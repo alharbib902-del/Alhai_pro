@@ -142,7 +142,9 @@ class _CompactBadge extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: useWhiteText
             ? Colors.white.withValues(alpha: 0.15)
@@ -157,11 +159,7 @@ class _CompactBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            data.icon,
-            color: data.color,
-            size: 20,
-          ),
+          Icon(data.icon, color: data.color, size: 20),
           const SizedBox(width: AlhaiSpacing.xs),
           Text(
             data.title,
@@ -278,11 +276,9 @@ class FeatureBadgesRow extends StatelessWidget {
       runSpacing: spacing,
       alignment: WrapAlignment.center,
       children: types
-          .map((type) => FeatureBadge(
-                type: type,
-                compact: compact,
-                light: light,
-              ))
+          .map(
+            (type) => FeatureBadge(type: type, compact: compact, light: light),
+          )
           .toList(),
     );
   }
@@ -299,23 +295,11 @@ class StatsRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        _StatItem(
-          value: '24/7',
-          label: 'دعم فني',
-          light: light,
-        ),
+        _StatItem(value: '24/7', label: 'دعم فني', light: light),
         _Divider(light: light),
-        _StatItem(
-          value: '+50',
-          label: 'أدوات تحليل',
-          light: light,
-        ),
+        _StatItem(value: '+50', label: 'أدوات تحليل', light: light),
         _Divider(light: light),
-        _StatItem(
-          value: '99.9%',
-          label: 'وقت التشغيل',
-          light: light,
-        ),
+        _StatItem(value: '99.9%', label: 'وقت التشغيل', light: light),
       ],
     );
   }

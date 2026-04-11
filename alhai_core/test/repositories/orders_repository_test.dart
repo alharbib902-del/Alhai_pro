@@ -79,8 +79,9 @@ void main() {
           paymentMethod: PaymentMethod.cash,
         );
 
-        when(() => mockRemote.createOrder(any()))
-            .thenAnswer((_) async => testOrderResponse);
+        when(
+          () => mockRemote.createOrder(any()),
+        ).thenAnswer((_) async => testOrderResponse);
 
         // Act
         final result = await repository.createOrder(params);
@@ -101,15 +102,17 @@ void main() {
           paymentMethod: PaymentMethod.cash,
         );
 
-        when(() => mockRemote.createOrder(any())).thenThrow(DioException(
-          type: DioExceptionType.badResponse,
-          response: Response(
-            statusCode: 400,
-            data: {'message': 'Items cannot be empty'},
+        when(() => mockRemote.createOrder(any())).thenThrow(
+          DioException(
+            type: DioExceptionType.badResponse,
+            response: Response(
+              statusCode: 400,
+              data: {'message': 'Items cannot be empty'},
+              requestOptions: RequestOptions(path: '/orders'),
+            ),
             requestOptions: RequestOptions(path: '/orders'),
           ),
-          requestOptions: RequestOptions(path: '/orders'),
-        ));
+        );
 
         // Act & Assert
         expect(
@@ -122,8 +125,9 @@ void main() {
     group('getOrder', () {
       test('returns Order on success', () async {
         // Arrange
-        when(() => mockRemote.getOrder(any()))
-            .thenAnswer((_) async => testOrderResponse);
+        when(
+          () => mockRemote.getOrder(any()),
+        ).thenAnswer((_) async => testOrderResponse);
 
         // Act
         final result = await repository.getOrder('order-1');
@@ -139,11 +143,13 @@ void main() {
     group('getOrders', () {
       test('returns paginated orders with status filter', () async {
         // Arrange
-        when(() => mockRemote.getOrders(
-              status: any(named: 'status'),
-              page: any(named: 'page'),
-              limit: any(named: 'limit'),
-            )).thenAnswer((_) async => [testOrderResponse]);
+        when(
+          () => mockRemote.getOrders(
+            status: any(named: 'status'),
+            page: any(named: 'page'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenAnswer((_) async => [testOrderResponse]);
 
         // Act
         final result = await repository.getOrders(
@@ -155,43 +161,44 @@ void main() {
         // Assert
         expect(result.items, hasLength(1));
         expect(result.items.first.status, equals(OrderStatus.created));
-        verify(() => mockRemote.getOrders(
-              status: 'created',
-              page: 1,
-              limit: 10,
-            )).called(1);
+        verify(
+          () => mockRemote.getOrders(status: 'created', page: 1, limit: 10),
+        ).called(1);
       });
 
       test('returns all orders when status is null', () async {
         // Arrange
-        when(() => mockRemote.getOrders(
-              status: any(named: 'status'),
-              page: any(named: 'page'),
-              limit: any(named: 'limit'),
-            )).thenAnswer((_) async => [testOrderResponse]);
+        when(
+          () => mockRemote.getOrders(
+            status: any(named: 'status'),
+            page: any(named: 'page'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenAnswer((_) async => [testOrderResponse]);
 
         // Act
         final result = await repository.getOrders();
 
         // Assert
         expect(result.items, hasLength(1));
-        verify(() => mockRemote.getOrders(
-              status: null,
-              page: 1,
-              limit: 20,
-            )).called(1);
+        verify(
+          () => mockRemote.getOrders(status: null, page: 1, limit: 20),
+        ).called(1);
       });
     });
 
     group('updateStatus', () {
       test('updates order status successfully', () async {
         // Arrange
-        when(() => mockRemote.updateStatus(any(), any()))
-            .thenAnswer((_) async => testOrderResponse);
+        when(
+          () => mockRemote.updateStatus(any(), any()),
+        ).thenAnswer((_) async => testOrderResponse);
 
         // Act
-        final result =
-            await repository.updateStatus('order-1', OrderStatus.confirmed);
+        final result = await repository.updateStatus(
+          'order-1',
+          OrderStatus.confirmed,
+        );
 
         // Assert
         expect(result.id, equals('order-1'));
@@ -202,23 +209,25 @@ void main() {
     group('cancelOrder', () {
       test('cancels order with reason', () async {
         // Arrange
-        when(() => mockRemote.cancelOrder(any(), reason: any(named: 'reason')))
-            .thenAnswer((_) async {});
+        when(
+          () => mockRemote.cancelOrder(any(), reason: any(named: 'reason')),
+        ).thenAnswer((_) async {});
 
         // Act & Assert
         await expectLater(
           repository.cancelOrder('order-1', reason: 'Customer request'),
           completes,
         );
-        verify(() =>
-                mockRemote.cancelOrder('order-1', reason: 'Customer request'))
-            .called(1);
+        verify(
+          () => mockRemote.cancelOrder('order-1', reason: 'Customer request'),
+        ).called(1);
       });
 
       test('cancels order without reason', () async {
         // Arrange
-        when(() => mockRemote.cancelOrder(any(), reason: any(named: 'reason')))
-            .thenAnswer((_) async {});
+        when(
+          () => mockRemote.cancelOrder(any(), reason: any(named: 'reason')),
+        ).thenAnswer((_) async {});
 
         // Act & Assert
         await expectLater(repository.cancelOrder('order-1'), completes);

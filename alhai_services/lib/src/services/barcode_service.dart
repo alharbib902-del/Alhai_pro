@@ -43,8 +43,9 @@ class BarcodeService {
 
   /// توليد SKU داخلي
   String generateSku({String prefix = 'SKU'}) {
-    final timestamp =
-        DateTime.now().millisecondsSinceEpoch.toString().substring(5);
+    final timestamp = DateTime.now().millisecondsSinceEpoch
+        .toString()
+        .substring(5);
     final random = _random.nextInt(9999).toString().padLeft(4, '0');
     return '$prefix-$timestamp-$random';
   }
@@ -52,8 +53,10 @@ class BarcodeService {
   /// توليد باركود Code128
   String generateCode128({int length = 10}) {
     const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-    return List.generate(length, (_) => chars[_random.nextInt(chars.length)])
-        .join();
+    return List.generate(
+      length,
+      (_) => chars[_random.nextInt(chars.length)],
+    ).join();
   }
 
   /// التحقق من صحة باركود EAN-13

@@ -174,8 +174,8 @@ class AppDataTable<T> extends StatelessWidget {
                         Icon(
                           isSorted
                               ? (sortAscending
-                                  ? Icons.arrow_upward
-                                  : Icons.arrow_downward)
+                                    ? Icons.arrow_upward
+                                    : Icons.arrow_downward)
                               : Icons.unfold_more,
                           size: 16,
                           color: isSorted
@@ -202,12 +202,13 @@ class AppDataTable<T> extends StatelessWidget {
       color: isSelected
           ? AppColors.primarySurface
           : isEven
-              ? AppColors.surface
-              : AppColors.grey50.withValues(alpha: 0.5),
+          ? AppColors.surface
+          : AppColors.grey50.withValues(alpha: 0.5),
       child: InkWell(
         onTap: onRowTap != null ? () => onRowTap!(item) : null,
-        onLongPress:
-            onRowLongPress != null ? () => onRowLongPress!(item) : null,
+        onLongPress: onRowLongPress != null
+            ? () => onRowLongPress!(item)
+            : null,
         child: SizedBox(
           height: rowHeight,
           child: Row(
@@ -332,9 +333,7 @@ class AppPagination extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: const BoxDecoration(
         color: AppColors.surface,
-        border: Border(
-          top: BorderSide(color: AppColors.border),
-        ),
+        border: Border(top: BorderSide(color: AppColors.border)),
       ),
       child: Row(
         children: [
@@ -357,10 +356,7 @@ class AppPagination extends StatelessWidget {
                 child: DropdownButton<int>(
                   value: pageSize,
                   items: pageSizeOptions.map((size) {
-                    return DropdownMenuItem(
-                      value: size,
-                      child: Text('$size'),
-                    );
+                    return DropdownMenuItem(value: size, child: Text('$size'));
                   }).toList(),
                   onChanged: (value) {
                     if (value != null) {
@@ -478,8 +474,9 @@ class AppPagination extends StatelessWidget {
             child: Text(
               '$i',
               style: AppTypography.labelMedium.copyWith(
-                color:
-                    i == currentPage ? AppColors.white : AppColors.textPrimary,
+                color: i == currentPage
+                    ? AppColors.white
+                    : AppColors.textPrimary,
               ),
             ),
           ),

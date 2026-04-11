@@ -19,15 +19,16 @@ void main() {
     db = setupMockDatabase(storesDao: storesDao);
     setupTestGetIt(mockDb: db);
 
-    when(() => storesDao.getStoreById(any()))
-        .thenAnswer((_) async => StoresTableData(
-              id: 'test-store-1',
-              name: 'Test Store',
-              currency: 'SAR',
-              timezone: 'Asia/Riyadh',
-              isActive: true,
-              createdAt: DateTime(2026, 1, 1),
-            ));
+    when(() => storesDao.getStoreById(any())).thenAnswer(
+      (_) async => StoresTableData(
+        id: 'test-store-1',
+        name: 'Test Store',
+        currency: 'SAR',
+        timezone: 'Asia/Riyadh',
+        isActive: true,
+        createdAt: DateTime(2026, 1, 1),
+      ),
+    );
   });
 
   tearDown(() => tearDownTestGetIt());

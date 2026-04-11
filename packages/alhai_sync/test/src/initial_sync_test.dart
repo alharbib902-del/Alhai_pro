@@ -73,8 +73,9 @@ void main() {
     group('isComplete', () {
       test('returns true when all tables are initial synced', () async {
         for (final table in InitialSync.downloadOrder) {
-          when(() => mockMetadataDao.isInitialSynced(table))
-              .thenAnswer((_) async => true);
+          when(
+            () => mockMetadataDao.isInitialSynced(table),
+          ).thenAnswer((_) async => true);
         }
 
         final result = await initialSync.isComplete();
@@ -84,8 +85,9 @@ void main() {
 
       test('returns false when any table is not synced', () async {
         for (final table in InitialSync.downloadOrder) {
-          when(() => mockMetadataDao.isInitialSynced(table))
-              .thenAnswer((_) async => table != 'products');
+          when(
+            () => mockMetadataDao.isInitialSynced(table),
+          ).thenAnswer((_) async => table != 'products');
         }
 
         final result = await initialSync.isComplete();
@@ -95,8 +97,9 @@ void main() {
 
       test('returns false when no tables are synced', () async {
         for (final table in InitialSync.downloadOrder) {
-          when(() => mockMetadataDao.isInitialSynced(table))
-              .thenAnswer((_) async => false);
+          when(
+            () => mockMetadataDao.isInitialSynced(table),
+          ).thenAnswer((_) async => false);
         }
 
         final result = await initialSync.isComplete();
@@ -108,8 +111,9 @@ void main() {
     group('getRemainingTables', () {
       test('returns all tables when none are synced', () async {
         for (final table in InitialSync.downloadOrder) {
-          when(() => mockMetadataDao.isInitialSynced(table))
-              .thenAnswer((_) async => false);
+          when(
+            () => mockMetadataDao.isInitialSynced(table),
+          ).thenAnswer((_) async => false);
         }
 
         final remaining = await initialSync.getRemainingTables();
@@ -119,8 +123,9 @@ void main() {
 
       test('returns empty when all are synced', () async {
         for (final table in InitialSync.downloadOrder) {
-          when(() => mockMetadataDao.isInitialSynced(table))
-              .thenAnswer((_) async => true);
+          when(
+            () => mockMetadataDao.isInitialSynced(table),
+          ).thenAnswer((_) async => true);
         }
 
         final remaining = await initialSync.getRemainingTables();
@@ -131,7 +136,8 @@ void main() {
       test('returns only unsynced tables', () async {
         for (final table in InitialSync.downloadOrder) {
           when(() => mockMetadataDao.isInitialSynced(table)).thenAnswer(
-              (_) async => table == 'organizations' || table == 'stores');
+            (_) async => table == 'organizations' || table == 'stores',
+          );
         }
 
         final remaining = await initialSync.getRemainingTables();
@@ -144,41 +150,52 @@ void main() {
     });
 
     group('execute', () {
-      test('returns success with 0 records when all tables already synced',
-          () async {
-        for (final table in InitialSync.downloadOrder) {
-          when(() => mockMetadataDao.isInitialSynced(table))
-              .thenAnswer((_) async => true);
-        }
+      test(
+        'returns success with 0 records when all tables already synced',
+        () async {
+          for (final table in InitialSync.downloadOrder) {
+            when(
+              () => mockMetadataDao.isInitialSynced(table),
+            ).thenAnswer((_) async => true);
+          }
 
-        final result = await initialSync.execute(
-          orgId: 'org-1',
-          storeId: 'store-1',
-        );
+          final result = await initialSync.execute(
+            orgId: 'org-1',
+            storeId: 'store-1',
+          );
 
-        expect(result.success, isTrue);
-        expect(result.totalRecords, 0);
-        expect(result.errors, isEmpty);
-      });
+          expect(result.success, isTrue);
+          expect(result.totalRecords, 0);
+          expect(result.errors, isEmpty);
+        },
+      );
 
       test('emits progress events during sync', () async {
         // Only one table remaining
         for (final table in InitialSync.downloadOrder) {
-          when(() => mockMetadataDao.isInitialSynced(table))
-              .thenAnswer((_) async => table != 'organizations');
+          when(
+            () => mockMetadataDao.isInitialSynced(table),
+          ).thenAnswer((_) async => table != 'organizations');
         }
 
         // Mock the download for organizations
         final queryBuilder = MockSupabaseQueryBuilder();
         final filterBuilder = MockPostgrestFilterBuilder();
-        when(() => mockClient.from('organizations'))
-            .thenAnswer((_) => queryBuilder);
+        when(
+          () => mockClient.from('organizations'),
+        ).thenAnswer((_) => queryBuilder);
         setupSelectChain(queryBuilder, filterBuilder, data: []);
 
-        when(() => mockMetadataDao.markInitialSynced(any()))
-            .thenAnswer((_) async {});
-        when(() => mockMetadataDao.updateLastPullAt(any(), any(),
-            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
+        when(
+          () => mockMetadataDao.markInitialSynced(any()),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockMetadataDao.updateLastPullAt(
+            any(),
+            any(),
+            syncCount: any(named: 'syncCount'),
+          ),
+        ).thenAnswer((_) async {});
 
         final progresses = <InitialSyncProgress>[];
         initialSync.progressStream.listen(progresses.add);
@@ -193,8 +210,9 @@ void main() {
       test('continues syncing other tables when one fails', () async {
         // All tables remaining
         for (final table in InitialSync.downloadOrder) {
-          when(() => mockMetadataDao.isInitialSynced(table))
-              .thenAnswer((_) async => false);
+          when(
+            () => mockMetadataDao.isInitialSynced(table),
+          ).thenAnswer((_) async => false);
         }
 
         // For each table, set up the mock to either succeed or fail
@@ -205,18 +223,26 @@ void main() {
 
           if (table == 'users') {
             // Simulate failure for users by throwing synchronously from select()
-            when(() => queryBuilder.select(any()))
-                .thenThrow(Exception('Network error'));
+            when(
+              () => queryBuilder.select(any()),
+            ).thenThrow(Exception('Network error'));
           } else {
             setupSelectChain(queryBuilder, filterBuilder, data: []);
           }
 
-          when(() => mockMetadataDao.markInitialSynced(table))
-              .thenAnswer((_) async {});
-          when(() => mockMetadataDao.updateLastPullAt(table, any(),
-              syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
-          when(() => mockMetadataDao.setError(table, any()))
-              .thenAnswer((_) async {});
+          when(
+            () => mockMetadataDao.markInitialSynced(table),
+          ).thenAnswer((_) async {});
+          when(
+            () => mockMetadataDao.updateLastPullAt(
+              table,
+              any(),
+              syncCount: any(named: 'syncCount'),
+            ),
+          ).thenAnswer((_) async {});
+          when(
+            () => mockMetadataDao.setError(table, any()),
+          ).thenAnswer((_) async {});
         }
 
         final result = await initialSync.execute(
@@ -229,8 +255,9 @@ void main() {
         // Verify that users failed
         expect(result.errors.any((e) => e.contains('users')), isTrue);
         // But other tables should have been attempted
-        verify(() => mockMetadataDao.markInitialSynced('organizations'))
-            .called(1);
+        verify(
+          () => mockMetadataDao.markInitialSynced('organizations'),
+        ).called(1);
       });
     });
 

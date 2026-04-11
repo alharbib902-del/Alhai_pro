@@ -148,44 +148,46 @@ class _PaymentDevicesSettingsScreenState
 
     if (_isLoading) {
       return SafeArea(
-          child: Column(
+        child: Column(
+          children: [
+            AppHeader(
+              title: l10n.paymentDevicesSettings,
+              onMenuTap: isWideScreen
+                  ? null
+                  : () => Scaffold.of(context).openDrawer(),
+              onNotificationsTap: () => context.push('/notifications'),
+              notificationsCount: 3,
+              userName: l10n.defaultUserName,
+              userRole: l10n.branchManager,
+            ),
+            const Expanded(child: Center(child: CircularProgressIndicator())),
+          ],
+        ),
+      );
+    }
+
+    return SafeArea(
+      child: Column(
         children: [
           AppHeader(
             title: l10n.paymentDevicesSettings,
-            onMenuTap:
-                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
             userRole: l10n.branchManager,
           ),
-          const Expanded(
-            child: Center(child: CircularProgressIndicator()),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+              child: _buildContent(isDark, l10n),
+            ),
           ),
         ],
-      ));
-    }
-
-    return SafeArea(
-        child: Column(
-      children: [
-        AppHeader(
-          title: l10n.paymentDevicesSettings,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
-          onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
-          userName: l10n.defaultUserName,
-          userRole: l10n.branchManager,
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-            child: _buildContent(isDark, l10n),
-          ),
-        ),
-      ],
-    ));
+      ),
+    );
   }
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
@@ -194,122 +196,164 @@ class _PaymentDevicesSettingsScreenState
       children: [
         _buildPageHeader(isDark, l10n),
         const SizedBox(height: AlhaiSpacing.mdl),
-        _buildSettingsGroup(l10n.supportedPaymentMethods, Icons.payment_rounded,
-            const Color(0xFF06B6D4), isDark, [
-          SwitchListTile(
-            title: Text('mada',
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            subtitle: Text(l10n.madaLocalCards),
-            secondary: const Icon(Icons.credit_card),
-            value: _enableMada,
-            onChanged: (v) {
-              setState(() => _enableMada = v);
-              _saveSingleSetting(_kEnableMada, v.toString());
-            },
-          ),
-          SwitchListTile(
-            title: Text('Visa / Mastercard',
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            subtitle: Text(l10n.internationalCards),
-            secondary: const Icon(Icons.credit_card),
-            value: _enableVisa,
-            onChanged: (v) {
-              setState(() => _enableVisa = v);
-              _saveSingleSetting(_kEnableVisa, v.toString());
-            },
-          ),
-          const Divider(indent: 16, endIndent: 16),
-          SwitchListTile(
-            title: Text('STC Pay',
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            subtitle: Text(l10n.stcDigitalWallet),
-            secondary: const Icon(Icons.phone_android),
-            value: _enableStcPay,
-            onChanged: (v) {
-              setState(() => _enableStcPay = v);
-              _saveSingleSetting(_kEnableStcPay, v.toString());
-            },
-          ),
-          SwitchListTile(
-            title: Text('Apple Pay',
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            secondary: const Icon(Icons.apple),
-            value: _enableApplePay,
-            onChanged: (v) {
-              setState(() => _enableApplePay = v);
-              _saveSingleSetting(_kEnableApplePay, v.toString());
-            },
-          ),
-          const SizedBox(height: AlhaiSpacing.xs),
-        ]),
-        _buildSettingsGroup(l10n.paymentTerminal, Icons.contactless_rounded,
-            AppColors.primary, isDark, [
-          RadioGroup<String>(
-            groupValue: _terminalType,
-            onChanged: (v) {
-              setState(() => _terminalType = v!);
-              _saveSingleSetting(_kTerminalType, v!);
-            },
-            child: Column(
-              children: [
-                RadioListTile<String>(
-                  title: Text('Ingenico',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface)),
-                  subtitle: Text(l10n.ingenicoDevices),
-                  value: 'ingenico',
+        _buildSettingsGroup(
+          l10n.supportedPaymentMethods,
+          Icons.payment_rounded,
+          const Color(0xFF06B6D4),
+          isDark,
+          [
+            SwitchListTile(
+              title: Text(
+                'mada',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
-                RadioListTile<String>(
-                  title: Text('Verifone',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface)),
-                  subtitle: Text(l10n.verifoneDevices),
-                  value: 'verifone',
-                ),
-                RadioListTile<String>(
-                  title: Text('PAX',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface)),
-                  subtitle: Text(l10n.paxDevices),
-                  value: 'pax',
-                ),
-              ],
+              ),
+              subtitle: Text(l10n.madaLocalCards),
+              secondary: const Icon(Icons.credit_card),
+              value: _enableMada,
+              onChanged: (v) {
+                setState(() => _enableMada = v);
+                _saveSingleSetting(_kEnableMada, v.toString());
+              },
             ),
-          ),
-          const SizedBox(height: AlhaiSpacing.xs),
-        ]),
-        _buildSettingsGroup(l10n.settlement, Icons.account_balance_rounded,
-            AppColors.success, isDark, [
-          SwitchListTile(
-            title: Text(l10n.autoSettlement,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            subtitle: Text(l10n.autoSettlementDesc),
-            value: _autoSettle,
-            onChanged: (v) {
-              setState(() => _autoSettle = v);
-              _saveSingleSetting(_kAutoSettle, v.toString());
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.sync, color: AppColors.info),
-            title: Text(l10n.manualSettlement,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            subtitle: Text(l10n.executeSettlementNow),
-            trailing: const AdaptiveIcon(Icons.chevron_right),
-            onTap: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.settlingInProgress)),
-              );
-            },
-          ),
-          const SizedBox(height: AlhaiSpacing.xs),
-        ]),
+            SwitchListTile(
+              title: Text(
+                'Visa / Mastercard',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              subtitle: Text(l10n.internationalCards),
+              secondary: const Icon(Icons.credit_card),
+              value: _enableVisa,
+              onChanged: (v) {
+                setState(() => _enableVisa = v);
+                _saveSingleSetting(_kEnableVisa, v.toString());
+              },
+            ),
+            const Divider(indent: 16, endIndent: 16),
+            SwitchListTile(
+              title: Text(
+                'STC Pay',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              subtitle: Text(l10n.stcDigitalWallet),
+              secondary: const Icon(Icons.phone_android),
+              value: _enableStcPay,
+              onChanged: (v) {
+                setState(() => _enableStcPay = v);
+                _saveSingleSetting(_kEnableStcPay, v.toString());
+              },
+            ),
+            SwitchListTile(
+              title: Text(
+                'Apple Pay',
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              secondary: const Icon(Icons.apple),
+              value: _enableApplePay,
+              onChanged: (v) {
+                setState(() => _enableApplePay = v);
+                _saveSingleSetting(_kEnableApplePay, v.toString());
+              },
+            ),
+            const SizedBox(height: AlhaiSpacing.xs),
+          ],
+        ),
+        _buildSettingsGroup(
+          l10n.paymentTerminal,
+          Icons.contactless_rounded,
+          AppColors.primary,
+          isDark,
+          [
+            RadioGroup<String>(
+              groupValue: _terminalType,
+              onChanged: (v) {
+                setState(() => _terminalType = v!);
+                _saveSingleSetting(_kTerminalType, v!);
+              },
+              child: Column(
+                children: [
+                  RadioListTile<String>(
+                    title: Text(
+                      'Ingenico',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    subtitle: Text(l10n.ingenicoDevices),
+                    value: 'ingenico',
+                  ),
+                  RadioListTile<String>(
+                    title: Text(
+                      'Verifone',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    subtitle: Text(l10n.verifoneDevices),
+                    value: 'verifone',
+                  ),
+                  RadioListTile<String>(
+                    title: Text(
+                      'PAX',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    subtitle: Text(l10n.paxDevices),
+                    value: 'pax',
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AlhaiSpacing.xs),
+          ],
+        ),
+        _buildSettingsGroup(
+          l10n.settlement,
+          Icons.account_balance_rounded,
+          AppColors.success,
+          isDark,
+          [
+            SwitchListTile(
+              title: Text(
+                l10n.autoSettlement,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              subtitle: Text(l10n.autoSettlementDesc),
+              value: _autoSettle,
+              onChanged: (v) {
+                setState(() => _autoSettle = v);
+                _saveSingleSetting(_kAutoSettle, v.toString());
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.sync, color: AppColors.info),
+              title: Text(
+                l10n.manualSettlement,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              subtitle: Text(l10n.executeSettlementNow),
+              trailing: const AdaptiveIcon(Icons.chevron_right),
+              onTap: () {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(l10n.settlingInProgress)),
+                );
+              },
+            ),
+            const SizedBox(height: AlhaiSpacing.xs),
+          ],
+        ),
         const SizedBox(height: AlhaiSpacing.md),
         SizedBox(
           width: double.infinity,
@@ -325,13 +369,16 @@ class _PaymentDevicesSettingsScreenState
                     ),
                   )
                 : const Icon(Icons.save_rounded),
-            label: Text(_isSaving
-                ? '\u062C\u0627\u0631\u064A \u0627\u0644\u062D\u0641\u0638...'
-                : l10n.saveSettings),
+            label: Text(
+              _isSaving
+                  ? '\u062C\u0627\u0631\u064A \u0627\u0644\u062D\u0641\u0638...'
+                  : l10n.saveSettings,
+            ),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),
@@ -359,45 +406,61 @@ class _PaymentDevicesSettingsScreenState
             color: const Color(0xFF06B6D4).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(Icons.payment_rounded,
-              color: Color(0xFF06B6D4), size: 24),
+          child: const Icon(
+            Icons.payment_rounded,
+            color: Color(0xFF06B6D4),
+            size: 24,
+          ),
         ),
         const SizedBox(width: AlhaiSpacing.sm),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.paymentDevicesSettings,
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface)),
-            Text(l10n.paymentDevicesSubtitle,
-                style: TextStyle(
-                    fontSize: 13,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(
+              l10n.paymentDevicesSettings,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            Text(
+              l10n.paymentDevicesSubtitle,
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildSettingsGroup(String title, IconData icon, Color color,
-      bool isDark, List<Widget> children) {
+  Widget _buildSettingsGroup(
+    String title,
+    IconData icon,
+    Color color,
+    bool isDark,
+    List<Widget> children,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            padding: const EdgeInsetsDirectional.fromSTEB(
+              AlhaiSpacing.mdl,
+              AlhaiSpacing.md,
+              AlhaiSpacing.mdl,
+              AlhaiSpacing.xs,
+            ),
             child: Row(
               children: [
                 Container(
@@ -409,11 +472,14 @@ class _PaymentDevicesSettingsScreenState
                   child: Icon(icon, color: color, size: 20),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
-                Text(title,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface)),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
               ],
             ),
           ),

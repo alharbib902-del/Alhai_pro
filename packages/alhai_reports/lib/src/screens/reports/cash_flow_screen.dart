@@ -78,68 +78,78 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
       final dr = _getDateRange();
 
       // Cash from sales
-      final salesResult = await db.customSelect(
-        '''SELECT COALESCE(SUM(total), 0) as total
+      final salesResult = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(total), 0) as total
            FROM sales
            WHERE store_id = ? AND status = 'completed'
              AND created_at >= ? AND created_at < ?''',
-        variables: [
-          Variable.withString(storeId),
-          Variable.withDateTime(dr.start),
-          Variable.withDateTime(dr.end),
-        ],
-      ).getSingle();
+            variables: [
+              Variable.withString(storeId),
+              Variable.withDateTime(dr.start),
+              Variable.withDateTime(dr.end),
+            ],
+          )
+          .getSingle();
 
       // Expenses paid
-      final expResult = await db.customSelect(
-        '''SELECT COALESCE(SUM(amount), 0) as total
+      final expResult = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(amount), 0) as total
            FROM expenses
            WHERE store_id = ? AND created_at >= ? AND created_at < ?''',
-        variables: [
-          Variable.withString(storeId),
-          Variable.withDateTime(dr.start),
-          Variable.withDateTime(dr.end),
-        ],
-      ).getSingle();
+            variables: [
+              Variable.withString(storeId),
+              Variable.withDateTime(dr.start),
+              Variable.withDateTime(dr.end),
+            ],
+          )
+          .getSingle();
 
       // Taxes paid
-      final taxResult = await db.customSelect(
-        '''SELECT COALESCE(SUM(tax), 0) as total
+      final taxResult = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(tax), 0) as total
            FROM sales
            WHERE store_id = ? AND status = 'completed'
              AND created_at >= ? AND created_at < ?''',
-        variables: [
-          Variable.withString(storeId),
-          Variable.withDateTime(dr.start),
-          Variable.withDateTime(dr.end),
-        ],
-      ).getSingle();
+            variables: [
+              Variable.withString(storeId),
+              Variable.withDateTime(dr.start),
+              Variable.withDateTime(dr.end),
+            ],
+          )
+          .getSingle();
 
       // Purchases paid
-      final purchResult = await db.customSelect(
-        '''SELECT COALESCE(SUM(total), 0) as total
+      final purchResult = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(total), 0) as total
            FROM purchases
            WHERE store_id = ? AND created_at >= ? AND created_at < ?''',
-        variables: [
-          Variable.withString(storeId),
-          Variable.withDateTime(dr.start),
-          Variable.withDateTime(dr.end),
-        ],
-      ).getSingle();
+            variables: [
+              Variable.withString(storeId),
+              Variable.withDateTime(dr.start),
+              Variable.withDateTime(dr.end),
+            ],
+          )
+          .getSingle();
 
       // Cash movements
-      final cashMovResult = await db.customSelect(
-        '''SELECT
+      final cashMovResult = await db
+          .customSelect(
+            '''SELECT
              COALESCE(SUM(CASE WHEN type = 'cash_in' THEN amount ELSE 0 END), 0) as cash_in,
              COALESCE(SUM(CASE WHEN type = 'cash_out' THEN amount ELSE 0 END), 0) as cash_out
            FROM transactions
            WHERE store_id = ? AND created_at >= ? AND created_at < ?''',
-        variables: [
-          Variable.withString(storeId),
-          Variable.withDateTime(dr.start),
-          Variable.withDateTime(dr.end),
-        ],
-      ).getSingle();
+            variables: [
+              Variable.withString(storeId),
+              Variable.withDateTime(dr.start),
+              Variable.withDateTime(dr.end),
+            ],
+          )
+          .getSingle();
 
       if (mounted) {
         setState(() {
@@ -206,7 +216,9 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
               Text(_error!),
               const SizedBox(height: AlhaiSpacing.sm),
               ElevatedButton(
-                  onPressed: _loadData, child: const Text('إعادة المحاولة')),
+                onPressed: _loadData,
+                child: const Text('إعادة المحاولة'),
+              ),
             ],
           ),
         ),
@@ -230,10 +242,12 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
             ],
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
-              child: Row(children: [
-                Text(_periodLabel()),
-                const Icon(Icons.arrow_drop_down),
-              ]),
+              child: Row(
+                children: [
+                  Text(_periodLabel()),
+                  const Icon(Icons.arrow_drop_down),
+                ],
+              ),
             ),
           ),
         ],
@@ -330,8 +344,11 @@ class _NetCard extends StatelessWidget {
   final double amount;
   final bool isPositive;
 
-  const _NetCard(
-      {required this.label, required this.amount, required this.isPositive});
+  const _NetCard({
+    required this.label,
+    required this.amount,
+    required this.isPositive,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -350,15 +367,21 @@ class _NetCard extends StatelessWidget {
         padding: const EdgeInsets.all(AlhaiSpacing.mdl),
         child: Column(
           children: [
-            Text(label,
-                style: TextStyle(
-                    fontSize: 14,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 14,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
             const SizedBox(height: AlhaiSpacing.xs),
             Text(
               '${isPositive ? '+' : ''}${amount.toStringAsFixed(0)} ر.س',
               style: TextStyle(
-                  fontSize: 32, fontWeight: FontWeight.bold, color: color),
+                fontSize: 32,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
             ),
             Icon(
               isPositive
@@ -403,15 +426,20 @@ class _ActivitySection extends StatelessWidget {
               children: [
                 Icon(icon, color: color, size: 20),
                 const SizedBox(width: AlhaiSpacing.xs),
-                Text(title,
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: color)),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
                 const Spacer(),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -428,40 +456,41 @@ class _ActivitySection extends StatelessWidget {
               ],
             ),
             const Divider(height: 20),
-            ...rows.map((row) => Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(
-                            row.isInflow
-                                ? Icons.add_circle_outline
-                                : Icons.remove_circle_outline,
-                            size: 14,
-                            color: row.isInflow
-                                ? AlhaiColors.success
-                                : AlhaiColors.error,
-                          ),
-                          const SizedBox(width: 6),
-                          Text(row.label, style: const TextStyle(fontSize: 13)),
-                        ],
-                      ),
-                      Text(
-                        '${row.amount >= 0 ? '+' : ''}${row.amount.toStringAsFixed(0)} ر.س',
-                        style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: row.amount >= 0
-                              ? AlhaiColors.successDark
-                              : AlhaiColors.errorDark,
+            ...rows.map(
+              (row) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(
+                          row.isInflow
+                              ? Icons.add_circle_outline
+                              : Icons.remove_circle_outline,
+                          size: 14,
+                          color: row.isInflow
+                              ? AlhaiColors.success
+                              : AlhaiColors.error,
                         ),
+                        const SizedBox(width: 6),
+                        Text(row.label, style: const TextStyle(fontSize: 13)),
+                      ],
+                    ),
+                    Text(
+                      '${row.amount >= 0 ? '+' : ''}${row.amount.toStringAsFixed(0)} ر.س',
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
+                        color: row.amount >= 0
+                            ? AlhaiColors.successDark
+                            : AlhaiColors.errorDark,
                       ),
-                    ],
-                  ),
-                )),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
         ),
       ),
@@ -473,6 +502,9 @@ class _FlowRow {
   final String label;
   final double amount;
   final bool isInflow;
-  const _FlowRow(
-      {required this.label, required this.amount, required this.isInflow});
+  const _FlowRow({
+    required this.label,
+    required this.amount,
+    required this.isInflow,
+  });
 }

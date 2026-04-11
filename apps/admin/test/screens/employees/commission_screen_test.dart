@@ -45,12 +45,14 @@ void main() {
     });
 
     testWidgets('screen handles missing store ID gracefully', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        const CommissionScreen(),
-        overrides: [
-          // Override with null storeId
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const CommissionScreen(),
+          overrides: [
+            // Override with null storeId
+          ],
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(CommissionScreen), findsOneWidget);

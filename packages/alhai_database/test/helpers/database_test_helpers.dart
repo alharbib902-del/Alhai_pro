@@ -21,15 +21,23 @@ Future<void> seedTestData(AppDatabase db) async {
   for (final id in ['store-1', 'store-2', 'test-store']) {
     await db.storesDao.insertStore(
       StoresTableCompanion.insert(
-          id: id, name: 'Test Store $id', createdAt: now),
+        id: id,
+        name: 'Test Store $id',
+        createdAt: now,
+      ),
     );
   }
 
   // ── Users / cashiers (top-level, referenced by sales.cashierId etc.) ──
   for (final id in ['user-1', 'user-2', 'cashier-1', 'cashier-2']) {
-    await db.into(db.usersTable).insert(
+    await db
+        .into(db.usersTable)
+        .insert(
           UsersTableCompanion.insert(
-              id: id, name: 'Test User $id', createdAt: now),
+            id: id,
+            name: 'Test User $id',
+            createdAt: now,
+          ),
         );
   }
 

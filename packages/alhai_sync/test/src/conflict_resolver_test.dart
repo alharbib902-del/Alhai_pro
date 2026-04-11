@@ -42,7 +42,7 @@ void main() {
           'sales',
           'sale_items',
           'shifts',
-          'cash_movements'
+          'cash_movements',
         ]) {
           expect(
             resolver.getStrategy(table, ConflictType.versionConflict),
@@ -421,8 +421,10 @@ void main() {
 
         // Products use serverWins strategy, not merge, for version conflicts
         // This test verifies that products use serverWins
-        final strategy =
-            resolver.getStrategy('products', ConflictType.versionConflict);
+        final strategy = resolver.getStrategy(
+          'products',
+          ConflictType.versionConflict,
+        );
         expect(strategy, ResolutionStrategy.serverWins);
       });
 
@@ -498,10 +500,7 @@ void main() {
     });
 
     test('fromJsonString returns null when missing conflict_type', () {
-      final json = jsonEncode({
-        'operation': 'UPDATE',
-        'table': 'products',
-      });
+      final json = jsonEncode({'operation': 'UPDATE', 'table': 'products'});
       final result = SyncConflict.fromJsonString(json, syncQueueId: 'sq-1');
       expect(result, isNull);
     });

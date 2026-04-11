@@ -41,8 +41,9 @@ class SlowMovingProductResponse {
       stockQty: stockQty.toDouble(),
       stockValue: stockValue,
       suggestedDiscount: suggestedDiscount ?? 0,
-      lastSaleDate:
-          lastSaleDate != null ? DateTime.tryParse(lastSaleDate!) : null,
+      lastSaleDate: lastSaleDate != null
+          ? DateTime.tryParse(lastSaleDate!)
+          : null,
     );
   }
 }

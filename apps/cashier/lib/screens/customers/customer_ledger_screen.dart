@@ -57,8 +57,9 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
 
     try {
       final account = await _db.accountsDao.getAccountById(widget.id);
-      final transactions =
-          await _db.transactionsDao.getAccountTransactions(widget.id);
+      final transactions = await _db.transactionsDao.getAccountTransactions(
+        widget.id,
+      );
 
       if (mounted) {
         setState(() {
@@ -90,7 +91,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
         'credit': isDebit ? 0.0 : t.amount.abs(),
         'balance': t.balanceAfter,
         'date': t.createdAt,
-      }
+      },
     ];
   }
 
@@ -100,9 +101,11 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
     final now = DateTime.now();
     if (_dateFilter == 'thisMonth') {
       list = list
-          .where((t) =>
-              (t['date'] as DateTime).month == now.month &&
-              (t['date'] as DateTime).year == now.year)
+          .where(
+            (t) =>
+                (t['date'] as DateTime).month == now.month &&
+                (t['date'] as DateTime).year == now.year,
+          )
           .toList();
     } else if (_dateFilter == 'threeMonths') {
       final threeMonthsAgo = DateTime(now.year, now.month - 3, now.day);
@@ -111,10 +114,13 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
           .toList();
     } else if (_dateFilter == 'custom' && _customDateRange != null) {
       list = list
-          .where((t) =>
-              (t['date'] as DateTime).isAfter(_customDateRange!.start) &&
-              (t['date'] as DateTime)
-                  .isBefore(_customDateRange!.end.add(const Duration(days: 1))))
+          .where(
+            (t) =>
+                (t['date'] as DateTime).isAfter(_customDateRange!.start) &&
+                (t['date'] as DateTime).isBefore(
+                  _customDateRange!.end.add(const Duration(days: 1)),
+                ),
+          )
           .toList();
     }
 
@@ -129,7 +135,9 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
       _filteredTransactions.fold(0.0, (sum, t) => sum + (t['debit'] as double));
 
   double get _totalCredit => _filteredTransactions.fold(
-      0.0, (sum, t) => sum + (t['credit'] as double));
+    0.0,
+    (sum, t) => sum + (t['credit'] as double),
+  );
 
   double get _currentBalance => _account?.balance ?? 0.0;
 
@@ -165,53 +173,57 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: AppColors.textOnPrimary))
+                  strokeWidth: 2,
+                  color: AppColors.textOnPrimary,
+                ),
+              )
             : const Icon(Icons.tune_rounded, size: 20),
         label: Text(l10n.manualAdjustment),
       ),
       body: _isLoading
           ? const AppLoadingState()
           : _error != null
-              ? AppErrorState.general(context,
-                  message: _error, onRetry: _loadData)
-              : Column(
-                  children: [
-                    _buildTopBar(colorScheme, l10n),
-                    Expanded(
-                      child: SingleChildScrollView(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: isWideScreen
-                              ? AlhaiSpacing.xxxl
-                              : (isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
-                          vertical: AlhaiSpacing.md,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _buildCustomerInfoCard(colorScheme, l10n, isMobile),
-                            const SizedBox(height: AlhaiSpacing.md),
-                            _buildFilterSection(colorScheme, l10n),
-                            const SizedBox(height: AlhaiSpacing.md),
-                            isMobile
-                                ? _buildMobileTransactions(colorScheme, l10n)
-                                : _buildDesktopTable(colorScheme, l10n),
-                            const SizedBox(height: AlhaiSpacing.md),
-                            if (!isMobile) _buildSummaryBar(colorScheme, l10n),
-                            const SizedBox(height: AlhaiSpacing.lg),
-                          ],
-                        ),
-                      ),
+          ? AppErrorState.general(context, message: _error, onRetry: _loadData)
+          : Column(
+              children: [
+                _buildTopBar(colorScheme, l10n),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: isWideScreen
+                          ? AlhaiSpacing.xxxl
+                          : (isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+                      vertical: AlhaiSpacing.md,
                     ),
-                    if (isMobile) _buildMobileBottomSummary(colorScheme, l10n),
-                  ],
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _buildCustomerInfoCard(colorScheme, l10n, isMobile),
+                        const SizedBox(height: AlhaiSpacing.md),
+                        _buildFilterSection(colorScheme, l10n),
+                        const SizedBox(height: AlhaiSpacing.md),
+                        isMobile
+                            ? _buildMobileTransactions(colorScheme, l10n)
+                            : _buildDesktopTable(colorScheme, l10n),
+                        const SizedBox(height: AlhaiSpacing.md),
+                        if (!isMobile) _buildSummaryBar(colorScheme, l10n),
+                        const SizedBox(height: AlhaiSpacing.lg),
+                      ],
+                    ),
+                  ),
                 ),
+                if (isMobile) _buildMobileBottomSummary(colorScheme, l10n),
+              ],
+            ),
     );
   }
 
   Widget _buildTopBar(ColorScheme colorScheme, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         border: Border(
@@ -224,13 +236,16 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
           children: [
             IconButton(
               onPressed: () => context.pop(),
-              icon:
-                  Icon(Icons.arrow_back_rounded, color: colorScheme.onSurface),
+              icon: Icon(
+                Icons.arrow_back_rounded,
+                color: colorScheme.onSurface,
+              ),
               tooltip: l10n.back,
               style: IconButton.styleFrom(
                 backgroundColor: colorScheme.surfaceContainerHighest,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(width: AlhaiSpacing.sm),
@@ -258,8 +273,10 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             ),
             IconButton(
               onPressed: _loadData,
-              icon: Icon(Icons.refresh_rounded,
-                  color: colorScheme.onSurfaceVariant),
+              icon: Icon(
+                Icons.refresh_rounded,
+                color: colorScheme.onSurfaceVariant,
+              ),
               tooltip: l10n.refresh,
             ),
           ],
@@ -269,7 +286,10 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
   }
 
   Widget _buildCustomerInfoCard(
-      ColorScheme colorScheme, AppLocalizations l10n, bool isMobile) {
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+    bool isMobile,
+  ) {
     final isDebt = _currentBalance > 0;
     final balanceColor = isDebt ? AppColors.error : AppColors.success;
 
@@ -318,8 +338,11 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                 const SizedBox(height: AlhaiSpacing.xxs),
                 Row(
                   children: [
-                    Icon(Icons.phone_outlined,
-                        size: 14, color: colorScheme.outline),
+                    Icon(
+                      Icons.phone_outlined,
+                      size: 14,
+                      color: colorScheme.outline,
+                    ),
                     const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       _account?.phone ?? '',
@@ -338,7 +361,9 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: AlhaiSpacing.xxs),
+                  horizontal: 10,
+                  vertical: AlhaiSpacing.xxs,
+                ),
                 decoration: BoxDecoration(
                   color: balanceColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(999),
@@ -384,14 +409,20 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.calendar_today_outlined,
-                  size: 16, color: colorScheme.outline),
+              Icon(
+                Icons.calendar_today_outlined,
+                size: 16,
+                color: colorScheme.outline,
+              ),
               const SizedBox(width: AlhaiSpacing.xs),
-              Text(l10n.date,
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: colorScheme.onSurfaceVariant)),
+              Text(
+                l10n.date,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 10),
@@ -400,43 +431,56 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             child: Row(
               children: [
                 _buildFilterChip(
-                    l10n.allPeriods,
-                    _dateFilter == 'all',
-                    () => setState(() {
-                          _dateFilter = 'all';
-                          _customDateRange = null;
-                        }),
-                    colorScheme),
+                  l10n.allPeriods,
+                  _dateFilter == 'all',
+                  () => setState(() {
+                    _dateFilter = 'all';
+                    _customDateRange = null;
+                  }),
+                  colorScheme,
+                ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
-                    l10n.thisMonthPeriod,
-                    _dateFilter == 'thisMonth',
-                    () => setState(() => _dateFilter = 'thisMonth'),
-                    colorScheme),
+                  l10n.thisMonthPeriod,
+                  _dateFilter == 'thisMonth',
+                  () => setState(() => _dateFilter = 'thisMonth'),
+                  colorScheme,
+                ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
-                    l10n.threeMonths,
-                    _dateFilter == 'threeMonths',
-                    () => setState(() => _dateFilter = 'threeMonths'),
-                    colorScheme),
+                  l10n.threeMonths,
+                  _dateFilter == 'threeMonths',
+                  () => setState(() => _dateFilter = 'threeMonths'),
+                  colorScheme,
+                ),
                 const SizedBox(width: AlhaiSpacing.xs),
-                _buildFilterChip(l10n.dateFromTo, _dateFilter == 'custom',
-                    _selectDateRange, colorScheme,
-                    icon: Icons.date_range_outlined),
+                _buildFilterChip(
+                  l10n.dateFromTo,
+                  _dateFilter == 'custom',
+                  _selectDateRange,
+                  colorScheme,
+                  icon: Icons.date_range_outlined,
+                ),
               ],
             ),
           ),
           const SizedBox(height: AlhaiSpacing.md),
           Row(
             children: [
-              Icon(Icons.filter_list_rounded,
-                  size: 16, color: colorScheme.outline),
+              Icon(
+                Icons.filter_list_rounded,
+                size: 16,
+                color: colorScheme.outline,
+              ),
               const SizedBox(width: AlhaiSpacing.xs),
-              Text(l10n.type,
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: colorScheme.onSurfaceVariant)),
+              Text(
+                l10n.type,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  color: colorScheme.onSurfaceVariant,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: 10),
@@ -444,23 +488,40 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: [
-                _buildFilterChip(l10n.allMovements, _typeFilter == 'all',
-                    () => setState(() => _typeFilter = 'all'), colorScheme),
-                const SizedBox(width: AlhaiSpacing.xs),
-                _buildFilterChip(l10n.invoices, _typeFilter == 'invoice',
-                    () => setState(() => _typeFilter = 'invoice'), colorScheme),
-                const SizedBox(width: AlhaiSpacing.xs),
-                _buildFilterChip(l10n.payment, _typeFilter == 'payment',
-                    () => setState(() => _typeFilter = 'payment'), colorScheme),
-                const SizedBox(width: AlhaiSpacing.xs),
-                _buildFilterChip(l10n.returns, _typeFilter == 'return',
-                    () => setState(() => _typeFilter = 'return'), colorScheme),
+                _buildFilterChip(
+                  l10n.allMovements,
+                  _typeFilter == 'all',
+                  () => setState(() => _typeFilter = 'all'),
+                  colorScheme,
+                ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 _buildFilterChip(
-                    l10n.adjustments,
-                    _typeFilter == 'adjustment',
-                    () => setState(() => _typeFilter = 'adjustment'),
-                    colorScheme),
+                  l10n.invoices,
+                  _typeFilter == 'invoice',
+                  () => setState(() => _typeFilter = 'invoice'),
+                  colorScheme,
+                ),
+                const SizedBox(width: AlhaiSpacing.xs),
+                _buildFilterChip(
+                  l10n.payment,
+                  _typeFilter == 'payment',
+                  () => setState(() => _typeFilter = 'payment'),
+                  colorScheme,
+                ),
+                const SizedBox(width: AlhaiSpacing.xs),
+                _buildFilterChip(
+                  l10n.returns,
+                  _typeFilter == 'return',
+                  () => setState(() => _typeFilter = 'return'),
+                  colorScheme,
+                ),
+                const SizedBox(width: AlhaiSpacing.xs),
+                _buildFilterChip(
+                  l10n.adjustments,
+                  _typeFilter == 'adjustment',
+                  () => setState(() => _typeFilter = 'adjustment'),
+                  colorScheme,
+                ),
               ],
             ),
           ),
@@ -469,43 +530,54 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
     );
   }
 
-  Widget _buildFilterChip(String label, bool isSelected, VoidCallback onTap,
-      ColorScheme colorScheme,
-      {IconData? icon}) {
+  Widget _buildFilterChip(
+    String label,
+    bool isSelected,
+    VoidCallback onTap,
+    ColorScheme colorScheme, {
+    IconData? icon,
+  }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(999),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(
-            horizontal: 14, vertical: AlhaiSpacing.xs),
+          horizontal: 14,
+          vertical: AlhaiSpacing.xs,
+        ),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary
               : colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
-              color:
-                  isSelected ? AppColors.primary : colorScheme.outlineVariant),
+            color: isSelected ? AppColors.primary : colorScheme.outlineVariant,
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon,
-                  size: 14,
-                  color: isSelected
-                      ? colorScheme.onPrimary
-                      : colorScheme.onSurfaceVariant),
+              Icon(
+                icon,
+                size: 14,
+                color: isSelected
+                    ? colorScheme.onPrimary
+                    : colorScheme.onSurfaceVariant,
+              ),
               const SizedBox(width: 6),
             ],
-            Text(label,
-                style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected
-                        ? colorScheme.onPrimary
-                        : colorScheme.onSurfaceVariant)),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected
+                    ? colorScheme.onPrimary
+                    : colorScheme.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       ),
@@ -530,49 +602,81 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
         children: [
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.mdl, vertical: 14),
-            decoration:
-                BoxDecoration(color: colorScheme.surfaceContainerHighest),
+              horizontal: AlhaiSpacing.mdl,
+              vertical: 14,
+            ),
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest,
+            ),
             child: Row(
               children: [
                 _tableHeaderCell(l10n.date, flex: 2, colorScheme: colorScheme),
-                _tableHeaderCell(l10n.statementCol,
-                    flex: 3, colorScheme: colorScheme),
-                _tableHeaderCell(l10n.referenceCol,
-                    flex: 2, colorScheme: colorScheme),
-                _tableHeaderCell(l10n.debitCol,
-                    flex: 2, colorScheme: colorScheme, align: TextAlign.end),
-                _tableHeaderCell(l10n.creditCol,
-                    flex: 2, colorScheme: colorScheme, align: TextAlign.end),
-                _tableHeaderCell(l10n.balanceCol,
-                    flex: 2, colorScheme: colorScheme, align: TextAlign.end),
+                _tableHeaderCell(
+                  l10n.statementCol,
+                  flex: 3,
+                  colorScheme: colorScheme,
+                ),
+                _tableHeaderCell(
+                  l10n.referenceCol,
+                  flex: 2,
+                  colorScheme: colorScheme,
+                ),
+                _tableHeaderCell(
+                  l10n.debitCol,
+                  flex: 2,
+                  colorScheme: colorScheme,
+                  align: TextAlign.end,
+                ),
+                _tableHeaderCell(
+                  l10n.creditCol,
+                  flex: 2,
+                  colorScheme: colorScheme,
+                  align: TextAlign.end,
+                ),
+                _tableHeaderCell(
+                  l10n.balanceCol,
+                  flex: 2,
+                  colorScheme: colorScheme,
+                  align: TextAlign.end,
+                ),
               ],
             ),
           ),
-          ...txns.asMap().entries.map((entry) =>
-              _buildTableRow(entry.value, entry.key, colorScheme, l10n)),
+          ...txns.asMap().entries.map(
+            (entry) =>
+                _buildTableRow(entry.value, entry.key, colorScheme, l10n),
+          ),
         ],
       ),
     );
   }
 
-  Widget _tableHeaderCell(String text,
-      {required int flex,
-      required ColorScheme colorScheme,
-      TextAlign align = TextAlign.start}) {
+  Widget _tableHeaderCell(
+    String text, {
+    required int flex,
+    required ColorScheme colorScheme,
+    TextAlign align = TextAlign.start,
+  }) {
     return Expanded(
       flex: flex,
-      child: Text(text,
-          textAlign: align,
-          style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.w700,
-              color: colorScheme.onSurfaceVariant)),
+      child: Text(
+        text,
+        textAlign: align,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          color: colorScheme.onSurfaceVariant,
+        ),
+      ),
     );
   }
 
-  Widget _buildTableRow(Map<String, dynamic> txn, int index,
-      ColorScheme colorScheme, AppLocalizations l10n) {
+  Widget _buildTableRow(
+    Map<String, dynamic> txn,
+    int index,
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+  ) {
     final type = txn['type'] as String;
     final date = txn['date'] as DateTime;
     final debit = txn['debit'] as double;
@@ -581,27 +685,37 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.mdl, vertical: 14),
+        horizontal: AlhaiSpacing.mdl,
+        vertical: 14,
+      ),
       decoration: BoxDecoration(
         color: type == 'adjustment'
             ? AppColors.warning.withValues(
                 alpha: Theme.of(context).brightness == Brightness.dark
                     ? 0.08
-                    : 0.05)
+                    : 0.05,
+              )
             : (index.isEven
-                ? Colors.transparent
-                : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)),
+                  ? Colors.transparent
+                  : colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)),
         border: Border(
-            bottom: BorderSide(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.5))),
+          bottom: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+          ),
+        ),
       ),
       child: Row(
         children: [
           Expanded(
-              flex: 2,
-              child: Text(_formatDate(date),
-                  style: TextStyle(
-                      fontSize: 13, color: colorScheme.onSurfaceVariant))),
+            flex: 2,
+            child: Text(
+              _formatDate(date),
+              style: TextStyle(
+                fontSize: 13,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
           Expanded(
             flex: 3,
             child: Row(
@@ -614,78 +728,103 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                     borderRadius: BorderRadius.circular(6),
                   ),
                   alignment: Alignment.center,
-                  child: Icon(_getTypeIcon(type),
-                      size: 15, color: _getTypeColor(type)),
+                  child: Icon(
+                    _getTypeIcon(type),
+                    size: 15,
+                    color: _getTypeColor(type),
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Flexible(
-                  child: Text(_getTypeLabel(type, l10n),
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.onSurface),
-                      overflow: TextOverflow.ellipsis),
+                  child: Text(
+                    _getTypeLabel(type, l10n),
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: colorScheme.onSurface,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ),
               ],
             ),
           ),
           Expanded(
-              flex: 2,
-              child: Text(txn['reference'] as String,
-                  style: TextStyle(
-                      fontSize: 13,
-                      color: colorScheme.onSurfaceVariant,
-                      fontFamily: 'monospace'))),
+            flex: 2,
+            child: Text(
+              txn['reference'] as String,
+              style: TextStyle(
+                fontSize: 13,
+                color: colorScheme.onSurfaceVariant,
+                fontFamily: 'monospace',
+              ),
+            ),
+          ),
           Expanded(
-              flex: 2,
-              child: Text(debit > 0 ? debit.toStringAsFixed(2) : '-',
-                  textAlign: TextAlign.end,
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: debit > 0 ? FontWeight.w600 : FontWeight.w400,
-                      color:
-                          debit > 0 ? AppColors.error : colorScheme.outline))),
+            flex: 2,
+            child: Text(
+              debit > 0 ? debit.toStringAsFixed(2) : '-',
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: debit > 0 ? FontWeight.w600 : FontWeight.w400,
+                color: debit > 0 ? AppColors.error : colorScheme.outline,
+              ),
+            ),
+          ),
           Expanded(
-              flex: 2,
-              child: Text(credit > 0 ? credit.toStringAsFixed(2) : '-',
-                  textAlign: TextAlign.end,
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontWeight:
-                          credit > 0 ? FontWeight.w600 : FontWeight.w400,
-                      color: credit > 0
-                          ? AppColors.success
-                          : colorScheme.outline))),
+            flex: 2,
+            child: Text(
+              credit > 0 ? credit.toStringAsFixed(2) : '-',
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: credit > 0 ? FontWeight.w600 : FontWeight.w400,
+                color: credit > 0 ? AppColors.success : colorScheme.outline,
+              ),
+            ),
+          ),
           Expanded(
-              flex: 2,
-              child: Text(balance.toStringAsFixed(2),
-                  textAlign: TextAlign.end,
-                  style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      color: colorScheme.onSurface))),
+            flex: 2,
+            child: Text(
+              balance.toStringAsFixed(2),
+              textAlign: TextAlign.end,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: colorScheme.onSurface,
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildMobileTransactions(
-      ColorScheme colorScheme, AppLocalizations l10n) {
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+  ) {
     final txns = _filteredTransactions;
     if (txns.isEmpty) return _buildEmptyState(colorScheme, l10n);
 
     return Column(
       children: txns
-          .map((txn) => Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: _buildMobileTransactionCard(txn, colorScheme, l10n),
-              ))
+          .map(
+            (txn) => Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _buildMobileTransactionCard(txn, colorScheme, l10n),
+            ),
+          )
           .toList(),
     );
   }
 
-  Widget _buildMobileTransactionCard(Map<String, dynamic> txn,
-      ColorScheme colorScheme, AppLocalizations l10n) {
+  Widget _buildMobileTransactionCard(
+    Map<String, dynamic> txn,
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+  ) {
     final type = txn['type'] as String;
     final date = txn['date'] as DateTime;
     final debit = txn['debit'] as double;
@@ -716,10 +855,11 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             Expanded(
               child: Padding(
                 padding: EdgeInsetsDirectional.only(
-                    start: type == 'adjustment' ? 12 : 16,
-                    end: 16,
-                    top: 14,
-                    bottom: 14),
+                  start: type == 'adjustment' ? 12 : 16,
+                  end: 16,
+                  top: 14,
+                  bottom: 14,
+                ),
                 child: Row(
                   children: [
                     Container(
@@ -730,22 +870,32 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       alignment: Alignment.center,
-                      child: Icon(_getTypeIcon(type),
-                          size: 16, color: _getTypeColor(type)),
+                      child: Icon(
+                        _getTypeIcon(type),
+                        size: 16,
+                        color: _getTypeColor(type),
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(_getTypeLabel(type, l10n),
-                              style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w600,
-                                  color: colorScheme.onSurface)),
-                          Text(_formatDateTime(date),
-                              style: TextStyle(
-                                  fontSize: 11, color: colorScheme.outline)),
+                          Text(
+                            _getTypeLabel(type, l10n),
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: colorScheme.onSurface,
+                            ),
+                          ),
+                          Text(
+                            _formatDateTime(date),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: colorScheme.outline,
+                            ),
+                          ),
                         ],
                       ),
                     ),
@@ -755,17 +905,19 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                         Text(
                           '${isDebitTx ? '+' : '-'}${amount.toStringAsFixed(2)}',
                           style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w700,
-                              color: isDebitTx
-                                  ? AppColors.error
-                                  : AppColors.success),
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: isDebitTx
+                                ? AppColors.error
+                                : AppColors.success,
+                          ),
                         ),
                         const SizedBox(height: AlhaiSpacing.xxxs),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: AlhaiSpacing.xs,
-                              vertical: AlhaiSpacing.xxxs),
+                            horizontal: AlhaiSpacing.xs,
+                            vertical: AlhaiSpacing.xxxs,
+                          ),
                           decoration: BoxDecoration(
                             color: colorScheme.surfaceContainerHighest,
                             borderRadius: BorderRadius.circular(999),
@@ -773,9 +925,10 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                           child: Text(
                             '${l10n.balanceCol}: ${balance.toStringAsFixed(0)}',
                             style: TextStyle(
-                                fontSize: 10,
-                                fontWeight: FontWeight.w600,
-                                color: colorScheme.onSurfaceVariant),
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                           ),
                         ),
                       ],
@@ -806,45 +959,58 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
       child: Row(
         children: [
           Expanded(
-              child: _buildSummaryItem(
-                  l10n.totalDebit,
-                  _totalDebit.toStringAsFixed(2),
-                  AppColors.error,
-                  Icons.arrow_upward_rounded,
-                  colorScheme)),
+            child: _buildSummaryItem(
+              l10n.totalDebit,
+              _totalDebit.toStringAsFixed(2),
+              AppColors.error,
+              Icons.arrow_upward_rounded,
+              colorScheme,
+            ),
+          ),
           Container(
-              width: 1,
-              height: 48,
-              color: colorScheme.outlineVariant,
-              margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md)),
+            width: 1,
+            height: 48,
+            color: colorScheme.outlineVariant,
+            margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
+          ),
           Expanded(
-              child: _buildSummaryItem(
-                  l10n.totalCredit,
-                  _totalCredit.toStringAsFixed(2),
-                  AppColors.success,
-                  Icons.arrow_downward_rounded,
-                  colorScheme)),
+            child: _buildSummaryItem(
+              l10n.totalCredit,
+              _totalCredit.toStringAsFixed(2),
+              AppColors.success,
+              Icons.arrow_downward_rounded,
+              colorScheme,
+            ),
+          ),
           Container(
-              width: 1,
-              height: 48,
-              color: colorScheme.outlineVariant,
-              margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md)),
+            width: 1,
+            height: 48,
+            color: colorScheme.outlineVariant,
+            margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
+          ),
           Expanded(
-              child: _buildSummaryItem(
-                  l10n.finalBalance,
-                  finalBalance.abs().toStringAsFixed(2),
-                  finalBalance > 0 ? AppColors.error : AppColors.success,
-                  Icons.account_balance_wallet_outlined,
-                  colorScheme,
-                  isBold: true)),
+            child: _buildSummaryItem(
+              l10n.finalBalance,
+              finalBalance.abs().toStringAsFixed(2),
+              finalBalance > 0 ? AppColors.error : AppColors.success,
+              Icons.account_balance_wallet_outlined,
+              colorScheme,
+              isBold: true,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildSummaryItem(String label, String value, Color color,
-      IconData icon, ColorScheme colorScheme,
-      {bool isBold = false}) {
+  Widget _buildSummaryItem(
+    String label,
+    String value,
+    Color color,
+    IconData icon,
+    ColorScheme colorScheme, {
+    bool isBold = false,
+  }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -853,39 +1019,51 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
           children: [
             Icon(icon, size: 14, color: color),
             const SizedBox(width: 6),
-            Text(label,
-                style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w500,
-                    color: colorScheme.onSurfaceVariant)),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.w500,
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 6),
-        Text(value,
-            style: TextStyle(
-                fontSize: isBold ? 18 : 16,
-                fontWeight: isBold ? FontWeight.w800 : FontWeight.w700,
-                color: color)),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: isBold ? 18 : 16,
+            fontWeight: isBold ? FontWeight.w800 : FontWeight.w700,
+            color: color,
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildMobileBottomSummary(
-      ColorScheme colorScheme, AppLocalizations l10n) {
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+  ) {
     final finalBalance = _totalDebit - _totalCredit;
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         border: Border(
-            top: BorderSide(color: colorScheme.outlineVariant, width: 1)),
+          top: BorderSide(color: colorScheme.outlineVariant, width: 1),
+        ),
         boxShadow: [
           BoxShadow(
-              color: Colors.black.withValues(alpha: 0.06),
-              blurRadius: 8,
-              offset: const Offset(0, -2)),
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 8,
+            offset: const Offset(0, -2),
+          ),
         ],
       ),
       child: SafeArea(
@@ -893,60 +1071,89 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
         child: Row(
           children: [
             Expanded(
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Text(l10n.totalDebit,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    l10n.totalDebit,
                     style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                        color: colorScheme.outline)),
-                const SizedBox(height: AlhaiSpacing.xxxs),
-                Text(_totalDebit.toStringAsFixed(0),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                      color: colorScheme.outline,
+                    ),
+                  ),
+                  const SizedBox(height: AlhaiSpacing.xxxs),
+                  Text(
+                    _totalDebit.toStringAsFixed(0),
                     style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.error)),
-              ]),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.error,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Expanded(
-              child: Column(mainAxisSize: MainAxisSize.min, children: [
-                Text(l10n.totalCredit,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    l10n.totalCredit,
                     style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.w500,
-                        color: colorScheme.outline)),
-                const SizedBox(height: AlhaiSpacing.xxxs),
-                Text(_totalCredit.toStringAsFixed(0),
+                      fontSize: 10,
+                      fontWeight: FontWeight.w500,
+                      color: colorScheme.outline,
+                    ),
+                  ),
+                  const SizedBox(height: AlhaiSpacing.xxxs),
+                  Text(
+                    _totalCredit.toStringAsFixed(0),
                     style: const TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w700,
-                        color: AppColors.success)),
-              ]),
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.success,
+                    ),
+                  ),
+                ],
+              ),
             ),
             Expanded(
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+                  horizontal: AlhaiSpacing.sm,
+                  vertical: AlhaiSpacing.xs,
+                ),
                 decoration: BoxDecoration(
                   color:
                       (finalBalance > 0 ? AppColors.error : AppColors.success)
                           .withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Column(mainAxisSize: MainAxisSize.min, children: [
-                  Text(l10n.finalBalance,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      l10n.finalBalance,
                       style: TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500,
-                          color: colorScheme.outline)),
-                  const SizedBox(height: AlhaiSpacing.xxxs),
-                  Text(finalBalance.abs().toStringAsFixed(0),
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                        color: colorScheme.outline,
+                      ),
+                    ),
+                    const SizedBox(height: AlhaiSpacing.xxxs),
+                    Text(
+                      finalBalance.abs().toStringAsFixed(0),
                       style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w800,
-                          color: finalBalance > 0
-                              ? AppColors.error
-                              : AppColors.success)),
-                ]),
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: finalBalance > 0
+                            ? AppColors.error
+                            : AppColors.success,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ],
@@ -967,14 +1174,20 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.receipt_long_outlined,
-                size: 64, color: colorScheme.outline.withValues(alpha: 0.4)),
+            Icon(
+              Icons.receipt_long_outlined,
+              size: 64,
+              color: colorScheme.outline.withValues(alpha: 0.4),
+            ),
             const SizedBox(height: AlhaiSpacing.md),
-            Text(l10n.noTransactions,
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: colorScheme.outline)),
+            Text(
+              l10n.noTransactions,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: colorScheme.outline,
+              ),
+            ),
           ],
         ),
       ),
@@ -993,8 +1206,9 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
           final dialogColorScheme = Theme.of(dialogContext).colorScheme;
 
           return Dialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             backgroundColor: dialogColorScheme.surface,
             child: Container(
               width: 440,
@@ -1013,59 +1227,76 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         alignment: Alignment.center,
-                        child: const Icon(Icons.tune_rounded,
-                            size: 20, color: AppColors.warning),
+                        child: const Icon(
+                          Icons.tune_rounded,
+                          size: 20,
+                          color: AppColors.warning,
+                        ),
                       ),
                       const SizedBox(width: AlhaiSpacing.sm),
-                      Text(l10n.manualAdjustment,
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              color: dialogColorScheme.onSurface)),
+                      Text(
+                        l10n.manualAdjustment,
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w700,
+                          color: dialogColorScheme.onSurface,
+                        ),
+                      ),
                       const Spacer(),
                       IconButton(
-                          onPressed: () => Navigator.pop(dialogContext),
-                          icon: Icon(Icons.close_rounded,
-                              color: dialogColorScheme.onSurfaceVariant),
-                          tooltip: l10n.close),
+                        onPressed: () => Navigator.pop(dialogContext),
+                        icon: Icon(
+                          Icons.close_rounded,
+                          color: dialogColorScheme.onSurfaceVariant,
+                        ),
+                        tooltip: l10n.close,
+                      ),
                     ],
                   ),
                   const SizedBox(height: AlhaiSpacing.lg),
-                  Text(l10n.adjustmentType,
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: dialogColorScheme.onSurfaceVariant)),
+                  Text(
+                    l10n.adjustmentType,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: dialogColorScheme.onSurfaceVariant,
+                    ),
+                  ),
                   const SizedBox(height: AlhaiSpacing.xs),
                   Row(
                     children: [
                       Expanded(
-                          child: _buildTypeOption(
-                              l10n.debitAdjustment,
-                              Icons.arrow_upward_rounded,
-                              AppColors.error,
-                              adjustmentType == 'debit',
-                              () => setDialogState(
-                                  () => adjustmentType = 'debit'),
-                              dialogColorScheme)),
+                        child: _buildTypeOption(
+                          l10n.debitAdjustment,
+                          Icons.arrow_upward_rounded,
+                          AppColors.error,
+                          adjustmentType == 'debit',
+                          () => setDialogState(() => adjustmentType = 'debit'),
+                          dialogColorScheme,
+                        ),
+                      ),
                       const SizedBox(width: AlhaiSpacing.sm),
                       Expanded(
-                          child: _buildTypeOption(
-                              l10n.creditAdjustment,
-                              Icons.arrow_downward_rounded,
-                              AppColors.success,
-                              adjustmentType == 'credit',
-                              () => setDialogState(
-                                  () => adjustmentType = 'credit'),
-                              dialogColorScheme)),
+                        child: _buildTypeOption(
+                          l10n.creditAdjustment,
+                          Icons.arrow_downward_rounded,
+                          AppColors.success,
+                          adjustmentType == 'credit',
+                          () => setDialogState(() => adjustmentType = 'credit'),
+                          dialogColorScheme,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: AlhaiSpacing.mdl),
-                  Text(l10n.adjustmentAmount,
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: dialogColorScheme.onSurfaceVariant)),
+                  Text(
+                    l10n.adjustmentAmount,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: dialogColorScheme.onSurfaceVariant,
+                    ),
+                  ),
                   const SizedBox(height: AlhaiSpacing.xs),
                   TextField(
                     controller: amountController,
@@ -1078,18 +1309,24 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       filled: true,
                       fillColor: dialogColorScheme.surfaceContainerHighest,
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none),
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.md, vertical: 14),
+                        horizontal: AlhaiSpacing.md,
+                        vertical: 14,
+                      ),
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.mdl),
-                  Text(l10n.adjustmentReason,
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: dialogColorScheme.onSurfaceVariant)),
+                  Text(
+                    l10n.adjustmentReason,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: dialogColorScheme.onSurfaceVariant,
+                    ),
+                  ),
                   const SizedBox(height: AlhaiSpacing.xs),
                   TextField(
                     controller: reasonController,
@@ -1101,10 +1338,13 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       filled: true,
                       fillColor: dialogColorScheme.surfaceContainerHighest,
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none),
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.md, vertical: 14),
+                        horizontal: AlhaiSpacing.md,
+                        vertical: 14,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 28),
@@ -1116,10 +1356,12 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                           style: OutlinedButton.styleFrom(
                             foregroundColor: dialogColorScheme.onSurfaceVariant,
                             side: BorderSide(
-                                color: dialogColorScheme.outlineVariant),
+                              color: dialogColorScheme.outlineVariant,
+                            ),
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                           child: Text(l10n.cancel),
                         ),
@@ -1128,19 +1370,26 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                       Expanded(
                         child: FilledButton.icon(
                           onPressed: () {
-                            final amount =
-                                double.tryParse(amountController.text);
+                            final amount = double.tryParse(
+                              amountController.text,
+                            );
                             if (amount == null || amount <= 0) {
                               ScaffoldMessenger.of(dialogContext).showSnackBar(
                                 SnackBar(
-                                    content: Text(l10n.enterValidAmount),
-                                    backgroundColor: AppColors.error),
+                                  content: Text(l10n.enterValidAmount),
+                                  backgroundColor: AppColors.error,
+                                ),
                               );
                               return;
                             }
                             Navigator.pop(dialogContext);
-                            _handleSaveAdjustment(adjustmentType, amount,
-                                reasonController.text, DateTime.now(), l10n);
+                            _handleSaveAdjustment(
+                              adjustmentType,
+                              amount,
+                              reasonController.text,
+                              DateTime.now(),
+                              l10n,
+                            );
                           },
                           icon: const Icon(Icons.save_outlined, size: 18),
                           label: Text(l10n.saveAdjustment),
@@ -1149,7 +1398,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                             foregroundColor: colorScheme.onPrimary,
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
                           ),
                         ),
                       ),
@@ -1164,8 +1414,14 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
     );
   }
 
-  Widget _buildTypeOption(String label, IconData icon, Color color,
-      bool isSelected, VoidCallback onTap, ColorScheme colorScheme) {
+  Widget _buildTypeOption(
+    String label,
+    IconData icon,
+    Color color,
+    bool isSelected,
+    VoidCallback onTap,
+    ColorScheme colorScheme,
+  ) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -1178,29 +1434,40 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
               : colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-              color: isSelected ? color : colorScheme.outlineVariant,
-              width: isSelected ? 2 : 1),
+            color: isSelected ? color : colorScheme.outlineVariant,
+            width: isSelected ? 2 : 1,
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon,
-                size: 18,
-                color: isSelected ? color : colorScheme.onSurfaceVariant),
+            Icon(
+              icon,
+              size: 18,
+              color: isSelected ? color : colorScheme.onSurfaceVariant,
+            ),
             const SizedBox(width: AlhaiSpacing.xs),
-            Text(label,
-                style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-                    color: isSelected ? color : colorScheme.onSurfaceVariant)),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
+                color: isSelected ? color : colorScheme.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Future<void> _handleSaveAdjustment(String type, double amount, String reason,
-      DateTime date, AppLocalizations l10n) async {
+  Future<void> _handleSaveAdjustment(
+    String type,
+    double amount,
+    String reason,
+    DateTime date,
+    AppLocalizations l10n,
+  ) async {
     setState(() => _isAdjusting = true);
 
     final isDebit = type == 'debit';
@@ -1231,8 +1498,9 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(l10n.adjustmentSaved),
-              backgroundColor: AppColors.success),
+            content: Text(l10n.adjustmentSaved),
+            backgroundColor: AppColors.success,
+          ),
         );
       }
     } catch (e, stack) {
@@ -1241,8 +1509,11 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            icon: const Icon(Icons.error_outline,
-                color: AppColors.error, size: 48),
+            icon: const Icon(
+              Icons.error_outline,
+              color: AppColors.error,
+              size: 48,
+            ),
             title: Text(l10n.error),
             content: Text(l10n.errorWithDetails('$e')),
             actions: [

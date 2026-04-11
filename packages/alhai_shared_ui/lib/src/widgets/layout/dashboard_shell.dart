@@ -208,7 +208,9 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
 
   /// تطبيق شارة عدد مهام الطباعة على مجموعات القائمة الجانبية
   List<SidebarGroup> _applyPrintQueueBadge(
-      List<SidebarGroup> groups, int printCount) {
+    List<SidebarGroup> groups,
+    int printCount,
+  ) {
     if (printCount <= 0) return groups;
 
     return groups.map((group) {
@@ -239,8 +241,10 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final pendingPrintCount = ref.watch(pendingPrintCountProvider);
 
-    final sidebarGroups =
-        _applyPrintQueueBadge(_getSidebarGroups(context), pendingPrintCount);
+    final sidebarGroups = _applyPrintQueueBadge(
+      _getSidebarGroups(context),
+      pendingPrintCount,
+    );
 
     final sidebar = AppSidebar(
       storeName: l10n.brandName,
@@ -261,8 +265,9 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
 
     if (isDesktop) {
       return Scaffold(
-        backgroundColor:
-            isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary,
+        backgroundColor: isDark
+            ? AppColors.backgroundDark
+            : AppColors.backgroundSecondary,
         body: Row(
           children: [
             sidebar,
@@ -273,8 +278,9 @@ class _DashboardShellState extends ConsumerState<DashboardShell> {
     } else {
       // Mobile: drawer sidebar
       return Scaffold(
-        backgroundColor:
-            isDark ? AppColors.backgroundDark : AppColors.backgroundSecondary,
+        backgroundColor: isDark
+            ? AppColors.backgroundDark
+            : AppColors.backgroundSecondary,
         drawer: Drawer(
           child: AppSidebar(
             storeName: l10n.brandName,

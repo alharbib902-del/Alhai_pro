@@ -74,12 +74,7 @@ class BoundingBox {
 }
 
 /// حالة التعرف
-enum RecognitionStatus {
-  matched,
-  partialMatch,
-  unrecognized,
-  newProduct,
-}
+enum RecognitionStatus { matched, partialMatch, unrecognized, newProduct }
 
 /// نتيجة مسح الرف
 class ShelfScanResult {
@@ -124,12 +119,7 @@ class OcrExtraction {
 }
 
 /// نوع المسح
-enum ScanMode {
-  singleProduct,
-  shelfScan,
-  barcodeOcr,
-  priceTag,
-}
+enum ScanMode { singleProduct, shelfScan, barcodeOcr, priceTag }
 
 // ============================================================================
 // SERVICE
@@ -197,9 +187,11 @@ class AiProductRecognitionService {
       ),
     ];
 
-    final matched =
-        products.where((p) => p.status == RecognitionStatus.matched).length;
-    final avgConf = products.map((p) => p.confidence).reduce((a, b) => a + b) /
+    final matched = products
+        .where((p) => p.status == RecognitionStatus.matched)
+        .length;
+    final avgConf =
+        products.map((p) => p.confidence).reduce((a, b) => a + b) /
         products.length;
 
     return RecognitionResult(
@@ -237,11 +229,11 @@ class AiProductRecognitionService {
       outOfStockProducts: [
         'حليب المراعي 2 لتر',
         'زبادي قليل الدسم',
-        'عصير تروبيكانا'
+        'عصير تروبيكانا',
       ],
       misplacedProducts: [
         'شاي ربيع (يجب أن يكون في رف المشروبات)',
-        'صابون لوكس (في رف الأغذية)'
+        'صابون لوكس (في رف الأغذية)',
       ],
       fillRate: 81.25,
     );

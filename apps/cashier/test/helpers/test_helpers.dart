@@ -54,10 +54,7 @@ Widget createTestWidget(
   GoRouter? router,
 }) {
   return ProviderScope(
-    overrides: [
-      ...defaultProviderOverrides(),
-      ...overrides,
-    ],
+    overrides: [...defaultProviderOverrides(), ...overrides],
     child: router != null
         ? MaterialApp.router(
             locale: locale,
@@ -161,12 +158,7 @@ GoRouter createTestRouter({
 }) {
   return GoRouter(
     initialLocation: initialLocation.isEmpty ? path : initialLocation,
-    routes: [
-      GoRoute(
-        path: path,
-        builder: builder,
-      ),
-    ],
+    routes: [GoRoute(path: path, builder: builder)],
   );
 }
 
@@ -211,10 +203,7 @@ void runReceiptPdfTests() {
 
     test('receipt number follows POS-YYYYMMDD-NNNN format', () {
       const receiptNo = 'POS-20260115-0001';
-      expect(
-        RegExp(r'^POS-\d{8}-\d{4,}$').hasMatch(receiptNo),
-        isTrue,
-      );
+      expect(RegExp(r'^POS-\d{8}-\d{4,}$').hasMatch(receiptNo), isTrue);
     });
 
     test('tax calculation is 15% of subtotal', () {
@@ -304,8 +293,11 @@ void runZatcaComplianceTests() {
       };
 
       for (final field in requiredFields) {
-        expect(invoice.containsKey(field), isTrue,
-            reason: 'Missing ZATCA field: $field');
+        expect(
+          invoice.containsKey(field),
+          isTrue,
+          reason: 'Missing ZATCA field: $field',
+        );
         expect(invoice[field], isNotNull, reason: 'Null ZATCA field: $field');
       }
     });
@@ -402,10 +394,7 @@ void runMultiTenantTests() {
       ];
 
       expect(stores.length, equals(3));
-      expect(
-        stores.every((s) => s['orgId'] == orgId),
-        isTrue,
-      );
+      expect(stores.every((s) => s['orgId'] == orgId), isTrue);
     });
 
     test('user is associated with a specific store', () {
@@ -459,10 +448,12 @@ void runMultiTenantTests() {
       ];
 
       final allSales = [...salesStoreA, ...salesStoreB];
-      final storeASales =
-          allSales.where((s) => s['storeId'] == 'store-a').toList();
-      final storeBSales =
-          allSales.where((s) => s['storeId'] == 'store-b').toList();
+      final storeASales = allSales
+          .where((s) => s['storeId'] == 'store-a')
+          .toList();
+      final storeBSales = allSales
+          .where((s) => s['storeId'] == 'store-b')
+          .toList();
 
       expect(storeASales.length, equals(2));
       expect(storeBSales.length, equals(1));
@@ -601,10 +592,7 @@ void runDeliveryTests() {
     });
 
     test('pickup order does not require address', () {
-      final order = {
-        'deliveryType': 'pickup',
-        'deliveryAddress': null,
-      };
+      final order = {'deliveryType': 'pickup', 'deliveryAddress': null};
 
       if (order['deliveryType'] == 'pickup') {
         // Address is optional for pickup
@@ -634,16 +622,10 @@ void runDeliveryTests() {
       };
 
       // pending -> confirmed is valid
-      expect(
-        validTransitions['pending']!.contains('confirmed'),
-        isTrue,
-      );
+      expect(validTransitions['pending']!.contains('confirmed'), isTrue);
 
       // delivered -> pending is NOT valid
-      expect(
-        validTransitions['delivered']!.contains('pending'),
-        isFalse,
-      );
+      expect(validTransitions['delivered']!.contains('pending'), isFalse);
     });
 
     test('driver assignment links driver to order', () {
@@ -664,8 +646,9 @@ void runDeliveryTests() {
     test('delivery time estimate is positive', () {
       const estimatedMinutes = 30;
       final orderTime = DateTime(2026, 1, 15, 12, 0);
-      final estimatedDelivery =
-          orderTime.add(Duration(minutes: estimatedMinutes));
+      final estimatedDelivery = orderTime.add(
+        Duration(minutes: estimatedMinutes),
+      );
 
       expect(estimatedDelivery.isAfter(orderTime), isTrue);
       expect(estimatedMinutes, greaterThan(0));

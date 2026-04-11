@@ -36,8 +36,9 @@ class DemandElasticityChart extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -149,18 +150,20 @@ class DemandElasticityChart extends StatelessWidget {
     final label = e.classification == ElasticityClass.inelastic
         ? 'غير مرن' // Inelastic
         : e.classification == ElasticityClass.elastic
-            ? l10n.elastic
-            : l10n.unit;
+        ? l10n.elastic
+        : l10n.unit;
     final color = e.classification == ElasticityClass.inelastic
         ? AppColors.primary
         : e.classification == ElasticityClass.elastic
-            ? AppColors.warning
-            : AppColors.info;
+        ? AppColors.warning
+        : AppColors.info;
 
     return Container(
       margin: const EdgeInsets.only(top: AlhaiSpacing.xxxs),
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+        horizontal: AlhaiSpacing.xs,
+        vertical: AlhaiSpacing.xxxs,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
@@ -183,10 +186,7 @@ class DemandElasticityChart extends StatelessWidget {
         Container(
           width: 10,
           height: 10,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: AlhaiSpacing.xxs),
         Text(
@@ -251,10 +251,18 @@ class _DemandCurvePainter extends CustomPainter {
       color: isDark ? Colors.white38 : AppColors.textMuted,
     );
 
-    _drawText(canvas, priceLabel, const Offset(padding - 10, padding - 15),
-        labelStyle);
-    _drawText(canvas, demandLabel, Offset(w - padding - 10, h - padding + 8),
-        labelStyle);
+    _drawText(
+      canvas,
+      priceLabel,
+      const Offset(padding - 10, padding - 15),
+      labelStyle,
+    );
+    _drawText(
+      canvas,
+      demandLabel,
+      Offset(w - padding - 10, h - padding + 8),
+      labelStyle,
+    );
 
     // منحنى الطلب
     final curvePaint = Paint()
@@ -288,8 +296,10 @@ class _DemandCurvePainter extends CustomPainter {
       final maxP = max(currentPrice, suggestedPrice) * 1.5;
       final normalizedCurrent = currentPrice / maxP;
       final currentX = padding + (1 - normalizedCurrent) * chartW;
-      final currentDemand =
-          pow(max(0.01, normalizedCurrent), -elasticity.abs() * 0.5);
+      final currentDemand = pow(
+        max(0.01, normalizedCurrent),
+        -elasticity.abs() * 0.5,
+      );
       final currentY =
           padding + chartH * (1 - min(1, max(0, currentDemand / 3)));
 
@@ -308,8 +318,10 @@ class _DemandCurvePainter extends CustomPainter {
       // نقطة السعر المقترح
       final normalizedSuggested = suggestedPrice / maxP;
       final suggestedX = padding + (1 - normalizedSuggested) * chartW;
-      final suggestedDemand =
-          pow(max(0.01, normalizedSuggested), -elasticity.abs() * 0.5);
+      final suggestedDemand = pow(
+        max(0.01, normalizedSuggested),
+        -elasticity.abs() * 0.5,
+      );
       final suggestedY =
           padding + chartH * (1 - min(1, max(0, suggestedDemand / 3)));
 
@@ -338,10 +350,7 @@ class _DemandCurvePainter extends CustomPainter {
 
   void _drawText(Canvas canvas, String text, Offset offset, TextStyle style) {
     final span = TextSpan(text: text, style: style);
-    final painter = TextPainter(
-      text: span,
-      textDirection: TextDirection.rtl,
-    );
+    final painter = TextPainter(text: span, textDirection: TextDirection.rtl);
     painter.layout();
     painter.paint(canvas, offset);
   }

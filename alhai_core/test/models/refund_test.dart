@@ -23,7 +23,8 @@ void main() {
         reason: reason,
         method: method,
         totalAmount: totalAmount,
-        items: items ??
+        items:
+            items ??
             [
               const RefundItem(
                 productId: 'p1',

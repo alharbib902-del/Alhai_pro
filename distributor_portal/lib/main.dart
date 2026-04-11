@@ -15,13 +15,18 @@ import 'di/injection.dart';
 import 'providers/distributor_providers.dart';
 
 void main() {
-  runZonedGuarded(() async {
-    await initSentry(appRunner: () async {
-      await _appMain();
-    });
-  }, (error, stack) {
-    reportError(error, stackTrace: stack, hint: 'runZonedGuarded');
-  });
+  runZonedGuarded(
+    () async {
+      await initSentry(
+        appRunner: () async {
+          await _appMain();
+        },
+      );
+    },
+    (error, stack) {
+      reportError(error, stackTrace: stack, hint: 'runZonedGuarded');
+    },
+  );
 }
 
 Future<void> _appMain() async {
@@ -90,9 +95,7 @@ class DistributorPortalApp extends ConsumerWidget {
         final isRtl = Directionality.of(context) == TextDirection.rtl;
         return Directionality(
           textDirection: isRtl ? TextDirection.rtl : TextDirection.ltr,
-          child: SessionTimeoutWrapper(
-            child: child ?? const SizedBox.shrink(),
-          ),
+          child: SessionTimeoutWrapper(child: child ?? const SizedBox.shrink()),
         );
       },
     );

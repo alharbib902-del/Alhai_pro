@@ -48,11 +48,9 @@ void main() {
 
     test('getAllCustomers returns all for store', () async {
       await db.customersDao.insertCustomer(makeCustomer());
-      await db.customersDao.insertCustomer(makeCustomer(
-        id: 'cust-2',
-        name: 'فاطمة علي',
-        phone: '0509876543',
-      ));
+      await db.customersDao.insertCustomer(
+        makeCustomer(id: 'cust-2', name: 'فاطمة علي', phone: '0509876543'),
+      );
 
       final customers = await db.customersDao.getAllCustomers('store-1');
       expect(customers, hasLength(2));
@@ -60,11 +58,9 @@ void main() {
 
     test('getActiveCustomers excludes inactive', () async {
       await db.customersDao.insertCustomer(makeCustomer());
-      await db.customersDao.insertCustomer(makeCustomer(
-        id: 'cust-2',
-        name: 'خالد سعيد',
-        isActive: false,
-      ));
+      await db.customersDao.insertCustomer(
+        makeCustomer(id: 'cust-2', name: 'خالد سعيد', isActive: false),
+      );
 
       final active = await db.customersDao.getActiveCustomers('store-1');
       expect(active, hasLength(1));
@@ -73,11 +69,9 @@ void main() {
 
     test('searchCustomers finds by name', () async {
       await db.customersDao.insertCustomer(makeCustomer());
-      await db.customersDao.insertCustomer(makeCustomer(
-        id: 'cust-2',
-        name: 'سارة أحمد',
-        phone: '0507777777',
-      ));
+      await db.customersDao.insertCustomer(
+        makeCustomer(id: 'cust-2', name: 'سارة أحمد', phone: '0507777777'),
+      );
 
       final results = await db.customersDao.searchCustomers('أحمد', 'store-1');
       expect(results, hasLength(2));
@@ -86,16 +80,20 @@ void main() {
     test('searchCustomers finds by phone', () async {
       await db.customersDao.insertCustomer(makeCustomer());
 
-      final results =
-          await db.customersDao.searchCustomers('0501234567', 'store-1');
+      final results = await db.customersDao.searchCustomers(
+        '0501234567',
+        'store-1',
+      );
       expect(results, hasLength(1));
     });
 
     test('getCustomerByPhone returns correct customer', () async {
       await db.customersDao.insertCustomer(makeCustomer());
 
-      final customer =
-          await db.customersDao.getCustomerByPhone('0501234567', 'store-1');
+      final customer = await db.customersDao.getCustomerByPhone(
+        '0501234567',
+        'store-1',
+      );
       expect(customer, isNotNull);
       expect(customer!.id, 'cust-1');
     });

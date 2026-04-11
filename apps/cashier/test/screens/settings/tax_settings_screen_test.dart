@@ -35,9 +35,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const TaxSettingsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const TaxSettingsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(TaxSettingsScreen), findsOneWidget);
@@ -53,12 +51,11 @@ void main() {
 
       // Use Completer to keep loading state without creating timers
       final completer = Completer<StoresTableData?>();
-      when(() => storesDao.getStoreById(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => storesDao.getStoreById(any()),
+      ).thenAnswer((_) => completer.future);
 
-      await tester.pumpWidget(
-        createTestWidget(const TaxSettingsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const TaxSettingsScreen()));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -75,10 +72,7 @@ void main() {
       suppressOverflowErrors();
 
       await tester.pumpWidget(
-        createTestWidget(
-          const TaxSettingsScreen(),
-          theme: ThemeData.dark(),
-        ),
+        createTestWidget(const TaxSettingsScreen(), theme: ThemeData.dark()),
       );
       await tester.pumpAndSettle();
 
@@ -93,9 +87,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const TaxSettingsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const TaxSettingsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(TaxSettingsScreen), findsOneWidget);
@@ -109,9 +101,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const TaxSettingsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const TaxSettingsScreen()));
       await tester.pumpAndSettle();
 
       // Tax screen has text fields for tax rate and tax number

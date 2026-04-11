@@ -8,12 +8,7 @@ class CustomerInfoCard extends StatelessWidget {
   final String? phone;
   final String? address;
 
-  const CustomerInfoCard({
-    super.key,
-    this.name,
-    this.phone,
-    this.address,
-  });
+  const CustomerInfoCard({super.key, this.name, this.phone, this.address});
 
   @override
   Widget build(BuildContext context) {
@@ -48,8 +43,10 @@ class CustomerInfoCard extends StatelessWidget {
               ListTile(
                 contentPadding: EdgeInsets.zero,
                 leading: const Icon(Icons.phone_outlined),
-                title:
-                    Text(_maskPhone(phone!), textDirection: TextDirection.ltr),
+                title: Text(
+                  _maskPhone(phone!),
+                  textDirection: TextDirection.ltr,
+                ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -57,9 +54,11 @@ class CustomerInfoCard extends StatelessWidget {
                       label: 'اتصال بالعميل',
                       button: true,
                       child: IconButton(
-                        icon: Icon(Icons.phone,
-                            size: 22,
-                            color: Theme.of(context).colorScheme.primary),
+                        icon: Icon(
+                          Icons.phone,
+                          size: 22,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                         tooltip: 'اتصال بالعميل',
                         onPressed: () => _launchPhone(phone!),
                       ),
@@ -68,9 +67,11 @@ class CustomerInfoCard extends StatelessWidget {
                       label: 'مراسلة عبر واتساب',
                       button: true,
                       child: IconButton(
-                        icon: Icon(Icons.message,
-                            size: 22,
-                            color: Theme.of(context).colorScheme.tertiary),
+                        icon: Icon(
+                          Icons.message,
+                          size: 22,
+                          color: Theme.of(context).colorScheme.tertiary,
+                        ),
                         tooltip: 'مراسلة عبر واتساب',
                         onPressed: () => _launchWhatsApp(phone!),
                       ),

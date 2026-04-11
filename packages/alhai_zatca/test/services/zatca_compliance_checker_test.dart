@@ -13,29 +13,28 @@ void main() {
   // ── Test Fixtures ──────────────────────────────────────────
 
   ZatcaSeller validSeller() => const ZatcaSeller(
-        name: 'Test Store',
-        vatNumber: '300000000000003',
-        streetName: 'King Fahd Road',
-        buildingNumber: '1234',
-        city: 'Riyadh',
-        postalCode: '12345',
-        countryCode: 'SA',
-      );
+    name: 'Test Store',
+    vatNumber: '300000000000003',
+    streetName: 'King Fahd Road',
+    buildingNumber: '1234',
+    city: 'Riyadh',
+    postalCode: '12345',
+    countryCode: 'SA',
+  );
 
   ZatcaInvoiceLine validLine({
     String vatCategoryCode = 'S',
     double vatRate = 15.0,
     String? vatExemptionReason,
-  }) =>
-      ZatcaInvoiceLine(
-        lineId: '1',
-        itemName: 'Test Product',
-        quantity: 2,
-        unitPrice: 100.0,
-        vatRate: vatRate,
-        vatCategoryCode: vatCategoryCode,
-        vatExemptionReason: vatExemptionReason,
-      );
+  }) => ZatcaInvoiceLine(
+    lineId: '1',
+    itemName: 'Test Product',
+    quantity: 2,
+    unitPrice: 100.0,
+    vatRate: vatRate,
+    vatCategoryCode: vatCategoryCode,
+    vatExemptionReason: vatExemptionReason,
+  );
 
   ZatcaInvoice validSimplifiedInvoice({
     List<ZatcaInvoiceLine>? lines,
@@ -45,42 +44,38 @@ void main() {
     InvoiceTypeCode typeCode = InvoiceTypeCode.standard,
     String? billingReferenceId,
     String paymentMeansCode = '10',
-  }) =>
-      ZatcaInvoice(
-        invoiceNumber: 'INV-001',
-        uuid: '550e8400-e29b-41d4-a716-446655440000',
-        issueDate: DateTime(2026, 1, 15),
-        issueTime: DateTime(2026, 1, 15, 14, 30),
-        typeCode: typeCode,
-        subType: '0200000',
-        currencyCode: currencyCode,
-        seller: seller ?? validSeller(),
-        lines: lines ?? [validLine()],
-        documentDiscount: documentDiscount,
-        paymentMeansCode: paymentMeansCode,
-        billingReferenceId: billingReferenceId,
-      );
+  }) => ZatcaInvoice(
+    invoiceNumber: 'INV-001',
+    uuid: '550e8400-e29b-41d4-a716-446655440000',
+    issueDate: DateTime(2026, 1, 15),
+    issueTime: DateTime(2026, 1, 15, 14, 30),
+    typeCode: typeCode,
+    subType: '0200000',
+    currencyCode: currencyCode,
+    seller: seller ?? validSeller(),
+    lines: lines ?? [validLine()],
+    documentDiscount: documentDiscount,
+    paymentMeansCode: paymentMeansCode,
+    billingReferenceId: billingReferenceId,
+  );
 
   ZatcaInvoice validStandardInvoice({
     ZatcaBuyer? buyer,
     List<ZatcaInvoiceLine>? lines,
-  }) =>
-      ZatcaInvoice(
-        invoiceNumber: 'INV-002',
-        uuid: '550e8400-e29b-41d4-a716-446655440001',
-        issueDate: DateTime(2026, 1, 15),
-        issueTime: DateTime(2026, 1, 15, 14, 30),
-        typeCode: InvoiceTypeCode.standard,
-        subType: '0100000',
-        seller: validSeller(),
-        buyer: buyer ??
-            const ZatcaBuyer(
-              name: 'Buyer Corp',
-              vatNumber: '300000000000010',
-            ),
-        lines: lines ?? [validLine()],
-        paymentMeansCode: '10',
-      );
+  }) => ZatcaInvoice(
+    invoiceNumber: 'INV-002',
+    uuid: '550e8400-e29b-41d4-a716-446655440001',
+    issueDate: DateTime(2026, 1, 15),
+    issueTime: DateTime(2026, 1, 15, 14, 30),
+    typeCode: InvoiceTypeCode.standard,
+    subType: '0100000',
+    seller: validSeller(),
+    buyer:
+        buyer ??
+        const ZatcaBuyer(name: 'Buyer Corp', vatNumber: '300000000000010'),
+    lines: lines ?? [validLine()],
+    paymentMeansCode: '10',
+  );
 
   setUp(() {
     checker = ZatcaComplianceChecker();
@@ -124,13 +119,15 @@ void main() {
       });
 
       test('rejects invalid UUID format', () {
-        final invoice =
-            validSimplifiedInvoice().copyWith(uuid: 'not-a-valid-uuid');
+        final invoice = validSimplifiedInvoice().copyWith(
+          uuid: 'not-a-valid-uuid',
+        );
         final errors = checker.validate(invoice);
 
         expect(
           errors.any(
-              (e) => e.code == 'BT-124' && e.message.contains('UUID format')),
+            (e) => e.code == 'BT-124' && e.message.contains('UUID format'),
+          ),
           isTrue,
         );
       });
@@ -180,8 +177,10 @@ void main() {
         final errors = checker.validate(invoice);
 
         expect(
-          errors.any((e) =>
-              e.code == 'BT-81' && e.severity == ComplianceSeverity.warning),
+          errors.any(
+            (e) =>
+                e.code == 'BT-81' && e.severity == ComplianceSeverity.warning,
+          ),
           isTrue,
         );
       });
@@ -252,8 +251,10 @@ void main() {
         final errors = checker.validate(invoice);
 
         expect(
-          errors.any((e) =>
-              e.code == 'BT-38' && e.severity == ComplianceSeverity.warning),
+          errors.any(
+            (e) =>
+                e.code == 'BT-38' && e.severity == ComplianceSeverity.warning,
+          ),
           isTrue,
         );
       });
@@ -289,9 +290,7 @@ void main() {
 
       test('rejects buyer without name for standard invoices', () {
         final invoice = validStandardInvoice(
-          buyer: const ZatcaBuyer(
-            vatNumber: '300000000000010',
-          ),
+          buyer: const ZatcaBuyer(vatNumber: '300000000000010'),
         );
         final errors = checker.validate(invoice);
 
@@ -300,10 +299,7 @@ void main() {
 
       test('rejects buyer with invalid VAT format for standard invoices', () {
         final invoice = validStandardInvoice(
-          buyer: const ZatcaBuyer(
-            name: 'Buyer Corp',
-            vatNumber: '12345',
-          ),
+          buyer: const ZatcaBuyer(name: 'Buyer Corp', vatNumber: '12345'),
         );
         final errors = checker.validate(invoice);
 
@@ -369,10 +365,7 @@ void main() {
       });
 
       test('requires exemption reason for exempt category E', () {
-        final line = validLine(
-          vatCategoryCode: 'E',
-          vatRate: 0.0,
-        );
+        final line = validLine(vatCategoryCode: 'E', vatRate: 0.0);
         final invoice = validSimplifiedInvoice(lines: [line]);
         final errors = checker.validate(invoice);
 
@@ -380,10 +373,7 @@ void main() {
       });
 
       test('requires exemption reason for zero-rated category Z', () {
-        final line = validLine(
-          vatCategoryCode: 'Z',
-          vatRate: 0.0,
-        );
+        final line = validLine(vatCategoryCode: 'Z', vatRate: 0.0);
         final invoice = validSimplifiedInvoice(lines: [line]);
         final errors = checker.validate(invoice);
 
@@ -408,9 +398,11 @@ void main() {
         final errors = checker.validate(invoice);
 
         expect(
-          errors.any((e) =>
-              e.code == 'KSA-EN16931-08' &&
-              e.severity == ComplianceSeverity.warning),
+          errors.any(
+            (e) =>
+                e.code == 'KSA-EN16931-08' &&
+                e.severity == ComplianceSeverity.warning,
+          ),
           isTrue,
         );
       });

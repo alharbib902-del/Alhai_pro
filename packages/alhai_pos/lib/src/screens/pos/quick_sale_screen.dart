@@ -65,9 +65,11 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
     final search = _searchController.text.toLowerCase();
     if (search.isNotEmpty) {
       products = products
-          .where((p) =>
-              p.name.toLowerCase().contains(search) ||
-              (p.barcode?.contains(search) ?? false))
+          .where(
+            (p) =>
+                p.name.toLowerCase().contains(search) ||
+                (p.barcode?.contains(search) ?? false),
+          )
           .toList();
     }
 
@@ -213,14 +215,15 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
           ),
           floatingActionButton:
               AppBreakpoints.isMobile(context) && _cartItems.isNotEmpty
-                  ? FloatingActionButton.extended(
-                      onPressed: () => setState(() => _showCart = true),
-                      backgroundColor: AppColors.primary,
-                      icon: const Icon(Icons.shopping_cart),
-                      label: Text(l10n.itemsCountPrice(
-                          _itemCount, _total.toStringAsFixed(2))),
-                    )
-                  : null,
+              ? FloatingActionButton.extended(
+                  onPressed: () => setState(() => _showCart = true),
+                  backgroundColor: AppColors.primary,
+                  icon: const Icon(Icons.shopping_cart),
+                  label: Text(
+                    l10n.itemsCountPrice(_itemCount, _total.toStringAsFixed(2)),
+                  ),
+                )
+              : null,
         ),
       ),
     );
@@ -237,9 +240,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
         _buildCategoriesBar(),
 
         // Products Grid
-        Expanded(
-          child: _buildProductsGrid(),
-        ),
+        Expanded(child: _buildProductsGrid()),
       ],
     );
   }
@@ -265,16 +266,19 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
                 color: Theme.of(context).colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(AppRadius.lg),
                 border: Border.all(
-                    color: Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.3)),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.primary.withValues(alpha: 0.3),
+                ),
               ),
               child: Row(
                 children: [
                   const SizedBox(width: AppSpacing.md),
-                  const Icon(Icons.qr_code_scanner,
-                      color: AppColors.primary, size: 24),
+                  const Icon(
+                    Icons.qr_code_scanner,
+                    color: AppColors.primary,
+                    size: 24,
+                  ),
                   const SizedBox(width: AppSpacing.sm),
                   Expanded(
                     child: TextField(
@@ -451,9 +455,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
             onPressed: _clearCart,
             icon: const Icon(Icons.delete_outline, size: 18),
             label: Text(l10n.clearAction),
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.error,
-            ),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
           ),
       ],
     );
@@ -481,9 +483,7 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
       padding: const EdgeInsets.all(AppSpacing.lg),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        border: Border(
-          top: BorderSide(color: Theme.of(context).dividerColor),
-        ),
+        border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
         boxShadow: AppShadows.sm,
       ),
       child: Column(
@@ -606,8 +606,10 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
         final db = GetIt.I<AppDatabase>();
         final storeId = ref.read(currentStoreIdProvider);
         if (storeId != null) {
-          final product =
-              await db.productsDao.getProductByBarcode(barcode, storeId);
+          final product = await db.productsDao.getProductByBarcode(
+            barcode,
+            storeId,
+          );
           if (product != null && mounted) {
             _addProduct(product);
           } else if (mounted) {
@@ -631,8 +633,9 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
 
   void _addProduct(ProductsTableData product) {
     setState(() {
-      final existingIndex =
-          _cartItems.indexWhere((e) => e.product.id == product.id);
+      final existingIndex = _cartItems.indexWhere(
+        (e) => e.product.id == product.id,
+      );
       if (existingIndex >= 0) {
         _cartItems[existingIndex] = _cartItems[existingIndex].copyWith(
           quantity: _cartItems[existingIndex].quantity + 1,
@@ -690,7 +693,8 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
 
     final now = DateTime.now();
     final defaultName = AppLocalizations.of(context).quickSaleHold(
-        '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}');
+      '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
+    );
 
     final name = await showDialog<String>(
       context: context,
@@ -710,13 +714,16 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
           ),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l10n.cancel),
+            ),
             FilledButton(
               onPressed: () => Navigator.pop(
-                  ctx,
-                  controller.text.trim().isEmpty
-                      ? defaultName
-                      : controller.text.trim()),
+                ctx,
+                controller.text.trim().isEmpty
+                    ? defaultName
+                    : controller.text.trim(),
+              ),
               child: Text(l10n.holdAction),
             ),
           ],
@@ -731,17 +738,23 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
       final storeId = ref.read(currentStoreIdProvider) ?? '';
       final id = const Uuid().v4();
       final subtotal = _cartItems.fold<double>(0.0, (s, i) => s + i.total);
-      final itemsJson = jsonEncode(_cartItems
-          .map((item) => {
+      final itemsJson = jsonEncode(
+        _cartItems
+            .map(
+              (item) => {
                 'productId': item.product.id,
                 'productName': item.product.name,
                 'price': item.product.price,
                 'quantity': item.quantity,
                 'total': item.total,
-              })
-          .toList());
+              },
+            )
+            .toList(),
+      );
 
-      await db.into(db.heldInvoicesTable).insert(
+      await db
+          .into(db.heldInvoicesTable)
+          .insert(
             HeldInvoicesTableCompanion.insert(
               id: id,
               storeId: storeId,
@@ -759,12 +772,17 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
         setState(() => _cartItems.clear());
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Row(children: [
-              const Icon(Icons.pause_circle_outline,
-                  color: AppColors.textOnPrimary, size: 18),
-              const SizedBox(width: AlhaiSpacing.xs),
-              Text(l10n.heldMessage(name)),
-            ]),
+            content: Row(
+              children: [
+                const Icon(
+                  Icons.pause_circle_outline,
+                  color: AppColors.textOnPrimary,
+                  size: 18,
+                ),
+                const SizedBox(width: AlhaiSpacing.xs),
+                Text(l10n.heldMessage(name)),
+              ],
+            ),
             backgroundColor: AppColors.warning,
           ),
         );
@@ -785,12 +803,15 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
     if (_cartItems.isEmpty) return;
 
     // عرض نافذة إدخال رقم الجوال إذا كانت الميزة مفعّلة
-    final featureSettings =
-        ref.read(cashierFeatureSettingsProvider).valueOrNull;
+    final featureSettings = ref
+        .read(cashierFeatureSettingsProvider)
+        .valueOrNull;
     if (featureSettings?.enablePhoneCollection == true) {
       final storeId = ref.read(currentStoreIdProvider) ?? '';
-      final phoneResult =
-          await PhoneEntryDialog.show(context, storeId: storeId);
+      final phoneResult = await PhoneEntryDialog.show(
+        context,
+        storeId: storeId,
+      );
       if (!mounted) return;
 
       if (!phoneResult.wasSkipped) {
@@ -798,7 +819,9 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
             .read(cartStateProvider.notifier)
             .setCustomerPhone(phoneResult.phone);
         if (phoneResult.hasExistingCustomer) {
-          ref.read(cartStateProvider.notifier).setCustomer(
+          ref
+              .read(cartStateProvider.notifier)
+              .setCustomer(
                 phoneResult.customerId,
                 customerName: phoneResult.customerName,
               );
@@ -819,17 +842,11 @@ class CartItem {
   final ProductsTableData product;
   final int quantity;
 
-  const CartItem({
-    required this.product,
-    required this.quantity,
-  });
+  const CartItem({required this.product, required this.quantity});
 
   double get total => product.price * quantity;
 
-  CartItem copyWith({
-    ProductsTableData? product,
-    int? quantity,
-  }) {
+  CartItem copyWith({ProductsTableData? product, int? quantity}) {
     return CartItem(
       product: product ?? this.product,
       quantity: quantity ?? this.quantity,

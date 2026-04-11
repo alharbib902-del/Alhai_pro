@@ -6,15 +6,19 @@ import '../data/delivery_datasource.dart';
 
 /// Real-time delivery tracking for an order.
 /// Emits `null` when no delivery is assigned yet.
-final deliveryTrackingProvider =
-    StreamProvider.family<Delivery?, String>((ref, orderId) {
+final deliveryTrackingProvider = StreamProvider.family<Delivery?, String>((
+  ref,
+  orderId,
+) {
   final datasource = locator<DeliveryDatasource>();
   return datasource.trackDelivery(orderId);
 });
 
 /// Real-time order status changes.
-final orderStatusTrackingProvider =
-    StreamProvider.family<OrderStatus, String>((ref, orderId) {
+final orderStatusTrackingProvider = StreamProvider.family<OrderStatus, String>((
+  ref,
+  orderId,
+) {
   final datasource = locator<DeliveryDatasource>();
   return datasource.trackOrderStatus(orderId);
 });
@@ -22,13 +26,14 @@ final orderStatusTrackingProvider =
 /// Real-time driver location.
 final driverLocationProvider =
     StreamProvider.family<Map<String, dynamic>?, String>((ref, driverId) {
-  final datasource = locator<DeliveryDatasource>();
-  return datasource.trackDriverLocation(driverId);
-});
+      final datasource = locator<DeliveryDatasource>();
+      return datasource.trackDriverLocation(driverId);
+    });
 
 /// Driver info (name, phone, image).
-final driverInfoProvider =
-    FutureProvider.family<Map<String, dynamic>?, String>((ref, driverId) {
-  final datasource = locator<DeliveryDatasource>();
-  return datasource.getDriverInfo(driverId);
-});
+final driverInfoProvider = FutureProvider.family<Map<String, dynamic>?, String>(
+  (ref, driverId) {
+    final datasource = locator<DeliveryDatasource>();
+    return datasource.getDriverInfo(driverId);
+  },
+);

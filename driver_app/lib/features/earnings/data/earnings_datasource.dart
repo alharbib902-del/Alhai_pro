@@ -30,7 +30,8 @@ class EarningsDatasource {
       final result = await _client
           .from('deliveries')
           .select(
-              'id, delivery_fee, delivered_at, distance_km, status, orders:order_id(order_number)')
+            'id, delivery_fee, delivered_at, distance_km, status, orders:order_id(order_number)',
+          )
           .eq('driver_id', _driverId)
           .eq('status', 'delivered')
           .gte('delivered_at', from.toIso8601String())
@@ -87,8 +88,9 @@ class EarningsDatasource {
       'total_earnings': totalEarnings,
       'total_deliveries': deliveries.length,
       'total_distance_km': totalDistance,
-      'avg_per_delivery':
-          deliveries.isNotEmpty ? totalEarnings / deliveries.length : 0,
+      'avg_per_delivery': deliveries.isNotEmpty
+          ? totalEarnings / deliveries.length
+          : 0,
       'deliveries': deliveries,
     };
   }

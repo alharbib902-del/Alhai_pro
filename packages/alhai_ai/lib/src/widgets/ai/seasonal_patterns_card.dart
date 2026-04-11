@@ -12,10 +12,7 @@ import '../../services/ai_sales_forecasting_service.dart';
 class SeasonalPatternsCard extends StatelessWidget {
   final List<SeasonalPattern> patterns;
 
-  const SeasonalPatternsCard({
-    super.key,
-    required this.patterns,
-  });
+  const SeasonalPatternsCard({super.key, required this.patterns});
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +24,9 @@ class SeasonalPatternsCard extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -84,10 +82,7 @@ class SeasonalPatternsCard extends StatelessWidget {
 
           // الرسم البياني العمودي
           if (patterns.isNotEmpty)
-            SizedBox(
-              height: 160,
-              child: _buildBarChart(isDark),
-            ),
+            SizedBox(height: 160, child: _buildBarChart(isDark)),
 
           const SizedBox(height: AlhaiSpacing.md),
 
@@ -123,10 +118,10 @@ class SeasonalPatternsCard extends StatelessWidget {
                     color: isPeak
                         ? AppColors.primary
                         : isLow
-                            ? AppColors.error
-                            : isDark
-                                ? Colors.white54
-                                : AppColors.textSecondary,
+                        ? AppColors.error
+                        : isDark
+                        ? Colors.white54
+                        : AppColors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: AlhaiSpacing.xxs),
@@ -142,24 +137,25 @@ class SeasonalPatternsCard extends StatelessWidget {
                             colors: [Color(0xFF059669), Color(0xFF10B981)],
                           )
                         : isLow
-                            ? LinearGradient(
-                                begin: Alignment.bottomCenter,
-                                end: Alignment.topCenter,
-                                colors: [
-                                  AppColors.error.withValues(alpha: 0.6),
-                                  AppColors.error.withValues(alpha: 0.3),
-                                ],
-                              )
-                            : LinearGradient(
-                                begin: Alignment.bottomCenter,
-                                end: Alignment.topCenter,
-                                colors: [
-                                  (isDark ? Colors.white24 : AppColors.grey300),
-                                  (isDark ? Colors.white12 : AppColors.grey200),
-                                ],
-                              ),
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(6)),
+                        ? LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [
+                              AppColors.error.withValues(alpha: 0.6),
+                              AppColors.error.withValues(alpha: 0.3),
+                            ],
+                          )
+                        : LinearGradient(
+                            begin: Alignment.bottomCenter,
+                            end: Alignment.topCenter,
+                            colors: [
+                              (isDark ? Colors.white24 : AppColors.grey300),
+                              (isDark ? Colors.white12 : AppColors.grey200),
+                            ],
+                          ),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(6),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -172,8 +168,8 @@ class SeasonalPatternsCard extends StatelessWidget {
                     color: isPeak
                         ? AppColors.primary
                         : isDark
-                            ? Colors.white54
-                            : AppColors.textSecondary,
+                        ? Colors.white54
+                        : AppColors.textSecondary,
                   ),
                 ),
               ],
@@ -190,13 +186,13 @@ class SeasonalPatternsCard extends StatelessWidget {
     final icon = isPeak
         ? Icons.trending_up_rounded
         : isLow
-            ? Icons.trending_down_rounded
-            : Icons.trending_flat_rounded;
+        ? Icons.trending_down_rounded
+        : Icons.trending_flat_rounded;
     final color = isPeak
         ? AppColors.primary
         : isLow
-            ? AppColors.error
-            : AppColors.textSecondary;
+        ? AppColors.error
+        : AppColors.textSecondary;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),

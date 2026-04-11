@@ -52,9 +52,7 @@ void _setLargeViewport(WidgetTester tester) {
   tester.view.devicePixelRatio = 1.0;
 }
 
-Widget _buildTestWidget({
-  AsyncValue<List<OrdersTableData>>? ordersValue,
-}) {
+Widget _buildTestWidget({AsyncValue<List<OrdersTableData>>? ordersValue}) {
   return ProviderScope(
     overrides: [
       currentStoreIdProvider.overrideWith((ref) => 'test-store-id'),
@@ -63,7 +61,9 @@ Widget _buildTestWidget({
             ordersValue?.when(
               data: (d) => Future.value(d),
               loading: () => Future.delayed(
-                  const Duration(days: 1), () => <OrdersTableData>[]),
+                const Duration(days: 1),
+                () => <OrdersTableData>[],
+              ),
               error: (e, _) => Future.error(e),
             ) ??
             Future.value(<OrdersTableData>[]),
@@ -108,9 +108,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        ordersValue: const AsyncValue.data([]),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(ordersValue: const AsyncValue.data([])),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byType(AppEmptyState), findsOneWidget);
@@ -123,12 +123,16 @@ void main() {
       final testOrders = [
         _createTestOrder(id: 'o1', orderNumber: 'ORD-001', total: 100),
         _createTestOrder(
-            id: 'o2', orderNumber: 'ORD-002', total: 200, status: 'pending'),
+          id: 'o2',
+          orderNumber: 'ORD-002',
+          total: 200,
+          status: 'pending',
+        ),
       ];
 
-      await tester.pumpWidget(_buildTestWidget(
-        ordersValue: AsyncValue.data(testOrders),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(ordersValue: AsyncValue.data(testOrders)),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byType(OrdersScreen), findsOneWidget);

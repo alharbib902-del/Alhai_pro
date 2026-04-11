@@ -38,12 +38,14 @@ class StoresFilterState {
   }
 }
 
-final saStoresFilterProvider =
-    StateProvider<StoresFilterState>((ref) => const StoresFilterState());
+final saStoresFilterProvider = StateProvider<StoresFilterState>(
+  (ref) => const StoresFilterState(),
+);
 
 /// Filtered stores list.
-final saStoresListProvider =
-    FutureProvider.autoDispose<List<SAStore>>((ref) async {
+final saStoresListProvider = FutureProvider.autoDispose<List<SAStore>>((
+  ref,
+) async {
   final ds = ref.watch(saStoresDatasourceProvider);
   final filter = ref.watch(saStoresFilterProvider);
   return ds.getStores(
@@ -54,22 +56,22 @@ final saStoresListProvider =
 });
 
 /// Single store detail.
-final saStoreDetailProvider =
-    FutureProvider.autoDispose.family<SAStore, String>((ref, storeId) async {
-  final ds = ref.watch(saStoresDatasourceProvider);
-  return ds.getStore(storeId);
-});
+final saStoreDetailProvider = FutureProvider.autoDispose
+    .family<SAStore, String>((ref, storeId) async {
+      final ds = ref.watch(saStoresDatasourceProvider);
+      return ds.getStore(storeId);
+    });
 
 /// Store usage stats.
 final saStoreUsageStatsProvider = FutureProvider.autoDispose
     .family<SAStoreUsageStats, String>((ref, storeId) async {
-  final ds = ref.watch(saStoresDatasourceProvider);
-  return ds.getStoreUsageStats(storeId);
-});
+      final ds = ref.watch(saStoresDatasourceProvider);
+      return ds.getStoreUsageStats(storeId);
+    });
 
 /// Store owner info.
 final saStoreOwnerProvider = FutureProvider.autoDispose
     .family<SAStoreOwner?, String>((ref, storeId) async {
-  final ds = ref.watch(saStoresDatasourceProvider);
-  return ds.getStoreOwner(storeId);
-});
+      final ds = ref.watch(saStoresDatasourceProvider);
+      return ds.getStoreOwner(storeId);
+    });

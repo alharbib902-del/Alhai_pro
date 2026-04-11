@@ -60,8 +60,9 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => <AccountsTableData>[]);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => <AccountsTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const ApplyInterestScreen()));
 
@@ -75,16 +76,17 @@ void main() {
       suppressOverflowErrors();
 
       // Return accounts with zero balance (no debt)
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => [
-                _createTestAccount(id: 'acc-1', balance: 0.0),
-              ]);
+      when(() => accountsDao.getReceivableAccounts(any())).thenAnswer(
+        (_) async => [_createTestAccount(id: 'acc-1', balance: 0.0)],
+      );
 
       await tester.pumpWidget(createTestWidget(const ApplyInterestScreen()));
       await tester.pumpAndSettle();
 
       expect(
-          find.byIcon(Icons.account_balance_wallet_outlined), findsOneWidget);
+        find.byIcon(Icons.account_balance_wallet_outlined),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows interest rate card with percent icon', (tester) async {
@@ -93,12 +95,11 @@ void main() {
 
       suppressOverflowErrors();
 
-      final accounts = [
-        _createTestAccount(id: 'acc-1', balance: 1000.0),
-      ];
+      final accounts = [_createTestAccount(id: 'acc-1', balance: 1000.0)];
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => accounts);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => accounts);
 
       await tester.pumpWidget(createTestWidget(const ApplyInterestScreen()));
       await tester.pumpAndSettle();
@@ -117,13 +118,20 @@ void main() {
 
       final accounts = [
         _createTestAccount(
-            id: 'acc-1', name: '\u0639\u0645\u064a\u0644 1', balance: 1000.0),
+          id: 'acc-1',
+          name: '\u0639\u0645\u064a\u0644 1',
+          balance: 1000.0,
+        ),
         _createTestAccount(
-            id: 'acc-2', name: '\u0639\u0645\u064a\u0644 2', balance: 500.0),
+          id: 'acc-2',
+          name: '\u0639\u0645\u064a\u0644 2',
+          balance: 500.0,
+        ),
       ];
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => accounts);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => accounts);
 
       await tester.pumpWidget(createTestWidget(const ApplyInterestScreen()));
       await tester.pumpAndSettle();
@@ -132,8 +140,9 @@ void main() {
       expect(find.byIcon(Icons.people_rounded), findsOneWidget);
       // Select All button
       expect(
-          find.text('\u062a\u062d\u062f\u064a\u062f \u0627\u0644\u0643\u0644'),
-          findsOneWidget);
+        find.text('\u062a\u062d\u062f\u064a\u062f \u0627\u0644\u0643\u0644'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows preview card with preview icon', (tester) async {
@@ -142,12 +151,11 @@ void main() {
 
       suppressOverflowErrors();
 
-      final accounts = [
-        _createTestAccount(id: 'acc-1', balance: 1000.0),
-      ];
+      final accounts = [_createTestAccount(id: 'acc-1', balance: 1000.0)];
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => accounts);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => accounts);
 
       await tester.pumpWidget(createTestWidget(const ApplyInterestScreen()));
       await tester.pumpAndSettle();
@@ -158,19 +166,19 @@ void main() {
       expect(find.text('\u0645\u0639\u0627\u064a\u0646\u0629'), findsOneWidget);
     });
 
-    testWidgets('apply button is disabled when no customers selected',
-        (tester) async {
+    testWidgets('apply button is disabled when no customers selected', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
       suppressOverflowErrors();
 
-      final accounts = [
-        _createTestAccount(id: 'acc-1', balance: 1000.0),
-      ];
+      final accounts = [_createTestAccount(id: 'acc-1', balance: 1000.0)];
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => accounts);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => accounts);
 
       await tester.pumpWidget(createTestWidget(const ApplyInterestScreen()));
       await tester.pumpAndSettle();
@@ -179,7 +187,8 @@ void main() {
       // Use ancestor finder because FilledButton.icon creates a subclass
       final filledButtonFinder = find.ancestor(
         of: find.text(
-            '\u062a\u0637\u0628\u064a\u0642 \u0627\u0644\u0641\u0627\u0626\u062f\u0629'),
+          '\u062a\u0637\u0628\u064a\u0642 \u0627\u0644\u0641\u0627\u0626\u062f\u0629',
+        ),
         matching: find.byWidgetPredicate((w) => w is FilledButton),
       );
       expect(filledButtonFinder, findsOneWidget);

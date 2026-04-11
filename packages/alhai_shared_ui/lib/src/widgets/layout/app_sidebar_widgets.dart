@@ -36,9 +36,7 @@ class _SidebarHeader extends StatelessWidget {
       padding: EdgeInsets.all(collapsed ? 4 : 20),
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(
-            color: Theme.of(context).dividerColor,
-          ),
+          bottom: BorderSide(color: Theme.of(context).dividerColor),
         ),
       ),
       child: collapsed
@@ -67,13 +65,10 @@ class _SidebarHeader extends StatelessWidget {
                         child: CachedNetworkImage(
                           imageUrl: storeLogoUrl!,
                           fit: BoxFit.cover,
-                          placeholder: (_, __) => const Center(
-                            child: CircularProgressIndicator(),
-                          ),
-                          errorWidget: (_, __, ___) => const Icon(
-                            Icons.broken_image,
-                            size: 40,
-                          ),
+                          placeholder: (_, __) =>
+                              const Center(child: CircularProgressIndicator()),
+                          errorWidget: (_, __, ___) =>
+                              const Icon(Icons.broken_image, size: 40),
                         ),
                       )
                     : const Icon(
@@ -113,10 +108,8 @@ class _SidebarHeader extends StatelessWidget {
                             placeholder: (_, __) => const Center(
                               child: CircularProgressIndicator(),
                             ),
-                            errorWidget: (_, __, ___) => const Icon(
-                              Icons.broken_image,
-                              size: 40,
-                            ),
+                            errorWidget: (_, __, ___) =>
+                                const Icon(Icons.broken_image, size: 40),
                           ),
                         )
                       : const Icon(
@@ -143,17 +136,20 @@ class _SidebarHeader extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                       SizedBox(height: AlhaiSpacing.xxxs),
-                      Builder(builder: (ctx) {
-                        final l10n = AppLocalizations.of(ctx);
-                        return Text(
-                          l10n.posSystem,
-                          style: TextStyle(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                            fontSize: 12,
-                          ),
-                        );
-                      }),
+                      Builder(
+                        builder: (ctx) {
+                          final l10n = AppLocalizations.of(ctx);
+                          return Text(
+                            l10n.posSystem,
+                            style: TextStyle(
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
+                              fontSize: 12,
+                            ),
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),
@@ -209,17 +205,12 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
                 color: widget.isSelected
                     ? AppColors.primary.withValues(alpha: 0.1)
                     : _isHovered
-                        ? (Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest)
-                        : Colors.transparent,
+                    ? (Theme.of(context).colorScheme.surfaceContainerHighest)
+                    : Colors.transparent,
                 borderRadius: BorderRadius.circular(12),
                 border: widget.isSelected
                     ? const BorderDirectional(
-                        end: BorderSide(
-                          color: AppColors.primary,
-                          width: 3,
-                        ),
+                        end: BorderSide(color: AppColors.primary, width: 3),
                       )
                     : null,
               ),
@@ -244,9 +235,9 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
                               : widget.item.icon,
                           color: widget.isSelected
                               ? AppColors.primary
-                              : (Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant),
+                              : (Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant),
                           size: 20,
                         ),
                         SizedBox(width: AlhaiSpacing.md),
@@ -292,27 +283,29 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
 
                         // علامة جديد
                         if (widget.item.isNew)
-                          Builder(builder: (ctx) {
-                            final l10n = AppLocalizations.of(ctx);
-                            return Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 6,
-                                vertical: AlhaiSpacing.xxxs,
-                              ),
-                              decoration: BoxDecoration(
-                                color: AppColors.primary,
-                                borderRadius: BorderRadius.circular(4),
-                              ),
-                              child: Text(
-                                l10n.newBadge,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 10,
-                                  fontWeight: FontWeight.bold,
+                          Builder(
+                            builder: (ctx) {
+                              final l10n = AppLocalizations.of(ctx);
+                              return Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 6,
+                                  vertical: AlhaiSpacing.xxxs,
                                 ),
-                              ),
-                            );
-                          }),
+                                decoration: BoxDecoration(
+                                  color: AppColors.primary,
+                                  borderRadius: BorderRadius.circular(4),
+                                ),
+                                child: Text(
+                                  l10n.newBadge,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 10,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                       ],
                     ),
             ),
@@ -371,8 +364,9 @@ class _UserProfileCardState extends State<_UserProfileCard> {
                       children: [
                         CircleAvatar(
                           radius: 18,
-                          backgroundColor:
-                              AppColors.primary.withValues(alpha: 0.15),
+                          backgroundColor: AppColors.primary.withValues(
+                            alpha: 0.15,
+                          ),
                           backgroundImage: widget.avatarUrl != null
                               ? CachedNetworkImageProvider(widget.avatarUrl!)
                               : null,
@@ -416,8 +410,9 @@ class _UserProfileCardState extends State<_UserProfileCard> {
                         children: [
                           CircleAvatar(
                             radius: 18,
-                            backgroundColor:
-                                AppColors.primary.withValues(alpha: 0.15),
+                            backgroundColor: AppColors.primary.withValues(
+                              alpha: 0.15,
+                            ),
                             backgroundImage: widget.avatarUrl != null
                                 ? CachedNetworkImageProvider(widget.avatarUrl!)
                                 : null,
@@ -476,9 +471,9 @@ class _UserProfileCardState extends State<_UserProfileCard> {
                               Text(
                                 widget.role!,
                                 style: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                   fontSize: 11,
                                 ),
                                 maxLines: 1,
@@ -524,34 +519,36 @@ class _SidebarFooter extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(collapsed ? 4 : 16),
-      child: Builder(builder: (ctx) {
-        final l10n = AppLocalizations.of(ctx);
-        return Column(
-          children: [
-            _FooterButton(
-              icon: Icons.settings_outlined,
-              title: l10n.settings,
-              collapsed: collapsed,
-              onTap: onSettingsTap,
-            ),
-            SizedBox(height: AlhaiSpacing.xxs),
-            _FooterButton(
-              icon: Icons.help_outline_rounded,
-              title: l10n.technicalSupportShort,
-              collapsed: collapsed,
-              onTap: onSupportTap,
-            ),
-            SizedBox(height: AlhaiSpacing.xxs),
-            _FooterButton(
-              icon: Icons.logout_rounded,
-              title: l10n.logout,
-              collapsed: collapsed,
-              onTap: onLogoutTap,
-              isDestructive: true,
-            ),
-          ],
-        );
-      }),
+      child: Builder(
+        builder: (ctx) {
+          final l10n = AppLocalizations.of(ctx);
+          return Column(
+            children: [
+              _FooterButton(
+                icon: Icons.settings_outlined,
+                title: l10n.settings,
+                collapsed: collapsed,
+                onTap: onSettingsTap,
+              ),
+              SizedBox(height: AlhaiSpacing.xxs),
+              _FooterButton(
+                icon: Icons.help_outline_rounded,
+                title: l10n.technicalSupportShort,
+                collapsed: collapsed,
+                onTap: onSupportTap,
+              ),
+              SizedBox(height: AlhaiSpacing.xxs),
+              _FooterButton(
+                icon: Icons.logout_rounded,
+                title: l10n.logout,
+                collapsed: collapsed,
+                onTap: onLogoutTap,
+                isDestructive: true,
+              ),
+            ],
+          );
+        },
+      ),
     );
   }
 }
@@ -581,8 +578,9 @@ class _FooterButtonState extends State<_FooterButton> {
 
   @override
   Widget build(BuildContext context) {
-    final color =
-        widget.isDestructive ? AppColors.error : AppColors.textSecondary;
+    final color = widget.isDestructive
+        ? AppColors.error
+        : AppColors.textSecondary;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
@@ -601,34 +599,21 @@ class _FooterButtonState extends State<_FooterButton> {
             decoration: BoxDecoration(
               color: _isHovered
                   ? (widget.isDestructive
-                      ? AppColors.error.withValues(alpha: 0.05)
-                      : AppColors.backgroundSecondary)
+                        ? AppColors.error.withValues(alpha: 0.05)
+                        : AppColors.backgroundSecondary)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(8),
             ),
             child: widget.collapsed
-                ? Center(
-                    child: Icon(
-                      widget.icon,
-                      color: color,
-                      size: 20,
-                    ),
-                  )
+                ? Center(child: Icon(widget.icon, color: color, size: 20))
                 : Row(
                     children: [
-                      Icon(
-                        widget.icon,
-                        color: color,
-                        size: 20,
-                      ),
+                      Icon(widget.icon, color: color, size: 20),
                       SizedBox(width: AlhaiSpacing.sm),
                       Expanded(
                         child: Text(
                           widget.title,
-                          style: TextStyle(
-                            color: color,
-                            fontSize: 14,
-                          ),
+                          style: TextStyle(color: color, fontSize: 14),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -948,9 +933,7 @@ class DefaultSidebarItems {
     );
 
     return [
-      SidebarGroup(
-        items: [dashboard, pos],
-      ),
+      SidebarGroup(items: [dashboard, pos]),
       SidebarGroup(
         title: l10n.storeManagement,
         items: [
@@ -959,7 +942,7 @@ class DefaultSidebarItems {
           inventory,
           customers,
           suppliers2,
-          mediaLibrary
+          mediaLibrary,
         ],
       ),
       SidebarGroup(
@@ -978,17 +961,14 @@ class DefaultSidebarItems {
           wallet,
           reports,
           complaintsReport,
-          printQueue
+          printQueue,
         ],
       ),
       SidebarGroup(
         title: l10n.teamSection,
         items: [employees, loyalty, shifts, purchases],
       ),
-      SidebarGroup(
-        title: l10n.systemSection,
-        items: [subscription, deviceLog],
-      ),
+      SidebarGroup(title: l10n.systemSection, items: [subscription, deviceLog]),
       SidebarGroup(
         title: l10n.aiSection,
         items: [
@@ -1017,73 +997,83 @@ class DefaultSidebarItems {
     SidebarGroup(
       items: [
         AppSidebarItem(
-            id: 'dashboard',
-            title: 'Dashboard',
-            icon: Icons.dashboard_outlined,
-            activeIcon: Icons.dashboard_rounded),
+          id: 'dashboard',
+          title: 'Dashboard',
+          icon: Icons.dashboard_outlined,
+          activeIcon: Icons.dashboard_rounded,
+        ),
         AppSidebarItem(
-            id: 'pos',
-            title: 'POS',
-            icon: Icons.point_of_sale_outlined,
-            activeIcon: Icons.point_of_sale_rounded),
+          id: 'pos',
+          title: 'POS',
+          icon: Icons.point_of_sale_outlined,
+          activeIcon: Icons.point_of_sale_rounded,
+        ),
       ],
     ),
     SidebarGroup(
       title: 'Store',
       items: [
         AppSidebarItem(
-            id: 'products',
-            title: 'Products',
-            icon: Icons.inventory_2_outlined,
-            activeIcon: Icons.inventory_2_rounded),
+          id: 'products',
+          title: 'Products',
+          icon: Icons.inventory_2_outlined,
+          activeIcon: Icons.inventory_2_rounded,
+        ),
         AppSidebarItem(
-            id: 'categories',
-            title: 'Categories',
-            icon: Icons.category_outlined,
-            activeIcon: Icons.category_rounded),
+          id: 'categories',
+          title: 'Categories',
+          icon: Icons.category_outlined,
+          activeIcon: Icons.category_rounded,
+        ),
         AppSidebarItem(
-            id: 'inventory',
-            title: 'Inventory',
-            icon: Icons.warehouse_outlined,
-            activeIcon: Icons.warehouse_rounded,
-            badge: '5',
-            badgeColor: Color(0xFFF59E0B)),
+          id: 'inventory',
+          title: 'Inventory',
+          icon: Icons.warehouse_outlined,
+          activeIcon: Icons.warehouse_rounded,
+          badge: '5',
+          badgeColor: Color(0xFFF59E0B),
+        ),
         AppSidebarItem(
-            id: 'customers',
-            title: 'Customers',
-            icon: Icons.people_outline_rounded,
-            activeIcon: Icons.people_rounded),
+          id: 'customers',
+          title: 'Customers',
+          icon: Icons.people_outline_rounded,
+          activeIcon: Icons.people_rounded,
+        ),
       ],
     ),
     SidebarGroup(
       title: 'Finance',
       items: [
         AppSidebarItem(
-            id: 'sales',
-            title: 'Sales',
-            icon: Icons.receipt_long_outlined,
-            activeIcon: Icons.receipt_long_rounded),
+          id: 'sales',
+          title: 'Sales',
+          icon: Icons.receipt_long_outlined,
+          activeIcon: Icons.receipt_long_rounded,
+        ),
         AppSidebarItem(
-            id: 'reports',
-            title: 'Reports',
-            icon: Icons.analytics_outlined,
-            activeIcon: Icons.analytics_rounded),
+          id: 'reports',
+          title: 'Reports',
+          icon: Icons.analytics_outlined,
+          activeIcon: Icons.analytics_rounded,
+        ),
       ],
     ),
     SidebarGroup(
       title: 'Team',
       items: [
         AppSidebarItem(
-            id: 'employees',
-            title: 'Employees',
-            icon: Icons.badge_outlined,
-            activeIcon: Icons.badge_rounded),
+          id: 'employees',
+          title: 'Employees',
+          icon: Icons.badge_outlined,
+          activeIcon: Icons.badge_rounded,
+        ),
         AppSidebarItem(
-            id: 'loyalty',
-            title: 'Loyalty',
-            icon: Icons.card_giftcard_outlined,
-            activeIcon: Icons.card_giftcard_rounded,
-            isNew: true),
+          id: 'loyalty',
+          title: 'Loyalty',
+          icon: Icons.card_giftcard_outlined,
+          activeIcon: Icons.card_giftcard_rounded,
+          isNew: true,
+        ),
       ],
     ),
   ];

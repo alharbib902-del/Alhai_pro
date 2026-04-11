@@ -13,8 +13,9 @@ class InventoryDao extends DatabaseAccessor<AppDatabase>
 
   /// الحصول على حركات منتج (مع فلتر المتجر)
   Future<List<InventoryMovementsTableData>> getMovementsByProduct(
-      String productId,
-      {String? storeId}) {
+    String productId, {
+    String? storeId,
+  }) {
     return (select(inventoryMovementsTable)
           ..where((m) {
             var condition = m.productId.equals(productId);
@@ -35,10 +36,12 @@ class InventoryDao extends DatabaseAccessor<AppDatabase>
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
     return (select(inventoryMovementsTable)
-          ..where((m) =>
-              m.storeId.equals(storeId) &
-              m.createdAt.isBiggerOrEqualValue(startOfDay) &
-              m.createdAt.isSmallerThanValue(endOfDay))
+          ..where(
+            (m) =>
+                m.storeId.equals(storeId) &
+                m.createdAt.isBiggerOrEqualValue(startOfDay) &
+                m.createdAt.isSmallerThanValue(endOfDay),
+          )
           ..orderBy([(m) => OrderingTerm.desc(m.createdAt)]))
         .get();
   }
@@ -58,19 +61,21 @@ class InventoryDao extends DatabaseAccessor<AppDatabase>
     required String saleId,
     String? userId,
   }) {
-    return insertMovement(InventoryMovementsTableCompanion.insert(
-      id: id,
-      productId: productId,
-      storeId: storeId,
-      type: 'sale',
-      qty: -qty, // سالب للبيع
-      previousQty: previousQty,
-      newQty: previousQty - qty,
-      referenceType: const Value('sale'),
-      referenceId: Value(saleId),
-      userId: Value(userId),
-      createdAt: DateTime.now(),
-    ));
+    return insertMovement(
+      InventoryMovementsTableCompanion.insert(
+        id: id,
+        productId: productId,
+        storeId: storeId,
+        type: 'sale',
+        qty: -qty, // سالب للبيع
+        previousQty: previousQty,
+        newQty: previousQty - qty,
+        referenceType: const Value('sale'),
+        referenceId: Value(saleId),
+        userId: Value(userId),
+        createdAt: DateTime.now(),
+      ),
+    );
   }
 
   /// إدراج حركة شراء (إضافة للمخزون)
@@ -83,19 +88,21 @@ class InventoryDao extends DatabaseAccessor<AppDatabase>
     required String purchaseId,
     String? userId,
   }) {
-    return insertMovement(InventoryMovementsTableCompanion.insert(
-      id: id,
-      productId: productId,
-      storeId: storeId,
-      type: 'purchase',
-      qty: qty, // موجب للشراء
-      previousQty: previousQty,
-      newQty: previousQty + qty,
-      referenceType: const Value('purchase_order'),
-      referenceId: Value(purchaseId),
-      userId: Value(userId),
-      createdAt: DateTime.now(),
-    ));
+    return insertMovement(
+      InventoryMovementsTableCompanion.insert(
+        id: id,
+        productId: productId,
+        storeId: storeId,
+        type: 'purchase',
+        qty: qty, // موجب للشراء
+        previousQty: previousQty,
+        newQty: previousQty + qty,
+        referenceType: const Value('purchase_order'),
+        referenceId: Value(purchaseId),
+        userId: Value(userId),
+        createdAt: DateTime.now(),
+      ),
+    );
   }
 
   /// إدراج حركة إلغاء بيع (استعادة المخزون)
@@ -108,19 +115,21 @@ class InventoryDao extends DatabaseAccessor<AppDatabase>
     required String saleId,
     String? userId,
   }) {
-    return insertMovement(InventoryMovementsTableCompanion.insert(
-      id: id,
-      productId: productId,
-      storeId: storeId,
-      type: 'void',
-      qty: qty, // موجب لاستعادة المخزون
-      previousQty: previousQty,
-      newQty: previousQty + qty,
-      referenceType: const Value('sale'),
-      referenceId: Value(saleId),
-      userId: Value(userId),
-      createdAt: DateTime.now(),
-    ));
+    return insertMovement(
+      InventoryMovementsTableCompanion.insert(
+        id: id,
+        productId: productId,
+        storeId: storeId,
+        type: 'void',
+        qty: qty, // موجب لاستعادة المخزون
+        previousQty: previousQty,
+        newQty: previousQty + qty,
+        referenceType: const Value('sale'),
+        referenceId: Value(saleId),
+        userId: Value(userId),
+        createdAt: DateTime.now(),
+      ),
+    );
   }
 
   /// إدراج حركة تعديل
@@ -133,30 +142,35 @@ class InventoryDao extends DatabaseAccessor<AppDatabase>
     String? reason,
     String? userId,
   }) {
-    return insertMovement(InventoryMovementsTableCompanion.insert(
-      id: id,
-      productId: productId,
-      storeId: storeId,
-      type: 'adjustment',
-      qty: newQty - previousQty,
-      previousQty: previousQty,
-      newQty: newQty,
-      reason: Value(reason),
-      userId: Value(userId),
-      createdAt: DateTime.now(),
-    ));
+    return insertMovement(
+      InventoryMovementsTableCompanion.insert(
+        id: id,
+        productId: productId,
+        storeId: storeId,
+        type: 'adjustment',
+        qty: newQty - previousQty,
+        previousQty: previousQty,
+        newQty: newQty,
+        reason: Value(reason),
+        userId: Value(userId),
+        createdAt: DateTime.now(),
+      ),
+    );
   }
 
   /// تعيين تاريخ المزامنة
   Future<int> markAsSynced(String id) {
-    return (update(inventoryMovementsTable)..where((m) => m.id.equals(id)))
-        .write(
-            InventoryMovementsTableCompanion(syncedAt: Value(DateTime.now())));
+    return (update(
+      inventoryMovementsTable,
+    )..where((m) => m.id.equals(id))).write(
+      InventoryMovementsTableCompanion(syncedAt: Value(DateTime.now())),
+    );
   }
 
   /// الحصول على الحركات غير المزامنة
-  Future<List<InventoryMovementsTableData>> getUnsyncedMovements(
-      {String? storeId}) {
+  Future<List<InventoryMovementsTableData>> getUnsyncedMovements({
+    String? storeId,
+  }) {
     final q = select(inventoryMovementsTable)
       ..where((m) => m.syncedAt.isNull());
     if (storeId != null) {
@@ -191,11 +205,13 @@ class InventoryDao extends DatabaseAccessor<AppDatabase>
     ).get();
 
     return result
-        .map((row) => MovementWithProduct(
-              movement: inventoryMovementsTable.map(row.data),
-              productName: row.data['product_name'] as String? ?? '',
-              productBarcode: row.data['product_barcode'] as String?,
-            ))
+        .map(
+          (row) => MovementWithProduct(
+            movement: inventoryMovementsTable.map(row.data),
+            productName: row.data['product_name'] as String? ?? '',
+            productBarcode: row.data['product_barcode'] as String?,
+          ),
+        )
         .toList();
   }
 }

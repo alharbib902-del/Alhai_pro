@@ -103,24 +103,28 @@ class CsvExportHelper {
   }) async {
     final pdf = await PdfFontHelper.createDocument();
 
-    pdf.addPage(pw.Page(
-      pageFormat: PdfPageFormat.a4.landscape,
-      build: (ctx) => pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text(fileName,
-              style:
-                  pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold)),
-          pw.SizedBox(height: 12),
-          pw.Table(
-            border: pw.TableBorder.all(color: PdfColors.grey300),
-            children: [
-              // Header row
-              pw.TableRow(
-                decoration:
-                    const pw.BoxDecoration(color: PdfColors.blueGrey700),
-                children: headers
-                    .map((h) => pw.Padding(
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4.landscape,
+        build: (ctx) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(
+              fileName,
+              style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.SizedBox(height: 12),
+            pw.Table(
+              border: pw.TableBorder.all(color: PdfColors.grey300),
+              children: [
+                // Header row
+                pw.TableRow(
+                  decoration: const pw.BoxDecoration(
+                    color: PdfColors.blueGrey700,
+                  ),
+                  children: headers
+                      .map(
+                        (h) => pw.Padding(
                           padding: const pw.EdgeInsets.all(6),
                           child: pw.Text(
                             h,
@@ -130,33 +134,45 @@ class CsvExportHelper {
                               fontSize: 10,
                             ),
                           ),
-                        ))
-                    .toList(),
-              ),
-              // Data rows
-              ...rows.take(50).map((row) => pw.TableRow(
-                    children: row
-                        .map((cell) => pw.Padding(
-                              padding: const pw.EdgeInsets.all(5),
-                              child: pw.Text(cell.toString(),
-                                  style: const pw.TextStyle(fontSize: 9)),
-                            ))
-                        .toList(),
-                  )),
-            ],
-          ),
-          if (rows.length > 50)
-            pw.Padding(
-              padding: const pw.EdgeInsets.only(top: 8),
-              child: pw.Text(
-                'ملاحظة: يعرض أول 50 صف فقط. استخدم تصدير CSV للحصول على كامل البيانات.',
-                style:
-                    const pw.TextStyle(fontSize: 8, color: PdfColors.grey600),
-              ),
+                        ),
+                      )
+                      .toList(),
+                ),
+                // Data rows
+                ...rows
+                    .take(50)
+                    .map(
+                      (row) => pw.TableRow(
+                        children: row
+                            .map(
+                              (cell) => pw.Padding(
+                                padding: const pw.EdgeInsets.all(5),
+                                child: pw.Text(
+                                  cell.toString(),
+                                  style: const pw.TextStyle(fontSize: 9),
+                                ),
+                              ),
+                            )
+                            .toList(),
+                      ),
+                    ),
+              ],
             ),
-        ],
+            if (rows.length > 50)
+              pw.Padding(
+                padding: const pw.EdgeInsets.only(top: 8),
+                child: pw.Text(
+                  'ملاحظة: يعرض أول 50 صف فقط. استخدم تصدير CSV للحصول على كامل البيانات.',
+                  style: const pw.TextStyle(
+                    fontSize: 8,
+                    color: PdfColors.grey600,
+                  ),
+                ),
+              ),
+          ],
+        ),
       ),
-    ));
+    );
 
     final bytes = await pdf.save();
     await Printing.sharePdf(bytes: bytes, filename: '$fileName.pdf');

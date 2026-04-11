@@ -31,11 +31,13 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => salesDao.getSaleById(any()))
-          .thenAnswer((_) async => createTestSale(id: 'order-1'));
+      when(
+        () => salesDao.getSaleById(any()),
+      ).thenAnswer((_) async => createTestSale(id: 'order-1'));
 
       await tester.pumpWidget(
-          createTestWidget(const SplitReceiptScreen(orderId: 'order-1')));
+        createTestWidget(const SplitReceiptScreen(orderId: 'order-1')),
+      );
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
@@ -49,15 +51,18 @@ void main() {
       when(() => salesDao.getSaleById(any())).thenAnswer((_) async => null);
 
       await tester.pumpWidget(
-          createTestWidget(const SplitReceiptScreen(orderId: 'order-1')));
+        createTestWidget(const SplitReceiptScreen(orderId: 'order-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.receipt_long_outlined), findsOneWidget);
       // Arabic l10n: orderNotFound
       expect(
-          find.text(
-              '\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0627\u0644\u0637\u0644\u0628'),
-          findsOneWidget);
+        find.text(
+          '\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0627\u0644\u0637\u0644\u0628',
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows order summary card when loaded', (tester) async {
@@ -66,15 +71,14 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => salesDao.getSaleById(any()))
-          .thenAnswer((_) async => createTestSale(
-                id: 'order-1',
-                total: 200.0,
-                paymentMethod: 'cash',
-              ));
+      when(() => salesDao.getSaleById(any())).thenAnswer(
+        (_) async =>
+            createTestSale(id: 'order-1', total: 200.0, paymentMethod: 'cash'),
+      );
 
       await tester.pumpWidget(
-          createTestWidget(const SplitReceiptScreen(orderId: 'order-1')));
+        createTestWidget(const SplitReceiptScreen(orderId: 'order-1')),
+      );
       await tester.pumpAndSettle();
 
       // Order summary card icon
@@ -87,15 +91,14 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => salesDao.getSaleById(any()))
-          .thenAnswer((_) async => createTestSale(
-                id: 'order-1',
-                total: 200.0,
-                paymentMethod: 'cash',
-              ));
+      when(() => salesDao.getSaleById(any())).thenAnswer(
+        (_) async =>
+            createTestSale(id: 'order-1', total: 200.0, paymentMethod: 'cash'),
+      );
 
       await tester.pumpWidget(
-          createTestWidget(const SplitReceiptScreen(orderId: 'order-1')));
+        createTestWidget(const SplitReceiptScreen(orderId: 'order-1')),
+      );
       await tester.pumpAndSettle();
 
       // Payment breakdown icon
@@ -108,14 +111,13 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => salesDao.getSaleById(any()))
-          .thenAnswer((_) async => createTestSale(
-                id: 'order-1',
-                total: 200.0,
-              ));
+      when(
+        () => salesDao.getSaleById(any()),
+      ).thenAnswer((_) async => createTestSale(id: 'order-1', total: 200.0));
 
       await tester.pumpWidget(
-          createTestWidget(const SplitReceiptScreen(orderId: 'order-1')));
+        createTestWidget(const SplitReceiptScreen(orderId: 'order-1')),
+      );
       await tester.pumpAndSettle();
 
       // QR code icon
@@ -128,14 +130,13 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => salesDao.getSaleById(any()))
-          .thenAnswer((_) async => createTestSale(
-                id: 'order-1',
-                total: 200.0,
-              ));
+      when(
+        () => salesDao.getSaleById(any()),
+      ).thenAnswer((_) async => createTestSale(id: 'order-1', total: 200.0));
 
       await tester.pumpWidget(
-          createTestWidget(const SplitReceiptScreen(orderId: 'order-1')));
+        createTestWidget(const SplitReceiptScreen(orderId: 'order-1')),
+      );
       await tester.pumpAndSettle();
 
       // Print button

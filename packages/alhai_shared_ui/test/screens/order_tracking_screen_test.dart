@@ -32,9 +32,7 @@ class MockCustomersDao extends Mock implements CustomersDao {}
 
 Widget _buildTestWidget() {
   return ProviderScope(
-    overrides: [
-      currentStoreIdProvider.overrideWith((ref) => 'test-store-id'),
-    ],
+    overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store-id')],
     child: MaterialApp(
       locale: const Locale('en'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -78,8 +76,9 @@ void main() {
 
   group('OrderTrackingScreen', () {
     testWidgets('shows loading then empty state', (tester) async {
-      when(() => mockOrdersDao.getPendingOrders(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockOrdersDao.getPendingOrders(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
       // Initially shows loading
@@ -92,8 +91,9 @@ void main() {
     });
 
     testWidgets('shows error state on exception', (tester) async {
-      when(() => mockOrdersDao.getPendingOrders(any()))
-          .thenThrow(Exception('DB error'));
+      when(
+        () => mockOrdersDao.getPendingOrders(any()),
+      ).thenThrow(Exception('DB error'));
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -103,8 +103,9 @@ void main() {
     });
 
     testWidgets('shows refresh button on error', (tester) async {
-      when(() => mockOrdersDao.getPendingOrders(any()))
-          .thenThrow(Exception('DB error'));
+      when(
+        () => mockOrdersDao.getPendingOrders(any()),
+      ).thenThrow(Exception('DB error'));
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -132,10 +133,12 @@ void main() {
         createdAt: DateTime(2026, 1, 15, 10, 0),
       );
 
-      when(() => mockOrdersDao.getPendingOrders(any()))
-          .thenAnswer((_) async => [testOrder]);
-      when(() => mockOrdersDao.getOrderItems(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockOrdersDao.getPendingOrders(any()),
+      ).thenAnswer((_) async => [testOrder]);
+      when(
+        () => mockOrdersDao.getOrderItems(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -147,8 +150,9 @@ void main() {
     });
 
     testWidgets('has AppBar with orders title', (tester) async {
-      when(() => mockOrdersDao.getPendingOrders(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockOrdersDao.getPendingOrders(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));

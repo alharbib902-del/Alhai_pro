@@ -51,7 +51,8 @@ class AlhaiSwitch extends StatelessWidget {
     final textDirection = Directionality.of(context);
     final isDisabled = !enabled || onChanged == null;
 
-    final effectivePadding = padding ??
+    final effectivePadding =
+        padding ??
         const EdgeInsetsDirectional.symmetric(
           horizontal: AlhaiSpacing.md,
           vertical: AlhaiSpacing.sm,
@@ -78,10 +79,7 @@ class AlhaiSwitch extends StatelessWidget {
 
     // No label - just switch
     if (label == null && subtitle == null && leading == null) {
-      return Padding(
-        padding: effectivePadding,
-        child: switchWidget,
-      );
+      return Padding(padding: effectivePadding, child: switchWidget);
     }
 
     // With label/subtitle

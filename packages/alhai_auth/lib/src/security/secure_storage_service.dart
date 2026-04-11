@@ -26,9 +26,7 @@ abstract class StorageInterface {
 /// Native implementation using FlutterSecureStorage (Android/iOS/macOS/Linux/Windows)
 class _NativeStorage implements StorageInterface {
   static const _storage = FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
+    aOptions: AndroidOptions(encryptedSharedPreferences: true),
     iOptions: IOSOptions(
       accessibility: KeychainAccessibility.first_unlock_this_device,
     ),
@@ -422,10 +420,7 @@ class SecureStorageService {
       // تخزين المفتاح المشفر في user_metadata
       await client.auth.updateUser(
         UserAttributes(
-          data: {
-            ...?user.userMetadata,
-            'encrypted_db_key': encryptedKey,
-          },
+          data: {...?user.userMetadata, 'encrypted_db_key': encryptedKey},
         ),
       );
 

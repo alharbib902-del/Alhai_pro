@@ -89,22 +89,25 @@ void main() {
       });
 
       test('should reject tempmail.com', () {
-        final result =
-            EmailValidator.validateNotDisposable('user@tempmail.com');
+        final result = EmailValidator.validateNotDisposable(
+          'user@tempmail.com',
+        );
         expect(result.isValid, isFalse);
         expect(result.errorCode, 'EMAIL_DISPOSABLE');
       });
 
       test('should reject mailinator.com', () {
-        final result =
-            EmailValidator.validateNotDisposable('test@mailinator.com');
+        final result = EmailValidator.validateNotDisposable(
+          'test@mailinator.com',
+        );
         expect(result.isValid, isFalse);
         expect(result.errorCode, 'EMAIL_DISPOSABLE');
       });
 
       test('should reject guerrillamail.com', () {
-        final result =
-            EmailValidator.validateNotDisposable('x@guerrillamail.com');
+        final result = EmailValidator.validateNotDisposable(
+          'x@guerrillamail.com',
+        );
         expect(result.isValid, isFalse);
         expect(result.errorCode, 'EMAIL_DISPOSABLE');
       });
@@ -117,13 +120,17 @@ void main() {
 
     group('normalize', () {
       test('should trim and lowercase', () {
-        expect(EmailValidator.normalize('  USER@EXAMPLE.COM  '),
-            'user@example.com');
+        expect(
+          EmailValidator.normalize('  USER@EXAMPLE.COM  '),
+          'user@example.com',
+        );
       });
 
       test('should handle already normalized email', () {
         expect(
-            EmailValidator.normalize('user@example.com'), 'user@example.com');
+          EmailValidator.normalize('user@example.com'),
+          'user@example.com',
+        );
       });
     });
 
@@ -160,8 +167,10 @@ void main() {
       });
 
       test('should return English error when locale is en', () {
-        final validator =
-            EmailValidator.formValidator(locale: 'en', required: true);
+        final validator = EmailValidator.formValidator(
+          locale: 'en',
+          required: true,
+        );
         final error = validator('');
         expect(error, isNotNull);
       });

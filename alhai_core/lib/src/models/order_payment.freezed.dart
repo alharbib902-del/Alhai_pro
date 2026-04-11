@@ -12,7 +12,8 @@ part of 'order_payment.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 OrderPayment _$OrderPaymentFromJson(Map<String, dynamic> json) {
   return _OrderPayment.fromJson(json);
@@ -41,17 +42,19 @@ mixin _$OrderPayment {
 /// @nodoc
 abstract class $OrderPaymentCopyWith<$Res> {
   factory $OrderPaymentCopyWith(
-          OrderPayment value, $Res Function(OrderPayment) then) =
-      _$OrderPaymentCopyWithImpl<$Res, OrderPayment>;
+    OrderPayment value,
+    $Res Function(OrderPayment) then,
+  ) = _$OrderPaymentCopyWithImpl<$Res, OrderPayment>;
   @useResult
-  $Res call(
-      {String id,
-      String orderId,
-      PaymentMethod method,
-      double amount,
-      String? referenceNo,
-      String status,
-      DateTime createdAt});
+  $Res call({
+    String id,
+    String orderId,
+    PaymentMethod method,
+    double amount,
+    String? referenceNo,
+    String status,
+    DateTime createdAt,
+  });
 }
 
 /// @nodoc
@@ -77,36 +80,39 @@ class _$OrderPaymentCopyWithImpl<$Res, $Val extends OrderPayment>
     Object? status = null,
     Object? createdAt = null,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      orderId: null == orderId
-          ? _value.orderId
-          : orderId // ignore: cast_nullable_to_non_nullable
-              as String,
-      method: null == method
-          ? _value.method
-          : method // ignore: cast_nullable_to_non_nullable
-              as PaymentMethod,
-      amount: null == amount
-          ? _value.amount
-          : amount // ignore: cast_nullable_to_non_nullable
-              as double,
-      referenceNo: freezed == referenceNo
-          ? _value.referenceNo
-          : referenceNo // ignore: cast_nullable_to_non_nullable
-              as String?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            orderId: null == orderId
+                ? _value.orderId
+                : orderId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            method: null == method
+                ? _value.method
+                : method // ignore: cast_nullable_to_non_nullable
+                      as PaymentMethod,
+            amount: null == amount
+                ? _value.amount
+                : amount // ignore: cast_nullable_to_non_nullable
+                      as double,
+            referenceNo: freezed == referenceNo
+                ? _value.referenceNo
+                : referenceNo // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as String,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -114,18 +120,20 @@ class _$OrderPaymentCopyWithImpl<$Res, $Val extends OrderPayment>
 abstract class _$$OrderPaymentImplCopyWith<$Res>
     implements $OrderPaymentCopyWith<$Res> {
   factory _$$OrderPaymentImplCopyWith(
-          _$OrderPaymentImpl value, $Res Function(_$OrderPaymentImpl) then) =
-      __$$OrderPaymentImplCopyWithImpl<$Res>;
+    _$OrderPaymentImpl value,
+    $Res Function(_$OrderPaymentImpl) then,
+  ) = __$$OrderPaymentImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String orderId,
-      PaymentMethod method,
-      double amount,
-      String? referenceNo,
-      String status,
-      DateTime createdAt});
+  $Res call({
+    String id,
+    String orderId,
+    PaymentMethod method,
+    double amount,
+    String? referenceNo,
+    String status,
+    DateTime createdAt,
+  });
 }
 
 /// @nodoc
@@ -133,8 +141,9 @@ class __$$OrderPaymentImplCopyWithImpl<$Res>
     extends _$OrderPaymentCopyWithImpl<$Res, _$OrderPaymentImpl>
     implements _$$OrderPaymentImplCopyWith<$Res> {
   __$$OrderPaymentImplCopyWithImpl(
-      _$OrderPaymentImpl _value, $Res Function(_$OrderPaymentImpl) _then)
-      : super(_value, _then);
+    _$OrderPaymentImpl _value,
+    $Res Function(_$OrderPaymentImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of OrderPayment
   /// with the given fields replaced by the non-null parameter values.
@@ -149,51 +158,53 @@ class __$$OrderPaymentImplCopyWithImpl<$Res>
     Object? status = null,
     Object? createdAt = null,
   }) {
-    return _then(_$OrderPaymentImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      orderId: null == orderId
-          ? _value.orderId
-          : orderId // ignore: cast_nullable_to_non_nullable
-              as String,
-      method: null == method
-          ? _value.method
-          : method // ignore: cast_nullable_to_non_nullable
-              as PaymentMethod,
-      amount: null == amount
-          ? _value.amount
-          : amount // ignore: cast_nullable_to_non_nullable
-              as double,
-      referenceNo: freezed == referenceNo
-          ? _value.referenceNo
-          : referenceNo // ignore: cast_nullable_to_non_nullable
-              as String?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as String,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$OrderPaymentImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        orderId: null == orderId
+            ? _value.orderId
+            : orderId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        method: null == method
+            ? _value.method
+            : method // ignore: cast_nullable_to_non_nullable
+                  as PaymentMethod,
+        amount: null == amount
+            ? _value.amount
+            : amount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        referenceNo: freezed == referenceNo
+            ? _value.referenceNo
+            : referenceNo // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as String,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$OrderPaymentImpl extends _OrderPayment {
-  const _$OrderPaymentImpl(
-      {required this.id,
-      required this.orderId,
-      required this.method,
-      required this.amount,
-      this.referenceNo,
-      this.status = 'completed',
-      required this.createdAt})
-      : super._();
+  const _$OrderPaymentImpl({
+    required this.id,
+    required this.orderId,
+    required this.method,
+    required this.amount,
+    this.referenceNo,
+    this.status = 'completed',
+    required this.createdAt,
+  }) : super._();
 
   factory _$OrderPaymentImpl.fromJson(Map<String, dynamic> json) =>
       _$$OrderPaymentImplFromJson(json);
@@ -238,7 +249,15 @@ class _$OrderPaymentImpl extends _OrderPayment {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, id, orderId, method, amount, referenceNo, status, createdAt);
+    runtimeType,
+    id,
+    orderId,
+    method,
+    amount,
+    referenceNo,
+    status,
+    createdAt,
+  );
 
   /// Create a copy of OrderPayment
   /// with the given fields replaced by the non-null parameter values.
@@ -250,21 +269,20 @@ class _$OrderPaymentImpl extends _OrderPayment {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$OrderPaymentImplToJson(
-      this,
-    );
+    return _$$OrderPaymentImplToJson(this);
   }
 }
 
 abstract class _OrderPayment extends OrderPayment {
-  const factory _OrderPayment(
-      {required final String id,
-      required final String orderId,
-      required final PaymentMethod method,
-      required final double amount,
-      final String? referenceNo,
-      final String status,
-      required final DateTime createdAt}) = _$OrderPaymentImpl;
+  const factory _OrderPayment({
+    required final String id,
+    required final String orderId,
+    required final PaymentMethod method,
+    required final double amount,
+    final String? referenceNo,
+    final String status,
+    required final DateTime createdAt,
+  }) = _$OrderPaymentImpl;
   const _OrderPayment._() : super._();
 
   factory _OrderPayment.fromJson(Map<String, dynamic> json) =

@@ -108,9 +108,9 @@ class PullStrategy {
     required SupabaseClient client,
     required AppDatabase db,
     required SyncMetadataDao metadataDao,
-  })  : _client = client,
-        _db = db,
-        _metadataDao = metadataDao;
+  }) : _client = client,
+       _db = db,
+       _metadataDao = metadataDao;
 
   /// تنفيذ السحب لجدول معين
   Future<PullResult> pullTable({
@@ -177,10 +177,12 @@ class PullStrategy {
       if (tableName == 'products' && totalPulled > 0) {
         try {
           await _db.customStatement(
-              "INSERT INTO products_fts(products_fts) VALUES('rebuild')");
+            "INSERT INTO products_fts(products_fts) VALUES('rebuild')",
+          );
           if (kDebugMode) {
             debugPrint(
-                '[Pull] FTS index rebuilt after pulling $totalPulled products');
+              '[Pull] FTS index rebuilt after pulling $totalPulled products',
+            );
           }
         } catch (e) {
           if (kDebugMode) {
@@ -265,18 +267,14 @@ class PullStrategy {
     results.addAll(await Future.wait(group1Futures));
 
     // المجموعة 2: products (تعتمد على categories)
-    results.add(await pullTable(
-      tableName: 'products',
-      orgId: orgId,
-      storeId: storeId,
-    ));
+    results.add(
+      await pullTable(tableName: 'products', orgId: orgId, storeId: storeId),
+    );
 
     // المجموعة 3: discounts (تعتمد على products)
-    results.add(await pullTable(
-      tableName: 'discounts',
-      orgId: orgId,
-      storeId: storeId,
-    ));
+    results.add(
+      await pullTable(tableName: 'discounts', orgId: orgId, storeId: storeId),
+    );
 
     return results;
   }
@@ -340,7 +338,9 @@ class PullStrategy {
 
   /// إدراج/تحديث السجلات محلياً باستخدام SQL مباشر
   Future<void> _upsertLocally(
-      String tableName, List<Map<String, dynamic>> records) async {
+    String tableName,
+    List<Map<String, dynamic>> records,
+  ) async {
     if (records.isEmpty) return;
     validateTableName(tableName);
     // L45: Additional whitelist validation before customStatement calls
@@ -352,10 +352,9 @@ class PullStrategy {
         final deletedAt = record['deleted_at'];
         if (deletedAt != null) {
           // حذف ناعم: حذف السجل محلياً
-          batch.customStatement(
-            'DELETE FROM $tableName WHERE id = ?',
-            [record['id']],
-          );
+          batch.customStatement('DELETE FROM $tableName WHERE id = ?', [
+            record['id'],
+          ]);
         } else {
           // إدراج أو تحديث
           final columns = record.keys.toList();

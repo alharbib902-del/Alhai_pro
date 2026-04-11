@@ -168,34 +168,29 @@ class BiometricLoginResult {
       const BiometricLoginResult._(isSuccess: true);
 
   factory BiometricLoginResult.failed() => const BiometricLoginResult._(
-        isSuccess: false,
-        error: 'فشلت المصادقة',
-        errorType: BiometricLoginError.failed,
-      );
+    isSuccess: false,
+    error: 'فشلت المصادقة',
+    errorType: BiometricLoginError.failed,
+  );
 
   factory BiometricLoginResult.notEnabled() => const BiometricLoginResult._(
-        isSuccess: false,
-        error: 'البصمة غير مفعلة',
-        errorType: BiometricLoginError.notEnabled,
-      );
+    isSuccess: false,
+    error: 'البصمة غير مفعلة',
+    errorType: BiometricLoginError.notEnabled,
+  );
 
   factory BiometricLoginResult.notAvailable() => const BiometricLoginResult._(
-        isSuccess: false,
-        error: 'البصمة غير متوفرة على هذا الجهاز',
-        errorType: BiometricLoginError.notAvailable,
-      );
+    isSuccess: false,
+    error: 'البصمة غير متوفرة على هذا الجهاز',
+    errorType: BiometricLoginError.notAvailable,
+  );
 
   factory BiometricLoginResult.lockedOut() => const BiometricLoginResult._(
-        isSuccess: false,
-        error: 'تم قفل البصمة بسبب كثرة المحاولات',
-        errorType: BiometricLoginError.lockedOut,
-      );
+    isSuccess: false,
+    error: 'تم قفل البصمة بسبب كثرة المحاولات',
+    errorType: BiometricLoginError.lockedOut,
+  );
 }
 
 /// أنواع أخطاء البيومترية
-enum BiometricLoginError {
-  failed,
-  notEnabled,
-  notAvailable,
-  lockedOut,
-}
+enum BiometricLoginError { failed, notEnabled, notAvailable, lockedOut }

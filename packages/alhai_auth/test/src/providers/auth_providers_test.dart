@@ -5,13 +5,14 @@ void main() {
   group('AuthStatus', () {
     test('has all expected values', () {
       expect(
-          AuthStatus.values,
-          containsAll([
-            AuthStatus.unknown,
-            AuthStatus.authenticated,
-            AuthStatus.unauthenticated,
-            AuthStatus.sessionExpired,
-          ]));
+        AuthStatus.values,
+        containsAll([
+          AuthStatus.unknown,
+          AuthStatus.authenticated,
+          AuthStatus.unauthenticated,
+          AuthStatus.sessionExpired,
+        ]),
+      );
     });
   });
 
@@ -103,9 +104,7 @@ void main() {
 
       test('overrides specified values', () {
         const original = AuthState(status: AuthStatus.unknown);
-        final copy = original.copyWith(
-          status: AuthStatus.authenticated,
-        );
+        final copy = original.copyWith(status: AuthStatus.authenticated);
         expect(copy.status, equals(AuthStatus.authenticated));
       });
 
@@ -119,9 +118,7 @@ void main() {
       });
 
       test('clearUser removes user', () {
-        const original = AuthState(
-          status: AuthStatus.authenticated,
-        );
+        const original = AuthState(status: AuthStatus.authenticated);
         final copy = original.copyWith(clearUser: true);
         expect(copy.user, isNull);
       });
@@ -131,13 +128,14 @@ void main() {
   group('SessionStatus', () {
     test('has all expected values', () {
       expect(
-          SessionStatus.values,
-          containsAll([
-            SessionStatus.valid,
-            SessionStatus.needsRefresh,
-            SessionStatus.expired,
-            SessionStatus.notAuthenticated,
-          ]));
+        SessionStatus.values,
+        containsAll([
+          SessionStatus.valid,
+          SessionStatus.needsRefresh,
+          SessionStatus.expired,
+          SessionStatus.notAuthenticated,
+        ]),
+      );
     });
   });
 }

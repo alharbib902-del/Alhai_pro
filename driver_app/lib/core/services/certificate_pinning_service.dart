@@ -47,12 +47,14 @@ class CertificatePinningService {
   // ---------------------------------------------------------------------------
 
   /// Primary fingerprint, injected via `--dart-define=SUPABASE_CERT_FINGERPRINT=`.
-  static const String _primaryFingerprint =
-      String.fromEnvironment('SUPABASE_CERT_FINGERPRINT');
+  static const String _primaryFingerprint = String.fromEnvironment(
+    'SUPABASE_CERT_FINGERPRINT',
+  );
 
   /// Optional backup fingerprint for rotation windows.
-  static const String _backupFingerprint =
-      String.fromEnvironment('SUPABASE_CERT_FINGERPRINT_BACKUP');
+  static const String _backupFingerprint = String.fromEnvironment(
+    'SUPABASE_CERT_FINGERPRINT_BACKUP',
+  );
 
   /// Active pin list, normalized (trimmed, non-empty).
   static final List<String> _pinnedHashes = <String>[
@@ -114,23 +116,23 @@ class CertificatePinningService {
     // SHA-256 of the DER-encoded peer certificate.
     ioClient.badCertificateCallback =
         (X509Certificate cert, String host, int port) {
-      // First gate: if the platform already considered the cert valid the
-      // callback would not be invoked — reaching here means the cert is
-      // untrusted or hostname mismatched. Enforce pin match as a second gate
-      // and fail-closed on any mismatch.
-      final matches = _matchesPinnedFingerprint(cert);
-      if (!matches) {
-        debugPrint(
-          '[CertificatePinning] REJECTED certificate for $host:$port '
-          '(fingerprint mismatch)',
-        );
-        return false;
-      }
-      debugPrint(
-        '[CertificatePinning] Accepted pinned certificate for $host:$port',
-      );
-      return true;
-    };
+          // First gate: if the platform already considered the cert valid the
+          // callback would not be invoked — reaching here means the cert is
+          // untrusted or hostname mismatched. Enforce pin match as a second gate
+          // and fail-closed on any mismatch.
+          final matches = _matchesPinnedFingerprint(cert);
+          if (!matches) {
+            debugPrint(
+              '[CertificatePinning] REJECTED certificate for $host:$port '
+              '(fingerprint mismatch)',
+            );
+            return false;
+          }
+          debugPrint(
+            '[CertificatePinning] Accepted pinned certificate for $host:$port',
+          );
+          return true;
+        };
 
     return IOClient(ioClient);
   }

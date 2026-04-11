@@ -43,9 +43,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const CustomReportScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const CustomReportScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(CustomReportScreen), findsOneWidget);
@@ -59,9 +57,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const CustomReportScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const CustomReportScreen()));
       await tester.pumpAndSettle();
 
       // Report type selector uses custom InkWell chips (sales, inventory, customers, payments)
@@ -77,10 +73,7 @@ void main() {
       suppressOverflowErrors();
 
       await tester.pumpWidget(
-        createTestWidget(
-          const CustomReportScreen(),
-          theme: ThemeData.dark(),
-        ),
+        createTestWidget(const CustomReportScreen(), theme: ThemeData.dark()),
       );
       await tester.pumpAndSettle();
 
@@ -95,9 +88,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const CustomReportScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const CustomReportScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(CustomReportScreen), findsOneWidget);
@@ -111,9 +102,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const CustomReportScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const CustomReportScreen()));
       await tester.pumpAndSettle();
 
       // Should have an elevated button or similar to generate reports

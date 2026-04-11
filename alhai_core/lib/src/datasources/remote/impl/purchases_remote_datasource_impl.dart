@@ -39,7 +39,8 @@ class PurchasesRemoteDataSourceImpl implements PurchasesRemoteDataSource {
   Future<PurchaseOrderResponse> getPurchaseOrder(String id) async {
     final response = await _dio.get('/purchase-orders/$id');
     return PurchaseOrderResponse.fromJson(
-        response.data as Map<String, dynamic>);
+      response.data as Map<String, dynamic>,
+    );
   }
 
   @override
@@ -51,7 +52,8 @@ class PurchasesRemoteDataSourceImpl implements PurchasesRemoteDataSource {
       data: request.toJson(),
     );
     return PurchaseOrderResponse.fromJson(
-        response.data as Map<String, dynamic>);
+      response.data as Map<String, dynamic>,
+    );
   }
 
   @override
@@ -59,21 +61,17 @@ class PurchasesRemoteDataSourceImpl implements PurchasesRemoteDataSource {
     String id,
     Map<String, dynamic> data,
   ) async {
-    final response = await _dio.patch(
-      '/purchase-orders/$id',
-      data: data,
-    );
+    final response = await _dio.patch('/purchase-orders/$id', data: data);
     return PurchaseOrderResponse.fromJson(
-        response.data as Map<String, dynamic>);
+      response.data as Map<String, dynamic>,
+    );
   }
 
   @override
   Future<void> cancelPurchaseOrder(String id, {String? reason}) async {
     await _dio.post(
       '/purchase-orders/$id/cancel',
-      data: {
-        if (reason != null) 'reason': reason,
-      },
+      data: {if (reason != null) 'reason': reason},
     );
   }
 
@@ -87,7 +85,8 @@ class PurchasesRemoteDataSourceImpl implements PurchasesRemoteDataSource {
       data: request.toJson(),
     );
     return PurchaseOrderResponse.fromJson(
-        response.data as Map<String, dynamic>);
+      response.data as Map<String, dynamic>,
+    );
   }
 
   @override
@@ -97,6 +96,7 @@ class PurchasesRemoteDataSourceImpl implements PurchasesRemoteDataSource {
       data: {'amount': amount},
     );
     return PurchaseOrderResponse.fromJson(
-        response.data as Map<String, dynamic>);
+      response.data as Map<String, dynamic>,
+    );
   }
 }

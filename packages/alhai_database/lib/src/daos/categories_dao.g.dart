@@ -16,5 +16,7 @@ class CategoriesDaoManager {
       $$StoresTableTableTableManager(_db.attachedDatabase, _db.storesTable);
   $$CategoriesTableTableTableManager get categoriesTable =>
       $$CategoriesTableTableTableManager(
-          _db.attachedDatabase, _db.categoriesTable);
+        _db.attachedDatabase,
+        _db.categoriesTable,
+      );
 }

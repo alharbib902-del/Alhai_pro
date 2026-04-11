@@ -115,10 +115,12 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        invoiceId: 'sale-1',
-        detailValue: const AsyncValue.data(null),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          invoiceId: 'sale-1',
+          detailValue: const AsyncValue.data(null),
+        ),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byType(InvoiceDetailScreen), findsOneWidget);
@@ -128,10 +130,12 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        invoiceId: 'nonexistent',
-        detailValue: const AsyncValue.data(null),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          invoiceId: 'nonexistent',
+          detailValue: const AsyncValue.data(null),
+        ),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byIcon(Icons.receipt_long_rounded), findsOneWidget);
@@ -141,11 +145,15 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        invoiceId: 'error-id',
-        detailValue:
-            AsyncValue.error(Exception('Load failed'), StackTrace.current),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          invoiceId: 'error-id',
+          detailValue: AsyncValue.error(
+            Exception('Load failed'),
+            StackTrace.current,
+          ),
+        ),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byIcon(Icons.error_outline), findsOneWidget);
@@ -159,20 +167,26 @@ void main() {
         sale: _createTestSale(id: 'sale-1', receiptNo: 'INV-001', total: 100.0),
         items: [
           _createTestSaleItem(
-              id: 'item-1', saleId: 'sale-1', productName: 'Coffee'),
+            id: 'item-1',
+            saleId: 'sale-1',
+            productName: 'Coffee',
+          ),
           _createTestSaleItem(
-              id: 'item-2',
-              saleId: 'sale-1',
-              productName: 'Cake',
-              unitPrice: 15.0,
-              qty: 1.0),
+            id: 'item-2',
+            saleId: 'sale-1',
+            productName: 'Cake',
+            unitPrice: 15.0,
+            qty: 1.0,
+          ),
         ],
       );
 
-      await tester.pumpWidget(_buildTestWidget(
-        invoiceId: 'sale-1',
-        detailValue: AsyncValue.data(testData),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          invoiceId: 'sale-1',
+          detailValue: AsyncValue.data(testData),
+        ),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byType(InvoiceDetailScreen), findsOneWidget);

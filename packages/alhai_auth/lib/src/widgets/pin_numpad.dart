@@ -39,18 +39,18 @@ class PinDisplay extends StatelessWidget {
           decoration: BoxDecoration(
             color: isFilled
                 ? (hasError
-                    ? AppColors.error.withValues(alpha: 0.1)
-                    : AppColors.primary.withValues(alpha: 0.1))
+                      ? AppColors.error.withValues(alpha: 0.1)
+                      : AppColors.primary.withValues(alpha: 0.1))
                 : Colors.white,
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: hasError
                   ? AppColors.error
                   : isFilled
-                      ? AppColors.primary
-                      : isNext
-                          ? AppColors.primary.withValues(alpha: 0.5)
-                          : AppColors.border,
+                  ? AppColors.primary
+                  : isNext
+                  ? AppColors.primary.withValues(alpha: 0.5)
+                  : AppColors.border,
               width: isFilled || isNext ? 2 : 1,
             ),
             boxShadow: isNext
@@ -66,22 +66,26 @@ class PinDisplay extends StatelessWidget {
           child: Center(
             child: isFilled
                 ? (obscure
-                    ? Container(
-                        width: AlhaiSpacing.md,
-                        height: AlhaiSpacing.md,
-                        decoration: BoxDecoration(
-                          color: hasError ? AppColors.error : AppColors.primary,
-                          shape: BoxShape.circle,
-                        ),
-                      )
-                    : Text(
-                        '●',
-                        style: TextStyle(
-                          color: hasError ? AppColors.error : AppColors.primary,
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ))
+                      ? Container(
+                          width: AlhaiSpacing.md,
+                          height: AlhaiSpacing.md,
+                          decoration: BoxDecoration(
+                            color: hasError
+                                ? AppColors.error
+                                : AppColors.primary,
+                            shape: BoxShape.circle,
+                          ),
+                        )
+                      : Text(
+                          '●',
+                          style: TextStyle(
+                            color: hasError
+                                ? AppColors.error
+                                : AppColors.primary,
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ))
                 : null,
           ),
         );
@@ -208,9 +212,10 @@ class _NumpadButtonState extends State<_NumpadButton>
       duration: const Duration(milliseconds: 100),
       vsync: this,
     );
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 0.95).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _scaleAnimation = Tween<double>(
+      begin: 1.0,
+      end: 0.95,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -244,22 +249,17 @@ class _NumpadButtonState extends State<_NumpadButton>
       child: AnimatedBuilder(
         animation: _scaleAnimation,
         builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: child,
-          );
+          return Transform.scale(scale: _scaleAnimation.value, child: child);
         },
         child: Container(
           width: AlhaiSpacing.avatarXl,
           height: AlhaiSpacing.avatarXl,
           decoration: BoxDecoration(
-            color:
-                widget.isSpecial ? AppColors.backgroundSecondary : Colors.white,
+            color: widget.isSpecial
+                ? AppColors.backgroundSecondary
+                : Colors.white,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(
-              color: AppColors.border,
-              width: 1,
-            ),
+            border: Border.all(color: AppColors.border, width: 1),
             boxShadow: [
               BoxShadow(
                 color: Colors.black.withValues(alpha: 0.03),
@@ -448,20 +448,14 @@ class _ManagerApprovalDialogState extends State<ManagerApprovalDialog> {
             const SizedBox(height: AlhaiSpacing.lg),
 
             // عرض PIN
-            PinDisplay(
-              filledCount: _pin.length,
-              hasError: _hasError,
-            ),
+            PinDisplay(filledCount: _pin.length, hasError: _hasError),
 
             // رسالة الخطأ
             if (_errorMessage != null) ...[
               const SizedBox(height: AlhaiSpacing.md),
               Text(
                 _errorMessage!,
-                style: const TextStyle(
-                  color: AppColors.error,
-                  fontSize: 14,
-                ),
+                style: const TextStyle(color: AppColors.error, fontSize: 14),
               ),
             ],
 
@@ -478,8 +472,9 @@ class _ManagerApprovalDialogState extends State<ManagerApprovalDialog> {
 
             // زر الإلغاء
             TextButton(
-              onPressed:
-                  _isVerifying ? null : () => Navigator.of(context).pop(false),
+              onPressed: _isVerifying
+                  ? null
+                  : () => Navigator.of(context).pop(false),
               child: Text(
                 AppLocalizations.of(context).cancel,
                 style: const TextStyle(
@@ -523,14 +518,8 @@ class _PinInputFieldState extends State<PinInputField> {
   @override
   void initState() {
     super.initState();
-    _controllers = List.generate(
-      widget.length,
-      (_) => TextEditingController(),
-    );
-    _focusNodes = List.generate(
-      widget.length,
-      (_) => FocusNode(),
-    );
+    _controllers = List.generate(widget.length, (_) => TextEditingController());
+    _focusNodes = List.generate(widget.length, (_) => FocusNode());
 
     if (widget.autofocus) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -611,13 +600,13 @@ class _PinInputFieldState extends State<PinInputField> {
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
-                  borderSide:
-                      const BorderSide(color: AppColors.primary, width: 2),
+                  borderSide: const BorderSide(
+                    color: AppColors.primary,
+                    width: 2,
+                  ),
                 ),
               ),
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-              ],
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               onChanged: (value) => _onChanged(index, value),
             ),
           ),

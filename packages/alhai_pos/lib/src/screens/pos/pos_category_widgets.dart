@@ -89,10 +89,7 @@ class PosCategoryColumn extends StatelessWidget {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         border: BorderDirectional(
-          start: BorderSide(
-            color: colorScheme.outlineVariant,
-            width: 0.5,
-          ),
+          start: BorderSide(color: colorScheme.outlineVariant, width: 0.5),
         ),
       ),
       child: categories.when(
@@ -105,13 +102,15 @@ class PosCategoryColumn extends StatelessWidget {
               onTap: () => onCategorySelected(null),
               color: AppColors.primary,
             ),
-            ...cats.map((cat) => PosCategoryColumnItem(
-                  icon: _getCategoryIcon(cat.name),
-                  label: cat.name,
-                  isActive: selectedCategoryId == cat.id,
-                  onTap: () => onCategorySelected(cat.id),
-                  color: AppColors.primary,
-                )),
+            ...cats.map(
+              (cat) => PosCategoryColumnItem(
+                icon: _getCategoryIcon(cat.name),
+                label: cat.name,
+                isActive: selectedCategoryId == cat.id,
+                onTap: () => onCategorySelected(cat.id),
+                color: AppColors.primary,
+              ),
+            ),
           ];
 
           return ListView.builder(
@@ -121,12 +120,15 @@ class PosCategoryColumn extends StatelessWidget {
           );
         },
         loading: () => const Center(
-            child: SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2))),
+          child: SizedBox(
+            width: 20,
+            height: 20,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
         error: (e, _) => const Center(
-            child: Icon(Icons.error_outline, color: AppColors.error, size: 20)),
+          child: Icon(Icons.error_outline, color: AppColors.error, size: 20),
+        ),
       ),
     );
   }
@@ -168,8 +170,9 @@ class PosCategoryColumnItem extends StatelessWidget {
             duration: AlhaiDurations.standard,
             padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
             decoration: BoxDecoration(
-              color:
-                  isActive ? color.withValues(alpha: 0.15) : Colors.transparent,
+              color: isActive
+                  ? color.withValues(alpha: 0.15)
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
               border: isActive
                   ? Border.all(color: color.withValues(alpha: 0.4), width: 1.5)
@@ -185,9 +188,10 @@ class PosCategoryColumnItem extends StatelessWidget {
                     color: isActive
                         ? color.withValues(alpha: 0.2)
                         : isDark
-                            ? colorScheme.surfaceContainerHigh
-                                .withValues(alpha: 0.5)
-                            : colorScheme.surfaceContainerLow,
+                        ? colorScheme.surfaceContainerHigh.withValues(
+                            alpha: 0.5,
+                          )
+                        : colorScheme.surfaceContainerLow,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -196,8 +200,8 @@ class PosCategoryColumnItem extends StatelessWidget {
                     color: isActive
                         ? color
                         : isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondary,
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
                   ),
                 ),
                 const SizedBox(height: AlhaiSpacing.xxs),
@@ -209,8 +213,8 @@ class PosCategoryColumnItem extends StatelessWidget {
                     color: isActive
                         ? color
                         : isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondary,
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
                   ),
                   textAlign: TextAlign.center,
                   maxLines: 1,
@@ -302,11 +306,7 @@ class PosCategoryBar extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 6),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(
-            color: colorScheme.outlineVariant,
-          ),
-        ),
+        border: Border(bottom: BorderSide(color: colorScheme.outlineVariant)),
       ),
       child: categories.when(
         data: (cats) => ListView(
@@ -319,22 +319,29 @@ class PosCategoryBar extends StatelessWidget {
               isActive: selectedCategoryId == null,
               onTap: () => onCategorySelected(null),
             ),
-            ...cats.map((cat) => PosCategoryPill(
-                  icon: _getCategoryIcon(cat.name),
-                  label: cat.name,
-                  isActive: selectedCategoryId == cat.id,
-                  onTap: () => onCategorySelected(cat.id),
-                )),
+            ...cats.map(
+              (cat) => PosCategoryPill(
+                icon: _getCategoryIcon(cat.name),
+                label: cat.name,
+                isActive: selectedCategoryId == cat.id,
+                onTap: () => onCategorySelected(cat.id),
+              ),
+            ),
           ],
         ),
         loading: () => const Center(
-            child: SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(strokeWidth: 2))),
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+        ),
         error: (e, _) => Center(
-            child: Text('${l10n.error}: $e',
-                style: const TextStyle(color: AppColors.error, fontSize: 12))),
+          child: Text(
+            '${l10n.error}: $e',
+            style: const TextStyle(color: AppColors.error, fontSize: 12),
+          ),
+        ),
       ),
     );
   }
@@ -377,8 +384,8 @@ class PosCategoryPill extends StatelessWidget {
               color: isActive
                   ? AppColors.primary
                   : isDark
-                      ? AppColors.surfaceVariantDark
-                      : colorScheme.surfaceContainerLow,
+                  ? AppColors.surfaceVariantDark
+                  : colorScheme.surfaceContainerLow,
               borderRadius: BorderRadius.circular(AppRadius.full),
               border: isActive
                   ? null
@@ -399,9 +406,10 @@ class PosCategoryPill extends StatelessWidget {
                     color: isActive
                         ? Colors.white.withValues(alpha: 0.25)
                         : isDark
-                            ? colorScheme.surfaceContainerHigh
-                                .withValues(alpha: 0.3)
-                            : colorScheme.surfaceContainer,
+                        ? colorScheme.surfaceContainerHigh.withValues(
+                            alpha: 0.3,
+                          )
+                        : colorScheme.surfaceContainer,
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -410,8 +418,8 @@ class PosCategoryPill extends StatelessWidget {
                     color: isActive
                         ? colorScheme.onPrimary
                         : isDark
-                            ? AppColors.textSecondaryDark
-                            : AppColors.textSecondary,
+                        ? AppColors.textSecondaryDark
+                        : AppColors.textSecondary,
                   ),
                 ),
                 const SizedBox(width: 6),
@@ -421,8 +429,8 @@ class PosCategoryPill extends StatelessWidget {
                     color: isActive
                         ? colorScheme.onPrimary
                         : isDark
-                            ? AppColors.textPrimaryDark
-                            : AppColors.textPrimary,
+                        ? AppColors.textPrimaryDark
+                        : AppColors.textPrimary,
                     fontSize: 11,
                     fontWeight: isActive ? FontWeight.w600 : FontWeight.w500,
                   ),

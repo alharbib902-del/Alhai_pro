@@ -320,7 +320,10 @@ class SaleException extends AppException {
 
   /// المخزون غير كافٍ
   factory SaleException.insufficientStock(
-      String productName, double available, double requested) {
+    String productName,
+    double available,
+    double requested,
+  ) {
     return SaleException(
       message:
           'Insufficient stock for "$productName": available=$available, requested=$requested',
@@ -361,7 +364,9 @@ class PermissionException extends AppException {
 
   /// دور غير كافي
   factory PermissionException.insufficientRole(
-      String required, String current) {
+    String required,
+    String current,
+  ) {
     return PermissionException(
       message: 'Role required: $required, current: $current',
       userMessage: 'هذا الإجراء يتطلب صلاحيات أعلى',

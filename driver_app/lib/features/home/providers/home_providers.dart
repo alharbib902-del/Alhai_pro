@@ -3,8 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/app_providers.dart';
 
 /// Dashboard stats for the driver (today's deliveries, earnings, etc.).
-final dashboardStatsProvider =
-    FutureProvider<Map<String, dynamic>>((ref) async {
+final dashboardStatsProvider = FutureProvider<Map<String, dynamic>>((
+  ref,
+) async {
   final client = ref.read(supabaseClientProvider);
   final driverId = client.auth.currentUser?.id;
   if (driverId == null) return {};

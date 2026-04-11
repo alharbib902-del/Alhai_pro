@@ -241,10 +241,7 @@ void main() {
           unitPrice: 50.0,
           vatRate: 15.0,
         );
-        final updated = original.copyWith(
-          quantity: 5,
-          discountAmount: 10.0,
-        );
+        final updated = original.copyWith(quantity: 5, discountAmount: 10.0);
         expect(updated.quantity, 5);
         expect(updated.discountAmount, 10.0);
         // Unchanged

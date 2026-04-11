@@ -52,8 +52,10 @@ class _CashierReceivingScreenState
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
 
-      final purchases =
-          await _db.purchasesDao.getPurchasesByStatus(storeId, 'approved');
+      final purchases = await _db.purchasesDao.getPurchasesByStatus(
+        storeId,
+        'approved',
+      );
 
       if (mounted) {
         setState(() {
@@ -88,8 +90,9 @@ class _CashierReceivingScreenState
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -100,26 +103,30 @@ class _CashierReceivingScreenState
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context,
-                      message: _error!, onRetry: _loadPurchases)
-                  : _purchases.isEmpty
-                      ? _buildEmptyState(isDark, l10n)
-                      : RefreshIndicator(
-                          onRefresh: _loadPurchases,
-                          child: ListView.separated(
-                            padding: EdgeInsets.all(isMediumScreen
-                                ? AlhaiSpacing.lg
-                                : AlhaiSpacing.md),
-                            itemCount: _purchases.length,
-                            separatorBuilder: (_, __) =>
-                                const SizedBox(height: AlhaiSpacing.sm),
-                            itemBuilder: (_, index) => _buildPurchaseCard(
-                                _purchases[index],
-                                isDark,
-                                isMediumScreen,
-                                l10n),
-                          ),
-                        ),
+              ? AppErrorState.general(
+                  context,
+                  message: _error!,
+                  onRetry: _loadPurchases,
+                )
+              : _purchases.isEmpty
+              ? _buildEmptyState(isDark, l10n)
+              : RefreshIndicator(
+                  onRefresh: _loadPurchases,
+                  child: ListView.separated(
+                    padding: EdgeInsets.all(
+                      isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                    ),
+                    itemCount: _purchases.length,
+                    separatorBuilder: (_, __) =>
+                        const SizedBox(height: AlhaiSpacing.sm),
+                    itemBuilder: (_, index) => _buildPurchaseCard(
+                      _purchases[index],
+                      isDark,
+                      isMediumScreen,
+                      l10n,
+                    ),
+                  ),
+                ),
         ),
       ],
     );
@@ -141,8 +148,11 @@ class _CashierReceivingScreenState
               color: AppColors.primary.withValues(alpha: 0.08),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.local_shipping_outlined,
-                size: 48, color: AppColors.primary),
+            child: const Icon(
+              Icons.local_shipping_outlined,
+              size: 48,
+              color: AppColors.primary,
+            ),
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           Text(
@@ -170,9 +180,12 @@ class _CashierReceivingScreenState
               foregroundColor: AppColors.primary,
               side: const BorderSide(color: AppColors.primary),
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.sm),
+                horizontal: AlhaiSpacing.lg,
+                vertical: AlhaiSpacing.sm,
+              ),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           ),
         ],
@@ -180,8 +193,12 @@ class _CashierReceivingScreenState
     );
   }
 
-  Widget _buildPurchaseCard(PurchasesTableData purchase, bool isDark,
-      bool isMedium, AppLocalizations l10n) {
+  Widget _buildPurchaseCard(
+    PurchasesTableData purchase,
+    bool isDark,
+    bool isMedium,
+    AppLocalizations l10n,
+  ) {
     final dateStr = purchase.createdAt.day.toString().padLeft(2, '0');
     final monthStr = purchase.createdAt.month.toString().padLeft(2, '0');
     final formattedDate = '$dateStr/$monthStr/${purchase.createdAt.year}';
@@ -205,8 +222,11 @@ class _CashierReceivingScreenState
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.local_shipping_rounded,
-                    color: AppColors.info, size: 22),
+                child: const Icon(
+                  Icons.local_shipping_rounded,
+                  color: AppColors.info,
+                  size: 22,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
@@ -234,7 +254,9 @@ class _CashierReceivingScreenState
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: AlhaiSpacing.xxs),
+                  horizontal: 10,
+                  vertical: AlhaiSpacing.xxs,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -259,16 +281,13 @@ class _CashierReceivingScreenState
             ),
             child: Row(
               children: [
-                _infoItem(
-                  Icons.calendar_today_rounded,
-                  formattedDate,
-                  isDark,
-                ),
+                _infoItem(Icons.calendar_today_rounded, formattedDate, isDark),
                 Container(
                   width: 1,
                   height: 24,
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.sm,
+                  ),
                   color: AppColors.getBorder(isDark),
                 ),
                 _infoItem(
@@ -281,8 +300,9 @@ class _CashierReceivingScreenState
                   Container(
                     width: 1,
                     height: 24,
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.sm,
+                    ),
                     color: AppColors.getBorder(isDark),
                   ),
                   Expanded(
@@ -304,15 +324,19 @@ class _CashierReceivingScreenState
                   onPressed: () =>
                       _showItemsBottomSheet(purchase, isDark, l10n),
                   icon: const Icon(Icons.list_alt_rounded, size: 18),
-                  label: Text(l10n.viewItems,
-                      style: const TextStyle(fontWeight: FontWeight.w600)),
+                  label: Text(
+                    l10n.viewItems,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
                   style: OutlinedButton.styleFrom(
                     foregroundColor: AppColors.info,
                     side: const BorderSide(color: AppColors.info),
-                    padding:
-                        const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AlhaiSpacing.sm,
+                    ),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),
@@ -328,7 +352,9 @@ class _CashierReceivingScreenState
                           width: 18,
                           height: 18,
                           child: CircularProgressIndicator(
-                              strokeWidth: 2, color: AppColors.textOnPrimary),
+                            strokeWidth: 2,
+                            color: AppColors.textOnPrimary,
+                          ),
                         )
                       : const Icon(Icons.check_circle_rounded, size: 18),
                   label: Text(
@@ -340,10 +366,12 @@ class _CashierReceivingScreenState
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.success,
                     foregroundColor: AppColors.textOnPrimary,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AlhaiSpacing.sm,
+                    ),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),
@@ -354,8 +382,12 @@ class _CashierReceivingScreenState
     );
   }
 
-  Widget _infoItem(IconData icon, String text, bool isDark,
-      {Color? valueColor}) {
+  Widget _infoItem(
+    IconData icon,
+    String text,
+    bool isDark, {
+    Color? valueColor,
+  }) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -377,7 +409,10 @@ class _CashierReceivingScreenState
   }
 
   Future<void> _showItemsBottomSheet(
-      PurchasesTableData purchase, bool isDark, AppLocalizations l10n) async {
+    PurchasesTableData purchase,
+    bool isDark,
+    AppLocalizations l10n,
+  ) async {
     List<PurchaseItemsTableData> items = [];
     try {
       items = await _db.purchasesDao.getPurchaseItems(purchase.id);
@@ -425,8 +460,11 @@ class _CashierReceivingScreenState
                             color: AppColors.info.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
                           ),
-                          child: const Icon(Icons.list_alt_rounded,
-                              color: AppColors.info, size: 20),
+                          child: const Icon(
+                            Icons.list_alt_rounded,
+                            color: AppColors.info,
+                            size: 20,
+                          ),
                         ),
                         const SizedBox(width: AlhaiSpacing.sm),
                         Expanded(
@@ -486,8 +524,9 @@ class _CashierReceivingScreenState
                                       width: 36,
                                       height: 36,
                                       decoration: BoxDecoration(
-                                        color: AppColors.primary
-                                            .withValues(alpha: 0.08),
+                                        color: AppColors.primary.withValues(
+                                          alpha: 0.08,
+                                        ),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       alignment: Alignment.center,
@@ -512,7 +551,8 @@ class _CashierReceivingScreenState
                                               fontSize: 14,
                                               fontWeight: FontWeight.w600,
                                               color: AppColors.getTextPrimary(
-                                                  isDark),
+                                                isDark,
+                                              ),
                                             ),
                                           ),
                                           if (item.productBarcode != null)
@@ -522,7 +562,8 @@ class _CashierReceivingScreenState
                                                 fontSize: 11,
                                                 fontFamily: 'monospace',
                                                 color: AppColors.getTextMuted(
-                                                    isDark),
+                                                  isDark,
+                                                ),
                                               ),
                                             ),
                                         ],
@@ -545,7 +586,8 @@ class _CashierReceivingScreenState
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: AppColors.getTextSecondary(
-                                                isDark),
+                                              isDark,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -566,7 +608,9 @@ class _CashierReceivingScreenState
   }
 
   Future<void> _confirmReceiving(
-      PurchasesTableData purchase, AppLocalizations l10n) async {
+    PurchasesTableData purchase,
+    AppLocalizations l10n,
+  ) async {
     // Show confirmation dialog
     final confirmed = await showDialog<bool>(
       context: context,
@@ -574,9 +618,7 @@ class _CashierReceivingScreenState
         textDirection: TextDirection.rtl,
         child: AlertDialog(
           title: Text(l10n.confirmReceiveGoodsTitle),
-          content: Text(
-            l10n.confirmReceiveGoodsBody(purchase.purchaseNumber),
-          ),
+          content: Text(l10n.confirmReceiveGoodsBody(purchase.purchaseNumber)),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
@@ -618,8 +660,9 @@ class _CashierReceivingScreenState
       // Audit log
       final user = ref.read(currentUserProvider);
       final storeId = ref.read(currentStoreIdProvider)!;
-      final receivedItems =
-          await _db.purchasesDao.getPurchaseItems(purchase.id);
+      final receivedItems = await _db.purchasesDao.getPurchaseItems(
+        purchase.id,
+      );
       auditService.logStockReceive(
         storeId: storeId,
         userId: user?.id ?? 'unknown',
@@ -646,8 +689,11 @@ class _CashierReceivingScreenState
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          icon:
-              const Icon(Icons.error_outline, color: AppColors.error, size: 48),
+          icon: const Icon(
+            Icons.error_outline,
+            color: AppColors.error,
+            size: 48,
+          ),
           title: Text(l10n.error),
           content: Text(l10n.errorWithDetails('$e')),
           actions: [

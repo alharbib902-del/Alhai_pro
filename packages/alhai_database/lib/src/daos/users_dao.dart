@@ -26,16 +26,17 @@ class UsersDao extends DatabaseAccessor<AppDatabase> with _$UsersDaoMixin {
 
   Future<UsersTableData?> getUserById(String id) =>
       (select(usersTable)..where((u) => u.id.equals(id))).getSingleOrNull();
-  Future<UsersTableData?> getUserByPhone(String phone) =>
-      (select(usersTable)..where((u) => u.phone.equals(phone)))
-          .getSingleOrNull();
+  Future<UsersTableData?> getUserByPhone(String phone) => (select(
+    usersTable,
+  )..where((u) => u.phone.equals(phone))).getSingleOrNull();
 
   Future<UsersTableData?> verifyPin(String storeId, String pin) {
-    return (select(usersTable)
-          ..where((u) =>
+    return (select(usersTable)..where(
+          (u) =>
               u.storeId.equals(storeId) &
               u.pin.equals(pin) &
-              u.isActive.equals(true)))
+              u.isActive.equals(true),
+        ))
         .getSingleOrNull();
   }
 
@@ -52,9 +53,11 @@ class UsersDao extends DatabaseAccessor<AppDatabase> with _$UsersDaoMixin {
 
   Future<int> updateLastLogin(String id) {
     return (update(usersTable)..where((u) => u.id.equals(id))).write(
-        UsersTableCompanion(
-            lastLoginAt: Value(DateTime.now()),
-            updatedAt: Value(DateTime.now())));
+      UsersTableCompanion(
+        lastLoginAt: Value(DateTime.now()),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   Stream<List<UsersTableData>> watchUsers(String storeId) {
@@ -65,8 +68,9 @@ class UsersDao extends DatabaseAccessor<AppDatabase> with _$UsersDaoMixin {
   }
 
   Future<int> markUserAsSynced(String id) {
-    return (update(usersTable)..where((u) => u.id.equals(id)))
-        .write(UsersTableCompanion(syncedAt: Value(DateTime.now())));
+    return (update(usersTable)..where((u) => u.id.equals(id))).write(
+      UsersTableCompanion(syncedAt: Value(DateTime.now())),
+    );
   }
 
   // Roles

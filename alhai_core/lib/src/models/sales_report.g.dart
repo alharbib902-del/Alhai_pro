@@ -81,12 +81,12 @@ _$InventoryValueImpl _$$InventoryValueImplFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$$InventoryValueImplToJson(
-        _$InventoryValueImpl instance) =>
-    <String, dynamic>{
-      'totalProducts': instance.totalProducts,
-      'totalUnits': instance.totalUnits,
-      'costValue': instance.costValue,
-      'retailValue': instance.retailValue,
-      'lowStockCount': instance.lowStockCount,
-      'outOfStockCount': instance.outOfStockCount,
-    };
+  _$InventoryValueImpl instance,
+) => <String, dynamic>{
+  'totalProducts': instance.totalProducts,
+  'totalUnits': instance.totalUnits,
+  'costValue': instance.costValue,
+  'retailValue': instance.retailValue,
+  'lowStockCount': instance.lowStockCount,
+  'outOfStockCount': instance.outOfStockCount,
+};

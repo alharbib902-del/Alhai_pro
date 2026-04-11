@@ -12,10 +12,12 @@ _$DeliveryImpl _$$DeliveryImplFromJson(Map<String, dynamic> json) =>
       orderId: json['orderId'] as String,
       driverId: json['driverId'] as String,
       status: $enumDecode(_$DeliveryStatusEnumMap, json['status']),
-      pickupAddress:
-          Address.fromJson(json['pickupAddress'] as Map<String, dynamic>),
-      deliveryAddress:
-          Address.fromJson(json['deliveryAddress'] as Map<String, dynamic>),
+      pickupAddress: Address.fromJson(
+        json['pickupAddress'] as Map<String, dynamic>,
+      ),
+      deliveryAddress: Address.fromJson(
+        json['deliveryAddress'] as Map<String, dynamic>,
+      ),
       driverName: json['driverName'] as String?,
       driverPhone: json['driverPhone'] as String?,
       driverLat: (json['driverLat'] as num?)?.toDouble(),

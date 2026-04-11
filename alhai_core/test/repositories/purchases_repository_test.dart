@@ -64,17 +64,22 @@ void main() {
     group('getPurchaseOrders', () {
       test('returns Paginated<PurchaseOrder> on success', () async {
         // Arrange
-        when(() => mockRemote.getPurchaseOrders(
-              any(),
-              status: any(named: 'status'),
-              supplierId: any(named: 'supplierId'),
-              page: any(named: 'page'),
-              limit: any(named: 'limit'),
-            )).thenAnswer((_) async => [testPurchaseOrderResponse]);
+        when(
+          () => mockRemote.getPurchaseOrders(
+            any(),
+            status: any(named: 'status'),
+            supplierId: any(named: 'supplierId'),
+            page: any(named: 'page'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenAnswer((_) async => [testPurchaseOrderResponse]);
 
         // Act
-        final result =
-            await repository.getPurchaseOrders('store-1', page: 1, limit: 20);
+        final result = await repository.getPurchaseOrders(
+          'store-1',
+          page: 1,
+          limit: 20,
+        );
 
         // Assert
         expect(result.items, hasLength(1));
@@ -84,16 +89,20 @@ void main() {
 
       test('throws NetworkException on connection error', () async {
         // Arrange
-        when(() => mockRemote.getPurchaseOrders(
-              any(),
-              status: any(named: 'status'),
-              supplierId: any(named: 'supplierId'),
-              page: any(named: 'page'),
-              limit: any(named: 'limit'),
-            )).thenThrow(DioException(
-          type: DioExceptionType.connectionError,
-          requestOptions: RequestOptions(path: '/purchases'),
-        ));
+        when(
+          () => mockRemote.getPurchaseOrders(
+            any(),
+            status: any(named: 'status'),
+            supplierId: any(named: 'supplierId'),
+            page: any(named: 'page'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenThrow(
+          DioException(
+            type: DioExceptionType.connectionError,
+            requestOptions: RequestOptions(path: '/purchases'),
+          ),
+        );
 
         // Act & Assert
         expect(
@@ -121,8 +130,9 @@ void main() {
           ],
         );
 
-        when(() => mockRemote.createPurchaseOrder(any()))
-            .thenAnswer((_) async => testPurchaseOrderResponse);
+        when(
+          () => mockRemote.createPurchaseOrder(any()),
+        ).thenAnswer((_) async => testPurchaseOrderResponse);
 
         // Act
         final result = await repository.createPurchaseOrder(params);
@@ -139,8 +149,9 @@ void main() {
         // Arrange
         final items = [const ReceivedItem(productId: 'prod-1', quantity: 10)];
 
-        when(() => mockRemote.receiveItems(any(), any()))
-            .thenAnswer((_) async => testPurchaseOrderResponse);
+        when(
+          () => mockRemote.receiveItems(any(), any()),
+        ).thenAnswer((_) async => testPurchaseOrderResponse);
 
         // Act
         final result = await repository.receiveItems('po-1', items);
@@ -154,8 +165,12 @@ void main() {
     group('cancelPurchaseOrder', () {
       test('cancels purchase order successfully', () async {
         // Arrange
-        when(() => mockRemote.cancelPurchaseOrder(any(),
-            reason: any(named: 'reason'))).thenAnswer((_) async {});
+        when(
+          () => mockRemote.cancelPurchaseOrder(
+            any(),
+            reason: any(named: 'reason'),
+          ),
+        ).thenAnswer((_) async {});
 
         // Act & Assert
         await expectLater(

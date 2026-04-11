@@ -59,15 +59,20 @@ void main() {
     group('getProducts', () {
       test('returns Paginated<Product> on success', () async {
         // Arrange
-        when(() => mockRemote.getProducts(
-              any(),
-              page: any(named: 'page'),
-              limit: any(named: 'limit'),
-            )).thenAnswer((_) async => [testProductResponse]);
+        when(
+          () => mockRemote.getProducts(
+            any(),
+            page: any(named: 'page'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenAnswer((_) async => [testProductResponse]);
 
         // Act
-        final result =
-            await repository.getProducts('store-1', page: 1, limit: 20);
+        final result = await repository.getProducts(
+          'store-1',
+          page: 1,
+          limit: 20,
+        );
 
         // Assert
         expect(result.items, hasLength(1));
@@ -75,20 +80,25 @@ void main() {
         expect(result.items.first.name, equals('Test Product'));
         expect(result.page, equals(1));
         expect(result.limit, equals(20));
-        verify(() => mockRemote.getProducts('store-1', page: 1, limit: 20))
-            .called(1);
+        verify(
+          () => mockRemote.getProducts('store-1', page: 1, limit: 20),
+        ).called(1);
       });
 
       test('throws AppException on network error', () async {
         // Arrange
-        when(() => mockRemote.getProducts(
-              any(),
-              page: any(named: 'page'),
-              limit: any(named: 'limit'),
-            )).thenThrow(DioException(
-          type: DioExceptionType.connectionError,
-          requestOptions: RequestOptions(path: '/products'),
-        ));
+        when(
+          () => mockRemote.getProducts(
+            any(),
+            page: any(named: 'page'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenThrow(
+          DioException(
+            type: DioExceptionType.connectionError,
+            requestOptions: RequestOptions(path: '/products'),
+          ),
+        );
 
         // Act & Assert
         expect(
@@ -99,11 +109,13 @@ void main() {
 
       test('returns empty list when no products', () async {
         // Arrange
-        when(() => mockRemote.getProducts(
-              any(),
-              page: any(named: 'page'),
-              limit: any(named: 'limit'),
-            )).thenAnswer((_) async => []);
+        when(
+          () => mockRemote.getProducts(
+            any(),
+            page: any(named: 'page'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenAnswer((_) async => []);
 
         // Act
         final result = await repository.getProducts('store-1');
@@ -117,8 +129,9 @@ void main() {
     group('getProduct', () {
       test('returns Product on success', () async {
         // Arrange
-        when(() => mockRemote.getProduct(any()))
-            .thenAnswer((_) async => testProductResponse);
+        when(
+          () => mockRemote.getProduct(any()),
+        ).thenAnswer((_) async => testProductResponse);
 
         // Act
         final result = await repository.getProduct('prod-1');
@@ -133,15 +146,17 @@ void main() {
 
       test('throws NotFoundException on 404', () async {
         // Arrange
-        when(() => mockRemote.getProduct(any())).thenThrow(DioException(
-          type: DioExceptionType.badResponse,
-          response: Response(
-            statusCode: 404,
-            data: {'message': 'Product not found'},
+        when(() => mockRemote.getProduct(any())).thenThrow(
+          DioException(
+            type: DioExceptionType.badResponse,
+            response: Response(
+              statusCode: 404,
+              data: {'message': 'Product not found'},
+              requestOptions: RequestOptions(path: '/products/invalid'),
+            ),
             requestOptions: RequestOptions(path: '/products/invalid'),
           ),
-          requestOptions: RequestOptions(path: '/products/invalid'),
-        ));
+        );
 
         // Act & Assert
         expect(
@@ -154,8 +169,9 @@ void main() {
     group('getByBarcode', () {
       test('returns Product when barcode exists', () async {
         // Arrange
-        when(() => mockRemote.getByBarcode(any()))
-            .thenAnswer((_) async => testProductResponse);
+        when(
+          () => mockRemote.getByBarcode(any()),
+        ).thenAnswer((_) async => testProductResponse);
 
         // Act
         final result = await repository.getByBarcode('123456789');
@@ -167,8 +183,9 @@ void main() {
 
       test('returns null when barcode not found', () async {
         // Arrange
-        when(() => mockRemote.getByBarcode(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockRemote.getByBarcode(any()),
+        ).thenAnswer((_) async => null);
 
         // Act
         final result = await repository.getByBarcode('unknown');
@@ -187,8 +204,9 @@ void main() {
           price: 49.99,
         );
 
-        when(() => mockRemote.createProduct(any()))
-            .thenAnswer((_) async => testProductResponse);
+        when(
+          () => mockRemote.createProduct(any()),
+        ).thenAnswer((_) async => testProductResponse);
 
         // Act
         final result = await repository.createProduct(params);
@@ -206,20 +224,22 @@ void main() {
           price: -1,
         );
 
-        when(() => mockRemote.createProduct(any())).thenThrow(DioException(
-          type: DioExceptionType.badResponse,
-          response: Response(
-            statusCode: 400,
-            data: {
-              'message': 'Validation failed',
-              'errors': {
-                'name': ['Name is required']
-              }
-            },
+        when(() => mockRemote.createProduct(any())).thenThrow(
+          DioException(
+            type: DioExceptionType.badResponse,
+            response: Response(
+              statusCode: 400,
+              data: {
+                'message': 'Validation failed',
+                'errors': {
+                  'name': ['Name is required'],
+                },
+              },
+              requestOptions: RequestOptions(path: '/products'),
+            ),
             requestOptions: RequestOptions(path: '/products'),
           ),
-          requestOptions: RequestOptions(path: '/products'),
-        ));
+        );
 
         // Act & Assert
         expect(
@@ -238,8 +258,9 @@ void main() {
           price: 79.99,
         );
 
-        when(() => mockRemote.updateProduct(any(), any()))
-            .thenAnswer((_) async => testProductResponse);
+        when(
+          () => mockRemote.updateProduct(any(), any()),
+        ).thenAnswer((_) async => testProductResponse);
 
         // Act
         final result = await repository.updateProduct(params);
@@ -262,15 +283,17 @@ void main() {
 
       test('throws ServerException on 500', () async {
         // Arrange
-        when(() => mockRemote.deleteProduct(any())).thenThrow(DioException(
-          type: DioExceptionType.badResponse,
-          response: Response(
-            statusCode: 500,
-            data: {'message': 'Internal server error'},
+        when(() => mockRemote.deleteProduct(any())).thenThrow(
+          DioException(
+            type: DioExceptionType.badResponse,
+            response: Response(
+              statusCode: 500,
+              data: {'message': 'Internal server error'},
+              requestOptions: RequestOptions(path: '/products/prod-1'),
+            ),
             requestOptions: RequestOptions(path: '/products/prod-1'),
           ),
-          requestOptions: RequestOptions(path: '/products/prod-1'),
-        ));
+        );
 
         // Act & Assert
         expect(

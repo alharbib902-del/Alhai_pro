@@ -38,16 +38,15 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
       children: [
         AppHeader(
           title: l10n.aiChatWithData,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.defaultUserName,
           userRole: l10n.branchManager,
         ),
-        Expanded(
-          child: _buildContent(isDark, isWideScreen),
-        ),
+        Expanded(child: _buildContent(isDark, isWideScreen)),
       ],
     );
   }
@@ -65,14 +64,23 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
           Expanded(
             flex: 3,
             child: _buildMainArea(
-                isDark, currentResult, isLoading, suggestions, isWideScreen),
+              isDark,
+              currentResult,
+              isLoading,
+              suggestions,
+              isWideScreen,
+            ),
           ),
           // لوحة السجل الجانبية
           SizedBox(
             width: 350,
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.zero,
-                  AlhaiSpacing.md, AlhaiSpacing.md, AlhaiSpacing.md),
+              padding: EdgeInsetsDirectional.fromSTEB(
+                AlhaiSpacing.zero,
+                AlhaiSpacing.md,
+                AlhaiSpacing.md,
+                AlhaiSpacing.md,
+              ),
               child: QueryHistoryPanel(
                 history: history,
                 onRerun: _executeQuery,
@@ -89,7 +97,12 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
     return Stack(
       children: [
         _buildMainArea(
-            isDark, currentResult, isLoading, suggestions, isWideScreen),
+          isDark,
+          currentResult,
+          isLoading,
+          suggestions,
+          isWideScreen,
+        ),
         if (_showHistory)
           Positioned.fill(
             child: GestureDetector(
@@ -140,8 +153,9 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
           DataQueryInput(
             suggestions: suggestions,
             onSubmit: _executeQuery,
-            onHistoryTap:
-                isWideScreen ? null : () => setState(() => _showHistory = true),
+            onHistoryTap: isWideScreen
+                ? null
+                : () => setState(() => _showHistory = true),
             isLoading: isLoading,
           ),
 
@@ -186,11 +200,7 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
               color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(
-              Icons.chat,
-              color: Colors.white,
-              size: 28,
-            ),
+            child: const Icon(Icons.chat, color: Colors.white, size: 28),
           ),
           const SizedBox(width: AlhaiSpacing.md),
           Expanded(
@@ -218,7 +228,9 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
           ),
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: 14, vertical: AlhaiSpacing.xs),
+              horizontal: 14,
+              vertical: AlhaiSpacing.xs,
+            ),
             decoration: BoxDecoration(
               color: Colors.white.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(20),
@@ -245,7 +257,10 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
   }
 
   Widget _buildWelcomeArea(
-      bool isDark, List<String> suggestions, bool isWideScreen) {
+    bool isDark,
+    List<String> suggestions,
+    bool isWideScreen,
+  ) {
     final l10n = AppLocalizations.of(context);
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
@@ -256,8 +271,11 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
         // عنوان الاقتراحات
         Row(
           children: [
-            const Icon(Icons.lightbulb_outline,
-                color: AppColors.warning, size: 20),
+            const Icon(
+              Icons.lightbulb_outline,
+              color: AppColors.warning,
+              size: 20,
+            ),
             const SizedBox(width: AlhaiSpacing.xs),
             Text(
               l10n.aiTrySampleQuestions,
@@ -374,9 +392,7 @@ class _AiChatWithDataScreenState extends ConsumerState<AiChatWithDataScreen> {
                 ? AppColors.info.withValues(alpha: 0.1)
                 : AppColors.infoSurface,
             borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: AppColors.info.withValues(alpha: 0.2),
-            ),
+            border: Border.all(color: AppColors.info.withValues(alpha: 0.2)),
           ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,

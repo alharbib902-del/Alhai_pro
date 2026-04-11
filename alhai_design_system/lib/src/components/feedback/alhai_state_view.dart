@@ -154,10 +154,7 @@ class AlhaiStateView extends StatelessWidget {
     if (customContent != null) {
       return Padding(
         padding: effectivePadding,
-        child: Align(
-          alignment: alignment,
-          child: customContent,
-        ),
+        child: Align(alignment: alignment, child: customContent),
       );
     }
 
@@ -171,10 +168,7 @@ class AlhaiStateView extends StatelessWidget {
 
     return Padding(
       padding: effectivePadding,
-      child: Align(
-        alignment: alignment,
-        child: content,
-      ),
+      child: Align(alignment: alignment, child: content),
     );
   }
 
@@ -248,10 +242,7 @@ class AlhaiStateView extends StatelessWidget {
         // Action button
         if (actionText != null && onAction != null) ...[
           const SizedBox(height: AlhaiSpacing.lg),
-          AlhaiButton.filled(
-            label: actionText!,
-            onPressed: onAction,
-          ),
+          AlhaiButton.filled(label: actionText!, onPressed: onAction),
         ],
       ],
     );

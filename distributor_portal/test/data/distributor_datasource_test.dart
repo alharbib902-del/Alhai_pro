@@ -212,14 +212,19 @@ void main() {
     });
 
     test('validStatusTransitions covers expected statuses', () {
-      expect(validStatusTransitions.keys,
-          containsAll(['sent', 'pending', 'draft', 'approved']));
+      expect(
+        validStatusTransitions.keys,
+        containsAll(['sent', 'pending', 'draft', 'approved']),
+      );
     });
 
     test('each transition set is non-empty', () {
       for (final entry in validStatusTransitions.entries) {
-        expect(entry.value, isNotEmpty,
-            reason: '${entry.key} has empty transitions');
+        expect(
+          entry.value,
+          isNotEmpty,
+          reason: '${entry.key} has empty transitions',
+        );
       }
     });
   });

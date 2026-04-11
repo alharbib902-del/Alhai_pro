@@ -26,10 +26,10 @@ class AuthTokensEntity {
 
   /// Converts to JSON for storage
   Map<String, dynamic> toJson() => {
-        'access_token': accessToken,
-        'refresh_token': refreshToken,
-        'expires_at': expiresAt,
-      };
+    'access_token': accessToken,
+    'refresh_token': refreshToken,
+    'expires_at': expiresAt,
+  };
 
   /// Creates from JSON storage
   factory AuthTokensEntity.fromJson(Map<String, dynamic> json) {

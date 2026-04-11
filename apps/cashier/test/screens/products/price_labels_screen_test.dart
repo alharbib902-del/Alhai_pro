@@ -52,8 +52,9 @@ void main() {
 
       // Use Completer to hold the future without pending timers
       final completer = Completer<List<ProductsTableData>>();
-      when(() => productsDao.getAllProducts(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => productsDao.getAllProducts(any()),
+      ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(createTestWidget(const PriceLabelsScreen()));
       await tester.pump();
@@ -74,8 +75,9 @@ void main() {
       suppressOverflowErrors();
 
       final products = createTestProductList(3);
-      when(() => productsDao.getAllProducts(any()))
-          .thenAnswer((_) async => products);
+      when(
+        () => productsDao.getAllProducts(any()),
+      ).thenAnswer((_) async => products);
 
       await tester.pumpWidget(createTestWidget(const PriceLabelsScreen()));
       await tester.pumpAndSettle();
@@ -107,15 +109,17 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('print button is disabled when no products selected',
-        (tester) async {
+    testWidgets('print button is disabled when no products selected', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
       final products = createTestProductList(2);
-      when(() => productsDao.getAllProducts(any()))
-          .thenAnswer((_) async => products);
+      when(
+        () => productsDao.getAllProducts(any()),
+      ).thenAnswer((_) async => products);
 
       await tester.pumpWidget(createTestWidget(const PriceLabelsScreen()));
       await tester.pumpAndSettle();
@@ -137,8 +141,9 @@ void main() {
       suppressOverflowErrors();
 
       final products = createTestProductList(5);
-      when(() => productsDao.getAllProducts(any()))
-          .thenAnswer((_) async => products);
+      when(
+        () => productsDao.getAllProducts(any()),
+      ).thenAnswer((_) async => products);
 
       await tester.pumpWidget(createTestWidget(const PriceLabelsScreen()));
       await tester.pumpAndSettle();

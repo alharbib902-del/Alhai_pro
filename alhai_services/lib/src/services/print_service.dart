@@ -89,10 +89,7 @@ class PrintService {
   /// طباعة نص
   Future<PrintResult> printText(String text) async {
     if (_status != PrinterStatus.connected) {
-      return const PrintResult(
-        success: false,
-        error: 'الطابعة غير متصلة',
-      );
+      return const PrintResult(success: false, error: 'الطابعة غير متصلة');
     }
 
     final previousStatus = _status;
@@ -115,25 +112,16 @@ class PrintService {
     } catch (e) {
       _status = previousStatus;
       if (e is UnimplementedError) {
-        return PrintResult(
-          success: false,
-          error: e.message,
-        );
+        return PrintResult(success: false, error: e.message);
       }
-      return PrintResult(
-        success: false,
-        error: 'فشل الطباعة: $e',
-      );
+      return PrintResult(success: false, error: 'فشل الطباعة: $e');
     }
   }
 
   /// طباعة فاتورة مع تنسيق ESC/POS متقدم
   Future<PrintResult> printReceipt(String receiptText) async {
     if (_status != PrinterStatus.connected) {
-      return const PrintResult(
-        success: false,
-        error: 'الطابعة غير متصلة',
-      );
+      return const PrintResult(success: false, error: 'الطابعة غير متصلة');
     }
 
     final previousStatus = _status;
@@ -160,15 +148,9 @@ class PrintService {
     } catch (e) {
       _status = previousStatus;
       if (e is UnimplementedError) {
-        return PrintResult(
-          success: false,
-          error: e.message,
-        );
+        return PrintResult(success: false, error: e.message);
       }
-      return PrintResult(
-        success: false,
-        error: 'فشل طباعة الفاتورة: $e',
-      );
+      return PrintResult(success: false, error: 'فشل طباعة الفاتورة: $e');
     }
   }
 
@@ -178,10 +160,7 @@ class PrintService {
     BarcodeType type = BarcodeType.code128,
   }) async {
     if (_status != PrinterStatus.connected) {
-      return const PrintResult(
-        success: false,
-        error: 'الطابعة غير متصلة',
-      );
+      return const PrintResult(success: false, error: 'الطابعة غير متصلة');
     }
 
     final previousStatus = _status;
@@ -207,32 +186,20 @@ class PrintService {
     } catch (e) {
       _status = previousStatus;
       if (e is UnimplementedError) {
-        return PrintResult(
-          success: false,
-          error: e.message,
-        );
+        return PrintResult(success: false, error: e.message);
       }
-      return PrintResult(
-        success: false,
-        error: 'فشل طباعة الباركود: $e',
-      );
+      return PrintResult(success: false, error: 'فشل طباعة الباركود: $e');
     }
   }
 
   /// طباعة صورة مع تحويل إلى بيانات ESC/POS raster
   Future<PrintResult> printImage(List<int> imageBytes) async {
     if (_status != PrinterStatus.connected) {
-      return const PrintResult(
-        success: false,
-        error: 'الطابعة غير متصلة',
-      );
+      return const PrintResult(success: false, error: 'الطابعة غير متصلة');
     }
 
     if (imageBytes.isEmpty) {
-      return const PrintResult(
-        success: false,
-        error: 'بيانات الصورة فارغة',
-      );
+      return const PrintResult(success: false, error: 'بيانات الصورة فارغة');
     }
 
     final previousStatus = _status;
@@ -257,25 +224,16 @@ class PrintService {
     } catch (e) {
       _status = previousStatus;
       if (e is UnimplementedError) {
-        return PrintResult(
-          success: false,
-          error: e.message,
-        );
+        return PrintResult(success: false, error: e.message);
       }
-      return PrintResult(
-        success: false,
-        error: 'فشل طباعة الصورة: $e',
-      );
+      return PrintResult(success: false, error: 'فشل طباعة الصورة: $e');
     }
   }
 
   /// فتح درج النقود عبر أمر ESC/POS
   Future<PrintResult> openCashDrawer() async {
     if (_status != PrinterStatus.connected) {
-      return const PrintResult(
-        success: false,
-        error: 'الطابعة غير متصلة',
-      );
+      return const PrintResult(success: false, error: 'الطابعة غير متصلة');
     }
 
     try {
@@ -294,15 +252,9 @@ class PrintService {
       );
     } catch (e) {
       if (e is UnimplementedError) {
-        return PrintResult(
-          success: false,
-          error: e.message,
-        );
+        return PrintResult(success: false, error: e.message);
       }
-      return PrintResult(
-        success: false,
-        error: 'فشل فتح درج النقود: $e',
-      );
+      return PrintResult(success: false, error: 'فشل فتح درج النقود: $e');
     }
   }
 
@@ -448,13 +400,7 @@ class EscPosCommandBuilder {
 enum EscPosAlignment { left, center, right }
 
 /// حالة الطابعة
-enum PrinterStatus {
-  disconnected,
-  connecting,
-  connected,
-  printing,
-  error,
-}
+enum PrinterStatus { disconnected, connecting, connected, printing, error }
 
 /// نوع اتصال الطابعة
 enum PrinterConnectionType {
@@ -484,18 +430,8 @@ class PrintResult {
   final bool success;
   final String? error;
 
-  const PrintResult({
-    required this.success,
-    this.error,
-  });
+  const PrintResult({required this.success, this.error});
 }
 
 /// نوع الباركود
-enum BarcodeType {
-  code128,
-  code39,
-  ean13,
-  ean8,
-  upcA,
-  qrCode,
-}
+enum BarcodeType { code128, code39, ean13, ean8, upcA, qrCode }

@@ -36,44 +36,43 @@ class PrintJob {
   });
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'saleId': saleId,
-        'receiptNo': receiptNo,
-        'type': type,
-        'status': status,
-        'errorMessage': errorMessage,
-        'retryCount': retryCount,
-        'createdAt': createdAt.toIso8601String(),
-      };
+    'id': id,
+    'saleId': saleId,
+    'receiptNo': receiptNo,
+    'type': type,
+    'status': status,
+    'errorMessage': errorMessage,
+    'retryCount': retryCount,
+    'createdAt': createdAt.toIso8601String(),
+  };
 
   factory PrintJob.fromJson(Map<String, dynamic> json) => PrintJob(
-        id: json['id'] as String,
-        saleId: json['saleId'] as String? ?? '',
-        receiptNo: json['receiptNo'] as String? ?? '',
-        type: json['type'] as String,
-        status: json['status'] as String? ?? 'pending',
-        errorMessage: json['errorMessage'] as String?,
-        retryCount: json['retryCount'] as int? ?? 0,
-        createdAt: DateTime.parse(json['createdAt'] as String),
-      );
+    id: json['id'] as String,
+    saleId: json['saleId'] as String? ?? '',
+    receiptNo: json['receiptNo'] as String? ?? '',
+    type: json['type'] as String,
+    status: json['status'] as String? ?? 'pending',
+    errorMessage: json['errorMessage'] as String?,
+    retryCount: json['retryCount'] as int? ?? 0,
+    createdAt: DateTime.parse(json['createdAt'] as String),
+  );
 
   PrintJob copyWith({
     String? status,
     Object? errorMessage = _undefined,
     int? retryCount,
-  }) =>
-      PrintJob(
-        id: id,
-        saleId: saleId,
-        receiptNo: receiptNo,
-        type: type,
-        status: status ?? this.status,
-        errorMessage: errorMessage == _undefined
-            ? this.errorMessage
-            : errorMessage as String?,
-        retryCount: retryCount ?? this.retryCount,
-        createdAt: createdAt,
-      );
+  }) => PrintJob(
+    id: id,
+    saleId: saleId,
+    receiptNo: receiptNo,
+    type: type,
+    status: status ?? this.status,
+    errorMessage: errorMessage == _undefined
+        ? this.errorMessage
+        : errorMessage as String?,
+    retryCount: retryCount ?? this.retryCount,
+    createdAt: createdAt,
+  );
 }
 
 /// مدير قائمة الطباعة
@@ -103,13 +102,15 @@ class PrintQueueNotifier extends StateNotifier<List<PrintJob>> {
   /// تحديد مهمة كفاشلة
   void markFailed(String id, String error) {
     state = state
-        .map((j) => j.id == id
-            ? j.copyWith(
-                status: 'failed',
-                errorMessage: error,
-                retryCount: j.retryCount + 1,
-              )
-            : j)
+        .map(
+          (j) => j.id == id
+              ? j.copyWith(
+                  status: 'failed',
+                  errorMessage: error,
+                  retryCount: j.retryCount + 1,
+                )
+              : j,
+        )
         .toList();
   }
 
@@ -123,8 +124,11 @@ class PrintQueueNotifier extends StateNotifier<List<PrintJob>> {
   /// إعادة محاولة طباعة مهمة فاشلة
   void retryJob(String id) {
     state = state
-        .map((j) =>
-            j.id == id ? j.copyWith(status: 'pending', errorMessage: null) : j)
+        .map(
+          (j) => j.id == id
+              ? j.copyWith(status: 'pending', errorMessage: null)
+              : j,
+        )
         .toList();
   }
 
@@ -145,8 +149,8 @@ class PrintQueueNotifier extends StateNotifier<List<PrintJob>> {
 /// مزود قائمة الطباعة
 final printQueueProvider =
     StateNotifierProvider<PrintQueueNotifier, List<PrintJob>>(
-  (ref) => PrintQueueNotifier(),
-);
+      (ref) => PrintQueueNotifier(),
+    );
 
 /// مزود عدد المهام المعلقة (للشارة في القائمة الجانبية)
 final pendingPrintCountProvider = Provider<int>((ref) {
@@ -165,8 +169,9 @@ typedef AutoPrintCallback = Future<bool> Function(String saleId);
 /// Provider for the auto-print callback, set by the app layer (e.g. cashier).
 /// When non-null and auto-print is enabled, the POS screen will automatically
 /// print a receipt after each successful payment.
-final autoPrintCallbackProvider =
-    StateProvider<AutoPrintCallback?>((ref) => null);
+final autoPrintCallbackProvider = StateProvider<AutoPrintCallback?>(
+  (ref) => null,
+);
 
 /// Whether auto-print is enabled
 final autoPrintEnabledProvider = StateProvider<bool>((ref) => false);

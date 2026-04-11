@@ -29,10 +29,7 @@ class FavoriteProductData {
   final FavoritesTableData favorite;
   final ProductsTableData product;
 
-  const FavoriteProductData({
-    required this.favorite,
-    required this.product,
-  });
+  const FavoriteProductData({required this.favorite, required this.product});
 
   /// معرّف المفضلة
   String get id => favorite.id;
@@ -66,28 +63,29 @@ class FavoriteProductData {
 /// قائمة المنتجات المفضلة مع تفاصيل المنتج
 final favoritesListProvider =
     FutureProvider.autoDispose<List<FavoriteProductData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
 
-  final db = GetIt.I<AppDatabase>();
+      final db = GetIt.I<AppDatabase>();
 
-  // جلب المفضلات من قاعدة البيانات
-  final favorites = await (db.select(db.favoritesTable)
-        ..where((f) => f.storeId.equals(storeId))
-        ..orderBy([(f) => OrderingTerm.asc(f.sortOrder)]))
-      .get();
+      // جلب المفضلات من قاعدة البيانات
+      final favorites =
+          await (db.select(db.favoritesTable)
+                ..where((f) => f.storeId.equals(storeId))
+                ..orderBy([(f) => OrderingTerm.asc(f.sortOrder)]))
+              .get();
 
-  // لكل مفضلة، جلب بيانات المنتج
-  final results = <FavoriteProductData>[];
-  for (final fav in favorites) {
-    final product = await db.productsDao.getProductById(fav.productId);
-    if (product != null) {
-      results.add(FavoriteProductData(favorite: fav, product: product));
-    }
-  }
+      // لكل مفضلة، جلب بيانات المنتج
+      final results = <FavoriteProductData>[];
+      for (final fav in favorites) {
+        final product = await db.productsDao.getProductById(fav.productId);
+        if (product != null) {
+          results.add(FavoriteProductData(favorite: fav, product: product));
+        }
+      }
 
-  return results;
-});
+      return results;
+    });
 
 // ============================================================================
 // عمليات المفضلة (إضافة / إزالة / إعادة ترتيب)
@@ -99,25 +97,30 @@ Future<void> addToFavorites(WidgetRef ref, String productId) async {
   final db = GetIt.I<AppDatabase>();
 
   // التحقق من عدم وجود المنتج مسبقاً
-  final existing = await (db.select(db.favoritesTable)
-        ..where(
-            (f) => f.storeId.equals(storeId) & f.productId.equals(productId)))
-      .getSingleOrNull();
+  final existing =
+      await (db.select(db.favoritesTable)..where(
+            (f) => f.storeId.equals(storeId) & f.productId.equals(productId),
+          ))
+          .getSingleOrNull();
 
   if (existing != null) return; // موجود مسبقاً
 
   // حساب ترتيب الفرز (آخر +1)
-  final maxOrderResult = await db.customSelect(
-    'SELECT MAX(sort_order) as max_order FROM favorites WHERE store_id = ?',
-    variables: [Variable.withString(storeId)],
-  ).getSingleOrNull();
+  final maxOrderResult = await db
+      .customSelect(
+        'SELECT MAX(sort_order) as max_order FROM favorites WHERE store_id = ?',
+        variables: [Variable.withString(storeId)],
+      )
+      .getSingleOrNull();
   final nextOrder = (maxOrderResult?.data['max_order'] as int? ?? 0) + 1;
 
   final id = _uuid.v4();
   final now = DateTime.now();
 
   // إدراج في قاعدة البيانات
-  await db.into(db.favoritesTable).insert(
+  await db
+      .into(db.favoritesTable)
+      .insert(
         FavoritesTableCompanion.insert(
           id: id,
           storeId: storeId,
@@ -155,16 +158,18 @@ Future<void> removeFromFavorites(WidgetRef ref, String productId) async {
   final db = GetIt.I<AppDatabase>();
 
   // البحث عن المفضلة لمعرفة الـ id
-  final existing = await (db.select(db.favoritesTable)
-        ..where(
-            (f) => f.storeId.equals(storeId) & f.productId.equals(productId)))
-      .getSingleOrNull();
+  final existing =
+      await (db.select(db.favoritesTable)..where(
+            (f) => f.storeId.equals(storeId) & f.productId.equals(productId),
+          ))
+          .getSingleOrNull();
 
   if (existing == null) return; // غير موجود
 
   // حذف من قاعدة البيانات
-  await (db.delete(db.favoritesTable)..where((f) => f.id.equals(existing.id)))
-      .go();
+  await (db.delete(
+    db.favoritesTable,
+  )..where((f) => f.id.equals(existing.id))).go();
 
   // إضافة للمزامنة
   try {
@@ -186,8 +191,9 @@ Future<void> removeFavoriteById(WidgetRef ref, String favoriteId) async {
   final db = GetIt.I<AppDatabase>();
 
   // حذف من قاعدة البيانات
-  await (db.delete(db.favoritesTable)..where((f) => f.id.equals(favoriteId)))
-      .go();
+  await (db.delete(
+    db.favoritesTable,
+  )..where((f) => f.id.equals(favoriteId))).go();
 
   // إضافة للمزامنة
   try {
@@ -213,7 +219,9 @@ Future<void> reAddFavorite(
   final now = DateTime.now();
 
   // إعادة الإدراج في قاعدة البيانات
-  await db.into(db.favoritesTable).insert(
+  await db
+      .into(db.favoritesTable)
+      .insert(
         FavoritesTableCompanion.insert(
           id: favoriteData.id,
           storeId: favoriteData.favorite.storeId,

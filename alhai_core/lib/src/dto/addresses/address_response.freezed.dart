@@ -12,7 +12,8 @@ part of 'address_response.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 AddressResponse _$AddressResponseFromJson(Map<String, dynamic> json) {
   return _AddressResponse.fromJson(json);
@@ -50,22 +51,24 @@ mixin _$AddressResponse {
 /// @nodoc
 abstract class $AddressResponseCopyWith<$Res> {
   factory $AddressResponseCopyWith(
-          AddressResponse value, $Res Function(AddressResponse) then) =
-      _$AddressResponseCopyWithImpl<$Res, AddressResponse>;
+    AddressResponse value,
+    $Res Function(AddressResponse) then,
+  ) = _$AddressResponseCopyWithImpl<$Res, AddressResponse>;
   @useResult
-  $Res call(
-      {String id,
-      String label,
-      @JsonKey(name: 'full_address') String fullAddress,
-      String city,
-      String? district,
-      String? street,
-      @JsonKey(name: 'building_number') String? buildingNumber,
-      @JsonKey(name: 'apartment_number') String? apartmentNumber,
-      String? landmark,
-      double lat,
-      double lng,
-      @JsonKey(name: 'is_default') bool isDefault});
+  $Res call({
+    String id,
+    String label,
+    @JsonKey(name: 'full_address') String fullAddress,
+    String city,
+    String? district,
+    String? street,
+    @JsonKey(name: 'building_number') String? buildingNumber,
+    @JsonKey(name: 'apartment_number') String? apartmentNumber,
+    String? landmark,
+    double lat,
+    double lng,
+    @JsonKey(name: 'is_default') bool isDefault,
+  });
 }
 
 /// @nodoc
@@ -96,80 +99,85 @@ class _$AddressResponseCopyWithImpl<$Res, $Val extends AddressResponse>
     Object? lng = null,
     Object? isDefault = null,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      label: null == label
-          ? _value.label
-          : label // ignore: cast_nullable_to_non_nullable
-              as String,
-      fullAddress: null == fullAddress
-          ? _value.fullAddress
-          : fullAddress // ignore: cast_nullable_to_non_nullable
-              as String,
-      city: null == city
-          ? _value.city
-          : city // ignore: cast_nullable_to_non_nullable
-              as String,
-      district: freezed == district
-          ? _value.district
-          : district // ignore: cast_nullable_to_non_nullable
-              as String?,
-      street: freezed == street
-          ? _value.street
-          : street // ignore: cast_nullable_to_non_nullable
-              as String?,
-      buildingNumber: freezed == buildingNumber
-          ? _value.buildingNumber
-          : buildingNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      apartmentNumber: freezed == apartmentNumber
-          ? _value.apartmentNumber
-          : apartmentNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      landmark: freezed == landmark
-          ? _value.landmark
-          : landmark // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lat: null == lat
-          ? _value.lat
-          : lat // ignore: cast_nullable_to_non_nullable
-              as double,
-      lng: null == lng
-          ? _value.lng
-          : lng // ignore: cast_nullable_to_non_nullable
-              as double,
-      isDefault: null == isDefault
-          ? _value.isDefault
-          : isDefault // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            label: null == label
+                ? _value.label
+                : label // ignore: cast_nullable_to_non_nullable
+                      as String,
+            fullAddress: null == fullAddress
+                ? _value.fullAddress
+                : fullAddress // ignore: cast_nullable_to_non_nullable
+                      as String,
+            city: null == city
+                ? _value.city
+                : city // ignore: cast_nullable_to_non_nullable
+                      as String,
+            district: freezed == district
+                ? _value.district
+                : district // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            street: freezed == street
+                ? _value.street
+                : street // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            buildingNumber: freezed == buildingNumber
+                ? _value.buildingNumber
+                : buildingNumber // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            apartmentNumber: freezed == apartmentNumber
+                ? _value.apartmentNumber
+                : apartmentNumber // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            landmark: freezed == landmark
+                ? _value.landmark
+                : landmark // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            lat: null == lat
+                ? _value.lat
+                : lat // ignore: cast_nullable_to_non_nullable
+                      as double,
+            lng: null == lng
+                ? _value.lng
+                : lng // ignore: cast_nullable_to_non_nullable
+                      as double,
+            isDefault: null == isDefault
+                ? _value.isDefault
+                : isDefault // ignore: cast_nullable_to_non_nullable
+                      as bool,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$AddressResponseImplCopyWith<$Res>
     implements $AddressResponseCopyWith<$Res> {
-  factory _$$AddressResponseImplCopyWith(_$AddressResponseImpl value,
-          $Res Function(_$AddressResponseImpl) then) =
-      __$$AddressResponseImplCopyWithImpl<$Res>;
+  factory _$$AddressResponseImplCopyWith(
+    _$AddressResponseImpl value,
+    $Res Function(_$AddressResponseImpl) then,
+  ) = __$$AddressResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String label,
-      @JsonKey(name: 'full_address') String fullAddress,
-      String city,
-      String? district,
-      String? street,
-      @JsonKey(name: 'building_number') String? buildingNumber,
-      @JsonKey(name: 'apartment_number') String? apartmentNumber,
-      String? landmark,
-      double lat,
-      double lng,
-      @JsonKey(name: 'is_default') bool isDefault});
+  $Res call({
+    String id,
+    String label,
+    @JsonKey(name: 'full_address') String fullAddress,
+    String city,
+    String? district,
+    String? street,
+    @JsonKey(name: 'building_number') String? buildingNumber,
+    @JsonKey(name: 'apartment_number') String? apartmentNumber,
+    String? landmark,
+    double lat,
+    double lng,
+    @JsonKey(name: 'is_default') bool isDefault,
+  });
 }
 
 /// @nodoc
@@ -177,8 +185,9 @@ class __$$AddressResponseImplCopyWithImpl<$Res>
     extends _$AddressResponseCopyWithImpl<$Res, _$AddressResponseImpl>
     implements _$$AddressResponseImplCopyWith<$Res> {
   __$$AddressResponseImplCopyWithImpl(
-      _$AddressResponseImpl _value, $Res Function(_$AddressResponseImpl) _then)
-      : super(_value, _then);
+    _$AddressResponseImpl _value,
+    $Res Function(_$AddressResponseImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of AddressResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -198,76 +207,78 @@ class __$$AddressResponseImplCopyWithImpl<$Res>
     Object? lng = null,
     Object? isDefault = null,
   }) {
-    return _then(_$AddressResponseImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      label: null == label
-          ? _value.label
-          : label // ignore: cast_nullable_to_non_nullable
-              as String,
-      fullAddress: null == fullAddress
-          ? _value.fullAddress
-          : fullAddress // ignore: cast_nullable_to_non_nullable
-              as String,
-      city: null == city
-          ? _value.city
-          : city // ignore: cast_nullable_to_non_nullable
-              as String,
-      district: freezed == district
-          ? _value.district
-          : district // ignore: cast_nullable_to_non_nullable
-              as String?,
-      street: freezed == street
-          ? _value.street
-          : street // ignore: cast_nullable_to_non_nullable
-              as String?,
-      buildingNumber: freezed == buildingNumber
-          ? _value.buildingNumber
-          : buildingNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      apartmentNumber: freezed == apartmentNumber
-          ? _value.apartmentNumber
-          : apartmentNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      landmark: freezed == landmark
-          ? _value.landmark
-          : landmark // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lat: null == lat
-          ? _value.lat
-          : lat // ignore: cast_nullable_to_non_nullable
-              as double,
-      lng: null == lng
-          ? _value.lng
-          : lng // ignore: cast_nullable_to_non_nullable
-              as double,
-      isDefault: null == isDefault
-          ? _value.isDefault
-          : isDefault // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
+    return _then(
+      _$AddressResponseImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        label: null == label
+            ? _value.label
+            : label // ignore: cast_nullable_to_non_nullable
+                  as String,
+        fullAddress: null == fullAddress
+            ? _value.fullAddress
+            : fullAddress // ignore: cast_nullable_to_non_nullable
+                  as String,
+        city: null == city
+            ? _value.city
+            : city // ignore: cast_nullable_to_non_nullable
+                  as String,
+        district: freezed == district
+            ? _value.district
+            : district // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        street: freezed == street
+            ? _value.street
+            : street // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        buildingNumber: freezed == buildingNumber
+            ? _value.buildingNumber
+            : buildingNumber // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        apartmentNumber: freezed == apartmentNumber
+            ? _value.apartmentNumber
+            : apartmentNumber // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        landmark: freezed == landmark
+            ? _value.landmark
+            : landmark // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        lat: null == lat
+            ? _value.lat
+            : lat // ignore: cast_nullable_to_non_nullable
+                  as double,
+        lng: null == lng
+            ? _value.lng
+            : lng // ignore: cast_nullable_to_non_nullable
+                  as double,
+        isDefault: null == isDefault
+            ? _value.isDefault
+            : isDefault // ignore: cast_nullable_to_non_nullable
+                  as bool,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$AddressResponseImpl extends _AddressResponse {
-  const _$AddressResponseImpl(
-      {required this.id,
-      required this.label,
-      @JsonKey(name: 'full_address') required this.fullAddress,
-      required this.city,
-      this.district,
-      this.street,
-      @JsonKey(name: 'building_number') this.buildingNumber,
-      @JsonKey(name: 'apartment_number') this.apartmentNumber,
-      this.landmark,
-      required this.lat,
-      required this.lng,
-      @JsonKey(name: 'is_default') this.isDefault = false})
-      : super._();
+  const _$AddressResponseImpl({
+    required this.id,
+    required this.label,
+    @JsonKey(name: 'full_address') required this.fullAddress,
+    required this.city,
+    this.district,
+    this.street,
+    @JsonKey(name: 'building_number') this.buildingNumber,
+    @JsonKey(name: 'apartment_number') this.apartmentNumber,
+    this.landmark,
+    required this.lat,
+    required this.lng,
+    @JsonKey(name: 'is_default') this.isDefault = false,
+  }) : super._();
 
   factory _$AddressResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$AddressResponseImplFromJson(json);
@@ -334,19 +345,20 @@ class _$AddressResponseImpl extends _AddressResponse {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      label,
-      fullAddress,
-      city,
-      district,
-      street,
-      buildingNumber,
-      apartmentNumber,
-      landmark,
-      lat,
-      lng,
-      isDefault);
+    runtimeType,
+    id,
+    label,
+    fullAddress,
+    city,
+    district,
+    street,
+    buildingNumber,
+    apartmentNumber,
+    landmark,
+    lat,
+    lng,
+    isDefault,
+  );
 
   /// Create a copy of AddressResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -355,31 +367,31 @@ class _$AddressResponseImpl extends _AddressResponse {
   @pragma('vm:prefer-inline')
   _$$AddressResponseImplCopyWith<_$AddressResponseImpl> get copyWith =>
       __$$AddressResponseImplCopyWithImpl<_$AddressResponseImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AddressResponseImplToJson(
-      this,
-    );
+    return _$$AddressResponseImplToJson(this);
   }
 }
 
 abstract class _AddressResponse extends AddressResponse {
-  const factory _AddressResponse(
-          {required final String id,
-          required final String label,
-          @JsonKey(name: 'full_address') required final String fullAddress,
-          required final String city,
-          final String? district,
-          final String? street,
-          @JsonKey(name: 'building_number') final String? buildingNumber,
-          @JsonKey(name: 'apartment_number') final String? apartmentNumber,
-          final String? landmark,
-          required final double lat,
-          required final double lng,
-          @JsonKey(name: 'is_default') final bool isDefault}) =
-      _$AddressResponseImpl;
+  const factory _AddressResponse({
+    required final String id,
+    required final String label,
+    @JsonKey(name: 'full_address') required final String fullAddress,
+    required final String city,
+    final String? district,
+    final String? street,
+    @JsonKey(name: 'building_number') final String? buildingNumber,
+    @JsonKey(name: 'apartment_number') final String? apartmentNumber,
+    final String? landmark,
+    required final double lat,
+    required final double lng,
+    @JsonKey(name: 'is_default') final bool isDefault,
+  }) = _$AddressResponseImpl;
   const _AddressResponse._() : super._();
 
   factory _AddressResponse.fromJson(Map<String, dynamic> json) =

@@ -235,7 +235,8 @@ void main() {
     expect(
       actualXml,
       expected,
-      reason: 'UBL output for "$fileName" no longer matches the golden. '
+      reason:
+          'UBL output for "$fileName" no longer matches the golden. '
           'If the change is intentional, rerun with UPDATE_GOLDENS=1 and '
           'review the diff carefully — this file has compliance weight.',
     );

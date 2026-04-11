@@ -60,9 +60,9 @@ void main() {
 
   group('appDatabaseProvider', () {
     test('provides AppDatabase from GetIt', () {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
       final db = container.read(appDatabaseProvider);
@@ -73,9 +73,9 @@ void main() {
 
   group('syncServiceProvider', () {
     test('provides SyncService', () {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
       final service = container.read(syncServiceProvider);
@@ -86,9 +86,9 @@ void main() {
 
   group('syncApiServiceProvider', () {
     test('returns null when SupabaseClient not registered', () {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
       // SupabaseClient is not registered in GetIt, so should return null

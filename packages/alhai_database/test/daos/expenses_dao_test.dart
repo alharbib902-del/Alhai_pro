@@ -34,24 +34,21 @@ void main() {
   group('ExpensesDao', () {
     test('insertExpense and getAllExpenses', () async {
       await db.expensesDao.insertExpense(makeExpense());
-      await db.expensesDao.insertExpense(makeExpense(
-        id: 'exp-2',
-        amount: 150.0,
-      ));
+      await db.expensesDao.insertExpense(
+        makeExpense(id: 'exp-2', amount: 150.0),
+      );
 
       final expenses = await db.expensesDao.getAllExpenses('store-1');
       expect(expenses, hasLength(2));
     });
 
     test('getExpensesByDateRange filters correctly', () async {
-      await db.expensesDao.insertExpense(makeExpense(
-        id: 'exp-jun',
-        expenseDate: DateTime(2025, 6, 15),
-      ));
-      await db.expensesDao.insertExpense(makeExpense(
-        id: 'exp-jul',
-        expenseDate: DateTime(2025, 7, 15),
-      ));
+      await db.expensesDao.insertExpense(
+        makeExpense(id: 'exp-jun', expenseDate: DateTime(2025, 6, 15)),
+      );
+      await db.expensesDao.insertExpense(
+        makeExpense(id: 'exp-jul', expenseDate: DateTime(2025, 7, 15)),
+      );
 
       final results = await db.expensesDao.getExpensesByDateRange(
         'store-1',

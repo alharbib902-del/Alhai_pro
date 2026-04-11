@@ -25,7 +25,8 @@ import 'package:alhai_auth/alhai_auth.dart';
 import '../../services/sale_service.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
-import '../../widgets/pos/split_payment_dialog.dart' as split_dlg
+import '../../widgets/pos/split_payment_dialog.dart'
+    as split_dlg
     show SplitPaymentDialog, PaymentSplit;
 import '../../providers/customer_display_providers.dart';
 import '../../services/customer_display/customer_display_state.dart';
@@ -110,8 +111,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
 
   /// بدء الاستماع لـ NFC إذا كانت الميزة مفعّلة
   void _startNfcListenerIfEnabled() {
-    final featureSettings =
-        ref.read(cashierFeatureSettingsProvider).valueOrNull;
+    final featureSettings = ref
+        .read(cashierFeatureSettingsProvider)
+        .valueOrNull;
     if (featureSettings?.enableNfcPayment != true) return;
 
     final nfcService = ref.read(nfcListenerServiceProvider);
@@ -127,7 +129,11 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
 
   /// تحديث شاشة العميل بحالة السلة
   void _updateCustomerDisplay(
-      CartState cartState, double subtotal, double tax, double discount) {
+    CartState cartState,
+    double subtotal,
+    double tax,
+    double discount,
+  ) {
     try {
       final displayService = ref.read(customerDisplayServiceProvider);
       if (!displayService.isEnabled) return;
@@ -235,8 +241,10 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     _updateCustomerDisplay(cartState, subtotal, tax, cartState.discount);
 
     // الاستماع لأحداث NFC
-    ref.listen<AsyncValue<NfcListenerEvent>>(nfcListenerStreamProvider,
-        (prev, next) {
+    ref.listen<AsyncValue<NfcListenerEvent>>(nfcListenerStreamProvider, (
+      prev,
+      next,
+    ) {
       next.whenData((event) {
         switch (event) {
           case NfcCompleted(:final result):
@@ -316,25 +324,25 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
               child: _showSuccess
                   ? PaymentSuccessState(scaleAnimation: _scaleAnimation)
                   : _isProcessing
-                      ? const PaymentProcessingState()
-                      : Column(
-                          children: [
-                            const OfflineBanner(),
-                            Expanded(
-                              child: _buildPaymentContent(
-                                total,
-                                subtotal,
-                                tax,
-                                discount,
-                                change,
-                                settings,
-                                loyaltySettings,
-                                loyaltyAccount,
-                                loyaltyDiscount,
-                              ),
-                            ),
-                          ],
+                  ? const PaymentProcessingState()
+                  : Column(
+                      children: [
+                        const OfflineBanner(),
+                        Expanded(
+                          child: _buildPaymentContent(
+                            total,
+                            subtotal,
+                            tax,
+                            discount,
+                            change,
+                            settings,
+                            loyaltySettings,
+                            loyaltyAccount,
+                            loyaltyDiscount,
+                          ),
                         ),
+                      ],
+                    ),
             ),
           ),
         ),
@@ -377,7 +385,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                   ),
                   const SizedBox(height: AppSpacing.lg),
                   _buildPaymentMethods(
-                      isOffline: _isOffline, settings: settings),
+                    isOffline: _isOffline,
+                    settings: settings,
+                  ),
                   const SizedBox(height: AppSpacing.xl),
                   PaymentLoyaltyWidget(
                     loyaltySettings: loyaltySettings,
@@ -437,7 +447,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
               Expanded(
                 child: SingleChildScrollView(
                   padding: EdgeInsets.all(
-                      isDesktop ? AppSpacing.xxl : AppSpacing.lg),
+                    isDesktop ? AppSpacing.xxl : AppSpacing.lg,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -450,7 +461,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                       ),
                       const SizedBox(height: AppSpacing.lg),
                       _buildPaymentMethods(
-                          isOffline: _isOffline, settings: settings),
+                        isOffline: _isOffline,
+                        settings: settings,
+                      ),
 
                       const SizedBox(height: AppSpacing.xl),
 
@@ -525,9 +538,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(color: theme.dividerColor),
-        ),
+        border: Border(bottom: BorderSide(color: theme.dividerColor)),
       ),
       child: Row(
         children: [
@@ -562,8 +573,11 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             ),
             child: Row(
               children: [
-                Icon(Icons.keyboard,
-                    size: 16, color: theme.colorScheme.onSurfaceVariant),
+                Icon(
+                  Icons.keyboard,
+                  size: 16,
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
                 const SizedBox(width: AppSpacing.xs),
                 Text(
                   l10n.enterToConfirm,
@@ -601,8 +615,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             decoration: BoxDecoration(
               color: AlhaiColors.warning.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(AppRadius.md),
-              border:
-                  Border.all(color: AlhaiColors.warning.withValues(alpha: 0.4)),
+              border: Border.all(
+                color: AlhaiColors.warning.withValues(alpha: 0.4),
+              ),
             ),
             child: Row(
               children: [
@@ -633,8 +648,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             decoration: BoxDecoration(
               color: AlhaiColors.info.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(AppRadius.md),
-              border:
-                  Border.all(color: AlhaiColors.info.withValues(alpha: 0.4)),
+              border: Border.all(
+                color: AlhaiColors.info.withValues(alpha: 0.4),
+              ),
             ),
             child: Row(
               children: [
@@ -682,16 +698,16 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 onTap: cardDisabled
                     ? null
                     : () => setState(() {
-                          _selectedMethod = PaymentMethod.card;
-                          _isSplitPayment = false;
-                          _splitPayments = [];
-                        }),
+                        _selectedMethod = PaymentMethod.card;
+                        _isSplitPayment = false;
+                        _splitPayments = [];
+                      }),
                 disabled: cardDisabled,
                 disabledLabel: isOffline
                     ? l10n.unavailableOffline
                     : !settings.hasCardPayment
-                        ? l10n.disabledInSettings
-                        : null,
+                    ? l10n.disabledInSettings
+                    : null,
               ),
             ),
             const SizedBox(width: AppSpacing.md),
@@ -706,10 +722,10 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 onTap: isOffline
                     ? null
                     : () => setState(() {
-                          _selectedMethod = PaymentMethod.wallet;
-                          _isSplitPayment = false;
-                          _splitPayments = [];
-                        }),
+                        _selectedMethod = PaymentMethod.wallet;
+                        _isSplitPayment = false;
+                        _splitPayments = [];
+                      }),
                 disabled: isOffline,
                 disabledLabel: isOffline ? l10n.unavailableOffline : null,
               ),
@@ -742,66 +758,75 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                   },
             icon: const Icon(Icons.call_split_rounded),
             label: _isSplitPayment
-                ? Text(AppLocalizations.of(context)
-                    .splitPaymentDone(_splitPayments.length))
+                ? Text(
+                    AppLocalizations.of(
+                      context,
+                    ).splitPaymentDone(_splitPayments.length),
+                  )
                 : Text(AppLocalizations.of(context).splitPaymentLabel),
             style: OutlinedButton.styleFrom(
-              foregroundColor:
-                  _isSplitPayment ? AppColors.success : AppColors.primary,
+              foregroundColor: _isSplitPayment
+                  ? AppColors.success
+                  : AppColors.primary,
               side: BorderSide(
-                  color:
-                      _isSplitPayment ? AppColors.success : AppColors.primary),
+                color: _isSplitPayment ? AppColors.success : AppColors.primary,
+              ),
               padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
             ),
           ),
         ),
         // مؤشر NFC (إذا كانت الميزة مفعّلة)
-        Builder(builder: (context) {
-          final featureSettings =
-              ref.watch(cashierFeatureSettingsProvider).valueOrNull;
-          if (featureSettings?.enableNfcPayment != true)
-            return const SizedBox.shrink();
+        Builder(
+          builder: (context) {
+            final featureSettings = ref
+                .watch(cashierFeatureSettingsProvider)
+                .valueOrNull;
+            if (featureSettings?.enableNfcPayment != true)
+              return const SizedBox.shrink();
 
-          final capability = ref.watch(nfcCapabilityProvider);
-          final bool isReady = capability.valueOrNull?.isReady ?? false;
-          final String? reason = capability.valueOrNull?.unavailableReason;
+            final capability = ref.watch(nfcCapabilityProvider);
+            final bool isReady = capability.valueOrNull?.isReady ?? false;
+            final String? reason = capability.valueOrNull?.unavailableReason;
 
-          final Color bannerColor =
-              isReady ? AlhaiColors.info : AlhaiColors.warning;
-          final String bannerText = isReady
-              ? 'الدفع اللاتلامسي مفعّل — يمكن للعميل تقريب البطاقة'
-              : reason ?? 'NFC غير متاح على هذا الجهاز';
-          final IconData bannerIcon =
-              isReady ? Icons.contactless_rounded : Icons.warning_amber_rounded;
+            final Color bannerColor = isReady
+                ? AlhaiColors.info
+                : AlhaiColors.warning;
+            final String bannerText = isReady
+                ? 'الدفع اللاتلامسي مفعّل — يمكن للعميل تقريب البطاقة'
+                : reason ?? 'NFC غير متاح على هذا الجهاز';
+            final IconData bannerIcon = isReady
+                ? Icons.contactless_rounded
+                : Icons.warning_amber_rounded;
 
-          return Container(
-            width: double.infinity,
-            margin: const EdgeInsets.only(top: AppSpacing.md),
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.lg,
-              vertical: AppSpacing.sm,
-            ),
-            decoration: BoxDecoration(
-              color: bannerColor.withValues(alpha: 0.06),
-              borderRadius: BorderRadius.circular(AppRadius.md),
-              border: Border.all(color: bannerColor.withValues(alpha: 0.3)),
-            ),
-            child: Row(
-              children: [
-                Icon(bannerIcon, size: 20, color: bannerColor),
-                const SizedBox(width: AppSpacing.sm),
-                Expanded(
-                  child: Text(
-                    bannerText,
-                    style: AppTypography.bodySmall.copyWith(
-                      color: bannerColor,
+            return Container(
+              width: double.infinity,
+              margin: const EdgeInsets.only(top: AppSpacing.md),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg,
+                vertical: AppSpacing.sm,
+              ),
+              decoration: BoxDecoration(
+                color: bannerColor.withValues(alpha: 0.06),
+                borderRadius: BorderRadius.circular(AppRadius.md),
+                border: Border.all(color: bannerColor.withValues(alpha: 0.3)),
+              ),
+              child: Row(
+                children: [
+                  Icon(bannerIcon, size: 20, color: bannerColor),
+                  const SizedBox(width: AppSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      bannerText,
+                      style: AppTypography.bodySmall.copyWith(
+                        color: bannerColor,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          );
-        }),
+                ],
+              ),
+            );
+          },
+        ),
       ],
     );
   }
@@ -844,13 +869,17 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 decoration: BoxDecoration(
                   color: AppColors.error.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(AppRadius.md),
-                  border:
-                      Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                  border: Border.all(
+                    color: AppColors.error.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.person_off,
-                        color: AppColors.error, size: 22),
+                    const Icon(
+                      Icons.person_off,
+                      color: AppColors.error,
+                      size: 22,
+                    ),
                     const SizedBox(width: AppSpacing.sm),
                     Expanded(
                       child: Text(
@@ -892,9 +921,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         // Summary Header
         Container(
           padding: const EdgeInsets.all(AppSpacing.lg),
-          decoration: const BoxDecoration(
-            color: AppColors.primarySurface,
-          ),
+          decoration: const BoxDecoration(color: AppColors.primarySurface),
           child: Row(
             children: [
               const Icon(Icons.receipt_long, color: AppColors.primary),
@@ -930,8 +957,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 if (loyaltyDiscount > 0) ...[
                   const SizedBox(height: AppSpacing.md),
                   PaymentSummaryRow(
-                    label: AppLocalizations.of(context)
-                        .loyaltyPointsDiscountLabel(_pointsToRedeem),
+                    label: AppLocalizations.of(
+                      context,
+                    ).loyaltyPointsDiscountLabel(_pointsToRedeem),
                     value: -loyaltyDiscount,
                     valueColor: AppColors.success,
                     icon: Icons.stars_rounded,
@@ -972,10 +1000,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        _getMethodIcon(),
-                        color: _getMethodColor(),
-                      ),
+                      Icon(_getMethodIcon(), color: _getMethodColor()),
                       const SizedBox(width: AppSpacing.sm),
                       Text(
                         _getMethodLabel(),
@@ -1001,13 +1026,13 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                     size: ButtonSize.large,
                     onPressed: _canConfirm(total)
                         ? () => _confirmPayment(
-                              total,
-                              loyaltyDiscount: loyaltyDiscount,
-                              loyaltyAccount: loyaltyAccount,
-                              loyaltySettings: loyaltySettings,
-                              storeId: storeId,
-                              cashierId: cashierId,
-                            )
+                            total,
+                            loyaltyDiscount: loyaltyDiscount,
+                            loyaltyAccount: loyaltyAccount,
+                            loyaltySettings: loyaltySettings,
+                            storeId: storeId,
+                            cashierId: cashierId,
+                          )
                         : null,
                     isLoading: _isProcessing,
                   ),
@@ -1056,9 +1081,13 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                   size: 20,
                 ),
                 const SizedBox(width: AlhaiSpacing.xs),
-                Text(l10n.whatsappReceipt,
-                    style: TextStyle(
-                        fontSize: 14, color: theme.colorScheme.onSurface)),
+                Text(
+                  l10n.whatsappReceipt,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
                 const SizedBox(width: AlhaiSpacing.xxs),
                 Icon(Icons.chat, size: 16, color: whatsAppColor),
               ],
@@ -1074,13 +1103,19 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             decoration: InputDecoration(
               prefixText: '+966 ',
               hintText: '5X XXX XXXX',
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
               contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.sm, vertical: 10),
+                horizontal: AlhaiSpacing.sm,
+                vertical: 10,
+              ),
               isDense: true,
-              suffixIcon:
-                  Icon(Icons.phone_android, size: 18, color: whatsAppColor),
+              suffixIcon: Icon(
+                Icons.phone_android,
+                size: 18,
+                color: whatsAppColor,
+              ),
             ),
             inputFormatters: [
               FilteringTextInputFormatter.digitsOnly,
@@ -1173,8 +1208,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
 
     try {
       final cartState = ref.read(cartStateProvider);
-      final resolvedStoreId =
-          storeId.isNotEmpty ? storeId : ref.read(currentStoreIdProvider) ?? '';
+      final resolvedStoreId = storeId.isNotEmpty
+          ? storeId
+          : ref.read(currentStoreIdProvider) ?? '';
       final resolvedCashierId = cashierId.isNotEmpty
           ? cashierId
           : ref.read(currentUserProvider)?.id ?? '';
@@ -1209,7 +1245,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       if (saleResult.hadPriceCorrections) {
         for (final correction in saleResult.priceCorrections) {
           debugPrint(
-              '[PaymentScreen] Price corrected at sale time: $correction');
+            '[PaymentScreen] Price corrected at sale time: $correction',
+          );
         }
       }
 
@@ -1230,8 +1267,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       String successMessage =
           '\u062A\u0645\u062A \u0627\u0644\u0639\u0645\u0644\u064A\u0629 \u0628\u0646\u062C\u0627\u062D';
       if (cartState.customerId != null && loyaltySettings.isEnabled) {
-        final pointsEarned =
-            ((subtotal + tax) * loyaltySettings.pointsPerRiyal).floor();
+        final pointsEarned = ((subtotal + tax) * loyaltySettings.pointsPerRiyal)
+            .floor();
         if (pointsEarned > 0) {
           successMessage =
               '\u062A\u0645\u062A \u0627\u0644\u0639\u0645\u0644\u064A\u0629 \u0628\u0646\u062C\u0627\u062D\n\u062A\u0645 \u0625\u0636\u0627\u0641\u0629 $pointsEarned \u0646\u0642\u0637\u0629';
@@ -1245,10 +1282,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       });
       // تحديث شاشة العميل - نجاح مع رسالة الولاء
       try {
-        ref.read(customerDisplayServiceProvider).showSuccess(
-              total: total,
-              message: successMessage,
-            );
+        ref
+            .read(customerDisplayServiceProvider)
+            .showSuccess(total: total, message: successMessage);
       } catch (_) {}
       _animationController.forward();
 
@@ -1265,11 +1301,13 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             receiptNo: saleId.substring(0, 8),
             date: DateTime.now(),
             items: cartState.items
-                .map((item) => ReceiptLineItem(
-                      name: item.product.name,
-                      quantity: item.quantity,
-                      total: item.total,
-                    ))
+                .map(
+                  (item) => ReceiptLineItem(
+                    name: item.product.name,
+                    quantity: item.quantity,
+                    total: item.total,
+                  ),
+                )
                 .toList(),
             subtotal: subtotal,
             tax: tax,
@@ -1280,15 +1318,16 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
           // Non-blocking - لا ننتظر النتيجة
           whatsappService
               .sendReceiptText(
-            phone: cartState.customerPhone!,
-            receiptText: receiptText,
-            saleId: saleId,
-          )
+                phone: cartState.customerPhone!,
+                receiptText: receiptText,
+                saleId: saleId,
+              )
               .catchError((Object e) {
-            debugPrint(
-                '[PaymentScreen] WhatsApp receipt failed (non-blocking): $e');
-            return '';
-          });
+                debugPrint(
+                  '[PaymentScreen] WhatsApp receipt failed (non-blocking): $e',
+                );
+                return '';
+              });
         } catch (e) {
           debugPrint('[PaymentScreen] WhatsApp service not available: $e');
         }
@@ -1358,12 +1397,14 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       LoyaltyPointsTableData? account = loyaltyAccount;
       if (account == null) {
         final newId = uuid.v4();
-        await db.loyaltyDao.createLoyalty(LoyaltyPointsTableCompanion.insert(
-          id: newId,
-          customerId: customerId,
-          storeId: storeId,
-          createdAt: DateTime.now(),
-        ));
+        await db.loyaltyDao.createLoyalty(
+          LoyaltyPointsTableCompanion.insert(
+            id: newId,
+            customerId: customerId,
+            storeId: storeId,
+            createdAt: DateTime.now(),
+          ),
+        );
         account = await db.loyaltyDao.getCustomerLoyalty(customerId, storeId);
         if (account == null) return;
       }
@@ -1377,8 +1418,10 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         );
 
         if (redeemed) {
-          final updatedAccount =
-              await db.loyaltyDao.getCustomerLoyalty(customerId, storeId);
+          final updatedAccount = await db.loyaltyDao.getCustomerLoyalty(
+            customerId,
+            storeId,
+          );
           await db.loyaltyDao.logTransaction(
             LoyaltyTransactionsTableCompanion.insert(
               id: uuid.v4(),
@@ -1399,12 +1442,14 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       }
 
       // 2. إضافة نقاط مكتسبة من هذا البيع
-      final earnedPoints =
-          (saleAmount * loyaltySettings.pointsPerRiyal).floor();
+      final earnedPoints = (saleAmount * loyaltySettings.pointsPerRiyal)
+          .floor();
       if (earnedPoints > 0) {
         await db.loyaltyDao.addPoints(customerId, storeId, earnedPoints);
-        final updatedAccount =
-            await db.loyaltyDao.getCustomerLoyalty(customerId, storeId);
+        final updatedAccount = await db.loyaltyDao.getCustomerLoyalty(
+          customerId,
+          storeId,
+        );
         await db.loyaltyDao.logTransaction(
           LoyaltyTransactionsTableCompanion.insert(
             id: uuid.v4(),

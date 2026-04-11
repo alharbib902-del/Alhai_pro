@@ -18,17 +18,13 @@ class TaxTotalBuilder {
     final totalVat = invoice.totalVatAmount;
 
     // First TaxTotal: total tax amount only (for display)
-    final firstTaxTotal = XmlElement(
-      XmlName('TaxTotal', 'cac'),
-      [],
-      [
-        _cbcElement(
-          'TaxAmount',
-          _fmtAmount(totalVat),
-          attributes: {'currencyID': currencyCode},
-        ),
-      ],
-    );
+    final firstTaxTotal = XmlElement(XmlName('TaxTotal', 'cac'), [], [
+      _cbcElement(
+        'TaxAmount',
+        _fmtAmount(totalVat),
+        attributes: {'currencyID': currencyCode},
+      ),
+    ]);
 
     // Second TaxTotal: includes TaxSubtotal breakdown by category
     final groups = _groupByVatCategory(invoice.lines);
@@ -40,10 +36,7 @@ class TaxTotalBuilder {
         0.0,
         (sum, l) => sum + l.lineNetAmount,
       );
-      final taxAmount = lines.fold<double>(
-        0.0,
-        (sum, l) => sum + l.vatAmount,
-      );
+      final taxAmount = lines.fold<double>(0.0, (sum, l) => sum + l.vatAmount);
       final vatRate = lines.first.vatRate;
       final vatCategoryCode = lines.first.vatCategoryCode;
       final exemptionReason = lines.first.vatExemptionReason;
@@ -62,18 +55,14 @@ class TaxTotalBuilder {
       );
     }
 
-    final secondTaxTotal = XmlElement(
-      XmlName('TaxTotal', 'cac'),
-      [],
-      [
-        _cbcElement(
-          'TaxAmount',
-          _fmtAmount(totalVat),
-          attributes: {'currencyID': currencyCode},
-        ),
-        ...subtotals,
-      ],
-    );
+    final secondTaxTotal = XmlElement(XmlName('TaxTotal', 'cac'), [], [
+      _cbcElement(
+        'TaxAmount',
+        _fmtAmount(totalVat),
+        attributes: {'currencyID': currencyCode},
+      ),
+      ...subtotals,
+    ]);
 
     return [firstTaxTotal, secondTaxTotal];
   }
@@ -106,34 +95,22 @@ class TaxTotalBuilder {
     }
 
     taxCategoryChildren.add(
-      XmlElement(
-        XmlName('TaxScheme', 'cac'),
-        [],
-        [_cbcElement('ID', 'VAT')],
-      ),
+      XmlElement(XmlName('TaxScheme', 'cac'), [], [_cbcElement('ID', 'VAT')]),
     );
 
-    return XmlElement(
-      XmlName('TaxSubtotal', 'cac'),
-      [],
-      [
-        _cbcElement(
-          'TaxableAmount',
-          _fmtAmount(taxableAmount),
-          attributes: {'currencyID': currencyCode},
-        ),
-        _cbcElement(
-          'TaxAmount',
-          _fmtAmount(taxAmount),
-          attributes: {'currencyID': currencyCode},
-        ),
-        XmlElement(
-          XmlName('TaxCategory', 'cac'),
-          [],
-          taxCategoryChildren,
-        ),
-      ],
-    );
+    return XmlElement(XmlName('TaxSubtotal', 'cac'), [], [
+      _cbcElement(
+        'TaxableAmount',
+        _fmtAmount(taxableAmount),
+        attributes: {'currencyID': currencyCode},
+      ),
+      _cbcElement(
+        'TaxAmount',
+        _fmtAmount(taxAmount),
+        attributes: {'currencyID': currencyCode},
+      ),
+      XmlElement(XmlName('TaxCategory', 'cac'), [], taxCategoryChildren),
+    ]);
   }
 
   /// Group invoice lines by VAT category code and rate
@@ -159,8 +136,7 @@ class TaxTotalBuilder {
   }) {
     return XmlElement(
       XmlName(name, 'cbc'),
-      (attributes ?? {})
-          .entries
+      (attributes ?? {}).entries
           .map((e) => XmlAttribute(XmlName(e.key), e.value))
           .toList(),
       [XmlText(text)],

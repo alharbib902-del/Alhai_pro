@@ -156,7 +156,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> get initComplete => _initCompleter.future;
 
   AuthNotifier(this._authRepository, [this._supabaseClient])
-      : super(const AuthState()) {
+    : super(const AuthState()) {
     _listenToSupabaseAuth();
     _checkAuthStatus();
   }
@@ -197,7 +197,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
               if (refreshed != null) {
                 final newExpiry = refreshed.expiresAt != null
                     ? DateTime.fromMillisecondsSinceEpoch(
-                        refreshed.expiresAt! * 1000)
+                        refreshed.expiresAt! * 1000,
+                      )
                     : DateTime.now().add(kSessionDuration);
                 await SecureStorageService.saveTokens(
                   accessToken: refreshed.accessToken,
@@ -256,7 +257,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       if (kDebugMode) {
         debugPrint(
-            '🔄 Supabase auth event: $event, session: ${session != null}');
+          '🔄 Supabase auth event: $event, session: ${session != null}',
+        );
       }
 
       // AUTH-GUARD FIX: resolve role from public.users on EVERY relevant
@@ -264,7 +266,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
       // demotions take effect after a refresh. Previously role was
       // hardcoded to UserRole.employee which made super-admin login
       // impossible and broke the router guard.
-      final shouldHandle = (event == AuthChangeEvent.initialSession ||
+      final shouldHandle =
+          (event == AuthChangeEvent.initialSession ||
               event == AuthChangeEvent.tokenRefreshed ||
               event == AuthChangeEvent.signedIn) &&
           session != null;
@@ -285,7 +288,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
             user: User(
               id: session.user.id,
               phone: session.user.phone ?? '',
-              name: session.user.userMetadata?['name'] as String? ??
+              name:
+                  session.user.userMetadata?['name'] as String? ??
                   session.user.phone ??
                   '',
               email: session.user.email,
@@ -390,7 +394,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
             user: User(
               id: session.user.id,
               phone: session.user.phone ?? '',
-              name: session.user.userMetadata?['name'] as String? ??
+              name:
+                  session.user.userMetadata?['name'] as String? ??
                   session.user.phone ??
                   '',
               email: session.user.email,
@@ -402,7 +407,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
           _startSessionMonitor();
           if (kDebugMode) {
             debugPrint(
-                '✅ Auth restored from Supabase session (role=$resolvedRole)');
+              '✅ Auth restored from Supabase session (role=$resolvedRole)',
+            );
           }
           return;
         }
@@ -426,17 +432,20 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
       if (kDebugMode) {
         final hasToken = await SecureStorageService.getAccessToken() != null;
-        debugPrint('📋 SecureStorage check: valid=$isSessionValid, '
-            'token=${hasToken ? "exists" : "null"}, '
-            'userId=${savedUserId ?? "null"}, '
-            'expiry=${savedExpiry?.toIso8601String() ?? "null"}');
+        debugPrint(
+          '📋 SecureStorage check: valid=$isSessionValid, '
+          'token=${hasToken ? "exists" : "null"}, '
+          'userId=${savedUserId ?? "null"}, '
+          'expiry=${savedExpiry?.toIso8601String() ?? "null"}',
+        );
       }
 
       if (!isSessionValid) {
         if (_supabaseClient != null && kIsWeb) {
           if (kDebugMode) {
             debugPrint(
-                '⏳ SecureStorage session expired, waiting for Supabase auth event...');
+              '⏳ SecureStorage session expired, waiting for Supabase auth event...',
+            );
           }
           state = const AuthState(status: AuthStatus.unauthenticated);
           return;
@@ -478,7 +487,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
         if (kDebugMode) {
           debugPrint(
-              '✅ Auth restored from SecureStorage for user: $savedUserId');
+            '✅ Auth restored from SecureStorage for user: $savedUserId',
+          );
         }
 
         if (state.needsRefresh) {
@@ -544,7 +554,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
       if (!sessionCheck.allowed) {
         state = state.copyWith(
-          error: sessionCheck.reason ??
+          error:
+              sessionCheck.reason ??
               'تم تجاوز الحد الأقصى للأجهزة المتصلة ($_maxConcurrentSessions). '
                   'يرجى تسجيل الخروج من جهاز آخر أولاً.',
         );
@@ -614,10 +625,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
 
       // حفظ بيانات المستخدم
-      await SecureStorageService.saveUserData(
-        userId: phone,
-        storeId: '',
-      );
+      await SecureStorageService.saveUserData(userId: phone, storeId: '');
 
       state = AuthState(
         status: AuthStatus.authenticated,
@@ -675,7 +683,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final cleanPhone = phone.replaceAll('+', '');
 
       debugPrint(
-          '📞 checkCashierByPhone: phone=$phone → cleanPhone=$cleanPhone');
+        '📞 checkCashierByPhone: phone=$phone → cleanPhone=$cleanPhone',
+      );
 
       final result = await _supabaseClient.rpc(
         'check_cashier_by_phone',
@@ -728,10 +737,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
           expiry: expiry,
         );
         final userId = response.user?.id ?? '';
-        await SecureStorageService.saveUserData(
-          userId: userId,
-          storeId: '',
-        );
+        await SecureStorageService.saveUserData(userId: userId, storeId: '');
 
         // AUTH-GUARD FIX: resolve role from public.users and reflect
         // it in AuthState immediately. Previously this method only
@@ -745,7 +751,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
             user: User(
               id: userId,
               phone: response.user?.phone ?? '',
-              name: response.user?.userMetadata?['name'] as String? ??
+              name:
+                  response.user?.userMetadata?['name'] as String? ??
                   response.user?.email ??
                   email,
               email: response.user?.email ?? email,
@@ -785,9 +792,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       if (_supabaseClient == null) return false;
 
-      await _supabaseClient.auth.signInWithOtp(
-        phone: phone,
-      );
+      await _supabaseClient.auth.signInWithOtp(phone: phone);
       return true;
     } catch (e) {
       if (kDebugMode) {
@@ -1007,16 +1012,14 @@ class ConcurrentSessionGuard {
         return SessionCheckResult(
           allowed: false,
           activeSessions: activeSessions,
-          reason: 'لديك $activeSessions أجهزة متصلة حالياً. '
+          reason:
+              'لديك $activeSessions أجهزة متصلة حالياً. '
               'الحد الأقصى هو $_maxConcurrentSessions أجهزة. '
               'يرجى تسجيل الخروج من جهاز آخر أولاً.',
         );
       }
 
-      return SessionCheckResult(
-        allowed: true,
-        activeSessions: activeSessions,
-      );
+      return SessionCheckResult(allowed: true, activeSessions: activeSessions);
     } catch (e) {
       // إذا فشل الاستعلام (الجدول غير موجود، شبكة، إلخ) → السماح
       // لتجنب حظر المستخدمين بسبب خطأ في الشبكة

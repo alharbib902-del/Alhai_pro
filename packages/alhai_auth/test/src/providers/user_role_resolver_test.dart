@@ -31,9 +31,13 @@ void main() {
 
     test('(c) missing user row (null) → safe default employee', () {
       expect(parseUserRoleFromDb(null), kDefaultUserRole);
-      expect(kDefaultUserRole, UserRole.employee,
-          reason: 'Safe default must be the lowest-privilege role so that '
-              'any super-admin gating still refuses unknown users.');
+      expect(
+        kDefaultUserRole,
+        UserRole.employee,
+        reason:
+            'Safe default must be the lowest-privilege role so that '
+            'any super-admin gating still refuses unknown users.',
+      );
     });
 
     test('(c2) empty string row → safe default employee', () {
@@ -46,8 +50,7 @@ void main() {
       expect(parseUserRoleFromDb('root'), UserRole.employee);
     });
 
-    test(
-        '(d) role change after token refresh is picked up '
+    test('(d) role change after token refresh is picked up '
         '(same helper returns new enum when DB value changes)', () {
       // Simulate: user was employee, then promoted to super_admin on
       // the server. On the next tokenRefreshed event, _resolveUserRole

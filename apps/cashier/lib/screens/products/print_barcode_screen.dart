@@ -59,8 +59,11 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
         });
       }
     } catch (e, stack) {
-      reportError(e,
-          stackTrace: stack, hint: 'Search products for barcode print');
+      reportError(
+        e,
+        stackTrace: stack,
+        hint: 'Search products for barcode print',
+      );
       if (mounted) {
         setState(() => _isSearching = false);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -89,8 +92,9 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -100,7 +104,8 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(
-                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+            ),
             child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
           ),
         ),
@@ -113,8 +118,12 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
     return '${now.day}/${now.month}/${now.year} \u2022 ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
-      AppLocalizations l10n) {
+  Widget _buildContent(
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     if (isWideScreen) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -184,8 +193,11 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.search_rounded,
-                    color: AppColors.primary, size: 20),
+                child: const Icon(
+                  Icons.search_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -209,8 +221,10 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                   decoration: InputDecoration(
                     hintText: l10n.searchByNameOrBarcode,
                     hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
-                    prefixIcon: Icon(Icons.search_rounded,
-                        color: AppColors.getTextMuted(isDark)),
+                    prefixIcon: Icon(
+                      Icons.search_rounded,
+                      color: AppColors.getTextMuted(isDark),
+                    ),
                     suffixIcon: _searchController.text.isNotEmpty
                         ? IconButton(
                             onPressed: () {
@@ -220,8 +234,10 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                                 _selectedProduct = null;
                               });
                             },
-                            icon: Icon(Icons.clear_rounded,
-                                color: AppColors.getTextMuted(isDark)),
+                            icon: Icon(
+                              Icons.clear_rounded,
+                              color: AppColors.getTextMuted(isDark),
+                            ),
                             tooltip: l10n.clearField,
                           )
                         : null,
@@ -229,21 +245,27 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                     fillColor: AppColors.getSurfaceVariant(isDark),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          BorderSide(color: AppColors.getBorder(isDark)),
+                      borderSide: BorderSide(
+                        color: AppColors.getBorder(isDark),
+                      ),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          BorderSide(color: AppColors.getBorder(isDark)),
+                      borderSide: BorderSide(
+                        color: AppColors.getBorder(isDark),
+                      ),
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          const BorderSide(color: AppColors.primary, width: 2),
+                      borderSide: const BorderSide(
+                        color: AppColors.primary,
+                        width: 2,
+                      ),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.md, vertical: 14),
+                      horizontal: AlhaiSpacing.md,
+                      vertical: 14,
+                    ),
                   ),
                 ),
               ),
@@ -255,7 +277,8 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
                         content: Text(
-                            AppLocalizations.of(context).enterBarcodeManually),
+                          AppLocalizations.of(context).enterBarcodeManually,
+                        ),
                         backgroundColor: AppColors.info,
                       ),
                     );
@@ -266,7 +289,8 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                     backgroundColor: AppColors.info,
                     foregroundColor: AppColors.textOnPrimary,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
@@ -302,12 +326,14 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
             },
             child: Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.mdl, vertical: 14),
+                horizontal: AlhaiSpacing.mdl,
+                vertical: 14,
+              ),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                      color:
-                          AppColors.getBorder(isDark).withValues(alpha: 0.5)),
+                    color: AppColors.getBorder(isDark).withValues(alpha: 0.5),
+                  ),
                 ),
               ),
               child: Row(
@@ -320,33 +346,45 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     alignment: Alignment.center,
-                    child: const Icon(Icons.inventory_2_outlined,
-                        color: AppColors.primary, size: 20),
+                    child: const Icon(
+                      Icons.inventory_2_outlined,
+                      color: AppColors.primary,
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(product.name,
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.getTextPrimary(isDark))),
+                        Text(
+                          product.name,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.getTextPrimary(isDark),
+                          ),
+                        ),
                         if (product.barcode != null)
-                          Text(product.barcode!,
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: AppColors.getTextMuted(isDark),
-                                  fontFamily: 'monospace')),
+                          Text(
+                            product.barcode!,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppColors.getTextMuted(isDark),
+                              fontFamily: 'monospace',
+                            ),
+                          ),
                       ],
                     ),
                   ),
-                  Text('${product.price.toStringAsFixed(2)} ${l10n.sar}',
-                      style: const TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.primary)),
+                  Text(
+                    '${product.price.toStringAsFixed(2)} ${l10n.sar}',
+                    style: const TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.primary,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -377,8 +415,11 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.qr_code_rounded,
-                    color: AppColors.info, size: 20),
+                child: const Icon(
+                  Icons.qr_code_rounded,
+                  color: AppColors.info,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -396,14 +437,21 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
             Center(
               child: Column(
                 children: [
-                  Icon(Icons.qr_code_2_rounded,
-                      size: 64,
-                      color: AppColors.getTextMuted(isDark)
-                          .withValues(alpha: 0.3)),
+                  Icon(
+                    Icons.qr_code_2_rounded,
+                    size: 64,
+                    color: AppColors.getTextMuted(
+                      isDark,
+                    ).withValues(alpha: 0.3),
+                  ),
                   const SizedBox(height: AlhaiSpacing.sm),
-                  Text(l10n.selectProductFirst,
-                      style: TextStyle(
-                          fontSize: 13, color: AppColors.getTextMuted(isDark))),
+                  Text(
+                    l10n.selectProductFirst,
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColors.getTextMuted(isDark),
+                    ),
+                  ),
                 ],
               ),
             )
@@ -451,10 +499,9 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                     product.name,
                     style: TextStyle(
                       fontSize: 12,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withValues(alpha: 0.54),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.54),
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -480,14 +527,18 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline_rounded,
-                      size: 16, color: AppColors.getTextMuted(isDark)),
+                  Icon(
+                    Icons.info_outline_rounded,
+                    size: 16,
+                    color: AppColors.getTextMuted(isDark),
+                  ),
                   const SizedBox(width: AlhaiSpacing.xs),
                   Text(
                     'Format: EAN-13',
                     style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.getTextSecondary(isDark)),
+                      fontSize: 12,
+                      color: AppColors.getTextSecondary(isDark),
+                    ),
                   ),
                 ],
               ),
@@ -517,8 +568,11 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.content_copy_rounded,
-                    color: AppColors.warning, size: 20),
+                child: const Icon(
+                  Icons.content_copy_rounded,
+                  color: AppColors.warning,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -559,8 +613,10 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: AppColors.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
               ),
               filled: true,
               fillColor: AppColors.getSurfaceVariant(isDark),
@@ -582,7 +638,9 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.md, vertical: 10),
+                      horizontal: AlhaiSpacing.md,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.primary.withValues(alpha: 0.1)
@@ -617,24 +675,30 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
-        onPressed:
-            _isPrinting || _selectedProduct == null ? null : _printBarcode,
+        onPressed: _isPrinting || _selectedProduct == null
+            ? null
+            : _printBarcode,
         icon: _isPrinting
             ? const SizedBox(
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: AppColors.textOnPrimary),
+                  strokeWidth: 2,
+                  color: AppColors.textOnPrimary,
+                ),
               )
             : const Icon(Icons.print_rounded, size: 20),
-        label: Text(l10n.printLabels,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        label: Text(
+          l10n.printLabels,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
     );

@@ -32,20 +32,20 @@ class PurchaseDetailData {
 /// قائمة جميع المشتريات (legacy - kept for backward compat)
 final purchasesListProvider =
     FutureProvider.autoDispose<List<PurchasesTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
-  final db = GetIt.I<AppDatabase>();
-  return db.purchasesDao.getAllPurchases(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
+      final db = GetIt.I<AppDatabase>();
+      return db.purchasesDao.getAllPurchases(storeId);
+    });
 
 /// المشتريات حسب الحالة (legacy - kept for backward compat)
 final purchasesByStatusProvider = FutureProvider.autoDispose
     .family<List<PurchasesTableData>, String>((ref, status) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
-  final db = GetIt.I<AppDatabase>();
-  return db.purchasesDao.getPurchasesByStatus(storeId, status);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
+      final db = GetIt.I<AppDatabase>();
+      return db.purchasesDao.getPurchasesByStatus(storeId, status);
+    });
 
 // ============================================================================
 // PAGINATED PROVIDERS
@@ -91,40 +91,51 @@ class PaginatedPurchases {
 /// Paginated purchases provider (all statuses or filtered)
 final paginatedPurchasesProvider = FutureProvider.autoDispose
     .family<PaginatedPurchases, PurchasesPageParams>((ref, params) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) {
-    return const PaginatedPurchases(
-        items: [], totalCount: 0, currentPage: 1, pageSize: 20);
-  }
-  final db = GetIt.I<AppDatabase>();
-  final offset = (params.page - 1) * params.pageSize;
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) {
+        return const PaginatedPurchases(
+          items: [],
+          totalCount: 0,
+          currentPage: 1,
+          pageSize: 20,
+        );
+      }
+      final db = GetIt.I<AppDatabase>();
+      final offset = (params.page - 1) * params.pageSize;
 
-  final results = await Future.wait([
-    params.status == null
-        ? db.purchasesDao.getPurchasesPaginated(storeId,
-            offset: offset, limit: params.pageSize)
-        : db.purchasesDao.getPurchasesByStatusPaginated(storeId, params.status!,
-            offset: offset, limit: params.pageSize),
-    db.purchasesDao.getPurchasesCount(storeId, status: params.status),
-  ]);
+      final results = await Future.wait([
+        params.status == null
+            ? db.purchasesDao.getPurchasesPaginated(
+                storeId,
+                offset: offset,
+                limit: params.pageSize,
+              )
+            : db.purchasesDao.getPurchasesByStatusPaginated(
+                storeId,
+                params.status!,
+                offset: offset,
+                limit: params.pageSize,
+              ),
+        db.purchasesDao.getPurchasesCount(storeId, status: params.status),
+      ]);
 
-  return PaginatedPurchases(
-    items: results[0] as List<PurchasesTableData>,
-    totalCount: results[1] as int,
-    currentPage: params.page,
-    pageSize: params.pageSize,
-  );
-});
+      return PaginatedPurchases(
+        items: results[0] as List<PurchasesTableData>,
+        totalCount: results[1] as int,
+        currentPage: params.page,
+        pageSize: params.pageSize,
+      );
+    });
 
 /// تفاصيل مشتريات واحدة
 final purchaseDetailProvider = FutureProvider.autoDispose
     .family<PurchaseDetailData?, String>((ref, id) async {
-  final db = GetIt.I<AppDatabase>();
-  final purchase = await db.purchasesDao.getPurchaseById(id);
-  if (purchase == null) return null;
-  final items = await db.purchasesDao.getPurchaseItems(id);
-  return PurchaseDetailData(purchase: purchase, items: items);
-});
+      final db = GetIt.I<AppDatabase>();
+      final purchase = await db.purchasesDao.getPurchaseById(id);
+      if (purchase == null) return null;
+      final items = await db.purchasesDao.getPurchaseItems(id);
+      return PurchaseDetailData(purchase: purchase, items: items);
+    });
 
 // ============================================================================
 // ACTION HELPERS
@@ -149,43 +160,47 @@ Future<String> createPurchase(
   final id = _uuid.v4();
   final purchaseNumber = 'PO-${DateTime.now().millisecondsSinceEpoch}';
 
-  await db.purchasesDao.insertPurchase(PurchasesTableCompanion(
-    id: Value(id),
-    storeId: Value(storeId),
-    supplierId: Value(supplierId),
-    supplierName: Value(supplierName),
-    purchaseNumber: Value(purchaseNumber),
-    status: const Value('draft'),
-    subtotal: Value(subtotal),
-    tax: Value(tax),
-    discount: Value(discount),
-    total: Value(total),
-    notes: Value(notes),
-    createdAt: Value(DateTime.now()),
-  ));
+  await db.purchasesDao.insertPurchase(
+    PurchasesTableCompanion(
+      id: Value(id),
+      storeId: Value(storeId),
+      supplierId: Value(supplierId),
+      supplierName: Value(supplierName),
+      purchaseNumber: Value(purchaseNumber),
+      status: const Value('draft'),
+      subtotal: Value(subtotal),
+      tax: Value(tax),
+      discount: Value(discount),
+      total: Value(total),
+      notes: Value(notes),
+      createdAt: Value(DateTime.now()),
+    ),
+  );
 
   if (items.isNotEmpty) {
     await db.purchasesDao.insertPurchaseItems(items);
   }
 
   try {
-    await ref.read(syncServiceProvider).enqueueCreate(
-      tableName: 'purchases',
-      recordId: id,
-      data: {
-        'id': id,
-        'store_id': storeId,
-        'supplier_id': supplierId,
-        'supplier_name': supplierName,
-        'purchase_number': purchaseNumber,
-        'status': 'draft',
-        'subtotal': subtotal,
-        'tax': tax,
-        'discount': discount,
-        'total': total,
-        'notes': notes,
-      },
-    );
+    await ref
+        .read(syncServiceProvider)
+        .enqueueCreate(
+          tableName: 'purchases',
+          recordId: id,
+          data: {
+            'id': id,
+            'store_id': storeId,
+            'supplier_id': supplierId,
+            'supplier_name': supplierName,
+            'purchase_number': purchaseNumber,
+            'status': 'draft',
+            'subtotal': subtotal,
+            'tax': tax,
+            'discount': discount,
+            'total': total,
+            'notes': notes,
+          },
+        );
   } catch (e) {
     debugPrint('فشل إضافة المشتريات لطابور المزامنة: $e');
   }
@@ -200,15 +215,17 @@ Future<void> receivePurchase(WidgetRef ref, String id) async {
   await db.purchasesDao.receivePurchase(id);
 
   try {
-    await ref.read(syncServiceProvider).enqueueUpdate(
-      tableName: 'purchases',
-      recordId: id,
-      changes: {
-        'id': id,
-        'status': 'received',
-        'received_at': DateTime.now().toIso8601String(),
-      },
-    );
+    await ref
+        .read(syncServiceProvider)
+        .enqueueUpdate(
+          tableName: 'purchases',
+          recordId: id,
+          changes: {
+            'id': id,
+            'status': 'received',
+            'received_at': DateTime.now().toIso8601String(),
+          },
+        );
   } catch (e) {
     debugPrint('فشل إضافة استلام المشتريات لطابور المزامنة: $e');
   }
@@ -237,15 +254,17 @@ Future<void> sendToDistributor(
   }
 
   try {
-    await ref.read(syncServiceProvider).enqueueUpdate(
-      tableName: 'purchases',
-      recordId: purchaseId,
-      changes: {
-        'id': purchaseId,
-        'status': 'sent',
-        'updated_at': DateTime.now().toIso8601String(),
-      },
-    );
+    await ref
+        .read(syncServiceProvider)
+        .enqueueUpdate(
+          tableName: 'purchases',
+          recordId: purchaseId,
+          changes: {
+            'id': purchaseId,
+            'status': 'sent',
+            'updated_at': DateTime.now().toIso8601String(),
+          },
+        );
   } catch (e) {
     debugPrint('فشل إضافة إرسال الطلب لطابور المزامنة: $e');
   }
@@ -304,15 +323,17 @@ Future<void> receivePurchaseWithDetails(
 
   // 4. مزامنة
   try {
-    await ref.read(syncServiceProvider).enqueueUpdate(
-      tableName: 'purchases',
-      recordId: purchaseId,
-      changes: {
-        'id': purchaseId,
-        'status': 'received',
-        'received_at': DateTime.now().toIso8601String(),
-      },
-    );
+    await ref
+        .read(syncServiceProvider)
+        .enqueueUpdate(
+          tableName: 'purchases',
+          recordId: purchaseId,
+          changes: {
+            'id': purchaseId,
+            'status': 'received',
+            'received_at': DateTime.now().toIso8601String(),
+          },
+        );
   } catch (e) {
     debugPrint('فشل إضافة استلام المشتريات لطابور المزامنة: $e');
   }

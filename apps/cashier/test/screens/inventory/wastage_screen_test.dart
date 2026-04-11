@@ -26,11 +26,13 @@ void main() {
     setupTestGetIt(mockDb: db);
 
     // Default stubs
-    when(() => productsDao.searchProducts(any(), any()))
-        .thenAnswer((_) async => []);
+    when(
+      () => productsDao.searchProducts(any(), any()),
+    ).thenAnswer((_) async => []);
     when(() => inventoryDao.insertMovement(any())).thenAnswer((_) async => 1);
-    when(() => productsDao.updateStock(any(), any()))
-        .thenAnswer((_) async => 1);
+    when(
+      () => productsDao.updateStock(any(), any()),
+    ).thenAnswer((_) async => 1);
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -74,16 +76,19 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.text(
-              '\u0627\u0644\u0643\u0645\u064a\u0629 \u0627\u0644\u0645\u0647\u062f\u0631\u0629'),
-          findsOneWidget);
+        find.text(
+          '\u0627\u0644\u0643\u0645\u064a\u0629 \u0627\u0644\u0645\u0647\u062f\u0631\u0629',
+        ),
+        findsOneWidget,
+      );
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('displays reason selection with wastage reasons',
-        (tester) async {
+    testWidgets('displays reason selection with wastage reasons', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
@@ -108,18 +113,23 @@ void main() {
 
       expect(find.text('\u0635\u0648\u0631\u0629'), findsOneWidget);
       expect(
-          find.text(
-              '\u0627\u0646\u0642\u0631 \u0644\u0627\u0644\u062a\u0642\u0627\u0637 \u0635\u0648\u0631\u0629'),
-          findsOneWidget);
-      expect(find.text('\u0627\u062e\u062a\u064a\u0627\u0631\u064a'),
-          findsWidgets);
+        find.text(
+          '\u0627\u0646\u0642\u0631 \u0644\u0627\u0644\u062a\u0642\u0627\u0637 \u0635\u0648\u0631\u0629',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text('\u0627\u062e\u062a\u064a\u0627\u0631\u064a'),
+        findsWidgets,
+      );
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('record wastage button is disabled without data',
-        (tester) async {
+    testWidgets('record wastage button is disabled without data', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
@@ -128,9 +138,11 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.text(
-              '\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u0647\u062f\u0631'),
-          findsOneWidget);
+        find.text(
+          '\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u0647\u062f\u0631',
+        ),
+        findsOneWidget,
+      );
 
       // Find the last FilledButton (Record Wastage)
       // FilledButton.icon creates a subclass, so use predicate

@@ -45,8 +45,9 @@ class LiteDailySalesScreen extends ConsumerWidget {
         child: dataAsync.when(
           data: (data) => SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
-            padding:
-                EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+            padding: EdgeInsets.all(
+              isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -63,8 +64,12 @@ class LiteDailySalesScreen extends ConsumerWidget {
                     final pct = data.todayStats.total > 0
                         ? '${(pm.total / data.todayStats.total * 100).toStringAsFixed(0)}%'
                         : '';
-                    return _BreakdownRow(pm.method, pm.total.toStringAsFixed(0),
-                        pct, AlhaiColors.info);
+                    return _BreakdownRow(
+                      pm.method,
+                      pm.total.toStringAsFixed(0),
+                      pct,
+                      AlhaiColors.info,
+                    );
                   }).toList(),
                 ),
                 const SizedBox(height: AlhaiSpacing.lg),
@@ -74,8 +79,12 @@ class LiteDailySalesScreen extends ConsumerWidget {
                   Icons.star_rounded,
                   isDark,
                   data.topProducts.map((p) {
-                    return _BreakdownRow(p.name, p.price.toStringAsFixed(0), '',
-                        AlhaiColors.primary);
+                    return _BreakdownRow(
+                      p.name,
+                      p.price.toStringAsFixed(0),
+                      '',
+                      AlhaiColors.primary,
+                    );
                   }).toList(),
                 ),
                 const SizedBox(height: AlhaiSpacing.lg),
@@ -97,24 +106,33 @@ class LiteDailySalesScreen extends ConsumerWidget {
   }
 
   Widget _buildError(
-      BuildContext context, WidgetRef ref, bool isDark, AppLocalizations l10n) {
+    BuildContext context,
+    WidgetRef ref,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AlhaiSpacing.massive),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline_rounded,
-                size: 48,
-                color: isDark
-                    ? Colors.white30
-                    : Theme.of(context).colorScheme.outlineVariant),
+            Icon(
+              Icons.error_outline_rounded,
+              size: 48,
+              color: isDark
+                  ? Colors.white30
+                  : Theme.of(context).colorScheme.outlineVariant,
+            ),
             const SizedBox(height: AlhaiSpacing.md),
-            Text(l10n.errorOccurred,
-                style: TextStyle(
-                    color: isDark
-                        ? Colors.white54
-                        : Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(
+              l10n.errorOccurred,
+              style: TextStyle(
+                color: isDark
+                    ? Colors.white54
+                    : Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
             const SizedBox(height: AlhaiSpacing.sm),
             TextButton.icon(
               onPressed: () => ref.invalidate(liteDailySalesProvider),
@@ -130,24 +148,42 @@ class LiteDailySalesScreen extends ConsumerWidget {
   Widget _buildDateHeader(bool isDark, AppLocalizations l10n) {
     final now = DateTime.now();
     return Builder(
-        builder: (context) => Text(
-              '${l10n.today} \u2022 ${now.day}/${now.month}/${now.year}',
-              style: TextStyle(
-                fontSize: 14,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-              ),
-            ));
+      builder: (context) => Text(
+        '${l10n.today} \u2022 ${now.day}/${now.month}/${now.year}',
+        style: TextStyle(
+          fontSize: 14,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        ),
+      ),
+    );
   }
 
-  Widget _buildTotalsRow(BuildContext context, bool isDark, bool isMobile,
-      AppLocalizations l10n, DailySalesData data) {
+  Widget _buildTotalsRow(
+    BuildContext context,
+    bool isDark,
+    bool isMobile,
+    AppLocalizations l10n,
+    DailySalesData data,
+  ) {
     final items = [
-      _TotalItem(l10n.totalSales, data.todayStats.total.toStringAsFixed(0),
-          AlhaiColors.success, Icons.trending_up),
-      _TotalItem(l10n.orders, '${data.todayStats.count}', AlhaiColors.info,
-          Icons.receipt),
-      _TotalItem(l10n.refund, data.refundStats.total.toStringAsFixed(0),
-          AlhaiColors.error, Icons.undo),
+      _TotalItem(
+        l10n.totalSales,
+        data.todayStats.total.toStringAsFixed(0),
+        AlhaiColors.success,
+        Icons.trending_up,
+      ),
+      _TotalItem(
+        l10n.orders,
+        '${data.todayStats.count}',
+        AlhaiColors.info,
+        Icons.receipt,
+      ),
+      _TotalItem(
+        l10n.refund,
+        data.refundStats.total.toStringAsFixed(0),
+        AlhaiColors.error,
+        Icons.undo,
+      ),
     ];
 
     return Row(
@@ -246,65 +282,73 @@ class LiteDailySalesScreen extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: AlhaiSpacing.md),
-          ...rows.map((row) => Padding(
-                padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 4,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: row.color,
-                        borderRadius: BorderRadius.circular(2),
-                      ),
+          ...rows.map(
+            (row) => Padding(
+              padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+              child: Row(
+                children: [
+                  Container(
+                    width: 4,
+                    height: 24,
+                    decoration: BoxDecoration(
+                      color: row.color,
+                      borderRadius: BorderRadius.circular(2),
                     ),
-                    const SizedBox(width: AlhaiSpacing.sm),
-                    Expanded(
-                      child: Text(
-                        row.label,
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: isDark
-                              ? Colors.white
-                              : Theme.of(context).colorScheme.onSurface,
-                        ),
-                      ),
-                    ),
-                    Text(
-                      row.value,
+                  ),
+                  const SizedBox(width: AlhaiSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      row.label,
                       style: TextStyle(
-                        fontWeight: FontWeight.bold,
                         fontSize: 14,
                         color: isDark
                             ? Colors.white
                             : Theme.of(context).colorScheme.onSurface,
                       ),
                     ),
-                    if (row.extra.isNotEmpty) ...[
-                      const SizedBox(width: AlhaiSpacing.xs),
-                      Text(
-                        row.extra,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).colorScheme.outline,
-                        ),
+                  ),
+                  Text(
+                    row.value,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                      color: isDark
+                          ? Colors.white
+                          : Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  if (row.extra.isNotEmpty) ...[
+                    const SizedBox(width: AlhaiSpacing.xs),
+                    Text(
+                      row.extra,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.outline,
                       ),
-                    ],
+                    ),
                   ],
-                ),
-              )),
+                ],
+              ),
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildHourlyChart(BuildContext context, bool isDark,
-      AppLocalizations l10n, List<dynamic> hourlySales) {
+  Widget _buildHourlyChart(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+    List<dynamic> hourlySales,
+  ) {
     // Build normalized bars from hourly sales data
     final maxTotal = hourlySales.isEmpty
         ? 1.0
         : hourlySales.fold<double>(
-            0, (max, h) => h.total > max ? h.total : max);
+            0,
+            (max, h) => h.total > max ? h.total : max,
+          );
     final bars = hourlySales.isEmpty
         ? List.filled(12, 0.0)
         : List.generate(12, (i) {
@@ -332,8 +376,11 @@ class LiteDailySalesScreen extends ConsumerWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.access_time,
-                  size: 18, color: AlhaiColors.primary),
+              const Icon(
+                Icons.access_time,
+                size: 18,
+                color: AlhaiColors.primary,
+              ),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.sales,
@@ -359,7 +406,8 @@ class LiteDailySalesScreen extends ConsumerWidget {
                       decoration: BoxDecoration(
                         color: AlhaiColors.info.withValues(alpha: 0.6),
                         borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(4)),
+                          top: Radius.circular(4),
+                        ),
                       ),
                     ),
                   ),
@@ -374,7 +422,9 @@ class LiteDailySalesScreen extends ConsumerWidget {
               return Text(
                 h,
                 style: TextStyle(
-                    fontSize: 10, color: Theme.of(context).colorScheme.outline),
+                  fontSize: 10,
+                  color: Theme.of(context).colorScheme.outline,
+                ),
               );
             }).toList(),
           ),

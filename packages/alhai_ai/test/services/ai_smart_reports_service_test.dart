@@ -128,8 +128,9 @@ void main() {
     });
 
     test('generates category distribution report', () {
-      final report =
-          AiSmartReportsService.generateReport('category_distribution');
+      final report = AiSmartReportsService.generateReport(
+        'category_distribution',
+      );
       expect(report.chartType, ChartType.pieChart);
       expect(report.data, isNotEmpty);
       expect(report.unit, '%');
@@ -159,8 +160,9 @@ void main() {
     });
 
     test('default template falls back to daily sales', () {
-      final report =
-          AiSmartReportsService.generateReport('nonexistent_template');
+      final report = AiSmartReportsService.generateReport(
+        'nonexistent_template',
+      );
       expect(report.templateId, 'daily_sales');
     });
 

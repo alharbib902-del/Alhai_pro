@@ -12,7 +12,8 @@ part of 'sales_report.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 SalesSummary _$SalesSummaryFromJson(Map<String, dynamic> json) {
   return _SalesSummary.fromJson(json);
@@ -42,18 +43,20 @@ mixin _$SalesSummary {
 /// @nodoc
 abstract class $SalesSummaryCopyWith<$Res> {
   factory $SalesSummaryCopyWith(
-          SalesSummary value, $Res Function(SalesSummary) then) =
-      _$SalesSummaryCopyWithImpl<$Res, SalesSummary>;
+    SalesSummary value,
+    $Res Function(SalesSummary) then,
+  ) = _$SalesSummaryCopyWithImpl<$Res, SalesSummary>;
   @useResult
-  $Res call(
-      {DateTime date,
-      int ordersCount,
-      int itemsSold,
-      double revenue,
-      double cost,
-      double profit,
-      double discounts,
-      double returns});
+  $Res call({
+    DateTime date,
+    int ordersCount,
+    int itemsSold,
+    double revenue,
+    double cost,
+    double profit,
+    double discounts,
+    double returns,
+  });
 }
 
 /// @nodoc
@@ -80,40 +83,43 @@ class _$SalesSummaryCopyWithImpl<$Res, $Val extends SalesSummary>
     Object? discounts = null,
     Object? returns = null,
   }) {
-    return _then(_value.copyWith(
-      date: null == date
-          ? _value.date
-          : date // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      ordersCount: null == ordersCount
-          ? _value.ordersCount
-          : ordersCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      itemsSold: null == itemsSold
-          ? _value.itemsSold
-          : itemsSold // ignore: cast_nullable_to_non_nullable
-              as int,
-      revenue: null == revenue
-          ? _value.revenue
-          : revenue // ignore: cast_nullable_to_non_nullable
-              as double,
-      cost: null == cost
-          ? _value.cost
-          : cost // ignore: cast_nullable_to_non_nullable
-              as double,
-      profit: null == profit
-          ? _value.profit
-          : profit // ignore: cast_nullable_to_non_nullable
-              as double,
-      discounts: null == discounts
-          ? _value.discounts
-          : discounts // ignore: cast_nullable_to_non_nullable
-              as double,
-      returns: null == returns
-          ? _value.returns
-          : returns // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            date: null == date
+                ? _value.date
+                : date // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            ordersCount: null == ordersCount
+                ? _value.ordersCount
+                : ordersCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            itemsSold: null == itemsSold
+                ? _value.itemsSold
+                : itemsSold // ignore: cast_nullable_to_non_nullable
+                      as int,
+            revenue: null == revenue
+                ? _value.revenue
+                : revenue // ignore: cast_nullable_to_non_nullable
+                      as double,
+            cost: null == cost
+                ? _value.cost
+                : cost // ignore: cast_nullable_to_non_nullable
+                      as double,
+            profit: null == profit
+                ? _value.profit
+                : profit // ignore: cast_nullable_to_non_nullable
+                      as double,
+            discounts: null == discounts
+                ? _value.discounts
+                : discounts // ignore: cast_nullable_to_non_nullable
+                      as double,
+            returns: null == returns
+                ? _value.returns
+                : returns // ignore: cast_nullable_to_non_nullable
+                      as double,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -121,19 +127,21 @@ class _$SalesSummaryCopyWithImpl<$Res, $Val extends SalesSummary>
 abstract class _$$SalesSummaryImplCopyWith<$Res>
     implements $SalesSummaryCopyWith<$Res> {
   factory _$$SalesSummaryImplCopyWith(
-          _$SalesSummaryImpl value, $Res Function(_$SalesSummaryImpl) then) =
-      __$$SalesSummaryImplCopyWithImpl<$Res>;
+    _$SalesSummaryImpl value,
+    $Res Function(_$SalesSummaryImpl) then,
+  ) = __$$SalesSummaryImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {DateTime date,
-      int ordersCount,
-      int itemsSold,
-      double revenue,
-      double cost,
-      double profit,
-      double discounts,
-      double returns});
+  $Res call({
+    DateTime date,
+    int ordersCount,
+    int itemsSold,
+    double revenue,
+    double cost,
+    double profit,
+    double discounts,
+    double returns,
+  });
 }
 
 /// @nodoc
@@ -141,8 +149,9 @@ class __$$SalesSummaryImplCopyWithImpl<$Res>
     extends _$SalesSummaryCopyWithImpl<$Res, _$SalesSummaryImpl>
     implements _$$SalesSummaryImplCopyWith<$Res> {
   __$$SalesSummaryImplCopyWithImpl(
-      _$SalesSummaryImpl _value, $Res Function(_$SalesSummaryImpl) _then)
-      : super(_value, _then);
+    _$SalesSummaryImpl _value,
+    $Res Function(_$SalesSummaryImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of SalesSummary
   /// with the given fields replaced by the non-null parameter values.
@@ -158,56 +167,58 @@ class __$$SalesSummaryImplCopyWithImpl<$Res>
     Object? discounts = null,
     Object? returns = null,
   }) {
-    return _then(_$SalesSummaryImpl(
-      date: null == date
-          ? _value.date
-          : date // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      ordersCount: null == ordersCount
-          ? _value.ordersCount
-          : ordersCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      itemsSold: null == itemsSold
-          ? _value.itemsSold
-          : itemsSold // ignore: cast_nullable_to_non_nullable
-              as int,
-      revenue: null == revenue
-          ? _value.revenue
-          : revenue // ignore: cast_nullable_to_non_nullable
-              as double,
-      cost: null == cost
-          ? _value.cost
-          : cost // ignore: cast_nullable_to_non_nullable
-              as double,
-      profit: null == profit
-          ? _value.profit
-          : profit // ignore: cast_nullable_to_non_nullable
-              as double,
-      discounts: null == discounts
-          ? _value.discounts
-          : discounts // ignore: cast_nullable_to_non_nullable
-              as double,
-      returns: null == returns
-          ? _value.returns
-          : returns // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
+    return _then(
+      _$SalesSummaryImpl(
+        date: null == date
+            ? _value.date
+            : date // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        ordersCount: null == ordersCount
+            ? _value.ordersCount
+            : ordersCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        itemsSold: null == itemsSold
+            ? _value.itemsSold
+            : itemsSold // ignore: cast_nullable_to_non_nullable
+                  as int,
+        revenue: null == revenue
+            ? _value.revenue
+            : revenue // ignore: cast_nullable_to_non_nullable
+                  as double,
+        cost: null == cost
+            ? _value.cost
+            : cost // ignore: cast_nullable_to_non_nullable
+                  as double,
+        profit: null == profit
+            ? _value.profit
+            : profit // ignore: cast_nullable_to_non_nullable
+                  as double,
+        discounts: null == discounts
+            ? _value.discounts
+            : discounts // ignore: cast_nullable_to_non_nullable
+                  as double,
+        returns: null == returns
+            ? _value.returns
+            : returns // ignore: cast_nullable_to_non_nullable
+                  as double,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$SalesSummaryImpl extends _SalesSummary {
-  const _$SalesSummaryImpl(
-      {required this.date,
-      required this.ordersCount,
-      required this.itemsSold,
-      required this.revenue,
-      required this.cost,
-      required this.profit,
-      this.discounts = 0,
-      this.returns = 0})
-      : super._();
+  const _$SalesSummaryImpl({
+    required this.date,
+    required this.ordersCount,
+    required this.itemsSold,
+    required this.revenue,
+    required this.cost,
+    required this.profit,
+    this.discounts = 0,
+    this.returns = 0,
+  }) : super._();
 
   factory _$SalesSummaryImpl.fromJson(Map<String, dynamic> json) =>
       _$$SalesSummaryImplFromJson(json);
@@ -256,8 +267,17 @@ class _$SalesSummaryImpl extends _SalesSummary {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, date, ordersCount, itemsSold,
-      revenue, cost, profit, discounts, returns);
+  int get hashCode => Object.hash(
+    runtimeType,
+    date,
+    ordersCount,
+    itemsSold,
+    revenue,
+    cost,
+    profit,
+    discounts,
+    returns,
+  );
 
   /// Create a copy of SalesSummary
   /// with the given fields replaced by the non-null parameter values.
@@ -269,22 +289,21 @@ class _$SalesSummaryImpl extends _SalesSummary {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$SalesSummaryImplToJson(
-      this,
-    );
+    return _$$SalesSummaryImplToJson(this);
   }
 }
 
 abstract class _SalesSummary extends SalesSummary {
-  const factory _SalesSummary(
-      {required final DateTime date,
-      required final int ordersCount,
-      required final int itemsSold,
-      required final double revenue,
-      required final double cost,
-      required final double profit,
-      final double discounts,
-      final double returns}) = _$SalesSummaryImpl;
+  const factory _SalesSummary({
+    required final DateTime date,
+    required final int ordersCount,
+    required final int itemsSold,
+    required final double revenue,
+    required final double cost,
+    required final double profit,
+    final double discounts,
+    final double returns,
+  }) = _$SalesSummaryImpl;
   const _SalesSummary._() : super._();
 
   factory _SalesSummary.fromJson(Map<String, dynamic> json) =
@@ -342,17 +361,19 @@ mixin _$ProductSales {
 /// @nodoc
 abstract class $ProductSalesCopyWith<$Res> {
   factory $ProductSalesCopyWith(
-          ProductSales value, $Res Function(ProductSales) then) =
-      _$ProductSalesCopyWithImpl<$Res, ProductSales>;
+    ProductSales value,
+    $Res Function(ProductSales) then,
+  ) = _$ProductSalesCopyWithImpl<$Res, ProductSales>;
   @useResult
-  $Res call(
-      {String productId,
-      String productName,
-      String? categoryId,
-      int quantitySold,
-      double revenue,
-      double cost,
-      double profit});
+  $Res call({
+    String productId,
+    String productName,
+    String? categoryId,
+    int quantitySold,
+    double revenue,
+    double cost,
+    double profit,
+  });
 }
 
 /// @nodoc
@@ -378,36 +399,39 @@ class _$ProductSalesCopyWithImpl<$Res, $Val extends ProductSales>
     Object? cost = null,
     Object? profit = null,
   }) {
-    return _then(_value.copyWith(
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      productName: null == productName
-          ? _value.productName
-          : productName // ignore: cast_nullable_to_non_nullable
-              as String,
-      categoryId: freezed == categoryId
-          ? _value.categoryId
-          : categoryId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      quantitySold: null == quantitySold
-          ? _value.quantitySold
-          : quantitySold // ignore: cast_nullable_to_non_nullable
-              as int,
-      revenue: null == revenue
-          ? _value.revenue
-          : revenue // ignore: cast_nullable_to_non_nullable
-              as double,
-      cost: null == cost
-          ? _value.cost
-          : cost // ignore: cast_nullable_to_non_nullable
-              as double,
-      profit: null == profit
-          ? _value.profit
-          : profit // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            productId: null == productId
+                ? _value.productId
+                : productId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            productName: null == productName
+                ? _value.productName
+                : productName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            categoryId: freezed == categoryId
+                ? _value.categoryId
+                : categoryId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            quantitySold: null == quantitySold
+                ? _value.quantitySold
+                : quantitySold // ignore: cast_nullable_to_non_nullable
+                      as int,
+            revenue: null == revenue
+                ? _value.revenue
+                : revenue // ignore: cast_nullable_to_non_nullable
+                      as double,
+            cost: null == cost
+                ? _value.cost
+                : cost // ignore: cast_nullable_to_non_nullable
+                      as double,
+            profit: null == profit
+                ? _value.profit
+                : profit // ignore: cast_nullable_to_non_nullable
+                      as double,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -415,18 +439,20 @@ class _$ProductSalesCopyWithImpl<$Res, $Val extends ProductSales>
 abstract class _$$ProductSalesImplCopyWith<$Res>
     implements $ProductSalesCopyWith<$Res> {
   factory _$$ProductSalesImplCopyWith(
-          _$ProductSalesImpl value, $Res Function(_$ProductSalesImpl) then) =
-      __$$ProductSalesImplCopyWithImpl<$Res>;
+    _$ProductSalesImpl value,
+    $Res Function(_$ProductSalesImpl) then,
+  ) = __$$ProductSalesImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String productId,
-      String productName,
-      String? categoryId,
-      int quantitySold,
-      double revenue,
-      double cost,
-      double profit});
+  $Res call({
+    String productId,
+    String productName,
+    String? categoryId,
+    int quantitySold,
+    double revenue,
+    double cost,
+    double profit,
+  });
 }
 
 /// @nodoc
@@ -434,8 +460,9 @@ class __$$ProductSalesImplCopyWithImpl<$Res>
     extends _$ProductSalesCopyWithImpl<$Res, _$ProductSalesImpl>
     implements _$$ProductSalesImplCopyWith<$Res> {
   __$$ProductSalesImplCopyWithImpl(
-      _$ProductSalesImpl _value, $Res Function(_$ProductSalesImpl) _then)
-      : super(_value, _then);
+    _$ProductSalesImpl _value,
+    $Res Function(_$ProductSalesImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of ProductSales
   /// with the given fields replaced by the non-null parameter values.
@@ -450,51 +477,53 @@ class __$$ProductSalesImplCopyWithImpl<$Res>
     Object? cost = null,
     Object? profit = null,
   }) {
-    return _then(_$ProductSalesImpl(
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      productName: null == productName
-          ? _value.productName
-          : productName // ignore: cast_nullable_to_non_nullable
-              as String,
-      categoryId: freezed == categoryId
-          ? _value.categoryId
-          : categoryId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      quantitySold: null == quantitySold
-          ? _value.quantitySold
-          : quantitySold // ignore: cast_nullable_to_non_nullable
-              as int,
-      revenue: null == revenue
-          ? _value.revenue
-          : revenue // ignore: cast_nullable_to_non_nullable
-              as double,
-      cost: null == cost
-          ? _value.cost
-          : cost // ignore: cast_nullable_to_non_nullable
-              as double,
-      profit: null == profit
-          ? _value.profit
-          : profit // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
+    return _then(
+      _$ProductSalesImpl(
+        productId: null == productId
+            ? _value.productId
+            : productId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        productName: null == productName
+            ? _value.productName
+            : productName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        categoryId: freezed == categoryId
+            ? _value.categoryId
+            : categoryId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        quantitySold: null == quantitySold
+            ? _value.quantitySold
+            : quantitySold // ignore: cast_nullable_to_non_nullable
+                  as int,
+        revenue: null == revenue
+            ? _value.revenue
+            : revenue // ignore: cast_nullable_to_non_nullable
+                  as double,
+        cost: null == cost
+            ? _value.cost
+            : cost // ignore: cast_nullable_to_non_nullable
+                  as double,
+        profit: null == profit
+            ? _value.profit
+            : profit // ignore: cast_nullable_to_non_nullable
+                  as double,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$ProductSalesImpl extends _ProductSales {
-  const _$ProductSalesImpl(
-      {required this.productId,
-      required this.productName,
-      this.categoryId,
-      required this.quantitySold,
-      required this.revenue,
-      required this.cost,
-      required this.profit})
-      : super._();
+  const _$ProductSalesImpl({
+    required this.productId,
+    required this.productName,
+    this.categoryId,
+    required this.quantitySold,
+    required this.revenue,
+    required this.cost,
+    required this.profit,
+  }) : super._();
 
   factory _$ProductSalesImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProductSalesImplFromJson(json);
@@ -539,8 +568,16 @@ class _$ProductSalesImpl extends _ProductSales {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, productId, productName,
-      categoryId, quantitySold, revenue, cost, profit);
+  int get hashCode => Object.hash(
+    runtimeType,
+    productId,
+    productName,
+    categoryId,
+    quantitySold,
+    revenue,
+    cost,
+    profit,
+  );
 
   /// Create a copy of ProductSales
   /// with the given fields replaced by the non-null parameter values.
@@ -552,21 +589,20 @@ class _$ProductSalesImpl extends _ProductSales {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ProductSalesImplToJson(
-      this,
-    );
+    return _$$ProductSalesImplToJson(this);
   }
 }
 
 abstract class _ProductSales extends ProductSales {
-  const factory _ProductSales(
-      {required final String productId,
-      required final String productName,
-      final String? categoryId,
-      required final int quantitySold,
-      required final double revenue,
-      required final double cost,
-      required final double profit}) = _$ProductSalesImpl;
+  const factory _ProductSales({
+    required final String productId,
+    required final String productName,
+    final String? categoryId,
+    required final int quantitySold,
+    required final double revenue,
+    required final double cost,
+    required final double profit,
+  }) = _$ProductSalesImpl;
   const _ProductSales._() : super._();
 
   factory _ProductSales.fromJson(Map<String, dynamic> json) =
@@ -620,15 +656,17 @@ mixin _$CategorySales {
 /// @nodoc
 abstract class $CategorySalesCopyWith<$Res> {
   factory $CategorySalesCopyWith(
-          CategorySales value, $Res Function(CategorySales) then) =
-      _$CategorySalesCopyWithImpl<$Res, CategorySales>;
+    CategorySales value,
+    $Res Function(CategorySales) then,
+  ) = _$CategorySalesCopyWithImpl<$Res, CategorySales>;
   @useResult
-  $Res call(
-      {String categoryId,
-      String categoryName,
-      int productsSold,
-      double revenue,
-      double profit});
+  $Res call({
+    String categoryId,
+    String categoryName,
+    int productsSold,
+    double revenue,
+    double profit,
+  });
 }
 
 /// @nodoc
@@ -652,28 +690,31 @@ class _$CategorySalesCopyWithImpl<$Res, $Val extends CategorySales>
     Object? revenue = null,
     Object? profit = null,
   }) {
-    return _then(_value.copyWith(
-      categoryId: null == categoryId
-          ? _value.categoryId
-          : categoryId // ignore: cast_nullable_to_non_nullable
-              as String,
-      categoryName: null == categoryName
-          ? _value.categoryName
-          : categoryName // ignore: cast_nullable_to_non_nullable
-              as String,
-      productsSold: null == productsSold
-          ? _value.productsSold
-          : productsSold // ignore: cast_nullable_to_non_nullable
-              as int,
-      revenue: null == revenue
-          ? _value.revenue
-          : revenue // ignore: cast_nullable_to_non_nullable
-              as double,
-      profit: null == profit
-          ? _value.profit
-          : profit // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            categoryId: null == categoryId
+                ? _value.categoryId
+                : categoryId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            categoryName: null == categoryName
+                ? _value.categoryName
+                : categoryName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            productsSold: null == productsSold
+                ? _value.productsSold
+                : productsSold // ignore: cast_nullable_to_non_nullable
+                      as int,
+            revenue: null == revenue
+                ? _value.revenue
+                : revenue // ignore: cast_nullable_to_non_nullable
+                      as double,
+            profit: null == profit
+                ? _value.profit
+                : profit // ignore: cast_nullable_to_non_nullable
+                      as double,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -681,16 +722,18 @@ class _$CategorySalesCopyWithImpl<$Res, $Val extends CategorySales>
 abstract class _$$CategorySalesImplCopyWith<$Res>
     implements $CategorySalesCopyWith<$Res> {
   factory _$$CategorySalesImplCopyWith(
-          _$CategorySalesImpl value, $Res Function(_$CategorySalesImpl) then) =
-      __$$CategorySalesImplCopyWithImpl<$Res>;
+    _$CategorySalesImpl value,
+    $Res Function(_$CategorySalesImpl) then,
+  ) = __$$CategorySalesImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String categoryId,
-      String categoryName,
-      int productsSold,
-      double revenue,
-      double profit});
+  $Res call({
+    String categoryId,
+    String categoryName,
+    int productsSold,
+    double revenue,
+    double profit,
+  });
 }
 
 /// @nodoc
@@ -698,8 +741,9 @@ class __$$CategorySalesImplCopyWithImpl<$Res>
     extends _$CategorySalesCopyWithImpl<$Res, _$CategorySalesImpl>
     implements _$$CategorySalesImplCopyWith<$Res> {
   __$$CategorySalesImplCopyWithImpl(
-      _$CategorySalesImpl _value, $Res Function(_$CategorySalesImpl) _then)
-      : super(_value, _then);
+    _$CategorySalesImpl _value,
+    $Res Function(_$CategorySalesImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of CategorySales
   /// with the given fields replaced by the non-null parameter values.
@@ -712,40 +756,43 @@ class __$$CategorySalesImplCopyWithImpl<$Res>
     Object? revenue = null,
     Object? profit = null,
   }) {
-    return _then(_$CategorySalesImpl(
-      categoryId: null == categoryId
-          ? _value.categoryId
-          : categoryId // ignore: cast_nullable_to_non_nullable
-              as String,
-      categoryName: null == categoryName
-          ? _value.categoryName
-          : categoryName // ignore: cast_nullable_to_non_nullable
-              as String,
-      productsSold: null == productsSold
-          ? _value.productsSold
-          : productsSold // ignore: cast_nullable_to_non_nullable
-              as int,
-      revenue: null == revenue
-          ? _value.revenue
-          : revenue // ignore: cast_nullable_to_non_nullable
-              as double,
-      profit: null == profit
-          ? _value.profit
-          : profit // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
+    return _then(
+      _$CategorySalesImpl(
+        categoryId: null == categoryId
+            ? _value.categoryId
+            : categoryId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        categoryName: null == categoryName
+            ? _value.categoryName
+            : categoryName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        productsSold: null == productsSold
+            ? _value.productsSold
+            : productsSold // ignore: cast_nullable_to_non_nullable
+                  as int,
+        revenue: null == revenue
+            ? _value.revenue
+            : revenue // ignore: cast_nullable_to_non_nullable
+                  as double,
+        profit: null == profit
+            ? _value.profit
+            : profit // ignore: cast_nullable_to_non_nullable
+                  as double,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$CategorySalesImpl implements _CategorySales {
-  const _$CategorySalesImpl(
-      {required this.categoryId,
-      required this.categoryName,
-      required this.productsSold,
-      required this.revenue,
-      required this.profit});
+  const _$CategorySalesImpl({
+    required this.categoryId,
+    required this.categoryName,
+    required this.productsSold,
+    required this.revenue,
+    required this.profit,
+  });
 
   factory _$CategorySalesImpl.fromJson(Map<String, dynamic> json) =>
       _$$CategorySalesImplFromJson(json);
@@ -784,7 +831,13 @@ class _$CategorySalesImpl implements _CategorySales {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, categoryId, categoryName, productsSold, revenue, profit);
+    runtimeType,
+    categoryId,
+    categoryName,
+    productsSold,
+    revenue,
+    profit,
+  );
 
   /// Create a copy of CategorySales
   /// with the given fields replaced by the non-null parameter values.
@@ -796,19 +849,18 @@ class _$CategorySalesImpl implements _CategorySales {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CategorySalesImplToJson(
-      this,
-    );
+    return _$$CategorySalesImplToJson(this);
   }
 }
 
 abstract class _CategorySales implements CategorySales {
-  const factory _CategorySales(
-      {required final String categoryId,
-      required final String categoryName,
-      required final int productsSold,
-      required final double revenue,
-      required final double profit}) = _$CategorySalesImpl;
+  const factory _CategorySales({
+    required final String categoryId,
+    required final String categoryName,
+    required final int productsSold,
+    required final double revenue,
+    required final double profit,
+  }) = _$CategorySalesImpl;
 
   factory _CategorySales.fromJson(Map<String, dynamic> json) =
       _$CategorySalesImpl.fromJson;
@@ -858,16 +910,18 @@ mixin _$InventoryValue {
 /// @nodoc
 abstract class $InventoryValueCopyWith<$Res> {
   factory $InventoryValueCopyWith(
-          InventoryValue value, $Res Function(InventoryValue) then) =
-      _$InventoryValueCopyWithImpl<$Res, InventoryValue>;
+    InventoryValue value,
+    $Res Function(InventoryValue) then,
+  ) = _$InventoryValueCopyWithImpl<$Res, InventoryValue>;
   @useResult
-  $Res call(
-      {int totalProducts,
-      int totalUnits,
-      double costValue,
-      double retailValue,
-      int lowStockCount,
-      int outOfStockCount});
+  $Res call({
+    int totalProducts,
+    int totalUnits,
+    double costValue,
+    double retailValue,
+    int lowStockCount,
+    int outOfStockCount,
+  });
 }
 
 /// @nodoc
@@ -892,50 +946,55 @@ class _$InventoryValueCopyWithImpl<$Res, $Val extends InventoryValue>
     Object? lowStockCount = null,
     Object? outOfStockCount = null,
   }) {
-    return _then(_value.copyWith(
-      totalProducts: null == totalProducts
-          ? _value.totalProducts
-          : totalProducts // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalUnits: null == totalUnits
-          ? _value.totalUnits
-          : totalUnits // ignore: cast_nullable_to_non_nullable
-              as int,
-      costValue: null == costValue
-          ? _value.costValue
-          : costValue // ignore: cast_nullable_to_non_nullable
-              as double,
-      retailValue: null == retailValue
-          ? _value.retailValue
-          : retailValue // ignore: cast_nullable_to_non_nullable
-              as double,
-      lowStockCount: null == lowStockCount
-          ? _value.lowStockCount
-          : lowStockCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      outOfStockCount: null == outOfStockCount
-          ? _value.outOfStockCount
-          : outOfStockCount // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            totalProducts: null == totalProducts
+                ? _value.totalProducts
+                : totalProducts // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalUnits: null == totalUnits
+                ? _value.totalUnits
+                : totalUnits // ignore: cast_nullable_to_non_nullable
+                      as int,
+            costValue: null == costValue
+                ? _value.costValue
+                : costValue // ignore: cast_nullable_to_non_nullable
+                      as double,
+            retailValue: null == retailValue
+                ? _value.retailValue
+                : retailValue // ignore: cast_nullable_to_non_nullable
+                      as double,
+            lowStockCount: null == lowStockCount
+                ? _value.lowStockCount
+                : lowStockCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            outOfStockCount: null == outOfStockCount
+                ? _value.outOfStockCount
+                : outOfStockCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$InventoryValueImplCopyWith<$Res>
     implements $InventoryValueCopyWith<$Res> {
-  factory _$$InventoryValueImplCopyWith(_$InventoryValueImpl value,
-          $Res Function(_$InventoryValueImpl) then) =
-      __$$InventoryValueImplCopyWithImpl<$Res>;
+  factory _$$InventoryValueImplCopyWith(
+    _$InventoryValueImpl value,
+    $Res Function(_$InventoryValueImpl) then,
+  ) = __$$InventoryValueImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {int totalProducts,
-      int totalUnits,
-      double costValue,
-      double retailValue,
-      int lowStockCount,
-      int outOfStockCount});
+  $Res call({
+    int totalProducts,
+    int totalUnits,
+    double costValue,
+    double retailValue,
+    int lowStockCount,
+    int outOfStockCount,
+  });
 }
 
 /// @nodoc
@@ -943,8 +1002,9 @@ class __$$InventoryValueImplCopyWithImpl<$Res>
     extends _$InventoryValueCopyWithImpl<$Res, _$InventoryValueImpl>
     implements _$$InventoryValueImplCopyWith<$Res> {
   __$$InventoryValueImplCopyWithImpl(
-      _$InventoryValueImpl _value, $Res Function(_$InventoryValueImpl) _then)
-      : super(_value, _then);
+    _$InventoryValueImpl _value,
+    $Res Function(_$InventoryValueImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of InventoryValue
   /// with the given fields replaced by the non-null parameter values.
@@ -958,45 +1018,48 @@ class __$$InventoryValueImplCopyWithImpl<$Res>
     Object? lowStockCount = null,
     Object? outOfStockCount = null,
   }) {
-    return _then(_$InventoryValueImpl(
-      totalProducts: null == totalProducts
-          ? _value.totalProducts
-          : totalProducts // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalUnits: null == totalUnits
-          ? _value.totalUnits
-          : totalUnits // ignore: cast_nullable_to_non_nullable
-              as int,
-      costValue: null == costValue
-          ? _value.costValue
-          : costValue // ignore: cast_nullable_to_non_nullable
-              as double,
-      retailValue: null == retailValue
-          ? _value.retailValue
-          : retailValue // ignore: cast_nullable_to_non_nullable
-              as double,
-      lowStockCount: null == lowStockCount
-          ? _value.lowStockCount
-          : lowStockCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      outOfStockCount: null == outOfStockCount
-          ? _value.outOfStockCount
-          : outOfStockCount // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
+    return _then(
+      _$InventoryValueImpl(
+        totalProducts: null == totalProducts
+            ? _value.totalProducts
+            : totalProducts // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalUnits: null == totalUnits
+            ? _value.totalUnits
+            : totalUnits // ignore: cast_nullable_to_non_nullable
+                  as int,
+        costValue: null == costValue
+            ? _value.costValue
+            : costValue // ignore: cast_nullable_to_non_nullable
+                  as double,
+        retailValue: null == retailValue
+            ? _value.retailValue
+            : retailValue // ignore: cast_nullable_to_non_nullable
+                  as double,
+        lowStockCount: null == lowStockCount
+            ? _value.lowStockCount
+            : lowStockCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        outOfStockCount: null == outOfStockCount
+            ? _value.outOfStockCount
+            : outOfStockCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$InventoryValueImpl implements _InventoryValue {
-  const _$InventoryValueImpl(
-      {required this.totalProducts,
-      required this.totalUnits,
-      required this.costValue,
-      required this.retailValue,
-      required this.lowStockCount,
-      required this.outOfStockCount});
+  const _$InventoryValueImpl({
+    required this.totalProducts,
+    required this.totalUnits,
+    required this.costValue,
+    required this.retailValue,
+    required this.lowStockCount,
+    required this.outOfStockCount,
+  });
 
   factory _$InventoryValueImpl.fromJson(Map<String, dynamic> json) =>
       _$$InventoryValueImplFromJson(json);
@@ -1040,8 +1103,15 @@ class _$InventoryValueImpl implements _InventoryValue {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, totalProducts, totalUnits,
-      costValue, retailValue, lowStockCount, outOfStockCount);
+  int get hashCode => Object.hash(
+    runtimeType,
+    totalProducts,
+    totalUnits,
+    costValue,
+    retailValue,
+    lowStockCount,
+    outOfStockCount,
+  );
 
   /// Create a copy of InventoryValue
   /// with the given fields replaced by the non-null parameter values.
@@ -1050,24 +1120,25 @@ class _$InventoryValueImpl implements _InventoryValue {
   @pragma('vm:prefer-inline')
   _$$InventoryValueImplCopyWith<_$InventoryValueImpl> get copyWith =>
       __$$InventoryValueImplCopyWithImpl<_$InventoryValueImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$InventoryValueImplToJson(
-      this,
-    );
+    return _$$InventoryValueImplToJson(this);
   }
 }
 
 abstract class _InventoryValue implements InventoryValue {
-  const factory _InventoryValue(
-      {required final int totalProducts,
-      required final int totalUnits,
-      required final double costValue,
-      required final double retailValue,
-      required final int lowStockCount,
-      required final int outOfStockCount}) = _$InventoryValueImpl;
+  const factory _InventoryValue({
+    required final int totalProducts,
+    required final int totalUnits,
+    required final double costValue,
+    required final double retailValue,
+    required final int lowStockCount,
+    required final int outOfStockCount,
+  }) = _$InventoryValueImpl;
 
   factory _InventoryValue.fromJson(Map<String, dynamic> json) =
       _$InventoryValueImpl.fromJson;

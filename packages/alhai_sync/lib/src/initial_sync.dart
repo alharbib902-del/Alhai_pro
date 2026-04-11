@@ -117,9 +117,9 @@ class InitialSync {
     required SupabaseClient client,
     required AppDatabase db,
     required SyncMetadataDao metadataDao,
-  })  : _client = client,
-        _db = db,
-        _metadataDao = metadataDao;
+  }) : _client = client,
+       _db = db,
+       _metadataDao = metadataDao;
 
   /// Stream لحالة التقدم
   Stream<InitialSyncProgress> get progressStream => _progressController.stream;
@@ -156,11 +156,7 @@ class InitialSync {
 
     if (tablesToSync.isEmpty) {
       _emitProgress(const InitialSyncProgress(isComplete: true));
-      return InitialSyncResult(
-        success: true,
-        totalRecords: 0,
-        errors: [],
-      );
+      return InitialSyncResult(success: true, totalRecords: 0, errors: []);
     }
 
     final totalTables = tablesToSync.length;
@@ -172,8 +168,9 @@ class InitialSync {
       // تخطي الجدول إذا فشل أحد الجداول التي يعتمد عليها
       final deps = _tableDependencies[tableName];
       if (deps != null && deps.any((dep) => failedTables.contains(dep))) {
-        final failedDeps =
-            deps.where((dep) => failedTables.contains(dep)).toList();
+        final failedDeps = deps
+            .where((dep) => failedTables.contains(dep))
+            .toList();
         final skipMsg =
             '$tableName: skipped (dependency failed: ${failedDeps.join(", ")})';
         errors.add(skipMsg);
@@ -185,12 +182,14 @@ class InitialSync {
         continue;
       }
 
-      _emitProgress(InitialSyncProgress(
-        currentTable: tableName,
-        currentTableIndex: i,
-        totalTables: totalTables,
-        recordsDownloaded: totalRecords,
-      ));
+      _emitProgress(
+        InitialSyncProgress(
+          currentTable: tableName,
+          currentTableIndex: i,
+          totalTables: totalTables,
+          recordsDownloaded: totalRecords,
+        ),
+      );
 
       try {
         final count = await _downloadTable(
@@ -222,14 +221,16 @@ class InitialSync {
 
     final isComplete = errors.isEmpty;
 
-    _emitProgress(InitialSyncProgress(
-      currentTable: '',
-      currentTableIndex: totalTables,
-      totalTables: totalTables,
-      recordsDownloaded: totalRecords,
-      isComplete: isComplete,
-      error: errors.isNotEmpty ? errors.join('; ') : null,
-    ));
+    _emitProgress(
+      InitialSyncProgress(
+        currentTable: '',
+        currentTableIndex: totalTables,
+        totalTables: totalTables,
+        recordsDownloaded: totalRecords,
+        isComplete: isComplete,
+        error: errors.isNotEmpty ? errors.join('; ') : null,
+      ),
+    );
 
     // التحقق من سلامة البيانات
     if (isComplete) {
@@ -354,7 +355,9 @@ class InitialSync {
   /// يتم تعطيل Foreign Keys مؤقتاً أثناء المزامنة الأولية
   /// لأن البيانات قادمة من السيرفر وسلامتها مضمونة
   Future<void> _insertBatch(
-      String tableName, List<Map<String, dynamic>> records) async {
+    String tableName,
+    List<Map<String, dynamic>> records,
+  ) async {
     if (records.isEmpty) return;
     validateTableName(tableName);
 
@@ -398,7 +401,8 @@ class InitialSync {
       final orphanCount = orphanProducts.data['count'] as int? ?? 0;
       if (orphanCount > 0 && kDebugMode) {
         debugPrint(
-            'Warning: $orphanCount products have orphaned category references');
+          'Warning: $orphanCount products have orphaned category references',
+        );
       }
     } catch (e) {
       if (kDebugMode) {

@@ -11,8 +11,9 @@ final earningsPeriodProvider = StateProvider<EarningsPeriod>(
 );
 
 /// Earnings summary based on selected period.
-final earningsSummaryProvider =
-    FutureProvider<Map<String, dynamic>>((ref) async {
+final earningsSummaryProvider = FutureProvider<Map<String, dynamic>>((
+  ref,
+) async {
   final period = ref.watch(earningsPeriodProvider);
   final ds = GetIt.instance<EarningsDatasource>();
 

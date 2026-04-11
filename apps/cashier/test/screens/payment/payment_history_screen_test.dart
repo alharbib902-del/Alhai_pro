@@ -32,8 +32,9 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
-          .thenAnswer((_) async => <SalesTableData>[]);
+      when(
+        () => salesDao.getAllSales(any(), limit: any(named: 'limit')),
+      ).thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
 
@@ -46,8 +47,9 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
-          .thenAnswer((_) async => <SalesTableData>[]);
+      when(
+        () => salesDao.getAllSales(any(), limit: any(named: 'limit')),
+      ).thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
       await tester.pumpAndSettle();
@@ -61,8 +63,9 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
-          .thenAnswer((_) async => <SalesTableData>[]);
+      when(
+        () => salesDao.getAllSales(any(), limit: any(named: 'limit')),
+      ).thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
       await tester.pumpAndSettle();
@@ -77,8 +80,9 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
-          .thenAnswer((_) async => <SalesTableData>[]);
+      when(
+        () => salesDao.getAllSales(any(), limit: any(named: 'limit')),
+      ).thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
       await tester.pumpAndSettle();
@@ -110,8 +114,9 @@ void main() {
         ),
       ];
 
-      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
-          .thenAnswer((_) async => sales);
+      when(
+        () => salesDao.getAllSales(any(), limit: any(named: 'limit')),
+      ).thenAnswer((_) async => sales);
 
       await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
       await tester.pumpAndSettle();
@@ -129,22 +134,21 @@ void main() {
       suppressOverflowErrors();
 
       final sales = [
-        createTestSale(
-          id: 'sale-1',
-          total: 100.0,
-          status: 'completed',
-        ),
+        createTestSale(id: 'sale-1', total: 100.0, status: 'completed'),
       ];
 
-      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
-          .thenAnswer((_) async => sales);
+      when(
+        () => salesDao.getAllSales(any(), limit: any(named: 'limit')),
+      ).thenAnswer((_) async => sales);
 
       await tester.pumpWidget(createTestWidget(const PaymentHistoryScreen()));
       await tester.pumpAndSettle();
 
       // Summary stats should show "Payments" text (Arabic l10n)
-      expect(find.text('\u0627\u0644\u062f\u0641\u0639\u0627\u062a'),
-          findsOneWidget);
+      expect(
+        find.text('\u0627\u0644\u062f\u0641\u0639\u0627\u062a'),
+        findsOneWidget,
+      );
     });
   });
 }

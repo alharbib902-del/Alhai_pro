@@ -132,8 +132,9 @@ void main() {
     });
 
     testWidgets('renders with saleId that is not found', (tester) async {
-      when(() => mockSalesDao.getSaleById('nonexistent'))
-          .thenAnswer((_) async => null);
+      when(
+        () => mockSalesDao.getSaleById('nonexistent'),
+      ).thenAnswer((_) async => null);
 
       await tester.pumpWidget(_buildTestWidget(saleId: 'nonexistent'));
       await tester.pumpAndSettle(const Duration(seconds: 2));

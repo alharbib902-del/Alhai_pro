@@ -148,9 +148,7 @@ class WaSenderApiClient {
   Future<WaSenderResponse> _sendMessage(Map<String, dynamic> body) async {
     try {
       final response = await _dio.post('/send-message', data: body);
-      return WaSenderResponse.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return WaSenderResponse.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (e) {
       return _handleDioError(e);
     } catch (e) {
@@ -173,10 +171,7 @@ class WaSenderApiClient {
         '/upload',
         data: Stream.fromIterable([data]),
         options: Options(
-          headers: {
-            'Content-Type': mimeType,
-            'Content-Length': data.length,
-          },
+          headers: {'Content-Type': mimeType, 'Content-Length': data.length},
         ),
       );
       return WaSenderUploadResponse.fromJson(
@@ -197,10 +192,7 @@ class WaSenderApiClient {
     try {
       final response = await _dio.post(
         '/upload',
-        data: {
-          'mimetype': mimeType,
-          'base64': base64Data,
-        },
+        data: {'mimetype': mimeType, 'base64': base64Data},
       );
       return WaSenderUploadResponse.fromJson(
         response.data as Map<String, dynamic>,
@@ -252,9 +244,7 @@ class WaSenderApiClient {
   Future<WaSenderResponse> resendMessage({required String msgId}) async {
     try {
       final response = await _dio.post('/messages/$msgId/resend');
-      return WaSenderResponse.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return WaSenderResponse.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (e) {
       return _handleDioError(e);
     }
@@ -289,10 +279,7 @@ class WaSenderApiClient {
       }
       return [];
     } on DioException catch (e) {
-      AppLogger.error(
-        'WaSender contacts error: ${e.message}',
-        tag: 'WaSender',
-      );
+      AppLogger.error('WaSender contacts error: ${e.message}', tag: 'WaSender');
       return [];
     }
   }
@@ -301,9 +288,7 @@ class WaSenderApiClient {
   Future<WaSenderContact?> getContact({required String phone}) async {
     try {
       final response = await _dio.get('/contacts/$phone');
-      return WaSenderContact.fromJson(
-        response.data as Map<String, dynamic>,
-      );
+      return WaSenderContact.fromJson(response.data as Map<String, dynamic>);
     } on DioException {
       return null;
     }
@@ -359,10 +344,7 @@ class WaSenderApiClient {
     String type = 'composing', // 'composing' or 'recording'
   }) async {
     try {
-      await _dio.post('/send-presence-update', data: {
-        'to': to,
-        'type': type,
-      });
+      await _dio.post('/send-presence-update', data: {'to': to, 'type': type});
     } on DioException {
       // نتجاهل أخطاء الحضور
     }

@@ -79,15 +79,18 @@ class _SALogsScreenState extends ConsumerState<SALogsScreen> {
           'message':
               'Store "${store['name']}" ${store['is_active'] == false ? 'suspended' : 'active'}',
           'detail': 'ID: ${store['id']}',
-          'timestamp': store['updated_at'] as String? ??
+          'timestamp':
+              store['updated_at'] as String? ??
               store['created_at'] as String? ??
               '',
         });
       }
 
       // Sort all logs by timestamp descending
-      logs.sort((a, b) =>
-          (b['timestamp'] as String).compareTo(a['timestamp'] as String));
+      logs.sort(
+        (a, b) =>
+            (b['timestamp'] as String).compareTo(a['timestamp'] as String),
+      );
 
       setState(() {
         _logs = logs;
@@ -135,71 +138,77 @@ class _SALogsScreenState extends ConsumerState<SALogsScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(Icons.error_outline,
-                          size: 48, color: theme.colorScheme.error),
-                      const SizedBox(height: 16),
-                      Text(_error!, style: theme.textTheme.bodyLarge),
-                      const SizedBox(height: 16),
-                      FilledButton.tonal(
-                        onPressed: _loadLogs,
-                        child: Text(l10n.retry),
-                      ),
-                    ],
+          ? Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.error_outline,
+                    size: 48,
+                    color: theme.colorScheme.error,
                   ),
-                )
-              : _filteredLogs.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.receipt_long_rounded,
-                              size: 48,
-                              color: theme.colorScheme.onSurfaceVariant),
-                          const SizedBox(height: 16),
-                          Text(l10n.saNoLogsFound,
-                              style: theme.textTheme.bodyLarge),
-                        ],
-                      ),
-                    )
-                  : ListView.separated(
-                      padding: const EdgeInsets.all(16),
-                      itemCount: _filteredLogs.length,
-                      separatorBuilder: (_, __) => const SizedBox(height: 4),
-                      itemBuilder: (context, index) {
-                        final log = _filteredLogs[index];
-                        final level = log['level'] as String;
-                        final icon = switch (log['type'] as String) {
-                          'login' => Icons.login_rounded,
-                          'signup' => Icons.person_add_rounded,
-                          'store' => Icons.store_rounded,
-                          _ => Icons.info_outline_rounded,
-                        };
-                        final color = level == 'warning'
-                            ? Colors.amber
-                            : theme.colorScheme.primary;
+                  const SizedBox(height: 16),
+                  Text(_error!, style: theme.textTheme.bodyLarge),
+                  const SizedBox(height: 16),
+                  FilledButton.tonal(
+                    onPressed: _loadLogs,
+                    child: Text(l10n.retry),
+                  ),
+                ],
+              ),
+            )
+          : _filteredLogs.isEmpty
+          ? Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.receipt_long_rounded,
+                    size: 48,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(l10n.saNoLogsFound, style: theme.textTheme.bodyLarge),
+                ],
+              ),
+            )
+          : ListView.separated(
+              padding: const EdgeInsets.all(16),
+              itemCount: _filteredLogs.length,
+              separatorBuilder: (_, __) => const SizedBox(height: 4),
+              itemBuilder: (context, index) {
+                final log = _filteredLogs[index];
+                final level = log['level'] as String;
+                final icon = switch (log['type'] as String) {
+                  'login' => Icons.login_rounded,
+                  'signup' => Icons.person_add_rounded,
+                  'store' => Icons.store_rounded,
+                  _ => Icons.info_outline_rounded,
+                };
+                final color = level == 'warning'
+                    ? Colors.amber
+                    : theme.colorScheme.primary;
 
-                        final ts = DateTime.tryParse(
-                            log['timestamp'] as String? ?? '');
-                        final timeStr = ts != null
-                            ? '${ts.year}-${ts.month.toString().padLeft(2, '0')}-${ts.day.toString().padLeft(2, '0')} ${ts.hour.toString().padLeft(2, '0')}:${ts.minute.toString().padLeft(2, '0')}'
-                            : '';
+                final ts = DateTime.tryParse(log['timestamp'] as String? ?? '');
+                final timeStr = ts != null
+                    ? '${ts.year}-${ts.month.toString().padLeft(2, '0')}-${ts.day.toString().padLeft(2, '0')} ${ts.hour.toString().padLeft(2, '0')}:${ts.minute.toString().padLeft(2, '0')}'
+                    : '';
 
-                        return ListTile(
-                          dense: true,
-                          leading: Icon(icon, color: color, size: 20),
-                          title: Text(log['message'] as String,
-                              style: theme.textTheme.bodyMedium),
-                          subtitle: Text(log['detail'] as String? ?? '',
-                              style: theme.textTheme.bodySmall),
-                          trailing:
-                              Text(timeStr, style: theme.textTheme.labelSmall),
-                        );
-                      },
-                    ),
+                return ListTile(
+                  dense: true,
+                  leading: Icon(icon, color: color, size: 20),
+                  title: Text(
+                    log['message'] as String,
+                    style: theme.textTheme.bodyMedium,
+                  ),
+                  subtitle: Text(
+                    log['detail'] as String? ?? '',
+                    style: theme.textTheme.bodySmall,
+                  ),
+                  trailing: Text(timeStr, style: theme.textTheme.labelSmall),
+                );
+              },
+            ),
     );
   }
 }

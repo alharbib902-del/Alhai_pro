@@ -57,8 +57,9 @@ class ActivityEntry {
 // =============================================================================
 
 /// Combined stats provider: dashboard data + pending approvals + active shifts
-final liteStatsProvider =
-    FutureProvider.autoDispose<LiteStatsData>((ref) async {
+final liteStatsProvider = FutureProvider.autoDispose<LiteStatsData>((
+  ref,
+) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return const LiteStatsData();
 
@@ -72,8 +73,11 @@ final liteStatsProvider =
     // 0: Pending approvals count
     _getPendingApprovalsCount(db, storeId),
     // 1: Today's sales
-    db.salesDao
-        .getSalesStats(storeId, startDate: startOfToday, endDate: endOfToday),
+    db.salesDao.getSalesStats(
+      storeId,
+      startDate: startOfToday,
+      endDate: endOfToday,
+    ),
     // 2: Yesterday's sales (for change %)
     db.salesDao.getSalesStats(
       storeId,
@@ -96,7 +100,7 @@ final liteStatsProvider =
   if (yesterdayStats.total > 0) {
     salesChange =
         ((todayStats.total - yesterdayStats.total) / yesterdayStats.total) *
-            100;
+        100;
   } else if (todayStats.total > 0) {
     salesChange = 100;
   }
@@ -116,8 +120,9 @@ final liteStatsProvider =
 // =============================================================================
 
 /// Recent activity from audit log (last 20 entries)
-final recentActivityProvider =
-    FutureProvider.autoDispose<List<ActivityEntry>>((ref) async {
+final recentActivityProvider = FutureProvider.autoDispose<List<ActivityEntry>>((
+  ref,
+) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
 
@@ -127,13 +132,15 @@ final recentActivityProvider =
     final logs = await db.auditLogDao.getLogs(storeId, limit: 20);
 
     return logs
-        .map((log) => ActivityEntry(
-              id: log.id,
-              userName: log.userName,
-              action: log.action,
-              description: log.description,
-              timestamp: log.createdAt,
-            ))
+        .map(
+          (log) => ActivityEntry(
+            id: log.id,
+            userName: log.userName,
+            action: log.action,
+            description: log.description,
+            timestamp: log.createdAt,
+          ),
+        )
         .toList();
   } catch (e, st) {
     sentry.reportError(e, stackTrace: st, hint: 'recentActivityProvider');
@@ -147,13 +154,15 @@ final recentActivityProvider =
 
 Future<int> _getPendingApprovalsCount(AppDatabase db, String storeId) async {
   try {
-    final result = await db.customSelect(
-      '''SELECT COUNT(*) as count
+    final result = await db
+        .customSelect(
+          '''SELECT COUNT(*) as count
          FROM returns
          WHERE store_id = ?
          AND status = 'pending' ''',
-      variables: [Variable.withString(storeId)],
-    ).getSingle();
+          variables: [Variable.withString(storeId)],
+        )
+        .getSingle();
     return result.data['count'] as int? ?? 0;
   } catch (e, st) {
     sentry.reportError(e, stackTrace: st, hint: '_getPendingApprovalsCount');
@@ -163,13 +172,15 @@ Future<int> _getPendingApprovalsCount(AppDatabase db, String storeId) async {
 
 Future<int> _getActiveShiftsCount(AppDatabase db, String storeId) async {
   try {
-    final result = await db.customSelect(
-      '''SELECT COUNT(*) as count
+    final result = await db
+        .customSelect(
+          '''SELECT COUNT(*) as count
          FROM shifts
          WHERE store_id = ?
          AND status = 'open' ''',
-      variables: [Variable.withString(storeId)],
-    ).getSingle();
+          variables: [Variable.withString(storeId)],
+        )
+        .getSingle();
     return result.data['count'] as int? ?? 0;
   } catch (e, st) {
     sentry.reportError(e, stackTrace: st, hint: '_getActiveShiftsCount');

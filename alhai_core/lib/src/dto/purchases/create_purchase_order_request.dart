@@ -32,7 +32,8 @@ class CreatePurchaseOrderRequest {
 
   /// Creates from domain params
   factory CreatePurchaseOrderRequest.fromDomain(
-      CreatePurchaseOrderParams params) {
+    CreatePurchaseOrderParams params,
+  ) {
     return CreatePurchaseOrderRequest(
       storeId: params.storeId,
       supplierId: params.supplierId,

@@ -25,11 +25,9 @@ class InvoiceChainService {
   final ChainStore _store;
   final InvoiceHasher _hasher;
 
-  InvoiceChainService({
-    required ChainStore store,
-    InvoiceHasher? hasher,
-  })  : _store = store,
-        _hasher = hasher ?? InvoiceHasher();
+  InvoiceChainService({required ChainStore store, InvoiceHasher? hasher})
+    : _store = store,
+      _hasher = hasher ?? InvoiceHasher();
 
   /// Get the previous invoice hash for use in a new invoice
   ///

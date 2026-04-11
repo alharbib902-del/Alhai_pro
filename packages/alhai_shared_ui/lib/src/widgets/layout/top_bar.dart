@@ -66,8 +66,8 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => Size.fromHeight(
-        showSearch ? AppBarSize.heightWithSearch : AppTopBarSize.height,
-      );
+    showSearch ? AppBarSize.heightWithSearch : AppTopBarSize.height,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -76,10 +76,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
       decoration: BoxDecoration(
         color: backgroundColor ?? AppColors.surface,
         border: const Border(
-          bottom: BorderSide(
-            color: AppColors.border,
-            width: 1,
-          ),
+          bottom: BorderSide(color: AppColors.border, width: 1),
         ),
         boxShadow: elevation > 0 ? AppShadows.sm : null,
       ),
@@ -104,18 +101,19 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
                   const SizedBox(width: AppSpacing.md),
 
                   // Title
-                  Expanded(
-                    child: titleWidget ?? _buildTitle(),
-                  ),
+                  Expanded(child: titleWidget ?? _buildTitle()),
 
                   // Actions
                   if (actions != null) ...[
                     const SizedBox(width: AppSpacing.md),
-                    ...actions!.map((action) => Padding(
-                          padding: const EdgeInsetsDirectional.only(
-                              end: AppSpacing.xs),
-                          child: action,
-                        )),
+                    ...actions!.map(
+                      (action) => Padding(
+                        padding: const EdgeInsetsDirectional.only(
+                          end: AppSpacing.xs,
+                        ),
+                        child: action,
+                      ),
+                    ),
                   ],
                 ],
               ),
@@ -178,9 +176,7 @@ class TopBar extends StatelessWidget implements PreferredSizeWidget {
           SizedBox(height: AlhaiSpacing.xxxs),
           Text(
             subtitle!,
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.textMuted,
-            ),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
           ),
         ],
       ],
@@ -193,11 +189,7 @@ class TopBarNotificationButton extends StatelessWidget {
   final int count;
   final VoidCallback? onPressed;
 
-  const TopBarNotificationButton({
-    super.key,
-    this.count = 0,
-    this.onPressed,
-  });
+  const TopBarNotificationButton({super.key, this.count = 0, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -221,15 +213,10 @@ class TopBarNotificationButton extends StatelessWidget {
                 color: AppColors.error,
                 shape: BoxShape.circle,
               ),
-              constraints: const BoxConstraints(
-                minWidth: 16,
-                minHeight: 16,
-              ),
+              constraints: const BoxConstraints(minWidth: 16, minHeight: 16),
               child: Text(
                 count > 99 ? '99+' : count.toString(),
-                style: AppTypography.badge.copyWith(
-                  color: AppColors.white,
-                ),
+                style: AppTypography.badge.copyWith(color: AppColors.white),
                 textAlign: TextAlign.center,
               ),
             ),
@@ -244,11 +231,7 @@ class TopBarSearchButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final String? tooltip;
 
-  const TopBarSearchButton({
-    super.key,
-    this.onPressed,
-    this.tooltip,
-  });
+  const TopBarSearchButton({super.key, this.onPressed, this.tooltip});
 
   @override
   Widget build(BuildContext context) {
@@ -266,10 +249,7 @@ class TopBarSearchButton extends StatelessWidget {
 class TopBarHelpButton extends StatelessWidget {
   final VoidCallback? onPressed;
 
-  const TopBarHelpButton({
-    super.key,
-    this.onPressed,
-  });
+  const TopBarHelpButton({super.key, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
@@ -287,10 +267,7 @@ class TopBarHelpButton extends StatelessWidget {
 class TopBarBreadcrumb extends StatelessWidget {
   final List<BreadcrumbItem> items;
 
-  const TopBarBreadcrumb({
-    super.key,
-    required this.items,
-  });
+  const TopBarBreadcrumb({super.key, required this.items});
 
   @override
   Widget build(BuildContext context) {
@@ -306,10 +283,7 @@ class TopBarBreadcrumb extends StatelessWidget {
                 color: AppColors.textMuted,
               ),
             ),
-          _BreadcrumbItemWidget(
-            item: items[i],
-            isLast: i == items.length - 1,
-          ),
+          _BreadcrumbItemWidget(item: items[i], isLast: i == items.length - 1),
         ],
       ],
     );
@@ -322,21 +296,14 @@ class BreadcrumbItem {
   final VoidCallback? onTap;
   final IconData? icon;
 
-  const BreadcrumbItem({
-    required this.label,
-    this.onTap,
-    this.icon,
-  });
+  const BreadcrumbItem({required this.label, this.onTap, this.icon});
 }
 
 class _BreadcrumbItemWidget extends StatelessWidget {
   final BreadcrumbItem item;
   final bool isLast;
 
-  const _BreadcrumbItemWidget({
-    required this.item,
-    required this.isLast,
-  });
+  const _BreadcrumbItemWidget({required this.item, required this.isLast});
 
   @override
   Widget build(BuildContext context) {
@@ -355,11 +322,7 @@ class _BreadcrumbItemWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (item.icon != null) ...[
-              Icon(
-                item.icon,
-                size: AppIconSize.xs,
-                color: color,
-              ),
+              Icon(item.icon, size: AppIconSize.xs, color: color),
               const SizedBox(width: AppSpacing.xs),
             ],
             Text(

@@ -16,9 +16,7 @@ void main() {
     test('returns 0 when invoices list is empty', () {
       final container = ProviderContainer(
         overrides: [
-          dbHeldInvoicesListProvider.overrideWith(
-            (ref) => Future.value([]),
-          ),
+          dbHeldInvoicesListProvider.overrideWith((ref) => Future.value([])),
         ],
       );
       addTearDown(container.dispose);

@@ -34,9 +34,7 @@ void main() {
 
     test('handles missing fields gracefully', () {
       // Arrange
-      final json = <String, dynamic>{
-        'id': null,
-      };
+      final json = <String, dynamic>{'id': null};
 
       // Act
       final user = SAUser.fromJson(json);
@@ -79,13 +77,11 @@ void main() {
 
   group('SAUser.isOnline', () {
     test('returns true when last sign-in is within 5 minutes', () {
-      final recentTime =
-          DateTime.now().subtract(const Duration(minutes: 2)).toIso8601String();
+      final recentTime = DateTime.now()
+          .subtract(const Duration(minutes: 2))
+          .toIso8601String();
 
-      final user = SAUser(
-        id: 'u1',
-        lastLoginAt: recentTime,
-      );
+      final user = SAUser(id: 'u1', lastLoginAt: recentTime);
 
       expect(user.isOnline, isTrue);
     });
@@ -95,10 +91,7 @@ void main() {
           .subtract(const Duration(minutes: 10))
           .toIso8601String();
 
-      final user = SAUser(
-        id: 'u2',
-        lastLoginAt: oldTime,
-      );
+      final user = SAUser(id: 'u2', lastLoginAt: oldTime);
 
       expect(user.isOnline, isFalse);
     });
@@ -116,8 +109,9 @@ void main() {
 
   group('SAUser.lastActiveFormatted', () {
     test('returns "Just now" for recent sign-in (< 5 min)', () {
-      final recentTime =
-          DateTime.now().subtract(const Duration(minutes: 1)).toIso8601String();
+      final recentTime = DateTime.now()
+          .subtract(const Duration(minutes: 1))
+          .toIso8601String();
 
       final user = SAUser(id: 'u1', lastLoginAt: recentTime);
       expect(user.lastActiveFormatted, equals('Just now'));
@@ -133,24 +127,27 @@ void main() {
     });
 
     test('returns hours ago for sign-in between 1-23 hours', () {
-      final time =
-          DateTime.now().subtract(const Duration(hours: 3)).toIso8601String();
+      final time = DateTime.now()
+          .subtract(const Duration(hours: 3))
+          .toIso8601String();
 
       final user = SAUser(id: 'u3', lastLoginAt: time);
       expect(user.lastActiveFormatted, equals('3 hr ago'));
     });
 
     test('returns days ago for sign-in between 1-6 days', () {
-      final time =
-          DateTime.now().subtract(const Duration(days: 3)).toIso8601String();
+      final time = DateTime.now()
+          .subtract(const Duration(days: 3))
+          .toIso8601String();
 
       final user = SAUser(id: 'u4', lastLoginAt: time);
       expect(user.lastActiveFormatted, equals('3 days ago'));
     });
 
     test('returns formatted date for sign-in 7+ days ago', () {
-      final time =
-          DateTime.now().subtract(const Duration(days: 30)).toIso8601String();
+      final time = DateTime.now()
+          .subtract(const Duration(days: 30))
+          .toIso8601String();
 
       final user = SAUser(id: 'u5', lastLoginAt: time);
       // Should be YYYY-MM-DD format

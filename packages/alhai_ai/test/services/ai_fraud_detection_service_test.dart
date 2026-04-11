@@ -209,8 +209,10 @@ void main() {
 
       final summary = await service.getSummary('store-1');
 
-      final totalFromPatterns =
-          summary.patternCounts.values.fold<int>(0, (sum, c) => sum + c);
+      final totalFromPatterns = summary.patternCounts.values.fold<int>(
+        0,
+        (sum, c) => sum + c,
+      );
       expect(totalFromPatterns, summary.totalAlerts);
     });
   });

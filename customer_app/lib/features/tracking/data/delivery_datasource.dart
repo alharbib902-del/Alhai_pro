@@ -77,10 +77,10 @@ class DeliveryDatasource {
   }
 
   Future<void> confirmDelivery(String orderId, String code) async {
-    await _client.rpc('confirm_delivery', params: {
-      'p_order_id': orderId,
-      'p_confirmation_code': code,
-    });
+    await _client.rpc(
+      'confirm_delivery',
+      params: {'p_order_id': orderId, 'p_confirmation_code': code},
+    );
   }
 
   Delivery _deliveryFromRow(Map<String, dynamic> row) {

@@ -12,7 +12,8 @@ part of 'pin_validation_service.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 PinValidationRequest _$PinValidationRequestFromJson(Map<String, dynamic> json) {
   return _PinValidationRequest.fromJson(json);
@@ -36,16 +37,19 @@ mixin _$PinValidationRequest {
 
 /// @nodoc
 abstract class $PinValidationRequestCopyWith<$Res> {
-  factory $PinValidationRequestCopyWith(PinValidationRequest value,
-          $Res Function(PinValidationRequest) then) =
-      _$PinValidationRequestCopyWithImpl<$Res, PinValidationRequest>;
+  factory $PinValidationRequestCopyWith(
+    PinValidationRequest value,
+    $Res Function(PinValidationRequest) then,
+  ) = _$PinValidationRequestCopyWithImpl<$Res, PinValidationRequest>;
   @useResult
   $Res call({String pin, PinActionType action, String? supervisorId});
 }
 
 /// @nodoc
-class _$PinValidationRequestCopyWithImpl<$Res,
-        $Val extends PinValidationRequest>
+class _$PinValidationRequestCopyWithImpl<
+  $Res,
+  $Val extends PinValidationRequest
+>
     implements $PinValidationRequestCopyWith<$Res> {
   _$PinValidationRequestCopyWithImpl(this._value, this._then);
 
@@ -63,29 +67,33 @@ class _$PinValidationRequestCopyWithImpl<$Res,
     Object? action = null,
     Object? supervisorId = freezed,
   }) {
-    return _then(_value.copyWith(
-      pin: null == pin
-          ? _value.pin
-          : pin // ignore: cast_nullable_to_non_nullable
-              as String,
-      action: null == action
-          ? _value.action
-          : action // ignore: cast_nullable_to_non_nullable
-              as PinActionType,
-      supervisorId: freezed == supervisorId
-          ? _value.supervisorId
-          : supervisorId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            pin: null == pin
+                ? _value.pin
+                : pin // ignore: cast_nullable_to_non_nullable
+                      as String,
+            action: null == action
+                ? _value.action
+                : action // ignore: cast_nullable_to_non_nullable
+                      as PinActionType,
+            supervisorId: freezed == supervisorId
+                ? _value.supervisorId
+                : supervisorId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$PinValidationRequestImplCopyWith<$Res>
     implements $PinValidationRequestCopyWith<$Res> {
-  factory _$$PinValidationRequestImplCopyWith(_$PinValidationRequestImpl value,
-          $Res Function(_$PinValidationRequestImpl) then) =
-      __$$PinValidationRequestImplCopyWithImpl<$Res>;
+  factory _$$PinValidationRequestImplCopyWith(
+    _$PinValidationRequestImpl value,
+    $Res Function(_$PinValidationRequestImpl) then,
+  ) = __$$PinValidationRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String pin, PinActionType action, String? supervisorId});
@@ -95,9 +103,10 @@ abstract class _$$PinValidationRequestImplCopyWith<$Res>
 class __$$PinValidationRequestImplCopyWithImpl<$Res>
     extends _$PinValidationRequestCopyWithImpl<$Res, _$PinValidationRequestImpl>
     implements _$$PinValidationRequestImplCopyWith<$Res> {
-  __$$PinValidationRequestImplCopyWithImpl(_$PinValidationRequestImpl _value,
-      $Res Function(_$PinValidationRequestImpl) _then)
-      : super(_value, _then);
+  __$$PinValidationRequestImplCopyWithImpl(
+    _$PinValidationRequestImpl _value,
+    $Res Function(_$PinValidationRequestImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of PinValidationRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -108,28 +117,33 @@ class __$$PinValidationRequestImplCopyWithImpl<$Res>
     Object? action = null,
     Object? supervisorId = freezed,
   }) {
-    return _then(_$PinValidationRequestImpl(
-      pin: null == pin
-          ? _value.pin
-          : pin // ignore: cast_nullable_to_non_nullable
-              as String,
-      action: null == action
-          ? _value.action
-          : action // ignore: cast_nullable_to_non_nullable
-              as PinActionType,
-      supervisorId: freezed == supervisorId
-          ? _value.supervisorId
-          : supervisorId // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$PinValidationRequestImpl(
+        pin: null == pin
+            ? _value.pin
+            : pin // ignore: cast_nullable_to_non_nullable
+                  as String,
+        action: null == action
+            ? _value.action
+            : action // ignore: cast_nullable_to_non_nullable
+                  as PinActionType,
+        supervisorId: freezed == supervisorId
+            ? _value.supervisorId
+            : supervisorId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$PinValidationRequestImpl implements _PinValidationRequest {
-  const _$PinValidationRequestImpl(
-      {required this.pin, required this.action, this.supervisorId});
+  const _$PinValidationRequestImpl({
+    required this.pin,
+    required this.action,
+    this.supervisorId,
+  });
 
   factory _$PinValidationRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$PinValidationRequestImplFromJson(json);
@@ -167,23 +181,24 @@ class _$PinValidationRequestImpl implements _PinValidationRequest {
   @override
   @pragma('vm:prefer-inline')
   _$$PinValidationRequestImplCopyWith<_$PinValidationRequestImpl>
-      get copyWith =>
-          __$$PinValidationRequestImplCopyWithImpl<_$PinValidationRequestImpl>(
-              this, _$identity);
+  get copyWith =>
+      __$$PinValidationRequestImplCopyWithImpl<_$PinValidationRequestImpl>(
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PinValidationRequestImplToJson(
-      this,
-    );
+    return _$$PinValidationRequestImplToJson(this);
   }
 }
 
 abstract class _PinValidationRequest implements PinValidationRequest {
-  const factory _PinValidationRequest(
-      {required final String pin,
-      required final PinActionType action,
-      final String? supervisorId}) = _$PinValidationRequestImpl;
+  const factory _PinValidationRequest({
+    required final String pin,
+    required final PinActionType action,
+    final String? supervisorId,
+  }) = _$PinValidationRequestImpl;
 
   factory _PinValidationRequest.fromJson(Map<String, dynamic> json) =
       _$PinValidationRequestImpl.fromJson;
@@ -200,7 +215,7 @@ abstract class _PinValidationRequest implements PinValidationRequest {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PinValidationRequestImplCopyWith<_$PinValidationRequestImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  get copyWith => throw _privateConstructorUsedError;
 }
 
 PinValidationResult _$PinValidationResultFromJson(Map<String, dynamic> json) {
@@ -231,18 +246,20 @@ mixin _$PinValidationResult {
 /// @nodoc
 abstract class $PinValidationResultCopyWith<$Res> {
   factory $PinValidationResultCopyWith(
-          PinValidationResult value, $Res Function(PinValidationResult) then) =
-      _$PinValidationResultCopyWithImpl<$Res, PinValidationResult>;
+    PinValidationResult value,
+    $Res Function(PinValidationResult) then,
+  ) = _$PinValidationResultCopyWithImpl<$Res, PinValidationResult>;
   @useResult
-  $Res call(
-      {bool isValid,
-      String? userId,
-      String? userName,
-      String? role,
-      List<String>? permissions,
-      String? errorMessage,
-      int remainingAttempts,
-      DateTime? lockedUntil});
+  $Res call({
+    bool isValid,
+    String? userId,
+    String? userName,
+    String? role,
+    List<String>? permissions,
+    String? errorMessage,
+    int remainingAttempts,
+    DateTime? lockedUntil,
+  });
 }
 
 /// @nodoc
@@ -269,69 +286,75 @@ class _$PinValidationResultCopyWithImpl<$Res, $Val extends PinValidationResult>
     Object? remainingAttempts = null,
     Object? lockedUntil = freezed,
   }) {
-    return _then(_value.copyWith(
-      isValid: null == isValid
-          ? _value.isValid
-          : isValid // ignore: cast_nullable_to_non_nullable
-              as bool,
-      userId: freezed == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userName: freezed == userName
-          ? _value.userName
-          : userName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      role: freezed == role
-          ? _value.role
-          : role // ignore: cast_nullable_to_non_nullable
-              as String?,
-      permissions: freezed == permissions
-          ? _value.permissions
-          : permissions // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      errorMessage: freezed == errorMessage
-          ? _value.errorMessage
-          : errorMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      remainingAttempts: null == remainingAttempts
-          ? _value.remainingAttempts
-          : remainingAttempts // ignore: cast_nullable_to_non_nullable
-              as int,
-      lockedUntil: freezed == lockedUntil
-          ? _value.lockedUntil
-          : lockedUntil // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            isValid: null == isValid
+                ? _value.isValid
+                : isValid // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            userId: freezed == userId
+                ? _value.userId
+                : userId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            userName: freezed == userName
+                ? _value.userName
+                : userName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            role: freezed == role
+                ? _value.role
+                : role // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            permissions: freezed == permissions
+                ? _value.permissions
+                : permissions // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
+            errorMessage: freezed == errorMessage
+                ? _value.errorMessage
+                : errorMessage // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            remainingAttempts: null == remainingAttempts
+                ? _value.remainingAttempts
+                : remainingAttempts // ignore: cast_nullable_to_non_nullable
+                      as int,
+            lockedUntil: freezed == lockedUntil
+                ? _value.lockedUntil
+                : lockedUntil // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$PinValidationResultImplCopyWith<$Res>
     implements $PinValidationResultCopyWith<$Res> {
-  factory _$$PinValidationResultImplCopyWith(_$PinValidationResultImpl value,
-          $Res Function(_$PinValidationResultImpl) then) =
-      __$$PinValidationResultImplCopyWithImpl<$Res>;
+  factory _$$PinValidationResultImplCopyWith(
+    _$PinValidationResultImpl value,
+    $Res Function(_$PinValidationResultImpl) then,
+  ) = __$$PinValidationResultImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {bool isValid,
-      String? userId,
-      String? userName,
-      String? role,
-      List<String>? permissions,
-      String? errorMessage,
-      int remainingAttempts,
-      DateTime? lockedUntil});
+  $Res call({
+    bool isValid,
+    String? userId,
+    String? userName,
+    String? role,
+    List<String>? permissions,
+    String? errorMessage,
+    int remainingAttempts,
+    DateTime? lockedUntil,
+  });
 }
 
 /// @nodoc
 class __$$PinValidationResultImplCopyWithImpl<$Res>
     extends _$PinValidationResultCopyWithImpl<$Res, _$PinValidationResultImpl>
     implements _$$PinValidationResultImplCopyWith<$Res> {
-  __$$PinValidationResultImplCopyWithImpl(_$PinValidationResultImpl _value,
-      $Res Function(_$PinValidationResultImpl) _then)
-      : super(_value, _then);
+  __$$PinValidationResultImplCopyWithImpl(
+    _$PinValidationResultImpl _value,
+    $Res Function(_$PinValidationResultImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of PinValidationResult
   /// with the given fields replaced by the non-null parameter values.
@@ -347,57 +370,59 @@ class __$$PinValidationResultImplCopyWithImpl<$Res>
     Object? remainingAttempts = null,
     Object? lockedUntil = freezed,
   }) {
-    return _then(_$PinValidationResultImpl(
-      isValid: null == isValid
-          ? _value.isValid
-          : isValid // ignore: cast_nullable_to_non_nullable
-              as bool,
-      userId: freezed == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userName: freezed == userName
-          ? _value.userName
-          : userName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      role: freezed == role
-          ? _value.role
-          : role // ignore: cast_nullable_to_non_nullable
-              as String?,
-      permissions: freezed == permissions
-          ? _value._permissions
-          : permissions // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      errorMessage: freezed == errorMessage
-          ? _value.errorMessage
-          : errorMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-      remainingAttempts: null == remainingAttempts
-          ? _value.remainingAttempts
-          : remainingAttempts // ignore: cast_nullable_to_non_nullable
-              as int,
-      lockedUntil: freezed == lockedUntil
-          ? _value.lockedUntil
-          : lockedUntil // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$PinValidationResultImpl(
+        isValid: null == isValid
+            ? _value.isValid
+            : isValid // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        userId: freezed == userId
+            ? _value.userId
+            : userId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        userName: freezed == userName
+            ? _value.userName
+            : userName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        role: freezed == role
+            ? _value.role
+            : role // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        permissions: freezed == permissions
+            ? _value._permissions
+            : permissions // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
+        errorMessage: freezed == errorMessage
+            ? _value.errorMessage
+            : errorMessage // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        remainingAttempts: null == remainingAttempts
+            ? _value.remainingAttempts
+            : remainingAttempts // ignore: cast_nullable_to_non_nullable
+                  as int,
+        lockedUntil: freezed == lockedUntil
+            ? _value.lockedUntil
+            : lockedUntil // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$PinValidationResultImpl extends _PinValidationResult {
-  const _$PinValidationResultImpl(
-      {required this.isValid,
-      this.userId,
-      this.userName,
-      this.role,
-      final List<String>? permissions,
-      this.errorMessage,
-      this.remainingAttempts = 0,
-      this.lockedUntil})
-      : _permissions = permissions,
-        super._();
+  const _$PinValidationResultImpl({
+    required this.isValid,
+    this.userId,
+    this.userName,
+    this.role,
+    final List<String>? permissions,
+    this.errorMessage,
+    this.remainingAttempts = 0,
+    this.lockedUntil,
+  }) : _permissions = permissions,
+       super._();
 
   factory _$PinValidationResultImpl.fromJson(Map<String, dynamic> json) =>
       _$$PinValidationResultImplFromJson(json);
@@ -443,8 +468,10 @@ class _$PinValidationResultImpl extends _PinValidationResult {
             (identical(other.userName, userName) ||
                 other.userName == userName) &&
             (identical(other.role, role) || other.role == role) &&
-            const DeepCollectionEquality()
-                .equals(other._permissions, _permissions) &&
+            const DeepCollectionEquality().equals(
+              other._permissions,
+              _permissions,
+            ) &&
             (identical(other.errorMessage, errorMessage) ||
                 other.errorMessage == errorMessage) &&
             (identical(other.remainingAttempts, remainingAttempts) ||
@@ -456,15 +483,16 @@ class _$PinValidationResultImpl extends _PinValidationResult {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      isValid,
-      userId,
-      userName,
-      role,
-      const DeepCollectionEquality().hash(_permissions),
-      errorMessage,
-      remainingAttempts,
-      lockedUntil);
+    runtimeType,
+    isValid,
+    userId,
+    userName,
+    role,
+    const DeepCollectionEquality().hash(_permissions),
+    errorMessage,
+    remainingAttempts,
+    lockedUntil,
+  );
 
   /// Create a copy of PinValidationResult
   /// with the given fields replaced by the non-null parameter values.
@@ -473,26 +501,27 @@ class _$PinValidationResultImpl extends _PinValidationResult {
   @pragma('vm:prefer-inline')
   _$$PinValidationResultImplCopyWith<_$PinValidationResultImpl> get copyWith =>
       __$$PinValidationResultImplCopyWithImpl<_$PinValidationResultImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PinValidationResultImplToJson(
-      this,
-    );
+    return _$$PinValidationResultImplToJson(this);
   }
 }
 
 abstract class _PinValidationResult extends PinValidationResult {
-  const factory _PinValidationResult(
-      {required final bool isValid,
-      final String? userId,
-      final String? userName,
-      final String? role,
-      final List<String>? permissions,
-      final String? errorMessage,
-      final int remainingAttempts,
-      final DateTime? lockedUntil}) = _$PinValidationResultImpl;
+  const factory _PinValidationResult({
+    required final bool isValid,
+    final String? userId,
+    final String? userName,
+    final String? role,
+    final List<String>? permissions,
+    final String? errorMessage,
+    final int remainingAttempts,
+    final DateTime? lockedUntil,
+  }) = _$PinValidationResultImpl;
   const _PinValidationResult._() : super._();
 
   factory _PinValidationResult.fromJson(Map<String, dynamic> json) =
@@ -547,11 +576,16 @@ mixin _$EmergencyCode {
 /// @nodoc
 abstract class $EmergencyCodeCopyWith<$Res> {
   factory $EmergencyCodeCopyWith(
-          EmergencyCode value, $Res Function(EmergencyCode) then) =
-      _$EmergencyCodeCopyWithImpl<$Res, EmergencyCode>;
+    EmergencyCode value,
+    $Res Function(EmergencyCode) then,
+  ) = _$EmergencyCodeCopyWithImpl<$Res, EmergencyCode>;
   @useResult
-  $Res call(
-      {String code, String supervisorId, DateTime expiresAt, bool isUsed});
+  $Res call({
+    String code,
+    String supervisorId,
+    DateTime expiresAt,
+    bool isUsed,
+  });
 }
 
 /// @nodoc
@@ -574,24 +608,27 @@ class _$EmergencyCodeCopyWithImpl<$Res, $Val extends EmergencyCode>
     Object? expiresAt = null,
     Object? isUsed = null,
   }) {
-    return _then(_value.copyWith(
-      code: null == code
-          ? _value.code
-          : code // ignore: cast_nullable_to_non_nullable
-              as String,
-      supervisorId: null == supervisorId
-          ? _value.supervisorId
-          : supervisorId // ignore: cast_nullable_to_non_nullable
-              as String,
-      expiresAt: null == expiresAt
-          ? _value.expiresAt
-          : expiresAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      isUsed: null == isUsed
-          ? _value.isUsed
-          : isUsed // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            code: null == code
+                ? _value.code
+                : code // ignore: cast_nullable_to_non_nullable
+                      as String,
+            supervisorId: null == supervisorId
+                ? _value.supervisorId
+                : supervisorId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            expiresAt: null == expiresAt
+                ? _value.expiresAt
+                : expiresAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            isUsed: null == isUsed
+                ? _value.isUsed
+                : isUsed // ignore: cast_nullable_to_non_nullable
+                      as bool,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -599,12 +636,17 @@ class _$EmergencyCodeCopyWithImpl<$Res, $Val extends EmergencyCode>
 abstract class _$$EmergencyCodeImplCopyWith<$Res>
     implements $EmergencyCodeCopyWith<$Res> {
   factory _$$EmergencyCodeImplCopyWith(
-          _$EmergencyCodeImpl value, $Res Function(_$EmergencyCodeImpl) then) =
-      __$$EmergencyCodeImplCopyWithImpl<$Res>;
+    _$EmergencyCodeImpl value,
+    $Res Function(_$EmergencyCodeImpl) then,
+  ) = __$$EmergencyCodeImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String code, String supervisorId, DateTime expiresAt, bool isUsed});
+  $Res call({
+    String code,
+    String supervisorId,
+    DateTime expiresAt,
+    bool isUsed,
+  });
 }
 
 /// @nodoc
@@ -612,8 +654,9 @@ class __$$EmergencyCodeImplCopyWithImpl<$Res>
     extends _$EmergencyCodeCopyWithImpl<$Res, _$EmergencyCodeImpl>
     implements _$$EmergencyCodeImplCopyWith<$Res> {
   __$$EmergencyCodeImplCopyWithImpl(
-      _$EmergencyCodeImpl _value, $Res Function(_$EmergencyCodeImpl) _then)
-      : super(_value, _then);
+    _$EmergencyCodeImpl _value,
+    $Res Function(_$EmergencyCodeImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of EmergencyCode
   /// with the given fields replaced by the non-null parameter values.
@@ -625,35 +668,38 @@ class __$$EmergencyCodeImplCopyWithImpl<$Res>
     Object? expiresAt = null,
     Object? isUsed = null,
   }) {
-    return _then(_$EmergencyCodeImpl(
-      code: null == code
-          ? _value.code
-          : code // ignore: cast_nullable_to_non_nullable
-              as String,
-      supervisorId: null == supervisorId
-          ? _value.supervisorId
-          : supervisorId // ignore: cast_nullable_to_non_nullable
-              as String,
-      expiresAt: null == expiresAt
-          ? _value.expiresAt
-          : expiresAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      isUsed: null == isUsed
-          ? _value.isUsed
-          : isUsed // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
+    return _then(
+      _$EmergencyCodeImpl(
+        code: null == code
+            ? _value.code
+            : code // ignore: cast_nullable_to_non_nullable
+                  as String,
+        supervisorId: null == supervisorId
+            ? _value.supervisorId
+            : supervisorId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        expiresAt: null == expiresAt
+            ? _value.expiresAt
+            : expiresAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        isUsed: null == isUsed
+            ? _value.isUsed
+            : isUsed // ignore: cast_nullable_to_non_nullable
+                  as bool,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$EmergencyCodeImpl implements _EmergencyCode {
-  const _$EmergencyCodeImpl(
-      {required this.code,
-      required this.supervisorId,
-      required this.expiresAt,
-      this.isUsed = false});
+  const _$EmergencyCodeImpl({
+    required this.code,
+    required this.supervisorId,
+    required this.expiresAt,
+    this.isUsed = false,
+  });
 
   factory _$EmergencyCodeImpl.fromJson(Map<String, dynamic> json) =>
       _$$EmergencyCodeImplFromJson(json);
@@ -701,18 +747,17 @@ class _$EmergencyCodeImpl implements _EmergencyCode {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$EmergencyCodeImplToJson(
-      this,
-    );
+    return _$$EmergencyCodeImplToJson(this);
   }
 }
 
 abstract class _EmergencyCode implements EmergencyCode {
-  const factory _EmergencyCode(
-      {required final String code,
-      required final String supervisorId,
-      required final DateTime expiresAt,
-      final bool isUsed}) = _$EmergencyCodeImpl;
+  const factory _EmergencyCode({
+    required final String code,
+    required final String supervisorId,
+    required final DateTime expiresAt,
+    final bool isUsed,
+  }) = _$EmergencyCodeImpl;
 
   factory _EmergencyCode.fromJson(Map<String, dynamic> json) =
       _$EmergencyCodeImpl.fromJson;
@@ -757,8 +802,9 @@ mixin _$TotpSecret {
 /// @nodoc
 abstract class $TotpSecretCopyWith<$Res> {
   factory $TotpSecretCopyWith(
-          TotpSecret value, $Res Function(TotpSecret) then) =
-      _$TotpSecretCopyWithImpl<$Res, TotpSecret>;
+    TotpSecret value,
+    $Res Function(TotpSecret) then,
+  ) = _$TotpSecretCopyWithImpl<$Res, TotpSecret>;
   @useResult
   $Res call({String userId, String secret, DateTime syncedAt});
 }
@@ -782,20 +828,23 @@ class _$TotpSecretCopyWithImpl<$Res, $Val extends TotpSecret>
     Object? secret = null,
     Object? syncedAt = null,
   }) {
-    return _then(_value.copyWith(
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      secret: null == secret
-          ? _value.secret
-          : secret // ignore: cast_nullable_to_non_nullable
-              as String,
-      syncedAt: null == syncedAt
-          ? _value.syncedAt
-          : syncedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            userId: null == userId
+                ? _value.userId
+                : userId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            secret: null == secret
+                ? _value.secret
+                : secret // ignore: cast_nullable_to_non_nullable
+                      as String,
+            syncedAt: null == syncedAt
+                ? _value.syncedAt
+                : syncedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -803,8 +852,9 @@ class _$TotpSecretCopyWithImpl<$Res, $Val extends TotpSecret>
 abstract class _$$TotpSecretImplCopyWith<$Res>
     implements $TotpSecretCopyWith<$Res> {
   factory _$$TotpSecretImplCopyWith(
-          _$TotpSecretImpl value, $Res Function(_$TotpSecretImpl) then) =
-      __$$TotpSecretImplCopyWithImpl<$Res>;
+    _$TotpSecretImpl value,
+    $Res Function(_$TotpSecretImpl) then,
+  ) = __$$TotpSecretImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String userId, String secret, DateTime syncedAt});
@@ -815,8 +865,9 @@ class __$$TotpSecretImplCopyWithImpl<$Res>
     extends _$TotpSecretCopyWithImpl<$Res, _$TotpSecretImpl>
     implements _$$TotpSecretImplCopyWith<$Res> {
   __$$TotpSecretImplCopyWithImpl(
-      _$TotpSecretImpl _value, $Res Function(_$TotpSecretImpl) _then)
-      : super(_value, _then);
+    _$TotpSecretImpl _value,
+    $Res Function(_$TotpSecretImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of TotpSecret
   /// with the given fields replaced by the non-null parameter values.
@@ -827,28 +878,33 @@ class __$$TotpSecretImplCopyWithImpl<$Res>
     Object? secret = null,
     Object? syncedAt = null,
   }) {
-    return _then(_$TotpSecretImpl(
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      secret: null == secret
-          ? _value.secret
-          : secret // ignore: cast_nullable_to_non_nullable
-              as String,
-      syncedAt: null == syncedAt
-          ? _value.syncedAt
-          : syncedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$TotpSecretImpl(
+        userId: null == userId
+            ? _value.userId
+            : userId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        secret: null == secret
+            ? _value.secret
+            : secret // ignore: cast_nullable_to_non_nullable
+                  as String,
+        syncedAt: null == syncedAt
+            ? _value.syncedAt
+            : syncedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$TotpSecretImpl implements _TotpSecret {
-  const _$TotpSecretImpl(
-      {required this.userId, required this.secret, required this.syncedAt});
+  const _$TotpSecretImpl({
+    required this.userId,
+    required this.secret,
+    required this.syncedAt,
+  });
 
   factory _$TotpSecretImpl.fromJson(Map<String, dynamic> json) =>
       _$$TotpSecretImplFromJson(json);
@@ -890,17 +946,16 @@ class _$TotpSecretImpl implements _TotpSecret {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$TotpSecretImplToJson(
-      this,
-    );
+    return _$$TotpSecretImplToJson(this);
   }
 }
 
 abstract class _TotpSecret implements TotpSecret {
-  const factory _TotpSecret(
-      {required final String userId,
-      required final String secret,
-      required final DateTime syncedAt}) = _$TotpSecretImpl;
+  const factory _TotpSecret({
+    required final String userId,
+    required final String secret,
+    required final DateTime syncedAt,
+  }) = _$TotpSecretImpl;
 
   factory _TotpSecret.fromJson(Map<String, dynamic> json) =
       _$TotpSecretImpl.fromJson;

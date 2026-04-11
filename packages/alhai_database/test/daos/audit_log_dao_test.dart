@@ -102,8 +102,10 @@ void main() {
       await db.auditLogDao.logLogin('store-1', 'user-1', 'أحمد');
       await db.auditLogDao.logLogout('store-1', 'user-1', 'أحمد');
 
-      final logins =
-          await db.auditLogDao.getLogsByAction('store-1', AuditAction.login);
+      final logins = await db.auditLogDao.getLogsByAction(
+        'store-1',
+        AuditAction.login,
+      );
       expect(logins, hasLength(1));
       expect(logins.first.action, 'login');
     });

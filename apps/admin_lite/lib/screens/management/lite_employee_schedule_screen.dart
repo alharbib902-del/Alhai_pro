@@ -26,19 +26,19 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
     final dataAsync = ref.watch(liteEmployeeScheduleProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.employees),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(l10n.employees), centerTitle: true),
       body: dataAsync.when(
         data: (shifts) {
           if (shifts.isEmpty) {
             return Center(
-              child: Text(l10n.noResults,
-                  style: TextStyle(
-                      color: isDark
-                          ? Colors.white54
-                          : Theme.of(context).colorScheme.onSurfaceVariant)),
+              child: Text(
+                l10n.noResults,
+                style: TextStyle(
+                  color: isDark
+                      ? Colors.white54
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
             );
           }
 
@@ -54,8 +54,9 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
           }).toList();
 
           return SingleChildScrollView(
-            padding:
-                EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+            padding: EdgeInsets.all(
+              isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -64,15 +65,17 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
                 if (todayShifts.isNotEmpty) ...[
                   _buildSectionTitle(l10n.today, Icons.today, isDark),
                   const SizedBox(height: AlhaiSpacing.sm),
-                  ...todayShifts
-                      .map((s) => _buildScheduleCard(context, s, isDark, true)),
+                  ...todayShifts.map(
+                    (s) => _buildScheduleCard(context, s, isDark, true),
+                  ),
                   const SizedBox(height: AlhaiSpacing.lg),
                 ],
                 if (otherShifts.isNotEmpty) ...[
                   _buildSectionTitle(l10n.next, Icons.schedule, isDark),
                   const SizedBox(height: AlhaiSpacing.sm),
                   ...otherShifts.map(
-                      (s) => _buildScheduleCard(context, s, isDark, false)),
+                    (s) => _buildScheduleCard(context, s, isDark, false),
+                  ),
                 ],
                 const SizedBox(height: AlhaiSpacing.lg),
               ],
@@ -102,8 +105,11 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
     final now = DateTime.now();
     final todayWeekday = now.weekday;
     final daysSinceSat = (todayWeekday + 1) % 7;
-    final startOfWeek = DateTime(now.year, now.month, now.day)
-        .subtract(Duration(days: daysSinceSat));
+    final startOfWeek = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).subtract(Duration(days: daysSinceSat));
     final days = [
       l10n.sat,
       l10n.sun,
@@ -111,7 +117,7 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
       l10n.tue,
       l10n.wed,
       l10n.thu,
-      l10n.fri
+      l10n.fri,
     ];
 
     return Container(
@@ -120,9 +126,10 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-            color: isDark
-                ? Colors.white12
-                : Theme.of(context).colorScheme.outlineVariant),
+          color: isDark
+              ? Colors.white12
+              : Theme.of(context).colorScheme.outlineVariant,
+        ),
       ),
       child: Row(
         children: days.asMap().entries.map((entry) {
@@ -137,22 +144,27 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
               ),
               child: Column(
                 children: [
-                  Text(entry.value,
-                      style: TextStyle(
-                          fontSize: 11,
-                          fontWeight:
-                              isToday ? FontWeight.bold : FontWeight.normal,
-                          color: isToday
-                              ? Colors.white
-                              : (isDark ? Colors.white54 : Colors.black54))),
+                  Text(
+                    entry.value,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: isToday ? FontWeight.bold : FontWeight.normal,
+                      color: isToday
+                          ? Colors.white
+                          : (isDark ? Colors.white54 : Colors.black54),
+                    ),
+                  ),
                   const SizedBox(height: AlhaiSpacing.xxxs),
-                  Text('${dayDate.day}',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: isToday
-                              ? Colors.white
-                              : (isDark ? Colors.white : Colors.black87))),
+                  Text(
+                    '${dayDate.day}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: isToday
+                          ? Colors.white
+                          : (isDark ? Colors.white : Colors.black87),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -167,17 +179,24 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
       children: [
         Icon(icon, size: 18, color: AlhaiColors.primary),
         const SizedBox(width: AlhaiSpacing.xs),
-        Text(title,
-            style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-                color: isDark ? Colors.white : null)),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: isDark ? Colors.white : null,
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildScheduleCard(
-      BuildContext context, ShiftWithCashier entry, bool isDark, bool isToday) {
+    BuildContext context,
+    ShiftWithCashier entry,
+    bool isDark,
+    bool isToday,
+  ) {
     final shift = entry.shift;
     final l10n = AppLocalizations.of(context);
     final name = entry.cashierName ?? l10n.unknownUser;
@@ -196,9 +215,10 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-            color: isDark
-                ? Colors.white12
-                : Theme.of(context).colorScheme.outlineVariant),
+          color: isDark
+              ? Colors.white12
+              : Theme.of(context).colorScheme.outlineVariant,
+        ),
       ),
       child: Row(
         children: [
@@ -206,18 +226,26 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
             width: 52,
             padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
             decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(8)),
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(8),
+            ),
             child: Column(
               children: [
-                Text(startTime,
-                    style: TextStyle(
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
-                        color: color)),
-                Text(endTime,
-                    style: TextStyle(
-                        fontSize: 11, color: color.withValues(alpha: 0.7))),
+                Text(
+                  startTime,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
+                Text(
+                  endTime,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: color.withValues(alpha: 0.7),
+                  ),
+                ),
               ],
             ),
           ),
@@ -225,50 +253,62 @@ class LiteEmployeeScheduleScreen extends ConsumerWidget {
           CircleAvatar(
             radius: 18,
             backgroundColor: AlhaiColors.primary.withValues(alpha: 0.15),
-            child: Text(name.isNotEmpty ? name.substring(0, 1) : '?',
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    color: AlhaiColors.primary,
-                    fontSize: 14)),
+            child: Text(
+              name.isNotEmpty ? name.substring(0, 1) : '?',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: AlhaiColors.primary,
+                fontSize: 14,
+              ),
+            ),
           ),
           const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(name,
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Colors.black87)),
-                Text(shift.status,
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: isDark
-                            ? Colors.white38
-                            : Theme.of(context).colorScheme.onSurfaceVariant)),
+                Text(
+                  name,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                Text(
+                  shift.status,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark
+                        ? Colors.white38
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
           ),
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+              horizontal: AlhaiSpacing.xs,
+              vertical: AlhaiSpacing.xxxs,
+            ),
             decoration: BoxDecoration(
               color: isOpen
                   ? AlhaiColors.success.withValues(alpha: 0.12)
                   : (isDark
-                      ? Colors.white.withValues(alpha: 0.06)
-                      : Colors.grey.shade100),
+                        ? Colors.white.withValues(alpha: 0.06)
+                        : Colors.grey.shade100),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
               isOpen ? l10n.active : l10n.closed,
               style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: isOpen
-                      ? AlhaiColors.success
-                      : (isDark ? Colors.white54 : Colors.black54)),
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: isOpen
+                    ? AlhaiColors.success
+                    : (isDark ? Colors.white54 : Colors.black54),
+              ),
             ),
           ),
         ],

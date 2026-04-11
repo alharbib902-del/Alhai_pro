@@ -12,8 +12,9 @@ class StockTransfersTable extends Table {
   TextColumn get transferNumber => text()();
   TextColumn get fromStoreId => text()();
   TextColumn get toStoreId => text()();
-  TextColumn get status => text().withDefault(const Constant(
-      'pending'))(); // pending, approved, in_transit, completed, cancelled
+  TextColumn get status => text().withDefault(
+    const Constant('pending'),
+  )(); // pending, approved, in_transit, completed, cancelled
   TextColumn get items => text()(); // JSON array
   TextColumn get notes => text().nullable()();
 

@@ -109,7 +109,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
         body: Row(
           children: [
             // App Sidebar (Desktop only)
-// Main Content
+            // Main Content
             Expanded(
               child: Column(
                 children: [
@@ -143,12 +143,13 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                       children: [
                         // Filters Sidebar (Desktop only)
                         if (isDesktop && _showFilters)
-                          _buildFiltersSidebar(categoriesAsync, isDark,
-                              l10n: l10n),
+                          _buildFiltersSidebar(
+                            categoriesAsync,
+                            isDark,
+                            l10n: l10n,
+                          ),
                         // Products Grid/List
-                        Expanded(
-                          child: _buildProductsContent(productsState),
-                        ),
+                        Expanded(child: _buildProductsContent(productsState)),
                       ],
                     ),
                   ),
@@ -162,19 +163,20 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   }
 
   Widget _buildToolbar(
-      bool isDark, bool isDesktop, AsyncValue<List<Category>> categoriesAsync,
-      {required AppLocalizations l10n}) {
+    bool isDark,
+    bool isDesktop,
+    AsyncValue<List<Category>> categoriesAsync, {
+    required AppLocalizations l10n,
+  }) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AppSizes.md, vertical: AppSizes.sm),
+        horizontal: AppSizes.md,
+        vertical: AppSizes.sm,
+      ),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        border: Border(
-          bottom: BorderSide(
-            color: colorScheme.outlineVariant,
-          ),
-        ),
+        border: Border(bottom: BorderSide(color: colorScheme.outlineVariant)),
       ),
       child: Column(
         children: [
@@ -197,10 +199,12 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                       );
                     }
                     _searchDebounce?.cancel();
-                    _searchDebounce =
-                        Timer(const Duration(milliseconds: 300), () {
-                      _onSearch(sanitized);
-                    });
+                    _searchDebounce = Timer(
+                      const Duration(milliseconds: 300),
+                      () {
+                        _onSearch(sanitized);
+                      },
+                    );
                   },
                   onClear: () {
                     _searchDebounce?.cancel();
@@ -212,8 +216,9 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                 const SizedBox(width: AppSizes.sm),
                 // Toggle Filters
                 AppIconButton(
-                  icon:
-                      _showFilters ? Icons.filter_list_off : Icons.filter_list,
+                  icon: _showFilters
+                      ? Icons.filter_list_off
+                      : Icons.filter_list,
                   onPressed: () => setState(() => _showFilters = !_showFilters),
                   tooltip: _showFilters ? l10n.hideFilters : l10n.showFilters,
                 ),
@@ -250,9 +255,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                   decoration: BoxDecoration(
                     color: colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-                    border: Border.all(
-                      color: colorScheme.outlineVariant,
-                    ),
+                    border: Border.all(color: colorScheme.outlineVariant),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -274,13 +277,21 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                         ),
                         items: [
                           DropdownMenuItem(
-                              value: 'name', child: Text(l10n.sortByName)),
+                            value: 'name',
+                            child: Text(l10n.sortByName),
+                          ),
                           DropdownMenuItem(
-                              value: 'price', child: Text(l10n.sortByPrice)),
+                            value: 'price',
+                            child: Text(l10n.sortByPrice),
+                          ),
                           DropdownMenuItem(
-                              value: 'stock', child: Text(l10n.sortByStock)),
+                            value: 'stock',
+                            child: Text(l10n.sortByStock),
+                          ),
                           DropdownMenuItem(
-                              value: 'recent', child: Text(l10n.sortByRecent)),
+                            value: 'recent',
+                            child: Text(l10n.sortByRecent),
+                          ),
                         ],
                         onChanged: (value) {
                           if (value != null) {
@@ -351,17 +362,17 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
   }
 
   Widget _buildFiltersSidebar(
-      AsyncValue<List<Category>> categoriesAsync, bool isDark,
-      {AppLocalizations? l10n}) {
+    AsyncValue<List<Category>> categoriesAsync,
+    bool isDark, {
+    AppLocalizations? l10n,
+  }) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       width: 260,
       decoration: BoxDecoration(
         color: colorScheme.surface,
         border: BorderDirectional(
-          start: BorderSide(
-            color: colorScheme.outlineVariant,
-          ),
+          start: BorderSide(color: colorScheme.outlineVariant),
         ),
       ),
       child: Column(
@@ -381,9 +392,9 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                 Text(
                   l10n?.categories ?? 'Categories',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.onSurface,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
               ],
             ),
@@ -423,10 +434,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
               error: (_, __) => const SizedBox(),
             ),
           ),
-          Divider(
-            height: 1,
-            color: colorScheme.outlineVariant,
-          ),
+          Divider(height: 1, color: colorScheme.outlineVariant),
           // Stock Filter Section
           Padding(
             padding: const EdgeInsets.all(AppSizes.md),
@@ -441,9 +449,9 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                 Text(
                   l10n?.stockStatus ?? 'Stock Status',
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: colorScheme.onSurface,
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: colorScheme.onSurface,
+                  ),
                 ),
               ],
             ),
@@ -541,10 +549,12 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
                 child: Text(
                   label,
                   style: TextStyle(
-                    color:
-                        isSelected ? AppColors.primary : colorScheme.onSurface,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.normal,
+                    color: isSelected
+                        ? AppColors.primary
+                        : colorScheme.onSurface,
+                    fontWeight: isSelected
+                        ? FontWeight.w600
+                        : FontWeight.normal,
                   ),
                 ),
               ),
@@ -585,10 +595,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
     }
 
     if (state.error != null && state.products.isEmpty) {
-      return AppErrorState(
-        message: state.error!,
-        onRetry: _refreshProducts,
-      );
+      return AppErrorState(message: state.error!, onRetry: _refreshProducts);
     }
 
     // Filter products by stock
@@ -631,10 +638,7 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
               itemCount: 8,
               childAspectRatio: 0.75,
             )
-          : const ShimmerList(
-              itemCount: 8,
-              itemHeight: 80,
-            ),
+          : const ShimmerList(itemCount: 8, itemHeight: 80),
     );
   }
 
@@ -658,10 +662,11 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
       itemBuilder: (context, index) {
         if (index >= products.length) {
           return const Center(
-              child: Padding(
-            padding: EdgeInsets.all(AppSizes.md),
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ));
+            child: Padding(
+              padding: EdgeInsets.all(AppSizes.md),
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          );
         }
         final product = products[index];
         return _ProductGridCard(
@@ -682,10 +687,11 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
       itemBuilder: (context, index) {
         if (index >= products.length) {
           return const Center(
-              child: Padding(
-            padding: EdgeInsets.all(AppSizes.md),
-            child: CircularProgressIndicator(strokeWidth: 2),
-          ));
+            child: Padding(
+              padding: EdgeInsets.all(AppSizes.md),
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          );
         }
         final product = products[index];
         return Padding(
@@ -710,8 +716,9 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
         selected: isSelected,
         onSelected: (_) => _onCategorySelected(categoryId),
         backgroundColor: colorScheme.surface,
-        selectedColor:
-            AppColors.primary.withValues(alpha: isDark ? 0.25 : 0.15),
+        selectedColor: AppColors.primary.withValues(
+          alpha: isDark ? 0.25 : 0.15,
+        ),
         checkmarkColor: AppColors.primary,
         labelStyle: TextStyle(
           color: isSelected ? AppColors.primary : colorScheme.onSurface,
@@ -980,10 +987,13 @@ class _ProductGridCardState extends State<_ProductGridCard> {
                         child: Container(
                           decoration: BoxDecoration(
                             color: colorScheme.surface,
-                            borderRadius:
-                                BorderRadius.circular(AppSizes.radiusSm),
-                            boxShadow:
-                                AppShadows.of(context, size: ShadowSize.sm),
+                            borderRadius: BorderRadius.circular(
+                              AppSizes.radiusSm,
+                            ),
+                            boxShadow: AppShadows.of(
+                              context,
+                              size: ShadowSize.sm,
+                            ),
                           ),
                           child: IconButton(
                             icon: Icon(
@@ -1019,9 +1029,7 @@ class _ProductGridCardState extends State<_ProductGridCard> {
                             type: MaterialType.transparency,
                             child: Text(
                               widget.product.name,
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .titleSmall
+                              style: Theme.of(context).textTheme.titleSmall
                                   ?.copyWith(
                                     fontWeight: FontWeight.w600,
                                     color: colorScheme.onSurface,
@@ -1037,10 +1045,8 @@ class _ProductGridCardState extends State<_ProductGridCard> {
                       if (widget.product.barcode != null)
                         Text(
                           widget.product.barcode!,
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: colorScheme.onSurfaceVariant,
-                                  ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(color: colorScheme.onSurfaceVariant),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
@@ -1048,12 +1054,14 @@ class _ProductGridCardState extends State<_ProductGridCard> {
                       // Price
                       Text(
                         CurrencyFormatter.formatWithContext(
-                            context, widget.product.price),
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: AppColors.primary,
-                                ),
+                          context,
+                          widget.product.price,
+                        ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary,
+                            ),
                       ),
                     ],
                   ),
@@ -1071,10 +1079,9 @@ class _ProductGridCardState extends State<_ProductGridCard> {
       child: Icon(
         Icons.image_rounded,
         size: 48,
-        color: Theme.of(context)
-            .colorScheme
-            .onSurfaceVariant
-            .withValues(alpha: 0.3),
+        color: Theme.of(
+          context,
+        ).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
       ),
     );
   }
@@ -1084,8 +1091,11 @@ class _ProductGridCardState extends State<_ProductGridCard> {
       return AppBadge.stock(context, 0);
     }
     if (widget.product.isLowStock) {
-      return AppBadge.stock(context, widget.product.stockQty,
-          minQuantity: widget.product.minQty);
+      return AppBadge.stock(
+        context,
+        widget.product.stockQty,
+        minQuantity: widget.product.minQty,
+      );
     }
     return const SizedBox.shrink();
   }
@@ -1152,8 +1162,9 @@ class _ProductListCardState extends State<_ProductListCard> {
                     ),
                     child: widget.product.imageThumbnail != null
                         ? ClipRRect(
-                            borderRadius:
-                                BorderRadius.circular(AppSizes.radiusMd),
+                            borderRadius: BorderRadius.circular(
+                              AppSizes.radiusMd,
+                            ),
                             child: CachedNetworkImage(
                               imageUrl: widget.product.imageThumbnail!,
                               fit: BoxFit.cover,
@@ -1183,9 +1194,7 @@ class _ProductListCardState extends State<_ProductListCard> {
                                 type: MaterialType.transparency,
                                 child: Text(
                                   widget.product.name,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .titleSmall
+                                  style: Theme.of(context).textTheme.titleSmall
                                       ?.copyWith(
                                         fontWeight: FontWeight.w600,
                                         color: colorScheme.onSurface,
@@ -1204,18 +1213,18 @@ class _ProductListCardState extends State<_ProductListCard> {
                         widget.product.barcode ??
                             AppLocalizations.of(context).noBarcode,
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: colorScheme.onSurfaceVariant,
-                            ),
+                          color: colorScheme.onSurfaceVariant,
+                        ),
                       ),
                       const SizedBox(height: AppSizes.xs),
                       Row(
                         children: [
                           Text(
                             CurrencyFormatter.formatWithContext(
-                                context, widget.product.price),
-                            style: Theme.of(context)
-                                .textTheme
-                                .titleSmall
+                              context,
+                              widget.product.price,
+                            ),
+                            style: Theme.of(context).textTheme.titleSmall
                                 ?.copyWith(
                                   fontWeight: FontWeight.bold,
                                   color: AppColors.primary,
@@ -1223,12 +1232,11 @@ class _ProductListCardState extends State<_ProductListCard> {
                           ),
                           const Spacer(),
                           Text(
-                            AppLocalizations.of(context)
-                                .stockCount(widget.product.stockQty.toInt()),
-                            style:
-                                Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: colorScheme.onSurfaceVariant,
-                                    ),
+                            AppLocalizations.of(
+                              context,
+                            ).stockCount(widget.product.stockQty.toInt()),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(color: colorScheme.onSurfaceVariant),
                           ),
                         ],
                       ),
@@ -1262,10 +1270,9 @@ class _ProductListCardState extends State<_ProductListCard> {
       child: Icon(
         Icons.image_rounded,
         size: 24,
-        color: Theme.of(context)
-            .colorScheme
-            .onSurfaceVariant
-            .withValues(alpha: 0.3),
+        color: Theme.of(
+          context,
+        ).colorScheme.onSurfaceVariant.withValues(alpha: 0.3),
       ),
     );
   }
@@ -1275,10 +1282,16 @@ class _ProductListCardState extends State<_ProductListCard> {
       return AppBadge.stock(context, 0);
     }
     if (widget.product.isLowStock) {
-      return AppBadge.stock(context, widget.product.stockQty,
-          minQuantity: widget.product.minQty);
+      return AppBadge.stock(
+        context,
+        widget.product.stockQty,
+        minQuantity: widget.product.minQty,
+      );
     }
-    return AppBadge.stock(context, widget.product.stockQty,
-        minQuantity: widget.product.minQty);
+    return AppBadge.stock(
+      context,
+      widget.product.stockQty,
+      minQuantity: widget.product.minQty,
+    );
   }
 }

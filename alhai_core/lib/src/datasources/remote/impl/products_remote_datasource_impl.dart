@@ -33,10 +33,7 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
       queryParams['search'] = searchQuery;
     }
 
-    final response = await _dio.get(
-      '/products',
-      queryParameters: queryParams,
-    );
+    final response = await _dio.get('/products', queryParameters: queryParams);
     final list = response.data['data'] as List<dynamic>;
     return list
         .map((e) => ProductResponse.fromJson(e as Map<String, dynamic>))
@@ -52,9 +49,7 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
   @override
   Future<ProductResponse?> getByBarcode(String barcode) async {
     try {
-      final response = await _dio.get(
-        '/products/barcode/$barcode',
-      );
+      final response = await _dio.get('/products/barcode/$barcode');
       return ProductResponse.fromJson(response.data as Map<String, dynamic>);
     } on DioException catch (e) {
       if (e.response?.statusCode == 404) {
@@ -66,10 +61,7 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
 
   @override
   Future<ProductResponse> createProduct(CreateProductRequest request) async {
-    final response = await _dio.post(
-      '/products',
-      data: request.toJson(),
-    );
+    final response = await _dio.post('/products', data: request.toJson());
     return ProductResponse.fromJson(response.data as Map<String, dynamic>);
   }
 
@@ -78,10 +70,7 @@ class ProductsRemoteDataSourceImpl implements ProductsRemoteDataSource {
     String id,
     UpdateProductRequest request,
   ) async {
-    final response = await _dio.patch(
-      '/products/$id',
-      data: request.toJson(),
-    );
+    final response = await _dio.patch('/products/$id', data: request.toJson());
     return ProductResponse.fromJson(response.data as Map<String, dynamic>);
   }
 

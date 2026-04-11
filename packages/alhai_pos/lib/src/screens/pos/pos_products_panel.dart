@@ -65,9 +65,11 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
   Widget build(BuildContext context) {
     // M93: Use .select() to only rebuild when products/loading/error change,
     // not when currentPage, hasMore, searchQuery, or categoryId change alone
-    final productsState = ref.watch(productsStateProvider.select(
-      (state) => (state.products, state.isLoading, state.error),
-    ));
+    final productsState = ref.watch(
+      productsStateProvider.select(
+        (state) => (state.products, state.isLoading, state.error),
+      ),
+    );
     final categoriesAsync = ref.watch(categoriesProvider);
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
@@ -95,7 +97,11 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
                 ),
                 Expanded(
                   child: _buildProductsGrid(
-                      context, ref, productsStateForGrid, l10n),
+                    context,
+                    ref,
+                    productsStateForGrid,
+                    l10n,
+                  ),
                 ),
               ],
             )
@@ -110,7 +116,11 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
                 ),
                 Expanded(
                   child: _buildProductsGrid(
-                      context, ref, productsStateForGrid, l10n),
+                    context,
+                    ref,
+                    productsStateForGrid,
+                    l10n,
+                  ),
                 ),
               ],
             ),
@@ -122,18 +132,23 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
               left: 0,
               right: 0,
               child: Center(
-                  child: PosShortcutsBar(
-                onHoldInvoice: widget.onHoldInvoice,
-                onShowHeldInvoices: widget.onShowHeldInvoices,
-              )),
+                child: PosShortcutsBar(
+                  onHoldInvoice: widget.onHoldInvoice,
+                  onShowHeldInvoices: widget.onShowHeldInvoices,
+                ),
+              ),
             ),
         ],
       ),
     );
   }
 
-  Widget _buildProductsGrid(BuildContext context, WidgetRef ref,
-      ProductsState state, AppLocalizations l10n) {
+  Widget _buildProductsGrid(
+    BuildContext context,
+    WidgetRef ref,
+    ProductsState state,
+    AppLocalizations l10n,
+  ) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
     if (state.isLoading && state.products.isEmpty) {
@@ -149,14 +164,20 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline,
-                size: 64, color: AppColors.error.withValues(alpha: 0.6)),
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: AppColors.error.withValues(alpha: 0.6),
+            ),
             const SizedBox(height: AlhaiSpacing.md),
-            Text('${l10n.error}: ${state.error}',
-                style: TextStyle(
-                    color: isDark
-                        ? AppColors.textSecondaryDark
-                        : AppColors.textSecondary)),
+            Text(
+              '${l10n.error}: ${state.error}',
+              style: TextStyle(
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
+              ),
+            ),
             const SizedBox(height: AlhaiSpacing.md),
             FilledButton.icon(
               onPressed: () {
@@ -180,23 +201,29 @@ class _PosProductsPanelState extends ConsumerState<PosProductsPanel> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.inventory_2_outlined,
-                size: 64,
-                color: isDark ? AppColors.grey600 : AppColors.grey400),
+            Icon(
+              Icons.inventory_2_outlined,
+              size: 64,
+              color: isDark ? AppColors.grey600 : AppColors.grey400,
+            ),
             const SizedBox(height: AlhaiSpacing.md),
-            Text(l10n.noProducts,
-                style: TextStyle(
-                  color: isDark
-                      ? AppColors.textSecondaryDark
-                      : AppColors.textSecondary,
-                  fontSize: 16,
-                )),
+            Text(
+              l10n.noProducts,
+              style: TextStyle(
+                color: isDark
+                    ? AppColors.textSecondaryDark
+                    : AppColors.textSecondary,
+                fontSize: 16,
+              ),
+            ),
             const SizedBox(height: AlhaiSpacing.xs),
-            Text(l10n.addProductsToStart,
-                style: TextStyle(
-                  color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
-                  fontSize: 14,
-                )),
+            Text(
+              l10n.addProductsToStart,
+              style: TextStyle(
+                color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+                fontSize: 14,
+              ),
+            ),
           ],
         ),
       );

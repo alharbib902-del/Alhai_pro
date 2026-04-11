@@ -46,11 +46,9 @@ void main() {
 
     test('getAllUsers returns all for store', () async {
       await db.usersDao.insertUser(makeUser());
-      await db.usersDao.insertUser(makeUser(
-        id: 'user-2',
-        name: 'علي المدير',
-        role: 'admin',
-      ));
+      await db.usersDao.insertUser(
+        makeUser(id: 'user-2', name: 'علي المدير', role: 'admin'),
+      );
 
       final users = await db.usersDao.getAllUsers('store-1');
       expect(users, hasLength(2));
@@ -58,11 +56,9 @@ void main() {
 
     test('getActiveUsers excludes inactive', () async {
       await db.usersDao.insertUser(makeUser());
-      await db.usersDao.insertUser(makeUser(
-        id: 'user-2',
-        name: 'موظف سابق',
-        isActive: false,
-      ));
+      await db.usersDao.insertUser(
+        makeUser(id: 'user-2', name: 'موظف سابق', isActive: false),
+      );
 
       final active = await db.usersDao.getActiveUsers('store-1');
       expect(active, hasLength(1));

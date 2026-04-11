@@ -103,8 +103,9 @@ class _DistributorOrdersScreenState
 
   void _toggleSelectAll(List<DistributorOrder> orders) {
     setState(() {
-      final pendingOrders =
-          orders.where((o) => o.status == 'sent' || o.status == 'pending');
+      final pendingOrders = orders.where(
+        (o) => o.status == 'sent' || o.status == 'pending',
+      );
       final pendingIds = pendingOrders.map((o) => o.id).toSet();
       if (pendingIds.every(_selectedOrderIds.contains)) {
         _selectedOrderIds.removeAll(pendingIds);
@@ -115,8 +116,9 @@ class _DistributorOrdersScreenState
   }
 
   bool _allPendingSelected(List<DistributorOrder> orders) {
-    final pendingOrders =
-        orders.where((o) => o.status == 'sent' || o.status == 'pending');
+    final pendingOrders = orders.where(
+      (o) => o.status == 'sent' || o.status == 'pending',
+    );
     if (pendingOrders.isEmpty) return false;
     return pendingOrders.every((o) => _selectedOrderIds.contains(o.id));
   }
@@ -135,7 +137,8 @@ class _DistributorOrdersScreenState
       builder: (ctx) => AlertDialog(
         title: Text('$actionLabel $count orders?'),
         content: Text(
-            'This will $actionLabel all $count selected orders. Continue?'),
+          'This will $actionLabel all $count selected orders. Continue?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -144,11 +147,14 @@ class _DistributorOrdersScreenState
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: FilledButton.styleFrom(
-              backgroundColor:
-                  newStatus == 'approved' ? AppColors.success : AppColors.error,
+              backgroundColor: newStatus == 'approved'
+                  ? AppColors.success
+                  : AppColors.error,
             ),
-            child: Text(actionLabel,
-                style: const TextStyle(color: AppColors.textOnPrimary)),
+            child: Text(
+              actionLabel,
+              style: const TextStyle(color: AppColors.textOnPrimary),
+            ),
           ),
         ],
       ),
@@ -172,11 +178,14 @@ class _DistributorOrdersScreenState
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(newStatus == 'approved'
-              ? '$count orders accepted'
-              : '$count orders rejected'),
-          backgroundColor:
-              newStatus == 'approved' ? AppColors.success : AppColors.error,
+          content: Text(
+            newStatus == 'approved'
+                ? '$count orders accepted'
+                : '$count orders rejected',
+          ),
+          backgroundColor: newStatus == 'approved'
+              ? AppColors.success
+              : AppColors.error,
         ),
       );
     } catch (_) {
@@ -208,8 +217,12 @@ class _DistributorOrdersScreenState
         children: [
           // Header
           Padding(
-            padding:
-                EdgeInsetsDirectional.fromSTEB(padding, padding, padding, 0),
+            padding: EdgeInsetsDirectional.fromSTEB(
+              padding,
+              padding,
+              padding,
+              0,
+            ),
             child: Text(
               l10n.distributorOrders,
               style: TextStyle(
@@ -239,8 +252,10 @@ class _DistributorOrdersScreenState
                     color: Theme.of(context).colorScheme.onSurfaceVariant,
                   ),
                   prefixIcon: ExcludeSemantics(
-                    child: Icon(Icons.search,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    child: Icon(
+                      Icons.search,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                   ),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? Semantics(
@@ -258,21 +273,27 @@ class _DistributorOrdersScreenState
                   filled: true,
                   fillColor: Theme.of(context).colorScheme.surface,
                   contentPadding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+                    horizontal: AlhaiSpacing.md,
+                    vertical: AlhaiSpacing.sm,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AlhaiRadius.md),
                     borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.outlineVariant),
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AlhaiRadius.md),
                     borderSide: BorderSide(
-                        color: Theme.of(context).colorScheme.outlineVariant),
+                      color: Theme.of(context).colorScheme.outlineVariant,
+                    ),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AlhaiRadius.md),
-                    borderSide:
-                        const BorderSide(color: AppColors.primary, width: 2),
+                    borderSide: const BorderSide(
+                      color: AppColors.primary,
+                      width: 2,
+                    ),
                   ),
                 ),
               ),
@@ -293,8 +314,9 @@ class _DistributorOrdersScreenState
                 _selectedOrderIds.clear();
               }),
               labelColor: AppColors.primary,
-              unselectedLabelColor:
-                  Theme.of(context).colorScheme.onSurfaceVariant,
+              unselectedLabelColor: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant,
               indicatorColor: AppColors.primary,
               indicatorSize: TabBarIndicatorSize.label,
               dividerColor: Colors.transparent,
@@ -341,10 +363,11 @@ class _DistributorOrdersScreenState
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     ExcludeSemantics(
-                      child: Icon(Icons.error_outline,
-                          size: 48,
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant),
+                      child: Icon(
+                        Icons.error_outline,
+                        size: 48,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     const SizedBox(height: AlhaiSpacing.md),
                     Text(l10n.distributorLoadError),
@@ -382,8 +405,9 @@ class _DistributorOrdersScreenState
                               : l10n.distributorNoOrders,
                           style: TextStyle(
                             fontSize: 16,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         const SizedBox(height: AlhaiSpacing.md),
@@ -440,7 +464,9 @@ class _DistributorOrdersScreenState
         color: Theme.of(context).colorScheme.inverseSurface,
         child: Padding(
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
+            horizontal: AlhaiSpacing.mdl,
+            vertical: AlhaiSpacing.sm,
+          ),
           child: Row(
             children: [
               Text(
@@ -463,7 +489,9 @@ class _DistributorOrdersScreenState
                     backgroundColor: AppColors.success,
                     foregroundColor: AppColors.textOnPrimary,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                      horizontal: AlhaiSpacing.md,
+                      vertical: AlhaiSpacing.xs,
+                    ),
                   ),
                 ),
               ),
@@ -479,7 +507,9 @@ class _DistributorOrdersScreenState
                     foregroundColor: AppColors.error,
                     side: const BorderSide(color: AppColors.error),
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                      horizontal: AlhaiSpacing.md,
+                      vertical: AlhaiSpacing.xs,
+                    ),
                   ),
                 ),
               ),
@@ -489,8 +519,10 @@ class _DistributorOrdersScreenState
                 label: 'Clear selection',
                 child: IconButton(
                   onPressed: () => setState(() => _selectedOrderIds.clear()),
-                  icon: Icon(Icons.close,
-                      color: Theme.of(context).colorScheme.onInverseSurface),
+                  icon: Icon(
+                    Icons.close,
+                    color: Theme.of(context).colorScheme.onInverseSurface,
+                  ),
                   tooltip: 'Clear selection',
                 ),
               ),
@@ -526,12 +558,16 @@ class _DistributorOrdersScreenState
   }
 
   Widget _buildDataTable(
-      List<DistributorOrder> orders, bool isDark, AppLocalizations? l10n) {
+    List<DistributorOrder> orders,
+    bool isDark,
+    AppLocalizations? l10n,
+  ) {
     final allPendingSelected = _allPendingSelected(orders);
 
     return SingleChildScrollView(
       padding: EdgeInsets.symmetric(
-          horizontal: responsivePadding(MediaQuery.sizeOf(context).width)),
+        horizontal: responsivePadding(MediaQuery.sizeOf(context).width),
+      ),
       child: Container(
         width: double.infinity,
         decoration: BoxDecoration(
@@ -615,36 +651,44 @@ class _DistributorOrdersScreenState
                         )
                       : const SizedBox.shrink(),
                 ),
-                DataCell(Semantics(
-                  label:
-                      '${l10n?.distributorOrderNumber ?? 'Order'} ${order.purchaseNumber}',
-                  child: Text(
-                    order.purchaseNumber,
+                DataCell(
+                  Semantics(
+                    label:
+                        '${l10n?.distributorOrderNumber ?? 'Order'} ${order.purchaseNumber}',
+                    child: Text(
+                      order.purchaseNumber,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                  ),
+                ),
+                DataCell(
+                  Text(
+                    order.storeName,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                DataCell(
+                  Text(
+                    '${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                DataCell(
+                  Text(
+                    '${NumberFormat('#,##0').format(order.total)} ${l10n?.distributorSar ?? 'SAR'}',
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       color: Theme.of(context).colorScheme.onSurface,
                     ),
                   ),
-                )),
-                DataCell(Text(
-                  order.storeName,
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                )),
-                DataCell(Text(
-                  '${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}',
-                  style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
-                )),
-                DataCell(Text(
-                  '${NumberFormat('#,##0').format(order.total)} ${l10n?.distributorSar ?? 'SAR'}',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
-                )),
+                ),
                 DataCell(
                   Semantics(
                     label:
@@ -665,10 +709,14 @@ class _DistributorOrdersScreenState
   }
 
   Widget _buildCardList(
-      List<DistributorOrder> orders, bool isDark, AppLocalizations? l10n) {
+    List<DistributorOrder> orders,
+    bool isDark,
+    AppLocalizations? l10n,
+  ) {
     return ListView.builder(
       padding: EdgeInsets.symmetric(
-          horizontal: responsivePadding(MediaQuery.sizeOf(context).width)),
+        horizontal: responsivePadding(MediaQuery.sizeOf(context).width),
+      ),
       itemCount: orders.length,
       itemBuilder: (context, index) {
         final order = orders[index];
@@ -717,8 +765,9 @@ class _DistributorOrdersScreenState
                           children: [
                             if (isPending && _selectedOrderIds.isNotEmpty)
                               Padding(
-                                padding:
-                                    const EdgeInsetsDirectional.only(end: 8),
+                                padding: const EdgeInsetsDirectional.only(
+                                  end: 8,
+                                ),
                                 child: Semantics(
                                   label: 'Select order ${order.purchaseNumber}',
                                   child: SizedBox(

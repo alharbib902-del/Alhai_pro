@@ -21,16 +21,19 @@ final saUsersDatasourceProvider = Provider<SAUsersDatasource>((ref) {
 final saUserSearchProvider = StateProvider<String>((ref) => '');
 
 /// Platform users list.
-final saUsersListProvider =
-    FutureProvider.autoDispose<List<SAUser>>((ref) async {
+final saUsersListProvider = FutureProvider.autoDispose<List<SAUser>>((
+  ref,
+) async {
   final ds = ref.watch(saUsersDatasourceProvider);
   final search = ref.watch(saUserSearchProvider);
   return ds.getPlatformUsers(search: search.isEmpty ? null : search);
 });
 
 /// Single user detail.
-final saUserDetailProvider =
-    FutureProvider.autoDispose.family<SAUser, String>((ref, userId) async {
+final saUserDetailProvider = FutureProvider.autoDispose.family<SAUser, String>((
+  ref,
+  userId,
+) async {
   final ds = ref.watch(saUsersDatasourceProvider);
   return ds.getUser(userId);
 });

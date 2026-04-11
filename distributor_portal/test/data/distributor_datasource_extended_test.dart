@@ -163,8 +163,11 @@ void main() {
 
     test('no transition set contains its own key', () {
       for (final entry in validStatusTransitions.entries) {
-        expect(entry.value.contains(entry.key), isFalse,
-            reason: '${entry.key} should not transition to itself');
+        expect(
+          entry.value.contains(entry.key),
+          isFalse,
+          reason: '${entry.key} should not transition to itself',
+        );
       }
     });
 

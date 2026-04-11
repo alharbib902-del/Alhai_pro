@@ -24,9 +24,9 @@ class AuthInterceptor extends Interceptor {
     required AuthLocalDataSource localDataSource,
     required ApiDioHolder apiDioHolder,
     required Dio refreshDio,
-  })  : _localDataSource = localDataSource,
-        _apiDioHolder = apiDioHolder,
-        _refreshDio = refreshDio;
+  }) : _localDataSource = localDataSource,
+       _apiDioHolder = apiDioHolder,
+       _refreshDio = refreshDio;
 
   /// Checks if path is an auth endpoint (skip token handling)
   bool _isAuthEndpoint(String path) => path.contains('/auth/');
@@ -53,10 +53,7 @@ class AuthInterceptor extends Interceptor {
   }
 
   @override
-  void onError(
-    DioException err,
-    ErrorInterceptorHandler handler,
-  ) async {
+  void onError(DioException err, ErrorInterceptorHandler handler) async {
     // Skip auth endpoints - no refresh needed
     if (_isAuthEndpoint(err.requestOptions.path)) {
       handler.next(err);

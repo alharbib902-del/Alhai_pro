@@ -19,27 +19,21 @@ void main() {
 
   group('VatReportScreen', () {
     testWidgets('renders without error', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const VatReportScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const VatReportScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(VatReportScreen), findsOneWidget);
     });
 
     testWidgets('shows Scaffold', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const VatReportScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const VatReportScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(Scaffold), findsWidgets);
     });
 
     testWidgets('shows content after loading', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const VatReportScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const VatReportScreen()));
       await tester.pump();
 
       expect(find.byType(VatReportScreen), findsOneWidget);

@@ -35,8 +35,10 @@ void main() {
       });
 
       test('should return 0 for platinum (max tier)', () {
-        final loyalty =
-            createLoyalty(balance: 15000, tier: LoyaltyTier.platinum);
+        final loyalty = createLoyalty(
+          balance: 15000,
+          tier: LoyaltyTier.platinum,
+        );
         expect(loyalty.pointsToNextTier, equals(0));
       });
     });
@@ -78,7 +80,9 @@ void main() {
 
       test('should return platinum for >= 10000 points', () {
         expect(
-            LoyaltyPoints.calculateTier(10000), equals(LoyaltyTier.platinum));
+          LoyaltyPoints.calculateTier(10000),
+          equals(LoyaltyTier.platinum),
+        );
       });
 
       test('should return bronze for 0 points', () {
@@ -87,7 +91,9 @@ void main() {
 
       test('should return platinum for very high points', () {
         expect(
-            LoyaltyPoints.calculateTier(100000), equals(LoyaltyTier.platinum));
+          LoyaltyPoints.calculateTier(100000),
+          equals(LoyaltyTier.platinum),
+        );
       });
     });
 
@@ -116,10 +122,7 @@ void main() {
       });
 
       test('should serialize to JSON and back', () {
-        final loyalty = createLoyalty(
-          balance: 5000,
-          tier: LoyaltyTier.gold,
-        );
+        final loyalty = createLoyalty(balance: 5000, tier: LoyaltyTier.gold);
         final json = loyalty.toJson();
         final restored = LoyaltyPoints.fromJson(json);
 

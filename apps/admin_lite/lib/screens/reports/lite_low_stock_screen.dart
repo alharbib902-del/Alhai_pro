@@ -44,20 +44,23 @@ class LiteLowStockScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.check_circle_outline,
-                      size: 64,
-                      color: isDark
-                          ? Colors.white24
-                          : AlhaiColors.success.withValues(alpha: 0.5)),
+                  Icon(
+                    Icons.check_circle_outline,
+                    size: 64,
+                    color: isDark
+                        ? Colors.white24
+                        : AlhaiColors.success.withValues(alpha: 0.5),
+                  ),
                   const SizedBox(height: AlhaiSpacing.md),
-                  Text(l10n.noResults,
-                      style: TextStyle(
-                          fontSize: 16,
-                          color: isDark
-                              ? Colors.white54
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant)),
+                  Text(
+                    l10n.noResults,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: isDark
+                          ? Colors.white54
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ],
               ),
             );
@@ -66,13 +69,19 @@ class LiteLowStockScreen extends ConsumerWidget {
           return Column(
             children: [
               _buildSummaryBar(
-                  context, isDark, l10n, items.length, outOfStockCount),
+                context,
+                isDark,
+                l10n,
+                items.length,
+                outOfStockCount,
+              ),
               Expanded(
                 child: RefreshIndicator(
                   onRefresh: () async => ref.invalidate(liteLowStockProvider),
                   child: ListView.builder(
                     padding: EdgeInsets.all(
-                        isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+                      isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg,
+                    ),
                     itemCount: items.length,
                     itemBuilder: (context, index) {
                       return _buildStockItem(context, items[index], isDark);
@@ -101,11 +110,18 @@ class LiteLowStockScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSummaryBar(BuildContext context, bool isDark,
-      AppLocalizations l10n, int total, int outOfStock) {
+  Widget _buildSummaryBar(
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+    int total,
+    int outOfStock,
+  ) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withValues(alpha: 0.03)
@@ -120,8 +136,11 @@ class LiteLowStockScreen extends ConsumerWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.warning_amber_rounded,
-              size: 20, color: AlhaiColors.warning),
+          Icon(
+            Icons.warning_amber_rounded,
+            size: 20,
+            color: AlhaiColors.warning,
+          ),
           const SizedBox(width: AlhaiSpacing.xs),
           Expanded(
             child: Text(
@@ -135,7 +154,9 @@ class LiteLowStockScreen extends ConsumerWidget {
           ),
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+              horizontal: AlhaiSpacing.xs,
+              vertical: AlhaiSpacing.xxxs,
+            ),
             decoration: BoxDecoration(
               color: AlhaiColors.error.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(8),
@@ -167,8 +188,9 @@ class LiteLowStockScreen extends ConsumerWidget {
     final urgencyColor = current == 0
         ? AlhaiColors.error
         : (current <= 3 ? AlhaiColors.warning : AlhaiColors.info);
-    final fillRatio =
-        threshold > 0 ? (current / threshold).clamp(0.0, 1.0) : 0.0;
+    final fillRatio = threshold > 0
+        ? (current / threshold).clamp(0.0, 1.0)
+        : 0.0;
 
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),

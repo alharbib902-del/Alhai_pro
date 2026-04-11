@@ -100,7 +100,8 @@ class LocalProductsRepository implements ProductsRepository {
   Future<Product?> getByBarcode(String barcode) async {
     if (defaultStoreId == null) {
       throw StateError(
-          'No store selected — cannot look up barcode without storeId');
+        'No store selected — cannot look up barcode without storeId',
+      );
     }
     final storeId = defaultStoreId!;
     final data = await _db.productsDao.getProductByBarcode(barcode, storeId);
@@ -176,9 +177,13 @@ class LocalProductsRepository implements ProductsRepository {
 
   /// Products by category
   Future<List<Product>> getProductsByCategory(
-      String categoryId, String storeId) async {
-    final results =
-        await _db.productsDao.getProductsByCategory(categoryId, storeId);
+    String categoryId,
+    String storeId,
+  ) async {
+    final results = await _db.productsDao.getProductsByCategory(
+      categoryId,
+      storeId,
+    );
     return results.map(_toProduct).toList();
   }
 

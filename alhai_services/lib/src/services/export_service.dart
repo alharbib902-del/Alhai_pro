@@ -31,8 +31,9 @@ String _buildDebtsCsv(List<Map<String, dynamic>> debts) {
   final buffer = StringBuffer();
 
   // Header
-  buffer
-      .writeln('اسم الطرف,الهاتف,المبلغ الأصلي,المتبقي,تاريخ الاستحقاق,النوع');
+  buffer.writeln(
+    'اسم الطرف,الهاتف,المبلغ الأصلي,المتبقي,تاريخ الاستحقاق,النوع',
+  );
 
   // Data
   for (final d in debts) {
@@ -86,7 +87,8 @@ String _buildHtmlTable(Map<String, dynamic> params) {
   buffer.writeln('body { font-family: Arial, sans-serif; padding: 20px; }');
   buffer.writeln('table { border-collapse: collapse; width: 100%; }');
   buffer.writeln(
-      'th, td { border: 1px solid #ddd; padding: 12px; text-align: right; }');
+    'th, td { border: 1px solid #ddd; padding: 12px; text-align: right; }',
+  );
   buffer.writeln('th { background-color: #4CAF50; color: white; }');
   buffer.writeln('tr:nth-child(even) { background-color: #f2f2f2; }');
   buffer.writeln('h1 { color: #333; }');

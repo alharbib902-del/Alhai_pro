@@ -18,17 +18,15 @@ class ValidationResult {
   });
 
   const ValidationResult.valid()
-      : isValid = true,
-        errors = const [],
-        warnings = const [];
+    : isValid = true,
+      errors = const [],
+      warnings = const [];
 
-  factory ValidationResult.invalid(List<String> errors,
-      [List<String> warnings = const []]) {
-    return ValidationResult(
-      isValid: false,
-      errors: errors,
-      warnings: warnings,
-    );
+  factory ValidationResult.invalid(
+    List<String> errors, [
+    List<String> warnings = const [],
+  ]) {
+    return ValidationResult(isValid: false, errors: errors, warnings: warnings);
   }
 
   @override
@@ -88,7 +86,8 @@ class DataValidator {
     if (paymentMethod == null ||
         !_validPaymentMethods.contains(paymentMethod)) {
       errors.add(
-          'invalid payment method: $paymentMethod (allowed: $_validPaymentMethods)');
+        'invalid payment method: $paymentMethod (allowed: $_validPaymentMethods)',
+      );
     }
 
     // المبالغ
@@ -181,7 +180,7 @@ class DataValidator {
       'receiptNo',
       'cashierId',
       'total',
-      'paymentMethod'
+      'paymentMethod',
     ],
     'sale_items': [
       'id',
@@ -190,7 +189,7 @@ class DataValidator {
       'productName',
       'unitPrice',
       'qty',
-      'total'
+      'total',
     ],
     'products': ['id', 'storeId', 'name', 'price'],
     'customers': ['id', 'name'],
@@ -201,7 +200,9 @@ class DataValidator {
 
   /// التحقق من payload المزامنة قبل الإرسال
   static ValidationResult validateSyncPayload(
-      String tableName, Map<String, dynamic> payload) {
+    String tableName,
+    Map<String, dynamic> payload,
+  ) {
     final errors = <String>[];
     final warnings = <String>[];
 
@@ -243,8 +244,9 @@ class DataValidator {
       if (value is String && value.isNotEmpty) {
         final date = DateTime.tryParse(value);
         if (date != null) {
-          final maxFuture =
-              DateTime.now().add(Duration(hours: _maxFutureHours));
+          final maxFuture = DateTime.now().add(
+            Duration(hours: _maxFutureHours),
+          );
           if (date.isAfter(maxFuture)) {
             warnings.add('date field "$field" is far in the future: $value');
           }

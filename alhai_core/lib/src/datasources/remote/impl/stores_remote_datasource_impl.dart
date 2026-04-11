@@ -39,18 +39,19 @@ class StoresRemoteDataSourceImpl implements StoresRemoteDataSource {
     required double lng,
     double radiusKm = 10,
   }) async {
-    final response = await _dio.get('/stores/nearby', queryParameters: {
-      'lat': lat,
-      'lng': lng,
-      'radius': radiusKm,
-    });
+    final response = await _dio.get(
+      '/stores/nearby',
+      queryParameters: {'lat': lat, 'lng': lng, 'radius': radiusKm},
+    );
     final List<dynamic> data = response.data['data'] ?? response.data;
     return data.map((json) => StoreResponse.fromJson(json)).toList();
   }
 
   @override
   Future<StoreResponse> updateStore(
-      String id, Map<String, dynamic> data) async {
+    String id,
+    Map<String, dynamic> data,
+  ) async {
     final response = await _dio.patch('/stores/$id', data: data);
     return StoreResponse.fromJson(response.data);
   }

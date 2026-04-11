@@ -30,26 +30,17 @@ void main() {
       });
 
       test('should calculate positive change', () {
-        const data = DashboardData(
-          todaySales: 150,
-          yesterdaySales: 100,
-        );
+        const data = DashboardData(todaySales: 150, yesterdaySales: 100);
         expect(data.salesChangePercent, 50);
       });
 
       test('should calculate negative change', () {
-        const data = DashboardData(
-          todaySales: 50,
-          yesterdaySales: 100,
-        );
+        const data = DashboardData(todaySales: 50, yesterdaySales: 100);
         expect(data.salesChangePercent, -50);
       });
 
       test('should return 0 when sales are same', () {
-        const data = DashboardData(
-          todaySales: 100,
-          yesterdaySales: 100,
-        );
+        const data = DashboardData(todaySales: 100, yesterdaySales: 100);
         expect(data.salesChangePercent, 0);
       });
     });
@@ -66,18 +57,12 @@ void main() {
       });
 
       test('should calculate positive change', () {
-        const data = DashboardData(
-          todayOrders: 15,
-          yesterdayOrders: 10,
-        );
+        const data = DashboardData(todayOrders: 15, yesterdayOrders: 10);
         expect(data.ordersChangePercent, 50);
       });
 
       test('should calculate negative change', () {
-        const data = DashboardData(
-          todayOrders: 5,
-          yesterdayOrders: 10,
-        );
+        const data = DashboardData(todayOrders: 5, yesterdayOrders: 10);
         expect(data.ordersChangePercent, -50);
       });
     });
@@ -86,22 +71,14 @@ void main() {
   group('DailySalesData', () {
     test('should store date, total, and count', () {
       final date = DateTime(2024, 1, 15);
-      final data = DailySalesData(
-        date: date,
-        total: 1500.50,
-        count: 25,
-      );
+      final data = DailySalesData(date: date, total: 1500.50, count: 25);
       expect(data.date, date);
       expect(data.total, 1500.50);
       expect(data.count, 25);
     });
 
     test('should handle zero values', () {
-      final data = DailySalesData(
-        date: DateTime.now(),
-        total: 0,
-        count: 0,
-      );
+      final data = DailySalesData(date: DateTime.now(), total: 0, count: 0);
       expect(data.total, 0);
       expect(data.count, 0);
     });

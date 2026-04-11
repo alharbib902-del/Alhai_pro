@@ -14,20 +14,14 @@ class EcdsaSigner {
   /// [privateKeyPem] - ECDSA private key in PEM format
   ///
   /// Returns base64-encoded DER-encoded signature value
-  String sign({
-    required Uint8List digest,
-    required String privateKeyPem,
-  }) {
+  String sign({required Uint8List digest, required String privateKeyPem}) {
     final privateKey = _parsePrivateKeyPem(privateKeyPem);
 
     // Initialize ECDSA signer with SHA-256
     // We pass the pre-computed digest directly, so use NullDigest
     final signer = Signer('SHA-256/DET-ECDSA');
 
-    signer.init(
-      true,
-      PrivateKeyParameter<ECPrivateKey>(privateKey),
-    );
+    signer.init(true, PrivateKeyParameter<ECPrivateKey>(privateKey));
 
     final ecSignature = signer.generateSignature(digest) as ECSignature;
 
@@ -52,10 +46,7 @@ class EcdsaSigner {
 
     final verifier = Signer('SHA-256/DET-ECDSA');
 
-    verifier.init(
-      false,
-      PublicKeyParameter<ECPublicKey>(publicKey),
-    );
+    verifier.init(false, PublicKeyParameter<ECPublicKey>(publicKey));
 
     try {
       return verifier.verifySignature(digest, ecSignature);
@@ -147,7 +138,8 @@ class EcdsaSigner {
     // Outer SEQUENCE
     if (der[offset] != 0x30) {
       throw FormatException(
-          'Expected SEQUENCE tag, got 0x${der[offset].toRadixString(16)}');
+        'Expected SEQUENCE tag, got 0x${der[offset].toRadixString(16)}',
+      );
     }
     offset++; // skip SEQUENCE tag
     offset = _skipLength(der, offset); // skip SEQUENCE length
@@ -155,7 +147,8 @@ class EcdsaSigner {
     // First element must be the version INTEGER in both PKCS#8 and SEC 1.
     if (der[offset] != 0x02) {
       throw FormatException(
-          'Expected INTEGER version tag, got 0x${der[offset].toRadixString(16)}');
+        'Expected INTEGER version tag, got 0x${der[offset].toRadixString(16)}',
+      );
     }
     final afterVersionOffset = _skipTlv(der, offset);
 
@@ -171,7 +164,8 @@ class EcdsaSigner {
 
       if (der[innerOffset] != 0x04) {
         throw FormatException(
-            'Expected OCTET STRING tag for PKCS#8 privateKey, got 0x${der[innerOffset].toRadixString(16)}');
+          'Expected OCTET STRING tag for PKCS#8 privateKey, got 0x${der[innerOffset].toRadixString(16)}',
+        );
       }
       innerOffset++; // skip OCTET STRING tag
       final len = _readLength(der, innerOffset);
@@ -194,7 +188,8 @@ class EcdsaSigner {
     }
 
     throw FormatException(
-        'Unrecognized EC private key format: expected SEQUENCE (PKCS#8) or OCTET STRING (SEC 1) after version, got 0x${secondTag.toRadixString(16)}');
+      'Unrecognized EC private key format: expected SEQUENCE (PKCS#8) or OCTET STRING (SEC 1) after version, got 0x${secondTag.toRadixString(16)}',
+    );
   }
 
   /// Extract the public key point bytes from a DER-encoded public key

@@ -16,15 +16,15 @@ class MockFlutterSecureStorage extends Mock implements FlutterSecureStorage {}
 // ---------------------------------------------------------------------------
 
 Map<String, dynamic> _salePayload({String? localSaleId}) => {
-      'local_sale_id': localSaleId ?? 'sale-001',
-      'amount': 150.0,
-      'items': [],
-    };
+  'local_sale_id': localSaleId ?? 'sale-001',
+  'amount': 150.0,
+  'items': [],
+};
 
 Map<String, dynamic> _refundPayload({String? originalSaleId}) => {
-      'original_sale_id': originalSaleId ?? 'sale-001',
-      'amount': 50.0,
-    };
+  'original_sale_id': originalSaleId ?? 'sale-001',
+  'amount': 50.0,
+};
 
 // ---------------------------------------------------------------------------
 // Tests
@@ -49,31 +49,31 @@ void main() {
     // Set up mock method channel before any secure storage calls
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(channel, (MethodCall call) async {
-      switch (call.method) {
-        case 'read':
-          final key = call.arguments['key'] as String;
-          return storage[key];
-        case 'write':
-          final key = call.arguments['key'] as String;
-          final value = call.arguments['value'] as String;
-          storage[key] = value;
-          return null;
-        case 'delete':
-          final key = call.arguments['key'] as String;
-          storage.remove(key);
-          return null;
-        case 'deleteAll':
-          storage.clear();
-          return null;
-        case 'readAll':
-          return storage;
-        case 'containsKey':
-          final key = call.arguments['key'] as String;
-          return storage.containsKey(key) ? 'true' : 'false';
-        default:
-          return null;
-      }
-    });
+          switch (call.method) {
+            case 'read':
+              final key = call.arguments['key'] as String;
+              return storage[key];
+            case 'write':
+              final key = call.arguments['key'] as String;
+              final value = call.arguments['value'] as String;
+              storage[key] = value;
+              return null;
+            case 'delete':
+              final key = call.arguments['key'] as String;
+              storage.remove(key);
+              return null;
+            case 'deleteAll':
+              storage.clear();
+              return null;
+            case 'readAll':
+              return storage;
+            case 'containsKey':
+              final key = call.arguments['key'] as String;
+              return storage.containsKey(key) ? 'true' : 'false';
+            default:
+              return null;
+          }
+        });
 
     service = OfflineQueueService.instance;
     // Reset state between tests
@@ -188,22 +188,24 @@ void main() {
       expect(await service.totalCount(), 1);
     });
 
-    test('duplicate idempotency key resets existing item and returns false',
-        () async {
-      await service.enqueue(
-        type: QueueOperationType.saleCreate,
-        payload: _salePayload(localSaleId: 'dup-sale'),
-      );
+    test(
+      'duplicate idempotency key resets existing item and returns false',
+      () async {
+        await service.enqueue(
+          type: QueueOperationType.saleCreate,
+          payload: _salePayload(localSaleId: 'dup-sale'),
+        );
 
-      // Enqueue again with the same implicit idempotency key
-      final result = await service.enqueue(
-        type: QueueOperationType.saleCreate,
-        payload: _salePayload(localSaleId: 'dup-sale'),
-      );
+        // Enqueue again with the same implicit idempotency key
+        final result = await service.enqueue(
+          type: QueueOperationType.saleCreate,
+          payload: _salePayload(localSaleId: 'dup-sale'),
+        );
 
-      expect(result, false); // deduplication -- updated in place
-      expect(await service.totalCount(), 1);
-    });
+        expect(result, false); // deduplication -- updated in place
+        expect(await service.totalCount(), 1);
+      },
+    );
 
     test('custom idempotency key is respected', () async {
       await service.enqueue(
@@ -278,8 +280,8 @@ void main() {
         payload: _salePayload(),
       );
 
-      service.itemProcessor =
-          (_) async => throw Exception('400 Bad Request: validation failed');
+      service.itemProcessor = (_) async =>
+          throw Exception('400 Bad Request: validation failed');
 
       await service.flush();
 
@@ -292,8 +294,8 @@ void main() {
         payload: _salePayload(),
       );
 
-      service.itemProcessor =
-          (_) async => throw Exception('422 Unprocessable Entity');
+      service.itemProcessor = (_) async =>
+          throw Exception('422 Unprocessable Entity');
 
       await service.flush();
 
@@ -305,58 +307,66 @@ void main() {
   // Retry logic
   // -------------------------------------------------------------------------
   group('retry logic (max 3 retries)', () {
-    test('item is marked failed after 3 network errors', () async {
-      await service.enqueue(
-        type: QueueOperationType.saleCreate,
-        payload: _salePayload(),
-      );
+    test(
+      'item is marked failed after 3 network errors',
+      () async {
+        await service.enqueue(
+          type: QueueOperationType.saleCreate,
+          payload: _salePayload(),
+        );
 
-      service.itemProcessor =
-          (_) async => throw Exception('SocketException timeout');
+        service.itemProcessor = (_) async =>
+            throw Exception('SocketException timeout');
 
-      // First flush processes the item (no backoff yet).
-      await service.flush();
+        // First flush processes the item (no backoff yet).
+        await service.flush();
 
-      // After first retry, backoff is 4s. We must wait for it to expire.
-      await Future<void>.delayed(const Duration(seconds: 5));
-      await service.flush();
+        // After first retry, backoff is 4s. We must wait for it to expire.
+        await Future<void>.delayed(const Duration(seconds: 5));
+        await service.flush();
 
-      // After second retry, backoff is 8s.
-      await Future<void>.delayed(const Duration(seconds: 9));
-      await service.flush();
+        // After second retry, backoff is 8s.
+        await Future<void>.delayed(const Duration(seconds: 9));
+        await service.flush();
 
-      final items = await service.getItems();
-      expect(items.length, 1);
-      expect(items.first.retryCount, 3);
-      expect(items.first.itemStatus, 'failed');
-    }, timeout: const Timeout(Duration(seconds: 30)));
+        final items = await service.getItems();
+        expect(items.length, 1);
+        expect(items.first.retryCount, 3);
+        expect(items.first.itemStatus, 'failed');
+      },
+      timeout: const Timeout(Duration(seconds: 30)),
+    );
 
-    test('failed items beyond maxRetries are not reprocessed', () async {
-      await service.enqueue(
-        type: QueueOperationType.saleCreate,
-        payload: _salePayload(),
-      );
+    test(
+      'failed items beyond maxRetries are not reprocessed',
+      () async {
+        await service.enqueue(
+          type: QueueOperationType.saleCreate,
+          payload: _salePayload(),
+        );
 
-      var callCount = 0;
-      service.itemProcessor = (_) async {
-        callCount++;
-        throw Exception('network error');
-      };
+        var callCount = 0;
+        service.itemProcessor = (_) async {
+          callCount++;
+          throw Exception('network error');
+        };
 
-      // Exhaust retries with delays for backoff
-      await service.flush(); // retry 1
-      await Future<void>.delayed(const Duration(seconds: 5));
-      await service.flush(); // retry 2
-      await Future<void>.delayed(const Duration(seconds: 9));
-      await service.flush(); // retry 3 (now marked failed)
-      await Future<void>.delayed(const Duration(seconds: 1));
-      await service
-          .flush(); // 4th flush: item has maxRetries, should be skipped
+        // Exhaust retries with delays for backoff
+        await service.flush(); // retry 1
+        await Future<void>.delayed(const Duration(seconds: 5));
+        await service.flush(); // retry 2
+        await Future<void>.delayed(const Duration(seconds: 9));
+        await service.flush(); // retry 3 (now marked failed)
+        await Future<void>.delayed(const Duration(seconds: 1));
+        await service
+            .flush(); // 4th flush: item has maxRetries, should be skipped
 
-      // The 4th flush should NOT call the processor again because retryCount
-      // already reached maxRetries.
-      expect(callCount, 3);
-    }, timeout: const Timeout(Duration(seconds: 30)));
+        // The 4th flush should NOT call the processor again because retryCount
+        // already reached maxRetries.
+        expect(callCount, 3);
+      },
+      timeout: const Timeout(Duration(seconds: 30)),
+    );
   });
 
   // -------------------------------------------------------------------------
@@ -534,19 +544,21 @@ void main() {
       expect(await service.totalCount(), 0);
     });
 
-    test('processor returning false also removes item (server rejection)',
-        () async {
-      await service.enqueue(
-        type: QueueOperationType.saleCreate,
-        payload: _salePayload(),
-      );
+    test(
+      'processor returning false also removes item (server rejection)',
+      () async {
+        await service.enqueue(
+          type: QueueOperationType.saleCreate,
+          payload: _salePayload(),
+        );
 
-      service.itemProcessor = (_) async => false;
+        service.itemProcessor = (_) async => false;
 
-      final processed = await service.flush();
-      expect(processed, 1);
-      expect(await service.totalCount(), 0);
-    });
+        final processed = await service.flush();
+        expect(processed, 1);
+        expect(await service.totalCount(), 0);
+      },
+    );
 
     test('onSyncEvent callback fires on enqueue', () async {
       final messages = <String>[];

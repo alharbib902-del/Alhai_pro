@@ -47,8 +47,9 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
       children: [
         AppHeader(
           title: l10n.aiBasketAnalysis,
-          onMenuTap:
-              !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
+          onMenuTap: !isWideScreen
+              ? () => Scaffold.of(context).openDrawer()
+              : null,
         ),
         Expanded(child: _buildContent(isDark, isWideScreen)),
       ],
@@ -68,7 +69,8 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
             data: (insights) =>
                 _buildInsightsSummary(isDark, insights, isWideScreen),
             loading: () => const Center(
-                child: CircularProgressIndicator(color: AppColors.primary)),
+              child: CircularProgressIndicator(color: AppColors.primary),
+            ),
             error: (e, _) => Text('$e'),
           ),
 
@@ -122,7 +124,10 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
   }
 
   Widget _buildInsightsSummary(
-      bool isDark, BasketInsight insights, bool isWideScreen) {
+    bool isDark,
+    BasketInsight insights,
+    bool isWideScreen,
+  ) {
     final l10n = AppLocalizations.of(context);
     final cards = [
       _InsightCardData(
@@ -177,8 +182,9 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color:
-                          Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                      color: Colors.black.withValues(
+                        alpha: isDark ? 0.2 : 0.04,
+                      ),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -212,8 +218,9 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                           Text(
                             card.value,
                             style: TextStyle(
-                              color:
-                                  isDark ? Colors.white : AppColors.textPrimary,
+                              color: isDark
+                                  ? Colors.white
+                                  : AppColors.textPrimary,
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
@@ -250,8 +257,13 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
           // Show pair details
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(AppLocalizations.of(context).aiAssociationFrequency(
-                  pair.productAName, pair.productBName, pair.frequency)),
+              content: Text(
+                AppLocalizations.of(context).aiAssociationFrequency(
+                  pair.productAName,
+                  pair.productBName,
+                  pair.frequency,
+                ),
+              ),
               backgroundColor: AppColors.primary,
             ),
           );
@@ -270,8 +282,11 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
         if (isWideScreen) {
           return GridView.builder(
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount:
-                  getResponsiveGridColumns(context, mobile: 2, desktop: 3),
+              crossAxisCount: getResponsiveGridColumns(
+                context,
+                mobile: 2,
+                desktop: 3,
+              ),
               childAspectRatio: 0.85,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
@@ -283,8 +298,11 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                 onActivate: () {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(AppLocalizations.of(context)
-                          .aiBundleActivated(bundles[index].name)),
+                      content: Text(
+                        AppLocalizations.of(
+                          context,
+                        ).aiBundleActivated(bundles[index].name),
+                      ),
                       backgroundColor: AppColors.success,
                     ),
                   );
@@ -351,15 +369,19 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                             color: AppColors.info.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(Icons.shopping_bag_outlined,
-                              color: AppColors.info, size: 24),
+                          child: const Icon(
+                            Icons.shopping_bag_outlined,
+                            color: AppColors.info,
+                            size: 24,
+                          ),
                         ),
                         const SizedBox(height: AlhaiSpacing.xs),
                         Text(
                           opp.triggerProduct,
                           style: TextStyle(
-                            color:
-                                isDark ? Colors.white : AppColors.textPrimary,
+                            color: isDark
+                                ? Colors.white
+                                : AppColors.textPrimary,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),
@@ -381,7 +403,9 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                         const SizedBox(height: AlhaiSpacing.xxs),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: AlhaiSpacing.xs, vertical: 3),
+                            horizontal: AlhaiSpacing.xs,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.primary.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(10),
@@ -408,15 +432,19 @@ class _AiBasketAnalysisScreenState extends ConsumerState<AiBasketAnalysisScreen>
                             color: AppColors.success.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: const Icon(Icons.add_shopping_cart_rounded,
-                              color: AppColors.success, size: 24),
+                          child: const Icon(
+                            Icons.add_shopping_cart_rounded,
+                            color: AppColors.success,
+                            size: 24,
+                          ),
                         ),
                         const SizedBox(height: AlhaiSpacing.xs),
                         Text(
                           opp.suggestedProduct,
                           style: TextStyle(
-                            color:
-                                isDark ? Colors.white : AppColors.textPrimary,
+                            color: isDark
+                                ? Colors.white
+                                : AppColors.textPrimary,
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
                           ),

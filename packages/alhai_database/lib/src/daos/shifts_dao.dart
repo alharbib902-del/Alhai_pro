@@ -11,11 +11,12 @@ class ShiftsDao extends DatabaseAccessor<AppDatabase> with _$ShiftsDaoMixin {
   ShiftsDao(super.db);
 
   Future<ShiftsTableData?> getOpenShift(String storeId, String cashierId) {
-    return (select(shiftsTable)
-          ..where((s) =>
+    return (select(shiftsTable)..where(
+          (s) =>
               s.storeId.equals(storeId) &
               s.cashierId.equals(cashierId) &
-              s.status.equals('open')))
+              s.status.equals('open'),
+        ))
         .getSingleOrNull();
   }
 
@@ -33,21 +34,28 @@ class ShiftsDao extends DatabaseAccessor<AppDatabase> with _$ShiftsDaoMixin {
     final startOfDay = DateTime(today.year, today.month, today.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
     return (select(shiftsTable)
-          ..where((s) =>
-              s.storeId.equals(storeId) &
-              s.openedAt.isBiggerOrEqualValue(startOfDay) &
-              s.openedAt.isSmallerThanValue(endOfDay))
+          ..where(
+            (s) =>
+                s.storeId.equals(storeId) &
+                s.openedAt.isBiggerOrEqualValue(startOfDay) &
+                s.openedAt.isSmallerThanValue(endOfDay),
+          )
           ..orderBy([(s) => OrderingTerm.desc(s.openedAt)]))
         .get();
   }
 
   Future<List<ShiftsTableData>> getShiftsByDateRange(
-      String storeId, DateTime startDate, DateTime endDate) {
+    String storeId,
+    DateTime startDate,
+    DateTime endDate,
+  ) {
     return (select(shiftsTable)
-          ..where((s) =>
-              s.storeId.equals(storeId) &
-              s.openedAt.isBiggerOrEqualValue(startDate) &
-              s.openedAt.isSmallerThanValue(endDate))
+          ..where(
+            (s) =>
+                s.storeId.equals(storeId) &
+                s.openedAt.isBiggerOrEqualValue(startDate) &
+                s.openedAt.isSmallerThanValue(endDate),
+          )
           ..orderBy([(s) => OrderingTerm.desc(s.openedAt)])
           ..limit(500))
         .get();
@@ -56,41 +64,46 @@ class ShiftsDao extends DatabaseAccessor<AppDatabase> with _$ShiftsDaoMixin {
   Future<int> openShift(ShiftsTableCompanion shift) =>
       into(shiftsTable).insert(shift);
 
-  Future<int> closeShift(
-      {required String id,
-      required double closingCash,
-      required double expectedCash,
-      required double difference,
-      required int totalSales,
-      required double totalSalesAmount,
-      required int totalRefunds,
-      required double totalRefundsAmount,
-      String? notes}) {
+  Future<int> closeShift({
+    required String id,
+    required double closingCash,
+    required double expectedCash,
+    required double difference,
+    required int totalSales,
+    required double totalSalesAmount,
+    required int totalRefunds,
+    required double totalRefundsAmount,
+    String? notes,
+  }) {
     return (update(shiftsTable)..where((s) => s.id.equals(id))).write(
-        ShiftsTableCompanion(
-            closingCash: Value(closingCash),
-            expectedCash: Value(expectedCash),
-            difference: Value(difference),
-            totalSales: Value(totalSales),
-            totalSalesAmount: Value(totalSalesAmount),
-            totalRefunds: Value(totalRefunds),
-            totalRefundsAmount: Value(totalRefundsAmount),
-            status: const Value('closed'),
-            notes: Value(notes),
-            closedAt: Value(DateTime.now())));
+      ShiftsTableCompanion(
+        closingCash: Value(closingCash),
+        expectedCash: Value(expectedCash),
+        difference: Value(difference),
+        totalSales: Value(totalSales),
+        totalSalesAmount: Value(totalSalesAmount),
+        totalRefunds: Value(totalRefunds),
+        totalRefundsAmount: Value(totalRefundsAmount),
+        status: const Value('closed'),
+        notes: Value(notes),
+        closedAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   Future<int> markAsSynced(String id) {
-    return (update(shiftsTable)..where((s) => s.id.equals(id)))
-        .write(ShiftsTableCompanion(syncedAt: Value(DateTime.now())));
+    return (update(shiftsTable)..where((s) => s.id.equals(id))).write(
+      ShiftsTableCompanion(syncedAt: Value(DateTime.now())),
+    );
   }
 
   Stream<ShiftsTableData?> watchOpenShift(String storeId, String cashierId) {
-    return (select(shiftsTable)
-          ..where((s) =>
+    return (select(shiftsTable)..where(
+          (s) =>
               s.storeId.equals(storeId) &
               s.cashierId.equals(cashierId) &
-              s.status.equals('open')))
+              s.status.equals('open'),
+        ))
         .watchSingleOrNull();
   }
 
@@ -138,10 +151,12 @@ class ShiftsDao extends DatabaseAccessor<AppDatabase> with _$ShiftsDaoMixin {
     ).get();
 
     return result
-        .map((row) => ShiftWithCashier(
-              shift: shiftsTable.map(row.data),
-              cashierName: row.data['cashier_name'] as String?,
-            ))
+        .map(
+          (row) => ShiftWithCashier(
+            shift: shiftsTable.map(row.data),
+            cashierName: row.data['cashier_name'] as String?,
+          ),
+        )
         .toList();
   }
 }

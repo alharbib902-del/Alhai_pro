@@ -62,11 +62,11 @@ class DisplayCartItem {
   });
 
   Map<String, dynamic> toJson() => {
-        'productName': productName,
-        'quantity': quantity,
-        'unitPrice': unitPrice,
-        'lineTotal': lineTotal,
-      };
+    'productName': productName,
+    'quantity': quantity,
+    'unitPrice': unitPrice,
+    'lineTotal': lineTotal,
+  };
 
   factory DisplayCartItem.fromJson(Map<String, dynamic> json) {
     return DisplayCartItem(
@@ -127,7 +127,7 @@ class CustomerDisplayState {
 
   /// حالة الانتظار الافتراضية
   const CustomerDisplayState.idle({String storeName = ''})
-      : this(phase: CustomerDisplayPhase.idle, storeName: storeName);
+    : this(phase: CustomerDisplayPhase.idle, storeName: storeName);
 
   /// حالة عرض السلة
   CustomerDisplayState.cart({
@@ -138,14 +138,14 @@ class CustomerDisplayState {
     required double total,
     String storeName = '',
   }) : this(
-          phase: CustomerDisplayPhase.cart,
-          storeName: storeName,
-          items: items,
-          subtotal: subtotal,
-          discount: discount,
-          tax: tax,
-          total: total,
-        );
+         phase: CustomerDisplayPhase.cart,
+         storeName: storeName,
+         items: items,
+         subtotal: subtotal,
+         discount: discount,
+         tax: tax,
+         total: total,
+       );
 
   /// حالة إدخال رقم الجوال
   CustomerDisplayState.phoneEntry({
@@ -153,11 +153,11 @@ class CustomerDisplayState {
     required double total,
     String storeName = '',
   }) : this(
-          phase: CustomerDisplayPhase.phoneEntry,
-          storeName: storeName,
-          items: items,
-          total: total,
-        );
+         phase: CustomerDisplayPhase.phoneEntry,
+         storeName: storeName,
+         items: items,
+         total: total,
+       );
 
   /// حالة انتظار NFC
   CustomerDisplayState.nfcWaiting({
@@ -166,12 +166,12 @@ class CustomerDisplayState {
     String? nfcMessage,
     String storeName = '',
   }) : this(
-          phase: CustomerDisplayPhase.nfcWaiting,
-          storeName: storeName,
-          total: total,
-          nfcStatus: nfcStatus,
-          nfcMessage: nfcMessage,
-        );
+         phase: CustomerDisplayPhase.nfcWaiting,
+         storeName: storeName,
+         total: total,
+         nfcStatus: nfcStatus,
+         nfcMessage: nfcMessage,
+       );
 
   /// حالة نجاح الدفع
   CustomerDisplayState.success({
@@ -179,21 +179,19 @@ class CustomerDisplayState {
     String? resultMessage,
     String storeName = '',
   }) : this(
-          phase: CustomerDisplayPhase.success,
-          storeName: storeName,
-          total: total,
-          resultMessage: resultMessage,
-        );
+         phase: CustomerDisplayPhase.success,
+         storeName: storeName,
+         total: total,
+         resultMessage: resultMessage,
+       );
 
   /// حالة فشل الدفع
-  CustomerDisplayState.failure({
-    String? resultMessage,
-    String storeName = '',
-  }) : this(
-          phase: CustomerDisplayPhase.failure,
-          storeName: storeName,
-          resultMessage: resultMessage,
-        );
+  CustomerDisplayState.failure({String? resultMessage, String storeName = ''})
+    : this(
+        phase: CustomerDisplayPhase.failure,
+        storeName: storeName,
+        resultMessage: resultMessage,
+      );
 
   CustomerDisplayState copyWith({
     CustomerDisplayPhase? phase,
@@ -228,18 +226,18 @@ class CustomerDisplayState {
   // =========================================================================
 
   Map<String, dynamic> toJson() => {
-        'phase': phase.name,
-        'storeName': storeName,
-        'items': items.map((e) => e.toJson()).toList(),
-        'subtotal': subtotal,
-        'discount': discount,
-        'tax': tax,
-        'total': total,
-        'paymentMethodName': paymentMethodName,
-        'nfcStatus': nfcStatus?.name,
-        'nfcMessage': nfcMessage,
-        'resultMessage': resultMessage,
-      };
+    'phase': phase.name,
+    'storeName': storeName,
+    'items': items.map((e) => e.toJson()).toList(),
+    'subtotal': subtotal,
+    'discount': discount,
+    'tax': tax,
+    'total': total,
+    'paymentMethodName': paymentMethodName,
+    'nfcStatus': nfcStatus?.name,
+    'nfcMessage': nfcMessage,
+    'resultMessage': resultMessage,
+  };
 
   String toJsonString() => jsonEncode(toJson());
 
@@ -250,7 +248,8 @@ class CustomerDisplayState {
         orElse: () => CustomerDisplayPhase.idle,
       ),
       storeName: json['storeName'] as String? ?? '',
-      items: (json['items'] as List<dynamic>?)
+      items:
+          (json['items'] as List<dynamic>?)
               ?.map((e) => DisplayCartItem.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],

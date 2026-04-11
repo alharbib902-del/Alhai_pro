@@ -37,10 +37,7 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     _animation = Tween<double>(begin: -2, end: 2).animate(
       CurvedAnimation(parent: _controller, curve: AlhaiMotion.standard),
@@ -54,8 +51,9 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final effectiveDuration =
-        context.prefersReducedMotion ? Duration.zero : widget.duration;
+    final effectiveDuration = context.prefersReducedMotion
+        ? Duration.zero
+        : widget.duration;
     if (_controller.duration != effectiveDuration) {
       _controller.duration = effectiveDuration;
       if (widget.isLoading) {
@@ -91,7 +89,8 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final baseColor =
         widget.baseColor ?? (isDark ? AppColors.grey700 : AppColors.grey200);
-    final highlightColor = widget.highlightColor ??
+    final highlightColor =
+        widget.highlightColor ??
         (isDark ? AppColors.grey600 : AppColors.grey100);
 
     return AnimatedBuilder(
@@ -103,11 +102,7 @@ class _ShimmerLoadingState extends State<ShimmerLoading>
             return LinearGradient(
               begin: Alignment.topLeft,
               end: Alignment.bottomRight,
-              colors: [
-                baseColor,
-                highlightColor,
-                baseColor,
-              ],
+              colors: [baseColor, highlightColor, baseColor],
               stops: const [0.0, 0.5, 1.0],
               transform: _SlidingGradientTransform(_animation.value),
             ).createShader(bounds);
@@ -213,11 +208,7 @@ class ShimmerCard extends StatelessWidget {
   final double? height;
   final EdgeInsetsGeometry? margin;
 
-  const ShimmerCard({
-    super.key,
-    this.height,
-    this.margin,
-  });
+  const ShimmerCard({super.key, this.height, this.margin});
 
   @override
   Widget build(BuildContext context) {
@@ -389,11 +380,7 @@ class ShimmerStats extends StatelessWidget {
   final int count;
   final bool isWide;
 
-  const ShimmerStats({
-    super.key,
-    this.count = 4,
-    this.isWide = true,
-  });
+  const ShimmerStats({super.key, this.count = 4, this.isWide = true});
 
   @override
   Widget build(BuildContext context) {

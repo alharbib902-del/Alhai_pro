@@ -38,23 +38,28 @@ class ReturnsDataTable extends StatelessWidget {
         child: Center(
           child: Column(
             children: [
-              Icon(Icons.inbox_outlined,
-                  size: 48,
-                  color:
-                      isDark ? AppColors.textMutedDark : AppColors.textMuted),
+              Icon(
+                Icons.inbox_outlined,
+                size: 48,
+                color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+              ),
               const SizedBox(height: AlhaiSpacing.sm),
-              Text(l10n.noReturns,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onSurface)),
+              Text(
+                l10n.noReturns,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
+              ),
               const SizedBox(height: AlhaiSpacing.xxs),
-              Text(l10n.noReturnsDesc,
-                  style: TextStyle(
-                      fontSize: 13,
-                      color: isDark
-                          ? AppColors.textMutedDark
-                          : AppColors.textMuted)),
+              Text(
+                l10n.noReturnsDesc,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+                ),
+              ),
             ],
           ),
         ),
@@ -87,8 +92,9 @@ class ReturnsDataTable extends StatelessWidget {
           ),
           dataTextStyle: TextStyle(
             fontSize: 13,
-            color:
-                isDark ? AppColors.textSecondaryDark : AppColors.textSecondary,
+            color: isDark
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondary,
           ),
           columnSpacing: 24,
           horizontalMargin: 20,
@@ -111,8 +117,13 @@ class ReturnsDataTable extends StatelessWidget {
     );
   }
 
-  DataRow _buildRow(BuildContext context, ReturnModel ret, bool isDark,
-      ColorScheme colorScheme, AppLocalizations l10n) {
+  DataRow _buildRow(
+    BuildContext context,
+    ReturnModel ret,
+    bool isDark,
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+  ) {
     return DataRow(
       // Semantics: row describes return ID, customer, and status
       key: ValueKey('return-${ret.id}'),
@@ -140,10 +151,12 @@ class ReturnsDataTable extends StatelessWidget {
                   child: SizedBox(
                     width: 32,
                     height: 32,
-                    child: Icon(Icons.copy_outlined,
-                        size: 14,
-                        color: colorScheme.outlineVariant,
-                        semanticLabel: l10n.copyToClipboard),
+                    child: Icon(
+                      Icons.copy_outlined,
+                      size: 14,
+                      color: colorScheme.outlineVariant,
+                      semanticLabel: l10n.copyToClipboard,
+                    ),
                   ),
                 ),
               ),
@@ -151,11 +164,14 @@ class ReturnsDataTable extends StatelessWidget {
           ),
         ),
         // Date
-        DataCell(Text(
-          _formatDate(ret.date),
-          style: TextStyle(
-              color: isDark ? AppColors.textMutedDark : AppColors.textMuted),
-        )),
+        DataCell(
+          Text(
+            _formatDate(ret.date),
+            style: TextStyle(
+              color: isDark ? AppColors.textMutedDark : AppColors.textMuted,
+            ),
+          ),
+        ),
         // Original invoice
         DataCell(
           InkWell(
@@ -163,10 +179,11 @@ class ReturnsDataTable extends StatelessWidget {
             child: Text(
               '#${ret.invoiceNo}',
               style: const TextStyle(
-                  color: AppColors.primary,
-                  fontWeight: FontWeight.w500,
-                  fontFamily: 'Courier',
-                  fontSize: 13),
+                color: AppColors.primary,
+                fontWeight: FontWeight.w500,
+                fontFamily: 'Courier',
+                fontSize: 13,
+              ),
             ),
           ),
         ),
@@ -180,7 +197,9 @@ class ReturnsDataTable extends StatelessWidget {
               Text(
                 ret.customer,
                 style: TextStyle(
-                    fontWeight: FontWeight.bold, color: colorScheme.onSurface),
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
               ),
             ],
           ),
@@ -188,11 +207,15 @@ class ReturnsDataTable extends StatelessWidget {
         // Reason
         DataCell(_buildReasonBadge(ret.reason, l10n, isDark, colorScheme)),
         // Amount
-        DataCell(Text(
-          '${ret.amount.toStringAsFixed(2)} ${l10n.sar}',
-          style: TextStyle(
-              fontWeight: FontWeight.bold, color: colorScheme.onSurface),
-        )),
+        DataCell(
+          Text(
+            '${ret.amount.toStringAsFixed(2)} ${l10n.sar}',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
+            ),
+          ),
+        ),
         // Status
         DataCell(_buildStatusBadge(context, ret.status, l10n, isDark)),
         // Actions
@@ -212,20 +235,28 @@ class ReturnsDataTable extends StatelessWidget {
     final initial = ret.customer.isNotEmpty ? ret.customer[0] : '?';
     return CircleAvatar(
       radius: 16,
-      backgroundColor:
-          isDark ? AppColors.surfaceVariantDark : colorScheme.surfaceContainer,
-      child: Text(initial,
-          style: TextStyle(
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
-              color: isDark
-                  ? AppColors.textMutedDark
-                  : colorScheme.onSurfaceVariant)),
+      backgroundColor: isDark
+          ? AppColors.surfaceVariantDark
+          : colorScheme.surfaceContainer,
+      child: Text(
+        initial,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: isDark
+              ? AppColors.textMutedDark
+              : colorScheme.onSurfaceVariant,
+        ),
+      ),
     );
   }
 
-  Widget _buildReasonBadge(String reason, AppLocalizations l10n, bool isDark,
-      ColorScheme colorScheme) {
+  Widget _buildReasonBadge(
+    String reason,
+    AppLocalizations l10n,
+    bool isDark,
+    ColorScheme colorScheme,
+  ) {
     IconData icon;
     Color bgColor;
     Color textColor;
@@ -264,7 +295,9 @@ class ReturnsDataTable extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+        horizontal: AlhaiSpacing.xs,
+        vertical: AlhaiSpacing.xxs,
+      ),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(6),
@@ -274,16 +307,25 @@ class ReturnsDataTable extends StatelessWidget {
         children: [
           Icon(icon, size: 13, color: textColor),
           const SizedBox(width: AlhaiSpacing.xxs),
-          Text(text,
-              style: TextStyle(
-                  fontSize: 11, fontWeight: FontWeight.w500, color: textColor)),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: textColor,
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildStatusBadge(
-      BuildContext context, String status, AppLocalizations l10n, bool isDark) {
+    BuildContext context,
+    String status,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
     Color bgColor;
     Color textColor;
@@ -332,7 +374,9 @@ class ReturnsDataTable extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: 10, vertical: AlhaiSpacing.xxs),
+        horizontal: 10,
+        vertical: AlhaiSpacing.xxs,
+      ),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(20),
@@ -353,22 +397,34 @@ class ReturnsDataTable extends StatelessWidget {
           else if (icon != null)
             Icon(icon, size: 13, color: textColor),
           const SizedBox(width: 5),
-          Text(label,
-              style: TextStyle(
-                  fontSize: 11, fontWeight: FontWeight.bold, color: textColor)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildActions(ReturnModel ret, AppLocalizations l10n, bool isDark,
-      ColorScheme colorScheme) {
+  Widget _buildActions(
+    ReturnModel ret,
+    AppLocalizations l10n,
+    bool isDark,
+    ColorScheme colorScheme,
+  ) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         // View
         _actionButton(
-            Icons.visibility_outlined, () => onView(ret), colorScheme),
+          Icons.visibility_outlined,
+          () => onView(ret),
+          colorScheme,
+        ),
         // Show more actions for pending
         if (ret.status == 'pending') ...[
           PopupMenuButton<String>(
@@ -377,8 +433,9 @@ class ReturnsDataTable extends StatelessWidget {
               if (value == 'reject' && onReject != null) onReject!(ret);
             },
             offset: const Offset(0, 36),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
             color: isDark ? AppColors.surfaceVariantDark : AppColors.surface,
             itemBuilder: (context) => [
               PopupMenuItem(
@@ -387,9 +444,13 @@ class ReturnsDataTable extends StatelessWidget {
                   children: [
                     const Icon(Icons.check, size: 16, color: AppColors.success),
                     const SizedBox(width: AlhaiSpacing.xs),
-                    Text(l10n.approve,
-                        style: const TextStyle(
-                            fontSize: 12, color: AppColors.success)),
+                    Text(
+                      l10n.approve,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.success,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -399,9 +460,13 @@ class ReturnsDataTable extends StatelessWidget {
                   children: [
                     const Icon(Icons.close, size: 16, color: AppColors.error),
                     const SizedBox(width: AlhaiSpacing.xs),
-                    Text(l10n.reject,
-                        style: const TextStyle(
-                            fontSize: 12, color: AppColors.error)),
+                    Text(
+                      l10n.reject,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.error,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -410,8 +475,11 @@ class ReturnsDataTable extends StatelessWidget {
               width: 30,
               height: 30,
               alignment: Alignment.center,
-              child: Icon(Icons.more_horiz,
-                  size: 16, color: colorScheme.onSurfaceVariant),
+              child: Icon(
+                Icons.more_horiz,
+                size: 16,
+                color: colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
         ] else ...[
@@ -424,7 +492,10 @@ class ReturnsDataTable extends StatelessWidget {
   }
 
   Widget _actionButton(
-      IconData icon, VoidCallback onTap, ColorScheme colorScheme) {
+    IconData icon,
+    VoidCallback onTap,
+    ColorScheme colorScheme,
+  ) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(6),

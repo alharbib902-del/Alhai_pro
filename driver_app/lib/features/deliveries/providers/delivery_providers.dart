@@ -27,8 +27,9 @@ final lastSyncTimeProvider = StateProvider<DateTime?>((ref) => null);
 ///
 /// Each successful emission updates [lastSyncTimeProvider] so the UI can
 /// display an offline / freshness indicator.
-final myDeliveriesStreamProvider =
-    StreamProvider<List<Map<String, dynamic>>>((ref) {
+final myDeliveriesStreamProvider = StreamProvider<List<Map<String, dynamic>>>((
+  ref,
+) {
   final ds = GetIt.instance<DeliveryDatasource>();
   return ds.streamMyDeliveries().map((rows) {
     // Record the time of the latest live update from the server.
@@ -43,15 +44,17 @@ final myDeliveriesStreamProvider =
 // ─── One-time fetch providers ────────────────────────────────────────────────
 
 /// Active deliveries (not terminal) – fetched once on demand.
-final activeDeliveriesProvider =
-    FutureProvider<List<Map<String, dynamic>>>((ref) async {
+final activeDeliveriesProvider = FutureProvider<List<Map<String, dynamic>>>((
+  ref,
+) async {
   final ds = GetIt.instance<DeliveryDatasource>();
   return ds.getActiveDeliveries();
 });
 
 /// Completed deliveries – fetched once on demand.
-final completedDeliveriesProvider =
-    FutureProvider<List<Map<String, dynamic>>>((ref) async {
+final completedDeliveriesProvider = FutureProvider<List<Map<String, dynamic>>>((
+  ref,
+) async {
   final ds = GetIt.instance<DeliveryDatasource>();
   return ds.getCompletedDeliveries();
 });
@@ -59,9 +62,9 @@ final completedDeliveriesProvider =
 /// Single delivery by ID – full detail projection.
 final deliveryByIdProvider =
     FutureProvider.family<Map<String, dynamic>?, String>((ref, id) async {
-  final ds = GetIt.instance<DeliveryDatasource>();
-  return ds.getDelivery(id);
-});
+      final ds = GetIt.instance<DeliveryDatasource>();
+      return ds.getDelivery(id);
+    });
 
 // ─── Filter state ────────────────────────────────────────────────────────────
 
@@ -79,27 +82,25 @@ final deliveryFilterProvider = StateProvider<DeliveryFilter>(
 /// the *active* subset actually changes, not on every stream emission.
 final activeDeliveriesStreamProvider =
     Provider<AsyncValue<List<Map<String, dynamic>>>>((ref) {
-  // select() compares the mapped value and skips rebuilds when unchanged.
-  return ref.watch(
-    myDeliveriesStreamProvider.select(
-      (async) => async.whenData(
-        (list) => list.where((d) => !_isTerminal(d)).toList(),
-      ),
-    ),
-  );
-});
+      // select() compares the mapped value and skips rebuilds when unchanged.
+      return ref.watch(
+        myDeliveriesStreamProvider.select(
+          (async) => async.whenData(
+            (list) => list.where((d) => !_isTerminal(d)).toList(),
+          ),
+        ),
+      );
+    });
 
 /// Completed deliveries derived from the live stream.
 final completedDeliveriesStreamProvider =
     Provider<AsyncValue<List<Map<String, dynamic>>>>((ref) {
-  return ref.watch(
-    myDeliveriesStreamProvider.select(
-      (async) => async.whenData(
-        (list) => list.where(_isTerminal).toList(),
-      ),
-    ),
-  );
-});
+      return ref.watch(
+        myDeliveriesStreamProvider.select(
+          (async) => async.whenData((list) => list.where(_isTerminal).toList()),
+        ),
+      );
+    });
 
 /// Filtered deliveries based on [deliveryFilterProvider].
 ///
@@ -107,17 +108,17 @@ final completedDeliveriesStreamProvider =
 /// the full list on every rebuild.
 final filteredDeliveriesProvider =
     Provider<AsyncValue<List<Map<String, dynamic>>>>((ref) {
-  final filter = ref.watch(deliveryFilterProvider);
+      final filter = ref.watch(deliveryFilterProvider);
 
-  switch (filter) {
-    case DeliveryFilter.active:
-      return ref.watch(activeDeliveriesStreamProvider);
-    case DeliveryFilter.completed:
-      return ref.watch(completedDeliveriesStreamProvider);
-    case DeliveryFilter.all:
-      return ref.watch(myDeliveriesStreamProvider);
-  }
-});
+      switch (filter) {
+        case DeliveryFilter.active:
+          return ref.watch(activeDeliveriesStreamProvider);
+        case DeliveryFilter.completed:
+          return ref.watch(completedDeliveriesStreamProvider);
+        case DeliveryFilter.all:
+          return ref.watch(myDeliveriesStreamProvider);
+      }
+    });
 
 // ─── Actions ─────────────────────────────────────────────────────────────────
 
@@ -125,20 +126,23 @@ final filteredDeliveriesProvider =
 ///
 /// Returns `{'success': true, 'offline': true}` when the device is offline
 /// and the update has been queued; throws on non-retriable failure.
-final updateDeliveryStatusProvider = FutureProvider.family<Map<String, dynamic>,
-    ({String id, String status, String? notes})>((ref, params) async {
-  final ds = GetIt.instance<DeliveryDatasource>();
-  final result = await ds.updateStatus(
-    params.id,
-    params.status,
-    notes: params.notes,
-  );
+final updateDeliveryStatusProvider =
+    FutureProvider.family<
+      Map<String, dynamic>,
+      ({String id, String status, String? notes})
+    >((ref, params) async {
+      final ds = GetIt.instance<DeliveryDatasource>();
+      final result = await ds.updateStatus(
+        params.id,
+        params.status,
+        notes: params.notes,
+      );
 
-  if (result['success'] != true) {
-    throw Exception(result['error'] ?? 'فشل تحديث الحالة');
-  }
+      if (result['success'] != true) {
+        throw Exception(result['error'] ?? 'فشل تحديث الحالة');
+      }
 
-  // Invalidate the one-shot fetch cache so detail screens stay fresh.
-  ref.invalidate(activeDeliveriesProvider);
-  return result;
-});
+      // Invalidate the one-shot fetch cache so detail screens stay fresh.
+      ref.invalidate(activeDeliveriesProvider);
+      return result;
+    });

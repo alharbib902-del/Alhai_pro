@@ -88,17 +88,17 @@ class CertificateInfo {
   }
 
   Map<String, dynamic> toJson() => {
-        'certificatePem': certificatePem,
-        'privateKeyPem': privateKeyPem,
-        'csid': csid,
-        'secret': secret,
-        if (serialNumber != null) 'serialNumber': serialNumber,
-        if (issuerName != null) 'issuerName': issuerName,
-        if (subjectName != null) 'subjectName': subjectName,
-        if (validFrom != null) 'validFrom': validFrom!.toIso8601String(),
-        if (validTo != null) 'validTo': validTo!.toIso8601String(),
-        'isProduction': isProduction,
-      };
+    'certificatePem': certificatePem,
+    'privateKeyPem': privateKeyPem,
+    'csid': csid,
+    'secret': secret,
+    if (serialNumber != null) 'serialNumber': serialNumber,
+    if (issuerName != null) 'issuerName': issuerName,
+    if (subjectName != null) 'subjectName': subjectName,
+    if (validFrom != null) 'validFrom': validFrom!.toIso8601String(),
+    if (validTo != null) 'validTo': validTo!.toIso8601String(),
+    'isProduction': isProduction,
+  };
 
   factory CertificateInfo.fromJson(Map<String, dynamic> json) =>
       CertificateInfo(

@@ -41,10 +41,7 @@ class SuppliersRemoteDataSourceImpl implements SuppliersRemoteDataSource {
 
   @override
   Future<SupplierResponse> createSupplier(CreateSupplierRequest request) async {
-    final response = await _dio.post(
-      '/suppliers',
-      data: request.toJson(),
-    );
+    final response = await _dio.post('/suppliers', data: request.toJson());
     return SupplierResponse.fromJson(response.data as Map<String, dynamic>);
   }
 
@@ -53,10 +50,7 @@ class SuppliersRemoteDataSourceImpl implements SuppliersRemoteDataSource {
     String id,
     UpdateSupplierRequest request,
   ) async {
-    final response = await _dio.patch(
-      '/suppliers/$id',
-      data: request.toJson(),
-    );
+    final response = await _dio.patch('/suppliers/$id', data: request.toJson());
     return SupplierResponse.fromJson(response.data as Map<String, dynamic>);
   }
 

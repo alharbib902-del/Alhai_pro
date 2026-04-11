@@ -29,11 +29,10 @@ abstract final class AlhaiInputFormatters {
   static TextInputFormatter currency({
     int maxIntegerDigits = 10,
     int decimalDigits = 2,
-  }) =>
-      _CurrencyFormatter(
-        maxIntegerDigits: maxIntegerDigits,
-        decimalDigits: decimalDigits,
-      );
+  }) => _CurrencyFormatter(
+    maxIntegerDigits: maxIntegerDigits,
+    decimalDigits: decimalDigits,
+  );
 
   /// Integer currency (no decimals)
   static TextInputFormatter integerCurrency({int maxDigits = 10}) =>
@@ -44,9 +43,10 @@ abstract final class AlhaiInputFormatters {
   // ============================================
 
   /// Quantity formatter (positive integers only)
-  static TextInputFormatter quantity(
-          {int maxDigits = 5, int maxValue = 99999}) =>
-      _QuantityFormatter(maxDigits: maxDigits, maxValue: maxValue);
+  static TextInputFormatter quantity({
+    int maxDigits = 5,
+    int maxValue = 99999,
+  }) => _QuantityFormatter(maxDigits: maxDigits, maxValue: maxValue);
 
   // ============================================
   // General Formatters
@@ -98,8 +98,9 @@ class _SaudiPhoneFormatter extends TextInputFormatter {
     final digitsOnly = newValue.text.replaceAll(RegExp(r'[^\d]'), '');
 
     // Limit to 12 digits (966 + 9 digits)
-    final limited =
-        digitsOnly.length > 12 ? digitsOnly.substring(0, 12) : digitsOnly;
+    final limited = digitsOnly.length > 12
+        ? digitsOnly.substring(0, 12)
+        : digitsOnly;
 
     // Format: +966 5XX XXX XXXX
     final buffer = StringBuffer();
@@ -139,8 +140,9 @@ class _InternationalPhoneFormatter extends TextInputFormatter {
     final digitsOnly = text.replaceAll(RegExp(r'[^\d]'), '');
 
     // Limit to 15 digits
-    final limited =
-        digitsOnly.length > 15 ? digitsOnly.substring(0, 15) : digitsOnly;
+    final limited = digitsOnly.length > 15
+        ? digitsOnly.substring(0, 15)
+        : digitsOnly;
 
     final formatted = hasPlus ? '+$limited' : limited;
     return TextEditingValue(

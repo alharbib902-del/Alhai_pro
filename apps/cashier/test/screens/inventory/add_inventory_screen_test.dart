@@ -27,11 +27,13 @@ void main() {
     setupTestGetIt(mockDb: db);
 
     // Default stubs
-    when(() => productsDao.searchProducts(any(), any()))
-        .thenAnswer((_) async => []);
+    when(
+      () => productsDao.searchProducts(any(), any()),
+    ).thenAnswer((_) async => []);
     when(() => inventoryDao.insertMovement(any())).thenAnswer((_) async => 1);
-    when(() => productsDao.updateStock(any(), any()))
-        .thenAnswer((_) async => 1);
+    when(
+      () => productsDao.updateStock(any(), any()),
+    ).thenAnswer((_) async => 1);
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -77,9 +79,11 @@ void main() {
 
       // Quantity to Add title
       expect(
-          find.text(
-              '\u0627\u0644\u0643\u0645\u064a\u0629 \u0627\u0644\u0645\u0631\u0627\u062f \u0625\u0636\u0627\u0641\u062a\u0647\u0627'),
-          findsOneWidget);
+        find.text(
+          '\u0627\u0644\u0643\u0645\u064a\u0629 \u0627\u0644\u0645\u0631\u0627\u062f \u0625\u0636\u0627\u0641\u062a\u0647\u0627',
+        ),
+        findsOneWidget,
+      );
       // Quick quantity chips
       expect(find.text('1'), findsOneWidget);
       expect(find.text('5'), findsOneWidget);
@@ -101,16 +105,19 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.text(
-              '\u0645\u0631\u062c\u0639 \u0627\u0644\u0645\u0648\u0631\u062f'),
-          findsOneWidget);
+        find.text(
+          '\u0645\u0631\u062c\u0639 \u0627\u0644\u0645\u0648\u0631\u062f',
+        ),
+        findsOneWidget,
+      );
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('save button is disabled when no product selected',
-        (tester) async {
+    testWidgets('save button is disabled when no product selected', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
@@ -133,8 +140,9 @@ void main() {
       suppressOverflowErrors();
 
       final products = [createTestProduct(name: 'Apple Juice')];
-      when(() => productsDao.searchProducts(any(), any()))
-          .thenAnswer((_) async => products);
+      when(
+        () => productsDao.searchProducts(any(), any()),
+      ).thenAnswer((_) async => products);
 
       await tester.pumpWidget(createTestWidget(const AddInventoryScreen()));
       await tester.pumpAndSettle();
@@ -145,8 +153,9 @@ void main() {
       await tester.enterText(textFields.first, 'Apple');
       await tester.pumpAndSettle();
 
-      verify(() => productsDao.searchProducts('Apple', 'test-store-1'))
-          .called(1);
+      verify(
+        () => productsDao.searchProducts('Apple', 'test-store-1'),
+      ).called(1);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

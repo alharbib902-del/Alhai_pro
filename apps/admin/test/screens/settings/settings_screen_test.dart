@@ -79,8 +79,9 @@ void main() {
 
       // Make getStoreById hang using Completer
       final completer = Completer<StoresTableData?>();
-      when(() => storesDao.getStoreById(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => storesDao.getStoreById(any()),
+      ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(createTestWidget(const SettingsScreen()));
       await tester.pump();

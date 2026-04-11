@@ -19,7 +19,10 @@ class SyncApiService {
   /// When a push times out, the server may have already processed the request.
   /// Call this before retrying to avoid creating duplicates.
   Future<bool> isRecordSynced(
-      String tableName, String recordId, String storeId) async {
+    String tableName,
+    String recordId,
+    String storeId,
+  ) async {
     try {
       final response = await _client
           .from(tableName)
@@ -73,27 +76,22 @@ class SyncApiService {
     try {
       await _client
           .from(tableName)
-          .upsert(
-            cleanPayload,
-            onConflict: 'id',
-          )
+          .upsert(cleanPayload, onConflict: 'id')
           .timeout(const Duration(seconds: 30));
     } on PostgrestException catch (e) {
       // FK violation على customer_id → إعادة المحاولة بدون العميل
       if (_isForeignKeyError(e) && cleanPayload.containsKey('customer_id')) {
         if (kDebugMode) {
           debugPrint(
-              'Sync: FK error on $tableName customer_id, retrying without it');
+            'Sync: FK error on $tableName customer_id, retrying without it',
+          );
         }
         final retryPayload = Map<String, dynamic>.from(cleanPayload)
           ..remove('customer_id');
         try {
           await _client
               .from(tableName)
-              .upsert(
-                retryPayload,
-                onConflict: 'id',
-              )
+              .upsert(retryPayload, onConflict: 'id')
               .timeout(const Duration(seconds: 30));
           return; // نجحت بدون customer_id
         } catch (_) {
@@ -102,7 +100,8 @@ class SyncApiService {
       }
       if (kDebugMode) {
         debugPrint(
-            'Sync upsert DB error for $tableName: ${e.code} ${e.message}');
+          'Sync upsert DB error for $tableName: ${e.code} ${e.message}',
+        );
       }
       rethrow;
     } on TimeoutException {
@@ -142,7 +141,8 @@ class SyncApiService {
     } on PostgrestException catch (e) {
       if (kDebugMode) {
         debugPrint(
-            'Sync delete DB error for $tableName: ${e.code} ${e.message}');
+          'Sync delete DB error for $tableName: ${e.code} ${e.message}',
+        );
       }
       rethrow;
     } on TimeoutException {
@@ -160,11 +160,14 @@ class SyncApiService {
 
   /// تنظيف الحمولة من الحقول المحلية فقط
   Map<String, dynamic> _cleanPayload(
-      String tableName, Map<String, dynamic> payload) {
+    String tableName,
+    Map<String, dynamic> payload,
+  ) {
     // Remove local-only fields (including embedded items and per-table
     // local-only columns), then convert to snake_case for Supabase
     return toSnakeCase(
-        cleanSyncPayload(payload, removeItems: true, tableName: tableName));
+      cleanSyncPayload(payload, removeItems: true, tableName: tableName),
+    );
   }
 
   /// مزامنة مجموعة عمليات (batch)
@@ -216,7 +219,8 @@ class SyncApiService {
     } on PostgrestException catch (e) {
       if (kDebugMode) {
         debugPrint(
-            'Fetch updates DB error for $tableName: ${e.code} ${e.message}');
+          'Fetch updates DB error for $tableName: ${e.code} ${e.message}',
+        );
       }
       rethrow;
     } on TimeoutException {
@@ -259,7 +263,8 @@ class SyncApiService {
 
       if (kDebugMode && records.isNotEmpty) {
         debugPrint(
-            '[SyncApi] Fetched page: $tableName offset=$offset count=${records.length}');
+          '[SyncApi] Fetched page: $tableName offset=$offset count=${records.length}',
+        );
       }
 
       if (records.length < pageSize) break; // Last page
@@ -287,7 +292,8 @@ class SyncApiService {
     } on PostgrestException catch (e) {
       if (kDebugMode) {
         debugPrint(
-            'Fetch by ID DB error for $tableName/$id: ${e.code} ${e.message}');
+          'Fetch by ID DB error for $tableName/$id: ${e.code} ${e.message}',
+        );
       }
       return null;
     } on TimeoutException {

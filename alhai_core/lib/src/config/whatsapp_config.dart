@@ -120,8 +120,10 @@ class WhatsAppConfig {
   static bool get isUsingEnvVariables => isConfigured;
 
   /// هل وضع الاختبار مفعّل عبر --dart-define=TEST_MODE=true
-  static const bool _testMode =
-      bool.fromEnvironment('TEST_MODE', defaultValue: false);
+  static const bool _testMode = bool.fromEnvironment(
+    'TEST_MODE',
+    defaultValue: false,
+  );
 
   /// هل هو وضع التطوير؟ (Debug Mode أو TEST_MODE=true في Debug فقط)
   /// في وضع التطوير: يتم عرض OTP في UI بدلاً من إرساله عبر WhatsApp
@@ -158,8 +160,8 @@ class WhatsAppConfig {
 
   /// Headers للـ API
   static Map<String, String> get headers => {
-        'Authorization': 'Bearer $apiToken',
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      };
+    'Authorization': 'Bearer $apiToken',
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+  };
 }

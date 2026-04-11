@@ -113,11 +113,14 @@ class ReportingApi {
         }
       }
 
-      results.add(ReportingResult(
-        request: request,
-        response: lastResponse ?? ZatcaResponse.failure(message: 'No response'),
-        attempts: attempts,
-      ));
+      results.add(
+        ReportingResult(
+          request: request,
+          response:
+              lastResponse ?? ZatcaResponse.failure(message: 'No response'),
+          attempts: attempts,
+        ),
+      );
     }
 
     return results;

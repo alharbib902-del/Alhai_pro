@@ -123,7 +123,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         storeId: storeId,
       );
       debugPrint(
-          '[POS] Initial sync done: ${result.totalRecords} records, errors: ${result.errors}');
+        '[POS] Initial sync done: ${result.totalRecords} records, errors: ${result.errors}',
+      );
     } catch (e) {
       debugPrint('[POS] Initial sync error: $e');
     }
@@ -149,8 +150,11 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         final colorScheme = Theme.of(ctx).colorScheme;
         final dialogL10n = AppLocalizations.of(ctx);
         return AlertDialog(
-          icon: Icon(Icons.shopping_cart_outlined,
-              color: colorScheme.primary, size: 36),
+          icon: Icon(
+            Icons.shopping_cart_outlined,
+            color: colorScheme.primary,
+            size: 36,
+          ),
           title: Text(dialogL10n.cart),
           content: Text(
             '${dialogL10n.nItems(itemCount)} • ${CurrencyFormatter.formatWithContext(context, total)}\n\n'
@@ -177,8 +181,11 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     if (!mounted) return;
     if (restore == true) {
       cartNotifier.acceptDraft();
-      _showSnackBar(context, '${l10n.cart} — ${l10n.nItems(itemCount)}',
-          isSuccess: true);
+      _showSnackBar(
+        context,
+        '${l10n.cart} — ${l10n.nItems(itemCount)}',
+        isSuccess: true,
+      );
     } else {
       cartNotifier.discardDraft();
     }
@@ -209,8 +216,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     final Color? bg = isError
         ? AppColors.error
         : isSuccess
-            ? AppColors.success
-            : null;
+        ? AppColors.success
+        : null;
 
     ScaffoldMessenger.of(ctx).showSnackBar(
       SnackBar(
@@ -261,8 +268,9 @@ class _PosScreenState extends ConsumerState<PosScreen> {
           return Container(
             decoration: BoxDecoration(
               color: colorScheme.surface,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(24)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(24),
+              ),
             ),
             child: Column(
               children: [
@@ -278,17 +286,18 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                 ),
                 // Cart content
                 Expanded(
-                    child: PosCartPanel(
-                  isBottomSheet: true,
-                  onHoldInvoice: () {
-                    Navigator.pop(context);
-                    _holdCurrentInvoice();
-                  },
-                  onShowHeldInvoices: () {
-                    Navigator.pop(context);
-                    _showHeldInvoices();
-                  },
-                )),
+                  child: PosCartPanel(
+                    isBottomSheet: true,
+                    onHoldInvoice: () {
+                      Navigator.pop(context);
+                      _holdCurrentInvoice();
+                    },
+                    onShowHeldInvoices: () {
+                      Navigator.pop(context);
+                      _showHeldInvoices();
+                    },
+                  ),
+                ),
               ],
             ),
           );
@@ -299,12 +308,15 @@ class _PosScreenState extends ConsumerState<PosScreen> {
 
   Future<void> _showPaymentDialog(double total) async {
     // عرض نافذة إدخال رقم الجوال إذا كانت الميزة مفعّلة
-    final featureSettings =
-        ref.read(cashierFeatureSettingsProvider).valueOrNull;
+    final featureSettings = ref
+        .read(cashierFeatureSettingsProvider)
+        .valueOrNull;
     if (featureSettings?.enablePhoneCollection == true) {
       final storeId = ref.read(currentStoreIdProvider) ?? '';
-      final phoneResult =
-          await PhoneEntryDialog.show(context, storeId: storeId);
+      final phoneResult = await PhoneEntryDialog.show(
+        context,
+        storeId: storeId,
+      );
       if (!mounted) return;
 
       if (!phoneResult.wasSkipped) {
@@ -312,7 +324,9 @@ class _PosScreenState extends ConsumerState<PosScreen> {
             .read(cartStateProvider.notifier)
             .setCustomerPhone(phoneResult.phone);
         if (phoneResult.hasExistingCustomer) {
-          ref.read(cartStateProvider.notifier).setCustomer(
+          ref
+              .read(cartStateProvider.notifier)
+              .setCustomer(
                 phoneResult.customerId,
                 customerName: phoneResult.customerName,
               );
@@ -330,8 +344,9 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         barrierDismissible: false,
         builder: (ctx) => StatefulBuilder(
           builder: (ctx, setDialogState) => Dialog(
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
+            ),
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 480),
               child: Stack(
@@ -360,9 +375,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                           color: Colors.black.withValues(alpha: 0.3),
                           borderRadius: BorderRadius.circular(20),
                         ),
-                        child: const Center(
-                          child: CircularProgressIndicator(),
-                        ),
+                        child: const Center(child: CircularProgressIndicator()),
                       ),
                     ),
                 ],
@@ -386,8 +399,9 @@ class _PosScreenState extends ConsumerState<PosScreen> {
             builder: (ctx, setSheetState) => Container(
               decoration: BoxDecoration(
                 color: colorScheme.surface,
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(24)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(24),
+                ),
               ),
               padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Stack(
@@ -432,9 +446,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                             top: Radius.circular(24),
                           ),
                         ),
-                        child: const Center(
-                          child: CircularProgressIndicator(),
-                        ),
+                        child: const Center(child: CircularProgressIndicator()),
                       ),
                     ),
                 ],
@@ -544,8 +556,11 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            icon: const Icon(Icons.error_outline,
-                color: AppColors.error, size: 40),
+            icon: const Icon(
+              Icons.error_outline,
+              color: AppColors.error,
+              size: 40,
+            ),
             title: Text(AppLocalizations.of(context).saleSaveFailed),
             content: Text(
               AppLocalizations.of(context).errorSavingSaleMessage(e.toString()),
@@ -584,8 +599,9 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         context: context,
         receiptNumber: receiptNumber,
         amount: result.amountPaid,
-        paymentMethodLabel:
-            result.method.localizedLabel(AppLocalizations.of(context)),
+        paymentMethodLabel: result.method.localizedLabel(
+          AppLocalizations.of(context),
+        ),
         customerPhone: result.customerPhone,
         customerName: result.customerName,
         saleId: saleId,
@@ -609,8 +625,11 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     if (product != null) {
       ref.read(cartStateProvider.notifier).addProduct(product);
       HapticFeedback.lightImpact();
-      _showSnackBar(context, '${l10n.addedToCart}: ${product.name}',
-          isSuccess: true);
+      _showSnackBar(
+        context,
+        '${l10n.addedToCart}: ${product.name}',
+        isSuccess: true,
+      );
     } else {
       _showSnackBar(
         context,
@@ -695,17 +714,20 @@ class _PosScreenState extends ConsumerState<PosScreen> {
               switch (action.type) {
                 case CartUndoType.add:
                   _showSnackBar(
-                      context, l10n.undoneRemoved(action.productName));
+                    context,
+                    l10n.undoneRemoved(action.productName),
+                  );
                 case CartUndoType.remove:
                   _showSnackBar(context, l10n.undoneAdded(action.productName));
                 case CartUndoType.quantityChange:
                   _showSnackBar(
-                      context,
-                      l10n.undoneQtyChanged(
-                        action.productName,
-                        action.newQuantity ?? 0,
-                        action.previousQuantity ?? 0,
-                      ));
+                    context,
+                    l10n.undoneQtyChanged(
+                      action.productName,
+                      action.newQuantity ?? 0,
+                      action.previousQuantity ?? 0,
+                    ),
+                  );
               }
             },
             onCancel: () => context.go(AppRoutes.home),
@@ -736,10 +758,13 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                                 : () => Scaffold.of(context).openDrawer(),
                             onNotificationsTap: () {},
                             notificationsCount: 0,
-                            userName: ref.watch(currentUserProvider)?.name ??
+                            userName:
+                                ref.watch(currentUserProvider)?.name ??
                                 l10n.cashCustomer,
                             userRole: _localizedRole(
-                                ref.watch(currentUserProvider)?.role, l10n),
+                              ref.watch(currentUserProvider)?.role,
+                              l10n,
+                            ),
                             onUserTap: () {},
                           ),
 
@@ -753,14 +778,14 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                                 if (_showOrdersPanel)
                                   OrdersPanel(
                                     onClose: () => setState(
-                                        () => _showOrdersPanel = false),
+                                      () => _showOrdersPanel = false,
+                                    ),
                                   ),
 
                                 // Main POS content (L56: RepaintBoundary isolates repaints)
                                 Expanded(
                                   child: ResponsiveBuilder(
-                                    builder:
-                                        (context, deviceType, screenWidth) {
+                                    builder: (context, deviceType, screenWidth) {
                                       if (deviceType.isMobile) {
                                         // L56: RepaintBoundary isolates product grid
                                         // scroll repaints from header/FAB
@@ -783,7 +808,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
                                       // In landscape, give more space to products (70/30)
                                       final isLandscape =
                                           MediaQuery.orientationOf(context) ==
-                                              Orientation.landscape;
+                                          Orientation.landscape;
                                       // Tablet: 55/45 split to give cart enough room; Desktop: 70/30 or 65/35
                                       final productsFlex = isTablet
                                           ? (isLandscape ? 60 : 55)
@@ -921,10 +946,7 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     if (note == null) return;
 
     // حفظ الفاتورة في قاعدة البيانات
-    await holdCurrentInvoice(
-      ref,
-      name: note.isEmpty ? null : note,
-    );
+    await holdCurrentInvoice(ref, name: note.isEmpty ? null : note);
 
     if (!mounted) return;
     _showSnackBar(context, l10n.invoiceSuspended, isSuccess: true);
@@ -997,10 +1019,8 @@ class _PosShortcutsOverlay extends StatelessWidget {
                       children: [
                         Text(
                           l10n.keyboardShortcuts,
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: Theme.of(context).textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         IconButton(
                           icon: const Icon(Icons.close),
@@ -1010,52 +1030,55 @@ class _PosShortcutsOverlay extends StatelessWidget {
                       ],
                     ),
                     const SizedBox(height: AlhaiSpacing.md),
-                    ...shortcuts.map((s) => Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: AlhaiSpacing.xxs),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 72,
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: AlhaiSpacing.xs,
-                                    vertical: AlhaiSpacing.xxs),
-                                decoration: BoxDecoration(
-                                  color: colorScheme.surfaceContainerHighest,
-                                  borderRadius: BorderRadius.circular(6),
-                                  border: Border.all(
-                                    color: colorScheme.outline
-                                        .withValues(alpha: 0.3),
+                    ...shortcuts.map(
+                      (s) => Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AlhaiSpacing.xxs,
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 72,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: AlhaiSpacing.xs,
+                                vertical: AlhaiSpacing.xxs,
+                              ),
+                              decoration: BoxDecoration(
+                                color: colorScheme.surfaceContainerHighest,
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                  color: colorScheme.outline.withValues(
+                                    alpha: 0.3,
                                   ),
                                 ),
-                                child: Text(
-                                  s.key,
-                                  textAlign: TextAlign.center,
-                                  style: Theme.of(context)
-                                      .textTheme
-                                      .labelMedium
-                                      ?.copyWith(
-                                        fontFamily: 'monospace',
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                ),
                               ),
-                              const SizedBox(width: AlhaiSpacing.sm),
-                              Expanded(
-                                child: Text(
-                                  s.label,
-                                  style: Theme.of(context).textTheme.bodyMedium,
-                                ),
+                              child: Text(
+                                s.key,
+                                textAlign: TextAlign.center,
+                                style: Theme.of(context).textTheme.labelMedium
+                                    ?.copyWith(
+                                      fontFamily: 'monospace',
+                                      fontWeight: FontWeight.bold,
+                                    ),
                               ),
-                            ],
-                          ),
-                        )),
+                            ),
+                            const SizedBox(width: AlhaiSpacing.sm),
+                            Expanded(
+                              child: Text(
+                                s.label,
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                     const SizedBox(height: AlhaiSpacing.sm),
                     Text(
                       'F1 ${l10n.help}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   ],
                 ),

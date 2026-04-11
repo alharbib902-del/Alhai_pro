@@ -12,7 +12,8 @@ part of 'category_response.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 CategoryResponse _$CategoryResponseFromJson(Map<String, dynamic> json) {
   return _CategoryResponse.fromJson(json);
@@ -44,16 +45,18 @@ mixin _$CategoryResponse {
 /// @nodoc
 abstract class $CategoryResponseCopyWith<$Res> {
   factory $CategoryResponseCopyWith(
-          CategoryResponse value, $Res Function(CategoryResponse) then) =
-      _$CategoryResponseCopyWithImpl<$Res, CategoryResponse>;
+    CategoryResponse value,
+    $Res Function(CategoryResponse) then,
+  ) = _$CategoryResponseCopyWithImpl<$Res, CategoryResponse>;
   @useResult
-  $Res call(
-      {String id,
-      String name,
-      @JsonKey(name: 'parent_id') String? parentId,
-      @JsonKey(name: 'image_url') String? imageUrl,
-      @JsonKey(name: 'sort_order') int sortOrder,
-      @JsonKey(name: 'is_active') bool isActive});
+  $Res call({
+    String id,
+    String name,
+    @JsonKey(name: 'parent_id') String? parentId,
+    @JsonKey(name: 'image_url') String? imageUrl,
+    @JsonKey(name: 'sort_order') int sortOrder,
+    @JsonKey(name: 'is_active') bool isActive,
+  });
 }
 
 /// @nodoc
@@ -78,59 +81,65 @@ class _$CategoryResponseCopyWithImpl<$Res, $Val extends CategoryResponse>
     Object? sortOrder = null,
     Object? isActive = null,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      parentId: freezed == parentId
-          ? _value.parentId
-          : parentId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      imageUrl: freezed == imageUrl
-          ? _value.imageUrl
-          : imageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      sortOrder: null == sortOrder
-          ? _value.sortOrder
-          : sortOrder // ignore: cast_nullable_to_non_nullable
-              as int,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            parentId: freezed == parentId
+                ? _value.parentId
+                : parentId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            imageUrl: freezed == imageUrl
+                ? _value.imageUrl
+                : imageUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            sortOrder: null == sortOrder
+                ? _value.sortOrder
+                : sortOrder // ignore: cast_nullable_to_non_nullable
+                      as int,
+            isActive: null == isActive
+                ? _value.isActive
+                : isActive // ignore: cast_nullable_to_non_nullable
+                      as bool,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$CategoryResponseImplCopyWith<$Res>
     implements $CategoryResponseCopyWith<$Res> {
-  factory _$$CategoryResponseImplCopyWith(_$CategoryResponseImpl value,
-          $Res Function(_$CategoryResponseImpl) then) =
-      __$$CategoryResponseImplCopyWithImpl<$Res>;
+  factory _$$CategoryResponseImplCopyWith(
+    _$CategoryResponseImpl value,
+    $Res Function(_$CategoryResponseImpl) then,
+  ) = __$$CategoryResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String name,
-      @JsonKey(name: 'parent_id') String? parentId,
-      @JsonKey(name: 'image_url') String? imageUrl,
-      @JsonKey(name: 'sort_order') int sortOrder,
-      @JsonKey(name: 'is_active') bool isActive});
+  $Res call({
+    String id,
+    String name,
+    @JsonKey(name: 'parent_id') String? parentId,
+    @JsonKey(name: 'image_url') String? imageUrl,
+    @JsonKey(name: 'sort_order') int sortOrder,
+    @JsonKey(name: 'is_active') bool isActive,
+  });
 }
 
 /// @nodoc
 class __$$CategoryResponseImplCopyWithImpl<$Res>
     extends _$CategoryResponseCopyWithImpl<$Res, _$CategoryResponseImpl>
     implements _$$CategoryResponseImplCopyWith<$Res> {
-  __$$CategoryResponseImplCopyWithImpl(_$CategoryResponseImpl _value,
-      $Res Function(_$CategoryResponseImpl) _then)
-      : super(_value, _then);
+  __$$CategoryResponseImplCopyWithImpl(
+    _$CategoryResponseImpl _value,
+    $Res Function(_$CategoryResponseImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of CategoryResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -144,46 +153,48 @@ class __$$CategoryResponseImplCopyWithImpl<$Res>
     Object? sortOrder = null,
     Object? isActive = null,
   }) {
-    return _then(_$CategoryResponseImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      parentId: freezed == parentId
-          ? _value.parentId
-          : parentId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      imageUrl: freezed == imageUrl
-          ? _value.imageUrl
-          : imageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      sortOrder: null == sortOrder
-          ? _value.sortOrder
-          : sortOrder // ignore: cast_nullable_to_non_nullable
-              as int,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
+    return _then(
+      _$CategoryResponseImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        parentId: freezed == parentId
+            ? _value.parentId
+            : parentId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        imageUrl: freezed == imageUrl
+            ? _value.imageUrl
+            : imageUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        sortOrder: null == sortOrder
+            ? _value.sortOrder
+            : sortOrder // ignore: cast_nullable_to_non_nullable
+                  as int,
+        isActive: null == isActive
+            ? _value.isActive
+            : isActive // ignore: cast_nullable_to_non_nullable
+                  as bool,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$CategoryResponseImpl extends _CategoryResponse {
-  const _$CategoryResponseImpl(
-      {required this.id,
-      required this.name,
-      @JsonKey(name: 'parent_id') this.parentId,
-      @JsonKey(name: 'image_url') this.imageUrl,
-      @JsonKey(name: 'sort_order') this.sortOrder = 0,
-      @JsonKey(name: 'is_active') this.isActive = true})
-      : super._();
+  const _$CategoryResponseImpl({
+    required this.id,
+    required this.name,
+    @JsonKey(name: 'parent_id') this.parentId,
+    @JsonKey(name: 'image_url') this.imageUrl,
+    @JsonKey(name: 'sort_order') this.sortOrder = 0,
+    @JsonKey(name: 'is_active') this.isActive = true,
+  }) : super._();
 
   factory _$CategoryResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$CategoryResponseImplFromJson(json);
@@ -230,7 +241,14 @@ class _$CategoryResponseImpl extends _CategoryResponse {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, id, name, parentId, imageUrl, sortOrder, isActive);
+    runtimeType,
+    id,
+    name,
+    parentId,
+    imageUrl,
+    sortOrder,
+    isActive,
+  );
 
   /// Create a copy of CategoryResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -239,25 +257,25 @@ class _$CategoryResponseImpl extends _CategoryResponse {
   @pragma('vm:prefer-inline')
   _$$CategoryResponseImplCopyWith<_$CategoryResponseImpl> get copyWith =>
       __$$CategoryResponseImplCopyWithImpl<_$CategoryResponseImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CategoryResponseImplToJson(
-      this,
-    );
+    return _$$CategoryResponseImplToJson(this);
   }
 }
 
 abstract class _CategoryResponse extends CategoryResponse {
-  const factory _CategoryResponse(
-          {required final String id,
-          required final String name,
-          @JsonKey(name: 'parent_id') final String? parentId,
-          @JsonKey(name: 'image_url') final String? imageUrl,
-          @JsonKey(name: 'sort_order') final int sortOrder,
-          @JsonKey(name: 'is_active') final bool isActive}) =
-      _$CategoryResponseImpl;
+  const factory _CategoryResponse({
+    required final String id,
+    required final String name,
+    @JsonKey(name: 'parent_id') final String? parentId,
+    @JsonKey(name: 'image_url') final String? imageUrl,
+    @JsonKey(name: 'sort_order') final int sortOrder,
+    @JsonKey(name: 'is_active') final bool isActive,
+  }) = _$CategoryResponseImpl;
   const _CategoryResponse._() : super._();
 
   factory _CategoryResponse.fromJson(Map<String, dynamic> json) =

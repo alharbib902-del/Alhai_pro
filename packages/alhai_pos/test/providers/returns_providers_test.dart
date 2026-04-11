@@ -35,10 +35,7 @@ void main() {
         ),
       ];
 
-      final detail = ReturnDetailData(
-        returnData: returnData,
-        items: items,
-      );
+      final detail = ReturnDetailData(returnData: returnData, items: items);
 
       expect(detail.returnData.id, equals('ret-1'));
       expect(detail.returnData.returnNumber, equals('RET-001'));
@@ -60,10 +57,7 @@ void main() {
         createdAt: DateTime(2026, 2, 1),
       );
 
-      final detail = ReturnDetailData(
-        returnData: returnData,
-        items: [],
-      );
+      final detail = ReturnDetailData(returnData: returnData, items: []);
 
       expect(detail.items, isEmpty);
       expect(detail.returnData.totalRefund, equals(0.0));
@@ -103,10 +97,7 @@ void main() {
         ),
       ];
 
-      final detail = ReturnDetailData(
-        returnData: returnData,
-        items: items,
-      );
+      final detail = ReturnDetailData(returnData: returnData, items: items);
 
       expect(detail.items.length, equals(2));
       expect(detail.items[0].productName, equals('Product A'));
@@ -131,10 +122,7 @@ void main() {
         createdAt: DateTime(2026, 4, 1),
       );
 
-      final detail = ReturnDetailData(
-        returnData: returnData,
-        items: [],
-      );
+      final detail = ReturnDetailData(returnData: returnData, items: []);
 
       expect(detail.returnData.customerId, equals('cust-1'));
       expect(detail.returnData.customerName, equals('Ahmed'));

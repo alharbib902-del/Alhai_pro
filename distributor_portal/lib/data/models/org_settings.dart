@@ -53,19 +53,19 @@ class OrgSettings {
   }
 
   Map<String, dynamic> toJson() => {
-        'name': companyName,
-        'phone': phone,
-        'email': email,
-        'address': address,
-        'delivery_zones': deliveryZones,
-        'min_order_amount': minOrderAmount,
-        'delivery_fee': deliveryFee,
-        'free_delivery_min': freeDeliveryMin,
-        'free_delivery_enabled': freeDeliveryEnabled,
-        'email_notifications': emailNotifications,
-        'push_notifications': pushNotifications,
-        'sms_notifications': smsNotifications,
-      };
+    'name': companyName,
+    'phone': phone,
+    'email': email,
+    'address': address,
+    'delivery_zones': deliveryZones,
+    'min_order_amount': minOrderAmount,
+    'delivery_fee': deliveryFee,
+    'free_delivery_min': freeDeliveryMin,
+    'free_delivery_enabled': freeDeliveryEnabled,
+    'email_notifications': emailNotifications,
+    'push_notifications': pushNotifications,
+    'sms_notifications': smsNotifications,
+  };
 
   @override
   bool operator ==(Object other) =>
@@ -88,17 +88,18 @@ class OrgSettings {
 
   @override
   int get hashCode => Object.hash(
-      id,
-      companyName,
-      phone,
-      email,
-      address,
-      deliveryZones,
-      minOrderAmount,
-      deliveryFee,
-      freeDeliveryMin,
-      freeDeliveryEnabled,
-      emailNotifications,
-      pushNotifications,
-      smsNotifications);
+    id,
+    companyName,
+    phone,
+    email,
+    address,
+    deliveryZones,
+    minOrderAmount,
+    deliveryFee,
+    freeDeliveryMin,
+    freeDeliveryEnabled,
+    emailNotifications,
+    pushNotifications,
+    smsNotifications,
+  );
 }

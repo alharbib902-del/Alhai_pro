@@ -10,30 +10,18 @@ import 'package:alhai_design_system/src/components/buttons/alhai_button.dart';
 void main() {
   group('AlhaiButton Golden Tests', () {
     testGoldens('Button variants', (tester) async {
-      final builder = GoldenBuilder.grid(
-        columns: 2,
-        widthToHeightRatio: 2,
-      )
+      final builder = GoldenBuilder.grid(columns: 2, widthToHeightRatio: 2)
         ..addScenario(
           'Filled',
-          AlhaiButton.filled(
-            label: 'Filled Button',
-            onPressed: () {},
-          ),
+          AlhaiButton.filled(label: 'Filled Button', onPressed: () {}),
         )
         ..addScenario(
           'Outlined',
-          AlhaiButton.outlined(
-            label: 'Outlined Button',
-            onPressed: () {},
-          ),
+          AlhaiButton.outlined(label: 'Outlined Button', onPressed: () {}),
         )
         ..addScenario(
           'Text',
-          AlhaiButton.text(
-            label: 'Text Button',
-            onPressed: () {},
-          ),
+          AlhaiButton.text(label: 'Text Button', onPressed: () {}),
         )
         ..addScenario(
           'Tonal',

@@ -114,11 +114,13 @@ void registerPosFallbackValues() {
   registerFallbackValue(FakeStockDeltasTableCompanion());
   registerFallbackValue(SyncPriority.normal);
   registerFallbackValue(const CartState());
-  registerFallbackValue(HeldInvoice(
-    id: 'fake',
-    cart: const CartState(),
-    createdAt: DateTime(2026, 1, 1),
-  ));
+  registerFallbackValue(
+    HeldInvoice(
+      id: 'fake',
+      cart: const CartState(),
+      createdAt: DateTime(2026, 1, 1),
+    ),
+  );
 }
 
 // ============================================================================
@@ -160,11 +162,7 @@ PosCartItem createTestCartItem({
   double? customPrice,
 }) {
   return PosCartItem(
-    product: createTestProduct(
-      id: productId,
-      name: productName,
-      price: price,
-    ),
+    product: createTestProduct(id: productId, name: productName, price: price),
     quantity: quantity,
     customPrice: customPrice,
   );
@@ -178,7 +176,8 @@ CartState createTestCartState({
   String? customerName,
 }) {
   return CartState(
-    items: items ??
+    items:
+        items ??
         [
           createTestCartItem(
             productId: 'prod-1',

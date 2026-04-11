@@ -10,9 +10,7 @@ void main() {
     late AppDatabase db;
 
     setUp(() {
-      db = AppDatabase.forTesting(
-        NativeDatabase.memory(),
-      );
+      db = AppDatabase.forTesting(NativeDatabase.memory());
     });
 
     tearDown(() async {
@@ -34,9 +32,7 @@ void main() {
     late AppDatabase db;
 
     setUp(() {
-      db = AppDatabase.forTesting(
-        NativeDatabase.memory(),
-      );
+      db = AppDatabase.forTesting(NativeDatabase.memory());
     });
 
     tearDown(() async {
@@ -110,9 +106,7 @@ void main() {
     late AppDatabase db;
 
     setUp(() {
-      db = AppDatabase.forTesting(
-        NativeDatabase.memory(),
-      );
+      db = AppDatabase.forTesting(NativeDatabase.memory());
     });
 
     tearDown(() async {

@@ -30,30 +30,24 @@ class ChatMessagesNotifier extends StateNotifier<List<ChatMessage>> {
   final Ref _ref;
 
   ChatMessagesNotifier(this._service, this._ref)
-      : super([
-          ChatMessage(
-            id: 'welcome_${DateTime.now().millisecondsSinceEpoch}',
-            role: ChatRole.assistant,
-            content: '''
+    : super([
+        ChatMessage(
+          id: 'welcome_${DateTime.now().millisecondsSinceEpoch}',
+          role: ChatRole.assistant,
+          content: '''
 مرحباً! أنا مساعدك الذكي لإدارة المتجر.
 
 يمكنني مساعدتك في معرفة المبيعات، حالة المخزون، ديون العملاء، والمزيد.
 
 جرب أحد الأسئلة السريعة أدناه أو اكتب سؤالك!''',
-            // Welcome message
-            timestamp: DateTime.now(),
-            suggestedActions: const [
-              SuggestedAction(
-                label: 'مبيعات اليوم',
-                icon: null,
-              ),
-              SuggestedAction(
-                label: 'حالة المخزون',
-                icon: null,
-              ),
-            ],
-          ),
-        ]);
+          // Welcome message
+          timestamp: DateTime.now(),
+          suggestedActions: const [
+            SuggestedAction(label: 'مبيعات اليوم', icon: null),
+            SuggestedAction(label: 'حالة المخزون', icon: null),
+          ],
+        ),
+      ]);
 
   /// إرسال رسالة من المستخدم
   Future<void> sendMessage(String text) async {
@@ -117,9 +111,9 @@ class ChatMessagesNotifier extends StateNotifier<List<ChatMessage>> {
 /// مزود رسائل المحادثة
 final chatMessagesProvider =
     StateNotifierProvider<ChatMessagesNotifier, List<ChatMessage>>((ref) {
-  final service = ref.read(aiAssistantServiceProvider);
-  return ChatMessagesNotifier(service, ref);
-});
+      final service = ref.read(aiAssistantServiceProvider);
+      return ChatMessagesNotifier(service, ref);
+    });
 
 /// مزود حالة المعالجة
 final isProcessingProvider = StateProvider<bool>((ref) => false);
@@ -137,11 +131,8 @@ final quickTemplatesProvider = Provider<List<QuickTemplate>>((ref) {
 /// مزود المساعد الذكي عبر خادم AI
 final assistantApiProvider =
     Provider<Future<Map<String, dynamic>> Function(String)>((ref) {
-  final api = ref.read(aiApiServiceProvider);
-  final storeId = ref.read(currentStoreIdProvider)!;
-  return (String query) => api.askAssistant(
-        orgId: 'default',
-        storeId: storeId,
-        query: query,
-      );
-});
+      final api = ref.read(aiApiServiceProvider);
+      final storeId = ref.read(currentStoreIdProvider)!;
+      return (String query) =>
+          api.askAssistant(orgId: 'default', storeId: storeId, query: query);
+    });

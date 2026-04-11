@@ -155,7 +155,9 @@ class BehaviorScoreWidget extends StatelessWidget {
         if (score.alertCount > 0)
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.xs, vertical: 3),
+              horizontal: AlhaiSpacing.xs,
+              vertical: 3,
+            ),
             decoration: BoxDecoration(
               color: AppColors.error.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
@@ -262,14 +264,16 @@ class BehaviorScoreWidget extends StatelessWidget {
         const SizedBox(height: AlhaiSpacing.md),
 
         // Factor bars
-        ...score.factors.entries.map((entry) => Padding(
-              padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-              child: _FactorBar(
-                label: entry.key,
-                value: entry.value,
-                isDark: isDark,
-              ),
-            )),
+        ...score.factors.entries.map(
+          (entry) => Padding(
+            padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+            child: _FactorBar(
+              label: entry.key,
+              value: entry.value,
+              isDark: isDark,
+            ),
+          ),
+        ),
       ],
     );
   }

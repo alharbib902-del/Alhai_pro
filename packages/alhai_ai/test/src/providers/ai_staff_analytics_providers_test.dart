@@ -35,10 +35,7 @@ void main() {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      expect(
-        container.read(staffPeriodFilterProvider),
-        StaffPeriod.thisWeek,
-      );
+      expect(container.read(staffPeriodFilterProvider), StaffPeriod.thisWeek);
     });
 
     test('can be updated to today', () {
@@ -47,10 +44,7 @@ void main() {
 
       container.read(staffPeriodFilterProvider.notifier).state =
           StaffPeriod.today;
-      expect(
-        container.read(staffPeriodFilterProvider),
-        StaffPeriod.today,
-      );
+      expect(container.read(staffPeriodFilterProvider), StaffPeriod.today);
     });
 
     test('can be updated to thisMonth', () {
@@ -59,10 +53,7 @@ void main() {
 
       container.read(staffPeriodFilterProvider.notifier).state =
           StaffPeriod.thisMonth;
-      expect(
-        container.read(staffPeriodFilterProvider),
-        StaffPeriod.thisMonth,
-      );
+      expect(container.read(staffPeriodFilterProvider), StaffPeriod.thisMonth);
     });
   });
 

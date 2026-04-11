@@ -39,8 +39,9 @@ void main() {
     group('getStore', () {
       test('returns Store on success', () async {
         // Arrange
-        when(() => mockRemote.getStore(any()))
-            .thenAnswer((_) async => testStoreResponse);
+        when(
+          () => mockRemote.getStore(any()),
+        ).thenAnswer((_) async => testStoreResponse);
 
         // Act
         final result = await repository.getStore('store-1');
@@ -53,14 +54,16 @@ void main() {
 
       test('throws NotFoundException on 404', () async {
         // Arrange
-        when(() => mockRemote.getStore(any())).thenThrow(DioException(
-          type: DioExceptionType.badResponse,
-          response: Response(
-            statusCode: 404,
+        when(() => mockRemote.getStore(any())).thenThrow(
+          DioException(
+            type: DioExceptionType.badResponse,
+            response: Response(
+              statusCode: 404,
+              requestOptions: RequestOptions(path: '/stores/invalid'),
+            ),
             requestOptions: RequestOptions(path: '/stores/invalid'),
           ),
-          requestOptions: RequestOptions(path: '/stores/invalid'),
-        ));
+        );
 
         // Act & Assert
         expect(
@@ -73,8 +76,9 @@ void main() {
     group('getCurrentStore', () {
       test('returns current Store when exists', () async {
         // Arrange
-        when(() => mockRemote.getCurrentStore())
-            .thenAnswer((_) async => testStoreResponse);
+        when(
+          () => mockRemote.getCurrentStore(),
+        ).thenAnswer((_) async => testStoreResponse);
 
         // Act
         final result = await repository.getCurrentStore();
@@ -99,8 +103,9 @@ void main() {
     group('getStores', () {
       test('returns list of stores', () async {
         // Arrange
-        when(() => mockRemote.getStores())
-            .thenAnswer((_) async => [testStoreResponse]);
+        when(
+          () => mockRemote.getStores(),
+        ).thenAnswer((_) async => [testStoreResponse]);
 
         // Act
         final result = await repository.getStores();
@@ -112,27 +117,28 @@ void main() {
 
       test('throws NetworkException on connection error', () async {
         // Arrange
-        when(() => mockRemote.getStores()).thenThrow(DioException(
-          type: DioExceptionType.connectionError,
-          requestOptions: RequestOptions(path: '/stores'),
-        ));
+        when(() => mockRemote.getStores()).thenThrow(
+          DioException(
+            type: DioExceptionType.connectionError,
+            requestOptions: RequestOptions(path: '/stores'),
+          ),
+        );
 
         // Act & Assert
-        expect(
-          () => repository.getStores(),
-          throwsA(isA<NetworkException>()),
-        );
+        expect(() => repository.getStores(), throwsA(isA<NetworkException>()));
       });
     });
 
     group('getNearbyStores', () {
       test('returns nearby stores with location params', () async {
         // Arrange
-        when(() => mockRemote.getNearbyStores(
-              lat: any(named: 'lat'),
-              lng: any(named: 'lng'),
-              radiusKm: any(named: 'radiusKm'),
-            )).thenAnswer((_) async => [testStoreResponse]);
+        when(
+          () => mockRemote.getNearbyStores(
+            lat: any(named: 'lat'),
+            lng: any(named: 'lng'),
+            radiusKm: any(named: 'radiusKm'),
+          ),
+        ).thenAnswer((_) async => [testStoreResponse]);
 
         // Act
         final result = await repository.getNearbyStores(
@@ -143,11 +149,13 @@ void main() {
 
         // Assert
         expect(result, hasLength(1));
-        verify(() => mockRemote.getNearbyStores(
-              lat: 24.7136,
-              lng: 46.6753,
-              radiusKm: 5,
-            )).called(1);
+        verify(
+          () => mockRemote.getNearbyStores(
+            lat: 24.7136,
+            lng: 46.6753,
+            radiusKm: 5,
+          ),
+        ).called(1);
       });
     });
 
@@ -155,8 +163,9 @@ void main() {
       test('updates store with params', () async {
         // Arrange
         const params = UpdateStoreParams(name: 'Updated Store');
-        when(() => mockRemote.updateStore(any(), any()))
-            .thenAnswer((_) async => testStoreResponse);
+        when(
+          () => mockRemote.updateStore(any(), any()),
+        ).thenAnswer((_) async => testStoreResponse);
 
         // Act
         final result = await repository.updateStore('store-1', params);
@@ -181,8 +190,9 @@ void main() {
 
       test('returns false when store is closed', () async {
         // Arrange
-        when(() => mockRemote.isStoreOpen(any()))
-            .thenAnswer((_) async => false);
+        when(
+          () => mockRemote.isStoreOpen(any()),
+        ).thenAnswer((_) async => false);
 
         // Act
         final result = await repository.isStoreOpen('store-1');

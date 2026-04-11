@@ -28,17 +28,11 @@ void main() {
       });
 
       test('supports custom VAT rate', () {
-        expect(
-          VatCalculator.addVat(netAmount: 100.0, vatRate: 10.0),
-          110.0,
-        );
+        expect(VatCalculator.addVat(netAmount: 100.0, vatRate: 10.0), 110.0);
       });
 
       test('returns unchanged amount for zero rate', () {
-        expect(
-          VatCalculator.addVat(netAmount: 100.0, vatRate: 0.0),
-          100.0,
-        );
+        expect(VatCalculator.addVat(netAmount: 100.0, vatRate: 0.0), 100.0);
       });
 
       test('rounds to 2 decimal places', () {
@@ -85,10 +79,7 @@ void main() {
       });
 
       test('returns 0 for zero rate', () {
-        expect(
-          VatCalculator.extractVat(grossAmount: 100.0, vatRate: 0.0),
-          0.0,
-        );
+        expect(VatCalculator.extractVat(grossAmount: 100.0, vatRate: 0.0), 0.0);
       });
     });
 
@@ -104,25 +95,16 @@ void main() {
       });
 
       test('returns 0 for zero rate (zero-rated items)', () {
-        expect(
-          VatCalculator.vatFromNet(netAmount: 100.0, vatRate: 0.0),
-          0.0,
-        );
+        expect(VatCalculator.vatFromNet(netAmount: 100.0, vatRate: 0.0), 0.0);
       });
 
       test('returns 0 for exempt items (rate=0)', () {
-        expect(
-          VatCalculator.vatFromNet(netAmount: 500.0, vatRate: 0.0),
-          0.0,
-        );
+        expect(VatCalculator.vatFromNet(netAmount: 500.0, vatRate: 0.0), 0.0);
       });
 
       test('rounds to 2 decimals for fractional rates', () {
         // 100 * 7.5 / 100 = 7.5
-        expect(
-          VatCalculator.vatFromNet(netAmount: 100.0, vatRate: 7.5),
-          7.5,
-        );
+        expect(VatCalculator.vatFromNet(netAmount: 100.0, vatRate: 7.5), 7.5);
       });
     });
 
@@ -221,10 +203,7 @@ void main() {
 
     group('lineBreakdown', () {
       test('quantity * unitPrice with standard rate', () {
-        final b = VatCalculator.lineBreakdown(
-          unitPrice: 50.0,
-          quantity: 2,
-        );
+        final b = VatCalculator.lineBreakdown(unitPrice: 50.0, quantity: 2);
         expect(b.netAmount, 100.0);
         expect(b.vatAmount, 15.0);
         expect(b.grossAmount, 115.0);
@@ -243,10 +222,7 @@ void main() {
       });
 
       test('handles fractional quantity', () {
-        final b = VatCalculator.lineBreakdown(
-          unitPrice: 100.0,
-          quantity: 1.5,
-        );
+        final b = VatCalculator.lineBreakdown(unitPrice: 100.0, quantity: 1.5);
         expect(b.netAmount, 150.0);
         expect(b.vatAmount, 22.5);
       });
@@ -294,30 +270,21 @@ void main() {
     group('validateVatAmount', () {
       test('accepts correct VAT for standard rate', () {
         expect(
-          VatCalculator.validateVatAmount(
-            netAmount: 100.0,
-            vatAmount: 15.0,
-          ),
+          VatCalculator.validateVatAmount(netAmount: 100.0, vatAmount: 15.0),
           isTrue,
         );
       });
 
       test('rejects VAT that does not match rate', () {
         expect(
-          VatCalculator.validateVatAmount(
-            netAmount: 100.0,
-            vatAmount: 10.0,
-          ),
+          VatCalculator.validateVatAmount(netAmount: 100.0, vatAmount: 10.0),
           isFalse,
         );
       });
 
       test('accepts within tolerance', () {
         expect(
-          VatCalculator.validateVatAmount(
-            netAmount: 100.0,
-            vatAmount: 15.005,
-          ),
+          VatCalculator.validateVatAmount(netAmount: 100.0, vatAmount: 15.005),
           isTrue,
         );
       });

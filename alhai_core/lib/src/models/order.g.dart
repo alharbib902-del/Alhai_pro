@@ -7,50 +7,50 @@ part of 'order.dart';
 // **************************************************************************
 
 _$OrderImpl _$$OrderImplFromJson(Map<String, dynamic> json) => _$OrderImpl(
-      id: json['id'] as String,
-      orderNumber: json['orderNumber'] as String?,
-      customerId: json['customerId'] as String,
-      customerName: json['customerName'] as String?,
-      customerPhone: json['customerPhone'] as String?,
-      storeId: json['storeId'] as String,
-      storeName: json['storeName'] as String?,
-      status: $enumDecode(_$OrderStatusEnumMap, json['status']),
-      items: (json['items'] as List<dynamic>)
-          .map((e) => OrderItem.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      subtotal: (json['subtotal'] as num).toDouble(),
-      discount: (json['discount'] as num?)?.toDouble() ?? 0,
-      deliveryFee: (json['deliveryFee'] as num?)?.toDouble() ?? 0,
-      tax: (json['tax'] as num?)?.toDouble() ?? 0,
-      total: (json['total'] as num).toDouble(),
-      paymentMethod: $enumDecode(_$PaymentMethodEnumMap, json['paymentMethod']),
-      isPaid: json['isPaid'] as bool? ?? false,
-      addressId: json['addressId'] as String?,
-      deliveryAddress: json['deliveryAddress'] == null
-          ? null
-          : Address.fromJson(json['deliveryAddress'] as Map<String, dynamic>),
-      notes: json['notes'] as String?,
-      cancellationReason: json['cancellationReason'] as String?,
-      confirmedAt: json['confirmedAt'] == null
-          ? null
-          : DateTime.parse(json['confirmedAt'] as String),
-      preparingAt: json['preparingAt'] == null
-          ? null
-          : DateTime.parse(json['preparingAt'] as String),
-      readyAt: json['readyAt'] == null
-          ? null
-          : DateTime.parse(json['readyAt'] as String),
-      deliveredAt: json['deliveredAt'] == null
-          ? null
-          : DateTime.parse(json['deliveredAt'] as String),
-      cancelledAt: json['cancelledAt'] == null
-          ? null
-          : DateTime.parse(json['cancelledAt'] as String),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: json['updatedAt'] == null
-          ? null
-          : DateTime.parse(json['updatedAt'] as String),
-    );
+  id: json['id'] as String,
+  orderNumber: json['orderNumber'] as String?,
+  customerId: json['customerId'] as String,
+  customerName: json['customerName'] as String?,
+  customerPhone: json['customerPhone'] as String?,
+  storeId: json['storeId'] as String,
+  storeName: json['storeName'] as String?,
+  status: $enumDecode(_$OrderStatusEnumMap, json['status']),
+  items: (json['items'] as List<dynamic>)
+      .map((e) => OrderItem.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  subtotal: (json['subtotal'] as num).toDouble(),
+  discount: (json['discount'] as num?)?.toDouble() ?? 0,
+  deliveryFee: (json['deliveryFee'] as num?)?.toDouble() ?? 0,
+  tax: (json['tax'] as num?)?.toDouble() ?? 0,
+  total: (json['total'] as num).toDouble(),
+  paymentMethod: $enumDecode(_$PaymentMethodEnumMap, json['paymentMethod']),
+  isPaid: json['isPaid'] as bool? ?? false,
+  addressId: json['addressId'] as String?,
+  deliveryAddress: json['deliveryAddress'] == null
+      ? null
+      : Address.fromJson(json['deliveryAddress'] as Map<String, dynamic>),
+  notes: json['notes'] as String?,
+  cancellationReason: json['cancellationReason'] as String?,
+  confirmedAt: json['confirmedAt'] == null
+      ? null
+      : DateTime.parse(json['confirmedAt'] as String),
+  preparingAt: json['preparingAt'] == null
+      ? null
+      : DateTime.parse(json['preparingAt'] as String),
+  readyAt: json['readyAt'] == null
+      ? null
+      : DateTime.parse(json['readyAt'] as String),
+  deliveredAt: json['deliveredAt'] == null
+      ? null
+      : DateTime.parse(json['deliveredAt'] as String),
+  cancelledAt: json['cancelledAt'] == null
+      ? null
+      : DateTime.parse(json['cancelledAt'] as String),
+  createdAt: DateTime.parse(json['createdAt'] as String),
+  updatedAt: json['updatedAt'] == null
+      ? null
+      : DateTime.parse(json['updatedAt'] as String),
+);
 
 Map<String, dynamic> _$$OrderImplToJson(_$OrderImpl instance) =>
     <String, dynamic>{

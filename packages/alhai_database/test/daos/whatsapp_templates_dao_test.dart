@@ -38,65 +38,75 @@ void main() {
     test('insertTemplate and getAllTemplates', () async {
       await db.whatsAppTemplatesDao.insertTemplate(makeTemplate());
 
-      final templates =
-          await db.whatsAppTemplatesDao.getAllTemplates('store-1');
+      final templates = await db.whatsAppTemplatesDao.getAllTemplates(
+        'store-1',
+      );
       expect(templates, hasLength(1));
       expect(templates.first.name, 'إيصال إلكتروني');
       expect(templates.first.type, 'receipt');
     });
 
     test('getAllTemplates returns only active templates', () async {
-      await db.whatsAppTemplatesDao
-          .insertTemplate(makeTemplate(isActive: true));
-      await db.whatsAppTemplatesDao.insertTemplate(makeTemplate(
-        id: 'tmpl-2',
-        name: 'قالب محذوف',
-        isActive: false,
-      ));
+      await db.whatsAppTemplatesDao.insertTemplate(
+        makeTemplate(isActive: true),
+      );
+      await db.whatsAppTemplatesDao.insertTemplate(
+        makeTemplate(id: 'tmpl-2', name: 'قالب محذوف', isActive: false),
+      );
 
-      final templates =
-          await db.whatsAppTemplatesDao.getAllTemplates('store-1');
+      final templates = await db.whatsAppTemplatesDao.getAllTemplates(
+        'store-1',
+      );
       expect(templates, hasLength(1));
     });
 
     test('getTemplatesByType filters by type', () async {
-      await db.whatsAppTemplatesDao
-          .insertTemplate(makeTemplate(type: 'receipt'));
-      await db.whatsAppTemplatesDao.insertTemplate(makeTemplate(
-        id: 'tmpl-2',
-        name: 'تذكير دين',
-        type: 'debt_reminder',
-      ));
+      await db.whatsAppTemplatesDao.insertTemplate(
+        makeTemplate(type: 'receipt'),
+      );
+      await db.whatsAppTemplatesDao.insertTemplate(
+        makeTemplate(id: 'tmpl-2', name: 'تذكير دين', type: 'debt_reminder'),
+      );
 
-      final receiptTemplates = await db.whatsAppTemplatesDao
-          .getTemplatesByType('store-1', 'receipt');
+      final receiptTemplates = await db.whatsAppTemplatesDao.getTemplatesByType(
+        'store-1',
+        'receipt',
+      );
       expect(receiptTemplates, hasLength(1));
       expect(receiptTemplates.first.type, 'receipt');
     });
 
     test('getDefaultTemplate returns default for type', () async {
-      await db.whatsAppTemplatesDao
-          .insertTemplate(makeTemplate(id: 'tmpl-1', isDefault: false));
-      await db.whatsAppTemplatesDao.insertTemplate(makeTemplate(
-        id: 'tmpl-2',
-        name: 'إيصال افتراضي',
-        type: 'receipt',
-        isDefault: true,
-      ));
+      await db.whatsAppTemplatesDao.insertTemplate(
+        makeTemplate(id: 'tmpl-1', isDefault: false),
+      );
+      await db.whatsAppTemplatesDao.insertTemplate(
+        makeTemplate(
+          id: 'tmpl-2',
+          name: 'إيصال افتراضي',
+          type: 'receipt',
+          isDefault: true,
+        ),
+      );
 
-      final defaultTemplate = await db.whatsAppTemplatesDao
-          .getDefaultTemplate('store-1', 'receipt');
+      final defaultTemplate = await db.whatsAppTemplatesDao.getDefaultTemplate(
+        'store-1',
+        'receipt',
+      );
       expect(defaultTemplate, isNotNull);
       expect(defaultTemplate!.id, 'tmpl-2');
       expect(defaultTemplate.isDefault, true);
     });
 
     test('getDefaultTemplate returns null when no default', () async {
-      await db.whatsAppTemplatesDao
-          .insertTemplate(makeTemplate(isDefault: false));
+      await db.whatsAppTemplatesDao.insertTemplate(
+        makeTemplate(isDefault: false),
+      );
 
-      final defaultTemplate = await db.whatsAppTemplatesDao
-          .getDefaultTemplate('store-1', 'receipt');
+      final defaultTemplate = await db.whatsAppTemplatesDao.getDefaultTemplate(
+        'store-1',
+        'receipt',
+      );
       expect(defaultTemplate, isNull);
     });
 
@@ -111,8 +121,9 @@ void main() {
         ),
       );
 
-      final templates =
-          await db.whatsAppTemplatesDao.getAllTemplates('store-1');
+      final templates = await db.whatsAppTemplatesDao.getAllTemplates(
+        'store-1',
+      );
       expect(templates.first.name, 'إيصال محدّث');
       expect(templates.first.content, 'محتوى جديد');
     });
@@ -125,23 +136,28 @@ void main() {
     });
 
     test('setAsDefault changes default template', () async {
-      await db.whatsAppTemplatesDao.insertTemplate(makeTemplate(
-        id: 'tmpl-old',
-        type: 'receipt',
-        isDefault: true,
-      ));
-      await db.whatsAppTemplatesDao.insertTemplate(makeTemplate(
-        id: 'tmpl-new',
-        name: 'إيصال جديد',
-        type: 'receipt',
-        isDefault: false,
-      ));
+      await db.whatsAppTemplatesDao.insertTemplate(
+        makeTemplate(id: 'tmpl-old', type: 'receipt', isDefault: true),
+      );
+      await db.whatsAppTemplatesDao.insertTemplate(
+        makeTemplate(
+          id: 'tmpl-new',
+          name: 'إيصال جديد',
+          type: 'receipt',
+          isDefault: false,
+        ),
+      );
 
-      await db.whatsAppTemplatesDao
-          .setAsDefault('store-1', 'receipt', 'tmpl-new');
+      await db.whatsAppTemplatesDao.setAsDefault(
+        'store-1',
+        'receipt',
+        'tmpl-new',
+      );
 
-      final oldDefault = await db.whatsAppTemplatesDao
-          .getDefaultTemplate('store-1', 'receipt');
+      final oldDefault = await db.whatsAppTemplatesDao.getDefaultTemplate(
+        'store-1',
+        'receipt',
+      );
       expect(oldDefault!.id, 'tmpl-new');
     });
 
@@ -164,8 +180,9 @@ void main() {
         makeTemplate(id: 'tmpl-3', name: 'ترحيب', type: 'welcome'),
       ]);
 
-      final templates =
-          await db.whatsAppTemplatesDao.getAllTemplates('store-1');
+      final templates = await db.whatsAppTemplatesDao.getAllTemplates(
+        'store-1',
+      );
       expect(templates, hasLength(3));
     });
   });

@@ -36,86 +36,86 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
 
   // بيانات تجريبية احتياطية
   static List<Role> get _defaultRoles => [
-        Role(
-          id: '1',
-          name: '\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645',
-          description:
-              '\u0635\u0644\u0627\u062d\u064a\u0627\u062a \u0643\u0627\u0645\u0644\u0629 \u0644\u0644\u0646\u0638\u0627\u0645',
-          color: Colors.purple,
-          icon: Icons.admin_panel_settings,
-          usersCount: 1,
-          isSystemRole: true,
-          permissions: Permission.values.map((p) => p.name).toList(),
-        ),
-        Role(
-          id: '2',
-          name: '\u0645\u062f\u064a\u0631 \u0627\u0644\u0645\u062a\u062c\u0631',
-          description:
-              '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u062a\u062c\u0631 \u0648\u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646',
-          color: AppColors.primary,
-          icon: Icons.store,
-          usersCount: 2,
-          isSystemRole: true,
-          permissions: [
-            'pos_access',
-            'products_manage',
-            'inventory_manage',
-            'customers_manage',
-            'reports_view',
-            'staff_manage',
-            'discounts_create',
-            'refunds_approve',
-          ],
-        ),
-        Role(
-          id: '3',
-          name: '\u0643\u0627\u0634\u064a\u0631',
-          description:
-              '\u0639\u0645\u0644\u064a\u0627\u062a \u0627\u0644\u0628\u064a\u0639 \u0648\u0627\u0644\u062f\u0641\u0639',
-          color: AppColors.success,
-          icon: Icons.point_of_sale,
-          usersCount: 5,
-          isSystemRole: true,
-          permissions: [
-            'pos_access',
-            'products_view',
-            'customers_view',
-            'discounts_apply',
-          ],
-        ),
-        Role(
-          id: '4',
-          name: '\u0623\u0645\u064a\u0646 \u0645\u062e\u0632\u0646',
-          description:
-              '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u062e\u0632\u0648\u0646 \u0648\u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a',
-          color: AppColors.warning,
-          icon: Icons.inventory,
-          usersCount: 2,
-          isSystemRole: false,
-          permissions: [
-            'products_manage',
-            'inventory_manage',
-            'inventory_adjust',
-            'suppliers_view',
-          ],
-        ),
-        Role(
-          id: '5',
-          name: '\u0645\u062d\u0627\u0633\u0628',
-          description:
-              '\u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631 \u0627\u0644\u0645\u0627\u0644\u064a\u0629 \u0648\u0627\u0644\u062d\u0633\u0627\u0628\u0627\u062a',
-          color: AppColors.info,
-          icon: Icons.account_balance,
-          usersCount: 1,
-          isSystemRole: false,
-          permissions: [
-            'reports_view',
-            'reports_export',
-            'debts_manage',
-            'expenses_manage',
-          ],
-        ),
-      ];
+    Role(
+      id: '1',
+      name: '\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645',
+      description:
+          '\u0635\u0644\u0627\u062d\u064a\u0627\u062a \u0643\u0627\u0645\u0644\u0629 \u0644\u0644\u0646\u0638\u0627\u0645',
+      color: Colors.purple,
+      icon: Icons.admin_panel_settings,
+      usersCount: 1,
+      isSystemRole: true,
+      permissions: Permission.values.map((p) => p.name).toList(),
+    ),
+    Role(
+      id: '2',
+      name: '\u0645\u062f\u064a\u0631 \u0627\u0644\u0645\u062a\u062c\u0631',
+      description:
+          '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u062a\u062c\u0631 \u0648\u0627\u0644\u0645\u0648\u0638\u0641\u064a\u0646',
+      color: AppColors.primary,
+      icon: Icons.store,
+      usersCount: 2,
+      isSystemRole: true,
+      permissions: [
+        'pos_access',
+        'products_manage',
+        'inventory_manage',
+        'customers_manage',
+        'reports_view',
+        'staff_manage',
+        'discounts_create',
+        'refunds_approve',
+      ],
+    ),
+    Role(
+      id: '3',
+      name: '\u0643\u0627\u0634\u064a\u0631',
+      description:
+          '\u0639\u0645\u0644\u064a\u0627\u062a \u0627\u0644\u0628\u064a\u0639 \u0648\u0627\u0644\u062f\u0641\u0639',
+      color: AppColors.success,
+      icon: Icons.point_of_sale,
+      usersCount: 5,
+      isSystemRole: true,
+      permissions: [
+        'pos_access',
+        'products_view',
+        'customers_view',
+        'discounts_apply',
+      ],
+    ),
+    Role(
+      id: '4',
+      name: '\u0623\u0645\u064a\u0646 \u0645\u062e\u0632\u0646',
+      description:
+          '\u0625\u062f\u0627\u0631\u0629 \u0627\u0644\u0645\u062e\u0632\u0648\u0646 \u0648\u0627\u0644\u0645\u0646\u062a\u062c\u0627\u062a',
+      color: AppColors.warning,
+      icon: Icons.inventory,
+      usersCount: 2,
+      isSystemRole: false,
+      permissions: [
+        'products_manage',
+        'inventory_manage',
+        'inventory_adjust',
+        'suppliers_view',
+      ],
+    ),
+    Role(
+      id: '5',
+      name: '\u0645\u062d\u0627\u0633\u0628',
+      description:
+          '\u0627\u0644\u062a\u0642\u0627\u0631\u064a\u0631 \u0627\u0644\u0645\u0627\u0644\u064a\u0629 \u0648\u0627\u0644\u062d\u0633\u0627\u0628\u0627\u062a',
+      color: AppColors.info,
+      icon: Icons.account_balance,
+      usersCount: 1,
+      isSystemRole: false,
+      permissions: [
+        'reports_view',
+        'reports_export',
+        'debts_manage',
+        'expenses_manage',
+      ],
+    ),
+  ];
 
   @override
   void initState() {
@@ -184,7 +184,8 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
 
   Color _getRoleColor(String roleName) {
     if (roleName.contains(
-            '\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645') ||
+          '\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645',
+        ) ||
         roleName.toLowerCase().contains('admin')) {
       return Colors.purple;
     }
@@ -209,7 +210,8 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
 
   IconData _getRoleIcon(String roleName) {
     if (roleName.contains(
-            '\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645') ||
+          '\u0645\u062f\u064a\u0631 \u0627\u0644\u0646\u0638\u0627\u0645',
+        ) ||
         roleName.toLowerCase().contains('admin')) {
       return Icons.admin_panel_settings;
     }
@@ -248,8 +250,9 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
       children: [
         AppHeader(
           title: l10n.rolesPermissions,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.defaultUserName,
@@ -261,8 +264,9 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
           child: TabBar(
             controller: _tabController,
             labelColor: AppColors.primary,
-            unselectedLabelColor:
-                Theme.of(context).colorScheme.onSurfaceVariant,
+            unselectedLabelColor: Theme.of(
+              context,
+            ).colorScheme.onSurfaceVariant,
             indicatorColor: AppColors.primary,
             tabs: [
               Tab(icon: const Icon(Icons.groups), text: l10n.rolesTab),
@@ -273,10 +277,7 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
         Expanded(
           child: TabBarView(
             controller: _tabController,
-            children: [
-              _buildRolesTab(isDark),
-              _buildPermissionsTab(isDark),
-            ],
+            children: [_buildRolesTab(isDark), _buildPermissionsTab(isDark)],
           ),
         ),
       ],
@@ -303,7 +304,8 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ],
@@ -325,9 +327,7 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: InkWell(
         onTap: () => _showRoleDetails(role),
@@ -363,7 +363,9 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
                           const SizedBox(width: AlhaiSpacing.xs),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: isDark
                                   ? Colors.white.withValues(alpha: 0.1)
@@ -374,9 +376,9 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
                               l10n.systemBadge,
                               style: TextStyle(
                                 fontSize: 10,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
                               ),
                             ),
                           ),
@@ -394,31 +396,35 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
                     const SizedBox(height: AlhaiSpacing.xxs),
                     Row(
                       children: [
-                        Icon(Icons.person,
-                            size: 14,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant),
+                        Icon(
+                          Icons.person,
+                          size: 14,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                         const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           l10n.userCountLabel(role.usersCount),
                           style: TextStyle(
                             fontSize: 11,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         const SizedBox(width: AlhaiSpacing.md),
-                        Icon(Icons.key,
-                            size: 14,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant),
+                        Icon(
+                          Icons.key,
+                          size: 14,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                         const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           l10n.permissionCountLabel(role.permissions.length),
                           style: TextStyle(
                             fontSize: 11,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],
@@ -427,23 +433,30 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
                 ),
               ),
               PopupMenuButton<String>(
-                icon: Icon(Icons.more_vert,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                icon: Icon(
+                  Icons.more_vert,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 onSelected: (value) => _handleRoleAction(value, role),
                 itemBuilder: (context) {
                   final l10n = AppLocalizations.of(context);
                   return [
                     PopupMenuItem(
-                        value: 'edit', child: Text(l10n.editRoleMenu)),
+                      value: 'edit',
+                      child: Text(l10n.editRoleMenu),
+                    ),
                     PopupMenuItem(
-                        value: 'duplicate',
-                        child: Text(l10n.duplicateRoleMenu)),
+                      value: 'duplicate',
+                      child: Text(l10n.duplicateRoleMenu),
+                    ),
                     PopupMenuItem(value: 'users', child: Text(l10n.users)),
                     if (!role.isSystemRole)
                       PopupMenuItem(
                         value: 'delete',
-                        child: Text(l10n.deleteRoleMenu,
-                            style: const TextStyle(color: AppColors.error)),
+                        child: Text(
+                          l10n.deleteRoleMenu,
+                          style: const TextStyle(color: AppColors.error),
+                        ),
                       ),
                   ];
                 },
@@ -468,17 +481,16 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
 
   Widget _buildPermissionCategory(PermissionCategory category, bool isDark) {
     final l10n = AppLocalizations.of(context);
-    final permissions =
-        Permission.values.where((p) => p.category == category).toList();
+    final permissions = Permission.values
+        .where((p) => p.category == category)
+        .toList();
 
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: ExpansionTile(
         leading: Container(
@@ -505,9 +517,11 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
         ),
         children: permissions.map((permission) {
           return ListTile(
-            leading: Icon(permission.icon,
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                size: 20),
+            leading: Icon(
+              permission.icon,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              size: 20,
+            ),
             title: Text(
               permission.label,
               style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
@@ -582,19 +596,23 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(role.name,
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.onSurface,
-                            )),
-                        Text(role.description,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
-                            )),
+                        Text(
+                          role.name,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                        Text(
+                          role.description,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -627,14 +645,21 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('${role.usersCount}',
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.primary)),
-                              Text(l10n.users,
-                                  style: const TextStyle(
-                                      fontSize: 11, color: AppColors.primary)),
+                              Text(
+                                '${role.usersCount}',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.primary,
+                                ),
+                              ),
+                              Text(
+                                l10n.users,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: AppColors.primary,
+                                ),
+                              ),
                             ],
                           ),
                         ],
@@ -656,14 +681,21 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('${role.permissions.length}',
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold,
-                                      color: AppColors.success)),
-                              Text(l10n.permissionsTab,
-                                  style: const TextStyle(
-                                      fontSize: 11, color: AppColors.success)),
+                              Text(
+                                '${role.permissions.length}',
+                                style: const TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.success,
+                                ),
+                              ),
+                              Text(
+                                l10n.permissionsTab,
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  color: AppColors.success,
+                                ),
+                              ),
                             ],
                           ),
                         ],
@@ -676,8 +708,9 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
             const SizedBox(height: AlhaiSpacing.md),
             Expanded(
               child: ListView.builder(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.lg,
+                ),
                 itemCount: role.permissions.length,
                 itemBuilder: (context, index) {
                   final permissionName = role.permissions[index];
@@ -692,17 +725,25 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
                         color: AppColors.success.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
-                      child: const Icon(Icons.check,
-                          color: AppColors.success, size: 16),
+                      child: const Icon(
+                        Icons.check,
+                        color: AppColors.success,
+                        size: 16,
+                      ),
                     ),
-                    title: Text(permission.label,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface)),
-                    subtitle: Text(permission.description,
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        )),
+                    title: Text(
+                      permission.label,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    subtitle: Text(
+                      permission.description,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                   );
                 },
               ),
@@ -756,8 +797,9 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
       final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(l10n.errorOccurred),
-            backgroundColor: AppColors.error),
+          content: Text(l10n.errorOccurred),
+          backgroundColor: AppColors.error,
+        ),
       );
       debugPrint('Security: non-admin attempted sensitive role operation');
       return false;
@@ -830,8 +872,9 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
                 ),
                 title: Text(
                   '${l10n.users} ${index + 1}',
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.onSurface),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
                 subtitle: Text('user${index + 1}@example.com'),
               ),
@@ -901,10 +944,7 @@ class _RoleFormDialog extends StatefulWidget {
   final Role? role;
   final Function(String name, String description) onSave;
 
-  const _RoleFormDialog({
-    this.role,
-    required this.onSave,
-  });
+  const _RoleFormDialog({this.role, required this.onSave});
 
   @override
   State<_RoleFormDialog> createState() => _RoleFormDialogState();
@@ -919,8 +959,9 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.role?.name ?? '');
-    _descriptionController =
-        TextEditingController(text: widget.role?.description ?? '');
+    _descriptionController = TextEditingController(
+      text: widget.role?.description ?? '',
+    );
     if (widget.role != null) {
       _selectedPermissions.addAll(widget.role!.permissions);
     }
@@ -939,9 +980,7 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
     return Dialog(
       child: Container(
         width: ResponsiveDialog.maxWidth(context, maxDesktop: 500),
-        constraints: BoxConstraints(
-          maxHeight: context.screenHeight * 0.8,
-        ),
+        constraints: BoxConstraints(maxHeight: context.screenHeight * 0.8),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -954,7 +993,9 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
                         ? l10n.addRoleTitle
                         : l10n.editRoleTitle,
                     style: const TextStyle(
-                        fontSize: 18, fontWeight: FontWeight.bold),
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const Spacer(),
                   IconButton(
@@ -995,7 +1036,9 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
                     Text(
                       l10n.rolePermissionsLabel,
                       style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.bold),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                     const SizedBox(height: AlhaiSpacing.sm),
                     ...PermissionCategory.values.map((category) {
@@ -1007,8 +1050,9 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
                         title: Text(category.label),
                         children: permissions.map((permission) {
                           return CheckboxListTile(
-                            value:
-                                _selectedPermissions.contains(permission.name),
+                            value: _selectedPermissions.contains(
+                              permission.name,
+                            ),
                             onChanged: (value) {
                               setState(() {
                                 if (value == true) {
@@ -1019,10 +1063,13 @@ class _RoleFormDialogState extends State<_RoleFormDialog> {
                               });
                             },
                             title: Text(permission.label),
-                            subtitle: Text(permission.description,
-                                style: const TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.textSecondary)),
+                            subtitle: Text(
+                              permission.description,
+                              style: const TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
                             controlAffinity: ListTileControlAffinity.leading,
                           );
                         }).toList(),

@@ -122,8 +122,9 @@ class AnimatedCounter extends StatefulWidget {
 
 class _AnimatedCounterState extends State<AnimatedCounter>
     with SingleTickerProviderStateMixin {
-  static final _thousandSeparatorRegExp =
-      RegExp(r'(\d{1,3})(?=(\d{3})+(?!\d))');
+  static final _thousandSeparatorRegExp = RegExp(
+    r'(\d{1,3})(?=(\d{3})+(?!\d))',
+  );
 
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -133,10 +134,7 @@ class _AnimatedCounterState extends State<AnimatedCounter>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
+    _controller = AnimationController(duration: widget.duration, vsync: this);
 
     _setupAnimation();
     _controller.forward();
@@ -145,18 +143,16 @@ class _AnimatedCounterState extends State<AnimatedCounter>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _controller.duration =
-        context.prefersReducedMotion ? Duration.zero : widget.duration;
+    _controller.duration = context.prefersReducedMotion
+        ? Duration.zero
+        : widget.duration;
   }
 
   void _setupAnimation() {
     _animation = Tween<double>(
       begin: _previousValue,
       end: widget.value,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: widget.curve,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: widget.curve));
   }
 
   @override
@@ -285,18 +281,15 @@ class _AnimatedCircularCounterState extends State<AnimatedCircularCounter>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
+    _controller = AnimationController(duration: widget.duration, vsync: this);
 
-    _animation = Tween<double>(
-      begin: 0,
-      end: widget.value / widget.maxValue,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: AlhaiMotion.standardDecelerate,
-    ));
+    _animation = Tween<double>(begin: 0, end: widget.value / widget.maxValue)
+        .animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: AlhaiMotion.standardDecelerate,
+          ),
+        );
 
     _controller.forward();
   }
@@ -304,21 +297,25 @@ class _AnimatedCircularCounterState extends State<AnimatedCircularCounter>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _controller.duration =
-        context.prefersReducedMotion ? Duration.zero : widget.duration;
+    _controller.duration = context.prefersReducedMotion
+        ? Duration.zero
+        : widget.duration;
   }
 
   @override
   void didUpdateWidget(AnimatedCircularCounter oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.value != widget.value) {
-      _animation = Tween<double>(
-        begin: oldWidget.value / widget.maxValue,
-        end: widget.value / widget.maxValue,
-      ).animate(CurvedAnimation(
-        parent: _controller,
-        curve: AlhaiMotion.standardDecelerate,
-      ));
+      _animation =
+          Tween<double>(
+            begin: oldWidget.value / widget.maxValue,
+            end: widget.value / widget.maxValue,
+          ).animate(
+            CurvedAnimation(
+              parent: _controller,
+              curve: AlhaiMotion.standardDecelerate,
+            ),
+          );
       _controller.forward(from: 0);
     }
   }
@@ -436,18 +433,15 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      duration: widget.duration,
-      vsync: this,
-    );
+    _controller = AnimationController(duration: widget.duration, vsync: this);
 
-    _animation = Tween<double>(
-      begin: 0,
-      end: widget.value.clamp(0.0, 1.0),
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: AlhaiMotion.standardDecelerate,
-    ));
+    _animation = Tween<double>(begin: 0, end: widget.value.clamp(0.0, 1.0))
+        .animate(
+          CurvedAnimation(
+            parent: _controller,
+            curve: AlhaiMotion.standardDecelerate,
+          ),
+        );
 
     _controller.forward();
   }
@@ -455,21 +449,25 @@ class _AnimatedProgressBarState extends State<AnimatedProgressBar>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _controller.duration =
-        context.prefersReducedMotion ? Duration.zero : widget.duration;
+    _controller.duration = context.prefersReducedMotion
+        ? Duration.zero
+        : widget.duration;
   }
 
   @override
   void didUpdateWidget(AnimatedProgressBar oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.value != widget.value) {
-      _animation = Tween<double>(
-        begin: oldWidget.value.clamp(0.0, 1.0),
-        end: widget.value.clamp(0.0, 1.0),
-      ).animate(CurvedAnimation(
-        parent: _controller,
-        curve: AlhaiMotion.standardDecelerate,
-      ));
+      _animation =
+          Tween<double>(
+            begin: oldWidget.value.clamp(0.0, 1.0),
+            end: widget.value.clamp(0.0, 1.0),
+          ).animate(
+            CurvedAnimation(
+              parent: _controller,
+              curve: AlhaiMotion.standardDecelerate,
+            ),
+          );
       _controller.forward(from: 0);
     }
   }

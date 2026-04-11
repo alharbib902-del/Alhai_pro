@@ -62,11 +62,9 @@ class VatCalculator {
     required double grossAmount,
     double vatRate = standardRate,
   }) {
-    return _round2(grossAmount -
-        netFromGross(
-          grossAmount: grossAmount,
-          vatRate: vatRate,
-        ));
+    return _round2(
+      grossAmount - netFromGross(grossAmount: grossAmount, vatRate: vatRate),
+    );
   }
 
   /// Extract net amount from gross (VAT-inclusive) amount
@@ -220,6 +218,7 @@ class VatBreakdown {
   });
 
   @override
-  String toString() => 'VatBreakdown(net: $netAmount, vat: $vatAmount, '
+  String toString() =>
+      'VatBreakdown(net: $netAmount, vat: $vatAmount, '
       'gross: $grossAmount, rate: $vatRate%)';
 }

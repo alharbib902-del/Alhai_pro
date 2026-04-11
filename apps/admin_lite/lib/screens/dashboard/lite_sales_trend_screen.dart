@@ -62,10 +62,11 @@ class _LiteSalesTrendScreenState extends ConsumerState<LiteSalesTrendScreen> {
             dailyAsync.when(
               data: (data) => _buildSummaryCards(isDark, isMobile, l10n, data),
               loading: () => const Center(
-                  child: Padding(
-                padding: EdgeInsets.all(AlhaiSpacing.lg),
-                child: CircularProgressIndicator(),
-              )),
+                child: Padding(
+                  padding: EdgeInsets.all(AlhaiSpacing.lg),
+                  child: CircularProgressIndicator(),
+                ),
+              ),
               error: (_, __) => Center(child: Text(l10n.errorOccurred)),
             ),
             const SizedBox(height: AlhaiSpacing.lg),
@@ -74,10 +75,11 @@ class _LiteSalesTrendScreenState extends ConsumerState<LiteSalesTrendScreen> {
             weeklyAsync.when(
               data: (data) => _buildChartCard(isDark, l10n, data),
               loading: () => const Center(
-                  child: Padding(
-                padding: EdgeInsets.all(AlhaiSpacing.lg),
-                child: CircularProgressIndicator(),
-              )),
+                child: Padding(
+                  padding: EdgeInsets.all(AlhaiSpacing.lg),
+                  child: CircularProgressIndicator(),
+                ),
+              ),
               error: (_, __) => Center(child: Text(l10n.errorOccurred)),
             ),
             const SizedBox(height: AlhaiSpacing.lg),
@@ -120,8 +122,9 @@ class _LiteSalesTrendScreenState extends ConsumerState<LiteSalesTrendScreen> {
                   boxShadow: isSelected && !isDark
                       ? [
                           BoxShadow(
-                              color: Colors.black.withValues(alpha: 0.06),
-                              blurRadius: 4)
+                            color: Colors.black.withValues(alpha: 0.06),
+                            blurRadius: 4,
+                          ),
                         ]
                       : null,
                 ),
@@ -129,8 +132,9 @@ class _LiteSalesTrendScreenState extends ConsumerState<LiteSalesTrendScreen> {
                   entry.value,
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontWeight:
-                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.bold
+                        : FontWeight.normal,
                     color: isSelected
                         ? (isDark ? Colors.white : AlhaiColors.primary)
                         : (isDark ? Colors.white54 : Colors.black54),
@@ -146,20 +150,32 @@ class _LiteSalesTrendScreenState extends ConsumerState<LiteSalesTrendScreen> {
   }
 
   Widget _buildSummaryCards(
-      bool isDark, bool isMobile, AppLocalizations l10n, DailySalesData data) {
+    bool isDark,
+    bool isMobile,
+    AppLocalizations l10n,
+    DailySalesData data,
+  ) {
     final items = [
-      _SummaryItem(l10n.totalSales, data.todayStats.total.toStringAsFixed(0),
-          AlhaiColors.success, Icons.trending_up),
-      _SummaryItem(l10n.orders, '${data.todayStats.count}', AlhaiColors.info,
-          Icons.receipt_long),
       _SummaryItem(
-          l10n.averageSale,
-          data.todayStats.count > 0
-              ? (data.todayStats.total / data.todayStats.count)
-                  .toStringAsFixed(0)
-              : '0',
-          AlhaiColors.primary,
-          Icons.analytics),
+        l10n.totalSales,
+        data.todayStats.total.toStringAsFixed(0),
+        AlhaiColors.success,
+        Icons.trending_up,
+      ),
+      _SummaryItem(
+        l10n.orders,
+        '${data.todayStats.count}',
+        AlhaiColors.info,
+        Icons.receipt_long,
+      ),
+      _SummaryItem(
+        l10n.averageSale,
+        data.todayStats.count > 0
+            ? (data.todayStats.total / data.todayStats.count).toStringAsFixed(0)
+            : '0',
+        AlhaiColors.primary,
+        Icons.analytics,
+      ),
     ];
 
     return Row(
@@ -219,7 +235,10 @@ class _LiteSalesTrendScreenState extends ConsumerState<LiteSalesTrendScreen> {
   }
 
   Widget _buildChartCard(
-      bool isDark, AppLocalizations l10n, WeeklyComparisonData data) {
+    bool isDark,
+    AppLocalizations l10n,
+    WeeklyComparisonData data,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
@@ -248,24 +267,27 @@ class _LiteSalesTrendScreenState extends ConsumerState<LiteSalesTrendScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: _buildChartBars(
-                  isDark,
-                  MediaQuery.of(context).size.width < 600 ? 150.0 : 200.0,
-                  data.dailyBreakdown),
+                isDark,
+                MediaQuery.of(context).size.width < 600 ? 150.0 : 200.0,
+                data.dailyBreakdown,
+              ),
             ),
           ),
           const SizedBox(height: AlhaiSpacing.sm),
           Row(
             children: data.dailyBreakdown
-                .map((d) => Expanded(
-                      child: Text(
-                        d.dayName,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 10,
-                          color: isDark ? Colors.white38 : Colors.black45,
-                        ),
+                .map(
+                  (d) => Expanded(
+                    child: Text(
+                      d.dayName,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: isDark ? Colors.white38 : Colors.black45,
                       ),
-                    ))
+                    ),
+                  ),
+                )
                 .toList(),
           ),
         ],
@@ -274,26 +296,34 @@ class _LiteSalesTrendScreenState extends ConsumerState<LiteSalesTrendScreen> {
   }
 
   List<Widget> _buildChartBars(
-      bool isDark, double chartHeight, List<DaySalesData> days) {
+    bool isDark,
+    double chartHeight,
+    List<DaySalesData> days,
+  ) {
     if (days.isEmpty) return [];
-    final maxVal =
-        days.map((d) => d.current).fold(0.0, (a, b) => a > b ? a : b);
+    final maxVal = days
+        .map((d) => d.current)
+        .fold(0.0, (a, b) => a > b ? a : b);
     if (maxVal == 0) {
       return days
-          .map((_) => Expanded(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxxs),
-                  child: Container(
-                    height: 4,
-                    decoration: BoxDecoration(
-                      color: AlhaiColors.primary.withValues(alpha: 0.3),
-                      borderRadius:
-                          const BorderRadius.vertical(top: Radius.circular(6)),
+          .map(
+            (_) => Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.xxxs,
+                ),
+                child: Container(
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: AlhaiColors.primary.withValues(alpha: 0.3),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(6),
                     ),
                   ),
                 ),
-              ))
+              ),
+            ),
+          )
           .toList();
     }
 
@@ -307,8 +337,9 @@ class _LiteSalesTrendScreenState extends ConsumerState<LiteSalesTrendScreen> {
             height: chartHeight * ratio.clamp(0.05, 1.0),
             decoration: BoxDecoration(
               color: AlhaiColors.primary.withValues(alpha: isToday ? 1.0 : 0.5),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(6)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(6),
+              ),
             ),
           ),
         ),
@@ -317,7 +348,10 @@ class _LiteSalesTrendScreenState extends ConsumerState<LiteSalesTrendScreen> {
   }
 
   Widget _buildComparisonSection(
-      bool isDark, AppLocalizations l10n, WeeklyComparisonData data) {
+    bool isDark,
+    AppLocalizations l10n,
+    WeeklyComparisonData data,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
@@ -398,10 +432,10 @@ class _ComparisonRow extends StatelessWidget {
           child: Text(
             label,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: isDark
-                      ? Colors.white54
-                      : Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+              color: isDark
+                  ? Colors.white54
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ),
         Expanded(
@@ -421,8 +455,8 @@ class _ComparisonRow extends StatelessWidget {
             previous,
             textAlign: TextAlign.end,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: isDark ? Colors.white38 : Colors.black45,
-                ),
+              color: isDark ? Colors.white38 : Colors.black45,
+            ),
           ),
         ),
       ],

@@ -24,40 +24,44 @@ class AlhaiStatusBadge extends StatelessWidget {
   }) {
     final (bg, fg) = switch (status) {
       'active' => (
-          AlhaiColors.statusActiveBackground(isDark),
-          AlhaiColors.statusActiveForeground(isDark)
-        ),
+        AlhaiColors.statusActiveBackground(isDark),
+        AlhaiColors.statusActiveForeground(isDark),
+      ),
       'trial' => (
-          AlhaiColors.statusTrialBackground(isDark),
-          AlhaiColors.statusTrialForeground(isDark)
-        ),
+        AlhaiColors.statusTrialBackground(isDark),
+        AlhaiColors.statusTrialForeground(isDark),
+      ),
       'expired' => (
-          AlhaiColors.statusExpiredBackground(isDark),
-          AlhaiColors.statusExpiredForeground(isDark)
-        ),
+        AlhaiColors.statusExpiredBackground(isDark),
+        AlhaiColors.statusExpiredForeground(isDark),
+      ),
       'suspended' => (
-          AlhaiColors.statusSuspendedBackground(isDark),
-          AlhaiColors.statusSuspendedForeground(isDark)
-        ),
+        AlhaiColors.statusSuspendedBackground(isDark),
+        AlhaiColors.statusSuspendedForeground(isDark),
+      ),
       'paid' => (
-          AlhaiColors.statusActiveBackground(isDark),
-          AlhaiColors.statusActiveForeground(isDark)
-        ),
+        AlhaiColors.statusActiveBackground(isDark),
+        AlhaiColors.statusActiveForeground(isDark),
+      ),
       'unpaid' || 'pending' => (
-          AlhaiColors.statusTrialBackground(isDark),
-          AlhaiColors.statusTrialForeground(isDark)
-        ),
+        AlhaiColors.statusTrialBackground(isDark),
+        AlhaiColors.statusTrialForeground(isDark),
+      ),
       'overdue' => (
-          AlhaiColors.statusExpiredBackground(isDark),
-          AlhaiColors.statusExpiredForeground(isDark)
-        ),
+        AlhaiColors.statusExpiredBackground(isDark),
+        AlhaiColors.statusExpiredForeground(isDark),
+      ),
       _ => (
-          AlhaiColors.statusInfoBackground(isDark),
-          AlhaiColors.statusInfoForeground(isDark)
-        ),
+        AlhaiColors.statusInfoBackground(isDark),
+        AlhaiColors.statusInfoForeground(isDark),
+      ),
     };
     return AlhaiStatusBadge(
-        key: key, label: label, backgroundColor: bg, foregroundColor: fg);
+      key: key,
+      label: label,
+      backgroundColor: bg,
+      foregroundColor: fg,
+    );
   }
 
   @override

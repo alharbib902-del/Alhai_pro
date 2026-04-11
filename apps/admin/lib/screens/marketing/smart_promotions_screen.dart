@@ -11,11 +11,11 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 // مزود المنتجات بطيئة الحركة (low stock)
 final _lowStockProductsProvider =
     FutureProvider.autoDispose<List<ProductsTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
-  final db = GetIt.I<AppDatabase>();
-  return db.productsDao.getLowStockProducts(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
+      final db = GetIt.I<AppDatabase>();
+      return db.productsDao.getLowStockProducts(storeId);
+    });
 
 /// Smart Promotions Screen - شاشة العروض الذكية
 class SmartPromotionsScreen extends ConsumerStatefulWidget {
@@ -61,8 +61,9 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
       children: [
         AppHeader(
           title: l10n.smartPromotionsTitle,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.cashCustomer,
@@ -73,16 +74,19 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
           child: TabBar(
             controller: _tabController,
             labelColor: AppColors.primary,
-            unselectedLabelColor:
-                isDark ? Colors.white60 : AppColors.textSecondary,
+            unselectedLabelColor: isDark
+                ? Colors.white60
+                : AppColors.textSecondary,
             indicatorColor: AppColors.primary,
             tabs: [
               Tab(
-                  icon: const Icon(Icons.lightbulb),
-                  text: l10n.tabAiSuggestions),
+                icon: const Icon(Icons.lightbulb),
+                text: l10n.tabAiSuggestions,
+              ),
               Tab(
-                  icon: const Icon(Icons.local_offer),
-                  text: l10n.tabActivePromotions),
+                icon: const Icon(Icons.local_offer),
+                text: l10n.tabActivePromotions,
+              ),
               Tab(icon: const Icon(Icons.history), text: l10n.tabHistory),
             ],
           ),
@@ -91,31 +95,43 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
           child: isLoading
               ? const Center(child: CircularProgressIndicator())
               : error != null
-                  ? AppErrorState.general(
-                      context,
-                      message: error.toString(),
-                      onRetry: () {
-                        ref.invalidate(activePromotionsProvider);
-                        ref.invalidate(_lowStockProductsProvider);
-                      },
-                    )
-                  : TabBarView(
-                      controller: _tabController,
-                      children: [
-                        _buildSuggestionsTab(isMediumScreen, isDark, l10n,
-                            lowStockAsync.valueOrNull ?? []),
-                        _buildActiveTab(isMediumScreen, isDark, l10n,
-                            activePromotionsAsync.valueOrNull ?? []),
-                        _buildHistoryTab(isDark, l10n),
-                      ],
+              ? AppErrorState.general(
+                  context,
+                  message: error.toString(),
+                  onRetry: () {
+                    ref.invalidate(activePromotionsProvider);
+                    ref.invalidate(_lowStockProductsProvider);
+                  },
+                )
+              : TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildSuggestionsTab(
+                      isMediumScreen,
+                      isDark,
+                      l10n,
+                      lowStockAsync.valueOrNull ?? [],
                     ),
+                    _buildActiveTab(
+                      isMediumScreen,
+                      isDark,
+                      l10n,
+                      activePromotionsAsync.valueOrNull ?? [],
+                    ),
+                    _buildHistoryTab(isDark, l10n),
+                  ],
+                ),
         ),
       ],
     );
   }
 
-  Widget _buildSuggestionsTab(bool isMediumScreen, bool isDark,
-      AppLocalizations l10n, List<ProductsTableData> lowStockProducts) {
+  Widget _buildSuggestionsTab(
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+    List<ProductsTableData> lowStockProducts,
+  ) {
     final textColor = Theme.of(context).colorScheme.onSurface;
     final subtextColor = Theme.of(context).colorScheme.onSurfaceVariant;
 
@@ -137,8 +153,9 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
                 Container(
                   padding: const EdgeInsets.all(AlhaiSpacing.sm),
                   decoration: BoxDecoration(
-                      color: AppColors.info,
-                      borderRadius: BorderRadius.circular(12)),
+                    color: AppColors.info,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                   child: const Icon(Icons.auto_awesome, color: Colors.white),
                 ),
                 const SizedBox(width: AlhaiSpacing.md),
@@ -146,13 +163,18 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(l10n.smartSuggestions,
-                          style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                              color: textColor)),
-                      Text(l10n.suggestionsBasedOnAnalysis,
-                          style: TextStyle(color: subtextColor)),
+                      Text(
+                        l10n.smartSuggestions,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: textColor,
+                        ),
+                      ),
+                      Text(
+                        l10n.suggestionsBasedOnAnalysis,
+                        style: TextStyle(color: subtextColor),
+                      ),
                     ],
                   ),
                 ),
@@ -165,31 +187,38 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
               padding: const EdgeInsets.all(AlhaiSpacing.xl),
               child: Column(
                 children: [
-                  Icon(Icons.lightbulb_outline,
-                      size: 48,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurfaceVariant
-                          .withValues(alpha: 0.5)),
+                  Icon(
+                    Icons.lightbulb_outline,
+                    size: 48,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                  ),
                   const SizedBox(height: AlhaiSpacing.sm),
                   Text(
-                      '\u0644\u0627 \u062a\u0648\u062c\u062f \u0627\u0642\u062a\u0631\u0627\u062d\u0627\u062a \u062d\u0627\u0644\u064a\u0627\u064b',
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          fontSize: 16)),
+                    '\u0644\u0627 \u062a\u0648\u062c\u062f \u0627\u0642\u062a\u0631\u0627\u062d\u0627\u062a \u062d\u0627\u0644\u064a\u0627\u064b',
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 16,
+                    ),
+                  ),
                 ],
               ),
             )
           else
-            ...lowStockProducts
-                .map((product) => _buildSuggestionCard(product, isDark, l10n)),
+            ...lowStockProducts.map(
+              (product) => _buildSuggestionCard(product, isDark, l10n),
+            ),
         ],
       ),
     );
   }
 
   Widget _buildSuggestionCard(
-      ProductsTableData product, bool isDark, AppLocalizations l10n) {
+    ProductsTableData product,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final cardColor = Theme.of(context).colorScheme.surface;
     final textColor = Theme.of(context).colorScheme.onSurface;
     final subtextColor = Theme.of(context).colorScheme.onSurfaceVariant;
@@ -210,34 +239,50 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
           Row(
             children: [
               Expanded(
-                  child: Text(product.name,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
-                          color: textColor))),
+                child: Text(
+                  product.name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 16,
+                    color: textColor,
+                  ),
+                ),
+              ),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
-                    color: AppColors.secondary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(20)),
-                child: Text(l10n.suggestedDiscountPercent(suggestedDiscount),
-                    style: const TextStyle(
-                        color: AppColors.secondary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 12)),
+                  color: AppColors.secondary.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  l10n.suggestedDiscountPercent(suggestedDiscount),
+                  style: const TextStyle(
+                    color: AppColors.secondary,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 12,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.xs),
           Row(
             children: [
-              const Icon(Icons.lightbulb_outline,
-                  size: 16, color: AppColors.warning),
+              const Icon(
+                Icons.lightbulb_outline,
+                size: 16,
+                color: AppColors.warning,
+              ),
               const SizedBox(width: AlhaiSpacing.xxs),
               Flexible(
-                  child: Text(l10n.slowMovementReason('${product.stockQty}'),
-                      style: TextStyle(color: subtextColor))),
+                child: Text(
+                  l10n.slowMovementReason('${product.stockQty}'),
+                  style: TextStyle(color: subtextColor),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.sm),
@@ -250,8 +295,9 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
                 onPressed: () => _applyPromotionForProduct(product, l10n),
                 icon: const Icon(Icons.check, size: 18),
                 label: Text(l10n.applyAction),
-                style:
-                    FilledButton.styleFrom(backgroundColor: AppColors.primary),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.primary,
+                ),
               ),
             ],
           ),
@@ -260,8 +306,12 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
     );
   }
 
-  Widget _buildActiveTab(bool isMediumScreen, bool isDark,
-      AppLocalizations l10n, List<PromotionsTableData> activePromotions) {
+  Widget _buildActiveTab(
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+    List<PromotionsTableData> activePromotions,
+  ) {
     final cardColor = Theme.of(context).colorScheme.surface;
     final textColor = Theme.of(context).colorScheme.onSurface;
     final subtextColor = Theme.of(context).colorScheme.onSurfaceVariant;
@@ -271,18 +321,21 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.local_offer_outlined,
-                size: 64,
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurfaceVariant
-                    .withValues(alpha: 0.5)),
+            Icon(
+              Icons.local_offer_outlined,
+              size: 64,
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+            ),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
-                '\u0644\u0627 \u062a\u0648\u062c\u062f \u0639\u0631\u0648\u0636 \u0646\u0634\u0637\u0629',
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontSize: 16)),
+              '\u0644\u0627 \u062a\u0648\u062c\u062f \u0639\u0631\u0648\u0636 \u0646\u0634\u0637\u0629',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 16,
+              ),
+            ),
           ],
         ),
       );
@@ -292,38 +345,47 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
       padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
       child: Column(
         children: activePromotions
-            .map((p) => Container(
-                  margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
-                  decoration: BoxDecoration(
-                    color: cardColor,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Theme.of(context).dividerColor),
-                  ),
-                  child: ListTile(
-                    onTap: () => _showPromotionDetails(p, l10n),
-                    leading: Container(
-                      padding: const EdgeInsets.all(AlhaiSpacing.xs),
-                      decoration: BoxDecoration(
-                          color: AppColors.success.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(8)),
-                      child: const Icon(Icons.local_offer,
-                          color: AppColors.success),
+            .map(
+              (p) => Container(
+                margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+                decoration: BoxDecoration(
+                  color: cardColor,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Theme.of(context).dividerColor),
+                ),
+                child: ListTile(
+                  onTap: () => _showPromotionDetails(p, l10n),
+                  leading: Container(
+                    padding: const EdgeInsets.all(AlhaiSpacing.xs),
+                    decoration: BoxDecoration(
+                      color: AppColors.success.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    title: Text(p.name,
-                        style: TextStyle(
-                            color: textColor, fontWeight: FontWeight.w500)),
-                    subtitle: Text(
-                      '${_getTypeName(p.type, l10n)} - ${l10n.validityDays(p.endDate.difference(DateTime.now()).inDays)}',
-                      style: TextStyle(color: subtextColor, fontSize: 12),
-                    ),
-                    trailing: Icon(
-                      Directionality.of(context) == TextDirection.rtl
-                          ? Icons.chevron_left_rounded
-                          : Icons.chevron_right_rounded,
-                      color: subtextColor,
+                    child: const Icon(
+                      Icons.local_offer,
+                      color: AppColors.success,
                     ),
                   ),
-                ))
+                  title: Text(
+                    p.name,
+                    style: TextStyle(
+                      color: textColor,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  subtitle: Text(
+                    '${_getTypeName(p.type, l10n)} - ${l10n.validityDays(p.endDate.difference(DateTime.now()).inDays)}',
+                    style: TextStyle(color: subtextColor, fontSize: 12),
+                  ),
+                  trailing: Icon(
+                    Directionality.of(context) == TextDirection.rtl
+                        ? Icons.chevron_left_rounded
+                        : Icons.chevron_right_rounded,
+                    color: subtextColor,
+                  ),
+                ),
+              ),
+            )
             .toList(),
       ),
     );
@@ -344,7 +406,9 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
   }
 
   void _applyPromotionForProduct(
-      ProductsTableData product, AppLocalizations l10n) async {
+    ProductsTableData product,
+    AppLocalizations l10n,
+  ) async {
     try {
       await addPromotion(
         ref,
@@ -356,8 +420,9 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(l10n.promotionApplied(product.name)),
-            backgroundColor: AppColors.success),
+          content: Text(l10n.promotionApplied(product.name)),
+          backgroundColor: AppColors.success,
+        ),
       );
     } catch (e) {
       debugPrint('Error applying promotion: $e');
@@ -365,7 +430,9 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
   }
 
   void _showPromotionDetails(
-      PromotionsTableData promotion, AppLocalizations l10n) {
+    PromotionsTableData promotion,
+    AppLocalizations l10n,
+  ) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -376,14 +443,18 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
           children: [
             Text(l10n.promotionType(_getTypeName(promotion.type, l10n))),
             Text(
-                '${l10n.startDateLabel}: ${promotion.startDate.toString().split(' ').first}'),
+              '${l10n.startDateLabel}: ${promotion.startDate.toString().split(' ').first}',
+            ),
             Text(
-                '${l10n.endDateLabel}: ${promotion.endDate.toString().split(' ').first}'),
+              '${l10n.endDateLabel}: ${promotion.endDate.toString().split(' ').first}',
+            ),
             if (promotion.description != null &&
                 promotion.description!.isNotEmpty) ...[
               const SizedBox(height: AlhaiSpacing.xs),
-              Text(promotion.description!,
-                  style: const TextStyle(fontSize: 13)),
+              Text(
+                promotion.description!,
+                style: const TextStyle(fontSize: 13),
+              ),
             ],
           ],
         ),
@@ -393,14 +464,19 @@ class _SmartPromotionsScreenState extends ConsumerState<SmartPromotionsScreen>
               Navigator.pop(context);
               deletePromotion(ref, promotion.id);
             },
-            child: Text(l10n.delete,
-                style: const TextStyle(color: AppColors.error)),
+            child: Text(
+              l10n.delete,
+              style: const TextStyle(color: AppColors.error),
+            ),
           ),
           TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(l10n.closeAction)),
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.closeAction),
+          ),
           FilledButton(
-              onPressed: () => Navigator.pop(context), child: Text(l10n.edit)),
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.edit),
+          ),
         ],
       ),
     );

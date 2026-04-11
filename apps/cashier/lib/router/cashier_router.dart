@@ -87,10 +87,7 @@ Widget _fadeTransition(
   Widget child,
 ) {
   return FadeTransition(
-    opacity: CurvedAnimation(
-      parent: animation,
-      curve: AlhaiMotion.standard,
-    ),
+    opacity: CurvedAnimation(parent: animation, curve: AlhaiMotion.standard),
     child: child,
   );
 }

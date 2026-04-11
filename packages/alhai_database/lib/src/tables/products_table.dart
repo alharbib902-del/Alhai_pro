@@ -29,8 +29,9 @@ import 'categories_table.dart';
 @TableIndex(name: 'idx_products_is_active', columns: {#isActive})
 @TableIndex(name: 'idx_products_store_barcode', columns: {#storeId, #barcode})
 @TableIndex(
-    name: 'idx_products_store_category_active',
-    columns: {#storeId, #categoryId, #isActive})
+  name: 'idx_products_store_category_active',
+  columns: {#storeId, #categoryId, #isActive},
+)
 class ProductsTable extends Table {
   @override
   String get tableName => 'products';
@@ -65,9 +66,11 @@ class ProductsTable extends Table {
   TextColumn get imageHash => text().nullable()();
 
   // التصنيف والحالة
-  TextColumn get categoryId => text()
-      .nullable()
-      .references(CategoriesTable, #id, onDelete: KeyAction.setNull)();
+  TextColumn get categoryId => text().nullable().references(
+    CategoriesTable,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
   BoolColumn get trackInventory =>
       boolean().withDefault(const Constant(true))();

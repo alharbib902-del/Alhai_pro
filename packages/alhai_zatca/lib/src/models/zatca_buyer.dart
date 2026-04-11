@@ -81,28 +81,28 @@ class ZatcaBuyer {
   }
 
   Map<String, dynamic> toJson() => {
-        if (name != null) 'name': name,
-        if (vatNumber != null) 'vatNumber': vatNumber,
-        if (buyerId != null) 'buyerId': buyerId,
-        if (buyerIdScheme != null) 'buyerIdScheme': buyerIdScheme,
-        if (streetName != null) 'streetName': streetName,
-        if (buildingNumber != null) 'buildingNumber': buildingNumber,
-        if (city != null) 'city': city,
-        if (district != null) 'district': district,
-        if (postalCode != null) 'postalCode': postalCode,
-        if (countryCode != null) 'countryCode': countryCode,
-      };
+    if (name != null) 'name': name,
+    if (vatNumber != null) 'vatNumber': vatNumber,
+    if (buyerId != null) 'buyerId': buyerId,
+    if (buyerIdScheme != null) 'buyerIdScheme': buyerIdScheme,
+    if (streetName != null) 'streetName': streetName,
+    if (buildingNumber != null) 'buildingNumber': buildingNumber,
+    if (city != null) 'city': city,
+    if (district != null) 'district': district,
+    if (postalCode != null) 'postalCode': postalCode,
+    if (countryCode != null) 'countryCode': countryCode,
+  };
 
   factory ZatcaBuyer.fromJson(Map<String, dynamic> json) => ZatcaBuyer(
-        name: json['name'] as String?,
-        vatNumber: json['vatNumber'] as String?,
-        buyerId: json['buyerId'] as String?,
-        buyerIdScheme: json['buyerIdScheme'] as String?,
-        streetName: json['streetName'] as String?,
-        buildingNumber: json['buildingNumber'] as String?,
-        city: json['city'] as String?,
-        district: json['district'] as String?,
-        postalCode: json['postalCode'] as String?,
-        countryCode: json['countryCode'] as String?,
-      );
+    name: json['name'] as String?,
+    vatNumber: json['vatNumber'] as String?,
+    buyerId: json['buyerId'] as String?,
+    buyerIdScheme: json['buyerIdScheme'] as String?,
+    streetName: json['streetName'] as String?,
+    buildingNumber: json['buildingNumber'] as String?,
+    city: json['city'] as String?,
+    district: json['district'] as String?,
+    postalCode: json['postalCode'] as String?,
+    countryCode: json['countryCode'] as String?,
+  );
 }

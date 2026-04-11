@@ -18,18 +18,19 @@ class SAReportsScreen extends ConsumerWidget {
     final subCounts = ref.watch(saSubscriptionCountsProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.saReportsTitle),
-      ),
+      appBar: AppBar(title: Text(l10n.saReportsTitle)),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Quick Stats Section
-            Text(l10n.saPlatformSummary,
-                style: theme.textTheme.titleLarge
-                    ?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              l10n.saPlatformSummary,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 16),
 
             kpis.when(
@@ -82,9 +83,12 @@ class SAReportsScreen extends ConsumerWidget {
             const SizedBox(height: 32),
 
             // Subscription breakdown
-            Text(l10n.saSubscriptionStatus,
-                style: theme.textTheme.titleLarge
-                    ?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              l10n.saSubscriptionStatus,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 16),
 
             subCounts.when(
@@ -113,9 +117,12 @@ class SAReportsScreen extends ConsumerWidget {
             const SizedBox(height: 32),
 
             // Export Section
-            Text(l10n.saExportData,
-                style: theme.textTheme.titleLarge
-                    ?.copyWith(fontWeight: FontWeight.bold)),
+            Text(
+              l10n.saExportData,
+              style: theme.textTheme.titleLarge?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: 16),
 
             Wrap(
@@ -184,14 +191,19 @@ class _StatCard extends StatelessWidget {
             children: [
               Icon(icon, color: color, size: 24),
               const SizedBox(height: 12),
-              Text(value,
-                  style: theme.textTheme.headlineSmall
-                      ?.copyWith(fontWeight: FontWeight.bold)),
+              Text(
+                value,
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               const SizedBox(height: 4),
-              Text(title,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
-                  )),
+              Text(
+                title,
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
             ],
           ),
         ),

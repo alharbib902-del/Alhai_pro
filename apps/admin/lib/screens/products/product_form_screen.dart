@@ -117,9 +117,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       if (mounted) {
         setState(() => _isLoadingProduct = false);
         final l10n = AppLocalizations.of(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.errorWithDetails('$e'))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.errorWithDetails('$e'))));
       }
     }
   }
@@ -181,7 +181,8 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     final size = MediaQuery.of(context).size;
     final isLandscape =
         MediaQuery.of(context).orientation == Orientation.landscape;
-    final isWideScreen = size.width >= AlhaiBreakpoints.desktop ||
+    final isWideScreen =
+        size.width >= AlhaiBreakpoints.desktop ||
         (isLandscape && size.width >= 600);
     final isMediumScreen = size.width >= AlhaiBreakpoints.tablet;
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -226,8 +227,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
               child: Column(
                 children: [
                   AppHeader(
-                    title:
-                        widget.isEditing ? l10n.editProduct : l10n.addProduct,
+                    title: widget.isEditing
+                        ? l10n.editProduct
+                        : l10n.addProduct,
                     onMenuTap: isWideScreen
                         ? null
                         : () => Scaffold.of(context).openDrawer(),
@@ -242,7 +244,11 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                         : SingleChildScrollView(
                             padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
                             child: _buildContent(
-                                isWideScreen, isMediumScreen, isDark, l10n),
+                              isWideScreen,
+                              isMediumScreen,
+                              isDark,
+                              l10n,
+                            ),
                           ),
                   ),
                 ],
@@ -268,9 +274,11 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           children: [
             IconButton(
               onPressed: () => context.pop(),
-              icon: Icon(Directionality.of(context) == TextDirection.rtl
-                  ? Icons.arrow_forward_rounded
-                  : Icons.arrow_back_rounded),
+              icon: Icon(
+                Directionality.of(context) == TextDirection.rtl
+                    ? Icons.arrow_forward_rounded
+                    : Icons.arrow_back_rounded,
+              ),
               tooltip: l10n.back,
             ),
             const SizedBox(width: AlhaiSpacing.xs),
@@ -375,8 +383,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -433,9 +442,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                   ? Theme.of(context).colorScheme.surface
                   : AppColors.border.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-              border: Border.all(
-                color: Theme.of(context).dividerColor,
-              ),
+              border: Border.all(color: Theme.of(context).dividerColor),
             ),
             child: Icon(
               Icons.add_photo_alternate_rounded,
@@ -578,7 +585,10 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           maxLength: 8,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           validator: FormValidators.numeric(
-              isRequired: false, max: 99999999, allowZero: true),
+            isRequired: false,
+            max: 99999999,
+            allowZero: true,
+          ),
           focusNode: _stockFocus,
           textInputAction: TextInputAction.next,
           onFieldSubmitted: (_) => _minStockFocus.requestFocus(),
@@ -593,7 +603,10 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           maxLength: 6,
           inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           validator: FormValidators.numeric(
-              isRequired: false, max: 999999, allowZero: true),
+            isRequired: false,
+            max: 999999,
+            allowZero: true,
+          ),
           focusNode: _minStockFocus,
           textInputAction: TextInputAction.done,
         ),
@@ -663,9 +676,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       onChanged: (_) {
         if (!_isDirty) _setDirty(true);
       },
-      style: TextStyle(
-        color: Theme.of(context).colorScheme.onSurface,
-      ),
+      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
       decoration: InputDecoration(
         labelText: label,
         prefixIcon: Icon(icon),
@@ -679,15 +690,11 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
             : AppColors.border.withValues(alpha: 0.15),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: Theme.of(context).dividerColor,
-          ),
+          borderSide: BorderSide(color: Theme.of(context).dividerColor),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: Theme.of(context).dividerColor,
-          ),
+          borderSide: BorderSide(color: Theme.of(context).dividerColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -706,9 +713,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       initialValue: _selectedCategoryId,
       isExpanded: true,
       dropdownColor: Theme.of(context).colorScheme.surface,
-      style: TextStyle(
-        color: Theme.of(context).colorScheme.onSurface,
-      ),
+      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
       decoration: InputDecoration(
         labelText: l10n.selectCategory,
         prefixIcon: const Icon(Icons.category_rounded),
@@ -721,15 +726,11 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
             : AppColors.border.withValues(alpha: 0.15),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: Theme.of(context).dividerColor,
-          ),
+          borderSide: BorderSide(color: Theme.of(context).dividerColor),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(
-            color: Theme.of(context).dividerColor,
-          ),
+          borderSide: BorderSide(color: Theme.of(context).dividerColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -738,9 +739,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       ),
       hint: Text(
         l10n.selectCategory,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.onSurfaceVariant,
-        ),
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
       items: [
         DropdownMenuItem<String?>(
@@ -753,10 +752,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           ),
         ),
         ..._categories.map(
-          (c) => DropdownMenuItem<String?>(
-            value: c.id,
-            child: Text(c.name),
-          ),
+          (c) => DropdownMenuItem<String?>(value: c.id, child: Text(c.name)),
         ),
       ],
       onChanged: (value) {
@@ -781,8 +777,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
             : AppColors.border.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : AppColors.border,
         ),
       ),
       child: SwitchListTile(
@@ -805,9 +802,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           icon,
           color: value ? AppColors.primary : AppColors.textTertiary,
         ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         activeThumbColor: AppColors.primary,
       ),
     );
@@ -853,10 +848,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     final l10n = AppLocalizations.of(context);
 
     // Security: Check for dangerous content in text fields
-    final fieldsToCheck = [
-      _nameController.text,
-      _nameEnController.text,
-    ];
+    final fieldsToCheck = [_nameController.text, _nameEnController.text];
     for (final value in fieldsToCheck) {
       if (value.trim().isNotEmpty &&
           InputSanitizer.containsDangerousContent(value)) {
@@ -891,8 +883,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           name: name,
           barcode: drift.Value(barcode.isEmpty ? null : barcode),
           price: double.tryParse(priceText) ?? 0.0,
-          costPrice:
-              drift.Value(costText.isEmpty ? null : double.tryParse(costText)),
+          costPrice: drift.Value(
+            costText.isEmpty ? null : double.tryParse(costText),
+          ),
           stockQty: double.tryParse(stockText) ?? 0.0,
           minQty: double.tryParse(minStockText) ?? 1.0,
           categoryId: drift.Value(_selectedCategoryId),
@@ -920,8 +913,9 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
           name: drift.Value(name),
           barcode: drift.Value(barcode.isEmpty ? null : barcode),
           price: drift.Value(double.tryParse(priceText) ?? 0.0),
-          costPrice:
-              drift.Value(costText.isEmpty ? null : double.tryParse(costText)),
+          costPrice: drift.Value(
+            costText.isEmpty ? null : double.tryParse(costText),
+          ),
           stockQty: drift.Value(double.tryParse(stockText) ?? 0.0),
           minQty: drift.Value(double.tryParse(minStockText) ?? 1.0),
           categoryId: drift.Value(_selectedCategoryId),

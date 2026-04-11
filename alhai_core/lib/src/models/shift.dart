@@ -4,10 +4,7 @@ part 'shift.freezed.dart';
 part 'shift.g.dart';
 
 /// Shift status enum (v2.4.0)
-enum ShiftStatus {
-  open,
-  closed,
-}
+enum ShiftStatus { open, closed }
 
 /// Extension for ShiftStatus
 extension ShiftStatusExt on ShiftStatus {

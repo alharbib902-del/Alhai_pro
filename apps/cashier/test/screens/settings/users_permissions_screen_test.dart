@@ -35,9 +35,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const UsersPermissionsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const UsersPermissionsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(UsersPermissionsScreen), findsOneWidget);
@@ -52,12 +50,11 @@ void main() {
       suppressOverflowErrors();
 
       final completer = Completer<List<UsersTableData>>();
-      when(() => usersDao.getAllUsers(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => usersDao.getAllUsers(any()),
+      ).thenAnswer((_) => completer.future);
 
-      await tester.pumpWidget(
-        createTestWidget(const UsersPermissionsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const UsersPermissionsScreen()));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -92,9 +89,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const UsersPermissionsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const UsersPermissionsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(UsersPermissionsScreen), findsOneWidget);
@@ -108,9 +103,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const UsersPermissionsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const UsersPermissionsScreen()));
       await tester.pumpAndSettle();
 
       // The screen should attempt to load users from the DAO.

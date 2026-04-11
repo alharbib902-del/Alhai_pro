@@ -71,15 +71,18 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
         children: [
           AppHeader(
             title: l10n.suppliersTitle,
-            onMenuTap:
-                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
             userRole: l10n.branchManager,
           ),
           Expanded(
-            child: ref.watch(suppliersListProvider).when(
+            child: ref
+                .watch(suppliersListProvider)
+                .when(
                   loading: () => const Padding(
                     padding: EdgeInsets.all(AlhaiSpacing.md),
                     child: ShimmerList(itemCount: 6, itemHeight: 72),
@@ -97,9 +100,15 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                       controller: _scrollController,
                       physics: const AlwaysScrollableScrollPhysics(),
                       padding: EdgeInsets.all(
-                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: _buildContent(suppliers, isWideScreen,
-                          isMediumScreen, isDark, l10n),
+                        isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                      ),
+                      child: _buildContent(
+                        suppliers,
+                        isWideScreen,
+                        isMediumScreen,
+                        isDark,
+                        l10n,
+                      ),
                     ),
                   ),
                 ),
@@ -109,8 +118,13 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
     );
   }
 
-  Widget _buildContent(List<SuppliersTableData> suppliers, bool isWideScreen,
-      bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(
+    List<SuppliersTableData> suppliers,
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final totalBalance = suppliers.fold(0.0, (sum, s) => sum + s.balance);
     final activeCount = suppliers.where((s) => s.isActive == true).length;
 
@@ -196,9 +210,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: AppColors.primary.withValues(alpha: 0.3),
-            ),
+            border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [
@@ -208,8 +220,11 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.menu_book_rounded,
-                    color: AppColors.primary, size: 24),
+                child: const Icon(
+                  Icons.menu_book_rounded,
+                  color: AppColors.primary,
+                  size: 24,
+                ),
               ),
               SizedBox(width: AlhaiSpacing.md),
               Expanded(
@@ -237,7 +252,9 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: AlhaiSpacing.xxs),
+                  horizontal: 10,
+                  vertical: AlhaiSpacing.xxs,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -262,9 +279,7 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Theme.of(context).dividerColor,
-            ),
+            border: Border.all(color: Theme.of(context).dividerColor),
           ),
           child: Column(
             children: [
@@ -280,7 +295,8 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                           borderRadius: BorderRadius.circular(12),
                         ),
                         contentPadding: const EdgeInsets.symmetric(
-                            vertical: AlhaiSpacing.sm),
+                          vertical: AlhaiSpacing.sm,
+                        ),
                       ),
                     ),
                   ),
@@ -291,120 +307,134 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                     label: Text(l10n.addSupplier),
                     style: FilledButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.mdl, vertical: 14),
+                        horizontal: AlhaiSpacing.mdl,
+                        vertical: 14,
+                      ),
                     ),
                   ),
                 ],
               ),
               SizedBox(height: AlhaiSpacing.md),
-              Divider(
-                color: Theme.of(context).dividerColor,
-              ),
+              Divider(color: Theme.of(context).dividerColor),
               SizedBox(height: AlhaiSpacing.xs),
 
               // Suppliers List
-              Builder(builder: (context) {
-                final filtered = _searchQuery.isEmpty
-                    ? suppliers
-                    : suppliers
-                        .where((s) =>
-                            s.name.contains(_searchQuery) ||
-                            (s.phone ?? '').contains(_searchQuery) ||
-                            (s.email ?? '').contains(_searchQuery))
-                        .toList();
+              Builder(
+                builder: (context) {
+                  final filtered = _searchQuery.isEmpty
+                      ? suppliers
+                      : suppliers
+                            .where(
+                              (s) =>
+                                  s.name.contains(_searchQuery) ||
+                                  (s.phone ?? '').contains(_searchQuery) ||
+                                  (s.email ?? '').contains(_searchQuery),
+                            )
+                            .toList();
 
-                if (filtered.isEmpty) {
-                  return Padding(
-                    padding: const EdgeInsets.all(AlhaiSpacing.xl),
-                    child: Center(
-                      child: Text(l10n.noSuppliers,
+                  if (filtered.isEmpty) {
+                    return Padding(
+                      padding: const EdgeInsets.all(AlhaiSpacing.xl),
+                      child: Center(
+                        child: Text(
+                          l10n.noSuppliers,
                           style: TextStyle(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant)),
-                    ),
-                  );
-                }
-
-                return ListView.separated(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: filtered.length,
-                  separatorBuilder: (_, __) => Divider(
-                    height: 1,
-                    color: Theme.of(context).dividerColor,
-                  ),
-                  itemBuilder: (context, index) {
-                    final supplier = filtered[index];
-                    final initial =
-                        supplier.name.isNotEmpty ? supplier.name[0] : '?';
-                    return ListTile(
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.xxs,
-                          vertical: AlhaiSpacing.xs),
-                      leading: Hero(
-                        tag: 'supplier-avatar-${supplier.id}',
-                        child: CircleAvatar(
-                          backgroundColor:
-                              AppColors.primary.withValues(alpha: 0.1),
-                          child: Text(
-                            initial,
-                            style: const TextStyle(
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ),
-                      title: Text(
-                        supplier.name,
-                        style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: Theme.of(context).colorScheme.onSurface,
+                    );
+                  }
+
+                  return ListView.separated(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: filtered.length,
+                    separatorBuilder: (_, __) => Divider(
+                      height: 1,
+                      color: Theme.of(context).dividerColor,
+                    ),
+                    itemBuilder: (context, index) {
+                      final supplier = filtered[index];
+                      final initial = supplier.name.isNotEmpty
+                          ? supplier.name[0]
+                          : '?';
+                      return ListTile(
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: AlhaiSpacing.xxs,
+                          vertical: AlhaiSpacing.xs,
                         ),
-                      ),
-                      subtitle: Text(
-                        supplier.phone ?? '',
-                        style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                      trailing: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: AlhaiSpacing.xxs),
-                            decoration: BoxDecoration(
-                              color: AppColors.primary.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(8),
+                        leading: Hero(
+                          tag: 'supplier-avatar-${supplier.id}',
+                          child: CircleAvatar(
+                            backgroundColor: AppColors.primary.withValues(
+                              alpha: 0.1,
                             ),
                             child: Text(
-                              '${supplier.balance.toStringAsFixed(0)} ${l10n.sar}',
+                              initial,
                               style: const TextStyle(
                                 color: AppColors.primary,
                                 fontWeight: FontWeight.bold,
-                                fontSize: 12,
                               ),
                             ),
                           ),
-                          SizedBox(width: AlhaiSpacing.xs),
-                          Icon(
-                            Directionality.of(context) == TextDirection.rtl
-                                ? Icons.chevron_right
-                                : Icons.chevron_left,
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.3)
-                                : AppColors.textTertiary,
+                        ),
+                        title: Text(
+                          supplier.name,
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: Theme.of(context).colorScheme.onSurface,
                           ),
-                        ],
-                      ),
-                      onTap: () =>
-                          _showSupplierDetailFromData(context, supplier),
-                    );
-                  },
-                );
-              }),
+                        ),
+                        subtitle: Text(
+                          supplier.phone ?? '',
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 10,
+                                vertical: AlhaiSpacing.xxs,
+                              ),
+                              decoration: BoxDecoration(
+                                color: AppColors.primary.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              child: Text(
+                                '${supplier.balance.toStringAsFixed(0)} ${l10n.sar}',
+                                style: const TextStyle(
+                                  color: AppColors.primary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: AlhaiSpacing.xs),
+                            Icon(
+                              Directionality.of(context) == TextDirection.rtl
+                                  ? Icons.chevron_right
+                                  : Icons.chevron_left,
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.3)
+                                  : AppColors.textTertiary,
+                            ),
+                          ],
+                        ),
+                        onTap: () =>
+                            _showSupplierDetailFromData(context, supplier),
+                      );
+                    },
+                  );
+                },
+              ),
             ],
           ),
         ),
@@ -413,7 +443,9 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
   }
 
   void _showSupplierDetailFromData(
-      BuildContext context, SuppliersTableData supplier) {
+    BuildContext context,
+    SuppliersTableData supplier,
+  ) {
     final l10n = AppLocalizations.of(context);
     showModalBottomSheet(
       context: context,
@@ -445,39 +477,47 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
               CircleAvatar(
                 radius: 40,
                 backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                child:
-                    const Icon(Icons.store, size: 40, color: AppColors.primary),
+                child: const Icon(
+                  Icons.store,
+                  size: 40,
+                  color: AppColors.primary,
+                ),
               ),
               SizedBox(height: AlhaiSpacing.md),
               Text(
                 supplier.name,
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               SizedBox(height: AlhaiSpacing.lg),
               _DetailRow(
-                  icon: Icons.phone,
-                  label: l10n.supplierPhone,
-                  value: supplier.phone ?? '-'),
+                icon: Icons.phone,
+                label: l10n.supplierPhone,
+                value: supplier.phone ?? '-',
+              ),
               _DetailRow(
-                  icon: Icons.email,
-                  label: l10n.supplierEmail,
-                  value: supplier.email ?? '-'),
+                icon: Icons.email,
+                label: l10n.supplierEmail,
+                value: supplier.email ?? '-',
+              ),
               _DetailRow(
-                  icon: Icons.location_on,
-                  label: l10n.supplierAddress,
-                  value: supplier.address ?? '-'),
+                icon: Icons.location_on,
+                label: l10n.supplierAddress,
+                value: supplier.address ?? '-',
+              ),
               _DetailRow(
-                  icon: Icons.account_balance,
-                  label: l10n.balance,
-                  value: '${supplier.balance.toStringAsFixed(0)} ${l10n.sar}'),
+                icon: Icons.account_balance,
+                label: l10n.balance,
+                value: '${supplier.balance.toStringAsFixed(0)} ${l10n.sar}',
+              ),
               if (supplier.taxNumber != null)
                 _DetailRow(
-                    icon: Icons.numbers,
-                    label: l10n.taxNumber,
-                    value: supplier.taxNumber!),
+                  icon: Icons.numbers,
+                  label: l10n.taxNumber,
+                  value: supplier.taxNumber!,
+                ),
               SizedBox(height: AlhaiSpacing.lg),
               Row(
                 children: [
@@ -578,9 +618,9 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                 email: emailCtrl.text.isEmpty ? null : emailCtrl.text,
               );
               if (!context.mounted) return;
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.supplierUpdatedMsg)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(l10n.supplierUpdatedMsg)));
             },
             child: Text(l10n.add),
           ),
@@ -616,9 +656,7 @@ class _StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
         children: [
@@ -665,8 +703,11 @@ class _DetailRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const _DetailRow(
-      {required this.icon, required this.label, required this.value});
+  const _DetailRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -94,8 +94,9 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
       final amount = inv.amount.abs().clamp(0, remaining);
       final dueDate = inv.createdAt.add(const Duration(days: 30));
       final isOverdue = dueDate.isBefore(DateTime.now());
-      final daysOverdue =
-          isOverdue ? DateTime.now().difference(dueDate).inDays : 0;
+      final daysOverdue = isOverdue
+          ? DateTime.now().difference(dueDate).inDays
+          : 0;
       debts.add({
         'id': inv.id,
         'invoice': inv.referenceId ?? inv.id,
@@ -129,8 +130,9 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
       if (widget.customerId != null) {
         final db = GetIt.I<AppDatabase>();
         final account = await db.accountsDao.getAccountById(widget.customerId!);
-        final transactions =
-            await db.transactionsDao.getAccountTransactions(widget.customerId!);
+        final transactions = await db.transactionsDao.getAccountTransactions(
+          widget.customerId!,
+        );
         if (mounted) {
           setState(() {
             _account = account;
@@ -163,82 +165,83 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
             child: ShimmerList(itemCount: 5, itemHeight: 72),
           )
         : _account == null
-            ? Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(Icons.person_off_outlined,
-                        size: 64, color: AppColors.getTextMuted(isDark)),
-                    SizedBox(height: AlhaiSpacing.md),
-                    Text(
-                      'Customer not found',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: AppColors.getTextSecondary(isDark),
-                      ),
-                    ),
-                    SizedBox(height: AlhaiSpacing.md),
-                    OutlinedButton(
-                      onPressed: () => context.pop(),
-                      child: Text(l10n.back),
-                    ),
-                  ],
+        ? Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.person_off_outlined,
+                  size: 64,
+                  color: AppColors.getTextMuted(isDark),
                 ),
-              )
-            : CustomScrollView(
-                slivers: [
-                  // Top bar
-                  SliverToBoxAdapter(child: _buildTopBar(isDark, l10n)),
-                  // Profile card
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal:
-                            isDesktop ? AlhaiSpacing.xl : AlhaiSpacing.md,
-                        vertical: AlhaiSpacing.xs,
-                      ),
-                      child: _buildProfileCard(isDark, l10n, isMobile),
-                    ),
+                SizedBox(height: AlhaiSpacing.md),
+                Text(
+                  'Customer not found',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppColors.getTextSecondary(isDark),
                   ),
-                  // Tabs
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal:
-                            isDesktop ? AlhaiSpacing.xl : AlhaiSpacing.md,
-                      ),
-                      child: _buildTabBar(isDark, l10n),
-                    ),
+                ),
+                SizedBox(height: AlhaiSpacing.md),
+                OutlinedButton(
+                  onPressed: () => context.pop(),
+                  child: Text(l10n.back),
+                ),
+              ],
+            ),
+          )
+        : CustomScrollView(
+            slivers: [
+              // Top bar
+              SliverToBoxAdapter(child: _buildTopBar(isDark, l10n)),
+              // Profile card
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isDesktop ? AlhaiSpacing.xl : AlhaiSpacing.md,
+                    vertical: AlhaiSpacing.xs,
                   ),
-                  const SliverToBoxAdapter(
-                      child: SizedBox(height: AlhaiSpacing.md)),
-                  // Tab content
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal:
-                            isDesktop ? AlhaiSpacing.xl : AlhaiSpacing.md,
-                      ),
-                      child:
-                          _buildTabContent(isDark, l10n, isMobile, isDesktop),
-                    ),
+                  child: _buildProfileCard(isDark, l10n, isMobile),
+                ),
+              ),
+              // Tabs
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isDesktop ? AlhaiSpacing.xl : AlhaiSpacing.md,
                   ),
-                  const SliverToBoxAdapter(
-                      child: SizedBox(height: AlhaiSpacing.lg)),
-                  // Internal notes (always visible)
-                  SliverToBoxAdapter(
-                    child: Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal:
-                            isDesktop ? AlhaiSpacing.xl : AlhaiSpacing.md,
-                      ),
-                      child: CustomerNotesSection(isDark: isDark),
-                    ),
+                  child: _buildTabBar(isDark, l10n),
+                ),
+              ),
+              const SliverToBoxAdapter(
+                child: SizedBox(height: AlhaiSpacing.md),
+              ),
+              // Tab content
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isDesktop ? AlhaiSpacing.xl : AlhaiSpacing.md,
                   ),
-                  const SliverToBoxAdapter(
-                      child: SizedBox(height: AlhaiSpacing.xl)),
-                ],
-              );
+                  child: _buildTabContent(isDark, l10n, isMobile, isDesktop),
+                ),
+              ),
+              const SliverToBoxAdapter(
+                child: SizedBox(height: AlhaiSpacing.lg),
+              ),
+              // Internal notes (always visible)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isDesktop ? AlhaiSpacing.xl : AlhaiSpacing.md,
+                  ),
+                  child: CustomerNotesSection(isDark: isDark),
+                ),
+              ),
+              const SliverToBoxAdapter(
+                child: SizedBox(height: AlhaiSpacing.xl),
+              ),
+            ],
+          );
   }
 
   // =====================================================
@@ -247,7 +250,9 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
   Widget _buildTopBar(bool isDark, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(
@@ -380,10 +385,7 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
             height: size,
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [
-                  _avatarColor,
-                  _avatarColor.withValues(alpha: 0.7),
-                ],
+                colors: [_avatarColor, _avatarColor.withValues(alpha: 0.7)],
                 begin: AlignmentDirectional.topStart,
                 end: AlignmentDirectional.bottomEnd,
               ),
@@ -410,10 +412,7 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
             decoration: BoxDecoration(
               color: _isActive ? AppColors.success : AppColors.grey400,
               shape: BoxShape.circle,
-              border: Border.all(
-                color: AppColors.getSurface(isDark),
-                width: 2,
-              ),
+              border: Border.all(color: AppColors.getSurface(isDark), width: 2),
             ),
           ),
         ),
@@ -443,7 +442,9 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
               SizedBox(width: AlhaiSpacing.xs),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+                  horizontal: AlhaiSpacing.xs,
+                  vertical: AlhaiSpacing.xxxs,
+                ),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFFF59E0B), Color(0xFFEA580C)],
@@ -473,19 +474,11 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
         const SizedBox(height: 6),
         // Phone
         if (_customerPhone.isNotEmpty)
-          _buildInfoChip(
-            Icons.phone_outlined,
-            _customerPhone,
-            isDark,
-          ),
+          _buildInfoChip(Icons.phone_outlined, _customerPhone, isDark),
         if (_customerPhone.isNotEmpty) SizedBox(height: AlhaiSpacing.xxs),
         // Email
         if (_customerEmail.isNotEmpty)
-          _buildInfoChip(
-            Icons.email_outlined,
-            _customerEmail,
-            isDark,
-          ),
+          _buildInfoChip(Icons.email_outlined, _customerEmail, isDark),
         if (_customerEmail.isNotEmpty) SizedBox(height: AlhaiSpacing.xxs),
         // Joined
         _buildInfoChip(
@@ -530,7 +523,9 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.md, vertical: 10),
+              horizontal: AlhaiSpacing.md,
+              vertical: 10,
+            ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(AppSizes.radiusLg),
             ),
@@ -549,8 +544,11 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
               value: 'edit',
               child: Row(
                 children: [
-                  Icon(Icons.edit_outlined,
-                      size: 18, color: AppColors.getTextSecondary(isDark)),
+                  Icon(
+                    Icons.edit_outlined,
+                    size: 18,
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
                   SizedBox(width: AlhaiSpacing.xs),
                   Text(l10n.edit),
                 ],
@@ -560,12 +558,16 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
               value: 'whatsapp',
               child: Row(
                 children: [
-                  const Icon(Icons.message_outlined,
-                      size: 18, color: Color(0xFF25D366)),
+                  const Icon(
+                    Icons.message_outlined,
+                    size: 18,
+                    color: Color(0xFF25D366),
+                  ),
                   SizedBox(width: AlhaiSpacing.xs),
-                  Text('WhatsApp',
-                      style:
-                          TextStyle(color: AppColors.getTextPrimary(isDark))),
+                  Text(
+                    'WhatsApp',
+                    style: TextStyle(color: AppColors.getTextPrimary(isDark)),
+                  ),
                 ],
               ),
             ),
@@ -574,18 +576,25 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
               value: 'block',
               child: Row(
                 children: [
-                  const Icon(Icons.block_outlined,
-                      size: 18, color: AppColors.error),
+                  const Icon(
+                    Icons.block_outlined,
+                    size: 18,
+                    color: AppColors.error,
+                  ),
                   SizedBox(width: AlhaiSpacing.xs),
-                  Text(l10n.inactive,
-                      style: const TextStyle(color: AppColors.error)),
+                  Text(
+                    l10n.inactive,
+                    style: const TextStyle(color: AppColors.error),
+                  ),
                 ],
               ),
             ),
           ],
           child: Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.sm, vertical: 10),
+              horizontal: AlhaiSpacing.sm,
+              vertical: 10,
+            ),
             decoration: BoxDecoration(
               color: AppColors.getSurfaceVariant(isDark),
               borderRadius: BorderRadius.circular(AppSizes.radiusLg),
@@ -594,8 +603,11 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Icon(Icons.more_horiz_rounded,
-                    size: 18, color: AppColors.getTextSecondary(isDark)),
+                Icon(
+                  Icons.more_horiz_rounded,
+                  size: 18,
+                  color: AppColors.getTextSecondary(isDark),
+                ),
                 SizedBox(width: AlhaiSpacing.xxs),
                 Text(
                   l10n.more,
@@ -626,27 +638,29 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
             // WhatsApp service is provided by consuming app (cashier)
             // TODO: Wire whatsappServiceProvider when assembling final apps
             throw UnimplementedError(
-                'WhatsApp service not available in shared_ui');
+              'WhatsApp service not available in shared_ui',
+            );
           } catch (_) {
             if (mounted) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                    content:
-                        Text(AppLocalizations.of(context).messageSendFailed)),
+                  content: Text(AppLocalizations.of(context).messageSendFailed),
+                ),
               );
             }
           }
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-                content: Text(AppLocalizations.of(context).noPhoneForCustomer)),
+              content: Text(AppLocalizations.of(context).noPhoneForCustomer),
+            ),
           );
         }
         break;
       case 'block':
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Customer blocked')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('Customer blocked')));
         break;
     }
   }
@@ -685,22 +699,21 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
     ];
 
     if (isMobile) {
-      return Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: chips,
-      );
+      return Wrap(spacing: 8, runSpacing: 8, children: chips);
     }
 
     return Row(
       children: chips
-          .map((chip) => Expanded(
-                child: Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
-                  child: chip,
+          .map(
+            (chip) => Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.xxs,
                 ),
-              ))
+                child: chip,
+              ),
+            ),
+          )
           .toList(),
     );
   }
@@ -725,10 +738,7 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
         indicatorSize: TabBarIndicatorSize.tab,
         indicatorWeight: 2.5,
         dividerColor: AppColors.getBorder(isDark),
-        labelStyle: const TextStyle(
-          fontWeight: FontWeight.w600,
-          fontSize: 13,
-        ),
+        labelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
         unselectedLabelStyle: const TextStyle(
           fontWeight: FontWeight.w500,
           fontSize: 13,
@@ -741,8 +751,12 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                 const Icon(Icons.receipt_long_outlined, size: 16),
                 const SizedBox(width: 6),
                 Flexible(
-                    child: Text(l10n.sales,
-                        overflow: TextOverflow.ellipsis, maxLines: 1)),
+                  child: Text(
+                    l10n.sales,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
               ],
             ),
           ),
@@ -753,8 +767,12 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                 const Icon(Icons.account_balance_wallet_outlined, size: 16),
                 const SizedBox(width: 6),
                 Flexible(
-                    child: Text(l10n.balance,
-                        overflow: TextOverflow.ellipsis, maxLines: 1)),
+                  child: Text(
+                    l10n.balance,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
               ],
             ),
           ),
@@ -765,8 +783,12 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                 const Icon(Icons.warning_amber_rounded, size: 16),
                 const SizedBox(width: 6),
                 Flexible(
-                    child: Text(l10n.debt,
-                        overflow: TextOverflow.ellipsis, maxLines: 1)),
+                  child: Text(
+                    l10n.debt,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
               ],
             ),
           ),
@@ -777,8 +799,12 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                 const Icon(Icons.analytics_outlined, size: 16),
                 const SizedBox(width: 6),
                 Flexible(
-                    child: Text(l10n.reports,
-                        overflow: TextOverflow.ellipsis, maxLines: 1)),
+                  child: Text(
+                    l10n.reports,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
               ],
             ),
           ),
@@ -788,7 +814,11 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
   }
 
   Widget _buildTabContent(
-      bool isDark, AppLocalizations l10n, bool isMobile, bool isDesktop) {
+    bool isDark,
+    AppLocalizations l10n,
+    bool isMobile,
+    bool isDesktop,
+  ) {
     // AnimatedSwitcher on tab index
     return AnimatedSwitcher(
       duration: AlhaiDurations.standard,
@@ -800,7 +830,11 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
   }
 
   Widget _buildCurrentTab(
-      bool isDark, AppLocalizations l10n, bool isMobile, bool isDesktop) {
+    bool isDark,
+    AppLocalizations l10n,
+    bool isMobile,
+    bool isDesktop,
+  ) {
     switch (_tabController.index) {
       case 0:
         return CustomerPurchasesTab(
@@ -839,7 +873,11 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
   // DEBTS TAB
   // =====================================================
   Widget _buildDebtsTab(
-      bool isDark, AppLocalizations l10n, bool isMobile, bool isDesktop) {
+    bool isDark,
+    AppLocalizations l10n,
+    bool isMobile,
+    bool isDesktop,
+  ) {
     final debts = _debtEntries;
     if (debts.isEmpty) {
       return AppEmptyState.noDebts(context);
@@ -863,8 +901,12 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
     );
   }
 
-  Widget _buildDebtCard(Map<String, dynamic> debt, bool isOverdue, bool isDark,
-      AppLocalizations l10n) {
+  Widget _buildDebtCard(
+    Map<String, dynamic> debt,
+    bool isOverdue,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final accentColor = isOverdue ? AppColors.error : AppColors.warning;
     return Container(
       decoration: BoxDecoration(
@@ -885,7 +927,11 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
           ),
           Padding(
             padding: const EdgeInsetsDirectional.only(
-                start: 16, end: 12, top: 16, bottom: 12),
+              start: 16,
+              end: 12,
+              top: 16,
+              bottom: 12,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -913,11 +959,14 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                     if (isOverdue)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: AlhaiSpacing.xxxs),
+                          horizontal: 6,
+                          vertical: AlhaiSpacing.xxxs,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.error.withValues(alpha: 0.12),
-                          borderRadius:
-                              BorderRadius.circular(AppSizes.radiusFull),
+                          borderRadius: BorderRadius.circular(
+                            AppSizes.radiusFull,
+                          ),
                         ),
                         child: Text(
                           '${debt['daysOverdue']}d',
@@ -974,10 +1023,13 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                             foregroundColor: Colors.white,
                             padding: EdgeInsets.zero,
                             textStyle: const TextStyle(
-                                fontSize: 11, fontWeight: FontWeight.w600),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
                             shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(AppSizes.radiusMd),
+                              borderRadius: BorderRadius.circular(
+                                AppSizes.radiusMd,
+                              ),
                             ),
                           ),
                           child: Text(l10n.pay),
@@ -996,10 +1048,13 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
                               side: BorderSide(color: accentColor),
                               padding: EdgeInsets.zero,
                               textStyle: const TextStyle(
-                                  fontSize: 11, fontWeight: FontWeight.w600),
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
                               shape: RoundedRectangleBorder(
-                                borderRadius:
-                                    BorderRadius.circular(AppSizes.radiusMd),
+                                borderRadius: BorderRadius.circular(
+                                  AppSizes.radiusMd,
+                                ),
                               ),
                             ),
                             child: Text(l10n.reminder),
@@ -1041,8 +1096,10 @@ class _StatChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AlhaiSpacing.sm,
+        vertical: 10,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: isDark ? 0.15 : 0.08),
         borderRadius: BorderRadius.circular(AppSizes.radiusLg),

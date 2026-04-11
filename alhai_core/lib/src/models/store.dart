@@ -57,7 +57,7 @@ class Store with _$Store {
       'thursday',
       'friday',
       'saturday',
-      'sunday'
+      'sunday',
     ];
     return days[weekday - 1];
   }

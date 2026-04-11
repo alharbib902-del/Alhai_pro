@@ -47,14 +47,16 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
     final filteredPurchases = _searchController.text.isEmpty
         ? invoiceTxns
         : invoiceTxns
-            .where((t) =>
-                (t.referenceId ?? t.id)
-                    .toLowerCase()
-                    .contains(_searchController.text.toLowerCase()) ||
-                (t.description ?? '')
-                    .toLowerCase()
-                    .contains(_searchController.text.toLowerCase()))
-            .toList();
+              .where(
+                (t) =>
+                    (t.referenceId ?? t.id).toLowerCase().contains(
+                      _searchController.text.toLowerCase(),
+                    ) ||
+                    (t.description ?? '').toLowerCase().contains(
+                      _searchController.text.toLowerCase(),
+                    ),
+              )
+              .toList();
 
     final totalPages = (filteredPurchases.length / _pageSize).ceil();
     final pagedPurchases = filteredPurchases
@@ -77,8 +79,11 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
             padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Row(
               children: [
-                const Icon(Icons.receipt_long_outlined,
-                    size: 20, color: AppColors.primary),
+                const Icon(
+                  Icons.receipt_long_outlined,
+                  size: 20,
+                  color: AppColors.primary,
+                ),
                 SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   l10n.recentTransactions,
@@ -103,8 +108,8 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
                         _searchController.text = sanitized;
                         _searchController.selection =
                             TextSelection.fromPosition(
-                          TextPosition(offset: sanitized.length),
-                        );
+                              TextPosition(offset: sanitized.length),
+                            );
                       }
                     },
                     style: TextStyle(
@@ -117,13 +122,17 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
                         fontSize: 13,
                         color: AppColors.getTextMuted(isDark),
                       ),
-                      prefixIcon: Icon(Icons.search_rounded,
-                          size: 18, color: AppColors.getTextMuted(isDark)),
+                      prefixIcon: Icon(
+                        Icons.search_rounded,
+                        size: 18,
+                        color: AppColors.getTextMuted(isDark),
+                      ),
                       filled: true,
                       fillColor: AppColors.getSurfaceVariant(isDark),
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.sm,
-                          vertical: AlhaiSpacing.zero),
+                        horizontal: AlhaiSpacing.sm,
+                        vertical: AlhaiSpacing.zero,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                         borderSide: BorderSide.none,
@@ -142,8 +151,9 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
                       foregroundColor: AppColors.getTextSecondary(isDark),
                       side: BorderSide(color: AppColors.getBorder(isDark)),
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.sm,
-                          vertical: AlhaiSpacing.xs),
+                        horizontal: AlhaiSpacing.sm,
+                        vertical: AlhaiSpacing.xs,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                       ),
@@ -179,14 +189,15 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
     );
   }
 
-  Widget _buildPurchaseTable(List<TransactionsTableData> purchases, bool isDark,
-      AppLocalizations l10n) {
+  Widget _buildPurchaseTable(
+    List<TransactionsTableData> purchases,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minWidth: context.screenWidth - 96,
-        ),
+        constraints: BoxConstraints(minWidth: context.screenWidth - 96),
         child: DataTable(
           headingRowColor: WidgetStatePropertyAll(
             AppColors.getSurfaceVariant(isDark),
@@ -225,31 +236,44 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
                   ),
                 ),
                 DataCell(
-                    Text('${t.amount.abs().toStringAsFixed(2)} ${l10n.sar}')),
+                  Text('${t.amount.abs().toStringAsFixed(2)} ${l10n.sar}'),
+                ),
                 DataCell(buildStatusBadge(l10n.completed, false, isDark)),
-                DataCell(Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
-                      onPressed: () {},
-                      icon: const Icon(Icons.visibility_outlined,
-                          size: 18, color: AppColors.info),
-                      tooltip: l10n.viewAll,
-                      padding: EdgeInsets.zero,
-                      constraints:
-                          const BoxConstraints(minWidth: 32, minHeight: 32),
-                    ),
-                    IconButton(
-                      onPressed: () {},
-                      icon: Icon(Icons.print_outlined,
-                          size: 18, color: AppColors.getTextSecondary(isDark)),
-                      tooltip: l10n.printReceipt,
-                      padding: EdgeInsets.zero,
-                      constraints:
-                          const BoxConstraints(minWidth: 32, minHeight: 32),
-                    ),
-                  ],
-                )),
+                DataCell(
+                  Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      IconButton(
+                        onPressed: () {},
+                        icon: const Icon(
+                          Icons.visibility_outlined,
+                          size: 18,
+                          color: AppColors.info,
+                        ),
+                        tooltip: l10n.viewAll,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(
+                          minWidth: 32,
+                          minHeight: 32,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () {},
+                        icon: Icon(
+                          Icons.print_outlined,
+                          size: 18,
+                          color: AppColors.getTextSecondary(isDark),
+                        ),
+                        tooltip: l10n.printReceipt,
+                        padding: EdgeInsets.zero,
+                        constraints: const BoxConstraints(
+                          minWidth: 32,
+                          minHeight: 32,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             );
           }).toList(),
@@ -258,8 +282,11 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
     );
   }
 
-  Widget _buildPurchaseCards(List<TransactionsTableData> purchases, bool isDark,
-      AppLocalizations l10n) {
+  Widget _buildPurchaseCards(
+    List<TransactionsTableData> purchases,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return ListView.separated(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -297,9 +324,13 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(dateStr,
-                      style: TextStyle(
-                          fontSize: 12, color: AppColors.getTextMuted(isDark))),
+                  Text(
+                    dateStr,
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.getTextMuted(isDark),
+                    ),
+                  ),
                   Text(
                     '${t.amount.abs().toStringAsFixed(2)} ${l10n.sar}',
                     style: TextStyle(
@@ -341,8 +372,9 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
               ...List.generate(totalPages, (i) {
                 final isSelected = i == _currentPage;
                 return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxxs),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.xxxs,
+                  ),
                   child: InkWell(
                     onTap: () => setState(() => _currentPage = i),
                     borderRadius: BorderRadius.circular(AppSizes.radiusMd),
@@ -351,16 +383,18 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
                       height: 32,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color:
-                            isSelected ? AppColors.primary : Colors.transparent,
+                        color: isSelected
+                            ? AppColors.primary
+                            : Colors.transparent,
                         borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                       ),
                       child: Text(
                         '${i + 1}',
                         style: TextStyle(
                           fontSize: 13,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.w400,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w400,
                           color: isSelected
                               ? Colors.white
                               : AppColors.getTextSecondary(isDark),
@@ -389,19 +423,17 @@ class _CustomerPurchasesTabState extends State<CustomerPurchasesTab> {
 Widget buildStatusBadge(String label, bool isReturned, bool isDark) {
   final color = isReturned ? AppColors.warning : AppColors.success;
   return Container(
-    padding:
-        const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+    padding: const EdgeInsets.symmetric(
+      horizontal: AlhaiSpacing.xs,
+      vertical: 3,
+    ),
     decoration: BoxDecoration(
       color: color.withValues(alpha: 0.12),
       borderRadius: BorderRadius.circular(AppSizes.radiusFull),
     ),
     child: Text(
       label,
-      style: TextStyle(
-        fontSize: 11,
-        fontWeight: FontWeight.w600,
-        color: color,
-      ),
+      style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color),
     ),
   );
 }

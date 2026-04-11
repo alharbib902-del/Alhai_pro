@@ -101,10 +101,7 @@ class _CacheEntry {
   final DateTime? expiry;
   final DateTime createdAt;
 
-  _CacheEntry({
-    required this.value,
-    this.expiry,
-  }) : createdAt = DateTime.now();
+  _CacheEntry({required this.value, this.expiry}) : createdAt = DateTime.now();
 
   bool get isExpired => expiry != null && DateTime.now().isAfter(expiry!);
 }

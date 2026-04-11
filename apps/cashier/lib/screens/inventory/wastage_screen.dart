@@ -67,8 +67,9 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(AppLocalizations.of(context).errorOccurred),
-              backgroundColor: AppColors.error),
+            content: Text(AppLocalizations.of(context).errorOccurred),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     }
@@ -90,8 +91,9 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -101,9 +103,14 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(
-                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-            child:
-                _buildContent(isWideScreen, isMediumScreen, colorScheme, l10n),
+              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+            ),
+            child: _buildContent(
+              isWideScreen,
+              isMediumScreen,
+              colorScheme,
+              l10n,
+            ),
           ),
         ),
       ],
@@ -115,8 +122,12 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
     return '${now.day}/${now.month}/${now.year} \u2022 ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen,
-      ColorScheme colorScheme, AppLocalizations l10n) {
+  Widget _buildContent(
+    bool isWideScreen,
+    bool isMediumScreen,
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+  ) {
     if (isWideScreen) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -128,11 +139,11 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                 _buildSearchCard(colorScheme, l10n),
                 if (_searchResults.isNotEmpty && _selectedProduct == null) ...[
                   const SizedBox(height: AlhaiSpacing.md),
-                  _buildSearchResults(colorScheme, l10n)
+                  _buildSearchResults(colorScheme, l10n),
                 ],
                 if (_selectedProduct != null) ...[
                   const SizedBox(height: AlhaiSpacing.md),
-                  _buildSelectedCard(colorScheme, l10n)
+                  _buildSelectedCard(colorScheme, l10n),
                 ],
                 const SizedBox(height: AlhaiSpacing.lg),
                 _buildQuantityCard(colorScheme, l10n),
@@ -164,11 +175,11 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
         _buildSearchCard(colorScheme, l10n),
         if (_searchResults.isNotEmpty && _selectedProduct == null) ...[
           const SizedBox(height: AlhaiSpacing.sm),
-          _buildSearchResults(colorScheme, l10n)
+          _buildSearchResults(colorScheme, l10n),
         ],
         if (_selectedProduct != null) ...[
           const SizedBox(height: AlhaiSpacing.sm),
-          _buildSelectedCard(colorScheme, l10n)
+          _buildSelectedCard(colorScheme, l10n),
         ],
         SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildQuantityCard(colorScheme, l10n),
@@ -203,15 +214,21 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                   color: AppColors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.delete_outline_rounded,
-                    color: AppColors.error, size: 20),
+                child: const Icon(
+                  Icons.delete_outline_rounded,
+                  color: AppColors.error,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text(l10n.searchProduct,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onSurface)),
+              Text(
+                l10n.searchProduct,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
@@ -225,8 +242,10 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                   decoration: InputDecoration(
                     hintText: l10n.searchByNameOrBarcode,
                     hintStyle: TextStyle(color: colorScheme.outline),
-                    prefixIcon:
-                        Icon(Icons.search_rounded, color: colorScheme.outline),
+                    prefixIcon: Icon(
+                      Icons.search_rounded,
+                      color: colorScheme.outline,
+                    ),
                     filled: true,
                     fillColor: colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
@@ -239,11 +258,15 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          const BorderSide(color: AppColors.primary, width: 2),
+                      borderSide: const BorderSide(
+                        color: AppColors.primary,
+                        width: 2,
+                      ),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.md, vertical: 14),
+                      horizontal: AlhaiSpacing.md,
+                      vertical: 14,
+                    ),
                   ),
                 ),
               ),
@@ -254,8 +277,9 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                          content: Text(l10n.scanBarcodeHint),
-                          backgroundColor: AppColors.info),
+                        content: Text(l10n.scanBarcodeHint),
+                        backgroundColor: AppColors.info,
+                      ),
                     );
                   },
                   icon: const Icon(Icons.qr_code_scanner_rounded, size: 20),
@@ -264,7 +288,8 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                     backgroundColor: AppColors.info,
                     foregroundColor: colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
@@ -293,22 +318,31 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
             }),
             child: Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+                horizontal: AlhaiSpacing.md,
+                vertical: AlhaiSpacing.sm,
+              ),
               decoration: BoxDecoration(
                 border: Border(
-                    bottom: BorderSide(
-                        color:
-                            colorScheme.outlineVariant.withValues(alpha: 0.5))),
+                  bottom: BorderSide(
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                  ),
+                ),
               ),
               child: Row(
                 children: [
                   Expanded(
-                      child: Text(product.name,
-                          style: TextStyle(
-                              fontSize: 14, color: colorScheme.onSurface))),
-                  Text('${l10n.stock}: ${product.stockQty}',
-                      style:
-                          TextStyle(fontSize: 12, color: colorScheme.outline)),
+                    child: Text(
+                      product.name,
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '${l10n.stock}: ${product.stockQty}',
+                    style: TextStyle(fontSize: 12, color: colorScheme.outline),
+                  ),
                 ],
               ),
             ),
@@ -324,28 +358,38 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: AppColors.error.withValues(
-            alpha:
-                Theme.of(context).brightness == Brightness.dark ? 0.1 : 0.05),
+          alpha: Theme.of(context).brightness == Brightness.dark ? 0.1 : 0.05,
+        ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.error.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          const Icon(Icons.delete_outline_rounded,
-              color: AppColors.error, size: 22),
+          const Icon(
+            Icons.delete_outline_rounded,
+            color: AppColors.error,
+            size: 22,
+          ),
           const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(product.name,
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurface)),
-                Text('${l10n.currentStock}: ${product.stockQty}',
-                    style: TextStyle(
-                        fontSize: 12, color: colorScheme.onSurfaceVariant)),
+                Text(
+                  product.name,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                Text(
+                  '${l10n.currentStock}: ${product.stockQty}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
           ),
@@ -354,8 +398,11 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
               _selectedProduct = null;
               _searchController.clear();
             }),
-            icon: Icon(Icons.close_rounded,
-                size: 18, color: colorScheme.onSurfaceVariant),
+            icon: Icon(
+              Icons.close_rounded,
+              size: 18,
+              color: colorScheme.onSurfaceVariant,
+            ),
             tooltip: l10n.clearField,
           ),
         ],
@@ -374,31 +421,39 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.quantityWasted,
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface)),
+          Text(
+            l10n.quantityWasted,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
+            ),
+          ),
           const SizedBox(height: AlhaiSpacing.md),
           TextField(
             controller: _quantityController,
             keyboardType: TextInputType.number,
             style: TextStyle(
-                fontSize: 28,
-                fontWeight: FontWeight.bold,
-                color: colorScheme.onSurface),
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
+            ),
             textAlign: TextAlign.center,
             onChanged: (_) => setState(() {}),
             decoration: InputDecoration(
               hintText: '0',
               hintStyle: TextStyle(
-                  color: colorScheme.outline,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold),
+                color: colorScheme.outline,
+                fontSize: 28,
+                fontWeight: FontWeight.bold,
+              ),
               prefixIcon: const Padding(
                 padding: EdgeInsets.all(AlhaiSpacing.sm),
-                child: Icon(Icons.delete_rounded,
-                    size: 28, color: AppColors.error),
+                child: Icon(
+                  Icons.delete_rounded,
+                  size: 28,
+                  color: AppColors.error,
+                ),
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -426,17 +481,17 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
       {
         'value': 'expired',
         'label': l10n.expired,
-        'icon': Icons.schedule_rounded
+        'icon': Icons.schedule_rounded,
       },
       {
         'value': 'damaged',
         'label': l10n.damaged,
-        'icon': Icons.broken_image_rounded
+        'icon': Icons.broken_image_rounded,
       },
       {
         'value': 'spillage',
         'label': l10n.spillage,
-        'icon': Icons.water_drop_rounded
+        'icon': Icons.water_drop_rounded,
       },
       {'value': 'other', 'label': l10n.other, 'icon': Icons.more_horiz_rounded},
     ];
@@ -459,15 +514,21 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.list_alt_rounded,
-                    color: AppColors.warning, size: 20),
+                child: const Icon(
+                  Icons.list_alt_rounded,
+                  color: AppColors.warning,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text(l10n.reason,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onSurface)),
+              Text(
+                l10n.reason,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.md),
@@ -481,8 +542,10 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                 borderRadius: BorderRadius.circular(10),
                 child: AnimatedContainer(
                   duration: const Duration(milliseconds: 200),
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? AppColors.primary.withValues(alpha: 0.1)
@@ -497,21 +560,26 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(r['icon'] as IconData,
-                          size: 16,
+                      Icon(
+                        r['icon'] as IconData,
+                        size: 16,
+                        color: isSelected
+                            ? AppColors.primary
+                            : colorScheme.onSurfaceVariant,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        r['label'] as String,
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.w500,
                           color: isSelected
                               ? AppColors.primary
-                              : colorScheme.onSurfaceVariant),
-                      const SizedBox(width: 6),
-                      Text(r['label'] as String,
-                          style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: isSelected
-                                  ? FontWeight.w600
-                                  : FontWeight.w500,
-                              color: isSelected
-                                  ? AppColors.primary
-                                  : colorScheme.onSurfaceVariant)),
+                              : colorScheme.onSurfaceVariant,
+                        ),
+                      ),
                     ],
                   ),
                 ),
@@ -534,11 +602,14 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.photoLabel,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurface)),
+          Text(
+            l10n.photoLabel,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurface,
+            ),
+          ),
           const SizedBox(height: AlhaiSpacing.sm),
           InkWell(
             onTap: () {
@@ -563,14 +634,20 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.check_circle_rounded,
-                              color: AppColors.success, size: 32),
+                          const Icon(
+                            Icons.check_circle_rounded,
+                            color: AppColors.success,
+                            size: 32,
+                          ),
                           const SizedBox(height: AlhaiSpacing.xs),
-                          Text(l10n.photoAttached,
-                              style: const TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColors.success)),
+                          Text(
+                            l10n.photoAttached,
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w500,
+                              color: AppColors.success,
+                            ),
+                          ),
                         ],
                       ),
                     )
@@ -578,20 +655,29 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.camera_alt_outlined,
-                              size: 32, color: colorScheme.outline),
+                          Icon(
+                            Icons.camera_alt_outlined,
+                            size: 32,
+                            color: colorScheme.outline,
+                          ),
                           const SizedBox(height: AlhaiSpacing.xs),
-                          Text(l10n.tapToTakePhoto,
-                              style: TextStyle(
-                                  fontSize: 13, color: colorScheme.outline)),
+                          Text(
+                            l10n.tapToTakePhoto,
+                            style: TextStyle(
+                              fontSize: 13,
+                              color: colorScheme.outline,
+                            ),
+                          ),
                         ],
                       ),
                     ),
             ),
           ),
           const SizedBox(height: AlhaiSpacing.xs),
-          Text(l10n.optionalLabel,
-              style: TextStyle(fontSize: 11, color: colorScheme.outline)),
+          Text(
+            l10n.optionalLabel,
+            style: TextStyle(fontSize: 11, color: colorScheme.outline),
+          ),
         ],
       ),
     );
@@ -608,11 +694,14 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.noteLabel,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurface)),
+          Text(
+            l10n.noteLabel,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurface,
+            ),
+          ),
           const SizedBox(height: AlhaiSpacing.sm),
           TextField(
             controller: _noteController,
@@ -633,8 +722,10 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: AppColors.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
               ),
               contentPadding: const EdgeInsets.all(AlhaiSpacing.md),
             ),
@@ -645,7 +736,8 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
   }
 
   Widget _buildSaveButton(ColorScheme colorScheme, AppLocalizations l10n) {
-    final hasData = _selectedProduct != null &&
+    final hasData =
+        _selectedProduct != null &&
         (int.tryParse(_quantityController.text) ?? 0) > 0;
 
     return SizedBox(
@@ -657,16 +749,22 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: colorScheme.onPrimary))
+                  strokeWidth: 2,
+                  color: colorScheme.onPrimary,
+                ),
+              )
             : const Icon(Icons.save_rounded, size: 20),
-        label: Text(l10n.recordWastage,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        label: Text(
+          l10n.recordWastage,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.error,
           foregroundColor: colorScheme.onPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
     );
@@ -697,7 +795,8 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
             newQty: newStock.toDouble(),
             reason: Value(_reason),
             notes: Value(
-                _noteController.text.isNotEmpty ? _noteController.text : null),
+              _noteController.text.isNotEmpty ? _noteController.text : null,
+            ),
             createdAt: DateTime.now(),
           ),
         );
@@ -721,7 +820,9 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(l10n.success), backgroundColor: AppColors.success),
+          content: Text(l10n.success),
+          backgroundColor: AppColors.success,
+        ),
       );
 
       setState(() {
@@ -737,8 +838,9 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(l10n.errorWithDetails('$e')),
-            backgroundColor: AppColors.error),
+          content: Text(l10n.errorWithDetails('$e')),
+          backgroundColor: AppColors.error,
+        ),
       );
     } finally {
       if (mounted) setState(() => _isSaving = false);

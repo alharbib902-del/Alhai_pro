@@ -246,9 +246,11 @@ mixin OfflineAwareMixin {
 
   /// الاشتراك في تغيرات الاتصال
   void subscribeToConnectivity(
-      void Function(NetworkConnectionState) onChanged) {
-    _offlineSubscription =
-        OfflineManager.instance.stateStream.listen(onChanged);
+    void Function(NetworkConnectionState) onChanged,
+  ) {
+    _offlineSubscription = OfflineManager.instance.stateStream.listen(
+      onChanged,
+    );
   }
 
   /// إلغاء الاشتراك
@@ -348,23 +350,27 @@ class PendingOperationsManager {
         // Look up the registered executor for this type
         final executor = _executors[type];
 
-        _operations.add(OfflineOperation(
-          id: id,
-          type: type,
-          execute: executor != null
-              ? () => executor(payload)
-              : () async {
-                  debugPrint(
-                      '[PendingOps] No executor registered for type: $type');
-                },
-          createdAt: createdAt,
-          retryCount: retryCount,
-        ));
+        _operations.add(
+          OfflineOperation(
+            id: id,
+            type: type,
+            execute: executor != null
+                ? () => executor(payload)
+                : () async {
+                    debugPrint(
+                      '[PendingOps] No executor registered for type: $type',
+                    );
+                  },
+            createdAt: createdAt,
+            retryCount: retryCount,
+          ),
+        );
       }
 
       OfflineManager.instance.updatePendingCount(_operations.length);
       debugPrint(
-          '[PendingOps] Restored ${_operations.length} operations from storage');
+        '[PendingOps] Restored ${_operations.length} operations from storage',
+      );
     } catch (e) {
       debugPrint('[PendingOps] Failed to restore from storage: $e');
     }
@@ -375,12 +381,14 @@ class PendingOperationsManager {
     try {
       final prefs = await SharedPreferences.getInstance();
       final items = _operations
-          .map((op) => {
-                'id': op.id,
-                'type': op.type,
-                'retryCount': op.retryCount,
-                'createdAt': op.createdAt.toIso8601String(),
-              })
+          .map(
+            (op) => {
+              'id': op.id,
+              'type': op.type,
+              'retryCount': op.retryCount,
+              'createdAt': op.createdAt.toIso8601String(),
+            },
+          )
           .toList();
       await prefs.setString(_storageKey, jsonEncode(items));
     } catch (e) {

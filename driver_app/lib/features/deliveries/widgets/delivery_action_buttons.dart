@@ -31,15 +31,17 @@ class _DeliveryActionButtonsState extends ConsumerState<DeliveryActionButtons> {
     setState(() => _isLoading = true);
     try {
       await ref.read(
-        updateDeliveryStatusProvider(
-          (id: widget.deliveryId, status: newStatus, notes: notes),
-        ).future,
+        updateDeliveryStatusProvider((
+          id: widget.deliveryId,
+          status: newStatus,
+          notes: notes,
+        )).future,
       );
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('حدث خطأ. حاول مرة أخرى')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('حدث خطأ. حاول مرة أخرى')));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);

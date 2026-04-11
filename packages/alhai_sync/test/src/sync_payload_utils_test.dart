@@ -19,10 +19,7 @@ void main() {
     });
 
     test('removes synced_at (snake_case)', () {
-      final payload = {
-        'id': 'p-1',
-        'synced_at': '2026-01-01',
-      };
+      final payload = {'id': 'p-1', 'synced_at': '2026-01-01'};
 
       final cleaned = cleanSyncPayload(payload);
 
@@ -65,10 +62,7 @@ void main() {
         'deleted_at': '2026-01-01',
       };
 
-      final cleaned = cleanSyncPayload(
-        payload,
-        tableName: 'sales',
-      );
+      final cleaned = cleanSyncPayload(payload, tableName: 'sales');
 
       expect(cleaned.containsKey('shift_id'), isFalse);
       expect(cleaned.containsKey('shiftId'), isFalse);
@@ -78,25 +72,15 @@ void main() {
     });
 
     test('does not strip columns for tables without local-only config', () {
-      final payload = {
-        'id': 'p-1',
-        'name': 'Product',
-        'extra_field': 'value',
-      };
+      final payload = {'id': 'p-1', 'name': 'Product', 'extra_field': 'value'};
 
-      final cleaned = cleanSyncPayload(
-        payload,
-        tableName: 'products',
-      );
+      final cleaned = cleanSyncPayload(payload, tableName: 'products');
 
       expect(cleaned['extra_field'], 'value');
     });
 
     test('does not modify original map', () {
-      final payload = {
-        'id': 'p-1',
-        'syncedAt': '2026-01-01',
-      };
+      final payload = {'id': 'p-1', 'syncedAt': '2026-01-01'};
 
       cleanSyncPayload(payload);
 
@@ -120,10 +104,7 @@ void main() {
     });
 
     test('preserves already snake_case keys', () {
-      final map = {
-        'store_id': 'store-1',
-        'name': 'Test',
-      };
+      final map = {'store_id': 'store-1', 'name': 'Test'};
 
       final result = toSnakeCase(map);
 
@@ -132,11 +113,7 @@ void main() {
     });
 
     test('preserves values unchanged', () {
-      final map = {
-        'storeId': 'store-1',
-        'total': 100.5,
-        'isActive': true,
-      };
+      final map = {'storeId': 'store-1', 'total': 100.5, 'isActive': true};
 
       final result = toSnakeCase(map);
 
@@ -165,11 +142,7 @@ void main() {
 
   group('mapColumnsToRemote', () {
     test('passes through when no renames configured', () {
-      final payload = {
-        'id': 'p-1',
-        'name': 'Product',
-        'store_id': 'store-1',
-      };
+      final payload = {'id': 'p-1', 'name': 'Product', 'store_id': 'store-1'};
 
       final result = mapColumnsToRemote('products', payload);
 
@@ -187,11 +160,7 @@ void main() {
 
   group('mapColumnsToLocal', () {
     test('passes through when no renames configured', () {
-      final payload = {
-        'id': 'p-1',
-        'name': 'Product',
-        'store_id': 'store-1',
-      };
+      final payload = {'id': 'p-1', 'name': 'Product', 'store_id': 'store-1'};
 
       final result = mapColumnsToLocal('products', payload);
 
@@ -222,8 +191,10 @@ void main() {
     });
 
     test('handles empty list', () {
-      final result =
-          batchMapColumnsToRemote('products', <Map<String, dynamic>>[]);
+      final result = batchMapColumnsToRemote(
+        'products',
+        <Map<String, dynamic>>[],
+      );
       expect(result, isEmpty);
     });
   });
@@ -243,8 +214,10 @@ void main() {
     });
 
     test('handles empty list', () {
-      final result =
-          batchMapColumnsToLocal('products', <Map<String, dynamic>>[]);
+      final result = batchMapColumnsToLocal(
+        'products',
+        <Map<String, dynamic>>[],
+      );
       expect(result, isEmpty);
     });
   });

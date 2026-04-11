@@ -49,9 +49,9 @@ class InvoiceService {
     required AppDatabase db,
     ImageUploadService? uploadService,
     Duration Function()? clockOffsetProvider,
-  })  : _db = db,
-        _uploadService = uploadService,
-        _clockOffsetProvider = clockOffsetProvider;
+  }) : _db = db,
+       _uploadService = uploadService,
+       _clockOffsetProvider = clockOffsetProvider;
 
   /// Get a corrected timestamp that accounts for device clock drift.
   /// ZATCA requires accurate timestamps; this uses the server-measured offset.
@@ -102,10 +102,12 @@ class InvoiceService {
           taxAmount: Value(sale.tax),
           total: Value(sale.total),
           paymentMethod: Value(sale.paymentMethod),
-          amountPaid:
-              Value(sale.isPaid ? sale.total : (sale.amountReceived ?? 0)),
-          amountDue:
-              Value(sale.isPaid ? 0 : sale.total - (sale.amountReceived ?? 0)),
+          amountPaid: Value(
+            sale.isPaid ? sale.total : (sale.amountReceived ?? 0),
+          ),
+          amountDue: Value(
+            sale.isPaid ? 0 : sale.total - (sale.amountReceived ?? 0),
+          ),
           createdBy: Value(sale.cashierId),
           cashierName: Value(cashierName),
           issuedAt: Value(now),
@@ -133,8 +135,8 @@ class InvoiceService {
         final errorStr = e.toString().toLowerCase();
         final isUniqueViolation =
             errorStr.contains('unique constraint failed') ||
-                errorStr.contains('unique constraint') ||
-                errorStr.contains('unique');
+            errorStr.contains('unique constraint') ||
+            errorStr.contains('unique');
         if (isUniqueViolation && attempt < maxRetries - 1) {
           if (kDebugMode) {
             debugPrint(

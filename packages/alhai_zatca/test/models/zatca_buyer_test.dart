@@ -167,10 +167,7 @@ void main() {
       });
 
       test('handles Arabic characters in name', () {
-        const buyer = ZatcaBuyer(
-          name: 'مؤسسة الاختبار',
-          city: 'الرياض',
-        );
+        const buyer = ZatcaBuyer(name: 'مؤسسة الاختبار', city: 'الرياض');
         final json = buyer.toJson();
         final restored = ZatcaBuyer.fromJson(json);
         expect(restored.name, 'مؤسسة الاختبار');

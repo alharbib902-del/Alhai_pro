@@ -50,8 +50,10 @@ class AppBadge extends StatelessWidget {
   });
 
   /// شارة النجاح
-  factory AppBadge.success(String label,
-      {AppBadgeSize size = AppBadgeSize.medium}) {
+  factory AppBadge.success(
+    String label, {
+    AppBadgeSize size = AppBadgeSize.medium,
+  }) {
     return AppBadge(
       label: label,
       color: AppColors.success,
@@ -61,8 +63,10 @@ class AppBadge extends StatelessWidget {
   }
 
   /// شارة التحذير
-  factory AppBadge.warning(String label,
-      {AppBadgeSize size = AppBadgeSize.medium}) {
+  factory AppBadge.warning(
+    String label, {
+    AppBadgeSize size = AppBadgeSize.medium,
+  }) {
     return AppBadge(
       label: label,
       color: AppColors.warning,
@@ -72,8 +76,10 @@ class AppBadge extends StatelessWidget {
   }
 
   /// شارة الخطأ
-  factory AppBadge.error(String label,
-      {AppBadgeSize size = AppBadgeSize.medium}) {
+  factory AppBadge.error(
+    String label, {
+    AppBadgeSize size = AppBadgeSize.medium,
+  }) {
     return AppBadge(
       label: label,
       color: AppColors.error,
@@ -83,8 +89,10 @@ class AppBadge extends StatelessWidget {
   }
 
   /// شارة المعلومات
-  factory AppBadge.info(String label,
-      {AppBadgeSize size = AppBadgeSize.medium}) {
+  factory AppBadge.info(
+    String label, {
+    AppBadgeSize size = AppBadgeSize.medium,
+  }) {
     return AppBadge(
       label: label,
       color: AppColors.info,
@@ -94,8 +102,11 @@ class AppBadge extends StatelessWidget {
   }
 
   /// شارة المخزون
-  static AppBadge stock(BuildContext context, double quantity,
-      {double minQuantity = 5}) {
+  static AppBadge stock(
+    BuildContext context,
+    double quantity, {
+    double minQuantity = 5,
+  }) {
     final l10n = AppLocalizations.of(context);
     if (quantity <= 0) {
       return AppBadge(
@@ -171,18 +182,12 @@ class AppBadge extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(
-                icon,
-                size: _getIconSize(),
-                color: _getContentColor(),
-              ),
+              Icon(icon, size: _getIconSize(), color: _getContentColor()),
               SizedBox(width: _getSpacing()),
             ],
             Text(
               label,
-              style: _getTextStyle().copyWith(
-                color: _getContentColor(),
-              ),
+              style: _getTextStyle().copyWith(color: _getContentColor()),
             ),
             if (onDelete != null) ...[
               SizedBox(width: _getSpacing()),
@@ -324,13 +329,8 @@ class AppCountBadge extends StatelessWidget {
     final displayText = count > maxCount ? '$maxCount+' : count.toString();
 
     return Container(
-      constraints: BoxConstraints(
-        minWidth: size,
-        minHeight: size,
-      ),
-      padding: EdgeInsets.symmetric(
-        horizontal: count > 9 ? size * 0.25 : 0,
-      ),
+      constraints: BoxConstraints(minWidth: size, minHeight: size),
+      padding: EdgeInsets.symmetric(horizontal: count > 9 ? size * 0.25 : 0),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(size / 2),
@@ -410,11 +410,7 @@ class AppStatusBadge extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         // Dot
-        _StatusDot(
-          color: color,
-          size: dotSize,
-          pulse: pulse && isActive,
-        ),
+        _StatusDot(color: color, size: dotSize, pulse: pulse && isActive),
 
         // Label
         if (showLabel && label != null) ...[
@@ -459,9 +455,10 @@ class _StatusDotState extends State<_StatusDot>
       vsync: this,
       duration: AlhaiDurations.shimmer,
     );
-    _animation = Tween<double>(begin: 1, end: 0).animate(
-      CurvedAnimation(parent: _controller, curve: AlhaiMotion.fadeOut),
-    );
+    _animation = Tween<double>(
+      begin: 1,
+      end: 0,
+    ).animate(CurvedAnimation(parent: _controller, curve: AlhaiMotion.fadeOut));
     if (widget.pulse) {
       _controller.repeat();
     }
@@ -510,8 +507,9 @@ class _StatusDotState extends State<_StatusDot>
                   height: widget.size * 2 * (1 + _animation.value * 0.5),
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color:
-                        widget.color.withValues(alpha: _animation.value * 0.3),
+                    color: widget.color.withValues(
+                      alpha: _animation.value * 0.3,
+                    ),
                   ),
                 );
               },
@@ -571,10 +569,7 @@ class AppCategoryBadge extends StatelessWidget {
               ? effectiveColor
               : effectiveColor.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(AppRadius.full),
-          border: Border.all(
-            color: effectiveColor,
-            width: isSelected ? 2 : 1,
-          ),
+          border: Border.all(color: effectiveColor, width: isSelected ? 2 : 1),
         ),
         child: Text(
           category,

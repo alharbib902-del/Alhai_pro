@@ -67,7 +67,9 @@ class AiQuickTemplates extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: 14, vertical: AlhaiSpacing.xs),
+            horizontal: 14,
+            vertical: AlhaiSpacing.xs,
+          ),
           decoration: BoxDecoration(
             color: isDark
                 ? Colors.white.withValues(alpha: 0.08)
@@ -82,11 +84,7 @@ class AiQuickTemplates extends StatelessWidget {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(
-                template.icon,
-                size: 16,
-                color: AppColors.primary,
-              ),
+              Icon(template.icon, size: 16, color: AppColors.primary),
               const SizedBox(width: 6),
               Text(
                 template.titleAr,

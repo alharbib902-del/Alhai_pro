@@ -7,11 +7,7 @@ class ProductService {
   final InventoryRepository _inventoryRepo;
   final CategoriesRepository _categoriesRepo;
 
-  ProductService(
-    this._productsRepo,
-    this._inventoryRepo,
-    this._categoriesRepo,
-  );
+  ProductService(this._productsRepo, this._inventoryRepo, this._categoriesRepo);
 
   /// الحصول على قائمة المنتجات
   Future<Paginated<Product>> getProducts(

@@ -114,8 +114,10 @@ class InputSanitizer {
   /// تنظيف اسم الملف
   static String sanitizeFilename(String input) {
     // الأحرف المسموحة فقط
-    var result =
-        input.replaceAll(RegExp(r'[^a-zA-Z0-9._\-\u0600-\u06FF ]'), '');
+    var result = input.replaceAll(
+      RegExp(r'[^a-zA-Z0-9._\-\u0600-\u06FF ]'),
+      '',
+    );
 
     // إزالة النقاط المتعددة
     result = result.replaceAll(RegExp(r'\.{2,}'), '.');
@@ -136,7 +138,14 @@ class InputSanitizer {
     }
 
     // إزالة الأحرف الخطرة
-    return input.replaceAll(RegExp('[<>"' "'" ']'), '');
+    return input.replaceAll(
+      RegExp(
+        '[<>"'
+        "'"
+        ']',
+      ),
+      '',
+    );
   }
 
   /// تنظيف عام للنصوص
@@ -165,10 +174,7 @@ class InputSanitizer {
   /// تنظيف الاسم
   static String sanitizeName(String input) {
     // السماح بالحروف العربية والإنجليزية والمسافات
-    var result = input.replaceAll(
-      RegExp(r'[^a-zA-Z\u0600-\u06FF\s\-]'),
-      '',
-    );
+    var result = input.replaceAll(RegExp(r'[^a-zA-Z\u0600-\u06FF\s\-]'), '');
 
     // تطبيع المسافات
     result = result.replaceAll(RegExp(r'\s+'), ' ');

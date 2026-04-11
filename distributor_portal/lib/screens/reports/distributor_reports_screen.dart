@@ -16,10 +16,12 @@ import 'package:intl/intl.dart' show NumberFormat;
 
 // Conditional import for web download
 import '../../core/utils/csv_export_stub.dart'
-    if (dart.library.html) '../../core/utils/csv_export_web.dart' as csv_export;
+    if (dart.library.html) '../../core/utils/csv_export_web.dart'
+    as csv_export;
 // Conditional import for web print
 import '../../core/utils/print_stub.dart'
-    if (dart.library.html) '../../core/utils/print_web.dart' as js_interop;
+    if (dart.library.html) '../../core/utils/print_web.dart'
+    as js_interop;
 
 import '../../data/models.dart';
 import '../../providers/distributor_providers.dart';
@@ -195,8 +197,11 @@ class _DistributorReportsScreenState
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline,
-                        size: 48, color: AppColors.getTextMuted(isDark)),
+                    Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: AppColors.getTextMuted(isDark),
+                    ),
                     const SizedBox(height: AlhaiSpacing.md),
                     Text(
                       l10n.distributorLoadError,
@@ -225,8 +230,11 @@ class _DistributorReportsScreenState
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.bar_chart_outlined,
-                            size: 64, color: AppColors.getTextMuted(isDark)),
+                        Icon(
+                          Icons.bar_chart_outlined,
+                          size: 64,
+                          color: AppColors.getTextMuted(isDark),
+                        ),
                         const SizedBox(height: AlhaiSpacing.md),
                         Text(
                           l10n.distributorNoDataToExport,
@@ -247,18 +255,25 @@ class _DistributorReportsScreenState
                     padding: EdgeInsets.all(rPadding),
                     child: Center(
                       child: ConstrainedBox(
-                        constraints:
-                            const BoxConstraints(maxWidth: kMaxContentWidth),
+                        constraints: const BoxConstraints(
+                          maxWidth: kMaxContentWidth,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             // ── Summary Cards ──
                             _buildSummaryCards(
-                                report, isDark, isWide, isMedium, size),
+                              report,
+                              isDark,
+                              isWide,
+                              isMedium,
+                              size,
+                            ),
                             SizedBox(
-                                height: isMedium
-                                    ? AlhaiSpacing.lg
-                                    : AlhaiSpacing.md),
+                              height: isMedium
+                                  ? AlhaiSpacing.lg
+                                  : AlhaiSpacing.md,
+                            ),
 
                             // ── Chart + Top Products ──
                             if (isWide)
@@ -266,18 +281,25 @@ class _DistributorReportsScreenState
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Expanded(
-                                      flex: 3,
-                                      child: Semantics(
-                                        label:
-                                            'Daily sales bar chart showing sales amounts per day',
-                                        child: _buildChart(isDark, isMedium,
-                                            report.dailySales),
-                                      )),
+                                    flex: 3,
+                                    child: Semantics(
+                                      label:
+                                          'Daily sales bar chart showing sales amounts per day',
+                                      child: _buildChart(
+                                        isDark,
+                                        isMedium,
+                                        report.dailySales,
+                                      ),
+                                    ),
+                                  ),
                                   const SizedBox(width: AlhaiSpacing.lg),
                                   Expanded(
-                                      flex: 2,
-                                      child: _buildTopProducts(
-                                          isDark, report.topProducts)),
+                                    flex: 2,
+                                    child: _buildTopProducts(
+                                      isDark,
+                                      report.topProducts,
+                                    ),
+                                  ),
                                 ],
                               )
                             else ...[
@@ -285,7 +307,10 @@ class _DistributorReportsScreenState
                                 label:
                                     'Daily sales bar chart showing sales amounts per day',
                                 child: _buildChart(
-                                    isDark, isMedium, report.dailySales),
+                                  isDark,
+                                  isMedium,
+                                  report.dailySales,
+                                ),
                               ),
                               const SizedBox(height: AlhaiSpacing.md),
                               _buildTopProducts(isDark, report.topProducts),
@@ -308,7 +333,12 @@ class _DistributorReportsScreenState
   // ─── Summary Cards ────────────────────────────────────────────
 
   Widget _buildSummaryCards(
-      ReportData report, bool isDark, bool isWide, bool isMedium, Size size) {
+    ReportData report,
+    bool isDark,
+    bool isWide,
+    bool isMedium,
+    Size size,
+  ) {
     final l10n = AppLocalizations.of(context);
     final fmt = NumberFormat('#,##0', 'ar');
     final fmtDec = NumberFormat('#,##0.00', 'ar');
@@ -391,8 +421,9 @@ class _DistributorReportsScreenState
               onTap: () => setState(() => _selectedPeriod = period),
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
-                padding:
-                    const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs + 2),
+                padding: const EdgeInsets.symmetric(
+                  vertical: AlhaiSpacing.xs + 2,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected ? AppColors.primary : Colors.transparent,
                   borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
@@ -402,8 +433,9 @@ class _DistributorReportsScreenState
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.w600
+                        : FontWeight.normal,
                     color: isSelected
                         ? AppColors.textOnPrimary
                         : AppColors.getTextSecondary(isDark),
@@ -419,8 +451,14 @@ class _DistributorReportsScreenState
 
   // ─── Stat Card ─────────────────────────────────────────────────
 
-  Widget _statCard(IconData icon, String label, String value, String change,
-      Color color, bool isDark) {
+  Widget _statCard(
+    IconData icon,
+    String label,
+    String value,
+    String change,
+    Color color,
+    bool isDark,
+  ) {
     return MergeSemantics(
       child: Semantics(
         label: '$label: $value${change.isNotEmpty ? ' ($change)' : ''}',
@@ -450,10 +488,13 @@ class _DistributorReportsScreenState
                   if (change.isNotEmpty)
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.xs, vertical: 3),
+                        horizontal: AlhaiSpacing.xs,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
-                        color: AppColors.success
-                            .withValues(alpha: isDark ? 0.2 : 0.1),
+                        color: AppColors.success.withValues(
+                          alpha: isDark ? 0.2 : 0.1,
+                        ),
                         borderRadius: BorderRadius.circular(AlhaiRadius.sm - 2),
                       ),
                       child: Text(
@@ -507,8 +548,11 @@ class _DistributorReportsScreenState
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.bar_chart_rounded,
-                  size: 40, color: AppColors.getTextMuted(isDark)),
+              Icon(
+                Icons.bar_chart_rounded,
+                size: 40,
+                color: AppColors.getTextMuted(isDark),
+              ),
               const SizedBox(height: AlhaiSpacing.sm),
               Text(
                 'لا توجد بيانات للفترة المحددة',
@@ -531,8 +575,9 @@ class _DistributorReportsScreenState
       );
     }
 
-    final maxValue =
-        dailySales.map((s) => s.amount).reduce((a, b) => a > b ? a : b);
+    final maxValue = dailySales
+        .map((s) => s.amount)
+        .reduce((a, b) => a > b ? a : b);
     final chartMaxY = maxValue > 0 ? maxValue * 1.2 : 100.0;
 
     return Container(
@@ -550,12 +595,16 @@ class _DistributorReportsScreenState
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
-                  color:
-                      AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
+                  color: AppColors.primary.withValues(
+                    alpha: isDark ? 0.2 : 0.1,
+                  ),
                   borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                 ),
-                child: const Icon(Icons.bar_chart_rounded,
-                    color: AppColors.primary, size: 20),
+                child: const Icon(
+                  Icons.bar_chart_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -579,8 +628,9 @@ class _DistributorReportsScreenState
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
                     tooltipRoundedRadius: 8,
-                    tooltipBgColor:
-                        isDark ? AppColors.getSurface(true) : AppColors.grey800,
+                    tooltipBgColor: isDark
+                        ? AppColors.getSurface(true)
+                        : AppColors.grey800,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       return BarTooltipItem(
                         '${NumberFormat('#,##0').format(rod.toY)} ر.س',
@@ -598,9 +648,11 @@ class _DistributorReportsScreenState
                 titlesData: FlTitlesData(
                   show: true,
                   rightTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                   topTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: false)),
+                    sideTitles: SideTitles(showTitles: false),
+                  ),
                   leftTitles: AxisTitles(
                     sideTitles: SideTitles(
                       showTitles: true,
@@ -666,12 +718,14 @@ class _DistributorReportsScreenState
                         ),
                         width: isMedium ? 20 : 14,
                         borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(6)),
+                          top: Radius.circular(6),
+                        ),
                         backDrawRodData: BackgroundBarChartRodData(
                           show: true,
                           toY: chartMaxY,
-                          color: AppColors.primary
-                              .withValues(alpha: isDark ? 0.08 : 0.04),
+                          color: AppColors.primary.withValues(
+                            alpha: isDark ? 0.08 : 0.04,
+                          ),
                         ),
                       ),
                     ],
@@ -726,12 +780,16 @@ class _DistributorReportsScreenState
                 Container(
                   padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
-                    color:
-                        AppColors.warning.withValues(alpha: isDark ? 0.2 : 0.1),
+                    color: AppColors.warning.withValues(
+                      alpha: isDark ? 0.2 : 0.1,
+                    ),
                     borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                   ),
-                  child: const Icon(Icons.emoji_events_rounded,
-                      color: AppColors.warning, size: 20),
+                  child: const Icon(
+                    Icons.emoji_events_rounded,
+                    color: AppColors.warning,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Text(
@@ -772,12 +830,16 @@ class _DistributorReportsScreenState
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
-                  color:
-                      AppColors.warning.withValues(alpha: isDark ? 0.2 : 0.1),
+                  color: AppColors.warning.withValues(
+                    alpha: isDark ? 0.2 : 0.1,
+                  ),
                   borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                 ),
-                child: const Icon(Icons.emoji_events_rounded,
-                    color: AppColors.warning, size: 20),
+                child: const Icon(
+                  Icons.emoji_events_rounded,
+                  color: AppColors.warning,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -794,14 +856,16 @@ class _DistributorReportsScreenState
           ...List.generate(topProducts.length, (index) {
             final product = topProducts[index];
             return Container(
-              padding:
-                  const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs + 2),
+              padding: const EdgeInsets.symmetric(
+                vertical: AlhaiSpacing.xs + 2,
+              ),
               decoration: BoxDecoration(
                 border: index < topProducts.length - 1
                     ? Border(
                         bottom: BorderSide(
-                          color: AppColors.getBorder(isDark)
-                              .withValues(alpha: 0.5),
+                          color: AppColors.getBorder(
+                            isDark,
+                          ).withValues(alpha: 0.5),
                         ),
                       )
                     : null,
@@ -816,9 +880,8 @@ class _DistributorReportsScreenState
                           ? [
                               AppColors.warning,
                               AppColors.grey400,
-                              AppColors.secondary
-                            ][index]
-                              .withValues(alpha: 0.12)
+                              AppColors.secondary,
+                            ][index].withValues(alpha: 0.12)
                           : AppColors.getSurfaceVariant(isDark),
                       borderRadius: BorderRadius.circular(AlhaiRadius.sm),
                     ),
@@ -832,7 +895,7 @@ class _DistributorReportsScreenState
                             ? [
                                 AppColors.warning,
                                 AppColors.grey500,
-                                AppColors.secondary
+                                AppColors.secondary,
                               ][index]
                             : AppColors.getTextMuted(isDark),
                       ),

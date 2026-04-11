@@ -98,8 +98,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockNotificationsDao.getAllNotifications(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockNotificationsDao.getAllNotifications(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -111,8 +112,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockNotificationsDao.getAllNotifications(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockNotificationsDao.getAllNotifications(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));

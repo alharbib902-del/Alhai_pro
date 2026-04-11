@@ -19,27 +19,21 @@ void main() {
 
   group('CashFlowScreen', () {
     testWidgets('renders without error', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const CashFlowScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const CashFlowScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(CashFlowScreen), findsOneWidget);
     });
 
     testWidgets('shows Scaffold', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const CashFlowScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const CashFlowScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(Scaffold), findsWidgets);
     });
 
     testWidgets('shows loading or content after data loads', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const CashFlowScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const CashFlowScreen()));
       await tester.pump();
 
       expect(find.byType(CashFlowScreen), findsOneWidget);

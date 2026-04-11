@@ -12,7 +12,8 @@ part of 'order_item.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 OrderItem _$OrderItemFromJson(Map<String, dynamic> json) {
   return _OrderItem.fromJson(json);
@@ -41,12 +42,13 @@ abstract class $OrderItemCopyWith<$Res> {
   factory $OrderItemCopyWith(OrderItem value, $Res Function(OrderItem) then) =
       _$OrderItemCopyWithImpl<$Res, OrderItem>;
   @useResult
-  $Res call(
-      {String productId,
-      String name,
-      double unitPrice,
-      int qty,
-      double lineTotal});
+  $Res call({
+    String productId,
+    String name,
+    double unitPrice,
+    int qty,
+    double lineTotal,
+  });
 }
 
 /// @nodoc
@@ -70,28 +72,31 @@ class _$OrderItemCopyWithImpl<$Res, $Val extends OrderItem>
     Object? qty = null,
     Object? lineTotal = null,
   }) {
-    return _then(_value.copyWith(
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      unitPrice: null == unitPrice
-          ? _value.unitPrice
-          : unitPrice // ignore: cast_nullable_to_non_nullable
-              as double,
-      qty: null == qty
-          ? _value.qty
-          : qty // ignore: cast_nullable_to_non_nullable
-              as int,
-      lineTotal: null == lineTotal
-          ? _value.lineTotal
-          : lineTotal // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            productId: null == productId
+                ? _value.productId
+                : productId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            unitPrice: null == unitPrice
+                ? _value.unitPrice
+                : unitPrice // ignore: cast_nullable_to_non_nullable
+                      as double,
+            qty: null == qty
+                ? _value.qty
+                : qty // ignore: cast_nullable_to_non_nullable
+                      as int,
+            lineTotal: null == lineTotal
+                ? _value.lineTotal
+                : lineTotal // ignore: cast_nullable_to_non_nullable
+                      as double,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -99,16 +104,18 @@ class _$OrderItemCopyWithImpl<$Res, $Val extends OrderItem>
 abstract class _$$OrderItemImplCopyWith<$Res>
     implements $OrderItemCopyWith<$Res> {
   factory _$$OrderItemImplCopyWith(
-          _$OrderItemImpl value, $Res Function(_$OrderItemImpl) then) =
-      __$$OrderItemImplCopyWithImpl<$Res>;
+    _$OrderItemImpl value,
+    $Res Function(_$OrderItemImpl) then,
+  ) = __$$OrderItemImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String productId,
-      String name,
-      double unitPrice,
-      int qty,
-      double lineTotal});
+  $Res call({
+    String productId,
+    String name,
+    double unitPrice,
+    int qty,
+    double lineTotal,
+  });
 }
 
 /// @nodoc
@@ -116,8 +123,9 @@ class __$$OrderItemImplCopyWithImpl<$Res>
     extends _$OrderItemCopyWithImpl<$Res, _$OrderItemImpl>
     implements _$$OrderItemImplCopyWith<$Res> {
   __$$OrderItemImplCopyWithImpl(
-      _$OrderItemImpl _value, $Res Function(_$OrderItemImpl) _then)
-      : super(_value, _then);
+    _$OrderItemImpl _value,
+    $Res Function(_$OrderItemImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of OrderItem
   /// with the given fields replaced by the non-null parameter values.
@@ -130,40 +138,43 @@ class __$$OrderItemImplCopyWithImpl<$Res>
     Object? qty = null,
     Object? lineTotal = null,
   }) {
-    return _then(_$OrderItemImpl(
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      unitPrice: null == unitPrice
-          ? _value.unitPrice
-          : unitPrice // ignore: cast_nullable_to_non_nullable
-              as double,
-      qty: null == qty
-          ? _value.qty
-          : qty // ignore: cast_nullable_to_non_nullable
-              as int,
-      lineTotal: null == lineTotal
-          ? _value.lineTotal
-          : lineTotal // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
+    return _then(
+      _$OrderItemImpl(
+        productId: null == productId
+            ? _value.productId
+            : productId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        unitPrice: null == unitPrice
+            ? _value.unitPrice
+            : unitPrice // ignore: cast_nullable_to_non_nullable
+                  as double,
+        qty: null == qty
+            ? _value.qty
+            : qty // ignore: cast_nullable_to_non_nullable
+                  as int,
+        lineTotal: null == lineTotal
+            ? _value.lineTotal
+            : lineTotal // ignore: cast_nullable_to_non_nullable
+                  as double,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$OrderItemImpl implements _OrderItem {
-  const _$OrderItemImpl(
-      {required this.productId,
-      required this.name,
-      required this.unitPrice,
-      required this.qty,
-      required this.lineTotal});
+  const _$OrderItemImpl({
+    required this.productId,
+    required this.name,
+    required this.unitPrice,
+    required this.qty,
+    required this.lineTotal,
+  });
 
   factory _$OrderItemImpl.fromJson(Map<String, dynamic> json) =>
       _$$OrderItemImplFromJson(json);
@@ -214,19 +225,18 @@ class _$OrderItemImpl implements _OrderItem {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$OrderItemImplToJson(
-      this,
-    );
+    return _$$OrderItemImplToJson(this);
   }
 }
 
 abstract class _OrderItem implements OrderItem {
-  const factory _OrderItem(
-      {required final String productId,
-      required final String name,
-      required final double unitPrice,
-      required final int qty,
-      required final double lineTotal}) = _$OrderItemImpl;
+  const factory _OrderItem({
+    required final String productId,
+    required final String name,
+    required final double unitPrice,
+    required final int qty,
+    required final double lineTotal,
+  }) = _$OrderItemImpl;
 
   factory _OrderItem.fromJson(Map<String, dynamic> json) =
       _$OrderItemImpl.fromJson;

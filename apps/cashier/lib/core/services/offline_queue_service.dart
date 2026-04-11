@@ -103,33 +103,33 @@ class QueueItem {
   });
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'type': type.name,
-        'payload': payload,
-        'idempotency_key': idempotencyKey,
-        'queued_at': queuedAt.toIso8601String(),
-        'item_status': itemStatus,
-        'retry_count': retryCount,
-        'last_attempt': lastAttempt?.toIso8601String(),
-        'last_error': lastError,
-      };
+    'id': id,
+    'type': type.name,
+    'payload': payload,
+    'idempotency_key': idempotencyKey,
+    'queued_at': queuedAt.toIso8601String(),
+    'item_status': itemStatus,
+    'retry_count': retryCount,
+    'last_attempt': lastAttempt?.toIso8601String(),
+    'last_error': lastError,
+  };
 
   factory QueueItem.fromJson(Map<String, dynamic> json) => QueueItem(
-        id: json['id'] as String,
-        type: QueueOperationType.values.firstWhere(
-          (e) => e.name == json['type'],
-          orElse: () => QueueOperationType.saleCreate,
-        ),
-        payload: Map<String, dynamic>.from(json['payload'] as Map),
-        idempotencyKey: json['idempotency_key'] as String,
-        queuedAt: DateTime.parse(json['queued_at'] as String),
-        itemStatus: (json['item_status'] as String?) ?? 'pending',
-        retryCount: (json['retry_count'] as int?) ?? 0,
-        lastAttempt: json['last_attempt'] != null
-            ? DateTime.tryParse(json['last_attempt'] as String)
-            : null,
-        lastError: json['last_error'] as String?,
-      );
+    id: json['id'] as String,
+    type: QueueOperationType.values.firstWhere(
+      (e) => e.name == json['type'],
+      orElse: () => QueueOperationType.saleCreate,
+    ),
+    payload: Map<String, dynamic>.from(json['payload'] as Map),
+    idempotencyKey: json['idempotency_key'] as String,
+    queuedAt: DateTime.parse(json['queued_at'] as String),
+    itemStatus: (json['item_status'] as String?) ?? 'pending',
+    retryCount: (json['retry_count'] as int?) ?? 0,
+    lastAttempt: json['last_attempt'] != null
+        ? DateTime.tryParse(json['last_attempt'] as String)
+        : null,
+    lastError: json['last_error'] as String?,
+  );
 }
 
 /// Callback that processes a single queue item against the server.
@@ -202,7 +202,8 @@ class OfflineQueueService {
               return QueueItem.fromJson(e as Map<String, dynamic>);
             } catch (e) {
               debugPrint(
-                  '[OfflineQueueService] item deserialization failed: $e');
+                '[OfflineQueueService] item deserialization failed: $e',
+              );
               return null;
             }
           })
@@ -299,9 +300,9 @@ class OfflineQueueService {
 
     // Deduplication check
     final existing = items.cast<QueueItem?>().firstWhere(
-          (i) => i!.idempotencyKey == key,
-          orElse: () => null,
-        );
+      (i) => i!.idempotencyKey == key,
+      orElse: () => null,
+    );
 
     if (existing != null) {
       if (existing.itemStatus == 'syncing') {
@@ -318,13 +319,15 @@ class OfflineQueueService {
       return false;
     }
 
-    items.add(QueueItem(
-      id: _uuid.v4(),
-      type: type,
-      payload: payload,
-      idempotencyKey: key,
-      queuedAt: DateTime.now(),
-    ));
+    items.add(
+      QueueItem(
+        id: _uuid.v4(),
+        type: type,
+        payload: payload,
+        idempotencyKey: key,
+        queuedAt: DateTime.now(),
+      ),
+    );
     await _save(items);
     _notify('تمت إضافة ${type.name} إلى قائمة الانتظار');
     return true;
@@ -361,9 +364,11 @@ class OfflineQueueService {
   Future<int> _processItems(List<QueueItem> items) async {
     // Only process items that are eligible
     final eligible = items
-        .where((i) =>
-            (i.itemStatus == 'pending' || i.itemStatus == 'failed') &&
-            i.retryCount < _maxRetries)
+        .where(
+          (i) =>
+              (i.itemStatus == 'pending' || i.itemStatus == 'failed') &&
+              i.retryCount < _maxRetries,
+        )
         .toList();
 
     if (eligible.isEmpty) {
@@ -374,9 +379,11 @@ class OfflineQueueService {
     int processed = 0;
 
     // Process in batches to avoid overwhelming the server
-    for (int batchStart = 0;
-        batchStart < eligible.length;
-        batchStart += _batchSize) {
+    for (
+      int batchStart = 0;
+      batchStart < eligible.length;
+      batchStart += _batchSize
+    ) {
       final batch = eligible.skip(batchStart).take(_batchSize).toList();
 
       for (final item in batch) {
@@ -409,10 +416,7 @@ class OfflineQueueService {
             // Server rejected -- discard, retrying won't help
             items.remove(item);
             processed++;
-            _notify(
-              'رفض الخادم العملية ${item.id}',
-              isError: true,
-            );
+            _notify('رفض الخادم العملية ${item.id}', isError: true);
           }
         } catch (e) {
           final errorType = _classifyError(e);
@@ -421,22 +425,17 @@ class OfflineQueueService {
           switch (errorType) {
             case QueueErrorType.conflict:
               item.itemStatus = 'conflict';
-              _notify(
-                'تعارض في العملية ${item.id}: $e',
-                isError: true,
-              );
+              _notify('تعارض في العملية ${item.id}: $e', isError: true);
               break;
             case QueueErrorType.validation:
               items.remove(item); // discard unretriable validation errors
-              _notify(
-                'خطأ في التحقق للعملية ${item.id}: $e',
-                isError: true,
-              );
+              _notify('خطأ في التحقق للعملية ${item.id}: $e', isError: true);
               break;
             case QueueErrorType.network:
               item.retryCount++;
-              item.itemStatus =
-                  item.retryCount >= _maxRetries ? 'failed' : 'pending';
+              item.itemStatus = item.retryCount >= _maxRetries
+                  ? 'failed'
+                  : 'pending';
               _notify(
                 'خطأ في الشبكة للعملية ${item.id} '
                 '(محاولة ${item.retryCount}/$_maxRetries): $e',
@@ -478,8 +477,9 @@ class OfflineQueueService {
   /// Returns the number of items removed.
   Future<int> cleanupStale() async {
     final items = await _load();
-    final cutoff =
-        DateTime.now().subtract(const Duration(days: _staleThresholdDays));
+    final cutoff = DateTime.now().subtract(
+      const Duration(days: _staleThresholdDays),
+    );
     final before = items.length;
     items.removeWhere((i) => i.queuedAt.isBefore(cutoff));
     final removed = before - items.length;

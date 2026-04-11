@@ -30,8 +30,9 @@ final toggleShiftProvider = FutureProvider<void>((ref) async {
 });
 
 /// Shift history.
-final shiftHistoryProvider =
-    FutureProvider<List<Map<String, dynamic>>>((ref) async {
+final shiftHistoryProvider = FutureProvider<List<Map<String, dynamic>>>((
+  ref,
+) async {
   final ds = GetIt.instance<ShiftsDatasource>();
   return ds.getShiftHistory();
 });

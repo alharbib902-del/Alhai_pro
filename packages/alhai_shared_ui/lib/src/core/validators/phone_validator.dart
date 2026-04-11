@@ -18,8 +18,9 @@ class PhoneValidator {
 
   /// نمط رقم الجوال السعودي مع كود الدولة
   /// +966 5xxxxxxxx أو 00966 5xxxxxxxx
-  static final RegExp _mobileWithCountryPattern =
-      RegExp(r'^(\+966|00966)5\d{8}$');
+  static final RegExp _mobileWithCountryPattern = RegExp(
+    r'^(\+966|00966)5\d{8}$',
+  );
 
   /// نمط الهاتف الثابت السعودي
   /// يبدأ بـ 01 ويتكون من 9 أرقام

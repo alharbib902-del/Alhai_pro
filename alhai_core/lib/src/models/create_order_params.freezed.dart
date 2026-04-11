@@ -12,7 +12,8 @@ part of 'create_order_params.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 CreateOrderParams _$CreateOrderParamsFromJson(Map<String, dynamic> json) {
   return _CreateOrderParams.fromJson(json);
@@ -41,17 +42,19 @@ mixin _$CreateOrderParams {
 /// @nodoc
 abstract class $CreateOrderParamsCopyWith<$Res> {
   factory $CreateOrderParamsCopyWith(
-          CreateOrderParams value, $Res Function(CreateOrderParams) then) =
-      _$CreateOrderParamsCopyWithImpl<$Res, CreateOrderParams>;
+    CreateOrderParams value,
+    $Res Function(CreateOrderParams) then,
+  ) = _$CreateOrderParamsCopyWithImpl<$Res, CreateOrderParams>;
   @useResult
-  $Res call(
-      {String clientOrderId,
-      String storeId,
-      List<OrderItem> items,
-      String? addressId,
-      String? deliveryAddress,
-      PaymentMethod paymentMethod,
-      double deliveryFee});
+  $Res call({
+    String clientOrderId,
+    String storeId,
+    List<OrderItem> items,
+    String? addressId,
+    String? deliveryAddress,
+    PaymentMethod paymentMethod,
+    double deliveryFee,
+  });
 }
 
 /// @nodoc
@@ -77,64 +80,70 @@ class _$CreateOrderParamsCopyWithImpl<$Res, $Val extends CreateOrderParams>
     Object? paymentMethod = null,
     Object? deliveryFee = null,
   }) {
-    return _then(_value.copyWith(
-      clientOrderId: null == clientOrderId
-          ? _value.clientOrderId
-          : clientOrderId // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      items: null == items
-          ? _value.items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<OrderItem>,
-      addressId: freezed == addressId
-          ? _value.addressId
-          : addressId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      deliveryAddress: freezed == deliveryAddress
-          ? _value.deliveryAddress
-          : deliveryAddress // ignore: cast_nullable_to_non_nullable
-              as String?,
-      paymentMethod: null == paymentMethod
-          ? _value.paymentMethod
-          : paymentMethod // ignore: cast_nullable_to_non_nullable
-              as PaymentMethod,
-      deliveryFee: null == deliveryFee
-          ? _value.deliveryFee
-          : deliveryFee // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            clientOrderId: null == clientOrderId
+                ? _value.clientOrderId
+                : clientOrderId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            storeId: null == storeId
+                ? _value.storeId
+                : storeId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            items: null == items
+                ? _value.items
+                : items // ignore: cast_nullable_to_non_nullable
+                      as List<OrderItem>,
+            addressId: freezed == addressId
+                ? _value.addressId
+                : addressId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            deliveryAddress: freezed == deliveryAddress
+                ? _value.deliveryAddress
+                : deliveryAddress // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            paymentMethod: null == paymentMethod
+                ? _value.paymentMethod
+                : paymentMethod // ignore: cast_nullable_to_non_nullable
+                      as PaymentMethod,
+            deliveryFee: null == deliveryFee
+                ? _value.deliveryFee
+                : deliveryFee // ignore: cast_nullable_to_non_nullable
+                      as double,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$CreateOrderParamsImplCopyWith<$Res>
     implements $CreateOrderParamsCopyWith<$Res> {
-  factory _$$CreateOrderParamsImplCopyWith(_$CreateOrderParamsImpl value,
-          $Res Function(_$CreateOrderParamsImpl) then) =
-      __$$CreateOrderParamsImplCopyWithImpl<$Res>;
+  factory _$$CreateOrderParamsImplCopyWith(
+    _$CreateOrderParamsImpl value,
+    $Res Function(_$CreateOrderParamsImpl) then,
+  ) = __$$CreateOrderParamsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String clientOrderId,
-      String storeId,
-      List<OrderItem> items,
-      String? addressId,
-      String? deliveryAddress,
-      PaymentMethod paymentMethod,
-      double deliveryFee});
+  $Res call({
+    String clientOrderId,
+    String storeId,
+    List<OrderItem> items,
+    String? addressId,
+    String? deliveryAddress,
+    PaymentMethod paymentMethod,
+    double deliveryFee,
+  });
 }
 
 /// @nodoc
 class __$$CreateOrderParamsImplCopyWithImpl<$Res>
     extends _$CreateOrderParamsCopyWithImpl<$Res, _$CreateOrderParamsImpl>
     implements _$$CreateOrderParamsImplCopyWith<$Res> {
-  __$$CreateOrderParamsImplCopyWithImpl(_$CreateOrderParamsImpl _value,
-      $Res Function(_$CreateOrderParamsImpl) _then)
-      : super(_value, _then);
+  __$$CreateOrderParamsImplCopyWithImpl(
+    _$CreateOrderParamsImpl _value,
+    $Res Function(_$CreateOrderParamsImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of CreateOrderParams
   /// with the given fields replaced by the non-null parameter values.
@@ -149,51 +158,53 @@ class __$$CreateOrderParamsImplCopyWithImpl<$Res>
     Object? paymentMethod = null,
     Object? deliveryFee = null,
   }) {
-    return _then(_$CreateOrderParamsImpl(
-      clientOrderId: null == clientOrderId
-          ? _value.clientOrderId
-          : clientOrderId // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      items: null == items
-          ? _value._items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<OrderItem>,
-      addressId: freezed == addressId
-          ? _value.addressId
-          : addressId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      deliveryAddress: freezed == deliveryAddress
-          ? _value.deliveryAddress
-          : deliveryAddress // ignore: cast_nullable_to_non_nullable
-              as String?,
-      paymentMethod: null == paymentMethod
-          ? _value.paymentMethod
-          : paymentMethod // ignore: cast_nullable_to_non_nullable
-              as PaymentMethod,
-      deliveryFee: null == deliveryFee
-          ? _value.deliveryFee
-          : deliveryFee // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
+    return _then(
+      _$CreateOrderParamsImpl(
+        clientOrderId: null == clientOrderId
+            ? _value.clientOrderId
+            : clientOrderId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        storeId: null == storeId
+            ? _value.storeId
+            : storeId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        items: null == items
+            ? _value._items
+            : items // ignore: cast_nullable_to_non_nullable
+                  as List<OrderItem>,
+        addressId: freezed == addressId
+            ? _value.addressId
+            : addressId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        deliveryAddress: freezed == deliveryAddress
+            ? _value.deliveryAddress
+            : deliveryAddress // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        paymentMethod: null == paymentMethod
+            ? _value.paymentMethod
+            : paymentMethod // ignore: cast_nullable_to_non_nullable
+                  as PaymentMethod,
+        deliveryFee: null == deliveryFee
+            ? _value.deliveryFee
+            : deliveryFee // ignore: cast_nullable_to_non_nullable
+                  as double,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$CreateOrderParamsImpl implements _CreateOrderParams {
-  const _$CreateOrderParamsImpl(
-      {required this.clientOrderId,
-      required this.storeId,
-      required final List<OrderItem> items,
-      this.addressId,
-      this.deliveryAddress,
-      required this.paymentMethod,
-      this.deliveryFee = 0})
-      : _items = items;
+  const _$CreateOrderParamsImpl({
+    required this.clientOrderId,
+    required this.storeId,
+    required final List<OrderItem> items,
+    this.addressId,
+    this.deliveryAddress,
+    required this.paymentMethod,
+    this.deliveryFee = 0,
+  }) : _items = items;
 
   factory _$CreateOrderParamsImpl.fromJson(Map<String, dynamic> json) =>
       _$$CreateOrderParamsImplFromJson(json);
@@ -247,14 +258,15 @@ class _$CreateOrderParamsImpl implements _CreateOrderParams {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      clientOrderId,
-      storeId,
-      const DeepCollectionEquality().hash(_items),
-      addressId,
-      deliveryAddress,
-      paymentMethod,
-      deliveryFee);
+    runtimeType,
+    clientOrderId,
+    storeId,
+    const DeepCollectionEquality().hash(_items),
+    addressId,
+    deliveryAddress,
+    paymentMethod,
+    deliveryFee,
+  );
 
   /// Create a copy of CreateOrderParams
   /// with the given fields replaced by the non-null parameter values.
@@ -263,25 +275,26 @@ class _$CreateOrderParamsImpl implements _CreateOrderParams {
   @pragma('vm:prefer-inline')
   _$$CreateOrderParamsImplCopyWith<_$CreateOrderParamsImpl> get copyWith =>
       __$$CreateOrderParamsImplCopyWithImpl<_$CreateOrderParamsImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CreateOrderParamsImplToJson(
-      this,
-    );
+    return _$$CreateOrderParamsImplToJson(this);
   }
 }
 
 abstract class _CreateOrderParams implements CreateOrderParams {
-  const factory _CreateOrderParams(
-      {required final String clientOrderId,
-      required final String storeId,
-      required final List<OrderItem> items,
-      final String? addressId,
-      final String? deliveryAddress,
-      required final PaymentMethod paymentMethod,
-      final double deliveryFee}) = _$CreateOrderParamsImpl;
+  const factory _CreateOrderParams({
+    required final String clientOrderId,
+    required final String storeId,
+    required final List<OrderItem> items,
+    final String? addressId,
+    final String? deliveryAddress,
+    required final PaymentMethod paymentMethod,
+    final double deliveryFee,
+  }) = _$CreateOrderParamsImpl;
 
   factory _CreateOrderParams.fromJson(Map<String, dynamic> json) =
       _$CreateOrderParamsImpl.fromJson;

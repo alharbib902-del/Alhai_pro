@@ -11,10 +11,7 @@ import '../../core/validators/validators.dart';
 class CustomerNotesSection extends StatefulWidget {
   final bool isDark;
 
-  const CustomerNotesSection({
-    super.key,
-    required this.isDark,
-  });
+  const CustomerNotesSection({super.key, required this.isDark});
 
   @override
   State<CustomerNotesSection> createState() => _CustomerNotesSectionState();
@@ -49,8 +46,11 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
             padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Row(
               children: [
-                const Icon(Icons.sticky_note_2_outlined,
-                    size: 20, color: Color(0xFFF59E0B)),
+                const Icon(
+                  Icons.sticky_note_2_outlined,
+                  size: 20,
+                  color: Color(0xFFF59E0B),
+                ),
                 SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   'Internal Notes',
@@ -63,7 +63,9 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+                    horizontal: AlhaiSpacing.xs,
+                    vertical: AlhaiSpacing.xxxs,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.getSurfaceVariant(isDark),
                     borderRadius: BorderRadius.circular(AppSizes.radiusFull),
@@ -126,7 +128,9 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
                       filled: true,
                       fillColor: AppColors.getSurfaceVariant(isDark),
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 14, vertical: 10),
+                        horizontal: 14,
+                        vertical: 10,
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppSizes.radiusLg),
                         borderSide: BorderSide.none,
@@ -235,8 +239,9 @@ class _CustomerNotesSectionState extends State<CustomerNotesSection> {
     if (InputSanitizer.containsDangerousContent(text)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content:
-              Text(AppLocalizations.of(context).inputContainsDangerousContent),
+          content: Text(
+            AppLocalizations.of(context).inputContainsDangerousContent,
+          ),
           backgroundColor: Theme.of(context).colorScheme.error,
         ),
       );

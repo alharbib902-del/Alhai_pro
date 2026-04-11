@@ -320,7 +320,9 @@ class AlhaiPageTransitionsBuilder {
     return SlideTransition(
       position: Tween(begin: begin, end: Offset.zero).animate(
         CurvedAnimation(
-            parent: animation, curve: AlhaiMotion.standardDecelerate),
+          parent: animation,
+          curve: AlhaiMotion.standardDecelerate,
+        ),
       ),
       child: FadeTransition(
         opacity: CurvedAnimation(parent: animation, curve: AlhaiMotion.fadeIn),
@@ -352,7 +354,9 @@ class AlhaiPageTransitionsBuilder {
     return ScaleTransition(
       scale: Tween(begin: 0.92, end: 1.0).animate(
         CurvedAnimation(
-            parent: animation, curve: AlhaiMotion.emphasizedDecelerate),
+          parent: animation,
+          curve: AlhaiMotion.emphasizedDecelerate,
+        ),
       ),
       child: FadeTransition(
         opacity: CurvedAnimation(parent: animation, curve: AlhaiMotion.fadeIn),

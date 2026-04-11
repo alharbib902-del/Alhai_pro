@@ -7,7 +7,8 @@ import '../tables/organizations_table.dart';
 part 'organizations_dao.g.dart';
 
 @DriftAccessor(
-    tables: [OrganizationsTable, SubscriptionsTable, OrgMembersTable])
+  tables: [OrganizationsTable, SubscriptionsTable, OrgMembersTable],
+)
 class OrganizationsDao extends DatabaseAccessor<AppDatabase>
     with _$OrganizationsDaoMixin {
   OrganizationsDao(super.db);
@@ -15,19 +16,21 @@ class OrganizationsDao extends DatabaseAccessor<AppDatabase>
   // === Organizations ===
 
   Future<List<OrganizationsTableData>> getAllOrganizations() {
-    return (select(organizationsTable)
-          ..orderBy([(o) => OrderingTerm.asc(o.name)]))
-        .get();
+    return (select(
+      organizationsTable,
+    )..orderBy([(o) => OrderingTerm.asc(o.name)])).get();
   }
 
   Future<OrganizationsTableData?> getOrganizationById(String id) {
-    return (select(organizationsTable)..where((o) => o.id.equals(id)))
-        .getSingleOrNull();
+    return (select(
+      organizationsTable,
+    )..where((o) => o.id.equals(id))).getSingleOrNull();
   }
 
   Stream<OrganizationsTableData?> watchOrganization(String id) {
-    return (select(organizationsTable)..where((o) => o.id.equals(id)))
-        .watchSingleOrNull();
+    return (select(
+      organizationsTable,
+    )..where((o) => o.id.equals(id))).watchSingleOrNull();
   }
 
   Future<int> insertOrganization(OrganizationsTableCompanion org) =>
@@ -49,31 +52,35 @@ class OrganizationsDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<int> markOrgAsSynced(String id) {
-    return (update(organizationsTable)..where((o) => o.id.equals(id)))
-        .write(OrganizationsTableCompanion(syncedAt: Value(DateTime.now())));
+    return (update(organizationsTable)..where((o) => o.id.equals(id))).write(
+      OrganizationsTableCompanion(syncedAt: Value(DateTime.now())),
+    );
   }
 
   Stream<List<OrganizationsTableData>> watchOrganizations() {
-    return (select(organizationsTable)
-          ..orderBy([(o) => OrderingTerm.asc(o.name)]))
-        .watch();
+    return (select(
+      organizationsTable,
+    )..orderBy([(o) => OrderingTerm.asc(o.name)])).watch();
   }
 
   // === Subscriptions ===
 
   Future<SubscriptionsTableData?> getSubscription(String orgId) {
-    return (select(subscriptionsTable)..where((s) => s.orgId.equals(orgId)))
-        .getSingleOrNull();
+    return (select(
+      subscriptionsTable,
+    )..where((s) => s.orgId.equals(orgId))).getSingleOrNull();
   }
 
   Future<SubscriptionsTableData?> getSubscriptionById(String id) {
-    return (select(subscriptionsTable)..where((s) => s.id.equals(id)))
-        .getSingleOrNull();
+    return (select(
+      subscriptionsTable,
+    )..where((s) => s.id.equals(id))).getSingleOrNull();
   }
 
   Stream<SubscriptionsTableData?> watchSubscription(String orgId) {
-    return (select(subscriptionsTable)..where((s) => s.orgId.equals(orgId)))
-        .watchSingleOrNull();
+    return (select(
+      subscriptionsTable,
+    )..where((s) => s.orgId.equals(orgId))).watchSingleOrNull();
   }
 
   Future<SubscriptionsTableData?> getActiveSubscription(String orgId) {

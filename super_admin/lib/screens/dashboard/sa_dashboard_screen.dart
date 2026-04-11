@@ -25,18 +25,24 @@ class SADashboardScreen extends ConsumerWidget {
     final subsDistAsync = ref.watch(saSubscriptionDistributionProvider);
 
     // Theme-aware colors
-    final greenColor =
-        isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D);
-    final blueColor =
-        isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB);
-    final indigoColor =
-        isDark ? const Color(0xFF818CF8) : const Color(0xFF4F46E5);
-    final tealColor =
-        isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488);
-    final deepPurpleColor =
-        isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED);
-    final amberColor =
-        isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706);
+    final greenColor = isDark
+        ? const Color(0xFF4ADE80)
+        : const Color(0xFF15803D);
+    final blueColor = isDark
+        ? const Color(0xFF60A5FA)
+        : const Color(0xFF2563EB);
+    final indigoColor = isDark
+        ? const Color(0xFF818CF8)
+        : const Color(0xFF4F46E5);
+    final tealColor = isDark
+        ? const Color(0xFF2DD4BF)
+        : const Color(0xFF0D9488);
+    final deepPurpleColor = isDark
+        ? const Color(0xFFA78BFA)
+        : const Color(0xFF7C3AED);
+    final amberColor = isDark
+        ? const Color(0xFFFBBF24)
+        : const Color(0xFFD97706);
 
     return Scaffold(
       body: kpisAsync.when(
@@ -169,13 +175,13 @@ class SADashboardScreen extends ConsumerWidget {
                   monthlyRevenueAsync.when(
                     loading: () => const AlhaiShimmer(
                       child: AlhaiSkeleton.rectangle(
-                          width: double.infinity, height: 280),
+                        width: double.infinity,
+                        height: 280,
+                      ),
                     ),
                     error: (e, _) => Text('$e'),
-                    data: (data) => _RevenueChart(
-                      theme: theme,
-                      monthlyData: data,
-                    ),
+                    data: (data) =>
+                        _RevenueChart(theme: theme, monthlyData: data),
                   ),
                   const SizedBox(height: AlhaiSpacing.xl),
 
@@ -185,7 +191,9 @@ class SADashboardScreen extends ConsumerWidget {
                   subsDistAsync.when(
                     loading: () => const AlhaiShimmer(
                       child: AlhaiSkeleton.rectangle(
-                          width: double.infinity, height: 200),
+                        width: double.infinity,
+                        height: 200,
+                      ),
                     ),
                     error: (e, _) => Text('$e'),
                     data: (dist) => _SubscriptionDistribution(
@@ -225,9 +233,9 @@ class _SectionTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       title,
-      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+      style: Theme.of(
+        context,
+      ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
     );
   }
 }
@@ -256,8 +264,9 @@ class _StatCard extends StatelessWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final isPositive = change.startsWith('+');
-    final positiveColor =
-        isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D);
+    final positiveColor = isDark
+        ? const Color(0xFF4ADE80)
+        : const Color(0xFF15803D);
     final changeColor = showArrow
         ? (isPositive ? positiveColor : theme.colorScheme.error)
         : theme.colorScheme.outline;
@@ -358,7 +367,7 @@ class _RevenueChart extends StatelessWidget {
     final maxY = monthlyData.isEmpty
         ? 100.0
         : monthlyData.map((e) => e.revenue).reduce((a, b) => a > b ? a : b) *
-            1.2;
+              1.2;
 
     return Card(
       elevation: 0,
@@ -424,11 +433,13 @@ class _RevenueChart extends StatelessWidget {
                               return const SizedBox();
                             }
                             final month = monthlyData[idx].month;
-                            final label =
-                                month.length >= 7 ? month.substring(5) : month;
+                            final label = month.length >= 7
+                                ? month.substring(5)
+                                : month;
                             return Padding(
-                              padding:
-                                  const EdgeInsets.only(top: AlhaiSpacing.xs),
+                              padding: const EdgeInsets.only(
+                                top: AlhaiSpacing.xs,
+                              ),
                               child: Text(
                                 label,
                                 style: theme.textTheme.bodySmall?.copyWith(
@@ -440,17 +451,20 @@ class _RevenueChart extends StatelessWidget {
                         ),
                       ),
                       topTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false)),
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
                       rightTitles: const AxisTitles(
-                          sideTitles: SideTitles(showTitles: false)),
+                        sideTitles: SideTitles(showTitles: false),
+                      ),
                     ),
                     borderData: FlBorderData(show: false),
                     gridData: FlGridData(
                       show: true,
                       drawVerticalLine: false,
                       getDrawingHorizontalLine: (value) => FlLine(
-                        color: theme.colorScheme.outlineVariant
-                            .withValues(alpha: 0.3),
+                        color: theme.colorScheme.outlineVariant.withValues(
+                          alpha: 0.3,
+                        ),
                         strokeWidth: 1,
                       ),
                     ),
@@ -482,8 +496,10 @@ class _SubscriptionDistribution extends StatelessWidget {
         elevation: 0,
         child: Padding(
           padding: const EdgeInsets.all(AlhaiSpacing.lg),
-          child: Text(l10n.saNoSubscriptionsYet,
-              style: theme.textTheme.bodyMedium),
+          child: Text(
+            l10n.saNoSubscriptionsYet,
+            style: theme.textTheme.bodyMedium,
+          ),
         ),
       );
     }
@@ -491,8 +507,9 @@ class _SubscriptionDistribution extends StatelessWidget {
     final planColors = {
       'basic': isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB),
       'advanced': isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED),
-      'professional':
-          isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488),
+      'professional': isDark
+          ? const Color(0xFF2DD4BF)
+          : const Color(0xFF0D9488),
     };
 
     final planNames = {
@@ -510,9 +527,9 @@ class _SubscriptionDistribution extends StatelessWidget {
         color: color,
         radius: 60,
         titleStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: colorScheme.onPrimary,
-              fontWeight: FontWeight.bold,
-            ),
+          color: colorScheme.onPrimary,
+          fontWeight: FontWeight.bold,
+        ),
       );
     }).toList();
 
@@ -587,10 +604,7 @@ class _LegendItem extends StatelessWidget {
           ),
         ),
         const SizedBox(width: AlhaiSpacing.xs),
-        Text(
-          '$label: $value',
-          style: theme.textTheme.bodyMedium,
-        ),
+        Text('$label: $value', style: theme.textTheme.bodyMedium),
       ],
     );
   }

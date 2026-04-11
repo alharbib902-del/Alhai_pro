@@ -65,12 +65,14 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
 
     final nextPage = _currentPage + 1;
     try {
-      final paginated = await ref.read(productsProvider((
-        storeId: store.id,
-        page: nextPage,
-        categoryId: selectedCategory,
-        search: null,
-      )).future);
+      final paginated = await ref.read(
+        productsProvider((
+          storeId: store.id,
+          page: nextPage,
+          categoryId: selectedCategory,
+          search: null,
+        )).future,
+      );
 
       if (mounted) {
         setState(() {
@@ -100,12 +102,14 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
     final selectedCategory = ref.read(selectedCategoryProvider);
     if (store == null) return;
 
-    ref.invalidate(productsProvider((
-      storeId: store.id,
-      page: 1,
-      categoryId: selectedCategory,
-      search: null,
-    )));
+    ref.invalidate(
+      productsProvider((
+        storeId: store.id,
+        page: 1,
+        categoryId: selectedCategory,
+        search: null,
+      )),
+    );
     ref.invalidate(categoriesProvider(store.id));
   }
 
@@ -129,12 +133,14 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
       categoriesProvider(store.id).select((v) => v.isLoading),
     );
 
-    final productsAsync = ref.watch(productsProvider((
-      storeId: store.id,
-      page: 1,
-      categoryId: selectedCategory,
-      search: null,
-    )));
+    final productsAsync = ref.watch(
+      productsProvider((
+        storeId: store.id,
+        page: 1,
+        categoryId: selectedCategory,
+        search: null,
+      )),
+    );
 
     // When page 1 loads, seed _allProducts
     if (_initialLoading) {
@@ -180,19 +186,22 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                     child: AlhaiShimmer(
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: AlhaiSpacing.md),
+                          horizontal: AlhaiSpacing.md,
+                        ),
                         child: Row(
                           children: List.generate(
-                              4,
-                              (_) => Padding(
-                                    padding: const EdgeInsetsDirectional.only(
-                                        end: AlhaiSpacing.xs),
-                                    child: AlhaiSkeleton.rectangle(
-                                        width: 70,
-                                        height: 32,
-                                        borderRadius:
-                                            BorderRadius.circular(16)),
-                                  )),
+                            4,
+                            (_) => Padding(
+                              padding: const EdgeInsetsDirectional.only(
+                                end: AlhaiSpacing.xs,
+                              ),
+                              child: AlhaiSkeleton.rectangle(
+                                width: 70,
+                                height: 32,
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -219,11 +228,11 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                     padding: const EdgeInsets.all(AlhaiSpacing.sm),
                     gridDelegate:
                         const SliverGridDelegateWithMaxCrossAxisExtent(
-                      maxCrossAxisExtent: 200,
-                      childAspectRatio: 0.72,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                    ),
+                          maxCrossAxisExtent: 200,
+                          childAspectRatio: 0.72,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                        ),
                     itemCount: 6,
                     itemBuilder: (context, index) =>
                         AlhaiSkeleton.productCard(),
@@ -238,8 +247,9 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                   ),
                 ),
                 data: (paginated) {
-                  final products =
-                      _allProducts.isNotEmpty ? _allProducts : paginated.items;
+                  final products = _allProducts.isNotEmpty
+                      ? _allProducts
+                      : paginated.items;
                   if (products.isEmpty) {
                     return Center(
                       child: AlhaiEmptyState.noProducts(
@@ -322,13 +332,16 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
                                             .read(cartProvider.notifier)
                                             .addItem(product, store.id);
                                         Navigator.pop(ctx);
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
                                             content: Text(
-                                                'تمت إضافة ${product.name}'),
-                                            duration:
-                                                const Duration(seconds: 1),
+                                              'تمت إضافة ${product.name}',
+                                            ),
+                                            duration: const Duration(
+                                              seconds: 1,
+                                            ),
                                           ),
                                         );
                                       },
@@ -392,7 +405,9 @@ class _ProductCard extends StatelessWidget {
             // Info
             Padding(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xs),
+                horizontal: AlhaiSpacing.xs,
+                vertical: AlhaiSpacing.xs,
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

@@ -64,13 +64,15 @@ class _AiSalesForecastingScreenState
         AppHeader(
           title: l10n.aiSalesForecasting,
           subtitle: l10n.aiSmartForecastSubtitle,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
         ),
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(
-                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+            ),
             child: _buildContent(isDark, isWideScreen, isMediumScreen),
           ),
         ),
@@ -149,9 +151,9 @@ class _AiSalesForecastingScreenState
                       isLoading: whatIfAsync.isLoading,
                       onDiscountChanged: (v) =>
                           ref.read(whatIfDiscountProvider.notifier).state = v,
-                      onPriceChanged: (v) => ref
-                          .read(whatIfPriceChangeProvider.notifier)
-                          .state = v,
+                      onPriceChanged: (v) =>
+                          ref.read(whatIfPriceChangeProvider.notifier).state =
+                              v,
                     ),
                   ],
                 ),
@@ -198,7 +200,10 @@ class _AiSalesForecastingScreenState
 
   /// بطاقات المؤشرات السريعة
   Widget _buildMetricsRow(
-      ForecastResult result, bool isDark, bool isWideScreen) {
+    ForecastResult result,
+    bool isDark,
+    bool isWideScreen,
+  ) {
     final l10n = AppLocalizations.of(context);
     final cards = [
       _MetricData(
@@ -212,18 +217,18 @@ class _AiSalesForecastingScreenState
         value: result.trend == TrendDirection.up
             ? l10n.aiTrendUp
             : result.trend == TrendDirection.down
-                ? l10n.aiTrendDown
-                : l10n.aiTrendStable,
+            ? l10n.aiTrendDown
+            : l10n.aiTrendStable,
         icon: result.trend == TrendDirection.up
             ? Icons.trending_up_rounded
             : result.trend == TrendDirection.down
-                ? Icons.trending_down_rounded
-                : Icons.trending_flat_rounded,
+            ? Icons.trending_down_rounded
+            : Icons.trending_flat_rounded,
         color: result.trend == TrendDirection.up
             ? AppColors.primary
             : result.trend == TrendDirection.down
-                ? AppColors.error
-                : AppColors.warning,
+            ? AppColors.error
+            : AppColors.warning,
       ),
       _MetricData(
         label: l10n.aiNextWeekForecast,
@@ -282,8 +287,9 @@ class _AiSalesForecastingScreenState
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -343,8 +349,9 @@ class _AiSalesForecastingScreenState
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : AppColors.border,
         ),
       ),
       child: TabBar(
@@ -381,9 +388,7 @@ class _AiSalesForecastingScreenState
               : [Colors.white, AppColors.primarySurface],
         ),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.2),
-        ),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.2)),
         boxShadow: [
           BoxShadow(
             color: AppColors.primary.withValues(alpha: isDark ? 0.1 : 0.05),
@@ -397,8 +402,11 @@ class _AiSalesForecastingScreenState
         children: [
           Row(
             children: [
-              const Icon(Icons.auto_awesome_rounded,
-                  color: AppColors.primary, size: 22),
+              const Icon(
+                Icons.auto_awesome_rounded,
+                color: AppColors.primary,
+                size: 22,
+              ),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.aiForecastSummary,
@@ -433,8 +441,8 @@ class _AiSalesForecastingScreenState
                   result.trend == TrendDirection.up
                       ? Icons.trending_up_rounded
                       : result.trend == TrendDirection.down
-                          ? Icons.trending_down_rounded
-                          : Icons.trending_flat_rounded,
+                      ? Icons.trending_down_rounded
+                      : Icons.trending_flat_rounded,
                   color: AppColors.primary,
                   size: 20,
                 ),
@@ -444,8 +452,8 @@ class _AiSalesForecastingScreenState
                     result.trend == TrendDirection.up
                         ? l10n.aiSalesTrendingUp
                         : result.trend == TrendDirection.down
-                            ? l10n.aiSalesDeclining
-                            : l10n.aiSalesStable,
+                        ? l10n.aiSalesDeclining
+                        : l10n.aiSalesStable,
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w500,
@@ -468,8 +476,9 @@ class _AiSalesForecastingScreenState
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : AppColors.border,
         ),
       ),
       child: const Center(child: CircularProgressIndicator(strokeWidth: 2)),

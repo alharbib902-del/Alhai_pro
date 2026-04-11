@@ -9,8 +9,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('RTL layout rendering', () {
-    testWidgets('Text aligns to the right in RTL directionality',
-        (tester) async {
+    testWidgets('Text aligns to the right in RTL directionality', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Directionality(
@@ -18,10 +19,7 @@ void main() {
             child: Scaffold(
               body: Padding(
                 padding: EdgeInsets.all(16),
-                child: Text(
-                  'مرحبا بالعالم',
-                  textAlign: TextAlign.start,
-                ),
+                child: Text('مرحبا بالعالم', textAlign: TextAlign.start),
               ),
             ),
           ),
@@ -48,12 +46,7 @@ void main() {
           home: Directionality(
             textDirection: TextDirection.rtl,
             child: Scaffold(
-              body: Row(
-                children: const [
-                  Text('first'),
-                  Text('second'),
-                ],
-              ),
+              body: Row(children: const [Text('first'), Text('second')]),
             ),
           ),
         ),
@@ -63,9 +56,12 @@ void main() {
       final secondPos = tester.getTopLeft(find.text('second'));
 
       // In RTL, "first" child should be to the RIGHT of "second" child.
-      expect(firstPos.dx, greaterThan(secondPos.dx),
-          reason:
-              'In RTL, the first Row child should render to the right of the second');
+      expect(
+        firstPos.dx,
+        greaterThan(secondPos.dx),
+        reason:
+            'In RTL, the first Row child should render to the right of the second',
+      );
     });
 
     testWidgets('EdgeInsetsDirectional respects RTL', (tester) async {
@@ -88,12 +84,16 @@ void main() {
       // In RTL, "start" padding means padding on the right side, so the
       // text's left edge should be near 0 (left of screen), not offset by 100.
       // The start=100 in RTL maps to right padding, pushing content left.
-      expect(textPos.dx, lessThan(100),
-          reason: 'In RTL, start padding should apply to the right side');
+      expect(
+        textPos.dx,
+        lessThan(100),
+        reason: 'In RTL, start padding should apply to the right side',
+      );
     });
 
-    testWidgets('AlignmentDirectional.centerStart is right-aligned in RTL',
-        (tester) async {
+    testWidgets('AlignmentDirectional.centerStart is right-aligned in RTL', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
           home: Directionality(
@@ -114,8 +114,11 @@ void main() {
 
       // In RTL, centerStart means right-aligned.
       // The text's left edge should be in the right half of the screen.
-      expect(textPos.dx, greaterThan(screenWidth / 2),
-          reason: 'AlignmentDirectional.centerStart in RTL should right-align');
+      expect(
+        textPos.dx,
+        greaterThan(screenWidth / 2),
+        reason: 'AlignmentDirectional.centerStart in RTL should right-align',
+      );
     });
 
     testWidgets('LTR layout works normally as baseline', (tester) async {
@@ -124,12 +127,7 @@ void main() {
           home: Directionality(
             textDirection: TextDirection.ltr,
             child: Scaffold(
-              body: Row(
-                children: const [
-                  Text('first'),
-                  Text('second'),
-                ],
-              ),
+              body: Row(children: const [Text('first'), Text('second')]),
             ),
           ),
         ),
@@ -139,9 +137,12 @@ void main() {
       final secondPos = tester.getTopLeft(find.text('second'));
 
       // In LTR, "first" child should be to the LEFT of "second" child.
-      expect(firstPos.dx, lessThan(secondPos.dx),
-          reason:
-              'In LTR, the first Row child should render to the left of the second');
+      expect(
+        firstPos.dx,
+        lessThan(secondPos.dx),
+        reason:
+            'In LTR, the first Row child should render to the left of the second',
+      );
     });
   });
 }

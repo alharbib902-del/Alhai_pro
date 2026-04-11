@@ -19,7 +19,8 @@ abstract class PurchasesRemoteDataSource {
 
   /// Creates a new purchase order
   Future<PurchaseOrderResponse> createPurchaseOrder(
-      CreatePurchaseOrderRequest request);
+    CreatePurchaseOrderRequest request,
+  );
 
   /// Updates a purchase order
   Future<PurchaseOrderResponse> updatePurchaseOrder(
@@ -32,7 +33,9 @@ abstract class PurchasesRemoteDataSource {
 
   /// Receives items from a purchase order
   Future<PurchaseOrderResponse> receiveItems(
-      String id, ReceiveItemsRequest request);
+    String id,
+    ReceiveItemsRequest request,
+  );
 
   /// Records payment for a purchase order
   Future<PurchaseOrderResponse> recordPayment(String id, double amount);

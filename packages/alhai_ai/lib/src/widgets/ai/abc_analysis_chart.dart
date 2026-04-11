@@ -13,11 +13,7 @@ class AbcAnalysisChart extends StatelessWidget {
   final List<AbcItem> items;
   final ValueChanged<AbcItem>? onItemTap;
 
-  const AbcAnalysisChart({
-    super.key,
-    required this.items,
-    this.onItemTap,
-  });
+  const AbcAnalysisChart({super.key, required this.items, this.onItemTap});
 
   Color _getCategoryColor(AbcCategory category) {
     switch (category) {
@@ -51,8 +47,9 @@ class AbcAnalysisChart extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -68,8 +65,11 @@ class AbcAnalysisChart extends StatelessWidget {
           // Header
           Row(
             children: [
-              const Icon(Icons.bar_chart_rounded,
-                  color: AppColors.primary, size: 20),
+              const Icon(
+                Icons.bar_chart_rounded,
+                color: AppColors.primary,
+                size: 20,
+              ),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 'مخطط باريتو - تحليل ABC', // Pareto Chart - ABC Analysis
@@ -102,13 +102,17 @@ class AbcAnalysisChart extends StatelessWidget {
           const SizedBox(height: AlhaiSpacing.md),
 
           // Items list
-          ...items.take(8).map((item) => _AbcItemRow(
-                item: item,
-                isDark: isDark,
-                color: _getCategoryColor(item.category),
-                categoryLabel: _getCategoryLabel(item.category),
-                onTap: () => onItemTap?.call(item),
-              )),
+          ...items
+              .take(8)
+              .map(
+                (item) => _AbcItemRow(
+                  item: item,
+                  isDark: isDark,
+                  color: _getCategoryColor(item.category),
+                  categoryLabel: _getCategoryLabel(item.category),
+                  onTap: () => onItemTap?.call(item),
+                ),
+              ),
         ],
       ),
     );
@@ -119,19 +123,22 @@ class AbcAnalysisChart extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         _LegendDot(
-            color: _getCategoryColor(AbcCategory.a),
-            label: 'A',
-            isDark: isDark),
+          color: _getCategoryColor(AbcCategory.a),
+          label: 'A',
+          isDark: isDark,
+        ),
         const SizedBox(width: AlhaiSpacing.xs),
         _LegendDot(
-            color: _getCategoryColor(AbcCategory.b),
-            label: 'B',
-            isDark: isDark),
+          color: _getCategoryColor(AbcCategory.b),
+          label: 'B',
+          isDark: isDark,
+        ),
         const SizedBox(width: AlhaiSpacing.xs),
         _LegendDot(
-            color: _getCategoryColor(AbcCategory.c),
-            label: 'C',
-            isDark: isDark),
+          color: _getCategoryColor(AbcCategory.c),
+          label: 'C',
+          isDark: isDark,
+        ),
       ],
     );
   }
@@ -178,8 +185,9 @@ class _ParetoPainter extends CustomPainter {
 
       // Product name label (rotated)
       final nameSpan = TextSpan(
-        text:
-            item.name.length > 6 ? '${item.name.substring(0, 6)}..' : item.name,
+        text: item.name.length > 6
+            ? '${item.name.substring(0, 6)}..'
+            : item.name,
         style: TextStyle(
           color: isDark
               ? Colors.white.withValues(alpha: 0.5)
@@ -239,10 +247,8 @@ class _ParetoPainter extends CustomPainter {
           fontSize: 9,
         ),
       );
-      final painter = TextPainter(
-        text: span,
-        textDirection: TextDirection.ltr,
-      )..layout();
+      final painter = TextPainter(text: span, textDirection: TextDirection.ltr)
+        ..layout();
       painter.paint(canvas, Offset(0, y - painter.height / 2));
 
       // Grid line
@@ -284,7 +290,9 @@ class _AbcItemRow extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.xxs, vertical: 6),
+            horizontal: AlhaiSpacing.xxs,
+            vertical: 6,
+          ),
           child: Row(
             children: [
               // Category badge
@@ -300,8 +308,8 @@ class _AbcItemRow extends StatelessWidget {
                     item.category == AbcCategory.a
                         ? 'A'
                         : item.category == AbcCategory.b
-                            ? 'B'
-                            : 'C',
+                        ? 'B'
+                        : 'C',
                     style: TextStyle(
                       color: color,
                       fontSize: 12,

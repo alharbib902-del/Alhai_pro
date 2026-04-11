@@ -146,14 +146,16 @@ class AlhaiOrderStatusTimeline extends StatelessWidget {
     if (steps != null) {
       // Sanitize user-provided steps
       if (currentStatus == AlhaiOrderStatus.cancelled) {
-        effectiveSteps =
-            steps!.where((s) => s == AlhaiOrderStatus.cancelled).toList();
+        effectiveSteps = steps!
+            .where((s) => s == AlhaiOrderStatus.cancelled)
+            .toList();
         if (effectiveSteps.isEmpty) {
           effectiveSteps = [AlhaiOrderStatus.cancelled];
         }
       } else {
-        effectiveSteps =
-            steps!.where((s) => s != AlhaiOrderStatus.cancelled).toList();
+        effectiveSteps = steps!
+            .where((s) => s != AlhaiOrderStatus.cancelled)
+            .toList();
       }
     } else {
       effectiveSteps = currentStatus == AlhaiOrderStatus.cancelled
@@ -199,7 +201,8 @@ class AlhaiOrderStatusTimeline extends StatelessWidget {
               label: labels[effectiveSteps[i]]!,
               description: descriptions?[effectiveSteps[i]],
               timestamp: timestamps?[effectiveSteps[i]],
-              isCompleted: effectiveSteps[i].progressIndex >= 0 &&
+              isCompleted:
+                  effectiveSteps[i].progressIndex >= 0 &&
                   effectiveSteps[i].progressIndex < currentIndex,
               isCurrent: effectiveSteps[i] == currentStatus,
               isLast: i == effectiveSteps.length - 1,
@@ -268,10 +271,7 @@ class _TimelineStep extends StatelessWidget {
                     color: (isCurrent || isCompleted) ? dotColor : null,
                     border: (isCurrent || isCompleted)
                         ? null
-                        : Border.all(
-                            color: dotColor,
-                            width: AlhaiSpacing.xxxs,
-                          ),
+                        : Border.all(color: dotColor, width: AlhaiSpacing.xxxs),
                     shape: BoxShape.circle,
                   ),
                   child: showIcon && (isCompleted || isCurrent)
@@ -305,9 +305,7 @@ class _TimelineStep extends StatelessWidget {
           // Content
           Expanded(
             child: Padding(
-              padding: EdgeInsets.only(
-                bottom: isLast ? 0 : AlhaiSpacing.md,
-              ),
+              padding: EdgeInsets.only(bottom: isLast ? 0 : AlhaiSpacing.md),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 mainAxisSize: MainAxisSize.min,

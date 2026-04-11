@@ -55,18 +55,18 @@ class SAStore {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'address': address,
-        'phone': phone,
-        'email': email,
-        'is_active': isActive,
-        'owner_id': ownerId,
-        'business_type': businessType,
-        'created_at': createdAt,
-        'logo': logo,
-        'subscriptions': subscriptions.map((s) => s.toJson()).toList(),
-      };
+    'id': id,
+    'name': name,
+    'address': address,
+    'phone': phone,
+    'email': email,
+    'is_active': isActive,
+    'owner_id': ownerId,
+    'business_type': businessType,
+    'created_at': createdAt,
+    'logo': logo,
+    'subscriptions': subscriptions.map((s) => s.toJson()).toList(),
+  };
 
   /// Convenience: get the current plan name from the first subscription.
   String get planName {
@@ -109,16 +109,19 @@ class SAStoreSubscription {
   factory SAStoreSubscription.fromJson(Map<String, dynamic> json) {
     // 'plan' can be a String slug (Supabase schema) or a Map (join query)
     final rawPlanField = json['plan'];
-    final rawPlan = json['plans'] ??
+    final rawPlan =
+        json['plans'] ??
         (rawPlanField is Map<String, dynamic> ? rawPlanField : null);
-    final planSlug =
-        rawPlanField is String ? rawPlanField : (json['plan_id'] as String?);
+    final planSlug = rawPlanField is String
+        ? rawPlanField
+        : (json['plan_id'] as String?);
 
     return SAStoreSubscription(
       id: json['id'] as String?,
       planSlug: planSlug,
       status: json['status'] as String?,
-      startDate: json['current_period_start'] as String? ??
+      startDate:
+          json['current_period_start'] as String? ??
           json['start_date'] as String?,
       endDate:
           json['current_period_end'] as String? ?? json['end_date'] as String?,
@@ -131,15 +134,15 @@ class SAStoreSubscription {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'plan': planSlug,
-        'status': status,
-        'current_period_start': startDate,
-        'current_period_end': endDate,
-        'org_id': orgId,
-        'amount': amount,
-        if (plan != null) 'plans': plan!.toJson(),
-      };
+    'id': id,
+    'plan': planSlug,
+    'status': status,
+    'current_period_start': startDate,
+    'current_period_end': endDate,
+    'org_id': orgId,
+    'amount': amount,
+    if (plan != null) 'plans': plan!.toJson(),
+  };
 
   String? get planName => plan?.name ?? planSlug?.replaceAll('_', ' ');
 }
@@ -185,16 +188,16 @@ class SAStorePlan {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'slug': slug,
-        'monthly_price': monthlyPrice,
-        'yearly_price': yearlyPrice,
-        'max_branches': maxBranches,
-        'max_products': maxProducts,
-        'max_users': maxUsers,
-        'features': features,
-      };
+    'id': id,
+    'name': name,
+    'slug': slug,
+    'monthly_price': monthlyPrice,
+    'yearly_price': yearlyPrice,
+    'max_branches': maxBranches,
+    'max_products': maxProducts,
+    'max_users': maxUsers,
+    'features': features,
+  };
 }
 
 /// Store usage stats (transactions, products, employees, branches).
@@ -221,11 +224,11 @@ class SAStoreUsageStats {
   }
 
   Map<String, int> toJson() => {
-        'transactions': transactions,
-        'products': products,
-        'employees': employees,
-        'branches': branches,
-      };
+    'transactions': transactions,
+    'products': products,
+    'employees': employees,
+    'branches': branches,
+  };
 }
 
 /// Store owner info.
@@ -255,10 +258,10 @@ class SAStoreOwner {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'phone': phone,
-        'email': email,
-        'role': role,
-      };
+    'id': id,
+    'name': name,
+    'phone': phone,
+    'email': email,
+    'role': role,
+  };
 }

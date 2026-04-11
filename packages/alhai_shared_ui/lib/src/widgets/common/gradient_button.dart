@@ -122,7 +122,7 @@ class GradientButton extends StatefulWidget {
       gradient: LinearGradient(
         colors: [
           AppColors.secondary,
-          AppColors.secondary.withValues(alpha: 0.8)
+          AppColors.secondary.withValues(alpha: 0.8),
         ],
         begin: AlignmentDirectional.topStart,
         end: AlignmentDirectional.bottomEnd,
@@ -250,10 +250,7 @@ class _GradientButtonState extends State<GradientButton>
   Gradient get _gradient =>
       widget.gradient ??
       LinearGradient(
-        colors: [
-          AppColors.primary,
-          AppColors.primary.withValues(alpha: 0.8),
-        ],
+        colors: [AppColors.primary, AppColors.primary.withValues(alpha: 0.8)],
         begin: AlignmentDirectional.topStart,
         end: AlignmentDirectional.bottomEnd,
       );
@@ -295,13 +292,19 @@ class _GradientButtonState extends State<GradientButton>
     switch (widget.size) {
       case GradientButtonSize.small:
         return const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs);
+          horizontal: AlhaiSpacing.sm,
+          vertical: AlhaiSpacing.xs,
+        );
       case GradientButtonSize.medium:
         return const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.md, vertical: 10);
+          horizontal: AlhaiSpacing.md,
+          vertical: 10,
+        );
       case GradientButtonSize.large:
         return const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.lg, vertical: 14);
+          horizontal: AlhaiSpacing.lg,
+          vertical: 14,
+        );
     }
   }
 
@@ -378,8 +381,9 @@ class _GradientButtonState extends State<GradientButton>
           height: _iconSize,
           child: CircularProgressIndicator(
             strokeWidth: 2,
-            valueColor:
-                AlwaysStoppedAnimation(Colors.white.withValues(alpha: 0.9)),
+            valueColor: AlwaysStoppedAnimation(
+              Colors.white.withValues(alpha: 0.9),
+            ),
           ),
         ),
       );
@@ -387,11 +391,7 @@ class _GradientButtonState extends State<GradientButton>
 
     if (widget.iconOnly && widget.icon != null) {
       return Center(
-        child: Icon(
-          widget.icon,
-          color: Colors.white,
-          size: _iconSize,
-        ),
+        child: Icon(widget.icon, color: Colors.white, size: _iconSize),
       );
     }
 
@@ -409,14 +409,11 @@ class _GradientButtonState extends State<GradientButton>
       return Center(child: textWidget);
     }
 
-    final iconWidget = Icon(
-      widget.icon,
-      color: Colors.white,
-      size: _iconSize,
-    );
+    final iconWidget = Icon(widget.icon, color: Colors.white, size: _iconSize);
 
-    final spacing =
-        SizedBox(width: widget.size == GradientButtonSize.small ? 6 : 8);
+    final spacing = SizedBox(
+      width: widget.size == GradientButtonSize.small ? 6 : 8,
+    );
 
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -429,17 +426,10 @@ class _GradientButtonState extends State<GradientButton>
 }
 
 /// حجم الزر
-enum GradientButtonSize {
-  small,
-  medium,
-  large,
-}
+enum GradientButtonSize { small, medium, large }
 
 /// موقع الأيقونة
-enum IconPosition {
-  leading,
-  trailing,
-}
+enum IconPosition { leading, trailing }
 
 /// زر أيقونة دائري مع Gradient
 class GradientIconButton extends StatefulWidget {
@@ -522,12 +512,12 @@ class _GradientIconButtonState extends State<GradientIconButton>
               decoration: BoxDecoration(
                 gradient: _isEnabled
                     ? (widget.gradient ??
-                        LinearGradient(
-                          colors: [
-                            AppColors.primary,
-                            AppColors.primary.withValues(alpha: 0.8),
-                          ],
-                        ))
+                          LinearGradient(
+                            colors: [
+                              AppColors.primary,
+                              AppColors.primary.withValues(alpha: 0.8),
+                            ],
+                          ))
                     : null,
                 color: _isEnabled ? null : AppColors.grey300,
                 shape: BoxShape.circle,
@@ -564,10 +554,7 @@ class _GradientIconButtonState extends State<GradientIconButton>
     );
 
     if (widget.tooltip != null) {
-      return Tooltip(
-        message: widget.tooltip!,
-        child: button,
-      );
+      return Tooltip(message: widget.tooltip!, child: button);
     }
 
     return button;

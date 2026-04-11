@@ -139,20 +139,26 @@ void main() {
 
       test('logPinCreated records event', () {
         SecurityLogger.logPinCreated();
-        expect(SecurityLogger.getLogs().first.type,
-            equals(SecurityEventType.pinCreated));
+        expect(
+          SecurityLogger.getLogs().first.type,
+          equals(SecurityEventType.pinCreated),
+        );
       });
 
       test('logPinChanged records event', () {
         SecurityLogger.logPinChanged();
-        expect(SecurityLogger.getLogs().first.type,
-            equals(SecurityEventType.pinChanged));
+        expect(
+          SecurityLogger.getLogs().first.type,
+          equals(SecurityEventType.pinChanged),
+        );
       });
 
       test('logPinRemoved records event', () {
         SecurityLogger.logPinRemoved();
-        expect(SecurityLogger.getLogs().first.type,
-            equals(SecurityEventType.pinRemoved));
+        expect(
+          SecurityLogger.getLogs().first.type,
+          equals(SecurityEventType.pinRemoved),
+        );
       });
     });
 
@@ -167,28 +173,36 @@ void main() {
 
       test('logSessionEnded records event', () {
         SecurityLogger.logSessionEnded();
-        expect(SecurityLogger.getLogs().first.type,
-            equals(SecurityEventType.sessionEnded));
+        expect(
+          SecurityLogger.getLogs().first.type,
+          equals(SecurityEventType.sessionEnded),
+        );
       });
 
       test('logSessionExpired records event', () {
         SecurityLogger.logSessionExpired();
-        expect(SecurityLogger.getLogs().first.type,
-            equals(SecurityEventType.sessionExpired));
+        expect(
+          SecurityLogger.getLogs().first.type,
+          equals(SecurityEventType.sessionExpired),
+        );
       });
 
       test('logSessionRefreshed records event', () {
         SecurityLogger.logSessionRefreshed();
-        expect(SecurityLogger.getLogs().first.type,
-            equals(SecurityEventType.sessionRefreshed));
+        expect(
+          SecurityLogger.getLogs().first.type,
+          equals(SecurityEventType.sessionRefreshed),
+        );
       });
     });
 
     group('Biometric logging helpers', () {
       test('logBiometricSuccess records event', () {
         SecurityLogger.logBiometricSuccess();
-        expect(SecurityLogger.getLogs().first.type,
-            equals(SecurityEventType.biometricSuccess));
+        expect(
+          SecurityLogger.getLogs().first.type,
+          equals(SecurityEventType.biometricSuccess),
+        );
       });
 
       test('logBiometricFailed records event with reason', () {
@@ -201,14 +215,18 @@ void main() {
 
       test('logBiometricEnabled records event', () {
         SecurityLogger.logBiometricEnabled();
-        expect(SecurityLogger.getLogs().first.type,
-            equals(SecurityEventType.biometricEnabled));
+        expect(
+          SecurityLogger.getLogs().first.type,
+          equals(SecurityEventType.biometricEnabled),
+        );
       });
 
       test('logBiometricDisabled records event', () {
         SecurityLogger.logBiometricDisabled();
-        expect(SecurityLogger.getLogs().first.type,
-            equals(SecurityEventType.biometricDisabled));
+        expect(
+          SecurityLogger.getLogs().first.type,
+          equals(SecurityEventType.biometricDisabled),
+        );
       });
     });
 
@@ -232,8 +250,10 @@ void main() {
 
       test('logLogoutSuccess records event', () {
         SecurityLogger.logLogoutSuccess();
-        expect(SecurityLogger.getLogs().first.type,
-            equals(SecurityEventType.logoutSuccess));
+        expect(
+          SecurityLogger.getLogs().first.type,
+          equals(SecurityEventType.logoutSuccess),
+        );
       });
     });
 
@@ -251,8 +271,9 @@ void main() {
       test('returns empty list when no matching logs', () {
         SecurityLogger.logPinCreated();
 
-        final logs =
-            SecurityLogger.getLogsByType(SecurityEventType.loginSuccess);
+        final logs = SecurityLogger.getLogsByType(
+          SecurityEventType.loginSuccess,
+        );
         expect(logs, isEmpty);
       });
     });

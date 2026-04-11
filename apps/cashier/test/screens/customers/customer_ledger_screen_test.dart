@@ -65,13 +65,16 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => accountsDao.getAccountById(any()))
-          .thenAnswer((_) async => _createTestAccount());
-      when(() => transactionsDao.getAccountTransactions(any()))
-          .thenAnswer((_) async => <TransactionsTableData>[]);
+      when(
+        () => accountsDao.getAccountById(any()),
+      ).thenAnswer((_) async => _createTestAccount());
+      when(
+        () => transactionsDao.getAccountTransactions(any()),
+      ).thenAnswer((_) async => <TransactionsTableData>[]);
 
       await tester.pumpWidget(
-          createTestWidget(const CustomerLedgerScreen(id: 'acc-1')));
+        createTestWidget(const CustomerLedgerScreen(id: 'acc-1')),
+      );
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
@@ -82,13 +85,16 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => accountsDao.getAccountById(any()))
-          .thenAnswer((_) async => _createTestAccount(balance: 500.0));
-      when(() => transactionsDao.getAccountTransactions(any()))
-          .thenAnswer((_) async => <TransactionsTableData>[]);
+      when(
+        () => accountsDao.getAccountById(any()),
+      ).thenAnswer((_) async => _createTestAccount(balance: 500.0));
+      when(
+        () => transactionsDao.getAccountTransactions(any()),
+      ).thenAnswer((_) async => <TransactionsTableData>[]);
 
       await tester.pumpWidget(
-          createTestWidget(const CustomerLedgerScreen(id: 'acc-1')));
+        createTestWidget(const CustomerLedgerScreen(id: 'acc-1')),
+      );
       await tester.pumpAndSettle();
 
       // Phone icon for customer info
@@ -97,20 +103,24 @@ void main() {
       expect(find.byIcon(Icons.arrow_back_rounded), findsOneWidget);
     });
 
-    testWidgets('shows filter section with date and type filters',
-        (tester) async {
+    testWidgets('shows filter section with date and type filters', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
       suppressOverflowErrors();
 
-      when(() => accountsDao.getAccountById(any()))
-          .thenAnswer((_) async => _createTestAccount());
-      when(() => transactionsDao.getAccountTransactions(any()))
-          .thenAnswer((_) async => <TransactionsTableData>[]);
+      when(
+        () => accountsDao.getAccountById(any()),
+      ).thenAnswer((_) async => _createTestAccount());
+      when(
+        () => transactionsDao.getAccountTransactions(any()),
+      ).thenAnswer((_) async => <TransactionsTableData>[]);
 
       await tester.pumpWidget(
-          createTestWidget(const CustomerLedgerScreen(id: 'acc-1')));
+        createTestWidget(const CustomerLedgerScreen(id: 'acc-1')),
+      );
       await tester.pumpAndSettle();
 
       // Calendar icon for date filter
@@ -125,13 +135,16 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => accountsDao.getAccountById(any()))
-          .thenAnswer((_) async => _createTestAccount());
-      when(() => transactionsDao.getAccountTransactions(any()))
-          .thenAnswer((_) async => <TransactionsTableData>[]);
+      when(
+        () => accountsDao.getAccountById(any()),
+      ).thenAnswer((_) async => _createTestAccount());
+      when(
+        () => transactionsDao.getAccountTransactions(any()),
+      ).thenAnswer((_) async => <TransactionsTableData>[]);
 
       await tester.pumpWidget(
-          createTestWidget(const CustomerLedgerScreen(id: 'acc-1')));
+        createTestWidget(const CustomerLedgerScreen(id: 'acc-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.receipt_long_outlined), findsOneWidget);
@@ -143,13 +156,16 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => accountsDao.getAccountById(any()))
-          .thenAnswer((_) async => _createTestAccount());
-      when(() => transactionsDao.getAccountTransactions(any()))
-          .thenAnswer((_) async => <TransactionsTableData>[]);
+      when(
+        () => accountsDao.getAccountById(any()),
+      ).thenAnswer((_) async => _createTestAccount());
+      when(
+        () => transactionsDao.getAccountTransactions(any()),
+      ).thenAnswer((_) async => <TransactionsTableData>[]);
 
       await tester.pumpWidget(
-          createTestWidget(const CustomerLedgerScreen(id: 'acc-1')));
+        createTestWidget(const CustomerLedgerScreen(id: 'acc-1')),
+      );
       await tester.pumpAndSettle();
 
       // FAB with tune icon
@@ -163,13 +179,16 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => accountsDao.getAccountById(any()))
-          .thenAnswer((_) async => _createTestAccount());
-      when(() => transactionsDao.getAccountTransactions(any()))
-          .thenAnswer((_) async => <TransactionsTableData>[]);
+      when(
+        () => accountsDao.getAccountById(any()),
+      ).thenAnswer((_) async => _createTestAccount());
+      when(
+        () => transactionsDao.getAccountTransactions(any()),
+      ).thenAnswer((_) async => <TransactionsTableData>[]);
 
       await tester.pumpWidget(
-          createTestWidget(const CustomerLedgerScreen(id: 'acc-1')));
+        createTestWidget(const CustomerLedgerScreen(id: 'acc-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.refresh_rounded), findsOneWidget);

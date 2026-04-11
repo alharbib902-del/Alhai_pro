@@ -90,11 +90,13 @@ class HomeScreen extends ConsumerWidget {
                           child: Card(
                             elevation: 0,
                             shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(AlhaiRadius.md),
+                              borderRadius: BorderRadius.circular(
+                                AlhaiRadius.md,
+                              ),
                             ),
-                            color:
-                                Theme.of(context).colorScheme.tertiaryContainer,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.tertiaryContainer,
                             child: ListTile(
                               leading: Badge(
                                 label: Text('$pending'),
@@ -104,8 +106,10 @@ class HomeScreen extends ConsumerWidget {
                                 ),
                               ),
                               title: Text('$pending طلبات بانتظار القبول'),
-                              trailing:
-                                  const Icon(Icons.arrow_forward_ios, size: 16),
+                              trailing: const Icon(
+                                Icons.arrow_forward_ios,
+                                size: 16,
+                              ),
                               onTap: () => context.go('/deliveries'),
                             ),
                           ),

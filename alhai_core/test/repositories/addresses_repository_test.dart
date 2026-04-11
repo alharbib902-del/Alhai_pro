@@ -53,7 +53,8 @@ void main() {
       test('returns list of addresses on success', () async {
         // Arrange
         when(() => mockRemote.getAddresses()).thenAnswer(
-            (_) async => [testAddressResponse, testSecondAddressResponse]);
+          (_) async => [testAddressResponse, testSecondAddressResponse],
+        );
 
         // Act
         final result = await repository.getAddresses();
@@ -66,10 +67,12 @@ void main() {
 
       test('throws NetworkException on connection error', () async {
         // Arrange
-        when(() => mockRemote.getAddresses()).thenThrow(DioException(
-          type: DioExceptionType.connectionError,
-          requestOptions: RequestOptions(path: '/addresses'),
-        ));
+        when(() => mockRemote.getAddresses()).thenThrow(
+          DioException(
+            type: DioExceptionType.connectionError,
+            requestOptions: RequestOptions(path: '/addresses'),
+          ),
+        );
 
         // Act & Assert
         expect(
@@ -83,7 +86,8 @@ void main() {
       test('returns default address when exists', () async {
         // Arrange
         when(() => mockRemote.getAddresses()).thenAnswer(
-            (_) async => [testAddressResponse, testSecondAddressResponse]);
+          (_) async => [testAddressResponse, testSecondAddressResponse],
+        );
 
         // Act
         final result = await repository.getDefaultAddress();
@@ -109,8 +113,9 @@ void main() {
     group('getAddress', () {
       test('returns single address on success', () async {
         // Arrange
-        when(() => mockRemote.getAddress(any()))
-            .thenAnswer((_) async => testAddressResponse);
+        when(
+          () => mockRemote.getAddress(any()),
+        ).thenAnswer((_) async => testAddressResponse);
 
         // Act
         final result = await repository.getAddress('addr-1');
@@ -132,8 +137,9 @@ void main() {
           lat: 21.5433,
           lng: 39.1728,
         );
-        when(() => mockRemote.createAddress(any()))
-            .thenAnswer((_) async => testAddressResponse);
+        when(
+          () => mockRemote.createAddress(any()),
+        ).thenAnswer((_) async => testAddressResponse);
 
         // Act
         final result = await repository.createAddress(params);
@@ -148,8 +154,9 @@ void main() {
       test('updates address with params', () async {
         // Arrange
         const params = UpdateAddressParams(label: 'Updated Label');
-        when(() => mockRemote.updateAddress(any(), any()))
-            .thenAnswer((_) async => testAddressResponse);
+        when(
+          () => mockRemote.updateAddress(any(), any()),
+        ).thenAnswer((_) async => testAddressResponse);
 
         // Act
         final result = await repository.updateAddress('addr-1', params);
@@ -174,8 +181,9 @@ void main() {
     group('setDefaultAddress', () {
       test('sets default address successfully', () async {
         // Arrange
-        when(() => mockRemote.setDefaultAddress(any()))
-            .thenAnswer((_) async {});
+        when(
+          () => mockRemote.setDefaultAddress(any()),
+        ).thenAnswer((_) async {});
 
         // Act & Assert
         await expectLater(repository.setDefaultAddress('addr-1'), completes);

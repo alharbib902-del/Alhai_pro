@@ -14,13 +14,8 @@ void main() {
         'amount': 199.0,
         'currency': 'SAR',
         'billing_cycle': 'monthly',
-        'stores': {
-          'id': 'store-001',
-          'name': 'Grocery Plus',
-        },
-        'plans': {
-          'slug': 'premium',
-        },
+        'stores': {'id': 'store-001', 'name': 'Grocery Plus'},
+        'plans': {'slug': 'premium'},
       };
 
       // Act
@@ -82,10 +77,7 @@ void main() {
     });
 
     test('falls back to store_id when org_id missing', () {
-      final json = {
-        'id': 'sub-005',
-        'store_id': 'store-001',
-      };
+      final json = {'id': 'sub-005', 'store_id': 'store-001'};
 
       final sub = SASubscription.fromJson(json);
 
@@ -116,9 +108,7 @@ void main() {
     });
 
     test('handles missing/null fields gracefully', () {
-      final json = <String, dynamic>{
-        'id': null,
-      };
+      final json = <String, dynamic>{'id': null};
 
       final sub = SASubscription.fromJson(json);
 
@@ -135,10 +125,7 @@ void main() {
     });
 
     test('ignores stores when not a Map', () {
-      final json = {
-        'id': 'sub-008',
-        'stores': 'not-a-map',
-      };
+      final json = {'id': 'sub-008', 'stores': 'not-a-map'};
 
       final sub = SASubscription.fromJson(json);
 
@@ -146,10 +133,7 @@ void main() {
     });
 
     test('ignores plans when not a Map and no plan field', () {
-      final json = {
-        'id': 'sub-009',
-        'plans': 42,
-      };
+      final json = {'id': 'sub-009', 'plans': 42};
 
       final sub = SASubscription.fromJson(json);
 
@@ -157,10 +141,7 @@ void main() {
     });
 
     test('parses amount from int (num coercion)', () {
-      final json = {
-        'id': 'sub-010',
-        'amount': 100,
-      };
+      final json = {'id': 'sub-010', 'amount': 100};
 
       final sub = SASubscription.fromJson(json);
 
@@ -201,11 +182,7 @@ void main() {
     });
 
     test('creates store when storeName is provided', () {
-      final json = {
-        'id': 'sub-sup-002',
-        'org_id': 'org-002',
-        'plan': 'basic',
-      };
+      final json = {'id': 'sub-sup-002', 'org_id': 'org-002', 'plan': 'basic'};
 
       final sub = SASubscription.fromSupabase(json, storeName: 'My Store');
 
@@ -215,10 +192,7 @@ void main() {
     });
 
     test('does not create store when storeName is null', () {
-      final json = {
-        'id': 'sub-sup-003',
-        'org_id': 'org-003',
-      };
+      final json = {'id': 'sub-sup-003', 'org_id': 'org-003'};
 
       final sub = SASubscription.fromSupabase(json);
 
@@ -226,9 +200,7 @@ void main() {
     });
 
     test('handles missing fields gracefully', () {
-      final json = <String, dynamic>{
-        'id': null,
-      };
+      final json = <String, dynamic>{'id': null};
 
       final sub = SASubscription.fromSupabase(json);
 
@@ -242,19 +214,17 @@ void main() {
     });
 
     test(
-        'store id defaults to empty string when org_id is null and storeName provided',
-        () {
-      final json = <String, dynamic>{
-        'id': 'sub-sup-004',
-        'org_id': null,
-      };
+      'store id defaults to empty string when org_id is null and storeName provided',
+      () {
+        final json = <String, dynamic>{'id': 'sub-sup-004', 'org_id': null};
 
-      final sub = SASubscription.fromSupabase(json, storeName: 'Fallback');
+        final sub = SASubscription.fromSupabase(json, storeName: 'Fallback');
 
-      expect(sub.store, isNotNull);
-      expect(sub.store!.id, equals(''));
-      expect(sub.store!.name, equals('Fallback'));
-    });
+        expect(sub.store, isNotNull);
+        expect(sub.store!.id, equals(''));
+        expect(sub.store!.name, equals('Fallback'));
+      },
+    );
   });
 
   group('SASubscription.toJson', () {
@@ -405,10 +375,7 @@ void main() {
 
   group('SASubscriptionStore', () {
     test('fromJson parses complete data', () {
-      final json = {
-        'id': 'store-001',
-        'name': 'Grocery Plus',
-      };
+      final json = {'id': 'store-001', 'name': 'Grocery Plus'};
 
       final store = SASubscriptionStore.fromJson(json);
 
@@ -417,9 +384,7 @@ void main() {
     });
 
     test('fromJson handles missing/null fields', () {
-      final json = <String, dynamic>{
-        'id': null,
-      };
+      final json = <String, dynamic>{'id': null};
 
       final store = SASubscriptionStore.fromJson(json);
 
@@ -477,9 +442,7 @@ void main() {
     });
 
     test('fromJson handles missing/null fields', () {
-      final json = <String, dynamic>{
-        'id': null,
-      };
+      final json = <String, dynamic>{'id': null};
 
       final plan = SAPlan.fromJson(json);
 
@@ -588,15 +551,8 @@ void main() {
         'status': 'paid',
         'issued_at': '2024-06-01T00:00:00Z',
         'due_at': '2024-06-15T00:00:00Z',
-        'stores': {
-          'id': 'store-001',
-          'name': 'Grocery Plus',
-        },
-        'plans': {
-          'name': 'Premium',
-          'slug': 'premium',
-          'monthly_price': 199.0,
-        },
+        'stores': {'id': 'store-001', 'name': 'Grocery Plus'},
+        'plans': {'name': 'Premium', 'slug': 'premium', 'monthly_price': 199.0},
       };
 
       final invoice = SABillingInvoice.fromJson(json);
@@ -615,9 +571,7 @@ void main() {
     });
 
     test('fromJson handles missing/null fields', () {
-      final json = <String, dynamic>{
-        'id': null,
-      };
+      final json = <String, dynamic>{'id': null};
 
       final invoice = SABillingInvoice.fromJson(json);
 
@@ -632,11 +586,7 @@ void main() {
     });
 
     test('fromJson ignores stores/plans when not a Map', () {
-      final json = {
-        'id': 'inv-002',
-        'stores': 'not-a-map',
-        'plans': 42,
-      };
+      final json = {'id': 'inv-002', 'stores': 'not-a-map', 'plans': 42};
 
       final invoice = SABillingInvoice.fromJson(json);
 
@@ -645,10 +595,7 @@ void main() {
     });
 
     test('fromJson coerces int amount to double', () {
-      final json = {
-        'id': 'inv-003',
-        'amount': 250,
-      };
+      final json = {'id': 'inv-003', 'amount': 250};
 
       final invoice = SABillingInvoice.fromJson(json);
 

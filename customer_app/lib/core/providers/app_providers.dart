@@ -35,7 +35,7 @@ final selectedStoreProvider = StateProvider<core.Store?>((ref) => null);
 
 /// Connectivity state stream.
 final connectivityProvider = StreamProvider<bool>((ref) {
-  return Connectivity()
-      .onConnectivityChanged
-      .map((result) => result != ConnectivityResult.none);
+  return Connectivity().onConnectivityChanged.map(
+    (result) => result != ConnectivityResult.none,
+  );
 });

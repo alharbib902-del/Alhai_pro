@@ -12,11 +12,7 @@ class EoqCalculatorCard extends StatelessWidget {
   final EoqResult result;
   final VoidCallback? onOrderNow;
 
-  const EoqCalculatorCard({
-    super.key,
-    required this.result,
-    this.onOrderNow,
-  });
+  const EoqCalculatorCard({super.key, required this.result, this.onOrderNow});
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +24,9 @@ class EoqCalculatorCard extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -51,8 +48,11 @@ class EoqCalculatorCard extends StatelessWidget {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.calculate_rounded,
-                    color: AppColors.primary, size: 20),
+                child: const Icon(
+                  Icons.calculate_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
@@ -83,7 +83,9 @@ class EoqCalculatorCard extends StatelessWidget {
               // EOQ value
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 14, vertical: AlhaiSpacing.xs),
+                  horizontal: 14,
+                  vertical: AlhaiSpacing.xs,
+                ),
                 decoration: BoxDecoration(
                   gradient: const LinearGradient(
                     colors: [Color(0xFF10B981), Color(0xFF059669)],
@@ -102,9 +104,10 @@ class EoqCalculatorCard extends StatelessWidget {
                     const Text(
                       'EOQ',
                       style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w500),
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     Text(
                       '${result.eoq}',
@@ -223,7 +226,9 @@ class EoqCalculatorCard extends StatelessWidget {
                 label: Text(
                   'طلب ${result.eoq} وحدة', // Order X units
                   style: const TextStyle(
-                      fontSize: 13, fontWeight: FontWeight.w600),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,

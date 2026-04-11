@@ -32,8 +32,9 @@ class BundleSuggestionCard extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -57,8 +58,11 @@ class BundleSuggestionCard extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.auto_awesome_rounded,
-                    color: Colors.white, size: 18),
+                child: const Icon(
+                  Icons.auto_awesome_rounded,
+                  color: Colors.white,
+                  size: 18,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
@@ -87,19 +91,25 @@ class BundleSuggestionCard extends StatelessWidget {
               ),
               // Uplift badge
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                      color: AppColors.success.withValues(alpha: 0.3)),
+                    color: AppColors.success.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.trending_up_rounded,
-                        size: 14, color: AppColors.success),
+                    const Icon(
+                      Icons.trending_up_rounded,
+                      size: 14,
+                      color: AppColors.success,
+                    ),
                     const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       '+${bundle.expectedUplift.toStringAsFixed(0)}%',
@@ -118,59 +128,65 @@ class BundleSuggestionCard extends StatelessWidget {
           const SizedBox(height: AlhaiSpacing.md),
 
           // Products list
-          ...bundle.products.map((product) => Padding(
-                padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 32,
-                      height: 32,
-                      decoration: BoxDecoration(
-                        color: AppColors.primary.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: const Icon(Icons.shopping_bag_outlined,
-                          size: 16, color: AppColors.primary),
+          ...bundle.products.map(
+            (product) => Padding(
+              padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+              child: Row(
+                children: [
+                  Container(
+                    width: 32,
+                    height: 32,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(8),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
+                    child: const Icon(
+                      Icons.shopping_bag_outlined,
+                      size: 16,
+                      color: AppColors.primary,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          product.name,
+                          style: TextStyle(
+                            color: isDark
+                                ? Colors.white
+                                : AppColors.textPrimary,
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        if (product.category != null)
                           Text(
-                            product.name,
+                            product.category!,
                             style: TextStyle(
-                              color:
-                                  isDark ? Colors.white : AppColors.textPrimary,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
+                              color: isDark
+                                  ? Colors.white.withValues(alpha: 0.4)
+                                  : AppColors.textMuted,
+                              fontSize: 11,
                             ),
                           ),
-                          if (product.category != null)
-                            Text(
-                              product.category!,
-                              style: TextStyle(
-                                color: isDark
-                                    ? Colors.white.withValues(alpha: 0.4)
-                                    : AppColors.textMuted,
-                                fontSize: 11,
-                              ),
-                            ),
-                        ],
-                      ),
+                      ],
                     ),
-                    Text(
-                      '${product.price.toStringAsFixed(1)} ر.س', // SAR
-                      style: TextStyle(
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.7)
-                            : AppColors.textSecondary,
-                        fontSize: 13,
-                      ),
+                  ),
+                  Text(
+                    '${product.price.toStringAsFixed(1)} ر.س', // SAR
+                    style: TextStyle(
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.7)
+                          : AppColors.textSecondary,
+                      fontSize: 13,
                     ),
-                  ],
-                ),
-              )),
+                  ),
+                ],
+              ),
+            ),
+          ),
 
           // Divider
           Padding(
@@ -240,7 +256,9 @@ class BundleSuggestionCard extends StatelessWidget {
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                  horizontal: AlhaiSpacing.xs,
+                  vertical: AlhaiSpacing.xxs,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -314,8 +332,10 @@ class BundleSuggestionCard extends StatelessWidget {
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                   ),
-                  child:
-                      Text(l10n.cancel, style: const TextStyle(fontSize: 13)),
+                  child: Text(
+                    l10n.cancel,
+                    style: const TextStyle(fontSize: 13),
+                  ),
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
@@ -324,8 +344,10 @@ class BundleSuggestionCard extends StatelessWidget {
                 child: ElevatedButton.icon(
                   onPressed: onActivate,
                   icon: const Icon(Icons.rocket_launch_rounded, size: 16),
-                  label: const Text('تفعيل الحزمة',
-                      style: TextStyle(fontSize: 13)), // Activate Bundle
+                  label: const Text(
+                    'تفعيل الحزمة',
+                    style: TextStyle(fontSize: 13),
+                  ), // Activate Bundle
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: Colors.white,

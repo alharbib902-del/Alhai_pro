@@ -53,8 +53,9 @@ void main() {
 
     test('getPendingCount returns correct count', () async {
       await db.whatsAppMessagesDao.enqueue(makeMessage(id: 'wa-1'));
-      await db.whatsAppMessagesDao
-          .enqueue(makeMessage(id: 'wa-2', phone: '966509876543'));
+      await db.whatsAppMessagesDao.enqueue(
+        makeMessage(id: 'wa-2', phone: '966509876543'),
+      );
 
       final count = await db.whatsAppMessagesDao.getPendingCount();
       expect(count, 2);
@@ -65,8 +66,9 @@ void main() {
 
       await db.whatsAppMessagesDao.markAsSending('wa-1');
 
-      final messages =
-          await db.whatsAppMessagesDao.getAllMessages(storeId: 'store-1');
+      final messages = await db.whatsAppMessagesDao.getAllMessages(
+        storeId: 'store-1',
+      );
       expect(messages.first.status, 'sending');
     });
 
@@ -75,8 +77,9 @@ void main() {
 
       await db.whatsAppMessagesDao.markAsSent('wa-1', 'ext-msg-123');
 
-      final messages =
-          await db.whatsAppMessagesDao.getAllMessages(storeId: 'store-1');
+      final messages = await db.whatsAppMessagesDao.getAllMessages(
+        storeId: 'store-1',
+      );
       expect(messages.first.status, 'sent');
       expect(messages.first.externalMsgId, 'ext-msg-123');
       expect(messages.first.sentAt, isNotNull);
@@ -88,8 +91,9 @@ void main() {
 
       await db.whatsAppMessagesDao.markAsDelivered('wa-1');
 
-      final messages =
-          await db.whatsAppMessagesDao.getAllMessages(storeId: 'store-1');
+      final messages = await db.whatsAppMessagesDao.getAllMessages(
+        storeId: 'store-1',
+      );
       expect(messages.first.status, 'delivered');
       expect(messages.first.deliveredAt, isNotNull);
     });
@@ -99,8 +103,9 @@ void main() {
 
       await db.whatsAppMessagesDao.markAsRead('wa-1');
 
-      final messages =
-          await db.whatsAppMessagesDao.getAllMessages(storeId: 'store-1');
+      final messages = await db.whatsAppMessagesDao.getAllMessages(
+        storeId: 'store-1',
+      );
       expect(messages.first.status, 'read');
       expect(messages.first.readAt, isNotNull);
     });
@@ -110,8 +115,9 @@ void main() {
 
       await db.whatsAppMessagesDao.markAsFailed('wa-1', 'فشل الإرسال');
 
-      final messages =
-          await db.whatsAppMessagesDao.getAllMessages(storeId: 'store-1');
+      final messages = await db.whatsAppMessagesDao.getAllMessages(
+        storeId: 'store-1',
+      );
       expect(messages.first.status, 'failed');
       expect(messages.first.retryCount, 1);
       expect(messages.first.lastError, 'فشل الإرسال');
@@ -121,8 +127,9 @@ void main() {
       await db.whatsAppMessagesDao.enqueue(makeMessage());
       await db.whatsAppMessagesDao.markAsSent('wa-1', 'ext-abc-123');
 
-      final msg =
-          await db.whatsAppMessagesDao.findByExternalMsgId('ext-abc-123');
+      final msg = await db.whatsAppMessagesDao.findByExternalMsgId(
+        'ext-abc-123',
+      );
       expect(msg, isNotNull);
       expect(msg!.id, 'wa-1');
     });
@@ -144,24 +151,27 @@ void main() {
     });
 
     test('getByReference returns messages by reference', () async {
-      await db.whatsAppMessagesDao.enqueue(makeMessage(
-        id: 'wa-1',
-        referenceType: 'sale',
-        referenceId: 'sale-1',
-      ));
+      await db.whatsAppMessagesDao.enqueue(
+        makeMessage(id: 'wa-1', referenceType: 'sale', referenceId: 'sale-1'),
+      );
 
-      final messages =
-          await db.whatsAppMessagesDao.getByReference('sale', 'sale-1');
+      final messages = await db.whatsAppMessagesDao.getByReference(
+        'sale',
+        'sale-1',
+      );
       expect(messages, hasLength(1));
     });
 
     test('getByBatchId returns batch messages', () async {
-      await db.whatsAppMessagesDao
-          .enqueue(makeMessage(id: 'wa-1', batchId: 'batch-1'));
       await db.whatsAppMessagesDao.enqueue(
-          makeMessage(id: 'wa-2', batchId: 'batch-1', phone: '966509999999'));
+        makeMessage(id: 'wa-1', batchId: 'batch-1'),
+      );
       await db.whatsAppMessagesDao.enqueue(
-          makeMessage(id: 'wa-3', batchId: 'batch-2', phone: '966508888888'));
+        makeMessage(id: 'wa-2', batchId: 'batch-1', phone: '966509999999'),
+      );
+      await db.whatsAppMessagesDao.enqueue(
+        makeMessage(id: 'wa-3', batchId: 'batch-2', phone: '966508888888'),
+      );
 
       final batch = await db.whatsAppMessagesDao.getByBatchId('batch-1');
       expect(batch, hasLength(2));
@@ -173,8 +183,9 @@ void main() {
 
       await db.whatsAppMessagesDao.retryMessage('wa-1');
 
-      final messages =
-          await db.whatsAppMessagesDao.getAllMessages(storeId: 'store-1');
+      final messages = await db.whatsAppMessagesDao.getAllMessages(
+        storeId: 'store-1',
+      );
       expect(messages.first.status, 'pending');
       expect(messages.first.retryCount, 0);
     });
@@ -190,43 +201,48 @@ void main() {
     });
 
     test('updateMediaUrl sets media URL', () async {
-      await db.whatsAppMessagesDao.enqueue(makeMessage(
-        messageType: 'image',
-        textContent: null,
-      ));
+      await db.whatsAppMessagesDao.enqueue(
+        makeMessage(messageType: 'image', textContent: null),
+      );
 
-      await db.whatsAppMessagesDao
-          .updateMediaUrl('wa-1', 'https://cdn.example.com/image.jpg');
+      await db.whatsAppMessagesDao.updateMediaUrl(
+        'wa-1',
+        'https://cdn.example.com/image.jpg',
+      );
 
-      final messages =
-          await db.whatsAppMessagesDao.getAllMessages(storeId: 'store-1');
+      final messages = await db.whatsAppMessagesDao.getAllMessages(
+        storeId: 'store-1',
+      );
       expect(messages.first.mediaUrl, 'https://cdn.example.com/image.jpg');
     });
 
     test('cancelBatch removes pending messages in batch', () async {
-      await db.whatsAppMessagesDao.enqueue(makeMessage(
-        id: 'wa-1',
-        batchId: 'batch-1',
-        status: 'pending',
-      ));
-      await db.whatsAppMessagesDao.enqueue(makeMessage(
-        id: 'wa-2',
-        phone: '966509999999',
-        batchId: 'batch-1',
-        status: 'sent',
-      ));
+      await db.whatsAppMessagesDao.enqueue(
+        makeMessage(id: 'wa-1', batchId: 'batch-1', status: 'pending'),
+      );
+      await db.whatsAppMessagesDao.enqueue(
+        makeMessage(
+          id: 'wa-2',
+          phone: '966509999999',
+          batchId: 'batch-1',
+          status: 'sent',
+        ),
+      );
 
       final deleted = await db.whatsAppMessagesDao.cancelBatch('batch-1');
       expect(deleted, 1); // only pending ones
     });
 
     test('getStatusCounts groups by status', () async {
-      await db.whatsAppMessagesDao
-          .enqueue(makeMessage(id: 'wa-1', status: 'pending'));
       await db.whatsAppMessagesDao.enqueue(
-          makeMessage(id: 'wa-2', phone: '966502222222', status: 'pending'));
+        makeMessage(id: 'wa-1', status: 'pending'),
+      );
       await db.whatsAppMessagesDao.enqueue(
-          makeMessage(id: 'wa-3', phone: '966503333333', status: 'sent'));
+        makeMessage(id: 'wa-2', phone: '966502222222', status: 'pending'),
+      );
+      await db.whatsAppMessagesDao.enqueue(
+        makeMessage(id: 'wa-3', phone: '966503333333', status: 'sent'),
+      );
 
       final counts = await db.whatsAppMessagesDao.getStatusCounts();
       expect(counts['pending'], 2);

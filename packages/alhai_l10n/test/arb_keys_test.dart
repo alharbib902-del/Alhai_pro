@@ -27,9 +27,7 @@ void main() {
   // Resolve the l10n directory relative to this test file.
   // The test is at packages/alhai_l10n/test/arb_keys_test.dart
   // ARB files live at packages/alhai_l10n/lib/l10n/
-  final l10nDir = Directory(
-    '${Directory.current.path}/lib/l10n',
-  );
+  final l10nDir = Directory('${Directory.current.path}/lib/l10n');
 
   late Map<String, dynamic> baseArb;
   late Set<String> baseKeys;
@@ -75,7 +73,8 @@ void main() {
 
       final missingKeys = baseKeys.difference(keys);
       if (missingKeys.isNotEmpty) {
-        final msg = 'app_$locale.arb is missing ${missingKeys.length} key(s):\n'
+        final msg =
+            'app_$locale.arb is missing ${missingKeys.length} key(s):\n'
             '  ${missingKeys.take(20).join('\n  ')}'
             '${missingKeys.length > 20 ? '\n  ... and ${missingKeys.length - 20} more' : ''}';
         if (strictLocales.contains(locale)) {

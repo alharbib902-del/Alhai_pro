@@ -104,9 +104,11 @@ void main() {
       final aItems = items.where((i) => i.category == AbcCategory.a).toList();
       final cItems = items.where((i) => i.category == AbcCategory.c).toList();
 
-      final aAvg = aItems.map((i) => i.percentage).reduce((a, b) => a + b) /
+      final aAvg =
+          aItems.map((i) => i.percentage).reduce((a, b) => a + b) /
           aItems.length;
-      final cAvg = cItems.map((i) => i.percentage).reduce((a, b) => a + b) /
+      final cAvg =
+          cItems.map((i) => i.percentage).reduce((a, b) => a + b) /
           cItems.length;
 
       expect(aAvg, greaterThan(cAvg));
@@ -166,8 +168,9 @@ void main() {
 
       final suggestions = await service.getReorderSuggestions('store-1');
 
-      final critical =
-          suggestions.where((s) => s.urgency == UrgencyLevel.critical).toList();
+      final critical = suggestions
+          .where((s) => s.urgency == UrgencyLevel.critical)
+          .toList();
       for (final s in critical) {
         expect(s.currentStock, lessThan(s.reorderPoint));
       }

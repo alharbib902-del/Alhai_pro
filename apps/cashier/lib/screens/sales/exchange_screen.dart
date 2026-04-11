@@ -93,12 +93,14 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
       if (existing >= 0) {
         list[existing] = list[existing].copyWithQty(list[existing].qty + 1);
       } else {
-        list.add(_ExchangeItem(
-          productId: product.id,
-          productName: product.name,
-          price: product.price,
-          qty: 1,
-        ));
+        list.add(
+          _ExchangeItem(
+            productId: product.id,
+            productName: product.name,
+            price: product.price,
+            qty: 1,
+          ),
+        );
       }
       if (isReturn) {
         _returnSearchController.clear();
@@ -155,8 +157,9 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -166,27 +169,25 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(
-                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+            ),
             child: isWideScreen
                 ? Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: _buildReturnSection(isDark, l10n),
-                      ),
+                      Expanded(child: _buildReturnSection(isDark, l10n)),
                       const SizedBox(width: AlhaiSpacing.lg),
-                      Expanded(
-                        child: _buildNewItemsSection(isDark, l10n),
-                      ),
+                      Expanded(child: _buildNewItemsSection(isDark, l10n)),
                     ],
                   )
                 : Column(
                     children: [
                       _buildReturnSection(isDark, l10n),
                       SizedBox(
-                          height: isMediumScreen
-                              ? AlhaiSpacing.lg
-                              : AlhaiSpacing.md),
+                        height: isMediumScreen
+                            ? AlhaiSpacing.lg
+                            : AlhaiSpacing.md,
+                      ),
                       _buildNewItemsSection(isDark, l10n),
                     ],
                   ),
@@ -221,8 +222,11 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                   color: AppColors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.assignment_return_rounded,
-                    color: AppColors.error, size: 20),
+                child: const Icon(
+                  Icons.assignment_return_rounded,
+                  color: AppColors.error,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -240,24 +244,29 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
           if (_returnSearchResults.isNotEmpty)
             _buildSearchResults(_returnSearchResults, isDark, true),
           const SizedBox(height: AlhaiSpacing.sm),
-          ..._returnItems.asMap().entries.map((e) =>
-              _buildExchangeItemCard(e.value, e.key, isDark, l10n, true)),
+          ..._returnItems.asMap().entries.map(
+            (e) => _buildExchangeItemCard(e.value, e.key, isDark, l10n, true),
+          ),
           if (_returnItems.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: AlhaiSpacing.sm),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(l10n.subtotal,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.getTextSecondary(isDark))),
+                  Text(
+                    l10n.subtotal,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.getTextSecondary(isDark),
+                    ),
+                  ),
                   Text(
                     '${_returnTotal.toStringAsFixed(2)} ${l10n.sar}',
                     style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: AppColors.error),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: AppColors.error,
+                    ),
                   ),
                 ],
               ),
@@ -286,8 +295,11 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.add_shopping_cart_rounded,
-                    color: AppColors.success, size: 20),
+                child: const Icon(
+                  Icons.add_shopping_cart_rounded,
+                  color: AppColors.success,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -305,24 +317,29 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
           if (_newSearchResults.isNotEmpty)
             _buildSearchResults(_newSearchResults, isDark, false),
           const SizedBox(height: AlhaiSpacing.sm),
-          ..._newItems.asMap().entries.map((e) =>
-              _buildExchangeItemCard(e.value, e.key, isDark, l10n, false)),
+          ..._newItems.asMap().entries.map(
+            (e) => _buildExchangeItemCard(e.value, e.key, isDark, l10n, false),
+          ),
           if (_newItems.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: AlhaiSpacing.sm),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(l10n.subtotal,
-                      style: TextStyle(
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.getTextSecondary(isDark))),
+                  Text(
+                    l10n.subtotal,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.getTextSecondary(isDark),
+                    ),
+                  ),
                   Text(
                     '${_newTotal.toStringAsFixed(2)} ${l10n.sar}',
                     style: const TextStyle(
-                        fontWeight: FontWeight.w700,
-                        fontSize: 16,
-                        color: AppColors.success),
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
+                      color: AppColors.success,
+                    ),
                   ),
                 ],
               ),
@@ -332,8 +349,12 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
     );
   }
 
-  Widget _buildSearchBar(TextEditingController controller, bool isDark,
-      AppLocalizations l10n, bool isReturn) {
+  Widget _buildSearchBar(
+    TextEditingController controller,
+    bool isDark,
+    AppLocalizations l10n,
+    bool isReturn,
+  ) {
     return TextField(
       controller: controller,
       style: TextStyle(color: AppColors.getTextPrimary(isDark)),
@@ -341,8 +362,10 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
       decoration: InputDecoration(
         hintText: l10n.searchPlaceholder,
         hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
-        prefixIcon:
-            Icon(Icons.search_rounded, color: AppColors.getTextMuted(isDark)),
+        prefixIcon: Icon(
+          Icons.search_rounded,
+          color: AppColors.getTextMuted(isDark),
+        ),
         filled: true,
         fillColor: AppColors.getSurfaceVariant(isDark),
         border: OutlineInputBorder(
@@ -358,13 +381,18 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.md, vertical: 14),
+          horizontal: AlhaiSpacing.md,
+          vertical: 14,
+        ),
       ),
     );
   }
 
   Widget _buildSearchResults(
-      List<ProductsTableData> results, bool isDark, bool isReturn) {
+    List<ProductsTableData> results,
+    bool isDark,
+    bool isReturn,
+  ) {
     return Container(
       margin: const EdgeInsets.only(top: AlhaiSpacing.xs),
       decoration: BoxDecoration(
@@ -386,11 +414,16 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
             borderRadius: BorderRadius.circular(12),
             child: Padding(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+                horizontal: AlhaiSpacing.md,
+                vertical: AlhaiSpacing.sm,
+              ),
               child: Row(
                 children: [
-                  Icon(Icons.inventory_2_outlined,
-                      size: 18, color: AppColors.getTextMuted(isDark)),
+                  Icon(
+                    Icons.inventory_2_outlined,
+                    size: 18,
+                    color: AppColors.getTextMuted(isDark),
+                  ),
                   const SizedBox(width: AlhaiSpacing.sm),
                   Expanded(
                     child: Text(
@@ -419,8 +452,13 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
     );
   }
 
-  Widget _buildExchangeItemCard(_ExchangeItem item, int index, bool isDark,
-      AppLocalizations l10n, bool isReturn) {
+  Widget _buildExchangeItemCard(
+    _ExchangeItem item,
+    int index,
+    bool isDark,
+    AppLocalizations l10n,
+    bool isReturn,
+  ) {
     final total = item.price * item.qty;
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
@@ -429,7 +467,8 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
         color: AppColors.getSurfaceVariant(isDark),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-            color: AppColors.getBorder(isDark).withValues(alpha: 0.5)),
+          color: AppColors.getBorder(isDark).withValues(alpha: 0.5),
+        ),
       ),
       child: Row(
         children: [
@@ -525,7 +564,8 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(
-            top: BorderSide(color: AppColors.getBorder(isDark), width: 1)),
+          top: BorderSide(color: AppColors.getBorder(isDark), width: 1),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
@@ -546,8 +586,9 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                   Text(
                     'Difference',
                     style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.getTextSecondary(isDark)),
+                      fontSize: 12,
+                      color: AppColors.getTextSecondary(isDark),
+                    ),
                   ),
                   Text(
                     '${diff >= 0 ? '+' : ''}${diff.toStringAsFixed(2)} ${l10n.sar}',
@@ -558,15 +599,21 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                     ),
                   ),
                   if (diff > 0)
-                    Text(l10n.customerPaysExtra,
-                        style: TextStyle(
-                            fontSize: 11,
-                            color: AppColors.getTextMuted(isDark)))
+                    Text(
+                      l10n.customerPaysExtra,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: AppColors.getTextMuted(isDark),
+                      ),
+                    )
                   else if (diff < 0)
-                    Text(l10n.refundToCustomer,
-                        style: TextStyle(
-                            fontSize: 11,
-                            color: AppColors.getTextMuted(isDark))),
+                    Text(
+                      l10n.refundToCustomer,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: AppColors.getTextMuted(isDark),
+                      ),
+                    ),
                 ],
               ),
             ),
@@ -581,19 +628,27 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                         width: 20,
                         height: 20,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: AppColors.textOnPrimary),
+                          strokeWidth: 2,
+                          color: AppColors.textOnPrimary,
+                        ),
                       )
                     : const Icon(Icons.swap_horiz_rounded, size: 20),
-                label: Text(l10n.submitExchange,
-                    style: const TextStyle(
-                        fontSize: 15, fontWeight: FontWeight.w600)),
+                label: Text(
+                  l10n.submitExchange,
+                  style: const TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: AppColors.textOnPrimary,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AlhaiSpacing.md,
+                  ),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
@@ -625,7 +680,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
         category: 'sale',
         data: {
           'returnItems': _returnItems.length,
-          'newItems': _newItems.length
+          'newItems': _newItems.length,
         },
       );
 
@@ -669,9 +724,9 @@ class _ExchangeItem {
   });
 
   _ExchangeItem copyWithQty(int newQty) => _ExchangeItem(
-        productId: productId,
-        productName: productName,
-        price: price,
-        qty: newQty,
-      );
+    productId: productId,
+    productName: productName,
+    price: price,
+    qty: newQty,
+  );
 }

@@ -47,10 +47,9 @@ void main() {
 
     test('getStoreTerminals returns all terminals for store', () async {
       await db.posTerminalsDao.upsertTerminal(makeTerminal());
-      await db.posTerminalsDao.upsertTerminal(makeTerminal(
-        id: 'term-2',
-        name: 'كاشير 2',
-      ));
+      await db.posTerminalsDao.upsertTerminal(
+        makeTerminal(id: 'term-2', name: 'كاشير 2'),
+      );
 
       final terminals = await db.posTerminalsDao.getStoreTerminals('store-1');
       expect(terminals, hasLength(2));
@@ -58,11 +57,9 @@ void main() {
 
     test('getActiveTerminals returns only active', () async {
       await db.posTerminalsDao.upsertTerminal(makeTerminal(isActive: true));
-      await db.posTerminalsDao.upsertTerminal(makeTerminal(
-        id: 'term-2',
-        name: 'معطل',
-        isActive: false,
-      ));
+      await db.posTerminalsDao.upsertTerminal(
+        makeTerminal(id: 'term-2', name: 'معطل', isActive: false),
+      );
 
       final active = await db.posTerminalsDao.getActiveTerminals('store-1');
       expect(active, hasLength(1));

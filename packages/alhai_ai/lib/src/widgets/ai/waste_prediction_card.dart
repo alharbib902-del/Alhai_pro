@@ -81,8 +81,8 @@ class WastePredictionCard extends StatelessWidget {
           color: prediction.daysToExpiry <= 3
               ? urgencyColor.withValues(alpha: 0.3)
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.1)
-                  : AppColors.border),
+                    ? Colors.white.withValues(alpha: 0.1)
+                    : AppColors.border),
         ),
         boxShadow: [
           BoxShadow(
@@ -221,8 +221,11 @@ class WastePredictionCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.money_off_rounded,
-                    color: AppColors.error, size: 18),
+                const Icon(
+                  Icons.money_off_rounded,
+                  color: AppColors.error,
+                  size: 18,
+                ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   'الخسارة المتوقعة: ', // Estimated Loss:
@@ -257,7 +260,9 @@ class WastePredictionCard extends StatelessWidget {
                 label: Text(
                   _getActionLabel(l10n),
                   style: const TextStyle(
-                      fontSize: 13, fontWeight: FontWeight.w600),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: actionColor,
@@ -273,8 +278,11 @@ class WastePredictionCard extends StatelessWidget {
             const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.check_circle_rounded,
-                    color: AppColors.success, size: 18),
+                Icon(
+                  Icons.check_circle_rounded,
+                  color: AppColors.success,
+                  size: 18,
+                ),
                 SizedBox(width: 6),
                 Text(
                   'لا إجراء مطلوب حالياً', // No action needed

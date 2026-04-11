@@ -38,8 +38,10 @@ class _MarketPositionChartState extends State<MarketPositionChart>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    _animation =
-        CurvedAnimation(parent: _controller, curve: Curves.easeOutBack);
+    _animation = CurvedAnimation(
+      parent: _controller,
+      curve: Curves.easeOutBack,
+    );
     _controller.forward();
   }
 
@@ -60,9 +62,10 @@ class _MarketPositionChartState extends State<MarketPositionChart>
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.1)
-                : AppColors.border),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : AppColors.border,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -86,8 +89,11 @@ class _MarketPositionChartState extends State<MarketPositionChart>
                     ),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.scatter_plot_rounded,
-                      color: Colors.white, size: 18),
+                  child: const Icon(
+                    Icons.scatter_plot_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
@@ -115,8 +121,10 @@ class _MarketPositionChartState extends State<MarketPositionChart>
                   ),
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
@@ -135,8 +143,12 @@ class _MarketPositionChartState extends State<MarketPositionChart>
           ),
           Expanded(
             child: Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.xxl,
-                  AlhaiSpacing.zero, AlhaiSpacing.mdl, AlhaiSpacing.xxl),
+              padding: EdgeInsetsDirectional.fromSTEB(
+                AlhaiSpacing.xxl,
+                AlhaiSpacing.zero,
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xxl,
+              ),
               child: AnimatedBuilder(
                 animation: _animation,
                 builder: (context, _) {
@@ -148,8 +160,10 @@ class _MarketPositionChartState extends State<MarketPositionChart>
                         },
                         onExit: (_) => setState(() => _hoveredIndex = null),
                         child: CustomPaint(
-                          size:
-                              Size(constraints.maxWidth, constraints.maxHeight),
+                          size: Size(
+                            constraints.maxWidth,
+                            constraints.maxHeight,
+                          ),
                           painter: _MarketPositionPainter(
                             points: widget.position.competitors,
                             animationValue: _animation.value,
@@ -173,8 +187,12 @@ class _MarketPositionChartState extends State<MarketPositionChart>
           ),
           // Legend
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.md,
-                AlhaiSpacing.zero, AlhaiSpacing.md, AlhaiSpacing.sm),
+            padding: EdgeInsetsDirectional.fromSTEB(
+              AlhaiSpacing.md,
+              AlhaiSpacing.zero,
+              AlhaiSpacing.md,
+              AlhaiSpacing.sm,
+            ),
             child: Wrap(
               spacing: 16,
               runSpacing: 6,
@@ -197,8 +215,9 @@ class _MarketPositionChartState extends State<MarketPositionChart>
                         boxShadow: point.isUs
                             ? [
                                 BoxShadow(
-                                    color: color.withValues(alpha: 0.4),
-                                    blurRadius: 4)
+                                  color: color.withValues(alpha: 0.4),
+                                  blurRadius: 4,
+                                ),
                               ]
                             : null,
                       ),
@@ -208,8 +227,9 @@ class _MarketPositionChartState extends State<MarketPositionChart>
                       point.name,
                       style: TextStyle(
                         fontSize: 11,
-                        fontWeight:
-                            point.isUs ? FontWeight.w700 : FontWeight.w500,
+                        fontWeight: point.isUs
+                            ? FontWeight.w700
+                            : FontWeight.w500,
                         color: isDark
                             ? Colors.white.withValues(alpha: 0.7)
                             : AppColors.textSecondary,
@@ -297,8 +317,9 @@ class _MarketPositionPainter extends CustomPainter {
 
   void _drawGrid(Canvas canvas, Size size) {
     final paint = Paint()
-      ..color =
-          isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.grey200
+      ..color = isDark
+          ? Colors.white.withValues(alpha: 0.06)
+          : AppColors.grey200
       ..strokeWidth = 1;
 
     for (int i = 0; i <= 4; i++) {
@@ -310,25 +331,33 @@ class _MarketPositionPainter extends CustomPainter {
 
     // Center lines (dashed)
     final centerPaint = Paint()
-      ..color =
-          isDark ? Colors.white.withValues(alpha: 0.15) : AppColors.grey300
+      ..color = isDark
+          ? Colors.white.withValues(alpha: 0.15)
+          : AppColors.grey300
       ..strokeWidth = 1.5;
 
     final cx = size.width / 2;
     final cy = size.height / 2;
     for (double i = 0; i < size.width; i += 8) {
       canvas.drawLine(
-          Offset(i, cy), Offset(min(i + 4, size.width), cy), centerPaint);
+        Offset(i, cy),
+        Offset(min(i + 4, size.width), cy),
+        centerPaint,
+      );
     }
     for (double i = 0; i < size.height; i += 8) {
       canvas.drawLine(
-          Offset(cx, i), Offset(cx, min(i + 4, size.height)), centerPaint);
+        Offset(cx, i),
+        Offset(cx, min(i + 4, size.height)),
+        centerPaint,
+      );
     }
   }
 
   void _drawAxisLabels(Canvas canvas, Size size) {
-    final color =
-        isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted;
+    final color = isDark
+        ? Colors.white.withValues(alpha: 0.4)
+        : AppColors.textMuted;
 
     // X axis labels
     final xLabels = [lowLabel, '', mediumLabel, '', highLabel];
@@ -336,11 +365,15 @@ class _MarketPositionPainter extends CustomPainter {
       if (xLabels[i].isEmpty) continue;
       final tp = TextPainter(
         text: TextSpan(
-            text: xLabels[i], style: TextStyle(color: color, fontSize: 10)),
+          text: xLabels[i],
+          style: TextStyle(color: color, fontSize: 10),
+        ),
         textDirection: TextDirection.rtl,
       )..layout();
       tp.paint(
-          canvas, Offset(size.width * i / 4 - tp.width / 2, size.height + 8));
+        canvas,
+        Offset(size.width * i / 4 - tp.width / 2, size.height + 8),
+      );
     }
 
     // Y axis labels
@@ -349,31 +382,43 @@ class _MarketPositionPainter extends CustomPainter {
       if (yLabels[i].isEmpty) continue;
       final tp = TextPainter(
         text: TextSpan(
-            text: yLabels[i], style: TextStyle(color: color, fontSize: 10)),
+          text: yLabels[i],
+          style: TextStyle(color: color, fontSize: 10),
+        ),
         textDirection: TextDirection.rtl,
       )..layout();
       tp.paint(
-          canvas, Offset(-tp.width - 6, size.height * i / 4 - tp.height / 2));
+        canvas,
+        Offset(-tp.width - 6, size.height * i / 4 - tp.height / 2),
+      );
     }
 
     // X axis title
     final xTitle = TextPainter(
       text: TextSpan(
         text: 'السعر ',
-        style:
-            TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600),
+        style: TextStyle(
+          color: color,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        ),
       ),
       textDirection: TextDirection.rtl,
     )..layout();
     xTitle.paint(
-        canvas, Offset(size.width / 2 - xTitle.width / 2, size.height + 22));
+      canvas,
+      Offset(size.width / 2 - xTitle.width / 2, size.height + 22),
+    );
 
     // Y axis title
     final yTitle = TextPainter(
       text: TextSpan(
         text: qualityLabel,
-        style:
-            TextStyle(color: color, fontSize: 11, fontWeight: FontWeight.w600),
+        style: TextStyle(
+          color: color,
+          fontSize: 11,
+          fontWeight: FontWeight.w600,
+        ),
       ),
       textDirection: TextDirection.rtl,
     )..layout();
@@ -385,8 +430,9 @@ class _MarketPositionPainter extends CustomPainter {
   }
 
   void _drawQuadrantLabels(Canvas canvas, Size size) {
-    final color =
-        isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.grey200;
+    final color = isDark
+        ? Colors.white.withValues(alpha: 0.08)
+        : AppColors.grey200;
     final textColor = isDark
         ? Colors.white.withValues(alpha: 0.15)
         : AppColors.textMuted.withValues(alpha: 0.5);
@@ -396,25 +442,25 @@ class _MarketPositionPainter extends CustomPainter {
         'label': 'قيمة ممتازة',
         'x': size.width * 0.20,
         'y': size.height * 0.20,
-        'color': AppColors.success
+        'color': AppColors.success,
       },
       {
         'label': luxuryLabel,
         'x': size.width * 0.75,
         'y': size.height * 0.20,
-        'color': AppColors.info
+        'color': AppColors.info,
       },
       {
         'label': economicLabel,
         'x': size.width * 0.20,
         'y': size.height * 0.80,
-        'color': AppColors.warning
+        'color': AppColors.warning,
       },
       {
         'label': 'مبالغ فيه',
         'x': size.width * 0.75,
         'y': size.height * 0.80,
-        'color': AppColors.error
+        'color': AppColors.error,
       },
     ];
 
@@ -440,11 +486,12 @@ class _MarketPositionPainter extends CustomPainter {
       );
       canvas.drawRRect(bgRect, Paint()..color = color);
       tp.paint(
-          canvas,
-          Offset(
-            (q['x'] as double) - tp.width / 2,
-            (q['y'] as double) - tp.height / 2,
-          ));
+        canvas,
+        Offset(
+          (q['x'] as double) - tp.width / 2,
+          (q['y'] as double) - tp.height / 2,
+        ),
+      );
     }
   }
 
@@ -551,11 +598,12 @@ class _MarketPositionPainter extends CustomPainter {
             ..strokeWidth = 1,
         );
         tooltipTp.paint(
-            canvas,
-            Offset(
-              x - tooltipTp.width / 2,
-              y - actualRadius - tooltipTp.height - 10,
-            ));
+          canvas,
+          Offset(
+            x - tooltipTp.width / 2,
+            y - actualRadius - tooltipTp.height - 10,
+          ),
+        );
       }
     }
   }

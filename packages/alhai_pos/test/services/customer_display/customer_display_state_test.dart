@@ -13,16 +13,26 @@ void main() {
       expect(CustomerDisplayPhase.values, hasLength(7));
       expect(CustomerDisplayPhase.values, contains(CustomerDisplayPhase.idle));
       expect(CustomerDisplayPhase.values, contains(CustomerDisplayPhase.cart));
-      expect(CustomerDisplayPhase.values,
-          contains(CustomerDisplayPhase.phoneEntry));
       expect(
-          CustomerDisplayPhase.values, contains(CustomerDisplayPhase.payment));
-      expect(CustomerDisplayPhase.values,
-          contains(CustomerDisplayPhase.nfcWaiting));
+        CustomerDisplayPhase.values,
+        contains(CustomerDisplayPhase.phoneEntry),
+      );
       expect(
-          CustomerDisplayPhase.values, contains(CustomerDisplayPhase.success));
+        CustomerDisplayPhase.values,
+        contains(CustomerDisplayPhase.payment),
+      );
       expect(
-          CustomerDisplayPhase.values, contains(CustomerDisplayPhase.failure));
+        CustomerDisplayPhase.values,
+        contains(CustomerDisplayPhase.nfcWaiting),
+      );
+      expect(
+        CustomerDisplayPhase.values,
+        contains(CustomerDisplayPhase.success),
+      );
+      expect(
+        CustomerDisplayPhase.values,
+        contains(CustomerDisplayPhase.failure),
+      );
     });
   });
 
@@ -257,9 +267,7 @@ void main() {
     });
 
     test('copyWith يغير المرحلة', () {
-      const original = CustomerDisplayState(
-        phase: CustomerDisplayPhase.cart,
-      );
+      const original = CustomerDisplayState(phase: CustomerDisplayPhase.cart);
 
       final copied = original.copyWith(
         phase: CustomerDisplayPhase.nfcWaiting,
@@ -392,10 +400,7 @@ void main() {
     });
 
     test('fromJson يتعامل مع مرحلة غير معروفة ويعود لـ idle', () {
-      final json = <String, dynamic>{
-        'phase': 'unknown_phase',
-        'storeName': '',
-      };
+      final json = <String, dynamic>{'phase': 'unknown_phase', 'storeName': ''};
 
       final state = CustomerDisplayState.fromJson(json);
 
@@ -414,10 +419,7 @@ void main() {
     });
 
     test('fromJson يتعامل مع nfcStatus بقيمة null', () {
-      final json = <String, dynamic>{
-        'phase': 'idle',
-        'nfcStatus': null,
-      };
+      final json = <String, dynamic>{'phase': 'idle', 'nfcStatus': null};
 
       final state = CustomerDisplayState.fromJson(json);
 
@@ -425,10 +427,7 @@ void main() {
     });
 
     test('fromJson يتعامل مع قائمة عناصر فارغة', () {
-      final json = <String, dynamic>{
-        'phase': 'cart',
-        'items': <dynamic>[],
-      };
+      final json = <String, dynamic>{'phase': 'cart', 'items': <dynamic>[]};
 
       final state = CustomerDisplayState.fromJson(json);
 
@@ -436,9 +435,7 @@ void main() {
     });
 
     test('fromJson يتعامل مع عدم وجود قائمة عناصر', () {
-      final json = <String, dynamic>{
-        'phase': 'cart',
-      };
+      final json = <String, dynamic>{'phase': 'cart'};
 
       final state = CustomerDisplayState.fromJson(json);
 

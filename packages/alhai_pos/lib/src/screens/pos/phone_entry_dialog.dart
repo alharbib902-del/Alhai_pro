@@ -26,9 +26,9 @@ class PhoneEntryResult {
 
   const PhoneEntryResult({this.phone, this.customerId, this.customerName});
   const PhoneEntryResult.skipped()
-      : phone = null,
-        customerId = null,
-        customerName = null;
+    : phone = null,
+      customerId = null,
+      customerName = null;
 
   bool get wasSkipped => phone == null;
   bool get hasExistingCustomer => customerId != null;
@@ -42,10 +42,7 @@ class PhoneEntryResult {
 class PhoneEntryDialog extends StatefulWidget {
   final String storeId;
 
-  const PhoneEntryDialog({
-    super.key,
-    required this.storeId,
-  });
+  const PhoneEntryDialog({super.key, required this.storeId});
 
   /// عرض النافذة وإرجاع النتيجة
   static Future<PhoneEntryResult> show(
@@ -129,8 +126,10 @@ class _PhoneEntryDialogState extends State<PhoneEntryDialog> {
     // بدء البحث بتأخير
     _debounceTimer?.cancel();
     if (sanitized.length >= 3) {
-      _debounceTimer =
-          Timer(_debounceDuration, () => _searchCustomers(sanitized));
+      _debounceTimer = Timer(
+        _debounceDuration,
+        () => _searchCustomers(sanitized),
+      );
     } else {
       setState(() {
         _matchedCustomers = [];
@@ -191,19 +190,23 @@ class _PhoneEntryDialogState extends State<PhoneEntryDialog> {
     setState(() => _isSearching = true);
 
     try {
-      final results =
-          await _customersDao.searchCustomers(query, widget.storeId);
+      final results = await _customersDao.searchCustomers(
+        query,
+        widget.storeId,
+      );
       if (!mounted) return;
 
       setState(() {
         _matchedCustomers = results
             .where((c) => c.phone != null && c.phone!.isNotEmpty)
             .take(_maxResults)
-            .map((c) => _MatchedCustomer(
-                  id: c.id,
-                  name: c.name,
-                  phone: c.phone ?? '',
-                ))
+            .map(
+              (c) => _MatchedCustomer(
+                id: c.id,
+                name: c.name,
+                phone: c.phone ?? '',
+              ),
+            )
             .toList();
         _isSearching = false;
       });
@@ -242,10 +245,7 @@ class _PhoneEntryDialogState extends State<PhoneEntryDialog> {
     }
 
     if (phone.isNotEmpty) {
-      Navigator.pop(
-        context,
-        PhoneEntryResult(phone: phone),
-      );
+      Navigator.pop(context, PhoneEntryResult(phone: phone));
       return;
     }
 
@@ -332,10 +332,7 @@ class _PhoneEntryDialogState extends State<PhoneEntryDialog> {
               if (_isSearching)
                 const Padding(
                   padding: EdgeInsets.symmetric(vertical: AppSizes.sm),
-                  child: SizedBox(
-                    height: 2,
-                    child: LinearProgressIndicator(),
-                  ),
+                  child: SizedBox(height: 2, child: LinearProgressIndicator()),
                 ),
 
               const SizedBox(height: AppSizes.sm),
@@ -374,10 +371,7 @@ class _PhoneEntryDialogState extends State<PhoneEntryDialog> {
         children: [
           const Icon(Icons.phone_android, size: 22),
           const SizedBox(width: AppSizes.sm),
-          Text(
-            l10n.customerPhoneNumber,
-            style: AppTypography.headlineSmall,
-          ),
+          Text(l10n.customerPhoneNumber, style: AppTypography.headlineSmall),
           const Spacer(),
           IconButton(
             onPressed: _skip,
@@ -405,9 +399,7 @@ class _PhoneEntryDialogState extends State<PhoneEntryDialog> {
         textAlign: TextAlign.left,
         keyboardType: TextInputType.phone,
         maxLength: 15,
-        inputFormatters: [
-          FilteringTextInputFormatter.allow(RegExp(r'[\d+]')),
-        ],
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'[\d+]'))],
         decoration: InputDecoration(
           counterText: '',
           hintText: '05xxxxxxxx',
@@ -436,9 +428,7 @@ class _PhoneEntryDialogState extends State<PhoneEntryDialog> {
             borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
           ),
         ),
-        style: AppTypography.titleLarge.copyWith(
-          letterSpacing: 1.5,
-        ),
+        style: AppTypography.titleLarge.copyWith(letterSpacing: 1.5),
         onSubmitted: (_) => _proceed(),
       ),
     );
@@ -450,17 +440,11 @@ class _PhoneEntryDialogState extends State<PhoneEntryDialog> {
       padding: const EdgeInsets.symmetric(horizontal: AppSizes.lg),
       child: Row(
         children: [
-          Icon(
-            Icons.info_outline,
-            size: 14,
-            color: AppColors.warning,
-          ),
+          Icon(Icons.info_outline, size: 14, color: AppColors.warning),
           const SizedBox(width: AppSizes.xs),
           Text(
             _validationHint!,
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.warning,
-            ),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.warning),
           ),
         ],
       ),
@@ -480,17 +464,11 @@ class _PhoneEntryDialogState extends State<PhoneEntryDialog> {
         decoration: BoxDecoration(
           color: AppColors.successSurface,
           borderRadius: BorderRadius.circular(AppSizes.radiusMd),
-          border: Border.all(
-            color: AppColors.success.withValues(alpha: 0.3),
-          ),
+          border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
         ),
         child: Row(
           children: [
-            Icon(
-              Icons.check_circle,
-              color: AppColors.success,
-              size: 20,
-            ),
+            Icon(Icons.check_circle, color: AppColors.success, size: 20),
             const SizedBox(width: AppSizes.sm),
             Expanded(
               child: Column(
@@ -557,7 +535,9 @@ class _PhoneEntryDialogState extends State<PhoneEntryDialog> {
 
   /// عنصر عميل في قائمة النتائج
   Widget _buildCustomerTile(
-      _MatchedCustomer customer, ColorScheme colorScheme) {
+    _MatchedCustomer customer,
+    ColorScheme colorScheme,
+  ) {
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSizes.xs),
       child: Material(

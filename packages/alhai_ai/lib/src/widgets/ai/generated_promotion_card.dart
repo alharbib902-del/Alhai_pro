@@ -29,7 +29,8 @@ class GeneratedPromotionCard extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final typeColor = Color(
-        AiPromotionDesignerService.getPromotionTypeColorValue(promotion.type));
+      AiPromotionDesignerService.getPromotionTypeColorValue(promotion.type),
+    );
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
 
@@ -47,8 +48,8 @@ class GeneratedPromotionCard extends StatelessWidget {
               color: isSelected
                   ? typeColor
                   : (isDark
-                      ? Colors.white.withValues(alpha: 0.08)
-                      : AppColors.border),
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : AppColors.border),
               width: isSelected ? 2 : 1,
             ),
             boxShadow: [
@@ -72,8 +73,10 @@ class GeneratedPromotionCard extends StatelessWidget {
               Row(
                 children: [
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
                     decoration: BoxDecoration(
                       color: typeColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(8),
@@ -89,7 +92,8 @@ class GeneratedPromotionCard extends StatelessWidget {
                         const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           AiPromotionDesignerService.getPromotionTypeLabel(
-                              promotion.type),
+                            promotion.type,
+                          ),
                           style: TextStyle(
                             color: typeColor,
                             fontSize: 11,
@@ -103,8 +107,9 @@ class GeneratedPromotionCard extends StatelessWidget {
                   // شارة الثقة
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.xs,
-                        vertical: AlhaiSpacing.xxs),
+                      horizontal: AlhaiSpacing.xs,
+                      vertical: AlhaiSpacing.xxs,
+                    ),
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.05)
@@ -171,7 +176,9 @@ class GeneratedPromotionCard extends StatelessWidget {
                 children: promotion.products.take(3).map((product) {
                   return Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.xs, vertical: 3),
+                      horizontal: AlhaiSpacing.xs,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.06)
@@ -180,10 +187,7 @@ class GeneratedPromotionCard extends StatelessWidget {
                     ),
                     child: Text(
                       product,
-                      style: TextStyle(
-                        color: subtextColor,
-                        fontSize: 10,
-                      ),
+                      style: TextStyle(color: subtextColor, fontSize: 10),
                     ),
                   );
                 }).toList(),
@@ -244,13 +248,16 @@ class GeneratedPromotionCard extends StatelessWidget {
                               : AppColors.border,
                         ),
                         padding: const EdgeInsets.symmetric(
-                            vertical: AlhaiSpacing.xs),
+                          vertical: AlhaiSpacing.xs,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
-                      child: Text(l10n.details,
-                          style: const TextStyle(fontSize: 12)),
+                      child: Text(
+                        l10n.details,
+                        style: const TextStyle(fontSize: 12),
+                      ),
                     ),
                   ),
                   const SizedBox(width: AlhaiSpacing.xs),
@@ -261,14 +268,17 @@ class GeneratedPromotionCard extends StatelessWidget {
                         backgroundColor: typeColor,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
-                            vertical: AlhaiSpacing.xs),
+                          vertical: AlhaiSpacing.xs,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
                         ),
                         elevation: 0,
                       ),
-                      child: Text(l10n.apply,
-                          style: const TextStyle(fontSize: 12)),
+                      child: Text(
+                        l10n.apply,
+                        style: const TextStyle(fontSize: 12),
+                      ),
                     ),
                   ),
                 ],
@@ -281,7 +291,11 @@ class GeneratedPromotionCard extends StatelessWidget {
   }
 
   Widget _buildMetric(
-      String label, String value, Color valueColor, Color labelColor) {
+    String label,
+    String value,
+    Color valueColor,
+    Color labelColor,
+  ) {
     return Expanded(
       child: Column(
         children: [
@@ -294,10 +308,7 @@ class GeneratedPromotionCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AlhaiSpacing.xxxs),
-          Text(
-            label,
-            style: TextStyle(color: labelColor, fontSize: 10),
-          ),
+          Text(label, style: TextStyle(color: labelColor, fontSize: 10)),
         ],
       ),
     );

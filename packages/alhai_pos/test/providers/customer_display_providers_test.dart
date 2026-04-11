@@ -109,9 +109,7 @@ void main() {
     });
 
     test('يقبل تعديل حقل واحد فقط', () {
-      const settings = CashierFeatureSettings(
-        enableCustomerDisplay: true,
-      );
+      const settings = CashierFeatureSettings(enableCustomerDisplay: true);
 
       expect(settings.enableCustomerDisplay, isTrue);
       // باقي القيم افتراضية
@@ -200,25 +198,19 @@ void main() {
     });
 
     test('feature_nfc_payment: "true" يفعّل NFC', () {
-      final settings = parseSettingsFromMap({
-        'feature_nfc_payment': 'true',
-      });
+      final settings = parseSettingsFromMap({'feature_nfc_payment': 'true'});
 
       expect(settings.enableNfcPayment, isTrue);
     });
 
     test('nfc_timeout_seconds يُحلل كعدد صحيح', () {
-      final settings = parseSettingsFromMap({
-        'nfc_timeout_seconds': '45',
-      });
+      final settings = parseSettingsFromMap({'nfc_timeout_seconds': '45'});
 
       expect(settings.nfcTimeoutSeconds, equals(45));
     });
 
     test('nfc_timeout_seconds غير صالح يعود لـ 30', () {
-      final settings = parseSettingsFromMap({
-        'nfc_timeout_seconds': 'abc',
-      });
+      final settings = parseSettingsFromMap({'nfc_timeout_seconds': 'abc'});
 
       expect(settings.nfcTimeoutSeconds, equals(30));
     });

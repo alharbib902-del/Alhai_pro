@@ -44,7 +44,8 @@ class AddressesDatasource {
     if (params.isDefault) {
       await _client
           .from('addresses')
-          .update({'is_default': false}).eq('user_id', _userId);
+          .update({'is_default': false})
+          .eq('user_id', _userId);
     }
 
     final data = await _client

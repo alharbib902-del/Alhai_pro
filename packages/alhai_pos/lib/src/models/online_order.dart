@@ -77,13 +77,13 @@ class OrderItem {
 
   /// تحويل لـ JSON
   Map<String, dynamic> toJson() => {
-        'productId': productId,
-        'productName': productName,
-        'quantity': quantity,
-        'unitPrice': unitPrice,
-        'discount': discount,
-        'notes': notes,
-      };
+    'productId': productId,
+    'productName': productName,
+    'quantity': quantity,
+    'unitPrice': unitPrice,
+    'discount': discount,
+    'notes': notes,
+  };
 
   /// إنشاء من JSON
   factory OrderItem.fromJson(Map<String, dynamic> json) {
@@ -221,28 +221,28 @@ class OnlineOrder {
 
   /// تحويل لـ JSON
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'storeId': storeId,
-        'customerId': customerId,
-        'customerName': customerName,
-        'customerPhone': customerPhone,
-        'customerAddress': customerAddress,
-        'items': items.map((e) => e.toJson()).toList(),
-        'subtotal': subtotal,
-        'deliveryFee': deliveryFee,
-        'discount': discount,
-        'total': total,
-        'status': status.name,
-        'paymentStatus': paymentStatus.name,
-        'createdAt': createdAt.toIso8601String(),
-        'acceptedAt': acceptedAt?.toIso8601String(),
-        'preparedAt': preparedAt?.toIso8601String(),
-        'deliveredAt': deliveredAt?.toIso8601String(),
-        'driverId': driverId,
-        'driverName': driverName,
-        'notes': notes,
-        'cancellationReason': cancellationReason,
-      };
+    'id': id,
+    'storeId': storeId,
+    'customerId': customerId,
+    'customerName': customerName,
+    'customerPhone': customerPhone,
+    'customerAddress': customerAddress,
+    'items': items.map((e) => e.toJson()).toList(),
+    'subtotal': subtotal,
+    'deliveryFee': deliveryFee,
+    'discount': discount,
+    'total': total,
+    'status': status.name,
+    'paymentStatus': paymentStatus.name,
+    'createdAt': createdAt.toIso8601String(),
+    'acceptedAt': acceptedAt?.toIso8601String(),
+    'preparedAt': preparedAt?.toIso8601String(),
+    'deliveredAt': deliveredAt?.toIso8601String(),
+    'driverId': driverId,
+    'driverName': driverName,
+    'notes': notes,
+    'cancellationReason': cancellationReason,
+  };
 
   /// إنشاء من JSON
   factory OnlineOrder.fromJson(Map<String, dynamic> json) {

@@ -24,8 +24,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const ConflictResolutionScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const ConflictResolutionScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(ConflictResolutionScreen), findsOneWidget);
@@ -39,8 +40,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const ConflictResolutionScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const ConflictResolutionScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.refresh), findsWidgets);
@@ -54,8 +56,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const ConflictResolutionScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const ConflictResolutionScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.check_circle), findsWidgets);

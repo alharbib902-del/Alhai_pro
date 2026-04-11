@@ -56,16 +56,18 @@ class _UsersPermissionsScreenState
         if (mounted) {
           setState(() {
             _users = users
-                .map((u) => _UserInfo(
-                      id: u.id,
-                      name: u.name,
-                      email: u.email ?? '',
-                      phone: u.phone ?? '',
-                      role: u.role,
-                      isActive: u.isActive,
-                      avatarUrl: u.avatar,
-                      lastLogin: u.lastLoginAt,
-                    ))
+                .map(
+                  (u) => _UserInfo(
+                    id: u.id,
+                    name: u.name,
+                    email: u.email ?? '',
+                    phone: u.phone ?? '',
+                    role: u.role,
+                    isActive: u.isActive,
+                    avatarUrl: u.avatar,
+                    lastLogin: u.lastLoginAt,
+                  ),
+                )
                 .toList();
           });
         }
@@ -168,7 +170,9 @@ class _UsersPermissionsScreenState
             const SizedBox(height: AlhaiSpacing.xxs),
             Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
+                horizontal: AlhaiSpacing.sm,
+                vertical: AlhaiSpacing.xxs,
+              ),
               decoration: BoxDecoration(
                 color: _getRoleColor(user.role).withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
@@ -183,10 +187,18 @@ class _UsersPermissionsScreenState
               ),
             ),
             const SizedBox(height: AlhaiSpacing.mdl),
-            _detailRow(Icons.email_rounded, 'Email',
-                user.email.isNotEmpty ? user.email : '-', isDark),
-            _detailRow(Icons.phone_rounded, l10n.phone,
-                user.phone.isNotEmpty ? user.phone : '-', isDark),
+            _detailRow(
+              Icons.email_rounded,
+              'Email',
+              user.email.isNotEmpty ? user.email : '-',
+              isDark,
+            ),
+            _detailRow(
+              Icons.phone_rounded,
+              l10n.phone,
+              user.phone.isNotEmpty ? user.phone : '-',
+              isDark,
+            ),
             _detailRow(
               Icons.circle,
               l10n.status,
@@ -208,13 +220,17 @@ class _UsersPermissionsScreenState
               decoration: BoxDecoration(
                 color: AppColors.info.withValues(alpha: isDark ? 0.12 : 0.06),
                 borderRadius: BorderRadius.circular(10),
-                border:
-                    Border.all(color: AppColors.info.withValues(alpha: 0.3)),
+                border: Border.all(
+                  color: AppColors.info.withValues(alpha: 0.3),
+                ),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.info_outline_rounded,
-                      color: AppColors.info, size: 18),
+                  const Icon(
+                    Icons.info_outline_rounded,
+                    color: AppColors.info,
+                    size: 18,
+                  ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
@@ -304,14 +320,22 @@ class _UsersPermissionsScreenState
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context,
-                      message: _error!, onRetry: _loadUsers)
-                  : SingleChildScrollView(
-                      padding: EdgeInsets.all(
-                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: _buildContent(
-                          isWideScreen, isMediumScreen, isDark, l10n),
-                    ),
+              ? AppErrorState.general(
+                  context,
+                  message: _error!,
+                  onRetry: _loadUsers,
+                )
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(
+                    isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                  ),
+                  child: _buildContent(
+                    isWideScreen,
+                    isMediumScreen,
+                    isDark,
+                    l10n,
+                  ),
+                ),
         ),
       ],
     );
@@ -450,7 +474,9 @@ class _UsersPermissionsScreenState
               onTap: () => setState(() => _selectedRole = role),
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                  horizontal: AlhaiSpacing.md,
+                  vertical: AlhaiSpacing.xs,
+                ),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? AppColors.primary.withValues(alpha: 0.1)
@@ -466,8 +492,9 @@ class _UsersPermissionsScreenState
                   roleLabels[role] ?? role,
                   style: TextStyle(
                     fontSize: 13,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.w600
+                        : FontWeight.normal,
                     color: isSelected
                         ? AppColors.primary
                         : AppColors.getTextSecondary(isDark),
@@ -506,7 +533,9 @@ class _UsersPermissionsScreenState
           // Table header
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.mdl, vertical: 14),
+              horizontal: AlhaiSpacing.mdl,
+              vertical: 14,
+            ),
             decoration: BoxDecoration(
               color: AppColors.getSurfaceVariant(isDark),
               borderRadius: const BorderRadius.only(
@@ -517,19 +546,21 @@ class _UsersPermissionsScreenState
             child: Row(
               children: [
                 Expanded(
-                    flex: 3,
-                    child:
-                        Text(l10n.userName, style: _tableHeaderStyle(isDark))),
+                  flex: 3,
+                  child: Text(l10n.userName, style: _tableHeaderStyle(isDark)),
+                ),
                 Expanded(
-                    flex: 2,
-                    child: Text(l10n.role, style: _tableHeaderStyle(isDark))),
+                  flex: 2,
+                  child: Text(l10n.role, style: _tableHeaderStyle(isDark)),
+                ),
                 Expanded(
-                    flex: 2,
-                    child: Text(l10n.status, style: _tableHeaderStyle(isDark))),
+                  flex: 2,
+                  child: Text(l10n.status, style: _tableHeaderStyle(isDark)),
+                ),
                 Expanded(
-                    flex: 2,
-                    child:
-                        Text(l10n.lastLogin, style: _tableHeaderStyle(isDark))),
+                  flex: 2,
+                  child: Text(l10n.lastLogin, style: _tableHeaderStyle(isDark)),
+                ),
               ],
             ),
           ),
@@ -539,7 +570,9 @@ class _UsersPermissionsScreenState
               onTap: () => _showUserDetail(user, isDark, l10n),
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.mdl, vertical: 14),
+                  horizontal: AlhaiSpacing.mdl,
+                  vertical: 14,
+                ),
                 decoration: BoxDecoration(
                   border: index < users.length - 1
                       ? Border(
@@ -557,8 +590,9 @@ class _UsersPermissionsScreenState
                         children: [
                           CircleAvatar(
                             radius: 16,
-                            backgroundColor: _getRoleColor(user.role)
-                                .withValues(alpha: 0.15),
+                            backgroundColor: _getRoleColor(
+                              user.role,
+                            ).withValues(alpha: 0.15),
                             child: Text(
                               user.name.isNotEmpty
                                   ? user.name[0].toUpperCase()
@@ -687,11 +721,13 @@ class _UsersPermissionsScreenState
                     children: [
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: AlhaiSpacing.xs,
-                            vertical: AlhaiSpacing.xxxs),
+                          horizontal: AlhaiSpacing.xs,
+                          vertical: AlhaiSpacing.xxxs,
+                        ),
                         decoration: BoxDecoration(
-                          color:
-                              _getRoleColor(user.role).withValues(alpha: 0.1),
+                          color: _getRoleColor(
+                            user.role,
+                          ).withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(

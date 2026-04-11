@@ -37,12 +37,12 @@ class _FakeAuthResponse extends Fake implements supa.AuthResponse {
     String accessToken = 'test-access-token',
     String refreshToken = 'test-refresh-token',
     int expiresAt = 1700000000,
-  })  : _user = _FakeUser(id: userId, phone: phone),
-        _session = _FakeSession(
-          accessToken: accessToken,
-          refreshToken: refreshToken,
-          expiresAt: expiresAt,
-        );
+  }) : _user = _FakeUser(id: userId, phone: phone),
+       _session = _FakeSession(
+         accessToken: accessToken,
+         refreshToken: refreshToken,
+         expiresAt: expiresAt,
+       );
 
   @override
   supa.User? get user => _user;
@@ -121,33 +121,41 @@ void main() {
         expiresAt: 1700000000,
       );
 
-      when(() => mockAuth.verifyOTP(
-            phone: phone,
-            token: otp,
-            type: supa.OtpType.sms,
-          )).thenAnswer((_) async => authResponse);
+      when(
+        () => mockAuth.verifyOTP(
+          phone: phone,
+          token: otp,
+          type: supa.OtpType.sms,
+        ),
+      ).thenAnswer((_) async => authResponse);
 
       final mockQueryBuilder = MockSupabaseQueryBuilder();
       final mockFilterBuilder = MockFilterBuilderList();
       final mockTransformBuilder = MockTransformBuilderMap();
 
       when(() => mockClient.from('users')).thenAnswer((_) => mockQueryBuilder);
-      when(() => mockQueryBuilder.upsert(any(),
-              onConflict: any(named: 'onConflict')))
-          .thenAnswer((_) => mockFilterBuilder);
-      when(() => mockFilterBuilder.select(any()))
-          .thenAnswer((_) => mockFilterBuilder);
-      when(() => mockFilterBuilder.single())
-          .thenAnswer((_) => mockTransformBuilder);
-      when(() => mockTransformBuilder.timeout(any()))
-          .thenAnswer((_) async => <String, dynamic>{
-                'id': userId,
-                'phone': phone,
-                'name': phone,
-                'email': null,
-                'is_active': true,
-                'created_at': '2024-01-01T00:00:00.000Z',
-              });
+      when(
+        () => mockQueryBuilder.upsert(
+          any(),
+          onConflict: any(named: 'onConflict'),
+        ),
+      ).thenAnswer((_) => mockFilterBuilder);
+      when(
+        () => mockFilterBuilder.select(any()),
+      ).thenAnswer((_) => mockFilterBuilder);
+      when(
+        () => mockFilterBuilder.single(),
+      ).thenAnswer((_) => mockTransformBuilder);
+      when(() => mockTransformBuilder.timeout(any())).thenAnswer(
+        (_) async => <String, dynamic>{
+          'id': userId,
+          'phone': phone,
+          'name': phone,
+          'email': null,
+          'is_active': true,
+          'created_at': '2024-01-01T00:00:00.000Z',
+        },
+      );
 
       // Act
       final result = await datasource.verifyOtp(phone, otp);
@@ -165,20 +173,24 @@ void main() {
       const phone = '+966500000000';
       const otp = '000000';
 
-      when(() => mockAuth.verifyOTP(
-            phone: phone,
-            token: otp,
-            type: supa.OtpType.sms,
-          )).thenAnswer((_) async => _NullUserAuthResponse());
+      when(
+        () => mockAuth.verifyOTP(
+          phone: phone,
+          token: otp,
+          type: supa.OtpType.sms,
+        ),
+      ).thenAnswer((_) async => _NullUserAuthResponse());
 
       // Act & Assert
       expect(
         () => datasource.verifyOtp(phone, otp),
-        throwsA(isA<Exception>().having(
-          (e) => e.toString(),
-          'message',
-          contains('OTP verification failed'),
-        )),
+        throwsA(
+          isA<Exception>().having(
+            (e) => e.toString(),
+            'message',
+            contains('OTP verification failed'),
+          ),
+        ),
       );
     });
 
@@ -188,38 +200,43 @@ void main() {
       const otp = '123456';
       const userId = 'user-role-test';
 
-      final authResponse = _FakeAuthResponse(
-        userId: userId,
-        phone: phone,
-      );
+      final authResponse = _FakeAuthResponse(userId: userId, phone: phone);
 
-      when(() => mockAuth.verifyOTP(
-            phone: phone,
-            token: otp,
-            type: supa.OtpType.sms,
-          )).thenAnswer((_) async => authResponse);
+      when(
+        () => mockAuth.verifyOTP(
+          phone: phone,
+          token: otp,
+          type: supa.OtpType.sms,
+        ),
+      ).thenAnswer((_) async => authResponse);
 
       final mockQueryBuilder = MockSupabaseQueryBuilder();
       final mockFilterBuilder = MockFilterBuilderList();
       final mockTransformBuilder = MockTransformBuilderMap();
 
       when(() => mockClient.from('users')).thenAnswer((_) => mockQueryBuilder);
-      when(() => mockQueryBuilder.upsert(any(),
-              onConflict: any(named: 'onConflict')))
-          .thenAnswer((_) => mockFilterBuilder);
-      when(() => mockFilterBuilder.select(any()))
-          .thenAnswer((_) => mockFilterBuilder);
-      when(() => mockFilterBuilder.single())
-          .thenAnswer((_) => mockTransformBuilder);
-      when(() => mockTransformBuilder.timeout(any()))
-          .thenAnswer((_) async => <String, dynamic>{
-                'id': userId,
-                'phone': phone,
-                'name': 'Test',
-                'role': 'storeOwner',
-                'is_active': true,
-                'created_at': '2024-01-01T00:00:00.000Z',
-              });
+      when(
+        () => mockQueryBuilder.upsert(
+          any(),
+          onConflict: any(named: 'onConflict'),
+        ),
+      ).thenAnswer((_) => mockFilterBuilder);
+      when(
+        () => mockFilterBuilder.select(any()),
+      ).thenAnswer((_) => mockFilterBuilder);
+      when(
+        () => mockFilterBuilder.single(),
+      ).thenAnswer((_) => mockTransformBuilder);
+      when(() => mockTransformBuilder.timeout(any())).thenAnswer(
+        (_) async => <String, dynamic>{
+          'id': userId,
+          'phone': phone,
+          'name': 'Test',
+          'role': 'storeOwner',
+          'is_active': true,
+          'created_at': '2024-01-01T00:00:00.000Z',
+        },
+      );
 
       // Act
       final result = await datasource.verifyOtp(phone, otp);
@@ -259,22 +276,24 @@ void main() {
       verify(() => mockAuth.signOut()).called(1);
     });
 
-    test('session null check after logout does not throw (no assert)',
-        () async {
-      // Arrange
-      when(() => mockAuth.signOut()).thenAnswer((_) async {});
-      when(() => mockAuth.currentSession).thenReturn(null);
+    test(
+      'session null check after logout does not throw (no assert)',
+      () async {
+        // Arrange
+        when(() => mockAuth.signOut()).thenAnswer((_) async {});
+        when(() => mockAuth.currentSession).thenReturn(null);
 
-      // Act
-      try {
-        await datasource.logout();
-      } catch (_) {
-        // SharedPreferences/SecureStorage not available in tests
-      }
+        // Act
+        try {
+          await datasource.logout();
+        } catch (_) {
+          // SharedPreferences/SecureStorage not available in tests
+        }
 
-      // Assert
-      verify(() => mockAuth.currentSession).called(1);
-    });
+        // Assert
+        verify(() => mockAuth.currentSession).called(1);
+      },
+    );
   });
 
   group('isAuthenticated', () {

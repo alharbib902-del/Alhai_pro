@@ -58,31 +58,31 @@ class _OnboardingPage {
 
 /// Admin-specific onboarding pages
 List<_OnboardingPage> _buildAdminPages(AppLocalizations l10n) => [
-      _OnboardingPage(
-        icon: Icons.dashboard_rounded,
-        title: l10n.welcomeTitle,
-        description: l10n.onboardingDesc1,
-        color: AppColors.primary,
-      ),
-      _OnboardingPage(
-        icon: Icons.inventory_2_rounded,
-        title: l10n.onboardingTitle3,
-        description: l10n.onboardingDesc3,
-        color: AppColors.warning,
-      ),
-      _OnboardingPage(
-        icon: Icons.analytics_rounded,
-        title: l10n.onboardingTitle4,
-        description: l10n.onboardingDesc4,
-        color: AppColors.info,
-      ),
-      _OnboardingPage(
-        icon: Icons.settings_rounded,
-        title: l10n.settings,
-        description: l10n.onboardingDesc2,
-        color: AppColors.success,
-      ),
-    ];
+  _OnboardingPage(
+    icon: Icons.dashboard_rounded,
+    title: l10n.welcomeTitle,
+    description: l10n.onboardingDesc1,
+    color: AppColors.primary,
+  ),
+  _OnboardingPage(
+    icon: Icons.inventory_2_rounded,
+    title: l10n.onboardingTitle3,
+    description: l10n.onboardingDesc3,
+    color: AppColors.warning,
+  ),
+  _OnboardingPage(
+    icon: Icons.analytics_rounded,
+    title: l10n.onboardingTitle4,
+    description: l10n.onboardingDesc4,
+    color: AppColors.info,
+  ),
+  _OnboardingPage(
+    icon: Icons.settings_rounded,
+    title: l10n.settings,
+    description: l10n.onboardingDesc2,
+    color: AppColors.success,
+  ),
+];
 
 /// Admin Onboarding Screen
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -156,7 +156,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               alignment: AlignmentDirectional.topEnd,
               child: Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: horizontalPadding, vertical: AppSizes.md),
+                  horizontal: horizontalPadding,
+                  vertical: AppSizes.md,
+                ),
                 child: TextButton(
                   onPressed: _skipOnboarding,
                   child: Text(
@@ -199,7 +201,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             // Navigation buttons
             Padding(
               padding: EdgeInsets.symmetric(
-                  horizontal: horizontalPadding, vertical: AppSizes.xl),
+                horizontal: horizontalPadding,
+                vertical: AppSizes.xl,
+              ),
               child: Row(
                 children: [
                   if (_currentPage > 0)
@@ -212,8 +216,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           );
                         },
                         style: OutlinedButton.styleFrom(
-                          padding:
-                              const EdgeInsets.symmetric(vertical: AppSizes.md),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSizes.md,
+                          ),
                         ),
                         child: Text(l10n.previous),
                       ),
@@ -224,12 +229,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   Expanded(
                     flex: 2,
                     child: FilledButton(
-                      onPressed:
-                          _isCompleting ? null : () => _nextPage(pages.length),
+                      onPressed: _isCompleting
+                          ? null
+                          : () => _nextPage(pages.length),
                       style: FilledButton.styleFrom(
                         backgroundColor: pages[_currentPage].color,
-                        padding:
-                            const EdgeInsets.symmetric(vertical: AppSizes.md),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppSizes.md,
+                        ),
                       ),
                       child: _isCompleting
                           ? SizedBox(
@@ -267,13 +274,15 @@ class _OnboardingPageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final iconContainerSize =
-        screenWidth > 600 ? 160.0 : (screenWidth * 0.35).clamp(100.0, 160.0);
+    final iconContainerSize = screenWidth > 600
+        ? 160.0
+        : (screenWidth * 0.35).clamp(100.0, 160.0);
     final iconSize = iconContainerSize * 0.5;
 
     return Padding(
       padding: EdgeInsets.symmetric(
-          horizontal: screenWidth > 600 ? AppSizes.xxxl : AppSizes.xl),
+        horizontal: screenWidth > 600 ? AppSizes.xxxl : AppSizes.xl,
+      ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -289,8 +298,9 @@ class _OnboardingPageWidget extends StatelessWidget {
           const SizedBox(height: AppSizes.xxxl),
           Text(
             page.title,
-            style: AppTypography.headlineLarge
-                .copyWith(fontWeight: FontWeight.bold),
+            style: AppTypography.headlineLarge.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSizes.lg),

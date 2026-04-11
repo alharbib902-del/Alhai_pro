@@ -19,19 +19,25 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart'
 
 /// قراءة إعداد واحد من قاعدة البيانات
 Future<String?> getSettingValue(
-    AppDatabase db, String storeId, String key) async {
-  final result = await (db.select(db.settingsTable)
-        ..where((s) => s.storeId.equals(storeId) & s.key.equals(key)))
-      .getSingleOrNull();
+  AppDatabase db,
+  String storeId,
+  String key,
+) async {
+  final result =
+      await (db.select(db.settingsTable)
+            ..where((s) => s.storeId.equals(storeId) & s.key.equals(key)))
+          .getSingleOrNull();
   return result?.value;
 }
 
 /// قراءة جميع إعدادات متجر معين من قاعدة البيانات
 Future<Map<String, String>> getAllSettings(
-    AppDatabase db, String storeId) async {
-  final settings = await (db.select(db.settingsTable)
-        ..where((s) => s.storeId.equals(storeId)))
-      .get();
+  AppDatabase db,
+  String storeId,
+) async {
+  final settings = await (db.select(
+    db.settingsTable,
+  )..where((s) => s.storeId.equals(storeId))).get();
 
   final map = <String, String>{};
   for (final s in settings) {
@@ -42,10 +48,13 @@ Future<Map<String, String>> getAllSettings(
 
 /// قراءة إعدادات معينة بناء على بادئة المفتاح (مثل 'pos_' أو 'printer_')
 Future<Map<String, String>> getSettingsByPrefix(
-    AppDatabase db, String storeId, String prefix) async {
-  final settings = await (db.select(db.settingsTable)
-        ..where((s) => s.storeId.equals(storeId) & s.key.like('$prefix%')))
-      .get();
+  AppDatabase db,
+  String storeId,
+  String prefix,
+) async {
+  final settings = await (db.select(
+    db.settingsTable,
+  )..where((s) => s.storeId.equals(storeId) & s.key.like('$prefix%'))).get();
 
   final map = <String, String>{};
   for (final s in settings) {
@@ -56,10 +65,16 @@ Future<Map<String, String>> getSettingsByPrefix(
 
 /// حفظ إعداد واحد في قاعدة البيانات (إنشاء أو تحديث)
 Future<String> saveSetting(
-    AppDatabase db, String storeId, String key, String value) async {
+  AppDatabase db,
+  String storeId,
+  String key,
+  String value,
+) async {
   final id = 'setting_${storeId}_$key';
 
-  await db.into(db.settingsTable).insertOnConflictUpdate(
+  await db
+      .into(db.settingsTable)
+      .insertOnConflictUpdate(
         SettingsTableCompanion.insert(
           id: id,
           storeId: storeId,
@@ -127,8 +142,9 @@ Future<void> saveSettingsBatch({
 // ============================================================================
 
 /// مزود لقراءة جميع إعدادات المتجر الحالي
-final storeSettingsProvider =
-    FutureProvider.autoDispose<Map<String, String>>((ref) async {
+final storeSettingsProvider = FutureProvider.autoDispose<Map<String, String>>((
+  ref,
+) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return {};
 
@@ -139,19 +155,19 @@ final storeSettingsProvider =
 /// مزود لقراءة إعدادات بناء على بادئة
 final settingsByPrefixProvider = FutureProvider.autoDispose
     .family<Map<String, String>, String>((ref, prefix) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return {};
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return {};
 
-  final db = getIt<AppDatabase>();
-  return getSettingsByPrefix(db, storeId, prefix);
-});
+      final db = getIt<AppDatabase>();
+      return getSettingsByPrefix(db, storeId, prefix);
+    });
 
 /// مزود لقراءة إعداد واحد
-final singleSettingProvider =
-    FutureProvider.autoDispose.family<String?, String>((ref, key) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return null;
+final singleSettingProvider = FutureProvider.autoDispose
+    .family<String?, String>((ref, key) async {
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return null;
 
-  final db = getIt<AppDatabase>();
-  return getSettingValue(db, storeId, key);
-});
+      final db = getIt<AppDatabase>();
+      return getSettingValue(db, storeId, key);
+    });

@@ -205,13 +205,15 @@ void main() {
 
       // Act - simulating _orderFromRow item parsing
       final items = itemRows
-          .map((row) => OrderItem(
-                productId: (row['product_id'] as String?) ?? '',
-                name: (row['product_name'] as String?) ?? '',
-                unitPrice: (row['unit_price'] as num).toDouble(),
-                qty: (row['qty'] as num).toInt(),
-                lineTotal: (row['total_price'] as num).toDouble(),
-              ))
+          .map(
+            (row) => OrderItem(
+              productId: (row['product_id'] as String?) ?? '',
+              name: (row['product_name'] as String?) ?? '',
+              unitPrice: (row['unit_price'] as num).toDouble(),
+              qty: (row['qty'] as num).toInt(),
+              lineTotal: (row['total_price'] as num).toDouble(),
+            ),
+          )
           .toList();
 
       // Assert
@@ -229,13 +231,15 @@ void main() {
       orderData.remove('order_items');
 
       final items = ((orderData['order_items'] as List?) ?? [])
-          .map((row) => OrderItem(
-                productId: (row['product_id'] as String?) ?? '',
-                name: (row['product_name'] as String?) ?? '',
-                unitPrice: (row['unit_price'] as num).toDouble(),
-                qty: (row['qty'] as num).toInt(),
-                lineTotal: (row['total_price'] as num).toDouble(),
-              ))
+          .map(
+            (row) => OrderItem(
+              productId: (row['product_id'] as String?) ?? '',
+              name: (row['product_name'] as String?) ?? '',
+              unitPrice: (row['unit_price'] as num).toDouble(),
+              qty: (row['qty'] as num).toInt(),
+              lineTotal: (row['total_price'] as num).toDouble(),
+            ),
+          )
           .toList();
 
       expect(items, isEmpty);
@@ -285,9 +289,7 @@ void main() {
         ),
         buildOrderRow(
           id: 'o2',
-          orderItems: [
-            buildOrderItemRow(productId: 'p3'),
-          ],
+          orderItems: [buildOrderItemRow(productId: 'p3')],
         ),
       ];
 

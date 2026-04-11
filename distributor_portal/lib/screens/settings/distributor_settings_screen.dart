@@ -128,8 +128,10 @@ class _DistributorSettingsScreenState
             appBar: AppBar(
               title: Text(
                 l10n.distributorSettings,
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: cs.onSurface,
+                ),
               ),
               centerTitle: false,
             ),
@@ -139,8 +141,11 @@ class _DistributorSettingsScreenState
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline,
-                        size: 48, color: AppColors.getTextMuted(isDark)),
+                    Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: AppColors.getTextMuted(isDark),
+                    ),
                     const SizedBox(height: AlhaiSpacing.md),
                     Text(
                       l10n.distributorLoadError,
@@ -168,8 +173,11 @@ class _DistributorSettingsScreenState
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.business_rounded,
-                            size: 48, color: AppColors.getTextMuted(isDark)),
+                        Icon(
+                          Icons.business_rounded,
+                          size: 48,
+                          color: AppColors.getTextMuted(isDark),
+                        ),
                         const SizedBox(height: AlhaiSpacing.md),
                         Text(
                           'لم يتم العثور على بيانات المنشأة',
@@ -198,7 +206,8 @@ class _DistributorSettingsScreenState
 
                 return SingleChildScrollView(
                   padding: EdgeInsets.all(
-                      isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                    isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                  ),
                   child: isWide
                       ? Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,8 +218,10 @@ class _DistributorSettingsScreenState
                                 children: [
                                   _buildCompanyInfoSection(isDark),
                                   const SizedBox(height: AlhaiSpacing.lg),
-                                  _buildDeliverySection(isDark,
-                                      isMobile: isMobile),
+                                  _buildDeliverySection(
+                                    isDark,
+                                    isMobile: isMobile,
+                                  ),
                                 ],
                               ),
                             ),
@@ -234,19 +245,22 @@ class _DistributorSettingsScreenState
                           children: [
                             _buildAppearanceSection(isDark, ref),
                             SizedBox(
-                                height: isMedium
-                                    ? AlhaiSpacing.lg
-                                    : AlhaiSpacing.md),
+                              height: isMedium
+                                  ? AlhaiSpacing.lg
+                                  : AlhaiSpacing.md,
+                            ),
                             _buildCompanyInfoSection(isDark),
                             SizedBox(
-                                height: isMedium
-                                    ? AlhaiSpacing.lg
-                                    : AlhaiSpacing.md),
+                              height: isMedium
+                                  ? AlhaiSpacing.lg
+                                  : AlhaiSpacing.md,
+                            ),
                             _buildNotificationsSection(isDark),
                             SizedBox(
-                                height: isMedium
-                                    ? AlhaiSpacing.lg
-                                    : AlhaiSpacing.md),
+                              height: isMedium
+                                  ? AlhaiSpacing.lg
+                                  : AlhaiSpacing.md,
+                            ),
                             _buildDeliverySection(isDark, isMobile: isMobile),
                             const SizedBox(height: AlhaiSpacing.lg),
                             _buildSaveButton(isDark),
@@ -539,8 +553,13 @@ class _DistributorSettingsScreenState
     );
   }
 
-  Widget _themeTile(String label, IconData icon, bool isSelected,
-      VoidCallback onTap, bool isDark) {
+  Widget _themeTile(
+    String label,
+    IconData icon,
+    bool isSelected,
+    VoidCallback onTap,
+    bool isDark,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
       child: InkWell(
@@ -548,22 +567,27 @@ class _DistributorSettingsScreenState
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.symmetric(
-              vertical: AlhaiSpacing.xs, horizontal: AlhaiSpacing.xs),
+            vertical: AlhaiSpacing.xs,
+            horizontal: AlhaiSpacing.xs,
+          ),
           child: Row(
             children: [
-              Icon(icon,
-                  color: isSelected
-                      ? AppColors.primary
-                      : AppColors.getTextMuted(isDark),
-                  size: 20),
+              Icon(
+                icon,
+                color: isSelected
+                    ? AppColors.primary
+                    : AppColors.getTextMuted(isDark),
+                size: 20,
+              ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Text(
                   label,
                   style: TextStyle(
                     fontSize: 14,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.w600
+                        : FontWeight.normal,
                     color: isSelected
                         ? AppColors.primary
                         : AppColors.getTextPrimary(isDark),
@@ -571,8 +595,11 @@ class _DistributorSettingsScreenState
                 ),
               ),
               if (isSelected)
-                const Icon(Icons.check_circle_rounded,
-                    color: AppColors.primary, size: 20),
+                const Icon(
+                  Icons.check_circle_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
             ],
           ),
         ),
@@ -595,17 +622,22 @@ class _DistributorSettingsScreenState
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: AppColors.textOnPrimary),
+                    strokeWidth: 2,
+                    color: AppColors.textOnPrimary,
+                  ),
                 )
               : const Icon(Icons.save_rounded, size: 20),
-          label: const Text('حفظ الإعدادات',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+          label: const Text(
+            'حفظ الإعدادات',
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          ),
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.primary,
             foregroundColor: AppColors.textOnPrimary,
             padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
             shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AlhaiRadius.md)),
+              borderRadius: BorderRadius.circular(AlhaiRadius.md),
+            ),
           ),
         ),
       ),
@@ -711,7 +743,9 @@ class _DistributorSettingsScreenState
               borderSide: const BorderSide(color: AppColors.primary, width: 2),
             ),
             contentPadding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+              horizontal: AlhaiSpacing.md,
+              vertical: AlhaiSpacing.sm,
+            ),
           ),
         ),
       ],
@@ -786,15 +820,22 @@ class _DistributorSettingsScreenState
               borderSide: const BorderSide(color: AppColors.primary, width: 2),
             ),
             contentPadding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+              horizontal: AlhaiSpacing.md,
+              vertical: AlhaiSpacing.sm,
+            ),
           ),
         ),
       ],
     );
   }
 
-  Widget _switchTile(String label, IconData icon, bool value,
-      ValueChanged<bool> onChanged, bool isDark) {
+  Widget _switchTile(
+    String label,
+    IconData icon,
+    bool value,
+    ValueChanged<bool> onChanged,
+    bool isDark,
+  ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
       child: Row(
@@ -870,8 +911,9 @@ class _DistributorSettingsScreenState
       companyName: _companyNameController.text,
       phone: _phoneController.text.isNotEmpty ? _phoneController.text : null,
       email: _emailController.text.isNotEmpty ? _emailController.text : null,
-      address:
-          _addressController.text.isNotEmpty ? _addressController.text : null,
+      address: _addressController.text.isNotEmpty
+          ? _addressController.text
+          : null,
       deliveryZones: _deliveryZonesController.text.isNotEmpty
           ? _deliveryZonesController.text
           : null,

@@ -14,11 +14,9 @@ class ZatcaApiClient {
   final Dio _dio;
   final ZatcaEnvironment _environment;
 
-  ZatcaApiClient({
-    required ZatcaEnvironment environment,
-    Dio? dio,
-  })  : _environment = environment,
-        _dio = dio ?? Dio() {
+  ZatcaApiClient({required ZatcaEnvironment environment, Dio? dio})
+    : _environment = environment,
+      _dio = dio ?? Dio() {
     _dio.options.headers['Accept-Language'] = 'ar';
     _dio.options.headers['Content-Type'] = 'application/json';
     _dio.options.headers['Accept-Version'] = 'V2';

@@ -26,9 +26,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const PrinterSettingsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const PrinterSettingsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(PrinterSettingsScreen), findsOneWidget);
@@ -42,9 +40,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const PrinterSettingsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const PrinterSettingsScreen()));
       await tester.pumpAndSettle();
 
       // Provider resolves synchronously in test, so loading state
@@ -79,9 +75,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const PrinterSettingsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const PrinterSettingsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(PrinterSettingsScreen), findsOneWidget);
@@ -95,9 +89,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const PrinterSettingsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const PrinterSettingsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(PrinterSettingsScreen), findsOneWidget);

@@ -13,13 +13,7 @@ import 'dart:math';
 // ============================================================================
 
 /// درجة المشاعر
-enum SentimentScore {
-  veryNegative,
-  negative,
-  neutral,
-  positive,
-  veryPositive,
-}
+enum SentimentScore { veryNegative, negative, neutral, positive, veryPositive }
 
 /// نتيجة تحليل المشاعر
 class SentimentResult {
@@ -172,15 +166,17 @@ class AiSentimentAnalysisService {
       'مرتب',
       'أسعار معقولة',
       'محترم',
-      'لذيذ'
+      'لذيذ',
     ];
     for (final word in positiveSelected) {
-      keywords.add(KeywordData(
-        word: word,
-        count: _random.nextInt(40) + 10,
-        sentiment: SentimentScore.positive,
-        sentimentValue: 0.5 + _random.nextDouble() * 0.5,
-      ));
+      keywords.add(
+        KeywordData(
+          word: word,
+          count: _random.nextInt(40) + 10,
+          sentiment: SentimentScore.positive,
+          sentimentValue: 0.5 + _random.nextDouble() * 0.5,
+        ),
+      );
     }
 
     // Negative keywords
@@ -190,26 +186,30 @@ class AiSentimentAnalysisService {
       'مزدحم',
       'غير متوفر',
       'فاسد',
-      'وقح'
+      'وقح',
     ];
     for (final word in negativeSelected) {
-      keywords.add(KeywordData(
-        word: word,
-        count: _random.nextInt(15) + 3,
-        sentiment: SentimentScore.negative,
-        sentimentValue: -0.5 - _random.nextDouble() * 0.5,
-      ));
+      keywords.add(
+        KeywordData(
+          word: word,
+          count: _random.nextInt(15) + 3,
+          sentiment: SentimentScore.negative,
+          sentimentValue: -0.5 - _random.nextDouble() * 0.5,
+        ),
+      );
     }
 
     // Neutral keywords
     final neutralSelected = ['عادي', 'مقبول', 'لا بأس'];
     for (final word in neutralSelected) {
-      keywords.add(KeywordData(
-        word: word,
-        count: _random.nextInt(10) + 5,
-        sentiment: SentimentScore.neutral,
-        sentimentValue: _random.nextDouble() * 0.3 - 0.15,
-      ));
+      keywords.add(
+        KeywordData(
+          word: word,
+          count: _random.nextInt(10) + 5,
+          sentiment: SentimentScore.neutral,
+          sentimentValue: _random.nextDouble() * 0.3 - 0.15,
+        ),
+      );
     }
 
     keywords.sort((a, b) => b.count.compareTo(a.count));
@@ -315,41 +315,47 @@ class AiSentimentAnalysisService {
   static List<SentimentTrend> getTrend() {
     return const [
       SentimentTrend(
-          period: 'الأسبوع 1',
-          positivePercent: 62,
-          neutralPercent: 22,
-          negativePercent: 16,
-          totalReviews: 45),
+        period: 'الأسبوع 1',
+        positivePercent: 62,
+        neutralPercent: 22,
+        negativePercent: 16,
+        totalReviews: 45,
+      ),
       SentimentTrend(
-          period: 'الأسبوع 2',
-          positivePercent: 65,
-          neutralPercent: 20,
-          negativePercent: 15,
-          totalReviews: 52),
+        period: 'الأسبوع 2',
+        positivePercent: 65,
+        neutralPercent: 20,
+        negativePercent: 15,
+        totalReviews: 52,
+      ),
       SentimentTrend(
-          period: 'الأسبوع 3',
-          positivePercent: 58,
-          neutralPercent: 25,
-          negativePercent: 17,
-          totalReviews: 48),
+        period: 'الأسبوع 3',
+        positivePercent: 58,
+        neutralPercent: 25,
+        negativePercent: 17,
+        totalReviews: 48,
+      ),
       SentimentTrend(
-          period: 'الأسبوع 4',
-          positivePercent: 70,
-          neutralPercent: 18,
-          negativePercent: 12,
-          totalReviews: 55),
+        period: 'الأسبوع 4',
+        positivePercent: 70,
+        neutralPercent: 18,
+        negativePercent: 12,
+        totalReviews: 55,
+      ),
       SentimentTrend(
-          period: 'الأسبوع 5',
-          positivePercent: 72,
-          neutralPercent: 16,
-          negativePercent: 12,
-          totalReviews: 61),
+        period: 'الأسبوع 5',
+        positivePercent: 72,
+        neutralPercent: 16,
+        negativePercent: 12,
+        totalReviews: 61,
+      ),
       SentimentTrend(
-          period: 'الأسبوع 6',
-          positivePercent: 68,
-          neutralPercent: 20,
-          negativePercent: 12,
-          totalReviews: 58),
+        period: 'الأسبوع 6',
+        positivePercent: 68,
+        neutralPercent: 20,
+        negativePercent: 12,
+        totalReviews: 58,
+      ),
     ];
   }
 
@@ -363,12 +369,15 @@ class AiSentimentAnalysisService {
       SentimentScore.veryPositive: feedback
           .where((f) => f.sentiment == SentimentScore.veryPositive)
           .length,
-      SentimentScore.positive:
-          feedback.where((f) => f.sentiment == SentimentScore.positive).length,
-      SentimentScore.neutral:
-          feedback.where((f) => f.sentiment == SentimentScore.neutral).length,
-      SentimentScore.negative:
-          feedback.where((f) => f.sentiment == SentimentScore.negative).length,
+      SentimentScore.positive: feedback
+          .where((f) => f.sentiment == SentimentScore.positive)
+          .length,
+      SentimentScore.neutral: feedback
+          .where((f) => f.sentiment == SentimentScore.neutral)
+          .length,
+      SentimentScore.negative: feedback
+          .where((f) => f.sentiment == SentimentScore.negative)
+          .length,
       SentimentScore.veryNegative: feedback
           .where((f) => f.sentiment == SentimentScore.veryNegative)
           .length,
@@ -376,7 +385,7 @@ class AiSentimentAnalysisService {
 
     final avgValue =
         feedback.map((f) => f.sentimentValue).reduce((a, b) => a + b) /
-            feedback.length;
+        feedback.length;
     final positiveCount = feedback.where((f) => f.sentimentValue > 0.2).length;
     final satisfactionRate = positiveCount / feedback.length * 100;
 
@@ -384,8 +393,8 @@ class AiSentimentAnalysisService {
       overallScore: avgValue > 0.5
           ? SentimentScore.positive
           : avgValue > 0
-              ? SentimentScore.neutral
-              : SentimentScore.negative,
+          ? SentimentScore.neutral
+          : SentimentScore.negative,
       overallValue: double.parse(avgValue.toStringAsFixed(2)),
       totalReviews: feedback.length,
       distribution: distribution,

@@ -65,16 +65,12 @@ import 'package:injectable/injectable.dart' as _i526;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
 extension GetItInjectableX on _i174.GetIt {
-// initializes the registration of main-scope dependencies inside of GetIt
+  // initializes the registration of main-scope dependencies inside of GetIt
   Future<_i174.GetIt> init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
   }) async {
-    final gh = _i526.GetItHelper(
-      this,
-      environment,
-      environmentFilter,
-    );
+    final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final coreModule = _$CoreModule();
     final networkingModule = _$NetworkingModule();
     final dataSourcesModule = _$DataSourcesModule();
@@ -84,23 +80,26 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
     );
     gh.lazySingleton<_i558.FlutterSecureStorage>(
-        () => coreModule.secureStorage);
+      () => coreModule.secureStorage,
+    );
     gh.lazySingleton<_i614.ApiDioHolder>(() => networkingModule.apiDioHolder);
     gh.lazySingleton<_i361.Dio>(
       () => networkingModule.refreshDio,
       instanceName: 'refreshDio',
     );
     gh.lazySingleton<_i436.AuthLocalDataSource>(
-        () => dataSourcesModule.authLocalDataSource(
-              gh<_i558.FlutterSecureStorage>(),
-              gh<_i460.SharedPreferences>(),
-            ));
+      () => dataSourcesModule.authLocalDataSource(
+        gh<_i558.FlutterSecureStorage>(),
+        gh<_i460.SharedPreferences>(),
+      ),
+    );
     gh.lazySingleton<_i803.AuthInterceptor>(
-        () => networkingModule.authInterceptor(
-              gh<_i436.AuthLocalDataSource>(),
-              gh<_i614.ApiDioHolder>(),
-              gh<_i361.Dio>(instanceName: 'refreshDio'),
-            ));
+      () => networkingModule.authInterceptor(
+        gh<_i436.AuthLocalDataSource>(),
+        gh<_i614.ApiDioHolder>(),
+        gh<_i361.Dio>(instanceName: 'refreshDio'),
+      ),
+    );
     gh.lazySingleton<_i361.Dio>(
       () => networkingModule.apiDio(
         gh<_i803.AuthInterceptor>(),
@@ -108,61 +107,136 @@ extension GetItInjectableX on _i174.GetIt {
       ),
       instanceName: 'apiDio',
     );
-    gh.lazySingleton<_i21.AuthRemoteDataSource>(() => dataSourcesModule
-        .authRemoteDataSource(gh<_i361.Dio>(instanceName: 'apiDio')));
-    gh.lazySingleton<_i30.ProductsRemoteDataSource>(() => dataSourcesModule
-        .productsRemoteDataSource(gh<_i361.Dio>(instanceName: 'apiDio')));
-    gh.lazySingleton<_i435.CategoriesRemoteDataSource>(() => dataSourcesModule
-        .categoriesRemoteDataSource(gh<_i361.Dio>(instanceName: 'apiDio')));
-    gh.lazySingleton<_i757.OrdersRemoteDataSource>(() => dataSourcesModule
-        .ordersRemoteDataSource(gh<_i361.Dio>(instanceName: 'apiDio')));
-    gh.lazySingleton<_i410.DeliveryRemoteDataSource>(() => dataSourcesModule
-        .deliveryRemoteDataSource(gh<_i361.Dio>(instanceName: 'apiDio')));
-    gh.lazySingleton<_i450.AddressesRemoteDataSource>(() => dataSourcesModule
-        .addressesRemoteDataSource(gh<_i361.Dio>(instanceName: 'apiDio')));
-    gh.lazySingleton<_i927.StoresRemoteDataSource>(() => dataSourcesModule
-        .storesRemoteDataSource(gh<_i361.Dio>(instanceName: 'apiDio')));
-    gh.lazySingleton<_i973.InventoryRemoteDataSource>(() => dataSourcesModule
-        .inventoryRemoteDataSource(gh<_i361.Dio>(instanceName: 'apiDio')));
-    gh.lazySingleton<_i719.SuppliersRemoteDataSource>(() => dataSourcesModule
-        .suppliersRemoteDataSource(gh<_i361.Dio>(instanceName: 'apiDio')));
-    gh.lazySingleton<_i288.PurchasesRemoteDataSource>(() => dataSourcesModule
-        .purchasesRemoteDataSource(gh<_i361.Dio>(instanceName: 'apiDio')));
-    gh.lazySingleton<_i774.DebtsRemoteDataSource>(() => dataSourcesModule
-        .debtsRemoteDataSource(gh<_i361.Dio>(instanceName: 'apiDio')));
-    gh.lazySingleton<_i641.ReportsRemoteDataSource>(() => dataSourcesModule
-        .reportsRemoteDataSource(gh<_i361.Dio>(instanceName: 'apiDio')));
-    gh.lazySingleton<_i761.AnalyticsRemoteDataSource>(() => dataSourcesModule
-        .analyticsRemoteDataSource(gh<_i361.Dio>(instanceName: 'apiDio')));
-    gh.lazySingleton<_i270.StoresRepository>(() => repositoriesModule
-        .storesRepository(gh<_i927.StoresRemoteDataSource>()));
+    gh.lazySingleton<_i21.AuthRemoteDataSource>(
+      () => dataSourcesModule.authRemoteDataSource(
+        gh<_i361.Dio>(instanceName: 'apiDio'),
+      ),
+    );
+    gh.lazySingleton<_i30.ProductsRemoteDataSource>(
+      () => dataSourcesModule.productsRemoteDataSource(
+        gh<_i361.Dio>(instanceName: 'apiDio'),
+      ),
+    );
+    gh.lazySingleton<_i435.CategoriesRemoteDataSource>(
+      () => dataSourcesModule.categoriesRemoteDataSource(
+        gh<_i361.Dio>(instanceName: 'apiDio'),
+      ),
+    );
+    gh.lazySingleton<_i757.OrdersRemoteDataSource>(
+      () => dataSourcesModule.ordersRemoteDataSource(
+        gh<_i361.Dio>(instanceName: 'apiDio'),
+      ),
+    );
+    gh.lazySingleton<_i410.DeliveryRemoteDataSource>(
+      () => dataSourcesModule.deliveryRemoteDataSource(
+        gh<_i361.Dio>(instanceName: 'apiDio'),
+      ),
+    );
+    gh.lazySingleton<_i450.AddressesRemoteDataSource>(
+      () => dataSourcesModule.addressesRemoteDataSource(
+        gh<_i361.Dio>(instanceName: 'apiDio'),
+      ),
+    );
+    gh.lazySingleton<_i927.StoresRemoteDataSource>(
+      () => dataSourcesModule.storesRemoteDataSource(
+        gh<_i361.Dio>(instanceName: 'apiDio'),
+      ),
+    );
+    gh.lazySingleton<_i973.InventoryRemoteDataSource>(
+      () => dataSourcesModule.inventoryRemoteDataSource(
+        gh<_i361.Dio>(instanceName: 'apiDio'),
+      ),
+    );
+    gh.lazySingleton<_i719.SuppliersRemoteDataSource>(
+      () => dataSourcesModule.suppliersRemoteDataSource(
+        gh<_i361.Dio>(instanceName: 'apiDio'),
+      ),
+    );
+    gh.lazySingleton<_i288.PurchasesRemoteDataSource>(
+      () => dataSourcesModule.purchasesRemoteDataSource(
+        gh<_i361.Dio>(instanceName: 'apiDio'),
+      ),
+    );
+    gh.lazySingleton<_i774.DebtsRemoteDataSource>(
+      () => dataSourcesModule.debtsRemoteDataSource(
+        gh<_i361.Dio>(instanceName: 'apiDio'),
+      ),
+    );
+    gh.lazySingleton<_i641.ReportsRemoteDataSource>(
+      () => dataSourcesModule.reportsRemoteDataSource(
+        gh<_i361.Dio>(instanceName: 'apiDio'),
+      ),
+    );
+    gh.lazySingleton<_i761.AnalyticsRemoteDataSource>(
+      () => dataSourcesModule.analyticsRemoteDataSource(
+        gh<_i361.Dio>(instanceName: 'apiDio'),
+      ),
+    );
+    gh.lazySingleton<_i270.StoresRepository>(
+      () => repositoriesModule.storesRepository(
+        gh<_i927.StoresRemoteDataSource>(),
+      ),
+    );
     gh.lazySingleton<_i49.AuthRepository>(
-        () => repositoriesModule.authRepository(
-              gh<_i21.AuthRemoteDataSource>(),
-              gh<_i436.AuthLocalDataSource>(),
-            ));
-    gh.lazySingleton<_i466.SuppliersRepository>(() => repositoriesModule
-        .suppliersRepository(gh<_i719.SuppliersRemoteDataSource>()));
-    gh.lazySingleton<_i1023.AnalyticsRepository>(() => repositoriesModule
-        .analyticsRepository(gh<_i761.AnalyticsRemoteDataSource>()));
-    gh.lazySingleton<_i99.CategoriesRepository>(() => repositoriesModule
-        .categoriesRepository(gh<_i435.CategoriesRemoteDataSource>()));
-    gh.lazySingleton<_i757.AddressesRepository>(() => repositoriesModule
-        .addressesRepository(gh<_i450.AddressesRemoteDataSource>()));
-    gh.lazySingleton<_i520.DeliveryRepository>(() => repositoriesModule
-        .deliveryRepository(gh<_i410.DeliveryRemoteDataSource>()));
-    gh.lazySingleton<_i640.ProductsRepository>(() => repositoriesModule
-        .productsRepository(gh<_i30.ProductsRemoteDataSource>()));
-    gh.lazySingleton<_i414.InventoryRepository>(() => repositoriesModule
-        .inventoryRepository(gh<_i973.InventoryRemoteDataSource>()));
-    gh.lazySingleton<_i849.OrdersRepository>(() => repositoriesModule
-        .ordersRepository(gh<_i757.OrdersRemoteDataSource>()));
-    gh.lazySingleton<_i416.ReportsRepository>(() => repositoriesModule
-        .reportsRepository(gh<_i641.ReportsRemoteDataSource>()));
-    gh.lazySingleton<_i822.DebtsRepository>(() =>
-        repositoriesModule.debtsRepository(gh<_i774.DebtsRemoteDataSource>()));
-    gh.lazySingleton<_i701.PurchasesRepository>(() => repositoriesModule
-        .purchasesRepository(gh<_i288.PurchasesRemoteDataSource>()));
+      () => repositoriesModule.authRepository(
+        gh<_i21.AuthRemoteDataSource>(),
+        gh<_i436.AuthLocalDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i466.SuppliersRepository>(
+      () => repositoriesModule.suppliersRepository(
+        gh<_i719.SuppliersRemoteDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i1023.AnalyticsRepository>(
+      () => repositoriesModule.analyticsRepository(
+        gh<_i761.AnalyticsRemoteDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i99.CategoriesRepository>(
+      () => repositoriesModule.categoriesRepository(
+        gh<_i435.CategoriesRemoteDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i757.AddressesRepository>(
+      () => repositoriesModule.addressesRepository(
+        gh<_i450.AddressesRemoteDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i520.DeliveryRepository>(
+      () => repositoriesModule.deliveryRepository(
+        gh<_i410.DeliveryRemoteDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i640.ProductsRepository>(
+      () => repositoriesModule.productsRepository(
+        gh<_i30.ProductsRemoteDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i414.InventoryRepository>(
+      () => repositoriesModule.inventoryRepository(
+        gh<_i973.InventoryRemoteDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i849.OrdersRepository>(
+      () => repositoriesModule.ordersRepository(
+        gh<_i757.OrdersRemoteDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i416.ReportsRepository>(
+      () => repositoriesModule.reportsRepository(
+        gh<_i641.ReportsRemoteDataSource>(),
+      ),
+    );
+    gh.lazySingleton<_i822.DebtsRepository>(
+      () =>
+          repositoriesModule.debtsRepository(gh<_i774.DebtsRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i701.PurchasesRepository>(
+      () => repositoriesModule.purchasesRepository(
+        gh<_i288.PurchasesRemoteDataSource>(),
+      ),
+    );
     return this;
   }
 }

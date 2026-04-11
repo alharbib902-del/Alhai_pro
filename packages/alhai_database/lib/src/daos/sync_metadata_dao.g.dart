@@ -14,5 +14,7 @@ class SyncMetadataDaoManager {
   SyncMetadataDaoManager(this._db);
   $$SyncMetadataTableTableTableManager get syncMetadataTable =>
       $$SyncMetadataTableTableTableManager(
-          _db.attachedDatabase, _db.syncMetadataTable);
+        _db.attachedDatabase,
+        _db.syncMetadataTable,
+      );
 }

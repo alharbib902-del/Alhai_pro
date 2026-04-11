@@ -36,8 +36,9 @@ void main() {
   group('BidirectionalStrategy', () {
     group('tableConfigs', () {
       test('contains expected tables', () {
-        final tableNames =
-            BidirectionalStrategy.tableConfigs.map((c) => c.tableName).toList();
+        final tableNames = BidirectionalStrategy.tableConfigs
+            .map((c) => c.tableName)
+            .toList();
         expect(tableNames, contains('customers'));
         expect(tableNames, contains('expenses'));
         expect(tableNames, contains('returns'));
@@ -47,24 +48,28 @@ void main() {
       });
 
       test('customers uses lastWriteWins conflict resolution', () {
-        final config = BidirectionalStrategy.tableConfigs
-            .firstWhere((c) => c.tableName == 'customers');
+        final config = BidirectionalStrategy.tableConfigs.firstWhere(
+          (c) => c.tableName == 'customers',
+        );
         expect(config.conflictResolution, ConflictResolution.lastWriteWins);
       });
 
       test('expenses uses localWins conflict resolution', () {
-        final config = BidirectionalStrategy.tableConfigs
-            .firstWhere((c) => c.tableName == 'expenses');
+        final config = BidirectionalStrategy.tableConfigs.firstWhere(
+          (c) => c.tableName == 'expenses',
+        );
         expect(config.conflictResolution, ConflictResolution.localWins);
       });
     });
 
     group('syncTable', () {
       test('handles errors gracefully', () async {
-        when(() => mockSyncQueueDao.getPendingItems())
-            .thenThrow(Exception('DB error'));
-        when(() => mockMetadataDao.setError(any(), any()))
-            .thenAnswer((_) async {});
+        when(
+          () => mockSyncQueueDao.getPendingItems(),
+        ).thenThrow(Exception('DB error'));
+        when(
+          () => mockMetadataDao.setError(any(), any()),
+        ).thenAnswer((_) async {});
 
         final result = await strategy.syncTable(
           config: const BidirectionalTableConfig(
@@ -82,22 +87,35 @@ void main() {
 
       test('pushes local changes then pulls server changes', () async {
         // Mock local push: no pending items
-        when(() => mockSyncQueueDao.getPendingItems())
-            .thenAnswer((_) async => []);
-        when(() => mockMetadataDao.getLastPullAt('customers'))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockSyncQueueDao.getPendingItems(),
+        ).thenAnswer((_) async => []);
+        when(
+          () => mockMetadataDao.getLastPullAt('customers'),
+        ).thenAnswer((_) async => null);
 
         // Mock server pull: no records
         final queryBuilder = MockSupabaseQueryBuilder();
         final filterBuilder = MockPostgrestFilterBuilder();
-        when(() => mockClient.from('customers'))
-            .thenAnswer((_) => queryBuilder);
+        when(
+          () => mockClient.from('customers'),
+        ).thenAnswer((_) => queryBuilder);
         setupSelectChain(queryBuilder, filterBuilder, data: []);
 
-        when(() => mockMetadataDao.updateLastPushAt(any(), any(),
-            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
-        when(() => mockMetadataDao.updateLastPullAt(any(), any(),
-            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
+        when(
+          () => mockMetadataDao.updateLastPushAt(
+            any(),
+            any(),
+            syncCount: any(named: 'syncCount'),
+          ),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockMetadataDao.updateLastPullAt(
+            any(),
+            any(),
+            syncCount: any(named: 'syncCount'),
+          ),
+        ).thenAnswer((_) async {});
         when(() => mockMetadataDao.clearError(any())).thenAnswer((_) async {});
 
         final result = await strategy.syncTable(
@@ -126,26 +144,41 @@ void main() {
           ),
         ];
 
-        when(() => mockSyncQueueDao.getPendingItems())
-            .thenAnswer((_) async => items);
-        when(() => mockSyncQueueDao.markAsSyncing(any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockSyncQueueDao.markAsSynced(any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockMetadataDao.getLastPullAt('customers'))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockSyncQueueDao.getPendingItems(),
+        ).thenAnswer((_) async => items);
+        when(
+          () => mockSyncQueueDao.markAsSyncing(any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockSyncQueueDao.markAsSynced(any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockMetadataDao.getLastPullAt('customers'),
+        ).thenAnswer((_) async => null);
 
         final queryBuilder = MockSupabaseQueryBuilder();
         final filterBuilder = MockPostgrestFilterBuilder();
-        when(() => mockClient.from('customers'))
-            .thenAnswer((_) => queryBuilder);
+        when(
+          () => mockClient.from('customers'),
+        ).thenAnswer((_) => queryBuilder);
         setupUpsertChain(queryBuilder);
         setupSelectChain(queryBuilder, filterBuilder, data: []);
 
-        when(() => mockMetadataDao.updateLastPushAt(any(), any(),
-            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
-        when(() => mockMetadataDao.updateLastPullAt(any(), any(),
-            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
+        when(
+          () => mockMetadataDao.updateLastPushAt(
+            any(),
+            any(),
+            syncCount: any(named: 'syncCount'),
+          ),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockMetadataDao.updateLastPullAt(
+            any(),
+            any(),
+            syncCount: any(named: 'syncCount'),
+          ),
+        ).thenAnswer((_) async {});
         when(() => mockMetadataDao.clearError(any())).thenAnswer((_) async {});
 
         final result = await strategy.syncTable(
@@ -166,23 +199,37 @@ void main() {
       test('syncs all configured tables', () async {
         // For each table, mock the push + pull to succeed
         for (final config in BidirectionalStrategy.tableConfigs) {
-          when(() => mockSyncQueueDao.getPendingItems())
-              .thenAnswer((_) async => []);
-          when(() => mockMetadataDao.getLastPullAt(config.tableName))
-              .thenAnswer((_) async => null);
+          when(
+            () => mockSyncQueueDao.getPendingItems(),
+          ).thenAnswer((_) async => []);
+          when(
+            () => mockMetadataDao.getLastPullAt(config.tableName),
+          ).thenAnswer((_) async => null);
 
           final queryBuilder = MockSupabaseQueryBuilder();
           final filterBuilder = MockPostgrestFilterBuilder();
-          when(() => mockClient.from(config.tableName))
-              .thenAnswer((_) => queryBuilder);
+          when(
+            () => mockClient.from(config.tableName),
+          ).thenAnswer((_) => queryBuilder);
           setupSelectChain(queryBuilder, filterBuilder, data: []);
 
-          when(() => mockMetadataDao.updateLastPushAt(config.tableName, any(),
-              syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
-          when(() => mockMetadataDao.updateLastPullAt(config.tableName, any(),
-              syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
-          when(() => mockMetadataDao.clearError(config.tableName))
-              .thenAnswer((_) async {});
+          when(
+            () => mockMetadataDao.updateLastPushAt(
+              config.tableName,
+              any(),
+              syncCount: any(named: 'syncCount'),
+            ),
+          ).thenAnswer((_) async {});
+          when(
+            () => mockMetadataDao.updateLastPullAt(
+              config.tableName,
+              any(),
+              syncCount: any(named: 'syncCount'),
+            ),
+          ).thenAnswer((_) async {});
+          when(
+            () => mockMetadataDao.clearError(config.tableName),
+          ).thenAnswer((_) async {});
         }
 
         final results = await strategy.syncAll(

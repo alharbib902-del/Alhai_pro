@@ -183,8 +183,9 @@ class _AlhaiButtonState extends State<AlhaiButton>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _controller.duration =
-        context.prefersReducedMotion ? Duration.zero : AlhaiDurations.quick;
+    _controller.duration = context.prefersReducedMotion
+        ? Duration.zero
+        : AlhaiDurations.quick;
   }
 
   @override
@@ -245,10 +246,7 @@ class _AlhaiButtonState extends State<AlhaiButton>
     return AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        );
+        return Transform.scale(scale: _scaleAnimation.value, child: child);
       },
       child: _buildButton(theme, colorScheme),
     );
@@ -297,7 +295,8 @@ class _AlhaiButtonState extends State<AlhaiButton>
   }
 
   Widget _buildContent(ColorScheme colorScheme) {
-    final iconColor = widget.foregroundColor ??
+    final iconColor =
+        widget.foregroundColor ??
         (widget.variant == AlhaiButtonVariant.filled
             ? colorScheme.onPrimary
             : colorScheme.primary);
@@ -306,10 +305,7 @@ class _AlhaiButtonState extends State<AlhaiButton>
       return SizedBox(
         width: _iconSize,
         height: _iconSize,
-        child: CircularProgressIndicator(
-          strokeWidth: 2,
-          color: iconColor,
-        ),
+        child: CircularProgressIndicator(strokeWidth: 2, color: iconColor),
       );
     }
 
@@ -324,8 +320,9 @@ class _AlhaiButtonState extends State<AlhaiButton>
 
     if (widget.trailingIcon != null) {
       children.add(const SizedBox(width: AlhaiSpacing.xs));
-      children
-          .add(Icon(widget.trailingIcon, size: _iconSize, color: iconColor));
+      children.add(
+        Icon(widget.trailingIcon, size: _iconSize, color: iconColor),
+      );
     }
 
     return Row(

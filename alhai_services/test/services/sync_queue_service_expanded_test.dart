@@ -29,11 +29,13 @@ void main() {
         // Act & Assert
         expect(
           () => syncService.retryItem(item.id),
-          throwsA(isA<Exception>().having(
-            (e) => e.toString(),
-            'message',
-            contains('cannot be retried'),
-          )),
+          throwsA(
+            isA<Exception>().having(
+              (e) => e.toString(),
+              'message',
+              contains('cannot be retried'),
+            ),
+          ),
         );
       });
 
@@ -165,49 +167,53 @@ void main() {
         expect(conflicts.first.isResolved, isFalse);
       });
 
-      test('resolveConflict with acceptLocal should re-enqueue local value',
-          () async {
-        syncService.addConflict(
-          entityType: SyncEntityType.product,
-          entityId: 'prod-1',
-          localValue: {'price': 10.0, 'name': 'Local'},
-          serverValue: {'price': 12.0, 'name': 'Server'},
-        );
+      test(
+        'resolveConflict with acceptLocal should re-enqueue local value',
+        () async {
+          syncService.addConflict(
+            entityType: SyncEntityType.product,
+            entityId: 'prod-1',
+            localValue: {'price': 10.0, 'name': 'Local'},
+            serverValue: {'price': 12.0, 'name': 'Server'},
+          );
 
-        final conflicts = await syncService.getConflicts();
-        await syncService.resolveConflict(
-          conflicts.first.id,
-          ConflictResolution.acceptLocal,
-        );
+          final conflicts = await syncService.getConflicts();
+          await syncService.resolveConflict(
+            conflicts.first.id,
+            ConflictResolution.acceptLocal,
+          );
 
-        // Conflict should be resolved
-        final unresolvedConflicts = await syncService.getConflicts();
-        expect(unresolvedConflicts, isEmpty);
+          // Conflict should be resolved
+          final unresolvedConflicts = await syncService.getConflicts();
+          expect(unresolvedConflicts, isEmpty);
 
-        // A new sync item should be enqueued with local value
-        final pending = await syncService.getPendingItems();
-        expect(pending.length, equals(1));
-      });
+          // A new sync item should be enqueued with local value
+          final pending = await syncService.getPendingItems();
+          expect(pending.length, equals(1));
+        },
+      );
 
-      test('resolveConflict with acceptServer should not enqueue anything',
-          () async {
-        syncService.addConflict(
-          entityType: SyncEntityType.product,
-          entityId: 'prod-1',
-          localValue: {'price': 10.0},
-          serverValue: {'price': 12.0},
-        );
+      test(
+        'resolveConflict with acceptServer should not enqueue anything',
+        () async {
+          syncService.addConflict(
+            entityType: SyncEntityType.product,
+            entityId: 'prod-1',
+            localValue: {'price': 10.0},
+            serverValue: {'price': 12.0},
+          );
 
-        final conflicts = await syncService.getConflicts();
-        await syncService.resolveConflict(
-          conflicts.first.id,
-          ConflictResolution.acceptServer,
-        );
+          final conflicts = await syncService.getConflicts();
+          await syncService.resolveConflict(
+            conflicts.first.id,
+            ConflictResolution.acceptServer,
+          );
 
-        // No new items should be enqueued
-        final pending = await syncService.getPendingItems();
-        expect(pending, isEmpty);
-      });
+          // No new items should be enqueued
+          final pending = await syncService.getPendingItems();
+          expect(pending, isEmpty);
+        },
+      );
 
       test('resolveConflict with merge should enqueue merged data', () async {
         syncService.addConflict(
@@ -293,8 +299,10 @@ void main() {
         await syncService.processQueue();
 
         // Assert - should be processed in FIFO order
-        expect(processedOrder,
-            equals(['sale-oldest', 'sale-middle', 'sale-newest']));
+        expect(
+          processedOrder,
+          equals(['sale-oldest', 'sale-middle', 'sale-newest']),
+        );
       });
 
       test('failed items should also be processed in FIFO order', () async {

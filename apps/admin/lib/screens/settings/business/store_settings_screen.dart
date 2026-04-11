@@ -78,7 +78,8 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
       final row = await supabase
           .from('stores')
           .select(
-              'lat, lng, delivery_radius, min_order_amount, delivery_fee, accepts_delivery, accepts_pickup')
+            'lat, lng, delivery_radius, min_order_amount, delivery_fee, accepts_delivery, accepts_pickup',
+          )
           .eq('id', storeId)
           .maybeSingle();
       if (row != null && mounted) {
@@ -132,45 +133,56 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
     final padding = size.width < 600
         ? 12.0
         : isWideScreen
-            ? 24.0
-            : 16.0;
+        ? 24.0
+        : 16.0;
 
     return SafeArea(
-        child: Column(
-      children: [
-        AppHeader(
-          title: l10n.storeSettings,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
-          onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
-          userName: l10n.defaultUserName,
-          userRole: l10n.branchManager,
-        ),
-        Expanded(
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  padding: EdgeInsets.all(padding),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                          maxWidth: isWideScreen ? 800 : double.infinity),
-                      child: Form(
-                        key: _formKey,
-                        child: _buildContent(
-                            isWideScreen, isMediumScreen, isDark, l10n),
+      child: Column(
+        children: [
+          AppHeader(
+            title: l10n.storeSettings,
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
+            onNotificationsTap: () => context.push('/notifications'),
+            notificationsCount: 3,
+            userName: l10n.defaultUserName,
+            userRole: l10n.branchManager,
+          ),
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+                    padding: EdgeInsets.all(padding),
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: isWideScreen ? 800 : double.infinity,
+                        ),
+                        child: Form(
+                          key: _formKey,
+                          child: _buildContent(
+                            isWideScreen,
+                            isMediumScreen,
+                            isDark,
+                            l10n,
+                          ),
+                        ),
                       ),
                     ),
                   ),
-                ),
-        ),
-      ],
-    ));
+          ),
+        ],
+      ),
+    );
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
-      AppLocalizations l10n) {
+  Widget _buildContent(
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -178,347 +190,450 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
         const SizedBox(height: AlhaiSpacing.mdl),
 
         _buildSettingsGroup(
-            l10n.storeInfo, Icons.store_rounded, AppColors.primary, isDark, [
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
-            child: TextFormField(
-              controller: _nameController,
-              maxLength: 100,
-              validator: FormValidators.requiredField(maxLength: 100),
-              decoration: InputDecoration(
-                labelText: l10n.storeNameField,
-                prefixIcon: const Icon(Icons.badge),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+          l10n.storeInfo,
+          Icons.store_rounded,
+          AppColors.primary,
+          isDark,
+          [
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
               ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
-            child: TextFormField(
-              controller: _addressController,
-              maxLength: 200,
-              validator: FormValidators.requiredField(maxLength: 200),
-              decoration: InputDecoration(
-                labelText: l10n.addressLabel,
-                prefixIcon: const Icon(Icons.location_on),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.md),
-            child: TextFormField(
-              controller: _phoneController,
-              keyboardType: TextInputType.phone,
-              maxLength: 13,
-              inputFormatters: [
-                FilteringTextInputFormatter.allow(RegExp(r'[\d+]')),
-              ],
-              validator: FormValidators.phone(),
-              decoration: InputDecoration(
-                labelText: l10n.phoneNumber,
-                prefixIcon: const Icon(Icons.phone),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-            ),
-          ),
-        ]),
-
-        _buildSettingsGroup(l10n.taxInfo, Icons.receipt_long_rounded,
-            AppColors.success, isDark, [
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
-            child: TextFormField(
-              controller: _vatController,
-              keyboardType: TextInputType.number,
-              maxLength: 15,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-              ],
-              validator: FormValidators.vatNumber(),
-              decoration: InputDecoration(
-                labelText: l10n.vatNumberFieldLabel,
-                prefixIcon: const Icon(Icons.numbers),
-                helperText: l10n.vatNumberHintText,
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-            ),
-          ),
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
-            child: TextFormField(
-              controller: _crController,
-              keyboardType: TextInputType.number,
-              maxLength: 10,
-              inputFormatters: [
-                FilteringTextInputFormatter.digitsOnly,
-              ],
-              validator: FormValidators.crNumber(),
-              decoration: InputDecoration(
-                labelText: l10n.commercialRegister,
-                prefixIcon: const Icon(Icons.business),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-              ),
-            ),
-          ),
-          SwitchListTile(
-            title: Text(l10n.enableVatOption,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            value: _enableVat,
-            onChanged: (v) => setState(() => _enableVat = v),
-          ),
-          if (_enableVat)
-            ListTile(
-              title: Text(l10n.taxRateField,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface)),
-              subtitle: Text('${_vatRate.toInt()}%'),
-              trailing: ConstrainedBox(
-                constraints: BoxConstraints(
-                    maxWidth:
-                        MediaQuery.of(context).size.width > 600 ? 200 : 120),
-                child: Slider(
-                  value: _vatRate,
-                  min: 5,
-                  max: 20,
-                  divisions: 3,
-                  label: '${_vatRate.toInt()}%',
-                  onChanged: (v) => setState(() => _vatRate = v),
+              child: TextFormField(
+                controller: _nameController,
+                maxLength: 100,
+                validator: FormValidators.requiredField(maxLength: 100),
+                decoration: InputDecoration(
+                  labelText: l10n.storeNameField,
+                  prefixIcon: const Icon(Icons.badge),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
-          const SizedBox(height: AlhaiSpacing.xs),
-        ]),
-
-        _buildSettingsGroup(l10n.languageAndCurrency, Icons.language_rounded,
-            const Color(0xFFF97316), isDark, [
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
-            child: DropdownButtonFormField<String>(
-              initialValue: _language,
-              decoration: InputDecoration(
-                labelText: l10n.language,
-                prefixIcon: const Icon(Icons.translate),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
               ),
-              items: const [
-                DropdownMenuItem(
-                    value: 'ar',
-                    child: Text('\u0627\u0644\u0639\u0631\u0628\u064A\u0629')),
-                DropdownMenuItem(value: 'en', child: Text('English')),
-              ],
-              onChanged: (v) => setState(() => _language = v!),
+              child: TextFormField(
+                controller: _addressController,
+                maxLength: 200,
+                validator: FormValidators.requiredField(maxLength: 200),
+                decoration: InputDecoration(
+                  labelText: l10n.addressLabel,
+                  prefixIcon: const Icon(Icons.location_on),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.md),
-            child: DropdownButtonFormField<String>(
-              initialValue: _currency,
-              decoration: InputDecoration(
-                labelText: l10n.currencyFieldLabel,
-                prefixIcon: const Icon(Icons.attach_money),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.md,
               ),
-              items: [
-                DropdownMenuItem(value: 'SAR', child: Text(l10n.saudiRiyal)),
-                const DropdownMenuItem(
+              child: TextFormField(
+                controller: _phoneController,
+                keyboardType: TextInputType.phone,
+                maxLength: 13,
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[\d+]')),
+                ],
+                validator: FormValidators.phone(),
+                decoration: InputDecoration(
+                  labelText: l10n.phoneNumber,
+                  prefixIcon: const Icon(Icons.phone),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+
+        _buildSettingsGroup(
+          l10n.taxInfo,
+          Icons.receipt_long_rounded,
+          AppColors.success,
+          isDark,
+          [
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+              ),
+              child: TextFormField(
+                controller: _vatController,
+                keyboardType: TextInputType.number,
+                maxLength: 15,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: FormValidators.vatNumber(),
+                decoration: InputDecoration(
+                  labelText: l10n.vatNumberFieldLabel,
+                  prefixIcon: const Icon(Icons.numbers),
+                  helperText: l10n.vatNumberHintText,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+              ),
+              child: TextFormField(
+                controller: _crController,
+                keyboardType: TextInputType.number,
+                maxLength: 10,
+                inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                validator: FormValidators.crNumber(),
+                decoration: InputDecoration(
+                  labelText: l10n.commercialRegister,
+                  prefixIcon: const Icon(Icons.business),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+            SwitchListTile(
+              title: Text(
+                l10n.enableVatOption,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              value: _enableVat,
+              onChanged: (v) => setState(() => _enableVat = v),
+            ),
+            if (_enableVat)
+              ListTile(
+                title: Text(
+                  l10n.taxRateField,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                subtitle: Text('${_vatRate.toInt()}%'),
+                trailing: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width > 600
+                        ? 200
+                        : 120,
+                  ),
+                  child: Slider(
+                    value: _vatRate,
+                    min: 5,
+                    max: 20,
+                    divisions: 3,
+                    label: '${_vatRate.toInt()}%',
+                    onChanged: (v) => setState(() => _vatRate = v),
+                  ),
+                ),
+              ),
+            const SizedBox(height: AlhaiSpacing.xs),
+          ],
+        ),
+
+        _buildSettingsGroup(
+          l10n.languageAndCurrency,
+          Icons.language_rounded,
+          const Color(0xFFF97316),
+          isDark,
+          [
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+              ),
+              child: DropdownButtonFormField<String>(
+                initialValue: _language,
+                decoration: InputDecoration(
+                  labelText: l10n.language,
+                  prefixIcon: const Icon(Icons.translate),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                items: const [
+                  DropdownMenuItem(
+                    value: 'ar',
+                    child: Text('\u0627\u0644\u0639\u0631\u0628\u064A\u0629'),
+                  ),
+                  DropdownMenuItem(value: 'en', child: Text('English')),
+                ],
+                onChanged: (v) => setState(() => _language = v!),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.md,
+              ),
+              child: DropdownButtonFormField<String>(
+                initialValue: _currency,
+                decoration: InputDecoration(
+                  labelText: l10n.currencyFieldLabel,
+                  prefixIcon: const Icon(Icons.attach_money),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                items: [
+                  DropdownMenuItem(value: 'SAR', child: Text(l10n.saudiRiyal)),
+                  const DropdownMenuItem(
                     value: 'AED',
                     child: Text(
-                        '\u062F\u0631\u0647\u0645 \u0625\u0645\u0627\u0631\u0627\u062A\u064A (AED)')),
-                const DropdownMenuItem(
+                      '\u062F\u0631\u0647\u0645 \u0625\u0645\u0627\u0631\u0627\u062A\u064A (AED)',
+                    ),
+                  ),
+                  const DropdownMenuItem(
                     value: 'KWD',
                     child: Text(
-                        '\u062F\u064A\u0646\u0627\u0631 \u0643\u0648\u064A\u062A\u064A (KWD)')),
-                DropdownMenuItem(value: 'USD', child: Text(l10n.usDollar)),
-              ],
-              onChanged: (v) => setState(() => _currency = v!),
+                      '\u062F\u064A\u0646\u0627\u0631 \u0643\u0648\u064A\u062A\u064A (KWD)',
+                    ),
+                  ),
+                  DropdownMenuItem(value: 'USD', child: Text(l10n.usDollar)),
+                ],
+                onChanged: (v) => setState(() => _currency = v!),
+              ),
             ),
-          ),
-        ]),
+          ],
+        ),
 
-        _buildSettingsGroup(l10n.storeLogoSection, Icons.image_rounded,
-            const Color(0xFFEC4899), isDark, [
-          ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Theme.of(context).dividerColor,
-              child: Icon(Icons.image,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant),
-            ),
-            title: Text(l10n.storeLogoSection,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            subtitle: Text(l10n.storeLogoDesc,
+        _buildSettingsGroup(
+          l10n.storeLogoSection,
+          Icons.image_rounded,
+          const Color(0xFFEC4899),
+          isDark,
+          [
+            ListTile(
+              leading: CircleAvatar(
+                backgroundColor: Theme.of(context).dividerColor,
+                child: Icon(
+                  Icons.image,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              title: Text(
+                l10n.storeLogoSection,
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
-            trailing: TextButton(
-              onPressed: () {},
-              child: Text(l10n.changeButton),
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              subtitle: Text(
+                l10n.storeLogoDesc,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+              trailing: TextButton(
+                onPressed: () {},
+                child: Text(l10n.changeButton),
+              ),
             ),
-          ),
-        ]),
+          ],
+        ),
 
         // Location & Delivery settings
         _buildSettingsGroup(
-            '\u0627\u0644\u0645\u0648\u0642\u0639 \u0648\u0627\u0644\u062A\u0648\u0635\u064A\u0644', // الموقع والتوصيل
-            Icons.delivery_dining_rounded,
-            const Color(0xFF8B5CF6),
-            isDark,
-            [
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(
-                    AlhaiSpacing.mdl, AlhaiSpacing.xs, AlhaiSpacing.mdl, 0),
-                child: Text(
-                  '\u064A\u0645\u0643\u0646\u0643 \u0627\u0644\u062D\u0635\u0648\u0644 \u0639\u0644\u0649 \u0627\u0644\u0625\u062D\u062F\u0627\u062B\u064A\u0627\u062A \u0645\u0646 \u062E\u0631\u0627\u0626\u0637 Google', // يمكنك الحصول على الإحداثيات من خرائط Google
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+          '\u0627\u0644\u0645\u0648\u0642\u0639 \u0648\u0627\u0644\u062A\u0648\u0635\u064A\u0644', // الموقع والتوصيل
+          Icons.delivery_dining_rounded,
+          const Color(0xFF8B5CF6),
+          isDark,
+          [
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+                AlhaiSpacing.mdl,
+                0,
+              ),
+              child: Text(
+                '\u064A\u0645\u0643\u0646\u0643 \u0627\u0644\u062D\u0635\u0648\u0644 \u0639\u0644\u0649 \u0627\u0644\u0625\u062D\u062F\u0627\u062B\u064A\u0627\u062A \u0645\u0646 \u062E\u0631\u0627\u0626\u0637 Google', // يمكنك الحصول على الإحداثيات من خرائط Google
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+              ),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _latController,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                        signed: true,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[\d.\-]')),
+                      ],
+                      decoration: InputDecoration(
+                        labelText:
+                            '\u062E\u0637 \u0627\u0644\u0639\u0631\u0636', // خط العرض
+                        hintText: '24.7136',
+                        prefixIcon: const Icon(Icons.my_location),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: AlhaiSpacing.sm),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _lngController,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                        signed: true,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[\d.\-]')),
+                      ],
+                      decoration: InputDecoration(
+                        labelText:
+                            '\u062E\u0637 \u0627\u0644\u0637\u0648\u0644', // خط الطول
+                        hintText: '46.6753',
+                        prefixIcon: const Icon(Icons.explore),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+              ),
+              child: TextFormField(
+                controller: _deliveryRadiusController,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
+                ],
+                decoration: InputDecoration(
+                  labelText:
+                      '\u0646\u0637\u0627\u0642 \u0627\u0644\u062A\u0648\u0635\u064A\u0644 \u0628\u0627\u0644\u0643\u064A\u0644\u0648\u0645\u062A\u0631', // نطاق التوصيل بالكيلومتر
+                  prefixIcon: const Icon(Icons.radar),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
               ),
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                    AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _latController,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true, signed: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[\d.\-]')),
-                        ],
-                        decoration: InputDecoration(
-                          labelText:
-                              '\u062E\u0637 \u0627\u0644\u0639\u0631\u0636', // خط العرض
-                          hintText: '24.7136',
-                          prefixIcon: const Icon(Icons.my_location),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: AlhaiSpacing.sm),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _lngController,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true, signed: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[\d.\-]')),
-                        ],
-                        decoration: InputDecoration(
-                          labelText:
-                              '\u062E\u0637 \u0627\u0644\u0637\u0648\u0644', // خط الطول
-                          hintText: '46.6753',
-                          prefixIcon: const Icon(Icons.explore),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
+            ),
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
               ),
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                    AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
-                child: TextFormField(
-                  controller: _deliveryRadiusController,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
-                  ],
-                  decoration: InputDecoration(
-                    labelText:
-                        '\u0646\u0637\u0627\u0642 \u0627\u0644\u062A\u0648\u0635\u064A\u0644 \u0628\u0627\u0644\u0643\u064A\u0644\u0648\u0645\u062A\u0631', // نطاق التوصيل بالكيلومتر
-                    prefixIcon: const Icon(Icons.radar),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12)),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _minOrderController,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
+                      ],
+                      decoration: InputDecoration(
+                        labelText:
+                            '\u0627\u0644\u062D\u062F \u0627\u0644\u0623\u062F\u0646\u0649 \u0644\u0644\u0637\u0644\u0628', // الحد الأدنى للطلب
+                        prefixIcon: const Icon(Icons.shopping_bag_outlined),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                    AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextFormField(
-                        controller: _minOrderController,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
-                        ],
-                        decoration: InputDecoration(
-                          labelText:
-                              '\u0627\u0644\u062D\u062F \u0627\u0644\u0623\u062F\u0646\u0649 \u0644\u0644\u0637\u0644\u0628', // الحد الأدنى للطلب
-                          prefixIcon: const Icon(Icons.shopping_bag_outlined),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12)),
+                  const SizedBox(width: AlhaiSpacing.sm),
+                  Expanded(
+                    child: TextFormField(
+                      controller: _deliveryFeeController,
+                      keyboardType: const TextInputType.numberWithOptions(
+                        decimal: true,
+                      ),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
+                      ],
+                      decoration: InputDecoration(
+                        labelText:
+                            '\u0631\u0633\u0648\u0645 \u0627\u0644\u062A\u0648\u0635\u064A\u0644', // رسوم التوصيل
+                        prefixIcon: const Icon(Icons.payments_outlined),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
                         ),
                       ),
                     ),
-                    const SizedBox(width: AlhaiSpacing.sm),
-                    Expanded(
-                      child: TextFormField(
-                        controller: _deliveryFeeController,
-                        keyboardType: const TextInputType.numberWithOptions(
-                            decimal: true),
-                        inputFormatters: [
-                          FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
-                        ],
-                        decoration: InputDecoration(
-                          labelText:
-                              '\u0631\u0633\u0648\u0645 \u0627\u0644\u062A\u0648\u0635\u064A\u0644', // رسوم التوصيل
-                          prefixIcon: const Icon(Icons.payments_outlined),
-                          border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12)),
-                        ),
-                      ),
-                    ),
-                  ],
+                  ),
+                ],
+              ),
+            ),
+            SwitchListTile(
+              title: Text(
+                '\u064A\u0642\u0628\u0644 \u0627\u0644\u062A\u0648\u0635\u064A\u0644', // يقبل التوصيل
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
-              SwitchListTile(
-                title: Text(
-                  '\u064A\u0642\u0628\u0644 \u0627\u0644\u062A\u0648\u0635\u064A\u0644', // يقبل التوصيل
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.onSurface),
+              secondary: const Icon(Icons.delivery_dining),
+              value: _acceptsDelivery,
+              onChanged: (v) => setState(() => _acceptsDelivery = v),
+            ),
+            SwitchListTile(
+              title: Text(
+                '\u064A\u0642\u0628\u0644 \u0627\u0644\u0627\u0633\u062A\u0644\u0627\u0645', // يقبل الاستلام
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
-                secondary: const Icon(Icons.delivery_dining),
-                value: _acceptsDelivery,
-                onChanged: (v) => setState(() => _acceptsDelivery = v),
               ),
-              SwitchListTile(
-                title: Text(
-                  '\u064A\u0642\u0628\u0644 \u0627\u0644\u0627\u0633\u062A\u0644\u0627\u0645', // يقبل الاستلام
-                  style:
-                      TextStyle(color: Theme.of(context).colorScheme.onSurface),
-                ),
-                secondary: const Icon(Icons.store_outlined),
-                value: _acceptsPickup,
-                onChanged: (v) => setState(() => _acceptsPickup = v),
-              ),
-              const SizedBox(height: AlhaiSpacing.xs),
-            ]),
+              secondary: const Icon(Icons.store_outlined),
+              value: _acceptsPickup,
+              onChanged: (v) => setState(() => _acceptsPickup = v),
+            ),
+            const SizedBox(height: AlhaiSpacing.xs),
+          ],
+        ),
 
         const SizedBox(height: AlhaiSpacing.lg),
         SizedBox(
@@ -530,13 +645,17 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
                     width: 18,
                     height: 18,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white))
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
                 : const Icon(Icons.save_rounded),
             label: Text(l10n.saveSettings),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),
@@ -564,45 +683,61 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
             color: AppColors.primary.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(Icons.store_rounded,
-              color: AppColors.primary, size: 24),
+          child: const Icon(
+            Icons.store_rounded,
+            color: AppColors.primary,
+            size: 24,
+          ),
         ),
         const SizedBox(width: AlhaiSpacing.sm),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.storeSettings,
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface)),
-            Text(l10n.storeInfo,
-                style: TextStyle(
-                    fontSize: 13,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(
+              l10n.storeSettings,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            Text(
+              l10n.storeInfo,
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildSettingsGroup(String title, IconData icon, Color color,
-      bool isDark, List<Widget> children) {
+  Widget _buildSettingsGroup(
+    String title,
+    IconData icon,
+    Color color,
+    bool isDark,
+    List<Widget> children,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            padding: const EdgeInsetsDirectional.fromSTEB(
+              AlhaiSpacing.mdl,
+              AlhaiSpacing.md,
+              AlhaiSpacing.mdl,
+              AlhaiSpacing.xs,
+            ),
             child: Row(
               children: [
                 Container(
@@ -614,11 +749,14 @@ class _StoreSettingsScreenState extends ConsumerState<StoreSettingsScreen> {
                   child: Icon(icon, color: color, size: 20),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
-                Text(title,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface)),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
               ],
             ),
           ),

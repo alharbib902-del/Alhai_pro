@@ -21,8 +21,9 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
 
   /// Get a single org product by ID
   Future<OrgProductsTableData?> getById(String id) {
-    return (select(orgProductsTable)..where((p) => p.id.equals(id)))
-        .getSingleOrNull();
+    return (select(
+      orgProductsTable,
+    )..where((p) => p.id.equals(id))).getSingleOrNull();
   }
 
   /// Get org product by SKU
@@ -43,13 +44,15 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
   Future<List<OrgProductsTableData>> search(String orgId, String query) {
     final pattern = '%$query%';
     return (select(orgProductsTable)
-          ..where((p) =>
-              p.orgId.equals(orgId) &
-              p.isActive.equals(true) &
-              (p.name.like(pattern) |
-                  p.nameEn.like(pattern) |
-                  p.barcode.like(pattern) |
-                  p.sku.like(pattern)))
+          ..where(
+            (p) =>
+                p.orgId.equals(orgId) &
+                p.isActive.equals(true) &
+                (p.name.like(pattern) |
+                    p.nameEn.like(pattern) |
+                    p.barcode.like(pattern) |
+                    p.sku.like(pattern)),
+          )
           ..orderBy([(p) => OrderingTerm.asc(p.name)])
           ..limit(50))
         .get();
@@ -57,12 +60,16 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
 
   /// Get products by category
   Future<List<OrgProductsTableData>> getByCategory(
-      String orgId, String categoryId) {
+    String orgId,
+    String categoryId,
+  ) {
     return (select(orgProductsTable)
-          ..where((p) =>
-              p.orgId.equals(orgId) &
-              p.categoryId.equals(categoryId) &
-              p.isActive.equals(true))
+          ..where(
+            (p) =>
+                p.orgId.equals(orgId) &
+                p.categoryId.equals(categoryId) &
+                p.isActive.equals(true),
+          )
           ..orderBy([(p) => OrderingTerm.asc(p.name)]))
         .get();
   }
@@ -70,10 +77,12 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
   /// Get online-available products
   Future<List<OrgProductsTableData>> getOnlineProducts(String orgId) {
     return (select(orgProductsTable)
-          ..where((p) =>
-              p.orgId.equals(orgId) &
-              p.isActive.equals(true) &
-              p.onlineAvailable.equals(true))
+          ..where(
+            (p) =>
+                p.orgId.equals(orgId) &
+                p.isActive.equals(true) &
+                p.onlineAvailable.equals(true),
+          )
           ..orderBy([(p) => OrderingTerm.asc(p.name)]))
         .get();
   }
@@ -101,19 +110,23 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
     String? orgImageLarge,
     String? orgImageHash,
   }) {
-    return (update(orgProductsTable)..where((p) => p.id.equals(id)))
-        .write(OrgProductsTableCompanion(
-      orgImageThumbnail: orgImageThumbnail != null
-          ? Value(orgImageThumbnail)
-          : const Value.absent(),
-      orgImageMedium:
-          orgImageMedium != null ? Value(orgImageMedium) : const Value.absent(),
-      orgImageLarge:
-          orgImageLarge != null ? Value(orgImageLarge) : const Value.absent(),
-      orgImageHash:
-          orgImageHash != null ? Value(orgImageHash) : const Value.absent(),
-      updatedAt: Value(DateTime.now()),
-    ));
+    return (update(orgProductsTable)..where((p) => p.id.equals(id))).write(
+      OrgProductsTableCompanion(
+        orgImageThumbnail: orgImageThumbnail != null
+            ? Value(orgImageThumbnail)
+            : const Value.absent(),
+        orgImageMedium: orgImageMedium != null
+            ? Value(orgImageMedium)
+            : const Value.absent(),
+        orgImageLarge: orgImageLarge != null
+            ? Value(orgImageLarge)
+            : const Value.absent(),
+        orgImageHash: orgImageHash != null
+            ? Value(orgImageHash)
+            : const Value.absent(),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   /// Soft delete
@@ -142,8 +155,10 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
     final count = orgProductsTable.id.count();
     final query = selectOnly(orgProductsTable)
       ..addColumns([count])
-      ..where(orgProductsTable.orgId.equals(orgId) &
-          orgProductsTable.isActive.equals(true));
+      ..where(
+        orgProductsTable.orgId.equals(orgId) &
+            orgProductsTable.isActive.equals(true),
+      );
     final result = await query.getSingle();
     return result.read(count) ?? 0;
   }

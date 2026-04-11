@@ -43,8 +43,9 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('shows appearance section with language and theme',
-        (tester) async {
+    testWidgets('shows appearance section with language and theme', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();

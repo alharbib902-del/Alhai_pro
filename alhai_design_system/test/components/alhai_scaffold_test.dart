@@ -6,11 +6,7 @@ void main() {
   group('AlhaiScaffold', () {
     testWidgets('renders body content', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: AlhaiScaffold(
-            body: Text('Body Content'),
-          ),
-        ),
+        const MaterialApp(home: AlhaiScaffold(body: Text('Body Content'))),
       );
 
       expect(find.text('Body Content'), findsOneWidget);
@@ -36,9 +32,7 @@ void main() {
           home: AlhaiScaffold(
             body: Text('Body'),
             bottomNavigationBar: BottomAppBar(
-              child: Row(
-                children: [Icon(Icons.home)],
-              ),
+              child: Row(children: [Icon(Icons.home)]),
             ),
           ),
         ),
@@ -66,9 +60,7 @@ void main() {
     testWidgets('fullScreen factory renders', (tester) async {
       await tester.pumpWidget(
         MaterialApp(
-          home: AlhaiScaffold.fullScreen(
-            body: const Text('Full Screen'),
-          ),
+          home: AlhaiScaffold.fullScreen(body: const Text('Full Screen')),
         ),
       );
 
@@ -77,11 +69,7 @@ void main() {
 
     testWidgets('renders scaffold under the hood', (tester) async {
       await tester.pumpWidget(
-        const MaterialApp(
-          home: AlhaiScaffold(
-            body: Text('Content'),
-          ),
-        ),
+        const MaterialApp(home: AlhaiScaffold(body: Text('Content'))),
       );
 
       expect(find.byType(Scaffold), findsOneWidget);

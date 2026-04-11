@@ -29,8 +29,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      when(() => mockSuppliersDao.getActiveSuppliers(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSuppliersDao.getActiveSuppliers(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createTestWidget(const PurchaseFormScreen()));
       await tester.pump(const Duration(milliseconds: 500));
@@ -46,11 +47,10 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      final suppliers = [
-        createTestSupplier(id: 'sup-1', name: 'مورد تجريبي'),
-      ];
-      when(() => mockSuppliersDao.getActiveSuppliers(any()))
-          .thenAnswer((_) async => suppliers);
+      final suppliers = [createTestSupplier(id: 'sup-1', name: 'مورد تجريبي')];
+      when(
+        () => mockSuppliersDao.getActiveSuppliers(any()),
+      ).thenAnswer((_) async => suppliers);
 
       await tester.pumpWidget(createTestWidget(const PurchaseFormScreen()));
       await tester.pump(const Duration(milliseconds: 500));
@@ -66,8 +66,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      when(() => mockSuppliersDao.getActiveSuppliers(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSuppliersDao.getActiveSuppliers(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createTestWidget(const PurchaseFormScreen()));
       await tester.pump(const Duration(milliseconds: 500));
@@ -83,8 +84,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      when(() => mockSuppliersDao.getActiveSuppliers(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSuppliersDao.getActiveSuppliers(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createTestWidget(const PurchaseFormScreen()));
       await tester.pump(const Duration(milliseconds: 500));
@@ -100,8 +102,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      when(() => mockSuppliersDao.getActiveSuppliers(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSuppliersDao.getActiveSuppliers(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createTestWidget(const PurchaseFormScreen()));
       await tester.pump(const Duration(milliseconds: 500));
@@ -118,8 +121,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      when(() => mockSuppliersDao.getActiveSuppliers(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSuppliersDao.getActiveSuppliers(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createTestWidget(const PurchaseFormScreen()));
       await tester.pump(const Duration(milliseconds: 500));

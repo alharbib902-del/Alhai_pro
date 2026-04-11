@@ -71,21 +71,23 @@ class AuditLogDao extends DatabaseAccessor<AppDatabase>
     final rand = Random().nextInt(999999).toString().padLeft(6, '0');
     final id = '${DateTime.now().millisecondsSinceEpoch}_${action.name}_$rand';
 
-    return into(auditLogTable).insert(AuditLogTableCompanion.insert(
-      id: id,
-      storeId: storeId,
-      userId: userId,
-      userName: userName,
-      action: action.name,
-      entityType: Value(entityType),
-      entityId: Value(entityId),
-      oldValue: Value(oldValue != null ? jsonEncode(oldValue) : null),
-      newValue: Value(newValue != null ? jsonEncode(newValue) : null),
-      description: Value(description),
-      ipAddress: Value(ipAddress),
-      deviceInfo: Value(deviceInfo),
-      createdAt: DateTime.now(),
-    ));
+    return into(auditLogTable).insert(
+      AuditLogTableCompanion.insert(
+        id: id,
+        storeId: storeId,
+        userId: userId,
+        userName: userName,
+        action: action.name,
+        entityType: Value(entityType),
+        entityId: Value(entityId),
+        oldValue: Value(oldValue != null ? jsonEncode(oldValue) : null),
+        newValue: Value(newValue != null ? jsonEncode(newValue) : null),
+        description: Value(description),
+        ipAddress: Value(ipAddress),
+        deviceInfo: Value(deviceInfo),
+        createdAt: DateTime.now(),
+      ),
+    );
   }
 
   /// تسجيل تسجيل دخول
@@ -196,10 +198,12 @@ class AuditLogDao extends DatabaseAccessor<AppDatabase>
     DateTime to,
   ) {
     return (select(auditLogTable)
-          ..where((l) =>
-              l.storeId.equals(storeId) &
-              l.createdAt.isBiggerOrEqualValue(from) &
-              l.createdAt.isSmallerOrEqualValue(to))
+          ..where(
+            (l) =>
+                l.storeId.equals(storeId) &
+                l.createdAt.isBiggerOrEqualValue(from) &
+                l.createdAt.isSmallerOrEqualValue(to),
+          )
           ..orderBy([(l) => OrderingTerm.desc(l.createdAt)]))
         .get();
   }
@@ -211,7 +215,8 @@ class AuditLogDao extends DatabaseAccessor<AppDatabase>
   ) {
     return (select(auditLogTable)
           ..where(
-              (l) => l.storeId.equals(storeId) & l.action.equals(action.name))
+            (l) => l.storeId.equals(storeId) & l.action.equals(action.name),
+          )
           ..orderBy([(l) => OrderingTerm.desc(l.createdAt)]))
         .get();
   }
@@ -234,16 +239,18 @@ class AuditLogDao extends DatabaseAccessor<AppDatabase>
 
   /// تحديد السجلات كمزامنة
   Future<int> markAsSynced(List<String> ids) {
-    return (update(auditLogTable)..where((l) => l.id.isIn(ids)))
-        .write(AuditLogTableCompanion(syncedAt: Value(DateTime.now())));
+    return (update(auditLogTable)..where((l) => l.id.isIn(ids))).write(
+      AuditLogTableCompanion(syncedAt: Value(DateTime.now())),
+    );
   }
 
   /// حذف السجلات المزامنة القديمة (أقدم من المدة المحددة)
   Future<int> cleanupOldLogs({Duration olderThan = const Duration(days: 90)}) {
     final cutoff = DateTime.now().subtract(olderThan);
-    return (delete(auditLogTable)
-          ..where((l) =>
-              l.syncedAt.isNotNull() & l.createdAt.isSmallerThanValue(cutoff)))
+    return (delete(auditLogTable)..where(
+          (l) =>
+              l.syncedAt.isNotNull() & l.createdAt.isSmallerThanValue(cutoff),
+        ))
         .go();
   }
 }

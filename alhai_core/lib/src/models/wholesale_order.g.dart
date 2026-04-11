@@ -14,8 +14,10 @@ _$WholesaleOrderImpl _$$WholesaleOrderImplFromJson(Map<String, dynamic> json) =>
       storeId: json['storeId'] as String,
       storeName: json['storeName'] as String,
       status: $enumDecode(_$WholesaleOrderStatusEnumMap, json['status']),
-      paymentMethod:
-          $enumDecode(_$WholesalePaymentMethodEnumMap, json['paymentMethod']),
+      paymentMethod: $enumDecode(
+        _$WholesalePaymentMethodEnumMap,
+        json['paymentMethod'],
+      ),
       items: (json['items'] as List<dynamic>)
           .map((e) => WholesaleOrderItem.fromJson(e as Map<String, dynamic>))
           .toList(),
@@ -48,31 +50,31 @@ _$WholesaleOrderImpl _$$WholesaleOrderImplFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$$WholesaleOrderImplToJson(
-        _$WholesaleOrderImpl instance) =>
-    <String, dynamic>{
-      'id': instance.id,
-      'orderNumber': instance.orderNumber,
-      'distributorId': instance.distributorId,
-      'storeId': instance.storeId,
-      'storeName': instance.storeName,
-      'status': _$WholesaleOrderStatusEnumMap[instance.status]!,
-      'paymentMethod': _$WholesalePaymentMethodEnumMap[instance.paymentMethod]!,
-      'items': instance.items,
-      'subtotal': instance.subtotal,
-      'discount': instance.discount,
-      'tax': instance.tax,
-      'total': instance.total,
-      'notes': instance.notes,
-      'deliveryAddress': instance.deliveryAddress,
-      'expectedDeliveryDate': instance.expectedDeliveryDate?.toIso8601String(),
-      'confirmedAt': instance.confirmedAt?.toIso8601String(),
-      'shippedAt': instance.shippedAt?.toIso8601String(),
-      'deliveredAt': instance.deliveredAt?.toIso8601String(),
-      'cancelledAt': instance.cancelledAt?.toIso8601String(),
-      'cancellationReason': instance.cancellationReason,
-      'createdAt': instance.createdAt.toIso8601String(),
-      'updatedAt': instance.updatedAt?.toIso8601String(),
-    };
+  _$WholesaleOrderImpl instance,
+) => <String, dynamic>{
+  'id': instance.id,
+  'orderNumber': instance.orderNumber,
+  'distributorId': instance.distributorId,
+  'storeId': instance.storeId,
+  'storeName': instance.storeName,
+  'status': _$WholesaleOrderStatusEnumMap[instance.status]!,
+  'paymentMethod': _$WholesalePaymentMethodEnumMap[instance.paymentMethod]!,
+  'items': instance.items,
+  'subtotal': instance.subtotal,
+  'discount': instance.discount,
+  'tax': instance.tax,
+  'total': instance.total,
+  'notes': instance.notes,
+  'deliveryAddress': instance.deliveryAddress,
+  'expectedDeliveryDate': instance.expectedDeliveryDate?.toIso8601String(),
+  'confirmedAt': instance.confirmedAt?.toIso8601String(),
+  'shippedAt': instance.shippedAt?.toIso8601String(),
+  'deliveredAt': instance.deliveredAt?.toIso8601String(),
+  'cancelledAt': instance.cancelledAt?.toIso8601String(),
+  'cancellationReason': instance.cancellationReason,
+  'createdAt': instance.createdAt.toIso8601String(),
+  'updatedAt': instance.updatedAt?.toIso8601String(),
+};
 
 const _$WholesaleOrderStatusEnumMap = {
   WholesaleOrderStatus.pending: 'PENDING',
@@ -92,27 +94,27 @@ const _$WholesalePaymentMethodEnumMap = {
 };
 
 _$WholesaleOrderItemImpl _$$WholesaleOrderItemImplFromJson(
-        Map<String, dynamic> json) =>
-    _$WholesaleOrderItemImpl(
-      productId: json['productId'] as String,
-      productName: json['productName'] as String,
-      productSku: json['productSku'] as String?,
-      quantity: (json['quantity'] as num).toInt(),
-      unitPrice: (json['unitPrice'] as num).toDouble(),
-      totalPrice: (json['totalPrice'] as num).toDouble(),
-      discount: (json['discount'] as num?)?.toDouble(),
-      unit: json['unit'] as String?,
-    );
+  Map<String, dynamic> json,
+) => _$WholesaleOrderItemImpl(
+  productId: json['productId'] as String,
+  productName: json['productName'] as String,
+  productSku: json['productSku'] as String?,
+  quantity: (json['quantity'] as num).toInt(),
+  unitPrice: (json['unitPrice'] as num).toDouble(),
+  totalPrice: (json['totalPrice'] as num).toDouble(),
+  discount: (json['discount'] as num?)?.toDouble(),
+  unit: json['unit'] as String?,
+);
 
 Map<String, dynamic> _$$WholesaleOrderItemImplToJson(
-        _$WholesaleOrderItemImpl instance) =>
-    <String, dynamic>{
-      'productId': instance.productId,
-      'productName': instance.productName,
-      'productSku': instance.productSku,
-      'quantity': instance.quantity,
-      'unitPrice': instance.unitPrice,
-      'totalPrice': instance.totalPrice,
-      'discount': instance.discount,
-      'unit': instance.unit,
-    };
+  _$WholesaleOrderItemImpl instance,
+) => <String, dynamic>{
+  'productId': instance.productId,
+  'productName': instance.productName,
+  'productSku': instance.productSku,
+  'quantity': instance.quantity,
+  'unitPrice': instance.unitPrice,
+  'totalPrice': instance.totalPrice,
+  'discount': instance.discount,
+  'unit': instance.unit,
+};

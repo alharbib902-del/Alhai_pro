@@ -39,9 +39,10 @@ class _StaffPerformanceCardState extends State<StaffPerformanceCard>
       vsync: this,
       duration: const Duration(milliseconds: 1200),
     );
-    _scoreAnimation = Tween<double>(begin: 0, end: widget.staff.score / 100)
-        .animate(
-            CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
+    _scoreAnimation = Tween<double>(
+      begin: 0,
+      end: widget.staff.score / 100,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
     _controller.forward();
   }
 
@@ -89,8 +90,8 @@ class _StaffPerformanceCardState extends State<StaffPerformanceCard>
             color: _isHovered
                 ? _scoreColor.withValues(alpha: 0.4)
                 : (isDark
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : AppColors.border),
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : AppColors.border),
             width: _isHovered ? 2 : 1,
           ),
           boxShadow: [
@@ -170,7 +171,9 @@ class _StaffPerformanceCardState extends State<StaffPerformanceCard>
                             ),
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: AlhaiSpacing.xs, vertical: 3),
+                                horizontal: AlhaiSpacing.xs,
+                                vertical: 3,
+                              ),
                               decoration: BoxDecoration(
                                 color: _scoreColor.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(6),
@@ -202,23 +205,25 @@ class _StaffPerformanceCardState extends State<StaffPerformanceCard>
                             if (widget.rank <= 3)
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: AlhaiSpacing.xxxs),
+                                  horizontal: 6,
+                                  vertical: AlhaiSpacing.xxxs,
+                                ),
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     colors: widget.rank == 1
                                         ? [
                                             const Color(0xFFFFD700),
-                                            const Color(0xFFFFA000)
+                                            const Color(0xFFFFA000),
                                           ]
                                         : widget.rank == 2
-                                            ? [
-                                                const Color(0xFFC0C0C0),
-                                                const Color(0xFF9E9E9E)
-                                              ]
-                                            : [
-                                                const Color(0xFFCD7F32),
-                                                const Color(0xFFA0522D)
-                                              ],
+                                        ? [
+                                            const Color(0xFFC0C0C0),
+                                            const Color(0xFF9E9E9E),
+                                          ]
+                                        : [
+                                            const Color(0xFFCD7F32),
+                                            const Color(0xFFA0522D),
+                                          ],
                                   ),
                                   borderRadius: BorderRadius.circular(4),
                                 ),
@@ -268,8 +273,9 @@ class _StaffPerformanceCardState extends State<StaffPerformanceCard>
                     value: '${widget.staff.voidRate.toStringAsFixed(1)}%',
                     icon: Icons.cancel_rounded,
                     isDark: isDark,
-                    valueColor:
-                        widget.staff.voidRate > 3 ? AppColors.error : null,
+                    valueColor: widget.staff.voidRate > 3
+                        ? AppColors.error
+                        : null,
                   ),
                 ],
               ),
@@ -317,11 +323,13 @@ class _MetricItem extends StatelessWidget {
     return Expanded(
       child: Column(
         children: [
-          Icon(icon,
-              size: 14,
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.3)
-                  : AppColors.textMuted),
+          Icon(
+            icon,
+            size: 14,
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.3)
+                : AppColors.textMuted,
+          ),
           const SizedBox(height: AlhaiSpacing.xxs),
           Text(
             value,
@@ -354,8 +362,11 @@ class _ScoreRingPainter extends CustomPainter {
   final Color color;
   final bool isDark;
 
-  _ScoreRingPainter(
-      {required this.progress, required this.color, required this.isDark});
+  _ScoreRingPainter({
+    required this.progress,
+    required this.color,
+    required this.isDark,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -364,13 +375,15 @@ class _ScoreRingPainter extends CustomPainter {
 
     // Background ring
     canvas.drawCircle(
-        center,
-        radius,
-        Paint()
-          ..color =
-              isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.grey200
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 4);
+      center,
+      radius,
+      Paint()
+        ..color = isDark
+            ? Colors.white.withValues(alpha: 0.06)
+            : AppColors.grey200
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 4,
+    );
 
     // Progress ring
     canvas.drawArc(
@@ -398,8 +411,11 @@ class _SparklinePainter extends CustomPainter {
   final Color color;
   final bool isDark;
 
-  _SparklinePainter(
-      {required this.values, required this.color, required this.isDark});
+  _SparklinePainter({
+    required this.values,
+    required this.color,
+    required this.isDark,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -416,8 +432,8 @@ class _SparklinePainter extends CustomPainter {
       final x = i * stepX;
       final y = range > 0
           ? size.height -
-              ((values[i] - minV) / range * size.height * 0.8 +
-                  size.height * 0.1)
+                ((values[i] - minV) / range * size.height * 0.8 +
+                    size.height * 0.1)
           : size.height / 2;
       if (i == 0) {
         path.moveTo(x, y);
@@ -433,32 +449,34 @@ class _SparklinePainter extends CustomPainter {
     fillPath.lineTo(0, size.height);
     fillPath.close();
     canvas.drawPath(
-        fillPath,
-        Paint()
-          ..shader = LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              color.withValues(alpha: 0.15),
-              color.withValues(alpha: 0.02)
-            ],
-          ).createShader(Rect.fromLTWH(0, 0, size.width, size.height)));
+      fillPath,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            color.withValues(alpha: 0.15),
+            color.withValues(alpha: 0.02),
+          ],
+        ).createShader(Rect.fromLTWH(0, 0, size.width, size.height)),
+    );
 
     // Line
     canvas.drawPath(
-        path,
-        Paint()
-          ..color = color
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2
-          ..strokeCap = StrokeCap.round);
+      path,
+      Paint()
+        ..color = color
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2
+        ..strokeCap = StrokeCap.round,
+    );
 
     // Last dot
     final lastX = (values.length - 1) * stepX;
     final lastY = range > 0
         ? size.height -
-            ((values.last - minV) / range * size.height * 0.8 +
-                size.height * 0.1)
+              ((values.last - minV) / range * size.height * 0.8 +
+                  size.height * 0.1)
         : size.height / 2;
     canvas.drawCircle(Offset(lastX, lastY), 3, Paint()..color = color);
     canvas.drawCircle(Offset(lastX, lastY), 1.5, Paint()..color = Colors.white);

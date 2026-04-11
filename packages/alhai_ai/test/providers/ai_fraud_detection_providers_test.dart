@@ -19,7 +19,9 @@ void main() {
       container.read(fraudSeverityFilterProvider.notifier).state =
           FraudSeverity.critical;
       expect(
-          container.read(fraudSeverityFilterProvider), FraudSeverity.critical);
+        container.read(fraudSeverityFilterProvider),
+        FraudSeverity.critical,
+      );
     });
 
     test('can be reset to null', () {
@@ -47,8 +49,10 @@ void main() {
 
       container.read(fraudPatternFilterProvider.notifier).state =
           FraudPattern.unusualRefund;
-      expect(container.read(fraudPatternFilterProvider),
-          FraudPattern.unusualRefund);
+      expect(
+        container.read(fraudPatternFilterProvider),
+        FraudPattern.unusualRefund,
+      );
     });
   });
 
@@ -114,9 +118,7 @@ void main() {
       ];
 
       final container = ProviderContainer(
-        overrides: [
-          fraudAlertsProvider.overrideWith((ref) async => alerts),
-        ],
+        overrides: [fraudAlertsProvider.overrideWith((ref) async => alerts)],
       );
       addTearDown(container.dispose);
 
@@ -158,9 +160,7 @@ void main() {
       ];
 
       final container = ProviderContainer(
-        overrides: [
-          fraudAlertsProvider.overrideWith((ref) async => alerts),
-        ],
+        overrides: [fraudAlertsProvider.overrideWith((ref) async => alerts)],
       );
       addTearDown(container.dispose);
 

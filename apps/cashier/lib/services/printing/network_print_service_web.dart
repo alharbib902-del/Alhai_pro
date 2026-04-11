@@ -29,8 +29,7 @@ class NetworkPrintService implements ThermalPrintService {
   @override
   Future<List<DiscoveredPrinter>> scanForPrinters({
     Duration timeout = const Duration(seconds: 10),
-  }) async =>
-      [];
+  }) async => [];
 
   @override
   Future<bool> connect(DiscoveredPrinter printer) async => false;

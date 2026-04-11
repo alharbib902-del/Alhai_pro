@@ -52,10 +52,7 @@ class StoreCard extends StatelessWidget {
                           ),
                         ),
                       )
-                    : Icon(
-                        Icons.storefront,
-                        color: theme.colorScheme.primary,
-                      ),
+                    : Icon(Icons.storefront, color: theme.colorScheme.primary),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               // Store info
@@ -82,13 +79,13 @@ class StoreCard extends StatelessWidget {
                           decoration: BoxDecoration(
                             color: isOpen
                                 ? theme
-                                    .extension<AlhaiStatusColors>()!
-                                    .success
-                                    .withValues(alpha: 0.1)
+                                      .extension<AlhaiStatusColors>()!
+                                      .success
+                                      .withValues(alpha: 0.1)
                                 : theme
-                                    .extension<AlhaiStatusColors>()!
-                                    .error
-                                    .withValues(alpha: 0.1),
+                                      .extension<AlhaiStatusColors>()!
+                                      .error
+                                      .withValues(alpha: 0.1),
                             borderRadius: AlhaiRadius.borderSm,
                           ),
                           child: Text(
@@ -96,8 +93,8 @@ class StoreCard extends StatelessWidget {
                             style: theme.textTheme.labelSmall?.copyWith(
                               color: isOpen
                                   ? theme
-                                      .extension<AlhaiStatusColors>()!
-                                      .success
+                                        .extension<AlhaiStatusColors>()!
+                                        .success
                                   : theme.extension<AlhaiStatusColors>()!.error,
                               fontWeight: FontWeight.w600,
                             ),
@@ -132,10 +129,7 @@ class StoreCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(
-                Icons.chevron_left,
-                color: theme.colorScheme.outline,
-              ),
+              Icon(Icons.chevron_left, color: theme.colorScheme.outline),
             ],
           ),
         ),

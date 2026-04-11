@@ -53,8 +53,9 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
       final dr = _getDateRange();
 
       // Get sales per cashier (using opened_by from shifts or cashier_id from sales)
-      final result = await db.customSelect(
-        '''SELECT
+      final result = await db
+          .customSelect(
+            '''SELECT
              u.id,
              COALESCE(u.name, u.phone) as emp_name,
              COUNT(DISTINCT s.id) as sale_count,
@@ -67,12 +68,13 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
              AND s.created_at < ?
            GROUP BY u.id
            ORDER BY total_sales DESC''',
-        variables: [
-          Variable.withString(storeId),
-          Variable.withDateTime(dr.start),
-          Variable.withDateTime(dr.end),
-        ],
-      ).get();
+            variables: [
+              Variable.withString(storeId),
+              Variable.withDateTime(dr.start),
+              Variable.withDateTime(dr.end),
+            ],
+          )
+          .get();
 
       if (mounted) {
         setState(() {
@@ -122,8 +124,10 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
-    final totalCommissions =
-        _employees.fold(0.0, (sum, e) => sum + e.commission);
+    final totalCommissions = _employees.fold(
+      0.0,
+      (sum, e) => sum + e.commission,
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -141,10 +145,12 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
             ],
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
-              child: Row(children: [
-                Text(_periodLabel(context)),
-                const Icon(Icons.arrow_drop_down),
-              ]),
+              child: Row(
+                children: [
+                  Text(_periodLabel(context)),
+                  const Icon(Icons.arrow_drop_down),
+                ],
+              ),
             ),
           ),
         ],
@@ -163,22 +169,23 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                       gradient: LinearGradient(
                         colors: [
                           Theme.of(context).colorScheme.primary,
-                          Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withValues(alpha: 0.8)
+                          Theme.of(
+                            context,
+                          ).colorScheme.primary.withValues(alpha: 0.8),
                         ],
                       ),
                     ),
                     child: Column(
                       children: [
-                        Text(l10n.totalDueCommissions,
-                            style: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onPrimary
-                                    .withValues(alpha: 0.7),
-                                fontSize: 12)),
+                        Text(
+                          l10n.totalDueCommissions,
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary.withValues(alpha: 0.7),
+                            fontSize: 12,
+                          ),
+                        ),
                         const SizedBox(height: AlhaiSpacing.xxs),
                         Text(
                           l10n.amountSar(totalCommissions.toStringAsFixed(2)),
@@ -191,11 +198,11 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                         Text(
                           l10n.forEmployees(_employees.length),
                           style: TextStyle(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onPrimary
-                                  .withValues(alpha: 0.7),
-                              fontSize: 12),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onPrimary.withValues(alpha: 0.7),
+                            fontSize: 12,
+                          ),
                         ),
                       ],
                     ),
@@ -214,15 +221,19 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                             itemBuilder: (ctx, i) {
                               final emp = _employees[i];
                               final achievedPct = emp.target > 0
-                                  ? (emp.totalSales / emp.target)
-                                      .clamp(0.0, 1.0)
+                                  ? (emp.totalSales / emp.target).clamp(
+                                      0.0,
+                                      1.0,
+                                    )
                                   : 0.0;
                               return Card(
                                 margin: const EdgeInsets.only(
-                                    bottom: AlhaiSpacing.xs),
+                                  bottom: AlhaiSpacing.xs,
+                                ),
                                 child: Padding(
-                                  padding:
-                                      const EdgeInsets.all(AlhaiSpacing.md),
+                                  padding: const EdgeInsets.all(
+                                    AlhaiSpacing.md,
+                                  ),
                                   child: Column(
                                     children: [
                                       Row(
@@ -239,40 +250,47 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                                                   : '?',
                                               style: TextStyle(
                                                 fontWeight: FontWeight.bold,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .primary,
+                                                color: Theme.of(
+                                                  context,
+                                                ).colorScheme.primary,
                                                 fontSize: 18,
                                               ),
                                             ),
                                           ),
                                           const SizedBox(
-                                              width: AlhaiSpacing.sm),
+                                            width: AlhaiSpacing.sm,
+                                          ),
                                           Expanded(
                                             child: Column(
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Text(emp.name,
-                                                    style: const TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold)),
+                                                Text(
+                                                  emp.name,
+                                                  style: const TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
                                                 Text(
                                                   l10n.invoicesSales(
-                                                      emp.saleCount,
-                                                      emp.totalSales
-                                                          .toStringAsFixed(0)),
+                                                    emp.saleCount,
+                                                    emp.totalSales
+                                                        .toStringAsFixed(0),
+                                                  ),
                                                   style: TextStyle(
-                                                      fontSize: 12,
-                                                      color: Theme.of(context)
-                                                          .hintColor),
+                                                    fontSize: 12,
+                                                    color: Theme.of(
+                                                      context,
+                                                    ).hintColor,
+                                                  ),
                                                 ),
                                               ],
                                             ),
                                           ),
                                           Container(
                                             padding: const EdgeInsets.all(
-                                                AlhaiSpacing.xs),
+                                              AlhaiSpacing.xs,
+                                            ),
                                             decoration: BoxDecoration(
                                               color: AppColors.success
                                                   .withValues(alpha: 0.1),
@@ -281,14 +299,20 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                                             ),
                                             child: Column(
                                               children: [
-                                                Text(l10n.commissionLabel,
-                                                    style: TextStyle(
-                                                        fontSize: 10,
-                                                        color: Theme.of(context)
-                                                            .hintColor)),
                                                 Text(
-                                                  l10n.amountSar(emp.commission
-                                                      .toStringAsFixed(0)),
+                                                  l10n.commissionLabel,
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    color: Theme.of(
+                                                      context,
+                                                    ).hintColor,
+                                                  ),
+                                                ),
+                                                Text(
+                                                  l10n.amountSar(
+                                                    emp.commission
+                                                        .toStringAsFixed(0),
+                                                  ),
                                                   style: TextStyle(
                                                     fontWeight: FontWeight.bold,
                                                     color: AppColors.success,
@@ -308,16 +332,20 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                                         children: [
                                           Text(
                                             l10n.targetLabel(
-                                                emp.target.toStringAsFixed(0)),
+                                              emp.target.toStringAsFixed(0),
+                                            ),
                                             style: TextStyle(
-                                                fontSize: 11,
-                                                color: Theme.of(context)
-                                                    .hintColor),
+                                              fontSize: 11,
+                                              color: Theme.of(
+                                                context,
+                                              ).hintColor,
+                                            ),
                                           ),
                                           Text(
                                             l10n.achievedPercent(
-                                                (achievedPct * 100)
-                                                    .toStringAsFixed(0)),
+                                              (achievedPct * 100)
+                                                  .toStringAsFixed(0),
+                                            ),
                                             style: TextStyle(
                                               fontSize: 11,
                                               fontWeight: FontWeight.bold,
@@ -331,26 +359,28 @@ class _CommissionScreenState extends ConsumerState<CommissionScreen> {
                                       const SizedBox(height: AlhaiSpacing.xxs),
                                       LinearProgressIndicator(
                                         value: achievedPct,
-                                        backgroundColor: Theme.of(context)
-                                            .colorScheme
-                                            .surfaceContainerLow,
+                                        backgroundColor: Theme.of(
+                                          context,
+                                        ).colorScheme.surfaceContainerLow,
                                         valueColor:
                                             AlwaysStoppedAnimation<Color>(
-                                          achievedPct >= 1
-                                              ? AppColors.success
-                                              : AppColors.warning,
-                                        ),
+                                              achievedPct >= 1
+                                                  ? AppColors.success
+                                                  : AppColors.warning,
+                                            ),
                                         minHeight: 6,
                                         borderRadius: BorderRadius.circular(3),
                                       ),
                                       const SizedBox(height: AlhaiSpacing.xxs),
                                       Text(
                                         l10n.commissionRate(
-                                            (emp.commissionRate * 100)
-                                                .toStringAsFixed(0)),
+                                          (emp.commissionRate * 100)
+                                              .toStringAsFixed(0),
+                                        ),
                                         style: TextStyle(
-                                            fontSize: 10,
-                                            color: Theme.of(context).hintColor),
+                                          fontSize: 10,
+                                          color: Theme.of(context).hintColor,
+                                        ),
                                       ),
                                     ],
                                   ),

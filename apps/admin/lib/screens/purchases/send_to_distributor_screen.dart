@@ -100,9 +100,11 @@ class _SendToDistributorScreenState
           FilledButton.icon(
             onPressed: () =>
                 context.go(AppRoutes.purchaseDetailPath(widget.purchaseId)),
-            icon: Icon(Directionality.of(context) == TextDirection.rtl
-                ? Icons.arrow_forward_rounded
-                : Icons.arrow_back_rounded),
+            icon: Icon(
+              Directionality.of(context) == TextDirection.rtl
+                  ? Icons.arrow_forward_rounded
+                  : Icons.arrow_back_rounded,
+            ),
             label: Text(AppLocalizations.of(context).goBack),
           ),
         ],
@@ -214,9 +216,7 @@ class _SendToDistributorScreenState
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -229,8 +229,11 @@ class _SendToDistributorScreenState
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.receipt_long_rounded,
-                    color: AppColors.info, size: 20),
+                child: const Icon(
+                  Icons.receipt_long_rounded,
+                  color: AppColors.info,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -244,18 +247,23 @@ class _SendToDistributorScreenState
             ],
           ),
           const SizedBox(height: AlhaiSpacing.md),
-          _infoRow(AppLocalizations.of(context).orderNumber,
-              purchase.purchaseNumber, isDark),
+          _infoRow(
+            AppLocalizations.of(context).orderNumber,
+            purchase.purchaseNumber,
+            isDark,
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           _infoRow(
-              AppLocalizations.of(context).currentSupplier,
-              purchase.supplierName ?? AppLocalizations.of(context).unspecified,
-              isDark),
+            AppLocalizations.of(context).currentSupplier,
+            purchase.supplierName ?? AppLocalizations.of(context).unspecified,
+            isDark,
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           _infoRow(
             AppLocalizations.of(context).totalLabel,
-            AppLocalizations.of(context)
-                .amountSar(purchase.total.toStringAsFixed(2)),
+            AppLocalizations.of(
+              context,
+            ).amountSar(purchase.total.toStringAsFixed(2)),
             isDark,
             valueColor: isDark ? AppColors.primaryLight : AppColors.primaryDark,
           ),
@@ -264,8 +272,12 @@ class _SendToDistributorScreenState
     );
   }
 
-  Widget _infoRow(String label, String value, bool isDark,
-      {Color? valueColor}) {
+  Widget _infoRow(
+    String label,
+    String value,
+    bool isDark, {
+    Color? valueColor,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -295,9 +307,7 @@ class _SendToDistributorScreenState
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -310,8 +320,11 @@ class _SendToDistributorScreenState
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.list_alt_rounded,
-                    color: AppColors.primary, size: 20),
+                child: const Icon(
+                  Icons.list_alt_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -324,8 +337,10 @@ class _SendToDistributorScreenState
               ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
@@ -342,9 +357,7 @@ class _SendToDistributorScreenState
             ],
           ),
           const SizedBox(height: AlhaiSpacing.md),
-          Divider(
-            color: Theme.of(context).dividerColor,
-          ),
+          Divider(color: Theme.of(context).dividerColor),
           if (items.isEmpty)
             AppEmptyState.noProducts(context)
           else
@@ -352,10 +365,8 @@ class _SendToDistributorScreenState
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: items.length,
-              separatorBuilder: (_, __) => Divider(
-                height: 1,
-                color: Theme.of(context).dividerColor,
-              ),
+              separatorBuilder: (_, __) =>
+                  Divider(height: 1, color: Theme.of(context).dividerColor),
               itemBuilder: (context, index) {
                 final item = items[index];
                 return Padding(
@@ -380,8 +391,9 @@ class _SendToDistributorScreenState
                       ),
                       const SizedBox(width: AlhaiSpacing.sm),
                       Text(
-                        AppLocalizations.of(context)
-                            .amountSar(item.total.toStringAsFixed(2)),
+                        AppLocalizations.of(
+                          context,
+                        ).amountSar(item.total.toStringAsFixed(2)),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: isDark
@@ -412,9 +424,7 @@ class _SendToDistributorScreenState
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -427,8 +437,11 @@ class _SendToDistributorScreenState
                   color: AppColors.secondary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.store_rounded,
-                    color: AppColors.secondary, size: 20),
+                child: const Icon(
+                  Icons.store_rounded,
+                  color: AppColors.secondary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -459,10 +472,9 @@ class _SendToDistributorScreenState
                 ),
                 initialValue: _selectedSupplierId,
                 items: suppliers
-                    .map((s) => DropdownMenuItem(
-                          value: s.id,
-                          child: Text(s.name),
-                        ))
+                    .map(
+                      (s) => DropdownMenuItem(value: s.id, child: Text(s.name)),
+                    )
                     .toList(),
                 onChanged: (v) => setState(() => _selectedSupplierId = v),
               );
@@ -482,9 +494,7 @@ class _SendToDistributorScreenState
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -497,8 +507,11 @@ class _SendToDistributorScreenState
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.notes_rounded,
-                    color: AppColors.warning, size: 20),
+                child: const Icon(
+                  Icons.notes_rounded,
+                  color: AppColors.warning,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -546,9 +559,11 @@ class _SendToDistributorScreenState
                 ),
               )
             : const Icon(Icons.send_rounded),
-        label: Text(_isSending
-            ? AppLocalizations.of(context).sending
-            : AppLocalizations.of(context).sendToDistributor),
+        label: Text(
+          _isSending
+              ? AppLocalizations.of(context).sending
+              : AppLocalizations.of(context).sendToDistributor,
+        ),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.info,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
@@ -582,13 +597,15 @@ class _SendToDistributorScreenState
       await db.purchasesDao.updateStatus(widget.purchaseId, 'sent');
 
       // 2. Update supplier if changed and add notes
-      final existingPurchase =
-          await db.purchasesDao.getPurchaseById(widget.purchaseId);
+      final existingPurchase = await db.purchasesDao.getPurchaseById(
+        widget.purchaseId,
+      );
       if (existingPurchase != null) {
         // Get selected supplier name
         final suppliers = ref.read(activeSuppliersProvider).valueOrNull ?? [];
-        final selectedSupplier =
-            suppliers.where((s) => s.id == _selectedSupplierId).firstOrNull;
+        final selectedSupplier = suppliers
+            .where((s) => s.id == _selectedSupplierId)
+            .firstOrNull;
         final supplierName =
             selectedSupplier?.name ?? existingPurchase.supplierName ?? '';
 
@@ -599,25 +616,29 @@ class _SendToDistributorScreenState
               : '$updatedNotes\n---\n${_notesController.text.trim()}';
         }
 
-        await db.purchasesDao.updatePurchase(existingPurchase.copyWith(
-          supplierId: Value(_selectedSupplierId),
-          supplierName: Value(supplierName),
-          notes: Value(updatedNotes),
-        ));
+        await db.purchasesDao.updatePurchase(
+          existingPurchase.copyWith(
+            supplierId: Value(_selectedSupplierId),
+            supplierName: Value(supplierName),
+            notes: Value(updatedNotes),
+          ),
+        );
       }
 
       // 3. Sync
       try {
-        await ref.read(syncServiceProvider).enqueueUpdate(
-          tableName: 'purchases',
-          recordId: widget.purchaseId,
-          changes: {
-            'id': widget.purchaseId,
-            'status': 'sent',
-            'supplier_id': _selectedSupplierId,
-            'updated_at': DateTime.now().toIso8601String(),
-          },
-        );
+        await ref
+            .read(syncServiceProvider)
+            .enqueueUpdate(
+              tableName: 'purchases',
+              recordId: widget.purchaseId,
+              changes: {
+                'id': widget.purchaseId,
+                'status': 'sent',
+                'supplier_id': _selectedSupplierId,
+                'updated_at': DateTime.now().toIso8601String(),
+              },
+            );
       } catch (e) {
         debugPrint('Sync enqueue error: $e');
       }

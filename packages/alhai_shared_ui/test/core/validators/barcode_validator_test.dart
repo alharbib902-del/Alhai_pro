@@ -153,8 +153,9 @@ void main() {
 
     group('generateEan13Checksum', () {
       test('should generate correct EAN-13 with checksum', () {
-        final fullBarcode =
-            BarcodeValidator.generateEan13Checksum('400638133393');
+        final fullBarcode = BarcodeValidator.generateEan13Checksum(
+          '400638133393',
+        );
         expect(fullBarcode, '4006381333931');
         expect(fullBarcode.length, 13);
       });
@@ -167,8 +168,9 @@ void main() {
       });
 
       test('generated barcode should pass validation', () {
-        final fullBarcode =
-            BarcodeValidator.generateEan13Checksum('590123412345');
+        final fullBarcode = BarcodeValidator.generateEan13Checksum(
+          '590123412345',
+        );
         final result = BarcodeValidator.validate(
           fullBarcode,
           type: BarcodeType.ean13,

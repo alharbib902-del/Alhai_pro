@@ -63,9 +63,9 @@ class _SARevenueAnalyticsScreenState
                     ),
                   ],
                   selected: {period},
-                  onSelectionChanged: (v) => ref
-                      .read(saRevenuePeriodProvider.notifier)
-                      .state = v.first,
+                  onSelectionChanged: (v) =>
+                      ref.read(saRevenuePeriodProvider.notifier).state =
+                          v.first,
                 ),
               ],
             ),
@@ -343,8 +343,9 @@ class _MrrChart extends StatelessWidget {
                 show: true,
                 drawVerticalLine: false,
                 getDrawingHorizontalLine: (value) => FlLine(
-                  color:
-                      theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+                  color: theme.colorScheme.outlineVariant.withValues(
+                    alpha: 0.3,
+                  ),
                   strokeWidth: 1,
                 ),
               ),
@@ -370,8 +371,9 @@ class _MrrChart extends StatelessWidget {
                         return const SizedBox();
                       }
                       final month = monthlyData[idx].month;
-                      final label =
-                          month.length >= 7 ? month.substring(5) : month;
+                      final label = month.length >= 7
+                          ? month.substring(5)
+                          : month;
                       return Padding(
                         padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
                         child: Text(
@@ -384,10 +386,12 @@ class _MrrChart extends StatelessWidget {
                     },
                   ),
                 ),
-                topTitles:
-                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles:
-                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                rightTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
               ),
               borderData: FlBorderData(show: false),
               minY: 0,
@@ -437,10 +441,7 @@ class _RevenueByPlanTable extends StatelessWidget {
       );
     }
 
-    final totalRevenue = plans.fold<double>(
-      0,
-      (sum, p) => sum + p.revenue,
-    );
+    final totalRevenue = plans.fold<double>(0, (sum, p) => sum + p.revenue);
 
     return Card(
       elevation: 0,
@@ -464,12 +465,14 @@ class _RevenueByPlanTable extends StatelessWidget {
               ? (plan.revenue / totalRevenue * 100).toStringAsFixed(1)
               : '0.0';
 
-          return DataRow(cells: [
-            DataCell(Text(plan.name)),
-            DataCell(Text('${plan.subscribers}')),
-            DataCell(Text('${plan.revenue.toStringAsFixed(0)} ${l10n.sar}')),
-            DataCell(Text('$pct%')),
-          ]);
+          return DataRow(
+            cells: [
+              DataCell(Text(plan.name)),
+              DataCell(Text('${plan.subscribers}')),
+              DataCell(Text('${plan.revenue.toStringAsFixed(0)} ${l10n.sar}')),
+              DataCell(Text('$pct%')),
+            ],
+          );
         }).toList(),
       ),
     );
@@ -519,11 +522,13 @@ class _TopStoresTable extends StatelessWidget {
         rows: List.generate(stores.length, (i) {
           final store = stores[i];
 
-          return DataRow(cells: [
-            DataCell(Text('${i + 1}')),
-            DataCell(Text(store.storeName)),
-            DataCell(Text('${store.revenue.toStringAsFixed(0)} ${l10n.sar}')),
-          ]);
+          return DataRow(
+            cells: [
+              DataCell(Text('${i + 1}')),
+              DataCell(Text(store.storeName)),
+              DataCell(Text('${store.revenue.toStringAsFixed(0)} ${l10n.sar}')),
+            ],
+          );
         }),
       ),
     );

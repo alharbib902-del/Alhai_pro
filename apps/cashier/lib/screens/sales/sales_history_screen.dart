@@ -218,8 +218,9 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
             subtitle: _getDateSubtitle(l10n),
             showSearch: false,
             searchHint: l10n.searchPlaceholder,
-            onMenuTap:
-                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: user?.name ?? l10n.cashCustomer,
@@ -233,90 +234,99 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                     child: ShimmerList(itemCount: 6, itemHeight: 72),
                   )
                 : _error != null
-                    ? AppErrorState.general(context,
-                        message: _error!, onRetry: _loadOrders)
-                    : Column(
-                        children: [
-                          // Filters & Search Bar
-                          Padding(
-                            padding: EdgeInsets.all(isMediumScreen
-                                ? AlhaiSpacing.lg
-                                : AlhaiSpacing.md),
-                            child: Column(
-                              children: [
-                                _buildSearchBar(isDark, l10n),
-                                const SizedBox(height: AlhaiSpacing.sm),
-                                _buildDateFilters(isDark, l10n),
-                              ],
-                            ),
-                          ),
-                          // Summary stats
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: isMediumScreen ? 24 : 16),
-                            child: _buildSummaryStats(isDark, l10n),
-                          ),
-                          const SizedBox(height: AlhaiSpacing.sm),
-                          // Orders list
-                          Expanded(
-                            child: _filteredOrders.isEmpty
-                                ? _buildEmptyState(isDark, l10n)
-                                : RefreshIndicator(
-                                    onRefresh: _loadOrders,
-                                    color: AppColors.primary,
-                                    child: ListView.separated(
-                                      controller: _scrollController,
-                                      physics:
-                                          const AlwaysScrollableScrollPhysics(),
-                                      padding: EdgeInsets.symmetric(
-                                          horizontal: isMediumScreen ? 24 : 16,
-                                          vertical: AlhaiSpacing.xs),
-                                      itemCount: _filteredOrders.length +
-                                          (_isLoadingMore || _hasMore ? 1 : 0),
-                                      separatorBuilder: (_, __) =>
-                                          const SizedBox(
-                                              height: AlhaiSpacing.xs),
-                                      itemBuilder: (context, index) {
-                                        if (index < _filteredOrders.length) {
-                                          return _buildOrderCard(
-                                              _filteredOrders[index],
-                                              isDark,
-                                              l10n);
-                                        }
-                                        // مؤشر تحميل المزيد
-                                        if (_isLoadingMore) {
-                                          return const Padding(
-                                            padding:
-                                                EdgeInsets.all(AlhaiSpacing.md),
-                                            child: Center(
-                                                child:
-                                                    CircularProgressIndicator()),
-                                          );
-                                        }
-                                        // زر تحميل المزيد
-                                        if (_hasMore) {
-                                          return Padding(
-                                            padding: const EdgeInsets.all(
-                                                AlhaiSpacing.md),
-                                            child: Center(
-                                              child: OutlinedButton.icon(
-                                                onPressed: _loadMore,
-                                                icon: const Icon(
-                                                    Icons.expand_more),
-                                                label: Text(
-                                                    AppLocalizations.of(context)
-                                                        .loadMoreBtn),
-                                              ),
-                                            ),
-                                          );
-                                        }
-                                        return const SizedBox.shrink();
-                                      },
-                                    ),
-                                  ),
-                          ),
-                        ],
+                ? AppErrorState.general(
+                    context,
+                    message: _error!,
+                    onRetry: _loadOrders,
+                  )
+                : Column(
+                    children: [
+                      // Filters & Search Bar
+                      Padding(
+                        padding: EdgeInsets.all(
+                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                        ),
+                        child: Column(
+                          children: [
+                            _buildSearchBar(isDark, l10n),
+                            const SizedBox(height: AlhaiSpacing.sm),
+                            _buildDateFilters(isDark, l10n),
+                          ],
+                        ),
                       ),
+                      // Summary stats
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: isMediumScreen ? 24 : 16,
+                        ),
+                        child: _buildSummaryStats(isDark, l10n),
+                      ),
+                      const SizedBox(height: AlhaiSpacing.sm),
+                      // Orders list
+                      Expanded(
+                        child: _filteredOrders.isEmpty
+                            ? _buildEmptyState(isDark, l10n)
+                            : RefreshIndicator(
+                                onRefresh: _loadOrders,
+                                color: AppColors.primary,
+                                child: ListView.separated(
+                                  controller: _scrollController,
+                                  physics:
+                                      const AlwaysScrollableScrollPhysics(),
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: isMediumScreen ? 24 : 16,
+                                    vertical: AlhaiSpacing.xs,
+                                  ),
+                                  itemCount:
+                                      _filteredOrders.length +
+                                      (_isLoadingMore || _hasMore ? 1 : 0),
+                                  separatorBuilder: (_, __) =>
+                                      const SizedBox(height: AlhaiSpacing.xs),
+                                  itemBuilder: (context, index) {
+                                    if (index < _filteredOrders.length) {
+                                      return _buildOrderCard(
+                                        _filteredOrders[index],
+                                        isDark,
+                                        l10n,
+                                      );
+                                    }
+                                    // مؤشر تحميل المزيد
+                                    if (_isLoadingMore) {
+                                      return const Padding(
+                                        padding: EdgeInsets.all(
+                                          AlhaiSpacing.md,
+                                        ),
+                                        child: Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      );
+                                    }
+                                    // زر تحميل المزيد
+                                    if (_hasMore) {
+                                      return Padding(
+                                        padding: const EdgeInsets.all(
+                                          AlhaiSpacing.md,
+                                        ),
+                                        child: Center(
+                                          child: OutlinedButton.icon(
+                                            onPressed: _loadMore,
+                                            icon: const Icon(Icons.expand_more),
+                                            label: Text(
+                                              AppLocalizations.of(
+                                                context,
+                                              ).loadMoreBtn,
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    }
+                                    return const SizedBox.shrink();
+                                  },
+                                ),
+                              ),
+                      ),
+                    ],
+                  ),
           ),
         ],
       ),
@@ -335,15 +345,19 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
       decoration: InputDecoration(
         hintText: l10n.searchPlaceholder,
         hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
-        prefixIcon:
-            Icon(Icons.search_rounded, color: AppColors.getTextMuted(isDark)),
+        prefixIcon: Icon(
+          Icons.search_rounded,
+          color: AppColors.getTextMuted(isDark),
+        ),
         suffixIcon: _searchController.text.isNotEmpty
             ? IconButton(
                 onPressed: () {
                   _searchController.clear();
                 },
-                icon: Icon(Icons.clear_rounded,
-                    color: AppColors.getTextMuted(isDark)),
+                icon: Icon(
+                  Icons.clear_rounded,
+                  color: AppColors.getTextMuted(isDark),
+                ),
                 tooltip: l10n.clearField,
               )
             : null,
@@ -362,7 +376,9 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.md, vertical: 14),
+          horizontal: AlhaiSpacing.md,
+          vertical: 14,
+        ),
       ),
     );
   }
@@ -419,32 +435,40 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
   }
 
   Widget _buildChip(
-      String label, bool isSelected, VoidCallback onTap, bool isDark,
-      {IconData? icon}) {
+    String label,
+    bool isSelected,
+    VoidCallback onTap,
+    bool isDark, {
+    IconData? icon,
+  }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(999),
       child: Container(
         padding: const EdgeInsets.symmetric(
-            horizontal: 14, vertical: AlhaiSpacing.xs),
+          horizontal: 14,
+          vertical: AlhaiSpacing.xs,
+        ),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary
               : AppColors.getSurfaceVariant(isDark),
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
-              color:
-                  isSelected ? AppColors.primary : AppColors.getBorder(isDark)),
+            color: isSelected ? AppColors.primary : AppColors.getBorder(isDark),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon,
-                  size: 14,
-                  color: isSelected
-                      ? AppColors.textOnPrimary
-                      : AppColors.getTextSecondary(isDark)),
+              Icon(
+                icon,
+                size: 14,
+                color: isSelected
+                    ? AppColors.textOnPrimary
+                    : AppColors.getTextSecondary(isDark),
+              ),
               const SizedBox(width: 6),
             ],
             Text(
@@ -464,8 +488,10 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
   }
 
   Widget _buildSummaryStats(bool isDark, AppLocalizations l10n) {
-    final totalAmount =
-        _filteredOrders.fold<double>(0, (sum, o) => sum + o.total);
+    final totalAmount = _filteredOrders.fold<double>(
+      0,
+      (sum, o) => sum + o.total,
+    );
     final count = _filteredOrders.length;
 
     // حساب مجاميع طرق الدفع
@@ -518,16 +544,22 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
               Expanded(
                 child: Column(
                   children: [
-                    Text(l10n.totalSales,
-                        style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.getTextSecondary(isDark))),
+                    Text(
+                      l10n.totalSales,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.getTextSecondary(isDark),
+                      ),
+                    ),
                     const SizedBox(height: AlhaiSpacing.xxs),
-                    Text('$count',
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.getTextPrimary(isDark))),
+                    Text(
+                      '$count',
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.getTextPrimary(isDark),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -539,16 +571,22 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
               Expanded(
                 child: Column(
                   children: [
-                    Text(l10n.amount,
-                        style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.getTextSecondary(isDark))),
+                    Text(
+                      l10n.amount,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.getTextSecondary(isDark),
+                      ),
+                    ),
                     const SizedBox(height: AlhaiSpacing.xxs),
-                    Text('${totalAmount.toStringAsFixed(2)} ${l10n.sar}',
-                        style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800,
-                            color: AppColors.success)),
+                    Text(
+                      '${totalAmount.toStringAsFixed(2)} ${l10n.sar}',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.success,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -559,7 +597,9 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
         // الصف الثاني: تفصيل طرق الدفع (نقد - بطاقة - آجل)
         Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.sm, vertical: 10),
+            horizontal: AlhaiSpacing.sm,
+            vertical: 10,
+          ),
           decoration: BoxDecoration(
             color: AppColors.getSurface(isDark),
             borderRadius: BorderRadius.circular(12),
@@ -633,11 +673,14 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
           children: [
             Icon(icon, size: 14, color: color),
             const SizedBox(width: AlhaiSpacing.xxs),
-            Text(label,
-                style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.getTextSecondary(isDark))),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: AppColors.getTextSecondary(isDark),
+              ),
+            ),
           ],
         ),
         const SizedBox(height: AlhaiSpacing.xxs),
@@ -654,7 +697,10 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
   }
 
   Widget _buildOrderCard(
-      SalesTableData order, bool isDark, AppLocalizations l10n) {
+    SalesTableData order,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final utc = order.createdAt.toUtc();
     final time =
         '${utc.hour.toString().padLeft(2, '0')}:${utc.minute.toString().padLeft(2, '0')}';
@@ -673,13 +719,17 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: _getPaymentMethodColor(order.paymentMethod)
-                  .withValues(alpha: 0.1),
+              color: _getPaymentMethodColor(
+                order.paymentMethod,
+              ).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(10),
             ),
             alignment: Alignment.center,
-            child: Icon(_getPaymentMethodIcon(order.paymentMethod),
-                color: _getPaymentMethodColor(order.paymentMethod), size: 22),
+            child: Icon(
+              _getPaymentMethodIcon(order.paymentMethod),
+              color: _getPaymentMethodColor(order.paymentMethod),
+              size: 22,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -700,10 +750,13 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                     // شارة طريقة الدفع
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: AlhaiSpacing.xxxs),
+                        horizontal: 6,
+                        vertical: AlhaiSpacing.xxxs,
+                      ),
                       decoration: BoxDecoration(
-                        color: _getPaymentMethodColor(order.paymentMethod)
-                            .withValues(alpha: 0.1),
+                        color: _getPaymentMethodColor(
+                          order.paymentMethod,
+                        ).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -720,8 +773,11 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                 const SizedBox(height: AlhaiSpacing.xxs),
                 Row(
                   children: [
-                    Icon(Icons.person_outline_rounded,
-                        size: 13, color: AppColors.getTextMuted(isDark)),
+                    Icon(
+                      Icons.person_outline_rounded,
+                      size: 13,
+                      color: AppColors.getTextMuted(isDark),
+                    ),
                     const SizedBox(width: AlhaiSpacing.xxs),
                     Flexible(
                       child: Text(
@@ -736,14 +792,19 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                       ),
                     ),
                     const SizedBox(width: AlhaiSpacing.sm),
-                    Icon(Icons.access_time_rounded,
-                        size: 13, color: AppColors.getTextMuted(isDark)),
+                    Icon(
+                      Icons.access_time_rounded,
+                      size: 13,
+                      color: AppColors.getTextMuted(isDark),
+                    ),
                     const SizedBox(width: AlhaiSpacing.xxs),
-                    Text('$date $time',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.getTextMuted(isDark),
-                        )),
+                    Text(
+                      '$date $time',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.getTextMuted(isDark),
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -766,7 +827,9 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
               const SizedBox(height: AlhaiSpacing.xxs),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+                  horizontal: AlhaiSpacing.xs,
+                  vertical: AlhaiSpacing.xxxs,
+                ),
                 decoration: BoxDecoration(
                   color: _getStatusColor(order.status).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(999),
@@ -789,7 +852,10 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
 
   /// تفاصيل الدفع حسب الطريقة
   Widget _buildPaymentDetails(
-      SalesTableData order, bool isDark, AppLocalizations l10n) {
+    SalesTableData order,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final method = order.paymentMethod;
     final total = order.total;
     final color = _getPaymentMethodColor(method);
@@ -825,8 +891,11 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.payments_outlined,
-                    size: 11, color: AppColors.success),
+                const Icon(
+                  Icons.payments_outlined,
+                  size: 11,
+                  color: AppColors.success,
+                ),
                 const SizedBox(width: 3),
                 Text(
                   order.cashAmount!.toStringAsFixed(2),
@@ -842,8 +911,11 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.credit_card_rounded,
-                    size: 11, color: AppColors.info),
+                const Icon(
+                  Icons.credit_card_rounded,
+                  size: 11,
+                  color: AppColors.info,
+                ),
                 const SizedBox(width: 3),
                 Text(
                   order.cardAmount!.toStringAsFixed(2),
@@ -859,8 +931,11 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Icon(Icons.account_balance_wallet_outlined,
-                    size: 11, color: AppColors.warning),
+                const Icon(
+                  Icons.account_balance_wallet_outlined,
+                  size: 11,
+                  color: AppColors.warning,
+                ),
                 const SizedBox(width: 3),
                 Text(
                   order.creditAmount!.toStringAsFixed(2),
@@ -886,8 +961,11 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
           Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.payments_outlined,
-                  size: 11, color: AppColors.success),
+              const Icon(
+                Icons.payments_outlined,
+                size: 11,
+                color: AppColors.success,
+              ),
               const SizedBox(width: 3),
               Text(
                 paidPart.toStringAsFixed(2),
@@ -996,15 +1074,20 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.receipt_long_outlined,
-              size: 64,
-              color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
+          Icon(
+            Icons.receipt_long_outlined,
+            size: 64,
+            color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4),
+          ),
           const SizedBox(height: AlhaiSpacing.md),
-          Text(l10n.noTransactions,
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.getTextMuted(isDark))),
+          Text(
+            l10n.noTransactions,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: AppColors.getTextMuted(isDark),
+            ),
+          ),
         ],
       ),
     );

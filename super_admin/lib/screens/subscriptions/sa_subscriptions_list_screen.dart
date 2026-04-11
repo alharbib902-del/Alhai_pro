@@ -116,10 +116,14 @@ class _SASubscriptionsListScreenState
                     empty: SAEmptyState.subscriptions(),
                     columns: [
                       DataColumn2(
-                          label: Text(l10n.storeName), size: ColumnSize.L),
+                        label: Text(l10n.storeName),
+                        size: ColumnSize.L,
+                      ),
                       DataColumn2(label: Text(l10n.storePlan), fixedWidth: 130),
                       DataColumn2(
-                          label: Text(l10n.storeStatus), fixedWidth: 120),
+                        label: Text(l10n.storeStatus),
+                        fixedWidth: 120,
+                      ),
                       DataColumn2(label: Text(l10n.startDate), fixedWidth: 120),
                       DataColumn2(label: Text(l10n.endDate), fixedWidth: 120),
                       DataColumn2(
@@ -128,10 +132,7 @@ class _SASubscriptionsListScreenState
                         fixedWidth: 120,
                       ),
                     ],
-                    source: _SubscriptionsDataSource(
-                      subs: subs,
-                      l10n: l10n,
-                    ),
+                    source: _SubscriptionsDataSource(subs: subs, l10n: l10n),
                   ),
                 ),
               ),
@@ -152,10 +153,7 @@ class _SubscriptionsDataSource extends DataTableSource {
   final List<SASubscription> subs;
   final AppLocalizations l10n;
 
-  _SubscriptionsDataSource({
-    required this.subs,
-    required this.l10n,
-  });
+  _SubscriptionsDataSource({required this.subs, required this.l10n});
 
   @override
   DataRow? getRow(int index) {
@@ -176,9 +174,7 @@ class _SubscriptionsDataSource extends DataTableSource {
         DataCell(_StatusChip(status: status)),
         DataCell(Text(startDate)),
         DataCell(Text(endDate)),
-        DataCell(Text(
-          price > 0 ? '$price ${l10n.sar}' : l10n.trial,
-        )),
+        DataCell(Text(price > 0 ? '$price ${l10n.sar}' : l10n.trial)),
       ],
     );
   }
@@ -216,9 +212,7 @@ class _SummaryChip extends StatelessWidget {
       onSelected: (_) => onTap(),
       selectedColor: color.withValues(alpha: 0.15),
       checkmarkColor: color,
-      side: BorderSide(
-        color: isSelected ? color : Colors.transparent,
-      ),
+      side: BorderSide(color: isSelected ? color : Colors.transparent),
     );
   }
 }
@@ -232,21 +226,21 @@ class _StatusChip extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final (color, bgColor) = switch (status) {
       'active' => (
-          isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
-          isDark ? const Color(0xFF1B3A2A) : const Color(0xFFDCFCE7),
-        ),
+        isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
+        isDark ? const Color(0xFF1B3A2A) : const Color(0xFFDCFCE7),
+      ),
       'trial' => (
-          isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309),
-          isDark ? const Color(0xFF3A2F1B) : const Color(0xFFFEF3C7),
-        ),
+        isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309),
+        isDark ? const Color(0xFF3A2F1B) : const Color(0xFFFEF3C7),
+      ),
       'expired' => (
-          isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C),
-          isDark ? const Color(0xFF3A1B1B) : const Color(0xFFFEE2E2),
-        ),
+        isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C),
+        isDark ? const Color(0xFF3A1B1B) : const Color(0xFFFEE2E2),
+      ),
       _ => (
-          isDark ? const Color(0xFF9CA3AF) : const Color(0xFF4B5563),
-          isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF3F4F6),
-        ),
+        isDark ? const Color(0xFF9CA3AF) : const Color(0xFF4B5563),
+        isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF3F4F6),
+      ),
     };
 
     return Container(
@@ -261,9 +255,9 @@ class _StatusChip extends StatelessWidget {
       child: Text(
         status.toUpperCase(),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
-            ),
+          color: color,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

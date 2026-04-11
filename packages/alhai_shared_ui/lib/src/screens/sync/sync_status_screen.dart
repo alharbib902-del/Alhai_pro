@@ -85,16 +85,19 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
       children: [
         AppHeader(
           title: l10n.syncStatusTitle,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.cashCustomer,
           userRole: l10n.branchManager,
           actions: [
             IconButton(
-              icon: Icon(Icons.refresh,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+              icon: Icon(
+                Icons.refresh,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               onPressed: _loadStatus,
             ),
           ],
@@ -103,21 +106,35 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : _error != null
-                  ? AppErrorState.general(context,
-                      message: _error, onRetry: _loadStatus)
-                  : SingleChildScrollView(
-                      padding: EdgeInsets.all(
-                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: _buildContent(
-                          isWideScreen, isMediumScreen, isDark, l10n, isOnline),
-                    ),
+              ? AppErrorState.general(
+                  context,
+                  message: _error,
+                  onRetry: _loadStatus,
+                )
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(
+                    isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                  ),
+                  child: _buildContent(
+                    isWideScreen,
+                    isMediumScreen,
+                    isDark,
+                    l10n,
+                    isOnline,
+                  ),
+                ),
         ),
       ],
     );
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
-      AppLocalizations l10n, bool isOnline) {
+  Widget _buildContent(
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+    bool isOnline,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -127,11 +144,11 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
           decoration: BoxDecoration(
             color: isDark
                 ? (isOnline
-                    ? AppColors.success.withValues(alpha: 0.1)
-                    : AppColors.error.withValues(alpha: 0.1))
+                      ? AppColors.success.withValues(alpha: 0.1)
+                      : AppColors.error.withValues(alpha: 0.1))
                 : (isOnline
-                    ? AppColors.successSurface
-                    : AppColors.errorSurface),
+                      ? AppColors.successSurface
+                      : AppColors.errorSurface),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
               color: (isOnline ? AppColors.success : AppColors.error)
@@ -172,8 +189,8 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                       Text(
                         l10n.lastSyncAt(_formatTime(_lastSyncTime!, l10n)),
                         style: TextStyle(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        ),
                       ),
                   ],
                 ),
@@ -225,10 +242,11 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                               ? l10n.nPendingOperations(_pendingCount)
                               : l10n.noPendingOperations,
                           style: TextStyle(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
-                              fontSize: 13),
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                            fontSize: 13,
+                          ),
                         ),
                       ],
                     ),
@@ -236,23 +254,28 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                   if (_pendingCount > 0)
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.sm,
-                          vertical: AlhaiSpacing.xxs),
+                        horizontal: AlhaiSpacing.sm,
+                        vertical: AlhaiSpacing.xxs,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.warning,
                         borderRadius: BorderRadius.circular(16),
                       ),
-                      child: Text('$_pendingCount',
-                          style: const TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
+                      child: Text(
+                        '$_pendingCount',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   SizedBox(width: AlhaiSpacing.xs),
-                  AdaptiveIcon(Icons.chevron_left,
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurfaceVariant
-                          .withValues(alpha: 0.5)),
+                  AdaptiveIcon(
+                    Icons.chevron_left,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+                  ),
                 ],
               ),
             ),
@@ -275,8 +298,10 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
               children: [
                 CircleAvatar(
                   backgroundColor: AppColors.error.withValues(alpha: 0.1),
-                  child: const Icon(Icons.warning_amber_rounded,
-                      color: AppColors.error),
+                  child: const Icon(
+                    Icons.warning_amber_rounded,
+                    color: AppColors.error,
+                  ),
                 ),
                 SizedBox(width: AlhaiSpacing.md),
                 Expanded(
@@ -293,23 +318,29 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                       Text(
                         l10n.itemsNeedReview(_conflictCount),
                         style: TextStyle(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                            fontSize: 13),
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          fontSize: 13,
+                        ),
                       ),
                     ],
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
+                    horizontal: AlhaiSpacing.sm,
+                    vertical: AlhaiSpacing.xxs,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.error,
                     borderRadius: BorderRadius.circular(16),
                   ),
-                  child: Text('$_conflictCount',
-                      style: const TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold)),
+                  child: Text(
+                    '$_conflictCount',
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -337,10 +368,12 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
               ),
               SizedBox(height: AlhaiSpacing.sm),
               _InfoRow(
-                  label: l10n.lastFullSync,
-                  value:
-                      _lastSyncTime != null ? _formatDate(_lastSyncTime!) : '-',
-                  isDark: isDark),
+                label: l10n.lastFullSync,
+                value: _lastSyncTime != null
+                    ? _formatDate(_lastSyncTime!)
+                    : '-',
+                isDark: isDark,
+              ),
               Divider(height: 16, color: Theme.of(context).dividerColor),
               _InfoRow(
                 label: l10n.databaseStatus,
@@ -350,9 +383,10 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
               ),
               Divider(height: 16, color: Theme.of(context).dividerColor),
               _InfoRow(
-                  label: l10n.pendingOperations,
-                  value: '$_pendingCount',
-                  isDark: isDark),
+                label: l10n.pendingOperations,
+                value: '$_pendingCount',
+                isDark: isDark,
+              ),
             ],
           ),
         ),
@@ -368,11 +402,15 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white))
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
                 : const Icon(Icons.sync),
             label: Text(_isSyncing ? l10n.syncing : l10n.syncNow),
             style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md)),
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+            ),
           ),
         ),
       ],
@@ -435,16 +473,18 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
       if (result.hasErrors) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(l10n.syncPartialSuccess(
-                result.successCount, result.failedCount)),
+            content: Text(
+              l10n.syncPartialSuccess(result.successCount, result.failedCount),
+            ),
             backgroundColor: AppColors.warning,
           ),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(l10n.syncSuccessful),
-              backgroundColor: AppColors.success),
+            content: Text(l10n.syncSuccessful),
+            backgroundColor: AppColors.success,
+          ),
         );
       }
     } catch (e) {
@@ -453,8 +493,9 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
         final errL10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(errL10n.syncErrorMessage('$e')),
-              backgroundColor: AppColors.error),
+            content: Text(errL10n.syncErrorMessage('$e')),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     } finally {
@@ -470,20 +511,24 @@ class _InfoRow extends StatelessWidget {
   final String value;
   final bool isDark;
   final Color? valueColor;
-  const _InfoRow(
-      {required this.label,
-      required this.value,
-      required this.isDark,
-      this.valueColor});
+  const _InfoRow({
+    required this.label,
+    required this.value,
+    required this.isDark,
+    this.valueColor,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label,
-            style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant)),
+        Text(
+          label,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
         Text(
           value,
           style: TextStyle(

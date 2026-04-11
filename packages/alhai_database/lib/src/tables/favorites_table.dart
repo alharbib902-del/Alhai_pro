@@ -4,9 +4,10 @@ import 'package:drift/drift.dart';
 @TableIndex(name: 'idx_favorites_store_id', columns: {#storeId})
 @TableIndex(name: 'idx_favorites_product_id', columns: {#productId})
 @TableIndex(
-    name: 'idx_favorites_store_product_unique',
-    columns: {#storeId, #productId},
-    unique: true)
+  name: 'idx_favorites_store_product_unique',
+  columns: {#storeId, #productId},
+  unique: true,
+)
 class FavoritesTable extends Table {
   @override
   String get tableName => 'favorites';

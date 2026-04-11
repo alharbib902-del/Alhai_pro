@@ -26,8 +26,9 @@ void main() {
   tearDown(tearDownTestGetIt);
 
   group('CashierShell - Widget creation', () {
-    testWidgets('CashierShell can be instantiated and renders content',
-        (tester) async {
+    testWidgets('CashierShell can be instantiated and renders content', (
+      tester,
+    ) async {
       // Use a large enough screen to avoid overflow
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
@@ -82,8 +83,9 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('CashierShell shows navigation items on desktop',
-        (tester) async {
+    testWidgets('CashierShell shows navigation items on desktop', (
+      tester,
+    ) async {
       // Set a large screen for desktop layout (>= 768)
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;

@@ -49,11 +49,7 @@ class RatingService {
   }
 
   /// تحديث تقييم
-  Future<Rating> updateRating(
-    String id, {
-    int? stars,
-    String? comment,
-  }) async {
+  Future<Rating> updateRating(String id, {int? stars, String? comment}) async {
     return await _ratingsRepo.updateRating(id, stars: stars, comment: comment);
   }
 
@@ -64,7 +60,9 @@ class RatingService {
 
   /// ملخص التقييمات
   Future<RatingSummary> getRatingSummary(
-      RatingEntityType entityType, String entityId) async {
+    RatingEntityType entityType,
+    String entityId,
+  ) async {
     return await _ratingsRepo.getRatingSummary(entityType, entityId);
   }
 

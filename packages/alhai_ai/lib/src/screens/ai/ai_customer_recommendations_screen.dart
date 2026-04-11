@@ -94,8 +94,9 @@ class _AiCustomerRecommendationsScreenState
       children: [
         AppHeader(
           title: AppLocalizations.of(context).aiCustomerRecommendationsTitle,
-          onMenuTap:
-              !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
+          onMenuTap: !isWideScreen
+              ? () => Scaffold.of(context).openDrawer()
+              : null,
         ),
         Expanded(child: _buildContent(isDark, isWideScreen)),
       ],
@@ -115,7 +116,8 @@ class _AiCustomerRecommendationsScreenState
             data: (segments) =>
                 _buildSegmentCards(isDark, segments, isWideScreen),
             loading: () => const Center(
-                child: CircularProgressIndicator(color: AppColors.primary)),
+              child: CircularProgressIndicator(color: AppColors.primary),
+            ),
             error: (e, _) => Text('$e'),
           ),
 
@@ -173,7 +175,10 @@ class _AiCustomerRecommendationsScreenState
   }
 
   Widget _buildSegmentCards(
-      bool isDark, List<SegmentResult> segments, bool isWideScreen) {
+    bool isDark,
+    List<SegmentResult> segments,
+    bool isWideScreen,
+  ) {
     return LayoutBuilder(
       builder: (context, constraints) {
         return Wrap(
@@ -197,8 +202,9 @@ class _AiCustomerRecommendationsScreenState
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color:
-                          Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
+                      color: Colors.black.withValues(
+                        alpha: isDark ? 0.15 : 0.03,
+                      ),
                       blurRadius: 6,
                       offset: const Offset(0, 2),
                     ),
@@ -212,8 +218,11 @@ class _AiCustomerRecommendationsScreenState
                         color: color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Icon(_getSegmentIcon(seg.segment),
-                          color: color, size: 20),
+                      child: Icon(
+                        _getSegmentIcon(seg.segment),
+                        color: color,
+                        size: 20,
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -230,18 +239,21 @@ class _AiCustomerRecommendationsScreenState
                             ),
                           ),
                           Text(
-                            AppLocalizations.of(context)
-                                .customerCount(seg.count),
+                            AppLocalizations.of(
+                              context,
+                            ).customerCount(seg.count),
                             style: TextStyle(
-                              color:
-                                  isDark ? Colors.white : AppColors.textPrimary,
+                              color: isDark
+                                  ? Colors.white
+                                  : AppColors.textPrimary,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Text(
                             AppLocalizations.of(context).revenueK(
-                                (seg.totalRevenue / 1000).toStringAsFixed(1)),
+                              (seg.totalRevenue / 1000).toStringAsFixed(1),
+                            ),
                             style: TextStyle(
                               color: color,
                               fontSize: 11,
@@ -282,8 +294,8 @@ class _AiCustomerRecommendationsScreenState
                 color: currentFilter == null
                     ? AppColors.primary
                     : (isDark
-                        ? Colors.white.withValues(alpha: 0.6)
-                        : AppColors.textSecondary),
+                          ? Colors.white.withValues(alpha: 0.6)
+                          : AppColors.textSecondary),
                 fontSize: 12,
               ),
             ),
@@ -296,19 +308,23 @@ class _AiCustomerRecommendationsScreenState
               child: FilterChip(
                 selected: isSelected,
                 label: Text(_getSegmentLabel(segment)),
-                onSelected: (_) => ref
-                    .read(segmentFilterProvider.notifier)
-                    .state = isSelected ? null : segment,
+                onSelected: (_) =>
+                    ref.read(segmentFilterProvider.notifier).state = isSelected
+                    ? null
+                    : segment,
                 selectedColor: color.withValues(alpha: 0.15),
                 checkmarkColor: color,
-                avatar: Icon(_getSegmentIcon(segment),
-                    size: 16, color: isSelected ? color : null),
+                avatar: Icon(
+                  _getSegmentIcon(segment),
+                  size: 16,
+                  color: isSelected ? color : null,
+                ),
                 labelStyle: TextStyle(
                   color: isSelected
                       ? color
                       : (isDark
-                          ? Colors.white.withValues(alpha: 0.6)
-                          : AppColors.textSecondary),
+                            ? Colors.white.withValues(alpha: 0.6)
+                            : AppColors.textSecondary),
                   fontSize: 12,
                 ),
               ),
@@ -374,8 +390,9 @@ class _AiCustomerRecommendationsScreenState
               initialPhone: reminder.phone,
               offerMessage: reminder.isOverdue
                   ? AppLocalizations.of(context).specialOfferMissYou
-                  : AppLocalizations.of(context)
-                      .friendlyReminderPurchase(reminder.productName),
+                  : AppLocalizations.of(
+                      context,
+                    ).friendlyReminderPurchase(reminder.productName),
             );
           },
         ),
@@ -412,8 +429,11 @@ class _AiCustomerRecommendationsScreenState
                 children: [
                   Row(
                     children: [
-                      Icon(_getSegmentIcon(seg.segment),
-                          color: color, size: 22),
+                      Icon(
+                        _getSegmentIcon(seg.segment),
+                        color: color,
+                        size: 22,
+                      ),
                       const SizedBox(width: AlhaiSpacing.xs),
                       Text(
                         _getSegmentLabel(seg.segment),
@@ -426,7 +446,9 @@ class _AiCustomerRecommendationsScreenState
                       const Spacer(),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: AlhaiSpacing.xxs),
+                          horizontal: 10,
+                          vertical: AlhaiSpacing.xxs,
+                        ),
                         decoration: BoxDecoration(
                           color: color.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
@@ -434,9 +456,10 @@ class _AiCustomerRecommendationsScreenState
                         child: Text(
                           AppLocalizations.of(context).customerCount(seg.count),
                           style: TextStyle(
-                              color: color,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600),
+                            color: color,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                       ),
                     ],
@@ -447,14 +470,16 @@ class _AiCustomerRecommendationsScreenState
                       _SegmentStat(
                         label: AppLocalizations.of(context).totalRevenueLabel,
                         value: AppLocalizations.of(context).revenueK(
-                            (seg.totalRevenue / 1000).toStringAsFixed(1)),
+                          (seg.totalRevenue / 1000).toStringAsFixed(1),
+                        ),
                         isDark: isDark,
                       ),
                       const SizedBox(width: AlhaiSpacing.lg),
                       _SegmentStat(
                         label: AppLocalizations.of(context).avgSpendStat,
-                        value: AppLocalizations.of(context)
-                            .amountSar(seg.avgSpend.toStringAsFixed(0)),
+                        value: AppLocalizations.of(
+                          context,
+                        ).amountSar(seg.avgSpend.toStringAsFixed(0)),
                         isDark: isDark,
                       ),
                     ],
@@ -466,8 +491,10 @@ class _AiCustomerRecommendationsScreenState
                     runSpacing: 6,
                     children: seg.customers.map((c) {
                       return Chip(
-                        label: Text(c.customerName,
-                            style: const TextStyle(fontSize: 11)),
+                        label: Text(
+                          c.customerName,
+                          style: const TextStyle(fontSize: 11),
+                        ),
                         backgroundColor: isDark
                             ? Colors.white.withValues(alpha: 0.05)
                             : AppColors.grey50,
@@ -527,8 +554,9 @@ class _CustomerRecommendationCard extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -575,7 +603,8 @@ class _CustomerRecommendationCard extends StatelessWidget {
                       children: [
                         Text(
                           l10n.lastVisitLabel(
-                              _formatTimeAgo(recommendation.lastVisit, l10n)),
+                            _formatTimeAgo(recommendation.lastVisit, l10n),
+                          ),
                           style: TextStyle(
                             color: isDark
                                 ? Colors.white.withValues(alpha: 0.5)
@@ -601,7 +630,9 @@ class _CustomerRecommendationCard extends StatelessWidget {
               // Segment badge
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                  horizontal: AlhaiSpacing.xs,
+                  vertical: AlhaiSpacing.xxs,
+                ),
                 decoration: BoxDecoration(
                   color: segmentColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -614,9 +645,10 @@ class _CustomerRecommendationCard extends StatelessWidget {
                     Text(
                       segmentLabel,
                       style: TextStyle(
-                          color: segmentColor,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold),
+                        color: segmentColor,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
@@ -641,7 +673,8 @@ class _CustomerRecommendationCard extends StatelessWidget {
               const SizedBox(width: AlhaiSpacing.md),
               Text(
                 l10n.totalSpentLabel(
-                    (recommendation.totalSpent / 1000).toStringAsFixed(1)),
+                  (recommendation.totalSpent / 1000).toStringAsFixed(1),
+                ),
                 style: const TextStyle(
                   color: AppColors.primary,
                   fontSize: 12,
@@ -664,10 +697,12 @@ class _CustomerRecommendationCard extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AlhaiSpacing.xs),
-            ...recommendation.products.map((product) => Padding(
-                  padding: const EdgeInsets.only(bottom: 6),
-                  child: RecommendationCard(product: product, compact: true),
-                )),
+            ...recommendation.products.map(
+              (product) => Padding(
+                padding: const EdgeInsets.only(bottom: 6),
+                child: RecommendationCard(product: product, compact: true),
+              ),
+            ),
           ],
 
           // WhatsApp button
@@ -685,10 +720,13 @@ class _CustomerRecommendationCard extends StatelessWidget {
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AlhaiSpacing.xs,
+                  ),
                   textStyle: const TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.w600),
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ),

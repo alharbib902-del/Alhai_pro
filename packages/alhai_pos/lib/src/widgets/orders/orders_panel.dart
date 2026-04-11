@@ -17,10 +17,7 @@ import 'order_card.dart';
 class OrdersPanel extends ConsumerWidget {
   final VoidCallback? onClose;
 
-  const OrdersPanel({
-    super.key,
-    this.onClose,
-  });
+  const OrdersPanel({super.key, this.onClose});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,9 +29,7 @@ class OrdersPanel extends ConsumerWidget {
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
         border: BorderDirectional(
-          end: BorderSide(
-            color: theme.colorScheme.outlineVariant,
-          ),
+          end: BorderSide(color: theme.colorScheme.outlineVariant),
         ),
         boxShadow: [
           BoxShadow(
@@ -57,8 +52,8 @@ class OrdersPanel extends ConsumerWidget {
             child: ordersState.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : ordersState.orders.isEmpty
-                    ? _buildEmptyState(context)
-                    : _buildOrdersList(context, ref, ordersState),
+                ? _buildEmptyState(context)
+                : _buildOrdersList(context, ref, ordersState),
           ),
         ],
       ),
@@ -66,7 +61,10 @@ class OrdersPanel extends ConsumerWidget {
   }
 
   Widget _buildHeader(
-      BuildContext context, WidgetRef ref, OnlineOrdersState state) {
+    BuildContext context,
+    WidgetRef ref,
+    OnlineOrdersState state,
+  ) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context);
 
@@ -99,8 +97,9 @@ class OrdersPanel extends ConsumerWidget {
                 Text(
                   l10n.pendingOrdersCount(state.pendingOrders.length),
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onPrimaryContainer
-                        .withValues(alpha: 0.7),
+                    color: theme.colorScheme.onPrimaryContainer.withValues(
+                      alpha: 0.7,
+                    ),
                   ),
                 ),
               ],
@@ -129,7 +128,9 @@ class OrdersPanel extends ConsumerWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xs),
+        horizontal: AlhaiSpacing.xs,
+        vertical: AlhaiSpacing.xs,
+      ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
         child: Row(
@@ -197,9 +198,13 @@ class OrdersPanel extends ConsumerWidget {
   }
 
   Widget _buildOrdersList(
-      BuildContext context, WidgetRef ref, OnlineOrdersState state) {
+    BuildContext context,
+    WidgetRef ref,
+    OnlineOrdersState state,
+  ) {
     // ترتيب الطلبات: المعلقة أولاً ثم بالوقت
-    final sortedOrders = [...state.orders]..sort((a, b) {
+    final sortedOrders = [...state.orders]
+      ..sort((a, b) {
         if (a.status == OrderStatus.pending &&
             b.status != OrderStatus.pending) {
           return -1;
@@ -232,7 +237,10 @@ class OrdersPanel extends ConsumerWidget {
   }
 
   void _showRejectDialog(
-      BuildContext context, WidgetRef ref, OnlineOrder order) {
+    BuildContext context,
+    WidgetRef ref,
+    OnlineOrder order,
+  ) {
     final l10n = AppLocalizations.of(context);
 
     showDialog(
@@ -269,16 +277,16 @@ class OrdersPanel extends ConsumerWidget {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(l10n.printingOrderMessage(order.id)),
-        action: SnackBarAction(
-          label: l10n.done,
-          onPressed: () {},
-        ),
+        action: SnackBarAction(label: l10n.done, onPressed: () {}),
       ),
     );
   }
 
   void _showDriverDialog(
-      BuildContext context, WidgetRef ref, OnlineOrder order) {
+    BuildContext context,
+    WidgetRef ref,
+    OnlineOrder order,
+  ) {
     final storeId = ref.read(currentStoreIdProvider);
     if (storeId == null) return;
 
@@ -287,11 +295,13 @@ class OrdersPanel extends ConsumerWidget {
     showDialog(
       context: context,
       builder: (dialogContext) => FutureBuilder<List<DriversTableData>>(
-        future: (db.select(db.driversTable)
-              ..where(
-                  (d) => d.storeId.equals(storeId) & d.isActive.equals(true))
-              ..orderBy([(d) => OrderingTerm.asc(d.name)]))
-            .get(),
+        future:
+            (db.select(db.driversTable)
+                  ..where(
+                    (d) => d.storeId.equals(storeId) & d.isActive.equals(true),
+                  )
+                  ..orderBy([(d) => OrderingTerm.asc(d.name)]))
+                .get(),
         builder: (ctx, snapshot) {
           final l10n = AppLocalizations.of(ctx);
 
@@ -328,27 +338,29 @@ class OrdersPanel extends ConsumerWidget {
             content: Column(
               mainAxisSize: MainAxisSize.min,
               children: drivers
-                  .map((driver) => ListTile(
-                        leading: const CircleAvatar(child: Icon(Icons.person)),
-                        title: Text(driver.name),
-                        subtitle:
-                            driver.phone != null ? Text(driver.phone!) : null,
-                        onTap: () {
-                          ref.read(onlineOrdersProvider.notifier).assignDriver(
-                                order.id,
-                                driver.id,
-                                driver.name,
-                              );
-                          Navigator.pop(ctx);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                  l10n.orderDeliveredToDriver(driver.name)),
-                              backgroundColor: AppColors.success,
+                  .map(
+                    (driver) => ListTile(
+                      leading: const CircleAvatar(child: Icon(Icons.person)),
+                      title: Text(driver.name),
+                      subtitle: driver.phone != null
+                          ? Text(driver.phone!)
+                          : null,
+                      onTap: () {
+                        ref
+                            .read(onlineOrdersProvider.notifier)
+                            .assignDriver(order.id, driver.id, driver.name);
+                        Navigator.pop(ctx);
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                              l10n.orderDeliveredToDriver(driver.name),
                             ),
-                          );
-                        },
-                      ))
+                            backgroundColor: AppColors.success,
+                          ),
+                        );
+                      },
+                    ),
+                  )
                   .toList(),
             ),
           );
@@ -377,16 +389,16 @@ class _StatusChip extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AlhaiSpacing.sm,
+        vertical: 6,
+      ),
       decoration: BoxDecoration(
         color: isSelected
             ? color.withValues(alpha: 0.2)
             : theme.colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isSelected ? color : Colors.transparent,
-        ),
+        border: Border.all(color: isSelected ? color : Colors.transparent),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

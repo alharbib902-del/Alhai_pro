@@ -609,11 +609,7 @@ class AppColors {
   static List<BoxShadow> getElevatedShadow(bool isDark) {
     if (isDark) return const [];
     return const [
-      BoxShadow(
-        color: Color(0x0D000000),
-        blurRadius: 8,
-        offset: Offset(0, -2),
-      ),
+      BoxShadow(color: Color(0x0D000000), blurRadius: 8, offset: Offset(0, -2)),
     ];
   }
 }

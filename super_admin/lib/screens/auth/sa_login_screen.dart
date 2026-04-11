@@ -42,11 +42,12 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
 
     try {
       // Super admin uses email/password auth
-      final result =
-          await ref.read(authStateProvider.notifier).signInWithEmailPassword(
-                email: phone, // phone field doubles as email for SA
-                password: password,
-              );
+      final result = await ref
+          .read(authStateProvider.notifier)
+          .signInWithEmailPassword(
+            email: phone, // phone field doubles as email for SA
+            password: password,
+          );
 
       if (!result.success) {
         if (mounted) {
@@ -203,8 +204,11 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
                   ),
                   child: Row(
                     children: [
-                      Icon(Icons.info_outline_rounded,
-                          size: 20, color: Colors.amber.shade700),
+                      Icon(
+                        Icons.info_outline_rounded,
+                        size: 20,
+                        color: Colors.amber.shade700,
+                      ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(

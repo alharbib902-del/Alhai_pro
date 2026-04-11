@@ -91,34 +91,32 @@ class ZatcaSeller {
   }
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'vatNumber': vatNumber,
-        if (crNumber != null) 'crNumber': crNumber,
-        'streetName': streetName,
-        'buildingNumber': buildingNumber,
-        if (plotIdentification != null)
-          'plotIdentification': plotIdentification,
-        'city': city,
-        if (district != null) 'district': district,
-        'postalCode': postalCode,
-        'countryCode': countryCode,
-        if (additionalId != null) 'additionalId': additionalId,
-        if (additionalIdScheme != null)
-          'additionalIdScheme': additionalIdScheme,
-      };
+    'name': name,
+    'vatNumber': vatNumber,
+    if (crNumber != null) 'crNumber': crNumber,
+    'streetName': streetName,
+    'buildingNumber': buildingNumber,
+    if (plotIdentification != null) 'plotIdentification': plotIdentification,
+    'city': city,
+    if (district != null) 'district': district,
+    'postalCode': postalCode,
+    'countryCode': countryCode,
+    if (additionalId != null) 'additionalId': additionalId,
+    if (additionalIdScheme != null) 'additionalIdScheme': additionalIdScheme,
+  };
 
   factory ZatcaSeller.fromJson(Map<String, dynamic> json) => ZatcaSeller(
-        name: json['name'] as String,
-        vatNumber: json['vatNumber'] as String,
-        crNumber: json['crNumber'] as String?,
-        streetName: json['streetName'] as String,
-        buildingNumber: json['buildingNumber'] as String,
-        plotIdentification: json['plotIdentification'] as String?,
-        city: json['city'] as String,
-        district: json['district'] as String?,
-        postalCode: json['postalCode'] as String,
-        countryCode: json['countryCode'] as String? ?? 'SA',
-        additionalId: json['additionalId'] as String?,
-        additionalIdScheme: json['additionalIdScheme'] as String?,
-      );
+    name: json['name'] as String,
+    vatNumber: json['vatNumber'] as String,
+    crNumber: json['crNumber'] as String?,
+    streetName: json['streetName'] as String,
+    buildingNumber: json['buildingNumber'] as String,
+    plotIdentification: json['plotIdentification'] as String?,
+    city: json['city'] as String,
+    district: json['district'] as String?,
+    postalCode: json['postalCode'] as String,
+    countryCode: json['countryCode'] as String? ?? 'SA',
+    additionalId: json['additionalId'] as String?,
+    additionalIdScheme: json['additionalIdScheme'] as String?,
+  );
 }

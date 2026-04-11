@@ -150,18 +150,23 @@ class _DistributorPricingScreenState
             appBar: AppBar(
               title: Text(
                 l10n.distributorPricing,
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: cs.onSurface,
+                ),
               ),
               centerTitle: false,
               actions: [
                 if (productsAsync.valueOrNull != null &&
                     _changedCount(productsAsync.valueOrNull!) > 0)
                   Container(
-                    margin:
-                        const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                    margin: const EdgeInsets.symmetric(
+                      vertical: AlhaiSpacing.sm,
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.warning.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(AlhaiRadius.md),
@@ -186,8 +191,11 @@ class _DistributorPricingScreenState
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.error_outline,
-                        size: 48, color: AppColors.getTextMuted(isDark)),
+                    Icon(
+                      Icons.error_outline,
+                      size: 48,
+                      color: AppColors.getTextMuted(isDark),
+                    ),
                     const SizedBox(height: AlhaiSpacing.md),
                     Text(
                       l10n.distributorLoadError,
@@ -215,8 +223,11 @@ class _DistributorPricingScreenState
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.price_change_outlined,
-                            size: 64, color: AppColors.getTextMuted(isDark)),
+                        Icon(
+                          Icons.price_change_outlined,
+                          size: 64,
+                          color: AppColors.getTextMuted(isDark),
+                        ),
                         const SizedBox(height: AlhaiSpacing.md),
                         Text(
                           l10n.distributorNoProducts,
@@ -242,7 +253,10 @@ class _DistributorPricingScreenState
                         child: isWide
                             ? _buildPricingTable(isDark, sortedProducts)
                             : _buildPricingCards(
-                                isDark, isMedium, sortedProducts),
+                                isDark,
+                                isMedium,
+                                sortedProducts,
+                              ),
                       ),
                     ),
                     _buildSaveBar(isDark, isMedium, products, changed),
@@ -256,31 +270,44 @@ class _DistributorPricingScreenState
     );
   }
 
-  Widget _buildSummaryHeader(bool isDark, bool isMedium,
-      List<DistributorProduct> products, int changed) {
+  Widget _buildSummaryHeader(
+    bool isDark,
+    bool isMedium,
+    List<DistributorProduct> products,
+    int changed,
+  ) {
     return Container(
       padding: EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
-        border: Border(
-          bottom: BorderSide(color: AppColors.getBorder(isDark)),
-        ),
+        border: Border(bottom: BorderSide(color: AppColors.getBorder(isDark))),
       ),
       child: Row(
         children: [
-          _summaryCard(Icons.inventory_2_rounded, '${products.length}',
-              'إجمالي المنتجات', AppColors.primary, isDark),
+          _summaryCard(
+            Icons.inventory_2_rounded,
+            '${products.length}',
+            'إجمالي المنتجات',
+            AppColors.primary,
+            isDark,
+          ),
           const SizedBox(width: AlhaiSpacing.sm),
-          _summaryCard(Icons.edit_rounded, '$changed', 'تغييرات معلقة',
-              AppColors.warning, isDark),
+          _summaryCard(
+            Icons.edit_rounded,
+            '$changed',
+            'تغييرات معلقة',
+            AppColors.warning,
+            isDark,
+          ),
           if (isMedium) ...[
             const SizedBox(width: AlhaiSpacing.sm),
             _summaryCard(
-                Icons.update_rounded,
-                DateFormat('dd/MM', 'ar').format(DateTime.now()),
-                'آخر تحديث',
-                AppColors.info,
-                isDark),
+              Icons.update_rounded,
+              DateFormat('dd/MM', 'ar').format(DateTime.now()),
+              'آخر تحديث',
+              AppColors.info,
+              isDark,
+            ),
           ],
         ],
       ),
@@ -288,7 +315,12 @@ class _DistributorPricingScreenState
   }
 
   Widget _summaryCard(
-      IconData icon, String value, String label, Color color, bool isDark) {
+    IconData icon,
+    String value,
+    String label,
+    Color color,
+    bool isDark,
+  ) {
     return Expanded(
       child: Semantics(
         label: '$label: $value',
@@ -307,15 +339,21 @@ class _DistributorPricingScreenState
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(value,
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            color: color)),
-                    Text(label,
-                        style: TextStyle(
-                            fontSize: 11,
-                            color: AppColors.getTextSecondary(isDark))),
+                    Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
+                    ),
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: AppColors.getTextSecondary(isDark),
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -339,11 +377,14 @@ class _DistributorPricingScreenState
           children: [
             Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
+                horizontal: AlhaiSpacing.mdl,
+                vertical: AlhaiSpacing.sm,
+              ),
               decoration: BoxDecoration(
                 color: AppColors.getSurfaceVariant(isDark),
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(16)),
+                borderRadius: const BorderRadius.vertical(
+                  top: Radius.circular(16),
+                ),
               ),
               child: Row(
                 children: [
@@ -351,9 +392,13 @@ class _DistributorPricingScreenState
                   _tHeader('السعر الحالي', 2, isDark, sortIndex: 1),
                   _tHeader('السعر الجديد', 3, isDark),
                   _tHeader('آخر تحديث', 2, isDark),
-                  _tHeaderWithHelp('الفرق', 2, isDark,
-                      helpText:
-                          'الفرق بين السعر الجديد والسعر الحالي. أخضر = انخفاض، أحمر = زيادة'),
+                  _tHeaderWithHelp(
+                    'الفرق',
+                    2,
+                    isDark,
+                    helpText:
+                        'الفرق بين السعر الجديد والسعر الحالي. أخضر = انخفاض، أحمر = زيادة',
+                  ),
                 ],
               ),
             ),
@@ -366,118 +411,163 @@ class _DistributorPricingScreenState
 
               return Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
+                  horizontal: AlhaiSpacing.mdl,
+                  vertical: AlhaiSpacing.sm,
+                ),
                 decoration: BoxDecoration(
                   color: hasDiff
-                      ? AppColors.warning
-                          .withValues(alpha: isDark ? 0.05 : 0.02)
+                      ? AppColors.warning.withValues(
+                          alpha: isDark ? 0.05 : 0.02,
+                        )
                       : null,
                   border: index < products.length - 1
                       ? Border(
                           bottom: BorderSide(
-                              color: AppColors.getBorder(isDark)
-                                  .withValues(alpha: 0.5)))
+                            color: AppColors.getBorder(
+                              isDark,
+                            ).withValues(alpha: 0.5),
+                          ),
+                        )
                       : null,
                 ),
                 child: Row(
                   children: [
                     Expanded(
-                        flex: 4,
-                        child: Text(product.name,
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.getTextPrimary(isDark)))),
+                      flex: 4,
+                      child: Text(
+                        product.name,
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.getTextPrimary(isDark),
+                        ),
+                      ),
+                    ),
                     Expanded(
-                        flex: 2,
-                        child: Text(
-                            '${NumberFormat('#,##0.00').format(product.price)} ر.س',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 14,
-                                color: AppColors.getTextSecondary(isDark)))),
+                      flex: 2,
+                      child: Text(
+                        '${NumberFormat('#,##0.00').format(product.price)} ر.س',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: AppColors.getTextSecondary(isDark),
+                        ),
+                      ),
+                    ),
                     Expanded(
                       flex: 3,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: AlhaiSpacing.md),
+                          horizontal: AlhaiSpacing.md,
+                        ),
                         child: TextField(
                           controller: controller,
                           keyboardType: TextInputType.number,
                           textAlign: TextAlign.center,
                           onChanged: (_) => setState(() => _hasChanges = true),
                           style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: AppColors.getTextPrimary(isDark)),
+                            fontSize: 14,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.getTextPrimary(isDark),
+                          ),
                           decoration: InputDecoration(
                             hintText: product.price.toStringAsFixed(2),
                             hintStyle: TextStyle(
-                                color: AppColors.getTextMuted(isDark)),
+                              color: AppColors.getTextMuted(isDark),
+                            ),
                             suffixText: 'ر.س',
                             suffixStyle: TextStyle(
-                                fontSize: 11,
-                                color: AppColors.getTextMuted(isDark)),
+                              fontSize: 11,
+                              color: AppColors.getTextMuted(isDark),
+                            ),
                             filled: true,
                             fillColor: AppColors.getSurfaceVariant(isDark),
                             contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 10, vertical: 10),
+                              horizontal: 10,
+                              vertical: 10,
+                            ),
                             border: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(AlhaiRadius.sm + 2),
-                                borderSide: BorderSide(
-                                    color: AppColors.getBorder(isDark))),
+                              borderRadius: BorderRadius.circular(
+                                AlhaiRadius.sm + 2,
+                              ),
+                              borderSide: BorderSide(
+                                color: AppColors.getBorder(isDark),
+                              ),
+                            ),
                             enabledBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(AlhaiRadius.sm + 2),
-                                borderSide: BorderSide(
-                                    color: AppColors.getBorder(isDark))),
+                              borderRadius: BorderRadius.circular(
+                                AlhaiRadius.sm + 2,
+                              ),
+                              borderSide: BorderSide(
+                                color: AppColors.getBorder(isDark),
+                              ),
+                            ),
                             focusedBorder: OutlineInputBorder(
-                                borderRadius:
-                                    BorderRadius.circular(AlhaiRadius.sm + 2),
-                                borderSide: const BorderSide(
-                                    color: AppColors.primary, width: 2)),
+                              borderRadius: BorderRadius.circular(
+                                AlhaiRadius.sm + 2,
+                              ),
+                              borderSide: const BorderSide(
+                                color: AppColors.primary,
+                                width: 2,
+                              ),
+                            ),
                           ),
                         ),
                       ),
                     ),
                     Expanded(
-                        flex: 2,
-                        child: Text(
-                            product.updatedAt != null
-                                ? DateFormat('dd/MM/yyyy', 'ar')
-                                    .format(product.updatedAt!)
-                                : '-',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: AppColors.getTextMuted(isDark)))),
+                      flex: 2,
+                      child: Text(
+                        product.updatedAt != null
+                            ? DateFormat(
+                                'dd/MM/yyyy',
+                                'ar',
+                              ).format(product.updatedAt!)
+                            : '-',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.getTextMuted(isDark),
+                        ),
+                      ),
+                    ),
                     Expanded(
                       flex: 2,
                       child: hasDiff
                           ? Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 8, vertical: 3),
+                                horizontal: 8,
+                                vertical: 3,
+                              ),
                               decoration: BoxDecoration(
-                                  color: (diff > 0
-                                          ? AppColors.error
-                                          : AppColors.success)
-                                      .withValues(alpha: 0.1),
-                                  borderRadius: BorderRadius.circular(
-                                      AlhaiRadius.sm - 2)),
+                                color:
+                                    (diff > 0
+                                            ? AppColors.error
+                                            : AppColors.success)
+                                        .withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(
+                                  AlhaiRadius.sm - 2,
+                                ),
+                              ),
                               child: Text(
-                                  '${diff > 0 ? '+' : ''}${NumberFormat('#,##0.00').format(diff)}',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.w600,
-                                      color: diff > 0
-                                          ? AppColors.error
-                                          : AppColors.success)))
-                          : Text('-',
+                                '${diff > 0 ? '+' : ''}${NumberFormat('#,##0.00').format(diff)}',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w600,
+                                  color: diff > 0
+                                      ? AppColors.error
+                                      : AppColors.success,
+                                ),
+                              ),
+                            )
+                          : Text(
+                              '-',
                               textAlign: TextAlign.center,
-                              style:
-                                  TextStyle(color: AppColors.getTextMuted(isDark))),
+                              style: TextStyle(
+                                color: AppColors.getTextMuted(isDark),
+                              ),
+                            ),
                     ),
                   ],
                 ),
@@ -508,43 +598,57 @@ class _DistributorPricingScreenState
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(text,
-                      style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: isSorted
-                              ? AppColors.primary
-                              : AppColors.getTextSecondary(isDark))),
+                  Text(
+                    text,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: isSorted
+                          ? AppColors.primary
+                          : AppColors.getTextSecondary(isDark),
+                    ),
+                  ),
                   if (isSorted)
                     Icon(
-                        _sortAscending
-                            ? Icons.arrow_upward
-                            : Icons.arrow_downward,
-                        size: 14,
-                        color: AppColors.primary),
+                      _sortAscending
+                          ? Icons.arrow_upward
+                          : Icons.arrow_downward,
+                      size: 14,
+                      color: AppColors.primary,
+                    ),
                 ],
               ),
             )
-          : Text(text,
+          : Text(
+              text,
               style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.getTextSecondary(isDark))),
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: AppColors.getTextSecondary(isDark),
+              ),
+            ),
     );
   }
 
-  Widget _tHeaderWithHelp(String text, int flex, bool isDark,
-      {required String helpText}) {
+  Widget _tHeaderWithHelp(
+    String text,
+    int flex,
+    bool isDark, {
+    required String helpText,
+  }) {
     return Expanded(
       flex: flex,
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(text,
-              style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.getTextSecondary(isDark))),
+          Text(
+            text,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: AppColors.getTextSecondary(isDark),
+            ),
+          ),
           const SizedBox(width: 4),
           Tooltip(
             message: helpText,
@@ -564,7 +668,10 @@ class _DistributorPricingScreenState
   }
 
   Widget _buildPricingCards(
-      bool isDark, bool isMedium, List<DistributorProduct> products) {
+    bool isDark,
+    bool isMedium,
+    List<DistributorProduct> products,
+  ) {
     final l10n = AppLocalizations.of(context);
     return ListView.separated(
       padding: EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
@@ -582,90 +689,130 @@ class _DistributorPricingScreenState
             color: AppColors.getSurface(isDark),
             borderRadius: BorderRadius.circular(AlhaiRadius.md + 2),
             border: Border.all(
-                color: hasDiff
-                    ? AppColors.warning.withValues(alpha: 0.4)
-                    : AppColors.getBorder(isDark)),
+              color: hasDiff
+                  ? AppColors.warning.withValues(alpha: 0.4)
+                  : AppColors.getBorder(isDark),
+            ),
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(children: [
-                Expanded(
-                    child: Text(product.name,
-                        style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.getTextPrimary(isDark)))),
-                Text(
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      product.name,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.getTextPrimary(isDark),
+                      ),
+                    ),
+                  ),
+                  Text(
                     product.updatedAt != null
                         ? DateFormat('dd/MM', 'ar').format(product.updatedAt!)
                         : '-',
                     style: TextStyle(
-                        fontSize: 11, color: AppColors.getTextMuted(isDark))),
-              ]),
-              const SizedBox(height: AlhaiSpacing.sm),
-              Row(children: [
-                Expanded(
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                      Text(l10n.distributorCurrentPrice,
-                          style: TextStyle(
-                              fontSize: 11,
-                              color: AppColors.getTextMuted(isDark))),
-                      const SizedBox(height: AlhaiSpacing.xxs),
-                      Text(
-                          '${NumberFormat('#,##0.00').format(product.price)} ر.س',
-                          style: TextStyle(
-                              fontSize: 15,
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.getTextSecondary(isDark))),
-                    ])),
-                Icon(Icons.arrow_forward_rounded,
-                    color: AppColors.getTextMuted(isDark), size: 18),
-                const SizedBox(width: AlhaiSpacing.sm),
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    keyboardType: TextInputType.number,
-                    onChanged: (_) => setState(() => _hasChanges = true),
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.getTextPrimary(isDark)),
-                    decoration: InputDecoration(
-                      labelText: 'السعر الجديد',
-                      labelStyle: TextStyle(
-                          fontSize: 12, color: AppColors.getTextMuted(isDark)),
-                      hintText: product.price.toStringAsFixed(2),
-                      hintStyle:
-                          TextStyle(color: AppColors.getTextMuted(isDark)),
-                      suffixText: 'ر.س',
-                      suffixStyle: TextStyle(
-                          fontSize: 11, color: AppColors.getTextMuted(isDark)),
-                      filled: true,
-                      fillColor: AppColors.getSurfaceVariant(isDark),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 12),
-                      border: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(AlhaiRadius.sm + 2),
-                          borderSide:
-                              BorderSide(color: AppColors.getBorder(isDark))),
-                      enabledBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(AlhaiRadius.sm + 2),
-                          borderSide:
-                              BorderSide(color: AppColors.getBorder(isDark))),
-                      focusedBorder: OutlineInputBorder(
-                          borderRadius:
-                              BorderRadius.circular(AlhaiRadius.sm + 2),
-                          borderSide: const BorderSide(
-                              color: AppColors.primary, width: 2)),
+                      fontSize: 11,
+                      color: AppColors.getTextMuted(isDark),
                     ),
                   ),
-                ),
-              ]),
+                ],
+              ),
+              const SizedBox(height: AlhaiSpacing.sm),
+              Row(
+                children: [
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.distributorCurrentPrice,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: AppColors.getTextMuted(isDark),
+                          ),
+                        ),
+                        const SizedBox(height: AlhaiSpacing.xxs),
+                        Text(
+                          '${NumberFormat('#,##0.00').format(product.price)} ر.س',
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.getTextSecondary(isDark),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    Icons.arrow_forward_rounded,
+                    color: AppColors.getTextMuted(isDark),
+                    size: 18,
+                  ),
+                  const SizedBox(width: AlhaiSpacing.sm),
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      keyboardType: TextInputType.number,
+                      onChanged: (_) => setState(() => _hasChanges = true),
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.getTextPrimary(isDark),
+                      ),
+                      decoration: InputDecoration(
+                        labelText: 'السعر الجديد',
+                        labelStyle: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.getTextMuted(isDark),
+                        ),
+                        hintText: product.price.toStringAsFixed(2),
+                        hintStyle: TextStyle(
+                          color: AppColors.getTextMuted(isDark),
+                        ),
+                        suffixText: 'ر.س',
+                        suffixStyle: TextStyle(
+                          fontSize: 11,
+                          color: AppColors.getTextMuted(isDark),
+                        ),
+                        filled: true,
+                        fillColor: AppColors.getSurfaceVariant(isDark),
+                        contentPadding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 12,
+                        ),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            AlhaiRadius.sm + 2,
+                          ),
+                          borderSide: BorderSide(
+                            color: AppColors.getBorder(isDark),
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            AlhaiRadius.sm + 2,
+                          ),
+                          borderSide: BorderSide(
+                            color: AppColors.getBorder(isDark),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            AlhaiRadius.sm + 2,
+                          ),
+                          borderSide: const BorderSide(
+                            color: AppColors.primary,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ],
           ),
         );
@@ -673,8 +820,12 @@ class _DistributorPricingScreenState
     );
   }
 
-  Widget _buildSaveBar(bool isDark, bool isMedium,
-      List<DistributorProduct> products, int changed) {
+  Widget _buildSaveBar(
+    bool isDark,
+    bool isMedium,
+    List<DistributorProduct> products,
+    int changed,
+  ) {
     if (changed == 0 && !_hasChanges) return const SizedBox.shrink();
     final l10n = AppLocalizations.of(context);
 
@@ -683,48 +834,59 @@ class _DistributorPricingScreenState
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(top: BorderSide(color: AppColors.getBorder(isDark))),
-        boxShadow: [
-          ...AppColors.getElevatedShadow(isDark),
-        ],
+        boxShadow: [...AppColors.getElevatedShadow(isDark)],
       ),
       child: SafeArea(
-        child: Row(children: [
-          if (changed > 0)
-            Expanded(
-                child: Text(l10n.distributorProductsWillUpdate(changed),
-                    style: TextStyle(
-                        fontSize: 13,
-                        color: AppColors.getTextSecondary(isDark)))),
-          SizedBox(
-            width: isMedium ? 200 : 160,
-            child: Semantics(
-              button: true,
-              label: l10n.distributorSaveCtrlS,
-              child: FilledButton.icon(
-                onPressed: _isSaving || changed == 0
-                    ? null
-                    : () => _savePrices(products),
-                icon: _isSaving
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: AppColors.textOnPrimary))
-                    : const Icon(Icons.save_rounded, size: 18),
-                label: Text(l10n.distributorSaveChanges,
-                    style:
-                        TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
-                style: FilledButton.styleFrom(
+        child: Row(
+          children: [
+            if (changed > 0)
+              Expanded(
+                child: Text(
+                  l10n.distributorProductsWillUpdate(changed),
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
+                ),
+              ),
+            SizedBox(
+              width: isMedium ? 200 : 160,
+              child: Semantics(
+                button: true,
+                label: l10n.distributorSaveCtrlS,
+                child: FilledButton.icon(
+                  onPressed: _isSaving || changed == 0
+                      ? null
+                      : () => _savePrices(products),
+                  icon: _isSaving
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.textOnPrimary,
+                          ),
+                        )
+                      : const Icon(Icons.save_rounded, size: 18),
+                  label: Text(
+                    l10n.distributorSaveChanges,
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                  ),
+                  style: FilledButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     foregroundColor: AppColors.textOnPrimary,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AlhaiSpacing.sm,
+                    ),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AlhaiRadius.md))),
+                      borderRadius: BorderRadius.circular(AlhaiRadius.md),
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        ]),
+          ],
+        ),
       ),
     );
   }
@@ -756,15 +918,17 @@ class _DistributorPricingScreenState
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(l10n.distributorChangesSaved),
-              backgroundColor: AppColors.success),
+            content: Text(l10n.distributorChangesSaved),
+            backgroundColor: AppColors.success,
+          ),
         );
       } catch (_) {
         if (!mounted) return;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(l10n.distributorSaveError),
-              backgroundColor: AppColors.error),
+            content: Text(l10n.distributorSaveError),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     }

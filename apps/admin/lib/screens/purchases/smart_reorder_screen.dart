@@ -69,8 +69,9 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
       children: [
         AppHeader(
           title: l10n.smartReorderTitle,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.defaultUserName,
@@ -86,8 +87,12 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
     );
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
-      AppLocalizations l10n) {
+  Widget _buildContent(
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -105,17 +110,21 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
             ),
             const SizedBox(width: AlhaiSpacing.xs),
             Expanded(
-              child: Text(l10n.smartReorderTitle,
-                  style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface)),
+              child: Text(
+                l10n.smartReorderTitle,
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
             ),
             if (_suggestions.isNotEmpty)
               FilledButton.icon(
-                  onPressed: _sendOrder,
-                  icon: const Icon(Icons.send, size: 18),
-                  label: Text(l10n.sendOrder)),
+                onPressed: _sendOrder,
+                icon: const Icon(Icons.send, size: 18),
+                label: Text(l10n.sendOrder),
+              ),
           ],
         ),
         const SizedBox(height: AlhaiSpacing.lg),
@@ -128,29 +137,25 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
               colors: isDark
                   ? [
                       Theme.of(context).colorScheme.primaryContainer,
-                      Theme.of(context).colorScheme.surfaceContainerHighest
+                      Theme.of(context).colorScheme.surfaceContainerHighest,
                     ]
                   : [
-                      Theme.of(context)
-                          .colorScheme
-                          .primaryContainer
-                          .withValues(alpha: 0.3),
-                      Theme.of(context)
-                          .colorScheme
-                          .primaryContainer
-                          .withValues(alpha: 0.15)
+                      Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer.withValues(alpha: 0.3),
+                      Theme.of(
+                        context,
+                      ).colorScheme.primaryContainer.withValues(alpha: 0.15),
                     ],
               begin: AlignmentDirectional.topStart,
               end: AlignmentDirectional.bottomEnd,
             ),
             borderRadius: BorderRadius.circular(16),
             border: Border.all(
-                color: isDark
-                    ? Theme.of(context)
-                        .colorScheme
-                        .primary
-                        .withValues(alpha: 0.3)
-                    : Theme.of(context).colorScheme.primaryContainer),
+              color: isDark
+                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)
+                  : Theme.of(context).colorScheme.primaryContainer,
+            ),
           ),
           child: Row(
             children: [
@@ -160,26 +165,33 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
                   color: Theme.of(context).colorScheme.primaryContainer,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(Icons.psychology,
-                    color: Theme.of(context).colorScheme.primary, size: 28),
+                child: Icon(
+                  Icons.psychology,
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 28,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.md),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(l10n.smartReorderAiTitle,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Theme.of(context).colorScheme.onSurface)),
+                    Text(
+                      l10n.smartReorderAiTitle,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 16,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
                     const SizedBox(height: AlhaiSpacing.xxs),
-                    Text(l10n.smartReorderDescription,
-                        style: TextStyle(
-                            fontSize: 13,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant)),
+                    Text(
+                      l10n.smartReorderDescription,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                   ],
                 ),
               ),
@@ -198,11 +210,13 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
             ],
           )
         else
-          Column(children: [
-            _buildFormSection(isDark),
-            const SizedBox(height: AlhaiSpacing.lg),
-            _buildResultsSection(isDark),
-          ]),
+          Column(
+            children: [
+              _buildFormSection(isDark),
+              const SizedBox(height: AlhaiSpacing.lg),
+              _buildResultsSection(isDark),
+            ],
+          ),
       ],
     );
   }
@@ -219,22 +233,31 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(children: [
-            Container(
-              padding: const EdgeInsets.all(AlhaiSpacing.xs),
-              decoration: BoxDecoration(
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(AlhaiSpacing.xs),
+                decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(8)),
-              child: const Icon(Icons.tune_rounded,
-                  color: AppColors.primary, size: 20),
-            ),
-            const SizedBox(width: AlhaiSpacing.sm),
-            Text(l10n.orderSettings,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: const Icon(
+                  Icons.tune_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
+              ),
+              const SizedBox(width: AlhaiSpacing.sm),
+              Text(
+                l10n.orderSettings,
                 style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface)),
-          ]),
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+            ],
+          ),
           const SizedBox(height: AlhaiSpacing.mdl),
           TextField(
             controller: _budgetController,
@@ -243,8 +266,9 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
               labelText: l10n.availableBudget,
               suffixText: l10n.sar,
               prefixIcon: const Icon(Icons.account_balance_wallet),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
               helperText: l10n.enterAvailableAmount,
             ),
           ),
@@ -254,15 +278,20 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
             decoration: InputDecoration(
               labelText: l10n.supplier,
               prefixIcon: const Icon(Icons.storefront),
-              border:
-                  OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             items: _isLoadingSuppliers
                 ? []
                 : _suppliersList
-                    .map((s) =>
-                        DropdownMenuItem(value: s.name, child: Text(s.name)))
-                    .toList(),
+                      .map(
+                        (s) => DropdownMenuItem(
+                          value: s.name,
+                          child: Text(s.name),
+                        ),
+                      )
+                      .toList(),
             onChanged: (v) => setState(() => _selectedSupplier = v),
           ),
           const SizedBox(height: AlhaiSpacing.lg),
@@ -274,11 +303,14 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
                   ? const SizedBox(
                       width: 20,
                       height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2))
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    )
                   : const Icon(Icons.auto_awesome),
-              label: Text(_isCalculating
-                  ? l10n.calculating
-                  : l10n.calculateSmartDistribution),
+              label: Text(
+                _isCalculating
+                    ? l10n.calculating
+                    : l10n.calculateSmartDistribution,
+              ),
             ),
           ),
         ],
@@ -297,42 +329,54 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
           border: Border.all(color: Theme.of(context).dividerColor),
         ),
         child: Center(
-          child: Column(children: [
-            Icon(Icons.auto_awesome_outlined,
+          child: Column(
+            children: [
+              Icon(
+                Icons.auto_awesome_outlined,
                 size: 64,
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurfaceVariant
-                    .withValues(alpha: 0.5)),
-            const SizedBox(height: AlhaiSpacing.md),
-            Text(l10n.setBudgetAndCalculate,
+                color: Theme.of(
+                  context,
+                ).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
+              ),
+              const SizedBox(height: AlhaiSpacing.md),
+              Text(
+                l10n.setBudgetAndCalculate,
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontSize: 16)),
-          ]),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 16,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
 
     return Column(
       children: [
-        Row(children: [
-          Expanded(
+        Row(
+          children: [
+            Expanded(
               child: _SummaryCard(
-                  title: l10n.numberOfProducts,
-                  value: '${_suggestions.length}',
-                  icon: Icons.inventory_2,
-                  color: AppColors.info,
-                  isDark: isDark)),
-          const SizedBox(width: AlhaiSpacing.sm),
-          Expanded(
+                title: l10n.numberOfProducts,
+                value: '${_suggestions.length}',
+                icon: Icons.inventory_2,
+                color: AppColors.info,
+                isDark: isDark,
+              ),
+            ),
+            const SizedBox(width: AlhaiSpacing.sm),
+            Expanded(
               child: _SummaryCard(
-                  title: l10n.totalLabel,
-                  value: '${_totalCost.toStringAsFixed(0)} ${l10n.sar}',
-                  icon: Icons.payments,
-                  color: AppColors.success,
-                  isDark: isDark)),
-        ]),
+                title: l10n.totalLabel,
+                value: '${_totalCost.toStringAsFixed(0)} ${l10n.sar}',
+                icon: Icons.payments,
+                color: AppColors.success,
+                isDark: isDark,
+              ),
+            ),
+          ],
+        ),
         const SizedBox(height: AlhaiSpacing.md),
         Container(
           padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -344,43 +388,52 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.suggestedProducts,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface)),
+              Text(
+                l10n.suggestedProducts,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
               const SizedBox(height: AlhaiSpacing.md),
-              ..._suggestions.map((item) => _ReorderItemCard(
-                    item: item,
-                    isDark: isDark,
-                    onQuantityChanged: (qty) =>
-                        setState(() => item.quantity = qty),
-                  )),
+              ..._suggestions.map(
+                (item) => _ReorderItemCard(
+                  item: item,
+                  isDark: isDark,
+                  onQuantityChanged: (qty) =>
+                      setState(() => item.quantity = qty),
+                ),
+              ),
             ],
           ),
         ),
         const SizedBox(height: AlhaiSpacing.md),
-        Row(children: [
-          Expanded(
-            child: OutlinedButton.icon(
-              onPressed: () => _sendVia('whatsapp'),
-              icon: const Icon(Icons.message),
-              label: const Text('WhatsApp'),
-              style: OutlinedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14)),
+        Row(
+          children: [
+            Expanded(
+              child: OutlinedButton.icon(
+                onPressed: () => _sendVia('whatsapp'),
+                icon: const Icon(Icons.message),
+                label: const Text('WhatsApp'),
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
             ),
-          ),
-          const SizedBox(width: AlhaiSpacing.sm),
-          Expanded(
-            child: FilledButton.icon(
-              onPressed: () => _sendVia('email'),
-              icon: const Icon(Icons.email),
-              label: Text(l10n.emailLabel),
-              style: FilledButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 14)),
+            const SizedBox(width: AlhaiSpacing.sm),
+            Expanded(
+              child: FilledButton.icon(
+                onPressed: () => _sendVia('email'),
+                icon: const Icon(Icons.email),
+                label: Text(l10n.emailLabel),
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                ),
+              ),
             ),
-          ),
-        ]),
+          ],
+        ),
       ],
     );
   }
@@ -392,8 +445,9 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
     final budget = double.tryParse(_budgetController.text) ?? 0;
     if (budget <= 0) {
       final l10n = AppLocalizations.of(context);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(l10n.enterValidBudget)));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.enterValidBudget)));
       return;
     }
 
@@ -407,8 +461,9 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
         return;
       }
 
-      final lowStockProducts =
-          await db.productsDao.getLowStockProducts(storeId);
+      final lowStockProducts = await db.productsDao.getLowStockProducts(
+        storeId,
+      );
 
       if (mounted) {
         setState(() {
@@ -420,8 +475,9 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
               name: p.name,
               currentStock: p.stockQty,
               minStock: p.minQty,
-              turnoverRate:
-                  deficit > 0 ? ((deficit / p.minQty) * 100).round() : 0,
+              turnoverRate: deficit > 0
+                  ? ((deficit / p.minQty) * 100).round()
+                  : 0,
               price: costPrice,
               quantity: reorderQty,
             );
@@ -442,8 +498,8 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
             final itemCost = _suggestions[i].price * _suggestions[i].quantity;
             if (runningTotal + itemCost > budget) {
               final remaining = budget - runningTotal;
-              final maxQty =
-                  (remaining / _suggestions[i].price).floorToDouble();
+              final maxQty = (remaining / _suggestions[i].price)
+                  .floorToDouble();
               if (maxQty > 0) {
                 _suggestions[i].quantity = maxQty;
                 runningTotal += _suggestions[i].price * maxQty;
@@ -460,8 +516,9 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
     } catch (e) {
       if (mounted) {
         setState(() => _isCalculating = false);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text(e.toString())));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
     }
   }
@@ -472,19 +529,22 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
       context: context,
       builder: (dialogContext) => AlertDialog(
         title: Text(l10n.confirmSendTitle),
-        content:
-            Text(l10n.sendOrderToMsg(_selectedSupplier ?? l10n.supplierLabel)),
+        content: Text(
+          l10n.sendOrderToMsg(_selectedSupplier ?? l10n.supplierLabel),
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(l10n.cancel)),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.cancel),
+          ),
           FilledButton(
             onPressed: () {
               Navigator.pop(dialogContext);
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                    content: Text(l10n.orderSentSuccessMsg),
-                    backgroundColor: AppColors.success),
+                  content: Text(l10n.orderSentSuccessMsg),
+                  backgroundColor: AppColors.success,
+                ),
               );
             },
             child: Text(l10n.sendOrder),
@@ -498,8 +558,12 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
     final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-          content: Text(l10n.sendingOrderVia(
-              method == 'whatsapp' ? 'WhatsApp' : l10n.emailLabel))),
+        content: Text(
+          l10n.sendingOrderVia(
+            method == 'whatsapp' ? 'WhatsApp' : l10n.emailLabel,
+          ),
+        ),
+      ),
     );
   }
 }
@@ -512,13 +576,14 @@ class _ReorderItem {
   final double price;
   double quantity;
 
-  _ReorderItem(
-      {required this.name,
-      required this.currentStock,
-      required this.minStock,
-      required this.turnoverRate,
-      required this.price,
-      required this.quantity});
+  _ReorderItem({
+    required this.name,
+    required this.currentStock,
+    required this.minStock,
+    required this.turnoverRate,
+    required this.price,
+    required this.quantity,
+  });
 }
 
 class _SummaryCard extends StatelessWidget {
@@ -528,12 +593,13 @@ class _SummaryCard extends StatelessWidget {
   final Color color;
   final bool isDark;
 
-  const _SummaryCard(
-      {required this.title,
-      required this.value,
-      required this.icon,
-      required this.color,
-      required this.isDark});
+  const _SummaryCard({
+    required this.title,
+    required this.value,
+    required this.icon,
+    required this.color,
+    required this.isDark,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -544,24 +610,35 @@ class _SummaryCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
-      child: Column(children: [
-        Container(
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
+      child: Column(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
               color: color.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(12)),
-          child: Icon(icon, color: color, size: 28),
-        ),
-        const SizedBox(height: AlhaiSpacing.sm),
-        Text(title,
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 28),
+          ),
+          const SizedBox(height: AlhaiSpacing.sm),
+          Text(
+            title,
             style: TextStyle(
-                fontSize: 12,
-                color: Theme.of(context).colorScheme.onSurfaceVariant)),
-        const SizedBox(height: AlhaiSpacing.xxs),
-        Text(value,
+              fontSize: 12,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          const SizedBox(height: AlhaiSpacing.xxs),
+          Text(
+            value,
             style: TextStyle(
-                fontSize: 18, fontWeight: FontWeight.bold, color: color)),
-      ]),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -571,10 +648,11 @@ class _ReorderItemCard extends StatelessWidget {
   final bool isDark;
   final ValueChanged<double> onQuantityChanged;
 
-  const _ReorderItemCard(
-      {required this.item,
-      required this.isDark,
-      required this.onQuantityChanged});
+  const _ReorderItemCard({
+    required this.item,
+    required this.isDark,
+    required this.onQuantityChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -583,10 +661,9 @@ class _ReorderItemCard extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: Theme.of(context)
-            .colorScheme
-            .surfaceContainerHighest
-            .withValues(alpha: 0.5),
+        color: Theme.of(
+          context,
+        ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
@@ -596,54 +673,76 @@ class _ReorderItemCard extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(item.name,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface)),
+                Text(
+                  item.name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
                 const SizedBox(height: AlhaiSpacing.xs),
-                Row(children: [
-                  _Tag(
+                Row(
+                  children: [
+                    _Tag(
                       icon: Icons.inventory,
                       label: l10n.stockLabelCount(item.currentStock.toInt()),
                       color: item.currentStock < item.minStock
                           ? AppColors.error
                           : AppColors.textSecondary,
-                      isDark: isDark),
-                  const SizedBox(width: AlhaiSpacing.xs),
-                  _Tag(
+                      isDark: isDark,
+                    ),
+                    const SizedBox(width: AlhaiSpacing.xs),
+                    _Tag(
                       icon: Icons.trending_up,
                       label: l10n.turnoverLabel(item.turnoverRate),
                       color: AppColors.info,
-                      isDark: isDark),
-                ]),
+                      isDark: isDark,
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
-          Column(children: [
-            Text('${item.price.toStringAsFixed(1)} ${l10n.sar}',
+          Column(
+            children: [
+              Text(
+                '${item.price.toStringAsFixed(1)} ${l10n.sar}',
                 style: TextStyle(
-                    fontSize: 12,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
-            const SizedBox(height: AlhaiSpacing.xxs),
-            Row(children: [
-              IconButton(
-                icon: Icon(Icons.remove_circle_outline,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
-                onPressed: item.quantity > 0
-                    ? () => onQuantityChanged(item.quantity - 1)
-                    : null,
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
-              Text('${item.quantity.toInt()}',
-                  style: TextStyle(
+              const SizedBox(height: AlhaiSpacing.xxs),
+              Row(
+                children: [
+                  IconButton(
+                    icon: Icon(
+                      Icons.remove_circle_outline,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    onPressed: item.quantity > 0
+                        ? () => onQuantityChanged(item.quantity - 1)
+                        : null,
+                  ),
+                  Text(
+                    '${item.quantity.toInt()}',
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
                       fontSize: 16,
-                      color: Theme.of(context).colorScheme.onSurface)),
-              IconButton(
-                  icon: const Icon(Icons.add_circle_outline,
-                      color: AppColors.primary),
-                  onPressed: () => onQuantityChanged(item.quantity + 1)),
-            ]),
-          ]),
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(
+                      Icons.add_circle_outline,
+                      color: AppColors.primary,
+                    ),
+                    onPressed: () => onQuantityChanged(item.quantity + 1),
+                  ),
+                ],
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -656,20 +755,24 @@ class _Tag extends StatelessWidget {
   final Color color;
   final bool isDark;
 
-  const _Tag(
-      {required this.icon,
-      required this.label,
-      required this.color,
-      required this.isDark});
+  const _Tag({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.isDark,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+        horizontal: AlhaiSpacing.xs,
+        vertical: AlhaiSpacing.xxs,
+      ),
       decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(8)),
+        color: color.withValues(alpha: 0.1),
+        borderRadius: BorderRadius.circular(8),
+      ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [

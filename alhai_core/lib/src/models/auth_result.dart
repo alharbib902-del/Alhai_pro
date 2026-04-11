@@ -9,10 +9,8 @@ part 'auth_result.g.dart';
 /// AuthResult domain model - result of successful authentication
 @freezed
 class AuthResult with _$AuthResult {
-  const factory AuthResult({
-    required User user,
-    required AuthTokens tokens,
-  }) = _AuthResult;
+  const factory AuthResult({required User user, required AuthTokens tokens}) =
+      _AuthResult;
 
   factory AuthResult.fromJson(Map<String, dynamic> json) =>
       _$AuthResultFromJson(json);

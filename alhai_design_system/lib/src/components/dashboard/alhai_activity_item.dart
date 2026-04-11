@@ -32,7 +32,9 @@ class AlhaiActivityItem extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-            vertical: AlhaiSpacing.sm, horizontal: AlhaiSpacing.md),
+          vertical: AlhaiSpacing.sm,
+          horizontal: AlhaiSpacing.md,
+        ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -45,11 +47,7 @@ class AlhaiActivityItem extends StatelessWidget {
                     color: type.color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
-                    type.icon,
-                    size: 20,
-                    color: type.color,
-                  ),
+                  child: Icon(type.icon, size: 20, color: type.color),
                 ),
             const SizedBox(width: AlhaiSpacing.sm),
             // Content

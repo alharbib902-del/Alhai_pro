@@ -39,14 +39,17 @@ class _DistributorProductsScreenState
     var filtered = products;
     if (_searchQuery.isNotEmpty) {
       filtered = filtered
-          .where((p) =>
-              p.name.contains(_searchQuery) ||
-              (p.barcode?.contains(_searchQuery) ?? false))
+          .where(
+            (p) =>
+                p.name.contains(_searchQuery) ||
+                (p.barcode?.contains(_searchQuery) ?? false),
+          )
           .toList();
     }
     if (_selectedCategory.isNotEmpty) {
-      filtered =
-          filtered.where((p) => p.category == _selectedCategory).toList();
+      filtered = filtered
+          .where((p) => p.category == _selectedCategory)
+          .toList();
     }
     return filtered;
   }
@@ -125,9 +128,12 @@ class _DistributorProductsScreenState
                 backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.textOnPrimary,
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                  horizontal: AlhaiSpacing.md,
+                  vertical: AlhaiSpacing.xs,
+                ),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2)),
+                  borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
+                ),
               ),
             ),
           ),
@@ -166,7 +172,9 @@ class _DistributorProductsScreenState
               if (hasActiveFilter)
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.xs),
+                    horizontal: AlhaiSpacing.mdl,
+                    vertical: AlhaiSpacing.xs,
+                  ),
                   child: Align(
                     alignment: AlignmentDirectional.centerStart,
                     child: Text(
@@ -185,9 +193,13 @@ class _DistributorProductsScreenState
                 child: sortedProducts.isEmpty
                     ? _buildEmptyState(isDark, l10n, hasActiveFilter)
                     : isWide
-                        ? _buildDataTable(sortedProducts, isDark, l10n)
-                        : _buildProductCards(
-                            sortedProducts, isDark, isMedium, l10n),
+                    ? _buildDataTable(sortedProducts, isDark, l10n)
+                    : _buildProductCards(
+                        sortedProducts,
+                        isDark,
+                        isMedium,
+                        l10n,
+                      ),
               ),
             ],
           );
@@ -196,17 +208,19 @@ class _DistributorProductsScreenState
     );
   }
 
-  Widget _buildSearchBar(bool isDark, bool isMedium, List<String> categories,
-      AppLocalizations? l10n) {
+  Widget _buildSearchBar(
+    bool isDark,
+    bool isMedium,
+    List<String> categories,
+    AppLocalizations? l10n,
+  ) {
     final allCategories = ['', ...categories];
 
     return Container(
       padding: EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
-        border: Border(
-          bottom: BorderSide(color: AppColors.getBorder(isDark)),
-        ),
+        border: Border(bottom: BorderSide(color: AppColors.getBorder(isDark))),
       ),
       child: Column(
         children: [
@@ -217,18 +231,23 @@ class _DistributorProductsScreenState
               onChanged: _onSearchChanged,
               style: TextStyle(color: AppColors.getTextPrimary(isDark)),
               decoration: InputDecoration(
-                hintText: l10n?.distributorSearchHint ??
+                hintText:
+                    l10n?.distributorSearchHint ??
                     'Search by name or barcode...',
                 hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
-                prefixIcon: Icon(Icons.search_rounded,
-                    color: AppColors.getTextMuted(isDark)),
+                prefixIcon: Icon(
+                  Icons.search_rounded,
+                  color: AppColors.getTextMuted(isDark),
+                ),
                 suffixIcon: _searchQuery.isNotEmpty
                     ? Semantics(
                         button: true,
                         label: 'Clear search',
                         child: IconButton(
-                          icon: Icon(Icons.close_rounded,
-                              color: AppColors.getTextMuted(isDark)),
+                          icon: Icon(
+                            Icons.close_rounded,
+                            color: AppColors.getTextMuted(isDark),
+                          ),
                           onPressed: () {
                             _searchController.clear();
                             _debounceTimer?.cancel();
@@ -244,7 +263,9 @@ class _DistributorProductsScreenState
                   borderSide: BorderSide.none,
                 ),
                 contentPadding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.md, vertical: 14),
+                  horizontal: AlhaiSpacing.md,
+                  vertical: 14,
+                ),
               ),
             ),
           ),
@@ -258,8 +279,9 @@ class _DistributorProductsScreenState
                   const SizedBox(width: AlhaiSpacing.xs),
               itemBuilder: (_, index) {
                 final cat = allCategories[index];
-                final label =
-                    cat.isEmpty ? (l10n?.distributorAllOrders ?? 'All') : cat;
+                final label = cat.isEmpty
+                    ? (l10n?.distributorAllOrders ?? 'All')
+                    : cat;
                 final isSelected = cat == _selectedCategory;
                 return FilterChip(
                   label: Text(label),
@@ -269,8 +291,9 @@ class _DistributorProductsScreenState
                   checkmarkColor: AppColors.primary,
                   labelStyle: TextStyle(
                     fontSize: 13,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.w600
+                        : FontWeight.normal,
                     color: isSelected
                         ? AppColors.primary
                         : AppColors.getTextSecondary(isDark),
@@ -281,8 +304,10 @@ class _DistributorProductsScreenState
                         : AppColors.getBorder(isDark),
                   ),
                   // Fixed touch targets: removed VisualDensity.compact, proper padding
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   materialTapTargetSize: MaterialTapTargetSize.padded,
                 );
               },
@@ -294,7 +319,10 @@ class _DistributorProductsScreenState
   }
 
   Widget _buildDataTable(
-      List<DistributorProduct> products, bool isDark, AppLocalizations? l10n) {
+    List<DistributorProduct> products,
+    bool isDark,
+    AppLocalizations? l10n,
+  ) {
     return ListView.builder(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       itemCount: products.length + 1, // +1 for the header
@@ -302,23 +330,37 @@ class _DistributorProductsScreenState
         if (index == 0) {
           return Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.mdl, vertical: 14),
+              horizontal: AlhaiSpacing.mdl,
+              vertical: 14,
+            ),
             decoration: BoxDecoration(
               color: AppColors.getSurfaceVariant(isDark),
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(16)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(16),
+              ),
               border: Border.all(color: AppColors.getBorder(isDark)),
             ),
             child: Row(
               children: [
-                _tableHeader(l10n?.products ?? 'Product', 4, isDark,
-                    sortIndex: 0),
+                _tableHeader(
+                  l10n?.products ?? 'Product',
+                  4,
+                  isDark,
+                  sortIndex: 0,
+                ),
                 _tableHeader(l10n?.distributorBarcode ?? 'Barcode', 2, isDark),
                 _tableHeader(
-                    l10n?.distributorCategory ?? 'Category', 2, isDark),
+                  l10n?.distributorCategory ?? 'Category',
+                  2,
+                  isDark,
+                ),
                 _tableHeader(l10n?.price ?? 'Price', 2, isDark, sortIndex: 3),
-                _tableHeader(l10n?.distributorStock ?? 'Stock', 2, isDark,
-                    sortIndex: 4),
+                _tableHeader(
+                  l10n?.distributorStock ?? 'Stock',
+                  2,
+                  isDark,
+                  sortIndex: 4,
+                ),
               ],
             ),
           );
@@ -330,15 +372,18 @@ class _DistributorProductsScreenState
 
         return Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
+            horizontal: AlhaiSpacing.mdl,
+            vertical: AlhaiSpacing.sm,
+          ),
           decoration: BoxDecoration(
             color: AppColors.getSurface(isDark),
             border: Border(
               left: BorderSide(color: AppColors.getBorder(isDark)),
               right: BorderSide(color: AppColors.getBorder(isDark)),
               bottom: BorderSide(
-                color: AppColors.getBorder(isDark)
-                    .withValues(alpha: isLast ? 1.0 : 0.5),
+                color: AppColors.getBorder(
+                  isDark,
+                ).withValues(alpha: isLast ? 1.0 : 0.5),
               ),
             ),
             borderRadius: isLast
@@ -359,8 +404,11 @@ class _DistributorProductsScreenState
                         borderRadius: BorderRadius.circular(AlhaiRadius.sm),
                       ),
                       alignment: Alignment.center,
-                      child: const Icon(Icons.inventory_2_outlined,
-                          color: AppColors.primary, size: 18),
+                      child: const Icon(
+                        Icons.inventory_2_outlined,
+                        color: AppColors.primary,
+                        size: 18,
+                      ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -390,8 +438,10 @@ class _DistributorProductsScreenState
               Expanded(
                 flex: 2,
                 child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 3,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.info.withValues(alpha: 0.08),
                     borderRadius: BorderRadius.circular(AlhaiRadius.sm - 2),
@@ -481,8 +531,12 @@ class _DistributorProductsScreenState
     );
   }
 
-  Widget _buildProductCards(List<DistributorProduct> products, bool isDark,
-      bool isMedium, AppLocalizations? l10n) {
+  Widget _buildProductCards(
+    List<DistributorProduct> products,
+    bool isDark,
+    bool isMedium,
+    AppLocalizations? l10n,
+  ) {
     return ListView.separated(
       padding: EdgeInsets.all(isMedium ? AlhaiSpacing.mdl : AlhaiSpacing.md),
       itemCount: products.length,
@@ -509,8 +563,11 @@ class _DistributorProductsScreenState
                     borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                   ),
                   alignment: Alignment.center,
-                  child: const Icon(Icons.inventory_2_outlined,
-                      color: AppColors.primary, size: 22),
+                  child: const Icon(
+                    Icons.inventory_2_outlined,
+                    color: AppColors.primary,
+                    size: 22,
+                  ),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
@@ -541,11 +598,14 @@ class _DistributorProductsScreenState
                             const SizedBox(width: AlhaiSpacing.xs),
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: 2),
+                              horizontal: 6,
+                              vertical: 2,
+                            ),
                             decoration: BoxDecoration(
                               color: AppColors.info.withValues(alpha: 0.08),
-                              borderRadius:
-                                  BorderRadius.circular(AlhaiRadius.xs),
+                              borderRadius: BorderRadius.circular(
+                                AlhaiRadius.xs,
+                              ),
                             ),
                             child: Text(
                               product.category,
@@ -602,7 +662,9 @@ class _DistributorProductsScreenState
       label: 'Stock: $label',
       child: Container(
         padding: const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.xs, vertical: 4),
+          horizontal: AlhaiSpacing.xs,
+          vertical: 4,
+        ),
         decoration: BoxDecoration(
           color: color.withValues(alpha: isDark ? 0.2 : 0.1),
           borderRadius: BorderRadius.circular(AlhaiRadius.sm - 2),
@@ -621,13 +683,19 @@ class _DistributorProductsScreenState
   }
 
   Widget _buildEmptyState(
-      bool isDark, AppLocalizations? l10n, bool hasActiveFilter) {
+    bool isDark,
+    AppLocalizations? l10n,
+    bool hasActiveFilter,
+  ) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.inventory_2_outlined,
-              size: 64, color: AppColors.getTextMuted(isDark)),
+          Icon(
+            Icons.inventory_2_outlined,
+            size: 64,
+            color: AppColors.getTextMuted(isDark),
+          ),
           const SizedBox(height: AlhaiSpacing.md),
           Text(
             l10n?.distributorNoProducts ?? 'No products found',
@@ -664,7 +732,9 @@ class _DistributorProductsScreenState
                 foregroundColor: AppColors.primary,
                 side: const BorderSide(color: AppColors.primary),
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+                  horizontal: AlhaiSpacing.md,
+                  vertical: AlhaiSpacing.sm,
+                ),
               ),
             ),
           ],

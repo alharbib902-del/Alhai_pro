@@ -34,33 +34,28 @@ class _AddToCartAnimationState extends State<AddToCartAnimation>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     _scaleAnimation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 1.15)
-            .chain(CurveTween(curve: AlhaiMotion.fadeOut)),
+        tween: Tween<double>(
+          begin: 1.0,
+          end: 1.15,
+        ).chain(CurveTween(curve: AlhaiMotion.fadeOut)),
         weight: 50,
       ),
       TweenSequenceItem(
-        tween: Tween<double>(begin: 1.15, end: 1.0)
-            .chain(CurveTween(curve: AlhaiMotion.fadeIn)),
+        tween: Tween<double>(
+          begin: 1.15,
+          end: 1.0,
+        ).chain(CurveTween(curve: AlhaiMotion.fadeIn)),
         weight: 50,
       ),
     ]).animate(_controller);
 
     _opacityAnimation = TweenSequence<double>([
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 1.0, end: 0.7),
-        weight: 50,
-      ),
-      TweenSequenceItem(
-        tween: Tween<double>(begin: 0.7, end: 1.0),
-        weight: 50,
-      ),
+      TweenSequenceItem(tween: Tween<double>(begin: 1.0, end: 0.7), weight: 50),
+      TweenSequenceItem(tween: Tween<double>(begin: 0.7, end: 1.0), weight: 50),
     ]).animate(_controller);
 
     _controller.addStatusListener((status) {
@@ -101,10 +96,7 @@ class _AddToCartAnimationState extends State<AddToCartAnimation>
       builder: (context, child) {
         return Transform.scale(
           scale: _scaleAnimation.value,
-          child: Opacity(
-            opacity: _opacityAnimation.value,
-            child: child,
-          ),
+          child: Opacity(opacity: _opacityAnimation.value, child: child),
         );
       },
       child: widget.child,
@@ -139,10 +131,7 @@ class SimpleAnimatedCounter extends StatelessWidget {
       tween: IntTween(begin: 0, end: value),
       duration: reduceMotion ? Duration.zero : duration,
       builder: (context, val, _) {
-        return Text(
-          '${prefix ?? ''}$val${suffix ?? ''}',
-          style: style,
-        );
+        return Text('${prefix ?? ''}$val${suffix ?? ''}', style: style);
       },
     );
   }
@@ -171,10 +160,7 @@ class AnimatedPrice extends StatelessWidget {
       tween: Tween<double>(begin: 0, end: value),
       duration: reduceMotion ? Duration.zero : duration,
       builder: (context, val, _) {
-        return Text(
-          '${val.toStringAsFixed(2)} $currency',
-          style: style,
-        );
+        return Text('${val.toStringAsFixed(2)} $currency', style: style);
       },
     );
   }
@@ -208,10 +194,7 @@ class _SuccessAnimationState extends State<SuccessAnimation>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     _scaleAnimation = Tween<double>(begin: 0, end: 1).animate(
       CurvedAnimation(
@@ -291,11 +274,7 @@ class SimpleShimmer extends StatefulWidget {
   final Widget child;
   final bool isLoading;
 
-  const SimpleShimmer({
-    super.key,
-    required this.child,
-    this.isLoading = true,
-  });
+  const SimpleShimmer({super.key, required this.child, this.isLoading = true});
 
   @override
   State<SimpleShimmer> createState() => _SimpleShimmerState();
@@ -386,20 +365,21 @@ class _PulseAnimationState extends State<PulseAnimation>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
     _animation = TweenSequence<double>([
       TweenSequenceItem(
-        tween: Tween<double>(begin: 1, end: 1.1)
-            .chain(CurveTween(curve: AlhaiMotion.fadeOut)),
+        tween: Tween<double>(
+          begin: 1,
+          end: 1.1,
+        ).chain(CurveTween(curve: AlhaiMotion.fadeOut)),
         weight: 50,
       ),
       TweenSequenceItem(
-        tween: Tween<double>(begin: 1.1, end: 1)
-            .chain(CurveTween(curve: AlhaiMotion.fadeIn)),
+        tween: Tween<double>(
+          begin: 1.1,
+          end: 1,
+        ).chain(CurveTween(curve: AlhaiMotion.fadeIn)),
         weight: 50,
       ),
     ]).animate(_controller);
@@ -437,10 +417,7 @@ class _PulseAnimationState extends State<PulseAnimation>
     return AnimatedBuilder(
       animation: _animation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _animation.value,
-          child: child,
-        );
+        return Transform.scale(scale: _animation.value, child: child);
       },
       child: widget.child,
     );

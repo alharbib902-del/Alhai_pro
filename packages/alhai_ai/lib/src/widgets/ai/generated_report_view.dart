@@ -23,9 +23,10 @@ class GeneratedReportView extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.1)
-                : AppColors.border),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : AppColors.border,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -97,7 +98,9 @@ class GeneratedReportView extends StatelessWidget {
           if (report.totalValue != null)
             Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.sm, vertical: 6),
+                horizontal: AlhaiSpacing.sm,
+                vertical: 6,
+              ),
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
@@ -119,20 +122,28 @@ class GeneratedReportView extends StatelessWidget {
   Widget _buildSummary(bool isDark) {
     return Container(
       margin: EdgeInsetsDirectional.fromSTEB(
-          AlhaiSpacing.md, AlhaiSpacing.zero, AlhaiSpacing.md, AlhaiSpacing.sm),
+        AlhaiSpacing.md,
+        AlhaiSpacing.zero,
+        AlhaiSpacing.md,
+        AlhaiSpacing.sm,
+      ),
       padding: const EdgeInsets.all(AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: isDark
             ? const Color(0xFF8B5CF6).withValues(alpha: 0.08)
             : const Color(0xFF8B5CF6).withValues(alpha: 0.05),
         borderRadius: BorderRadius.circular(10),
-        border:
-            Border.all(color: const Color(0xFF8B5CF6).withValues(alpha: 0.15)),
+        border: Border.all(
+          color: const Color(0xFF8B5CF6).withValues(alpha: 0.15),
+        ),
       ),
       child: Row(
         children: [
-          const Icon(Icons.auto_awesome_rounded,
-              size: 16, color: Color(0xFF8B5CF6)),
+          const Icon(
+            Icons.auto_awesome_rounded,
+            size: 16,
+            color: Color(0xFF8B5CF6),
+          ),
           const SizedBox(width: AlhaiSpacing.xs),
           Expanded(
             child: Text(
@@ -155,21 +166,36 @@ class GeneratedReportView extends StatelessWidget {
     switch (report.chartType) {
       case ChartType.barChart:
         return _BarChartView(
-            data: report.data, isDark: isDark, unit: report.unit);
+          data: report.data,
+          isDark: isDark,
+          unit: report.unit,
+        );
       case ChartType.lineChart:
         return _LineChartView(
-            data: report.data, isDark: isDark, unit: report.unit);
+          data: report.data,
+          isDark: isDark,
+          unit: report.unit,
+        );
       case ChartType.pieChart:
         return _PieChartView(
-            data: report.data, isDark: isDark, unit: report.unit);
+          data: report.data,
+          isDark: isDark,
+          unit: report.unit,
+        );
       case ChartType.table:
         return _TableView(data: report.data, isDark: isDark, unit: report.unit);
       case ChartType.number:
         return _NumberView(
-            data: report.data, isDark: isDark, unit: report.unit);
+          data: report.data,
+          isDark: isDark,
+          unit: report.unit,
+        );
       case ChartType.heatmap:
         return _BarChartView(
-            data: report.data, isDark: isDark, unit: report.unit);
+          data: report.data,
+          isDark: isDark,
+          unit: report.unit,
+        );
     }
   }
 
@@ -253,7 +279,8 @@ class _BarChartView extends StatelessWidget {
                                   colors: colors,
                                 ),
                                 borderRadius: const BorderRadius.vertical(
-                                    top: Radius.circular(4)),
+                                  top: Radius.circular(4),
+                                ),
                               ),
                             ),
                           ),
@@ -340,8 +367,9 @@ class _LineChartPainter extends CustomPainter {
 
     // Grid
     final gridPaint = Paint()
-      ..color =
-          isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.grey200
+      ..color = isDark
+          ? Colors.white.withValues(alpha: 0.06)
+          : AppColors.grey200
       ..strokeWidth = 1;
     for (int i = 0; i <= 4; i++) {
       final y = size.height * i / 4;
@@ -354,8 +382,8 @@ class _LineChartPainter extends CustomPainter {
       final x = i * stepX;
       final y = range > 0
           ? size.height -
-              ((data[i].value - minVal) / range * size.height * 0.85 +
-                  size.height * 0.05)
+                ((data[i].value - minVal) / range * size.height * 0.85 +
+                    size.height * 0.05)
           : size.height / 2;
       if (i == 0) {
         areaPath.moveTo(x, y);
@@ -379,8 +407,9 @@ class _LineChartPainter extends CustomPainter {
     canvas.drawPath(
       areaFillPath,
       Paint()
-        ..shader = areaGradient
-            .createShader(Rect.fromLTWH(0, 0, size.width, size.height)),
+        ..shader = areaGradient.createShader(
+          Rect.fromLTWH(0, 0, size.width, size.height),
+        ),
     );
 
     // Line
@@ -399,8 +428,8 @@ class _LineChartPainter extends CustomPainter {
         final pv = data[i].previousValue ?? data[i].value;
         final y = range > 0
             ? size.height -
-                ((pv - minVal) / range * size.height * 0.85 +
-                    size.height * 0.05)
+                  ((pv - minVal) / range * size.height * 0.85 +
+                      size.height * 0.05)
             : size.height / 2;
         if (i == 0) {
           prevPath.moveTo(x, y);
@@ -409,13 +438,15 @@ class _LineChartPainter extends CustomPainter {
         }
       }
       canvas.drawPath(
-          prevPath,
-          Paint()
-            ..color =
-                isDark ? Colors.white.withValues(alpha: 0.2) : AppColors.grey300
-            ..strokeWidth = 1.5
-            ..style = PaintingStyle.stroke
-            ..strokeCap = StrokeCap.round);
+        prevPath,
+        Paint()
+          ..color = isDark
+              ? Colors.white.withValues(alpha: 0.2)
+              : AppColors.grey300
+          ..strokeWidth = 1.5
+          ..style = PaintingStyle.stroke
+          ..strokeCap = StrokeCap.round,
+      );
     }
 
     // Dots
@@ -423,11 +454,14 @@ class _LineChartPainter extends CustomPainter {
       final x = i * stepX;
       final y = range > 0
           ? size.height -
-              ((data[i].value - minVal) / range * size.height * 0.85 +
-                  size.height * 0.05)
+                ((data[i].value - minVal) / range * size.height * 0.85 +
+                    size.height * 0.05)
           : size.height / 2;
       canvas.drawCircle(
-          Offset(x, y), 4, Paint()..color = const Color(0xFF8B5CF6));
+        Offset(x, y),
+        4,
+        Paint()..color = const Color(0xFF8B5CF6),
+      );
       canvas.drawCircle(Offset(x, y), 2, Paint()..color = Colors.white);
     }
 
@@ -498,8 +532,9 @@ class _PieChartView extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: data.asMap().entries.map((entry) {
-                final percent =
-                    total > 0 ? (entry.value.value / total * 100) : 0;
+                final percent = total > 0
+                    ? (entry.value.value / total * 100)
+                    : 0;
                 return Padding(
                   padding: const EdgeInsets.symmetric(vertical: 3),
                   child: Row(
@@ -551,11 +586,12 @@ class _PieChartPainter extends CustomPainter {
   final List<Color> colors;
   final bool isDark;
 
-  _PieChartPainter(
-      {required this.data,
-      required this.total,
-      required this.colors,
-      required this.isDark});
+  _PieChartPainter({
+    required this.data,
+    required this.total,
+    required this.colors,
+    required this.isDark,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -587,8 +623,11 @@ class _PieChartPainter extends CustomPainter {
     }
 
     // Center hole (donut)
-    canvas.drawCircle(center, radius * 0.55,
-        Paint()..color = isDark ? const Color(0xFF1E293B) : Colors.white);
+    canvas.drawCircle(
+      center,
+      radius * 0.55,
+      Paint()..color = isDark ? const Color(0xFF1E293B) : Colors.white,
+    );
 
     // Center text
     final tp = TextPainter(
@@ -603,7 +642,9 @@ class _PieChartPainter extends CustomPainter {
       textDirection: TextDirection.ltr,
     )..layout();
     tp.paint(
-        canvas, Offset(center.dx - tp.width / 2, center.dy - tp.height / 2));
+      canvas,
+      Offset(center.dx - tp.width / 2, center.dy - tp.height / 2),
+    );
   }
 
   @override
@@ -626,8 +667,9 @@ class _TableView extends StatelessWidget {
         itemCount: data.length,
         separatorBuilder: (_, __) => Divider(
           height: 1,
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.grey100,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.06)
+              : AppColors.grey100,
         ),
         itemBuilder: (context, index) {
           final row = data[index];
@@ -676,7 +718,9 @@ class _TableView extends StatelessWidget {
                   const SizedBox(width: AlhaiSpacing.xs),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 6, vertical: AlhaiSpacing.xxxs),
+                      horizontal: 6,
+                      vertical: AlhaiSpacing.xxxs,
+                    ),
                     decoration: BoxDecoration(
                       color: row.changePercent >= 0
                           ? AppColors.success.withValues(alpha: 0.1)

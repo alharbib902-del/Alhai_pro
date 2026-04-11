@@ -93,8 +93,10 @@ void main() {
     });
 
     test('success with devOtp includes otp', () {
-      final result =
-          WhatsAppOtpSendResult.success(messageId: 'dev', devOtp: '123456');
+      final result = WhatsAppOtpSendResult.success(
+        messageId: 'dev',
+        devOtp: '123456',
+      );
       expect(result.isSuccess, isTrue);
       expect(result.devOtp, equals('123456'));
     });
@@ -113,8 +115,9 @@ void main() {
     });
 
     test('cooldown factory includes duration', () {
-      final result =
-          WhatsAppOtpSendResult.cooldown(const Duration(seconds: 45));
+      final result = WhatsAppOtpSendResult.cooldown(
+        const Duration(seconds: 45),
+      );
       expect(result.isSuccess, isFalse);
       expect(result.cooldown, equals(const Duration(seconds: 45)));
     });
@@ -182,8 +185,9 @@ void main() {
 
     group('getCooldownRemaining', () {
       test('returns null when no previous send', () {
-        final cooldown =
-            WhatsAppOtpService.getCooldownRemaining('966512345678');
+        final cooldown = WhatsAppOtpService.getCooldownRemaining(
+          '966512345678',
+        );
         expect(cooldown, isNull);
       });
     });

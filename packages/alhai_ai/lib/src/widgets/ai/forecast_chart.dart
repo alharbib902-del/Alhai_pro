@@ -15,11 +15,7 @@ class ForecastChart extends StatefulWidget {
   final List<DailyForecast> forecasts;
   final double height;
 
-  const ForecastChart({
-    super.key,
-    required this.forecasts,
-    this.height = 280,
-  });
+  const ForecastChart({super.key, required this.forecasts, this.height = 280});
 
   @override
   State<ForecastChart> createState() => _ForecastChartState();
@@ -40,8 +36,9 @@ class _ForecastChartState extends State<ForecastChart> {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -57,8 +54,11 @@ class _ForecastChartState extends State<ForecastChart> {
           // العنوان
           Row(
             children: [
-              const Icon(Icons.show_chart_rounded,
-                  color: AppColors.primary, size: 20),
+              const Icon(
+                Icons.show_chart_rounded,
+                color: AppColors.primary,
+                size: 20,
+              ),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 'التوقعات مقابل الفعلي', // Forecast vs Actual
@@ -78,8 +78,11 @@ class _ForecastChartState extends State<ForecastChart> {
               const SizedBox(width: AlhaiSpacing.md),
               _buildLegend(l10n.forecast, AppColors.primary, isDark),
               const SizedBox(width: AlhaiSpacing.md),
-              _buildLegend('نطاق الثقة',
-                  AppColors.primary.withValues(alpha: 0.2), isDark),
+              _buildLegend(
+                'نطاق الثقة',
+                AppColors.primary.withValues(alpha: 0.2),
+                isDark,
+              ),
               // Confidence band
             ],
           ),
@@ -142,8 +145,10 @@ class _ForecastChartState extends State<ForecastChart> {
 
   Widget _buildTooltip(DailyForecast forecast, bool isDark) {
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AlhaiSpacing.sm,
+        vertical: 6,
+      ),
       margin: const EdgeInsets.only(top: AlhaiSpacing.xs),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.grey50,
@@ -305,11 +310,7 @@ class _ForecastChartPainter extends CustomPainter {
         6,
         Paint()..color = AppColors.primary.withValues(alpha: 0.3),
       );
-      canvas.drawCircle(
-        Offset(x, yP),
-        4,
-        Paint()..color = AppColors.primary,
-      );
+      canvas.drawCircle(Offset(x, yP), 4, Paint()..color = AppColors.primary);
 
       if (forecasts[hoveredIndex!].actual != null) {
         final yA = toY(forecasts[hoveredIndex!].actual!);

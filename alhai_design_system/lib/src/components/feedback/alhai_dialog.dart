@@ -281,11 +281,7 @@ class AlhaiDialog extends StatelessWidget {
     final iconData = customIcon ?? _getDefaultIcon();
     final iconColor = _getIconColor(theme, colorScheme);
 
-    return Icon(
-      iconData,
-      size: AlhaiSpacing.iconLg,
-      color: iconColor,
-    );
+    return Icon(iconData, size: AlhaiSpacing.iconLg, color: iconColor);
   }
 
   IconData _getDefaultIcon() {

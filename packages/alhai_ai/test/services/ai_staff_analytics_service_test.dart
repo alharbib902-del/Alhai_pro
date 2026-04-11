@@ -204,8 +204,9 @@ void main() {
       final staff = AiStaffAnalyticsService.getStaffPerformance();
       final summary = AiStaffAnalyticsService.getTeamSummary();
 
-      final expectedTotal =
-          staff.map((s) => s.salesVolume).reduce((a, b) => a + b);
+      final expectedTotal = staff
+          .map((s) => s.salesVolume)
+          .reduce((a, b) => a + b);
       expect(summary.totalSales, expectedTotal);
     });
 

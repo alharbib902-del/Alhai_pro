@@ -48,9 +48,9 @@ class PerformanceDashboard extends ConsumerWidget {
                   icon: const Icon(Icons.refresh, size: 20),
                   onPressed: () {
                     ref.read(performanceProvider.notifier).resetSession();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(l10n.statsReset)),
-                    );
+                    ScaffoldMessenger.of(
+                      context,
+                    ).showSnackBar(SnackBar(content: Text(l10n.statsReset)));
                   },
                   tooltip: l10n.resetStatsAction,
                 ),
@@ -99,8 +99,9 @@ class PerformanceDashboard extends ConsumerWidget {
             Container(
               padding: const EdgeInsets.all(AlhaiSpacing.sm),
               decoration: BoxDecoration(
-                color:
-                    theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
+                color: theme.colorScheme.primaryContainer.withValues(
+                  alpha: 0.3,
+                ),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -113,9 +114,10 @@ class PerformanceDashboard extends ConsumerWidget {
                     color: AlhaiColors.success,
                   ),
                   Container(
-                      width: 1,
-                      height: 30,
-                      color: Theme.of(context).dividerColor),
+                    width: 1,
+                    height: 30,
+                    color: Theme.of(context).dividerColor,
+                  ),
                   _SummaryItem(
                     label: l10n.totalSales,
                     value:
@@ -124,9 +126,10 @@ class PerformanceDashboard extends ConsumerWidget {
                     color: AlhaiColors.info,
                   ),
                   Container(
-                      width: 1,
-                      height: 30,
-                      color: Theme.of(context).dividerColor),
+                    width: 1,
+                    height: 30,
+                    color: Theme.of(context).dividerColor,
+                  ),
                   _SummaryItem(
                     label: l10n.errors,
                     value: '${stats.errorCount}',
@@ -212,7 +215,9 @@ class _MiniKpi extends StatelessWidget {
       message: tooltip,
       child: Container(
         padding: const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+          horizontal: AlhaiSpacing.xs,
+          vertical: AlhaiSpacing.xxs,
+        ),
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surfaceContainerHighest,
           borderRadius: BorderRadius.circular(8),
@@ -220,9 +225,11 @@ class _MiniKpi extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(icon,
-                size: 14,
-                color: Theme.of(context).colorScheme.onSurfaceVariant),
+            Icon(
+              icon,
+              size: 14,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             SizedBox(width: AlhaiSpacing.xxs),
             Text(value, style: const TextStyle(fontSize: 12)),
           ],
@@ -285,9 +292,7 @@ class _KpiCard extends StatelessWidget {
                 SizedBox(width: AlhaiSpacing.xxxs),
                 Text(
                   unit,
-                  style: theme.textTheme.labelSmall?.copyWith(
-                    color: color,
-                  ),
+                  style: theme.textTheme.labelSmall?.copyWith(color: color),
                 ),
               ],
             ],
@@ -319,15 +324,9 @@ class _SummaryItem extends StatelessWidget {
         SizedBox(height: AlhaiSpacing.xxs),
         Text(
           value,
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: color,
-          ),
+          style: TextStyle(fontWeight: FontWeight.bold, color: color),
         ),
-        Text(
-          label,
-          style: Theme.of(context).textTheme.labelSmall,
-        ),
+        Text(label, style: Theme.of(context).textTheme.labelSmall),
       ],
     );
   }

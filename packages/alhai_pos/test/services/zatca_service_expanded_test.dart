@@ -156,10 +156,14 @@ void main() {
       test('should return input unchanged for various invalid lengths', () {
         expect(ZatcaService.formatVatNumber(''), equals(''));
         expect(ZatcaService.formatVatNumber('3'), equals('3'));
-        expect(ZatcaService.formatVatNumber('300000000000'),
-            equals('300000000000'));
-        expect(ZatcaService.formatVatNumber('3000000000000030'),
-            equals('3000000000000030'));
+        expect(
+          ZatcaService.formatVatNumber('300000000000'),
+          equals('300000000000'),
+        );
+        expect(
+          ZatcaService.formatVatNumber('3000000000000030'),
+          equals('3000000000000030'),
+        );
       });
     });
 

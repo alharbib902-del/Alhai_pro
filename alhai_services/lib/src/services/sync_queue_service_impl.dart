@@ -248,8 +248,9 @@ class SyncQueueServiceImpl implements SyncQueueService {
 
   @override
   Future<int> clearSyncedItems() async {
-    final syncedItems =
-        _queue.where((i) => i.status == SyncStatus.synced).toList();
+    final syncedItems = _queue
+        .where((i) => i.status == SyncStatus.synced)
+        .toList();
     final count = syncedItems.length;
 
     _queue.removeWhere((i) => i.status == SyncStatus.synced);
@@ -331,14 +332,16 @@ class SyncQueueServiceImpl implements SyncQueueService {
     required Map<String, dynamic> localValue,
     required Map<String, dynamic> serverValue,
   }) {
-    _conflicts.add(SyncConflict(
-      id: _uuid.v4(),
-      entityType: entityType,
-      entityId: entityId,
-      localValue: localValue,
-      serverValue: serverValue,
-      detectedAt: DateTime.now(),
-    ));
+    _conflicts.add(
+      SyncConflict(
+        id: _uuid.v4(),
+        entityType: entityType,
+        entityId: entityId,
+        localValue: localValue,
+        serverValue: serverValue,
+        detectedAt: DateTime.now(),
+      ),
+    );
   }
 
   /// Get all items in queue (for debugging)

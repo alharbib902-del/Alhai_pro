@@ -11,9 +11,8 @@ import '../inventory_repository.dart';
 class InventoryRepositoryImpl implements InventoryRepository {
   final InventoryRemoteDataSource _remote;
 
-  InventoryRepositoryImpl({
-    required InventoryRemoteDataSource remote,
-  }) : _remote = remote;
+  InventoryRepositoryImpl({required InventoryRemoteDataSource remote})
+    : _remote = remote;
 
   @override
   Future<Paginated<StockAdjustment>> getAdjustments(

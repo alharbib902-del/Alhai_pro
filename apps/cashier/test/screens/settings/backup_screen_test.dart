@@ -25,9 +25,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const BackupScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const BackupScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(BackupScreen), findsOneWidget);
@@ -41,9 +39,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const BackupScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const BackupScreen()));
       await tester.pumpAndSettle();
 
       // Provider resolves synchronously in test, so loading state
@@ -60,10 +56,7 @@ void main() {
       suppressOverflowErrors();
 
       await tester.pumpWidget(
-        createTestWidget(
-          const BackupScreen(),
-          theme: ThemeData.dark(),
-        ),
+        createTestWidget(const BackupScreen(), theme: ThemeData.dark()),
       );
       await tester.pumpAndSettle();
 
@@ -78,9 +71,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const BackupScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const BackupScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(BackupScreen), findsOneWidget);
@@ -94,9 +85,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const BackupScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const BackupScreen()));
       await tester.pumpAndSettle();
 
       // Backup screen has switches for auto-backup toggle

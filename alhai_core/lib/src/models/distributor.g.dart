@@ -20,9 +20,11 @@ _$DistributorImpl _$$DistributorImplFromJson(Map<String, dynamic> json) =>
       phone: json['phone'] as String?,
       email: json['email'] as String?,
       website: json['website'] as String?,
-      status: $enumDecodeNullable(_$DistributorStatusEnumMap, json['status']) ??
+      status:
+          $enumDecodeNullable(_$DistributorStatusEnumMap, json['status']) ??
           DistributorStatus.pending,
-      tier: $enumDecodeNullable(_$DistributorTierEnumMap, json['tier']) ??
+      tier:
+          $enumDecodeNullable(_$DistributorTierEnumMap, json['tier']) ??
           DistributorTier.free,
       totalProducts: (json['totalProducts'] as num?)?.toInt() ?? 0,
       totalOrders: (json['totalOrders'] as num?)?.toInt() ?? 0,

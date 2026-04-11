@@ -8,8 +8,9 @@ import '../../addresses/providers/address_providers.dart';
 import '../../../core/providers/app_providers.dart';
 
 /// Selected payment method for checkout.
-final selectedPaymentMethodProvider =
-    StateProvider<PaymentMethod>((ref) => PaymentMethod.cash);
+final selectedPaymentMethodProvider = StateProvider<PaymentMethod>(
+  (ref) => PaymentMethod.cash,
+);
 
 /// Delivery notes.
 final deliveryNotesProvider = StateProvider<String>((ref) => '');
@@ -27,8 +28,10 @@ final minOrderAmountProvider = Provider<double>((ref) {
 });
 
 /// Place order action.
-final placeOrderProvider =
-    FutureProvider.family<Order, Cart>((ref, cart) async {
+final placeOrderProvider = FutureProvider.family<Order, Cart>((
+  ref,
+  cart,
+) async {
   final address = ref.read(selectedAddressProvider);
   final paymentMethod = ref.read(selectedPaymentMethodProvider);
   final deliveryFee = ref.read(deliveryFeeProvider);

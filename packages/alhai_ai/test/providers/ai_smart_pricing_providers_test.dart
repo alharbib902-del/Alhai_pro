@@ -28,7 +28,9 @@ void main() {
       container.read(priceFilterProvider.notifier).state =
           PriceFilterType.shouldDecrease;
       expect(
-          container.read(priceFilterProvider), PriceFilterType.shouldDecrease);
+        container.read(priceFilterProvider),
+        PriceFilterType.shouldDecrease,
+      );
     });
   });
 

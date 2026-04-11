@@ -149,15 +149,17 @@ void main() {
         data: {'id': 'r1', 'name': 'Test'},
       );
       expect(id, isA<String>());
-      verify(() => mockDao.enqueue(
-            id: any(named: 'id'),
-            tableName: 'products',
-            recordId: 'r1',
-            operation: 'CREATE',
-            payload: any(named: 'payload'),
-            idempotencyKey: any(named: 'idempotencyKey'),
-            priority: any(named: 'priority'),
-          )).called(1);
+      verify(
+        () => mockDao.enqueue(
+          id: any(named: 'id'),
+          tableName: 'products',
+          recordId: 'r1',
+          operation: 'CREATE',
+          payload: any(named: 'payload'),
+          idempotencyKey: any(named: 'idempotencyKey'),
+          priority: any(named: 'priority'),
+        ),
+      ).called(1);
     });
 
     test('enqueueUpdate delegates to enqueue with update operation', () async {
@@ -167,15 +169,17 @@ void main() {
         changes: {'id': 'r1', 'price': 10.0},
       );
       expect(id, isA<String>());
-      verify(() => mockDao.enqueue(
-            id: any(named: 'id'),
-            tableName: 'products',
-            recordId: 'r1',
-            operation: 'UPDATE',
-            payload: any(named: 'payload'),
-            idempotencyKey: any(named: 'idempotencyKey'),
-            priority: any(named: 'priority'),
-          )).called(1);
+      verify(
+        () => mockDao.enqueue(
+          id: any(named: 'id'),
+          tableName: 'products',
+          recordId: 'r1',
+          operation: 'UPDATE',
+          payload: any(named: 'payload'),
+          idempotencyKey: any(named: 'idempotencyKey'),
+          priority: any(named: 'priority'),
+        ),
+      ).called(1);
     });
 
     test('enqueueDelete delegates with deleted:true payload', () async {
@@ -184,15 +188,17 @@ void main() {
         recordId: 'r1',
       );
       expect(id, isA<String>());
-      verify(() => mockDao.enqueue(
-            id: any(named: 'id'),
-            tableName: 'products',
-            recordId: 'r1',
-            operation: 'DELETE',
-            payload: jsonEncode({'deleted': true}),
-            idempotencyKey: any(named: 'idempotencyKey'),
-            priority: any(named: 'priority'),
-          )).called(1);
+      verify(
+        () => mockDao.enqueue(
+          id: any(named: 'id'),
+          tableName: 'products',
+          recordId: 'r1',
+          operation: 'DELETE',
+          payload: jsonEncode({'deleted': true}),
+          idempotencyKey: any(named: 'idempotencyKey'),
+          priority: any(named: 'priority'),
+        ),
+      ).called(1);
     });
   });
 
@@ -209,10 +215,12 @@ void main() {
         status: 'pending',
         operation: 'UPDATE',
       );
-      when(() => mockDao.findByIdempotencyKey(any()))
-          .thenAnswer((_) async => existingItem);
-      when(() => mockDao.updatePayload(any(), any()))
-          .thenAnswer((_) async => 1);
+      when(
+        () => mockDao.findByIdempotencyKey(any()),
+      ).thenAnswer((_) async => existingItem);
+      when(
+        () => mockDao.updatePayload(any(), any()),
+      ).thenAnswer((_) async => 1);
 
       final id = await service.enqueue(
         tableName: 'products',
@@ -223,37 +231,41 @@ void main() {
 
       expect(id, 'existing-id');
       verify(() => mockDao.updatePayload('existing-id', any())).called(1);
-      verifyNever(() => mockDao.enqueue(
-            id: any(named: 'id'),
-            tableName: any(named: 'tableName'),
-            recordId: any(named: 'recordId'),
-            operation: any(named: 'operation'),
-            payload: any(named: 'payload'),
-            idempotencyKey: any(named: 'idempotencyKey'),
-            priority: any(named: 'priority'),
-          ));
+      verifyNever(
+        () => mockDao.enqueue(
+          id: any(named: 'id'),
+          tableName: any(named: 'tableName'),
+          recordId: any(named: 'recordId'),
+          operation: any(named: 'operation'),
+          payload: any(named: 'payload'),
+          idempotencyKey: any(named: 'idempotencyKey'),
+          priority: any(named: 'priority'),
+        ),
+      );
     });
   });
 
   // ─── Queue overload protection ────────────────────────────────────
 
   group('Queue overload protection', () {
-    test('high-priority tables are not downgraded when queue is overloaded',
-        () async {
-      // Setup overloaded queue
-      _setupOverloadedQueue(mockDao);
-      _setupNoPendingItems(mockDao);
-      _setupNoExistingIdempotency(mockDao);
-      _setupEnqueueSuccess(mockDao);
+    test(
+      'high-priority tables are not downgraded when queue is overloaded',
+      () async {
+        // Setup overloaded queue
+        _setupOverloadedQueue(mockDao);
+        _setupNoPendingItems(mockDao);
+        _setupNoExistingIdempotency(mockDao);
+        _setupEnqueueSuccess(mockDao);
 
-      await service.enqueueCreate(
-        tableName: 'sales', // high-priority table
-        recordId: 'r1',
-        data: {'id': 'r1', 'total': 100.0},
-      );
+        await service.enqueueCreate(
+          tableName: 'sales', // high-priority table
+          recordId: 'r1',
+          data: {'id': 'r1', 'total': 100.0},
+        );
 
-      // Should enqueue with normal priority (2), not downgraded to low (1)
-      verify(() => mockDao.enqueue(
+        // Should enqueue with normal priority (2), not downgraded to low (1)
+        verify(
+          () => mockDao.enqueue(
             id: any(named: 'id'),
             tableName: 'sales',
             recordId: 'r1',
@@ -261,24 +273,28 @@ void main() {
             payload: any(named: 'payload'),
             idempotencyKey: any(named: 'idempotencyKey'),
             priority: 2, // normal priority preserved
-          )).called(1);
-    });
+          ),
+        ).called(1);
+      },
+    );
 
-    test('low-priority tables are downgraded when queue is overloaded',
-        () async {
-      _setupOverloadedQueue(mockDao);
-      _setupNoPendingItems(mockDao);
-      _setupNoExistingIdempotency(mockDao);
-      _setupEnqueueSuccess(mockDao);
+    test(
+      'low-priority tables are downgraded when queue is overloaded',
+      () async {
+        _setupOverloadedQueue(mockDao);
+        _setupNoPendingItems(mockDao);
+        _setupNoExistingIdempotency(mockDao);
+        _setupEnqueueSuccess(mockDao);
 
-      await service.enqueueCreate(
-        tableName: 'categories', // non-high-priority table
-        recordId: 'r1',
-        data: {'id': 'r1', 'name': 'Food'},
-      );
+        await service.enqueueCreate(
+          tableName: 'categories', // non-high-priority table
+          recordId: 'r1',
+          data: {'id': 'r1', 'name': 'Food'},
+        );
 
-      // Should enqueue with low priority (1)
-      verify(() => mockDao.enqueue(
+        // Should enqueue with low priority (1)
+        verify(
+          () => mockDao.enqueue(
             id: any(named: 'id'),
             tableName: 'categories',
             recordId: 'r1',
@@ -286,8 +302,10 @@ void main() {
             payload: any(named: 'payload'),
             idempotencyKey: any(named: 'idempotencyKey'),
             priority: 1, // downgraded to low
-          )).called(1);
-    });
+          ),
+        ).called(1);
+      },
+    );
   });
 
   // ─── Delegation methods ───────────────────────────────────────────
@@ -325,8 +343,9 @@ void main() {
     });
 
     test('cleanup delegates to DAO with default duration', () async {
-      when(() => mockDao.cleanupSyncedItems(olderThan: any(named: 'olderThan')))
-          .thenAnswer((_) async => 10);
+      when(
+        () => mockDao.cleanupSyncedItems(olderThan: any(named: 'olderThan')),
+      ).thenAnswer((_) async => 10);
       final count = await service.cleanup();
       expect(count, 10);
     });
@@ -355,22 +374,20 @@ void main() {
   group('Enums', () {
     test('SyncOperation has all expected values', () {
       expect(
-          SyncOperation.values,
-          containsAll([
-            SyncOperation.create,
-            SyncOperation.update,
-            SyncOperation.delete,
-          ]));
+        SyncOperation.values,
+        containsAll([
+          SyncOperation.create,
+          SyncOperation.update,
+          SyncOperation.delete,
+        ]),
+      );
     });
 
     test('SyncPriority has all expected values', () {
       expect(
-          SyncPriority.values,
-          containsAll([
-            SyncPriority.low,
-            SyncPriority.normal,
-            SyncPriority.high,
-          ]));
+        SyncPriority.values,
+        containsAll([SyncPriority.low, SyncPriority.normal, SyncPriority.high]),
+      );
     });
   });
 }
@@ -378,28 +395,28 @@ void main() {
 // ─── Helper functions ─────────────────────────────────────────────────
 
 SyncQueueHealth _healthyQueue() => SyncQueueHealth(
-      totalItems: 100,
-      pendingCount: 50,
-      syncingCount: 10,
-      failedCount: 5,
-      conflictCount: 0,
-      syncedCount: 35,
-      oldestPendingAt: null,
-      avgRetryCount: 0.5,
-      itemsPerTable: {},
-    );
+  totalItems: 100,
+  pendingCount: 50,
+  syncingCount: 10,
+  failedCount: 5,
+  conflictCount: 0,
+  syncedCount: 35,
+  oldestPendingAt: null,
+  avgRetryCount: 0.5,
+  itemsPerTable: {},
+);
 
 SyncQueueHealth _overloadedQueue() => SyncQueueHealth(
-      totalItems: 15000,
-      pendingCount: 11000,
-      syncingCount: 500,
-      failedCount: 200,
-      conflictCount: 50,
-      syncedCount: 3250,
-      oldestPendingAt: null,
-      avgRetryCount: 2.0,
-      itemsPerTable: {},
-    );
+  totalItems: 15000,
+  pendingCount: 11000,
+  syncingCount: 500,
+  failedCount: 200,
+  conflictCount: 50,
+  syncedCount: 3250,
+  oldestPendingAt: null,
+  avgRetryCount: 2.0,
+  itemsPerTable: {},
+);
 
 void _setupHealthyQueue(MockSyncQueueDao dao) {
   when(() => dao.getQueueHealth()).thenAnswer((_) async => _healthyQueue());
@@ -410,8 +427,9 @@ void _setupOverloadedQueue(MockSyncQueueDao dao) {
 }
 
 void _setupNoPendingItems(MockSyncQueueDao dao) {
-  when(() => dao.findPendingByTableRecord(any(), any()))
-      .thenAnswer((_) async => []);
+  when(
+    () => dao.findPendingByTableRecord(any(), any()),
+  ).thenAnswer((_) async => []);
 }
 
 void _setupNoExistingIdempotency(MockSyncQueueDao dao) {
@@ -419,15 +437,17 @@ void _setupNoExistingIdempotency(MockSyncQueueDao dao) {
 }
 
 void _setupEnqueueSuccess(MockSyncQueueDao dao) {
-  when(() => dao.enqueue(
-        id: any(named: 'id'),
-        tableName: any(named: 'tableName'),
-        recordId: any(named: 'recordId'),
-        operation: any(named: 'operation'),
-        payload: any(named: 'payload'),
-        idempotencyKey: any(named: 'idempotencyKey'),
-        priority: any(named: 'priority'),
-      )).thenAnswer((_) async => 1);
+  when(
+    () => dao.enqueue(
+      id: any(named: 'id'),
+      tableName: any(named: 'tableName'),
+      recordId: any(named: 'recordId'),
+      operation: any(named: 'operation'),
+      payload: any(named: 'payload'),
+      idempotencyKey: any(named: 'idempotencyKey'),
+      priority: any(named: 'priority'),
+    ),
+  ).thenAnswer((_) async => 1);
 }
 
 SyncQueueTableData _fakeSyncQueueItem({

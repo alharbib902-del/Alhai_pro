@@ -37,8 +37,9 @@ class ZatcaOfflineQueue {
     await _ensureLoaded();
 
     // Avoid duplicate entries for the same invoice
-    final existingIdx =
-        _queue.indexWhere((item) => item.invoiceNumber == invoiceNumber);
+    final existingIdx = _queue.indexWhere(
+      (item) => item.invoiceNumber == invoiceNumber,
+    );
     if (existingIdx >= 0) {
       // Update existing entry
       _queue[existingIdx] = _queue[existingIdx].copyWith(
@@ -47,16 +48,18 @@ class ZatcaOfflineQueue {
         retryCount: _queue[existingIdx].retryCount,
       );
     } else {
-      _queue.add(QueuedInvoice(
-        invoiceNumber: invoiceNumber,
-        signedXmlBase64: signedXmlBase64,
-        invoiceHash: invoiceHash,
-        uuid: uuid,
-        isStandard: isStandard,
-        storeId: storeId ?? '',
-        queuedAt: DateTime.now(),
-        retryCount: 0,
-      ));
+      _queue.add(
+        QueuedInvoice(
+          invoiceNumber: invoiceNumber,
+          signedXmlBase64: signedXmlBase64,
+          invoiceHash: invoiceHash,
+          uuid: uuid,
+          isStandard: isStandard,
+          storeId: storeId ?? '',
+          queuedAt: DateTime.now(),
+          retryCount: 0,
+        ),
+      );
     }
 
     await _persistQueue();
@@ -96,8 +99,9 @@ class ZatcaOfflineQueue {
   /// Increment the retry count for a queued invoice
   Future<void> incrementRetry({required String invoiceNumber}) async {
     await _ensureLoaded();
-    final index =
-        _queue.indexWhere((item) => item.invoiceNumber == invoiceNumber);
+    final index = _queue.indexWhere(
+      (item) => item.invoiceNumber == invoiceNumber,
+    );
     if (index >= 0) {
       _queue[index] = _queue[index].copyWith(
         retryCount: _queue[index].retryCount + 1,
@@ -135,8 +139,9 @@ class ZatcaOfflineQueue {
     }
 
     // Process retryable invoices in queue order
-    final retryable =
-        _queue.where((item) => !item.isMaxRetriesExceeded).toList();
+    final retryable = _queue
+        .where((item) => !item.isMaxRetriesExceeded)
+        .toList();
 
     for (final item in retryable) {
       try {
@@ -162,30 +167,36 @@ class ZatcaOfflineQueue {
 
         if (response.isSuccess) {
           await dequeue(invoiceNumber: item.invoiceNumber);
-          results.add(QueueProcessResult(
-            invoiceNumber: item.invoiceNumber,
-            success: true,
-            message: 'Successfully submitted',
-            response: response,
-          ));
+          results.add(
+            QueueProcessResult(
+              invoiceNumber: item.invoiceNumber,
+              success: true,
+              message: 'Successfully submitted',
+              response: response,
+            ),
+          );
         } else {
           await incrementRetry(invoiceNumber: item.invoiceNumber);
-          results.add(QueueProcessResult(
-            invoiceNumber: item.invoiceNumber,
-            success: false,
-            message: response.errors.isNotEmpty
-                ? response.errors.first.message
-                : 'Submission rejected by ZATCA',
-            response: response,
-          ));
+          results.add(
+            QueueProcessResult(
+              invoiceNumber: item.invoiceNumber,
+              success: false,
+              message: response.errors.isNotEmpty
+                  ? response.errors.first.message
+                  : 'Submission rejected by ZATCA',
+              response: response,
+            ),
+          );
         }
       } catch (e) {
         await incrementRetry(invoiceNumber: item.invoiceNumber);
-        results.add(QueueProcessResult(
-          invoiceNumber: item.invoiceNumber,
-          success: false,
-          message: 'Network error: $e',
-        ));
+        results.add(
+          QueueProcessResult(
+            invoiceNumber: item.invoiceNumber,
+            success: false,
+            message: 'Network error: $e',
+          ),
+        );
       }
     }
 
@@ -236,8 +247,11 @@ class ZatcaOfflineQueue {
         final List<dynamic> decoded = jsonDecode(raw) as List<dynamic>;
         _queue
           ..clear()
-          ..addAll(decoded
-              .map((e) => QueuedInvoice.fromJson(e as Map<String, dynamic>)));
+          ..addAll(
+            decoded.map(
+              (e) => QueuedInvoice.fromJson(e as Map<String, dynamic>),
+            ),
+          );
       }
     } catch (_) {
       // If loading fails, start with empty queue
@@ -328,30 +342,30 @@ class QueuedInvoice {
   }
 
   Map<String, dynamic> toJson() => {
-        'invoiceNumber': invoiceNumber,
-        'signedXmlBase64': signedXmlBase64,
-        'invoiceHash': invoiceHash,
-        'uuid': uuid,
-        'isStandard': isStandard,
-        'storeId': storeId,
-        'queuedAt': queuedAt.toIso8601String(),
-        if (lastRetryAt != null) 'lastRetryAt': lastRetryAt!.toIso8601String(),
-        'retryCount': retryCount,
-      };
+    'invoiceNumber': invoiceNumber,
+    'signedXmlBase64': signedXmlBase64,
+    'invoiceHash': invoiceHash,
+    'uuid': uuid,
+    'isStandard': isStandard,
+    'storeId': storeId,
+    'queuedAt': queuedAt.toIso8601String(),
+    if (lastRetryAt != null) 'lastRetryAt': lastRetryAt!.toIso8601String(),
+    'retryCount': retryCount,
+  };
 
   factory QueuedInvoice.fromJson(Map<String, dynamic> json) => QueuedInvoice(
-        invoiceNumber: json['invoiceNumber'] as String,
-        signedXmlBase64: json['signedXmlBase64'] as String,
-        invoiceHash: json['invoiceHash'] as String,
-        uuid: json['uuid'] as String,
-        isStandard: json['isStandard'] as bool,
-        storeId: json['storeId'] as String? ?? '',
-        queuedAt: DateTime.parse(json['queuedAt'] as String),
-        lastRetryAt: json['lastRetryAt'] != null
-            ? DateTime.parse(json['lastRetryAt'] as String)
-            : null,
-        retryCount: json['retryCount'] as int? ?? 0,
-      );
+    invoiceNumber: json['invoiceNumber'] as String,
+    signedXmlBase64: json['signedXmlBase64'] as String,
+    invoiceHash: json['invoiceHash'] as String,
+    uuid: json['uuid'] as String,
+    isStandard: json['isStandard'] as bool,
+    storeId: json['storeId'] as String? ?? '',
+    queuedAt: DateTime.parse(json['queuedAt'] as String),
+    lastRetryAt: json['lastRetryAt'] != null
+        ? DateTime.parse(json['lastRetryAt'] as String)
+        : null,
+    retryCount: json['retryCount'] as int? ?? 0,
+  );
 }
 
 /// Result of processing a single queued invoice

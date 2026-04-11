@@ -139,13 +139,15 @@ void main() {
 
     group('checkSession', () {
       test('should return true when authenticated', () async {
-        fakeAuthRepo.setCurrentUser(User(
-          id: 'user-1',
-          phone: '0512345678',
-          name: 'Test',
-          role: UserRole.storeOwner,
-          createdAt: DateTime(2026, 1, 1),
-        ));
+        fakeAuthRepo.setCurrentUser(
+          User(
+            id: 'user-1',
+            phone: '0512345678',
+            name: 'Test',
+            role: UserRole.storeOwner,
+            createdAt: DateTime(2026, 1, 1),
+          ),
+        );
 
         final result = await authService.checkSession();
 
@@ -174,13 +176,15 @@ void main() {
       test('superAdmin should have all permissions', () async {
         await authService.verifyOtp('0512345678', '1234');
         // verifyOtp returns storeOwner, so let's set a superAdmin
-        fakeAuthRepo.setCurrentUser(User(
-          id: 'admin-1',
-          phone: '0512345678',
-          name: 'Admin',
-          role: UserRole.superAdmin,
-          createdAt: DateTime(2026, 1, 1),
-        ));
+        fakeAuthRepo.setCurrentUser(
+          User(
+            id: 'admin-1',
+            phone: '0512345678',
+            name: 'Admin',
+            role: UserRole.superAdmin,
+            createdAt: DateTime(2026, 1, 1),
+          ),
+        );
         await authService.checkSession();
 
         expect(authService.hasPermission('manage_admins'), isTrue);
@@ -195,13 +199,15 @@ void main() {
       });
 
       test('employee should only have specific permissions', () async {
-        fakeAuthRepo.setCurrentUser(User(
-          id: 'emp-1',
-          phone: '0512345678',
-          name: 'Employee',
-          role: UserRole.employee,
-          createdAt: DateTime(2026, 1, 1),
-        ));
+        fakeAuthRepo.setCurrentUser(
+          User(
+            id: 'emp-1',
+            phone: '0512345678',
+            name: 'Employee',
+            role: UserRole.employee,
+            createdAt: DateTime(2026, 1, 1),
+          ),
+        );
         await authService.checkSession();
 
         expect(authService.hasPermission('create_order'), isTrue);
@@ -212,13 +218,15 @@ void main() {
       });
 
       test('delivery should only have delivery permissions', () async {
-        fakeAuthRepo.setCurrentUser(User(
-          id: 'del-1',
-          phone: '0512345678',
-          name: 'Driver',
-          role: UserRole.delivery,
-          createdAt: DateTime(2026, 1, 1),
-        ));
+        fakeAuthRepo.setCurrentUser(
+          User(
+            id: 'del-1',
+            phone: '0512345678',
+            name: 'Driver',
+            role: UserRole.delivery,
+            createdAt: DateTime(2026, 1, 1),
+          ),
+        );
         await authService.checkSession();
 
         expect(authService.hasPermission('view_deliveries'), isTrue);
@@ -227,13 +235,15 @@ void main() {
       });
 
       test('customer should only have customer permissions', () async {
-        fakeAuthRepo.setCurrentUser(User(
-          id: 'cust-1',
-          phone: '0512345678',
-          name: 'Customer',
-          role: UserRole.customer,
-          createdAt: DateTime(2026, 1, 1),
-        ));
+        fakeAuthRepo.setCurrentUser(
+          User(
+            id: 'cust-1',
+            phone: '0512345678',
+            name: 'Customer',
+            role: UserRole.customer,
+            createdAt: DateTime(2026, 1, 1),
+          ),
+        );
         await authService.checkSession();
 
         expect(authService.hasPermission('view_products'), isTrue);

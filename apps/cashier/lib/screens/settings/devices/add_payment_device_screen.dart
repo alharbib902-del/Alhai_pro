@@ -56,7 +56,9 @@ class _AddPaymentDeviceScreenState
   Future<void> _upsertSetting(String key, String value) async {
     final storeId = ref.read(currentStoreIdProvider)!;
     final id = 'setting_${storeId}_$key';
-    await _db.into(_db.settingsTable).insertOnConflictUpdate(
+    await _db
+        .into(_db.settingsTable)
+        .insertOnConflictUpdate(
           SettingsTableCompanion.insert(
             id: id,
             storeId: storeId,
@@ -93,8 +95,9 @@ class _AddPaymentDeviceScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(AppLocalizations.of(context).connectionFailedMsg('$e')),
+            content: Text(
+              AppLocalizations.of(context).connectionFailedMsg('$e'),
+            ),
             backgroundColor: AppColors.error,
           ),
         );
@@ -142,8 +145,9 @@ class _AddPaymentDeviceScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(AppLocalizations.of(context).settingsSaveErrorMsg('$e')),
+            content: Text(
+              AppLocalizations.of(context).settingsSaveErrorMsg('$e'),
+            ),
             backgroundColor: AppColors.error,
           ),
         );
@@ -183,15 +187,20 @@ class _AddPaymentDeviceScreenState
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(
-                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+            ),
             // M121: constrain form width on desktop
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 800),
                 child: Form(
                   key: _formKey,
-                  child:
-                      _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
+                  child: _buildContent(
+                    isWideScreen,
+                    isMediumScreen,
+                    isDark,
+                    l10n,
+                  ),
                 ),
               ),
             ),
@@ -306,7 +315,9 @@ class _AddPaymentDeviceScreenState
                 onTap: () => setState(() => _selectedType = type),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.md, vertical: 10),
+                    horizontal: AlhaiSpacing.md,
+                    vertical: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? AppColors.primary.withValues(alpha: 0.1)
@@ -360,12 +371,15 @@ class _AddPaymentDeviceScreenState
             final isSelected = _connectionMethod == method;
             return Padding(
               padding: EdgeInsets.only(
-                  bottom: index < _connectionMethods.length - 1 ? 8 : 0),
+                bottom: index < _connectionMethods.length - 1 ? 8 : 0,
+              ),
               child: GestureDetector(
                 onTap: () => setState(() => _connectionMethod = method),
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.md, vertical: 14),
+                    horizontal: AlhaiSpacing.md,
+                    vertical: 14,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? AppColors.info.withValues(alpha: 0.08)
@@ -392,8 +406,9 @@ class _AddPaymentDeviceScreenState
                         method,
                         style: TextStyle(
                           fontSize: 14,
-                          fontWeight:
-                              isSelected ? FontWeight.w600 : FontWeight.normal,
+                          fontWeight: isSelected
+                              ? FontWeight.w600
+                              : FontWeight.normal,
                           color: isSelected
                               ? AppColors.info
                               : AppColors.getTextPrimary(isDark),
@@ -457,8 +472,8 @@ class _AddPaymentDeviceScreenState
             ),
             validator: (v) =>
                 _connectionMethod == 'Network' && (v == null || v.isEmpty)
-                    ? l10n.fieldRequired
-                    : null,
+                ? l10n.fieldRequired
+                : null,
             decoration: _inputDecoration('192.168.1.100', isDark),
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
@@ -496,13 +511,17 @@ class _AddPaymentDeviceScreenState
             decoration: BoxDecoration(
               color: AppColors.success.withValues(alpha: isDark ? 0.15 : 0.08),
               borderRadius: BorderRadius.circular(12),
-              border:
-                  Border.all(color: AppColors.success.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: AppColors.success.withValues(alpha: 0.3),
+              ),
             ),
             child: Row(
               children: [
-                const Icon(Icons.check_circle_rounded,
-                    color: AppColors.success, size: 20),
+                const Icon(
+                  Icons.check_circle_rounded,
+                  color: AppColors.success,
+                  size: 20,
+                ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Text(
                   'Connection test passed',
@@ -533,11 +552,13 @@ class _AddPaymentDeviceScreenState
                 label: Text(l10n.testConnection),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: AppColors.info,
-                  side:
-                      BorderSide(color: AppColors.info.withValues(alpha: 0.5)),
+                  side: BorderSide(
+                    color: AppColors.info.withValues(alpha: 0.5),
+                  ),
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
@@ -550,7 +571,9 @@ class _AddPaymentDeviceScreenState
                         width: 18,
                         height: 18,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: AppColors.textOnPrimary),
+                          strokeWidth: 2,
+                          color: AppColors.textOnPrimary,
+                        ),
                       )
                     : const Icon(Icons.save_rounded, size: 20),
                 label: Text(l10n.saveDevice),
@@ -559,7 +582,8 @@ class _AddPaymentDeviceScreenState
                   foregroundColor: AppColors.textOnPrimary,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),

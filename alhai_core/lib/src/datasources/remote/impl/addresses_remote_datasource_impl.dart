@@ -30,7 +30,9 @@ class AddressesRemoteDataSourceImpl implements AddressesRemoteDataSource {
 
   @override
   Future<AddressResponse> updateAddress(
-      String id, Map<String, dynamic> data) async {
+    String id,
+    Map<String, dynamic> data,
+  ) async {
     final response = await _dio.patch('/addresses/$id', data: data);
     return AddressResponse.fromJson(response.data);
   }

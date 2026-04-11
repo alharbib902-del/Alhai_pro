@@ -15,11 +15,7 @@ class AlhaiTabItem {
   /// Optional badge (e.g., notification count)
   final Widget? badge;
 
-  const AlhaiTabItem({
-    required this.label,
-    this.icon,
-    this.badge,
-  });
+  const AlhaiTabItem({required this.label, this.icon, this.badge});
 }
 
 /// AlhaiTabs - Standardized Tabs component (TabBar + TabBarView)
@@ -63,12 +59,16 @@ class AlhaiTabs extends StatelessWidget {
     this.onTap,
     this.paddingOverride,
     this.viewHeight,
-  })  : assert(tabs.length == views.length,
-            'tabs and views must have same length'),
-        assert(tabs.length > 0, 'tabs must not be empty'),
-        assert(views.length > 0, 'views must not be empty'),
-        assert(controller == null || controller.length == tabs.length,
-            'controller.length must match tabs length');
+  }) : assert(
+         tabs.length == views.length,
+         'tabs and views must have same length',
+       ),
+       assert(tabs.length > 0, 'tabs must not be empty'),
+       assert(views.length > 0, 'views must not be empty'),
+       assert(
+         controller == null || controller.length == tabs.length,
+         'controller.length must match tabs length',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -88,10 +88,7 @@ class AlhaiTabs extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    final tabBarView = TabBarView(
-      controller: controller,
-      children: views,
-    );
+    final tabBarView = TabBarView(controller: controller, children: views);
 
     return Column(
       mainAxisSize: viewHeight != null ? MainAxisSize.min : MainAxisSize.max,
@@ -123,7 +120,8 @@ class AlhaiTabs extends StatelessWidget {
     ColorScheme colorScheme,
   ) {
     final textDirection = Directionality.of(context);
-    final effectivePadding = paddingOverride ??
+    final effectivePadding =
+        paddingOverride ??
         const EdgeInsetsDirectional.symmetric(horizontal: AlhaiSpacing.md);
 
     // Build tabs
@@ -185,10 +183,7 @@ class AlhaiTabs extends StatelessWidget {
       );
     }
 
-    return Directionality(
-      textDirection: textDirection,
-      child: tabBar,
-    );
+    return Directionality(textDirection: textDirection, child: tabBar);
   }
 
   Widget _buildTab(AlhaiTabItem item, ThemeData theme) {

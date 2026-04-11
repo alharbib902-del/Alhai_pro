@@ -11,12 +11,15 @@ import 'sa_dashboard_providers.dart' show saSupabaseClientProvider;
 /// Platform settings from store_settings or a platform_settings table.
 final saPlatformSettingsProvider =
     FutureProvider.autoDispose<SAPlatformSettings>((ref) async {
-  final client = ref.watch(saSupabaseClientProvider);
-  try {
-    final data = await client.from('platform_settings').select('*').single();
-    return SAPlatformSettings.fromJson(data);
-  } catch (_) {
-    // Table may not exist yet, return defaults
-    return const SAPlatformSettings();
-  }
-});
+      final client = ref.watch(saSupabaseClientProvider);
+      try {
+        final data = await client
+            .from('platform_settings')
+            .select('*')
+            .single();
+        return SAPlatformSettings.fromJson(data);
+      } catch (_) {
+        // Table may not exist yet, return defaults
+        return const SAPlatformSettings();
+      }
+    });

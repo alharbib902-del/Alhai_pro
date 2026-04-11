@@ -85,39 +85,35 @@ void main() {
   );
 
   ZatcaInvoice simplifiedInvoice() => ZatcaInvoice(
-        invoiceNumber: 'INV-001',
-        uuid: '550e8400-e29b-41d4-a716-446655440000',
-        issueDate: DateTime(2026, 1, 15),
-        issueTime: DateTime(2026, 1, 15, 14, 30),
-        typeCode: InvoiceTypeCode.standard,
-        subType: '0200000',
-        seller: const ZatcaSeller(
-          name: 'Test Store',
-          vatNumber: '300000000000003',
-          streetName: 'King Fahd Road',
-          buildingNumber: '1234',
-          city: 'Riyadh',
-          postalCode: '12345',
-        ),
-        lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Product',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-          ),
-        ],
-      );
-
-  ZatcaInvoice standardInvoice() => simplifiedInvoice().copyWith(
-        subType: '0100000',
-      );
-
-  const validComplianceResult = ComplianceResult(
-    isValid: true,
-    errors: [],
+    invoiceNumber: 'INV-001',
+    uuid: '550e8400-e29b-41d4-a716-446655440000',
+    issueDate: DateTime(2026, 1, 15),
+    issueTime: DateTime(2026, 1, 15, 14, 30),
+    typeCode: InvoiceTypeCode.standard,
+    subType: '0200000',
+    seller: const ZatcaSeller(
+      name: 'Test Store',
+      vatNumber: '300000000000003',
+      streetName: 'King Fahd Road',
+      buildingNumber: '1234',
+      city: 'Riyadh',
+      postalCode: '12345',
+    ),
+    lines: [
+      const ZatcaInvoiceLine(
+        lineId: '1',
+        itemName: 'Product',
+        quantity: 1,
+        unitPrice: 100.0,
+        vatRate: 15.0,
+      ),
+    ],
   );
+
+  ZatcaInvoice standardInvoice() =>
+      simplifiedInvoice().copyWith(subType: '0100000');
+
+  const validComplianceResult = ComplianceResult(isValid: true, errors: []);
 
   const invalidComplianceResult = ComplianceResult(
     isValid: false,
@@ -190,48 +186,62 @@ void main() {
 
   // Helper to set up the full happy path
   void setupHappyPath({bool isStandard = false}) {
-    when(() => mockComplianceChecker.check(any()))
-        .thenReturn(validComplianceResult);
-    when(() => mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
-        .thenAnswer((_) async => validCertificate);
-    when(() => mockChainService.getPreviousHash(storeId: any(named: 'storeId')))
-        .thenAnswer((_) async => 'prev-hash-base64');
+    when(
+      () => mockComplianceChecker.check(any()),
+    ).thenReturn(validComplianceResult);
+    when(
+      () => mockCertStorage.getCertificate(storeId: any(named: 'storeId')),
+    ).thenAnswer((_) async => validCertificate);
+    when(
+      () => mockChainService.getPreviousHash(storeId: any(named: 'storeId')),
+    ).thenAnswer((_) async => 'prev-hash-base64');
     when(() => mockXmlBuilder.build(any())).thenReturn('<Invoice/>');
-    when(() => mockSigner.sign(
-              invoiceXml: any(named: 'invoiceXml'),
-              certificate: any(named: 'certificate'),
-            ))
-        .thenReturn(
-            '<ds:Signature><ds:SignatureValue>abc123</ds:SignatureValue></ds:Signature>');
-    when(() => mockSigner.computeInvoiceHash(any()))
-        .thenReturn('invoice-hash-base64');
-    when(() => mockQrService.generateQrData(
-          invoice: any(named: 'invoice'),
-          invoiceHash: any(named: 'invoiceHash'),
-          digitalSignature: any(named: 'digitalSignature'),
-          certificate: any(named: 'certificate'),
-        )).thenReturn('qr-data-base64');
+    when(
+      () => mockSigner.sign(
+        invoiceXml: any(named: 'invoiceXml'),
+        certificate: any(named: 'certificate'),
+      ),
+    ).thenReturn(
+      '<ds:Signature><ds:SignatureValue>abc123</ds:SignatureValue></ds:Signature>',
+    );
+    when(
+      () => mockSigner.computeInvoiceHash(any()),
+    ).thenReturn('invoice-hash-base64');
+    when(
+      () => mockQrService.generateQrData(
+        invoice: any(named: 'invoice'),
+        invoiceHash: any(named: 'invoiceHash'),
+        digitalSignature: any(named: 'digitalSignature'),
+        certificate: any(named: 'certificate'),
+      ),
+    ).thenReturn('qr-data-base64');
 
     if (isStandard) {
-      when(() => mockClearanceApi.clearInvoice(
-            signedXmlBase64: any(named: 'signedXmlBase64'),
-            invoiceHash: any(named: 'invoiceHash'),
-            uuid: any(named: 'uuid'),
-            certificate: any(named: 'certificate'),
-          )).thenAnswer((_) async => clearanceSuccessResponse);
+      when(
+        () => mockClearanceApi.clearInvoice(
+          signedXmlBase64: any(named: 'signedXmlBase64'),
+          invoiceHash: any(named: 'invoiceHash'),
+          uuid: any(named: 'uuid'),
+          certificate: any(named: 'certificate'),
+        ),
+      ).thenAnswer((_) async => clearanceSuccessResponse);
     } else {
-      when(() => mockReportingApi.reportInvoice(
-            signedXmlBase64: any(named: 'signedXmlBase64'),
-            invoiceHash: any(named: 'invoiceHash'),
-            uuid: any(named: 'uuid'),
-            certificate: any(named: 'certificate'),
-          )).thenAnswer((_) async => successResponse);
+      when(
+        () => mockReportingApi.reportInvoice(
+          signedXmlBase64: any(named: 'signedXmlBase64'),
+          invoiceHash: any(named: 'invoiceHash'),
+          uuid: any(named: 'uuid'),
+          certificate: any(named: 'certificate'),
+        ),
+      ).thenAnswer((_) async => successResponse);
     }
 
-    when(() => mockChainService.updateLastHash(
-          storeId: any(named: 'storeId'),
-          invoiceHash: any(named: 'invoiceHash'),
-        )).thenAnswer((_) async {});
+    when(
+      () => mockChainService.updateLastHash(
+        storeId: any(named: 'storeId'),
+        invoiceHash: any(named: 'invoiceHash'),
+      ),
+    ).thenAnswer((_) async {});
   }
 
   group('ZatcaInvoiceService', () {
@@ -252,10 +262,12 @@ void main() {
         expect(result.qrCode, 'qr-data-base64');
         expect(result.previousInvoiceHash, 'prev-hash-base64');
 
-        verify(() => mockChainService.updateLastHash(
-              storeId: storeId,
-              invoiceHash: 'invoice-hash-base64',
-            )).called(1);
+        verify(
+          () => mockChainService.updateLastHash(
+            storeId: storeId,
+            invoiceHash: 'invoice-hash-base64',
+          ),
+        ).called(1);
       });
 
       test('processes standard invoice via clearance', () async {
@@ -269,39 +281,45 @@ void main() {
         expect(result.reportingStatus, ReportingStatus.cleared);
         expect(result.signedXml, '<stamped-xml/>');
 
-        verify(() => mockClearanceApi.clearInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).called(1);
+        verify(
+          () => mockClearanceApi.clearInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).called(1);
       });
     });
 
     // ── processInvoice - validation failures ──────────────
 
     group('processInvoice - validation', () {
-      test('returns failed when compliance check has blocking errors',
-          () async {
-        when(() => mockComplianceChecker.check(any()))
-            .thenReturn(invalidComplianceResult);
+      test(
+        'returns failed when compliance check has blocking errors',
+        () async {
+          when(
+            () => mockComplianceChecker.check(any()),
+          ).thenReturn(invalidComplianceResult);
 
-        final result = await service.processInvoice(
-          invoice: simplifiedInvoice(),
-          storeId: storeId,
-        );
+          final result = await service.processInvoice(
+            invoice: simplifiedInvoice(),
+            storeId: storeId,
+          );
 
-        expect(result.reportingStatus, ReportingStatus.failed);
-        expect(result.errors, isNotEmpty);
+          expect(result.reportingStatus, ReportingStatus.failed);
+          expect(result.errors, isNotEmpty);
 
-        // Should not proceed to signing
-        verifyNever(() => mockXmlBuilder.build(any()));
-      });
+          // Should not proceed to signing
+          verifyNever(() => mockXmlBuilder.build(any()));
+        },
+      );
 
       test('continues processing when only warnings exist', () async {
         setupHappyPath();
-        when(() => mockComplianceChecker.check(any()))
-            .thenReturn(warningOnlyResult);
+        when(
+          () => mockComplianceChecker.check(any()),
+        ).thenReturn(warningOnlyResult);
 
         final result = await service.processInvoice(
           invoice: simplifiedInvoice(),
@@ -318,11 +336,12 @@ void main() {
 
     group('processInvoice - certificate', () {
       test('returns failed when no certificate found', () async {
-        when(() => mockComplianceChecker.check(any()))
-            .thenReturn(validComplianceResult);
-        when(() =>
-                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockComplianceChecker.check(any()),
+        ).thenReturn(validComplianceResult);
+        when(
+          () => mockCertStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => null);
 
         final result = await service.processInvoice(
           invoice: simplifiedInvoice(),
@@ -330,16 +349,19 @@ void main() {
         );
 
         expect(result.reportingStatus, ReportingStatus.failed);
-        expect(result.errors.any((e) => e.contains('No ZATCA certificate')),
-            isTrue);
+        expect(
+          result.errors.any((e) => e.contains('No ZATCA certificate')),
+          isTrue,
+        );
       });
 
       test('returns failed when certificate is expired', () async {
-        when(() => mockComplianceChecker.check(any()))
-            .thenReturn(validComplianceResult);
-        when(() =>
-                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => expiredCertificate);
+        when(
+          () => mockComplianceChecker.check(any()),
+        ).thenReturn(validComplianceResult);
+        when(
+          () => mockCertStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => expiredCertificate);
 
         final result = await service.processInvoice(
           invoice: simplifiedInvoice(),
@@ -356,19 +378,23 @@ void main() {
     group('processInvoice - offline queue', () {
       test('queues simplified invoice when reporting fails', () async {
         setupHappyPath();
-        when(() => mockReportingApi.reportInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenThrow(Exception('Connection refused'));
-        when(() => mockOfflineQueue.enqueue(
-              invoiceNumber: any(named: 'invoiceNumber'),
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              isStandard: any(named: 'isStandard'),
-            )).thenAnswer((_) async {});
+        when(
+          () => mockReportingApi.reportInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenThrow(Exception('Connection refused'));
+        when(
+          () => mockOfflineQueue.enqueue(
+            invoiceNumber: any(named: 'invoiceNumber'),
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            isStandard: any(named: 'isStandard'),
+          ),
+        ).thenAnswer((_) async {});
 
         final result = await service.processInvoice(
           invoice: simplifiedInvoice(),
@@ -376,30 +402,36 @@ void main() {
         );
 
         expect(result.reportingStatus, ReportingStatus.queued);
-        verify(() => mockOfflineQueue.enqueue(
-              invoiceNumber: any(named: 'invoiceNumber'),
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              isStandard: false,
-            )).called(1);
+        verify(
+          () => mockOfflineQueue.enqueue(
+            invoiceNumber: any(named: 'invoiceNumber'),
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            isStandard: false,
+          ),
+        ).called(1);
       });
 
       test('queues standard invoice when clearance fails', () async {
         setupHappyPath(isStandard: true);
-        when(() => mockClearanceApi.clearInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenThrow(Exception('Timeout'));
-        when(() => mockOfflineQueue.enqueue(
-              invoiceNumber: any(named: 'invoiceNumber'),
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              isStandard: any(named: 'isStandard'),
-            )).thenAnswer((_) async {});
+        when(
+          () => mockClearanceApi.clearInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenThrow(Exception('Timeout'));
+        when(
+          () => mockOfflineQueue.enqueue(
+            invoiceNumber: any(named: 'invoiceNumber'),
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            isStandard: any(named: 'isStandard'),
+          ),
+        ).thenAnswer((_) async {});
 
         final result = await service.processInvoice(
           invoice: standardInvoice(),
@@ -415,15 +447,19 @@ void main() {
     group('processInvoice - QR fallback', () {
       test('falls back to simplified QR when enhanced QR fails', () async {
         setupHappyPath();
-        when(() => mockQrService.generateQrData(
-              invoice: any(named: 'invoice'),
-              invoiceHash: any(named: 'invoiceHash'),
-              digitalSignature: any(named: 'digitalSignature'),
-              certificate: any(named: 'certificate'),
-            )).thenThrow(Exception('Certificate parsing failed'));
-        when(() => mockQrService.generateSimplifiedQr(
-              invoice: any(named: 'invoice'),
-            )).thenReturn('simplified-qr');
+        when(
+          () => mockQrService.generateQrData(
+            invoice: any(named: 'invoice'),
+            invoiceHash: any(named: 'invoiceHash'),
+            digitalSignature: any(named: 'digitalSignature'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenThrow(Exception('Certificate parsing failed'));
+        when(
+          () => mockQrService.generateSimplifiedQr(
+            invoice: any(named: 'invoice'),
+          ),
+        ).thenReturn('simplified-qr');
 
         final result = await service.processInvoice(
           invoice: simplifiedInvoice(),
@@ -439,11 +475,12 @@ void main() {
 
     group('processInvoice - error handling', () {
       test('never throws - captures processing errors', () async {
-        when(() => mockComplianceChecker.check(any()))
-            .thenReturn(validComplianceResult);
-        when(() =>
-                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenThrow(Exception('Database corrupted'));
+        when(
+          () => mockComplianceChecker.check(any()),
+        ).thenReturn(validComplianceResult);
+        when(
+          () => mockCertStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenThrow(Exception('Database corrupted'));
 
         final result = await service.processInvoice(
           invoice: simplifiedInvoice(),
@@ -452,7 +489,9 @@ void main() {
 
         expect(result.reportingStatus, ReportingStatus.failed);
         expect(
-            result.errors.any((e) => e.contains('Processing error')), isTrue);
+          result.errors.any((e) => e.contains('Processing error')),
+          isTrue,
+        );
       });
     });
 
@@ -460,22 +499,26 @@ void main() {
 
     group('retryQueue', () {
       test('delegates to offline queue processQueue', () async {
-        when(() => mockOfflineQueue.processQueue(
-              reportingApi: any(named: 'reportingApi'),
-              clearanceApi: any(named: 'clearanceApi'),
-              certStorage: any(named: 'certStorage'),
-              storeId: any(named: 'storeId'),
-            )).thenAnswer((_) async => []);
+        when(
+          () => mockOfflineQueue.processQueue(
+            reportingApi: any(named: 'reportingApi'),
+            clearanceApi: any(named: 'clearanceApi'),
+            certStorage: any(named: 'certStorage'),
+            storeId: any(named: 'storeId'),
+          ),
+        ).thenAnswer((_) async => []);
 
         final results = await service.retryQueue(storeId: storeId);
 
         expect(results, isEmpty);
-        verify(() => mockOfflineQueue.processQueue(
-              reportingApi: mockReportingApi,
-              clearanceApi: mockClearanceApi,
-              certStorage: mockCertStorage,
-              storeId: storeId,
-            )).called(1);
+        verify(
+          () => mockOfflineQueue.processQueue(
+            reportingApi: mockReportingApi,
+            clearanceApi: mockClearanceApi,
+            certStorage: mockCertStorage,
+            storeId: storeId,
+          ),
+        ).called(1);
       });
     });
 
@@ -494,8 +537,9 @@ void main() {
 
     group('validateInvoice', () {
       test('delegates to compliance checker', () {
-        when(() => mockComplianceChecker.check(any()))
-            .thenReturn(validComplianceResult);
+        when(
+          () => mockComplianceChecker.check(any()),
+        ).thenReturn(validComplianceResult);
 
         final result = service.validateInvoice(simplifiedInvoice());
         expect(result.isValid, isTrue);

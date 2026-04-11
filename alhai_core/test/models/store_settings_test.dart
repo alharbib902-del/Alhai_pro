@@ -125,10 +125,7 @@ void main() {
       });
 
       test('should use defaults for missing optional fields', () {
-        final json = {
-          'id': 'settings-1',
-          'storeId': 'store-1',
-        };
+        final json = {'id': 'settings-1', 'storeId': 'store-1'};
 
         final settings = StoreSettings.fromJson(json);
 
@@ -141,10 +138,7 @@ void main() {
       });
 
       test('should serialize to JSON and back', () {
-        final settings = createSettings(
-          taxRate: 5.0,
-          currency: 'AED',
-        );
+        final settings = createSettings(taxRate: 5.0, currency: 'AED');
         final json = settings.toJson();
         final restored = StoreSettings.fromJson(json);
 

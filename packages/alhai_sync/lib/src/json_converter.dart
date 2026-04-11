@@ -43,10 +43,7 @@ class JsonColumnConverter {
   }
 
   /// Remote (JSONB) -> Local (Text): serialize objects to JSON strings
-  Map<String, dynamic> toLocal(
-    String tableName,
-    Map<String, dynamic> payload,
-  ) {
+  Map<String, dynamic> toLocal(String tableName, Map<String, dynamic> payload) {
     final result = Map<String, dynamic>.from(payload);
     for (final field in getJsonbFields(tableName)) {
       if (result.containsKey(field) && result[field] != null) {
@@ -59,14 +56,12 @@ class JsonColumnConverter {
   List<Map<String, dynamic>> batchToLocal(
     String tableName,
     List<Map<String, dynamic>> records,
-  ) =>
-      records.map((r) => toLocal(tableName, r)).toList();
+  ) => records.map((r) => toLocal(tableName, r)).toList();
 
   List<Map<String, dynamic>> batchToRemote(
     String tableName,
     List<Map<String, dynamic>> records,
-  ) =>
-      records.map((r) => toRemote(tableName, r)).toList();
+  ) => records.map((r) => toRemote(tableName, r)).toList();
 
   dynamic _parseJsonString(String value) {
     if (value.isEmpty) return value;

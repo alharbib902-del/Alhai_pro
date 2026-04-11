@@ -33,7 +33,12 @@ class ReportData {
 
   @override
   int get hashCode => Object.hash(
-      totalSales, orderCount, avgOrderValue, topProduct, topProductOrders);
+    totalSales,
+    orderCount,
+    avgOrderValue,
+    topProduct,
+    topProductOrders,
+  );
 }
 
 class DailySales {

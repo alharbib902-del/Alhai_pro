@@ -58,8 +58,9 @@ class CartNotifier extends StateNotifier<Cart> {
       return false;
     }
 
-    final existing =
-        state.items.indexWhere((item) => item.productId == product.id);
+    final existing = state.items.indexWhere(
+      (item) => item.productId == product.id,
+    );
 
     List<CartItem> updatedItems;
     if (existing >= 0) {
@@ -79,10 +80,7 @@ class CartNotifier extends StateNotifier<Cart> {
       ];
     }
 
-    state = state.copyWith(
-      items: updatedItems,
-      storeId: storeId,
-    );
+    state = state.copyWith(items: updatedItems, storeId: storeId);
     _saveToDisk();
     return true;
   }
@@ -114,8 +112,9 @@ class CartNotifier extends StateNotifier<Cart> {
 
   /// Remove a product from cart.
   void removeItem(String productId) {
-    final updatedItems =
-        state.items.where((item) => item.productId != productId).toList();
+    final updatedItems = state.items
+        .where((item) => item.productId != productId)
+        .toList();
     state = state.copyWith(items: updatedItems);
     if (state.isEmpty) {
       state = const Cart();

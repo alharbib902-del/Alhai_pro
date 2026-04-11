@@ -26,8 +26,9 @@ void main() {
   tearDown(tearDownTestGetIt);
 
   group('DailySummaryScreen', () {
-    testWidgets('shows loading when todayShiftsProvider is loading',
-        (tester) async {
+    testWidgets('shows loading when todayShiftsProvider is loading', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
@@ -35,14 +36,14 @@ void main() {
 
       final completer = Completer<List<ShiftsTableData>>();
 
-      await tester.pumpWidget(createTestWidget(
-        const DailySummaryScreen(),
-        overrides: [
-          todayShiftsProvider.overrideWith(
-            (ref) => completer.future,
-          ),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const DailySummaryScreen(),
+          overrides: [
+            todayShiftsProvider.overrideWith((ref) => completer.future),
+          ],
+        ),
+      );
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
@@ -55,12 +56,16 @@ void main() {
 
       suppressOverflowErrors();
 
-      await tester.pumpWidget(createTestWidget(
-        const DailySummaryScreen(),
-        overrides: [
-          todayShiftsProvider.overrideWith((ref) async => <ShiftsTableData>[]),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const DailySummaryScreen(),
+          overrides: [
+            todayShiftsProvider.overrideWith(
+              (ref) async => <ShiftsTableData>[],
+            ),
+          ],
+        ),
+      );
       await tester.pumpAndSettle();
 
       // No shifts icon
@@ -92,12 +97,12 @@ void main() {
         ),
       ];
 
-      await tester.pumpWidget(createTestWidget(
-        const DailySummaryScreen(),
-        overrides: [
-          todayShiftsProvider.overrideWith((ref) async => shifts),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const DailySummaryScreen(),
+          overrides: [todayShiftsProvider.overrideWith((ref) async => shifts)],
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Stats cards should show trending up (total sales)
@@ -125,12 +130,12 @@ void main() {
         ),
       ];
 
-      await tester.pumpWidget(createTestWidget(
-        const DailySummaryScreen(),
-        overrides: [
-          todayShiftsProvider.overrideWith((ref) async => shifts),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const DailySummaryScreen(),
+          overrides: [todayShiftsProvider.overrideWith((ref) async => shifts)],
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Shifts table header icon
@@ -152,12 +157,12 @@ void main() {
         ),
       ];
 
-      await tester.pumpWidget(createTestWidget(
-        const DailySummaryScreen(),
-        overrides: [
-          todayShiftsProvider.overrideWith((ref) async => shifts),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const DailySummaryScreen(),
+          overrides: [todayShiftsProvider.overrideWith((ref) async => shifts)],
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Summary card icon

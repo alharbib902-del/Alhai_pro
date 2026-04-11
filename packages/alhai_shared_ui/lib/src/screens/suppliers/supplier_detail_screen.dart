@@ -43,10 +43,12 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
     List<PurchasesTableData> purchases = [];
     try {
       // Query purchases for this supplier
-      final allPurchases =
-          await db.purchasesDao.getAllPurchases(supplier?.storeId ?? '');
-      purchases =
-          allPurchases.where((p) => p.supplierId == widget.supplierId).toList();
+      final allPurchases = await db.purchasesDao.getAllPurchases(
+        supplier?.storeId ?? '',
+      );
+      purchases = allPurchases
+          .where((p) => p.supplierId == widget.supplierId)
+          .toList();
     } catch (_) {}
     if (mounted) {
       setState(() {
@@ -71,8 +73,9 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
         AppHeader(
           title: l10n.supplierDetailTitle,
           subtitle: _supplier?.name ?? '',
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () {},
           notificationsCount: 3,
           userName: 'أحمد',
@@ -87,27 +90,31 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                   child: ShimmerList(itemCount: 5, itemHeight: 72),
                 )
               : _supplier == null
-                  ? Center(
-                      child: Text(
-                        l10n.supplierNotFoundMsg,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    )
-                  : SingleChildScrollView(
-                      padding: EdgeInsets.all(
-                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: _buildContent(isDark, isMediumScreen, l10n),
+              ? Center(
+                  child: Text(
+                    l10n.supplierNotFoundMsg,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: colorScheme.onSurfaceVariant,
                     ),
+                  ),
+                )
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(
+                    isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                  ),
+                  child: _buildContent(isDark, isMediumScreen, l10n),
+                ),
         ),
       ],
     );
   }
 
   Widget _buildContent(
-      bool isDark, bool isMediumScreen, AppLocalizations l10n) {
+    bool isDark,
+    bool isMediumScreen,
+    AppLocalizations l10n,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -153,10 +160,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Expanded(
-                flex: 2,
-                child: _buildSupplierInfoCard(isDark),
-              ),
+              Expanded(flex: 2, child: _buildSupplierInfoCard(isDark)),
               SizedBox(width: AlhaiSpacing.md),
               Expanded(
                 child: Column(
@@ -193,9 +197,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: colorScheme.outlineVariant,
-        ),
+        border: Border.all(color: colorScheme.outlineVariant),
         boxShadow: AppShadows.of(context, size: ShadowSize.md),
       ),
       child: Column(
@@ -248,7 +250,9 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                     SizedBox(height: AlhaiSpacing.xxs),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: AlhaiSpacing.xxs),
+                        horizontal: 10,
+                        vertical: AlhaiSpacing.xxs,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.primary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(20),
@@ -269,9 +273,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
           ),
 
           SizedBox(height: AlhaiSpacing.mdl),
-          Divider(
-            color: colorScheme.outlineVariant,
-          ),
+          Divider(color: colorScheme.outlineVariant),
           SizedBox(height: AlhaiSpacing.md),
 
           // Contact info
@@ -312,9 +314,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: balanceColor.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: balanceColor.withValues(alpha: 0.3)),
         boxShadow: AppShadows.of(context, size: ShadowSize.md),
       ),
       child: Column(
@@ -372,8 +372,9 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                 label: Text(l10n.registerPayment),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.error,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AlhaiSpacing.sm,
+                  ),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -392,8 +393,9 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
       0.0,
       (sum, p) => sum + p.total,
     );
-    final lastPurchaseDate =
-        _recentPurchases.isNotEmpty ? _recentPurchases.first.createdAt : null;
+    final lastPurchaseDate = _recentPurchases.isNotEmpty
+        ? _recentPurchases.first.createdAt
+        : null;
 
     return Row(
       children: [
@@ -411,8 +413,9 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
           child: _StatCard(
             icon: Icons.calendar_today_outlined,
             label: l10n.lastPurchaseLabel,
-            value:
-                lastPurchaseDate != null ? _formatDate(lastPurchaseDate) : '-',
+            value: lastPurchaseDate != null
+                ? _formatDate(lastPurchaseDate)
+                : '-',
             color: AppColors.primary,
             isDark: isDark,
           ),
@@ -446,15 +449,14 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                     content: Text(l10n.viewAllPurchases), // عرض جميع المشتريات
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 );
               },
               icon: const Icon(Icons.arrow_back_ios_rounded, size: 14),
               label: Text(l10n.viewAllPurchases), // عرض جميع المشتريات
-              style: TextButton.styleFrom(
-                foregroundColor: AppColors.primary,
-              ),
+              style: TextButton.styleFrom(foregroundColor: AppColors.primary),
             ),
           ],
         ),
@@ -475,9 +477,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                   SizedBox(height: AlhaiSpacing.sm),
                   Text(
                     l10n.noPurchasesLabel, // لا توجد مشتريات
-                    style: TextStyle(
-                      color: colorScheme.onSurfaceVariant,
-                    ),
+                    style: TextStyle(color: colorScheme.onSurfaceVariant),
                   ),
                 ],
               ),
@@ -488,8 +488,9 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
             final purchase = _recentPurchases[index];
             final isCompleted =
                 purchase.status == 'received' || purchase.status == 'completed';
-            final statusColor =
-                isCompleted ? AppColors.success : AppColors.warning;
+            final statusColor = isCompleted
+                ? AppColors.success
+                : AppColors.warning;
 
             return Container(
               margin: const EdgeInsets.only(bottom: 10),
@@ -497,9 +498,7 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
               decoration: BoxDecoration(
                 color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: colorScheme.outlineVariant,
-                ),
+                border: Border.all(color: colorScheme.outlineVariant),
               ),
               child: Row(
                 children: [
@@ -547,7 +546,9 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                   // Status badge
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: AlhaiSpacing.xxs),
+                      horizontal: 10,
+                      vertical: AlhaiSpacing.xxs,
+                    ),
                     decoration: BoxDecoration(
                       color: statusColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
@@ -604,24 +605,18 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
           l10n.deleteSupplier,
-          style: TextStyle(
-            color: colorScheme.onSurface,
-          ),
+          style: TextStyle(color: colorScheme.onSurface),
         ),
         content: Text(
           l10n.deleteSupplierConfirm,
-          style: TextStyle(
-            color: colorScheme.onSurfaceVariant,
-          ),
+          style: TextStyle(color: colorScheme.onSurfaceVariant),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(ctx),
             child: Text(
               l10n.deleteConfirmCancel,
-              style: TextStyle(
-                color: colorScheme.onSurfaceVariant,
-              ),
+              style: TextStyle(color: colorScheme.onSurfaceVariant),
             ),
           ),
           FilledButton(
@@ -638,7 +633,8 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                         backgroundColor: AppColors.error,
                         behavior: SnackBarBehavior.floating,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     );
                     context.go(AppRoutes.suppliers);
@@ -651,7 +647,8 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
                         backgroundColor: AppColors.error,
                         behavior: SnackBarBehavior.floating,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                     );
                   }
@@ -787,11 +784,7 @@ class _InfoRow extends StatelessWidget {
             color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Icon(
-            icon,
-            size: 18,
-            color: colorScheme.onSurfaceVariant,
-          ),
+          child: Icon(icon, size: 18, color: colorScheme.onSurfaceVariant),
         ),
         SizedBox(width: AlhaiSpacing.sm),
         Column(
@@ -843,9 +836,7 @@ class _StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(
-          color: colorScheme.outlineVariant,
-        ),
+        border: Border.all(color: colorScheme.outlineVariant),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -861,10 +852,7 @@ class _StatCard extends StatelessWidget {
           SizedBox(height: AlhaiSpacing.sm),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 11,
-              color: colorScheme.onSurfaceVariant,
-            ),
+            style: TextStyle(fontSize: 11, color: colorScheme.onSurfaceVariant),
           ),
           SizedBox(height: AlhaiSpacing.xxs),
           Text(

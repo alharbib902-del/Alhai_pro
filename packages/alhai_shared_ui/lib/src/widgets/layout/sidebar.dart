@@ -80,13 +80,16 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
       vsync: this,
       duration: AppDurations.normal,
     );
-    _widthAnimation = Tween<double>(
-      begin: AppSidebarSize.width,
-      end: AppSidebarSize.collapsedWidth,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: AppCurves.defaultCurve,
-    ));
+    _widthAnimation =
+        Tween<double>(
+          begin: AppSidebarSize.width,
+          end: AppSidebarSize.collapsedWidth,
+        ).animate(
+          CurvedAnimation(
+            parent: _animationController,
+            curve: AppCurves.defaultCurve,
+          ),
+        );
 
     if (widget.isCollapsed) {
       _animationController.value = 1.0;
@@ -121,10 +124,7 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
           decoration: BoxDecoration(
             color: AppColors.surface,
             border: const BorderDirectional(
-              start: BorderSide(
-                color: AppColors.border,
-                width: 1,
-              ),
+              start: BorderSide(color: AppColors.border, width: 1),
             ),
             boxShadow: AppShadows.sm,
           ),
@@ -141,8 +141,9 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
                 child: ListView(
                   padding: EdgeInsets.symmetric(
                     vertical: AppSpacing.md,
-                    horizontal:
-                        widget.isCollapsed ? AppSpacing.xs : AppSpacing.sm,
+                    horizontal: widget.isCollapsed
+                        ? AppSpacing.xs
+                        : AppSpacing.sm,
                   ),
                   children: widget.items.map((item) {
                     return _SidebarItemWidget(
@@ -268,10 +269,7 @@ class _SidebarState extends State<Sidebar> with SingleTickerProviderStateMixin {
                 // Connection Status (with label when expanded)
                 const Padding(
                   padding: EdgeInsets.only(bottom: AppSpacing.sm),
-                  child: ConnectionStatusIndicator(
-                    size: 10,
-                    showLabel: true,
-                  ),
+                  child: ConnectionStatusIndicator(size: 10, showLabel: true),
                 ),
                 Row(
                   children: [
@@ -371,8 +369,8 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
               color: isActive
                   ? AppColors.primarySurface
                   : _isHovered
-                      ? AppColors.grey100
-                      : Colors.transparent,
+                  ? AppColors.grey100
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(AppRadius.md),
               border: isActive
                   ? Border.all(color: AppColors.primaryBorder, width: 1)
@@ -404,8 +402,8 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
                         color: isActive
                             ? AppColors.primary
                             : _isHovered
-                                ? AppColors.textPrimary
-                                : AppColors.textSecondary,
+                            ? AppColors.textPrimary
+                            : AppColors.textSecondary,
                       ),
 
                       // Label & Badge (hidden when collapsed)
@@ -418,10 +416,11 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
                               color: isActive
                                   ? AppColors.primary
                                   : _isHovered
-                                      ? AppColors.textPrimary
-                                      : AppColors.textSecondary,
-                              fontWeight:
-                                  isActive ? FontWeight.w600 : FontWeight.w500,
+                                  ? AppColors.textPrimary
+                                  : AppColors.textSecondary,
+                              fontWeight: isActive
+                                  ? FontWeight.w600
+                                  : FontWeight.w500,
                             ),
                           ),
                         ),
@@ -435,8 +434,9 @@ class _SidebarItemWidgetState extends State<_SidebarItemWidget> {
                             ),
                             decoration: BoxDecoration(
                               color: widget.item.badgeColor ?? AppColors.error,
-                              borderRadius:
-                                  BorderRadius.circular(AppRadius.full),
+                              borderRadius: BorderRadius.circular(
+                                AppRadius.full,
+                              ),
                             ),
                             child: Text(
                               widget.item.badge!,

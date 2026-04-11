@@ -11,9 +11,10 @@ import 'products_table.dart';
 @TableIndex(name: 'idx_returns_status', columns: {#status})
 @TableIndex(name: 'idx_returns_created_at', columns: {#createdAt})
 @TableIndex(
-    name: 'idx_returns_store_number_unique',
-    columns: {#storeId, #returnNumber},
-    unique: true)
+  name: 'idx_returns_store_number_unique',
+  columns: {#storeId, #returnNumber},
+  unique: true,
+)
 class ReturnsTable extends Table {
   @override
   String get tableName => 'returns';
@@ -25,9 +26,11 @@ class ReturnsTable extends Table {
       text().references(SalesTable, #id, onDelete: KeyAction.restrict)();
   TextColumn get storeId =>
       text().references(StoresTable, #id, onDelete: KeyAction.restrict)();
-  TextColumn get customerId => text()
-      .nullable()
-      .references(CustomersTable, #id, onDelete: KeyAction.setNull)();
+  TextColumn get customerId => text().nullable().references(
+    CustomersTable,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
   TextColumn get customerName => text().nullable()();
   TextColumn get reason => text().nullable()();
   TextColumn get type =>

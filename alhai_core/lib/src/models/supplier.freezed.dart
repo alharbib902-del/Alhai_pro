@@ -12,7 +12,8 @@ part of 'supplier.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 Supplier _$SupplierFromJson(Map<String, dynamic> json) {
   return _Supplier.fromJson(json);
@@ -47,18 +48,19 @@ abstract class $SupplierCopyWith<$Res> {
   factory $SupplierCopyWith(Supplier value, $Res Function(Supplier) then) =
       _$SupplierCopyWithImpl<$Res, Supplier>;
   @useResult
-  $Res call(
-      {String id,
-      String storeId,
-      String name,
-      String? phone,
-      String? email,
-      String? address,
-      String? notes,
-      double balance,
-      bool isActive,
-      DateTime createdAt,
-      DateTime? updatedAt});
+  $Res call({
+    String id,
+    String storeId,
+    String name,
+    String? phone,
+    String? email,
+    String? address,
+    String? notes,
+    double balance,
+    bool isActive,
+    DateTime createdAt,
+    DateTime? updatedAt,
+  });
 }
 
 /// @nodoc
@@ -88,52 +90,55 @@ class _$SupplierCopyWithImpl<$Res, $Val extends Supplier>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: freezed == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String?,
-      email: freezed == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String?,
-      address: freezed == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String?,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      balance: null == balance
-          ? _value.balance
-          : balance // ignore: cast_nullable_to_non_nullable
-              as double,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            storeId: null == storeId
+                ? _value.storeId
+                : storeId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            phone: freezed == phone
+                ? _value.phone
+                : phone // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            email: freezed == email
+                ? _value.email
+                : email // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            address: freezed == address
+                ? _value.address
+                : address // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            notes: freezed == notes
+                ? _value.notes
+                : notes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            balance: null == balance
+                ? _value.balance
+                : balance // ignore: cast_nullable_to_non_nullable
+                      as double,
+            isActive: null == isActive
+                ? _value.isActive
+                : isActive // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            updatedAt: freezed == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -141,22 +146,24 @@ class _$SupplierCopyWithImpl<$Res, $Val extends Supplier>
 abstract class _$$SupplierImplCopyWith<$Res>
     implements $SupplierCopyWith<$Res> {
   factory _$$SupplierImplCopyWith(
-          _$SupplierImpl value, $Res Function(_$SupplierImpl) then) =
-      __$$SupplierImplCopyWithImpl<$Res>;
+    _$SupplierImpl value,
+    $Res Function(_$SupplierImpl) then,
+  ) = __$$SupplierImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String storeId,
-      String name,
-      String? phone,
-      String? email,
-      String? address,
-      String? notes,
-      double balance,
-      bool isActive,
-      DateTime createdAt,
-      DateTime? updatedAt});
+  $Res call({
+    String id,
+    String storeId,
+    String name,
+    String? phone,
+    String? email,
+    String? address,
+    String? notes,
+    double balance,
+    bool isActive,
+    DateTime createdAt,
+    DateTime? updatedAt,
+  });
 }
 
 /// @nodoc
@@ -164,8 +171,9 @@ class __$$SupplierImplCopyWithImpl<$Res>
     extends _$SupplierCopyWithImpl<$Res, _$SupplierImpl>
     implements _$$SupplierImplCopyWith<$Res> {
   __$$SupplierImplCopyWithImpl(
-      _$SupplierImpl _value, $Res Function(_$SupplierImpl) _then)
-      : super(_value, _then);
+    _$SupplierImpl _value,
+    $Res Function(_$SupplierImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of Supplier
   /// with the given fields replaced by the non-null parameter values.
@@ -184,71 +192,73 @@ class __$$SupplierImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(_$SupplierImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: freezed == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String?,
-      email: freezed == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String?,
-      address: freezed == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String?,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      balance: null == balance
-          ? _value.balance
-          : balance // ignore: cast_nullable_to_non_nullable
-              as double,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$SupplierImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        storeId: null == storeId
+            ? _value.storeId
+            : storeId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        phone: freezed == phone
+            ? _value.phone
+            : phone // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        email: freezed == email
+            ? _value.email
+            : email // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        address: freezed == address
+            ? _value.address
+            : address // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        notes: freezed == notes
+            ? _value.notes
+            : notes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        balance: null == balance
+            ? _value.balance
+            : balance // ignore: cast_nullable_to_non_nullable
+                  as double,
+        isActive: null == isActive
+            ? _value.isActive
+            : isActive // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        updatedAt: freezed == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$SupplierImpl extends _Supplier {
-  const _$SupplierImpl(
-      {required this.id,
-      required this.storeId,
-      required this.name,
-      this.phone,
-      this.email,
-      this.address,
-      this.notes,
-      this.balance = 0,
-      this.isActive = true,
-      required this.createdAt,
-      this.updatedAt})
-      : super._();
+  const _$SupplierImpl({
+    required this.id,
+    required this.storeId,
+    required this.name,
+    this.phone,
+    this.email,
+    this.address,
+    this.notes,
+    this.balance = 0,
+    this.isActive = true,
+    required this.createdAt,
+    this.updatedAt,
+  }) : super._();
 
   factory _$SupplierImpl.fromJson(Map<String, dynamic> json) =>
       _$$SupplierImplFromJson(json);
@@ -306,8 +316,20 @@ class _$SupplierImpl extends _Supplier {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, storeId, name, phone, email,
-      address, notes, balance, isActive, createdAt, updatedAt);
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    storeId,
+    name,
+    phone,
+    email,
+    address,
+    notes,
+    balance,
+    isActive,
+    createdAt,
+    updatedAt,
+  );
 
   /// Create a copy of Supplier
   /// with the given fields replaced by the non-null parameter values.
@@ -319,25 +341,24 @@ class _$SupplierImpl extends _Supplier {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$SupplierImplToJson(
-      this,
-    );
+    return _$$SupplierImplToJson(this);
   }
 }
 
 abstract class _Supplier extends Supplier {
-  const factory _Supplier(
-      {required final String id,
-      required final String storeId,
-      required final String name,
-      final String? phone,
-      final String? email,
-      final String? address,
-      final String? notes,
-      final double balance,
-      final bool isActive,
-      required final DateTime createdAt,
-      final DateTime? updatedAt}) = _$SupplierImpl;
+  const factory _Supplier({
+    required final String id,
+    required final String storeId,
+    required final String name,
+    final String? phone,
+    final String? email,
+    final String? address,
+    final String? notes,
+    final double balance,
+    final bool isActive,
+    required final DateTime createdAt,
+    final DateTime? updatedAt,
+  }) = _$SupplierImpl;
   const _Supplier._() : super._();
 
   factory _Supplier.fromJson(Map<String, dynamic> json) =

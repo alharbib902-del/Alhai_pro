@@ -124,7 +124,8 @@ class AlhaiSection extends StatelessWidget {
                         children: [
                           Text(
                             title!,
-                            style: titleStyle ??
+                            style:
+                                titleStyle ??
                                 theme.textTheme.titleMedium?.copyWith(
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -154,18 +155,11 @@ class AlhaiSection extends StatelessWidget {
           if (hasHeader) SizedBox(height: titleContentSpacing),
 
           // Content
-          Padding(
-            padding: contentPadding,
-            child: child,
-          ),
+          Padding(padding: contentPadding, child: child),
 
           // Divider
           if (showDivider)
-            Divider(
-              height: 1,
-              thickness: 1,
-              color: colorScheme.outlineVariant,
-            ),
+            Divider(height: 1, thickness: 1, color: colorScheme.outlineVariant),
         ],
       ),
     );

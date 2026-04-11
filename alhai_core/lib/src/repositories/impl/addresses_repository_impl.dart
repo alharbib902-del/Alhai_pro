@@ -9,9 +9,8 @@ import '../addresses_repository.dart';
 class AddressesRepositoryImpl implements AddressesRepository {
   final AddressesRemoteDataSource _remote;
 
-  AddressesRepositoryImpl({
-    required AddressesRemoteDataSource remote,
-  }) : _remote = remote;
+  AddressesRepositoryImpl({required AddressesRemoteDataSource remote})
+    : _remote = remote;
 
   @override
   Future<List<Address>> getAddresses() async {

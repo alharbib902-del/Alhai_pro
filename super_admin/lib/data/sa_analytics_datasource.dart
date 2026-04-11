@@ -48,10 +48,11 @@ class SAAnalyticsDatasource {
       monthlyMap[key] = (monthlyMap[key] ?? 0) + monthly;
     }
 
-    final result = monthlyMap.entries
-        .map((e) => SARevenueData(month: e.key, revenue: e.value))
-        .toList()
-      ..sort((a, b) => a.month.compareTo(b.month));
+    final result =
+        monthlyMap.entries
+            .map((e) => SARevenueData(month: e.key, revenue: e.value))
+            .toList()
+          ..sort((a, b) => a.month.compareTo(b.month));
 
     return result;
   }
@@ -71,27 +72,29 @@ class SAAnalyticsDatasource {
       final monthly = cycle == 'yearly' ? amount / 12 : amount;
 
       if (!planRevenue.containsKey(slug)) {
-        planRevenue[slug] =
-            _PlanAccumulator(name: slug.replaceAll('_', ' '), slug: slug);
+        planRevenue[slug] = _PlanAccumulator(
+          name: slug.replaceAll('_', ' '),
+          slug: slug,
+        );
       }
       planRevenue[slug]!.subscribers += 1;
       planRevenue[slug]!.revenue += monthly;
     }
 
     return planRevenue.values
-        .map((a) => SARevenueByPlan(
-              name: a.name,
-              slug: a.slug,
-              subscribers: a.subscribers,
-              revenue: a.revenue,
-            ))
+        .map(
+          (a) => SARevenueByPlan(
+            name: a.name,
+            slug: a.slug,
+            subscribers: a.subscribers,
+            revenue: a.revenue,
+          ),
+        )
         .toList();
   }
 
   /// Top stores by revenue.
-  Future<List<SATopStoreRevenue>> getTopStoresByRevenue({
-    int limit = 5,
-  }) async {
+  Future<List<SATopStoreRevenue>> getTopStoresByRevenue({int limit = 5}) async {
     try {
       final data = await _client.rpc(
         'sa_top_stores_by_revenue',
@@ -126,11 +129,13 @@ class SAAnalyticsDatasource {
         revenue += (sale['total_amount'] as num?)?.toDouble() ?? 0;
       }
 
-      result.add(SATopStoreRevenue(
-        storeId: storeId,
-        storeName: store['name'] as String? ?? '',
-        revenue: revenue,
-      ));
+      result.add(
+        SATopStoreRevenue(
+          storeId: storeId,
+          storeName: store['name'] as String? ?? '',
+          revenue: revenue,
+        ),
+      );
     }
 
     result.sort((a, b) => b.revenue.compareTo(a.revenue));
@@ -143,15 +148,18 @@ class SAAnalyticsDatasource {
 
   /// Get total transaction count across all stores.
   Future<int> getTotalTransactionCount() async {
-    final result =
-        await _client.from('sales').select('id').count(CountOption.exact);
+    final result = await _client
+        .from('sales')
+        .select('id')
+        .count(CountOption.exact);
     return result.count;
   }
 
   /// Get average daily transactions (last 30 days).
   Future<double> getAvgDailyTransactions() async {
-    final thirtyDaysAgo =
-        DateTime.now().subtract(const Duration(days: 30)).toIso8601String();
+    final thirtyDaysAgo = DateTime.now()
+        .subtract(const Duration(days: 30))
+        .toIso8601String();
     final result = await _client
         .from('sales')
         .select('id')
@@ -171,8 +179,9 @@ class SAAnalyticsDatasource {
       );
       if (data is List && data.isNotEmpty) {
         return data
-            .map((e) =>
-                SATopStoreTransactions.fromJson(e as Map<String, dynamic>))
+            .map(
+              (e) => SATopStoreTransactions.fromJson(e as Map<String, dynamic>),
+            )
             .toList();
       }
     } catch (_) {
@@ -201,13 +210,15 @@ class SAAnalyticsDatasource {
           .eq('store_id', storeId)
           .count(CountOption.exact);
 
-      result.add(SATopStoreTransactions(
-        storeId: storeId,
-        storeName: store['name'] as String? ?? '',
-        transactions: countResult.count,
-        avgPerDay: (countResult.count / 30.0).round(),
-        products: productCount.count,
-      ));
+      result.add(
+        SATopStoreTransactions(
+          storeId: storeId,
+          storeName: store['name'] as String? ?? '',
+          transactions: countResult.count,
+          avgPerDay: (countResult.count / 30.0).round(),
+          products: productCount.count,
+        ),
+      );
     }
 
     result.sort((a, b) => b.transactions.compareTo(a.transactions));
@@ -227,8 +238,9 @@ class SAAnalyticsDatasource {
     final result = <SAActiveUsersPerStore>[];
     for (final store in stores as List) {
       final storeId = store['id'] as String;
-      final thirtyDaysAgo =
-          DateTime.now().subtract(const Duration(days: 30)).toIso8601String();
+      final thirtyDaysAgo = DateTime.now()
+          .subtract(const Duration(days: 30))
+          .toIso8601String();
       final countResult = await _client
           .from('users')
           .select('id')
@@ -236,11 +248,13 @@ class SAAnalyticsDatasource {
           .gte('last_login_at', thirtyDaysAgo)
           .count(CountOption.exact);
 
-      result.add(SAActiveUsersPerStore(
-        storeId: storeId,
-        storeName: store['name'] as String? ?? '',
-        activeUsers: countResult.count,
-      ));
+      result.add(
+        SAActiveUsersPerStore(
+          storeId: storeId,
+          storeName: store['name'] as String? ?? '',
+          activeUsers: countResult.count,
+        ),
+      );
     }
 
     result.sort((a, b) => b.activeUsers.compareTo(a.activeUsers));

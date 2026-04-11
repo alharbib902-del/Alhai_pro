@@ -14,9 +14,9 @@ class SyncMetadataDao extends DatabaseAccessor<AppDatabase>
 
   /// الحصول على بيانات المزامنة لجدول معين
   Future<SyncMetadataTableData?> getForTable(String tableName) {
-    return (select(syncMetadataTable)
-          ..where((t) => t.tableName_.equals(tableName)))
-        .getSingleOrNull();
+    return (select(
+      syncMetadataTable,
+    )..where((t) => t.tableName_.equals(tableName))).getSingleOrNull();
   }
 
   /// الحصول على بيانات المزامنة لجميع الجداول
@@ -31,22 +31,25 @@ class SyncMetadataDao extends DatabaseAccessor<AppDatabase>
 
   /// مراقبة بيانات المزامنة لجدول معين
   Stream<SyncMetadataTableData?> watchForTable(String tableName) {
-    return (select(syncMetadataTable)
-          ..where((t) => t.tableName_.equals(tableName)))
-        .watchSingleOrNull();
+    return (select(
+      syncMetadataTable,
+    )..where((t) => t.tableName_.equals(tableName))).watchSingleOrNull();
   }
 
   /// تحديث آخر وقت سحب لجدول
-  Future<void> updateLastPullAt(String tableName, DateTime time,
-      {int syncCount = 0}) async {
+  Future<void> updateLastPullAt(
+    String tableName,
+    DateTime time, {
+    int syncCount = 0,
+  }) async {
     final companion = SyncMetadataTableCompanion(
       lastPullAt: Value(time),
       lastSyncCount: Value(syncCount),
       isInitialSynced: const Value(true),
     );
-    final rows = await (update(syncMetadataTable)
-          ..where((t) => t.tableName_.equals(tableName)))
-        .write(companion);
+    final rows = await (update(
+      syncMetadataTable,
+    )..where((t) => t.tableName_.equals(tableName))).write(companion);
     if (rows == 0) {
       await into(syncMetadataTable).insert(
         SyncMetadataTableCompanion.insert(
@@ -60,15 +63,18 @@ class SyncMetadataDao extends DatabaseAccessor<AppDatabase>
   }
 
   /// تحديث آخر وقت دفع لجدول
-  Future<void> updateLastPushAt(String tableName, DateTime time,
-      {int syncCount = 0}) async {
+  Future<void> updateLastPushAt(
+    String tableName,
+    DateTime time, {
+    int syncCount = 0,
+  }) async {
     final companion = SyncMetadataTableCompanion(
       lastPushAt: Value(time),
       lastSyncCount: Value(syncCount),
     );
-    final rows = await (update(syncMetadataTable)
-          ..where((t) => t.tableName_.equals(tableName)))
-        .write(companion);
+    final rows = await (update(
+      syncMetadataTable,
+    )..where((t) => t.tableName_.equals(tableName))).write(companion);
     if (rows == 0) {
       await into(syncMetadataTable).insert(
         SyncMetadataTableCompanion.insert(
@@ -86,9 +92,9 @@ class SyncMetadataDao extends DatabaseAccessor<AppDatabase>
       pendingCount: Value(pending),
       failedCount: Value(failed),
     );
-    final rows = await (update(syncMetadataTable)
-          ..where((t) => t.tableName_.equals(tableName)))
-        .write(companion);
+    final rows = await (update(
+      syncMetadataTable,
+    )..where((t) => t.tableName_.equals(tableName))).write(companion);
     if (rows == 0) {
       await into(syncMetadataTable).insert(
         SyncMetadataTableCompanion.insert(
@@ -102,12 +108,10 @@ class SyncMetadataDao extends DatabaseAccessor<AppDatabase>
 
   /// تعيين أن المزامنة الأولية تمت
   Future<void> markInitialSynced(String tableName) async {
-    const companion = SyncMetadataTableCompanion(
-      isInitialSynced: Value(true),
-    );
-    final rows = await (update(syncMetadataTable)
-          ..where((t) => t.tableName_.equals(tableName)))
-        .write(companion);
+    const companion = SyncMetadataTableCompanion(isInitialSynced: Value(true));
+    final rows = await (update(
+      syncMetadataTable,
+    )..where((t) => t.tableName_.equals(tableName))).write(companion);
     if (rows == 0) {
       await into(syncMetadataTable).insert(
         SyncMetadataTableCompanion.insert(
@@ -120,12 +124,10 @@ class SyncMetadataDao extends DatabaseAccessor<AppDatabase>
 
   /// تسجيل خطأ مزامنة
   Future<void> setError(String tableName, String error) async {
-    final companion = SyncMetadataTableCompanion(
-      lastError: Value(error),
-    );
-    final rows = await (update(syncMetadataTable)
-          ..where((t) => t.tableName_.equals(tableName)))
-        .write(companion);
+    final companion = SyncMetadataTableCompanion(lastError: Value(error));
+    final rows = await (update(
+      syncMetadataTable,
+    )..where((t) => t.tableName_.equals(tableName))).write(companion);
     if (rows == 0) {
       await into(syncMetadataTable).insert(
         SyncMetadataTableCompanion.insert(
@@ -138,12 +140,10 @@ class SyncMetadataDao extends DatabaseAccessor<AppDatabase>
 
   /// مسح خطأ المزامنة
   Future<void> clearError(String tableName) async {
-    const companion = SyncMetadataTableCompanion(
-      lastError: Value(null),
-    );
-    final rows = await (update(syncMetadataTable)
-          ..where((t) => t.tableName_.equals(tableName)))
-        .write(companion);
+    const companion = SyncMetadataTableCompanion(lastError: Value(null));
+    final rows = await (update(
+      syncMetadataTable,
+    )..where((t) => t.tableName_.equals(tableName))).write(companion);
     if (rows == 0) {
       await into(syncMetadataTable).insert(
         SyncMetadataTableCompanion.insert(
@@ -192,9 +192,9 @@ class SyncMetadataDao extends DatabaseAccessor<AppDatabase>
 
   /// إعادة تعيين بيانات المزامنة لجدول (للمزامنة الكاملة)
   Future<void> resetTable(String tableName) async {
-    await (delete(syncMetadataTable)
-          ..where((t) => t.tableName_.equals(tableName)))
-        .go();
+    await (delete(
+      syncMetadataTable,
+    )..where((t) => t.tableName_.equals(tableName))).go();
   }
 
   /// إعادة تعيين جميع بيانات المزامنة

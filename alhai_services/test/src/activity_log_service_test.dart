@@ -48,7 +48,9 @@ class FakeActivityLogsRepository implements ActivityLogsRepository {
 
   @override
   Future<List<ActivityLog>> getEntityLogs(
-      String entityType, String entityId) async {
+    String entityType,
+    String entityId,
+  ) async {
     return _logs
         .where((l) => l.entityType == entityType && l.entityId == entityId)
         .toList();
@@ -192,8 +194,10 @@ void main() {
           entityId: 'prod-1',
         );
 
-        final logs =
-            await activityLogService.getEntityLogs('product', 'prod-1');
+        final logs = await activityLogService.getEntityLogs(
+          'product',
+          'prod-1',
+        );
         expect(logs, hasLength(1));
       });
     });

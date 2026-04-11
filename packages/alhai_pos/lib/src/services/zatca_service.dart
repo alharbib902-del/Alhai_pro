@@ -73,12 +73,12 @@ class ZatcaInvoiceData {
     required this.totalWithVat,
     required this.vatAmount,
   }) : qrCode = ZatcaService.generateQrData(
-          sellerName: sellerName,
-          vatNumber: vatNumber,
-          timestamp: timestamp,
-          totalWithVat: totalWithVat,
-          vatAmount: vatAmount,
-        );
+         sellerName: sellerName,
+         vatNumber: vatNumber,
+         timestamp: timestamp,
+         totalWithVat: totalWithVat,
+         vatAmount: vatAmount,
+       );
 
   /// حساب الضريبة من الإجمالي
   factory ZatcaInvoiceData.fromTotal({

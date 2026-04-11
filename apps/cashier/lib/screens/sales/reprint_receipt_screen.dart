@@ -116,8 +116,9 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -128,11 +129,14 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context,
-                      message: _error!, onRetry: _loadOrders)
-                  : isWideScreen
-                      ? _buildWideLayout(isDark, l10n, isMediumScreen)
-                      : _buildNarrowLayout(isDark, l10n, isMediumScreen),
+              ? AppErrorState.general(
+                  context,
+                  message: _error!,
+                  onRetry: _loadOrders,
+                )
+              : isWideScreen
+              ? _buildWideLayout(isDark, l10n, isMediumScreen)
+              : _buildNarrowLayout(isDark, l10n, isMediumScreen),
         ),
       ],
     );
@@ -144,7 +148,10 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
   }
 
   Widget _buildWideLayout(
-      bool isDark, AppLocalizations l10n, bool isMediumScreen) {
+    bool isDark,
+    AppLocalizations l10n,
+    bool isMediumScreen,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(AlhaiSpacing.lg),
       child: Row(
@@ -161,22 +168,23 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
             ),
           ),
           const SizedBox(width: AlhaiSpacing.lg),
-          Expanded(
-            flex: 2,
-            child: _buildSelectedOrderPreview(isDark, l10n),
-          ),
+          Expanded(flex: 2, child: _buildSelectedOrderPreview(isDark, l10n)),
         ],
       ),
     );
   }
 
   Widget _buildNarrowLayout(
-      bool isDark, AppLocalizations l10n, bool isMediumScreen) {
+    bool isDark,
+    AppLocalizations l10n,
+    bool isMediumScreen,
+  ) {
     return Column(
       children: [
         Padding(
           padding: EdgeInsets.all(
-              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+            isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+          ),
           child: _buildSearchBar(isDark, l10n),
         ),
         Expanded(
@@ -197,13 +205,17 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
       decoration: InputDecoration(
         hintText: l10n.searchByInvoiceOrCustomer,
         hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
-        prefixIcon:
-            Icon(Icons.search_rounded, color: AppColors.getTextMuted(isDark)),
+        prefixIcon: Icon(
+          Icons.search_rounded,
+          color: AppColors.getTextMuted(isDark),
+        ),
         suffixIcon: _searchController.text.isNotEmpty
             ? IconButton(
                 onPressed: () => _searchController.clear(),
-                icon: Icon(Icons.clear_rounded,
-                    color: AppColors.getTextMuted(isDark)),
+                icon: Icon(
+                  Icons.clear_rounded,
+                  color: AppColors.getTextMuted(isDark),
+                ),
                 tooltip: l10n.clearField,
               )
             : null,
@@ -222,7 +234,9 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.md, vertical: 14),
+          horizontal: AlhaiSpacing.md,
+          vertical: 14,
+        ),
       ),
     );
   }
@@ -233,15 +247,20 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.receipt_long_outlined,
-                size: 64,
-                color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
+            Icon(
+              Icons.receipt_long_outlined,
+              size: 64,
+              color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4),
+            ),
             const SizedBox(height: AlhaiSpacing.md),
-            Text(l10n.noTransactions,
-                style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                    color: AppColors.getTextMuted(isDark))),
+            Text(
+              l10n.noTransactions,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+                color: AppColors.getTextMuted(isDark),
+              ),
+            ),
           ],
         ),
       );
@@ -256,7 +275,10 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
   }
 
   Widget _buildOrderCard(
-      SalesTableData order, bool isDark, AppLocalizations l10n) {
+    SalesTableData order,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final isSelected = _selectedOrderId == order.id;
     final time =
         '${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}';
@@ -298,8 +320,11 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                 ),
               ),
               child: isSelected
-                  ? const Icon(Icons.check_rounded,
-                      size: 16, color: Colors.white)
+                  ? const Icon(
+                      Icons.check_rounded,
+                      size: 16,
+                      color: Colors.white,
+                    )
                   : null,
             ),
             const SizedBox(width: 14),
@@ -312,8 +337,11 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                 borderRadius: BorderRadius.circular(10),
               ),
               alignment: Alignment.center,
-              child: const Icon(Icons.receipt_rounded,
-                  color: AppColors.primary, size: 20),
+              child: const Icon(
+                Icons.receipt_rounded,
+                color: AppColors.primary,
+                size: 20,
+              ),
             ),
             const SizedBox(width: 14),
             // Order details
@@ -332,15 +360,19 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                   const SizedBox(height: AlhaiSpacing.xxs),
                   Row(
                     children: [
-                      Icon(Icons.person_outline_rounded,
-                          size: 12, color: AppColors.getTextMuted(isDark)),
+                      Icon(
+                        Icons.person_outline_rounded,
+                        size: 12,
+                        color: AppColors.getTextMuted(isDark),
+                      ),
                       const SizedBox(width: AlhaiSpacing.xxs),
                       Flexible(
                         child: Text(
                           order.customerId ?? l10n.cashCustomer,
                           style: TextStyle(
-                              fontSize: 12,
-                              color: AppColors.getTextSecondary(isDark)),
+                            fontSize: 12,
+                            color: AppColors.getTextSecondary(isDark),
+                          ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),
@@ -348,13 +380,19 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                   ),
                   Row(
                     children: [
-                      Icon(Icons.access_time_rounded,
-                          size: 12, color: AppColors.getTextMuted(isDark)),
+                      Icon(
+                        Icons.access_time_rounded,
+                        size: 12,
+                        color: AppColors.getTextMuted(isDark),
+                      ),
                       const SizedBox(width: AlhaiSpacing.xxs),
-                      Text('$date $time',
-                          style: TextStyle(
-                              fontSize: 11,
-                              color: AppColors.getTextMuted(isDark))),
+                      Text(
+                        '$date $time',
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: AppColors.getTextMuted(isDark),
+                        ),
+                      ),
                     ],
                   ),
                 ],
@@ -390,16 +428,21 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.print_outlined,
-                  size: 64,
-                  color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
+              Icon(
+                Icons.print_outlined,
+                size: 64,
+                color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4),
+              ),
               const SizedBox(height: AlhaiSpacing.md),
-              Text(l10n.selectInvoiceToPrint,
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.getTextMuted(isDark))),
+              Text(
+                l10n.selectInvoiceToPrint,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                  color: AppColors.getTextMuted(isDark),
+                ),
+              ),
             ],
           ),
         ),
@@ -428,35 +471,47 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.receipt_long_rounded,
-                    color: AppColors.primary, size: 20),
+                child: const Icon(
+                  Icons.receipt_long_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
-                child: Text(l10n.receiptPreview,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.getTextPrimary(isDark))),
+                child: Text(
+                  l10n.receiptPreview,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           // Order info
           _buildPreviewRow(
-              l10n.invoiceNumber,
-              '#${order.id.length > 8 ? order.id.substring(0, 8) : order.id}',
-              isDark),
+            l10n.invoiceNumber,
+            '#${order.id.length > 8 ? order.id.substring(0, 8) : order.id}',
+            isDark,
+          ),
           _buildPreviewRow(
-              l10n.customerName, order.customerId ?? l10n.cashCustomer, isDark),
+            l10n.customerName,
+            order.customerId ?? l10n.cashCustomer,
+            isDark,
+          ),
           _buildPreviewRow(
-              l10n.date,
-              '${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}',
-              isDark),
+            l10n.date,
+            '${order.createdAt.day}/${order.createdAt.month}/${order.createdAt.year}',
+            isDark,
+          ),
           _buildPreviewRow(
-              l10n.time,
-              '${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}',
-              isDark),
+            l10n.time,
+            '${order.createdAt.hour.toString().padLeft(2, '0')}:${order.createdAt.minute.toString().padLeft(2, '0')}',
+            isDark,
+          ),
           _buildPreviewRow(l10n.paymentMethod, order.paymentMethod, isDark),
           Divider(height: 24, color: AppColors.getBorder(isDark)),
           Padding(
@@ -464,16 +519,22 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(l10n.totalAmountLabel,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: AppColors.getTextPrimary(isDark))),
-                Text('${order.total.toStringAsFixed(2)} ${l10n.sar}',
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                        color: AppColors.primary)),
+                Text(
+                  l10n.totalAmountLabel,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
+                ),
+                Text(
+                  '${order.total.toStringAsFixed(2)} ${l10n.sar}',
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: AppColors.primary,
+                  ),
+                ),
               ],
             ),
           ),
@@ -500,18 +561,25 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: AppColors.textOnPrimary),
+                        strokeWidth: 2,
+                        color: AppColors.textOnPrimary,
+                      ),
                     )
                   : const Icon(Icons.print_rounded, size: 20),
-              label: Text(l10n.reprintReceipt,
-                  style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.w600)),
+              label: Text(
+                l10n.reprintReceipt,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.textOnPrimary,
                 padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ),
@@ -525,15 +593,22 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          Text('$label:',
-              style: TextStyle(
-                  fontSize: 13, color: AppColors.getTextSecondary(isDark))),
+          Text(
+            '$label:',
+            style: TextStyle(
+              fontSize: 13,
+              color: AppColors.getTextSecondary(isDark),
+            ),
+          ),
           const Spacer(),
-          Text(value,
-              style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.getTextPrimary(isDark))),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: AppColors.getTextPrimary(isDark),
+            ),
+          ),
         ],
       ),
     );
@@ -545,7 +620,8 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(
-            top: BorderSide(color: AppColors.getBorder(isDark), width: 1)),
+          top: BorderSide(color: AppColors.getBorder(isDark), width: 1),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
@@ -562,8 +638,9 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
             onPressed: _isPrinting
                 ? null
                 : () {
-                    final order =
-                        _allOrders.firstWhere((o) => o.id == _selectedOrderId);
+                    final order = _allOrders.firstWhere(
+                      (o) => o.id == _selectedOrderId,
+                    );
                     _printReceipt(order, l10n);
                   },
             icon: _isPrinting
@@ -571,18 +648,22 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: AppColors.textOnPrimary),
+                      strokeWidth: 2,
+                      color: AppColors.textOnPrimary,
+                    ),
                   )
                 : const Icon(Icons.print_rounded, size: 20),
-            label: Text(l10n.reprintReceipt,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            label: Text(
+              l10n.reprintReceipt,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.textOnPrimary,
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),
@@ -591,7 +672,9 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
   }
 
   Future<void> _printReceipt(
-      SalesTableData order, AppLocalizations l10n) async {
+    SalesTableData order,
+    AppLocalizations l10n,
+  ) async {
     setState(() => _isPrinting = true);
 
     try {

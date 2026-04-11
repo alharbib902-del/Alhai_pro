@@ -129,14 +129,16 @@ class OtpState {
     // Verify HMAC signature - reject if missing or invalid
     if (storedHmac == null || storedHmac.isEmpty) {
       debugPrint(
-          '[OTP-SECURITY] Rejected stored OTP state: missing HMAC signature');
+        '[OTP-SECURITY] Rejected stored OTP state: missing HMAC signature',
+      );
       return null;
     }
 
     final expectedHmac = _computeHmac(phone, sentAtStr, expiresAtStr);
     if (storedHmac != expectedHmac) {
       debugPrint(
-          '[OTP-SECURITY] Rejected stored OTP state: HMAC mismatch (possible tampering)');
+        '[OTP-SECURITY] Rejected stored OTP state: HMAC mismatch (possible tampering)',
+      );
       return null;
     }
 
@@ -234,8 +236,9 @@ class OtpService {
       // استعادة حالة OTP
       final stateJson = await SecureStorageService.read(_kOtpStateKey);
       if (stateJson != null) {
-        final state =
-            OtpState.fromJson(jsonDecode(stateJson) as Map<String, dynamic>);
+        final state = OtpState.fromJson(
+          jsonDecode(stateJson) as Map<String, dynamic>,
+        );
         if (state == null) {
           // HMAC verification failed - stored data is tampered or corrupted
           await SecureStorageService.delete(_kOtpStateKey);
@@ -257,7 +260,8 @@ class OtpService {
           final attempts = (entry.value as List)
               .map((e) => DateTime.tryParse(e as String) ?? DateTime.now())
               .where(
-                  (time) => DateTime.now().difference(time) <= kRateLimitWindow)
+                (time) => DateTime.now().difference(time) <= kRateLimitWindow,
+              )
               .toList();
           if (attempts.isNotEmpty) {
             _attemptHistory[entry.key] = attempts;
@@ -290,8 +294,9 @@ class OtpService {
       // حفظ سجل المحاولات
       final historyMap = <String, List<String>>{};
       for (final entry in _attemptHistory.entries) {
-        historyMap[entry.key] =
-            entry.value.map((e) => e.toIso8601String()).toList();
+        historyMap[entry.key] = entry.value
+            .map((e) => e.toIso8601String())
+            .toList();
       }
       await SecureStorageService.write(
         _kAttemptHistoryKey,
@@ -507,9 +512,7 @@ class OtpService {
     if (attempts == null || attempts.isEmpty) return null;
 
     // أقدم محاولة في النافذة تحدد متى يُرفع الحظر
-    final oldestAttempt = attempts.reduce(
-      (a, b) => a.isBefore(b) ? a : b,
-    );
+    final oldestAttempt = attempts.reduce((a, b) => a.isBefore(b) ? a : b);
 
     return oldestAttempt.add(kRateLimitWindow);
   }
@@ -549,22 +552,20 @@ class OtpSendResult {
 
   factory OtpSendResult.success() => const OtpSendResult._(isSuccess: true);
 
-  factory OtpSendResult.error(String message) => OtpSendResult._(
-        isSuccess: false,
-        error: message,
-      );
+  factory OtpSendResult.error(String message) =>
+      OtpSendResult._(isSuccess: false, error: message);
 
   factory OtpSendResult.rateLimited(DateTime? until) => OtpSendResult._(
-        isSuccess: false,
-        error: 'تم تجاوز الحد الأقصى للمحاولات',
-        blockedUntil: until,
-      );
+    isSuccess: false,
+    error: 'تم تجاوز الحد الأقصى للمحاولات',
+    blockedUntil: until,
+  );
 
   factory OtpSendResult.cooldown(Duration remaining) => OtpSendResult._(
-        isSuccess: false,
-        error: 'يرجى الانتظار قبل إعادة الإرسال',
-        cooldown: remaining,
-      );
+    isSuccess: false,
+    error: 'يرجى الانتظار قبل إعادة الإرسال',
+    cooldown: remaining,
+  );
 }
 
 /// نتيجة التحقق من OTP
@@ -584,35 +585,33 @@ class OtpVerifyResult {
   factory OtpVerifyResult.success() => const OtpVerifyResult._(isSuccess: true);
 
   factory OtpVerifyResult.invalid(int remaining) => OtpVerifyResult._(
-        isSuccess: false,
-        error: 'رمز التحقق غير صحيح',
-        remainingAttempts: remaining,
-      );
+    isSuccess: false,
+    error: 'رمز التحقق غير صحيح',
+    remainingAttempts: remaining,
+  );
 
   factory OtpVerifyResult.expired() => const OtpVerifyResult._(
-        isSuccess: false,
-        error: 'انتهت صلاحية رمز التحقق',
-      );
+    isSuccess: false,
+    error: 'انتهت صلاحية رمز التحقق',
+  );
 
   factory OtpVerifyResult.noOtpSent() => const OtpVerifyResult._(
-        isSuccess: false,
-        error: 'لم يتم إرسال رمز التحقق',
-      );
+    isSuccess: false,
+    error: 'لم يتم إرسال رمز التحقق',
+  );
 
   factory OtpVerifyResult.maxAttemptsExceeded() => const OtpVerifyResult._(
-        isSuccess: false,
-        error: 'تم تجاوز الحد الأقصى للمحاولات',
-        remainingAttempts: 0,
-      );
+    isSuccess: false,
+    error: 'تم تجاوز الحد الأقصى للمحاولات',
+    remainingAttempts: 0,
+  );
 
   factory OtpVerifyResult.rateLimited(DateTime? until) => OtpVerifyResult._(
-        isSuccess: false,
-        error: 'يرجى الانتظار قبل المحاولة مرة أخرى',
-        blockedUntil: until,
-      );
+    isSuccess: false,
+    error: 'يرجى الانتظار قبل المحاولة مرة أخرى',
+    blockedUntil: until,
+  );
 
-  factory OtpVerifyResult.error(String message) => OtpVerifyResult._(
-        isSuccess: false,
-        error: message,
-      );
+  factory OtpVerifyResult.error(String message) =>
+      OtpVerifyResult._(isSuccess: false, error: message);
 }

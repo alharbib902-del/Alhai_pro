@@ -160,18 +160,17 @@ class AiSmartPricingService {
     }
 
     // ترتيب حسب التأثير المتوقع
-    suggestions.sort((a, b) => b.expectedImpact.monthlyRevenueDelta
-        .abs()
-        .compareTo(a.expectedImpact.monthlyRevenueDelta.abs()));
+    suggestions.sort(
+      (a, b) => b.expectedImpact.monthlyRevenueDelta.abs().compareTo(
+        a.expectedImpact.monthlyRevenueDelta.abs(),
+      ),
+    );
 
     return suggestions;
   }
 
   /// حساب تأثير تغيير السعر لمنتج معين
-  Future<PriceImpact> calculateImpact(
-    String productId,
-    double newPrice,
-  ) async {
+  Future<PriceImpact> calculateImpact(String productId, double newPrice) async {
     final product = await _db.productsDao.getProductById(productId);
     if (product == null) {
       return const PriceImpact(
@@ -183,8 +182,9 @@ class AiSmartPricingService {
 
     final currentPrice = product.price;
     final costPrice = product.costPrice ?? (currentPrice * 0.6);
-    final priceChange =
-        currentPrice > 0 ? (newPrice - currentPrice) / currentPrice : 0.0;
+    final priceChange = currentPrice > 0
+        ? (newPrice - currentPrice) / currentPrice
+        : 0.0;
 
     // مرونة سعرية تقريبية
     final elasticity = _estimateElasticity(product);
@@ -226,8 +226,8 @@ class AiSmartPricingService {
     final classification = elasticity.abs() < 0.8
         ? ElasticityClass.inelastic
         : elasticity.abs() > 1.2
-            ? ElasticityClass.elastic
-            : ElasticityClass.unit;
+        ? ElasticityClass.elastic
+        : ElasticityClass.unit;
 
     String description;
     switch (classification) {
@@ -270,20 +270,23 @@ class AiSmartPricingService {
         final safeIncrease = (1.0 - elasticity.abs()) * 10;
         if (safeIncrease > 2) {
           // الحد الأدنى 2%
-          options.add(BulkPricingOption(
-            productId: product.id,
-            name: product.name,
-            currentPrice: product.price,
-            suggestedPrice: product.price * (1 + safeIncrease / 100),
-            safeIncreasePercent: safeIncrease,
-            category: product.categoryId ?? 'عام', // General
-          ));
+          options.add(
+            BulkPricingOption(
+              productId: product.id,
+              name: product.name,
+              currentPrice: product.price,
+              suggestedPrice: product.price * (1 + safeIncrease / 100),
+              safeIncreasePercent: safeIncrease,
+              category: product.categoryId ?? 'عام', // General
+            ),
+          );
         }
       }
     }
 
-    options
-        .sort((a, b) => b.safeIncreasePercent.compareTo(a.safeIncreasePercent));
+    options.sort(
+      (a, b) => b.safeIncreasePercent.compareTo(a.safeIncreasePercent),
+    );
     return options;
   }
 
@@ -347,7 +350,8 @@ class AiSmartPricingService {
     final newVolume = monthlyVolume * (1 + volumeChangePercent / 100);
     final monthlyRevenueDelta =
         (suggestedPrice * newVolume) - (product.price * monthlyVolume);
-    final yearlyProfitDelta = ((suggestedPrice - cost) * newVolume -
+    final yearlyProfitDelta =
+        ((suggestedPrice - cost) * newVolume -
             (product.price - cost) * monthlyVolume) *
         12;
 

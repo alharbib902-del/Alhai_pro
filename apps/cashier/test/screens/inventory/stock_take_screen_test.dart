@@ -33,8 +33,9 @@ void main() {
     setupTestGetIt(mockDb: db);
 
     // Default stubs
-    when(() => categoriesDao.getAllCategories(any()))
-        .thenAnswer((_) async => []);
+    when(
+      () => categoriesDao.getAllCategories(any()),
+    ).thenAnswer((_) async => []);
     when(() => productsDao.getAllProducts(any())).thenAnswer((_) async => []);
   });
 
@@ -63,10 +64,12 @@ void main() {
       // Use Completers to hold the future without pending timers
       final catCompleter = Completer<List<CategoriesTableData>>();
       final prodCompleter = Completer<List<ProductsTableData>>();
-      when(() => categoriesDao.getAllCategories(any()))
-          .thenAnswer((_) => catCompleter.future);
-      when(() => productsDao.getAllProducts(any()))
-          .thenAnswer((_) => prodCompleter.future);
+      when(
+        () => categoriesDao.getAllCategories(any()),
+      ).thenAnswer((_) => catCompleter.future);
+      when(
+        () => productsDao.getAllProducts(any()),
+      ).thenAnswer((_) => prodCompleter.future);
 
       await tester.pumpWidget(createTestWidget(const StockTakeScreen()));
       await tester.pump();
@@ -88,8 +91,9 @@ void main() {
       suppressOverflowErrors();
 
       final products = createTestProductList(3);
-      when(() => productsDao.getAllProducts(any()))
-          .thenAnswer((_) async => products);
+      when(
+        () => productsDao.getAllProducts(any()),
+      ).thenAnswer((_) async => products);
 
       await tester.pumpWidget(createTestWidget(const StockTakeScreen()));
       await tester.pumpAndSettle();
@@ -109,17 +113,20 @@ void main() {
       suppressOverflowErrors();
 
       final products = createTestProductList(5);
-      when(() => productsDao.getAllProducts(any()))
-          .thenAnswer((_) async => products);
+      when(
+        () => productsDao.getAllProducts(any()),
+      ).thenAnswer((_) async => products);
 
       await tester.pumpWidget(createTestWidget(const StockTakeScreen()));
       await tester.pumpAndSettle();
 
       // Summary bar shows Total Items count
       expect(
-          find.text(
-              '\u0625\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u0639\u0646\u0627\u0635\u0631'),
-          findsOneWidget);
+        find.text(
+          '\u0625\u062c\u0645\u0627\u0644\u064a \u0627\u0644\u0639\u0646\u0627\u0635\u0631',
+        ),
+        findsOneWidget,
+      );
       expect(find.text('5'), findsOneWidget);
 
       tester.view.resetPhysicalSize();
@@ -132,8 +139,9 @@ void main() {
       suppressOverflowErrors();
 
       final categories = createTestCategoryList(2);
-      when(() => categoriesDao.getAllCategories(any()))
-          .thenAnswer((_) async => categories);
+      when(
+        () => categoriesDao.getAllCategories(any()),
+      ).thenAnswer((_) async => categories);
 
       await tester.pumpWidget(createTestWidget(const StockTakeScreen()));
       await tester.pumpAndSettle();
@@ -156,9 +164,11 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.text(
-              '\u062d\u0641\u0638 \u0627\u0644\u0645\u0633\u0648\u062f\u0629'),
-          findsOneWidget);
+        find.text(
+          '\u062d\u0641\u0638 \u0627\u0644\u0645\u0633\u0648\u062f\u0629',
+        ),
+        findsOneWidget,
+      );
       expect(find.text('\u0625\u0646\u0647\u0627\u0621'), findsOneWidget);
 
       tester.view.resetPhysicalSize();

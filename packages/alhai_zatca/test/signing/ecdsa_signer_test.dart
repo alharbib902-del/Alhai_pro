@@ -25,8 +25,9 @@ void main() {
 
     group('sign', () {
       test('should produce a valid base64 signature', () {
-        final digest =
-            Uint8List.fromList(sha256.convert(utf8.encode('test data')).bytes);
+        final digest = Uint8List.fromList(
+          sha256.convert(utf8.encode('test data')).bytes,
+        );
 
         final signatureBase64 = signer.sign(
           digest: digest,
@@ -43,10 +44,12 @@ void main() {
       });
 
       test('should produce different signatures for different data', () {
-        final digest1 =
-            Uint8List.fromList(sha256.convert(utf8.encode('data 1')).bytes);
-        final digest2 =
-            Uint8List.fromList(sha256.convert(utf8.encode('data 2')).bytes);
+        final digest1 = Uint8List.fromList(
+          sha256.convert(utf8.encode('data 1')).bytes,
+        );
+        final digest2 = Uint8List.fromList(
+          sha256.convert(utf8.encode('data 2')).bytes,
+        );
 
         final sig1 = signer.sign(
           digest: digest1,
@@ -61,8 +64,9 @@ void main() {
       });
 
       test('should produce deterministic signatures (DET-ECDSA)', () {
-        final digest =
-            Uint8List.fromList(sha256.convert(utf8.encode('same data')).bytes);
+        final digest = Uint8List.fromList(
+          sha256.convert(utf8.encode('same data')).bytes,
+        );
 
         final sig1 = signer.sign(
           digest: digest,
@@ -81,8 +85,9 @@ void main() {
 
     group('verify', () {
       test('should verify a valid signature', () {
-        final digest =
-            Uint8List.fromList(sha256.convert(utf8.encode('verify me')).bytes);
+        final digest = Uint8List.fromList(
+          sha256.convert(utf8.encode('verify me')).bytes,
+        );
 
         final signatureBase64 = signer.sign(
           digest: digest,
@@ -99,10 +104,12 @@ void main() {
       });
 
       test('should reject signature with wrong digest', () {
-        final originalDigest =
-            Uint8List.fromList(sha256.convert(utf8.encode('original')).bytes);
-        final tamperedDigest =
-            Uint8List.fromList(sha256.convert(utf8.encode('tampered')).bytes);
+        final originalDigest = Uint8List.fromList(
+          sha256.convert(utf8.encode('original')).bytes,
+        );
+        final tamperedDigest = Uint8List.fromList(
+          sha256.convert(utf8.encode('tampered')).bytes,
+        );
 
         final signatureBase64 = signer.sign(
           digest: originalDigest,
@@ -119,8 +126,9 @@ void main() {
       });
 
       test('should reject signature with wrong public key', () {
-        final digest =
-            Uint8List.fromList(sha256.convert(utf8.encode('test')).bytes);
+        final digest = Uint8List.fromList(
+          sha256.convert(utf8.encode('test')).bytes,
+        );
 
         final signatureBase64 = signer.sign(
           digest: digest,
@@ -146,8 +154,9 @@ void main() {
         // Simulate the ZATCA signing flow:
         // 1. Compute SHA-256 of invoice data
         const invoiceData = 'invoice-xml-content-here';
-        final digest =
-            Uint8List.fromList(sha256.convert(utf8.encode(invoiceData)).bytes);
+        final digest = Uint8List.fromList(
+          sha256.convert(utf8.encode(invoiceData)).bytes,
+        );
 
         // 2. Sign the digest
         final signatureBase64 = signer.sign(
@@ -184,8 +193,9 @@ void main() {
 
       test('should handle multiple sign/verify cycles', () {
         for (int i = 0; i < 5; i++) {
-          final digest =
-              Uint8List.fromList(sha256.convert(utf8.encode('cycle $i')).bytes);
+          final digest = Uint8List.fromList(
+            sha256.convert(utf8.encode('cycle $i')).bytes,
+          );
 
           final sig = signer.sign(
             digest: digest,
@@ -221,8 +231,9 @@ void main() {
 
       test('parses raw SEC 1 EC private key', () {
         // The default test helper uses SEC 1 format.
-        final digest =
-            Uint8List.fromList(sha256.convert(utf8.encode('sec1-key')).bytes);
+        final digest = Uint8List.fromList(
+          sha256.convert(utf8.encode('sec1-key')).bytes,
+        );
 
         // Should not throw RangeError or FormatException.
         expect(
@@ -230,8 +241,10 @@ void main() {
           returnsNormally,
         );
 
-        final sigBase64 =
-            signer.sign(digest: digest, privateKeyPem: testPrivateKeyPem);
+        final sigBase64 = signer.sign(
+          digest: digest,
+          privateKeyPem: testPrivateKeyPem,
+        );
         final valid = signer.verify(
           digest: digest,
           signature: Uint8List.fromList(base64Decode(sigBase64)),
@@ -240,80 +253,78 @@ void main() {
         expect(valid, isTrue);
       });
 
-      test('parses PKCS#8 wrapped SEC1 EC private key from CsrGenerator',
-          () async {
-        // Exercise the exact path that triggered the original RangeError:
-        // CsrGenerator emits a PKCS#8-wrapped SEC 1 EC private key PEM,
-        // and EcdsaSigner.sign must be able to parse & use it.
-        final csrGenerator = CsrGenerator();
-        final result = await csrGenerator.generateCsr(
-          commonName: 'Test Store',
-          organizationUnit: 'Branch-001',
-          organizationName: 'Test Org',
-          country: 'SA',
-          serialNumber: '1-TestSolution|2-1.0|3-SN001',
-          invoiceType: '1100',
-          branchLocation: 'Riyadh',
-          industryBusinessCategory: 'Food',
-        );
+      test(
+        'parses PKCS#8 wrapped SEC1 EC private key from CsrGenerator',
+        () async {
+          // Exercise the exact path that triggered the original RangeError:
+          // CsrGenerator emits a PKCS#8-wrapped SEC 1 EC private key PEM,
+          // and EcdsaSigner.sign must be able to parse & use it.
+          final csrGenerator = CsrGenerator();
+          final result = await csrGenerator.generateCsr(
+            commonName: 'Test Store',
+            organizationUnit: 'Branch-001',
+            organizationName: 'Test Org',
+            country: 'SA',
+            serialNumber: '1-TestSolution|2-1.0|3-SN001',
+            invoiceType: '1100',
+            branchLocation: 'Riyadh',
+            industryBusinessCategory: 'Food',
+          );
 
-        final pkcs8PrivateKeyPem = result['privateKey']!;
-        expect(pkcs8PrivateKeyPem, contains('BEGIN PRIVATE KEY'));
+          final pkcs8PrivateKeyPem = result['privateKey']!;
+          expect(pkcs8PrivateKeyPem, contains('BEGIN PRIVATE KEY'));
 
-        final digest = Uint8List.fromList(
-          sha256.convert(utf8.encode('csr-pkcs8-key')).bytes,
-        );
+          final digest = Uint8List.fromList(
+            sha256.convert(utf8.encode('csr-pkcs8-key')).bytes,
+          );
 
-        // Should not throw RangeError — this was the reported crash.
-        expect(
-          () => signer.sign(
+          // Should not throw RangeError — this was the reported crash.
+          expect(
+            () =>
+                signer.sign(digest: digest, privateKeyPem: pkcs8PrivateKeyPem),
+            returnsNormally,
+          );
+
+          final signatureBase64 = signer.sign(
             digest: digest,
             privateKeyPem: pkcs8PrivateKeyPem,
-          ),
-          returnsNormally,
-        );
-
-        final signatureBase64 = signer.sign(
-          digest: digest,
-          privateKeyPem: pkcs8PrivateKeyPem,
-        );
-        // Valid base64 DER signature
-        expect(() => base64Decode(signatureBase64), returnsNormally);
-        final sigBytes = base64Decode(signatureBase64);
-        expect(sigBytes[0], 0x30); // DER SEQUENCE tag
-      });
+          );
+          // Valid base64 DER signature
+          expect(() => base64Decode(signatureBase64), returnsNormally);
+          final sigBytes = base64Decode(signatureBase64);
+          expect(sigBytes[0], 0x30); // DER SEQUENCE tag
+        },
+      );
 
       test(
-          'PKCS#8 key from CsrGenerator does not throw RangeError on recursive parse',
-          () async {
-        // Before the fix, the recursive call into the inner SEC 1 structure
-        // would re-enter the PKCS#8 branch and index past the buffer end.
-        final csrGenerator = CsrGenerator();
-        final result = await csrGenerator.generateCsr(
-          commonName: 'Regression Test',
-          organizationUnit: 'OU',
-          organizationName: 'O',
-          country: 'SA',
-          serialNumber: '1-a|2-b|3-c',
-          invoiceType: '1000',
-          branchLocation: 'Jeddah',
-          industryBusinessCategory: 'Retail',
-        );
-
-        final digest = Uint8List.fromList(
-          sha256.convert(utf8.encode('range-error-regression')).bytes,
-        );
-
-        // Specifically assert no RangeError is thrown.
-        try {
-          signer.sign(
-            digest: digest,
-            privateKeyPem: result['privateKey']!,
+        'PKCS#8 key from CsrGenerator does not throw RangeError on recursive parse',
+        () async {
+          // Before the fix, the recursive call into the inner SEC 1 structure
+          // would re-enter the PKCS#8 branch and index past the buffer end.
+          final csrGenerator = CsrGenerator();
+          final result = await csrGenerator.generateCsr(
+            commonName: 'Regression Test',
+            organizationUnit: 'OU',
+            organizationName: 'O',
+            country: 'SA',
+            serialNumber: '1-a|2-b|3-c',
+            invoiceType: '1000',
+            branchLocation: 'Jeddah',
+            industryBusinessCategory: 'Retail',
           );
-        } on RangeError catch (e) {
-          fail('RangeError should not be thrown after the fix: $e');
-        }
-      });
+
+          final digest = Uint8List.fromList(
+            sha256.convert(utf8.encode('range-error-regression')).bytes,
+          );
+
+          // Specifically assert no RangeError is thrown.
+          try {
+            signer.sign(digest: digest, privateKeyPem: result['privateKey']!);
+          } on RangeError catch (e) {
+            fail('RangeError should not be thrown after the fix: $e');
+          }
+        },
+      );
     });
   });
 }
@@ -347,9 +358,11 @@ Uint8List _randomSeed() {
   final seed = Uint8List(32);
   final secureRandom = SecureRandom('Fortuna');
   secureRandom.seed(
-    KeyParameter(Uint8List.fromList(
-      List.generate(32, (i) => DateTime.now().microsecond + i),
-    )),
+    KeyParameter(
+      Uint8List.fromList(
+        List.generate(32, (i) => DateTime.now().microsecond + i),
+      ),
+    ),
   );
   for (int i = 0; i < 32; i++) {
     seed[i] = secureRandom.nextUint8();
@@ -378,7 +391,7 @@ String _encodeEcPrivateKeyPem(ECPrivateKey key) {
     ..._derLength(innerLen),
     ...versionBytes,
     ...octetString,
-    ...contextOid
+    ...contextOid,
   ];
 
   final b64 = base64Encode(sequence);
@@ -407,7 +420,7 @@ String _encodeEcPublicKeyPem(ECPublicKey key) {
     0xCE,
     0x3D,
     0x02,
-    0x01
+    0x01,
   ]; // 1.2.840.10045.2.1
   final secp256k1Oid = <int>[
     0x06,
@@ -416,21 +429,21 @@ String _encodeEcPublicKeyPem(ECPublicKey key) {
     0x81,
     0x04,
     0x00,
-    0x0A
+    0x0A,
   ]; // 1.3.132.0.10
   final algIdLen = ecPubKeyOid.length + secp256k1Oid.length;
   final algId = <int>[
     0x30,
     ..._derLength(algIdLen),
     ...ecPubKeyOid,
-    ...secp256k1Oid
+    ...secp256k1Oid,
   ];
 
   final bitString = <int>[
     0x03,
     ..._derLength(point.length + 1),
     0x00,
-    ...point
+    ...point,
   ];
 
   final outerLen = algId.length + bitString.length;

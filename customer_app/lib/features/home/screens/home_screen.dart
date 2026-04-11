@@ -10,8 +10,9 @@ import '../widgets/store_card.dart';
 import '../../../core/services/location_service.dart';
 
 /// User location provider.
-final _userLocationProvider =
-    FutureProvider<({double lat, double lng})?>((ref) async {
+final _userLocationProvider = FutureProvider<({double lat, double lng})?>((
+  ref,
+) async {
   final pos = await LocationService.getCurrentPosition();
   if (pos == null) return null;
   return (lat: pos.latitude, lng: pos.longitude);
@@ -142,7 +143,11 @@ class HomeScreen extends ConsumerWidget {
             List<Widget> storeWidgets = stores.map((store) {
               final distance = location != null
                   ? LocationService.distanceKm(
-                      location.lat, location.lng, store.lat, store.lng)
+                      location.lat,
+                      location.lng,
+                      store.lat,
+                      store.lng,
+                    )
                   : null;
               return StoreCard(
                 store: store,

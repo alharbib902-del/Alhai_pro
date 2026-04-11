@@ -70,7 +70,8 @@ class DbHealthReport {
     final sb = StringBuffer('=== DB Health Report ===\n');
     sb.writeln('Status: $healthLevel');
     sb.writeln(
-        'Integrity: ${integrityOk ? "OK" : "FAILED"} ($integrityMessage)');
+      'Integrity: ${integrityOk ? "OK" : "FAILED"} ($integrityMessage)',
+    );
     sb.writeln('FK Violations: $foreignKeyViolations');
     sb.writeln('Orphaned sale_items: $orphanedSaleItems');
     sb.writeln('Orphaned return_items: $orphanedReturnItems');
@@ -268,10 +269,7 @@ class DbHealthService {
         return const _IntegrityResult(ok: false, message: 'no result');
       }
       final message = result.first.data.values.first?.toString() ?? '';
-      return _IntegrityResult(
-        ok: message == 'ok',
-        message: message,
-      );
+      return _IntegrityResult(ok: message == 'ok', message: message);
     } catch (e) {
       return _IntegrityResult(ok: false, message: 'check failed: $e');
     }
@@ -353,10 +351,12 @@ class DbHealthService {
 
       // 3. مبيعات بتاريخ مستقبلي (أكثر من 24 ساعة)
       final futureDate = DateTime.now().add(const Duration(hours: 24));
-      final futureSales = await _db.customSelect(
-        'SELECT COUNT(*) as cnt FROM sales WHERE created_at > ?',
-        variables: [Variable.withDateTime(futureDate)],
-      ).getSingle();
+      final futureSales = await _db
+          .customSelect(
+            'SELECT COUNT(*) as cnt FROM sales WHERE created_at > ?',
+            variables: [Variable.withDateTime(futureDate)],
+          )
+          .getSingle();
       final futureCount = futureSales.data['cnt'] as int? ?? 0;
       if (futureCount > 0) {
         anomalies.add('$futureCount sales with future dates (>24h from now)');
@@ -364,9 +364,7 @@ class DbHealthService {
 
       // 4. منتجات بسعر سالب
       final negativePrices = await _db
-          .customSelect(
-            'SELECT COUNT(*) as cnt FROM products WHERE price < 0',
-          )
+          .customSelect('SELECT COUNT(*) as cnt FROM products WHERE price < 0')
           .getSingle();
       final negPriceCount = negativePrices.data['cnt'] as int? ?? 0;
       if (negPriceCount > 0) {
@@ -375,10 +373,12 @@ class DbHealthService {
 
       // 5. sync_queue عالقة في حالة syncing (أكثر من ساعة)
       final stuckCutoff = DateTime.now().subtract(const Duration(hours: 1));
-      final stuckItems = await _db.customSelect(
-        "SELECT COUNT(*) as cnt FROM sync_queue WHERE status = 'syncing' AND last_attempt_at < ?",
-        variables: [Variable.withDateTime(stuckCutoff)],
-      ).getSingle();
+      final stuckItems = await _db
+          .customSelect(
+            "SELECT COUNT(*) as cnt FROM sync_queue WHERE status = 'syncing' AND last_attempt_at < ?",
+            variables: [Variable.withDateTime(stuckCutoff)],
+          )
+          .getSingle();
       final stuckCount = stuckItems.data['cnt'] as int? ?? 0;
       if (stuckCount > 0) {
         anomalies.add('$stuckCount sync items stuck in syncing state (>1h)');
@@ -398,17 +398,15 @@ class DbHealthService {
     try {
       final pageCount = await _db.customSelect('PRAGMA page_count').getSingle();
       final pageSize = await _db.customSelect('PRAGMA page_size').getSingle();
-      final freePages =
-          await _db.customSelect('PRAGMA freelist_count').getSingle();
+      final freePages = await _db
+          .customSelect('PRAGMA freelist_count')
+          .getSingle();
 
       final pages = pageCount.data.values.first as int? ?? 0;
       final size = pageSize.data.values.first as int? ?? 4096;
       final free = freePages.data.values.first as int? ?? 0;
 
-      return _SizeInfo(
-        sizeBytes: pages * size,
-        freePages: free,
-      );
+      return _SizeInfo(sizeBytes: pages * size, freePages: free);
     } catch (e) {
       if (kDebugMode) {
         debugPrint('[DbHealthService] Size check failed: $e');
@@ -420,8 +418,9 @@ class DbHealthService {
   /// الحصول على عدد الصفحات الفارغة
   Future<int> _getFreePages() async {
     try {
-      final result =
-          await _db.customSelect('PRAGMA freelist_count').getSingle();
+      final result = await _db
+          .customSelect('PRAGMA freelist_count')
+          .getSingle();
       return result.data.values.first as int? ?? 0;
     } catch (_) {
       return 0;

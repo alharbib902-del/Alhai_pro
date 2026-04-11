@@ -115,23 +115,22 @@ class ZatcaInvoiceLine {
   }
 
   Map<String, dynamic> toJson() => {
-        'lineId': lineId,
-        'itemName': itemName,
-        'quantity': quantity,
-        'unitCode': unitCode,
-        'unitPrice': unitPrice,
-        if (grossPrice != null) 'grossPrice': grossPrice,
-        'discountAmount': discountAmount,
-        if (discountReason != null) 'discountReason': discountReason,
-        'vatRate': vatRate,
-        'vatCategoryCode': vatCategoryCode,
-        if (vatExemptionReason != null)
-          'vatExemptionReason': vatExemptionReason,
-        if (vatExemptionReasonCode != null)
-          'vatExemptionReasonCode': vatExemptionReasonCode,
-        if (barcode != null) 'barcode': barcode,
-        if (sellerItemId != null) 'sellerItemId': sellerItemId,
-      };
+    'lineId': lineId,
+    'itemName': itemName,
+    'quantity': quantity,
+    'unitCode': unitCode,
+    'unitPrice': unitPrice,
+    if (grossPrice != null) 'grossPrice': grossPrice,
+    'discountAmount': discountAmount,
+    if (discountReason != null) 'discountReason': discountReason,
+    'vatRate': vatRate,
+    'vatCategoryCode': vatCategoryCode,
+    if (vatExemptionReason != null) 'vatExemptionReason': vatExemptionReason,
+    if (vatExemptionReasonCode != null)
+      'vatExemptionReasonCode': vatExemptionReasonCode,
+    if (barcode != null) 'barcode': barcode,
+    if (sellerItemId != null) 'sellerItemId': sellerItemId,
+  };
 
   factory ZatcaInvoiceLine.fromJson(Map<String, dynamic> json) =>
       ZatcaInvoiceLine(

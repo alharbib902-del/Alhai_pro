@@ -36,10 +36,7 @@ class SessionManager {
     final authState = _ref.read(authStateProvider);
     if (authState.status != AuthStatus.authenticated) return;
 
-    _timer = Timer(
-      const Duration(minutes: kSessionTimeoutMinutes),
-      _onTimeout,
-    );
+    _timer = Timer(const Duration(minutes: kSessionTimeoutMinutes), _onTimeout);
   }
 
   /// Called when the timer expires

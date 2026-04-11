@@ -95,27 +95,25 @@ class PinValidationResult with _$PinValidationResult {
     required String userName,
     required String role,
     List<String>? permissions,
-  }) =>
-      PinValidationResult(
-        isValid: true,
-        userId: userId,
-        userName: userName,
-        role: role,
-        permissions: permissions ?? [],
-      );
+  }) => PinValidationResult(
+    isValid: true,
+    userId: userId,
+    userName: userName,
+    role: role,
+    permissions: permissions ?? [],
+  );
 
   /// Create failure result
   factory PinValidationResult.failure({
     required String errorMessage,
     int remainingAttempts = 3,
     DateTime? lockedUntil,
-  }) =>
-      PinValidationResult(
-        isValid: false,
-        errorMessage: errorMessage,
-        remainingAttempts: remainingAttempts,
-        lockedUntil: lockedUntil,
-      );
+  }) => PinValidationResult(
+    isValid: false,
+    errorMessage: errorMessage,
+    remainingAttempts: remainingAttempts,
+    lockedUntil: lockedUntil,
+  );
 }
 
 /// Emergency code for offline PIN validation

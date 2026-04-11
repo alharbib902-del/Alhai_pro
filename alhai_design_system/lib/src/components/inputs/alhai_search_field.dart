@@ -109,16 +109,17 @@ class _AlhaiSearchFieldState extends State<AlhaiSearchField> {
       enabled: widget.enabled,
       textInputAction: TextInputAction.search,
       onChanged: (value) {
-        widget.onChanged
-            ?.call(value.replaceAll(RegExp(r'[\x00-\x1F\x7F]'), ''));
+        widget.onChanged?.call(
+          value.replaceAll(RegExp(r'[\x00-\x1F\x7F]'), ''),
+        );
       },
       onSubmitted: widget.onSubmitted,
       inputFormatters: const [],
       maxLength: 200,
       maxLengthEnforcement: MaxLengthEnforcement.enforced,
-      buildCounter: (context,
-              {required currentLength, required isFocused, maxLength}) =>
-          null,
+      buildCounter:
+          (context, {required currentLength, required isFocused, maxLength}) =>
+              null,
       style: theme.textTheme.bodyLarge,
       decoration: InputDecoration(
         hintText: widget.hintText,
@@ -145,10 +146,7 @@ class _AlhaiSearchFieldState extends State<AlhaiSearchField> {
         ),
         suffixIcon: widget.showClearButton && _hasText
             ? IconButton(
-                icon: Icon(
-                  Icons.close,
-                  color: colorScheme.onSurfaceVariant,
-                ),
+                icon: Icon(Icons.close, color: colorScheme.onSurfaceVariant),
                 onPressed: _handleClear,
               )
             : null,

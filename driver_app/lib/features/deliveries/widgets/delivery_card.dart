@@ -8,11 +8,7 @@ class DeliveryCard extends StatelessWidget {
   final Map<String, dynamic> delivery;
   final VoidCallback onTap;
 
-  const DeliveryCard({
-    super.key,
-    required this.delivery,
-    required this.onTap,
-  });
+  const DeliveryCard({super.key, required this.delivery, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -71,13 +67,13 @@ class DeliveryCard extends StatelessWidget {
                 if (customerName.isNotEmpty) ...[
                   Row(
                     children: [
-                      Icon(Icons.person_outline,
-                          size: 16, color: theme.colorScheme.outline),
-                      const SizedBox(width: AlhaiSpacing.xxs),
-                      Text(
-                        customerName,
-                        style: theme.textTheme.bodyMedium,
+                      Icon(
+                        Icons.person_outline,
+                        size: 16,
+                        color: theme.colorScheme.outline,
                       ),
+                      const SizedBox(width: AlhaiSpacing.xxs),
+                      Text(customerName, style: theme.textTheme.bodyMedium),
                     ],
                   ),
                   const SizedBox(height: AlhaiSpacing.xxs),
@@ -86,8 +82,11 @@ class DeliveryCard extends StatelessWidget {
                 // Address
                 Row(
                   children: [
-                    Icon(Icons.location_on_outlined,
-                        size: 16, color: theme.colorScheme.outline),
+                    Icon(
+                      Icons.location_on_outlined,
+                      size: 16,
+                      color: theme.colorScheme.outline,
+                    ),
                     const SizedBox(width: AlhaiSpacing.xxs),
                     Expanded(
                       child: Text(

@@ -40,24 +40,25 @@ class LoyaltySettings {
 /// Provider for customer loyalty points data.
 final customerLoyaltyProvider = FutureProvider.autoDispose
     .family<LoyaltyPointsTableData?, String>((ref, customerId) async {
-  if (customerId.isEmpty) return null;
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return null;
-  final db = GetIt.I<AppDatabase>();
-  return db.loyaltyDao.getCustomerLoyalty(customerId, storeId);
-});
+      if (customerId.isEmpty) return null;
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return null;
+      final db = GetIt.I<AppDatabase>();
+      return db.loyaltyDao.getCustomerLoyalty(customerId, storeId);
+    });
 
 /// Provider for loyalty system settings.
-final loyaltySettingsProvider =
-    FutureProvider.autoDispose<LoyaltySettings>((ref) async {
+final loyaltySettingsProvider = FutureProvider.autoDispose<LoyaltySettings>((
+  ref,
+) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return const LoyaltySettings();
 
   final db = GetIt.I<AppDatabase>();
   try {
-    final rows = await (db.select(db.settingsTable)
-          ..where((s) => s.storeId.equals(storeId)))
-        .get();
+    final rows = await (db.select(
+      db.settingsTable,
+    )..where((s) => s.storeId.equals(storeId))).get();
     final map = <String, String>{for (final r in rows) r.key: r.value};
 
     return LoyaltySettings(
@@ -117,11 +118,11 @@ class PaymentLoyaltyWidget extends StatelessWidget {
       decoration: BoxDecoration(
         color: useLoyaltyPoints
             ? (isDark
-                ? AppColors.success.withValues(alpha: 0.1)
-                : AppColors.successSurface)
+                  ? AppColors.success.withValues(alpha: 0.1)
+                  : AppColors.successSurface)
             : (isDark
-                ? AppColors.warning.withValues(alpha: 0.1)
-                : AppColors.warningSurface),
+                  ? AppColors.warning.withValues(alpha: 0.1)
+                  : AppColors.warningSurface),
         borderRadius: BorderRadius.circular(AppRadius.lg),
         border: Border.all(
           color: useLoyaltyPoints
@@ -145,8 +146,9 @@ class PaymentLoyaltyWidget extends StatelessWidget {
               const SizedBox(width: AppSpacing.sm),
               Text(
                 AppLocalizations.of(context).availableLoyaltyPoints(
-                    availablePoints.toString(),
-                    maxSarEquivalent.toStringAsFixed(2)),
+                  availablePoints.toString(),
+                  maxSarEquivalent.toStringAsFixed(2),
+                ),
                 style: AppTypography.bodyMedium.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
@@ -180,8 +182,9 @@ class PaymentLoyaltyWidget extends StatelessWidget {
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     decoration: InputDecoration(
-                      hintText: AppLocalizations.of(context)
-                          .pointsCountHint(availablePoints.toString()),
+                      hintText: AppLocalizations.of(
+                        context,
+                      ).pointsCountHint(availablePoints.toString()),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppRadius.md),
                         borderSide: const BorderSide(color: AppColors.border),
@@ -189,7 +192,9 @@ class PaymentLoyaltyWidget extends StatelessWidget {
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(AppRadius.md),
                         borderSide: const BorderSide(
-                            color: AppColors.success, width: 2),
+                          color: AppColors.success,
+                          width: 2,
+                        ),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
                         horizontal: AppSpacing.md,
@@ -204,13 +209,14 @@ class PaymentLoyaltyWidget extends StatelessWidget {
                       onPointsChanged(clamped);
                       // Correct value if it exceeds maximum
                       if (entered > availablePoints) {
-                        loyaltyPointsController.text =
-                            availablePoints.toString();
+                        loyaltyPointsController.text = availablePoints
+                            .toString();
                         loyaltyPointsController.selection =
                             TextSelection.fromPosition(
-                          TextPosition(
-                              offset: loyaltyPointsController.text.length),
-                        );
+                              TextPosition(
+                                offset: loyaltyPointsController.text.length,
+                              ),
+                            );
                       }
                     },
                   ),
@@ -226,12 +232,14 @@ class PaymentLoyaltyWidget extends StatelessWidget {
                     color: AppColors.successSurface,
                     borderRadius: BorderRadius.circular(AppRadius.md),
                     border: Border.all(
-                        color: AppColors.success.withValues(alpha: 0.3)),
+                      color: AppColors.success.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Text(
                     AppLocalizations.of(context).discountAmountSar(
-                        (pointsToRedeem * loyaltySettings.pointValueSar)
-                            .toStringAsFixed(2)),
+                      (pointsToRedeem * loyaltySettings.pointValueSar)
+                          .toStringAsFixed(2),
+                    ),
                     style: AppTypography.labelLarge.copyWith(
                       color: AppColors.success,
                       fontWeight: FontWeight.w700,
@@ -255,14 +263,16 @@ class PaymentLoyaltyWidget extends StatelessWidget {
                 ),
                 LoyaltyQuickChip(
                   label: AppLocalizations.of(context).pointsCountLabel(
-                      (availablePoints * 0.5).floor().toString()),
+                    (availablePoints * 0.5).floor().toString(),
+                  ),
                   points: (availablePoints * 0.5).floor(),
                   onSelected: onPointsChanged,
                   controller: loyaltyPointsController,
                 ),
                 LoyaltyQuickChip(
                   label: AppLocalizations.of(context).pointsCountLabel(
-                      (availablePoints * 0.25).floor().toString()),
+                    (availablePoints * 0.25).floor().toString(),
+                  ),
                   points: (availablePoints * 0.25).floor(),
                   onSelected: onPointsChanged,
                   controller: loyaltyPointsController,

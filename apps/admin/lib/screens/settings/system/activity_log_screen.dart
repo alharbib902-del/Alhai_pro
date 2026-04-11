@@ -39,15 +39,17 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
     if (mounted) {
       setState(() {
         _activities = logs
-            .map((log) => _ActivityItem(
-                  user: log.userName,
-                  action: log.action,
-                  details: log.description ?? '',
-                  time: _formatTimeAgo(log.createdAt),
-                  icon: _getActionIcon(log.action),
-                  color: _getActionColor(log.action),
-                  type: _getActionType(log.action),
-                ))
+            .map(
+              (log) => _ActivityItem(
+                user: log.userName,
+                action: log.action,
+                details: log.description ?? '',
+                time: _formatTimeAgo(log.createdAt),
+                icon: _getActionIcon(log.action),
+                color: _getActionColor(log.action),
+                type: _getActionType(log.action),
+              ),
+            )
             .toList();
         _updateFilteredList();
         _isLoading = false;
@@ -130,60 +132,73 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
     final l10n = AppLocalizations.of(context);
 
     return SafeArea(
-        child: Column(
-      children: [
-        AppHeader(
-          title: l10n.activityLog,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
-          onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
-          userName: l10n.defaultUserName,
-          userRole: l10n.branchManager,
-        ),
-        Expanded(
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                  child:
-                      _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
-                ),
-        ),
-      ],
-    ));
+      child: Column(
+        children: [
+          AppHeader(
+            title: l10n.activityLog,
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
+            onNotificationsTap: () => context.push('/notifications'),
+            notificationsCount: 3,
+            userName: l10n.defaultUserName,
+            userRole: l10n.branchManager,
+          ),
+          Expanded(
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+                    padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                    child: _buildContent(
+                      isWideScreen,
+                      isMediumScreen,
+                      isDark,
+                      l10n,
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
-      AppLocalizations l10n) {
+  Widget _buildContent(
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Filters
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
-          child: Row(children: [
-            _buildFilterChip('all', l10n.allFilter, isDark),
-            const SizedBox(width: AlhaiSpacing.xs),
-            _buildFilterChip('auth', l10n.loginLogoutFilter, isDark),
-            const SizedBox(width: AlhaiSpacing.xs),
-            _buildFilterChip('sales', l10n.salesFilter, isDark),
-            const SizedBox(width: AlhaiSpacing.xs),
-            _buildFilterChip('products', l10n.productsFilter, isDark),
-            const SizedBox(width: AlhaiSpacing.xs),
-            _buildFilterChip('users', l10n.usersFilter, isDark),
-            const SizedBox(width: AlhaiSpacing.xs),
-            _buildFilterChip('system', l10n.systemFilter, isDark),
-          ]),
+          child: Row(
+            children: [
+              _buildFilterChip('all', l10n.allFilter, isDark),
+              const SizedBox(width: AlhaiSpacing.xs),
+              _buildFilterChip('auth', l10n.loginLogoutFilter, isDark),
+              const SizedBox(width: AlhaiSpacing.xs),
+              _buildFilterChip('sales', l10n.salesFilter, isDark),
+              const SizedBox(width: AlhaiSpacing.xs),
+              _buildFilterChip('products', l10n.productsFilter, isDark),
+              const SizedBox(width: AlhaiSpacing.xs),
+              _buildFilterChip('users', l10n.usersFilter, isDark),
+              const SizedBox(width: AlhaiSpacing.xs),
+              _buildFilterChip('system', l10n.systemFilter, isDark),
+            ],
+          ),
         ),
         const SizedBox(height: AlhaiSpacing.mdl),
         _buildGroup(
-            '${l10n.activityLog} (${_filteredActivities.length})',
-            _filteredActivities
-                .map((a) => _buildActivityTile(a, isDark))
-                .toList(),
-            isDark,
-            noItemsText: l10n.noActivities),
+          '${l10n.activityLog} (${_filteredActivities.length})',
+          _filteredActivities
+              .map((a) => _buildActivityTile(a, isDark))
+              .toList(),
+          isDark,
+          noItemsText: l10n.noActivities,
+        ),
       ],
     );
   }
@@ -191,13 +206,14 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
   Widget _buildFilterChip(String filter, String label, bool isDark) {
     final sel = _selectedFilter == filter;
     return FilterChip(
-      label: Text(label,
-          style: TextStyle(
-              color: sel
-                  ? Colors.white
-                  : (Theme.of(context).colorScheme.onSurface),
-              fontWeight: sel ? FontWeight.bold : FontWeight.normal,
-              fontSize: 12)),
+      label: Text(
+        label,
+        style: TextStyle(
+          color: sel ? Colors.white : (Theme.of(context).colorScheme.onSurface),
+          fontWeight: sel ? FontWeight.bold : FontWeight.normal,
+          fontSize: 12,
+        ),
+      ),
       selected: sel,
       onSelected: (_) => setState(() {
         _selectedFilter = filter;
@@ -206,13 +222,18 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
       selectedColor: AppColors.primary,
       backgroundColor: Theme.of(context).colorScheme.surface,
       side: BorderSide(
-          color: sel ? AppColors.primary : (Theme.of(context).dividerColor)),
+        color: sel ? AppColors.primary : (Theme.of(context).dividerColor),
+      ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     );
   }
 
-  Widget _buildGroup(String title, List<Widget> children, bool isDark,
-      {String noItemsText = ''}) {
+  Widget _buildGroup(
+    String title,
+    List<Widget> children,
+    bool isDark, {
+    String noItemsText = '',
+  }) {
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
@@ -220,27 +241,41 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Padding(
-          padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-              AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
-          child: Text(title,
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface)),
-        ),
-        if (children.isEmpty)
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
           Padding(
+            padding: const EdgeInsetsDirectional.fromSTEB(
+              AlhaiSpacing.mdl,
+              AlhaiSpacing.md,
+              AlhaiSpacing.mdl,
+              AlhaiSpacing.xs,
+            ),
+            child: Text(
+              title,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+          ),
+          if (children.isEmpty)
+            Padding(
               padding: const EdgeInsets.all(AlhaiSpacing.xl),
               child: Center(
-                  child: Text(noItemsText,
-                      style: TextStyle(
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant))))
-        else
-          ...children,
-      ]),
+                child: Text(
+                  noItemsText,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ),
+            )
+          else
+            ...children,
+        ],
+      ),
     );
   }
 
@@ -249,34 +284,52 @@ class _ActivityLogScreenState extends ConsumerState<ActivityLogScreen> {
       leading: Container(
         padding: const EdgeInsets.all(AlhaiSpacing.xs),
         decoration: BoxDecoration(
-            color: a.color.withValues(alpha: 0.1),
-            borderRadius: BorderRadius.circular(8)),
+          color: a.color.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8),
+        ),
         child: Icon(a.icon, color: a.color, size: 20),
       ),
-      title: Row(children: [
-        Expanded(
-            child: Text(a.action,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurface,
-                    fontWeight: FontWeight.w500))),
-        Text(a.time,
+      title: Row(
+        children: [
+          Expanded(
+            child: Text(
+              a.action,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurface,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+          Text(
+            a.time,
             style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                fontSize: 11)),
-      ]),
-      subtitle: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Text(a.details,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            a.details,
             style: TextStyle(
-                color: Theme.of(context).colorScheme.onSurfaceVariant,
-                fontSize: 12)),
-        Text(a.user,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 12,
+            ),
+          ),
+          Text(
+            a.user,
             style: TextStyle(
-                color: Theme.of(context)
-                    .colorScheme
-                    .onSurfaceVariant
-                    .withValues(alpha: 0.6),
-                fontSize: 11)),
-      ]),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
+              fontSize: 11,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
@@ -285,12 +338,13 @@ class _ActivityItem {
   final String user, action, details, time, type;
   final IconData icon;
   final Color color;
-  _ActivityItem(
-      {required this.user,
-      required this.action,
-      required this.details,
-      required this.time,
-      required this.icon,
-      required this.color,
-      required this.type});
+  _ActivityItem({
+    required this.user,
+    required this.action,
+    required this.details,
+    required this.time,
+    required this.icon,
+    required this.color,
+    required this.type,
+  });
 }

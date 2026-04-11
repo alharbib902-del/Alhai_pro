@@ -47,8 +47,9 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
       children: [
         AppHeader(
           title: l10n.aiStaffAnalytics,
-          onMenuTap:
-              !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
+          onMenuTap: !isWideScreen
+              ? () => Scaffold.of(context).openDrawer()
+              : null,
         ),
         Expanded(child: _buildContent(isDark, isWideScreen)),
       ],
@@ -62,15 +63,23 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
       children: [
         // Summary cards
         Padding(
-          padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-              AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
+          padding: EdgeInsetsDirectional.fromSTEB(
+            AlhaiSpacing.mdl,
+            AlhaiSpacing.md,
+            AlhaiSpacing.mdl,
+            AlhaiSpacing.zero,
+          ),
           child: _buildSummaryRow(teamSummary, isDark, isWideScreen),
         ),
 
         // Tabs
         Container(
-          margin: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-              AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.zero),
+          margin: EdgeInsetsDirectional.fromSTEB(
+            AlhaiSpacing.mdl,
+            AlhaiSpacing.md,
+            AlhaiSpacing.mdl,
+            AlhaiSpacing.zero,
+          ),
           decoration: BoxDecoration(
             color: isDark ? const Color(0xFF1E293B) : Colors.white,
             borderRadius: BorderRadius.circular(12),
@@ -93,8 +102,10 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
             unselectedLabelColor: isDark
                 ? Colors.white.withValues(alpha: 0.5)
                 : AppColors.textSecondary,
-            labelStyle:
-                const TextStyle(fontWeight: FontWeight.w600, fontSize: 13),
+            labelStyle: const TextStyle(
+              fontWeight: FontWeight.w600,
+              fontSize: 13,
+            ),
             dividerHeight: 0,
             tabs: [
               Tab(
@@ -147,25 +158,42 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
   }
 
   Widget _buildSummaryRow(
-      TeamPerformanceSummary summary, bool isDark, bool isWideScreen) {
+    TeamPerformanceSummary summary,
+    bool isDark,
+    bool isWideScreen,
+  ) {
     final l10n = AppLocalizations.of(context);
     final items = [
-      _SummaryItem(Icons.grade_rounded, l10n.aiAvgPerformance,
-          '${summary.avgScore}%', AppColors.primary),
       _SummaryItem(
-          Icons.attach_money_rounded,
-          l10n.aiTotalSalesLabel,
-          '${(summary.totalSales / 1000).toStringAsFixed(0)}K ر.س',
-          AppColors.success),
-      _SummaryItem(Icons.receipt_long_rounded, l10n.aiTotalTransactions,
-          '${summary.totalTransactions}', AppColors.info),
+        Icons.grade_rounded,
+        l10n.aiAvgPerformance,
+        '${summary.avgScore}%',
+        AppColors.primary,
+      ),
       _SummaryItem(
-          Icons.cancel_outlined,
-          l10n.aiAvgVoidRate,
-          '${summary.avgVoidRate}%',
-          summary.avgVoidRate > 3 ? AppColors.error : AppColors.warning),
-      _SummaryItem(Icons.trending_up_rounded, l10n.aiTeamGrowth,
-          '+${summary.teamGrowth}%', AppColors.primary),
+        Icons.attach_money_rounded,
+        l10n.aiTotalSalesLabel,
+        '${(summary.totalSales / 1000).toStringAsFixed(0)}K ر.س',
+        AppColors.success,
+      ),
+      _SummaryItem(
+        Icons.receipt_long_rounded,
+        l10n.aiTotalTransactions,
+        '${summary.totalTransactions}',
+        AppColors.info,
+      ),
+      _SummaryItem(
+        Icons.cancel_outlined,
+        l10n.aiAvgVoidRate,
+        '${summary.avgVoidRate}%',
+        summary.avgVoidRate > 3 ? AppColors.error : AppColors.warning,
+      ),
+      _SummaryItem(
+        Icons.trending_up_rounded,
+        l10n.aiTeamGrowth,
+        '+${summary.teamGrowth}%',
+        AppColors.primary,
+      ),
     ];
 
     return LayoutBuilder(
@@ -184,9 +212,10 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
                   color: isDark ? const Color(0xFF1E293B) : Colors.white,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                      color: isDark
-                          ? Colors.white.withValues(alpha: 0.08)
-                          : AppColors.border),
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.08)
+                        : AppColors.border,
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -230,9 +259,10 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
           color: isDark ? const Color(0xFF1E293B) : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.08)
-                  : AppColors.border),
+            color: isDark
+                ? Colors.white.withValues(alpha: 0.08)
+                : AppColors.border,
+          ),
           boxShadow: [
             BoxShadow(
               color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.04),
@@ -254,8 +284,11 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
                       ),
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.emoji_events_rounded,
-                        color: Colors.white, size: 20),
+                    child: const Icon(
+                      Icons.emoji_events_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(width: AlhaiSpacing.sm),
                   Text(
@@ -290,14 +323,17 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
         rankColor = const Color(0xFFCD7F32);
         rankIcon = Icons.emoji_events_rounded;
       default:
-        rankColor =
-            isDark ? Colors.white.withValues(alpha: 0.4) : AppColors.textMuted;
+        rankColor = isDark
+            ? Colors.white.withValues(alpha: 0.4)
+            : AppColors.textMuted;
         rankIcon = Icons.person_rounded;
     }
 
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 14),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AlhaiSpacing.md,
+        vertical: 14,
+      ),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
@@ -308,8 +344,8 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
         ),
         color: ranking.rank == 1
             ? (isDark
-                ? const Color(0xFFFFD700).withValues(alpha: 0.05)
-                : const Color(0xFFFFF8E1))
+                  ? const Color(0xFFFFD700).withValues(alpha: 0.05)
+                  : const Color(0xFFFFF8E1))
             : null,
       ),
       child: Row(
@@ -384,7 +420,9 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
           // Change
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.xs, vertical: 3),
+              horizontal: AlhaiSpacing.xs,
+              vertical: 3,
+            ),
             decoration: BoxDecoration(
               color: ranking.changeFromLastWeek >= 0
                   ? AppColors.success.withValues(alpha: 0.1)
@@ -428,8 +466,10 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
     return staffAsync.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(
-          child: Text(
-              AppLocalizations.of(context).aiErrorWithMessage(e.toString()))),
+        child: Text(
+          AppLocalizations.of(context).aiErrorWithMessage(e.toString()),
+        ),
+      ),
       data: (staff) {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -466,7 +506,9 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
       child: Column(
         children: [
           ShiftOptimizationChart(
-              data: heatmap, height: isWideScreen ? 350 : 280),
+            data: heatmap,
+            height: isWideScreen ? 350 : 280,
+          ),
           const SizedBox(height: AlhaiSpacing.mdl),
           // Optimization suggestions
           ...optimizations.map((opt) => _buildOptimizationCard(opt, isDark)),
@@ -502,8 +544,11 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
               color: AppColors.warning.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(10),
             ),
-            child: const Icon(Icons.lightbulb_rounded,
-                color: AppColors.warning, size: 22),
+            child: const Icon(
+              Icons.lightbulb_rounded,
+              color: AppColors.warning,
+              size: 22,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -523,14 +568,18 @@ class _AiStaffAnalyticsScreenState extends ConsumerState<AiStaffAnalyticsScreen>
                     const SizedBox(width: AlhaiSpacing.xs),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.xs, vertical: 3),
+                        horizontal: AlhaiSpacing.xs,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.error.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
                         AppLocalizations.of(context).aiStaffCurrentSuggested(
-                            opt.currentStaff, opt.suggestedStaff),
+                          opt.currentStaff,
+                          opt.suggestedStaff,
+                        ),
                         style: const TextStyle(
                           color: AppColors.error,
                           fontWeight: FontWeight.w600,

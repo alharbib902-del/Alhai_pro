@@ -8,12 +8,16 @@ void main() {
       expect(AlertType.lowStock.displayNameAr, equals('مخزون منخفض'));
       expect(AlertType.slowMoving.displayNameAr, equals('صنف راكد'));
       expect(
-          AlertType.expiringSoon.displayNameAr, equals('قرب انتهاء الصلاحية'));
+        AlertType.expiringSoon.displayNameAr,
+        equals('قرب انتهاء الصلاحية'),
+      );
       expect(AlertType.highDemand.displayNameAr, equals('طلب عالي'));
       expect(AlertType.debtOverdue.displayNameAr, equals('دين متأخر'));
       expect(AlertType.priceChange.displayNameAr, equals('تغير سعر'));
-      expect(AlertType.reorderSuggestion.displayNameAr,
-          equals('اقتراح إعادة طلب'));
+      expect(
+        AlertType.reorderSuggestion.displayNameAr,
+        equals('اقتراح إعادة طلب'),
+      );
     });
 
     test('priority should return correct priority levels', () {

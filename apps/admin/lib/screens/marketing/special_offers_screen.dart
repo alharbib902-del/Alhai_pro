@@ -24,8 +24,9 @@ class SpecialOffersScreen extends ConsumerWidget {
       children: [
         AppHeader(
           title: l10n.specialOffersTitle,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.cashCustomer,
@@ -83,11 +84,14 @@ class _OffersContent extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(l10n.manageSpecialOffers,
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: textColor)),
+            Text(
+              l10n.manageSpecialOffers,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
+            ),
             FilledButton.icon(
               onPressed: () => _showAddPromotionDialog(context, ref),
               icon: const Icon(Icons.add, size: 18),
@@ -100,31 +104,37 @@ class _OffersContent extends ConsumerWidget {
         Row(
           children: [
             Expanded(
-                child: _buildStatCard(
-                    context,
-                    Icons.local_offer,
-                    l10n.totalLabel,
-                    '${promotions.length}',
-                    AppColors.info,
-                    isDark)),
+              child: _buildStatCard(
+                context,
+                Icons.local_offer,
+                l10n.totalLabel,
+                '${promotions.length}',
+                AppColors.info,
+                isDark,
+              ),
+            ),
             SizedBox(width: isMediumScreen ? 16 : 12),
             Expanded(
-                child: _buildStatCard(
-                    context,
-                    Icons.check_circle,
-                    l10n.active,
-                    '${promotions.where((p) => p.isActive).length}',
-                    AppColors.success,
-                    isDark)),
+              child: _buildStatCard(
+                context,
+                Icons.check_circle,
+                l10n.active,
+                '${promotions.where((p) => p.isActive).length}',
+                AppColors.success,
+                isDark,
+              ),
+            ),
             SizedBox(width: isMediumScreen ? 16 : 12),
             Expanded(
-                child: _buildStatCard(
-                    context,
-                    Icons.timer,
-                    l10n.expiringSoon,
-                    '${promotions.where((p) => p.isActive && p.endDate.difference(DateTime.now()).inDays <= 7).length}',
-                    AppColors.secondary,
-                    isDark)),
+              child: _buildStatCard(
+                context,
+                Icons.timer,
+                l10n.expiringSoon,
+                '${promotions.where((p) => p.isActive && p.endDate.difference(DateTime.now()).inDays <= 7).length}',
+                AppColors.secondary,
+                isDark,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: AlhaiSpacing.mdl),
@@ -144,47 +154,64 @@ class _OffersContent extends ConsumerWidget {
               ),
               child: ListTile(
                 contentPadding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                  horizontal: AlhaiSpacing.md,
+                  vertical: AlhaiSpacing.xs,
+                ),
                 leading: Container(
                   padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
                     color: _getTypeColor(promotion.type).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(_getTypeIcon(promotion.type),
-                      color: _getTypeColor(promotion.type)),
+                  child: Icon(
+                    _getTypeIcon(promotion.type),
+                    color: _getTypeColor(promotion.type),
+                  ),
                 ),
                 title: Row(
                   children: [
                     Expanded(
-                        child: Text(promotion.name,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: textColor))),
+                      child: Text(
+                        promotion.name,
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: textColor,
+                        ),
+                      ),
+                    ),
                     if (isExpired)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
-                            color: AppColors.textSecondary,
-                            borderRadius: BorderRadius.circular(4)),
-                        child: Text(l10n.offerExpired,
-                            style: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onInverseSurface,
-                                fontSize: 10)),
+                          color: AppColors.textSecondary,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          l10n.offerExpired,
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onInverseSurface,
+                            fontSize: 10,
+                          ),
+                        ),
                       ),
                   ],
                 ),
                 subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(_getTypeLabel(promotion, l10n),
-                        style: TextStyle(color: subtextColor, fontSize: 12)),
                     Text(
-                        '${promotion.endDate.day}/${promotion.endDate.month}/${promotion.endDate.year}',
-                        style: TextStyle(fontSize: 11, color: subtextColor)),
+                      _getTypeLabel(promotion, l10n),
+                      style: TextStyle(color: subtextColor, fontSize: 12),
+                    ),
+                    Text(
+                      '${promotion.endDate.day}/${promotion.endDate.month}/${promotion.endDate.year}',
+                      style: TextStyle(fontSize: 11, color: subtextColor),
+                    ),
                   ],
                 ),
                 trailing: Switch(
@@ -202,8 +229,14 @@ class _OffersContent extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatCard(BuildContext context, IconData icon, String label,
-      String value, Color color, bool isDark) {
+  Widget _buildStatCard(
+    BuildContext context,
+    IconData icon,
+    String label,
+    String value,
+    Color color,
+    bool isDark,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
@@ -215,13 +248,21 @@ class _OffersContent extends ConsumerWidget {
         children: [
           Icon(icon, color: color, size: 24),
           const SizedBox(height: AlhaiSpacing.xs),
-          Text(value,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, color: color, fontSize: 20)),
-          Text(label,
-              style: TextStyle(
-                  fontSize: 11,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant)),
+          Text(
+            value,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: color,
+              fontSize: 20,
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );
@@ -257,7 +298,10 @@ class _OffersContent extends ConsumerWidget {
   }
 
   Future<void> _toggleActive(
-      WidgetRef ref, PromotionsTableData promotion, bool value) async {
+    WidgetRef ref,
+    PromotionsTableData promotion,
+    bool value,
+  ) async {
     try {
       final updated = PromotionsTableData(
         id: promotion.id,
@@ -282,7 +326,9 @@ class _OffersContent extends ConsumerWidget {
   }
 
   Future<void> _deletePromotion(
-      WidgetRef ref, PromotionsTableData promotion) async {
+    WidgetRef ref,
+    PromotionsTableData promotion,
+  ) async {
     try {
       await deletePromotion(ref, promotion.id);
     } catch (e) {
@@ -304,24 +350,32 @@ class _OffersContent extends ConsumerWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 TextField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                        labelText: l10n.offerName,
-                        prefixIcon: const Icon(Icons.local_offer))),
+                  controller: nameController,
+                  decoration: InputDecoration(
+                    labelText: l10n.offerName,
+                    prefixIcon: const Icon(Icons.local_offer),
+                  ),
+                ),
                 const SizedBox(height: AlhaiSpacing.sm),
                 DropdownButtonFormField<String>(
                   initialValue: type,
                   decoration: InputDecoration(
-                      labelText: l10n.offerType,
-                      prefixIcon: const Icon(Icons.category)),
+                    labelText: l10n.offerType,
+                    prefixIcon: const Icon(Icons.category),
+                  ),
                   items: [
                     DropdownMenuItem(
-                        value: 'flash_sale',
-                        child: Text(l10n.percentageDiscount)),
+                      value: 'flash_sale',
+                      child: Text(l10n.percentageDiscount),
+                    ),
                     DropdownMenuItem(
-                        value: 'bundle', child: Text(l10n.bundleLabel)),
+                      value: 'bundle',
+                      child: Text(l10n.bundleLabel),
+                    ),
                     DropdownMenuItem(
-                        value: 'buy_x_get_y', child: Text(l10n.buyAndGet)),
+                      value: 'buy_x_get_y',
+                      child: Text(l10n.buyAndGet),
+                    ),
                   ],
                   onChanged: (v) => setDialogState(() => type = v!),
                 ),
@@ -330,14 +384,18 @@ class _OffersContent extends ConsumerWidget {
           ),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(l10n.cancel)),
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.cancel),
+            ),
             FilledButton(
               onPressed: () async {
                 if (nameController.text.isNotEmpty) {
                   try {
-                    await addPromotion(ref,
-                        name: nameController.text, type: type);
+                    await addPromotion(
+                      ref,
+                      name: nameController.text,
+                      type: type,
+                    );
                   } catch (e) {
                     debugPrint('Error adding promotion: $e');
                   }
@@ -354,7 +412,10 @@ class _OffersContent extends ConsumerWidget {
   }
 
   void _showPromotionDetails(
-      BuildContext context, WidgetRef ref, PromotionsTableData p) {
+    BuildContext context,
+    WidgetRef ref,
+    PromotionsTableData p,
+  ) {
     final isDarkTheme = Theme.of(context).brightness == Brightness.dark;
     showModalBottomSheet(
       context: context,
@@ -365,51 +426,72 @@ class _OffersContent extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(children: [
-              Icon(_getTypeIcon(p.type),
-                  size: 32, color: _getTypeColor(p.type)),
-              const SizedBox(width: AlhaiSpacing.sm),
-              Expanded(
-                  child: Text(p.name,
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface))),
-            ]),
+            Row(
+              children: [
+                Icon(
+                  _getTypeIcon(p.type),
+                  size: 32,
+                  color: _getTypeColor(p.type),
+                ),
+                const SizedBox(width: AlhaiSpacing.sm),
+                Expanded(
+                  child: Text(
+                    p.name,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
+                ),
+              ],
+            ),
             const SizedBox(height: AlhaiSpacing.md),
             _DetailRow(
-                label: l10n.offerType,
-                value: _getTypeLabel(p, l10n),
-                isDark: isDarkTheme),
+              label: l10n.offerType,
+              value: _getTypeLabel(p, l10n),
+              isDark: isDarkTheme,
+            ),
             _DetailRow(
-                label: l10n.startDateLabel,
-                value:
-                    '${p.startDate.day}/${p.startDate.month}/${p.startDate.year}',
-                isDark: isDarkTheme),
+              label: l10n.startDateLabel,
+              value:
+                  '${p.startDate.day}/${p.startDate.month}/${p.startDate.year}',
+              isDark: isDarkTheme,
+            ),
             _DetailRow(
-                label: l10n.endDateLabel,
-                value: '${p.endDate.day}/${p.endDate.month}/${p.endDate.year}',
-                isDark: isDarkTheme),
+              label: l10n.endDateLabel,
+              value: '${p.endDate.day}/${p.endDate.month}/${p.endDate.year}',
+              isDark: isDarkTheme,
+            ),
             const SizedBox(height: AlhaiSpacing.md),
-            Row(children: [
-              Expanded(
+            Row(
+              children: [
+                Expanded(
                   child: OutlinedButton.icon(
-                      onPressed: () {
-                        Navigator.pop(context);
-                        _deletePromotion(ref, p);
-                      },
-                      icon: const Icon(Icons.delete, color: AppColors.error),
-                      label: Text(l10n.delete,
-                          style: const TextStyle(color: AppColors.error)))),
-              const SizedBox(width: AlhaiSpacing.sm),
-              Expanded(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      _deletePromotion(ref, p);
+                    },
+                    icon: const Icon(Icons.delete, color: AppColors.error),
+                    label: Text(
+                      l10n.delete,
+                      style: const TextStyle(color: AppColors.error),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AlhaiSpacing.sm),
+                Expanded(
                   child: FilledButton.icon(
-                      onPressed: () {},
-                      icon: const Icon(Icons.edit),
-                      label: Text(l10n.edit),
-                      style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.primary))),
-            ]),
+                    onPressed: () {},
+                    icon: const Icon(Icons.edit),
+                    label: Text(l10n.edit),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
@@ -420,22 +502,31 @@ class _OffersContent extends ConsumerWidget {
 class _DetailRow extends StatelessWidget {
   final String label, value;
   final bool isDark;
-  const _DetailRow(
-      {required this.label, required this.value, this.isDark = false});
+  const _DetailRow({
+    required this.label,
+    required this.value,
+    this.isDark = false,
+  });
   @override
   Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(label,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
-            Text(value,
-                style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: Theme.of(context).colorScheme.onSurface)),
-          ],
+    padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
-      );
+        Text(
+          value,
+          style: TextStyle(
+            fontWeight: FontWeight.w500,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
+      ],
+    ),
+  );
 }

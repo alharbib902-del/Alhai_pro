@@ -227,11 +227,9 @@ void main() {
 
     test('add increases count', () {
       final manager = PendingOperationsManager();
-      manager.add(OfflineOperation<void>(
-        id: 'op-1',
-        type: 'test',
-        execute: () async {},
-      ));
+      manager.add(
+        OfflineOperation<void>(id: 'op-1', type: 'test', execute: () async {}),
+      );
 
       expect(manager.count, 1);
       expect(manager.hasOperations, isTrue);
@@ -239,11 +237,9 @@ void main() {
 
     test('remove decreases count', () {
       final manager = PendingOperationsManager();
-      manager.add(OfflineOperation<void>(
-        id: 'op-1',
-        type: 'test',
-        execute: () async {},
-      ));
+      manager.add(
+        OfflineOperation<void>(id: 'op-1', type: 'test', execute: () async {}),
+      );
       manager.remove('op-1');
 
       expect(manager.count, 0);
@@ -252,11 +248,9 @@ void main() {
 
     test('operations returns unmodifiable list', () {
       final manager = PendingOperationsManager();
-      manager.add(OfflineOperation<void>(
-        id: 'op-1',
-        type: 'test',
-        execute: () async {},
-      ));
+      manager.add(
+        OfflineOperation<void>(id: 'op-1', type: 'test', execute: () async {}),
+      );
 
       expect(() => manager.operations.clear(), throwsUnsupportedError);
     });
@@ -264,16 +258,20 @@ void main() {
     test('executeAll processes operations', () async {
       final executed = <String>[];
       final manager = PendingOperationsManager();
-      manager.add(OfflineOperation<void>(
-        id: 'op-1',
-        type: 'test',
-        execute: () async => executed.add('op-1'),
-      ));
-      manager.add(OfflineOperation<void>(
-        id: 'op-2',
-        type: 'test',
-        execute: () async => executed.add('op-2'),
-      ));
+      manager.add(
+        OfflineOperation<void>(
+          id: 'op-1',
+          type: 'test',
+          execute: () async => executed.add('op-1'),
+        ),
+      );
+      manager.add(
+        OfflineOperation<void>(
+          id: 'op-2',
+          type: 'test',
+          execute: () async => executed.add('op-2'),
+        ),
+      );
 
       await manager.executeAll();
 
@@ -284,14 +282,16 @@ void main() {
     test('executeAll retries failed operations up to 3 times', () async {
       var callCount = 0;
       final manager = PendingOperationsManager();
-      manager.add(OfflineOperation<void>(
-        id: 'op-1',
-        type: 'test',
-        execute: () async {
-          callCount++;
-          throw Exception('fail');
-        },
-      ));
+      manager.add(
+        OfflineOperation<void>(
+          id: 'op-1',
+          type: 'test',
+          execute: () async {
+            callCount++;
+            throw Exception('fail');
+          },
+        ),
+      );
 
       // First execute - retryCount becomes 1
       await manager.executeAll();
@@ -311,16 +311,12 @@ void main() {
 
     test('clear removes all operations', () {
       final manager = PendingOperationsManager();
-      manager.add(OfflineOperation<void>(
-        id: 'op-1',
-        type: 'test',
-        execute: () async {},
-      ));
-      manager.add(OfflineOperation<void>(
-        id: 'op-2',
-        type: 'test',
-        execute: () async {},
-      ));
+      manager.add(
+        OfflineOperation<void>(id: 'op-1', type: 'test', execute: () async {}),
+      );
+      manager.add(
+        OfflineOperation<void>(id: 'op-2', type: 'test', execute: () async {}),
+      );
 
       manager.clear();
 

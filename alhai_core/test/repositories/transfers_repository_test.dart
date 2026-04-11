@@ -15,11 +15,7 @@ void main() {
         sourceStoreName: 'Store A',
         destinationStoreName: 'Store B',
         items: const [
-          TransferItem(
-            productId: 'p1',
-            productName: 'Product 1',
-            quantity: 10,
-          ),
+          TransferItem(productId: 'p1', productName: 'Product 1', quantity: 10),
         ],
         status: TransferStatus.pending,
         createdAt: DateTime(2026, 1, 15),

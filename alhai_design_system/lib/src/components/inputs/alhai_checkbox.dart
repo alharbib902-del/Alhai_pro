@@ -51,7 +51,8 @@ class AlhaiCheckbox extends StatelessWidget {
     final textDirection = Directionality.of(context);
     final isDisabled = !enabled || onChanged == null;
 
-    final effectivePadding = padding ??
+    final effectivePadding =
+        padding ??
         const EdgeInsetsDirectional.symmetric(
           horizontal: AlhaiSpacing.md,
           vertical: AlhaiSpacing.sm,
@@ -73,10 +74,7 @@ class AlhaiCheckbox extends StatelessWidget {
 
     // No label - just checkbox
     if (label == null && subtitle == null) {
-      return Padding(
-        padding: effectivePadding,
-        child: checkbox,
-      );
+      return Padding(padding: effectivePadding, child: checkbox);
     }
 
     // With label/subtitle

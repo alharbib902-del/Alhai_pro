@@ -30,22 +30,26 @@ void main() {
   group('EmployeeProfileScreen', () {
     testWidgets('shows loading indicator initially', (tester) async {
       final completer = Completer<UsersTableData?>();
-      when(() => mockUsersDao.getUserById(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => mockUsersDao.getUserById(any()),
+      ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(
-          createTestWidget(const EmployeeProfileScreen(userId: 'user-1')));
+        createTestWidget(const EmployeeProfileScreen(userId: 'user-1')),
+      );
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsWidgets);
     });
 
     testWidgets('shows error state when user not found', (tester) async {
-      when(() => mockUsersDao.getUserById('user-1'))
-          .thenAnswer((_) async => null);
+      when(
+        () => mockUsersDao.getUserById('user-1'),
+      ).thenAnswer((_) async => null);
 
       await tester.pumpWidget(
-          createTestWidget(const EmployeeProfileScreen(userId: 'user-1')));
+        createTestWidget(const EmployeeProfileScreen(userId: 'user-1')),
+      );
       await tester.pumpAndSettle();
 
       // Screen should handle null user
@@ -62,11 +66,13 @@ void main() {
         isActive: true,
         createdAt: DateTime(2026, 1, 1),
       );
-      when(() => mockUsersDao.getUserById('user-1'))
-          .thenAnswer((_) async => user);
+      when(
+        () => mockUsersDao.getUserById('user-1'),
+      ).thenAnswer((_) async => user);
 
       await tester.pumpWidget(
-          createTestWidget(const EmployeeProfileScreen(userId: 'user-1')));
+        createTestWidget(const EmployeeProfileScreen(userId: 'user-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('أحمد محمد'), findsWidgets);
@@ -82,11 +88,13 @@ void main() {
         isActive: true,
         createdAt: DateTime(2026, 1, 1),
       );
-      when(() => mockUsersDao.getUserById('user-1'))
-          .thenAnswer((_) async => user);
+      when(
+        () => mockUsersDao.getUserById('user-1'),
+      ).thenAnswer((_) async => user);
 
       await tester.pumpWidget(
-          createTestWidget(const EmployeeProfileScreen(userId: 'user-1')));
+        createTestWidget(const EmployeeProfileScreen(userId: 'user-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(TabBar), findsOneWidget);
@@ -94,11 +102,13 @@ void main() {
     });
 
     testWidgets('screen handles error from getUserById', (tester) async {
-      when(() => mockUsersDao.getUserById('user-1'))
-          .thenAnswer((_) async => throw Exception('DB error'));
+      when(
+        () => mockUsersDao.getUserById('user-1'),
+      ).thenAnswer((_) async => throw Exception('DB error'));
 
       await tester.pumpWidget(
-          createTestWidget(const EmployeeProfileScreen(userId: 'user-1')));
+        createTestWidget(const EmployeeProfileScreen(userId: 'user-1')),
+      );
       await tester.pump(const Duration(seconds: 1));
 
       expect(find.byType(EmployeeProfileScreen), findsOneWidget);

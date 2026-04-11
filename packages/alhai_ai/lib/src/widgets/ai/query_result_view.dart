@@ -13,10 +13,7 @@ import '../../services/ai_chat_with_data_service.dart';
 class QueryResultView extends StatelessWidget {
   final QueryResult result;
 
-  const QueryResultView({
-    super.key,
-    required this.result,
-  });
+  const QueryResultView({super.key, required this.result});
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +27,9 @@ class QueryResultView extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.06)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -47,11 +45,7 @@ class QueryResultView extends StatelessWidget {
           // العنوان + وقت التنفيذ
           Row(
             children: [
-              Icon(
-                _getResultIcon(),
-                color: AppColors.primary,
-                size: 20,
-              ),
+              Icon(_getResultIcon(), color: AppColors.primary, size: 20),
               const SizedBox(width: AlhaiSpacing.xs),
               Expanded(
                 child: Text(
@@ -65,7 +59,9 @@ class QueryResultView extends StatelessWidget {
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.xs, vertical: 3),
+                  horizontal: AlhaiSpacing.xs,
+                  vertical: 3,
+                ),
                 decoration: BoxDecoration(
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.05)
@@ -74,10 +70,7 @@ class QueryResultView extends StatelessWidget {
                 ),
                 child: Text(
                   '${result.executionTimeMs}ms',
-                  style: TextStyle(
-                    color: subtextColor,
-                    fontSize: 10,
-                  ),
+                  style: TextStyle(color: subtextColor, fontSize: 10),
                 ),
               ),
             ],
@@ -140,10 +133,7 @@ class QueryResultView extends StatelessWidget {
             if (result.singleUnit != null && result.singleUnit!.isNotEmpty)
               Text(
                 result.singleUnit!,
-                style: TextStyle(
-                  color: subtextColor,
-                  fontSize: 16,
-                ),
+                style: TextStyle(color: subtextColor, fontSize: 16),
               ),
           ],
         ),
@@ -176,31 +166,34 @@ class QueryResultView extends StatelessWidget {
           ),
         ),
         columns: result.tableHeaders!
-            .map((h) => DataColumn(
-                  label: Text(
-                    h,
-                    style: TextStyle(
-                      color: textColor,
-                      fontSize: 13,
-                      fontWeight: FontWeight.bold,
-                    ),
+            .map(
+              (h) => DataColumn(
+                label: Text(
+                  h,
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
                   ),
-                ))
+                ),
+              ),
+            )
             .toList(),
         rows: result.tableRows!
-            .map((row) => DataRow(
-                  cells: row
-                      .map((cell) => DataCell(
-                            Text(
-                              cell,
-                              style: TextStyle(
-                                color: subtextColor,
-                                fontSize: 13,
-                              ),
-                            ),
-                          ))
-                      .toList(),
-                ))
+            .map(
+              (row) => DataRow(
+                cells: row
+                    .map(
+                      (cell) => DataCell(
+                        Text(
+                          cell,
+                          style: TextStyle(color: subtextColor, fontSize: 13),
+                        ),
+                      ),
+                    )
+                    .toList(),
+              ),
+            )
             .toList(),
       ),
     );
@@ -219,10 +212,7 @@ class QueryResultView extends StatelessWidget {
       height: 220,
       child: CustomPaint(
         size: const Size(double.infinity, 220),
-        painter: _BarChartPainter(
-          data: result.chartData!,
-          isDark: isDark,
-        ),
+        painter: _BarChartPainter(data: result.chartData!, isDark: isDark),
       ),
     );
   }
@@ -240,10 +230,7 @@ class QueryResultView extends StatelessWidget {
       height: 200,
       child: CustomPaint(
         size: const Size(double.infinity, 200),
-        painter: _LineChartPainter(
-          data: result.chartData!,
-          isDark: isDark,
-        ),
+        painter: _LineChartPainter(data: result.chartData!, isDark: isDark),
       ),
     );
   }
@@ -263,10 +250,7 @@ class QueryResultView extends StatelessWidget {
           height: 200,
           child: CustomPaint(
             size: const Size(double.infinity, 200),
-            painter: _PieChartPainter(
-              data: result.chartData!,
-              isDark: isDark,
-            ),
+            painter: _PieChartPainter(data: result.chartData!, isDark: isDark),
           ),
         ),
         const SizedBox(height: AlhaiSpacing.md),
@@ -289,10 +273,7 @@ class QueryResultView extends StatelessWidget {
                 const SizedBox(width: 6),
                 Text(
                   '${d.label}: ${d.value.toStringAsFixed(0)}%',
-                  style: TextStyle(
-                    color: subtextColor,
-                    fontSize: 12,
-                  ),
+                  style: TextStyle(color: subtextColor, fontSize: 12),
                 ),
               ],
             );
@@ -357,7 +338,10 @@ class _BarChartPainter extends CustomPainter {
     for (int i = 0; i <= 4; i++) {
       final y = paddingTop + (chartHeight * i / 4);
       canvas.drawLine(
-          Offset(paddingLeft, y), Offset(size.width - 10, y), gridPaint);
+        Offset(paddingLeft, y),
+        Offset(size.width - 10, y),
+        gridPaint,
+      );
 
       final val = maxValue - (maxValue * i / 4);
       final tp = TextPainter(
@@ -387,10 +371,7 @@ class _BarChartPainter extends CustomPainter {
         ..shader = LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            data[i].color,
-            data[i].color.withValues(alpha: 0.7),
-          ],
+          colors: [data[i].color, data[i].color.withValues(alpha: 0.7)],
         ).createShader(Rect.fromLTWH(x, y, barWidth, barHeight));
 
       canvas.drawRRect(rect, barPaint);
@@ -403,7 +384,9 @@ class _BarChartPainter extends CustomPainter {
       tp.paint(
         canvas,
         Offset(
-            x + barWidth / 2 - tp.width / 2, size.height - paddingBottom + 8),
+          x + barWidth / 2 - tp.width / 2,
+          size.height - paddingBottom + 8,
+        ),
       );
     }
   }

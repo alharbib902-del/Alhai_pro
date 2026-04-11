@@ -288,7 +288,8 @@ Future<void> copyDatabaseFile(String backupId, {String? dbName}) async {
   // يجب استخدام exportToJson من DatabaseBackupService
   if (kDebugMode) {
     debugPrint(
-        '[Backup] Web: copyDatabaseFile not supported, use exportToJson');
+      '[Backup] Web: copyDatabaseFile not supported, use exportToJson',
+    );
   }
 }
 
@@ -297,6 +298,7 @@ Future<void> copyDatabaseFile(String backupId, {String? dbName}) async {
 Future<void> restoreDatabaseFile(String backupId, {String? dbName}) async {
   if (kDebugMode) {
     debugPrint(
-        '[Backup] Web: restoreDatabaseFile not supported, use importFromJson');
+      '[Backup] Web: restoreDatabaseFile not supported, use importFromJson',
+    );
   }
 }

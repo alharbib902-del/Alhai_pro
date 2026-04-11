@@ -64,9 +64,9 @@ void main() {
   group('liteStatsProvider', () {
     test('returns default LiteStatsData when storeId is null', () async {
       setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(liteStatsProvider.future);
@@ -82,26 +82,29 @@ void main() {
     test('returns stats with correct values from DAOs', () async {
       // Stub pending approvals (customSelect)
       final pendingSelectable = MockSelectable();
-      when(() => db.customSelect(
-            any(),
-            variables: any(named: 'variables'),
-          )).thenReturn(pendingSelectable);
-      when(() => pendingSelectable.getSingle()).thenAnswer(
-        (_) async => FakeQueryRow({'count': 3}),
-      );
+      when(
+        () => db.customSelect(any(), variables: any(named: 'variables')),
+      ).thenReturn(pendingSelectable);
+      when(
+        () => pendingSelectable.getSingle(),
+      ).thenAnswer((_) async => FakeQueryRow({'count': 3}));
 
       // Stub today's sales stats
-      when(() => salesDao.getSalesStats(
-            any(),
-            startDate: any(named: 'startDate'),
-            endDate: any(named: 'endDate'),
-          )).thenAnswer((_) async => const SalesStats(
-            count: 12,
-            total: 1500.0,
-            average: 125.0,
-            maxSale: 300.0,
-            minSale: 50.0,
-          ));
+      when(
+        () => salesDao.getSalesStats(
+          any(),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+        ),
+      ).thenAnswer(
+        (_) async => const SalesStats(
+          count: 12,
+          total: 1500.0,
+          average: 125.0,
+          maxSale: 300.0,
+          minSale: 50.0,
+        ),
+      );
 
       // Stub low stock products
       when(() => productsDao.getLowStockProducts(any())).thenAnswer(
@@ -113,9 +116,9 @@ void main() {
       );
 
       setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        ...defaultProviderOverrides(storeId: 'test-store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [...defaultProviderOverrides(storeId: 'test-store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(liteStatsProvider.future);
@@ -127,48 +130,52 @@ void main() {
 
     test('calculates sales change percent correctly', () async {
       final pendingSelectable = MockSelectable();
-      when(() => db.customSelect(
-            any(),
-            variables: any(named: 'variables'),
-          )).thenReturn(pendingSelectable);
-      when(() => pendingSelectable.getSingle()).thenAnswer(
-        (_) async => FakeQueryRow({'count': 0}),
-      );
+      when(
+        () => db.customSelect(any(), variables: any(named: 'variables')),
+      ).thenReturn(pendingSelectable);
+      when(
+        () => pendingSelectable.getSingle(),
+      ).thenAnswer((_) async => FakeQueryRow({'count': 0}));
 
       // Yesterday: 1000, Today: 1500 => change = 50%
       var callCount = 0;
-      when(() => salesDao.getSalesStats(
-            any(),
-            startDate: any(named: 'startDate'),
-            endDate: any(named: 'endDate'),
-          )).thenAnswer((_) async {
+      when(
+        () => salesDao.getSalesStats(
+          any(),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+        ),
+      ).thenAnswer((_) async {
         callCount++;
         if (callCount == 1) {
           // Today's stats
           return const SalesStats(
-              count: 10,
-              total: 1500.0,
-              average: 150.0,
-              maxSale: 300.0,
-              minSale: 50.0);
+            count: 10,
+            total: 1500.0,
+            average: 150.0,
+            maxSale: 300.0,
+            minSale: 50.0,
+          );
         } else {
           // Yesterday's stats
           return const SalesStats(
-              count: 8,
-              total: 1000.0,
-              average: 125.0,
-              maxSale: 200.0,
-              minSale: 30.0);
+            count: 8,
+            total: 1000.0,
+            average: 125.0,
+            maxSale: 200.0,
+            minSale: 30.0,
+          );
         }
       });
 
-      when(() => productsDao.getLowStockProducts(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => productsDao.getLowStockProducts(any()),
+      ).thenAnswer((_) async => []);
 
       setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        ...defaultProviderOverrides(storeId: 'test-store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [...defaultProviderOverrides(storeId: 'test-store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(liteStatsProvider.future);
@@ -176,76 +183,94 @@ void main() {
       expect(result.salesChangePercent, 50.0);
     });
 
-    test('sales change is 100% when yesterday is 0 but today has sales',
-        () async {
-      final pendingSelectable = MockSelectable();
-      when(() => db.customSelect(
-            any(),
-            variables: any(named: 'variables'),
-          )).thenReturn(pendingSelectable);
-      when(() => pendingSelectable.getSingle()).thenAnswer(
-        (_) async => FakeQueryRow({'count': 0}),
-      );
+    test(
+      'sales change is 100% when yesterday is 0 but today has sales',
+      () async {
+        final pendingSelectable = MockSelectable();
+        when(
+          () => db.customSelect(any(), variables: any(named: 'variables')),
+        ).thenReturn(pendingSelectable);
+        when(
+          () => pendingSelectable.getSingle(),
+        ).thenAnswer((_) async => FakeQueryRow({'count': 0}));
 
-      var callCount = 0;
-      when(() => salesDao.getSalesStats(
+        var callCount = 0;
+        when(
+          () => salesDao.getSalesStats(
             any(),
             startDate: any(named: 'startDate'),
             endDate: any(named: 'endDate'),
-          )).thenAnswer((_) async {
-        callCount++;
-        if (callCount == 1) {
-          return const SalesStats(
+          ),
+        ).thenAnswer((_) async {
+          callCount++;
+          if (callCount == 1) {
+            return const SalesStats(
               count: 5,
               total: 500.0,
               average: 100.0,
               maxSale: 200.0,
-              minSale: 50.0);
-        } else {
-          return const SalesStats(
-              count: 0, total: 0, average: 0, maxSale: 0, minSale: 0);
-        }
-      });
+              minSale: 50.0,
+            );
+          } else {
+            return const SalesStats(
+              count: 0,
+              total: 0,
+              average: 0,
+              maxSale: 0,
+              minSale: 0,
+            );
+          }
+        });
 
-      when(() => productsDao.getLowStockProducts(any()))
-          .thenAnswer((_) async => []);
+        when(
+          () => productsDao.getLowStockProducts(any()),
+        ).thenAnswer((_) async => []);
 
-      setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        ...defaultProviderOverrides(storeId: 'test-store-1'),
-      ]);
-      addTearDown(container.dispose);
+        setupTestGetIt(mockDb: db);
+        final container = ProviderContainer(
+          overrides: [...defaultProviderOverrides(storeId: 'test-store-1')],
+        );
+        addTearDown(container.dispose);
 
-      final result = await container.read(liteStatsProvider.future);
+        final result = await container.read(liteStatsProvider.future);
 
-      expect(result.salesChangePercent, 100.0);
-    });
+        expect(result.salesChangePercent, 100.0);
+      },
+    );
 
     test('sales change is 0% when both days have zero sales', () async {
       final pendingSelectable = MockSelectable();
-      when(() => db.customSelect(
-            any(),
-            variables: any(named: 'variables'),
-          )).thenReturn(pendingSelectable);
-      when(() => pendingSelectable.getSingle()).thenAnswer(
-        (_) async => FakeQueryRow({'count': 0}),
+      when(
+        () => db.customSelect(any(), variables: any(named: 'variables')),
+      ).thenReturn(pendingSelectable);
+      when(
+        () => pendingSelectable.getSingle(),
+      ).thenAnswer((_) async => FakeQueryRow({'count': 0}));
+
+      when(
+        () => salesDao.getSalesStats(
+          any(),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+        ),
+      ).thenAnswer(
+        (_) async => const SalesStats(
+          count: 0,
+          total: 0,
+          average: 0,
+          maxSale: 0,
+          minSale: 0,
+        ),
       );
 
-      when(() => salesDao.getSalesStats(
-                any(),
-                startDate: any(named: 'startDate'),
-                endDate: any(named: 'endDate'),
-              ))
-          .thenAnswer((_) async => const SalesStats(
-              count: 0, total: 0, average: 0, maxSale: 0, minSale: 0));
-
-      when(() => productsDao.getLowStockProducts(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => productsDao.getLowStockProducts(any()),
+      ).thenAnswer((_) async => []);
 
       setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        ...defaultProviderOverrides(storeId: 'test-store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [...defaultProviderOverrides(storeId: 'test-store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(liteStatsProvider.future);
@@ -261,9 +286,9 @@ void main() {
   group('recentActivityProvider', () {
     test('returns empty list when storeId is null', () async {
       setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(recentActivityProvider.future);
@@ -274,18 +299,25 @@ void main() {
     test('returns activities mapped from audit log', () async {
       final logs = [
         createTestAuditLog(
-            id: 'log-1', action: 'saleCreate', description: 'Created sale'),
+          id: 'log-1',
+          action: 'saleCreate',
+          description: 'Created sale',
+        ),
         createTestAuditLog(
-            id: 'log-2', action: 'login', description: 'User logged in'),
+          id: 'log-2',
+          action: 'login',
+          description: 'User logged in',
+        ),
       ];
 
-      when(() => auditLogDao.getLogs(any(), limit: any(named: 'limit')))
-          .thenAnswer((_) async => logs);
+      when(
+        () => auditLogDao.getLogs(any(), limit: any(named: 'limit')),
+      ).thenAnswer((_) async => logs);
 
       setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        ...defaultProviderOverrides(storeId: 'test-store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [...defaultProviderOverrides(storeId: 'test-store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(recentActivityProvider.future);
@@ -298,13 +330,14 @@ void main() {
     });
 
     test('returns empty list when audit log throws', () async {
-      when(() => auditLogDao.getLogs(any(), limit: any(named: 'limit')))
-          .thenThrow(Exception('Database error'));
+      when(
+        () => auditLogDao.getLogs(any(), limit: any(named: 'limit')),
+      ).thenThrow(Exception('Database error'));
 
       setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        ...defaultProviderOverrides(storeId: 'test-store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [...defaultProviderOverrides(storeId: 'test-store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(recentActivityProvider.future);
@@ -312,38 +345,41 @@ void main() {
       expect(result, isEmpty);
     });
 
-    test('maps all fields correctly from AuditLogTableData to ActivityEntry',
-        () async {
-      final timestamp = DateTime(2026, 2, 20, 10, 30);
-      final logs = [
-        createTestAuditLog(
-          id: 'log-x',
-          userName: 'Ahmed',
-          action: 'productEdit',
-          description: 'Edited product price',
-          createdAt: timestamp,
-        ),
-      ];
+    test(
+      'maps all fields correctly from AuditLogTableData to ActivityEntry',
+      () async {
+        final timestamp = DateTime(2026, 2, 20, 10, 30);
+        final logs = [
+          createTestAuditLog(
+            id: 'log-x',
+            userName: 'Ahmed',
+            action: 'productEdit',
+            description: 'Edited product price',
+            createdAt: timestamp,
+          ),
+        ];
 
-      when(() => auditLogDao.getLogs(any(), limit: any(named: 'limit')))
-          .thenAnswer((_) async => logs);
+        when(
+          () => auditLogDao.getLogs(any(), limit: any(named: 'limit')),
+        ).thenAnswer((_) async => logs);
 
-      setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        ...defaultProviderOverrides(storeId: 'test-store-1'),
-      ]);
-      addTearDown(container.dispose);
+        setupTestGetIt(mockDb: db);
+        final container = ProviderContainer(
+          overrides: [...defaultProviderOverrides(storeId: 'test-store-1')],
+        );
+        addTearDown(container.dispose);
 
-      final result = await container.read(recentActivityProvider.future);
+        final result = await container.read(recentActivityProvider.future);
 
-      expect(result.length, 1);
-      final activity = result.first;
-      expect(activity.id, 'log-x');
-      expect(activity.userName, 'Ahmed');
-      expect(activity.action, 'productEdit');
-      expect(activity.description, 'Edited product price');
-      expect(activity.timestamp, timestamp);
-    });
+        expect(result.length, 1);
+        final activity = result.first;
+        expect(activity.id, 'log-x');
+        expect(activity.userName, 'Ahmed');
+        expect(activity.action, 'productEdit');
+        expect(activity.description, 'Edited product price');
+        expect(activity.timestamp, timestamp);
+      },
+    );
   });
 
   // ===========================================================================

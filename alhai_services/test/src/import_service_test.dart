@@ -153,10 +153,11 @@ void main() {
       test('should validate CSV with all required columns', () {
         const csv = 'الباركود,اسم المنتج,السعر\n628000,Product,15.00';
 
-        final result = importService.validateCsv(
-          csv,
-          ['الباركود', 'اسم المنتج', 'السعر'],
-        );
+        final result = importService.validateCsv(csv, [
+          'الباركود',
+          'اسم المنتج',
+          'السعر',
+        ]);
 
         expect(result.isValid, isTrue);
         expect(result.rowCount, equals(1));
@@ -166,10 +167,11 @@ void main() {
       test('should reject CSV missing required columns', () {
         const csv = 'الباركود,اسم المنتج\n628000,Product';
 
-        final result = importService.validateCsv(
-          csv,
-          ['الباركود', 'اسم المنتج', 'السعر'],
-        );
+        final result = importService.validateCsv(csv, [
+          'الباركود',
+          'اسم المنتج',
+          'السعر',
+        ]);
 
         expect(result.isValid, isFalse);
         expect(result.error, contains('السعر'));
@@ -203,9 +205,7 @@ void main() {
         final result = ImportResult<String>(
           success: true,
           imported: ['a', 'b', 'c'],
-          failed: [
-            const ImportError(line: 4, error: 'bad'),
-          ],
+          failed: [const ImportError(line: 4, error: 'bad')],
         );
 
         expect(result.totalRows, equals(4));

@@ -53,9 +53,6 @@ class AuthResponse with _$AuthResponse {
 
   /// Maps DTO to Domain model (called from Repository only)
   AuthResult toDomain() {
-    return AuthResult(
-      user: user.toDomain(),
-      tokens: tokens.toDomain(),
-    );
+    return AuthResult(user: user.toDomain(), tokens: tokens.toDomain());
   }
 }

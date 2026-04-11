@@ -52,8 +52,9 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
 
       final now = DateTime.now();
 
-      final result = await db.customSelect(
-        '''SELECT
+      final result = await db
+          .customSelect(
+            '''SELECT
              a.id,
              a.name,
              a.phone,
@@ -65,8 +66,9 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
              AND a.type = 'receivable'
              AND a.balance > 0
            ORDER BY a.balance DESC''',
-        variables: [Variable.withString(storeId)],
-      ).get();
+            variables: [Variable.withString(storeId)],
+          )
+          .get();
 
       final entries = result.map((row) {
         final balance = _toDouble(row.data['balance']);
@@ -74,8 +76,8 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
         final createdStr = row.data['created_at'] as String;
         final baseDate = lastTxnStr != null
             ? (DateTime.tryParse(lastTxnStr) ??
-                DateTime.tryParse(createdStr) ??
-                now)
+                  DateTime.tryParse(createdStr) ??
+                  now)
             : (DateTime.tryParse(createdStr) ?? now);
         final days = now.difference(baseDate).inDays;
 
@@ -163,7 +165,9 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
               const SizedBox(height: AlhaiSpacing.sm),
               Text(_error!),
               TextButton(
-                  onPressed: _loadData, child: const Text('إعادة المحاولة')),
+                onPressed: _loadData,
+                child: const Text('إعادة المحاولة'),
+              ),
             ],
           ),
         ),
@@ -188,58 +192,72 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
             padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Column(
               children: [
-                Row(children: [
-                  Expanded(
+                Row(
+                  children: [
+                    Expanded(
                       child: _BucketCard(
-                    label: '0-30 يوم',
-                    amount: _total0_30,
-                    color: Colors.green,
-                    pct: _grandTotal > 0 ? _total0_30 / _grandTotal : 0,
-                  )),
-                  const SizedBox(width: AlhaiSpacing.xs),
-                  Expanded(
+                        label: '0-30 يوم',
+                        amount: _total0_30,
+                        color: Colors.green,
+                        pct: _grandTotal > 0 ? _total0_30 / _grandTotal : 0,
+                      ),
+                    ),
+                    const SizedBox(width: AlhaiSpacing.xs),
+                    Expanded(
                       child: _BucketCard(
-                    label: '31-60 يوم',
-                    amount: _total31_60,
-                    color: Colors.orange,
-                    pct: _grandTotal > 0 ? _total31_60 / _grandTotal : 0,
-                  )),
-                ]),
+                        label: '31-60 يوم',
+                        amount: _total31_60,
+                        color: Colors.orange,
+                        pct: _grandTotal > 0 ? _total31_60 / _grandTotal : 0,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: AlhaiSpacing.xs),
-                Row(children: [
-                  Expanded(
+                Row(
+                  children: [
+                    Expanded(
                       child: _BucketCard(
-                    label: '61-90 يوم',
-                    amount: _total61_90,
-                    color: Colors.deepOrange,
-                    pct: _grandTotal > 0 ? _total61_90 / _grandTotal : 0,
-                  )),
-                  const SizedBox(width: AlhaiSpacing.xs),
-                  Expanded(
+                        label: '61-90 يوم',
+                        amount: _total61_90,
+                        color: Colors.deepOrange,
+                        pct: _grandTotal > 0 ? _total61_90 / _grandTotal : 0,
+                      ),
+                    ),
+                    const SizedBox(width: AlhaiSpacing.xs),
+                    Expanded(
                       child: _BucketCard(
-                    label: '+90 يوم',
-                    amount: _total90plus,
-                    color: Colors.red,
-                    pct: _grandTotal > 0 ? _total90plus / _grandTotal : 0,
-                  )),
-                ]),
+                        label: '+90 يوم',
+                        amount: _total90plus,
+                        color: Colors.red,
+                        pct: _grandTotal > 0 ? _total90plus / _grandTotal : 0,
+                      ),
+                    ),
+                  ],
+                ),
                 const SizedBox(height: AlhaiSpacing.sm),
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                    horizontal: AlhaiSpacing.md,
+                    vertical: AlhaiSpacing.xs,
+                  ),
                   decoration: BoxDecoration(
                     gradient: const LinearGradient(
-                        colors: [Color(0xFF1A8FE3), Color(0xFF0EC9C9)]),
+                      colors: [Color(0xFF1A8FE3), Color(0xFF0EC9C9)],
+                    ),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('إجمالي الديون',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500)),
+                      const Text(
+                        'إجمالي الديون',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                       Text(
                         '${_grandTotal.toStringAsFixed(0)} ر.س',
                         style: const TextStyle(
@@ -262,14 +280,20 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        const Icon(Icons.check_circle_outline,
-                            size: 64, color: Colors.green),
+                        const Icon(
+                          Icons.check_circle_outline,
+                          size: 64,
+                          color: Colors.green,
+                        ),
                         const SizedBox(height: AlhaiSpacing.sm),
-                        Text('لا توجد ديون مستحقة',
-                            style: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant)),
+                        Text(
+                          'لا توجد ديون مستحقة',
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                          ),
+                        ),
                       ],
                     ),
                   )
@@ -287,17 +311,22 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
                             child: Text(
                               e.name.isNotEmpty ? e.name[0] : '?',
                               style: TextStyle(
-                                  color: e.color, fontWeight: FontWeight.bold),
+                                color: e.color,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                          title: Text(e.name,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.w500)),
+                          title: Text(
+                            e.name,
+                            style: const TextStyle(fontWeight: FontWeight.w500),
+                          ),
                           subtitle: Row(
                             children: [
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 6, vertical: 2),
+                                  horizontal: 6,
+                                  vertical: 2,
+                                ),
                                 decoration: BoxDecoration(
                                   color: e.color.withValues(alpha: 0.1),
                                   borderRadius: BorderRadius.circular(8),
@@ -305,14 +334,17 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
                                 child: Text(
                                   e.bucket,
                                   style: TextStyle(
-                                      fontSize: 10,
-                                      color: e.color,
-                                      fontWeight: FontWeight.w500),
+                                    fontSize: 10,
+                                    color: e.color,
+                                    fontWeight: FontWeight.w500,
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 6),
-                              Text('${e.days} يوم',
-                                  style: const TextStyle(fontSize: 11)),
+                              Text(
+                                '${e.days} يوم',
+                                style: const TextStyle(fontSize: 11),
+                              ),
                             ],
                           ),
                           trailing: Text(
@@ -359,14 +391,22 @@ class _BucketCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label,
-              style: TextStyle(
-                  fontSize: 11, color: color, fontWeight: FontWeight.w500)),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
           const SizedBox(height: AlhaiSpacing.xxs),
           Text(
             '${amount.toStringAsFixed(0)} ر.س',
             style: TextStyle(
-                fontSize: 14, fontWeight: FontWeight.bold, color: color),
+              fontSize: 14,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
           ),
           const SizedBox(height: AlhaiSpacing.xxs),
           LinearProgressIndicator(
@@ -380,8 +420,9 @@ class _BucketCard extends StatelessWidget {
           Text(
             '${(pct * 100).toStringAsFixed(0)}%',
             style: TextStyle(
-                fontSize: 10,
-                color: Theme.of(context).colorScheme.onSurfaceVariant),
+              fontSize: 10,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),

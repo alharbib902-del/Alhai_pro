@@ -32,9 +32,7 @@ class MockConnectivityService extends Mock implements ConnectivityService {}
 // Helper
 // ---------------------------------------------------------------------------
 
-Widget _buildTestWidget({
-  AsyncValue<DashboardData>? dashboardValue,
-}) {
+Widget _buildTestWidget({AsyncValue<DashboardData>? dashboardValue}) {
   final mockSyncManager = MockSyncManager();
 
   return ProviderScope(
@@ -45,7 +43,9 @@ Widget _buildTestWidget({
             dashboardValue?.when(
               data: (d) => Future.value(d),
               loading: () => Future.delayed(
-                  const Duration(days: 1), () => const DashboardData()),
+                const Duration(days: 1),
+                () => const DashboardData(),
+              ),
               error: (e, _) => Future.error(e),
             ) ??
             Future.value(const DashboardData()),
@@ -121,10 +121,14 @@ void main() {
       setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        dashboardValue:
-            AsyncValue.error(Exception('Failed'), StackTrace.current),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          dashboardValue: AsyncValue.error(
+            Exception('Failed'),
+            StackTrace.current,
+          ),
+        ),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byIcon(Icons.error_outline_rounded), findsOneWidget);
@@ -144,9 +148,9 @@ void main() {
         yesterdayOrders: 20,
       );
 
-      await tester.pumpWidget(_buildTestWidget(
-        dashboardValue: const AsyncValue.data(testData),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(dashboardValue: const AsyncValue.data(testData)),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byType(DashboardScreen), findsOneWidget);
@@ -157,9 +161,11 @@ void main() {
       setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        dashboardValue: const AsyncValue.data(DashboardData()),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          dashboardValue: const AsyncValue.data(DashboardData()),
+        ),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byType(DashboardScreen), findsOneWidget);
@@ -169,9 +175,11 @@ void main() {
       setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        dashboardValue: const AsyncValue.data(DashboardData()),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          dashboardValue: const AsyncValue.data(DashboardData()),
+        ),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byType(RefreshIndicator), findsOneWidget);

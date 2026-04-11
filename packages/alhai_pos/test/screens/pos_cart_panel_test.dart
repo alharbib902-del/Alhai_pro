@@ -64,11 +64,7 @@ Widget _buildTestWidget({
       locale: const Locale('en'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: Scaffold(
-        body: PosCartPanel(
-          onPayTap: (_) {},
-        ),
-      ),
+      home: Scaffold(body: PosCartPanel(onPayTap: (_) {})),
     ),
   );
 }
@@ -142,18 +138,20 @@ void main() {
       setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        cartState: CartState(
-          items: [
-            createTestCartItem(
-              productId: 'p1',
-              productName: 'Coffee',
-              price: 15.0,
-              quantity: 2,
-            ),
-          ],
+      await tester.pumpWidget(
+        _buildTestWidget(
+          cartState: CartState(
+            items: [
+              createTestCartItem(
+                productId: 'p1',
+                productName: 'Coffee',
+                price: 15.0,
+                quantity: 2,
+              ),
+            ],
+          ),
         ),
-      ));
+      );
       await tester.pump(const Duration(seconds: 1));
       await tester.pump(const Duration(seconds: 1));
       tester.takeException();
@@ -165,17 +163,19 @@ void main() {
       setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        cartState: CartState(
-          items: [
-            createTestCartItem(
-              productId: 'p1',
-              productName: 'Test Item',
-              price: 10.0,
-            ),
-          ],
+      await tester.pumpWidget(
+        _buildTestWidget(
+          cartState: CartState(
+            items: [
+              createTestCartItem(
+                productId: 'p1',
+                productName: 'Test Item',
+                price: 10.0,
+              ),
+            ],
+          ),
         ),
-      ));
+      );
       await tester.pump(const Duration(seconds: 1));
       await tester.pump(const Duration(seconds: 1));
       tester.takeException();

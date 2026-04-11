@@ -47,24 +47,22 @@ class OtpData {
   }
 
   Map<String, dynamic> toJson() => {
-        'phone': phone,
-        'otpHash': otpHash,
-        'otpSalt': otpSalt,
-        'createdAt': createdAt.toIso8601String(),
-        'expiresAt': expiresAt.toIso8601String(),
-        'verifyAttempts': verifyAttempts,
-      };
+    'phone': phone,
+    'otpHash': otpHash,
+    'otpSalt': otpSalt,
+    'createdAt': createdAt.toIso8601String(),
+    'expiresAt': expiresAt.toIso8601String(),
+    'verifyAttempts': verifyAttempts,
+  };
 
   factory OtpData.fromJson(Map<String, dynamic> json) => OtpData(
-        phone: json['phone'],
-        otpHash: json['otpHash'],
-        otpSalt: json['otpSalt'] ?? '',
-        createdAt:
-            DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now(),
-        expiresAt:
-            DateTime.tryParse(json['expiresAt'] as String) ?? DateTime.now(),
-        verifyAttempts: json['verifyAttempts'] ?? 0,
-      );
+    phone: json['phone'],
+    otpHash: json['otpHash'],
+    otpSalt: json['otpSalt'] ?? '',
+    createdAt: DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now(),
+    expiresAt: DateTime.tryParse(json['expiresAt'] as String) ?? DateTime.now(),
+    verifyAttempts: json['verifyAttempts'] ?? 0,
+  );
 }
 
 // ============================================================================
@@ -93,7 +91,10 @@ class WhatsAppOtpSendResult {
 
   factory WhatsAppOtpSendResult.success({String? messageId, String? devOtp}) =>
       WhatsAppOtpSendResult._(
-          isSuccess: true, messageId: messageId, devOtp: devOtp);
+        isSuccess: true,
+        messageId: messageId,
+        devOtp: devOtp,
+      );
 
   factory WhatsAppOtpSendResult.error(String message) =>
       WhatsAppOtpSendResult._(isSuccess: false, error: message);
@@ -136,9 +137,9 @@ class WhatsAppOtpVerifyResult {
       );
 
   factory WhatsAppOtpVerifyResult.expired() => const WhatsAppOtpVerifyResult._(
-        isSuccess: false,
-        error: 'انتهت صلاحية رمز التحقق',
-      );
+    isSuccess: false,
+    error: 'انتهت صلاحية رمز التحقق',
+  );
 
   factory WhatsAppOtpVerifyResult.noOtpSent() =>
       const WhatsAppOtpVerifyResult._(
@@ -203,9 +204,7 @@ class WhatsAppOtpService {
   // ============================================================================
 
   /// إرسال OTP عبر WhatsApp
-  static Future<WhatsAppOtpSendResult> sendOtp({
-    required String phone,
-  }) async {
+  static Future<WhatsAppOtpSendResult> sendOtp({required String phone}) async {
     // تحميل بيانات Rate Limiting
     await _loadRateLimitData();
 
@@ -254,8 +253,9 @@ class WhatsAppOtpService {
           otpHash: otpHash,
           otpSalt: salt,
           createdAt: now,
-          expiresAt:
-              now.add(const Duration(minutes: WhatsAppConfig.otpExpiryMinutes)),
+          expiresAt: now.add(
+            const Duration(minutes: WhatsAppConfig.otpExpiryMinutes),
+          ),
         );
 
         _otpCache[formattedPhone] = otpData;
@@ -264,7 +264,9 @@ class WhatsAppOtpService {
         SecurityLogger.logOtpSent(formattedPhone);
 
         return WhatsAppOtpSendResult.success(
-            messageId: 'dev-mode', devOtp: otp);
+          messageId: 'dev-mode',
+          devOtp: otp,
+        );
       }
 
       // إرسال عبر WaSenderAPI (الإنتاج فقط)
@@ -286,8 +288,9 @@ class WhatsAppOtpService {
           otpHash: otpHash,
           otpSalt: salt,
           createdAt: now,
-          expiresAt:
-              now.add(const Duration(minutes: WhatsAppConfig.otpExpiryMinutes)),
+          expiresAt: now.add(
+            const Duration(minutes: WhatsAppConfig.otpExpiryMinutes),
+          ),
         );
 
         _otpCache[formattedPhone] = otpData;
@@ -546,8 +549,9 @@ class WhatsAppOtpService {
     try {
       final historyMap = <String, List<String>>{};
       for (final entry in _sendHistory.entries) {
-        historyMap[entry.key] =
-            entry.value.map((e) => e.toIso8601String()).toList();
+        historyMap[entry.key] = entry.value
+            .map((e) => e.toIso8601String())
+            .toList();
       }
       await SecureStorageService.write(_sendHistoryKey, jsonEncode(historyMap));
 
@@ -556,7 +560,9 @@ class WhatsAppOtpService {
         lastSendMap[entry.key] = entry.value.toIso8601String();
       }
       await SecureStorageService.write(
-          _lastSendTimeKey, jsonEncode(lastSendMap));
+        _lastSendTimeKey,
+        jsonEncode(lastSendMap),
+      );
     } catch (e) {
       AppLogger.debug('Failed to persist rate limit data: $e', tag: 'OTP');
     }

@@ -145,8 +145,9 @@ class _WhatsAppRecommendationDialogState
                         Text(
                           'إرسال توصية واتساب', // Send WhatsApp Recommendation
                           style: TextStyle(
-                            color:
-                                isDark ? Colors.white : AppColors.textPrimary,
+                            color: isDark
+                                ? Colors.white
+                                : AppColors.textPrimary,
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                           ),
@@ -204,8 +205,11 @@ class _WhatsAppRecommendationDialogState
                         ? Colors.white.withValues(alpha: 0.3)
                         : AppColors.textMuted,
                   ),
-                  prefixIcon: const Icon(Icons.phone_rounded,
-                      color: AppColors.primary, size: 20),
+                  prefixIcon: const Icon(
+                    Icons.phone_rounded,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12),
                     borderSide: BorderSide(
@@ -227,7 +231,9 @@ class _WhatsAppRecommendationDialogState
                     borderSide: const BorderSide(color: Color(0xFF25D366)),
                   ),
                   contentPadding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.sm),
+                    horizontal: AlhaiSpacing.sm,
+                    vertical: AlhaiSpacing.sm,
+                  ),
                   filled: true,
                   fillColor: isDark
                       ? Colors.white.withValues(alpha: 0.05)
@@ -308,7 +314,9 @@ class _WhatsAppRecommendationDialogState
                         ? 'جاري الإرسال...'
                         : 'إرسال عبر واتساب', // Sending... / Send via WhatsApp
                     style: const TextStyle(
-                        fontSize: 14, fontWeight: FontWeight.w600),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color(0xFF25D366),

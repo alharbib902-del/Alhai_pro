@@ -21,7 +21,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 /// عنوان خادم الذكاء الاصطناعي
 // ignore: prefer_const_declarations - kDebugMode is const but ternary prevents const
 final String _kAiServerUrl = kDebugMode
-    ? AppEndpoints.aiDebug // Android emulator -> host
+    ? AppEndpoints
+          .aiDebug // Android emulator -> host
     : AppEndpoints.aiProduction; // Production
 
 /// مهلة الاتصال (ثانية)
@@ -57,29 +58,34 @@ class AiApiService {
   static const Duration _kRateLimitWindow = Duration(minutes: 1);
 
   AiApiService() {
-    _dio = Dio(BaseOptions(
-      baseUrl: _kAiServerUrl,
-      connectTimeout: const Duration(seconds: _kTimeoutSeconds),
-      receiveTimeout: const Duration(seconds: _kTimeoutSeconds),
-      headers: {'Content-Type': 'application/json'},
-    ));
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: _kAiServerUrl,
+        connectTimeout: const Duration(seconds: _kTimeoutSeconds),
+        receiveTimeout: const Duration(seconds: _kTimeoutSeconds),
+        headers: {'Content-Type': 'application/json'},
+      ),
+    );
 
     // Add auth interceptor
-    _dio.interceptors.add(InterceptorsWrapper(
-      onRequest: (options, handler) async {
-        final token = Supabase.instance.client.auth.currentSession?.accessToken;
-        if (token != null) {
-          options.headers['Authorization'] = 'Bearer $token';
-        }
-        handler.next(options);
-      },
-      onError: (error, handler) {
-        if (kDebugMode) {
-          debugPrint('AI API Error: ${error.message}');
-        }
-        handler.next(error);
-      },
-    ));
+    _dio.interceptors.add(
+      InterceptorsWrapper(
+        onRequest: (options, handler) async {
+          final token =
+              Supabase.instance.client.auth.currentSession?.accessToken;
+          if (token != null) {
+            options.headers['Authorization'] = 'Bearer $token';
+          }
+          handler.next(options);
+        },
+        onError: (error, handler) {
+          if (kDebugMode) {
+            debugPrint('AI API Error: ${error.message}');
+          }
+          handler.next(error);
+        },
+      ),
+    );
   }
 
   // ==========================================================================
@@ -177,10 +183,7 @@ class AiApiService {
   }
 
   void _putInCache(String key, Map<String, dynamic> data) {
-    _cache[key] = _CacheEntry(
-      data: data,
-      timestamp: DateTime.now(),
-    );
+    _cache[key] = _CacheEntry(data: data, timestamp: DateTime.now());
   }
 
   /// Obfuscation key for cache encoding. This provides a basic layer of
@@ -280,8 +283,10 @@ class AiApiService {
   /// عدد الطلبات المتبقية قبل Rate Limit
   int get remainingRequests {
     _cleanupOldTimestamps();
-    return (_kMaxRequestsPerMinute - _apiCallTimestamps.length)
-        .clamp(0, _kMaxRequestsPerMinute);
+    return (_kMaxRequestsPerMinute - _apiCallTimestamps.length).clamp(
+      0,
+      _kMaxRequestsPerMinute,
+    );
   }
 
   /// هل الخدمة قابلة للاستخدام (غير محدودة)؟
@@ -348,14 +353,11 @@ class AiApiService {
     required String storeId,
     String? saleId,
   }) async {
-    return _post(
-        '/ai/fraud',
-        {
-          'org_id': orgId,
-          'store_id': storeId,
-          if (saleId != null) 'sale_id': saleId,
-        },
-        useCache: false);
+    return _post('/ai/fraud', {
+      'org_id': orgId,
+      'store_id': storeId,
+      if (saleId != null) 'sale_id': saleId,
+    }, useCache: false);
   }
 
   // ==========================================================================
@@ -469,16 +471,13 @@ class AiApiService {
     String? barcode,
     String? description,
   }) async {
-    return _post(
-        '/ai/recognize',
-        {
-          'org_id': orgId,
-          'store_id': storeId,
-          if (imageBase64 != null) 'image_base64': imageBase64,
-          if (barcode != null) 'barcode': barcode,
-          if (description != null) 'description': description,
-        },
-        useCache: false);
+    return _post('/ai/recognize', {
+      'org_id': orgId,
+      'store_id': storeId,
+      if (imageBase64 != null) 'image_base64': imageBase64,
+      if (barcode != null) 'barcode': barcode,
+      if (description != null) 'description': description,
+    }, useCache: false);
   }
 
   // ==========================================================================
@@ -546,16 +545,13 @@ class AiApiService {
     String? conversationId,
     String language = 'ar',
   }) async {
-    return _post(
-        '/ai/chat',
-        {
-          'org_id': orgId,
-          'store_id': storeId,
-          'message': message,
-          'language': language,
-          if (conversationId != null) 'conversation_id': conversationId,
-        },
-        useCache: false);
+    return _post('/ai/chat', {
+      'org_id': orgId,
+      'store_id': storeId,
+      'message': message,
+      'language': language,
+      if (conversationId != null) 'conversation_id': conversationId,
+    }, useCache: false);
   }
 
   // ==========================================================================
@@ -568,15 +564,12 @@ class AiApiService {
     required String query,
     String context = 'general',
   }) async {
-    return _post(
-        '/ai/assistant',
-        {
-          'org_id': orgId,
-          'store_id': storeId,
-          'query': query,
-          'context': context,
-        },
-        useCache: false);
+    return _post('/ai/assistant', {
+      'org_id': orgId,
+      'store_id': storeId,
+      'query': query,
+      'context': context,
+    }, useCache: false);
   }
 }
 

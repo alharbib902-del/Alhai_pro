@@ -14,9 +14,8 @@ import '../orders_repository.dart';
 class OrdersRepositoryImpl implements OrdersRepository {
   final OrdersRemoteDataSource _remote;
 
-  OrdersRepositoryImpl({
-    required OrdersRemoteDataSource remote,
-  }) : _remote = remote;
+  OrdersRepositoryImpl({required OrdersRemoteDataSource remote})
+    : _remote = remote;
 
   @override
   Future<Order> createOrder(CreateOrderParams params) async {

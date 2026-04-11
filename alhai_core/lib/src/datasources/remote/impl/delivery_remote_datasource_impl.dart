@@ -36,10 +36,13 @@ class DeliveryRemoteDataSourceImpl implements DeliveryRemoteDataSource {
 
   @override
   Future<DeliveryResponse> updateStatus(
-      String id, DeliveryStatus status) async {
-    final response = await _dio.patch('/deliveries/$id/status', data: {
-      'status': status.name,
-    });
+    String id,
+    DeliveryStatus status,
+  ) async {
+    final response = await _dio.patch(
+      '/deliveries/$id/status',
+      data: {'status': status.name},
+    );
     return _parseDeliveryResponse(response.data);
   }
 
@@ -49,10 +52,10 @@ class DeliveryRemoteDataSourceImpl implements DeliveryRemoteDataSource {
     required double lat,
     required double lng,
   }) async {
-    await _dio.post('/deliveries/$deliveryId/location', data: {
-      'lat': lat,
-      'lng': lng,
-    });
+    await _dio.post(
+      '/deliveries/$deliveryId/location',
+      data: {'lat': lat, 'lng': lng},
+    );
   }
 
   @override
@@ -63,9 +66,10 @@ class DeliveryRemoteDataSourceImpl implements DeliveryRemoteDataSource {
 
   @override
   Future<void> rejectDelivery(String id, {String? reason}) async {
-    await _dio.post('/deliveries/$id/reject', data: {
-      if (reason != null) 'reason': reason,
-    });
+    await _dio.post(
+      '/deliveries/$id/reject',
+      data: {if (reason != null) 'reason': reason},
+    );
   }
 
   @override
@@ -76,17 +80,16 @@ class DeliveryRemoteDataSourceImpl implements DeliveryRemoteDataSource {
 
   @override
   Future<DeliveryResponse> markDelivered(String id, {String? notes}) async {
-    final response = await _dio.post('/deliveries/$id/deliver', data: {
-      if (notes != null) 'notes': notes,
-    });
+    final response = await _dio.post(
+      '/deliveries/$id/deliver',
+      data: {if (notes != null) 'notes': notes},
+    );
     return _parseDeliveryResponse(response.data);
   }
 
   @override
   Future<void> reportIssue(String id, String issue) async {
-    await _dio.post('/deliveries/$id/issue', data: {
-      'issue': issue,
-    });
+    await _dio.post('/deliveries/$id/issue', data: {'issue': issue});
   }
 
   DeliveryResponse _parseDeliveryResponse(Map<String, dynamic> json) {

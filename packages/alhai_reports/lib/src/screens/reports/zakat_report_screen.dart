@@ -62,38 +62,47 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
       }
 
       // Inventory value
-      final invResult = await db.customSelect(
-        '''SELECT COALESCE(SUM(current_stock * COALESCE(cost_price, price * 0.7)), 0) as total
+      final invResult = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(current_stock * COALESCE(cost_price, price * 0.7)), 0) as total
            FROM products WHERE store_id = ? AND current_stock > 0''',
-        variables: [Variable.withString(storeId)],
-      ).getSingle();
+            variables: [Variable.withString(storeId)],
+          )
+          .getSingle();
 
       // Cash balance
-      final cashResult = await db.customSelect(
-        '''SELECT COALESCE(SUM(CASE WHEN type IN ('sale','cash_in') THEN amount ELSE -amount END), 0) as cash
+      final cashResult = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(CASE WHEN type IN ('sale','cash_in') THEN amount ELSE -amount END), 0) as cash
            FROM transactions WHERE store_id = ?''',
-        variables: [Variable.withString(storeId)],
-      ).getSingle();
+            variables: [Variable.withString(storeId)],
+          )
+          .getSingle();
 
       // Receivables
-      final recResult = await db.customSelect(
-        '''SELECT COALESCE(SUM(balance), 0) as total
+      final recResult = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(balance), 0) as total
            FROM accounts WHERE store_id = ? AND type = 'receivable' AND balance > 0''',
-        variables: [Variable.withString(storeId)],
-      ).getSingle();
+            variables: [Variable.withString(storeId)],
+          )
+          .getSingle();
 
       // Payables
-      final payResult = await db.customSelect(
-        '''SELECT COALESCE(SUM(balance), 0) as total
+      final payResult = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(balance), 0) as total
            FROM accounts WHERE store_id = ? AND type = 'payable' AND balance > 0''',
-        variables: [Variable.withString(storeId)],
-      ).getSingle();
+            variables: [Variable.withString(storeId)],
+          )
+          .getSingle();
 
       if (mounted) {
         setState(() {
           _inventoryValue = _toDouble(invResult.data['total']);
-          _cashBalance =
-              _toDouble(cashResult.data['cash']).clamp(0.0, double.infinity);
+          _cashBalance = _toDouble(
+            cashResult.data['cash'],
+          ).clamp(0.0, double.infinity);
           _accountsReceivable = _toDouble(recResult.data['total']);
           _accountsPayable = _toDouble(payResult.data['total']);
           _otherLiabilities = 0;
@@ -138,7 +147,9 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
               const SizedBox(height: AlhaiSpacing.sm),
               Text(_error!),
               TextButton(
-                  onPressed: _loadData, child: const Text('إعادة المحاولة')),
+                onPressed: _loadData,
+                child: const Text('إعادة المحاولة'),
+              ),
             ],
           ),
         ),
@@ -150,7 +161,9 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
         title: const Text('حساب الزكاة'),
         actions: [
           IconButton(
-              icon: const Icon(Icons.refresh_rounded), onPressed: _loadData),
+            icon: const Icon(Icons.refresh_rounded),
+            onPressed: _loadData,
+          ),
         ],
       ),
       body: ListView(
@@ -191,10 +204,13 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                   ),
                   if (_aboveNisab) ...[
                     const SizedBox(height: AlhaiSpacing.xs),
-                    Text('مقدار الزكاة الواجبة',
-                        style: TextStyle(
-                            color: theme.colorScheme.onSurfaceVariant,
-                            fontSize: 13)),
+                    Text(
+                      'مقدار الزكاة الواجبة',
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurfaceVariant,
+                        fontSize: 13,
+                      ),
+                    ),
                     const SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       '${_zakatDue.toStringAsFixed(2)} ر.س',
@@ -207,8 +223,9 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                     Text(
                       'بنسبة ${(_zakatRate * 100).toStringAsFixed(1)}% من وعاء الزكاة',
                       style: TextStyle(
-                          color: theme.colorScheme.onSurfaceVariant,
-                          fontSize: 12),
+                        color: theme.colorScheme.onSurfaceVariant,
+                        fontSize: 12,
+                      ),
                     ),
                   ] else ...[
                     const SizedBox(height: AlhaiSpacing.xs),
@@ -219,8 +236,9 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                     Text(
                       'وعاء الزكاة الحالي: ${_netZakatBase.toStringAsFixed(0)} ر.س',
                       style: TextStyle(
-                          color: theme.colorScheme.onSurfaceVariant,
-                          fontSize: 12),
+                        color: theme.colorScheme.onSurfaceVariant,
+                        fontSize: 12,
+                      ),
                     ),
                   ],
                 ],
@@ -236,8 +254,11 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
               padding: const EdgeInsets.all(AlhaiSpacing.sm),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline,
-                      color: Colors.amber.shade700, size: 20),
+                  Icon(
+                    Icons.info_outline,
+                    color: Colors.amber.shade700,
+                    size: 20,
+                  ),
                   const SizedBox(width: AlhaiSpacing.xs),
                   Expanded(
                     child: Text(
@@ -258,8 +279,10 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
           const SizedBox(height: AlhaiSpacing.mdl),
 
           // Zakat base calculation
-          const Text('أصول الزكاة (+)',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+          const Text(
+            'أصول الزكاة (+)',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           _ZakatLine(
             label: 'قيمة البضاعة والمخزون',
@@ -281,8 +304,10 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
           ),
 
           const SizedBox(height: AlhaiSpacing.sm),
-          const Text('الخصومات (-)',
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold)),
+          const Text(
+            'الخصومات (-)',
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           _ZakatLine(
             label: 'الديون الواجبة للموردين',
@@ -311,9 +336,10 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text('وعاء الزكاة الصافي',
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 15)),
+                const Text(
+                  'وعاء الزكاة الصافي',
+                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                ),
                 Text(
                   '${_netZakatBase.toStringAsFixed(0)} ر.س',
                   style: TextStyle(
@@ -341,8 +367,9 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                          '${_netZakatBase.toStringAsFixed(0)} × ${(_zakatRate * 100).toStringAsFixed(1)}%',
-                          style: const TextStyle(fontSize: 13)),
+                        '${_netZakatBase.toStringAsFixed(0)} × ${(_zakatRate * 100).toStringAsFixed(1)}%',
+                        style: const TextStyle(fontSize: 13),
+                      ),
                       Text(
                         '${_zakatDue.toStringAsFixed(2)} ر.س',
                         style: TextStyle(
@@ -357,8 +384,9 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                   Text(
                     'تنبيه: هذا الحساب تقريبي. يُنصح بمراجعة مختص شرعي لتحديد الزكاة الواجبة بدقة.',
                     style: TextStyle(
-                        fontSize: 11,
-                        color: theme.colorScheme.onSurfaceVariant),
+                      fontSize: 11,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
                     textAlign: TextAlign.center,
                   ),
                 ],

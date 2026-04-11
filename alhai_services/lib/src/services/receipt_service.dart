@@ -51,27 +51,34 @@ class ReceiptService {
     buffer.writeln(thinDivider);
 
     // Totals
-    buffer.writeln(_padRight('المجموع الفرعي:', 20) +
-        _padLeft(_formatPrice(order.subtotal), 12));
+    buffer.writeln(
+      _padRight('المجموع الفرعي:', 20) +
+          _padLeft(_formatPrice(order.subtotal), 12),
+    );
 
     if (order.discount > 0) {
-      buffer.writeln(_padRight('الخصم:', 20) +
-          _padLeft('-${_formatPrice(order.discount)}', 12));
+      buffer.writeln(
+        _padRight('الخصم:', 20) +
+            _padLeft('-${_formatPrice(order.discount)}', 12),
+      );
     }
 
     if (order.tax > 0) {
       buffer.writeln(
-          _padRight('الضريبة:', 20) + _padLeft(_formatPrice(order.tax), 12));
+        _padRight('الضريبة:', 20) + _padLeft(_formatPrice(order.tax), 12),
+      );
     }
 
     buffer.writeln(divider);
     buffer.writeln(
-        _padRight('الإجمالي:', 20) + _padLeft(_formatPrice(order.total), 12));
+      _padRight('الإجمالي:', 20) + _padLeft(_formatPrice(order.total), 12),
+    );
     buffer.writeln(divider);
 
     // Payment
     buffer.writeln(
-        'طريقة الدفع: ${_getPaymentMethodArabic(order.paymentMethod)}');
+      'طريقة الدفع: ${_getPaymentMethodArabic(order.paymentMethod)}',
+    );
 
     // Footer
     buffer.writeln();
@@ -100,7 +107,8 @@ class ReceiptService {
     buffer.writeln('<meta charset="UTF-8">');
     buffer.writeln('<style>');
     buffer.writeln(
-        'body { font-family: Arial, sans-serif; font-size: 12px; width: 80mm; margin: 0 auto; }');
+      'body { font-family: Arial, sans-serif; font-size: 12px; width: 80mm; margin: 0 auto; }',
+    );
     buffer.writeln('.header { text-align: center; margin-bottom: 10px; }');
     buffer.writeln('.divider { border-top: 1px dashed #000; margin: 5px 0; }');
     buffer.writeln('.item { display: flex; justify-content: space-between; }');
@@ -127,7 +135,8 @@ class ReceiptService {
     // Order info
     buffer.writeln('<p>رقم الفاتورة: ${_escapeHtml(order.displayNumber)}</p>');
     buffer.writeln(
-        '<p>التاريخ: ${_formatDate(order.createdAt)} ${_formatTime(order.createdAt)}</p>');
+      '<p>التاريخ: ${_formatDate(order.createdAt)} ${_formatTime(order.createdAt)}</p>',
+    );
     if (cashierName != null) {
       buffer.writeln('<p>الكاشير: ${_escapeHtml(cashierName)}</p>');
     }
@@ -139,7 +148,8 @@ class ReceiptService {
       buffer.writeln('<div class="item">');
       buffer.writeln('<span>${_escapeHtml(item.name)}</span>');
       buffer.writeln(
-          '<span>${item.qty} x ${_formatPrice(item.unitPrice)} = ${_formatPrice(item.lineTotal)}</span>');
+        '<span>${item.qty} x ${_formatPrice(item.unitPrice)} = ${_formatPrice(item.lineTotal)}</span>',
+      );
       buffer.writeln('</div>');
     }
 
@@ -147,23 +157,28 @@ class ReceiptService {
 
     // Totals
     buffer.writeln(
-        '<div class="item"><span>المجموع الفرعي:</span><span>${_formatPrice(order.subtotal)}</span></div>');
+      '<div class="item"><span>المجموع الفرعي:</span><span>${_formatPrice(order.subtotal)}</span></div>',
+    );
     if (order.discount > 0) {
       buffer.writeln(
-          '<div class="item"><span>الخصم:</span><span>-${_formatPrice(order.discount)}</span></div>');
+        '<div class="item"><span>الخصم:</span><span>-${_formatPrice(order.discount)}</span></div>',
+      );
     }
     if (order.tax > 0) {
       buffer.writeln(
-          '<div class="item"><span>الضريبة:</span><span>${_formatPrice(order.tax)}</span></div>');
+        '<div class="item"><span>الضريبة:</span><span>${_formatPrice(order.tax)}</span></div>',
+      );
     }
     buffer.writeln('<div class="divider"></div>');
     buffer.writeln(
-        '<div class="item total"><span>الإجمالي:</span><span>${_formatPrice(order.total)}</span></div>');
+      '<div class="item total"><span>الإجمالي:</span><span>${_formatPrice(order.total)}</span></div>',
+    );
 
     // Footer
     buffer.writeln('<div class="footer">');
     buffer.writeln(
-        '<p>${_escapeHtml(settings?.receiptFooter ?? 'شكراً لزيارتكم')}</p>');
+      '<p>${_escapeHtml(settings?.receiptFooter ?? 'شكراً لزيارتكم')}</p>',
+    );
     buffer.writeln('</div>');
 
     buffer.writeln('</body></html>');

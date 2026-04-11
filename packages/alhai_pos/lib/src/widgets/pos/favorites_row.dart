@@ -28,7 +28,9 @@ class FavoritesRow extends ConsumerWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xs),
+        horizontal: AlhaiSpacing.xs,
+        vertical: AlhaiSpacing.xs,
+      ),
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerLow,
         border: Border(
@@ -43,14 +45,12 @@ class FavoritesRow extends ConsumerWidget {
           // العنوان
           Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+              horizontal: AlhaiSpacing.xs,
+              vertical: AlhaiSpacing.xxs,
+            ),
             child: Row(
               children: [
-                Icon(
-                  Icons.star,
-                  size: 16,
-                  color: theme.colorScheme.primary,
-                ),
+                Icon(Icons.star, size: 16, color: theme.colorScheme.primary),
                 const SizedBox(width: AlhaiSpacing.xxs),
                 Text(
                   AppLocalizations.of(context).bestSellingPress19,
@@ -126,8 +126,10 @@ class _FavoriteProductCard extends StatelessWidget {
               children: [
                 // رقم الاختصار
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 6,
+                    vertical: 2,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primary,
                     borderRadius: BorderRadius.circular(4),
@@ -153,8 +155,9 @@ class _FavoriteProductCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 // السعر
                 Text(
-                  AppLocalizations.of(context)
-                      .priceSar(product.price.toStringAsFixed(0)),
+                  AppLocalizations.of(
+                    context,
+                  ).priceSar(product.price.toStringAsFixed(0)),
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,

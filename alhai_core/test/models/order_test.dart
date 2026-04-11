@@ -27,7 +27,8 @@ void main() {
         customerId: 'customer-1',
         storeId: 'store-1',
         status: status,
-        items: items ??
+        items:
+            items ??
             [
               const OrderItem(
                 productId: 'p1',

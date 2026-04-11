@@ -12,9 +12,8 @@ import '../purchases_repository.dart';
 class PurchasesRepositoryImpl implements PurchasesRepository {
   final PurchasesRemoteDataSource _remote;
 
-  PurchasesRepositoryImpl({
-    required PurchasesRemoteDataSource remote,
-  }) : _remote = remote;
+  PurchasesRepositoryImpl({required PurchasesRemoteDataSource remote})
+    : _remote = remote;
 
   @override
   Future<Paginated<PurchaseOrder>> getPurchaseOrders(
@@ -59,7 +58,8 @@ class PurchasesRepositoryImpl implements PurchasesRepository {
 
   @override
   Future<PurchaseOrder> createPurchaseOrder(
-      CreatePurchaseOrderParams params) async {
+    CreatePurchaseOrderParams params,
+  ) async {
     try {
       final request = CreatePurchaseOrderRequest.fromDomain(params);
       final response = await _remote.createPurchaseOrder(request);
@@ -106,7 +106,9 @@ class PurchasesRepositoryImpl implements PurchasesRepository {
 
   @override
   Future<PurchaseOrder> receiveItems(
-      String id, List<ReceivedItem> items) async {
+    String id,
+    List<ReceivedItem> items,
+  ) async {
     try {
       final request = ReceiveItemsRequest.fromDomain(items);
       final response = await _remote.receiveItems(id, request);

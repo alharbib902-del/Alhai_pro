@@ -169,19 +169,23 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
 
     // Apply filter
     if (_filterType == 'debtors') {
-      result =
-          result.where((c) => c.balance > 0 && c.type == 'receivable').toList();
+      result = result
+          .where((c) => c.balance > 0 && c.type == 'receivable')
+          .toList();
     } else if (_filterType == 'creditors') {
-      result =
-          result.where((c) => c.balance < 0 || c.type == 'payable').toList();
+      result = result
+          .where((c) => c.balance < 0 || c.type == 'payable')
+          .toList();
     }
 
     // Apply search
     if (currentQuery.isNotEmpty) {
       result = result
-          .where((c) =>
-              c.name.toLowerCase().contains(currentQuery) ||
-              (c.phone?.contains(currentQuery) ?? false))
+          .where(
+            (c) =>
+                c.name.toLowerCase().contains(currentQuery) ||
+                (c.phone?.contains(currentQuery) ?? false),
+          )
           .toList();
     }
 
@@ -274,7 +278,10 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
   }
 
   Widget _buildHeader(
-      BuildContext context, bool isDark, AppLocalizations l10n) {
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final isDesktop = context.screenWidth >= AppSizes.breakpointTablet;
 
     return Container(
@@ -298,8 +305,9 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                           padding: const EdgeInsets.all(AppSizes.sm),
                           decoration: BoxDecoration(
                             color: AppColors.primary.withValues(alpha: 0.1),
-                            borderRadius:
-                                BorderRadius.circular(AppSizes.radiusMd),
+                            borderRadius: BorderRadius.circular(
+                              AppSizes.radiusMd,
+                            ),
                           ),
                           child: const Icon(
                             Icons.people_rounded,
@@ -310,9 +318,7 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                         const SizedBox(width: AppSizes.sm),
                         Text(
                           l10n.customers,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
+                          style: Theme.of(context).textTheme.headlineSmall
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.getTextPrimary(isDark),
@@ -329,8 +335,8 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                     Text(
                       l10n.manageCustomersAndAccounts,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.getTextSecondary(isDark),
-                          ),
+                        color: AppColors.getTextSecondary(isDark),
+                      ),
                     ),
                   ],
                 ),
@@ -338,8 +344,9 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
               // Actions
               if (isDesktop) ...[
                 AppIconButton(
-                  icon:
-                      _showFilters ? Icons.filter_list_off : Icons.filter_list,
+                  icon: _showFilters
+                      ? Icons.filter_list_off
+                      : Icons.filter_list,
                   onPressed: () => setState(() => _showFilters = !_showFilters),
                   tooltip: _showFilters ? l10n.hideFilters : l10n.showFilters,
                 ),
@@ -377,10 +384,12 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                       );
                     }
                     _searchDebounce?.cancel();
-                    _searchDebounce =
-                        Timer(const Duration(milliseconds: 300), () {
-                      setState(() {});
-                    });
+                    _searchDebounce = Timer(
+                      const Duration(milliseconds: 300),
+                      () {
+                        setState(() {});
+                      },
+                    );
                   },
                   onClear: () {
                     _searchDebounce?.cancel();
@@ -405,24 +414,33 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.sort_rounded,
-                          size: 18, color: AppColors.getTextSecondary(isDark)),
+                      Icon(
+                        Icons.sort_rounded,
+                        size: 18,
+                        color: AppColors.getTextSecondary(isDark),
+                      ),
                       const SizedBox(width: AppSizes.xs),
                       DropdownButton<String>(
                         value: _sortBy,
                         underline: const SizedBox(),
                         isDense: true,
                         dropdownColor: AppColors.getSurface(isDark),
-                        style:
-                            TextStyle(color: AppColors.getTextPrimary(isDark)),
+                        style: TextStyle(
+                          color: AppColors.getTextPrimary(isDark),
+                        ),
                         items: [
                           DropdownMenuItem(
-                              value: 'name', child: Text(l10n.sortByName)),
+                            value: 'name',
+                            child: Text(l10n.sortByName),
+                          ),
                           DropdownMenuItem(
-                              value: 'balance',
-                              child: Text(l10n.sortByBalance)),
+                            value: 'balance',
+                            child: Text(l10n.sortByBalance),
+                          ),
                           DropdownMenuItem(
-                              value: 'recent', child: Text(l10n.sortByRecent)),
+                            value: 'recent',
+                            child: Text(l10n.sortByRecent),
+                          ),
                         ],
                         onChanged: (value) {
                           if (value != null) setState(() => _sortBy = value);
@@ -439,8 +457,10 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                         onPressed: () =>
                             setState(() => _sortAscending = !_sortAscending),
                         padding: EdgeInsets.zero,
-                        constraints:
-                            const BoxConstraints(minWidth: 32, minHeight: 32),
+                        constraints: const BoxConstraints(
+                          minWidth: 32,
+                          minHeight: 32,
+                        ),
                       ),
                     ],
                   ),
@@ -458,9 +478,17 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                 children: [
                   _buildFilterChip(l10n.all, 'all', null, isDark),
                   _buildFilterChip(
-                      l10n.debtors, 'debtors', AppColors.error, isDark),
-                  _buildFilterChip(l10n.creditorsLabel, 'creditors',
-                      AppColors.success, isDark),
+                    l10n.debtors,
+                    'debtors',
+                    AppColors.error,
+                    isDark,
+                  ),
+                  _buildFilterChip(
+                    l10n.creditorsLabel,
+                    'creditors',
+                    AppColors.success,
+                    isDark,
+                  ),
                 ],
               ),
             ),
@@ -518,7 +546,8 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: BorderDirectional(
-            start: BorderSide(color: AppColors.getBorder(isDark))),
+          start: BorderSide(color: AppColors.getBorder(isDark)),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -528,15 +557,18 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
             padding: const EdgeInsets.all(AppSizes.md),
             child: Row(
               children: [
-                Icon(Icons.filter_alt_rounded,
-                    size: 18, color: AppColors.getTextSecondary(isDark)),
+                Icon(
+                  Icons.filter_alt_rounded,
+                  size: 18,
+                  color: AppColors.getTextSecondary(isDark),
+                ),
                 const SizedBox(width: AppSizes.xs),
                 Text(
                   l10n.filterByLabel,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.getTextPrimary(isDark),
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
                 ),
               ],
             ),
@@ -572,15 +604,18 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
             padding: const EdgeInsets.all(AppSizes.md),
             child: Row(
               children: [
-                Icon(Icons.flash_on_rounded,
-                    size: 18, color: AppColors.getTextSecondary(isDark)),
+                Icon(
+                  Icons.flash_on_rounded,
+                  size: 18,
+                  color: AppColors.getTextSecondary(isDark),
+                ),
                 const SizedBox(width: AppSizes.xs),
                 Text(
                   l10n.quickActionsLabel,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.getTextPrimary(isDark),
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
                 ),
               ],
             ),
@@ -653,15 +688,18 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                     color: isSelected
                         ? AppColors.primary
                         : AppColors.getTextPrimary(isDark),
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.normal,
+                    fontWeight: isSelected
+                        ? FontWeight.w600
+                        : FontWeight.normal,
                   ),
                 ),
               ),
               if (count != null)
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AppSizes.xs, vertical: AlhaiSpacing.xxxs),
+                    horizontal: AppSizes.xs,
+                    vertical: AlhaiSpacing.xxxs,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.getSurfaceVariant(isDark),
                     borderRadius: BorderRadius.circular(AppSizes.radiusSm),
@@ -669,13 +707,17 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                   child: Text(
                     '$count',
                     style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.getTextSecondary(isDark)),
+                      fontSize: 12,
+                      color: AppColors.getTextSecondary(isDark),
+                    ),
                   ),
                 ),
               if (isSelected)
-                const Icon(Icons.check_rounded,
-                    size: 18, color: AppColors.primary),
+                const Icon(
+                  Icons.check_rounded,
+                  size: 18,
+                  color: AppColors.primary,
+                ),
             ],
           ),
         ),
@@ -709,8 +751,11 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                   style: TextStyle(color: AppColors.getTextPrimary(isDark)),
                 ),
               ),
-              AdaptiveIcon(Icons.chevron_left_rounded,
-                  size: 18, color: AppColors.getTextSecondary(isDark)),
+              AdaptiveIcon(
+                Icons.chevron_left_rounded,
+                size: 18,
+                color: AppColors.getTextSecondary(isDark),
+              ),
             ],
           ),
         ),
@@ -719,7 +764,11 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
   }
 
   Widget _buildFilterChip(
-      String label, String value, Color? color, bool isDark) {
+    String label,
+    String value,
+    Color? color,
+    bool isDark,
+  ) {
     final isSelected = _filterType == value;
     return Padding(
       padding: const EdgeInsetsDirectional.only(start: AppSizes.xs),
@@ -737,9 +786,10 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         ),
         side: BorderSide(
-            color: isSelected
-                ? (color ?? AppColors.primary)
-                : AppColors.getBorder(isDark)),
+          color: isSelected
+              ? (color ?? AppColors.primary)
+              : AppColors.getBorder(isDark),
+        ),
       ),
     );
   }
@@ -852,7 +902,10 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
   }
 
   void _showAddCustomerDialog(
-      BuildContext context, bool isDark, AppLocalizations l10n) {
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
     final phoneFocusNode = FocusNode();
@@ -872,8 +925,10 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                 color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppSizes.radiusMd),
               ),
-              child: const Icon(Icons.person_add_rounded,
-                  color: AppColors.primary),
+              child: const Icon(
+                Icons.person_add_rounded,
+                color: AppColors.primary,
+              ),
             ),
             const SizedBox(width: AppSizes.sm),
             Text(
@@ -895,10 +950,13 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                 style: TextStyle(color: AppColors.getTextPrimary(isDark)),
                 decoration: InputDecoration(
                   labelText: l10n.customerNameRequired,
-                  labelStyle:
-                      TextStyle(color: AppColors.getTextSecondary(isDark)),
-                  prefixIcon: Icon(Icons.person_rounded,
-                      color: AppColors.getTextSecondary(isDark)),
+                  labelStyle: TextStyle(
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
+                  prefixIcon: Icon(
+                    Icons.person_rounded,
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                   ),
@@ -917,10 +975,13 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                 style: TextStyle(color: AppColors.getTextPrimary(isDark)),
                 decoration: InputDecoration(
                   labelText: l10n.customerPhone,
-                  labelStyle:
-                      TextStyle(color: AppColors.getTextSecondary(isDark)),
-                  prefixIcon: Icon(Icons.phone_rounded,
-                      color: AppColors.getTextSecondary(isDark)),
+                  labelStyle: TextStyle(
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
+                  prefixIcon: Icon(
+                    Icons.phone_rounded,
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppSizes.radiusMd),
                   ),
@@ -944,7 +1005,8 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
 
               // Security: Check for dangerous content
               if (InputSanitizer.containsDangerousContent(
-                  nameController.text)) {
+                nameController.text,
+              )) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(l10n.inputContainsDangerousContent),
@@ -959,14 +1021,15 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
 
               if (storeId != null) {
                 final id = DateTime.now().millisecondsSinceEpoch.toString();
-                await db.accountsDao
-                    .insertAccount(AccountsTableCompanion.insert(
-                  id: id,
-                  storeId: storeId,
-                  name: nameController.text,
-                  type: 'receivable',
-                  createdAt: DateTime.now(),
-                ));
+                await db.accountsDao.insertAccount(
+                  AccountsTableCompanion.insert(
+                    id: id,
+                    storeId: storeId,
+                    name: nameController.text,
+                    type: 'receivable',
+                    createdAt: DateTime.now(),
+                  ),
+                );
 
                 if (!context.mounted) return;
                 Navigator.pop(context);
@@ -977,8 +1040,10 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                   SnackBar(
                     content: Row(
                       children: [
-                        const Icon(Icons.check_circle_rounded,
-                            color: Colors.white),
+                        const Icon(
+                          Icons.check_circle_rounded,
+                          color: Colors.white,
+                        ),
                         const SizedBox(width: AppSizes.sm),
                         Text(l10n.customerAddedSuccess(nameController.text)),
                       ],
@@ -1010,7 +1075,10 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
   }
 
   void _showPaymentDialog(
-      AccountsTableData account, bool isDark, AppLocalizations l10n) {
+    AccountsTableData account,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final controller = TextEditingController();
 
     showDialog(
@@ -1028,8 +1096,10 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                 color: AppColors.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppSizes.radiusMd),
               ),
-              child:
-                  const Icon(Icons.payment_rounded, color: AppColors.success),
+              child: const Icon(
+                Icons.payment_rounded,
+                color: AppColors.success,
+              ),
             ),
             const SizedBox(width: AppSizes.sm),
             Text(
@@ -1073,10 +1143,14 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                             ),
                           ),
                           Text(
-                            l10n.dueAmountLabel(AppNumberFormatter.currency(
+                            l10n.dueAmountLabel(
+                              AppNumberFormatter.currency(
                                 account.balance.abs(),
-                                locale: Localizations.localeOf(context)
-                                    .toString())),
+                                locale: Localizations.localeOf(
+                                  context,
+                                ).toString(),
+                              ),
+                            ),
                             style: const TextStyle(
                               color: AppColors.error,
                               fontSize: 12,
@@ -1102,8 +1176,9 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                 textAlign: TextAlign.center,
                 decoration: InputDecoration(
                   labelText: l10n.paymentAmountLabel,
-                  labelStyle:
-                      TextStyle(color: AppColors.getTextSecondary(isDark)),
+                  labelStyle: TextStyle(
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
                   suffixText: l10n.currency,
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(AppSizes.radiusMd),
@@ -1118,24 +1193,30 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
               // Quick Amounts
               Wrap(
                 spacing: AppSizes.sm,
-                children: [50, 100, 200, 500].map((amount) {
-                  return ActionChip(
-                    label: Text(
-                      '$amount',
-                      style: TextStyle(color: AppColors.getTextPrimary(isDark)),
+                children:
+                    [50, 100, 200, 500].map((amount) {
+                      return ActionChip(
+                        label: Text(
+                          '$amount',
+                          style: TextStyle(
+                            color: AppColors.getTextPrimary(isDark),
+                          ),
+                        ),
+                        onPressed: () => controller.text = amount.toString(),
+                        backgroundColor: AppColors.getSurfaceVariant(isDark),
+                      );
+                    }).toList()..add(
+                      ActionChip(
+                        label: Text(l10n.fullAmount),
+                        onPressed: () => controller.text = account.balance
+                            .abs()
+                            .toStringAsFixed(0), // Raw number for input field
+                        backgroundColor: AppColors.primary.withValues(
+                          alpha: 0.1,
+                        ),
+                        labelStyle: const TextStyle(color: AppColors.primary),
+                      ),
                     ),
-                    onPressed: () => controller.text = amount.toString(),
-                    backgroundColor: AppColors.getSurfaceVariant(isDark),
-                  );
-                }).toList()
-                  ..add(ActionChip(
-                    label: Text(l10n.fullAmount),
-                    onPressed: () => controller.text = account.balance
-                        .abs()
-                        .toStringAsFixed(0), // Raw number for input field
-                    backgroundColor: AppColors.primary.withValues(alpha: 0.1),
-                    labelStyle: const TextStyle(color: AppColors.primary),
-                  )),
               ),
             ],
           ),
@@ -1162,12 +1243,19 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                 SnackBar(
                   content: Row(
                     children: [
-                      const Icon(Icons.check_circle_rounded,
-                          color: Colors.white),
+                      const Icon(
+                        Icons.check_circle_rounded,
+                        color: Colors.white,
+                      ),
                       const SizedBox(width: AppSizes.sm),
-                      Text(l10n.paymentRecorded(AppNumberFormatter.currency(
-                          amount,
-                          locale: Localizations.localeOf(context).toString()))),
+                      Text(
+                        l10n.paymentRecorded(
+                          AppNumberFormatter.currency(
+                            amount,
+                            locale: Localizations.localeOf(context).toString(),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   backgroundColor: AppColors.success,
@@ -1311,8 +1399,8 @@ class _CustomerCardState extends State<_CustomerCard> {
             color: widget.isSelected
                 ? AppColors.primary
                 : _isHovered
-                    ? AppColors.primary.withValues(alpha: 0.5)
-                    : AppColors.getBorder(isDark),
+                ? AppColors.primary.withValues(alpha: 0.5)
+                : AppColors.getBorder(isDark),
             width: widget.isSelected ? 2 : 1,
           ),
           boxShadow: _isHovered ? AppSizes.shadowMd : AppSizes.shadowSm,
@@ -1343,18 +1431,17 @@ class _CustomerCardState extends State<_CustomerCard> {
                         colors: hasDebt
                             ? [
                                 AppColors.error.withValues(alpha: 0.7),
-                                AppColors.error
+                                AppColors.error,
                               ]
                             : hasCredit
-                                ? [
-                                    AppColors.success.withValues(alpha: 0.7),
-                                    AppColors.success
-                                  ]
-                                : [
-                                    AppColors.textSecondary
-                                        .withValues(alpha: 0.7),
-                                    AppColors.textSecondary
-                                  ],
+                            ? [
+                                AppColors.success.withValues(alpha: 0.7),
+                                AppColors.success,
+                              ]
+                            : [
+                                AppColors.textSecondary.withValues(alpha: 0.7),
+                                AppColors.textSecondary,
+                              ],
                         begin: AlignmentDirectional.topStart,
                         end: AlignmentDirectional.bottomEnd,
                       ),
@@ -1383,9 +1470,9 @@ class _CustomerCardState extends State<_CustomerCard> {
                       Text(
                         widget.customer.name,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: AppColors.getTextPrimary(isDark),
-                            ),
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.getTextPrimary(isDark),
+                        ),
                       ),
                       const SizedBox(height: AppSizes.xxs),
                       Row(
@@ -1420,21 +1507,21 @@ class _CustomerCardState extends State<_CustomerCard> {
                         color: hasDebt
                             ? AppColors.error
                             : hasCredit
-                                ? AppColors.success
-                                : AppColors.getTextSecondary(isDark),
+                            ? AppColors.success
+                            : AppColors.getTextSecondary(isDark),
                       ),
                     ),
                     AppBadge(
                       label: hasDebt
                           ? widget.l10n.owedLabel
                           : hasCredit
-                              ? widget.l10n.hasBalanceLabel
-                              : widget.l10n.zeroLabel,
+                          ? widget.l10n.hasBalanceLabel
+                          : widget.l10n.zeroLabel,
                       color: hasDebt
                           ? AppColors.error
                           : hasCredit
-                              ? AppColors.success
-                              : AppColors.getTextSecondary(isDark),
+                          ? AppColors.success
+                          : AppColors.getTextSecondary(isDark),
                       variant: AppBadgeVariant.soft,
                     ),
                   ],
@@ -1447,8 +1534,10 @@ class _CustomerCardState extends State<_CustomerCard> {
                     onPressed: widget.onPayment,
                     tooltip: widget.l10n.payAction,
                   ),
-                AdaptiveIcon(Icons.chevron_left_rounded,
-                    color: AppColors.getTextSecondary(isDark)),
+                AdaptiveIcon(
+                  Icons.chevron_left_rounded,
+                  color: AppColors.getTextSecondary(isDark),
+                ),
               ],
             ),
           ),

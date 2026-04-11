@@ -28,12 +28,12 @@ class UserFeedback {
   });
 
   Map<String, dynamic> toJson() => {
-        'saleId': saleId,
-        'timestamp': timestamp.toIso8601String(),
-        'rating': rating,
-        'wasQuick': wasQuick,
-        'comment': comment,
-      };
+    'saleId': saleId,
+    'timestamp': timestamp.toIso8601String(),
+    'rating': rating,
+    'wasQuick': wasQuick,
+    'comment': comment,
+  };
 
   factory UserFeedback.fromJson(Map<String, dynamic> json) {
     return UserFeedback(
@@ -121,8 +121,8 @@ class FeedbackNotifier extends StateNotifier<List<UserFeedback>> {
 /// مزود التقييمات
 final feedbackProvider =
     StateNotifierProvider<FeedbackNotifier, List<UserFeedback>>(
-  (ref) => FeedbackNotifier(),
-);
+      (ref) => FeedbackNotifier(),
+    );
 
 /// نسبة "سريع"
 final quickPercentageProvider = Provider<double>((ref) {
@@ -164,16 +164,15 @@ class QuickFeedbackWidget extends ConsumerWidget {
                   label: AppLocalizations.of(context).fastLabel,
                   color: AlhaiColors.success,
                   onTap: () {
-                    ref.read(feedbackProvider.notifier).addFeedback(
-                          saleId: saleId,
-                          rating: 5,
-                          wasQuick: true,
-                        );
+                    ref
+                        .read(feedbackProvider.notifier)
+                        .addFeedback(saleId: saleId, rating: 5, wasQuick: true);
                     onFeedbackSubmitted?.call();
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                        content:
-                            Text(AppLocalizations.of(context).thanksFeedback),
+                        content: Text(
+                          AppLocalizations.of(context).thanksFeedback,
+                        ),
                         duration: const Duration(seconds: 1),
                       ),
                     );
@@ -184,7 +183,9 @@ class QuickFeedbackWidget extends ConsumerWidget {
                   label: AppLocalizations.of(context).slow,
                   color: AlhaiColors.warning,
                   onTap: () {
-                    ref.read(feedbackProvider.notifier).addFeedback(
+                    ref
+                        .read(feedbackProvider.notifier)
+                        .addFeedback(
                           saleId: saleId,
                           rating: 2,
                           wasQuick: false,
@@ -206,7 +207,10 @@ class QuickFeedbackWidget extends ConsumerWidget {
   }
 
   void _showDetailedFeedback(
-      BuildContext context, WidgetRef ref, String saleId) {
+    BuildContext context,
+    WidgetRef ref,
+    String saleId,
+  ) {
     final controller = TextEditingController();
 
     showDialog(
@@ -236,7 +240,9 @@ class QuickFeedbackWidget extends ConsumerWidget {
           FilledButton(
             onPressed: () {
               if (controller.text.isNotEmpty) {
-                ref.read(feedbackProvider.notifier).addFeedback(
+                ref
+                    .read(feedbackProvider.notifier)
+                    .addFeedback(
                       saleId: saleId,
                       rating: 2,
                       wasQuick: false,
@@ -284,17 +290,16 @@ class _FeedbackButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
+            horizontal: AlhaiSpacing.mdl,
+            vertical: AlhaiSpacing.sm,
+          ),
           child: Column(
             children: [
               Icon(icon, color: color, size: 32),
               SizedBox(height: AlhaiSpacing.xxs),
               Text(
                 label,
-                style: TextStyle(
-                  color: color,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: TextStyle(color: color, fontWeight: FontWeight.bold),
               ),
             ],
           ),

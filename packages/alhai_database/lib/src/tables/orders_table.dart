@@ -25,14 +25,19 @@ import 'customers_table.dart';
 @TableIndex(name: 'idx_orders_order_date', columns: {#orderDate})
 @TableIndex(name: 'idx_orders_store_status', columns: {#storeId, #status})
 @TableIndex(
-    name: 'idx_orders_store_order_date', columns: {#storeId, #orderDate})
+  name: 'idx_orders_store_order_date',
+  columns: {#storeId, #orderDate},
+)
 @TableIndex(name: 'idx_orders_synced_at', columns: {#syncedAt})
 @TableIndex(
-    name: 'idx_orders_customer_created', columns: {#customerId, #createdAt})
+  name: 'idx_orders_customer_created',
+  columns: {#customerId, #createdAt},
+)
 @TableIndex(
-    name: 'idx_orders_store_number_unique',
-    columns: {#storeId, #orderNumber},
-    unique: true)
+  name: 'idx_orders_store_number_unique',
+  columns: {#storeId, #orderNumber},
+  unique: true,
+)
 class OrdersTable extends Table {
   @override
   String get tableName => 'orders';

@@ -12,7 +12,8 @@ part of 'stock_adjustment.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 StockAdjustment _$StockAdjustmentFromJson(Map<String, dynamic> json) {
   return _StockAdjustment.fromJson(json);
@@ -45,21 +46,23 @@ mixin _$StockAdjustment {
 /// @nodoc
 abstract class $StockAdjustmentCopyWith<$Res> {
   factory $StockAdjustmentCopyWith(
-          StockAdjustment value, $Res Function(StockAdjustment) then) =
-      _$StockAdjustmentCopyWithImpl<$Res, StockAdjustment>;
+    StockAdjustment value,
+    $Res Function(StockAdjustment) then,
+  ) = _$StockAdjustmentCopyWithImpl<$Res, StockAdjustment>;
   @useResult
-  $Res call(
-      {String id,
-      String productId,
-      String storeId,
-      AdjustmentType type,
-      double quantity,
-      double previousQty,
-      double newQty,
-      String? reason,
-      String? referenceId,
-      String? createdBy,
-      DateTime createdAt});
+  $Res call({
+    String id,
+    String productId,
+    String storeId,
+    AdjustmentType type,
+    double quantity,
+    double previousQty,
+    double newQty,
+    String? reason,
+    String? referenceId,
+    String? createdBy,
+    DateTime createdAt,
+  });
 }
 
 /// @nodoc
@@ -89,75 +92,80 @@ class _$StockAdjustmentCopyWithImpl<$Res, $Val extends StockAdjustment>
     Object? createdBy = freezed,
     Object? createdAt = null,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as AdjustmentType,
-      quantity: null == quantity
-          ? _value.quantity
-          : quantity // ignore: cast_nullable_to_non_nullable
-              as double,
-      previousQty: null == previousQty
-          ? _value.previousQty
-          : previousQty // ignore: cast_nullable_to_non_nullable
-              as double,
-      newQty: null == newQty
-          ? _value.newQty
-          : newQty // ignore: cast_nullable_to_non_nullable
-              as double,
-      reason: freezed == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as String?,
-      referenceId: freezed == referenceId
-          ? _value.referenceId
-          : referenceId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdBy: freezed == createdBy
-          ? _value.createdBy
-          : createdBy // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            productId: null == productId
+                ? _value.productId
+                : productId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            storeId: null == storeId
+                ? _value.storeId
+                : storeId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as AdjustmentType,
+            quantity: null == quantity
+                ? _value.quantity
+                : quantity // ignore: cast_nullable_to_non_nullable
+                      as double,
+            previousQty: null == previousQty
+                ? _value.previousQty
+                : previousQty // ignore: cast_nullable_to_non_nullable
+                      as double,
+            newQty: null == newQty
+                ? _value.newQty
+                : newQty // ignore: cast_nullable_to_non_nullable
+                      as double,
+            reason: freezed == reason
+                ? _value.reason
+                : reason // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            referenceId: freezed == referenceId
+                ? _value.referenceId
+                : referenceId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            createdBy: freezed == createdBy
+                ? _value.createdBy
+                : createdBy // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$StockAdjustmentImplCopyWith<$Res>
     implements $StockAdjustmentCopyWith<$Res> {
-  factory _$$StockAdjustmentImplCopyWith(_$StockAdjustmentImpl value,
-          $Res Function(_$StockAdjustmentImpl) then) =
-      __$$StockAdjustmentImplCopyWithImpl<$Res>;
+  factory _$$StockAdjustmentImplCopyWith(
+    _$StockAdjustmentImpl value,
+    $Res Function(_$StockAdjustmentImpl) then,
+  ) = __$$StockAdjustmentImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String productId,
-      String storeId,
-      AdjustmentType type,
-      double quantity,
-      double previousQty,
-      double newQty,
-      String? reason,
-      String? referenceId,
-      String? createdBy,
-      DateTime createdAt});
+  $Res call({
+    String id,
+    String productId,
+    String storeId,
+    AdjustmentType type,
+    double quantity,
+    double previousQty,
+    double newQty,
+    String? reason,
+    String? referenceId,
+    String? createdBy,
+    DateTime createdAt,
+  });
 }
 
 /// @nodoc
@@ -165,8 +173,9 @@ class __$$StockAdjustmentImplCopyWithImpl<$Res>
     extends _$StockAdjustmentCopyWithImpl<$Res, _$StockAdjustmentImpl>
     implements _$$StockAdjustmentImplCopyWith<$Res> {
   __$$StockAdjustmentImplCopyWithImpl(
-      _$StockAdjustmentImpl _value, $Res Function(_$StockAdjustmentImpl) _then)
-      : super(_value, _then);
+    _$StockAdjustmentImpl _value,
+    $Res Function(_$StockAdjustmentImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of StockAdjustment
   /// with the given fields replaced by the non-null parameter values.
@@ -185,70 +194,73 @@ class __$$StockAdjustmentImplCopyWithImpl<$Res>
     Object? createdBy = freezed,
     Object? createdAt = null,
   }) {
-    return _then(_$StockAdjustmentImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as AdjustmentType,
-      quantity: null == quantity
-          ? _value.quantity
-          : quantity // ignore: cast_nullable_to_non_nullable
-              as double,
-      previousQty: null == previousQty
-          ? _value.previousQty
-          : previousQty // ignore: cast_nullable_to_non_nullable
-              as double,
-      newQty: null == newQty
-          ? _value.newQty
-          : newQty // ignore: cast_nullable_to_non_nullable
-              as double,
-      reason: freezed == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as String?,
-      referenceId: freezed == referenceId
-          ? _value.referenceId
-          : referenceId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdBy: freezed == createdBy
-          ? _value.createdBy
-          : createdBy // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$StockAdjustmentImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        productId: null == productId
+            ? _value.productId
+            : productId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        storeId: null == storeId
+            ? _value.storeId
+            : storeId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as AdjustmentType,
+        quantity: null == quantity
+            ? _value.quantity
+            : quantity // ignore: cast_nullable_to_non_nullable
+                  as double,
+        previousQty: null == previousQty
+            ? _value.previousQty
+            : previousQty // ignore: cast_nullable_to_non_nullable
+                  as double,
+        newQty: null == newQty
+            ? _value.newQty
+            : newQty // ignore: cast_nullable_to_non_nullable
+                  as double,
+        reason: freezed == reason
+            ? _value.reason
+            : reason // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        referenceId: freezed == referenceId
+            ? _value.referenceId
+            : referenceId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        createdBy: freezed == createdBy
+            ? _value.createdBy
+            : createdBy // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$StockAdjustmentImpl implements _StockAdjustment {
-  const _$StockAdjustmentImpl(
-      {required this.id,
-      required this.productId,
-      required this.storeId,
-      required this.type,
-      required this.quantity,
-      required this.previousQty,
-      required this.newQty,
-      this.reason,
-      this.referenceId,
-      this.createdBy,
-      required this.createdAt});
+  const _$StockAdjustmentImpl({
+    required this.id,
+    required this.productId,
+    required this.storeId,
+    required this.type,
+    required this.quantity,
+    required this.previousQty,
+    required this.newQty,
+    this.reason,
+    this.referenceId,
+    this.createdBy,
+    required this.createdAt,
+  });
 
   factory _$StockAdjustmentImpl.fromJson(Map<String, dynamic> json) =>
       _$$StockAdjustmentImplFromJson(json);
@@ -307,8 +319,20 @@ class _$StockAdjustmentImpl implements _StockAdjustment {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, productId, storeId, type,
-      quantity, previousQty, newQty, reason, referenceId, createdBy, createdAt);
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    productId,
+    storeId,
+    type,
+    quantity,
+    previousQty,
+    newQty,
+    reason,
+    referenceId,
+    createdBy,
+    createdAt,
+  );
 
   /// Create a copy of StockAdjustment
   /// with the given fields replaced by the non-null parameter values.
@@ -317,29 +341,30 @@ class _$StockAdjustmentImpl implements _StockAdjustment {
   @pragma('vm:prefer-inline')
   _$$StockAdjustmentImplCopyWith<_$StockAdjustmentImpl> get copyWith =>
       __$$StockAdjustmentImplCopyWithImpl<_$StockAdjustmentImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$StockAdjustmentImplToJson(
-      this,
-    );
+    return _$$StockAdjustmentImplToJson(this);
   }
 }
 
 abstract class _StockAdjustment implements StockAdjustment {
-  const factory _StockAdjustment(
-      {required final String id,
-      required final String productId,
-      required final String storeId,
-      required final AdjustmentType type,
-      required final double quantity,
-      required final double previousQty,
-      required final double newQty,
-      final String? reason,
-      final String? referenceId,
-      final String? createdBy,
-      required final DateTime createdAt}) = _$StockAdjustmentImpl;
+  const factory _StockAdjustment({
+    required final String id,
+    required final String productId,
+    required final String storeId,
+    required final AdjustmentType type,
+    required final double quantity,
+    required final double previousQty,
+    required final double newQty,
+    final String? reason,
+    final String? referenceId,
+    final String? createdBy,
+    required final DateTime createdAt,
+  }) = _$StockAdjustmentImpl;
 
   factory _StockAdjustment.fromJson(Map<String, dynamic> json) =
       _$StockAdjustmentImpl.fromJson;

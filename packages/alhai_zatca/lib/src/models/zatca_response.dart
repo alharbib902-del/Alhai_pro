@@ -63,8 +63,9 @@ class ZatcaResponse {
     return ZatcaResponse(
       isSuccess: isSuccess,
       statusCode: statusCode,
-      reportingStatus:
-          isSuccess ? ReportingStatus.reported : ReportingStatus.rejected,
+      reportingStatus: isSuccess
+          ? ReportingStatus.reported
+          : ReportingStatus.rejected,
       clearanceStatus: json['clearanceStatus'] as String?,
       clearedInvoiceXml: json['clearedInvoice'] as String?,
       warnings: warnings,
@@ -73,10 +74,7 @@ class ZatcaResponse {
   }
 
   /// Create a failure response for network/parsing errors
-  factory ZatcaResponse.failure({
-    required String message,
-    int statusCode = 0,
-  }) {
+  factory ZatcaResponse.failure({required String message, int statusCode = 0}) {
     return ZatcaResponse(
       isSuccess: false,
       statusCode: statusCode,

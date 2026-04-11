@@ -108,7 +108,9 @@ class PinService {
     await SecureStorageService.write(_pinHashKey, hash);
     await SecureStorageService.write(_pinSaltKey, saltBase64);
     await SecureStorageService.write(
-        _pinVersionKey, _currentVersion.toString());
+      _pinVersionKey,
+      _currentVersion.toString(),
+    );
     await SecureStorageService.write(_pinEnabledKey, 'true');
     await _resetAttempts();
 
@@ -211,7 +213,9 @@ class PinService {
     await SecureStorageService.write(_pinHashKey, hash);
     await SecureStorageService.write(_pinSaltKey, saltBase64);
     await SecureStorageService.write(
-        _pinVersionKey, _currentVersion.toString());
+      _pinVersionKey,
+      _currentVersion.toString(),
+    );
   }
 
   // ============================================================================
@@ -246,7 +250,9 @@ class PinService {
   static Future<void> _lockOut() async {
     final lockedUntil = DateTime.now().add(kLockoutDuration);
     await SecureStorageService.write(
-        _pinLockedUntilKey, lockedUntil.toIso8601String());
+      _pinLockedUntilKey,
+      lockedUntil.toIso8601String(),
+    );
   }
 
   /// الحصول على عدد المحاولات
@@ -363,43 +369,37 @@ class PinResult {
   factory PinResult.success() => const PinResult._(isSuccess: true);
 
   factory PinResult.incorrect(int remaining) => PinResult._(
-        isSuccess: false,
-        error: 'رمز PIN غير صحيح',
-        errorType: PinError.incorrect,
-        remainingAttempts: remaining,
-      );
+    isSuccess: false,
+    error: 'رمز PIN غير صحيح',
+    errorType: PinError.incorrect,
+    remainingAttempts: remaining,
+  );
 
   factory PinResult.invalidLength() => const PinResult._(
-        isSuccess: false,
-        error: 'يجب أن يكون رمز PIN من 4-6 أرقام',
-        errorType: PinError.invalidLength,
-      );
+    isSuccess: false,
+    error: 'يجب أن يكون رمز PIN من 4-6 أرقام',
+    errorType: PinError.invalidLength,
+  );
 
   factory PinResult.invalidFormat() => const PinResult._(
-        isSuccess: false,
-        error: 'يجب أن يحتوي رمز PIN على أرقام فقط',
-        errorType: PinError.invalidFormat,
-      );
+    isSuccess: false,
+    error: 'يجب أن يحتوي رمز PIN على أرقام فقط',
+    errorType: PinError.invalidFormat,
+  );
 
   factory PinResult.notEnabled() => const PinResult._(
-        isSuccess: false,
-        error: 'رمز PIN غير مفعل',
-        errorType: PinError.notEnabled,
-      );
+    isSuccess: false,
+    error: 'رمز PIN غير مفعل',
+    errorType: PinError.notEnabled,
+  );
 
   factory PinResult.lockedOut(DateTime? until) => PinResult._(
-        isSuccess: false,
-        error: 'تم قفل PIN بسبب كثرة المحاولات',
-        errorType: PinError.lockedOut,
-        lockedUntil: until,
-      );
+    isSuccess: false,
+    error: 'تم قفل PIN بسبب كثرة المحاولات',
+    errorType: PinError.lockedOut,
+    lockedUntil: until,
+  );
 }
 
 /// أنواع أخطاء PIN
-enum PinError {
-  incorrect,
-  invalidLength,
-  invalidFormat,
-  notEnabled,
-  lockedOut,
-}
+enum PinError { incorrect, invalidLength, invalidFormat, notEnabled, lockedOut }

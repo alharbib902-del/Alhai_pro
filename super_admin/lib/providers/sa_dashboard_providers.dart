@@ -18,8 +18,9 @@ final saSupabaseClientProvider = Provider<SupabaseClient>((ref) {
 // ============================================================================
 
 /// Dashboard KPIs -- auto-refreshes when invalidated.
-final saDashboardKPIsProvider =
-    FutureProvider.autoDispose<SADashboardKPIs>((ref) async {
+final saDashboardKPIsProvider = FutureProvider.autoDispose<SADashboardKPIs>((
+  ref,
+) async {
   final ds = SAAnalyticsDatasource(ref.watch(saSupabaseClientProvider));
   return ds.getDashboardKPIs();
 });
@@ -27,13 +28,13 @@ final saDashboardKPIsProvider =
 /// Monthly revenue chart data.
 final saMonthlyRevenueProvider =
     FutureProvider.autoDispose<List<SARevenueData>>((ref) async {
-  final ds = SAAnalyticsDatasource(ref.watch(saSupabaseClientProvider));
-  return ds.getMonthlyRevenue();
-});
+      final ds = SAAnalyticsDatasource(ref.watch(saSupabaseClientProvider));
+      return ds.getMonthlyRevenue();
+    });
 
 /// Subscription distribution by plan (for pie chart).
 final saSubscriptionDistributionProvider =
     FutureProvider.autoDispose<Map<String, int>>((ref) async {
-  final ds = SASubscriptionsDatasource(ref.watch(saSupabaseClientProvider));
-  return ds.getSubscriberCountByPlan();
-});
+      final ds = SASubscriptionsDatasource(ref.watch(saSupabaseClientProvider));
+      return ds.getSubscriberCountByPlan();
+    });

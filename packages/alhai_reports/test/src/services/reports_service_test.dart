@@ -33,17 +33,16 @@ void main() {
   group('ReportsService', () {
     group('getTodayStats', () {
       test('returns stats from SalesDao for today', () async {
-        final expectedStats = createTestSalesStats(
-          count: 25,
-          total: 2500.0,
-        );
+        final expectedStats = createTestSalesStats(count: 25, total: 2500.0);
 
-        when(() => mockSalesDao.getSalesStats(
-              any(),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              cashierId: any(named: 'cashierId'),
-            )).thenAnswer((_) async => expectedStats);
+        when(
+          () => mockSalesDao.getSalesStats(
+            any(),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            cashierId: any(named: 'cashierId'),
+          ),
+        ).thenAnswer((_) async => expectedStats);
 
         final stats = await service.getTodayStats('store-1');
 
@@ -52,21 +51,25 @@ void main() {
       });
 
       test('passes cashierId when provided', () async {
-        when(() => mockSalesDao.getSalesStats(
-              any(),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              cashierId: any(named: 'cashierId'),
-            )).thenAnswer((_) async => createTestSalesStats());
+        when(
+          () => mockSalesDao.getSalesStats(
+            any(),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            cashierId: any(named: 'cashierId'),
+          ),
+        ).thenAnswer((_) async => createTestSalesStats());
 
         await service.getTodayStats('store-1', cashierId: 'cashier-1');
 
-        verify(() => mockSalesDao.getSalesStats(
-              'store-1',
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              cashierId: 'cashier-1',
-            )).called(1);
+        verify(
+          () => mockSalesDao.getSalesStats(
+            'store-1',
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            cashierId: 'cashier-1',
+          ),
+        ).called(1);
       });
     });
 
@@ -75,8 +78,9 @@ void main() {
         // Create mock products with varying stock levels
         final products = <ProductsTableData>[];
 
-        when(() => mockProductsDao.getAllProducts(any()))
-            .thenAnswer((_) async => products);
+        when(
+          () => mockProductsDao.getAllProducts(any()),
+        ).thenAnswer((_) async => products);
 
         final report = await service.getInventoryReport('store-1');
 
@@ -88,21 +92,21 @@ void main() {
 
     group('getInventoryMovements', () {
       test('calls getMovementsByProduct when productId provided', () async {
-        when(() => mockInventoryDao.getMovementsByProduct(any()))
-            .thenAnswer((_) async => []);
+        when(
+          () => mockInventoryDao.getMovementsByProduct(any()),
+        ).thenAnswer((_) async => []);
 
-        await service.getInventoryMovements(
-          'store-1',
-          productId: 'product-1',
-        );
+        await service.getInventoryMovements('store-1', productId: 'product-1');
 
-        verify(() => mockInventoryDao.getMovementsByProduct('product-1'))
-            .called(1);
+        verify(
+          () => mockInventoryDao.getMovementsByProduct('product-1'),
+        ).called(1);
       });
 
       test('calls getTodayMovements when no productId', () async {
-        when(() => mockInventoryDao.getTodayMovements(any()))
-            .thenAnswer((_) async => []);
+        when(
+          () => mockInventoryDao.getTodayMovements(any()),
+        ).thenAnswer((_) async => []);
 
         await service.getInventoryMovements('store-1');
 
@@ -131,11 +135,13 @@ void main() {
           totalTransactions: 100,
         );
 
-        when(() => mockLoyaltyDao.getStats(
-              any(),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-            )).thenAnswer((_) async => expectedStats);
+        when(
+          () => mockLoyaltyDao.getStats(
+            any(),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+          ),
+        ).thenAnswer((_) async => expectedStats);
 
         final result = await service.getLoyaltyReport('store-1');
         expect(result, isNotNull);
@@ -153,45 +159,57 @@ void main() {
           loyaltyDao: null,
         );
 
-        final result =
-            await serviceWithoutLoyalty.getTopLoyaltyCustomers('store-1');
+        final result = await serviceWithoutLoyalty.getTopLoyaltyCustomers(
+          'store-1',
+        );
         expect(result, isEmpty);
       });
 
       test('returns top customers from loyalty dao', () async {
-        when(() => mockLoyaltyDao.getTopCustomers(any(),
-            limit: any(named: 'limit'))).thenAnswer((_) async => []);
+        when(
+          () =>
+              mockLoyaltyDao.getTopCustomers(any(), limit: any(named: 'limit')),
+        ).thenAnswer((_) async => []);
 
         final result = await service.getTopLoyaltyCustomers('store-1');
         expect(result, isEmpty);
-        verify(() => mockLoyaltyDao.getTopCustomers('store-1', limit: 10))
-            .called(1);
+        verify(
+          () => mockLoyaltyDao.getTopCustomers('store-1', limit: 10),
+        ).called(1);
       });
     });
 
     group('getSalesReport', () {
       test('returns report with stats for a period', () async {
-        when(() => mockSalesDao.getSalesStats(
-              any(),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              cashierId: any(named: 'cashierId'),
-            )).thenAnswer((_) async => createTestSalesStats(
-              count: 10,
-              total: 1000.0,
-            ));
+        when(
+          () => mockSalesDao.getSalesStats(
+            any(),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            cashierId: any(named: 'cashierId'),
+          ),
+        ).thenAnswer(
+          (_) async => createTestSalesStats(count: 10, total: 1000.0),
+        );
 
-        when(() => mockSalesDao.getPaymentMethodStats(
-              any(),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-            )).thenAnswer((_) async => []);
+        when(
+          () => mockSalesDao.getPaymentMethodStats(
+            any(),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+          ),
+        ).thenAnswer((_) async => []);
 
-        when(() => mockSalesDao.getHourlySales(any(), any()))
-            .thenAnswer((_) async => []);
+        when(
+          () => mockSalesDao.getHourlySales(any(), any()),
+        ).thenAnswer((_) async => []);
 
-        when(() => mockProductsDao.getTopSellingProducts(any(),
-            limit: any(named: 'limit'))).thenAnswer((_) async => []);
+        when(
+          () => mockProductsDao.getTopSellingProducts(
+            any(),
+            limit: any(named: 'limit'),
+          ),
+        ).thenAnswer((_) async => []);
 
         final report = await service.getSalesReport(
           'store-1',
@@ -207,29 +225,35 @@ void main() {
 
     group('getDashboardSummary', () {
       test('returns combined summary from multiple sources', () async {
-        when(() => mockSalesDao.getSalesStats(
-              any(),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              cashierId: any(named: 'cashierId'),
-            )).thenAnswer((_) async => createTestSalesStats(
-              count: 20,
-              total: 3000.0,
-            ));
+        when(
+          () => mockSalesDao.getSalesStats(
+            any(),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            cashierId: any(named: 'cashierId'),
+          ),
+        ).thenAnswer(
+          (_) async => createTestSalesStats(count: 20, total: 3000.0),
+        );
 
-        when(() => mockProductsDao.getAllProducts(any()))
-            .thenAnswer((_) async => []);
+        when(
+          () => mockProductsDao.getAllProducts(any()),
+        ).thenAnswer((_) async => []);
 
-        when(() => mockLoyaltyDao.getStats(
-              any(),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-            )).thenAnswer((_) async => LoyaltyStats(
-              totalEarned: 100,
-              totalRedeemed: 50,
-              activeCustomers: 10,
-              totalTransactions: 20,
-            ));
+        when(
+          () => mockLoyaltyDao.getStats(
+            any(),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+          ),
+        ).thenAnswer(
+          (_) async => LoyaltyStats(
+            totalEarned: 100,
+            totalRedeemed: 50,
+            activeCustomers: 10,
+            totalTransactions: 20,
+          ),
+        );
 
         final summary = await service.getDashboardSummary('store-1');
 
@@ -279,10 +303,7 @@ void main() {
 
   group('DateRange', () {
     test('days returns correct number of days', () {
-      final range = DateRange(
-        DateTime(2026, 1, 1),
-        DateTime(2026, 1, 8),
-      );
+      final range = DateRange(DateTime(2026, 1, 1), DateTime(2026, 1, 8));
       expect(range.days, equals(7));
     });
 

@@ -15,11 +15,7 @@ class ChartDataPoint {
   final double value;
   final DateTime? date;
 
-  const ChartDataPoint({
-    required this.label,
-    required this.value,
-    this.date,
-  });
+  const ChartDataPoint({required this.label, required this.value, this.date});
 }
 
 /// نوع الفترة الزمنية
@@ -60,8 +56,9 @@ class SimpleBarChart extends StatelessWidget {
           child: Text(
             AppLocalizations.of(context).noData,
             style: TextStyle(
-              color:
-                  isDark ? Colors.white.withAlpha(128) : AppColors.textTertiary,
+              color: isDark
+                  ? Colors.white.withAlpha(128)
+                  : AppColors.textTertiary,
               fontSize: 14,
             ),
           ),
@@ -79,8 +76,9 @@ class SimpleBarChart extends StatelessWidget {
           final barAreaHeight = height - (showLabels ? 32 : 0);
           final barWidth = (constraints.maxWidth / data.length) * 0.5;
           final gridColor = isDark ? AppColors.borderDark : AppColors.border;
-          final textColor =
-              isDark ? AppColors.textSecondaryDark : AppColors.textSecondary;
+          final textColor = isDark
+              ? AppColors.textSecondaryDark
+              : AppColors.textSecondary;
 
           return Column(
             children: [
@@ -95,10 +93,7 @@ class SimpleBarChart extends StatelessWidget {
                         top: y,
                         left: 0,
                         right: 0,
-                        child: Container(
-                          height: 1,
-                          color: gridColor,
-                        ),
+                        child: Container(height: 1, color: gridColor),
                       );
                     }),
                     // الأعمدة
@@ -106,8 +101,9 @@ class SimpleBarChart extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: data.map((point) {
-                        final percentage =
-                            maxValue > 0 ? point.value / maxValue : 0.0;
+                        final percentage = maxValue > 0
+                            ? point.value / maxValue
+                            : 0.0;
                         return Tooltip(
                           message:
                               '${point.label}: ${_formatValue(point.value)}',
@@ -140,10 +136,7 @@ class SimpleBarChart extends StatelessWidget {
                     children: data.map((point) {
                       return Text(
                         point.label,
-                        style: TextStyle(
-                          color: textColor,
-                          fontSize: 11,
-                        ),
+                        style: TextStyle(color: textColor, fontSize: 11),
                       );
                     }).toList(),
                   ),
@@ -217,8 +210,9 @@ class _SalesChartCardState extends State<SalesChartCard> {
       padding: EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius:
-            BorderRadius.circular(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+        borderRadius: BorderRadius.circular(
+          isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg,
+        ),
         border: Border.all(
           color: isDark
               ? Colors.white.withAlpha(13)
@@ -302,11 +296,12 @@ class _SalesChartCardState extends State<SalesChartCard> {
                             color: isSelected
                                 ? (Theme.of(context).colorScheme.onSurface)
                                 : (isDark
-                                    ? Colors.white.withAlpha(102)
-                                    : AppColors.textSecondary),
+                                      ? Colors.white.withAlpha(102)
+                                      : AppColors.textSecondary),
                             fontSize: 12,
-                            fontWeight:
-                                isSelected ? FontWeight.bold : FontWeight.w500,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.w500,
                           ),
                         ),
                       ),
@@ -320,10 +315,7 @@ class _SalesChartCardState extends State<SalesChartCard> {
           SizedBox(height: isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
 
           // الرسم البياني الشريطي
-          SimpleBarChart(
-            data: currentData,
-            height: isMobile ? 200 : 280,
-          ),
+          SimpleBarChart(data: currentData, height: isMobile ? 200 : 280),
         ],
       ),
     );
@@ -440,8 +432,9 @@ class _TopProductRow extends StatelessWidget {
               ? null
               : Border(
                   bottom: BorderSide(
-                    color:
-                        isDark ? Colors.white.withAlpha(26) : AppColors.border,
+                    color: isDark
+                        ? Colors.white.withAlpha(26)
+                        : AppColors.border,
                   ),
                 ),
         ),
@@ -509,7 +502,9 @@ class _TopProductRow extends StatelessWidget {
             // الإيرادات
             Text(
               CurrencyFormatter.formatCompactWithContext(
-                  context, product.revenue),
+                context,
+                product.revenue,
+              ),
               style: const TextStyle(
                 color: AppColors.primary,
                 fontSize: 13,

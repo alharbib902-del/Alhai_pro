@@ -66,13 +66,15 @@ void main() {
     group('getDebts', () {
       test('returns Paginated<Debt> on success', () async {
         // Arrange
-        when(() => mockRemote.getDebts(
-              any(),
-              type: any(named: 'type'),
-              overdueOnly: any(named: 'overdueOnly'),
-              page: any(named: 'page'),
-              limit: any(named: 'limit'),
-            )).thenAnswer((_) async => [testDebtResponse]);
+        when(
+          () => mockRemote.getDebts(
+            any(),
+            type: any(named: 'type'),
+            overdueOnly: any(named: 'overdueOnly'),
+            page: any(named: 'page'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenAnswer((_) async => [testDebtResponse]);
 
         // Act
         final result = await repository.getDebts('store-1', page: 1, limit: 20);
@@ -85,16 +87,20 @@ void main() {
 
       test('throws NetworkException on connection error', () async {
         // Arrange
-        when(() => mockRemote.getDebts(
-              any(),
-              type: any(named: 'type'),
-              overdueOnly: any(named: 'overdueOnly'),
-              page: any(named: 'page'),
-              limit: any(named: 'limit'),
-            )).thenThrow(DioException(
-          type: DioExceptionType.connectionError,
-          requestOptions: RequestOptions(path: '/debts'),
-        ));
+        when(
+          () => mockRemote.getDebts(
+            any(),
+            type: any(named: 'type'),
+            overdueOnly: any(named: 'overdueOnly'),
+            page: any(named: 'page'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenThrow(
+          DioException(
+            type: DioExceptionType.connectionError,
+            requestOptions: RequestOptions(path: '/debts'),
+          ),
+        );
 
         // Act & Assert
         expect(
@@ -115,8 +121,9 @@ void main() {
           amount: 500.0,
         );
 
-        when(() => mockRemote.createDebt(any()))
-            .thenAnswer((_) async => testDebtResponse);
+        when(
+          () => mockRemote.createDebt(any()),
+        ).thenAnswer((_) async => testDebtResponse);
 
         // Act
         final result = await repository.createDebt(params);
@@ -136,8 +143,9 @@ void main() {
           paymentMethod: 'cash',
         );
 
-        when(() => mockRemote.recordPayment(any()))
-            .thenAnswer((_) async => testPaymentResponse);
+        when(
+          () => mockRemote.recordPayment(any()),
+        ).thenAnswer((_) async => testPaymentResponse);
 
         // Act
         final result = await repository.recordPayment(params);
@@ -151,8 +159,9 @@ void main() {
     group('getDebtSummary', () {
       test('returns DebtSummary on success', () async {
         // Arrange
-        when(() => mockRemote.getDebtSummary(any()))
-            .thenAnswer((_) async => testSummaryResponse);
+        when(
+          () => mockRemote.getDebtSummary(any()),
+        ).thenAnswer((_) async => testSummaryResponse);
 
         // Act
         final result = await repository.getDebtSummary('store-1');

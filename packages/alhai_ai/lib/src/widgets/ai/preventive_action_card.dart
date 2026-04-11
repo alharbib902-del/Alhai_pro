@@ -36,8 +36,9 @@ class PreventiveActionCard extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -61,10 +62,7 @@ class PreventiveActionCard extends StatelessWidget {
                   gradient: LinearGradient(
                     begin: AlignmentDirectional.topStart,
                     end: AlignmentDirectional.bottomEnd,
-                    colors: [
-                      typeColor,
-                      typeColor.withValues(alpha: 0.7),
-                    ],
+                    colors: [typeColor, typeColor.withValues(alpha: 0.7)],
                   ),
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
@@ -93,15 +91,17 @@ class PreventiveActionCard extends StatelessWidget {
                     const SizedBox(height: AlhaiSpacing.xxxs),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.xs,
-                          vertical: AlhaiSpacing.xxxs),
+                        horizontal: AlhaiSpacing.xs,
+                        vertical: AlhaiSpacing.xxxs,
+                      ),
                       decoration: BoxDecoration(
                         color: typeColor.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         AiReturnPredictionService.getPreventiveTypeLabel(
-                            action.type),
+                          action.type,
+                        ),
                         style: TextStyle(
                           color: typeColor,
                           fontSize: 11,
@@ -120,11 +120,7 @@ class PreventiveActionCard extends StatelessWidget {
           // الوصف
           Text(
             action.description,
-            style: TextStyle(
-              color: subtextColor,
-              fontSize: 13,
-              height: 1.5,
-            ),
+            style: TextStyle(color: subtextColor, fontSize: 13, height: 1.5),
           ),
 
           const SizedBox(height: 14),
@@ -132,7 +128,9 @@ class PreventiveActionCard extends StatelessWidget {
           // التوفير المتوقع
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+              horizontal: AlhaiSpacing.sm,
+              vertical: AlhaiSpacing.xs,
+            ),
             decoration: BoxDecoration(
               color: isDark
                   ? AppColors.success.withValues(alpha: 0.1)

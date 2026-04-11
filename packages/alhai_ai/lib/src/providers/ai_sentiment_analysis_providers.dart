@@ -20,8 +20,8 @@ final sentimentResultProvider = Provider<SentimentResult>((ref) {
 /// مزود ملاحظات العملاء
 final customerFeedbackProvider =
     StateNotifierProvider<FeedbackNotifier, List<CustomerFeedback>>((ref) {
-  return FeedbackNotifier();
-});
+      return FeedbackNotifier();
+    });
 
 /// مزود الكلمات المفتاحية
 final sentimentKeywordsProvider = Provider<List<KeywordData>>((ref) {
@@ -72,8 +72,9 @@ class FeedbackNotifier extends StateNotifier<List<CustomerFeedback>> {
 // ============================================================================
 
 /// مزود بيانات تحليل المشاعر من خادم AI
-final sentimentApiProvider =
-    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+final sentimentApiProvider = FutureProvider.autoDispose<Map<String, dynamic>>((
+  ref,
+) async {
   final api = ref.read(aiApiServiceProvider);
   final storeId = ref.read(currentStoreIdProvider)!;
   return api.analyzeSentiment(orgId: 'default', storeId: storeId);

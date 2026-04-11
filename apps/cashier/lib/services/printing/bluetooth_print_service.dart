@@ -52,21 +52,22 @@ class BluetoothPrintService implements ThermalPrintService {
     if (kIsWeb) return [];
 
     try {
-      final result = await _channel.invokeMethod<List<dynamic>>(
-        'scan',
-        {'timeout': timeout.inMilliseconds},
-      );
+      final result = await _channel.invokeMethod<List<dynamic>>('scan', {
+        'timeout': timeout.inMilliseconds,
+      });
 
       if (result == null) return [];
 
       return result
           .cast<Map<dynamic, dynamic>>()
-          .map((device) => DiscoveredPrinter(
-                id: device['address'] as String? ?? '',
-                name: device['name'] as String? ?? 'Unknown',
-                type: PrinterConnectionType.bluetooth,
-                address: device['address'] as String?,
-              ))
+          .map(
+            (device) => DiscoveredPrinter(
+              id: device['address'] as String? ?? '',
+              name: device['name'] as String? ?? 'Unknown',
+              type: PrinterConnectionType.bluetooth,
+              address: device['address'] as String?,
+            ),
+          )
           .toList();
     } on PlatformException catch (e) {
       if (kDebugMode) debugPrint('BT scan error: ${e.message}');
@@ -85,10 +86,9 @@ class BluetoothPrintService implements ThermalPrintService {
 
     _status = PrinterStatus.connecting;
     try {
-      final success = await _channel.invokeMethod<bool>(
-        'connect',
-        {'address': printer.address},
-      );
+      final success = await _channel.invokeMethod<bool>('connect', {
+        'address': printer.address,
+      });
 
       if (success == true) {
         _status = PrinterStatus.connected;
@@ -223,10 +223,9 @@ class BluetoothPrintService implements ThermalPrintService {
       final chunk = bytes.sublist(offset, end);
 
       try {
-        final success = await _channel.invokeMethod<bool>(
-          'write',
-          {'data': chunk},
-        );
+        final success = await _channel.invokeMethod<bool>('write', {
+          'data': chunk,
+        });
 
         if (success != true) {
           return PrintResult.fail('فشل إرسال البيانات إلى الطابعة');
@@ -256,10 +255,9 @@ class BluetoothPrintService implements ThermalPrintService {
       _status = PrinterStatus.connecting;
 
       try {
-        final success = await _channel.invokeMethod<bool>(
-          'connect',
-          {'address': _connectedAddress},
-        );
+        final success = await _channel.invokeMethod<bool>('connect', {
+          'address': _connectedAddress,
+        });
 
         if (success == true) {
           _status = PrinterStatus.connected;

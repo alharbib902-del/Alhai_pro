@@ -40,9 +40,8 @@ class PhoneValidationService {
 
   static const String _tag = 'PhoneValidation';
 
-  PhoneValidationService({
-    required WaSenderApiClient apiClient,
-  }) : _apiClient = apiClient;
+  PhoneValidationService({required WaSenderApiClient apiClient})
+    : _apiClient = apiClient;
 
   // ═══════════════════════════════════════════════════════
   // التحقق من التوفر على واتساب

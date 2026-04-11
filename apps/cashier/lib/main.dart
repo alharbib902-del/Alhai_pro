@@ -31,158 +31,165 @@ import 'services/printing/auto_print_setup.dart';
 import 'services/session_manager.dart';
 
 void main() {
-  initSentry(appRunner: () async {
-    final binding = WidgetsFlutterBinding.ensureInitialized();
+  initSentry(
+    appRunner: () async {
+      final binding = WidgetsFlutterBinding.ensureInitialized();
 
-    // Enable semantics tree for E2E testing (Playwright needs DOM elements).
-    // On web, Flutter CanvasKit renders to canvas — enabling semantics
-    // creates a parallel DOM tree that Playwright can interact with.
-    if (kIsWeb) {
-      binding.ensureSemantics();
-    }
-
-    // Global error handlers — send to Sentry
-    FlutterError.onError = (details) {
-      FlutterError.presentError(details);
-      reportError(
-        details.exception,
-        stackTrace: details.stack,
-        hint: 'FlutterError: ${details.library}',
-      );
-    };
-    PlatformDispatcher.instance.onError = (error, stack) {
-      reportError(error, stackTrace: stack, hint: 'PlatformDispatcher');
-      return true;
-    };
-
-    // تهيئة Firebase + Supabase + مفتاح التشفير + استعادة الجلسة بالتوازي
-    final dbKeyFuture = _getOrCreateDbKey();
-    final prefsFuture = SharedPreferences.getInstance();
-    // استعادة store ID المحفوظ لمنع فقدان الجلسة عند التحديث (F5)
-    final storeIdFuture = SecureStorageService.getStoreId();
-
-    final firebaseFuture = () async {
-      // Skip Firebase on web debug (JS SDK can't load without internet to gstatic.com)
-      if (kIsWeb && kDebugMode) {
-        debugPrint('Firebase init skipped (web debug mode)');
-        return;
+      // Enable semantics tree for E2E testing (Playwright needs DOM elements).
+      // On web, Flutter CanvasKit renders to canvas — enabling semantics
+      // creates a parallel DOM tree that Playwright can interact with.
+      if (kIsWeb) {
+        binding.ensureSemantics();
       }
-      try {
-        await Firebase.initializeApp();
-        if (kDebugMode) debugPrint('Firebase initialized successfully');
-      } catch (e, stack) {
-        reportError(e, stackTrace: stack, hint: 'Firebase init');
-      }
-    }();
 
-    final supabaseFuture = () async {
-      try {
-        debugPrint(
-            '🔧 Supabase config: url=${SupabaseConfig.url.isNotEmpty}, key=${SupabaseConfig.anonKey.isNotEmpty}');
-        if (!SupabaseConfig.isConfigured) {
-          throw StateError(
-            'Supabase not configured. ${SupabaseConfig.configurationError}',
-          );
-        }
-        await Supabase.initialize(
-          url: SupabaseConfig.url,
-          anonKey: SupabaseConfig.anonKey,
-          debug: SupabaseConfig.enableDebugLogs,
+      // Global error handlers — send to Sentry
+      FlutterError.onError = (details) {
+        FlutterError.presentError(details);
+        reportError(
+          details.exception,
+          stackTrace: details.stack,
+          hint: 'FlutterError: ${details.library}',
         );
-        debugPrint('✅ Supabase initialized successfully');
-      } catch (e, stack) {
-        debugPrint('❌ Supabase init FAILED: $e');
-        reportError(e, stackTrace: stack, hint: 'Supabase init');
-      }
-    }();
+      };
+      PlatformDispatcher.instance.onError = (error, stack) {
+        reportError(error, stackTrace: stack, hint: 'PlatformDispatcher');
+        return true;
+      };
 
-    // انتظر Firebase + Supabase + مفتاح DB + SharedPreferences + storeId معاً
-    final results = await Future.wait([
-      firebaseFuture,
-      supabaseFuture,
-      dbKeyFuture,
-      prefsFuture,
-      storeIdFuture,
-    ]);
+      // تهيئة Firebase + Supabase + مفتاح التشفير + استعادة الجلسة بالتوازي
+      final dbKeyFuture = _getOrCreateDbKey();
+      final prefsFuture = SharedPreferences.getInstance();
+      // استعادة store ID المحفوظ لمنع فقدان الجلسة عند التحديث (F5)
+      final storeIdFuture = SecureStorageService.getStoreId();
 
-    final dbKey = results[2] as String;
-    setDatabaseEncryptionKey(dbKey);
-
-    // SESSION-FIX: على الويب، فحص سريع لجلسة Supabase
-    // معظم المستخدمين يسجلون دخول محلي (verifyLocalOtp) بدون Supabase session
-    // لذلك نقلل الانتظار إلى 500ms فقط لعدم تأخير بدء التطبيق
-    if (kIsWeb) {
-      try {
-        final client = Supabase.instance.client;
-        if (client.auth.currentSession == null) {
-          debugPrint('⏳ Quick check for Supabase session on web...');
-          await client.auth.onAuthStateChange
-              .where((data) => data.session != null)
-              .first
-              .timeout(const Duration(milliseconds: 500));
-          debugPrint('✅ Supabase session recovered');
-        } else {
-          debugPrint('✅ Supabase session available immediately');
+      final firebaseFuture = () async {
+        // Skip Firebase on web debug (JS SDK can't load without internet to gstatic.com)
+        if (kIsWeb && kDebugMode) {
+          debugPrint('Firebase init skipped (web debug mode)');
+          return;
         }
-      } catch (e) {
-        debugPrint('ℹ️ No Supabase session (normal for local auth): $e');
+        try {
+          await Firebase.initializeApp();
+          if (kDebugMode) debugPrint('Firebase initialized successfully');
+        } catch (e, stack) {
+          reportError(e, stackTrace: stack, hint: 'Firebase init');
+        }
+      }();
+
+      final supabaseFuture = () async {
+        try {
+          debugPrint(
+            '🔧 Supabase config: url=${SupabaseConfig.url.isNotEmpty}, key=${SupabaseConfig.anonKey.isNotEmpty}',
+          );
+          if (!SupabaseConfig.isConfigured) {
+            throw StateError(
+              'Supabase not configured. ${SupabaseConfig.configurationError}',
+            );
+          }
+          await Supabase.initialize(
+            url: SupabaseConfig.url,
+            anonKey: SupabaseConfig.anonKey,
+            debug: SupabaseConfig.enableDebugLogs,
+          );
+          debugPrint('✅ Supabase initialized successfully');
+        } catch (e, stack) {
+          debugPrint('❌ Supabase init FAILED: $e');
+          reportError(e, stackTrace: stack, hint: 'Supabase init');
+        }
+      }();
+
+      // انتظر Firebase + Supabase + مفتاح DB + SharedPreferences + storeId معاً
+      final results = await Future.wait([
+        firebaseFuture,
+        supabaseFuture,
+        dbKeyFuture,
+        prefsFuture,
+        storeIdFuture,
+      ]);
+
+      final dbKey = results[2] as String;
+      setDatabaseEncryptionKey(dbKey);
+
+      // SESSION-FIX: على الويب، فحص سريع لجلسة Supabase
+      // معظم المستخدمين يسجلون دخول محلي (verifyLocalOtp) بدون Supabase session
+      // لذلك نقلل الانتظار إلى 500ms فقط لعدم تأخير بدء التطبيق
+      if (kIsWeb) {
+        try {
+          final client = Supabase.instance.client;
+          if (client.auth.currentSession == null) {
+            debugPrint('⏳ Quick check for Supabase session on web...');
+            await client.auth.onAuthStateChange
+                .where((data) => data.session != null)
+                .first
+                .timeout(const Duration(milliseconds: 500));
+            debugPrint('✅ Supabase session recovered');
+          } else {
+            debugPrint('✅ Supabase session available immediately');
+          }
+        } catch (e) {
+          debugPrint('ℹ️ No Supabase session (normal for local auth): $e');
+        }
+
+        // SESSION-FIX: تشخيص حالة SecureStorage قبل runApp
+        final isValid = await SecureStorageService.isSessionValid();
+        final ssUserId = await SecureStorageService.getUserId();
+        debugPrint(
+          '📋 Pre-runApp SecureStorage: valid=$isValid, userId=${ssUserId ?? "null"}',
+        );
       }
 
-      // SESSION-FIX: تشخيص حالة SecureStorage قبل runApp
-      final isValid = await SecureStorageService.isSessionValid();
-      final ssUserId = await SecureStorageService.getUserId();
-      debugPrint(
-          '📋 Pre-runApp SecureStorage: valid=$isValid, userId=${ssUserId ?? "null"}');
-    }
+      // DI must run before runApp (Riverpod providers use getIt synchronously)
+      await configureDependencies();
 
-    // DI must run before runApp (Riverpod providers use getIt synchronously)
-    await configureDependencies();
+      // Seed database from CSV assets (first launch only)
+      await _seedDatabaseFromCsv();
 
-    // Seed database from CSV assets (first launch only)
-    await _seedDatabaseFromCsv();
+      final prefs = results[3] as SharedPreferences;
+      // SESSION-FIX: استعادة store ID المحفوظ قبل runApp لمنع فقدان الجلسة عند F5
+      final savedStoreId = results[4] as String?;
 
-    final prefs = results[3] as SharedPreferences;
-    // SESSION-FIX: استعادة store ID المحفوظ قبل runApp لمنع فقدان الجلسة عند F5
-    final savedStoreId = results[4] as String?;
+      final savedTheme = prefs.getString('app_theme_mode');
+      final initialThemeMode = switch (savedTheme) {
+        'dark' => ThemeMode.dark,
+        'light' => ThemeMode.light,
+        _ => ThemeMode.system,
+      };
 
-    final savedTheme = prefs.getString('app_theme_mode');
-    final initialThemeMode = switch (savedTheme) {
-      'dark' => ThemeMode.dark,
-      'light' => ThemeMode.light,
-      _ => ThemeMode.system,
-    };
+      // M57: Pre-load onboarding state so router guard can check synchronously
+      final hasSeenOnboardingFlag = prefs.getBool(kOnboardingSeenKey) ?? false;
 
-    // M57: Pre-load onboarding state so router guard can check synchronously
-    final hasSeenOnboardingFlag = prefs.getBool(kOnboardingSeenKey) ?? false;
+      if (kDebugMode) {
+        debugPrint('🔑 Restored storeId: $savedStoreId');
+      }
 
-    if (kDebugMode) {
-      debugPrint('🔑 Restored storeId: $savedStoreId');
-    }
+      addBreadcrumb(message: 'App initialized', category: 'lifecycle');
 
-    addBreadcrumb(message: 'App initialized', category: 'lifecycle');
-
-    runApp(
-      ProviderScope(
-        overrides: [
-          themeProvider.overrideWith((ref) => ThemeNotifier(initialThemeMode)),
-          // M-THEME-FIX: تهيئة مزود auth بنفس القيمة الأولية
-          auth_theme.themeProvider.overrideWith(
-              (ref) => auth_theme.ThemeNotifier(initialThemeMode)),
-          onboardingSeenProvider.overrideWith((ref) => hasSeenOnboardingFlag),
-          // SESSION-FIX: تهيئة store ID المحفوظ قبل أن يعمل router guard
-          // هذا يمنع إعادة التوجيه إلى /store-select عند تحديث الصفحة (F5)
-          if (savedStoreId != null && savedStoreId.isNotEmpty)
-            currentStoreIdProvider.overrideWith((ref) => savedStoreId),
-          // ZATCA: Wire clock offset from ClockValidationService into SaleService
-          // so sale timestamps are corrected for device clock drift
-          clockOffsetProvider.overrideWithValue(
-            () => ClockValidationService.instance.clockOffset,
-          ),
-        ],
-        child: const CashierApp(),
-      ),
-    );
-  });
+      runApp(
+        ProviderScope(
+          overrides: [
+            themeProvider.overrideWith(
+              (ref) => ThemeNotifier(initialThemeMode),
+            ),
+            // M-THEME-FIX: تهيئة مزود auth بنفس القيمة الأولية
+            auth_theme.themeProvider.overrideWith(
+              (ref) => auth_theme.ThemeNotifier(initialThemeMode),
+            ),
+            onboardingSeenProvider.overrideWith((ref) => hasSeenOnboardingFlag),
+            // SESSION-FIX: تهيئة store ID المحفوظ قبل أن يعمل router guard
+            // هذا يمنع إعادة التوجيه إلى /store-select عند تحديث الصفحة (F5)
+            if (savedStoreId != null && savedStoreId.isNotEmpty)
+              currentStoreIdProvider.overrideWith((ref) => savedStoreId),
+            // ZATCA: Wire clock offset from ClockValidationService into SaleService
+            // so sale timestamps are corrected for device clock drift
+            clockOffsetProvider.overrideWithValue(
+              () => ClockValidationService.instance.clockOffset,
+            ),
+          ],
+          child: const CashierApp(),
+        ),
+      );
+    },
+  );
 }
 
 /// Get or create database encryption key from secure storage.
@@ -207,7 +214,8 @@ Future<String> _getOrCreateDbKey() async {
     const storage = FlutterSecureStorage(
       aOptions: AndroidOptions(encryptedSharedPreferences: true),
       iOptions: IOSOptions(
-          accessibility: KeychainAccessibility.first_unlock_this_device),
+        accessibility: KeychainAccessibility.first_unlock_this_device,
+      ),
     );
     var key = await storage.read(key: keyName);
     if (key == null) {
@@ -233,10 +241,12 @@ Future<void> _seedDatabaseFromCsv() async {
       addBreadcrumb(message: 'Seeding database from CSV', category: 'data');
 
       // Load CSV strings from assets (must be on main thread for rootBundle)
-      final categoriesCsv =
-          await rootBundle.loadString('assets/data/categories.csv');
-      final productsCsv =
-          await rootBundle.loadString('assets/data/products.csv');
+      final categoriesCsv = await rootBundle.loadString(
+        'assets/data/categories.csv',
+      );
+      final productsCsv = await rootBundle.loadString(
+        'assets/data/products.csv',
+      );
 
       // L64: Parse CSV data in a background isolate to avoid blocking the UI.
       // The parsed rows (List<List<dynamic>>) are returned to the main thread,
@@ -351,9 +361,7 @@ class _CashierAppState extends ConsumerState<CashierApp> {
       builder: (context, child) {
         return Directionality(
           textDirection: localeState.textDirection,
-          child: SessionTimeoutWrapper(
-            child: child ?? const SizedBox.shrink(),
-          ),
+          child: SessionTimeoutWrapper(child: child ?? const SizedBox.shrink()),
         );
       },
     );

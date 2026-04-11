@@ -88,11 +88,11 @@ class PullSyncService {
     required SyncMetadataDao metadataDao,
     required SyncQueueDao syncQueueDao,
     ConflictResolver conflictResolver = const ConflictResolver(),
-  })  : _syncApi = syncApi,
-        _db = db,
-        _metadataDao = metadataDao,
-        _syncQueueDao = syncQueueDao,
-        _conflictResolver = conflictResolver;
+  }) : _syncApi = syncApi,
+       _db = db,
+       _metadataDao = metadataDao,
+       _syncQueueDao = syncQueueDao,
+       _conflictResolver = conflictResolver;
 
   /// تنفيذ السحب الدوري لجميع الجداول المحددة
   ///
@@ -106,10 +106,7 @@ class PullSyncService {
 
     for (final tableName in pullTables) {
       try {
-        final result = await _pullTable(
-          tableName: tableName,
-          storeId: storeId,
-        );
+        final result = await _pullTable(tableName: tableName, storeId: storeId);
 
         tableCounts[tableName] = result.pulled;
         totalPulled += result.pulled;
@@ -117,11 +114,13 @@ class PullSyncService {
 
         if (result.pulled > 0 && kDebugMode) {
           debugPrint(
-              '[PullSync] Pulled ${result.pulled} records for $tableName');
+            '[PullSync] Pulled ${result.pulled} records for $tableName',
+          );
         }
         if (result.skippedConflicts > 0 && kDebugMode) {
           debugPrint(
-              '[PullSync] Skipped ${result.skippedConflicts} conflicting records for $tableName');
+            '[PullSync] Skipped ${result.skippedConflicts} conflicting records for $tableName',
+          );
         }
       } catch (e) {
         errors.add('$tableName: $e');
@@ -135,7 +134,8 @@ class PullSyncService {
     if (kDebugMode) {
       if (totalPulled > 0) {
         debugPrint(
-            '[PullSync] Done: $totalPulled total records pulled, $totalSkippedConflicts conflicts skipped');
+          '[PullSync] Done: $totalPulled total records pulled, $totalSkippedConflicts conflicts skipped',
+        );
       } else if (errors.isEmpty) {
         debugPrint('[PullSync] No updates found');
       }
@@ -192,12 +192,15 @@ class PullSyncService {
         } catch (e) {
           if (kDebugMode) {
             debugPrint(
-                '[PullSync] Failed to track conflict for $tableName/$recordId: $e');
+              '[PullSync] Failed to track conflict for $tableName/$recordId: $e',
+            );
           }
         }
         if (kDebugMode) {
           final strategy = _conflictResolver.getStrategy(
-              tableName, ConflictType.versionConflict);
+            tableName,
+            ConflictType.versionConflict,
+          );
           debugPrint(
             '[PullSync] Conflict: skipped $tableName/$recordId '
             '(pending local push, server has update, strategy: ${strategy.name})',
@@ -260,7 +263,9 @@ class PullSyncService {
   /// يتم تعطيل Foreign Keys مؤقتاً أثناء السحب لأن البيانات قادمة
   /// من السيرفر وسلامتها مضمونة.
   Future<void> _insertBatch(
-      String tableName, List<Map<String, dynamic>> records) async {
+    String tableName,
+    List<Map<String, dynamic>> records,
+  ) async {
     if (records.isEmpty) return;
     validateTableName(tableName);
 
@@ -273,10 +278,9 @@ class PullSyncService {
           // التعامل مع الحذف الناعم
           final deletedAt = record['deleted_at'];
           if (deletedAt != null) {
-            batch.customStatement(
-              'DELETE FROM $tableName WHERE id = ?',
-              [record['id']],
-            );
+            batch.customStatement('DELETE FROM $tableName WHERE id = ?', [
+              record['id'],
+            ]);
           } else {
             final columns = record.keys.toList();
             final placeholders = columns.map((_) => '?').join(', ');

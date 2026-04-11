@@ -102,8 +102,9 @@ void main() {
       expect(find.byType(RefundReceiptScreen), findsOneWidget);
     });
 
-    testWidgets('shows no refund ID message when refundId is null',
-        (tester) async {
+    testWidgets('shows no refund ID message when refundId is null', (
+      tester,
+    ) async {
       await tester.pumpWidget(_buildTestWidget(refundId: null));
       await tester.pump(const Duration(seconds: 1));
       tester.takeException();
@@ -138,14 +139,16 @@ void main() {
 
     testWidgets('shows loading when refundId is provided', (tester) async {
       // Mock returnDetailProvider to return loading state
-      await tester.pumpWidget(_buildTestWidget(
-        refundId: 'ret-1',
-        overrides: [
-          returnDetailProvider('ret-1').overrideWith(
-            (ref) => Future.value(null),
-          ),
-        ],
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          refundId: 'ret-1',
+          overrides: [
+            returnDetailProvider(
+              'ret-1',
+            ).overrideWith((ref) => Future.value(null)),
+          ],
+        ),
+      );
       await tester.pump(const Duration(seconds: 1));
       await tester.pump(const Duration(seconds: 1));
       tester.takeException();

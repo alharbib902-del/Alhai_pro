@@ -40,14 +40,13 @@ class WhatsAppTemplatesDao extends DatabaseAccessor<AppDatabase>
     String storeId,
     String type,
   ) {
-    return (select(whatsAppTemplatesTable)
-          ..where(
-            (q) =>
-                q.storeId.equals(storeId) &
-                q.type.equals(type) &
-                q.isDefault.equals(true) &
-                q.isActive.equals(true),
-          ))
+    return (select(whatsAppTemplatesTable)..where(
+          (q) =>
+              q.storeId.equals(storeId) &
+              q.type.equals(type) &
+              q.isDefault.equals(true) &
+              q.isActive.equals(true),
+        ))
         .getSingleOrNull();
   }
 
@@ -61,8 +60,9 @@ class WhatsAppTemplatesDao extends DatabaseAccessor<AppDatabase>
     String id,
     WhatsAppTemplatesTableCompanion template,
   ) {
-    return (update(whatsAppTemplatesTable)..where((q) => q.id.equals(id)))
-        .write(template);
+    return (update(
+      whatsAppTemplatesTable,
+    )..where((q) => q.id.equals(id))).write(template);
   }
 
   /// حذف قالب
@@ -74,23 +74,20 @@ class WhatsAppTemplatesDao extends DatabaseAccessor<AppDatabase>
   Future<void> setAsDefault(String storeId, String type, String templateId) {
     return transaction(() async {
       // إلغاء الافتراضي القديم
-      await (update(whatsAppTemplatesTable)
-            ..where(
-              (q) =>
-                  q.storeId.equals(storeId) &
-                  q.type.equals(type) &
-                  q.isDefault.equals(true),
-            ))
-          .write(const WhatsAppTemplatesTableCompanion(
-        isDefault: Value(false),
-      ));
+      await (update(whatsAppTemplatesTable)..where(
+            (q) =>
+                q.storeId.equals(storeId) &
+                q.type.equals(type) &
+                q.isDefault.equals(true),
+          ))
+          .write(
+            const WhatsAppTemplatesTableCompanion(isDefault: Value(false)),
+          );
 
       // تعيين الجديد
       await (update(whatsAppTemplatesTable)
             ..where((q) => q.id.equals(templateId)))
-          .write(const WhatsAppTemplatesTableCompanion(
-        isDefault: Value(true),
-      ));
+          .write(const WhatsAppTemplatesTableCompanion(isDefault: Value(true)));
     });
   }
 

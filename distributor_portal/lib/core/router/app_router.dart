@@ -148,9 +148,7 @@ class _DeferredScreen extends StatelessWidget {
           }
           return builder();
         }
-        return const Scaffold(
-          body: Center(child: CircularProgressIndicator()),
-        );
+        return const Scaffold(body: Center(child: CircularProgressIndicator()));
       },
     );
   }

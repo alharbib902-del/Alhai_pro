@@ -9,9 +9,8 @@ import '../reports_repository.dart';
 class ReportsRepositoryImpl implements ReportsRepository {
   final ReportsRemoteDataSource _remote;
 
-  ReportsRepositoryImpl({
-    required ReportsRemoteDataSource remote,
-  }) : _remote = remote;
+  ReportsRepositoryImpl({required ReportsRemoteDataSource remote})
+    : _remote = remote;
 
   @override
   Future<SalesSummary> getDailySummary(String storeId, DateTime date) async {

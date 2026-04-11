@@ -34,7 +34,7 @@ void main() {
         'logout',
         'create_order',
         'refund',
-        'open_shift'
+        'open_shift',
       ];
 
       for (final action in actions) {

@@ -82,18 +82,21 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         final hasProds = await db.productsDao.hasProducts(kDefaultStoreId);
         if (hasProds) {
           debugPrint(
-              '[StoreSelect] Products exist but no store record - creating default');
-          await db.storesDao.insertStore(StoresTableCompanion.insert(
-            id: kDefaultStoreId,
-            name: 'سوبرماركت الحي',
-            createdAt: DateTime.now(),
-            currency: const Value('SAR'),
-            timezone: const Value('Asia/Riyadh'),
-            isActive: const Value(true),
-            address: const Value('الرياض، حي النزهة'),
-            city: const Value('الرياض'),
-            nameEn: const Value('Al-Hai Supermarket'),
-          ));
+            '[StoreSelect] Products exist but no store record - creating default',
+          );
+          await db.storesDao.insertStore(
+            StoresTableCompanion.insert(
+              id: kDefaultStoreId,
+              name: 'سوبرماركت الحي',
+              createdAt: DateTime.now(),
+              currency: const Value('SAR'),
+              timezone: const Value('Asia/Riyadh'),
+              isActive: const Value(true),
+              address: const Value('الرياض، حي النزهة'),
+              city: const Value('الرياض'),
+              nameEn: const Value('Al-Hai Supermarket'),
+            ),
+          );
           final newStore = await db.storesDao.getStoreById(kDefaultStoreId);
           if (newStore != null) stores.add(newStore);
         }
@@ -149,7 +152,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
 
   /// مزامنة المتاجر في الخلفية بدون تأخير العرض
   Future<void> _syncStoresInBackground(
-      AppDatabase db, String? currentUserId) async {
+    AppDatabase db,
+    String? currentUserId,
+  ) async {
     try {
       await _syncStoresFromSupabase(db);
       // بعد المزامنة، نتحقق إذا تغيرت القائمة
@@ -211,7 +216,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           final delay =
               initialDelay * (1 << attempt); // exponential: 1s, 2s, 4s
           debugPrint(
-              '[$label] Attempt ${attempt + 1} failed, retrying in ${delay.inMilliseconds}ms: $e');
+            '[$label] Attempt ${attempt + 1} failed, retrying in ${delay.inMilliseconds}ms: $e',
+          );
           await Future.delayed(delay);
         }
       }
@@ -227,7 +233,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     final supabase = Supabase.instance.client;
     final authUser = supabase.auth.currentUser;
     debugPrint(
-        '[StoreSelect] currentUser: ${authUser?.id} / phone: ${authUser?.phone}');
+      '[StoreSelect] currentUser: ${authUser?.id} / phone: ${authUser?.phone}',
+    );
 
     if (authUser == null) {
       debugPrint('[StoreSelect] No authenticated user - returning empty');
@@ -251,16 +258,18 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
       if (s is! Map<String, dynamic>) continue;
       final id = s['id'] as String?;
       if (id == null || id.isEmpty) continue;
-      branches.add(BranchData(
-        id: id,
-        name: s['name'] as String? ?? '',
-        address: s['address'] as String?,
-        type: BranchType.store,
-        status: (s['is_active'] as bool? ?? true)
-            ? BranchStatus.open
-            : BranchStatus.closed,
-        isDefault: i == 0,
-      ));
+      branches.add(
+        BranchData(
+          id: id,
+          name: s['name'] as String? ?? '',
+          address: s['address'] as String?,
+          type: BranchType.store,
+          status: (s['is_active'] as bool? ?? true)
+              ? BranchStatus.open
+              : BranchStatus.closed,
+          isDefault: i == 0,
+        ),
+      );
     }
     return branches;
   }
@@ -284,7 +293,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
       if (storesList.isEmpty) return;
 
       debugPrint(
-          '[StoreSelect] Syncing ${storesList.length} stores to local DB');
+        '[StoreSelect] Syncing ${storesList.length} stores to local DB',
+      );
       final now = DateTime.now();
 
       for (final s in storesList) {
@@ -293,35 +303,40 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         if (storeId.isEmpty) continue;
 
         // 1. حفظ تفاصيل المتجر
-        await db.storesDao.insertStore(StoresTableCompanion.insert(
-          id: storeId,
-          name: s['name'] as String? ?? '',
-          createdAt:
-              DateTime.tryParse(s['created_at']?.toString() ?? '') ?? now,
-          currency: Value(s['currency'] as String? ?? 'SAR'),
-          timezone: Value(s['timezone'] as String? ?? 'Asia/Riyadh'),
-          isActive: Value(s['is_active'] as bool? ?? true),
-          address: Value(s['address'] as String?),
-          phone: Value(s['phone'] as String?),
-          email: Value(s['email'] as String?),
-          city: Value(s['city'] as String?),
-          nameEn: Value(s['name_en'] as String?),
-        ));
+        await db.storesDao.insertStore(
+          StoresTableCompanion.insert(
+            id: storeId,
+            name: s['name'] as String? ?? '',
+            createdAt:
+                DateTime.tryParse(s['created_at']?.toString() ?? '') ?? now,
+            currency: Value(s['currency'] as String? ?? 'SAR'),
+            timezone: Value(s['timezone'] as String? ?? 'Asia/Riyadh'),
+            isActive: Value(s['is_active'] as bool? ?? true),
+            address: Value(s['address'] as String?),
+            phone: Value(s['phone'] as String?),
+            email: Value(s['email'] as String?),
+            city: Value(s['city'] as String?),
+            nameEn: Value(s['name_en'] as String?),
+          ),
+        );
 
         // 2. حفظ ربط المستخدم بالمتجر في user_stores
         final role = s['role_in_store'] as String? ?? 'cashier';
-        await db.orgMembersDao.upsertUserStore(UserStoresTableCompanion.insert(
-          id: 'us_${authUser.id}_$storeId',
-          userId: authUser.id,
-          storeId: storeId,
-          role: Value(role),
-          isPrimary: Value(storesList.length == 1),
-          isActive: const Value(true),
-          createdAt: now,
-        ));
+        await db.orgMembersDao.upsertUserStore(
+          UserStoresTableCompanion.insert(
+            id: 'us_${authUser.id}_$storeId',
+            userId: authUser.id,
+            storeId: storeId,
+            role: Value(role),
+            isPrimary: Value(storesList.length == 1),
+            isActive: const Value(true),
+            createdAt: now,
+          ),
+        );
       }
       debugPrint(
-          '[StoreSelect] Stores + user_stores synced to local DB successfully');
+        '[StoreSelect] Stores + user_stores synced to local DB successfully',
+      );
     } catch (e) {
       debugPrint('خطأ في مزامنة المتاجر من Supabase: $e');
     }
@@ -394,15 +409,15 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     // تشغيل RPC التصنيفات والمنتجات بالتوازي بدلاً من التسلسل
     final results = await Future.wait([
       _retryRpc(
-        () => supabase.rpc('get_store_categories', params: {
-          'p_store_id': storeId
-        }).timeout(const Duration(seconds: 20)),
+        () => supabase
+            .rpc('get_store_categories', params: {'p_store_id': storeId})
+            .timeout(const Duration(seconds: 20)),
         label: 'get_store_categories',
       ),
       _retryRpc(
-        () => supabase.rpc('get_store_products', params: {
-          'p_store_id': storeId
-        }).timeout(const Duration(seconds: 20)),
+        () => supabase
+            .rpc('get_store_products', params: {'p_store_id': storeId})
+            .timeout(const Duration(seconds: 20)),
         label: 'get_store_products',
       ),
     ]);
@@ -421,14 +436,17 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
   }
 
   Future<void> _saveCategoriesLocally(
-      AppDatabase db, List<dynamic> catList) async {
+    AppDatabase db,
+    List<dynamic> catList,
+  ) async {
     final categories = catList.whereType<Map<String, dynamic>>().map((c) {
       final cat = c;
       return CategoriesTableCompanion.insert(
         id: cat['id'] as String? ?? '',
         storeId: cat['store_id'] as String? ?? '',
         name: cat['name'] as String? ?? '',
-        createdAt: DateTime.tryParse(cat['created_at']?.toString() ?? '') ??
+        createdAt:
+            DateTime.tryParse(cat['created_at']?.toString() ?? '') ??
             DateTime.now(),
         orgId: Value(cat['org_id'] as String?),
         nameEn: Value(cat['name_en'] as String?),
@@ -438,8 +456,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         icon: Value(cat['icon'] as String?),
         sortOrder: Value(cat['sort_order'] as int? ?? 0),
         isActive: Value(cat['is_active'] as bool? ?? true),
-        updatedAt:
-            Value(DateTime.tryParse(cat['updated_at']?.toString() ?? '')),
+        updatedAt: Value(
+          DateTime.tryParse(cat['updated_at']?.toString() ?? ''),
+        ),
         syncedAt: Value(DateTime.now()),
       );
     }).toList();
@@ -449,36 +468,42 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
   }
 
   Future<void> _saveProductsLocally(
-      AppDatabase db, List<dynamic> prodList) async {
+    AppDatabase db,
+    List<dynamic> prodList,
+  ) async {
     for (final p in prodList) {
       if (p is! Map<String, dynamic>) continue;
       final prod = p;
-      await db.productsDao.upsertProduct(ProductsTableCompanion.insert(
-        id: prod['id'] as String? ?? '',
-        storeId: prod['store_id'] as String? ?? '',
-        name: prod['name'] as String? ?? '',
-        price: (prod['price'] as num?)?.toDouble() ?? 0.0,
-        createdAt: DateTime.tryParse(prod['created_at']?.toString() ?? '') ??
-            DateTime.now(),
-        orgId: Value(prod['org_id'] as String?),
-        sku: Value(prod['sku'] as String?),
-        barcode: Value(prod['barcode'] as String?),
-        costPrice: Value((prod['cost_price'] as num?)?.toDouble()),
-        stockQty: Value((prod['stock_qty'] as num?)?.toDouble() ?? 0.0),
-        minQty: Value((prod['min_qty'] as num?)?.toDouble() ?? 0.0),
-        unit: Value(prod['unit'] as String?),
-        description: Value(prod['description'] as String?),
-        imageThumbnail: Value(prod['image_thumbnail'] as String?),
-        imageMedium: Value(prod['image_medium'] as String?),
-        imageLarge: Value(prod['image_large'] as String?),
-        imageHash: Value(prod['image_hash'] as String?),
-        categoryId: Value(prod['category_id'] as String?),
-        isActive: Value(prod['is_active'] as bool? ?? true),
-        trackInventory: Value(prod['track_inventory'] as bool? ?? true),
-        updatedAt:
-            Value(DateTime.tryParse(prod['updated_at']?.toString() ?? '')),
-        syncedAt: Value(DateTime.now()),
-      ));
+      await db.productsDao.upsertProduct(
+        ProductsTableCompanion.insert(
+          id: prod['id'] as String? ?? '',
+          storeId: prod['store_id'] as String? ?? '',
+          name: prod['name'] as String? ?? '',
+          price: (prod['price'] as num?)?.toDouble() ?? 0.0,
+          createdAt:
+              DateTime.tryParse(prod['created_at']?.toString() ?? '') ??
+              DateTime.now(),
+          orgId: Value(prod['org_id'] as String?),
+          sku: Value(prod['sku'] as String?),
+          barcode: Value(prod['barcode'] as String?),
+          costPrice: Value((prod['cost_price'] as num?)?.toDouble()),
+          stockQty: Value((prod['stock_qty'] as num?)?.toDouble() ?? 0.0),
+          minQty: Value((prod['min_qty'] as num?)?.toDouble() ?? 0.0),
+          unit: Value(prod['unit'] as String?),
+          description: Value(prod['description'] as String?),
+          imageThumbnail: Value(prod['image_thumbnail'] as String?),
+          imageMedium: Value(prod['image_medium'] as String?),
+          imageLarge: Value(prod['image_large'] as String?),
+          imageHash: Value(prod['image_hash'] as String?),
+          categoryId: Value(prod['category_id'] as String?),
+          isActive: Value(prod['is_active'] as bool? ?? true),
+          trackInventory: Value(prod['track_inventory'] as bool? ?? true),
+          updatedAt: Value(
+            DateTime.tryParse(prod['updated_at']?.toString() ?? ''),
+          ),
+          syncedAt: Value(DateTime.now()),
+        ),
+      );
     }
     debugPrint('[Sync] ✅ تم مزامنة ${prodList.length} منتج');
   }
@@ -504,10 +529,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     return Row(
       children: [
         // اللوحة اليسرى - Brand Panel
-        Expanded(
-          flex: 4,
-          child: _buildBrandPanel(),
-        ),
+        Expanded(flex: 4, child: _buildBrandPanel()),
         // اللوحة اليمنى - Content Panel
         Expanded(
           flex: 5,
@@ -526,9 +548,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         // Brand Header مصغر
         _buildMobileBrandHeader(),
         // Content
-        Expanded(
-          child: _buildContentPanel(isDarkMode, isMobile: true),
-        ),
+        Expanded(child: _buildContentPanel(isDarkMode, isMobile: true)),
       ],
     );
   }
@@ -542,10 +562,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         gradient: LinearGradient(
           begin: Alignment.topCenter,
           end: Alignment.bottomCenter,
-          colors: [
-            AppColors.primary,
-            AppColors.primaryDark,
-          ],
+          colors: [AppColors.primary, AppColors.primaryDark],
         ),
       ),
       child: Stack(
@@ -835,9 +852,7 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           ),
 
           // قائمة الفروع
-          Expanded(
-            child: _buildStoresList(isDarkMode),
-          ),
+          Expanded(child: _buildStoresList(isDarkMode)),
 
           // Footer
           _buildFooter(isDarkMode),
@@ -870,13 +885,14 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
               SizedBox(width: isMobile ? AlhaiSpacing.xs : AlhaiSpacing.sm),
 
               // === معلومات المستخدم ===
-              Expanded(
-                child: _buildUserInfo(isDarkMode, isMobile: isMobile),
-              ),
+              Expanded(child: _buildUserInfo(isDarkMode, isMobile: isMobile)),
 
               // === اليمين: اللغة + Dark Mode ===
-              _buildLanguageSelector(isDarkMode, localeState,
-                  isMobile: isMobile),
+              _buildLanguageSelector(
+                isDarkMode,
+                localeState,
+                isMobile: isMobile,
+              ),
 
               SizedBox(width: isMobile ? 6 : AlhaiSpacing.xs),
 
@@ -955,8 +971,11 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     );
   }
 
-  Widget _buildLanguageSelector(bool isDarkMode, LocaleState localeState,
-      {bool isMobile = false}) {
+  Widget _buildLanguageSelector(
+    bool isDarkMode,
+    LocaleState localeState, {
+    bool isMobile = false,
+  }) {
     return PopupMenuButton<Locale>(
       offset: const Offset(0, 48),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -1176,7 +1195,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.md),
+          horizontal: AlhaiSpacing.mdl,
+          vertical: AlhaiSpacing.md,
+        ),
       ),
     );
   }
@@ -1193,9 +1214,11 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline,
-                size: 64,
-                color: isDarkMode ? Colors.red.shade300 : Colors.red.shade400),
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: isDarkMode ? Colors.red.shade300 : Colors.red.shade400,
+            ),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
               AppLocalizations.of(context).errorOccurred,
@@ -1231,7 +1254,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
 
     return ListView.builder(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.md),
+        horizontal: AlhaiSpacing.lg,
+        vertical: AlhaiSpacing.md,
+      ),
       itemCount: _filteredStores.length + 1,
       itemBuilder: (context, index) {
         if (index == _filteredStores.length) {
@@ -1294,18 +1319,18 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         decoration: BoxDecoration(
           color: isDarkMode
               ? (isSelected
-                  ? AppColors.primary.withValues(alpha: 0.1)
-                  : Colors.white.withValues(alpha: 0.05))
+                    ? AppColors.primary.withValues(alpha: 0.1)
+                    : Colors.white.withValues(alpha: 0.05))
               : (isSelected
-                  ? AppColors.primary.withValues(alpha: 0.05)
-                  : Theme.of(context).colorScheme.surfaceContainerLowest),
+                    ? AppColors.primary.withValues(alpha: 0.05)
+                    : Theme.of(context).colorScheme.surfaceContainerLowest),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected
                 ? AppColors.primary
                 : (isDarkMode
-                    ? Colors.white12
-                    : Theme.of(context).colorScheme.outlineVariant),
+                      ? Colors.white12
+                      : Theme.of(context).colorScheme.outlineVariant),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -1355,8 +1380,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                     isOpen
                         ? l10n.openNow
                         : (store.closedUntil != null
-                            ? l10n.closedOpensAt(store.closedUntil!)
-                            : l10n.branchClosed),
+                              ? l10n.closedOpensAt(store.closedUntil!)
+                              : l10n.branchClosed),
                     style: TextStyle(
                       color: isOpen
                           ? AppColors.success
@@ -1446,7 +1471,8 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
               content: Text(l10n.comingSoon),
               behavior: SnackBarBehavior.floating,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10)),
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           );
         },
@@ -1458,8 +1484,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
                 : Theme.of(context).colorScheme.outlineVariant,
             style: BorderStyle.solid,
           ),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -1510,7 +1537,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.sm,
+      ),
       decoration: BoxDecoration(
         border: Border(
           top: BorderSide(
@@ -1528,10 +1557,16 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           Wrap(
             spacing: 12,
             children: [
-              _buildFooterLink(l10n.technicalSupport,
-                  Icons.headset_mic_outlined, isDarkMode),
               _buildFooterLink(
-                  l10n.privacyPolicy, Icons.shield_outlined, isDarkMode),
+                l10n.technicalSupport,
+                Icons.headset_mic_outlined,
+                isDarkMode,
+              ),
+              _buildFooterLink(
+                l10n.privacyPolicy,
+                Icons.shield_outlined,
+                isDarkMode,
+              ),
             ],
           ),
           // حقوق النشر
@@ -1553,7 +1588,9 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
       borderRadius: BorderRadius.circular(8),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+          horizontal: AlhaiSpacing.xs,
+          vertical: AlhaiSpacing.xxs,
+        ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [

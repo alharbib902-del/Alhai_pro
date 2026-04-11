@@ -144,10 +144,7 @@ class LocaleNotifier extends StateNotifier<LocaleState> {
 
       if (savedLocale != null) {
         final parts = savedLocale.split('_');
-        final locale = Locale(
-          parts[0],
-          parts.length > 1 ? parts[1] : null,
-        );
+        final locale = Locale(parts[0], parts.length > 1 ? parts[1] : null);
 
         if (_isSupported(locale)) {
           state = LocaleState.fromLocale(locale);

@@ -27,8 +27,10 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
   ProductsFtsService get ftsService => _ftsService;
 
   /// الحصول على جميع المنتجات للمتجر (باستثناء المحذوفة)
-  Future<List<ProductsTableData>> getAllProducts(String storeId,
-      {int limit = 5000}) {
+  Future<List<ProductsTableData>> getAllProducts(
+    String storeId, {
+    int limit = 5000,
+  }) {
     return (select(productsTable)
           ..where((p) => p.storeId.equals(storeId) & p.deletedAt.isNull())
           ..orderBy([(p) => OrderingTerm.asc(p.name)])
@@ -38,22 +40,26 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
 
   /// فحص سريع: هل يوجد منتجات للمتجر؟ (بدون تحميل كل البيانات)
   Future<bool> hasProducts(String storeId) async {
-    final result = await (select(productsTable)
-          ..where((p) => p.storeId.equals(storeId) & p.deletedAt.isNull())
-          ..limit(1))
-        .get();
+    final result =
+        await (select(productsTable)
+              ..where((p) => p.storeId.equals(storeId) & p.deletedAt.isNull())
+              ..limit(1))
+            .get();
     return result.isNotEmpty;
   }
 
   /// الحصول على منتج بالمعرف
   Future<ProductsTableData?> getProductById(String id) {
-    return (select(productsTable)..where((p) => p.id.equals(id)))
-        .getSingleOrNull();
+    return (select(
+      productsTable,
+    )..where((p) => p.id.equals(id))).getSingleOrNull();
   }
 
   /// الحصول على منتج بالباركود
   Future<ProductsTableData?> getProductByBarcode(
-      String barcode, String storeId) {
+    String barcode,
+    String storeId,
+  ) {
     return (select(productsTable)
           ..where((p) => p.barcode.equals(barcode) & p.storeId.equals(storeId)))
         .getSingleOrNull();
@@ -61,7 +67,9 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
 
   /// البحث في المنتجات (يستخدم FTS إذا متاح)
   Future<List<ProductsTableData>> searchProducts(
-      String query, String storeId) async {
+    String query,
+    String storeId,
+  ) async {
     // محاولة البحث بـ FTS أولاً للأداء الأفضل
     try {
       if (await _ftsService.isFtsTableExists()) {
@@ -69,9 +77,9 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
         if (ftsResults.isNotEmpty) {
           // تحويل نتائج FTS إلى ProductsTableData
           final ids = ftsResults.map((r) => r.id).toList();
-          return (select(productsTable)
-                ..where((p) => p.id.isIn(ids) & p.storeId.equals(storeId)))
-              .get();
+          return (select(
+            productsTable,
+          )..where((p) => p.id.isIn(ids) & p.storeId.equals(storeId))).get();
         }
       }
     } catch (_) {
@@ -81,11 +89,13 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
     // البحث التقليدي كـ fallback
     final escaped = _escapeLikePattern(query);
     return (select(productsTable)
-          ..where((p) =>
-              p.storeId.equals(storeId) &
-              (p.name.like('%$escaped%') |
-                  p.barcode.like('%$escaped%') |
-                  p.sku.like('%$escaped%')))
+          ..where(
+            (p) =>
+                p.storeId.equals(storeId) &
+                (p.name.like('%$escaped%') |
+                    p.barcode.like('%$escaped%') |
+                    p.sku.like('%$escaped%')),
+          )
           ..orderBy([(p) => OrderingTerm.asc(p.name)])
           ..limit(200))
         .get();
@@ -123,10 +133,13 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
 
   /// الحصول على منتجات التصنيف
   Future<List<ProductsTableData>> getProductsByCategory(
-      String categoryId, String storeId) {
+    String categoryId,
+    String storeId,
+  ) {
     return (select(productsTable)
-          ..where((p) =>
-              p.categoryId.equals(categoryId) & p.storeId.equals(storeId))
+          ..where(
+            (p) => p.categoryId.equals(categoryId) & p.storeId.equals(storeId),
+          )
           ..orderBy([(p) => OrderingTerm.asc(p.name)]))
         .get();
   }
@@ -160,11 +173,12 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
 
   /// تحديث المخزون
   Future<int> updateStock(String productId, double newQty) {
-    return (update(productsTable)..where((p) => p.id.equals(productId)))
-        .write(ProductsTableCompanion(
-      stockQty: Value(newQty),
-      updatedAt: Value(DateTime.now()),
-    ));
+    return (update(productsTable)..where((p) => p.id.equals(productId))).write(
+      ProductsTableCompanion(
+        stockQty: Value(newQty),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   /// حذف منتج
@@ -174,8 +188,9 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
 
   /// تعيين تاريخ المزامنة
   Future<int> markAsSynced(String id) {
-    return (update(productsTable)..where((p) => p.id.equals(id)))
-        .write(ProductsTableCompanion(syncedAt: Value(DateTime.now())));
+    return (update(productsTable)..where((p) => p.id.equals(id))).write(
+      ProductsTableCompanion(syncedAt: Value(DateTime.now())),
+    );
   }
 
   /// الحصول على المنتجات غير المزامنة
@@ -189,13 +204,17 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
 
   /// مراقبة المنتجات (Stream) - باستثناء المحذوفة
   /// [limit] - الحد الأقصى للنتائج (افتراضي 500)
-  Stream<List<ProductsTableData>> watchProducts(String storeId,
-      {int limit = 500}) {
+  Stream<List<ProductsTableData>> watchProducts(
+    String storeId, {
+    int limit = 500,
+  }) {
     return (select(productsTable)
-          ..where((p) =>
-              p.storeId.equals(storeId) &
-              p.isActive.equals(true) &
-              p.deletedAt.isNull())
+          ..where(
+            (p) =>
+                p.storeId.equals(storeId) &
+                p.isActive.equals(true) &
+                p.deletedAt.isNull(),
+          )
           ..orderBy([(p) => OrderingTerm.asc(p.name)])
           ..limit(limit))
         .watch();
@@ -265,13 +284,15 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
     final searchPattern = '%${_escapeLikePattern(query)}%';
 
     return (select(productsTable)
-          ..where((p) =>
-              p.storeId.equals(storeId) &
-              p.isActive.equals(true) &
-              p.deletedAt.isNull() &
-              (p.name.like(searchPattern) |
-                  p.barcode.like(searchPattern) |
-                  p.sku.like(searchPattern)))
+          ..where(
+            (p) =>
+                p.storeId.equals(storeId) &
+                p.isActive.equals(true) &
+                p.deletedAt.isNull() &
+                (p.name.like(searchPattern) |
+                    p.barcode.like(searchPattern) |
+                    p.sku.like(searchPattern)),
+          )
           ..orderBy([(p) => OrderingTerm.asc(p.name)])
           ..limit(limit, offset: offset))
         .get();
@@ -280,13 +301,17 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
   /// البحث السريع بالباركود مع cache
   /// يستخدم index على barcode للأداء الأمثل
   Future<ProductsTableData?> quickFindByBarcode(
-      String barcode, String storeId) {
+    String barcode,
+    String storeId,
+  ) {
     // الباركود يجب أن يكون دقيقاً
     return (select(productsTable)
-          ..where((p) =>
-              p.barcode.equals(barcode) &
-              p.storeId.equals(storeId) &
-              p.isActive.equals(true))
+          ..where(
+            (p) =>
+                p.barcode.equals(barcode) &
+                p.storeId.equals(storeId) &
+                p.isActive.equals(true),
+          )
           ..limit(1))
         .getSingleOrNull();
   }
@@ -310,11 +335,12 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
   ) {
     if (barcodes.isEmpty) return Future.value([]);
 
-    return (select(productsTable)
-          ..where((p) =>
+    return (select(productsTable)..where(
+          (p) =>
               p.barcode.isIn(barcodes) &
               p.storeId.equals(storeId) &
-              p.isActive.equals(true)))
+              p.isActive.equals(true),
+        ))
         .get();
   }
 
@@ -378,7 +404,8 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
 
   /// منتجات منخفضة المخزون مع التصنيف
   Future<List<ProductWithCategory>> getLowStockWithCategory(
-      String storeId) async {
+    String storeId,
+  ) async {
     final result = await customSelect(
       '''SELECT p.*, c.name as category_name
          FROM products p
@@ -390,10 +417,12 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
     ).get();
 
     return result
-        .map((row) => ProductWithCategory(
-              product: productsTable.map(row.data),
-              categoryName: row.data['category_name'] as String?,
-            ))
+        .map(
+          (row) => ProductWithCategory(
+            product: productsTable.map(row.data),
+            categoryName: row.data['category_name'] as String?,
+          ),
+        )
         .toList();
   }
 
@@ -405,16 +434,21 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
     String? imageLarge,
     String? imageHash,
   }) {
-    return (update(productsTable)..where((p) => p.id.equals(productId)))
-        .write(ProductsTableCompanion(
-      imageThumbnail:
-          imageThumbnail != null ? Value(imageThumbnail) : const Value.absent(),
-      imageMedium:
-          imageMedium != null ? Value(imageMedium) : const Value.absent(),
-      imageLarge: imageLarge != null ? Value(imageLarge) : const Value.absent(),
-      imageHash: imageHash != null ? Value(imageHash) : const Value.absent(),
-      updatedAt: Value(DateTime.now()),
-    ));
+    return (update(productsTable)..where((p) => p.id.equals(productId))).write(
+      ProductsTableCompanion(
+        imageThumbnail: imageThumbnail != null
+            ? Value(imageThumbnail)
+            : const Value.absent(),
+        imageMedium: imageMedium != null
+            ? Value(imageMedium)
+            : const Value.absent(),
+        imageLarge: imageLarge != null
+            ? Value(imageLarge)
+            : const Value.absent(),
+        imageHash: imageHash != null ? Value(imageHash) : const Value.absent(),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   /// تحديث batch للمنتجات (لتحسين الأداء)

@@ -80,14 +80,18 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
         });
       }
     } catch (e, stack) {
-      reportError(e,
-          stackTrace: stack, hint: 'Search products in add inventory');
+      reportError(
+        e,
+        stackTrace: stack,
+        hint: 'Search products in add inventory',
+      );
       if (mounted) {
         setState(() => _isSearching = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(AppLocalizations.of(context).errorOccurred),
-              backgroundColor: AppColors.error),
+            content: Text(AppLocalizations.of(context).errorOccurred),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     }
@@ -109,8 +113,9 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -120,9 +125,14 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(
-                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-            child:
-                _buildContent(isWideScreen, isMediumScreen, colorScheme, l10n),
+              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+            ),
+            child: _buildContent(
+              isWideScreen,
+              isMediumScreen,
+              colorScheme,
+              l10n,
+            ),
           ),
         ),
       ],
@@ -134,8 +144,12 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
     return '${now.day}/${now.month}/${now.year} \u2022 ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen,
-      ColorScheme colorScheme, AppLocalizations l10n) {
+  Widget _buildContent(
+    bool isWideScreen,
+    bool isMediumScreen,
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+  ) {
     if (isWideScreen) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,11 +161,11 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                 _buildSearchCard(colorScheme, l10n),
                 if (_searchResults.isNotEmpty && _selectedProduct == null) ...[
                   const SizedBox(height: AlhaiSpacing.md),
-                  _buildSearchResults(colorScheme, l10n)
+                  _buildSearchResults(colorScheme, l10n),
                 ],
                 if (_selectedProduct != null) ...[
                   const SizedBox(height: AlhaiSpacing.lg),
-                  _buildSelectedProductCard(colorScheme, l10n)
+                  _buildSelectedProductCard(colorScheme, l10n),
                 ],
               ],
             ),
@@ -179,11 +193,11 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
         _buildSearchCard(colorScheme, l10n),
         if (_searchResults.isNotEmpty && _selectedProduct == null) ...[
           SizedBox(height: isMediumScreen ? AlhaiSpacing.md : AlhaiSpacing.sm),
-          _buildSearchResults(colorScheme, l10n)
+          _buildSearchResults(colorScheme, l10n),
         ],
         if (_selectedProduct != null) ...[
           SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-          _buildSelectedProductCard(colorScheme, l10n)
+          _buildSelectedProductCard(colorScheme, l10n),
         ],
         SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildQuantityCard(colorScheme, l10n),
@@ -214,15 +228,21 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.search_rounded,
-                    color: AppColors.primary, size: 20),
+                child: const Icon(
+                  Icons.search_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text(l10n.searchProduct,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onSurface)),
+              Text(
+                l10n.searchProduct,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
@@ -236,8 +256,10 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                   decoration: InputDecoration(
                     hintText: l10n.searchByNameOrBarcode,
                     hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
-                    prefixIcon: Icon(Icons.search_rounded,
-                        color: colorScheme.onSurfaceVariant),
+                    prefixIcon: Icon(
+                      Icons.search_rounded,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                     filled: true,
                     fillColor: colorScheme.surfaceContainerLow,
                     border: OutlineInputBorder(
@@ -250,11 +272,15 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          const BorderSide(color: AppColors.primary, width: 2),
+                      borderSide: const BorderSide(
+                        color: AppColors.primary,
+                        width: 2,
+                      ),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.md, vertical: 14),
+                      horizontal: AlhaiSpacing.md,
+                      vertical: 14,
+                    ),
                   ),
                 ),
               ),
@@ -265,9 +291,11 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
                       SnackBar(
-                          content: Text(
-                              AppLocalizations.of(context).scanOrEnterBarcode),
-                          backgroundColor: AppColors.info),
+                        content: Text(
+                          AppLocalizations.of(context).scanOrEnterBarcode,
+                        ),
+                        backgroundColor: AppColors.info,
+                      ),
                     );
                   },
                   icon: const Icon(Icons.qr_code_scanner_rounded, size: 20),
@@ -276,7 +304,8 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                     backgroundColor: AppColors.info,
                     foregroundColor: colorScheme.onPrimary,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
@@ -312,11 +341,14 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
             },
             child: Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.mdl, vertical: 14),
+                horizontal: AlhaiSpacing.mdl,
+                vertical: 14,
+              ),
               decoration: BoxDecoration(
                 border: Border(
                   bottom: BorderSide(
-                      color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                  ),
                 ),
               ),
               child: Row(
@@ -329,23 +361,32 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     alignment: Alignment.center,
-                    child: const Icon(Icons.inventory_2_outlined,
-                        color: AppColors.primary, size: 20),
+                    child: const Icon(
+                      Icons.inventory_2_outlined,
+                      color: AppColors.primary,
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(width: 14),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(product.name,
-                            style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w600,
-                                color: colorScheme.onSurface)),
-                        Text('${l10n.stock}: ${product.stockQty}',
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: colorScheme.onSurfaceVariant)),
+                        Text(
+                          product.name,
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                            color: colorScheme.onSurface,
+                          ),
+                        ),
+                        Text(
+                          '${l10n.stock}: ${product.stockQty}',
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: colorScheme.onSurfaceVariant,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -359,14 +400,16 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
   }
 
   Widget _buildSelectedProductCard(
-      ColorScheme colorScheme, AppLocalizations l10n) {
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+  ) {
     final product = _selectedProduct!;
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: AppColors.success.withValues(
-            alpha:
-                Theme.of(context).brightness == Brightness.dark ? 0.1 : 0.05),
+          alpha: Theme.of(context).brightness == Brightness.dark ? 0.1 : 0.05,
+        ),
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
       ),
@@ -380,22 +423,32 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
               borderRadius: BorderRadius.circular(12),
             ),
             alignment: Alignment.center,
-            child: const Icon(Icons.check_circle_rounded,
-                color: AppColors.success, size: 24),
+            child: const Icon(
+              Icons.check_circle_rounded,
+              color: AppColors.success,
+              size: 24,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(product.name,
-                    style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurface)),
-                Text('${l10n.currentStock}: ${product.stockQty}',
-                    style: TextStyle(
-                        fontSize: 12, color: colorScheme.onSurfaceVariant)),
+                Text(
+                  product.name,
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                Text(
+                  '${l10n.currentStock}: ${product.stockQty}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
           ),
@@ -406,8 +459,10 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                 _searchController.clear();
               });
             },
-            icon:
-                Icon(Icons.close_rounded, color: colorScheme.onSurfaceVariant),
+            icon: Icon(
+              Icons.close_rounded,
+              color: colorScheme.onSurfaceVariant,
+            ),
             tooltip: l10n.clearField,
           ),
         ],
@@ -434,15 +489,21 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.add_circle_rounded,
-                    color: AppColors.success, size: 20),
+                child: const Icon(
+                  Icons.add_circle_rounded,
+                  color: AppColors.success,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text(l10n.quantityToAdd,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onSurface)),
+              Text(
+                l10n.quantityToAdd,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
@@ -473,8 +534,10 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: AppColors.success, width: 2),
+                borderSide: const BorderSide(
+                  color: AppColors.success,
+                  width: 2,
+                ),
               ),
               filled: true,
               fillColor: colorScheme.surfaceContainerLow,
@@ -496,7 +559,9 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 14, vertical: AlhaiSpacing.xs),
+                      horizontal: 14,
+                      vertical: AlhaiSpacing.xs,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.success.withValues(alpha: 0.1)
@@ -508,12 +573,15 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                             : colorScheme.outlineVariant,
                       ),
                     ),
-                    child: Text('$qty',
-                        style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: isSelected
-                                ? AppColors.success
-                                : colorScheme.onSurfaceVariant)),
+                    child: Text(
+                      '$qty',
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: isSelected
+                            ? AppColors.success
+                            : colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                   ),
                 ),
               );
@@ -535,11 +603,14 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.supplierReference,
-              style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurfaceVariant)),
+          Text(
+            l10n.supplierReference,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           TextField(
             controller: _supplierRefController,
@@ -547,8 +618,10 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
             decoration: InputDecoration(
               hintText: l10n.optional,
               hintStyle: TextStyle(color: colorScheme.onSurfaceVariant),
-              prefixIcon: Icon(Icons.business_rounded,
-                  color: colorScheme.onSurfaceVariant),
+              prefixIcon: Icon(
+                Icons.business_rounded,
+                color: colorScheme.onSurfaceVariant,
+              ),
               filled: true,
               fillColor: colorScheme.surfaceContainerLow,
               border: OutlineInputBorder(
@@ -561,19 +634,26 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: AppColors.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
               ),
               contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.md, vertical: 14),
+                horizontal: AlhaiSpacing.md,
+                vertical: 14,
+              ),
             ),
           ),
           const SizedBox(height: AlhaiSpacing.md),
-          Text(l10n.noteLabel,
-              style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurfaceVariant)),
+          Text(
+            l10n.noteLabel,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           TextField(
             controller: _noteController,
@@ -594,8 +674,10 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: AppColors.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
               ),
               contentPadding: const EdgeInsets.all(AlhaiSpacing.md),
             ),
@@ -606,7 +688,8 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
   }
 
   Widget _buildSaveButton(ColorScheme colorScheme, AppLocalizations l10n) {
-    final hasData = _selectedProduct != null &&
+    final hasData =
+        _selectedProduct != null &&
         _quantityController.text.isNotEmpty &&
         (int.tryParse(_quantityController.text) ?? 0) > 0;
 
@@ -619,16 +702,22 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: colorScheme.onPrimary))
+                  strokeWidth: 2,
+                  color: colorScheme.onPrimary,
+                ),
+              )
             : const Icon(Icons.save_rounded, size: 20),
-        label: Text(l10n.save,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        label: Text(
+          l10n.save,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.success,
           foregroundColor: colorScheme.onPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
     );
@@ -659,7 +748,8 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
             newQty: newStock.toDouble(),
             reason: const Value('received'),
             notes: Value(
-                _noteController.text.isNotEmpty ? _noteController.text : null),
+              _noteController.text.isNotEmpty ? _noteController.text : null,
+            ),
             createdAt: DateTime.now(),
           ),
         );
@@ -683,8 +773,9 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(AppLocalizations.of(context).inventoryUpdatedMsg),
-            backgroundColor: AppColors.success),
+          content: Text(AppLocalizations.of(context).inventoryUpdatedMsg),
+          backgroundColor: AppColors.success,
+        ),
       );
 
       // Clear form
@@ -700,8 +791,9 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(l10n.errorWithDetails('$e')),
-            backgroundColor: AppColors.error),
+          content: Text(l10n.errorWithDetails('$e')),
+          backgroundColor: AppColors.error,
+        ),
       );
     } finally {
       if (mounted) setState(() => _isSaving = false);

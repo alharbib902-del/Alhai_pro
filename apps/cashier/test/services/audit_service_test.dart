@@ -31,49 +31,57 @@ void main() {
 
     // The DAO `log` returns an int (row id) and `logRefund`, `logPriceChange`,
     // `logStockAdjust` also return int.
-    when(() => dao.log(
-          storeId: any(named: 'storeId'),
-          userId: any(named: 'userId'),
-          userName: any(named: 'userName'),
-          action: any(named: 'action'),
-          entityType: any(named: 'entityType'),
-          entityId: any(named: 'entityId'),
-          oldValue: any(named: 'oldValue'),
-          newValue: any(named: 'newValue'),
-          description: any(named: 'description'),
-          ipAddress: any(named: 'ipAddress'),
-          deviceInfo: any(named: 'deviceInfo'),
-        )).thenAnswer((_) async => 1);
+    when(
+      () => dao.log(
+        storeId: any(named: 'storeId'),
+        userId: any(named: 'userId'),
+        userName: any(named: 'userName'),
+        action: any(named: 'action'),
+        entityType: any(named: 'entityType'),
+        entityId: any(named: 'entityId'),
+        oldValue: any(named: 'oldValue'),
+        newValue: any(named: 'newValue'),
+        description: any(named: 'description'),
+        ipAddress: any(named: 'ipAddress'),
+        deviceInfo: any(named: 'deviceInfo'),
+      ),
+    ).thenAnswer((_) async => 1);
 
-    when(() => dao.logRefund(
-          storeId: any(named: 'storeId'),
-          userId: any(named: 'userId'),
-          userName: any(named: 'userName'),
-          saleId: any(named: 'saleId'),
-          amount: any(named: 'amount'),
-          reason: any(named: 'reason'),
-        )).thenAnswer((_) async => 1);
+    when(
+      () => dao.logRefund(
+        storeId: any(named: 'storeId'),
+        userId: any(named: 'userId'),
+        userName: any(named: 'userName'),
+        saleId: any(named: 'saleId'),
+        amount: any(named: 'amount'),
+        reason: any(named: 'reason'),
+      ),
+    ).thenAnswer((_) async => 1);
 
-    when(() => dao.logPriceChange(
-          storeId: any(named: 'storeId'),
-          userId: any(named: 'userId'),
-          userName: any(named: 'userName'),
-          productId: any(named: 'productId'),
-          productName: any(named: 'productName'),
-          oldPrice: any(named: 'oldPrice'),
-          newPrice: any(named: 'newPrice'),
-        )).thenAnswer((_) async => 1);
+    when(
+      () => dao.logPriceChange(
+        storeId: any(named: 'storeId'),
+        userId: any(named: 'userId'),
+        userName: any(named: 'userName'),
+        productId: any(named: 'productId'),
+        productName: any(named: 'productName'),
+        oldPrice: any(named: 'oldPrice'),
+        newPrice: any(named: 'newPrice'),
+      ),
+    ).thenAnswer((_) async => 1);
 
-    when(() => dao.logStockAdjust(
-          storeId: any(named: 'storeId'),
-          userId: any(named: 'userId'),
-          userName: any(named: 'userName'),
-          productId: any(named: 'productId'),
-          productName: any(named: 'productName'),
-          oldQty: any(named: 'oldQty'),
-          newQty: any(named: 'newQty'),
-          reason: any(named: 'reason'),
-        )).thenAnswer((_) async => 1);
+    when(
+      () => dao.logStockAdjust(
+        storeId: any(named: 'storeId'),
+        userId: any(named: 'userId'),
+        userName: any(named: 'userName'),
+        productId: any(named: 'productId'),
+        productName: any(named: 'productName'),
+        oldQty: any(named: 'oldQty'),
+        newQty: any(named: 'newQty'),
+        reason: any(named: 'reason'),
+      ),
+    ).thenAnswer((_) async => 1);
   });
 
   // -------------------------------------------------------------------------
@@ -91,16 +99,18 @@ void main() {
         receiptNo: 'R-001',
       );
 
-      final captured = verify(() => dao.log(
-            storeId: captureAny(named: 'storeId'),
-            userId: captureAny(named: 'userId'),
-            userName: captureAny(named: 'userName'),
-            action: captureAny(named: 'action'),
-            entityType: captureAny(named: 'entityType'),
-            entityId: captureAny(named: 'entityId'),
-            newValue: captureAny(named: 'newValue'),
-            description: captureAny(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: captureAny(named: 'storeId'),
+          userId: captureAny(named: 'userId'),
+          userName: captureAny(named: 'userName'),
+          action: captureAny(named: 'action'),
+          entityType: captureAny(named: 'entityType'),
+          entityId: captureAny(named: 'entityId'),
+          newValue: captureAny(named: 'newValue'),
+          description: captureAny(named: 'description'),
+        ),
+      ).captured;
 
       expect(captured[0], equals('store-1'));
       expect(captured[1], equals('u1'));
@@ -125,16 +135,18 @@ void main() {
         paymentMethod: 'card',
       );
 
-      final captured = verify(() => dao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: any(named: 'action'),
-            entityType: any(named: 'entityType'),
-            entityId: any(named: 'entityId'),
-            newValue: captureAny(named: 'newValue'),
-            description: any(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: any(named: 'action'),
+          entityType: any(named: 'entityType'),
+          entityId: any(named: 'entityId'),
+          newValue: captureAny(named: 'newValue'),
+          description: any(named: 'description'),
+        ),
+      ).captured;
       final newVal = captured.first as Map<String, dynamic>;
       expect(newVal.containsKey('receiptNo'), isFalse);
     });
@@ -149,16 +161,18 @@ void main() {
         reason: 'customer cancelled',
       );
 
-      final captured = verify(() => dao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: captureAny(named: 'action'),
-            entityType: any(named: 'entityType'),
-            entityId: any(named: 'entityId'),
-            newValue: captureAny(named: 'newValue'),
-            description: any(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: captureAny(named: 'action'),
+          entityType: any(named: 'entityType'),
+          entityId: any(named: 'entityId'),
+          newValue: captureAny(named: 'newValue'),
+          description: any(named: 'description'),
+        ),
+      ).captured;
       expect(captured[0], equals(AuditAction.saleCancel));
       final newVal = captured[1] as Map<String, dynamic>;
       expect(newVal['reason'], equals('customer cancelled'));
@@ -173,14 +187,16 @@ void main() {
         amount: 40,
       );
 
-      final captured = verify(() => dao.logRefund(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            saleId: captureAny(named: 'saleId'),
-            amount: captureAny(named: 'amount'),
-            reason: captureAny(named: 'reason'),
-          )).captured;
+      final captured = verify(
+        () => dao.logRefund(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          saleId: captureAny(named: 'saleId'),
+          amount: captureAny(named: 'amount'),
+          reason: captureAny(named: 'reason'),
+        ),
+      ).captured;
       expect(captured[0], equals('sale-3'));
       expect(captured[1], equals(40.0));
       expect(captured[2], equals('مرتجع')); // fallback reason
@@ -195,15 +211,17 @@ void main() {
         newCount: 3,
       );
 
-      final captured = verify(() => dao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: captureAny(named: 'action'),
-            entityType: captureAny(named: 'entityType'),
-            newValue: captureAny(named: 'newValue'),
-            description: any(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: captureAny(named: 'action'),
+          entityType: captureAny(named: 'entityType'),
+          newValue: captureAny(named: 'newValue'),
+          description: any(named: 'description'),
+        ),
+      ).captured;
 
       expect(captured[0], equals(AuditAction.saleRefund));
       expect(captured[1], equals('exchange'));
@@ -229,16 +247,18 @@ void main() {
         balanceAfter: 100,
       );
 
-      final captured = verify(() => dao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: captureAny(named: 'action'),
-            entityType: captureAny(named: 'entityType'),
-            entityId: captureAny(named: 'entityId'),
-            newValue: captureAny(named: 'newValue'),
-            description: captureAny(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: captureAny(named: 'action'),
+          entityType: captureAny(named: 'entityType'),
+          entityId: captureAny(named: 'entityId'),
+          newValue: captureAny(named: 'newValue'),
+          description: captureAny(named: 'description'),
+        ),
+      ).captured;
 
       expect(captured[0], equals(AuditAction.paymentRecord));
       expect(captured[1], equals('transaction'));
@@ -262,16 +282,18 @@ void main() {
         balanceAfter: 50,
       );
 
-      final captured = verify(() => dao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: any(named: 'action'),
-            entityType: any(named: 'entityType'),
-            entityId: any(named: 'entityId'),
-            newValue: any(named: 'newValue'),
-            description: captureAny(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: any(named: 'action'),
+          entityType: any(named: 'entityType'),
+          entityId: any(named: 'entityId'),
+          newValue: any(named: 'newValue'),
+          description: captureAny(named: 'description'),
+        ),
+      ).captured;
       expect(captured.first as String, contains('دفعة'));
     });
 
@@ -285,15 +307,17 @@ void main() {
         totalInterest: 125,
       );
 
-      final captured = verify(() => dao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: captureAny(named: 'action'),
-            entityType: any(named: 'entityType'),
-            newValue: captureAny(named: 'newValue'),
-            description: any(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: captureAny(named: 'action'),
+          entityType: any(named: 'entityType'),
+          newValue: captureAny(named: 'newValue'),
+          description: any(named: 'description'),
+        ),
+      ).captured;
 
       expect(captured[0], equals(AuditAction.interestApply));
       final newVal = captured[1] as Map<String, dynamic>;
@@ -316,16 +340,18 @@ void main() {
         openingCash: 500,
       );
 
-      final captured = verify(() => dao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: captureAny(named: 'action'),
-            entityType: captureAny(named: 'entityType'),
-            entityId: captureAny(named: 'entityId'),
-            newValue: captureAny(named: 'newValue'),
-            description: any(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: captureAny(named: 'action'),
+          entityType: captureAny(named: 'entityType'),
+          entityId: captureAny(named: 'entityId'),
+          newValue: captureAny(named: 'newValue'),
+          description: any(named: 'description'),
+        ),
+      ).captured;
 
       expect(captured[0], equals(AuditAction.shiftOpen));
       expect(captured[1], equals('shift'));
@@ -347,16 +373,18 @@ void main() {
         totalSalesAmount: 1000,
       );
 
-      final captured = verify(() => dao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: captureAny(named: 'action'),
-            entityType: any(named: 'entityType'),
-            entityId: any(named: 'entityId'),
-            newValue: captureAny(named: 'newValue'),
-            description: any(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: captureAny(named: 'action'),
+          entityType: any(named: 'entityType'),
+          entityId: any(named: 'entityId'),
+          newValue: captureAny(named: 'newValue'),
+          description: any(named: 'description'),
+        ),
+      ).captured;
 
       expect(captured[0], equals(AuditAction.shiftClose));
       final newVal = captured[1] as Map<String, dynamic>;
@@ -377,15 +405,17 @@ void main() {
         reason: 'opening float',
       );
 
-      final captured = verify(() => dao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: captureAny(named: 'action'),
-            entityType: captureAny(named: 'entityType'),
-            newValue: captureAny(named: 'newValue'),
-            description: captureAny(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: captureAny(named: 'action'),
+          entityType: captureAny(named: 'entityType'),
+          newValue: captureAny(named: 'newValue'),
+          description: captureAny(named: 'description'),
+        ),
+      ).captured;
 
       expect(captured[0], equals(AuditAction.cashDrawerOpen));
       expect(captured[1], equals('cash_movement'));
@@ -405,15 +435,17 @@ void main() {
         amount: 75,
       );
 
-      final captured = verify(() => dao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: any(named: 'action'),
-            entityType: any(named: 'entityType'),
-            newValue: any(named: 'newValue'),
-            description: captureAny(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: any(named: 'action'),
+          entityType: any(named: 'entityType'),
+          newValue: any(named: 'newValue'),
+          description: captureAny(named: 'description'),
+        ),
+      ).captured;
       expect(captured.first as String, contains('سحب'));
     });
   });
@@ -432,16 +464,18 @@ void main() {
         price: 12.5,
       );
 
-      final captured = verify(() => dao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: captureAny(named: 'action'),
-            entityType: captureAny(named: 'entityType'),
-            entityId: captureAny(named: 'entityId'),
-            newValue: captureAny(named: 'newValue'),
-            description: any(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: captureAny(named: 'action'),
+          entityType: captureAny(named: 'entityType'),
+          entityId: captureAny(named: 'entityId'),
+          newValue: captureAny(named: 'newValue'),
+          description: any(named: 'description'),
+        ),
+      ).captured;
       expect(captured[0], equals(AuditAction.productCreate));
       expect(captured[1], equals('product'));
       expect(captured[2], equals('p1'));
@@ -461,15 +495,17 @@ void main() {
         newPrice: 7,
       );
 
-      verify(() => dao.logPriceChange(
-            storeId: 's',
-            userId: 'u',
-            userName: 'n',
-            productId: 'p1',
-            productName: 'Tea',
-            oldPrice: 5,
-            newPrice: 7,
-          )).called(1);
+      verify(
+        () => dao.logPriceChange(
+          storeId: 's',
+          userId: 'u',
+          userName: 'n',
+          productId: 'p1',
+          productName: 'Tea',
+          oldPrice: 5,
+          newPrice: 7,
+        ),
+      ).called(1);
     });
   });
 
@@ -489,16 +525,18 @@ void main() {
         reason: 'wastage',
       );
 
-      verify(() => dao.logStockAdjust(
-            storeId: 's',
-            userId: 'u',
-            userName: 'n',
-            productId: 'p1',
-            productName: 'Milk',
-            oldQty: 20,
-            newQty: 15,
-            reason: 'wastage',
-          )).called(1);
+      verify(
+        () => dao.logStockAdjust(
+          storeId: 's',
+          userId: 'u',
+          userName: 'n',
+          productId: 'p1',
+          productName: 'Milk',
+          oldQty: 20,
+          newQty: 15,
+          reason: 'wastage',
+        ),
+      ).called(1);
     });
 
     test('logStockReceive records purchase number and item count', () async {
@@ -511,16 +549,18 @@ void main() {
         itemCount: 25,
       );
 
-      final captured = verify(() => dao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: captureAny(named: 'action'),
-            entityType: captureAny(named: 'entityType'),
-            entityId: any(named: 'entityId'),
-            newValue: captureAny(named: 'newValue'),
-            description: captureAny(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: captureAny(named: 'action'),
+          entityType: captureAny(named: 'entityType'),
+          entityId: any(named: 'entityId'),
+          newValue: captureAny(named: 'newValue'),
+          description: captureAny(named: 'description'),
+        ),
+      ).captured;
       expect(captured[0], equals(AuditAction.stockReceive));
       expect(captured[1], equals('purchase'));
       final newVal = captured[2] as Map<String, dynamic>;
@@ -538,16 +578,18 @@ void main() {
         itemCount: 10,
       );
 
-      final captured = verify(() => dao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: any(named: 'action'),
-            entityType: any(named: 'entityType'),
-            entityId: any(named: 'entityId'),
-            newValue: captureAny(named: 'newValue'),
-            description: any(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: any(named: 'action'),
+          entityType: any(named: 'entityType'),
+          entityId: any(named: 'entityId'),
+          newValue: captureAny(named: 'newValue'),
+          description: any(named: 'description'),
+        ),
+      ).captured;
       final newVal = captured.first as Map<String, dynamic>;
       expect(newVal.containsKey('purchaseNumber'), isFalse);
     });
@@ -566,16 +608,18 @@ void main() {
         customerName: 'خالد',
       );
 
-      final captured = verify(() => dao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: captureAny(named: 'action'),
-            entityType: captureAny(named: 'entityType'),
-            entityId: captureAny(named: 'entityId'),
-            newValue: captureAny(named: 'newValue'),
-            description: any(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: captureAny(named: 'action'),
+          entityType: captureAny(named: 'entityType'),
+          entityId: captureAny(named: 'entityId'),
+          newValue: captureAny(named: 'newValue'),
+          description: any(named: 'description'),
+        ),
+      ).captured;
       expect(captured[0], equals(AuditAction.customerCreate));
       expect(captured[1], equals('customer'));
       expect(captured[2], equals('c1'));
@@ -593,16 +637,18 @@ void main() {
         changes: {'phone': '555', 'address': 'Riyadh'},
       );
 
-      final captured = verify(() => dao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: captureAny(named: 'action'),
-            entityType: any(named: 'entityType'),
-            entityId: any(named: 'entityId'),
-            newValue: captureAny(named: 'newValue'),
-            description: any(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: captureAny(named: 'action'),
+          entityType: any(named: 'entityType'),
+          entityId: any(named: 'entityId'),
+          newValue: captureAny(named: 'newValue'),
+          description: any(named: 'description'),
+        ),
+      ).captured;
       expect(captured[0], equals(AuditAction.customerEdit));
       final newVal = captured[1] as Map<String, dynamic>;
       expect(newVal['name'], equals('خالد'));
@@ -619,16 +665,18 @@ void main() {
         customerName: 'name',
       );
 
-      final captured = verify(() => dao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: any(named: 'action'),
-            entityType: any(named: 'entityType'),
-            entityId: any(named: 'entityId'),
-            newValue: captureAny(named: 'newValue'),
-            description: any(named: 'description'),
-          )).captured;
+      final captured = verify(
+        () => dao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: any(named: 'action'),
+          entityType: any(named: 'entityType'),
+          entityId: any(named: 'entityId'),
+          newValue: captureAny(named: 'newValue'),
+          description: any(named: 'description'),
+        ),
+      ).captured;
       final newVal = captured.first as Map<String, dynamic>;
       expect(newVal['name'], equals('name'));
       // Only 'name' key -- no merged changes

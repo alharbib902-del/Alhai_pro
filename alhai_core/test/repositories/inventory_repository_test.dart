@@ -54,35 +54,45 @@ void main() {
     group('getAdjustments', () {
       test('returns Paginated<StockAdjustment> on success', () async {
         // Arrange
-        when(() => mockRemote.getAdjustments(
-              any(),
-              page: any(named: 'page'),
-              limit: any(named: 'limit'),
-            )).thenAnswer((_) async => [testAdjustmentResponse]);
+        when(
+          () => mockRemote.getAdjustments(
+            any(),
+            page: any(named: 'page'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenAnswer((_) async => [testAdjustmentResponse]);
 
         // Act
-        final result =
-            await repository.getAdjustments('prod-1', page: 1, limit: 20);
+        final result = await repository.getAdjustments(
+          'prod-1',
+          page: 1,
+          limit: 20,
+        );
 
         // Assert
         expect(result.items, hasLength(1));
         expect(result.items.first.id, equals('adj-1'));
         expect(result.items.first.type, equals(AdjustmentType.sold));
         expect(result.page, equals(1));
-        verify(() => mockRemote.getAdjustments('prod-1', page: 1, limit: 20))
-            .called(1);
+        verify(
+          () => mockRemote.getAdjustments('prod-1', page: 1, limit: 20),
+        ).called(1);
       });
 
       test('throws NetworkException on connection error', () async {
         // Arrange
-        when(() => mockRemote.getAdjustments(
-              any(),
-              page: any(named: 'page'),
-              limit: any(named: 'limit'),
-            )).thenThrow(DioException(
-          type: DioExceptionType.connectionError,
-          requestOptions: RequestOptions(path: '/inventory'),
-        ));
+        when(
+          () => mockRemote.getAdjustments(
+            any(),
+            page: any(named: 'page'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenThrow(
+          DioException(
+            type: DioExceptionType.connectionError,
+            requestOptions: RequestOptions(path: '/inventory'),
+          ),
+        );
 
         // Act & Assert
         expect(
@@ -95,8 +105,9 @@ void main() {
     group('adjustStock', () {
       test('adjusts stock and returns StockAdjustment', () async {
         // Arrange
-        when(() => mockRemote.adjustStock(any()))
-            .thenAnswer((_) async => testAdjustmentResponse);
+        when(
+          () => mockRemote.adjustStock(any()),
+        ).thenAnswer((_) async => testAdjustmentResponse);
 
         // Act
         final result = await repository.adjustStock(
@@ -116,8 +127,9 @@ void main() {
     group('getLowStockProducts', () {
       test('returns list of LowStockProduct', () async {
         // Arrange
-        when(() => mockRemote.getLowStockProducts(any()))
-            .thenAnswer((_) async => [testLowStockResponse]);
+        when(
+          () => mockRemote.getLowStockProducts(any()),
+        ).thenAnswer((_) async => [testLowStockResponse]);
 
         // Act
         final result = await repository.getLowStockProducts('store-1');
@@ -132,8 +144,9 @@ void main() {
     group('getOutOfStockProductIds', () {
       test('returns list of product IDs', () async {
         // Arrange
-        when(() => mockRemote.getOutOfStockProductIds(any()))
-            .thenAnswer((_) async => ['prod-1', 'prod-2']);
+        when(
+          () => mockRemote.getOutOfStockProductIds(any()),
+        ).thenAnswer((_) async => ['prod-1', 'prod-2']);
 
         // Act
         final result = await repository.getOutOfStockProductIds('store-1');

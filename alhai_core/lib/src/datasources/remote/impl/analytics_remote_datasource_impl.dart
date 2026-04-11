@@ -22,7 +22,8 @@ class AnalyticsRemoteDataSourceImpl implements AnalyticsRemoteDataSource {
       queryParameters: {'store_id': storeId},
     );
     return DashboardSummaryResponse.fromJson(
-        response.data as Map<String, dynamic>);
+      response.data as Map<String, dynamic>,
+    );
   }
 
   @override
@@ -41,8 +42,9 @@ class AnalyticsRemoteDataSourceImpl implements AnalyticsRemoteDataSource {
     );
     final list = response.data['data'] as List<dynamic>;
     return list
-        .map((e) =>
-            SlowMovingProductResponse.fromJson(e as Map<String, dynamic>))
+        .map(
+          (e) => SlowMovingProductResponse.fromJson(e as Map<String, dynamic>),
+        )
         .toList();
   }
 
@@ -53,10 +55,7 @@ class AnalyticsRemoteDataSourceImpl implements AnalyticsRemoteDataSource {
   }) async {
     final response = await _dio.get(
       '/analytics/forecast',
-      queryParameters: {
-        'store_id': storeId,
-        'days': days,
-      },
+      queryParameters: {'store_id': storeId, 'days': days},
     );
     final list = response.data['data'] as List<dynamic>;
     return list
@@ -104,15 +103,13 @@ class AnalyticsRemoteDataSourceImpl implements AnalyticsRemoteDataSource {
   }) async {
     final response = await _dio.get(
       '/analytics/reorder-suggestions',
-      queryParameters: {
-        'store_id': storeId,
-        'days_ahead': daysAhead,
-      },
+      queryParameters: {'store_id': storeId, 'days_ahead': daysAhead},
     );
     final list = response.data['data'] as List<dynamic>;
     return list
-        .map((e) =>
-            ReorderSuggestionResponse.fromJson(e as Map<String, dynamic>))
+        .map(
+          (e) => ReorderSuggestionResponse.fromJson(e as Map<String, dynamic>),
+        )
         .toList();
   }
 
@@ -131,7 +128,8 @@ class AnalyticsRemoteDataSourceImpl implements AnalyticsRemoteDataSource {
       },
     );
     return PeakHoursAnalysisResponse.fromJson(
-        response.data as Map<String, dynamic>);
+      response.data as Map<String, dynamic>,
+    );
   }
 
   @override
@@ -141,10 +139,7 @@ class AnalyticsRemoteDataSourceImpl implements AnalyticsRemoteDataSource {
   }) async {
     final response = await _dio.get(
       '/analytics/customer-patterns',
-      queryParameters: {
-        'store_id': storeId,
-        'limit': limit,
-      },
+      queryParameters: {'store_id': storeId, 'limit': limit},
     );
     final list = response.data['data'] as List<dynamic>;
     return list

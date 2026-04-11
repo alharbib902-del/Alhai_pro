@@ -21,7 +21,9 @@ class CategoryChips extends StatelessWidget {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.sm, vertical: 6),
+          horizontal: AlhaiSpacing.sm,
+          vertical: 6,
+        ),
         itemCount: categories.length + 1, // +1 for "All"
         itemBuilder: (context, index) {
           if (index == 0) {
@@ -41,9 +43,8 @@ class CategoryChips extends StatelessWidget {
             child: FilterChip(
               label: Text(category.name),
               selected: selectedId == category.id,
-              onSelected: (_) => onSelected(
-                selectedId == category.id ? null : category.id,
-              ),
+              onSelected: (_) =>
+                  onSelected(selectedId == category.id ? null : category.id),
             ),
           );
         },

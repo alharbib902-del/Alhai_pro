@@ -12,7 +12,8 @@ part of 'auth_tokens_response.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 AuthTokensResponse _$AuthTokensResponseFromJson(Map<String, dynamic> json) {
   return _AuthTokensResponse.fromJson(json);
@@ -40,13 +41,15 @@ mixin _$AuthTokensResponse {
 /// @nodoc
 abstract class $AuthTokensResponseCopyWith<$Res> {
   factory $AuthTokensResponseCopyWith(
-          AuthTokensResponse value, $Res Function(AuthTokensResponse) then) =
-      _$AuthTokensResponseCopyWithImpl<$Res, AuthTokensResponse>;
+    AuthTokensResponse value,
+    $Res Function(AuthTokensResponse) then,
+  ) = _$AuthTokensResponseCopyWithImpl<$Res, AuthTokensResponse>;
   @useResult
-  $Res call(
-      {@JsonKey(name: 'access_token') String accessToken,
-      @JsonKey(name: 'refresh_token') String refreshToken,
-      @JsonKey(name: 'expires_at') String expiresAt});
+  $Res call({
+    @JsonKey(name: 'access_token') String accessToken,
+    @JsonKey(name: 'refresh_token') String refreshToken,
+    @JsonKey(name: 'expires_at') String expiresAt,
+  });
 }
 
 /// @nodoc
@@ -68,44 +71,50 @@ class _$AuthTokensResponseCopyWithImpl<$Res, $Val extends AuthTokensResponse>
     Object? refreshToken = null,
     Object? expiresAt = null,
   }) {
-    return _then(_value.copyWith(
-      accessToken: null == accessToken
-          ? _value.accessToken
-          : accessToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      refreshToken: null == refreshToken
-          ? _value.refreshToken
-          : refreshToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      expiresAt: null == expiresAt
-          ? _value.expiresAt
-          : expiresAt // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            accessToken: null == accessToken
+                ? _value.accessToken
+                : accessToken // ignore: cast_nullable_to_non_nullable
+                      as String,
+            refreshToken: null == refreshToken
+                ? _value.refreshToken
+                : refreshToken // ignore: cast_nullable_to_non_nullable
+                      as String,
+            expiresAt: null == expiresAt
+                ? _value.expiresAt
+                : expiresAt // ignore: cast_nullable_to_non_nullable
+                      as String,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$AuthTokensResponseImplCopyWith<$Res>
     implements $AuthTokensResponseCopyWith<$Res> {
-  factory _$$AuthTokensResponseImplCopyWith(_$AuthTokensResponseImpl value,
-          $Res Function(_$AuthTokensResponseImpl) then) =
-      __$$AuthTokensResponseImplCopyWithImpl<$Res>;
+  factory _$$AuthTokensResponseImplCopyWith(
+    _$AuthTokensResponseImpl value,
+    $Res Function(_$AuthTokensResponseImpl) then,
+  ) = __$$AuthTokensResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {@JsonKey(name: 'access_token') String accessToken,
-      @JsonKey(name: 'refresh_token') String refreshToken,
-      @JsonKey(name: 'expires_at') String expiresAt});
+  $Res call({
+    @JsonKey(name: 'access_token') String accessToken,
+    @JsonKey(name: 'refresh_token') String refreshToken,
+    @JsonKey(name: 'expires_at') String expiresAt,
+  });
 }
 
 /// @nodoc
 class __$$AuthTokensResponseImplCopyWithImpl<$Res>
     extends _$AuthTokensResponseCopyWithImpl<$Res, _$AuthTokensResponseImpl>
     implements _$$AuthTokensResponseImplCopyWith<$Res> {
-  __$$AuthTokensResponseImplCopyWithImpl(_$AuthTokensResponseImpl _value,
-      $Res Function(_$AuthTokensResponseImpl) _then)
-      : super(_value, _then);
+  __$$AuthTokensResponseImplCopyWithImpl(
+    _$AuthTokensResponseImpl _value,
+    $Res Function(_$AuthTokensResponseImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of AuthTokensResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -116,31 +125,33 @@ class __$$AuthTokensResponseImplCopyWithImpl<$Res>
     Object? refreshToken = null,
     Object? expiresAt = null,
   }) {
-    return _then(_$AuthTokensResponseImpl(
-      accessToken: null == accessToken
-          ? _value.accessToken
-          : accessToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      refreshToken: null == refreshToken
-          ? _value.refreshToken
-          : refreshToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      expiresAt: null == expiresAt
-          ? _value.expiresAt
-          : expiresAt // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
+    return _then(
+      _$AuthTokensResponseImpl(
+        accessToken: null == accessToken
+            ? _value.accessToken
+            : accessToken // ignore: cast_nullable_to_non_nullable
+                  as String,
+        refreshToken: null == refreshToken
+            ? _value.refreshToken
+            : refreshToken // ignore: cast_nullable_to_non_nullable
+                  as String,
+        expiresAt: null == expiresAt
+            ? _value.expiresAt
+            : expiresAt // ignore: cast_nullable_to_non_nullable
+                  as String,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$AuthTokensResponseImpl extends _AuthTokensResponse {
-  const _$AuthTokensResponseImpl(
-      {@JsonKey(name: 'access_token') required this.accessToken,
-      @JsonKey(name: 'refresh_token') required this.refreshToken,
-      @JsonKey(name: 'expires_at') required this.expiresAt})
-      : super._();
+  const _$AuthTokensResponseImpl({
+    @JsonKey(name: 'access_token') required this.accessToken,
+    @JsonKey(name: 'refresh_token') required this.refreshToken,
+    @JsonKey(name: 'expires_at') required this.expiresAt,
+  }) : super._();
 
   factory _$AuthTokensResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$AuthTokensResponseImplFromJson(json);
@@ -185,22 +196,22 @@ class _$AuthTokensResponseImpl extends _AuthTokensResponse {
   @pragma('vm:prefer-inline')
   _$$AuthTokensResponseImplCopyWith<_$AuthTokensResponseImpl> get copyWith =>
       __$$AuthTokensResponseImplCopyWithImpl<_$AuthTokensResponseImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AuthTokensResponseImplToJson(
-      this,
-    );
+    return _$$AuthTokensResponseImplToJson(this);
   }
 }
 
 abstract class _AuthTokensResponse extends AuthTokensResponse {
-  const factory _AuthTokensResponse(
-          {@JsonKey(name: 'access_token') required final String accessToken,
-          @JsonKey(name: 'refresh_token') required final String refreshToken,
-          @JsonKey(name: 'expires_at') required final String expiresAt}) =
-      _$AuthTokensResponseImpl;
+  const factory _AuthTokensResponse({
+    @JsonKey(name: 'access_token') required final String accessToken,
+    @JsonKey(name: 'refresh_token') required final String refreshToken,
+    @JsonKey(name: 'expires_at') required final String expiresAt,
+  }) = _$AuthTokensResponseImpl;
   const _AuthTokensResponse._() : super._();
 
   factory _AuthTokensResponse.fromJson(Map<String, dynamic> json) =

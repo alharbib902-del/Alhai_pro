@@ -225,8 +225,8 @@ class MockNfcListenerService implements NfcListenerService {
     this.behavior = MockNfcBehavior.success,
     this.cardDetectDelay = const Duration(milliseconds: 1500),
     this.readDelay = const Duration(milliseconds: 800),
-  })  : _gateway = gateway,
-        _configuration = configuration ?? NfcConfiguration.defaultConfig {
+  }) : _gateway = gateway,
+       _configuration = configuration ?? NfcConfiguration.defaultConfig {
     // التأكد من أن المحاكاة تعمل في وضع التطوير فقط
     if (kReleaseMode) {
       debugPrint('[NFC] تحذير: محاكاة NFC لا تعمل في وضع الإنتاج');
@@ -374,9 +374,9 @@ class MockNfcListenerService implements NfcListenerService {
 
       // اكتشاف البطاقة
       _cancelTimeoutTimer();
-      _emitEvent(NfcCardDetected(
-        cardId: 'SIM-${DateTime.now().millisecondsSinceEpoch}',
-      ));
+      _emitEvent(
+        NfcCardDetected(cardId: 'SIM-${DateTime.now().millisecondsSinceEpoch}'),
+      );
 
       // محاكاة: قراءة البطاقة
       await Future.delayed(readDelay);
@@ -401,10 +401,7 @@ class MockNfcListenerService implements NfcListenerService {
         orderId: 'NFC-${DateTime.now().millisecondsSinceEpoch}',
         amount: amount,
         method: PaymentMethod.mada,
-        metadata: {
-          'source': 'nfc_tap',
-          '_simulated': true,
-        },
+        metadata: {'source': 'nfc_tap', '_simulated': true},
       );
 
       PaymentResult result;

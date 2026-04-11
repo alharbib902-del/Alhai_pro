@@ -89,9 +89,11 @@ class AlhaiTabBar extends StatelessWidget {
     this.trailing,
     this.showDivider = true,
     this.filled = false,
-  })  : assert(tabs.length > 0, 'AlhaiTabBar requires at least one tab'),
-        assert(currentIndex >= 0 && currentIndex < tabs.length,
-            'currentIndex must be within tabs range');
+  }) : assert(tabs.length > 0, 'AlhaiTabBar requires at least one tab'),
+       assert(
+         currentIndex >= 0 && currentIndex < tabs.length,
+         'currentIndex must be within tabs range',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -119,9 +121,7 @@ class AlhaiTabBar extends StatelessWidget {
               ],
 
               // Tabs
-              Expanded(
-                child: _buildTabsRow(theme, colorScheme, textDirection),
-              ),
+              Expanded(child: _buildTabsRow(theme, colorScheme, textDirection)),
 
               // Trailing
               if (trailing != null) ...[
@@ -312,11 +312,12 @@ class _TabItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDisabled = !item.enabled;
     final labelColor = isDisabled
-        ? colorScheme.onSurfaceVariant
-            .withValues(alpha: AlhaiColors.disabledOpacity)
+        ? colorScheme.onSurfaceVariant.withValues(
+            alpha: AlhaiColors.disabledOpacity,
+          )
         : isSelected
-            ? (filled ? colorScheme.onSecondaryContainer : colorScheme.primary)
-            : colorScheme.onSurfaceVariant;
+        ? (filled ? colorScheme.onSecondaryContainer : colorScheme.primary)
+        : colorScheme.onSurfaceVariant;
 
     return Semantics(
       label: item.label,
@@ -389,11 +390,7 @@ class _TabItem extends StatelessWidget {
 
     // Icon
     if (item.icon != null) {
-      children.add(Icon(
-        item.icon,
-        size: AlhaiSpacing.lg,
-        color: labelColor,
-      ));
+      children.add(Icon(item.icon, size: AlhaiSpacing.lg, color: labelColor));
       children.add(const SizedBox(width: AlhaiSpacing.xs));
     }
 
@@ -447,9 +444,7 @@ class _TabItem extends StatelessWidget {
         minWidth: AlhaiSpacing.md,
         minHeight: AlhaiSpacing.md,
       ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: AlhaiSpacing.xxs,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: colorScheme.error,
         borderRadius: BorderRadius.circular(AlhaiRadius.full),

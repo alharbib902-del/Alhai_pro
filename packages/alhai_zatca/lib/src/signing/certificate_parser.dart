@@ -222,7 +222,8 @@ class CertificateParser {
       // valueBytes() may throw
     }
     throw FormatException(
-        'Cannot parse ASN.1 time object with tag ${timeObj.tag}');
+      'Cannot parse ASN.1 time object with tag ${timeObj.tag}',
+    );
   }
 
   /// Parse a time string in UTCTime or GeneralizedTime format

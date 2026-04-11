@@ -18,8 +18,9 @@ void main() {
     db = setupMockDatabase(auditLogDao: auditLogDao);
     setupTestGetIt(mockDb: db);
 
-    when(() => auditLogDao.getLogs(any(), limit: any(named: 'limit')))
-        .thenAnswer((_) async => []);
+    when(
+      () => auditLogDao.getLogs(any(), limit: any(named: 'limit')),
+    ).thenAnswer((_) async => []);
   });
 
   tearDown(() => tearDownTestGetIt());

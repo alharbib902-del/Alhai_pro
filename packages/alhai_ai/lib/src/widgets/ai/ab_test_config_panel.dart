@@ -49,8 +49,9 @@ class AbTestConfigPanel extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.06)
+              : AppColors.border,
         ),
       ),
       child: Column(
@@ -86,10 +87,7 @@ class AbTestConfigPanel extends StatelessWidget {
                     ),
                     Text(
                       'قارن بين عرضين لتحديد الأفضل',
-                      style: TextStyle(
-                        color: subtextColor,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: subtextColor, fontSize: 12),
                     ),
                   ],
                 ),
@@ -258,8 +256,9 @@ class AbTestConfigPanel extends StatelessWidget {
           SizedBox(
             width: double.infinity,
             child: ElevatedButton.icon(
-              onPressed:
-                  (promotionA != null && promotionB != null) ? onLaunch : null,
+              onPressed: (promotionA != null && promotionB != null)
+                  ? onLaunch
+                  : null,
               icon: const Icon(Icons.rocket_launch, size: 18),
               label: const Text('إطلاق اختبار A/B'),
               style: ElevatedButton.styleFrom(
@@ -322,7 +321,9 @@ class AbTestConfigPanel extends StatelessWidget {
           children: [
             Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.xs, vertical: 3),
+                horizontal: AlhaiSpacing.xs,
+                vertical: 3,
+              ),
               decoration: BoxDecoration(
                 color: color.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(6),
@@ -359,18 +360,11 @@ class AbTestConfigPanel extends StatelessWidget {
                 ),
               ),
             ] else ...[
-              Icon(
-                Icons.add_circle_outline,
-                color: subtextColor,
-                size: 28,
-              ),
+              Icon(Icons.add_circle_outline, color: subtextColor, size: 28),
               const SizedBox(height: AlhaiSpacing.xxs),
               Text(
                 'اختر عرضاً',
-                style: TextStyle(
-                  color: subtextColor,
-                  fontSize: 11,
-                ),
+                style: TextStyle(color: subtextColor, fontSize: 11),
               ),
             ],
           ],
@@ -413,7 +407,8 @@ class AbTestConfigPanel extends StatelessWidget {
                 final promo = options[i];
                 final typeColor = Color(
                   AiPromotionDesignerService.getPromotionTypeColorValue(
-                      promo.type),
+                    promo.type,
+                  ),
                 );
                 return ListTile(
                   onTap: () {
@@ -436,7 +431,8 @@ class AbTestConfigPanel extends StatelessWidget {
                     child: Center(
                       child: Text(
                         AiPromotionDesignerService.getPromotionTypeEmoji(
-                            promo.type),
+                          promo.type,
+                        ),
                         style: TextStyle(
                           color: typeColor,
                           fontWeight: FontWeight.bold,
@@ -472,7 +468,11 @@ class AbTestConfigPanel extends StatelessWidget {
   }
 
   Widget _buildGroupIndicator(
-      String label, double percent, Color color, bool isDark) {
+    String label,
+    double percent,
+    Color color,
+    bool isDark,
+  ) {
     return Expanded(
       flex: percent.round().clamp(1, 100),
       child: Container(

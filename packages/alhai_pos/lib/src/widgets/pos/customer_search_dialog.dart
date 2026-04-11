@@ -25,8 +25,10 @@ class CustomerSearchDialog extends StatefulWidget {
   });
 
   /// عرض النافذة
-  static Future<CustomerSearchResult?> show(BuildContext context,
-      {required String storeId}) {
+  static Future<CustomerSearchResult?> show(
+    BuildContext context, {
+    required String storeId,
+  }) {
     return showModalBottomSheet<CustomerSearchResult>(
       context: context,
       isScrollControlled: true,
@@ -73,14 +75,16 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
       if (!mounted) return;
       setState(() {
         _allCustomers = customers
-            .map((c) => CustomerSearchResult(
-                  id: c.id,
-                  name: c.name,
-                  phone: c.phone ?? '',
-                  balance: 0, // سيتم تحديثه لاحقاً من حساب العميل
-                  loyaltyPoints: 0,
-                  tier: null,
-                ))
+            .map(
+              (c) => CustomerSearchResult(
+                id: c.id,
+                name: c.name,
+                phone: c.phone ?? '',
+                balance: 0, // سيتم تحديثه لاحقاً من حساب العميل
+                loyaltyPoints: 0,
+                tier: null,
+              ),
+            )
             .toList();
         _filteredCustomers = _allCustomers;
         _isLoading = false;
@@ -118,14 +122,16 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
         if (!mounted) return;
         setState(() {
           _filteredCustomers = results
-              .map((c) => CustomerSearchResult(
-                    id: c.id,
-                    name: c.name,
-                    phone: c.phone ?? '',
-                    balance: 0,
-                    loyaltyPoints: 0,
-                    tier: null,
-                  ))
+              .map(
+                (c) => CustomerSearchResult(
+                  id: c.id,
+                  name: c.name,
+                  phone: c.phone ?? '',
+                  balance: 0,
+                  loyaltyPoints: 0,
+                  tier: null,
+                ),
+              )
               .toList();
         });
       });
@@ -215,22 +221,27 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
               child: ListTile(
                 leading: CircleAvatar(
                   backgroundColor: colorScheme.outlineVariant,
-                  child: const Icon(Icons.person_outline,
-                      color: AppColors.textMuted),
+                  child: const Icon(
+                    Icons.person_outline,
+                    color: AppColors.textMuted,
+                  ),
                 ),
                 title: Text(AppLocalizations.of(context).walkInCustomerLabel),
-                subtitle:
-                    Text(AppLocalizations.of(context).continueWithoutCustomer),
+                subtitle: Text(
+                  AppLocalizations.of(context).continueWithoutCustomer,
+                ),
                 trailing: const AdaptiveIcon(Icons.arrow_forward_ios, size: 16),
                 onTap: () {
-                  widget.onSelect(CustomerSearchResult(
-                    id: 'walk-in',
-                    name: AppLocalizations.of(context).walkInCustomerLabel,
-                    phone: '',
-                    balance: 0,
-                    loyaltyPoints: 0,
-                    tier: null,
-                  ));
+                  widget.onSelect(
+                    CustomerSearchResult(
+                      id: 'walk-in',
+                      name: AppLocalizations.of(context).walkInCustomerLabel,
+                      phone: '',
+                      balance: 0,
+                      loyaltyPoints: 0,
+                      tier: null,
+                    ),
+                  );
                 },
               ),
             ),
@@ -243,15 +254,16 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _filteredCustomers.isEmpty
-                    ? _buildEmptyState()
-                    : ListView.builder(
-                        padding:
-                            const EdgeInsets.symmetric(horizontal: AppSizes.lg),
-                        itemCount: _filteredCustomers.length,
-                        itemBuilder: (context, index) {
-                          return _buildCustomerCard(_filteredCustomers[index]);
-                        },
-                      ),
+                ? _buildEmptyState()
+                : ListView.builder(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSizes.lg,
+                    ),
+                    itemCount: _filteredCustomers.length,
+                    itemBuilder: (context, index) {
+                      return _buildCustomerCard(_filteredCustomers[index]);
+                    },
+                  ),
           ),
 
           // Add New Customer
@@ -262,8 +274,9 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                 child: OutlinedButton.icon(
                   onPressed: widget.onAddNew,
                   icon: const Icon(Icons.person_add),
-                  label:
-                      Text(AppLocalizations.of(context).addNewCustomerButton),
+                  label: Text(
+                    AppLocalizations.of(context).addNewCustomerButton,
+                  ),
                   style: OutlinedButton.styleFrom(
                     minimumSize: const Size.fromHeight(48),
                   ),
@@ -312,8 +325,9 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
               children: [
                 // Avatar
                 CircleAvatar(
-                  backgroundColor:
-                      _getTierColor(customer.tier).withValues(alpha: 0.1),
+                  backgroundColor: _getTierColor(
+                    customer.tier,
+                  ).withValues(alpha: 0.1),
                   child: Text(
                     customer.name[0],
                     style: TextStyle(
@@ -346,8 +360,9 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                               ),
                               decoration: BoxDecoration(
                                 color: _getTierColor(customer.tier),
-                                borderRadius:
-                                    BorderRadius.circular(AppSizes.radiusSm),
+                                borderRadius: BorderRadius.circular(
+                                  AppSizes.radiusSm,
+                                ),
                               ),
                               child: Text(
                                 _localizedTier(l10n, customer.tier),
@@ -383,9 +398,11 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                           ),
                           const SizedBox(width: AlhaiSpacing.xxs),
                           Text(
-                            AppLocalizations.of(context)
-                                .loyaltyPointsCountLabel(
-                                    customer.loyaltyPoints.toString()),
+                            AppLocalizations.of(
+                              context,
+                            ).loyaltyPointsCountLabel(
+                              customer.loyaltyPoints.toString(),
+                            ),
                             style: AppTypography.bodySmall.copyWith(
                               color: AppColors.textMuted,
                             ),
@@ -408,13 +425,14 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
                     ),
                     Text(
                       AppLocalizations.of(context).customerBalanceAmount(
-                          customer.balance.abs().toStringAsFixed(2)),
+                        customer.balance.abs().toStringAsFixed(2),
+                      ),
                       style: AppTypography.titleSmall.copyWith(
                         color: hasDebt
                             ? AppColors.error
                             : (hasCredit
-                                ? AppColors.success
-                                : AppColors.textSecondary),
+                                  ? AppColors.success
+                                  : AppColors.textSecondary),
                         fontWeight: FontWeight.bold,
                       ),
                     ),
@@ -448,11 +466,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.search_off,
-            size: 64,
-            color: colorScheme.onSurfaceVariant,
-          ),
+          Icon(Icons.search_off, size: 64, color: colorScheme.onSurfaceVariant),
           const SizedBox(height: AppSizes.md),
           Text(
             AppLocalizations.of(context).noResultsFoundTitle,
@@ -463,9 +477,7 @@ class _CustomerSearchDialogState extends State<CustomerSearchDialog> {
           const SizedBox(height: AppSizes.xs),
           Text(
             AppLocalizations.of(context).tryAnotherSearch,
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.textMuted,
-            ),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
           ),
         ],
       ),

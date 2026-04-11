@@ -77,9 +77,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
     try {
       final fullPhone = phone.startsWith('+') ? phone : '+966$phone';
-      await ref.read(
-        verifyOtpProvider((phone: fullPhone, otp: otp)).future,
-      );
+      await ref.read(verifyOtpProvider((phone: fullPhone, otp: otp)).future);
 
       if (!mounted) return;
 
@@ -219,11 +217,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   const SizedBox(height: AlhaiSpacing.lg),
 
                   FilledButton(
-                    onPressed:
-                        _isLoading ? null : (_otpSent ? _verifyOtp : _sendOtp),
+                    onPressed: _isLoading
+                        ? null
+                        : (_otpSent ? _verifyOtp : _sendOtp),
                     style: FilledButton.styleFrom(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AlhaiSpacing.md,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),

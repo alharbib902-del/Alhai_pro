@@ -63,10 +63,7 @@ class AdaptiveIcon extends StatelessWidget {
   };
 
   /// Icons that should be flipped via Transform (no paired counterpart)
-  static final _flipIcons = <IconData>{
-    Icons.send,
-    Icons.send_rounded,
-  };
+  static final _flipIcons = <IconData>{Icons.send, Icons.send_rounded};
 
   // ===========================================================================
   // Static helpers
@@ -109,8 +106,12 @@ class AdaptiveIcon extends StatelessWidget {
     if (isRtl && _flipIcons.contains(icon)) {
       return Transform.flip(
         flipX: true,
-        child:
-            Icon(icon, size: size, color: color, semanticLabel: semanticLabel),
+        child: Icon(
+          icon,
+          size: size,
+          color: color,
+          semanticLabel: semanticLabel,
+        ),
       );
     }
 

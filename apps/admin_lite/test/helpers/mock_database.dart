@@ -78,8 +78,9 @@ MockAppDatabase setupMockDatabase({
   when(() => db.customersDao).thenReturn(customersDao ?? MockCustomersDao());
   when(() => db.categoriesDao).thenReturn(categoriesDao ?? MockCategoriesDao());
   when(() => db.inventoryDao).thenReturn(inventoryDao ?? MockInventoryDao());
-  when(() => db.notificationsDao)
-      .thenReturn(notificationsDao ?? MockNotificationsDao());
+  when(
+    () => db.notificationsDao,
+  ).thenReturn(notificationsDao ?? MockNotificationsDao());
   when(() => db.storesDao).thenReturn(storesDao ?? MockStoresDao());
   when(() => db.syncQueueDao).thenReturn(syncQueueDao ?? MockSyncQueueDao());
 

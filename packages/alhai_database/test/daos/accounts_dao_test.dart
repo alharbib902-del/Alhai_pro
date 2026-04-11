@@ -9,12 +9,14 @@ void main() {
     db = createTestDatabase();
     await seedTestData(db);
     // Accounts reference customers via FK
-    await db.customersDao.insertCustomer(CustomersTableCompanion.insert(
-      id: 'cust-1',
-      storeId: 'store-1',
-      name: 'Cust 1',
-      createdAt: DateTime(2025, 1, 1),
-    ));
+    await db.customersDao.insertCustomer(
+      CustomersTableCompanion.insert(
+        id: 'cust-1',
+        storeId: 'store-1',
+        name: 'Cust 1',
+        createdAt: DateTime(2025, 1, 1),
+      ),
+    );
   });
 
   tearDown(() async {
@@ -53,21 +55,21 @@ void main() {
 
     test('getAllAccounts returns accounts for store', () async {
       await db.accountsDao.insertAccount(makeAccount());
-      await db.accountsDao.insertAccount(makeAccount(
-        id: 'acc-2',
-        name: 'حساب خالد',
-        type: 'payable',
-      ));
+      await db.accountsDao.insertAccount(
+        makeAccount(id: 'acc-2', name: 'حساب خالد', type: 'payable'),
+      );
 
       final accounts = await db.accountsDao.getAllAccounts('store-1');
       expect(accounts, hasLength(2));
     });
 
     test('getReceivableAccounts filters by type', () async {
-      await db.accountsDao
-          .insertAccount(makeAccount(id: 'acc-r', type: 'receivable'));
       await db.accountsDao.insertAccount(
-          makeAccount(id: 'acc-p', name: 'مورد', type: 'payable'));
+        makeAccount(id: 'acc-r', type: 'receivable'),
+      );
+      await db.accountsDao.insertAccount(
+        makeAccount(id: 'acc-p', name: 'مورد', type: 'payable'),
+      );
 
       final receivables = await db.accountsDao.getReceivableAccounts('store-1');
       expect(receivables, hasLength(1));
@@ -75,10 +77,12 @@ void main() {
     });
 
     test('getPayableAccounts filters by type', () async {
-      await db.accountsDao
-          .insertAccount(makeAccount(id: 'acc-r', type: 'receivable'));
       await db.accountsDao.insertAccount(
-          makeAccount(id: 'acc-p', name: 'مورد', type: 'payable'));
+        makeAccount(id: 'acc-r', type: 'receivable'),
+      );
+      await db.accountsDao.insertAccount(
+        makeAccount(id: 'acc-p', name: 'مورد', type: 'payable'),
+      );
 
       final payables = await db.accountsDao.getPayableAccounts('store-1');
       expect(payables, hasLength(1));
@@ -88,8 +92,10 @@ void main() {
     test('getCustomerAccount finds by customerId and storeId', () async {
       await db.accountsDao.insertAccount(makeAccount());
 
-      final account =
-          await db.accountsDao.getCustomerAccount('cust-1', 'store-1');
+      final account = await db.accountsDao.getCustomerAccount(
+        'cust-1',
+        'store-1',
+      );
       expect(account, isNotNull);
       expect(account!.customerId, 'cust-1');
     });

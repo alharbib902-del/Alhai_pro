@@ -74,8 +74,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         context.push('/auth/otp', extra: phone);
       }
     } on SocketException catch (_) {
-      setState(() =>
-          _error = 'لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى');
+      setState(
+        () => _error = 'لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى',
+      );
     } on TimeoutException catch (_) {
       setState(() => _error = 'انتهت مهلة الاتصال. حاول مرة أخرى');
     } catch (e) {
@@ -100,23 +101,25 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               children: [
                 const Spacer(),
                 // Logo
-                Builder(builder: (context) {
-                  final logoSize = (MediaQuery.of(context).size.width * 0.25)
-                      .clamp(80.0, 150.0);
-                  return Container(
-                    width: logoSize,
-                    height: logoSize,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primaryContainer,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.storefront_rounded,
-                      size: logoSize * 0.5,
-                      color: theme.colorScheme.primary,
-                    ),
-                  );
-                }),
+                Builder(
+                  builder: (context) {
+                    final logoSize = (MediaQuery.of(context).size.width * 0.25)
+                        .clamp(80.0, 150.0);
+                    return Container(
+                      width: logoSize,
+                      height: logoSize,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primaryContainer,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.storefront_rounded,
+                        size: logoSize * 0.5,
+                        color: theme.colorScheme.primary,
+                      ),
+                    );
+                  },
+                ),
                 const SizedBox(height: AlhaiSpacing.xl),
                 Text(
                   'مرحباً بك',

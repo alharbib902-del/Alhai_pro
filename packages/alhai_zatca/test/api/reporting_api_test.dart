@@ -56,12 +56,14 @@ void main() {
 
     group('reportInvoice', () {
       test('delegates to client and returns success response', () async {
-        when(() => mockClient.reportInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => successResponse);
+        when(
+          () => mockClient.reportInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => successResponse);
 
         final result = await reportingApi.reportInvoice(
           signedXmlBase64: 'base64xml',
@@ -75,12 +77,14 @@ void main() {
       });
 
       test('propagates rejection from ZATCA', () async {
-        when(() => mockClient.reportInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => rejectedResponse);
+        when(
+          () => mockClient.reportInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => rejectedResponse);
 
         final result = await reportingApi.reportInvoice(
           signedXmlBase64: 'base64xml',
@@ -98,12 +102,14 @@ void main() {
 
     group('reportBatch', () {
       test('processes multiple invoices sequentially', () async {
-        when(() => mockClient.reportInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => successResponse);
+        when(
+          () => mockClient.reportInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => successResponse);
 
         final requests = List.generate(
           3,
@@ -125,12 +131,14 @@ void main() {
 
       test('continues processing after individual failures', () async {
         var callCount = 0;
-        when(() => mockClient.reportInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async {
+        when(
+          () => mockClient.reportInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async {
           callCount++;
           if (callCount == 2) throw Exception('Network error');
           return successResponse;
@@ -170,12 +178,14 @@ void main() {
 
     group('reportBatchWithRetry', () {
       test('succeeds on first attempt without retry', () async {
-        when(() => mockClient.reportInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => successResponse);
+        when(
+          () => mockClient.reportInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => successResponse);
 
         final results = await reportingApi.reportBatchWithRetry(
           requests: [
@@ -195,12 +205,14 @@ void main() {
       });
 
       test('does not retry 400 validation rejections', () async {
-        when(() => mockClient.reportInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => rejectedResponse);
+        when(
+          () => mockClient.reportInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => rejectedResponse);
 
         final results = await reportingApi.reportBatchWithRetry(
           requests: [
@@ -216,12 +228,14 @@ void main() {
 
         expect(results.first.isSuccess, isFalse);
         // Should only call once since 400 is not retried
-        verify(() => mockClient.reportInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).called(1);
+        verify(
+          () => mockClient.reportInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).called(1);
       });
     });
   });

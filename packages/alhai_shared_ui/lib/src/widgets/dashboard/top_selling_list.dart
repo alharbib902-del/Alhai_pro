@@ -57,9 +57,7 @@ class TopSellingList extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(24),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDarkMode ? 0.2 : 0.04),
@@ -101,11 +99,15 @@ class TopSellingList extends StatelessWidget {
           SizedBox(height: AlhaiSpacing.md),
 
           // قائمة المنتجات
-          ...products.take(5).map((product) => _TopSellingItem(
-                product: product,
-                formatAmount: formatAmount,
-                isDarkMode: isDarkMode,
-              )),
+          ...products
+              .take(5)
+              .map(
+                (product) => _TopSellingItem(
+                  product: product,
+                  formatAmount: formatAmount,
+                  isDarkMode: isDarkMode,
+                ),
+              ),
         ],
       ),
     );
@@ -148,9 +150,8 @@ class _TopSellingItem extends StatelessWidget {
                       fit: BoxFit.cover,
                       memCacheWidth: 100,
                       memCacheHeight: 100,
-                      placeholder: (_, __) => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      placeholder: (_, __) =>
+                          const Center(child: CircularProgressIndicator()),
                       errorWidget: (_, __, ___) => Icon(
                         Icons.coffee_rounded,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,

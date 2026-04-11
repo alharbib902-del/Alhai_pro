@@ -67,8 +67,9 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: ref.watch(unreadNotificationsCountProvider),
           userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
@@ -78,7 +79,8 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(
-                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+            ),
             child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
           ),
         ),
@@ -92,8 +94,12 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
     return '$dateStr \u2022 ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
-      AppLocalizations l10n) {
+  Widget _buildContent(
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final user = ref.watch(currentUserProvider);
 
     if (isWideScreen) {
@@ -166,9 +172,10 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                     ? user!.name[0].toUpperCase()
                     : '?',
                 style: const TextStyle(
-                    fontSize: 22,
-                    color: AppColors.textOnPrimary,
-                    fontWeight: FontWeight.bold),
+                  fontSize: 22,
+                  color: AppColors.textOnPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
           ),
@@ -188,8 +195,11 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                 const SizedBox(height: AlhaiSpacing.xxs),
                 Row(
                   children: [
-                    Icon(Icons.access_time_rounded,
-                        size: 14, color: AppColors.getTextMuted(isDark)),
+                    Icon(
+                      Icons.access_time_rounded,
+                      size: 14,
+                      color: AppColors.getTextMuted(isDark),
+                    ),
                     const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       timeStr,
@@ -199,8 +209,11 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                       ),
                     ),
                     const SizedBox(width: AlhaiSpacing.sm),
-                    Icon(Icons.calendar_today_rounded,
-                        size: 14, color: AppColors.getTextMuted(isDark)),
+                    Icon(
+                      Icons.calendar_today_rounded,
+                      size: 14,
+                      color: AppColors.getTextMuted(isDark),
+                    ),
                     const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       '${now.day}/${now.month}/${now.year}',
@@ -238,8 +251,11 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.account_balance_wallet_rounded,
-                    color: AppColors.info, size: 20),
+                child: const Icon(
+                  Icons.account_balance_wallet_rounded,
+                  color: AppColors.info,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -276,8 +292,11 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
               ),
               prefixIcon: Padding(
                 padding: const EdgeInsets.all(AlhaiSpacing.sm),
-                child: Icon(Icons.calculate_rounded,
-                    size: 28, color: AppColors.getTextMuted(isDark)),
+                child: Icon(
+                  Icons.calculate_rounded,
+                  size: 28,
+                  color: AppColors.getTextMuted(isDark),
+                ),
               ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
@@ -289,8 +308,10 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: AppColors.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
               ),
               filled: true,
               fillColor: AppColors.getSurfaceVariant(isDark),
@@ -314,7 +335,9 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                   borderRadius: BorderRadius.circular(10),
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.md, vertical: 10),
+                      horizontal: AlhaiSpacing.md,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.primary.withValues(alpha: 0.1)
@@ -364,8 +387,11 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                   color: AppColors.warning.withValues(alpha: 0.15),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.info_outline_rounded,
-                    color: AppColors.warning, size: 20),
+                child: const Icon(
+                  Icons.info_outline_rounded,
+                  color: AppColors.warning,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -399,17 +425,22 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: AppColors.textOnPrimary),
+                  strokeWidth: 2,
+                  color: AppColors.textOnPrimary,
+                ),
               )
             : const Icon(Icons.login_rounded, size: 20),
-        label: Text(l10n.openShift,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        label: Text(
+          l10n.openShift,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
     );
@@ -465,8 +496,12 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(l10n.shiftOpenedWithAmount(
-              openingCash.toStringAsFixed(0), l10n.sar)),
+          content: Text(
+            l10n.shiftOpenedWithAmount(
+              openingCash.toStringAsFixed(0),
+              l10n.sar,
+            ),
+          ),
           backgroundColor: AppColors.success,
         ),
       );

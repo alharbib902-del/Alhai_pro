@@ -31,8 +31,10 @@ void main() {
     });
 
     test('effectivePrice returns custom price when set', () {
-      final item =
-          PosCartItem(product: _product(price: 50.0), customPrice: 40.0);
+      final item = PosCartItem(
+        product: _product(price: 50.0),
+        customPrice: 40.0,
+      );
       expect(item.effectivePrice, equals(40.0));
     });
 
@@ -89,20 +91,24 @@ void main() {
 
     group('subtotal & total calculations', () {
       test('subtotal sums all item totals', () {
-        final cart = CartState(items: [
-          PosCartItem(
-              product: _product(id: 'a', price: 10.0), quantity: 2), // 20
-          PosCartItem(
-              product: _product(id: 'b', price: 15.0), quantity: 3), // 45
-        ]);
+        final cart = CartState(
+          items: [
+            PosCartItem(
+              product: _product(id: 'a', price: 10.0),
+              quantity: 2,
+            ), // 20
+            PosCartItem(
+              product: _product(id: 'b', price: 15.0),
+              quantity: 3,
+            ), // 45
+          ],
+        );
         expect(cart.subtotal, equals(65.0));
       });
 
       test('total = subtotal - discount', () {
         final cart = CartState(
-          items: [
-            PosCartItem(product: _product(price: 100.0), quantity: 1),
-          ],
+          items: [PosCartItem(product: _product(price: 100.0), quantity: 1)],
           discount: 20.0,
         );
         expect(cart.subtotal, equals(100.0));
@@ -110,9 +116,9 @@ void main() {
       });
 
       test('total equals subtotal when no discount', () {
-        final cart = CartState(items: [
-          PosCartItem(product: _product(price: 50.0), quantity: 2),
-        ]);
+        final cart = CartState(
+          items: [PosCartItem(product: _product(price: 50.0), quantity: 2)],
+        );
         expect(cart.total, equals(cart.subtotal));
         expect(cart.total, equals(100.0));
       });
@@ -120,19 +126,23 @@ void main() {
 
     group('itemCount & uniqueItemCount', () {
       test('itemCount sums quantities', () {
-        final cart = CartState(items: [
-          PosCartItem(product: _product(id: 'a'), quantity: 3),
-          PosCartItem(product: _product(id: 'b'), quantity: 2),
-        ]);
+        final cart = CartState(
+          items: [
+            PosCartItem(product: _product(id: 'a'), quantity: 3),
+            PosCartItem(product: _product(id: 'b'), quantity: 2),
+          ],
+        );
         expect(cart.itemCount, equals(5));
       });
 
       test('uniqueItemCount counts distinct products', () {
-        final cart = CartState(items: [
-          PosCartItem(product: _product(id: 'a'), quantity: 3),
-          PosCartItem(product: _product(id: 'b'), quantity: 2),
-          PosCartItem(product: _product(id: 'c'), quantity: 1),
-        ]);
+        final cart = CartState(
+          items: [
+            PosCartItem(product: _product(id: 'a'), quantity: 3),
+            PosCartItem(product: _product(id: 'b'), quantity: 2),
+            PosCartItem(product: _product(id: 'c'), quantity: 1),
+          ],
+        );
         expect(cart.uniqueItemCount, equals(3));
       });
     });
@@ -166,25 +176,25 @@ void main() {
 
     group('edge cases', () {
       test('product with zero price', () {
-        final cart = CartState(items: [
-          PosCartItem(product: _product(price: 0.0), quantity: 5),
-        ]);
+        final cart = CartState(
+          items: [PosCartItem(product: _product(price: 0.0), quantity: 5)],
+        );
         expect(cart.subtotal, equals(0.0));
         expect(cart.total, equals(0.0));
       });
 
       test('single item with quantity 1', () {
-        final cart = CartState(items: [
-          PosCartItem(product: _product(price: 99.99), quantity: 1),
-        ]);
+        final cart = CartState(
+          items: [PosCartItem(product: _product(price: 99.99), quantity: 1)],
+        );
         expect(cart.subtotal, closeTo(99.99, 0.001));
         expect(cart.itemCount, equals(1));
       });
 
       test('large quantity', () {
-        final cart = CartState(items: [
-          PosCartItem(product: _product(price: 5.0), quantity: 1000),
-        ]);
+        final cart = CartState(
+          items: [PosCartItem(product: _product(price: 5.0), quantity: 1000)],
+        );
         expect(cart.subtotal, equals(5000.0));
       });
     });
@@ -224,9 +234,10 @@ void main() {
           items: [
             PosCartItem(product: _product(id: 'p1', price: 25.0), quantity: 3),
             PosCartItem(
-                product: _product(id: 'p2', price: 10.0),
-                quantity: 1,
-                customPrice: 8.0),
+              product: _product(id: 'p2', price: 10.0),
+              quantity: 1,
+              customPrice: 8.0,
+            ),
           ],
           discount: 5.0,
           customerId: 'cust-1',
@@ -260,9 +271,7 @@ void main() {
     test('description returns name when set', () {
       final invoice = HeldInvoice(
         id: '1',
-        cart: CartState(items: [
-          PosCartItem(product: _product(), quantity: 2),
-        ]),
+        cart: CartState(items: [PosCartItem(product: _product(), quantity: 2)]),
         name: 'VIP Order',
         createdAt: DateTime.now(),
       );
@@ -284,9 +293,7 @@ void main() {
     test('description returns item count when no name or customer', () {
       final invoice = HeldInvoice(
         id: '1',
-        cart: CartState(items: [
-          PosCartItem(product: _product(), quantity: 3),
-        ]),
+        cart: CartState(items: [PosCartItem(product: _product(), quantity: 3)]),
         createdAt: DateTime.now(),
       );
       expect(invoice.description, contains('3'));

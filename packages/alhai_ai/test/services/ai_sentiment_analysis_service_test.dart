@@ -23,8 +23,9 @@ void main() {
       final negative = keywords
           .where((k) => k.sentiment == SentimentScore.negative)
           .toList();
-      final neutral =
-          keywords.where((k) => k.sentiment == SentimentScore.neutral).toList();
+      final neutral = keywords
+          .where((k) => k.sentiment == SentimentScore.neutral)
+          .toList();
 
       expect(positive, isNotEmpty);
       expect(negative, isNotEmpty);
@@ -103,9 +104,11 @@ void main() {
     test('positive feedback has positive sentiment values', () {
       final feedback = AiSentimentAnalysisService.getFeedback();
       final positive = feedback
-          .where((f) =>
-              f.sentiment == SentimentScore.positive ||
-              f.sentiment == SentimentScore.veryPositive)
+          .where(
+            (f) =>
+                f.sentiment == SentimentScore.positive ||
+                f.sentiment == SentimentScore.veryPositive,
+          )
           .toList();
 
       for (final f in positive) {
@@ -116,9 +119,11 @@ void main() {
     test('negative feedback has negative sentiment values', () {
       final feedback = AiSentimentAnalysisService.getFeedback();
       final negative = feedback
-          .where((f) =>
-              f.sentiment == SentimentScore.negative ||
-              f.sentiment == SentimentScore.veryNegative)
+          .where(
+            (f) =>
+                f.sentiment == SentimentScore.negative ||
+                f.sentiment == SentimentScore.veryNegative,
+          )
           .toList();
 
       for (final f in negative) {
@@ -177,8 +182,10 @@ void main() {
     test('distribution sums to total reviews', () {
       final result = AiSentimentAnalysisService.getAnalysisResult();
 
-      final totalFromDist =
-          result.distribution.values.fold<int>(0, (sum, c) => sum + c);
+      final totalFromDist = result.distribution.values.fold<int>(
+        0,
+        (sum, c) => sum + c,
+      );
       expect(totalFromDist, result.totalReviews);
     });
 
@@ -198,22 +205,29 @@ void main() {
   group('getSentimentLabel', () {
     test('returns correct label for each score', () {
       expect(
-          AiSentimentAnalysisService.getSentimentLabel(
-              SentimentScore.veryPositive),
-          isNotEmpty);
+        AiSentimentAnalysisService.getSentimentLabel(
+          SentimentScore.veryPositive,
+        ),
+        isNotEmpty,
+      );
       expect(
-          AiSentimentAnalysisService.getSentimentLabel(SentimentScore.positive),
-          isNotEmpty);
+        AiSentimentAnalysisService.getSentimentLabel(SentimentScore.positive),
+        isNotEmpty,
+      );
       expect(
-          AiSentimentAnalysisService.getSentimentLabel(SentimentScore.neutral),
-          isNotEmpty);
+        AiSentimentAnalysisService.getSentimentLabel(SentimentScore.neutral),
+        isNotEmpty,
+      );
       expect(
-          AiSentimentAnalysisService.getSentimentLabel(SentimentScore.negative),
-          isNotEmpty);
+        AiSentimentAnalysisService.getSentimentLabel(SentimentScore.negative),
+        isNotEmpty,
+      );
       expect(
-          AiSentimentAnalysisService.getSentimentLabel(
-              SentimentScore.veryNegative),
-          isNotEmpty);
+        AiSentimentAnalysisService.getSentimentLabel(
+          SentimentScore.veryNegative,
+        ),
+        isNotEmpty,
+      );
     });
 
     test('returns unique labels for different scores', () {

@@ -10,13 +10,7 @@ library;
 import 'validation_result.dart';
 
 /// أنواع الباركود المدعومة
-enum BarcodeType {
-  ean13,
-  ean8,
-  upcA,
-  code128,
-  any,
-}
+enum BarcodeType { ean13, ean8, upcA, code128, any }
 
 /// التحقق من الباركود
 class BarcodeValidator {

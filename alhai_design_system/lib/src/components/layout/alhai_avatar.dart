@@ -213,11 +213,7 @@ class AlhaiAvatar extends StatelessWidget {
 
           // Badge (topEnd, RTL-safe)
           if (badge != null)
-            PositionedDirectional(
-              top: 0,
-              end: 0,
-              child: badge!,
-            ),
+            PositionedDirectional(top: 0, end: 0, child: badge!),
 
           // Online dot
           if (showOnlineDot && badge == null)
@@ -252,8 +248,9 @@ class AlhaiAvatar extends StatelessWidget {
   ) {
     if (initials != null && initials!.isNotEmpty) {
       // Take first 2 characters (no toUpperCase for Arabic support)
-      final displayInitials =
-          initials!.length > 2 ? initials!.substring(0, 2) : initials!;
+      final displayInitials = initials!.length > 2
+          ? initials!.substring(0, 2)
+          : initials!;
 
       return Text(
         displayInitials,

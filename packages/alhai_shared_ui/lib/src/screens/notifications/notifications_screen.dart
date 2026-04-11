@@ -47,8 +47,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
       final db = GetIt.I<AppDatabase>();
-      final notifications =
-          await db.notificationsDao.getAllNotifications(storeId);
+      final notifications = await db.notificationsDao.getAllNotifications(
+        storeId,
+      );
       if (mounted) {
         setState(() {
           _notifications = notifications;
@@ -94,8 +95,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         children: [
           AppHeader(
             title: l10n.notifications,
-            onMenuTap:
-                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () {},
             notificationsCount: unread,
             userName: l10n.defaultUserName,
@@ -124,8 +126,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                 },
                 itemBuilder: (context) => [
                   PopupMenuItem(
-                      value: 'settings',
-                      child: Text(l10n.notificationSettings)),
+                    value: 'settings',
+                    child: Text(l10n.notificationSettings),
+                  ),
                   PopupMenuItem(value: 'clear', child: Text(l10n.clearAll)),
                 ],
               ),
@@ -138,145 +141,150 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                     child: ShimmerList(itemCount: 6, itemHeight: 72),
                   )
                 : _error != null
-                    ? AppErrorState.general(context,
-                        message: _error, onRetry: _loadData)
-                    : _notifications.isEmpty
-                        ? AppEmptyState.noNotifications(context)
-                        : RefreshIndicator(
-                            onRefresh: _loadData,
-                            color: AppColors.primary,
-                            child: AnimatedListView(
-                              controller: _scrollController,
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              padding: EdgeInsets.all(isMediumScreen
-                                  ? AlhaiSpacing.lg
-                                  : AlhaiSpacing.md),
-                              itemCount: _notifications.length,
-                              itemBuilder: (context, index) {
-                                final notification = _notifications[index];
-                                return Dismissible(
-                                  key: Key(notification.id),
-                                  direction: DismissDirection.endToStart,
-                                  background: Container(
-                                    margin: const EdgeInsets.only(
-                                        bottom: AlhaiSpacing.xs),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.error,
-                                      borderRadius: BorderRadius.circular(12),
-                                    ),
-                                    alignment: AlignmentDirectional.centerStart,
-                                    padding: const EdgeInsetsDirectional.only(
-                                        start: 16),
-                                    child: const Icon(Icons.delete,
-                                        color: Colors.white),
-                                  ),
-                                  onDismissed: (_) async {
-                                    try {
-                                      final db = GetIt.I<AppDatabase>();
-                                      await db.notificationsDao
-                                          .deleteNotification(notification.id);
-                                    } catch (_) {}
-                                    setState(
-                                        () => _notifications.removeAt(index));
-                                  },
-                                  child: Container(
-                                    margin: const EdgeInsets.only(
-                                        bottom: AlhaiSpacing.xs),
-                                    decoration: BoxDecoration(
-                                      color: notification.isRead
-                                          ? (Theme.of(context)
-                                              .colorScheme
-                                              .surface)
-                                          : (isDark
-                                              ? Theme.of(context)
-                                                  .colorScheme
-                                                  .surfaceContainerHighest
-                                              : AppColors.infoSurface),
-                                      borderRadius: BorderRadius.circular(12),
-                                      border: Border.all(
-                                        color: notification.isRead
-                                            ? (Theme.of(context).dividerColor)
-                                            : AppColors.info
-                                                .withValues(alpha: 0.3),
-                                      ),
-                                    ),
-                                    child: ListTile(
-                                      contentPadding:
-                                          const EdgeInsets.symmetric(
-                                              horizontal: AlhaiSpacing.md,
-                                              vertical: AlhaiSpacing.xs),
-                                      leading: Container(
-                                        padding: const EdgeInsets.all(10),
-                                        decoration: BoxDecoration(
-                                          color: _getColor(notification.type)
-                                              .withValues(alpha: 0.1),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                        ),
-                                        child: Icon(_getIcon(notification.type),
-                                            color:
-                                                _getColor(notification.type)),
-                                      ),
-                                      title: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              notification.title,
-                                              style: TextStyle(
-                                                fontWeight: notification.isRead
-                                                    ? FontWeight.normal
-                                                    : FontWeight.bold,
-                                                color: Theme.of(context)
-                                                    .colorScheme
-                                                    .onSurface,
-                                              ),
-                                            ),
-                                          ),
-                                          if (!notification.isRead)
-                                            Container(
-                                              width: 8,
-                                              height: 8,
-                                              decoration: const BoxDecoration(
-                                                  color: AppColors.info,
-                                                  shape: BoxShape.circle),
-                                            ),
-                                        ],
-                                      ),
-                                      subtitle: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(height: AlhaiSpacing.xxs),
-                                          Text(
-                                            notification.body,
-                                            style: TextStyle(
-                                              fontSize: 12,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onSurfaceVariant,
-                                            ),
-                                          ),
-                                          SizedBox(height: AlhaiSpacing.xxxs),
-                                          Text(
-                                            _formatTime(notification.createdAt),
-                                            style: TextStyle(
-                                              fontSize: 10,
-                                              color: Theme.of(context)
-                                                  .colorScheme
-                                                  .onSurfaceVariant
-                                                  .withValues(alpha: 0.5),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      onTap: () =>
-                                          _openNotification(notification),
-                                    ),
-                                  ),
-                                );
-                              },
+                ? AppErrorState.general(
+                    context,
+                    message: _error,
+                    onRetry: _loadData,
+                  )
+                : _notifications.isEmpty
+                ? AppEmptyState.noNotifications(context)
+                : RefreshIndicator(
+                    onRefresh: _loadData,
+                    color: AppColors.primary,
+                    child: AnimatedListView(
+                      controller: _scrollController,
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      padding: EdgeInsets.all(
+                        isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                      ),
+                      itemCount: _notifications.length,
+                      itemBuilder: (context, index) {
+                        final notification = _notifications[index];
+                        return Dismissible(
+                          key: Key(notification.id),
+                          direction: DismissDirection.endToStart,
+                          background: Container(
+                            margin: const EdgeInsets.only(
+                              bottom: AlhaiSpacing.xs,
+                            ),
+                            decoration: BoxDecoration(
+                              color: AppColors.error,
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            alignment: AlignmentDirectional.centerStart,
+                            padding: const EdgeInsetsDirectional.only(
+                              start: 16,
+                            ),
+                            child: const Icon(
+                              Icons.delete,
+                              color: Colors.white,
                             ),
                           ),
+                          onDismissed: (_) async {
+                            try {
+                              final db = GetIt.I<AppDatabase>();
+                              await db.notificationsDao.deleteNotification(
+                                notification.id,
+                              );
+                            } catch (_) {}
+                            setState(() => _notifications.removeAt(index));
+                          },
+                          child: Container(
+                            margin: const EdgeInsets.only(
+                              bottom: AlhaiSpacing.xs,
+                            ),
+                            decoration: BoxDecoration(
+                              color: notification.isRead
+                                  ? (Theme.of(context).colorScheme.surface)
+                                  : (isDark
+                                        ? Theme.of(
+                                            context,
+                                          ).colorScheme.surfaceContainerHighest
+                                        : AppColors.infoSurface),
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                color: notification.isRead
+                                    ? (Theme.of(context).dividerColor)
+                                    : AppColors.info.withValues(alpha: 0.3),
+                              ),
+                            ),
+                            child: ListTile(
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: AlhaiSpacing.md,
+                                vertical: AlhaiSpacing.xs,
+                              ),
+                              leading: Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: _getColor(
+                                    notification.type,
+                                  ).withValues(alpha: 0.1),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Icon(
+                                  _getIcon(notification.type),
+                                  color: _getColor(notification.type),
+                                ),
+                              ),
+                              title: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      notification.title,
+                                      style: TextStyle(
+                                        fontWeight: notification.isRead
+                                            ? FontWeight.normal
+                                            : FontWeight.bold,
+                                        color: Theme.of(
+                                          context,
+                                        ).colorScheme.onSurface,
+                                      ),
+                                    ),
+                                  ),
+                                  if (!notification.isRead)
+                                    Container(
+                                      width: 8,
+                                      height: 8,
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.info,
+                                        shape: BoxShape.circle,
+                                      ),
+                                    ),
+                                ],
+                              ),
+                              subtitle: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(height: AlhaiSpacing.xxs),
+                                  Text(
+                                    notification.body,
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
+                                    ),
+                                  ),
+                                  SizedBox(height: AlhaiSpacing.xxxs),
+                                  Text(
+                                    _formatTime(notification.createdAt),
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant
+                                          .withValues(alpha: 0.5),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              onTap: () => _openNotification(notification),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
           ),
         ],
       ),
@@ -330,7 +338,8 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     if (mounted) {
       final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('${l10n.openedNotification}: ${n.title}')));
+        SnackBar(content: Text('${l10n.openedNotification}: ${n.title}')),
+      );
     }
   }
 }

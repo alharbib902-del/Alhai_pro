@@ -73,20 +73,23 @@ void main() {
       final probs = await service.getReturnProbabilities('store-1');
 
       final highRisk = probs
-          .where((p) =>
-              p.riskLevel == ReturnRiskLevel.high ||
-              p.riskLevel == ReturnRiskLevel.veryHigh)
+          .where(
+            (p) =>
+                p.riskLevel == ReturnRiskLevel.high ||
+                p.riskLevel == ReturnRiskLevel.veryHigh,
+          )
           .toList();
-      final lowRisk =
-          probs.where((p) => p.riskLevel == ReturnRiskLevel.low).toList();
+      final lowRisk = probs
+          .where((p) => p.riskLevel == ReturnRiskLevel.low)
+          .toList();
 
       if (highRisk.isNotEmpty && lowRisk.isNotEmpty) {
         final avgHigh =
             highRisk.map((p) => p.probability).reduce((a, b) => a + b) /
-                highRisk.length;
+            highRisk.length;
         final avgLow =
             lowRisk.map((p) => p.probability).reduce((a, b) => a + b) /
-                lowRisk.length;
+            lowRisk.length;
         expect(avgHigh, greaterThan(avgLow));
       }
     });
@@ -184,9 +187,11 @@ void main() {
       final result = service.calculateAtRiskAmount(probs);
 
       final expected = probs
-          .where((p) =>
-              p.riskLevel == ReturnRiskLevel.high ||
-              p.riskLevel == ReturnRiskLevel.veryHigh)
+          .where(
+            (p) =>
+                p.riskLevel == ReturnRiskLevel.high ||
+                p.riskLevel == ReturnRiskLevel.veryHigh,
+          )
           .fold<double>(0, (sum, p) => sum + p.amount);
 
       expect(result, expected);
@@ -208,7 +213,9 @@ void main() {
     test('getRiskColorValue returns color for each level', () {
       for (final level in ReturnRiskLevel.values) {
         expect(
-            AiReturnPredictionService.getRiskColorValue(level), greaterThan(0));
+          AiReturnPredictionService.getRiskColorValue(level),
+          greaterThan(0),
+        );
       }
     });
 
@@ -221,7 +228,9 @@ void main() {
     test('getPreventiveTypeLabel returns label for each type', () {
       for (final type in PreventiveType.values) {
         expect(
-            AiReturnPredictionService.getPreventiveTypeLabel(type), isNotEmpty);
+          AiReturnPredictionService.getPreventiveTypeLabel(type),
+          isNotEmpty,
+        );
       }
     });
   });

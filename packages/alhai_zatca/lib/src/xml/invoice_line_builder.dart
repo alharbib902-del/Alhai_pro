@@ -35,11 +35,7 @@ class InvoiceLineBuilder {
     // Price element
     children.add(_buildPrice(line, currencyCode));
 
-    return XmlElement(
-      XmlName('InvoiceLine', 'cac'),
-      [],
-      children,
-    );
+    return XmlElement(XmlName('InvoiceLine', 'cac'), [], children);
   }
 
   /// Build all InvoiceLine elements for a list of lines
@@ -51,10 +47,7 @@ class InvoiceLineBuilder {
   }
 
   /// Build the TaxTotal element within an InvoiceLine
-  XmlElement _buildLineTaxTotal(
-    ZatcaInvoiceLine line,
-    String currencyCode,
-  ) {
+  XmlElement _buildLineTaxTotal(ZatcaInvoiceLine line, String currencyCode) {
     final taxAmount = _cbcElement(
       'TaxAmount',
       _fmtAmount(line.vatAmount),
@@ -68,40 +61,31 @@ class InvoiceLineBuilder {
       attributes: {'currencyID': currencyCode},
     );
 
-    return XmlElement(
-      XmlName('TaxTotal', 'cac'),
-      [],
-      [taxAmount, roundingAmount],
-    );
+    return XmlElement(XmlName('TaxTotal', 'cac'), [], [
+      taxAmount,
+      roundingAmount,
+    ]);
   }
 
   /// Build the Item element within an InvoiceLine
   XmlElement _buildItem(ZatcaInvoiceLine line) {
-    final children = <XmlNode>[
-      _cbcElement('Name', line.itemName),
-    ];
+    final children = <XmlNode>[_cbcElement('Name', line.itemName)];
 
     // Seller item identification
     if (line.sellerItemId != null) {
       children.add(
-        XmlElement(
-          XmlName('SellersItemIdentification', 'cac'),
-          [],
-          [_cbcElement('ID', line.sellerItemId!)],
-        ),
+        XmlElement(XmlName('SellersItemIdentification', 'cac'), [], [
+          _cbcElement('ID', line.sellerItemId!),
+        ]),
       );
     }
 
     // Standard item identification (barcode / GTIN)
     if (line.barcode != null) {
       children.add(
-        XmlElement(
-          XmlName('StandardItemIdentification', 'cac'),
-          [],
-          [
-            _cbcElement('ID', line.barcode!, attributes: {'schemeID': 'GTIN'}),
-          ],
-        ),
+        XmlElement(XmlName('StandardItemIdentification', 'cac'), [], [
+          _cbcElement('ID', line.barcode!, attributes: {'schemeID': 'GTIN'}),
+        ]),
       );
     }
 
@@ -125,11 +109,7 @@ class InvoiceLineBuilder {
     }
 
     taxCategoryChildren.add(
-      XmlElement(
-        XmlName('TaxScheme', 'cac'),
-        [],
-        [_cbcElement('ID', 'VAT')],
-      ),
+      XmlElement(XmlName('TaxScheme', 'cac'), [], [_cbcElement('ID', 'VAT')]),
     );
 
     children.add(
@@ -140,11 +120,7 @@ class InvoiceLineBuilder {
       ),
     );
 
-    return XmlElement(
-      XmlName('Item', 'cac'),
-      [],
-      children,
-    );
+    return XmlElement(XmlName('Item', 'cac'), [], children);
   }
 
   /// Build the Price element within an InvoiceLine
@@ -160,39 +136,28 @@ class InvoiceLineBuilder {
     // AllowanceCharge inside Price (shows gross price and discount)
     if (line.grossPrice != null && line.discountAmount > 0) {
       children.add(
-        XmlElement(
-          XmlName('AllowanceCharge', 'cac'),
-          [],
-          [
-            _cbcElement('ChargeIndicator', 'false'),
-            _cbcElement('AllowanceChargeReason', 'discount'),
-            _cbcElement(
-              'Amount',
-              _fmtAmount(line.discountAmount),
-              attributes: {'currencyID': currencyCode},
-            ),
-            _cbcElement(
-              'BaseAmount',
-              _fmtAmount(line.grossPrice!),
-              attributes: {'currencyID': currencyCode},
-            ),
-          ],
-        ),
+        XmlElement(XmlName('AllowanceCharge', 'cac'), [], [
+          _cbcElement('ChargeIndicator', 'false'),
+          _cbcElement('AllowanceChargeReason', 'discount'),
+          _cbcElement(
+            'Amount',
+            _fmtAmount(line.discountAmount),
+            attributes: {'currencyID': currencyCode},
+          ),
+          _cbcElement(
+            'BaseAmount',
+            _fmtAmount(line.grossPrice!),
+            attributes: {'currencyID': currencyCode},
+          ),
+        ]),
       );
     }
 
-    return XmlElement(
-      XmlName('Price', 'cac'),
-      [],
-      children,
-    );
+    return XmlElement(XmlName('Price', 'cac'), [], children);
   }
 
   /// Build line-level AllowanceCharge
-  XmlElement? _buildLineAllowance(
-    ZatcaInvoiceLine line,
-    String currencyCode,
-  ) {
+  XmlElement? _buildLineAllowance(ZatcaInvoiceLine line, String currencyCode) {
     if (line.discountAmount <= 0) return null;
 
     final children = <XmlNode>[
@@ -201,10 +166,7 @@ class InvoiceLineBuilder {
         'AllowanceChargeReasonCode',
         '95', // Discount
       ),
-      _cbcElement(
-        'AllowanceChargeReason',
-        line.discountReason ?? 'Discount',
-      ),
+      _cbcElement('AllowanceChargeReason', line.discountReason ?? 'Discount'),
       _cbcElement(
         'MultiplierFactorNumeric',
         _fmtAmount(
@@ -227,11 +189,7 @@ class InvoiceLineBuilder {
       ),
     ];
 
-    return XmlElement(
-      XmlName('AllowanceCharge', 'cac'),
-      [],
-      children,
-    );
+    return XmlElement(XmlName('AllowanceCharge', 'cac'), [], children);
   }
 
   // ─── Helpers ─────────────────────────────────────────────
@@ -247,8 +205,7 @@ class InvoiceLineBuilder {
   }) {
     return XmlElement(
       XmlName(name, 'cbc'),
-      (attributes ?? {})
-          .entries
+      (attributes ?? {}).entries
           .map((e) => XmlAttribute(XmlName(e.key), e.value))
           .toList(),
       [XmlText(text)],

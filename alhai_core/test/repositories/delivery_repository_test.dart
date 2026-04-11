@@ -58,8 +58,9 @@ void main() {
     group('getMyDeliveries', () {
       test('returns list of deliveries on success', () async {
         // Arrange
-        when(() => mockRemote.getMyDeliveries())
-            .thenAnswer((_) async => [testDeliveryResponse]);
+        when(
+          () => mockRemote.getMyDeliveries(),
+        ).thenAnswer((_) async => [testDeliveryResponse]);
 
         // Act
         final result = await repository.getMyDeliveries();
@@ -72,10 +73,12 @@ void main() {
 
       test('throws NetworkException on connection error', () async {
         // Arrange
-        when(() => mockRemote.getMyDeliveries()).thenThrow(DioException(
-          type: DioExceptionType.connectionError,
-          requestOptions: RequestOptions(path: '/deliveries'),
-        ));
+        when(() => mockRemote.getMyDeliveries()).thenThrow(
+          DioException(
+            type: DioExceptionType.connectionError,
+            requestOptions: RequestOptions(path: '/deliveries'),
+          ),
+        );
 
         // Act & Assert
         expect(
@@ -88,8 +91,9 @@ void main() {
     group('getDelivery', () {
       test('returns delivery on success', () async {
         // Arrange
-        when(() => mockRemote.getDelivery(any()))
-            .thenAnswer((_) async => testDeliveryResponse);
+        when(
+          () => mockRemote.getDelivery(any()),
+        ).thenAnswer((_) async => testDeliveryResponse);
 
         // Act
         final result = await repository.getDelivery('del-1');
@@ -104,8 +108,9 @@ void main() {
     group('getDeliveryByOrderId', () {
       test('returns delivery when exists', () async {
         // Arrange
-        when(() => mockRemote.getDeliveryByOrderId(any()))
-            .thenAnswer((_) async => testDeliveryResponse);
+        when(
+          () => mockRemote.getDeliveryByOrderId(any()),
+        ).thenAnswer((_) async => testDeliveryResponse);
 
         // Act
         final result = await repository.getDeliveryByOrderId('order-1');
@@ -117,8 +122,9 @@ void main() {
 
       test('returns null when no delivery found', () async {
         // Arrange
-        when(() => mockRemote.getDeliveryByOrderId(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockRemote.getDeliveryByOrderId(any()),
+        ).thenAnswer((_) async => null);
 
         // Act
         final result = await repository.getDeliveryByOrderId('unknown');
@@ -133,8 +139,9 @@ void main() {
     group('acceptDelivery', () {
       test('accepts delivery successfully', () async {
         // Arrange
-        when(() => mockRemote.acceptDelivery(any()))
-            .thenAnswer((_) async => testDeliveryResponse);
+        when(
+          () => mockRemote.acceptDelivery(any()),
+        ).thenAnswer((_) async => testDeliveryResponse);
 
         // Act
         final result = await repository.acceptDelivery('del-1');
@@ -147,9 +154,9 @@ void main() {
     group('rejectDelivery', () {
       test('rejects delivery with reason', () async {
         // Arrange
-        when(() =>
-                mockRemote.rejectDelivery(any(), reason: any(named: 'reason')))
-            .thenAnswer((_) async {});
+        when(
+          () => mockRemote.rejectDelivery(any(), reason: any(named: 'reason')),
+        ).thenAnswer((_) async {});
 
         // Act & Assert
         await expectLater(
@@ -162,8 +169,9 @@ void main() {
     group('markPickedUp', () {
       test('marks delivery as picked up', () async {
         // Arrange
-        when(() => mockRemote.markPickedUp(any()))
-            .thenAnswer((_) async => testDeliveryResponse);
+        when(
+          () => mockRemote.markPickedUp(any()),
+        ).thenAnswer((_) async => testDeliveryResponse);
 
         // Act
         final result = await repository.markPickedUp('del-1');
@@ -176,12 +184,15 @@ void main() {
     group('markDelivered', () {
       test('marks delivery as delivered with notes', () async {
         // Arrange
-        when(() => mockRemote.markDelivered(any(), notes: any(named: 'notes')))
-            .thenAnswer((_) async => testDeliveryResponse);
+        when(
+          () => mockRemote.markDelivered(any(), notes: any(named: 'notes')),
+        ).thenAnswer((_) async => testDeliveryResponse);
 
         // Act
-        final result =
-            await repository.markDelivered('del-1', notes: 'Left at door');
+        final result = await repository.markDelivered(
+          'del-1',
+          notes: 'Left at door',
+        );
 
         // Assert
         expect(result.id, equals('del-1'));
@@ -191,8 +202,9 @@ void main() {
     group('reportIssue', () {
       test('reports issue successfully', () async {
         // Arrange
-        when(() => mockRemote.reportIssue(any(), any()))
-            .thenAnswer((_) async {});
+        when(
+          () => mockRemote.reportIssue(any(), any()),
+        ).thenAnswer((_) async {});
 
         // Act & Assert
         await expectLater(

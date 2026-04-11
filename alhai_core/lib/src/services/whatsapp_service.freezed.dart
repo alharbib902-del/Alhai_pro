@@ -12,10 +12,12 @@ part of 'whatsapp_service.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 WhatsAppReceiptRequest _$WhatsAppReceiptRequestFromJson(
-    Map<String, dynamic> json) {
+  Map<String, dynamic> json,
+) {
   return _WhatsAppReceiptRequest.fromJson(json);
 }
 
@@ -38,17 +40,24 @@ mixin _$WhatsAppReceiptRequest {
 
 /// @nodoc
 abstract class $WhatsAppReceiptRequestCopyWith<$Res> {
-  factory $WhatsAppReceiptRequestCopyWith(WhatsAppReceiptRequest value,
-          $Res Function(WhatsAppReceiptRequest) then) =
-      _$WhatsAppReceiptRequestCopyWithImpl<$Res, WhatsAppReceiptRequest>;
+  factory $WhatsAppReceiptRequestCopyWith(
+    WhatsAppReceiptRequest value,
+    $Res Function(WhatsAppReceiptRequest) then,
+  ) = _$WhatsAppReceiptRequestCopyWithImpl<$Res, WhatsAppReceiptRequest>;
   @useResult
-  $Res call(
-      {String orderId, String phone, String customerName, String? language});
+  $Res call({
+    String orderId,
+    String phone,
+    String customerName,
+    String? language,
+  });
 }
 
 /// @nodoc
-class _$WhatsAppReceiptRequestCopyWithImpl<$Res,
-        $Val extends WhatsAppReceiptRequest>
+class _$WhatsAppReceiptRequestCopyWithImpl<
+  $Res,
+  $Val extends WhatsAppReceiptRequest
+>
     implements $WhatsAppReceiptRequestCopyWith<$Res> {
   _$WhatsAppReceiptRequestCopyWithImpl(this._value, this._then);
 
@@ -67,24 +76,27 @@ class _$WhatsAppReceiptRequestCopyWithImpl<$Res,
     Object? customerName = null,
     Object? language = freezed,
   }) {
-    return _then(_value.copyWith(
-      orderId: null == orderId
-          ? _value.orderId
-          : orderId // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerName: null == customerName
-          ? _value.customerName
-          : customerName // ignore: cast_nullable_to_non_nullable
-              as String,
-      language: freezed == language
-          ? _value.language
-          : language // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            orderId: null == orderId
+                ? _value.orderId
+                : orderId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            phone: null == phone
+                ? _value.phone
+                : phone // ignore: cast_nullable_to_non_nullable
+                      as String,
+            customerName: null == customerName
+                ? _value.customerName
+                : customerName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            language: freezed == language
+                ? _value.language
+                : language // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -92,24 +104,28 @@ class _$WhatsAppReceiptRequestCopyWithImpl<$Res,
 abstract class _$$WhatsAppReceiptRequestImplCopyWith<$Res>
     implements $WhatsAppReceiptRequestCopyWith<$Res> {
   factory _$$WhatsAppReceiptRequestImplCopyWith(
-          _$WhatsAppReceiptRequestImpl value,
-          $Res Function(_$WhatsAppReceiptRequestImpl) then) =
-      __$$WhatsAppReceiptRequestImplCopyWithImpl<$Res>;
+    _$WhatsAppReceiptRequestImpl value,
+    $Res Function(_$WhatsAppReceiptRequestImpl) then,
+  ) = __$$WhatsAppReceiptRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String orderId, String phone, String customerName, String? language});
+  $Res call({
+    String orderId,
+    String phone,
+    String customerName,
+    String? language,
+  });
 }
 
 /// @nodoc
 class __$$WhatsAppReceiptRequestImplCopyWithImpl<$Res>
-    extends _$WhatsAppReceiptRequestCopyWithImpl<$Res,
-        _$WhatsAppReceiptRequestImpl>
+    extends
+        _$WhatsAppReceiptRequestCopyWithImpl<$Res, _$WhatsAppReceiptRequestImpl>
     implements _$$WhatsAppReceiptRequestImplCopyWith<$Res> {
   __$$WhatsAppReceiptRequestImplCopyWithImpl(
-      _$WhatsAppReceiptRequestImpl _value,
-      $Res Function(_$WhatsAppReceiptRequestImpl) _then)
-      : super(_value, _then);
+    _$WhatsAppReceiptRequestImpl _value,
+    $Res Function(_$WhatsAppReceiptRequestImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of WhatsAppReceiptRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -121,35 +137,38 @@ class __$$WhatsAppReceiptRequestImplCopyWithImpl<$Res>
     Object? customerName = null,
     Object? language = freezed,
   }) {
-    return _then(_$WhatsAppReceiptRequestImpl(
-      orderId: null == orderId
-          ? _value.orderId
-          : orderId // ignore: cast_nullable_to_non_nullable
-              as String,
-      phone: null == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerName: null == customerName
-          ? _value.customerName
-          : customerName // ignore: cast_nullable_to_non_nullable
-              as String,
-      language: freezed == language
-          ? _value.language
-          : language // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$WhatsAppReceiptRequestImpl(
+        orderId: null == orderId
+            ? _value.orderId
+            : orderId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        phone: null == phone
+            ? _value.phone
+            : phone // ignore: cast_nullable_to_non_nullable
+                  as String,
+        customerName: null == customerName
+            ? _value.customerName
+            : customerName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        language: freezed == language
+            ? _value.language
+            : language // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$WhatsAppReceiptRequestImpl implements _WhatsAppReceiptRequest {
-  const _$WhatsAppReceiptRequestImpl(
-      {required this.orderId,
-      required this.phone,
-      required this.customerName,
-      this.language});
+  const _$WhatsAppReceiptRequestImpl({
+    required this.orderId,
+    required this.phone,
+    required this.customerName,
+    this.language,
+  });
 
   factory _$WhatsAppReceiptRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$WhatsAppReceiptRequestImplFromJson(json);
@@ -192,23 +211,25 @@ class _$WhatsAppReceiptRequestImpl implements _WhatsAppReceiptRequest {
   @override
   @pragma('vm:prefer-inline')
   _$$WhatsAppReceiptRequestImplCopyWith<_$WhatsAppReceiptRequestImpl>
-      get copyWith => __$$WhatsAppReceiptRequestImplCopyWithImpl<
-          _$WhatsAppReceiptRequestImpl>(this, _$identity);
+  get copyWith =>
+      __$$WhatsAppReceiptRequestImplCopyWithImpl<_$WhatsAppReceiptRequestImpl>(
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$WhatsAppReceiptRequestImplToJson(
-      this,
-    );
+    return _$$WhatsAppReceiptRequestImplToJson(this);
   }
 }
 
 abstract class _WhatsAppReceiptRequest implements WhatsAppReceiptRequest {
-  const factory _WhatsAppReceiptRequest(
-      {required final String orderId,
-      required final String phone,
-      required final String customerName,
-      final String? language}) = _$WhatsAppReceiptRequestImpl;
+  const factory _WhatsAppReceiptRequest({
+    required final String orderId,
+    required final String phone,
+    required final String customerName,
+    final String? language,
+  }) = _$WhatsAppReceiptRequestImpl;
 
   factory _WhatsAppReceiptRequest.fromJson(Map<String, dynamic> json) =
       _$WhatsAppReceiptRequestImpl.fromJson;
@@ -227,11 +248,12 @@ abstract class _WhatsAppReceiptRequest implements WhatsAppReceiptRequest {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$WhatsAppReceiptRequestImplCopyWith<_$WhatsAppReceiptRequestImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  get copyWith => throw _privateConstructorUsedError;
 }
 
 WhatsAppReceiptResponse _$WhatsAppReceiptResponseFromJson(
-    Map<String, dynamic> json) {
+  Map<String, dynamic> json,
+) {
   return _WhatsAppReceiptResponse.fromJson(json);
 }
 
@@ -254,20 +276,24 @@ mixin _$WhatsAppReceiptResponse {
 
 /// @nodoc
 abstract class $WhatsAppReceiptResponseCopyWith<$Res> {
-  factory $WhatsAppReceiptResponseCopyWith(WhatsAppReceiptResponse value,
-          $Res Function(WhatsAppReceiptResponse) then) =
-      _$WhatsAppReceiptResponseCopyWithImpl<$Res, WhatsAppReceiptResponse>;
+  factory $WhatsAppReceiptResponseCopyWith(
+    WhatsAppReceiptResponse value,
+    $Res Function(WhatsAppReceiptResponse) then,
+  ) = _$WhatsAppReceiptResponseCopyWithImpl<$Res, WhatsAppReceiptResponse>;
   @useResult
-  $Res call(
-      {String messageId,
-      WhatsAppMessageStatus status,
-      String receiptUrl,
-      String? errorMessage});
+  $Res call({
+    String messageId,
+    WhatsAppMessageStatus status,
+    String receiptUrl,
+    String? errorMessage,
+  });
 }
 
 /// @nodoc
-class _$WhatsAppReceiptResponseCopyWithImpl<$Res,
-        $Val extends WhatsAppReceiptResponse>
+class _$WhatsAppReceiptResponseCopyWithImpl<
+  $Res,
+  $Val extends WhatsAppReceiptResponse
+>
     implements $WhatsAppReceiptResponseCopyWith<$Res> {
   _$WhatsAppReceiptResponseCopyWithImpl(this._value, this._then);
 
@@ -286,24 +312,27 @@ class _$WhatsAppReceiptResponseCopyWithImpl<$Res,
     Object? receiptUrl = null,
     Object? errorMessage = freezed,
   }) {
-    return _then(_value.copyWith(
-      messageId: null == messageId
-          ? _value.messageId
-          : messageId // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as WhatsAppMessageStatus,
-      receiptUrl: null == receiptUrl
-          ? _value.receiptUrl
-          : receiptUrl // ignore: cast_nullable_to_non_nullable
-              as String,
-      errorMessage: freezed == errorMessage
-          ? _value.errorMessage
-          : errorMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            messageId: null == messageId
+                ? _value.messageId
+                : messageId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as WhatsAppMessageStatus,
+            receiptUrl: null == receiptUrl
+                ? _value.receiptUrl
+                : receiptUrl // ignore: cast_nullable_to_non_nullable
+                      as String,
+            errorMessage: freezed == errorMessage
+                ? _value.errorMessage
+                : errorMessage // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -311,27 +340,31 @@ class _$WhatsAppReceiptResponseCopyWithImpl<$Res,
 abstract class _$$WhatsAppReceiptResponseImplCopyWith<$Res>
     implements $WhatsAppReceiptResponseCopyWith<$Res> {
   factory _$$WhatsAppReceiptResponseImplCopyWith(
-          _$WhatsAppReceiptResponseImpl value,
-          $Res Function(_$WhatsAppReceiptResponseImpl) then) =
-      __$$WhatsAppReceiptResponseImplCopyWithImpl<$Res>;
+    _$WhatsAppReceiptResponseImpl value,
+    $Res Function(_$WhatsAppReceiptResponseImpl) then,
+  ) = __$$WhatsAppReceiptResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String messageId,
-      WhatsAppMessageStatus status,
-      String receiptUrl,
-      String? errorMessage});
+  $Res call({
+    String messageId,
+    WhatsAppMessageStatus status,
+    String receiptUrl,
+    String? errorMessage,
+  });
 }
 
 /// @nodoc
 class __$$WhatsAppReceiptResponseImplCopyWithImpl<$Res>
-    extends _$WhatsAppReceiptResponseCopyWithImpl<$Res,
-        _$WhatsAppReceiptResponseImpl>
+    extends
+        _$WhatsAppReceiptResponseCopyWithImpl<
+          $Res,
+          _$WhatsAppReceiptResponseImpl
+        >
     implements _$$WhatsAppReceiptResponseImplCopyWith<$Res> {
   __$$WhatsAppReceiptResponseImplCopyWithImpl(
-      _$WhatsAppReceiptResponseImpl _value,
-      $Res Function(_$WhatsAppReceiptResponseImpl) _then)
-      : super(_value, _then);
+    _$WhatsAppReceiptResponseImpl _value,
+    $Res Function(_$WhatsAppReceiptResponseImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of WhatsAppReceiptResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -343,35 +376,38 @@ class __$$WhatsAppReceiptResponseImplCopyWithImpl<$Res>
     Object? receiptUrl = null,
     Object? errorMessage = freezed,
   }) {
-    return _then(_$WhatsAppReceiptResponseImpl(
-      messageId: null == messageId
-          ? _value.messageId
-          : messageId // ignore: cast_nullable_to_non_nullable
-              as String,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as WhatsAppMessageStatus,
-      receiptUrl: null == receiptUrl
-          ? _value.receiptUrl
-          : receiptUrl // ignore: cast_nullable_to_non_nullable
-              as String,
-      errorMessage: freezed == errorMessage
-          ? _value.errorMessage
-          : errorMessage // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$WhatsAppReceiptResponseImpl(
+        messageId: null == messageId
+            ? _value.messageId
+            : messageId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as WhatsAppMessageStatus,
+        receiptUrl: null == receiptUrl
+            ? _value.receiptUrl
+            : receiptUrl // ignore: cast_nullable_to_non_nullable
+                  as String,
+        errorMessage: freezed == errorMessage
+            ? _value.errorMessage
+            : errorMessage // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$WhatsAppReceiptResponseImpl implements _WhatsAppReceiptResponse {
-  const _$WhatsAppReceiptResponseImpl(
-      {required this.messageId,
-      required this.status,
-      required this.receiptUrl,
-      this.errorMessage});
+  const _$WhatsAppReceiptResponseImpl({
+    required this.messageId,
+    required this.status,
+    required this.receiptUrl,
+    this.errorMessage,
+  });
 
   factory _$WhatsAppReceiptResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$WhatsAppReceiptResponseImplFromJson(json);
@@ -415,23 +451,24 @@ class _$WhatsAppReceiptResponseImpl implements _WhatsAppReceiptResponse {
   @override
   @pragma('vm:prefer-inline')
   _$$WhatsAppReceiptResponseImplCopyWith<_$WhatsAppReceiptResponseImpl>
-      get copyWith => __$$WhatsAppReceiptResponseImplCopyWithImpl<
-          _$WhatsAppReceiptResponseImpl>(this, _$identity);
+  get copyWith =>
+      __$$WhatsAppReceiptResponseImplCopyWithImpl<
+        _$WhatsAppReceiptResponseImpl
+      >(this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$WhatsAppReceiptResponseImplToJson(
-      this,
-    );
+    return _$$WhatsAppReceiptResponseImplToJson(this);
   }
 }
 
 abstract class _WhatsAppReceiptResponse implements WhatsAppReceiptResponse {
-  const factory _WhatsAppReceiptResponse(
-      {required final String messageId,
-      required final WhatsAppMessageStatus status,
-      required final String receiptUrl,
-      final String? errorMessage}) = _$WhatsAppReceiptResponseImpl;
+  const factory _WhatsAppReceiptResponse({
+    required final String messageId,
+    required final WhatsAppMessageStatus status,
+    required final String receiptUrl,
+    final String? errorMessage,
+  }) = _$WhatsAppReceiptResponseImpl;
 
   factory _WhatsAppReceiptResponse.fromJson(Map<String, dynamic> json) =
       _$WhatsAppReceiptResponseImpl.fromJson;
@@ -450,5 +487,5 @@ abstract class _WhatsAppReceiptResponse implements WhatsAppReceiptResponse {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$WhatsAppReceiptResponseImplCopyWith<_$WhatsAppReceiptResponseImpl>
-      get copyWith => throw _privateConstructorUsedError;
+  get copyWith => throw _privateConstructorUsedError;
 }

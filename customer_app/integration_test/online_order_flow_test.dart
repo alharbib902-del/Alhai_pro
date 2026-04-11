@@ -46,202 +46,164 @@ void main() {
     group('Step 1: Browse Products', () {
       testWidgets('home screen loads successfully', (tester) async {
         // Arrange: Launch customer app at home screen
-        await tester.pumpWidget(buildCustomerTestApp(
-          initialRoute: '/home',
-        ));
+        await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/home'));
         await pumpAndSettleWithTimeout(tester);
 
         // Assert: Home screen stub is visible (real screen needs full DI)
         expectStubScreen('Home');
       });
 
-      testWidgets(
-        'navigating to catalog shows product listing',
-        (tester) async {
-          // Arrange: Start at home
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/home',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('navigating to catalog shows product listing', (
+        tester,
+      ) async {
+        // Arrange: Start at home
+        await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/home'));
+        await pumpAndSettleWithTimeout(tester);
 
-          // Act: Navigate to catalog
-          final router = GoRouter.of(
-            tester.element(find.byKey(const Key('stub_Home'))),
-          );
-          router.go('/catalog');
-          await pumpAndSettleWithTimeout(tester);
+        // Act: Navigate to catalog
+        final router = GoRouter.of(
+          tester.element(find.byKey(const Key('stub_Home'))),
+        );
+        router.go('/catalog');
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Catalog screen is shown
-          expectStubScreen('Catalog');
-        },
-      );
+        // Assert: Catalog screen is shown
+        expectStubScreen('Catalog');
+      });
 
-      testWidgets(
-        'tapping a product navigates to product detail',
-        (tester) async {
-          // Arrange: Start at catalog
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/catalog',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('tapping a product navigates to product detail', (
+        tester,
+      ) async {
+        // Arrange: Start at catalog
+        await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/catalog'));
+        await pumpAndSettleWithTimeout(tester);
 
-          // Act: Navigate to a specific product detail
-          final router = GoRouter.of(
-            tester.element(find.byKey(const Key('stub_Catalog'))),
-          );
-          router.go('/products/${testProducts[0].id}');
-          await pumpAndSettleWithTimeout(tester);
+        // Act: Navigate to a specific product detail
+        final router = GoRouter.of(
+          tester.element(find.byKey(const Key('stub_Catalog'))),
+        );
+        router.go('/products/${testProducts[0].id}');
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Product detail screen is shown
-          expectStubScreen('Product ${testProducts[0].id}');
-        },
-      );
+        // Assert: Product detail screen is shown
+        expectStubScreen('Product ${testProducts[0].id}');
+      });
 
-      testWidgets(
-        'search screen is accessible from home',
-        (tester) async {
-          // Arrange
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/home',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('search screen is accessible from home', (tester) async {
+        // Arrange
+        await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/home'));
+        await pumpAndSettleWithTimeout(tester);
 
-          // Act: Navigate to search
-          final router = GoRouter.of(
-            tester.element(find.byKey(const Key('stub_Home'))),
-          );
-          router.go('/search');
-          await pumpAndSettleWithTimeout(tester);
+        // Act: Navigate to search
+        final router = GoRouter.of(
+          tester.element(find.byKey(const Key('stub_Home'))),
+        );
+        router.go('/search');
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Search screen is shown
-          expectStubScreen('Search');
-        },
-      );
+        // Assert: Search screen is shown
+        expectStubScreen('Search');
+      });
     });
 
     // ========================================================================
     // Step 2: Add Products to Cart
     // ========================================================================
     group('Step 2: Add to Cart', () {
-      testWidgets(
-        'cart screen loads from bottom navigation',
-        (tester) async {
-          // Arrange: Navigate to cart
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/cart',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('cart screen loads from bottom navigation', (tester) async {
+        // Arrange: Navigate to cart
+        await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/cart'));
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Cart screen is visible
-          expectStubScreen('Cart');
-        },
-      );
+        // Assert: Cart screen is visible
+        expectStubScreen('Cart');
+      });
 
-      testWidgets(
-        'product detail has add-to-cart action',
-        (tester) async {
-          // Arrange: View a product detail
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/products/${testProducts[0].id}',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('product detail has add-to-cart action', (tester) async {
+        // Arrange: View a product detail
+        await tester.pumpWidget(
+          buildCustomerTestApp(initialRoute: '/products/${testProducts[0].id}'),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Product detail screen is shown
-          // In the real screen, an "Add to Cart" button is rendered.
-          expectStubScreen('Product ${testProducts[0].id}');
-        },
-      );
+        // Assert: Product detail screen is shown
+        // In the real screen, an "Add to Cart" button is rendered.
+        expectStubScreen('Product ${testProducts[0].id}');
+      });
 
-      testWidgets(
-        'after adding items, cart badge updates',
-        (tester) async {
-          // Arrange: Navigate to cart to verify items
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/cart',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('after adding items, cart badge updates', (tester) async {
+        // Arrange: Navigate to cart to verify items
+        await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/cart'));
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Cart screen is accessible
-          expectStubScreen('Cart');
-        },
-      );
+        // Assert: Cart screen is accessible
+        expectStubScreen('Cart');
+      });
     });
 
     // ========================================================================
     // Step 3: Select Delivery Address
     // ========================================================================
     group('Step 3: Select Address', () {
-      testWidgets(
-        'addresses screen loads from profile',
-        (tester) async {
-          // Arrange: Navigate to addresses
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/profile/addresses',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('addresses screen loads from profile', (tester) async {
+        // Arrange: Navigate to addresses
+        await tester.pumpWidget(
+          buildCustomerTestApp(initialRoute: '/profile/addresses'),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Addresses screen is shown
-          expectStubScreen('Addresses');
-        },
-      );
+        // Assert: Addresses screen is shown
+        expectStubScreen('Addresses');
+      });
 
-      testWidgets(
-        'checkout screen shows address selection',
-        (tester) async {
-          // Arrange: Navigate to checkout
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/checkout',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('checkout screen shows address selection', (tester) async {
+        // Arrange: Navigate to checkout
+        await tester.pumpWidget(
+          buildCustomerTestApp(initialRoute: '/checkout'),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Checkout screen renders with address section.
-          // CheckoutScreen displays delivery address, payment method, and order summary.
-          expectStubScreen('Checkout');
-        },
-      );
+        // Assert: Checkout screen renders with address section.
+        // CheckoutScreen displays delivery address, payment method, and order summary.
+        expectStubScreen('Checkout');
+      });
     });
 
     // ========================================================================
     // Step 4: Place Order
     // ========================================================================
     group('Step 4: Place Order', () {
-      testWidgets(
-        'checkout screen has place order button',
-        (tester) async {
-          // Arrange
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/checkout',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('checkout screen has place order button', (tester) async {
+        // Arrange
+        await tester.pumpWidget(
+          buildCustomerTestApp(initialRoute: '/checkout'),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Checkout screen is displayed.
-          // The real screen has a "Place Order" FilledButton at the bottom.
-          expectStubScreen('Checkout');
-        },
-      );
+        // Assert: Checkout screen is displayed.
+        // The real screen has a "Place Order" FilledButton at the bottom.
+        expectStubScreen('Checkout');
+      });
 
-      testWidgets(
-        'placing order navigates to order detail',
-        (tester) async {
-          // Arrange: Start at checkout
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/checkout',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('placing order navigates to order detail', (tester) async {
+        // Arrange: Start at checkout
+        await tester.pumpWidget(
+          buildCustomerTestApp(initialRoute: '/checkout'),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Act: Simulate successful order placement by navigating to order detail.
-          // In the real app, CheckoutScreen calls placeOrderProvider which returns
-          // an Order and then navigates to /orders/{order.id}.
-          final router = GoRouter.of(
-            tester.element(find.byKey(const Key('stub_Checkout'))),
-          );
-          router.go('/orders/$kTestOrderId');
-          await pumpAndSettleWithTimeout(tester);
+        // Act: Simulate successful order placement by navigating to order detail.
+        // In the real app, CheckoutScreen calls placeOrderProvider which returns
+        // an Order and then navigates to /orders/{order.id}.
+        final router = GoRouter.of(
+          tester.element(find.byKey(const Key('stub_Checkout'))),
+        );
+        router.go('/orders/$kTestOrderId');
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Order detail screen is shown
-          expectStubScreen('Order $kTestOrderId');
-        },
-      );
+        // Assert: Order detail screen is shown
+        expectStubScreen('Order $kTestOrderId');
+      });
     });
 
     // ========================================================================
@@ -249,44 +211,42 @@ void main() {
     // (Verified from customer side via order status tracking)
     // ========================================================================
     group('Steps 5-8: Order Processing (Cashier Side)', () {
-      testWidgets(
-        'order detail screen shows created status initially',
-        (tester) async {
-          // Arrange: View the order detail
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/orders/$kTestOrderId',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('order detail screen shows created status initially', (
+        tester,
+      ) async {
+        // Arrange: View the order detail
+        await tester.pumpWidget(
+          buildCustomerTestApp(initialRoute: '/orders/$kTestOrderId'),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Order detail is displayed. The initial status would be "created"
-          // and would show order items, total, and status indicator.
-          expectStubScreen('Order $kTestOrderId');
-        },
-      );
+        // Assert: Order detail is displayed. The initial status would be "created"
+        // and would show order items, total, and status indicator.
+        expectStubScreen('Order $kTestOrderId');
+      });
 
-      testWidgets(
-        'order tracking screen shows timeline with statuses',
-        (tester) async {
-          // Arrange: Navigate to order tracking
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/orders/$kTestOrderId/track',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('order tracking screen shows timeline with statuses', (
+        tester,
+      ) async {
+        // Arrange: Navigate to order tracking
+        await tester.pumpWidget(
+          buildCustomerTestApp(initialRoute: '/orders/$kTestOrderId/track'),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Tracking screen is shown with delivery timeline.
-          // The real OrderTrackingScreen uses deliveryTrackingProvider and
-          // orderStatusTrackingProvider for real-time updates.
-          expectStubScreen('Track $kTestOrderId');
-        },
-      );
+        // Assert: Tracking screen is shown with delivery timeline.
+        // The real OrderTrackingScreen uses deliveryTrackingProvider and
+        // orderStatusTrackingProvider for real-time updates.
+        expectStubScreen('Track $kTestOrderId');
+      });
 
       testWidgets(
         'order transitions through: confirmed -> preparing -> ready',
         (tester) async {
           // Arrange: View order tracking
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/orders/$kTestOrderId/track',
-          ));
+          await tester.pumpWidget(
+            buildCustomerTestApp(initialRoute: '/orders/$kTestOrderId/track'),
+          );
           await pumpAndSettleWithTimeout(tester);
 
           // Assert: Tracking screen renders. In a full integration test with
@@ -303,29 +263,26 @@ void main() {
     // Steps 9-11: Driver Picks Up, In Transit, Delivered
     // ========================================================================
     group('Steps 9-11: Delivery Tracking', () {
-      testWidgets(
-        'tracking screen shows driver assignment',
-        (tester) async {
-          // Arrange: View order tracking
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/orders/$kTestOrderId/track',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('tracking screen shows driver assignment', (tester) async {
+        // Arrange: View order tracking
+        await tester.pumpWidget(
+          buildCustomerTestApp(initialRoute: '/orders/$kTestOrderId/track'),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Tracking screen is shown.
-          // In the real app, driverInfoProvider provides driver name/phone.
-          // driverLocationProvider shows real-time map position.
-          expectStubScreen('Track $kTestOrderId');
-        },
-      );
+        // Assert: Tracking screen is shown.
+        // In the real app, driverInfoProvider provides driver name/phone.
+        // driverLocationProvider shows real-time map position.
+        expectStubScreen('Track $kTestOrderId');
+      });
 
       testWidgets(
         'tracking screen shows in-transit status with driver location',
         (tester) async {
           // Arrange
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/orders/$kTestOrderId/track',
-          ));
+          await tester.pumpWidget(
+            buildCustomerTestApp(initialRoute: '/orders/$kTestOrderId/track'),
+          );
           await pumpAndSettleWithTimeout(tester);
 
           // Assert: Tracking screen renders delivery timeline.
@@ -334,75 +291,63 @@ void main() {
         },
       );
 
-      testWidgets(
-        'tracking screen shows delivered status',
-        (tester) async {
-          // Arrange
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/orders/$kTestOrderId/track',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('tracking screen shows delivered status', (tester) async {
+        // Arrange
+        await tester.pumpWidget(
+          buildCustomerTestApp(initialRoute: '/orders/$kTestOrderId/track'),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Tracking screen shows delivery confirmation.
-          // The real deliveryTrackingProvider stream would emit delivered status.
-          expectStubScreen('Track $kTestOrderId');
-        },
-      );
+        // Assert: Tracking screen shows delivery confirmation.
+        // The real deliveryTrackingProvider stream would emit delivered status.
+        expectStubScreen('Track $kTestOrderId');
+      });
     });
 
     // ========================================================================
     // Step 12: Customer Confirms Delivery
     // ========================================================================
     group('Step 12: Customer Confirmation', () {
-      testWidgets(
-        'order detail shows confirmation action after delivery',
-        (tester) async {
-          // Arrange: View the order that has been delivered
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/orders/$kTestOrderId',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('order detail shows confirmation action after delivery', (
+        tester,
+      ) async {
+        // Arrange: View the order that has been delivered
+        await tester.pumpWidget(
+          buildCustomerTestApp(initialRoute: '/orders/$kTestOrderId'),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Order detail shows delivered state.
-          // In the real app, a "Confirm Receipt" button appears after delivery.
-          expectStubScreen('Order $kTestOrderId');
-        },
-      );
+        // Assert: Order detail shows delivered state.
+        // In the real app, a "Confirm Receipt" button appears after delivery.
+        expectStubScreen('Order $kTestOrderId');
+      });
     });
 
     // ========================================================================
     // Step 13: Order Complete
     // ========================================================================
     group('Step 13: Order Complete', () {
-      testWidgets(
-        'orders list screen shows completed order',
-        (tester) async {
-          // Arrange: Navigate to orders list
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/orders',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('orders list screen shows completed order', (tester) async {
+        // Arrange: Navigate to orders list
+        await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/orders'));
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Orders list is shown. In the real app, the completed
-          // order would appear with "completed" badge and green checkmark.
-          expectStubScreen('Orders');
-        },
-      );
+        // Assert: Orders list is shown. In the real app, the completed
+        // order would appear with "completed" badge and green checkmark.
+        expectStubScreen('Orders');
+      });
 
-      testWidgets(
-        'completed order detail shows final status',
-        (tester) async {
-          // Arrange: View completed order detail
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/orders/$kTestOrderId',
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('completed order detail shows final status', (tester) async {
+        // Arrange: View completed order detail
+        await tester.pumpWidget(
+          buildCustomerTestApp(initialRoute: '/orders/$kTestOrderId'),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Order detail shows completed status with all timestamps
-          // (confirmedAt, preparingAt, readyAt, deliveredAt).
-          expectStubScreen('Order $kTestOrderId');
-        },
-      );
+        // Assert: Order detail shows completed status with all timestamps
+        // (confirmedAt, preparingAt, readyAt, deliveredAt).
+        expectStubScreen('Order $kTestOrderId');
+      });
     });
 
     // ========================================================================
@@ -413,9 +358,7 @@ void main() {
         'full flow: browse -> cart -> checkout -> track -> complete',
         (tester) async {
           // Arrange: Start at home screen
-          await tester.pumpWidget(buildCustomerTestApp(
-            initialRoute: '/home',
-          ));
+          await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/home'));
           await pumpAndSettleWithTimeout(tester);
 
           // Step 1: Customer is on the home screen

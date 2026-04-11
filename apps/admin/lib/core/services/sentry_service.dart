@@ -23,17 +23,14 @@ Future<void> initSentry({required Future<void> Function() appRunner}) async {
     return;
   }
 
-  await SentryFlutter.init(
-    (options) {
-      options.dsn = _sentryDsn;
-      options.environment = kDebugMode ? 'development' : 'production';
-      options.tracesSampleRate = kDebugMode ? 1.0 : 0.3;
-      options.attachScreenshot = true;
-      options.sendDefaultPii = false;
-      options.diagnosticLevel = SentryLevel.warning;
-    },
-    appRunner: appRunner,
-  );
+  await SentryFlutter.init((options) {
+    options.dsn = _sentryDsn;
+    options.environment = kDebugMode ? 'development' : 'production';
+    options.tracesSampleRate = kDebugMode ? 1.0 : 0.3;
+    options.attachScreenshot = true;
+    options.sendDefaultPii = false;
+    options.diagnosticLevel = SentryLevel.warning;
+  }, appRunner: appRunner);
 }
 
 /// Report an exception to Sentry (non-fatal).
@@ -66,11 +63,13 @@ void addBreadcrumb({
   if (kDebugMode) debugPrint('[$category] $message');
   if (!isSentryConfigured) return;
 
-  Sentry.addBreadcrumb(Breadcrumb(
-    message: message,
-    category: category,
-    level: level,
-    data: data,
-    timestamp: DateTime.now(),
-  ));
+  Sentry.addBreadcrumb(
+    Breadcrumb(
+      message: message,
+      category: category,
+      level: level,
+      data: data,
+      timestamp: DateTime.now(),
+    ),
+  );
 }

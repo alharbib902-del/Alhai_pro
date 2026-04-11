@@ -49,9 +49,9 @@ void main() {
 
   group('expensesListProvider', () {
     test('returns empty list when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(expensesListProvider.future);
@@ -59,12 +59,13 @@ void main() {
     });
 
     test('returns expenses from dao', () async {
-      when(() => mockExpensesDao.getAllExpenses('store-1'))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockExpensesDao.getAllExpenses('store-1'),
+      ).thenAnswer((_) async => []);
 
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(expensesListProvider.future);
@@ -74,9 +75,9 @@ void main() {
 
   group('todayExpensesTotalProvider', () {
     test('returns 0 when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(todayExpensesTotalProvider.future);
@@ -84,12 +85,13 @@ void main() {
     });
 
     test('returns total from dao', () async {
-      when(() => mockExpensesDao.getTodayExpensesTotal('store-1'))
-          .thenAnswer((_) async => 750.0);
+      when(
+        () => mockExpensesDao.getTodayExpensesTotal('store-1'),
+      ).thenAnswer((_) async => 750.0);
 
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(todayExpensesTotalProvider.future);
@@ -99,9 +101,9 @@ void main() {
 
   group('expenseCategoriesProvider', () {
     test('returns empty list when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(expenseCategoriesProvider.future);

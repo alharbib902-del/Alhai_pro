@@ -18,10 +18,13 @@ final competitorsProvider = Provider<List<Competitor>>((ref) {
 });
 
 /// مزود مقارنات الأسعار
-final priceComparisonsProvider = StateNotifierProvider<PriceComparisonsNotifier,
-    AsyncValue<List<PriceComparison>>>((ref) {
-  return PriceComparisonsNotifier();
-});
+final priceComparisonsProvider =
+    StateNotifierProvider<
+      PriceComparisonsNotifier,
+      AsyncValue<List<PriceComparison>>
+    >((ref) {
+      return PriceComparisonsNotifier();
+    });
 
 /// مزود الموقع السوقي
 final marketPositionProvider = Provider<MarketPosition>((ref) {
@@ -30,10 +33,11 @@ final marketPositionProvider = Provider<MarketPosition>((ref) {
 
 /// مزود التنبيهات
 final competitorAlertsProvider =
-    StateNotifierProvider<CompetitorAlertsNotifier, List<CompetitorAlert>>(
-        (ref) {
-  return CompetitorAlertsNotifier();
-});
+    StateNotifierProvider<CompetitorAlertsNotifier, List<CompetitorAlert>>((
+      ref,
+    ) {
+      return CompetitorAlertsNotifier();
+    });
 
 /// مزود ملخص التحليل
 final competitorSummaryProvider = Provider<CompetitorAnalysisSummary>((ref) {
@@ -44,16 +48,12 @@ final competitorSummaryProvider = Provider<CompetitorAnalysisSummary>((ref) {
 final competitorFilterProvider = StateProvider<String>((ref) => 'الكل');
 
 /// مزود ترتيب الجدول
-final competitorSortProvider =
-    StateProvider<CompetitorSortType>((ref) => CompetitorSortType.name);
+final competitorSortProvider = StateProvider<CompetitorSortType>(
+  (ref) => CompetitorSortType.name,
+);
 
 /// نوع الترتيب
-enum CompetitorSortType {
-  name,
-  priceDiff,
-  ourPrice,
-  category,
-}
+enum CompetitorSortType { name, priceDiff, ourPrice, category }
 
 // ============================================================================
 // NOTIFIERS
@@ -83,14 +83,18 @@ class PriceComparisonsNotifier
   }
 
   List<PriceComparison> sortComparisons(
-      List<PriceComparison> list, CompetitorSortType sort) {
+    List<PriceComparison> list,
+    CompetitorSortType sort,
+  ) {
     final sorted = List<PriceComparison>.from(list);
     switch (sort) {
       case CompetitorSortType.name:
         sorted.sort((a, b) => a.productName.compareTo(b.productName));
       case CompetitorSortType.priceDiff:
-        sorted.sort((a, b) =>
-            a.priceDifferencePercent.compareTo(b.priceDifferencePercent));
+        sorted.sort(
+          (a, b) =>
+              a.priceDifferencePercent.compareTo(b.priceDifferencePercent),
+        );
       case CompetitorSortType.ourPrice:
         sorted.sort((a, b) => a.ourPrice.compareTo(b.ourPrice));
       case CompetitorSortType.category:
@@ -126,18 +130,20 @@ class CompetitorAlertsNotifier extends StateNotifier<List<CompetitorAlert>> {
 
   void markAllAsRead() {
     state = state
-        .map((a) => CompetitorAlert(
-              id: a.id,
-              competitorName: a.competitorName,
-              productName: a.productName,
-              alertType: a.alertType,
-              message: a.message,
-              oldPrice: a.oldPrice,
-              newPrice: a.newPrice,
-              changePercent: a.changePercent,
-              timestamp: a.timestamp,
-              isRead: true,
-            ))
+        .map(
+          (a) => CompetitorAlert(
+            id: a.id,
+            competitorName: a.competitorName,
+            productName: a.productName,
+            alertType: a.alertType,
+            message: a.message,
+            oldPrice: a.oldPrice,
+            newPrice: a.newPrice,
+            changePercent: a.changePercent,
+            timestamp: a.timestamp,
+            isRead: true,
+          ),
+        )
         .toList();
   }
 
@@ -149,8 +155,9 @@ class CompetitorAlertsNotifier extends StateNotifier<List<CompetitorAlert>> {
 // ============================================================================
 
 /// مزود بيانات تحليل المنافسين من خادم AI
-final competitorApiProvider =
-    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+final competitorApiProvider = FutureProvider.autoDispose<Map<String, dynamic>>((
+  ref,
+) async {
   final api = ref.read(aiApiServiceProvider);
   final storeId = ref.read(currentStoreIdProvider)!;
   return api.analyzeCompetitors(orgId: 'default', storeId: storeId);

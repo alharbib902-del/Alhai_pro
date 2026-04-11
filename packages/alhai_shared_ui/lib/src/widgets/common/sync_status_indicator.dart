@@ -189,8 +189,8 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
               decoration: BoxDecoration(
                 color: _isHovered
                     ? (widget.isDark
-                        ? Colors.white.withValues(alpha: 0.1)
-                        : AppColors.backgroundSecondary)
+                          ? Colors.white.withValues(alpha: 0.1)
+                          : AppColors.backgroundSecondary)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -222,7 +222,8 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
                       child: Icon(
                         state.icon,
                         key: ValueKey(
-                            '${state.icon.codePoint}_${state.color.value}'),
+                          '${state.icon.codePoint}_${state.color.value}',
+                        ),
                         color: state.color,
                         size: 18,
                       ),
@@ -329,8 +330,9 @@ class _SyncIndicatorButtonState extends State<_SyncIndicatorButton>
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black
-                            .withValues(alpha: isDark ? 0.24 : 0.12),
+                        color: Colors.black.withValues(
+                          alpha: isDark ? 0.24 : 0.12,
+                        ),
                         blurRadius: 16,
                         offset: const Offset(0, 4),
                       ),

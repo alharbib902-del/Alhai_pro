@@ -11,20 +11,13 @@ void main() {
         title: 'المشرف العام',
         theme: AlhaiTheme.dark,
         locale: const Locale('ar'),
-        supportedLocales: const [
-          Locale('ar'),
-          Locale('en'),
-        ],
+        supportedLocales: const [Locale('ar'), Locale('en')],
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        home: const Scaffold(
-          body: Center(
-            child: Text('Super Admin'),
-          ),
-        ),
+        home: const Scaffold(body: Center(child: Text('Super Admin'))),
       ),
     );
 

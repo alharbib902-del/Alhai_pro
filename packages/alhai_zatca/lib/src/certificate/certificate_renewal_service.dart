@@ -37,8 +37,8 @@ class CertificateRenewalService {
   CertificateRenewalService({
     required CertificateStorage storage,
     required CsidOnboardingService onboardingService,
-  })  : _storage = storage,
-        _onboardingService = onboardingService;
+  }) : _storage = storage,
+       _onboardingService = onboardingService;
 
   /// Check if the certificate for a store needs renewal
   Future<bool> needsRenewal({required String storeId}) async {
@@ -197,14 +197,16 @@ class CertificateRenewalService {
     if (cert.isNearExpiry) {
       return CertificateCheckResult(
         status: CertificateStatus.nearExpiry,
-        message: 'Certificate expires in ${cert.daysUntilExpiry} days. '
+        message:
+            'Certificate expires in ${cert.daysUntilExpiry} days. '
             'Renewal recommended.',
         daysUntilExpiry: cert.daysUntilExpiry,
       );
     }
     return CertificateCheckResult(
       status: CertificateStatus.valid,
-      message: 'Certificate is valid'
+      message:
+          'Certificate is valid'
           '${cert.daysUntilExpiry != null ? ' (${cert.daysUntilExpiry} days remaining)' : ''}.',
       daysUntilExpiry: cert.daysUntilExpiry,
     );

@@ -14,10 +14,7 @@ class SADashboardSkeleton extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Title placeholder
-            const AlhaiSkeleton.rectangle(
-              width: 180,
-              height: 24,
-            ),
+            const AlhaiSkeleton.rectangle(width: 180, height: 24),
             const SizedBox(height: AlhaiSpacing.lg),
             // KPI cards grid
             GridView.count(
@@ -48,19 +45,13 @@ class SADashboardSkeleton extends StatelessWidget {
             ),
             const SizedBox(height: AlhaiSpacing.xl),
             // Section title
-            const AlhaiSkeleton.rectangle(
-              width: 140,
-              height: 18,
-            ),
+            const AlhaiSkeleton.rectangle(width: 140, height: 18),
             const SizedBox(height: AlhaiSpacing.md),
             // Chart skeleton
             AlhaiSkeleton.card(height: 280),
             const SizedBox(height: AlhaiSpacing.xl),
             // Section title
-            const AlhaiSkeleton.rectangle(
-              width: 140,
-              height: 18,
-            ),
+            const AlhaiSkeleton.rectangle(width: 140, height: 18),
             const SizedBox(height: AlhaiSpacing.md),
             // Pie chart skeleton
             AlhaiSkeleton.card(height: 200),
@@ -87,15 +78,13 @@ class SATableSkeleton extends StatelessWidget {
             const AlhaiSkeleton.rectangle(
               width: double.infinity,
               height: 48,
-              borderRadius:
-                  BorderRadius.all(Radius.circular(AlhaiRadius.input)),
+              borderRadius: BorderRadius.all(
+                Radius.circular(AlhaiRadius.input),
+              ),
             ),
             const SizedBox(height: AlhaiSpacing.md),
             // Table header
-            const AlhaiSkeleton.rectangle(
-              width: double.infinity,
-              height: 40,
-            ),
+            const AlhaiSkeleton.rectangle(width: double.infinity, height: 40),
             const SizedBox(height: 4),
             // Table rows
             ...List.generate(

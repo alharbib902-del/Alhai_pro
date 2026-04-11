@@ -17,14 +17,14 @@ abstract class NetworkingModule {
   @Named('refreshDio')
   @lazySingleton
   Dio get refreshDio => Dio(
-        BaseOptions(
-          baseUrl: AppConfig.apiBaseUrl,
-          connectTimeout: const Duration(seconds: AppConfig.connectTimeout),
-          receiveTimeout: const Duration(seconds: AppConfig.receiveTimeout),
-          sendTimeout: const Duration(seconds: AppConfig.sendTimeout),
-          headers: {'Content-Type': 'application/json'},
-        ),
-      );
+    BaseOptions(
+      baseUrl: AppConfig.apiBaseUrl,
+      connectTimeout: const Duration(seconds: AppConfig.connectTimeout),
+      receiveTimeout: const Duration(seconds: AppConfig.receiveTimeout),
+      sendTimeout: const Duration(seconds: AppConfig.sendTimeout),
+      headers: {'Content-Type': 'application/json'},
+    ),
+  );
 
   /// AuthInterceptor - depends on local datasource, holder, and refreshDio
   @lazySingleton
@@ -32,20 +32,16 @@ abstract class NetworkingModule {
     AuthLocalDataSource localDataSource,
     ApiDioHolder apiDioHolder,
     @Named('refreshDio') Dio refreshDio,
-  ) =>
-      AuthInterceptor(
-        localDataSource: localDataSource,
-        apiDioHolder: apiDioHolder,
-        refreshDio: refreshDio,
-      );
+  ) => AuthInterceptor(
+    localDataSource: localDataSource,
+    apiDioHolder: apiDioHolder,
+    refreshDio: refreshDio,
+  );
 
   /// API Dio - with AuthInterceptor and LogInterceptor
   @Named('apiDio')
   @lazySingleton
-  Dio apiDio(
-    AuthInterceptor authInterceptor,
-    ApiDioHolder apiDioHolder,
-  ) {
+  Dio apiDio(AuthInterceptor authInterceptor, ApiDioHolder apiDioHolder) {
     final dio = Dio(
       BaseOptions(
         baseUrl: AppConfig.apiBaseUrl,
@@ -58,11 +54,7 @@ abstract class NetworkingModule {
 
     dio.interceptors.addAll([
       authInterceptor,
-      LogInterceptor(
-        requestBody: true,
-        responseBody: true,
-        error: true,
-      ),
+      LogInterceptor(requestBody: true, responseBody: true, error: true),
     ]);
 
     // Assign to holder for retry mechanism

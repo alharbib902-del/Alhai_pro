@@ -11,9 +11,7 @@ void main() {
         await tester.pumpWidget(
           const MaterialApp(
             home: Scaffold(
-              appBar: AlhaiAppBar(
-                title: 'Test Title',
-              ),
+              appBar: AlhaiAppBar(title: 'Test Title'),
               body: SizedBox(),
             ),
           ),
@@ -67,8 +65,9 @@ void main() {
     });
 
     group('Search Mode', () {
-      testWidgets('shows search button when enableSearch is true',
-          (tester) async {
+      testWidgets('shows search button when enableSearch is true', (
+        tester,
+      ) async {
         // Arrange & Act
         await tester.pumpWidget(
           MaterialApp(
@@ -111,9 +110,7 @@ void main() {
         await tester.pumpWidget(
           MaterialApp(
             home: Scaffold(
-              appBar: AlhaiAppBar.simple(
-                title: 'Simple Title',
-              ),
+              appBar: AlhaiAppBar.simple(title: 'Simple Title'),
               body: const SizedBox(),
             ),
           ),
@@ -148,10 +145,7 @@ void main() {
         await tester.pumpWidget(
           const MaterialApp(
             home: Scaffold(
-              appBar: AlhaiAppBar(
-                title: 'Centered',
-                centerTitle: true,
-              ),
+              appBar: AlhaiAppBar(title: 'Centered', centerTitle: true),
               body: SizedBox(),
             ),
           ),

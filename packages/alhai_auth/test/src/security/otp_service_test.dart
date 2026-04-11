@@ -120,10 +120,7 @@ void main() {
 
     test('sendOtp records state after sending', () async {
       // ignore: deprecated_member_use_from_same_package
-      await OtpService.sendOtp(
-        phone: '+966512345678',
-        onSend: (_) async {},
-      );
+      await OtpService.sendOtp(phone: '+966512345678', onSend: (_) async {});
 
       // ignore: deprecated_member_use_from_same_package
       final state = OtpService.currentState;
@@ -156,10 +153,7 @@ void main() {
 
     test('verifyOtp returns success when callback returns true', () async {
       // ignore: deprecated_member_use_from_same_package
-      await OtpService.sendOtp(
-        phone: '+966512345678',
-        onSend: (_) async {},
-      );
+      await OtpService.sendOtp(phone: '+966512345678', onSend: (_) async {});
 
       // ignore: deprecated_member_use_from_same_package
       final result = await OtpService.verifyOtp(
@@ -173,10 +167,7 @@ void main() {
 
     test('verifyOtp returns invalid when callback returns false', () async {
       // ignore: deprecated_member_use_from_same_package
-      await OtpService.sendOtp(
-        phone: '+966512345678',
-        onSend: (_) async {},
-      );
+      await OtpService.sendOtp(phone: '+966512345678', onSend: (_) async {});
 
       // ignore: deprecated_member_use_from_same_package
       final result = await OtpService.verifyOtp(
@@ -191,10 +182,7 @@ void main() {
 
     test('verifyOtp clears state after successful verification', () async {
       // ignore: deprecated_member_use_from_same_package
-      await OtpService.sendOtp(
-        phone: '+966512345678',
-        onSend: (_) async {},
-      );
+      await OtpService.sendOtp(phone: '+966512345678', onSend: (_) async {});
 
       // ignore: deprecated_member_use_from_same_package
       await OtpService.verifyOtp(
@@ -209,10 +197,7 @@ void main() {
 
     test('reset clears all state', () async {
       // ignore: deprecated_member_use_from_same_package
-      await OtpService.sendOtp(
-        phone: '+966512345678',
-        onSend: (_) async {},
-      );
+      await OtpService.sendOtp(phone: '+966512345678', onSend: (_) async {});
 
       // ignore: deprecated_member_use_from_same_package
       await OtpService.reset();

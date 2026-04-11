@@ -114,44 +114,46 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
 
     if (_isLoading) {
       return SafeArea(
-          child: Column(
+        child: Column(
+          children: [
+            AppHeader(
+              title: l10n.printerSettings,
+              onMenuTap: isWideScreen
+                  ? null
+                  : () => Scaffold.of(context).openDrawer(),
+              onNotificationsTap: () => context.push('/notifications'),
+              notificationsCount: 3,
+              userName: l10n.defaultUserName,
+              userRole: l10n.branchManager,
+            ),
+            const Expanded(child: Center(child: CircularProgressIndicator())),
+          ],
+        ),
+      );
+    }
+
+    return SafeArea(
+      child: Column(
         children: [
           AppHeader(
             title: l10n.printerSettings,
-            onMenuTap:
-                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
             userRole: l10n.branchManager,
           ),
-          const Expanded(
-            child: Center(child: CircularProgressIndicator()),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+              child: _buildContent(isDark, l10n),
+            ),
           ),
         ],
-      ));
-    }
-
-    return SafeArea(
-        child: Column(
-      children: [
-        AppHeader(
-          title: l10n.printerSettings,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
-          onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
-          userName: l10n.defaultUserName,
-          userRole: l10n.branchManager,
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-            child: _buildContent(isDark, l10n),
-          ),
-        ),
-      ],
-    ));
+      ),
+    );
   }
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
@@ -160,92 +162,126 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
       children: [
         _buildPageHeader(isDark, l10n),
         const SizedBox(height: AlhaiSpacing.mdl),
-        _buildSettingsGroup(l10n.printerType, Icons.print_rounded,
-            const Color(0xFF8B5CF6), isDark, [
-          RadioGroup<String>(
-            groupValue: _printerType,
-            onChanged: (v) => setState(() => _printerType = v!),
-            child: Column(
-              children: [
-                RadioListTile<String>(
-                  title: Text('USB',
+        _buildSettingsGroup(
+          l10n.printerType,
+          Icons.print_rounded,
+          const Color(0xFF8B5CF6),
+          isDark,
+          [
+            RadioGroup<String>(
+              groupValue: _printerType,
+              onChanged: (v) => setState(() => _printerType = v!),
+              child: Column(
+                children: [
+                  RadioListTile<String>(
+                    title: Text(
+                      'USB',
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface)),
-                  subtitle: Text(l10n.thermalUsbPrinter),
-                  value: 'usb',
-                ),
-                RadioListTile<String>(
-                  title: Text('Bluetooth',
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    subtitle: Text(l10n.thermalUsbPrinter),
+                    value: 'usb',
+                  ),
+                  RadioListTile<String>(
+                    title: Text(
+                      'Bluetooth',
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface)),
-                  subtitle: Text(l10n.bluetoothPortablePrinter),
-                  value: 'bluetooth',
-                ),
-                RadioListTile<String>(
-                  title: Text('PDF',
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    subtitle: Text(l10n.bluetoothPortablePrinter),
+                    value: 'bluetooth',
+                  ),
+                  RadioListTile<String>(
+                    title: Text(
+                      'PDF',
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface)),
-                  subtitle: Text(l10n.saveAsPdf),
-                  value: 'pdf',
-                ),
-              ],
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    subtitle: Text(l10n.saveAsPdf),
+                    value: 'pdf',
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: AlhaiSpacing.xs),
-        ]),
-        _buildSettingsGroup(l10n.receiptTemplate, Icons.receipt_long_rounded,
-            AppColors.info, isDark, [
-          RadioGroup<String>(
-            groupValue: _template,
-            onChanged: (v) => setState(() => _template = v!),
-            child: Column(
-              children: [
-                RadioListTile<String>(
-                  title: Text(l10n.compactTemplate,
+            const SizedBox(height: AlhaiSpacing.xs),
+          ],
+        ),
+        _buildSettingsGroup(
+          l10n.receiptTemplate,
+          Icons.receipt_long_rounded,
+          AppColors.info,
+          isDark,
+          [
+            RadioGroup<String>(
+              groupValue: _template,
+              onChanged: (v) => setState(() => _template = v!),
+              child: Column(
+                children: [
+                  RadioListTile<String>(
+                    title: Text(
+                      l10n.compactTemplate,
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface)),
-                  subtitle: Text(l10n.basicInfoOnly),
-                  value: 'compact',
-                ),
-                RadioListTile<String>(
-                  title: Text(l10n.detailedTemplate,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    subtitle: Text(l10n.basicInfoOnly),
+                    value: 'compact',
+                  ),
+                  RadioListTile<String>(
+                    title: Text(
+                      l10n.detailedTemplate,
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface)),
-                  subtitle: Text(l10n.allDetails),
-                  value: 'detailed',
-                ),
-              ],
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    subtitle: Text(l10n.allDetails),
+                    value: 'detailed',
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: AlhaiSpacing.xs),
-        ]),
-        _buildSettingsGroup(l10n.printOptions, Icons.settings_rounded,
-            AppColors.success, isDark, [
-          SwitchListTile(
-            title: Text(l10n.autoPrinting,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            subtitle: Text(l10n.autoPrintAfterSale),
-            value: _autoPrint,
-            onChanged: (v) => setState(() => _autoPrint = v),
-          ),
-          const SizedBox(height: AlhaiSpacing.xs),
-        ]),
+            const SizedBox(height: AlhaiSpacing.xs),
+          ],
+        ),
+        _buildSettingsGroup(
+          l10n.printOptions,
+          Icons.settings_rounded,
+          AppColors.success,
+          isDark,
+          [
+            SwitchListTile(
+              title: Text(
+                l10n.autoPrinting,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              subtitle: Text(l10n.autoPrintAfterSale),
+              value: _autoPrint,
+              onChanged: (v) => setState(() => _autoPrint = v),
+            ),
+            const SizedBox(height: AlhaiSpacing.xs),
+          ],
+        ),
         const SizedBox(height: AlhaiSpacing.md),
         SizedBox(
           width: double.infinity,
           child: OutlinedButton.icon(
             onPressed: () {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.testPrintInProgress)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(l10n.testPrintInProgress)));
             },
             icon: const Icon(Icons.print),
             label: Text(l10n.testPrint),
             style: OutlinedButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),
@@ -268,7 +304,8 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),
@@ -296,45 +333,61 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
             color: const Color(0xFF8B5CF6).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(Icons.print_rounded,
-              color: Color(0xFF8B5CF6), size: 24),
+          child: const Icon(
+            Icons.print_rounded,
+            color: Color(0xFF8B5CF6),
+            size: 24,
+          ),
         ),
         const SizedBox(width: AlhaiSpacing.sm),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.printerSettings,
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface)),
-            Text(l10n.printerSettingsSubtitle,
-                style: TextStyle(
-                    fontSize: 13,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(
+              l10n.printerSettings,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            Text(
+              l10n.printerSettingsSubtitle,
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildSettingsGroup(String title, IconData icon, Color color,
-      bool isDark, List<Widget> children) {
+  Widget _buildSettingsGroup(
+    String title,
+    IconData icon,
+    Color color,
+    bool isDark,
+    List<Widget> children,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            padding: const EdgeInsetsDirectional.fromSTEB(
+              AlhaiSpacing.mdl,
+              AlhaiSpacing.md,
+              AlhaiSpacing.mdl,
+              AlhaiSpacing.xs,
+            ),
             child: Row(
               children: [
                 Container(
@@ -346,11 +399,14 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                   child: Icon(icon, color: color, size: 20),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
-                Text(title,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface)),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
               ],
             ),
           ),

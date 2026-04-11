@@ -78,8 +78,9 @@ class DailySalesData {
 /// مزود بيانات لوحة التحكم الرئيسي
 /// يجمع كل البيانات المطلوبة في استعلام واحد
 /// Keeps data alive for 5 minutes to avoid re-fetching on tab switches.
-final dashboardDataProvider =
-    FutureProvider.autoDispose<DashboardData>((ref) async {
+final dashboardDataProvider = FutureProvider.autoDispose<DashboardData>((
+  ref,
+) async {
   // Keep the provider alive for 5 minutes after last listener detaches,
   // so navigating away and back doesn't trigger a re-fetch.
   final link = ref.keepAlive();
@@ -158,18 +159,20 @@ Future<int> _getTodayNewCustomersCount(
   DateTime endOfDay,
 ) async {
   try {
-    final result = await db.customSelect(
-      '''SELECT COUNT(*) as count
+    final result = await db
+        .customSelect(
+          '''SELECT COUNT(*) as count
          FROM customers
          WHERE store_id = ?
          AND created_at >= ?
          AND created_at < ?''',
-      variables: [
-        Variable.withString(storeId),
-        Variable.withDateTime(startOfDay),
-        Variable.withDateTime(endOfDay),
-      ],
-    ).getSingle();
+          variables: [
+            Variable.withString(storeId),
+            Variable.withDateTime(startOfDay),
+            Variable.withDateTime(endOfDay),
+          ],
+        )
+        .getSingle();
     return result.data['count'] as int? ?? 0;
   } catch (_) {
     return 0;
@@ -184,8 +187,11 @@ Future<List<DailySalesData>> _getWeeklySales(
 ) async {
   final days = <DailySalesData>[];
   for (int i = 6; i >= 0; i--) {
-    final date =
-        DateTime(now.year, now.month, now.day).subtract(Duration(days: i));
+    final date = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).subtract(Duration(days: i));
     final nextDate = date.add(const Duration(days: 1));
     try {
       final stats = await db.salesDao.getSalesStats(
@@ -194,7 +200,8 @@ Future<List<DailySalesData>> _getWeeklySales(
         endDate: nextDate,
       );
       days.add(
-          DailySalesData(date: date, total: stats.total, count: stats.count));
+        DailySalesData(date: date, total: stats.total, count: stats.count),
+      );
     } catch (_) {
       days.add(DailySalesData(date: date, total: 0, count: 0));
     }
@@ -210,8 +217,11 @@ Future<List<DailySalesData>> _getMonthlySales(
 ) async {
   final weeks = <DailySalesData>[];
   for (int i = 3; i >= 0; i--) {
-    final weekStart = DateTime(now.year, now.month, now.day)
-        .subtract(Duration(days: (i + 1) * 7));
+    final weekStart = DateTime(
+      now.year,
+      now.month,
+      now.day,
+    ).subtract(Duration(days: (i + 1) * 7));
     final weekEnd = weekStart.add(const Duration(days: 7));
     try {
       final stats = await db.salesDao.getSalesStats(
@@ -219,8 +229,9 @@ Future<List<DailySalesData>> _getMonthlySales(
         startDate: weekStart,
         endDate: weekEnd,
       );
-      weeks.add(DailySalesData(
-          date: weekStart, total: stats.total, count: stats.count));
+      weeks.add(
+        DailySalesData(date: weekStart, total: stats.total, count: stats.count),
+      );
     } catch (_) {
       weeks.add(DailySalesData(date: weekStart, total: 0, count: 0));
     }
@@ -236,18 +247,20 @@ Future<int> _getExpiringProductsCount(
 ) async {
   try {
     final in7Days = now.add(const Duration(days: 7));
-    final result = await db.customSelect(
-      '''SELECT COUNT(*) as count
+    final result = await db
+        .customSelect(
+          '''SELECT COUNT(*) as count
          FROM product_expiry
          WHERE store_id = ?
          AND expiry_date > ?
          AND expiry_date <= ?''',
-      variables: [
-        Variable.withString(storeId),
-        Variable.withDateTime(now),
-        Variable.withDateTime(in7Days),
-      ],
-    ).getSingle();
+          variables: [
+            Variable.withString(storeId),
+            Variable.withDateTime(now),
+            Variable.withDateTime(in7Days),
+          ],
+        )
+        .getSingle();
     return result.data['count'] as int? ?? 0;
   } catch (_) {
     return 0;
@@ -257,9 +270,9 @@ Future<int> _getExpiringProductsCount(
 /// مزود مراقبة مبيعات اليوم (Stream) - للتحديث التلقائي
 final todaySalesStreamProvider =
     StreamProvider.autoDispose<List<SalesTableData>>((ref) {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return const Stream.empty();
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return const Stream.empty();
 
-  final db = GetIt.I<AppDatabase>();
-  return db.salesDao.watchTodaySales(storeId);
-});
+      final db = GetIt.I<AppDatabase>();
+      return db.salesDao.watchTodaySales(storeId);
+    });

@@ -41,11 +41,17 @@ void main() {
       expect(BiometricLoginError.values, hasLength(4));
       expect(BiometricLoginError.values, contains(BiometricLoginError.failed));
       expect(
-          BiometricLoginError.values, contains(BiometricLoginError.notEnabled));
-      expect(BiometricLoginError.values,
-          contains(BiometricLoginError.notAvailable));
+        BiometricLoginError.values,
+        contains(BiometricLoginError.notEnabled),
+      );
       expect(
-          BiometricLoginError.values, contains(BiometricLoginError.lockedOut));
+        BiometricLoginError.values,
+        contains(BiometricLoginError.notAvailable),
+      );
+      expect(
+        BiometricLoginError.values,
+        contains(BiometricLoginError.lockedOut),
+      );
     });
   });
 

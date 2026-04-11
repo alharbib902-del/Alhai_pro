@@ -227,13 +227,18 @@ void main() {
 
       // secp256k1 OID in DER: 06 05 2B 81 04 00 0A
       final secp256k1Oid = [0x06, 0x05, 0x2B, 0x81, 0x04, 0x00, 0x0A];
-      final csrHex =
-          csrBytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
-      final oidHex =
-          secp256k1Oid.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+      final csrHex = csrBytes
+          .map((b) => b.toRadixString(16).padLeft(2, '0'))
+          .join();
+      final oidHex = secp256k1Oid
+          .map((b) => b.toRadixString(16).padLeft(2, '0'))
+          .join();
 
-      expect(csrHex, contains(oidHex),
-          reason: 'CSR must embed secp256k1 OID (1.3.132.0.10)');
+      expect(
+        csrHex,
+        contains(oidHex),
+        reason: 'CSR must embed secp256k1 OID (1.3.132.0.10)',
+      );
     });
 
     test('CSR embeds ZATCA subject DN fields', () async {
@@ -289,8 +294,11 @@ void main() {
         industryBusinessCategory: 'Retail',
       );
 
-      expect(first['privateKey'], isNot(equals(second['privateKey'])),
-          reason: 'Each CSR generation must create a fresh key pair');
+      expect(
+        first['privateKey'],
+        isNot(equals(second['privateKey'])),
+        reason: 'Each CSR generation must create a fresh key pair',
+      );
     });
   });
 
@@ -309,41 +317,48 @@ void main() {
       csrGenerator = CsrGenerator();
     });
 
-    test('obtains compliance CSID with OTP 123456', tags: ['sandbox'],
-        () async {
-      // 1. Generate CSR
-      final csrResult = await csrGenerator.generateCsr(
-        commonName: _csrConfig.solutionName,
-        organizationUnit: _csrConfig.branchId,
-        organizationName: _csrConfig.organizationName,
-        country: 'SA',
-        serialNumber:
-            '1-${_csrConfig.solutionName}|2-${_csrConfig.modelVersion}|3-${_csrConfig.serialNumber}',
-        invoiceType: _csrConfig.invoiceType,
-        branchLocation: _csrConfig.branchLocation,
-        industryBusinessCategory: _csrConfig.industryCategory,
-      );
-      final csrBase64 = csrResult['csr']!
-          .replaceAll(RegExp(r'-----BEGIN [A-Z\s]+-----'), '')
-          .replaceAll(RegExp(r'-----END [A-Z\s]+-----'), '')
-          .replaceAll(RegExp(r'\s'), '');
+    test(
+      'obtains compliance CSID with OTP 123456',
+      tags: ['sandbox'],
+      () async {
+        // 1. Generate CSR
+        final csrResult = await csrGenerator.generateCsr(
+          commonName: _csrConfig.solutionName,
+          organizationUnit: _csrConfig.branchId,
+          organizationName: _csrConfig.organizationName,
+          country: 'SA',
+          serialNumber:
+              '1-${_csrConfig.solutionName}|2-${_csrConfig.modelVersion}|3-${_csrConfig.serialNumber}',
+          invoiceType: _csrConfig.invoiceType,
+          branchLocation: _csrConfig.branchLocation,
+          industryBusinessCategory: _csrConfig.industryCategory,
+        );
+        final csrBase64 = csrResult['csr']!
+            .replaceAll(RegExp(r'-----BEGIN [A-Z\s]+-----'), '')
+            .replaceAll(RegExp(r'-----END [A-Z\s]+-----'), '')
+            .replaceAll(RegExp(r'\s'), '');
 
-      // 2. Submit to sandbox
-      final response = await complianceApi.requestComplianceCsid(
-        csrBase64: csrBase64,
-        otp: _sandboxOtp,
-      );
+        // 2. Submit to sandbox
+        final response = await complianceApi.requestComplianceCsid(
+          csrBase64: csrBase64,
+          otp: _sandboxOtp,
+        );
 
-      // 3. Verify response
-      expect(response.isSuccess, isTrue,
-          reason: 'Sandbox should accept CSR with OTP 123456');
-      expect(response.binarySecurityToken, isNotNull);
-      expect(response.binarySecurityToken, isNotEmpty);
-      expect(response.csid, isNotNull);
-      expect(response.csid, isNotEmpty);
-      expect(response.secret, isNotNull);
-      expect(response.secret, isNotEmpty);
-    }, timeout: const Timeout(Duration(seconds: 60)));
+        // 3. Verify response
+        expect(
+          response.isSuccess,
+          isTrue,
+          reason: 'Sandbox should accept CSR with OTP 123456',
+        );
+        expect(response.binarySecurityToken, isNotNull);
+        expect(response.binarySecurityToken, isNotEmpty);
+        expect(response.csid, isNotNull);
+        expect(response.csid, isNotEmpty);
+        expect(response.secret, isNotNull);
+        expect(response.secret, isNotEmpty);
+      },
+      timeout: const Timeout(Duration(seconds: 60)),
+    );
   });
 
   // ═══════════════════════════════════════════════════════════
@@ -387,8 +402,10 @@ void main() {
         csrBase64: csrBase64,
         otp: _sandboxOtp,
       );
-      assert(response.isSuccess,
-          'Failed to get compliance CSID: ${response.errorMessage}');
+      assert(
+        response.isSuccess,
+        'Failed to get compliance CSID: ${response.errorMessage}',
+      );
 
       complianceCert = CertificateInfo(
         certificatePem: response.binarySecurityToken!,
@@ -447,87 +464,135 @@ void main() {
       return resp;
     }
 
-    test('1/6 - Standard tax invoice (388 / 0100000)', tags: ['sandbox'],
-        () async {
-      final resp = await submitComplianceInvoice(
-        invoiceNumber: 'INV-COMP-1',
-        typeCode: InvoiceTypeCode.standard,
-        subType: '0100000',
-        icv: 1,
-      );
-      expect(resp.isSuccess, isTrue,
-          reason: 'Standard invoice compliance failed: '
-              '${resp.errors.map((e) => e.message).join(', ')}');
-    }, timeout: const Timeout(Duration(seconds: 30)));
+    test(
+      '1/6 - Standard tax invoice (388 / 0100000)',
+      tags: ['sandbox'],
+      () async {
+        final resp = await submitComplianceInvoice(
+          invoiceNumber: 'INV-COMP-1',
+          typeCode: InvoiceTypeCode.standard,
+          subType: '0100000',
+          icv: 1,
+        );
+        expect(
+          resp.isSuccess,
+          isTrue,
+          reason:
+              'Standard invoice compliance failed: '
+              '${resp.errors.map((e) => e.message).join(', ')}',
+        );
+      },
+      timeout: const Timeout(Duration(seconds: 30)),
+    );
 
-    test('2/6 - Standard credit note (381 / 0100000)', tags: ['sandbox'],
-        () async {
-      final resp = await submitComplianceInvoice(
-        invoiceNumber: 'INV-COMP-2',
-        typeCode: InvoiceTypeCode.creditNote,
-        subType: '0100000',
-        billingReferenceId: 'INV-COMP-1',
-        icv: 2,
-      );
-      expect(resp.isSuccess, isTrue,
-          reason: 'Standard credit note compliance failed: '
-              '${resp.errors.map((e) => e.message).join(', ')}');
-    }, timeout: const Timeout(Duration(seconds: 30)));
+    test(
+      '2/6 - Standard credit note (381 / 0100000)',
+      tags: ['sandbox'],
+      () async {
+        final resp = await submitComplianceInvoice(
+          invoiceNumber: 'INV-COMP-2',
+          typeCode: InvoiceTypeCode.creditNote,
+          subType: '0100000',
+          billingReferenceId: 'INV-COMP-1',
+          icv: 2,
+        );
+        expect(
+          resp.isSuccess,
+          isTrue,
+          reason:
+              'Standard credit note compliance failed: '
+              '${resp.errors.map((e) => e.message).join(', ')}',
+        );
+      },
+      timeout: const Timeout(Duration(seconds: 30)),
+    );
 
-    test('3/6 - Standard debit note (383 / 0100000)', tags: ['sandbox'],
-        () async {
-      final resp = await submitComplianceInvoice(
-        invoiceNumber: 'INV-COMP-3',
-        typeCode: InvoiceTypeCode.debitNote,
-        subType: '0100000',
-        billingReferenceId: 'INV-COMP-1',
-        icv: 3,
-      );
-      expect(resp.isSuccess, isTrue,
-          reason: 'Standard debit note compliance failed: '
-              '${resp.errors.map((e) => e.message).join(', ')}');
-    }, timeout: const Timeout(Duration(seconds: 30)));
+    test(
+      '3/6 - Standard debit note (383 / 0100000)',
+      tags: ['sandbox'],
+      () async {
+        final resp = await submitComplianceInvoice(
+          invoiceNumber: 'INV-COMP-3',
+          typeCode: InvoiceTypeCode.debitNote,
+          subType: '0100000',
+          billingReferenceId: 'INV-COMP-1',
+          icv: 3,
+        );
+        expect(
+          resp.isSuccess,
+          isTrue,
+          reason:
+              'Standard debit note compliance failed: '
+              '${resp.errors.map((e) => e.message).join(', ')}',
+        );
+      },
+      timeout: const Timeout(Duration(seconds: 30)),
+    );
 
-    test('4/6 - Simplified tax invoice (388 / 0200000)', tags: ['sandbox'],
-        () async {
-      final resp = await submitComplianceInvoice(
-        invoiceNumber: 'INV-COMP-4',
-        typeCode: InvoiceTypeCode.standard,
-        subType: '0200000',
-        icv: 4,
-      );
-      expect(resp.isSuccess, isTrue,
-          reason: 'Simplified invoice compliance failed: '
-              '${resp.errors.map((e) => e.message).join(', ')}');
-    }, timeout: const Timeout(Duration(seconds: 30)));
+    test(
+      '4/6 - Simplified tax invoice (388 / 0200000)',
+      tags: ['sandbox'],
+      () async {
+        final resp = await submitComplianceInvoice(
+          invoiceNumber: 'INV-COMP-4',
+          typeCode: InvoiceTypeCode.standard,
+          subType: '0200000',
+          icv: 4,
+        );
+        expect(
+          resp.isSuccess,
+          isTrue,
+          reason:
+              'Simplified invoice compliance failed: '
+              '${resp.errors.map((e) => e.message).join(', ')}',
+        );
+      },
+      timeout: const Timeout(Duration(seconds: 30)),
+    );
 
-    test('5/6 - Simplified credit note (381 / 0200000)', tags: ['sandbox'],
-        () async {
-      final resp = await submitComplianceInvoice(
-        invoiceNumber: 'INV-COMP-5',
-        typeCode: InvoiceTypeCode.creditNote,
-        subType: '0200000',
-        billingReferenceId: 'INV-COMP-4',
-        icv: 5,
-      );
-      expect(resp.isSuccess, isTrue,
-          reason: 'Simplified credit note compliance failed: '
-              '${resp.errors.map((e) => e.message).join(', ')}');
-    }, timeout: const Timeout(Duration(seconds: 30)));
+    test(
+      '5/6 - Simplified credit note (381 / 0200000)',
+      tags: ['sandbox'],
+      () async {
+        final resp = await submitComplianceInvoice(
+          invoiceNumber: 'INV-COMP-5',
+          typeCode: InvoiceTypeCode.creditNote,
+          subType: '0200000',
+          billingReferenceId: 'INV-COMP-4',
+          icv: 5,
+        );
+        expect(
+          resp.isSuccess,
+          isTrue,
+          reason:
+              'Simplified credit note compliance failed: '
+              '${resp.errors.map((e) => e.message).join(', ')}',
+        );
+      },
+      timeout: const Timeout(Duration(seconds: 30)),
+    );
 
-    test('6/6 - Simplified debit note (383 / 0200000)', tags: ['sandbox'],
-        () async {
-      final resp = await submitComplianceInvoice(
-        invoiceNumber: 'INV-COMP-6',
-        typeCode: InvoiceTypeCode.debitNote,
-        subType: '0200000',
-        billingReferenceId: 'INV-COMP-4',
-        icv: 6,
-      );
-      expect(resp.isSuccess, isTrue,
-          reason: 'Simplified debit note compliance failed: '
-              '${resp.errors.map((e) => e.message).join(', ')}');
-    }, timeout: const Timeout(Duration(seconds: 30)));
+    test(
+      '6/6 - Simplified debit note (383 / 0200000)',
+      tags: ['sandbox'],
+      () async {
+        final resp = await submitComplianceInvoice(
+          invoiceNumber: 'INV-COMP-6',
+          typeCode: InvoiceTypeCode.debitNote,
+          subType: '0200000',
+          billingReferenceId: 'INV-COMP-4',
+          icv: 6,
+        );
+        expect(
+          resp.isSuccess,
+          isTrue,
+          reason:
+              'Simplified debit note compliance failed: '
+              '${resp.errors.map((e) => e.message).join(', ')}',
+        );
+      },
+      timeout: const Timeout(Duration(seconds: 30)),
+    );
   });
 
   // ═══════════════════════════════════════════════════════════
@@ -577,8 +642,10 @@ void main() {
       expect(xml, contains('InvoiceTypeCode'));
 
       // Currencies
-      expect(xml,
-          contains('<cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>'));
+      expect(
+        xml,
+        contains('<cbc:DocumentCurrencyCode>SAR</cbc:DocumentCurrencyCode>'),
+      );
       expect(xml, contains('<cbc:TaxCurrencyCode>SAR</cbc:TaxCurrencyCode>'));
 
       // Parties
@@ -587,16 +654,20 @@ void main() {
 
       // Supplier details
       expect(
-          xml,
-          contains(
-              '<cbc:RegistrationName>Alhai Test Company</cbc:RegistrationName>'));
+        xml,
+        contains(
+          '<cbc:RegistrationName>Alhai Test Company</cbc:RegistrationName>',
+        ),
+      );
       expect(xml, contains('<cbc:CompanyID>300000000000003</cbc:CompanyID>'));
       expect(xml, contains('<cbc:StreetName>King Fahd Road</cbc:StreetName>'));
       expect(xml, contains('<cbc:BuildingNumber>1234</cbc:BuildingNumber>'));
       expect(xml, contains('<cbc:CityName>Riyadh</cbc:CityName>'));
       expect(xml, contains('<cbc:PostalZone>12345</cbc:PostalZone>'));
       expect(
-          xml, contains('<cbc:IdentificationCode>SA</cbc:IdentificationCode>'));
+        xml,
+        contains('<cbc:IdentificationCode>SA</cbc:IdentificationCode>'),
+      );
 
       // Payment
       expect(xml, contains('<cac:PaymentMeans>'));
@@ -621,7 +692,9 @@ void main() {
 
       // Signature placeholder
       expect(
-          xml, contains('urn:oasis:names:specification:ubl:signature:Invoice'));
+        xml,
+        contains('urn:oasis:names:specification:ubl:signature:Invoice'),
+      );
     });
 
     test('credit note includes BillingReference', () {
@@ -688,9 +761,11 @@ void main() {
       final xml = xmlBuilder.build(invoice);
 
       expect(
-          xml,
-          contains(
-              'xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"'));
+        xml,
+        contains(
+          'xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"',
+        ),
+      );
       expect(xml, contains('xmlns:cac='));
       expect(xml, contains('xmlns:cbc='));
       expect(xml, contains('xmlns:ext='));
@@ -759,10 +834,7 @@ void main() {
       // Signing may throw if the cert parser cannot parse the placeholder.
       // We catch and verify the structure for what we can.
       try {
-        final signedXml = signer.sign(
-          invoiceXml: xml,
-          certificate: testCert,
-        );
+        final signedXml = signer.sign(invoiceXml: xml, certificate: testCert);
 
         expect(signedXml, contains('<ds:Signature'));
         expect(signedXml, contains('<ds:SignatureValue>'));
@@ -792,16 +864,17 @@ void main() {
       final xml = xmlBuilder.build(invoice);
 
       try {
-        final signedXml = signer.sign(
-          invoiceXml: xml,
-          certificate: testCert,
-        );
+        final signedXml = signer.sign(invoiceXml: xml, certificate: testCert);
 
         // Count occurrences of <ext:UBLExtensions>
-        final matches =
-            RegExp(r'<ext:UBLExtensions>').allMatches(signedXml).length;
-        expect(matches, equals(1),
-            reason: 'Signed XML must contain exactly one UBLExtensions block');
+        final matches = RegExp(
+          r'<ext:UBLExtensions>',
+        ).allMatches(signedXml).length;
+        expect(
+          matches,
+          equals(1),
+          reason: 'Signed XML must contain exactly one UBLExtensions block',
+        );
       } catch (e) {
         markTestSkipped('Cert placeholder incompatible with signer: $e');
       }
@@ -827,17 +900,18 @@ void main() {
     });
 
     test('same XML produces deterministic hash', () {
-      final invoice = _buildTestInvoice(
-        invoiceNumber: 'HASH-DET',
-        uuid: '00000000-0000-0000-0000-000000000001',
-        typeCode: InvoiceTypeCode.standard,
-        subType: '0200000',
-        invoiceCounterValue: 4,
-      ).copyWith(
-        issueDate: DateTime(2026, 1, 1),
-        issueTime: DateTime(2026, 1, 1, 12, 0, 0),
-        previousInvoiceHash: InvoiceChainService.seedHash,
-      );
+      final invoice =
+          _buildTestInvoice(
+            invoiceNumber: 'HASH-DET',
+            uuid: '00000000-0000-0000-0000-000000000001',
+            typeCode: InvoiceTypeCode.standard,
+            subType: '0200000',
+            invoiceCounterValue: 4,
+          ).copyWith(
+            issueDate: DateTime(2026, 1, 1),
+            issueTime: DateTime(2026, 1, 1, 12, 0, 0),
+            previousInvoiceHash: InvoiceChainService.seedHash,
+          );
 
       final xml = xmlBuilder.build(invoice);
       final hash1 = signer.computeInvoiceHash(xml);
@@ -882,12 +956,18 @@ void main() {
       expect(tags.containsKey(3), isTrue, reason: 'Missing tag 3: timestamp');
       expect(tags.containsKey(4), isTrue, reason: 'Missing tag 4: total');
       expect(tags.containsKey(5), isTrue, reason: 'Missing tag 5: VAT amount');
-      expect(tags.containsKey(6), isTrue,
-          reason: 'Missing tag 6: invoice hash');
+      expect(
+        tags.containsKey(6),
+        isTrue,
+        reason: 'Missing tag 6: invoice hash',
+      );
       expect(tags.containsKey(7), isTrue, reason: 'Missing tag 7: signature');
       expect(tags.containsKey(8), isTrue, reason: 'Missing tag 8: public key');
-      expect(tags.containsKey(9), isTrue,
-          reason: 'Missing tag 9: cert signature');
+      expect(
+        tags.containsKey(9),
+        isTrue,
+        reason: 'Missing tag 9: cert signature',
+      );
 
       // Verify string tags
       final strings = tlvEncoder.decodeToStrings(qrData);
@@ -935,10 +1015,16 @@ void main() {
 
       final tags = tlvEncoder.decode(qrData);
       final tag9Bytes = tags[9]!;
-      expect(tag9Bytes.length, equals(72),
-          reason: 'Tag 9 should contain the signature bytes we provided');
-      expect(tag9Bytes.every((b) => b == 0x42), isTrue,
-          reason: 'Tag 9 bytes should match input signature bytes');
+      expect(
+        tag9Bytes.length,
+        equals(72),
+        reason: 'Tag 9 should contain the signature bytes we provided',
+      );
+      expect(
+        tag9Bytes.every((b) => b == 0x42),
+        isTrue,
+        reason: 'Tag 9 bytes should match input signature bytes',
+      );
     });
 
     test('QR validation accepts valid data', () {
@@ -1053,8 +1139,11 @@ void main() {
 
       // Invoice 2: uses hash of invoice 1
       final pih2 = await chainService.getPreviousHash(storeId: storeId);
-      expect(pih2, equals(hash1),
-          reason: 'Invoice 2 PIH must equal invoice 1 hash');
+      expect(
+        pih2,
+        equals(hash1),
+        reason: 'Invoice 2 PIH must equal invoice 1 hash',
+      );
 
       final inv2 = _buildTestInvoice(
         invoiceNumber: 'CHAIN-2',
@@ -1069,8 +1158,11 @@ void main() {
 
       // Invoice 3: uses hash of invoice 2
       final pih3 = await chainService.getPreviousHash(storeId: storeId);
-      expect(pih3, equals(hash2),
-          reason: 'Invoice 3 PIH must equal invoice 2 hash');
+      expect(
+        pih3,
+        equals(hash2),
+        reason: 'Invoice 3 PIH must equal invoice 2 hash',
+      );
 
       final inv3 = _buildTestInvoice(
         invoiceNumber: 'CHAIN-3',
@@ -1247,18 +1339,23 @@ void main() {
         isProduction: true,
       );
 
-      when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-          .thenAnswer((_) async => cert);
-      when(() => mockReporting.reportInvoice(
-            signedXmlBase64: any(named: 'signedXmlBase64'),
-            invoiceHash: any(named: 'invoiceHash'),
-            uuid: any(named: 'uuid'),
-            certificate: any(named: 'certificate'),
-          )).thenAnswer((_) async => const ZatcaResponse(
-            isSuccess: true,
-            statusCode: 200,
-            reportingStatus: ReportingStatus.reported,
-          ));
+      when(
+        () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+      ).thenAnswer((_) async => cert);
+      when(
+        () => mockReporting.reportInvoice(
+          signedXmlBase64: any(named: 'signedXmlBase64'),
+          invoiceHash: any(named: 'invoiceHash'),
+          uuid: any(named: 'uuid'),
+          certificate: any(named: 'certificate'),
+        ),
+      ).thenAnswer(
+        (_) async => const ZatcaResponse(
+          isSuccess: true,
+          statusCode: 200,
+          reportingStatus: ReportingStatus.reported,
+        ),
+      );
 
       await queue.enqueue(
         invoiceNumber: 'Q-PROC',
@@ -1296,14 +1393,17 @@ void main() {
         isProduction: true,
       );
 
-      when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-          .thenAnswer((_) async => cert);
-      when(() => mockReporting.reportInvoice(
-            signedXmlBase64: any(named: 'signedXmlBase64'),
-            invoiceHash: any(named: 'invoiceHash'),
-            uuid: any(named: 'uuid'),
-            certificate: any(named: 'certificate'),
-          )).thenThrow(Exception('Network unavailable'));
+      when(
+        () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+      ).thenAnswer((_) async => cert);
+      when(
+        () => mockReporting.reportInvoice(
+          signedXmlBase64: any(named: 'signedXmlBase64'),
+          invoiceHash: any(named: 'invoiceHash'),
+          uuid: any(named: 'uuid'),
+          certificate: any(named: 'certificate'),
+        ),
+      ).thenThrow(Exception('Network unavailable'));
 
       await queue.enqueue(
         invoiceNumber: 'Q-FAIL',
@@ -1409,8 +1509,11 @@ void main() {
       );
 
       final result = checker.check(invoice);
-      expect(result.isValid, isTrue,
-          reason: 'Errors: ${result.errors.map((e) => e.message).join(', ')}');
+      expect(
+        result.isValid,
+        isTrue,
+        reason: 'Errors: ${result.errors.map((e) => e.message).join(', ')}',
+      );
     });
 
     test('valid standard invoice with buyer passes all checks', () {
@@ -1422,8 +1525,11 @@ void main() {
       );
 
       final result = checker.check(invoice);
-      expect(result.isValid, isTrue,
-          reason: 'Errors: ${result.errors.map((e) => e.message).join(', ')}');
+      expect(
+        result.isValid,
+        isTrue,
+        reason: 'Errors: ${result.errors.map((e) => e.message).join(', ')}',
+      );
     });
 
     test('rejects standard invoice without buyer', () {

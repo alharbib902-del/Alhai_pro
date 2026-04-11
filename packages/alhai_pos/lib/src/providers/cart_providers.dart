@@ -57,10 +57,10 @@ class PosCartItem {
 
   /// تحويل لـ JSON للتخزين
   Map<String, dynamic> toJson() => {
-        'product': product.toJson(),
-        'quantity': quantity,
-        'customPrice': customPrice,
-      };
+    'product': product.toJson(),
+    'quantity': quantity,
+    'customPrice': customPrice,
+  };
 
   /// إنشاء من JSON
   factory PosCartItem.fromJson(Map<String, dynamic> json) {
@@ -133,8 +133,9 @@ class CartState {
       paymentMethod: paymentMethod ?? this.paymentMethod,
       customerId: clearCustomer ? null : (customerId ?? this.customerId),
       customerName: clearCustomer ? null : (customerName ?? this.customerName),
-      customerPhone:
-          clearCustomer ? null : (customerPhone ?? this.customerPhone),
+      customerPhone: clearCustomer
+          ? null
+          : (customerPhone ?? this.customerPhone),
       notes: notes ?? this.notes,
       lastModified: lastModified ?? DateTime.now(),
     );
@@ -142,20 +143,21 @@ class CartState {
 
   /// تحويل لـ JSON للتخزين
   Map<String, dynamic> toJson() => {
-        'items': items.map((item) => item.toJson()).toList(),
-        'discount': discount,
-        'paymentMethod': paymentMethod.name,
-        'customerId': customerId,
-        'customerName': customerName,
-        'customerPhone': customerPhone,
-        'notes': notes,
-        'lastModified': lastModified?.toIso8601String(),
-      };
+    'items': items.map((item) => item.toJson()).toList(),
+    'discount': discount,
+    'paymentMethod': paymentMethod.name,
+    'customerId': customerId,
+    'customerName': customerName,
+    'customerPhone': customerPhone,
+    'notes': notes,
+    'lastModified': lastModified?.toIso8601String(),
+  };
 
   /// إنشاء من JSON
   factory CartState.fromJson(Map<String, dynamic> json) {
     return CartState(
-      items: (json['items'] as List<dynamic>?)
+      items:
+          (json['items'] as List<dynamic>?)
               ?.map((e) => PosCartItem.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
@@ -201,11 +203,11 @@ class HeldInvoice {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'cart': cart.toJson(),
-        'name': name,
-        'createdAt': createdAt.toIso8601String(),
-      };
+    'id': id,
+    'cart': cart.toJson(),
+    'name': name,
+    'createdAt': createdAt.toIso8601String(),
+  };
 
   factory HeldInvoice.fromJson(Map<String, dynamic> json) {
     return HeldInvoice(
@@ -370,7 +372,8 @@ class CartNotifier extends StateNotifier<CartState> {
     if (savedCart != null && savedCart.isNotEmpty) {
       _pendingDraft = savedCart;
       debugPrint(
-          '[Cart] Found draft with ${savedCart.itemCount} items — awaiting user confirmation');
+        '[Cart] Found draft with ${savedCart.itemCount} items — awaiting user confirmation',
+      );
     }
     _isInitialized = true;
   }
@@ -455,9 +458,7 @@ class CartNotifier extends StateNotifier<CartState> {
             // Was a brand new item → remove entirely
             state = state.copyWith(
               items: state.items
-                  .where(
-                    (item) => item.product.id != action.productId,
-                  )
+                  .where((item) => item.product.id != action.productId)
                   .toList(),
             );
           }
@@ -528,16 +529,20 @@ class CartNotifier extends StateNotifier<CartState> {
       final updatedItems = [...state.items];
       final existingItem = updatedItems[existingIndex];
       // Clamp new quantity to max
-      final newQty =
-          (existingItem.quantity + quantity).clamp(1, _maxQuantityPerItem);
+      final newQty = (existingItem.quantity + quantity).clamp(
+        1,
+        _maxQuantityPerItem,
+      );
       if (newQty == existingItem.quantity) return; // already at max
-      _pushUndo(UndoAction(
-        type: CartUndoType.add,
-        productId: product.id,
-        productName: product.name,
-        product: product,
-        previousQuantity: existingItem.quantity,
-      ));
+      _pushUndo(
+        UndoAction(
+          type: CartUndoType.add,
+          productId: product.id,
+          productName: product.name,
+          product: product,
+          previousQuantity: existingItem.quantity,
+        ),
+      );
       updatedItems[existingIndex] = existingItem.copyWith(
         quantity: newQty,
         customPrice: customPrice ?? existingItem.customPrice,
@@ -546,12 +551,14 @@ class CartNotifier extends StateNotifier<CartState> {
     } else {
       // إضافة عنصر جديد — clamp quantity to max
       final clampedQty = quantity.clamp(1, _maxQuantityPerItem);
-      _pushUndo(UndoAction(
-        type: CartUndoType.add,
-        productId: product.id,
-        productName: product.name,
-        product: product,
-      ));
+      _pushUndo(
+        UndoAction(
+          type: CartUndoType.add,
+          productId: product.id,
+          productName: product.name,
+          product: product,
+        ),
+      );
       state = state.copyWith(
         items: [
           ...state.items,
@@ -569,19 +576,19 @@ class CartNotifier extends StateNotifier<CartState> {
   /// إزالة منتج من السلة
   void removeProduct(String productId) {
     final removedItem = state.items
-        .where(
-          (item) => item.product.id == productId,
-        )
+        .where((item) => item.product.id == productId)
         .firstOrNull;
     if (removedItem != null) {
-      _pushUndo(UndoAction(
-        type: CartUndoType.remove,
-        productId: productId,
-        productName: removedItem.product.name,
-        product: removedItem.product,
-        previousQuantity: removedItem.quantity,
-        customPrice: removedItem.customPrice,
-      ));
+      _pushUndo(
+        UndoAction(
+          type: CartUndoType.remove,
+          productId: productId,
+          productName: removedItem.product.name,
+          product: removedItem.product,
+          previousQuantity: removedItem.quantity,
+          customPrice: removedItem.customPrice,
+        ),
+      );
     }
     state = state.copyWith(
       items: state.items.where((item) => item.product.id != productId).toList(),
@@ -600,21 +607,21 @@ class CartNotifier extends StateNotifier<CartState> {
     final clampedQty = quantity.clamp(1, _maxQuantityPerItem);
 
     final existing = state.items
-        .where(
-          (item) => item.product.id == productId,
-        )
+        .where((item) => item.product.id == productId)
         .firstOrNull;
     if (existing != null) {
       if (clampedQty == existing.quantity) return; // no change
-      _pushUndo(UndoAction(
-        type: CartUndoType.quantityChange,
-        productId: productId,
-        productName: existing.product.name,
-        product: existing.product,
-        previousQuantity: existing.quantity,
-        newQuantity: clampedQty,
-        customPrice: existing.customPrice,
-      ));
+      _pushUndo(
+        UndoAction(
+          type: CartUndoType.quantityChange,
+          productId: productId,
+          productName: existing.product.name,
+          product: existing.product,
+          previousQuantity: existing.quantity,
+          newQuantity: clampedQty,
+          customPrice: existing.customPrice,
+        ),
+      );
     }
 
     final updatedItems = state.items.map((item) {
@@ -788,9 +795,9 @@ final cartStateProvider = StateNotifierProvider<CartNotifier, CartState>((ref) {
 /// مزود الفواتير المعلقة
 final heldInvoicesProvider =
     StateNotifierProvider<HeldInvoicesNotifier, List<HeldInvoice>>((ref) {
-  final persistence = ref.watch(cartPersistenceProvider);
-  return HeldInvoicesNotifier(persistence);
-});
+      final persistence = ref.watch(cartPersistenceProvider);
+      return HeldInvoicesNotifier(persistence);
+    });
 
 /// مزود عناصر السلة (اختصار)
 final cartItemsProvider = Provider<List<PosCartItem>>((ref) {
@@ -803,15 +810,15 @@ final isCartEmptyProvider = Provider<bool>((ref) {
 });
 
 /// مزود الحصول على عنصر سلة بـ ID المنتج
-final cartItemByProductIdProvider =
-    Provider.autoDispose.family<PosCartItem?, String>((ref, productId) {
-  final items = ref.watch(cartItemsProvider);
-  try {
-    return items.firstWhere((item) => item.product.id == productId);
-  } catch (_) {
-    return null;
-  }
-});
+final cartItemByProductIdProvider = Provider.autoDispose
+    .family<PosCartItem?, String>((ref, productId) {
+      final items = ref.watch(cartItemsProvider);
+      try {
+        return items.firstWhere((item) => item.product.id == productId);
+      } catch (_) {
+        return null;
+      }
+    });
 
 /// مزود عدد الفواتير المعلقة
 final heldInvoicesCountProvider = Provider<int>((ref) {

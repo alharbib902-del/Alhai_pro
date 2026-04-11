@@ -36,10 +36,7 @@ class PaymentService {
   }
 
   /// إغلاق الوردية الحالية
-  Future<Shift> closeShift({
-    required double closingCash,
-    String? notes,
-  }) async {
+  Future<Shift> closeShift({required double closingCash, String? notes}) async {
     if (_currentShift == null) {
       throw Exception('لا توجد وردية مفتوحة');
     }

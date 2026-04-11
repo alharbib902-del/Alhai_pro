@@ -30,16 +30,18 @@ void main() {
     setupTestGetIt(mockDb: db);
 
     // Default: product found
-    when(() => productsDao.getProductById(any()))
-        .thenAnswer((_) async => createTestProduct(
-              id: 'prod-1',
-              name: 'Test Product',
-              barcode: '123456789',
-              stockQty: 50,
-            ));
+    when(() => productsDao.getProductById(any())).thenAnswer(
+      (_) async => createTestProduct(
+        id: 'prod-1',
+        name: 'Test Product',
+        barcode: '123456789',
+        stockQty: 50,
+      ),
+    );
     when(() => inventoryDao.insertMovement(any())).thenAnswer((_) async => 1);
-    when(() => productsDao.updateStock(any(), any()))
-        .thenAnswer((_) async => 1);
+    when(
+      () => productsDao.updateStock(any(), any()),
+    ).thenAnswer((_) async => 1);
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -50,9 +52,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(createTestWidget(
-        const EditInventoryScreen(productId: 'prod-1'),
-      ));
+      await tester.pumpWidget(
+        createTestWidget(const EditInventoryScreen(productId: 'prod-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(EditInventoryScreen), findsOneWidget);
@@ -70,12 +72,13 @@ void main() {
 
       // Use a Completer to hold the future without pending timers
       final completer = Completer<ProductsTableData?>();
-      when(() => productsDao.getProductById(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => productsDao.getProductById(any()),
+      ).thenAnswer((_) => completer.future);
 
-      await tester.pumpWidget(createTestWidget(
-        const EditInventoryScreen(productId: 'prod-1'),
-      ));
+      await tester.pumpWidget(
+        createTestWidget(const EditInventoryScreen(productId: 'prod-1')),
+      );
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -93,12 +96,13 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      when(() => productsDao.getProductById(any()))
-          .thenAnswer((_) async => null);
+      when(
+        () => productsDao.getProductById(any()),
+      ).thenAnswer((_) async => null);
 
-      await tester.pumpWidget(createTestWidget(
-        const EditInventoryScreen(productId: 'nonexistent'),
-      ));
+      await tester.pumpWidget(
+        createTestWidget(const EditInventoryScreen(productId: 'nonexistent')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.search_off_rounded), findsOneWidget);
@@ -112,18 +116,20 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(createTestWidget(
-        const EditInventoryScreen(productId: 'prod-1'),
-      ));
+      await tester.pumpWidget(
+        createTestWidget(const EditInventoryScreen(productId: 'prod-1')),
+      );
       await tester.pumpAndSettle();
 
       // Current stock should show 50.0 (stockQty is double, may appear in multiple places)
       expect(find.text('50.0'), findsWidgets);
       // Adjustment card title (Arabic l10n)
       expect(
-          find.text(
-              '\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0643\u0645\u064a\u0629'),
-          findsOneWidget);
+        find.text(
+          '\u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0643\u0645\u064a\u0629',
+        ),
+        findsOneWidget,
+      );
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -134,9 +140,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(createTestWidget(
-        const EditInventoryScreen(productId: 'prod-1'),
-      ));
+      await tester.pumpWidget(
+        createTestWidget(const EditInventoryScreen(productId: 'prod-1')),
+      );
       await tester.pumpAndSettle();
 
       // Reason options
@@ -146,15 +152,16 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('save button is disabled when no adjustment entered',
-        (tester) async {
+    testWidgets('save button is disabled when no adjustment entered', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(createTestWidget(
-        const EditInventoryScreen(productId: 'prod-1'),
-      ));
+      await tester.pumpWidget(
+        createTestWidget(const EditInventoryScreen(productId: 'prod-1')),
+      );
       await tester.pumpAndSettle();
 
       // Find the save button - it should be disabled (no amount entered)

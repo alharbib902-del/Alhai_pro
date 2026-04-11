@@ -43,10 +43,9 @@ void main() {
 
     test('getAllSuppliers returns all for store', () async {
       await db.suppliersDao.insertSupplier(makeSupplier());
-      await db.suppliersDao.insertSupplier(makeSupplier(
-        id: 'sup-2',
-        name: 'مؤسسة التوزيع',
-      ));
+      await db.suppliersDao.insertSupplier(
+        makeSupplier(id: 'sup-2', name: 'مؤسسة التوزيع'),
+      );
 
       final suppliers = await db.suppliersDao.getAllSuppliers('store-1');
       expect(suppliers, hasLength(2));
@@ -54,11 +53,9 @@ void main() {
 
     test('getActiveSuppliers excludes inactive', () async {
       await db.suppliersDao.insertSupplier(makeSupplier());
-      await db.suppliersDao.insertSupplier(makeSupplier(
-        id: 'sup-2',
-        name: 'مورد قديم',
-        isActive: false,
-      ));
+      await db.suppliersDao.insertSupplier(
+        makeSupplier(id: 'sup-2', name: 'مورد قديم', isActive: false),
+      );
 
       final active = await db.suppliersDao.getActiveSuppliers('store-1');
       expect(active, hasLength(1));
@@ -74,8 +71,10 @@ void main() {
     test('searchSuppliers finds by phone', () async {
       await db.suppliersDao.insertSupplier(makeSupplier());
 
-      final results =
-          await db.suppliersDao.searchSuppliers('011234', 'store-1');
+      final results = await db.suppliersDao.searchSuppliers(
+        '011234',
+        'store-1',
+      );
       expect(results, hasLength(1));
     });
 

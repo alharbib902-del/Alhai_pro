@@ -53,31 +53,33 @@ class CashierFeatureSettings {
 /// مزود إعدادات الميزات (يقرأ من settings_table)
 final cashierFeatureSettingsProvider =
     FutureProvider.autoDispose<CashierFeatureSettings>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return const CashierFeatureSettings();
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return const CashierFeatureSettings();
 
-  final db = GetIt.I<AppDatabase>();
-  try {
-    final settings = await (db.select(db.settingsTable)
-          ..where((s) => s.storeId.equals(storeId)))
-        .get();
+      final db = GetIt.I<AppDatabase>();
+      try {
+        final settings = await (db.select(
+          db.settingsTable,
+        )..where((s) => s.storeId.equals(storeId))).get();
 
-    final settingsMap = <String, String>{};
-    for (final s in settings) {
-      settingsMap[s.key] = s.value;
-    }
+        final settingsMap = <String, String>{};
+        for (final s in settings) {
+          settingsMap[s.key] = s.value;
+        }
 
-    return CashierFeatureSettings(
-      enableCustomerDisplay: settingsMap['feature_customer_display'] == 'true',
-      enablePhoneCollection: settingsMap['feature_phone_collection'] != 'false',
-      enableNfcPayment: settingsMap['feature_nfc_payment'] == 'true',
-      nfcTimeoutSeconds:
-          int.tryParse(settingsMap['nfc_timeout_seconds'] ?? '') ?? 30,
-    );
-  } catch (_) {
-    return const CashierFeatureSettings();
-  }
-});
+        return CashierFeatureSettings(
+          enableCustomerDisplay:
+              settingsMap['feature_customer_display'] == 'true',
+          enablePhoneCollection:
+              settingsMap['feature_phone_collection'] != 'false',
+          enableNfcPayment: settingsMap['feature_nfc_payment'] == 'true',
+          nfcTimeoutSeconds:
+              int.tryParse(settingsMap['nfc_timeout_seconds'] ?? '') ?? 30,
+        );
+      } catch (_) {
+        return const CashierFeatureSettings();
+      }
+    });
 
 // ============================================================================
 // CUSTOMER DISPLAY SERVICE PROVIDER
@@ -106,8 +108,9 @@ final customerDisplayServiceProvider = Provider<CustomerDisplayService>((ref) {
 // ============================================================================
 
 /// بث حالة شاشة العميل (لشاشة العميل المستقبِلة)
-final customerDisplayStreamProvider =
-    StreamProvider<CustomerDisplayState>((ref) {
+final customerDisplayStreamProvider = StreamProvider<CustomerDisplayState>((
+  ref,
+) {
   final service = ref.watch(customerDisplayServiceProvider);
   return service.stateStream;
 });
@@ -166,8 +169,9 @@ final nfcCapabilityServiceProvider = Provider<NfcCapabilityService>((ref) {
 });
 
 /// مزود حالة قدرة NFC
-final nfcCapabilityProvider =
-    FutureProvider.autoDispose<NfcCapability>((ref) async {
+final nfcCapabilityProvider = FutureProvider.autoDispose<NfcCapability>((
+  ref,
+) async {
   final service = ref.watch(nfcCapabilityServiceProvider);
   return service.checkCapability();
 });

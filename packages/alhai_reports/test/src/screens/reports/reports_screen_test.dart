@@ -19,27 +19,21 @@ void main() {
 
   group('ReportsScreen', () {
     testWidgets('renders without error', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const ReportsScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const ReportsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(ReportsScreen), findsOneWidget);
     });
 
     testWidgets('shows Scaffold', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const ReportsScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const ReportsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(Scaffold), findsWidgets);
     });
 
     testWidgets('shows content structure', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const ReportsScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const ReportsScreen()));
       await tester.pumpAndSettle();
 
       // Reports screen should have scrollable content

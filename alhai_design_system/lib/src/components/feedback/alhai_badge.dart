@@ -111,10 +111,7 @@ class AlhaiBadge extends StatelessWidget {
         Positioned.fill(
           child: Align(
             alignment: alignment,
-            child: Transform.translate(
-              offset: offset,
-              child: badge,
-            ),
+            child: Transform.translate(offset: offset, child: badge),
           ),
         ),
       ],
@@ -133,10 +130,7 @@ class AlhaiBadge extends StatelessWidget {
       return Container(
         width: size.dotSize,
         height: size.dotSize,
-        decoration: BoxDecoration(
-          color: bgColor,
-          shape: BoxShape.circle,
-        ),
+        decoration: BoxDecoration(color: bgColor, shape: BoxShape.circle),
       );
     }
 

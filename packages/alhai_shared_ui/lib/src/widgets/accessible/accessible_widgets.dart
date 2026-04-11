@@ -88,10 +88,7 @@ class AccessibleButton extends StatelessWidget {
       button: true,
       enabled: onPressed != null && !isLoading,
       child: ConstrainedBox(
-        constraints: BoxConstraints(
-          minWidth: minSize,
-          minHeight: minSize,
-        ),
+        constraints: BoxConstraints(minWidth: minSize, minHeight: minSize),
         child: _buildButton(buttonChild, buttonStyle),
       ),
     );
@@ -129,17 +126,11 @@ class AccessibleButton extends StatelessWidget {
   ButtonStyle _getButtonStyle(ThemeData theme) {
     switch (type) {
       case AccessibleButtonType.primary:
-        return ElevatedButton.styleFrom(
-          padding: _getPadding(),
-        );
+        return ElevatedButton.styleFrom(padding: _getPadding());
       case AccessibleButtonType.secondary:
-        return OutlinedButton.styleFrom(
-          padding: _getPadding(),
-        );
+        return OutlinedButton.styleFrom(padding: _getPadding());
       case AccessibleButtonType.text:
-        return TextButton.styleFrom(
-          padding: _getPadding(),
-        );
+        return TextButton.styleFrom(padding: _getPadding());
       case AccessibleButtonType.danger:
         return ElevatedButton.styleFrom(
           backgroundColor: theme.colorScheme.error,
@@ -153,13 +144,19 @@ class AccessibleButton extends StatelessWidget {
     switch (size) {
       case AccessibleButtonSize.small:
         return const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs);
+          horizontal: AlhaiSpacing.sm,
+          vertical: AlhaiSpacing.xs,
+        );
       case AccessibleButtonSize.medium:
         return const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm);
+          horizontal: AlhaiSpacing.md,
+          vertical: AlhaiSpacing.sm,
+        );
       case AccessibleButtonSize.large:
         return const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.md);
+          horizontal: AlhaiSpacing.lg,
+          vertical: AlhaiSpacing.md,
+        );
     }
   }
 
@@ -607,7 +604,7 @@ class AccessibleImage extends StatelessWidget {
                   child: CircularProgressIndicator(
                     value: loadingProgress.expectedTotalBytes != null
                         ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
+                              loadingProgress.expectedTotalBytes!
                         : null,
                   ),
                 ),
@@ -660,10 +657,7 @@ class AccessibleCheckbox extends StatelessWidget {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Checkbox(
-              value: value,
-              onChanged: isEnabled ? onChanged : null,
-            ),
+            Checkbox(value: value, onChanged: isEnabled ? onChanged : null),
             SizedBox(width: AlhaiSpacing.xs),
             Text(
               label,

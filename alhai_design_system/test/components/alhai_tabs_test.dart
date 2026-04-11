@@ -7,21 +7,20 @@ import '../helpers/test_helpers.dart';
 void main() {
   group('AlhaiTabs', () {
     testWidgets('renders tab labels and views', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        SizedBox(
-          height: 400,
-          child: AlhaiTabs(
-            tabs: const [
-              AlhaiTabItem(label: 'Tab 1'),
-              AlhaiTabItem(label: 'Tab 2'),
-            ],
-            views: const [
-              Text('View 1'),
-              Text('View 2'),
-            ],
+      await tester.pumpWidget(
+        createTestWidget(
+          SizedBox(
+            height: 400,
+            child: AlhaiTabs(
+              tabs: const [
+                AlhaiTabItem(label: 'Tab 1'),
+                AlhaiTabItem(label: 'Tab 2'),
+              ],
+              views: const [Text('View 1'), Text('View 2')],
+            ),
           ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Tab 1'), findsOneWidget);
@@ -30,21 +29,20 @@ void main() {
     });
 
     testWidgets('switches view when tab is tapped', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        SizedBox(
-          height: 400,
-          child: AlhaiTabs(
-            tabs: const [
-              AlhaiTabItem(label: 'Tab 1'),
-              AlhaiTabItem(label: 'Tab 2'),
-            ],
-            views: const [
-              Text('View 1'),
-              Text('View 2'),
-            ],
+      await tester.pumpWidget(
+        createTestWidget(
+          SizedBox(
+            height: 400,
+            child: AlhaiTabs(
+              tabs: const [
+                AlhaiTabItem(label: 'Tab 1'),
+                AlhaiTabItem(label: 'Tab 2'),
+              ],
+              views: const [Text('View 1'), Text('View 2')],
+            ),
           ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Tab 2'));
@@ -54,21 +52,20 @@ void main() {
     });
 
     testWidgets('shows icon in tab when provided', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        SizedBox(
-          height: 400,
-          child: AlhaiTabs(
-            tabs: const [
-              AlhaiTabItem(label: 'Home', icon: Icon(Icons.home)),
-              AlhaiTabItem(label: 'Settings', icon: Icon(Icons.settings)),
-            ],
-            views: const [
-              Text('Home View'),
-              Text('Settings View'),
-            ],
+      await tester.pumpWidget(
+        createTestWidget(
+          SizedBox(
+            height: 400,
+            child: AlhaiTabs(
+              tabs: const [
+                AlhaiTabItem(label: 'Home', icon: Icon(Icons.home)),
+                AlhaiTabItem(label: 'Settings', icon: Icon(Icons.settings)),
+              ],
+              views: const [Text('Home View'), Text('Settings View')],
+            ),
           ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.home), findsOneWidget);
@@ -76,21 +73,20 @@ void main() {
     });
 
     testWidgets('works with fixed viewHeight', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        SingleChildScrollView(
-          child: AlhaiTabs(
-            tabs: const [
-              AlhaiTabItem(label: 'Tab 1'),
-              AlhaiTabItem(label: 'Tab 2'),
-            ],
-            views: const [
-              Text('View 1'),
-              Text('View 2'),
-            ],
-            viewHeight: 300,
+      await tester.pumpWidget(
+        createTestWidget(
+          SingleChildScrollView(
+            child: AlhaiTabs(
+              tabs: const [
+                AlhaiTabItem(label: 'Tab 1'),
+                AlhaiTabItem(label: 'Tab 2'),
+              ],
+              views: const [Text('View 1'), Text('View 2')],
+              viewHeight: 300,
+            ),
           ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('View 1'), findsOneWidget);
@@ -98,22 +94,21 @@ void main() {
 
     testWidgets('calls onTap callback', (tester) async {
       int? tappedIndex;
-      await tester.pumpWidget(createTestWidget(
-        SizedBox(
-          height: 400,
-          child: AlhaiTabs(
-            tabs: const [
-              AlhaiTabItem(label: 'Tab 1'),
-              AlhaiTabItem(label: 'Tab 2'),
-            ],
-            views: const [
-              Text('View 1'),
-              Text('View 2'),
-            ],
-            onTap: (index) => tappedIndex = index,
+      await tester.pumpWidget(
+        createTestWidget(
+          SizedBox(
+            height: 400,
+            child: AlhaiTabs(
+              tabs: const [
+                AlhaiTabItem(label: 'Tab 1'),
+                AlhaiTabItem(label: 'Tab 2'),
+              ],
+              views: const [Text('View 1'), Text('View 2')],
+              onTap: (index) => tappedIndex = index,
+            ),
           ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Tab 2'));

@@ -70,22 +70,10 @@ Widget buildTestApp({
         path: '/store-select',
         builder: (_, __) => const _StubScreen(label: 'Store Select'),
       ),
-      GoRoute(
-        path: '/pos',
-        builder: (_, __) => const PosScreen(),
-      ),
-      GoRoute(
-        path: '/pos/payment',
-        builder: (_, __) => const PaymentScreen(),
-      ),
-      GoRoute(
-        path: '/pos/receipt',
-        builder: (_, __) => const ReceiptScreen(),
-      ),
-      GoRoute(
-        path: '/returns',
-        builder: (_, __) => const ReturnsScreen(),
-      ),
+      GoRoute(path: '/pos', builder: (_, __) => const PosScreen()),
+      GoRoute(path: '/pos/payment', builder: (_, __) => const PaymentScreen()),
+      GoRoute(path: '/pos/receipt', builder: (_, __) => const ReceiptScreen()),
+      GoRoute(path: '/returns', builder: (_, __) => const ReturnsScreen()),
       GoRoute(
         path: '/returns/request',
         builder: (_, __) => const RefundRequestScreen(),
@@ -96,9 +84,8 @@ Widget buildTestApp({
       ),
       GoRoute(
         path: '/returns/receipt/:id',
-        builder: (_, state) => RefundReceiptScreen(
-          refundId: state.pathParameters['id'],
-        ),
+        builder: (_, state) =>
+            RefundReceiptScreen(refundId: state.pathParameters['id']),
       ),
       GoRoute(
         path: '/shifts/open',
@@ -114,9 +101,8 @@ Widget buildTestApp({
       ),
       GoRoute(
         path: '/sales/:id',
-        builder: (_, state) => _StubScreen(
-          label: 'Sale Detail ${state.pathParameters["id"]}',
-        ),
+        builder: (_, state) =>
+            _StubScreen(label: 'Sale Detail ${state.pathParameters["id"]}'),
       ),
       GoRoute(
         path: '/invoices',
@@ -208,12 +194,7 @@ class _StubScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text(
-          label,
-          key: Key('stub_$label'),
-        ),
-      ),
+      body: Center(child: Text(label, key: Key('stub_$label'))),
     );
   }
 }

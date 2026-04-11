@@ -11,13 +11,15 @@ void main() {
     // purchase_items reference products via FK
     final now = DateTime(2025, 1, 1);
     for (var i = 1; i <= 2; i++) {
-      await db.productsDao.insertProduct(ProductsTableCompanion.insert(
-        id: 'prod-$i',
-        storeId: 'store-1',
-        name: 'P$i',
-        price: 10.0,
-        createdAt: now,
-      ));
+      await db.productsDao.insertProduct(
+        ProductsTableCompanion.insert(
+          id: 'prod-$i',
+          storeId: 'store-1',
+          name: 'P$i',
+          price: 10.0,
+          createdAt: now,
+        ),
+      );
     }
   });
 
@@ -56,26 +58,26 @@ void main() {
 
     test('getAllPurchases returns all for store', () async {
       await db.purchasesDao.insertPurchase(makePurchase());
-      await db.purchasesDao.insertPurchase(makePurchase(
-        id: 'pur-2',
-        purchaseNumber: 'PO-002',
-      ));
+      await db.purchasesDao.insertPurchase(
+        makePurchase(id: 'pur-2', purchaseNumber: 'PO-002'),
+      );
 
       final purchases = await db.purchasesDao.getAllPurchases('store-1');
       expect(purchases, hasLength(2));
     });
 
     test('getPurchasesByStatus filters correctly', () async {
-      await db.purchasesDao
-          .insertPurchase(makePurchase(id: 'pur-1', status: 'draft'));
-      await db.purchasesDao.insertPurchase(makePurchase(
-        id: 'pur-2',
-        purchaseNumber: 'PO-002',
-        status: 'received',
-      ));
+      await db.purchasesDao.insertPurchase(
+        makePurchase(id: 'pur-1', status: 'draft'),
+      );
+      await db.purchasesDao.insertPurchase(
+        makePurchase(id: 'pur-2', purchaseNumber: 'PO-002', status: 'received'),
+      );
 
-      final drafts =
-          await db.purchasesDao.getPurchasesByStatus('store-1', 'draft');
+      final drafts = await db.purchasesDao.getPurchasesByStatus(
+        'store-1',
+        'draft',
+      );
       expect(drafts, hasLength(1));
       expect(drafts.first.id, 'pur-1');
     });

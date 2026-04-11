@@ -19,17 +19,20 @@ void main() {
     db = setupMockDatabase(loyaltyDao: loyaltyDao);
     setupTestGetIt(mockDb: db);
 
-    when(() => loyaltyDao.getAllLoyaltyAccounts(any()))
-        .thenAnswer((_) async => []);
-    when(() => loyaltyDao.getAvailableRewards(any()))
-        .thenAnswer((_) async => []);
-    when(() => loyaltyDao.getStats(any()))
-        .thenAnswer((_) async => const LoyaltyStats(
-              totalEarned: 0,
-              totalRedeemed: 0,
-              activeCustomers: 0,
-              totalTransactions: 0,
-            ));
+    when(
+      () => loyaltyDao.getAllLoyaltyAccounts(any()),
+    ).thenAnswer((_) async => []);
+    when(
+      () => loyaltyDao.getAvailableRewards(any()),
+    ).thenAnswer((_) async => []);
+    when(() => loyaltyDao.getStats(any())).thenAnswer(
+      (_) async => const LoyaltyStats(
+        totalEarned: 0,
+        totalRedeemed: 0,
+        activeCustomers: 0,
+        totalTransactions: 0,
+      ),
+    );
   });
 
   tearDown(() => tearDownTestGetIt());

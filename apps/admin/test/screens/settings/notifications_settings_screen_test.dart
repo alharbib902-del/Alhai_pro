@@ -24,8 +24,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const NotificationsSettingsScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const NotificationsSettingsScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(NotificationsSettingsScreen), findsOneWidget);
@@ -39,8 +40,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const NotificationsSettingsScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const NotificationsSettingsScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.notifications_active_rounded), findsWidgets);
@@ -49,14 +51,16 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('shows switch list tiles for notification channels',
-        (tester) async {
+    testWidgets('shows switch list tiles for notification channels', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const NotificationsSettingsScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const NotificationsSettingsScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(SwitchListTile), findsWidgets);
@@ -70,8 +74,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const NotificationsSettingsScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const NotificationsSettingsScreen()),
+      );
       await tester.pumpAndSettle();
 
       // Email notifications switch tile has email_rounded icon

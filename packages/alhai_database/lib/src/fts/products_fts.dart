@@ -78,7 +78,8 @@ class ProductsFtsService {
 
     // تحسين الفهرس
     await _db.customStatement(
-        "INSERT INTO products_fts(products_fts) VALUES('optimize')");
+      "INSERT INTO products_fts(products_fts) VALUES('optimize')",
+    );
   }
 
   /// البحث السريع باستخدام FTS5
@@ -102,8 +103,9 @@ class ProductsFtsService {
     // تنظيف الاستعلام وإضافة * للبحث الجزئي
     final cleanQuery = _prepareQuery(query);
 
-    final results = await _db.customSelect(
-      '''
+    final results = await _db
+        .customSelect(
+          '''
       SELECT
         p.*,
         bm25(products_fts) as rank
@@ -115,14 +117,15 @@ class ProductsFtsService {
       ORDER BY rank
       LIMIT ? OFFSET ?
       ''',
-      variables: [
-        Variable.withString(cleanQuery),
-        Variable.withString(storeId),
-        Variable.withInt(limit),
-        Variable.withInt(offset),
-      ],
-      readsFrom: {},
-    ).get();
+          variables: [
+            Variable.withString(cleanQuery),
+            Variable.withString(storeId),
+            Variable.withInt(limit),
+            Variable.withInt(offset),
+          ],
+          readsFrom: {},
+        )
+        .get();
 
     return results.map((row) => FtsSearchResult.fromRow(row)).toList();
   }
@@ -141,8 +144,9 @@ class ProductsFtsService {
     final cleanQuery = _prepareQuery(query);
 
     // عدد النتائج
-    final countResult = await _db.customSelect(
-      '''
+    final countResult = await _db
+        .customSelect(
+          '''
       SELECT COUNT(*) as count
       FROM products_fts fts
       INNER JOIN products p ON fts.id = p.id
@@ -150,12 +154,13 @@ class ProductsFtsService {
         AND fts.store_id = ?
         AND p.is_active = 1
       ''',
-      variables: [
-        Variable.withString(cleanQuery),
-        Variable.withString(storeId),
-      ],
-      readsFrom: {},
-    ).getSingle();
+          variables: [
+            Variable.withString(cleanQuery),
+            Variable.withString(storeId),
+          ],
+          readsFrom: {},
+        )
+        .getSingle();
 
     final totalCount = countResult.read<int>('count');
 
@@ -167,18 +172,20 @@ class ProductsFtsService {
 
   /// بحث سريع بالباركود (exact match)
   Future<String?> findIdByBarcode(String barcode, String storeId) async {
-    final result = await _db.customSelect(
-      '''
+    final result = await _db
+        .customSelect(
+          '''
       SELECT id FROM products
       WHERE barcode = ? AND store_id = ? AND is_active = 1
       LIMIT 1
       ''',
-      variables: [
-        Variable.withString(barcode),
-        Variable.withString(storeId),
-      ],
-      readsFrom: {},
-    ).getSingleOrNull();
+          variables: [
+            Variable.withString(barcode),
+            Variable.withString(storeId),
+          ],
+          readsFrom: {},
+        )
+        .getSingleOrNull();
 
     return result?.read<String>('id');
   }
@@ -193,8 +200,9 @@ class ProductsFtsService {
 
     final cleanQuery = _prepareQuery(query);
 
-    final results = await _db.customSelect(
-      '''
+    final results = await _db
+        .customSelect(
+          '''
       SELECT DISTINCT name
       FROM products_fts fts
       INNER JOIN products p ON fts.id = p.id
@@ -204,13 +212,14 @@ class ProductsFtsService {
       ORDER BY bm25(products_fts)
       LIMIT ?
       ''',
-      variables: [
-        Variable.withString(cleanQuery),
-        Variable.withString(storeId),
-        Variable.withInt(limit),
-      ],
-      readsFrom: {},
-    ).get();
+          variables: [
+            Variable.withString(cleanQuery),
+            Variable.withString(storeId),
+            Variable.withInt(limit),
+          ],
+          readsFrom: {},
+        )
+        .get();
 
     return results.map((row) => row.read<String>('name')).toList();
   }
@@ -220,8 +229,10 @@ class ProductsFtsService {
     // تنظيف الاستعلام
     var cleaned = query
         .trim()
-        .replaceAll(RegExp(r'[^\w\u0600-\u06FF\s]'),
-            ' ') // إزالة الأحرف الخاصة مع الحفاظ على العربية
+        .replaceAll(
+          RegExp(r'[^\w\u0600-\u06FF\s]'),
+          ' ',
+        ) // إزالة الأحرف الخاصة مع الحفاظ على العربية
         .replaceAll(RegExp(r'\s+'), ' '); // تقليل المسافات
 
     // إضافة * لكل كلمة للبحث الجزئي
@@ -235,10 +246,12 @@ class ProductsFtsService {
     if (_ftsTableExistsCache != null) return _ftsTableExistsCache!;
 
     try {
-      final result = await _db.customSelect(
-        "SELECT 1 FROM sqlite_master WHERE type='table' AND name='products_fts'",
-        readsFrom: {},
-      ).getSingleOrNull();
+      final result = await _db
+          .customSelect(
+            "SELECT 1 FROM sqlite_master WHERE type='table' AND name='products_fts'",
+            readsFrom: {},
+          )
+          .getSingleOrNull();
       _ftsTableExistsCache = result != null;
       return _ftsTableExistsCache!;
     } catch (_) {
@@ -298,10 +311,7 @@ class FtsSearchResponse {
   final List<FtsSearchResult> results;
   final int totalCount;
 
-  FtsSearchResponse({
-    required this.results,
-    required this.totalCount,
-  });
+  FtsSearchResponse({required this.results, required this.totalCount});
 
   bool get hasMore => results.length < totalCount;
   int get currentCount => results.length;

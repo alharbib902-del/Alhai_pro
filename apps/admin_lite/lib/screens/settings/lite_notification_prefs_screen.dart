@@ -37,10 +37,7 @@ class _LiteNotificationPrefsScreenState
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.notificationSettings),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(l10n.notificationSettings), centerTitle: true),
       body: ListView(
         padding: EdgeInsets.symmetric(
           horizontal: isMobile ? AlhaiSpacing.md : AlhaiSpacing.xl,
@@ -49,7 +46,10 @@ class _LiteNotificationPrefsScreenState
         children: [
           // Master toggle
           _buildSectionHeader(
-              l10n.notifications, Icons.notifications_outlined, isDark),
+            l10n.notifications,
+            Icons.notifications_outlined,
+            isDark,
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           _buildCard(isDark, [
             _buildToggle(
@@ -84,8 +84,9 @@ class _LiteNotificationPrefsScreenState
               title: l10n.orders,
               subtitle: 'New orders and status changes',
               value: _orderAlerts,
-              onChanged:
-                  _pushEnabled ? (v) => setState(() => _orderAlerts = v) : null,
+              onChanged: _pushEnabled
+                  ? (v) => setState(() => _orderAlerts = v)
+                  : null,
               isDark: isDark,
             ),
             _divider(isDark),
@@ -127,8 +128,9 @@ class _LiteNotificationPrefsScreenState
               title: l10n.sync,
               subtitle: 'Sync errors and completions',
               value: _syncAlerts,
-              onChanged:
-                  _pushEnabled ? (v) => setState(() => _syncAlerts = v) : null,
+              onChanged: _pushEnabled
+                  ? (v) => setState(() => _syncAlerts = v)
+                  : null,
               isDark: isDark,
             ),
           ]),
@@ -199,21 +201,26 @@ class _LiteNotificationPrefsScreenState
   }) {
     final isDisabled = onChanged == null;
     return Padding(
-      padding:
-          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AlhaiSpacing.md,
+        vertical: 10,
+      ),
       child: Row(
         children: [
           Container(
             width: 36,
             height: 36,
             decoration: BoxDecoration(
-              color: AlhaiColors.primary
-                  .withValues(alpha: isDisabled ? 0.05 : 0.1),
+              color: AlhaiColors.primary.withValues(
+                alpha: isDisabled ? 0.05 : 0.1,
+              ),
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon,
-                size: 18,
-                color: isDisabled ? Colors.grey : AlhaiColors.primary),
+            child: Icon(
+              icon,
+              size: 18,
+              color: isDisabled ? Colors.grey : AlhaiColors.primary,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
@@ -238,8 +245,8 @@ class _LiteNotificationPrefsScreenState
                       color: isDisabled
                           ? (isDark ? Colors.white12 : Colors.black12)
                           : (isDark
-                              ? Colors.white38
-                              : Theme.of(context).colorScheme.outline),
+                                ? Colors.white38
+                                : Theme.of(context).colorScheme.outline),
                     ),
                   ),
               ],

@@ -116,11 +116,23 @@ void main() {
     test('sale with no prior returns: all items available', () {
       final saleItems = [
         const SaleItem(
-            productId: 'p1', productName: 'Milk', qty: 3, unitPrice: 12),
+          productId: 'p1',
+          productName: 'Milk',
+          qty: 3,
+          unitPrice: 12,
+        ),
         const SaleItem(
-            productId: 'p2', productName: 'Bread', qty: 2, unitPrice: 5),
+          productId: 'p2',
+          productName: 'Bread',
+          qty: 2,
+          unitPrice: 5,
+        ),
         const SaleItem(
-            productId: 'p3', productName: 'Cheese', qty: 1, unitPrice: 18.5),
+          productId: 'p3',
+          productName: 'Cheese',
+          qty: 1,
+          unitPrice: 18.5,
+        ),
       ];
 
       final available = calculateAvailableForRefund(
@@ -136,9 +148,17 @@ void main() {
     test('sale with full prior return: all items have 0 available', () {
       final saleItems = [
         const SaleItem(
-            productId: 'p1', productName: 'Milk', qty: 2, unitPrice: 12),
+          productId: 'p1',
+          productName: 'Milk',
+          qty: 2,
+          unitPrice: 12,
+        ),
         const SaleItem(
-            productId: 'p2', productName: 'Bread', qty: 1, unitPrice: 5),
+          productId: 'p2',
+          productName: 'Bread',
+          qty: 1,
+          unitPrice: 5,
+        ),
       ];
 
       final priorReturns = [
@@ -163,9 +183,17 @@ void main() {
     test('sale with partial return: only remaining quantities available', () {
       final saleItems = [
         const SaleItem(
-            productId: 'p1', productName: 'Milk', qty: 5, unitPrice: 12),
+          productId: 'p1',
+          productName: 'Milk',
+          qty: 5,
+          unitPrice: 12,
+        ),
         const SaleItem(
-            productId: 'p2', productName: 'Bread', qty: 3, unitPrice: 5),
+          productId: 'p2',
+          productName: 'Bread',
+          qty: 3,
+          unitPrice: 5,
+        ),
       ];
 
       final priorReturns = [
@@ -190,7 +218,11 @@ void main() {
     test('multiple partial returns accumulate correctly', () {
       final saleItems = [
         const SaleItem(
-            productId: 'p1', productName: 'Milk', qty: 10, unitPrice: 12),
+          productId: 'p1',
+          productName: 'Milk',
+          qty: 10,
+          unitPrice: 12,
+        ),
       ];
 
       final priorReturns = [
@@ -216,7 +248,11 @@ void main() {
     test('rejected returns are not counted against available qty', () {
       final saleItems = [
         const SaleItem(
-            productId: 'p1', productName: 'Milk', qty: 5, unitPrice: 12),
+          productId: 'p1',
+          productName: 'Milk',
+          qty: 5,
+          unitPrice: 12,
+        ),
       ];
 
       final priorReturns = [
@@ -237,7 +273,11 @@ void main() {
     test('returned quantity clamped to 0 (never negative)', () {
       final saleItems = [
         const SaleItem(
-            productId: 'p1', productName: 'Milk', qty: 2, unitPrice: 12),
+          productId: 'p1',
+          productName: 'Milk',
+          qty: 2,
+          unitPrice: 12,
+        ),
       ];
 
       // Hypothetical data inconsistency: returned more than sold
@@ -360,9 +400,17 @@ void main() {
     test('new sale -> check eligibility -> partial return -> check again', () {
       final saleItems = [
         const SaleItem(
-            productId: 'p1', productName: 'Milk 1L', qty: 3, unitPrice: 12),
+          productId: 'p1',
+          productName: 'Milk 1L',
+          qty: 3,
+          unitPrice: 12,
+        ),
         const SaleItem(
-            productId: 'p2', productName: 'Cheese', qty: 2, unitPrice: 18.5),
+          productId: 'p2',
+          productName: 'Cheese',
+          qty: 2,
+          unitPrice: 18.5,
+        ),
       ];
 
       // Step 1: Fresh sale, all available
@@ -372,8 +420,10 @@ void main() {
       );
       expect(available['p1'], 3.0);
       expect(available['p2'], 2.0);
-      expect(isRefundBlocked(saleStatus: 'completed', availableQty: available),
-          isFalse);
+      expect(
+        isRefundBlocked(saleStatus: 'completed', availableQty: available),
+        isFalse,
+      );
 
       // Step 2: Partial return of 1 Milk
       final afterFirstReturn = [
@@ -388,8 +438,10 @@ void main() {
       );
       expect(available['p1'], 2.0);
       expect(available['p2'], 2.0);
-      expect(isRefundBlocked(saleStatus: 'completed', availableQty: available),
-          isFalse);
+      expect(
+        isRefundBlocked(saleStatus: 'completed', availableQty: available),
+        isFalse,
+      );
 
       // Step 3: Return remaining items
       final afterFullReturn = [
@@ -408,8 +460,10 @@ void main() {
       );
       expect(available['p1'], 0.0);
       expect(available['p2'], 0.0);
-      expect(isRefundBlocked(saleStatus: 'completed', availableQty: available),
-          isTrue);
+      expect(
+        isRefundBlocked(saleStatus: 'completed', availableQty: available),
+        isTrue,
+      );
     });
 
     test('refund amount for partial return includes VAT', () {

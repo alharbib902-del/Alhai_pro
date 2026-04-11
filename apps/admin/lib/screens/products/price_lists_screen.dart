@@ -26,25 +26,29 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
     final l10n = AppLocalizations.of(context);
     return [
       _PriceList(
-          id: 'retail',
-          name: l10n.retailPrice,
-          description: l10n.retailPriceDesc,
-          color: Colors.blue),
+        id: 'retail',
+        name: l10n.retailPrice,
+        description: l10n.retailPriceDesc,
+        color: Colors.blue,
+      ),
       _PriceList(
-          id: 'wholesale',
-          name: l10n.wholesalePrice,
-          description: l10n.wholesalePriceDesc,
-          color: Colors.orange),
+        id: 'wholesale',
+        name: l10n.wholesalePrice,
+        description: l10n.wholesalePriceDesc,
+        color: Colors.orange,
+      ),
       _PriceList(
-          id: 'vip',
-          name: l10n.vipPrice,
-          description: l10n.vipPriceDesc,
-          color: Colors.purple),
+        id: 'vip',
+        name: l10n.vipPrice,
+        description: l10n.vipPriceDesc,
+        color: Colors.purple,
+      ),
       _PriceList(
-          id: 'cost',
-          name: l10n.costPriceList,
-          description: l10n.costPriceDesc,
-          color: Colors.red),
+        id: 'cost',
+        name: l10n.costPriceList,
+        description: l10n.costPriceDesc,
+        color: Colors.red,
+      ),
     ];
   }
 
@@ -90,8 +94,9 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
           priceColumn = 'price';
       }
 
-      final result = await db.customSelect(
-        '''SELECT
+      final result = await db
+          .customSelect(
+            '''SELECT
              id,
              name,
              price,
@@ -103,20 +108,23 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
              AND is_active = 1
            ORDER BY name
            LIMIT 50''',
-        variables: [Variable.withString(storeId)],
-      ).get();
+            variables: [Variable.withString(storeId)],
+          )
+          .get();
 
       if (mounted) {
         setState(() {
           _entries = result
-              .map((row) => _PriceEntry(
-                    id: row.data['id'] as String,
-                    name: row.data['name'] as String,
-                    basePrice: _toDouble(row.data['price']),
-                    listPrice: _toDouble(row.data['list_price']),
-                    costPrice: _toDouble(row.data['cost_price']),
-                    stock: _toDouble(row.data['current_stock']),
-                  ))
+              .map(
+                (row) => _PriceEntry(
+                  id: row.data['id'] as String,
+                  name: row.data['name'] as String,
+                  basePrice: _toDouble(row.data['price']),
+                  listPrice: _toDouble(row.data['list_price']),
+                  costPrice: _toDouble(row.data['cost_price']),
+                  stock: _toDouble(row.data['current_stock']),
+                ),
+              )
               .toList();
           _isLoadingEntries = false;
         });
@@ -137,8 +145,9 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
   }
 
   void _showEditPriceDialog(_PriceEntry entry) {
-    final controller =
-        TextEditingController(text: entry.listPrice.toStringAsFixed(2));
+    final controller = TextEditingController(
+      text: entry.listPrice.toStringAsFixed(2),
+    );
     showDialog(
       context: context,
       builder: (ctx) {
@@ -149,18 +158,27 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.basePriceLabel(entry.basePrice.toStringAsFixed(2)),
-                  style: TextStyle(
-                      color: Theme.of(context).hintColor, fontSize: 12)),
-              Text(l10n.costPriceLabel(entry.costPrice.toStringAsFixed(2)),
-                  style: TextStyle(
-                      color: Theme.of(context).hintColor, fontSize: 12)),
+              Text(
+                l10n.basePriceLabel(entry.basePrice.toStringAsFixed(2)),
+                style: TextStyle(
+                  color: Theme.of(context).hintColor,
+                  fontSize: 12,
+                ),
+              ),
+              Text(
+                l10n.costPriceLabel(entry.costPrice.toStringAsFixed(2)),
+                style: TextStyle(
+                  color: Theme.of(context).hintColor,
+                  fontSize: 12,
+                ),
+              ),
               const SizedBox(height: AlhaiSpacing.sm),
               TextField(
                 controller: controller,
                 decoration: InputDecoration(
-                  labelText:
-                      l10n.newPriceLabel(_priceLists[_selectedList].name),
+                  labelText: l10n.newPriceLabel(
+                    _priceLists[_selectedList].name,
+                  ),
                   border: const OutlineInputBorder(),
                   suffixText: l10n.sarSuffix,
                 ),
@@ -170,7 +188,9 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
           ),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l10n.cancel),
+            ),
             FilledButton(
               onPressed: () {
                 final newPrice = double.tryParse(controller.text);
@@ -178,8 +198,12 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
                   Navigator.pop(ctx);
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content: Text(l10n.priceUpdated(
-                          entry.name, newPrice.toStringAsFixed(2))),
+                      content: Text(
+                        l10n.priceUpdated(
+                          entry.name,
+                          newPrice.toStringAsFixed(2),
+                        ),
+                      ),
                       backgroundColor: AppColors.success,
                     ),
                   );
@@ -214,16 +238,20 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
             Builder(
               builder: (context) {
                 final screenWidth = MediaQuery.of(context).size.width;
-                final cardWidth =
-                    screenWidth >= AlhaiBreakpoints.tablet ? 150.0 : 130.0;
-                final selectorHeight =
-                    screenWidth >= AlhaiBreakpoints.tablet ? 100.0 : 85.0;
+                final cardWidth = screenWidth >= AlhaiBreakpoints.tablet
+                    ? 150.0
+                    : 130.0;
+                final selectorHeight = screenWidth >= AlhaiBreakpoints.tablet
+                    ? 100.0
+                    : 85.0;
                 return SizedBox(
                   height: selectorHeight,
                   child: ListView.separated(
                     scrollDirection: Axis.horizontal,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+                      horizontal: AlhaiSpacing.sm,
+                      vertical: AlhaiSpacing.xs,
+                    ),
                     itemCount: _priceLists.length,
                     separatorBuilder: (_, __) =>
                         const SizedBox(width: AlhaiSpacing.xs),
@@ -285,15 +313,18 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
             // Active list header
             Padding(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                horizontal: AlhaiSpacing.md,
+                vertical: AlhaiSpacing.xs,
+              ),
               child: Row(
                 children: [
                   Icon(
-                      _priceLists[_selectedList].color == Colors.blue
-                          ? Icons.storefront_rounded
-                          : Icons.business_rounded,
-                      color: _priceLists[_selectedList].color,
-                      size: 18),
+                    _priceLists[_selectedList].color == Colors.blue
+                        ? Icons.storefront_rounded
+                        : Icons.business_rounded,
+                    color: _priceLists[_selectedList].color,
+                    size: 18,
+                  ),
                   const SizedBox(width: AlhaiSpacing.xs),
                   Text(
                     '${_priceLists[_selectedList].name} (${l10n.productCount(_entries.length)})',
@@ -308,72 +339,74 @@ class _PriceListsScreenState extends ConsumerState<PriceListsScreen> {
               child: _isLoadingEntries
                   ? const Center(child: CircularProgressIndicator())
                   : _entries.isEmpty
-                      ? AppEmptyState.noProducts(context)
-                      : ListView.separated(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: AlhaiSpacing.sm),
-                          itemCount: _entries.length,
-                          separatorBuilder: (_, __) =>
-                              const Divider(height: 1, thickness: 0),
-                          itemBuilder: (ctx, i) {
-                            final entry = _entries[i];
-                            final diff = entry.listPrice - entry.basePrice;
-                            final diffPct = entry.basePrice > 0
-                                ? (diff / entry.basePrice) * 100
-                                : 0.0;
-                            final listColor = _priceLists[_selectedList].color;
-                            return ListTile(
-                              dense: true,
-                              title: Text(entry.name,
-                                  style: const TextStyle(fontSize: 13)),
-                              subtitle: Text(
-                                l10n.baseLabel(
-                                    entry.basePrice.toStringAsFixed(2)),
-                                style: TextStyle(
-                                    fontSize: 11,
-                                    color: Theme.of(context).hintColor),
-                              ),
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
+                  ? AppEmptyState.noProducts(context)
+                  : ListView.separated(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AlhaiSpacing.sm,
+                      ),
+                      itemCount: _entries.length,
+                      separatorBuilder: (_, __) =>
+                          const Divider(height: 1, thickness: 0),
+                      itemBuilder: (ctx, i) {
+                        final entry = _entries[i];
+                        final diff = entry.listPrice - entry.basePrice;
+                        final diffPct = entry.basePrice > 0
+                            ? (diff / entry.basePrice) * 100
+                            : 0.0;
+                        final listColor = _priceLists[_selectedList].color;
+                        return ListTile(
+                          dense: true,
+                          title: Text(
+                            entry.name,
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                          subtitle: Text(
+                            l10n.baseLabel(entry.basePrice.toStringAsFixed(2)),
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: Theme.of(context).hintColor,
+                            ),
+                          ),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                crossAxisAlignment: CrossAxisAlignment.end,
                                 children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
-                                    children: [
-                                      Text(
-                                        l10n.amountSar(
-                                            entry.listPrice.toStringAsFixed(2)),
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: listColor,
-                                          fontSize: 13,
-                                        ),
+                                  Text(
+                                    l10n.amountSar(
+                                      entry.listPrice.toStringAsFixed(2),
+                                    ),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: listColor,
+                                      fontSize: 13,
+                                    ),
+                                  ),
+                                  if (diff.abs() > 0.01)
+                                    Text(
+                                      '${diffPct >= 0 ? '+' : ''}${diffPct.toStringAsFixed(0)}%',
+                                      style: TextStyle(
+                                        fontSize: 10,
+                                        color: diffPct < 0
+                                            ? Colors.red
+                                            : Colors.green,
                                       ),
-                                      if (diff.abs() > 0.01)
-                                        Text(
-                                          '${diffPct >= 0 ? '+' : ''}${diffPct.toStringAsFixed(0)}%',
-                                          style: TextStyle(
-                                            fontSize: 10,
-                                            color: diffPct < 0
-                                                ? Colors.red
-                                                : Colors.green,
-                                          ),
-                                        ),
-                                    ],
-                                  ),
-                                  const SizedBox(width: AlhaiSpacing.xxs),
-                                  IconButton(
-                                    icon: const Icon(Icons.edit_rounded,
-                                        size: 18),
-                                    onPressed: () =>
-                                        _showEditPriceDialog(entry),
-                                    color: Theme.of(context).hintColor,
-                                  ),
+                                    ),
                                 ],
                               ),
-                            );
-                          },
-                        ),
+                              const SizedBox(width: AlhaiSpacing.xxs),
+                              IconButton(
+                                icon: const Icon(Icons.edit_rounded, size: 18),
+                                onPressed: () => _showEditPriceDialog(entry),
+                                color: Theme.of(context).hintColor,
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    ),
             ),
           ],
         ),

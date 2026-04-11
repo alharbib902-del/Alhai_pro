@@ -61,10 +61,7 @@ void main() {
 
     test('uses defaults for missing/null fields', () {
       // Arrange
-      final json = <String, dynamic>{
-        'id': null,
-        'name': null,
-      };
+      final json = <String, dynamic>{'id': null, 'name': null};
 
       // Act
       final store = SAStore.fromJson(json);
@@ -157,11 +154,7 @@ void main() {
       const store = SAStore(
         id: 's1',
         name: 'S1',
-        subscriptions: [
-          SAStoreSubscription(
-            plan: SAStorePlan(name: 'Gold'),
-          ),
-        ],
+        subscriptions: [SAStoreSubscription(plan: SAStorePlan(name: 'Gold'))],
       );
       expect(store.planName, equals('Gold'));
     });
@@ -180,9 +173,7 @@ void main() {
       const store = SAStore(
         id: 's4',
         name: 'S4',
-        subscriptions: [
-          SAStoreSubscription(status: 'active'),
-        ],
+        subscriptions: [SAStoreSubscription(status: 'active')],
       );
       expect(store.subscriptionStatus, equals('active'));
     });

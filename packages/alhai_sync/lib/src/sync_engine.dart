@@ -150,13 +150,13 @@ class SyncEngine {
     required ConnectivityService connectivity,
     required SyncStatusTracker statusTracker,
     required SyncQueueDao syncQueueDao,
-  })  : _pullStrategy = pullStrategy,
-        _pushStrategy = pushStrategy,
-        _bidirectionalStrategy = bidirectionalStrategy,
-        _stockDeltaSync = stockDeltaSync,
-        _connectivity = connectivity,
-        _statusTracker = statusTracker,
-        _syncQueueDao = syncQueueDao;
+  }) : _pullStrategy = pullStrategy,
+       _pushStrategy = pushStrategy,
+       _bidirectionalStrategy = bidirectionalStrategy,
+       _stockDeltaSync = stockDeltaSync,
+       _connectivity = connectivity,
+       _statusTracker = statusTracker,
+       _syncQueueDao = syncQueueDao;
 
   /// تهيئة المحرك
   Future<void> initialize({
@@ -169,8 +169,9 @@ class SyncEngine {
     _deviceId = deviceId;
 
     // الاستماع لتغييرات الاتصال
-    _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen((isOnline) {
+    _connectivitySubscription = _connectivity.onConnectivityChanged.listen((
+      isOnline,
+    ) {
       if (isOnline) {
         // عند استعادة الاتصال: مزامنة فورية
         syncNow();
@@ -249,10 +250,7 @@ class SyncEngine {
     }
 
     if (_connectivity.isOffline) {
-      return SyncEngineResult(
-        success: false,
-        errors: ['Device is offline'],
-      );
+      return SyncEngineResult(success: false, errors: ['Device is offline']);
     }
 
     if (_orgId == null || _storeId == null || _deviceId == null) {
@@ -278,17 +276,20 @@ class SyncEngine {
     }
 
     // حساب إجمالي الجداول
-    final totalTables = PullStrategy.pullTables.length +
+    final totalTables =
+        PullStrategy.pullTables.length +
         1 + // push (1 عملية)
         BidirectionalStrategy.tableConfigs.length +
         1; // stock delta
 
-    _updateProgress(SyncProgress(
-      state: SyncEngineState.syncing,
-      phase: SyncPhase.pulling,
-      totalTables: totalTables,
-      completedTables: 0,
-    ));
+    _updateProgress(
+      SyncProgress(
+        state: SyncEngineState.syncing,
+        phase: SyncPhase.pulling,
+        totalTables: totalTables,
+        completedTables: 0,
+      ),
+    );
 
     try {
       int completed = 0;
@@ -301,10 +302,12 @@ class SyncEngine {
       );
       for (final result in pullResults) {
         completed++;
-        _updateProgress(_currentProgress.copyWith(
-          completedTables: completed,
-          currentTable: result.tableName,
-        ));
+        _updateProgress(
+          _currentProgress.copyWith(
+            completedTables: completed,
+            currentTable: result.tableName,
+          ),
+        );
         if (result.hasErrors) allErrors.addAll(result.errors);
       }
 
@@ -317,17 +320,20 @@ class SyncEngine {
 
       // المرحلة 3: ثنائي الاتجاه (Bidirectional)
       _updateProgress(
-          _currentProgress.copyWith(phase: SyncPhase.bidirectional));
+        _currentProgress.copyWith(phase: SyncPhase.bidirectional),
+      );
       final biResults = await _bidirectionalStrategy.syncAll(
         orgId: _orgId!,
         storeId: _storeId!,
       );
       for (final result in biResults) {
         completed++;
-        _updateProgress(_currentProgress.copyWith(
-          completedTables: completed,
-          currentTable: result.tableName,
-        ));
+        _updateProgress(
+          _currentProgress.copyWith(
+            completedTables: completed,
+            currentTable: result.tableName,
+          ),
+        );
         if (result.hasErrors) allErrors.addAll(result.errors);
       }
 
@@ -344,17 +350,20 @@ class SyncEngine {
 
       // تحديث حالة المزامنة
       final now = DateTime.now().toUtc();
-      final finalState =
-          allErrors.isEmpty ? SyncEngineState.completed : SyncEngineState.error;
+      final finalState = allErrors.isEmpty
+          ? SyncEngineState.completed
+          : SyncEngineState.error;
 
-      _updateProgress(SyncProgress(
-        state: finalState,
-        phase: SyncPhase.none,
-        totalTables: totalTables,
-        completedTables: totalTables,
-        errors: allErrors,
-        lastSyncAt: now,
-      ));
+      _updateProgress(
+        SyncProgress(
+          state: finalState,
+          phase: SyncPhase.none,
+          totalTables: totalTables,
+          completedTables: totalTables,
+          errors: allErrors,
+          lastSyncAt: now,
+        ),
+      );
 
       // تحديث متتبع الحالة
       await _statusTracker.refreshAll();
@@ -362,9 +371,9 @@ class SyncEngine {
       // إعادة تعيين الحالة لـ idle بعد ثانيتين
       Future.delayed(const Duration(seconds: 2), () {
         if (!_progressController.isClosed) {
-          _updateProgress(_currentProgress.copyWith(
-            state: SyncEngineState.idle,
-          ));
+          _updateProgress(
+            _currentProgress.copyWith(state: SyncEngineState.idle),
+          );
         }
       });
 
@@ -385,11 +394,13 @@ class SyncEngine {
       );
     } catch (e) {
       allErrors.add('SyncEngine: $e');
-      _updateProgress(SyncProgress(
-        state: SyncEngineState.error,
-        phase: SyncPhase.none,
-        errors: allErrors,
-      ));
+      _updateProgress(
+        SyncProgress(
+          state: SyncEngineState.error,
+          phase: SyncPhase.none,
+          errors: allErrors,
+        ),
+      );
 
       _incrementBackoff();
 
@@ -419,8 +430,10 @@ class SyncEngine {
     });
 
     if (kDebugMode && _consecutiveFailures > 0) {
-      debugPrint('SyncEngine: backoff interval = ${interval.inSeconds}s '
-          '(failures: $_consecutiveFailures)');
+      debugPrint(
+        'SyncEngine: backoff interval = ${interval.inSeconds}s '
+        '(failures: $_consecutiveFailures)',
+      );
     }
   }
 
@@ -482,8 +495,10 @@ class SyncEngineResult {
       total += pushResult!.successCount;
     }
     if (bidirectionalResults != null) {
-      total +=
-          bidirectionalResults!.fold(0, (sum, r) => sum + r.pushed + r.pulled);
+      total += bidirectionalResults!.fold(
+        0,
+        (sum, r) => sum + r.pushed + r.pulled,
+      );
     }
     if (stockDeltaResult != null) {
       total += stockDeltaResult!.deltasSent;
@@ -551,8 +566,9 @@ class SyncHealthReport {
     if (isWarning) {
       return 'Warning: $consecutiveFailures failures, $pendingItemCount pending';
     }
-    final dlSuffix =
-        deadLetterCount > 0 ? ', $deadLetterCount dead letter' : '';
+    final dlSuffix = deadLetterCount > 0
+        ? ', $deadLetterCount dead letter'
+        : '';
     return 'Healthy: $pendingItemCount pending items$dlSuffix';
   }
 

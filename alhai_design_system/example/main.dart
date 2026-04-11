@@ -20,8 +20,9 @@ class _AlhaiDesignShowcaseState extends State<AlhaiDesignShowcase> {
 
   void _toggleTheme() {
     setState(() {
-      _themeMode =
-          _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+      _themeMode = _themeMode == ThemeMode.light
+          ? ThemeMode.dark
+          : ThemeMode.light;
     });
   }
 
@@ -111,8 +112,8 @@ class _ShowcasePageState extends State<ShowcasePage> {
           final columns = AlhaiBreakpoints.isDesktop(width)
               ? 3
               : AlhaiBreakpoints.isTablet(width)
-                  ? 2
-                  : 1;
+              ? 2
+              : 1;
           return _buildContent(context, columns: columns);
         },
       ),
@@ -150,13 +151,13 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   value: context.isMobile
                       ? 'موبايل'
                       : context.isTablet
-                          ? 'تابلت'
-                          : 'سطح المكتب',
+                      ? 'تابلت'
+                      : 'سطح المكتب',
                   icon: context.isMobile
                       ? Icons.phone_android
                       : context.isTablet
-                          ? Icons.tablet
-                          : Icons.laptop,
+                      ? Icons.tablet
+                      : Icons.laptop,
                 ),
               ],
             ),
@@ -181,10 +182,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
                   label: 'زر ثانوي',
                   onPressed: () => AlhaiSnackbar.info(context, 'زر ثانوي'),
                 ),
-                AlhaiButton.text(
-                  label: 'زر نصي',
-                  onPressed: () {},
-                ),
+                AlhaiButton.text(label: 'زر نصي', onPressed: () {}),
                 AlhaiButton.filled(
                   label: 'تحميل...',
                   isLoading: _isLoading,
@@ -194,10 +192,7 @@ class _ShowcasePageState extends State<ShowcasePage> {
                     setState(() => _isLoading = false);
                   },
                 ),
-                AlhaiButton.filled(
-                  label: 'معطل',
-                  onPressed: null,
-                ),
+                AlhaiButton.filled(label: 'معطل', onPressed: null),
               ],
             ),
           ),
@@ -359,13 +354,17 @@ class _ShowcasePageState extends State<ShowcasePage> {
                 Expanded(
                   child: AlhaiCard(
                     child: AlhaiEmptyState.noOrders(
-                        title: 'لا توجد طلبات', compact: true),
+                      title: 'لا توجد طلبات',
+                      compact: true,
+                    ),
                   ),
                 ),
                 Expanded(
                   child: AlhaiCard(
                     child: AlhaiEmptyState.noResults(
-                        title: 'لا توجد نتائج', compact: true),
+                      title: 'لا توجد نتائج',
+                      compact: true,
+                    ),
                   ),
                 ),
               ],

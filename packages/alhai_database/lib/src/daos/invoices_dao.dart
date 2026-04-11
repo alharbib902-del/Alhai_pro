@@ -33,8 +33,10 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
     int limit = 50,
   }) {
     return (select(invoicesTable)
-          ..where((i) =>
-              i.storeId.equals(storeId) & i.invoiceType.equals(invoiceType))
+          ..where(
+            (i) =>
+                i.storeId.equals(storeId) & i.invoiceType.equals(invoiceType),
+          )
           ..orderBy([(i) => OrderingTerm.desc(i.createdAt)])
           ..limit(limit))
         .get();
@@ -55,22 +57,24 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
 
   /// جلب فاتورة بالمعرف
   Future<InvoicesTableData?> getById(String id) {
-    return (select(invoicesTable)..where((i) => i.id.equals(id)))
-        .getSingleOrNull();
+    return (select(
+      invoicesTable,
+    )..where((i) => i.id.equals(id))).getSingleOrNull();
   }
 
   /// جلب فاتورة بالرقم
   Future<InvoicesTableData?> getByNumber(String storeId, String number) {
-    return (select(invoicesTable)
-          ..where((i) =>
-              i.storeId.equals(storeId) & i.invoiceNumber.equals(number)))
+    return (select(invoicesTable)..where(
+          (i) => i.storeId.equals(storeId) & i.invoiceNumber.equals(number),
+        ))
         .getSingleOrNull();
   }
 
   /// جلب فاتورة مرتبطة بعملية بيع
   Future<InvoicesTableData?> getBySaleId(String saleId) {
-    return (select(invoicesTable)..where((i) => i.saleId.equals(saleId)))
-        .getSingleOrNull();
+    return (select(
+      invoicesTable,
+    )..where((i) => i.saleId.equals(saleId))).getSingleOrNull();
   }
 
   /// جلب فواتير عميل معين
@@ -80,8 +84,9 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
     int limit = 50,
   }) {
     return (select(invoicesTable)
-          ..where((i) =>
-              i.storeId.equals(storeId) & i.customerId.equals(customerId))
+          ..where(
+            (i) => i.storeId.equals(storeId) & i.customerId.equals(customerId),
+          )
           ..orderBy([(i) => OrderingTerm.desc(i.createdAt)])
           ..limit(limit))
         .get();
@@ -90,10 +95,12 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
   /// جلب الفواتير غير المدفوعة (المستحقة)
   Future<List<InvoicesTableData>> getUnpaid(String storeId) {
     return (select(invoicesTable)
-          ..where((i) =>
-              i.storeId.equals(storeId) &
-              i.amountDue.isBiggerThanValue(0) &
-              i.status.isNotIn(['cancelled', 'archived']))
+          ..where(
+            (i) =>
+                i.storeId.equals(storeId) &
+                i.amountDue.isBiggerThanValue(0) &
+                i.status.isNotIn(['cancelled', 'archived']),
+          )
           ..orderBy([(i) => OrderingTerm.asc(i.dueAt)]))
         .get();
   }
@@ -102,11 +109,13 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
   Future<List<InvoicesTableData>> getOverdue(String storeId) {
     final now = DateTime.now();
     return (select(invoicesTable)
-          ..where((i) =>
-              i.storeId.equals(storeId) &
-              i.amountDue.isBiggerThanValue(0) &
-              i.dueAt.isSmallerThanValue(now) &
-              i.status.isNotIn(['cancelled', 'archived', 'paid']))
+          ..where(
+            (i) =>
+                i.storeId.equals(storeId) &
+                i.amountDue.isBiggerThanValue(0) &
+                i.dueAt.isSmallerThanValue(now) &
+                i.status.isNotIn(['cancelled', 'archived', 'paid']),
+          )
           ..orderBy([(i) => OrderingTerm.asc(i.dueAt)]))
         .get();
   }
@@ -232,9 +241,11 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
     final count = invoicesTable.id.count();
     final query = selectOnly(invoicesTable)
       ..addColumns([count])
-      ..where(invoicesTable.storeId.equals(storeId) &
-          invoicesTable.amountDue.isBiggerThanValue(0) &
-          invoicesTable.status.isNotIn(['cancelled', 'archived']));
+      ..where(
+        invoicesTable.storeId.equals(storeId) &
+            invoicesTable.amountDue.isBiggerThanValue(0) &
+            invoicesTable.status.isNotIn(['cancelled', 'archived']),
+      );
     return query.map((row) => row.read(count) ?? 0).watchSingle();
   }
 }

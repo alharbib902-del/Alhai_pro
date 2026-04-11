@@ -11,10 +11,7 @@ abstract class AnalyticsRepository {
   });
 
   /// Gets sales forecast for upcoming days
-  Future<List<SalesForecast>> getSalesForecast(
-    String storeId, {
-    int days = 7,
-  });
+  Future<List<SalesForecast>> getSalesForecast(String storeId, {int days = 7});
 
   /// Gets smart alerts for store
   Future<List<SmartAlert>> getSmartAlerts(

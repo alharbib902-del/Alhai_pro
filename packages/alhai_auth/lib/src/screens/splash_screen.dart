@@ -47,8 +47,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       MemoryMonitor.instance.startMonitoring();
 
       stopwatch.stop();
-      AppLogger.debug('Init time: ${stopwatch.elapsedMilliseconds}ms',
-          tag: 'SPLASH');
+      AppLogger.debug(
+        'Init time: ${stopwatch.elapsedMilliseconds}ms',
+        tag: 'SPLASH',
+      );
     } catch (e, stackTrace) {
       stopwatch.stop();
       AppLogger.error('Initialization error: $e', tag: 'SPLASH');
@@ -90,10 +92,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     final authState = ref.read(authStateProvider);
     final isAuthenticated = authState.status == AuthStatus.authenticated;
 
-    AppLogger.debug(
-      'Auth status: ${authState.status}',
-      tag: 'SPLASH',
-    );
+    AppLogger.debug('Auth status: ${authState.status}', tag: 'SPLASH');
 
     if (!isAuthenticated) {
       return '/login';
@@ -174,13 +173,13 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
             final logoSize = isMobile
                 ? 120.0
                 : isDesktop
-                    ? 200.0
-                    : 150.0;
+                ? 200.0
+                : 150.0;
             final logoBorderRadius = isMobile
                 ? 24.0
                 : isDesktop
-                    ? 40.0
-                    : 30.0;
+                ? 40.0
+                : 30.0;
 
             return Container(
               decoration: const BoxDecoration(
@@ -219,35 +218,34 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                     const SizedBox(height: AlhaiSpacing.lg),
                     Text(
                       l10n.pointOfSale,
-                      style:
-                          Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                color: Theme.of(context).colorScheme.surface,
-                                fontWeight: FontWeight.bold,
-                                fontSize: isMobile
-                                    ? 22
-                                    : isDesktop
-                                        ? 32
-                                        : 26,
-                                fontFamilyFallback:
-                                    AlhaiTypography.fontFamilyFallback,
-                              ),
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(
+                            color: Theme.of(context).colorScheme.surface,
+                            fontWeight: FontWeight.bold,
+                            fontSize: isMobile
+                                ? 22
+                                : isDesktop
+                                ? 32
+                                : 26,
+                            fontFamilyFallback:
+                                AlhaiTypography.fontFamilyFallback,
+                          ),
                     ),
                     const SizedBox(height: AlhaiSpacing.xs),
                     Text(
                       'Al-HAI POS',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .surface
-                                .withValues(alpha: 0.7),
-                            fontFamilyFallback:
-                                AlhaiTypography.fontFamilyFallback,
-                          ),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surface.withValues(alpha: 0.7),
+                        fontFamilyFallback: AlhaiTypography.fontFamilyFallback,
+                      ),
                     ),
                     const SizedBox(height: AlhaiSpacing.xxxl),
                     CircularProgressIndicator(
                       valueColor: AlwaysStoppedAnimation<Color>(
-                          Theme.of(context).colorScheme.surface),
+                        Theme.of(context).colorScheme.surface,
+                      ),
                     ),
                     const SizedBox(height: AlhaiSpacing.md),
                     // نص الحالة
@@ -256,10 +254,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                       style: TextStyle(
                         fontFamily: AlhaiTypography.fontFamily,
                         fontFamilyFallback: AlhaiTypography.fontFamilyFallback,
-                        color: Theme.of(context)
-                            .colorScheme
-                            .surface
-                            .withValues(alpha: 0.7),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.surface.withValues(alpha: 0.7),
                         fontSize: 14,
                       ),
                     ),

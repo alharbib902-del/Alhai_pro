@@ -17,5 +17,7 @@ class ExpensesDaoManager {
       $$ExpensesTableTableTableManager(_db.attachedDatabase, _db.expensesTable);
   $$ExpenseCategoriesTableTableTableManager get expenseCategoriesTable =>
       $$ExpenseCategoriesTableTableTableManager(
-          _db.attachedDatabase, _db.expenseCategoriesTable);
+        _db.attachedDatabase,
+        _db.expenseCategoriesTable,
+      );
 }

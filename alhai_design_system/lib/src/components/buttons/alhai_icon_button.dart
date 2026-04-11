@@ -75,8 +75,9 @@ class _AlhaiIconButtonState extends State<AlhaiIconButton>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    _controller.duration =
-        context.prefersReducedMotion ? Duration.zero : AlhaiDurations.quick;
+    _controller.duration = context.prefersReducedMotion
+        ? Duration.zero
+        : AlhaiDurations.quick;
   }
 
   @override
@@ -100,10 +101,7 @@ class _AlhaiIconButtonState extends State<AlhaiIconButton>
     Widget iconButton = AnimatedBuilder(
       animation: _scaleAnimation,
       builder: (context, child) {
-        return Transform.scale(
-          scale: _scaleAnimation.value,
-          child: child,
-        );
+        return Transform.scale(scale: _scaleAnimation.value, child: child);
       },
       child: Material(
         color: widget.backgroundColor ?? Colors.transparent,
@@ -152,10 +150,7 @@ class _AlhaiIconButtonState extends State<AlhaiIconButton>
 
     // Wrap with tooltip if provided
     if (widget.tooltip != null) {
-      return Tooltip(
-        message: widget.tooltip!,
-        child: iconButton,
-      );
+      return Tooltip(message: widget.tooltip!, child: iconButton);
     }
 
     return iconButton;
@@ -163,8 +158,9 @@ class _AlhaiIconButtonState extends State<AlhaiIconButton>
 
   Widget _buildBadge(ColorScheme colorScheme) {
     if (widget.badgeCount != null && widget.badgeCount! > 0) {
-      final displayCount =
-          widget.badgeCount! > 99 ? '99+' : widget.badgeCount.toString();
+      final displayCount = widget.badgeCount! > 99
+          ? '99+'
+          : widget.badgeCount.toString();
       return Container(
         padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
         constraints: const BoxConstraints(minWidth: 16, minHeight: 16),

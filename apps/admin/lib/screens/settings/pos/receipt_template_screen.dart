@@ -33,11 +33,12 @@ class ReceiptTemplateScreen extends ConsumerStatefulWidget {
 
 class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
   final _headerController = TextEditingController(
-      text:
-          '\u0645\u062a\u062c\u0631 \u0627\u0644\u0625\u064a\u0645\u0627\u0646');
+    text: '\u0645\u062a\u062c\u0631 \u0627\u0644\u0625\u064a\u0645\u0627\u0646',
+  );
   final _footerController = TextEditingController(
-      text:
-          '\u0634\u0643\u0631\u0627\u064b \u0644\u0632\u064a\u0627\u0631\u062a\u0643\u0645 - \u0646\u062a\u0645\u0646\u0649 \u0644\u0643\u0645 \u062a\u062c\u0631\u0628\u0629 \u0645\u0645\u062a\u0639\u0629');
+    text:
+        '\u0634\u0643\u0631\u0627\u064b \u0644\u0632\u064a\u0627\u0631\u062a\u0643\u0645 - \u0646\u062a\u0645\u0646\u0649 \u0644\u0643\u0645 \u062a\u062c\u0631\u0628\u0629 \u0645\u0645\u062a\u0639\u0629',
+  );
 
   bool _showLogo = true;
   bool _showStoreName = true;
@@ -138,7 +139,8 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text(
-                '\u062d\u062f\u062b \u062e\u0637\u0623 \u0623\u062b\u0646\u0627\u0621 \u0627\u0644\u062d\u0641\u0638'),
+              '\u062d\u062f\u062b \u062e\u0637\u0623 \u0623\u062b\u0646\u0627\u0621 \u0627\u0644\u062d\u0641\u0638',
+            ),
             backgroundColor: AppColors.error,
             behavior: SnackBarBehavior.floating,
           ),
@@ -168,44 +170,46 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
 
     if (_isLoading) {
       return SafeArea(
-          child: Column(
+        child: Column(
+          children: [
+            AppHeader(
+              title: l10n.receiptTemplateTitle,
+              onMenuTap: isWideScreen
+                  ? null
+                  : () => Scaffold.of(context).openDrawer(),
+              onNotificationsTap: () => context.push('/notifications'),
+              notificationsCount: 3,
+              userName: l10n.defaultUserName,
+              userRole: l10n.branchManager,
+            ),
+            const Expanded(child: Center(child: CircularProgressIndicator())),
+          ],
+        ),
+      );
+    }
+
+    return SafeArea(
+      child: Column(
         children: [
           AppHeader(
             title: l10n.receiptTemplateTitle,
-            onMenuTap:
-                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
             userRole: l10n.branchManager,
           ),
-          const Expanded(
-            child: Center(child: CircularProgressIndicator()),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+              child: _buildContent(isDark, l10n),
+            ),
           ),
         ],
-      ));
-    }
-
-    return SafeArea(
-        child: Column(
-      children: [
-        AppHeader(
-          title: l10n.receiptTemplateTitle,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
-          onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
-          userName: l10n.defaultUserName,
-          userRole: l10n.branchManager,
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-            child: _buildContent(isDark, l10n),
-          ),
-        ),
-      ],
-    ));
+      ),
+    );
   }
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
@@ -216,152 +220,213 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
         const SizedBox(height: AlhaiSpacing.mdl),
 
         // Header / Footer
-        _buildSettingsGroup(l10n.headerAndFooter, Icons.text_fields_rounded,
-            const Color(0xFFEC4899), isDark, [
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
-            child: TextField(
-              controller: _headerController,
-              decoration: InputDecoration(
-                labelText: l10n.receiptTitleField,
-                prefixIcon: const Icon(Icons.title),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+        _buildSettingsGroup(
+          l10n.headerAndFooter,
+          Icons.text_fields_rounded,
+          const Color(0xFFEC4899),
+          isDark,
+          [
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+              ),
+              child: TextField(
+                controller: _headerController,
+                decoration: InputDecoration(
+                  labelText: l10n.receiptTitleField,
+                  prefixIcon: const Icon(Icons.title),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.md),
-            child: TextField(
-              controller: _footerController,
-              maxLines: 2,
-              decoration: InputDecoration(
-                labelText: l10n.footerText,
-                prefixIcon: const Icon(Icons.notes),
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+            Padding(
+              padding: const EdgeInsetsDirectional.fromSTEB(
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.xs,
+                AlhaiSpacing.mdl,
+                AlhaiSpacing.md,
+              ),
+              child: TextField(
+                controller: _footerController,
+                maxLines: 2,
+                decoration: InputDecoration(
+                  labelText: l10n.footerText,
+                  prefixIcon: const Icon(Icons.notes),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
               ),
             ),
-          ),
-        ]),
+          ],
+        ),
 
         // Fields to show
         _buildSettingsGroup(
-            l10n.displayedFields, Icons.list_rounded, AppColors.info, isDark, [
-          SwitchListTile(
-            title: Text(l10n.storeLogo,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            secondary: const Icon(Icons.image),
-            value: _showLogo,
-            onChanged: (v) => setState(() => _showLogo = v),
-          ),
-          SwitchListTile(
-            title: Text(l10n.storeName,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            secondary: const Icon(Icons.store),
-            value: _showStoreName,
-            onChanged: (v) => setState(() => _showStoreName = v),
-          ),
-          SwitchListTile(
-            title: Text(l10n.addressField,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            secondary: const Icon(Icons.location_on),
-            value: _showAddress,
-            onChanged: (v) => setState(() => _showAddress = v),
-          ),
-          SwitchListTile(
-            title: Text(l10n.phoneNumberField,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            secondary: const Icon(Icons.phone),
-            value: _showPhone,
-            onChanged: (v) => setState(() => _showPhone = v),
-          ),
-          SwitchListTile(
-            title: Text(l10n.vatNumberField,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            secondary: const Icon(Icons.numbers),
-            value: _showVatNumber,
-            onChanged: (v) => setState(() => _showVatNumber = v),
-          ),
-          const Divider(indent: 16, endIndent: 16),
-          SwitchListTile(
-            title: Text(l10n.dateAndTime,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            secondary: const Icon(Icons.access_time),
-            value: _showDate,
-            onChanged: (v) => setState(() => _showDate = v),
-          ),
-          SwitchListTile(
-            title: Text(l10n.cashierName,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            secondary: const Icon(Icons.person),
-            value: _showCashier,
-            onChanged: (v) => setState(() => _showCashier = v),
-          ),
-          const Divider(indent: 16, endIndent: 16),
-          SwitchListTile(
-            title: Text(l10n.invoiceBarcode,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            secondary: const Icon(Icons.qr_code),
-            value: _showBarcode,
-            onChanged: (v) => setState(() => _showBarcode = v),
-          ),
-          SwitchListTile(
-            title: Text(l10n.qrCodeField,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            subtitle: Text(l10n.qrCodeEInvoice),
-            secondary: const Icon(Icons.qr_code_2),
-            value: _showQrCode,
-            onChanged: (v) => setState(() => _showQrCode = v),
-          ),
-          const SizedBox(height: AlhaiSpacing.xs),
-        ]),
+          l10n.displayedFields,
+          Icons.list_rounded,
+          AppColors.info,
+          isDark,
+          [
+            SwitchListTile(
+              title: Text(
+                l10n.storeLogo,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              secondary: const Icon(Icons.image),
+              value: _showLogo,
+              onChanged: (v) => setState(() => _showLogo = v),
+            ),
+            SwitchListTile(
+              title: Text(
+                l10n.storeName,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              secondary: const Icon(Icons.store),
+              value: _showStoreName,
+              onChanged: (v) => setState(() => _showStoreName = v),
+            ),
+            SwitchListTile(
+              title: Text(
+                l10n.addressField,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              secondary: const Icon(Icons.location_on),
+              value: _showAddress,
+              onChanged: (v) => setState(() => _showAddress = v),
+            ),
+            SwitchListTile(
+              title: Text(
+                l10n.phoneNumberField,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              secondary: const Icon(Icons.phone),
+              value: _showPhone,
+              onChanged: (v) => setState(() => _showPhone = v),
+            ),
+            SwitchListTile(
+              title: Text(
+                l10n.vatNumberField,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              secondary: const Icon(Icons.numbers),
+              value: _showVatNumber,
+              onChanged: (v) => setState(() => _showVatNumber = v),
+            ),
+            const Divider(indent: 16, endIndent: 16),
+            SwitchListTile(
+              title: Text(
+                l10n.dateAndTime,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              secondary: const Icon(Icons.access_time),
+              value: _showDate,
+              onChanged: (v) => setState(() => _showDate = v),
+            ),
+            SwitchListTile(
+              title: Text(
+                l10n.cashierName,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              secondary: const Icon(Icons.person),
+              value: _showCashier,
+              onChanged: (v) => setState(() => _showCashier = v),
+            ),
+            const Divider(indent: 16, endIndent: 16),
+            SwitchListTile(
+              title: Text(
+                l10n.invoiceBarcode,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              secondary: const Icon(Icons.qr_code),
+              value: _showBarcode,
+              onChanged: (v) => setState(() => _showBarcode = v),
+            ),
+            SwitchListTile(
+              title: Text(
+                l10n.qrCodeField,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              subtitle: Text(l10n.qrCodeEInvoice),
+              secondary: const Icon(Icons.qr_code_2),
+              value: _showQrCode,
+              onChanged: (v) => setState(() => _showQrCode = v),
+            ),
+            const SizedBox(height: AlhaiSpacing.xs),
+          ],
+        ),
 
         // Paper size
-        _buildSettingsGroup(l10n.paperSize, Icons.straighten_rounded,
-            AppColors.success, isDark, [
-          RadioGroup<String>(
-            groupValue: _paperSize,
-            onChanged: (v) => setState(() => _paperSize = v!),
-            child: Column(
-              children: [
-                RadioListTile<String>(
-                  title: Text('80mm',
+        _buildSettingsGroup(
+          l10n.paperSize,
+          Icons.straighten_rounded,
+          AppColors.success,
+          isDark,
+          [
+            RadioGroup<String>(
+              groupValue: _paperSize,
+              onChanged: (v) => setState(() => _paperSize = v!),
+              child: Column(
+                children: [
+                  RadioListTile<String>(
+                    title: Text(
+                      '80mm',
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface)),
-                  subtitle: Text(l10n.standardSize),
-                  value: '80mm',
-                ),
-                RadioListTile<String>(
-                  title: Text('58mm',
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    subtitle: Text(l10n.standardSize),
+                    value: '80mm',
+                  ),
+                  RadioListTile<String>(
+                    title: Text(
+                      '58mm',
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface)),
-                  subtitle: Text(l10n.smallSize),
-                  value: '58mm',
-                ),
-                RadioListTile<String>(
-                  title: Text('A4',
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    subtitle: Text(l10n.smallSize),
+                    value: '58mm',
+                  ),
+                  RadioListTile<String>(
+                    title: Text(
+                      'A4',
                       style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurface)),
-                  subtitle: Text(l10n.normalPrint),
-                  value: 'a4',
-                ),
-              ],
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
+                    subtitle: Text(l10n.normalPrint),
+                    value: 'a4',
+                  ),
+                ],
+              ),
             ),
-          ),
-          const SizedBox(height: AlhaiSpacing.xs),
-        ]),
+            const SizedBox(height: AlhaiSpacing.xs),
+          ],
+        ),
 
         const SizedBox(height: AlhaiSpacing.md),
         SizedBox(
@@ -373,13 +438,17 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
                     width: 18,
                     height: 18,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white))
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
                 : const Icon(Icons.save_rounded),
             label: Text(l10n.saveSettings),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),
@@ -407,45 +476,61 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
             color: const Color(0xFFEC4899).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(Icons.receipt_long_rounded,
-              color: Color(0xFFEC4899), size: 24),
+          child: const Icon(
+            Icons.receipt_long_rounded,
+            color: Color(0xFFEC4899),
+            size: 24,
+          ),
         ),
         const SizedBox(width: AlhaiSpacing.sm),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.receiptTemplateTitle,
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface)),
-            Text(l10n.receiptTemplateSubtitle,
-                style: TextStyle(
-                    fontSize: 13,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(
+              l10n.receiptTemplateTitle,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            Text(
+              l10n.receiptTemplateSubtitle,
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildSettingsGroup(String title, IconData icon, Color color,
-      bool isDark, List<Widget> children) {
+  Widget _buildSettingsGroup(
+    String title,
+    IconData icon,
+    Color color,
+    bool isDark,
+    List<Widget> children,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            padding: const EdgeInsetsDirectional.fromSTEB(
+              AlhaiSpacing.mdl,
+              AlhaiSpacing.md,
+              AlhaiSpacing.mdl,
+              AlhaiSpacing.xs,
+            ),
             child: Row(
               children: [
                 Container(
@@ -457,11 +542,14 @@ class _ReceiptTemplateScreenState extends ConsumerState<ReceiptTemplateScreen> {
                   child: Icon(icon, color: color, size: 20),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
-                Text(title,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface)),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
               ],
             ),
           ),

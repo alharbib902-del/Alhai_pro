@@ -26,8 +26,9 @@ void main() {
   tearDown(tearDownTestGetIt);
 
   group('ShiftCloseScreen', () {
-    testWidgets('shows loading when openShiftProvider is loading',
-        (tester) async {
+    testWidgets('shows loading when openShiftProvider is loading', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
@@ -35,14 +36,14 @@ void main() {
 
       final completer = Completer<ShiftsTableData?>();
 
-      await tester.pumpWidget(createTestWidget(
-        const ShiftCloseScreen(),
-        overrides: [
-          openShiftProvider.overrideWith(
-            (ref) => completer.future,
-          ),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const ShiftCloseScreen(),
+          overrides: [
+            openShiftProvider.overrideWith((ref) => completer.future),
+          ],
+        ),
+      );
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
@@ -55,12 +56,12 @@ void main() {
 
       suppressOverflowErrors();
 
-      await tester.pumpWidget(createTestWidget(
-        const ShiftCloseScreen(),
-        overrides: [
-          openShiftProvider.overrideWith((ref) async => null),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const ShiftCloseScreen(),
+          overrides: [openShiftProvider.overrideWith((ref) async => null)],
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.timer_off_rounded), findsOneWidget);
@@ -80,18 +81,20 @@ void main() {
         totalRefundsAmount: 100.0,
       );
 
-      await tester.pumpWidget(createTestWidget(
-        const ShiftCloseScreen(),
-        overrides: [
-          openShiftProvider.overrideWith((ref) async => shift),
-          shiftMovementsProvider(shift.id).overrideWith(
-            (ref) async => <CashMovementsTableData>[],
-          ),
-          shiftCashTotalsProvider(shift.id).overrideWith(
-            (ref) async => (cashSales: 1200.0, cashRefunds: 100.0),
-          ),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const ShiftCloseScreen(),
+          overrides: [
+            openShiftProvider.overrideWith((ref) async => shift),
+            shiftMovementsProvider(
+              shift.id,
+            ).overrideWith((ref) async => <CashMovementsTableData>[]),
+            shiftCashTotalsProvider(shift.id).overrideWith(
+              (ref) async => (cashSales: 1200.0, cashRefunds: 100.0),
+            ),
+          ],
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Shift info card should show
@@ -108,18 +111,20 @@ void main() {
 
       final shift = createTestShift(id: 'shift-1');
 
-      await tester.pumpWidget(createTestWidget(
-        const ShiftCloseScreen(),
-        overrides: [
-          openShiftProvider.overrideWith((ref) async => shift),
-          shiftMovementsProvider(shift.id).overrideWith(
-            (ref) async => <CashMovementsTableData>[],
-          ),
-          shiftCashTotalsProvider(shift.id).overrideWith(
-            (ref) async => (cashSales: 0.0, cashRefunds: 0.0),
-          ),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const ShiftCloseScreen(),
+          overrides: [
+            openShiftProvider.overrideWith((ref) async => shift),
+            shiftMovementsProvider(
+              shift.id,
+            ).overrideWith((ref) async => <CashMovementsTableData>[]),
+            shiftCashTotalsProvider(
+              shift.id,
+            ).overrideWith((ref) async => (cashSales: 0.0, cashRefunds: 0.0)),
+          ],
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Actual cash input field
@@ -136,25 +141,25 @@ void main() {
 
       final shift = createTestShift(id: 'shift-1');
 
-      await tester.pumpWidget(createTestWidget(
-        const ShiftCloseScreen(),
-        overrides: [
-          openShiftProvider.overrideWith((ref) async => shift),
-          shiftMovementsProvider(shift.id).overrideWith(
-            (ref) async => <CashMovementsTableData>[],
-          ),
-          shiftCashTotalsProvider(shift.id).overrideWith(
-            (ref) async => (cashSales: 0.0, cashRefunds: 0.0),
-          ),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const ShiftCloseScreen(),
+          overrides: [
+            openShiftProvider.overrideWith((ref) async => shift),
+            shiftMovementsProvider(
+              shift.id,
+            ).overrideWith((ref) async => <CashMovementsTableData>[]),
+            shiftCashTotalsProvider(
+              shift.id,
+            ).overrideWith((ref) async => (cashSales: 0.0, cashRefunds: 0.0)),
+          ],
+        ),
+      );
       await tester.pumpAndSettle();
 
       // FilledButton.icon() creates a _FilledButtonWithIcon subclass,
       // so use byWidgetPredicate to find it.
-      final buttonFinder = find.byWidgetPredicate(
-        (w) => w is FilledButton,
-      );
+      final buttonFinder = find.byWidgetPredicate((w) => w is FilledButton);
       expect(buttonFinder, findsWidgets);
       // The close button with lock icon should be disabled (onPressed == null)
       final button = tester.widget<FilledButton>(buttonFinder.last);

@@ -260,7 +260,7 @@ class AiStaffAnalyticsService {
       'الثلاثاء',
       'الأربعاء',
       'الخميس',
-      'الجمعة'
+      'الجمعة',
     ];
     final hours = List.generate(14, (i) => 7 + i); // 7 AM to 8 PM
 
@@ -300,20 +300,23 @@ class AiStaffAnalyticsService {
         dayAr: 'الجمعة',
         hourlyNeeds: [
           HourlyStaffNeed(
-              hour: 11,
-              trafficIntensity: 0.9,
-              currentStaff: 3,
-              suggestedStaff: 5),
+            hour: 11,
+            trafficIntensity: 0.9,
+            currentStaff: 3,
+            suggestedStaff: 5,
+          ),
           HourlyStaffNeed(
-              hour: 12,
-              trafficIntensity: 0.95,
-              currentStaff: 3,
-              suggestedStaff: 5),
+            hour: 12,
+            trafficIntensity: 0.95,
+            currentStaff: 3,
+            suggestedStaff: 5,
+          ),
           HourlyStaffNeed(
-              hour: 13,
-              trafficIntensity: 0.85,
-              currentStaff: 3,
-              suggestedStaff: 4),
+            hour: 13,
+            trafficIntensity: 0.85,
+            currentStaff: 3,
+            suggestedStaff: 4,
+          ),
         ],
         currentStaff: 3,
         suggestedStaff: 5,
@@ -325,20 +328,23 @@ class AiStaffAnalyticsService {
         dayAr: 'الخميس',
         hourlyNeeds: [
           HourlyStaffNeed(
-              hour: 17,
-              trafficIntensity: 0.85,
-              currentStaff: 2,
-              suggestedStaff: 4),
+            hour: 17,
+            trafficIntensity: 0.85,
+            currentStaff: 2,
+            suggestedStaff: 4,
+          ),
           HourlyStaffNeed(
-              hour: 18,
-              trafficIntensity: 0.9,
-              currentStaff: 2,
-              suggestedStaff: 4),
+            hour: 18,
+            trafficIntensity: 0.9,
+            currentStaff: 2,
+            suggestedStaff: 4,
+          ),
           HourlyStaffNeed(
-              hour: 19,
-              trafficIntensity: 0.8,
-              currentStaff: 2,
-              suggestedStaff: 3),
+            hour: 19,
+            trafficIntensity: 0.8,
+            currentStaff: 2,
+            suggestedStaff: 3,
+          ),
         ],
         currentStaff: 2,
         suggestedStaff: 4,
@@ -354,8 +360,9 @@ class AiStaffAnalyticsService {
     final avgScore =
         staff.map((s) => s.score).reduce((a, b) => a + b) / staff.length;
     final totalSales = staff.map((s) => s.salesVolume).reduce((a, b) => a + b);
-    final totalTxn =
-        staff.map((s) => s.totalTransactions).reduce((a, b) => a + b);
+    final totalTxn = staff
+        .map((s) => s.totalTransactions)
+        .reduce((a, b) => a + b);
     final avgVoid =
         staff.map((s) => s.voidRate).reduce((a, b) => a + b) / staff.length;
     final top = staff.reduce((a, b) => a.score > b.score ? a : b);

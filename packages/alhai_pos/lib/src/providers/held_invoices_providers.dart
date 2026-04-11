@@ -31,30 +31,31 @@ const _uuid = Uuid();
 /// يحوّل بيانات الجدول إلى نموذج HeldInvoice المستخدم في الواجهة
 final dbHeldInvoicesListProvider =
     FutureProvider.autoDispose<List<HeldInvoice>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
 
-  final db = GetIt.I<AppDatabase>();
+      final db = GetIt.I<AppDatabase>();
 
-  // جلب الفواتير المعلقة من قاعدة البيانات
-  final rows = await (db.select(db.heldInvoicesTable)
-        ..where((h) => h.storeId.equals(storeId))
-        ..orderBy([(h) => OrderingTerm.desc(h.createdAt)]))
-      .get();
+      // جلب الفواتير المعلقة من قاعدة البيانات
+      final rows =
+          await (db.select(db.heldInvoicesTable)
+                ..where((h) => h.storeId.equals(storeId))
+                ..orderBy([(h) => OrderingTerm.desc(h.createdAt)]))
+              .get();
 
-  // تحويل كل صف إلى نموذج HeldInvoice
-  final results = <HeldInvoice>[];
-  for (final row in rows) {
-    try {
-      final invoice = _rowToHeldInvoice(row);
-      results.add(invoice);
-    } catch (e) {
-      debugPrint('[HeldInvoicesDB] خطأ في تحويل الفاتورة ${row.id}: $e');
-    }
-  }
+      // تحويل كل صف إلى نموذج HeldInvoice
+      final results = <HeldInvoice>[];
+      for (final row in rows) {
+        try {
+          final invoice = _rowToHeldInvoice(row);
+          results.add(invoice);
+        } catch (e) {
+          debugPrint('[HeldInvoicesDB] خطأ في تحويل الفاتورة ${row.id}: $e');
+        }
+      }
 
-  return results;
-});
+      return results;
+    });
 
 /// مزود عدد الفواتير المعلقة من DB
 final dbHeldInvoicesCountProvider = Provider.autoDispose<int>((ref) {
@@ -70,10 +71,7 @@ final dbHeldInvoicesCountProvider = Provider.autoDispose<int>((ref) {
 // ============================================================================
 
 /// تعليق الفاتورة الحالية وحفظها في قاعدة البيانات
-Future<HeldInvoice> holdCurrentInvoice(
-  WidgetRef ref, {
-  String? name,
-}) async {
+Future<HeldInvoice> holdCurrentInvoice(WidgetRef ref, {String? name}) async {
   final cart = ref.read(cartStateProvider);
   final storeId = ref.read(currentStoreIdProvider) ?? '';
   final db = GetIt.I<AppDatabase>();
@@ -82,11 +80,14 @@ Future<HeldInvoice> holdCurrentInvoice(
   final now = DateTime.now();
 
   // تحويل عناصر السلة إلى JSON
-  final itemsJson =
-      jsonEncode(cart.items.map((item) => item.toJson()).toList());
+  final itemsJson = jsonEncode(
+    cart.items.map((item) => item.toJson()).toList(),
+  );
 
   // حفظ في قاعدة البيانات
-  await db.into(db.heldInvoicesTable).insert(
+  await db
+      .into(db.heldInvoicesTable)
+      .insert(
         HeldInvoicesTableCompanion.insert(
           id: id,
           storeId: storeId,
@@ -122,12 +123,7 @@ Future<HeldInvoice> holdCurrentInvoice(
   ref.invalidate(dbHeldInvoicesListProvider);
 
   // بناء نموذج HeldInvoice
-  return HeldInvoice(
-    id: id,
-    cart: cart,
-    name: name,
-    createdAt: now,
-  );
+  return HeldInvoice(id: id, cart: cart, name: name, createdAt: now);
 }
 
 /// استعادة فاتورة معلقة إلى السلة
@@ -158,14 +154,14 @@ Future<void> deleteAllHeldInvoices(WidgetRef ref) async {
   final db = GetIt.I<AppDatabase>();
 
   // جلب كل الفواتير للمزامنة
-  final rows = await (db.select(db.heldInvoicesTable)
-        ..where((h) => h.storeId.equals(storeId)))
-      .get();
+  final rows = await (db.select(
+    db.heldInvoicesTable,
+  )..where((h) => h.storeId.equals(storeId))).get();
 
   // حذف الكل من قاعدة البيانات
-  await (db.delete(db.heldInvoicesTable)
-        ..where((h) => h.storeId.equals(storeId)))
-      .go();
+  await (db.delete(
+    db.heldInvoicesTable,
+  )..where((h) => h.storeId.equals(storeId))).go();
 
   // إضافة كل عملية حذف للمزامنة
   for (final row in rows) {
@@ -223,7 +219,10 @@ Future<void> _deleteHeldInvoiceFromDb(WidgetRef ref, String id) async {
 
 /// إضافة عملية إنشاء للمزامنة
 Future<void> _enqueueSyncCreate(
-    WidgetRef ref, String recordId, Map<String, dynamic> data) async {
+  WidgetRef ref,
+  String recordId,
+  Map<String, dynamic> data,
+) async {
   try {
     final syncService = ref.read(syncServiceProvider);
     await syncService.enqueueCreate(
@@ -240,10 +239,7 @@ Future<void> _enqueueSyncCreate(
 Future<void> _enqueueSyncDelete(WidgetRef ref, String id) async {
   try {
     final syncService = ref.read(syncServiceProvider);
-    await syncService.enqueueDelete(
-      tableName: 'held_invoices',
-      recordId: id,
-    );
+    await syncService.enqueueDelete(tableName: 'held_invoices', recordId: id);
   } catch (e) {
     debugPrint('[HeldInvoicesDB] خطأ في إضافة المزامنة: $e');
   }

@@ -27,17 +27,22 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
   }
 
   /// الحصول على مبيعات بتاريخ (باستثناء المحذوفة)
-  Future<List<SalesTableData>> getSalesByDate(String storeId, DateTime date,
-      {int limit = 1000}) {
+  Future<List<SalesTableData>> getSalesByDate(
+    String storeId,
+    DateTime date, {
+    int limit = 1000,
+  }) {
     final startOfDay = DateTime(date.year, date.month, date.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
     return (select(salesTable)
-          ..where((s) =>
-              s.storeId.equals(storeId) &
-              s.deletedAt.isNull() &
-              s.createdAt.isBiggerOrEqualValue(startOfDay) &
-              s.createdAt.isSmallerThanValue(endOfDay))
+          ..where(
+            (s) =>
+                s.storeId.equals(storeId) &
+                s.deletedAt.isNull() &
+                s.createdAt.isBiggerOrEqualValue(startOfDay) &
+                s.createdAt.isSmallerThanValue(endOfDay),
+          )
           ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
           ..limit(limit))
         .get();
@@ -51,11 +56,13 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
     int limit = 5000,
   }) {
     return (select(salesTable)
-          ..where((s) =>
-              s.storeId.equals(storeId) &
-              s.deletedAt.isNull() &
-              s.createdAt.isBiggerOrEqualValue(startDate) &
-              s.createdAt.isSmallerOrEqualValue(endDate))
+          ..where(
+            (s) =>
+                s.storeId.equals(storeId) &
+                s.deletedAt.isNull() &
+                s.createdAt.isBiggerOrEqualValue(startDate) &
+                s.createdAt.isSmallerOrEqualValue(endDate),
+          )
           ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
           ..limit(limit))
         .get();
@@ -63,15 +70,16 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
 
   /// الحصول على بيع بالمعرف
   Future<SalesTableData?> getSaleById(String id) {
-    return (select(salesTable)..where((s) => s.id.equals(id)))
-        .getSingleOrNull();
+    return (select(
+      salesTable,
+    )..where((s) => s.id.equals(id))).getSingleOrNull();
   }
 
   /// الحصول على بيع برقم الإيصال
   Future<SalesTableData?> getSaleByReceiptNo(String receiptNo, String storeId) {
-    return (select(salesTable)
-          ..where(
-              (s) => s.receiptNo.equals(receiptNo) & s.storeId.equals(storeId)))
+    return (select(salesTable)..where(
+          (s) => s.receiptNo.equals(receiptNo) & s.storeId.equals(storeId),
+        ))
         .getSingleOrNull();
   }
 
@@ -132,8 +140,8 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
             ).getSingleOrNull();
             final previousQty = productRow != null
                 ? ((productRow.data['stock_qty'] is int)
-                    ? (productRow.data['stock_qty'] as int).toDouble()
-                    : productRow.data['stock_qty'] as double? ?? 0.0)
+                      ? (productRow.data['stock_qty'] as int).toDouble()
+                      : productRow.data['stock_qty'] as double? ?? 0.0)
                 : 0.0;
 
             // استعادة المخزون
@@ -173,18 +181,21 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
               );
             }
           } catch (e) {
-            debugPrint('[DB] voidSale: failed to restore stock for '
-                'product ${item.data['product_id']} in sale $id: $e');
+            debugPrint(
+              '[DB] voidSale: failed to restore stock for '
+              'product ${item.data['product_id']} in sale $id: $e',
+            );
             rethrow;
           }
         }
 
         // 3. تحديث حالة البيع إلى ملغي
-        return (update(salesTable)..where((s) => s.id.equals(id)))
-            .write(SalesTableCompanion(
-          status: const Value('voided'),
-          updatedAt: Value(now),
-        ));
+        return (update(salesTable)..where((s) => s.id.equals(id))).write(
+          SalesTableCompanion(
+            status: const Value('voided'),
+            updatedAt: Value(now),
+          ),
+        );
       } catch (e) {
         debugPrint('[DB] voidSale transaction failed for $id: $e');
         rethrow;
@@ -291,8 +302,9 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
 
   /// تعيين تاريخ المزامنة
   Future<int> markAsSynced(String id) {
-    return (update(salesTable)..where((s) => s.id.equals(id)))
-        .write(SalesTableCompanion(syncedAt: Value(DateTime.now())));
+    return (update(salesTable)..where((s) => s.id.equals(id))).write(
+      SalesTableCompanion(syncedAt: Value(DateTime.now())),
+    );
   }
 
   /// الحصول على المبيعات غير المزامنة
@@ -306,19 +318,23 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
 
   /// مراقبة المبيعات (Stream)
   /// [limit] - الحد الأقصى للنتائج (افتراضي 200)
-  Stream<List<SalesTableData>> watchTodaySales(String storeId,
-      {int limit = 200}) {
+  Stream<List<SalesTableData>> watchTodaySales(
+    String storeId, {
+    int limit = 200,
+  }) {
     final today = DateTime.now();
     final startOfDay = DateTime(today.year, today.month, today.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
     return (select(salesTable)
-          ..where((s) =>
-              s.storeId.equals(storeId) &
-              s.deletedAt.isNull() &
-              s.status.equals('voided').not() &
-              s.createdAt.isBiggerOrEqualValue(startOfDay) &
-              s.createdAt.isSmallerThanValue(endOfDay))
+          ..where(
+            (s) =>
+                s.storeId.equals(storeId) &
+                s.deletedAt.isNull() &
+                s.status.equals('voided').not() &
+                s.createdAt.isBiggerOrEqualValue(startOfDay) &
+                s.createdAt.isSmallerThanValue(endOfDay),
+          )
           ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
           ..limit(limit))
         .watch();
@@ -419,17 +435,14 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
       variables.add(Variable.withString(cashierId));
     }
 
-    final result = await customSelect(
-      '''SELECT
+    final result = await customSelect('''SELECT
            COUNT(*) as count,
            COALESCE(SUM(total), 0) as total,
            COALESCE(AVG(total), 0) as average,
            COALESCE(MAX(total), 0) as max_sale,
            COALESCE(MIN(total), 0) as min_sale
          FROM sales
-         WHERE $whereClause''',
-      variables: variables,
-    ).getSingle();
+         WHERE $whereClause''', variables: variables).getSingle();
 
     return SalesStats(
       count: result.data['count'] as int? ?? 0,
@@ -450,7 +463,9 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
 
   /// المبيعات بالساعة (للتقارير)
   Future<List<HourlySales>> getHourlySales(
-      String storeId, DateTime date) async {
+    String storeId,
+    DateTime date,
+  ) async {
     final startOfDay = DateTime(date.year, date.month, date.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
 
@@ -474,13 +489,15 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
     ).get();
 
     return result
-        .map((row) => HourlySales(
-              hour: int.tryParse(row.data['hour']?.toString() ?? '') ?? 0,
-              count: row.data['count'] as int,
-              total: (row.data['total'] is int)
-                  ? (row.data['total'] as int).toDouble()
-                  : row.data['total'] as double,
-            ))
+        .map(
+          (row) => HourlySales(
+            hour: int.tryParse(row.data['hour']?.toString() ?? '') ?? 0,
+            count: row.data['count'] as int,
+            total: (row.data['total'] is int)
+                ? (row.data['total'] as int).toDouble()
+                : row.data['total'] as double,
+          ),
+        )
         .toList();
   }
 
@@ -502,26 +519,25 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
       variables.add(Variable.withDateTime(endDate));
     }
 
-    final result = await customSelect(
-      '''SELECT
+    final result = await customSelect('''SELECT
            payment_method,
            COUNT(*) as count,
            COALESCE(SUM(total), 0) as total
          FROM sales
          WHERE $whereClause
          GROUP BY payment_method
-         ORDER BY total DESC''',
-      variables: variables,
-    ).get();
+         ORDER BY total DESC''', variables: variables).get();
 
     return result
-        .map((row) => PaymentMethodStats(
-              method: row.data['payment_method'] as String,
-              count: row.data['count'] as int,
-              total: (row.data['total'] is int)
-                  ? (row.data['total'] as int).toDouble()
-                  : row.data['total'] as double,
-            ))
+        .map(
+          (row) => PaymentMethodStats(
+            method: row.data['payment_method'] as String,
+            count: row.data['count'] as int,
+            total: (row.data['total'] is int)
+                ? (row.data['total'] as int).toDouble()
+                : row.data['total'] as double,
+          ),
+        )
         .toList();
   }
 
@@ -562,22 +578,25 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
       variables: [
         ...variables,
         Variable.withInt(limit),
-        Variable.withInt(offset)
+        Variable.withInt(offset),
       ],
     ).get();
 
     return result
-        .map((row) => SaleWithDetails(
-              id: row.data['id'] as String,
-              receiptNo: row.data['receipt_no'] as String,
-              total: _toDouble(row.data['total']),
-              paymentMethod: row.data['payment_method'] as String? ?? 'cash',
-              status: row.data['status'] as String,
-              createdAt: DateTime.tryParse(row.data['created_at'].toString()) ??
-                  DateTime.now(),
-              customerName: row.data['customer_name'] as String?,
-              customerPhone: row.data['customer_phone'] as String?,
-            ))
+        .map(
+          (row) => SaleWithDetails(
+            id: row.data['id'] as String,
+            receiptNo: row.data['receipt_no'] as String,
+            total: _toDouble(row.data['total']),
+            paymentMethod: row.data['payment_method'] as String? ?? 'cash',
+            status: row.data['status'] as String,
+            createdAt:
+                DateTime.tryParse(row.data['created_at'].toString()) ??
+                DateTime.now(),
+            customerName: row.data['customer_name'] as String?,
+            customerPhone: row.data['customer_phone'] as String?,
+          ),
+        )
         .toList();
   }
 
@@ -601,7 +620,8 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
       total: _toDouble(row.data['total']),
       paymentMethod: row.data['payment_method'] as String? ?? 'cash',
       status: row.data['status'] as String,
-      createdAt: DateTime.tryParse(row.data['created_at'].toString()) ??
+      createdAt:
+          DateTime.tryParse(row.data['created_at'].toString()) ??
           DateTime.now(),
       customerName: row.data['customer_name'] as String?,
       customerPhone: row.data['customer_phone'] as String?,

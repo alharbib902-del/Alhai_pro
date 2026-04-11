@@ -66,34 +66,41 @@ void setupSelectChain(
   when(() => filterBuilder.eq(any(), any())).thenAnswer((_) => filterBuilder);
   when(() => filterBuilder.or(any())).thenAnswer((_) => filterBuilder);
   when(() => filterBuilder.gte(any(), any())).thenAnswer((_) => filterBuilder);
-  when(() => filterBuilder.order(any(), ascending: any(named: 'ascending')))
-      .thenAnswer((_) => filterBuilder);
-  when(() => filterBuilder.range(any(), any()))
-      .thenAnswer((_) => filterBuilder);
+  when(
+    () => filterBuilder.order(any(), ascending: any(named: 'ascending')),
+  ).thenAnswer((_) => filterBuilder);
+  when(
+    () => filterBuilder.range(any(), any()),
+  ).thenAnswer((_) => filterBuilder);
   // Mock the `then()` method that `await` calls since PostgrestBuilder implements Future
-  when(() => filterBuilder.then<dynamic>(any(), onError: any(named: 'onError')))
-      .thenAnswer((invocation) {
+  when(
+    () => filterBuilder.then<dynamic>(any(), onError: any(named: 'onError')),
+  ).thenAnswer((invocation) {
     final onValue = invocation.positionalArguments[0] as Function;
     return Future.value(onValue(data));
   });
   // Production code chains .timeout() on the builder
-  when(() => filterBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')))
-      .thenAnswer((_) => Future<PostgrestList>.value(data));
+  when(
+    () => filterBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')),
+  ).thenAnswer((_) => Future<PostgrestList>.value(data));
 }
 
 /// Setup upsert on queryBuilder to succeed (resolves when awaited)
 void setupUpsertChain(MockSupabaseQueryBuilder queryBuilder) {
   final upsertBuilder = MockPostgrestFilterBuilderDynamic();
-  when(() => queryBuilder.upsert(any(), onConflict: any(named: 'onConflict')))
-      .thenAnswer((_) => upsertBuilder);
-  when(() => upsertBuilder.then<dynamic>(any(), onError: any(named: 'onError')))
-      .thenAnswer((invocation) {
+  when(
+    () => queryBuilder.upsert(any(), onConflict: any(named: 'onConflict')),
+  ).thenAnswer((_) => upsertBuilder);
+  when(
+    () => upsertBuilder.then<dynamic>(any(), onError: any(named: 'onError')),
+  ).thenAnswer((invocation) {
     final onValue = invocation.positionalArguments[0] as Function;
     return Future.value(onValue(null));
   });
   // Production code chains .timeout() on the builder
-  when(() => upsertBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')))
-      .thenAnswer((_) => Future<dynamic>.value(null));
+  when(
+    () => upsertBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')),
+  ).thenAnswer((_) => Future<dynamic>.value(null));
 }
 
 /// Setup delete chain: delete() -> eq() -> then(resolve)
@@ -101,29 +108,34 @@ void setupDeleteChain(MockSupabaseQueryBuilder queryBuilder) {
   final deleteBuilder = MockPostgrestFilterBuilderDynamic();
   when(() => queryBuilder.delete()).thenAnswer((_) => deleteBuilder);
   when(() => deleteBuilder.eq(any(), any())).thenAnswer((_) => deleteBuilder);
-  when(() => deleteBuilder.then<dynamic>(any(), onError: any(named: 'onError')))
-      .thenAnswer((invocation) {
+  when(
+    () => deleteBuilder.then<dynamic>(any(), onError: any(named: 'onError')),
+  ).thenAnswer((invocation) {
     final onValue = invocation.positionalArguments[0] as Function;
     return Future.value(onValue(null));
   });
   // Production code chains .timeout() on the builder
-  when(() => deleteBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')))
-      .thenAnswer((_) => Future<dynamic>.value(null));
+  when(
+    () => deleteBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')),
+  ).thenAnswer((_) => Future<dynamic>.value(null));
 }
 
 /// Setup RPC call on client that resolves with [result]
 void setupRpcCall(MockSupabaseClient client, {dynamic result}) {
   final rpcBuilder = MockPostgrestFilterBuilderDynamic();
-  when(() => client.rpc(any(), params: any(named: 'params')))
-      .thenAnswer((_) => rpcBuilder);
-  when(() => rpcBuilder.then<dynamic>(any(), onError: any(named: 'onError')))
-      .thenAnswer((invocation) {
+  when(
+    () => client.rpc(any(), params: any(named: 'params')),
+  ).thenAnswer((_) => rpcBuilder);
+  when(
+    () => rpcBuilder.then<dynamic>(any(), onError: any(named: 'onError')),
+  ).thenAnswer((invocation) {
     final onValue = invocation.positionalArguments[0] as Function;
     return Future.value(onValue(result));
   });
   // Production code chains .timeout() on the builder
-  when(() => rpcBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')))
-      .thenAnswer((_) => Future<dynamic>.value(result));
+  when(
+    () => rpcBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')),
+  ).thenAnswer((_) => Future<dynamic>.value(result));
 }
 
 /// Setup maybeSingle() on a filter builder to resolve with [data]
@@ -133,16 +145,16 @@ void setupMaybeSingle(
 }) {
   final transformBuilder = MockPostgrestTransformBuilderNullableMap();
   when(() => filterBuilder.maybeSingle()).thenAnswer((_) => transformBuilder);
-  when(() =>
-          transformBuilder.then<dynamic>(any(), onError: any(named: 'onError')))
-      .thenAnswer((invocation) {
+  when(
+    () => transformBuilder.then<dynamic>(any(), onError: any(named: 'onError')),
+  ).thenAnswer((invocation) {
     final onValue = invocation.positionalArguments[0] as Function;
     return Future.value(onValue(data));
   });
   // Production code chains .timeout() on the builder
-  when(() =>
-          transformBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')))
-      .thenAnswer((_) => Future<Map<String, dynamic>?>.value(data));
+  when(
+    () => transformBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')),
+  ).thenAnswer((_) => Future<Map<String, dynamic>?>.value(data));
 }
 
 // ============================================================================

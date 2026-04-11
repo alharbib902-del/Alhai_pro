@@ -7,18 +7,18 @@ import '../../helpers/test_helpers.dart';
 void main() {
   group('AlhaiCheckbox', () {
     testWidgets('renders correctly with value false', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        AlhaiCheckbox(value: false, onChanged: (_) {}),
-      ));
+      await tester.pumpWidget(
+        createTestWidget(AlhaiCheckbox(value: false, onChanged: (_) {})),
+      );
 
       expect(find.byType(AlhaiCheckbox), findsOneWidget);
       expect(find.byType(Checkbox), findsOneWidget);
     });
 
     testWidgets('renders correctly with value true', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        AlhaiCheckbox(value: true, onChanged: (_) {}),
-      ));
+      await tester.pumpWidget(
+        createTestWidget(AlhaiCheckbox(value: true, onChanged: (_) {})),
+      );
 
       final checkbox = tester.widget<Checkbox>(find.byType(Checkbox));
       expect(checkbox.value, isTrue);
@@ -26,12 +26,14 @@ void main() {
 
     testWidgets('calls onChanged when tapped', (tester) async {
       bool? changedValue;
-      await tester.pumpWidget(createTestWidget(
-        AlhaiCheckbox(
-          value: false,
-          onChanged: (value) => changedValue = value,
+      await tester.pumpWidget(
+        createTestWidget(
+          AlhaiCheckbox(
+            value: false,
+            onChanged: (value) => changedValue = value,
+          ),
         ),
-      ));
+      );
 
       await tester.tap(find.byType(Checkbox));
       await tester.pump();
@@ -40,53 +42,53 @@ void main() {
     });
 
     testWidgets('shows label text', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        AlhaiCheckbox(
-          value: false,
-          label: 'Accept terms',
-          onChanged: (_) {},
+      await tester.pumpWidget(
+        createTestWidget(
+          AlhaiCheckbox(value: false, label: 'Accept terms', onChanged: (_) {}),
         ),
-      ));
+      );
 
       expect(find.text('Accept terms'), findsOneWidget);
     });
 
     testWidgets('shows subtitle text', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        AlhaiCheckbox(
-          value: false,
-          label: 'Accept',
-          subtitle: 'Read the terms first',
-          onChanged: (_) {},
+      await tester.pumpWidget(
+        createTestWidget(
+          AlhaiCheckbox(
+            value: false,
+            label: 'Accept',
+            subtitle: 'Read the terms first',
+            onChanged: (_) {},
+          ),
         ),
-      ));
+      );
 
       expect(find.text('Accept'), findsOneWidget);
       expect(find.text('Read the terms first'), findsOneWidget);
     });
 
     testWidgets('is disabled when onChanged is null', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        const AlhaiCheckbox(
-          value: false,
-          onChanged: null,
-          label: 'Disabled',
+      await tester.pumpWidget(
+        createTestWidget(
+          const AlhaiCheckbox(value: false, onChanged: null, label: 'Disabled'),
         ),
-      ));
+      );
 
       final checkbox = tester.widget<Checkbox>(find.byType(Checkbox));
       expect(checkbox.onChanged, isNull);
     });
 
     testWidgets('is disabled when enabled is false', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        AlhaiCheckbox(
-          value: false,
-          enabled: false,
-          onChanged: (_) {},
-          label: 'Disabled',
+      await tester.pumpWidget(
+        createTestWidget(
+          AlhaiCheckbox(
+            value: false,
+            enabled: false,
+            onChanged: (_) {},
+            label: 'Disabled',
+          ),
         ),
-      ));
+      );
 
       final checkbox = tester.widget<Checkbox>(find.byType(Checkbox));
       expect(checkbox.onChanged, isNull);
@@ -94,13 +96,15 @@ void main() {
 
     testWidgets('label tap toggles checkbox', (tester) async {
       bool? changedValue;
-      await tester.pumpWidget(createTestWidget(
-        AlhaiCheckbox(
-          value: false,
-          label: 'Click me',
-          onChanged: (value) => changedValue = value,
+      await tester.pumpWidget(
+        createTestWidget(
+          AlhaiCheckbox(
+            value: false,
+            label: 'Click me',
+            onChanged: (value) => changedValue = value,
+          ),
         ),
-      ));
+      );
 
       await tester.tap(find.text('Click me'));
       await tester.pump();
@@ -109,13 +113,11 @@ void main() {
     });
 
     testWidgets('tristate supports null value', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        AlhaiCheckbox(
-          value: null,
-          tristate: true,
-          onChanged: (_) {},
+      await tester.pumpWidget(
+        createTestWidget(
+          AlhaiCheckbox(value: null, tristate: true, onChanged: (_) {}),
         ),
-      ));
+      );
 
       final checkbox = tester.widget<Checkbox>(find.byType(Checkbox));
       expect(checkbox.tristate, isTrue);
@@ -125,12 +127,11 @@ void main() {
     testWidgets('can be toggled off', (tester) async {
       bool? newValue;
 
-      await tester.pumpWidget(createTestWidget(
-        AlhaiCheckbox(
-          value: true,
-          onChanged: (value) => newValue = value,
+      await tester.pumpWidget(
+        createTestWidget(
+          AlhaiCheckbox(value: true, onChanged: (value) => newValue = value),
         ),
-      ));
+      );
 
       await tester.tap(find.byType(Checkbox));
       await tester.pump();
@@ -141,13 +142,15 @@ void main() {
     testWidgets('disabled checkbox does not respond to tap', (tester) async {
       bool tapped = false;
 
-      await tester.pumpWidget(createTestWidget(
-        AlhaiCheckbox(
-          value: false,
-          enabled: false,
-          onChanged: (_) => tapped = true,
+      await tester.pumpWidget(
+        createTestWidget(
+          AlhaiCheckbox(
+            value: false,
+            enabled: false,
+            onChanged: (_) => tapped = true,
+          ),
         ),
-      ));
+      );
 
       await tester.tap(find.byType(Checkbox));
       await tester.pump();

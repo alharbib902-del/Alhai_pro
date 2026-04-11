@@ -114,7 +114,9 @@ void main() {
       test('should reject numbers with wrong length', () {
         expect(ZatcaService.isValidVatNumber('30000000000003'), isFalse); // 14
         expect(
-            ZatcaService.isValidVatNumber('3000000000000030'), isFalse); // 16
+          ZatcaService.isValidVatNumber('3000000000000030'),
+          isFalse,
+        ); // 16
         expect(ZatcaService.isValidVatNumber(''), isFalse);
       });
 

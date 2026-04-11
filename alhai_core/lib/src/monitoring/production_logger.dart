@@ -43,14 +43,14 @@ class LogEntry {
   }) : timestamp = DateTime.now();
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'timestamp': timestamp.toIso8601String(),
-        'level': level.name,
-        'message': message,
-        'tag': tag,
-        'context': context,
-        'stackTrace': stackTrace?.toString(),
-      };
+    'id': id,
+    'timestamp': timestamp.toIso8601String(),
+    'level': level.name,
+    'message': message,
+    'tag': tag,
+    'context': context,
+    'stackTrace': stackTrace?.toString(),
+  };
 
   @override
   String toString() {
@@ -220,7 +220,8 @@ class ProductionLogger {
 
     if (kDebugMode) {
       debugPrint(
-          '📝 ProductionLogger initialized (minLevel: ${_minLevel.name})');
+        '📝 ProductionLogger initialized (minLevel: ${_minLevel.name})',
+      );
     }
   }
 
@@ -259,20 +260,29 @@ class ProductionLogger {
   }
 
   /// Debug log
-  static Future<void> debug(String message,
-      {String? tag, Map<String, dynamic>? context}) {
+  static Future<void> debug(
+    String message, {
+    String? tag,
+    Map<String, dynamic>? context,
+  }) {
     return log(LogLevel.debug, message, tag: tag, context: context);
   }
 
   /// Info log
-  static Future<void> info(String message,
-      {String? tag, Map<String, dynamic>? context}) {
+  static Future<void> info(
+    String message, {
+    String? tag,
+    Map<String, dynamic>? context,
+  }) {
     return log(LogLevel.info, message, tag: tag, context: context);
   }
 
   /// Warning log
-  static Future<void> warning(String message,
-      {String? tag, Map<String, dynamic>? context}) {
+  static Future<void> warning(
+    String message, {
+    String? tag,
+    Map<String, dynamic>? context,
+  }) {
     return log(LogLevel.warning, message, tag: tag, context: context);
   }
 
@@ -288,10 +298,7 @@ class ProductionLogger {
       LogLevel.error,
       message,
       tag: tag,
-      context: {
-        ...?context,
-        if (error != null) 'error': error.toString(),
-      },
+      context: {...?context, if (error != null) 'error': error.toString()},
       stackTrace: stackTrace,
     );
   }
@@ -308,10 +315,7 @@ class ProductionLogger {
       LogLevel.fatal,
       message,
       tag: tag,
-      context: {
-        ...?context,
-        if (error != null) 'error': error.toString(),
-      },
+      context: {...?context, if (error != null) 'error': error.toString()},
       stackTrace: stackTrace,
     );
   }
@@ -326,10 +330,7 @@ class ProductionLogger {
     return error(
       'Exception: ${exception.runtimeType}',
       tag: tag ?? 'EXCEPTION',
-      context: {
-        ...?context,
-        'exception': exception.toString(),
-      },
+      context: {...?context, 'exception': exception.toString()},
       error: exception,
       stackTrace: stackTrace ?? StackTrace.current,
     );
@@ -388,22 +389,35 @@ class ProductionLogger {
 /// Extension لتسهيل التسجيل من أي مكان
 extension LoggerExtension on Object {
   void logDebug(String message, {Map<String, dynamic>? context}) {
-    ProductionLogger.debug(message,
-        tag: runtimeType.toString(), context: context);
+    ProductionLogger.debug(
+      message,
+      tag: runtimeType.toString(),
+      context: context,
+    );
   }
 
   void logInfo(String message, {Map<String, dynamic>? context}) {
-    ProductionLogger.info(message,
-        tag: runtimeType.toString(), context: context);
+    ProductionLogger.info(
+      message,
+      tag: runtimeType.toString(),
+      context: context,
+    );
   }
 
   void logWarning(String message, {Map<String, dynamic>? context}) {
-    ProductionLogger.warning(message,
-        tag: runtimeType.toString(), context: context);
+    ProductionLogger.warning(
+      message,
+      tag: runtimeType.toString(),
+      context: context,
+    );
   }
 
-  void logError(String message,
-      {Object? error, StackTrace? stackTrace, Map<String, dynamic>? context}) {
+  void logError(
+    String message, {
+    Object? error,
+    StackTrace? stackTrace,
+    Map<String, dynamic>? context,
+  }) {
     ProductionLogger.error(
       message,
       tag: runtimeType.toString(),
@@ -443,7 +457,8 @@ class AppLogger {
     // Errors are always logged (for crashlytics) but only printed in debug
     if (kDebugMode) {
       debugPrint(
-          '${tag != null ? '[$tag] ' : ''}$message${error != null ? '\n$error' : ''}');
+        '${tag != null ? '[$tag] ' : ''}$message${error != null ? '\n$error' : ''}',
+      );
     }
   }
 }

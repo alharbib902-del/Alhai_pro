@@ -80,9 +80,9 @@ class WhatsAppReceiptService {
     required WaSenderApiClient apiClient,
     required WhatsAppMessagesDao messagesDao,
     String storeId = 'default',
-  })  : _apiClient = apiClient,
-        _messagesDao = messagesDao,
-        _storeId = storeId;
+  }) : _apiClient = apiClient,
+       _messagesDao = messagesDao,
+       _storeId = storeId;
 
   // ============================================================================
   // تنسيق الإيصال (Static - لا يحتاج instance)
@@ -128,9 +128,7 @@ class WhatsAppReceiptService {
     buffer.writeln('──────────');
 
     // Subtotal
-    buffer.writeln(
-      'المجموع الفرعي: ${subtotal.toStringAsFixed(2)} $_currency',
-    );
+    buffer.writeln('المجموع الفرعي: ${subtotal.toStringAsFixed(2)} $_currency');
 
     // Tax
     final taxPercent = (taxRate * 100).toStringAsFixed(0);
@@ -140,17 +138,13 @@ class WhatsAppReceiptService {
 
     // Discount (only if > 0)
     if (discount > 0) {
-      buffer.writeln(
-        'الخصم: -${discount.toStringAsFixed(2)} $_currency',
-      );
+      buffer.writeln('الخصم: -${discount.toStringAsFixed(2)} $_currency');
     }
 
     buffer.writeln('──────────');
 
     // Total (bold with WhatsApp markdown)
-    buffer.writeln(
-      '*الإجمالي: ${total.toStringAsFixed(2)} $_currency*',
-    );
+    buffer.writeln('*الإجمالي: ${total.toStringAsFixed(2)} $_currency*');
 
     // Payment method
     buffer.writeln('طريقة الدفع: $paymentMethod');
@@ -288,8 +282,6 @@ class WhatsAppReceiptService {
     }
 
     // لا يوجد محتوى للإرسال
-    throw ArgumentError(
-      'يجب توفير pdfBytes أو receiptText على الأقل',
-    );
+    throw ArgumentError('يجب توفير pdfBytes أو receiptText على الأقل');
   }
 }

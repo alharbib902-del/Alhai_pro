@@ -11,20 +11,13 @@ void main() {
         title: 'سائق الحي',
         theme: AlhaiTheme.light,
         locale: const Locale('ar'),
-        supportedLocales: const [
-          Locale('ar'),
-          Locale('en'),
-        ],
+        supportedLocales: const [Locale('ar'), Locale('en')],
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,
           GlobalCupertinoLocalizations.delegate,
         ],
-        home: const Scaffold(
-          body: Center(
-            child: Text('Driver App'),
-          ),
-        ),
+        home: const Scaffold(body: Center(child: Text('Driver App'))),
       ),
     );
 

@@ -73,11 +73,7 @@ void main() {
     });
 
     test('cacheEarnings stores and retrieves earnings by period', () async {
-      final dailyEarnings = {
-        'total': 350.0,
-        'deliveries': 12,
-        'tips': 45.0,
-      };
+      final dailyEarnings = {'total': 350.0, 'deliveries': 12, 'tips': 45.0};
 
       await cacheService.cacheEarnings('daily', dailyEarnings);
       final cached = await cacheService.getCachedEarnings('daily');
@@ -123,8 +119,9 @@ void main() {
 
     test('expired cache entry returns null', () async {
       // Set up SharedPreferences with an old timestamp (> 24h ago)
-      final oldTimestamp =
-          DateTime.now().subtract(const Duration(hours: 25)).toIso8601String();
+      final oldTimestamp = DateTime.now()
+          .subtract(const Duration(hours: 25))
+          .toIso8601String();
 
       SharedPreferences.setMockInitialValues({
         'cache_deliveries': '[{"id":"old","status":"pending"}]',
@@ -140,8 +137,9 @@ void main() {
     });
 
     test('expired profile returns null', () async {
-      final oldTimestamp =
-          DateTime.now().subtract(const Duration(hours: 25)).toIso8601String();
+      final oldTimestamp = DateTime.now()
+          .subtract(const Duration(hours: 25))
+          .toIso8601String();
 
       SharedPreferences.setMockInitialValues({
         'cache_driver_profile': '{"name":"Expired Driver"}',
@@ -155,8 +153,9 @@ void main() {
     });
 
     test('cache within 24h is still valid', () async {
-      final recentTimestamp =
-          DateTime.now().subtract(const Duration(hours: 23)).toIso8601String();
+      final recentTimestamp = DateTime.now()
+          .subtract(const Duration(hours: 23))
+          .toIso8601String();
 
       SharedPreferences.setMockInitialValues({
         'cache_deliveries': '[{"id":"recent","status":"active"}]',
@@ -171,8 +170,9 @@ void main() {
     });
 
     test('expired delivery detail returns null', () async {
-      final oldTimestamp =
-          DateTime.now().subtract(const Duration(hours: 25)).toIso8601String();
+      final oldTimestamp = DateTime.now()
+          .subtract(const Duration(hours: 25))
+          .toIso8601String();
 
       SharedPreferences.setMockInitialValues({
         'cache_delivery_del-exp': '{"id":"del-exp","status":"done"}',
@@ -186,8 +186,9 @@ void main() {
     });
 
     test('expired earnings returns null', () async {
-      final oldTimestamp =
-          DateTime.now().subtract(const Duration(hours: 25)).toIso8601String();
+      final oldTimestamp = DateTime.now()
+          .subtract(const Duration(hours: 25))
+          .toIso8601String();
 
       SharedPreferences.setMockInitialValues({
         'cache_earnings_daily': '{"total": 100}',

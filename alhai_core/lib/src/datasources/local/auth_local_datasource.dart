@@ -39,8 +39,8 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   AuthLocalDataSourceImpl({
     required FlutterSecureStorage secureStorage,
     required SharedPreferences prefs,
-  })  : _secureStorage = secureStorage,
-        _prefs = prefs;
+  }) : _secureStorage = secureStorage,
+       _prefs = prefs;
 
   // ==================== Tokens (SecureStorage) ====================
 

@@ -27,9 +27,7 @@ class MockSyncQueueDao extends Mock implements SyncQueueDao {}
 // Helpers
 // ---------------------------------------------------------------------------
 
-Widget _buildTestWidget({
-  List<Override> overrides = const [],
-}) {
+Widget _buildTestWidget({List<Override> overrides = const []}) {
   return ProviderScope(
     overrides: [
       currentStoreIdProvider.overrideWith((ref) => 'test-store-id'),
@@ -57,8 +55,9 @@ void main() {
     when(() => mockDb.syncQueueDao).thenReturn(mockSyncQueueDao);
 
     // Mock customSelect to return empty results
-    when(() => mockDb.customSelect(any(), variables: any(named: 'variables')))
-        .thenAnswer((_) => _FakeSelectable());
+    when(
+      () => mockDb.customSelect(any(), variables: any(named: 'variables')),
+    ).thenAnswer((_) => _FakeSelectable());
 
     final getIt = GetIt.instance;
     if (getIt.isRegistered<AppDatabase>()) {

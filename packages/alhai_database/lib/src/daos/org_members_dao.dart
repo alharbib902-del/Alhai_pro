@@ -17,8 +17,9 @@ class OrgMembersDao extends DatabaseAccessor<AppDatabase>
   }
 
   Stream<List<OrgMembersTableData>> watchOrgMembers(String orgId) {
-    return (select(orgMembersTable)..where((m) => m.orgId.equals(orgId)))
-        .watch();
+    return (select(
+      orgMembersTable,
+    )..where((m) => m.orgId.equals(orgId))).watch();
   }
 
   Future<OrgMembersTableData?> getMemberByUserId(String orgId, String userId) {
@@ -36,18 +37,21 @@ class OrgMembersDao extends DatabaseAccessor<AppDatabase>
   // === User Stores ===
 
   Future<List<UserStoresTableData>> getUserStores(String userId) {
-    return (select(userStoresTable)..where((us) => us.userId.equals(userId)))
-        .get();
+    return (select(
+      userStoresTable,
+    )..where((us) => us.userId.equals(userId))).get();
   }
 
   Stream<List<UserStoresTableData>> watchUserStores(String userId) {
-    return (select(userStoresTable)..where((us) => us.userId.equals(userId)))
-        .watch();
+    return (select(
+      userStoresTable,
+    )..where((us) => us.userId.equals(userId))).watch();
   }
 
   Future<List<UserStoresTableData>> getStoreUsers(String storeId) {
-    return (select(userStoresTable)..where((us) => us.storeId.equals(storeId)))
-        .get();
+    return (select(
+      userStoresTable,
+    )..where((us) => us.storeId.equals(storeId))).get();
   }
 
   Future<int> upsertUserStore(UserStoresTableCompanion userStore) =>

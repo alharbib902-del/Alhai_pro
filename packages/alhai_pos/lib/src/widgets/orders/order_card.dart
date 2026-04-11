@@ -31,10 +31,7 @@ class OrderCard extends StatelessWidget {
         duration: AlhaiDurations.slow,
         decoration: BoxDecoration(
           border: BorderDirectional(
-            end: BorderSide(
-              color: _getStatusColor(order.status),
-              width: 4,
-            ),
+            end: BorderSide(color: _getStatusColor(order.status), width: 4),
           ),
         ),
         child: Column(
@@ -90,7 +87,9 @@ class OrderCard extends StatelessWidget {
                     if (order.isNew)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.error,
                           borderRadius: BorderRadius.circular(4),
@@ -120,7 +119,9 @@ class OrderCard extends StatelessWidget {
           // Status Badge
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+              horizontal: AlhaiSpacing.xs,
+              vertical: AlhaiSpacing.xxs,
+            ),
             decoration: BoxDecoration(
               color: _getStatusColor(order.status).withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(12),
@@ -128,10 +129,7 @@ class OrderCard extends StatelessWidget {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  order.status.icon,
-                  style: const TextStyle(fontSize: 12),
-                ),
+                Text(order.status.icon, style: const TextStyle(fontSize: 12)),
                 const SizedBox(width: AlhaiSpacing.xxs),
                 Text(
                   order.status.arabicName,
@@ -227,52 +225,58 @@ class OrderCard extends StatelessWidget {
           const SizedBox(height: AlhaiSpacing.sm),
 
           // Items
-          ...order.items.take(3).map((item) => Padding(
-                padding: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
-                child: Row(
-                  children: [
-                    Container(
-                      width: 24,
-                      height: 24,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primaryContainer,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Center(
-                        child: Text(
-                          '${item.quantity}',
-                          style: TextStyle(
-                            color: theme.colorScheme.onPrimaryContainer,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12,
+          ...order.items
+              .take(3)
+              .map(
+                (item) => Padding(
+                  padding: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.primaryContainer,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Center(
+                          child: Text(
+                            '${item.quantity}',
+                            style: TextStyle(
+                              color: theme.colorScheme.onPrimaryContainer,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 12,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    const SizedBox(width: AlhaiSpacing.xs),
-                    Expanded(
-                      child: Text(
-                        item.productName,
-                        style: theme.textTheme.bodyMedium,
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1,
+                      const SizedBox(width: AlhaiSpacing.xs),
+                      Expanded(
+                        child: Text(
+                          item.productName,
+                          style: theme.textTheme.bodyMedium,
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                        ),
                       ),
-                    ),
-                    Text(
-                      AppLocalizations.of(context)
-                          .priceSar(item.total.toStringAsFixed(2)),
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        fontWeight: FontWeight.w500,
+                      Text(
+                        AppLocalizations.of(
+                          context,
+                        ).priceSar(item.total.toStringAsFixed(2)),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              )),
+              ),
 
           if (order.items.length > 3)
             Text(
-              AppLocalizations.of(context)
-                  .moreProductsLabel(order.items.length - 3),
+              AppLocalizations.of(
+                context,
+              ).moreProductsLabel(order.items.length - 3),
               style: theme.textTheme.bodySmall?.copyWith(
                 color: theme.colorScheme.primary,
               ),
@@ -297,7 +301,9 @@ class OrderCard extends StatelessWidget {
               // Payment Status
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                  horizontal: AlhaiSpacing.xs,
+                  vertical: AlhaiSpacing.xxs,
+                ),
                 decoration: BoxDecoration(
                   color: order.isPaid
                       ? AppColors.success.withValues(alpha: 0.1)
@@ -334,8 +340,9 @@ class OrderCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    AppLocalizations.of(context)
-                        .priceSar(order.total.toStringAsFixed(2)),
+                    AppLocalizations.of(
+                      context,
+                    ).priceSar(order.total.toStringAsFixed(2)),
                     style: theme.textTheme.titleMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: theme.colorScheme.primary,
@@ -435,8 +442,9 @@ class OrderCard extends StatelessWidget {
                   ),
                   if (order.driverName != null)
                     Text(
-                      AppLocalizations.of(context)
-                          .driverNameLabel(order.driverName!),
+                      AppLocalizations.of(
+                        context,
+                      ).driverNameLabel(order.driverName!),
                       style: TextStyle(
                         fontSize: 12,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,

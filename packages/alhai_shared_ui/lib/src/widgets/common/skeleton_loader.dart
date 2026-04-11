@@ -186,10 +186,13 @@ class SkeletonTable extends StatelessWidget {
               columns,
               (i) => Expanded(
                 child: Padding(
-                  padding:
-                      const EdgeInsetsDirectional.only(end: AlhaiSpacing.xs),
-                  child:
-                      const SkeletonLoader(height: 14, width: double.infinity),
+                  padding: const EdgeInsetsDirectional.only(
+                    end: AlhaiSpacing.xs,
+                  ),
+                  child: const SkeletonLoader(
+                    height: 14,
+                    width: double.infinity,
+                  ),
                 ),
               ),
             ),
@@ -209,10 +212,13 @@ class SkeletonTable extends StatelessWidget {
                 columns,
                 (i) => Expanded(
                   child: Padding(
-                    padding:
-                        const EdgeInsetsDirectional.only(end: AlhaiSpacing.xs),
+                    padding: const EdgeInsetsDirectional.only(
+                      end: AlhaiSpacing.xs,
+                    ),
                     child: const SkeletonLoader(
-                        height: 12, width: double.infinity),
+                      height: 12,
+                      width: double.infinity,
+                    ),
                   ),
                 ),
               ),

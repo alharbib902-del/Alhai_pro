@@ -12,9 +12,8 @@ import '../debts_repository.dart';
 class DebtsRepositoryImpl implements DebtsRepository {
   final DebtsRemoteDataSource _remote;
 
-  DebtsRepositoryImpl({
-    required DebtsRemoteDataSource remote,
-  }) : _remote = remote;
+  DebtsRepositoryImpl({required DebtsRemoteDataSource remote})
+    : _remote = remote;
 
   @override
   Future<Paginated<Debt>> getDebts(

@@ -54,17 +54,22 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
 
       for (final account in accounts) {
         if (account.balance > 0) {
-          final hasInterest = await _db.transactionsDao
-              .hasInterestForPeriod(account.id, _currentPeriod);
-          final isOverdue = account.lastTransactionAt != null &&
+          final hasInterest = await _db.transactionsDao.hasInterestForPeriod(
+            account.id,
+            _currentPeriod,
+          );
+          final isOverdue =
+              account.lastTransactionAt != null &&
               account.lastTransactionAt!.isBefore(gracePeriod);
 
           if (!hasInterest && isOverdue) {
-            customers.add(_CustomerDebt(
-              account: account,
-              expectedInterest: account.balance * (_interestRate / 100),
-              isSelected: true,
-            ));
+            customers.add(
+              _CustomerDebt(
+                account: account,
+                expectedInterest: account.balance * (_interestRate / 100),
+                isSelected: true,
+              ),
+            );
           }
         }
       }
@@ -93,16 +98,19 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: isWideScreen,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.defaultUserName,
           userRole: l10n.branchManager,
           actions: [
             IconButton(
-              icon: Icon(Icons.refresh_rounded,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+              icon: Icon(
+                Icons.refresh_rounded,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               onPressed: _loadData,
             ),
           ],
@@ -117,7 +125,11 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
                       child: SingleChildScrollView(
                         padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
                         child: _buildContent(
-                            isWideScreen, isMediumScreen, isDark, l10n),
+                          isWideScreen,
+                          isMediumScreen,
+                          isDark,
+                          l10n,
+                        ),
                       ),
                     ),
                     _buildBottomBar(isDark, l10n),
@@ -134,8 +146,12 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
     return '$dateStr \u2022 ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
-      AppLocalizations l10n) {
+  Widget _buildContent(
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -161,32 +177,46 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
           Container(
             padding: const EdgeInsets.all(10),
             decoration: BoxDecoration(
-                color: AppColors.info.withValues(alpha: 0.15),
-                borderRadius: BorderRadius.circular(12)),
-            child: const Icon(Icons.calendar_month_rounded,
-                color: AppColors.info, size: 28),
+              color: AppColors.info.withValues(alpha: 0.15),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.calendar_month_rounded,
+              color: AppColors.info,
+              size: 28,
+            ),
           ),
           const SizedBox(width: AlhaiSpacing.md),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.closingPeriod(_currentPeriod),
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface,
-                        fontSize: 16)),
-                if (_lastCloseDate != null)
-                  Text(l10n.lastClosing(_lastCloseDate ?? '-'),
-                      style: TextStyle(
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                          fontSize: 12)),
                 Text(
-                    l10n.interestRateAndGrace(
-                        _interestRate.toString(), _graceDays.toString()),
+                  l10n.closingPeriod(_currentPeriod),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                    fontSize: 16,
+                  ),
+                ),
+                if (_lastCloseDate != null)
+                  Text(
+                    l10n.lastClosing(_lastCloseDate ?? '-'),
                     style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        fontSize: 12)),
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      fontSize: 12,
+                    ),
+                  ),
+                Text(
+                  l10n.interestRateAndGrace(
+                    _interestRate.toString(),
+                    _graceDays.toString(),
+                  ),
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    fontSize: 12,
+                  ),
+                ),
               ],
             ),
           ),
@@ -195,33 +225,44 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
     );
   }
 
-  Widget _buildSummary(bool isWideScreen, bool isMediumScreen, bool isDark,
-      AppLocalizations l10n) {
+  Widget _buildSummary(
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final selectedCustomers = _customers.where((c) => c.isSelected).toList();
-    final totalInterest =
-        selectedCustomers.fold<double>(0, (sum, c) => sum + c.expectedInterest);
-    final totalDebt =
-        selectedCustomers.fold<double>(0, (sum, c) => sum + c.account.balance);
+    final totalInterest = selectedCustomers.fold<double>(
+      0,
+      (sum, c) => sum + c.expectedInterest,
+    );
+    final totalDebt = selectedCustomers.fold<double>(
+      0,
+      (sum, c) => sum + c.account.balance,
+    );
 
     final cards = [
       _buildSummaryCard(
-          title: l10n.selectedCustomers,
-          value: '${selectedCustomers.length}',
-          icon: Icons.people_rounded,
-          color: AppColors.info,
-          isDark: isDark),
+        title: l10n.selectedCustomers,
+        value: '${selectedCustomers.length}',
+        icon: Icons.people_rounded,
+        color: AppColors.info,
+        isDark: isDark,
+      ),
       _buildSummaryCard(
-          title: l10n.totalDebts,
-          value: '${totalDebt.toStringAsFixed(0)} ${l10n.sar}',
-          icon: Icons.account_balance_rounded,
-          color: AppColors.warning,
-          isDark: isDark),
+        title: l10n.totalDebts,
+        value: '${totalDebt.toStringAsFixed(0)} ${l10n.sar}',
+        icon: Icons.account_balance_rounded,
+        color: AppColors.warning,
+        isDark: isDark,
+      ),
       _buildSummaryCard(
-          title: l10n.expectedInterests,
-          value: '${totalInterest.toStringAsFixed(2)} ${l10n.sar}',
-          icon: Icons.trending_up_rounded,
-          color: AppColors.success,
-          isDark: isDark),
+        title: l10n.expectedInterests,
+        value: '${totalInterest.toStringAsFixed(2)} ${l10n.sar}',
+        icon: Icons.trending_up_rounded,
+        color: AppColors.success,
+        isDark: isDark,
+      ),
     ];
 
     final spacing = isMediumScreen ? 16.0 : 12.0;
@@ -232,7 +273,8 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
           return Expanded(
             child: Padding(
               padding: EdgeInsetsDirectional.only(
-                  end: entry.key < cards.length - 1 ? spacing : 0),
+                end: entry.key < cards.length - 1 ? spacing : 0,
+              ),
               child: entry.value,
             ),
           );
@@ -240,23 +282,28 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
       );
     }
 
-    return Column(children: [
-      Row(children: [
-        Expanded(child: cards[0]),
-        SizedBox(width: spacing),
-        Expanded(child: cards[1])
-      ]),
-      SizedBox(height: spacing),
-      cards[2],
-    ]);
+    return Column(
+      children: [
+        Row(
+          children: [
+            Expanded(child: cards[0]),
+            SizedBox(width: spacing),
+            Expanded(child: cards[1]),
+          ],
+        ),
+        SizedBox(height: spacing),
+        cards[2],
+      ],
+    );
   }
 
-  Widget _buildSummaryCard(
-      {required String title,
-      required String value,
-      required IconData icon,
-      required Color color,
-      required bool isDark}) {
+  Widget _buildSummaryCard({
+    required String title,
+    required String value,
+    required IconData icon,
+    required Color color,
+    required bool isDark,
+  }) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -268,22 +315,30 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-              padding: const EdgeInsets.all(10),
-              decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(12)),
-              child: Icon(icon, color: color, size: 22)),
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              color: color.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(icon, color: color, size: 22),
+          ),
           const SizedBox(height: AlhaiSpacing.sm),
-          Text(value,
-              style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface)),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
           const SizedBox(height: AlhaiSpacing.xxs),
-          Text(title,
-              style: TextStyle(
-                  fontSize: 13,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant)),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 13,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );
@@ -299,20 +354,31 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
           border: Border.all(color: Theme.of(context).dividerColor),
         ),
         child: Center(
-          child: Column(children: [
-            Icon(Icons.check_circle_rounded,
-                size: 64, color: AppColors.success.withValues(alpha: 0.6)),
-            const SizedBox(height: AlhaiSpacing.md),
-            Text(l10n.noDebtsNeedClosing,
+          child: Column(
+            children: [
+              Icon(
+                Icons.check_circle_rounded,
+                size: 64,
+                color: AppColors.success.withValues(alpha: 0.6),
+              ),
+              const SizedBox(height: AlhaiSpacing.md),
+              Text(
+                l10n.noDebtsNeedClosing,
                 style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.onSurface)),
-            const SizedBox(height: AlhaiSpacing.xxs),
-            Text(l10n.allCustomersWithinGrace,
+                  fontSize: 16,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              const SizedBox(height: AlhaiSpacing.xxs),
+              Text(
+                l10n.allCustomersWithinGrace,
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontSize: 12)),
-          ]),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  fontSize: 12,
+                ),
+              ),
+            ],
+          ),
         ),
       );
     }
@@ -323,71 +389,96 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Theme.of(context).dividerColor),
       ),
-      child: Column(children: [
-        Padding(
-          padding: const EdgeInsets.all(AlhaiSpacing.mdl),
-          child: Row(children: [
-            Text(l10n.debtors,
-                style: TextStyle(
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(AlhaiSpacing.mdl),
+            child: Row(
+              children: [
+                Text(
+                  l10n.debtors,
+                  style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface)),
-            const Spacer(),
-            Text('${_customers.length}',
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
-          ]),
-        ),
-        const Divider(height: 1),
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: _customers.length,
-          separatorBuilder: (_, __) => const Divider(height: 1),
-          itemBuilder: (context, index) {
-            final customer = _customers[index];
-            return CheckboxListTile(
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
-              value: customer.isSelected,
-              onChanged: (v) => setState(
-                  () => _customers[index] = customer.copyWith(isSelected: v!)),
-              title: Text(customer.account.name,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                const Spacer(),
+                Text(
+                  '${_customers.length}',
                   style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.onSurface)),
-              subtitle: Column(
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 1),
+          ListView.separated(
+            shrinkWrap: true,
+            physics: const NeverScrollableScrollPhysics(),
+            itemCount: _customers.length,
+            separatorBuilder: (_, __) => const Divider(height: 1),
+            itemBuilder: (context, index) {
+              final customer = _customers[index];
+              return CheckboxListTile(
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 4,
+                ),
+                value: customer.isSelected,
+                onChanged: (v) => setState(
+                  () => _customers[index] = customer.copyWith(isSelected: v!),
+                ),
+                title: Text(
+                  customer.account.name,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                subtitle: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                        l10n.debtLabel(
-                            customer.account.balance.toStringAsFixed(2)),
-                        style: TextStyle(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
-                            fontSize: 12)),
+                      l10n.debtLabel(
+                        customer.account.balance.toStringAsFixed(2),
+                      ),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                        fontSize: 12,
+                      ),
+                    ),
                     Text(
-                        l10n.expectedInterestLabel(
-                            customer.expectedInterest.toStringAsFixed(2)),
-                        style: const TextStyle(
-                            color: AppColors.success,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 12)),
-                  ]),
-              secondary: CircleAvatar(
-                backgroundColor: AppColors.info.withValues(alpha: 0.15),
-                child: Text(
+                      l10n.expectedInterestLabel(
+                        customer.expectedInterest.toStringAsFixed(2),
+                      ),
+                      style: const TextStyle(
+                        color: AppColors.success,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                ),
+                secondary: CircleAvatar(
+                  backgroundColor: AppColors.info.withValues(alpha: 0.15),
+                  child: Text(
                     customer.account.name.isNotEmpty
                         ? customer.account.name[0]
                         : '?',
                     style: const TextStyle(
-                        color: AppColors.info, fontWeight: FontWeight.bold)),
-              ),
-              isThreeLine: true,
-            );
-          },
-        ),
-      ]),
+                      color: AppColors.info,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                isThreeLine: true,
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -401,74 +492,96 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
         border: Border(top: BorderSide(color: Theme.of(context).dividerColor)),
         boxShadow: [
           BoxShadow(
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurface
-                  .withValues(alpha: 0.05),
-              blurRadius: 10,
-              offset: const Offset(0, -2))
+            color: Theme.of(
+              context,
+            ).colorScheme.onSurface.withValues(alpha: 0.05),
+            blurRadius: 10,
+            offset: const Offset(0, -2),
+          ),
         ],
       ),
-      child: Row(children: [
-        Expanded(
-            child: Text(l10n.selectedCustomerCount(selectedCount),
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant))),
-        FilledButton.icon(
-          onPressed: selectedCount > 0 && !_isProcessing
-              ? _showConfirmationDialog
-              : null,
-          icon: _isProcessing
-              ? SizedBox(
-                  width: 20,
-                  height: 20,
-                  child: CircularProgressIndicator(
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              l10n.selectedCustomerCount(selectedCount),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+          FilledButton.icon(
+            onPressed: selectedCount > 0 && !_isProcessing
+                ? _showConfirmationDialog
+                : null,
+            icon: _isProcessing
+                ? SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
                       strokeWidth: 2,
-                      color: Theme.of(context).colorScheme.onPrimary))
-              : const Icon(Icons.check_rounded),
-          label: Text(_isProcessing ? l10n.processingClose : l10n.executeClose),
-        ),
-      ]),
+                      color: Theme.of(context).colorScheme.onPrimary,
+                    ),
+                  )
+                : const Icon(Icons.check_rounded),
+            label: Text(
+              _isProcessing ? l10n.processingClose : l10n.executeClose,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
   void _showConfirmationDialog() {
     final l10n = AppLocalizations.of(context);
     final selectedCustomers = _customers.where((c) => c.isSelected).toList();
-    final totalInterest =
-        selectedCustomers.fold<double>(0, (sum, c) => sum + c.expectedInterest);
+    final totalInterest = selectedCustomers.fold<double>(
+      0,
+      (sum, c) => sum + c.expectedInterest,
+    );
 
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.confirm),
         content: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(l10n.interestWillBeAdded(selectedCustomers.length)),
-              const SizedBox(height: AlhaiSpacing.xs),
-              Text(l10n.totalInterestsLabel(totalInterest.toStringAsFixed(2)),
-                  style: const TextStyle(fontWeight: FontWeight.bold)),
-              const SizedBox(height: AlhaiSpacing.md),
-              Container(
-                padding: const EdgeInsets.all(AlhaiSpacing.sm),
-                decoration: BoxDecoration(
-                    color: AppColors.warning.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(8)),
-                child: Row(children: [
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.interestWillBeAdded(selectedCustomers.length)),
+            const SizedBox(height: AlhaiSpacing.xs),
+            Text(
+              l10n.totalInterestsLabel(totalInterest.toStringAsFixed(2)),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: AlhaiSpacing.md),
+            Container(
+              padding: const EdgeInsets.all(AlhaiSpacing.sm),
+              decoration: BoxDecoration(
+                color: AppColors.warning.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Row(
+                children: [
                   const Icon(Icons.warning_rounded, color: AppColors.warning),
                   const SizedBox(width: AlhaiSpacing.xs),
                   Expanded(
-                      child: Text(l10n.cannotUndo,
-                          style: const TextStyle(fontSize: 13))),
-                ]),
+                    child: Text(
+                      l10n.cannotUndo,
+                      style: const TextStyle(fontSize: 13),
+                    ),
+                  ),
+                ],
               ),
-            ]),
+            ),
+          ],
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(l10n.cancel)),
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
@@ -500,8 +613,10 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
           periodKey: _currentPeriod,
         );
 
-        await _db.accountsDao
-            .addToBalance(customer.account.id, customer.expectedInterest);
+        await _db.accountsDao.addToBalance(
+          customer.account.id,
+          customer.expectedInterest,
+        );
       }
 
       final prefs = await SharedPreferences.getInstance();
@@ -512,8 +627,9 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(l10n.monthCloseSuccess(selectedCustomers.length)),
-              backgroundColor: AppColors.success),
+            content: Text(l10n.monthCloseSuccess(selectedCustomers.length)),
+            backgroundColor: AppColors.success,
+          ),
         );
         await _loadData();
       }
@@ -522,8 +638,9 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text('${l10n.errorOccurred}: $e'),
-              backgroundColor: AppColors.error),
+            content: Text('${l10n.errorOccurred}: $e'),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     }
@@ -535,15 +652,17 @@ class _CustomerDebt {
   final double expectedInterest;
   final bool isSelected;
 
-  _CustomerDebt(
-      {required this.account,
-      required this.expectedInterest,
-      required this.isSelected});
+  _CustomerDebt({
+    required this.account,
+    required this.expectedInterest,
+    required this.isSelected,
+  });
 
   _CustomerDebt copyWith({bool? isSelected}) {
     return _CustomerDebt(
-        account: account,
-        expectedInterest: expectedInterest,
-        isSelected: isSelected ?? this.isSelected);
+      account: account,
+      expectedInterest: expectedInterest,
+      isSelected: isSelected ?? this.isSelected,
+    );
   }
 }

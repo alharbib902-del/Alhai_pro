@@ -11,10 +11,7 @@ enum InvoiceTypeCode {
   /// 383 - Debit Note
   debitNote(code: '383', name: 'Debit Note');
 
-  const InvoiceTypeCode({
-    required this.code,
-    required this.name,
-  });
+  const InvoiceTypeCode({required this.code, required this.name});
 
   /// The UBL numeric code
   final String code;

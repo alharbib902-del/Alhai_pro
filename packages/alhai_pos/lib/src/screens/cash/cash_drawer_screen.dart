@@ -42,8 +42,9 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: isWideScreen,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: userName,
@@ -51,16 +52,20 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
           onUserTap: () {},
         ),
         Expanded(
-          child: ref.watch(openShiftProvider).when(
+          child: ref
+              .watch(openShiftProvider)
+              .when(
                 data: (shift) {
                   if (shift == null) {
                     return _buildNoShiftMessage(isDark, l10n, isMediumScreen);
                   }
-                  return ref.watch(shiftMovementsProvider(shift.id)).when(
+                  return ref
+                      .watch(shiftMovementsProvider(shift.id))
+                      .when(
                         data: (movements) => SingleChildScrollView(
-                          padding: EdgeInsets.all(isMediumScreen
-                              ? AlhaiSpacing.lg
-                              : AlhaiSpacing.md),
+                          padding: EdgeInsets.all(
+                            isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                          ),
                           child: _buildContent(
                             shift,
                             movements,
@@ -93,10 +98,14 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
   }
 
   Widget _buildNoShiftMessage(
-      bool isDark, AppLocalizations l10n, bool isMediumScreen) {
+    bool isDark,
+    AppLocalizations l10n,
+    bool isMediumScreen,
+  ) {
     return SingleChildScrollView(
-      padding:
-          EdgeInsets.all(isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+      padding: EdgeInsets.all(
+        isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+      ),
       child: Column(
         children: [
           // Closed status card
@@ -115,8 +124,11 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
                     color: AppColors.error.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.lock_rounded,
-                      color: AppColors.error, size: 32),
+                  child: const Icon(
+                    Icons.lock_rounded,
+                    color: AppColors.error,
+                    size: 32,
+                  ),
                 ),
                 const SizedBox(width: AlhaiSpacing.md),
                 Expanded(
@@ -187,16 +199,29 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                  flex: 3,
-                  child: _buildBalanceSummary(openingBalance, cashIn, cashOut,
-                      expectedBalance, isDark, l10n)),
+                flex: 3,
+                child: _buildBalanceSummary(
+                  openingBalance,
+                  cashIn,
+                  cashOut,
+                  expectedBalance,
+                  isDark,
+                  l10n,
+                ),
+              ),
               const SizedBox(width: AlhaiSpacing.lg),
               Expanded(flex: 2, child: _buildQuickActions(shift, isDark, l10n)),
             ],
           )
         else ...[
           _buildBalanceSummary(
-              openingBalance, cashIn, cashOut, expectedBalance, isDark, l10n),
+            openingBalance,
+            cashIn,
+            cashOut,
+            expectedBalance,
+            isDark,
+            l10n,
+          ),
           SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           _buildQuickActions(shift, isDark, l10n),
         ],
@@ -209,7 +234,10 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
   }
 
   Widget _buildStatusCard(
-      ShiftsTableData shift, bool isDark, AppLocalizations l10n) {
+    ShiftsTableData shift,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -225,8 +253,11 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
               color: AppColors.success.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.lock_open_rounded,
-                color: AppColors.success, size: 32),
+            child: const Icon(
+              Icons.lock_open_rounded,
+              color: AppColors.success,
+              size: 32,
+            ),
           ),
           const SizedBox(width: AlhaiSpacing.md),
           Expanded(
@@ -294,25 +325,28 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.md),
           _BalanceRow(
-              label: l10n.openingBalance,
-              amount: openingBalance,
-              icon: Icons.account_balance_wallet_rounded,
-              color: AppColors.info,
-              isDark: isDark),
+            label: l10n.openingBalance,
+            amount: openingBalance,
+            icon: Icons.account_balance_wallet_rounded,
+            color: AppColors.info,
+            isDark: isDark,
+          ),
           _BalanceRow(
-              label: l10n.cashIncoming,
-              amount: cashIn,
-              icon: Icons.add_circle_rounded,
-              color: AppColors.success,
-              isPositive: true,
-              isDark: isDark),
+            label: l10n.cashIncoming,
+            amount: cashIn,
+            icon: Icons.add_circle_rounded,
+            color: AppColors.success,
+            isPositive: true,
+            isDark: isDark,
+          ),
           _BalanceRow(
-              label: l10n.cashOutgoing,
-              amount: cashOut,
-              icon: Icons.remove_circle_rounded,
-              color: AppColors.error,
-              isNegative: true,
-              isDark: isDark),
+            label: l10n.cashOutgoing,
+            amount: cashOut,
+            icon: Icons.remove_circle_rounded,
+            color: AppColors.error,
+            isNegative: true,
+            isDark: isDark,
+          ),
           Divider(height: 24, color: Theme.of(context).dividerColor),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
@@ -330,9 +364,10 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
                 Text(
                   '${expectedBalance.toStringAsFixed(0)} ${l10n.sar}',
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                      color: AppColors.success),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
+                    color: AppColors.success,
+                  ),
                 ),
               ],
             ),
@@ -343,7 +378,10 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
   }
 
   Widget _buildQuickActions(
-      ShiftsTableData shift, bool isDark, AppLocalizations l10n) {
+    ShiftsTableData shift,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -391,8 +429,11 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
     );
   }
 
-  Widget _buildRecentTransactions(List<CashMovementsTableData> movements,
-      bool isDark, AppLocalizations l10n) {
+  Widget _buildRecentTransactions(
+    List<CashMovementsTableData> movements,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     // Show movements sorted by most recent first
     final sortedMovements = List<CashMovementsTableData>.from(movements)
       ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -413,9 +454,10 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
                 Text(
                   l10n.recentTransactions,
                   style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
                 const Spacer(),
                 TextButton(onPressed: () {}, child: Text(l10n.viewAll)),
@@ -434,15 +476,18 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
               ),
             )
           else
-            ...recentMovements.map((m) => _TransactionTile(
-                  title: m.reason ??
-                      (m.type == 'cash_in' ? l10n.cashIn : l10n.cashOut),
-                  amount: m.amount,
-                  time: _formatTime(m.createdAt, l10n),
-                  isIncome: m.type == 'cash_in',
-                  isDark: isDark,
-                  currency: l10n.sar,
-                )),
+            ...recentMovements.map(
+              (m) => _TransactionTile(
+                title:
+                    m.reason ??
+                    (m.type == 'cash_in' ? l10n.cashIn : l10n.cashOut),
+                amount: m.amount,
+                time: _formatTime(m.createdAt, l10n),
+                isIncome: m.type == 'cash_in',
+                isDark: isDark,
+                currency: l10n.sar,
+              ),
+            ),
         ],
       ),
     );
@@ -481,8 +526,9 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(l10n.cancel)),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.cancel),
+          ),
           FilledButton(
             onPressed: () async {
               final amount = double.tryParse(controller.text);
@@ -495,9 +541,9 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
                 if (!mounted) return;
                 final approved =
                     await ManagerApprovalService.requestPinApproval(
-                  context: context,
-                  action: 'cash_out',
-                );
+                      context: context,
+                      action: 'cash_out',
+                    );
                 if (!approved) {
                   if (!mounted) return;
                   ScaffoldMessenger.of(context).showSnackBar(
@@ -526,15 +572,18 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
                 if (!mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                      content: Text(
-                          isDeposit ? l10n.depositDone : l10n.withdrawalDone)),
+                    content: Text(
+                      isDeposit ? l10n.depositDone : l10n.withdrawalDone,
+                    ),
+                  ),
                 );
               } catch (e) {
                 if (!mounted) return;
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                      content: Text(l10n.errorWithDetails('$e')),
-                      backgroundColor: AppColors.error),
+                    content: Text(l10n.errorWithDetails('$e')),
+                    backgroundColor: AppColors.error,
+                  ),
                 );
               }
             },
@@ -585,12 +634,17 @@ class _BalanceRow extends StatelessWidget {
           ),
           const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
-            child: Text(label,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
+            child: Text(
+              label,
+              style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+            ),
           ),
           Text(
-            '${isPositive ? '+' : isNegative ? '-' : ''}${amount.toStringAsFixed(0)} ${l10n.sar}',
+            '${isPositive
+                ? '+'
+                : isNegative
+                ? '-'
+                : ''}${amount.toStringAsFixed(0)} ${l10n.sar}',
             style: TextStyle(fontWeight: FontWeight.w600, color: color),
           ),
         ],
@@ -632,9 +686,14 @@ class _ActionButton extends StatelessWidget {
             children: [
               Icon(icon, color: color, size: 28),
               const SizedBox(height: AlhaiSpacing.xs),
-              Text(label,
-                  style: TextStyle(
-                      color: color, fontWeight: FontWeight.w600, fontSize: 13)),
+              Text(
+                label,
+                style: TextStyle(
+                  color: color,
+                  fontWeight: FontWeight.w600,
+                  fontSize: 13,
+                ),
+              ),
             ],
           ),
         ),
@@ -664,13 +723,16 @@ class _TransactionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       contentPadding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.xxs),
+        horizontal: AlhaiSpacing.mdl,
+        vertical: AlhaiSpacing.xxs,
+      ),
       leading: Container(
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          color: (isIncome ? AppColors.success : AppColors.error)
-              .withValues(alpha: 0.1),
+          color: (isIncome ? AppColors.success : AppColors.error).withValues(
+            alpha: 0.1,
+          ),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(
@@ -679,18 +741,26 @@ class _TransactionTile extends StatelessWidget {
           size: 20,
         ),
       ),
-      title: Text(title,
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurface, fontSize: 14)),
-      subtitle: Text(time,
-          style: TextStyle(
-              color: Theme.of(context).colorScheme.onSurfaceVariant,
-              fontSize: 12)),
+      title: Text(
+        title,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurface,
+          fontSize: 14,
+        ),
+      ),
+      subtitle: Text(
+        time,
+        style: TextStyle(
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+          fontSize: 12,
+        ),
+      ),
       trailing: Text(
         '${isIncome ? '+' : '-'}${amount.toStringAsFixed(0)} $currency',
         style: TextStyle(
-            fontWeight: FontWeight.bold,
-            color: isIncome ? AppColors.success : AppColors.error),
+          fontWeight: FontWeight.bold,
+          color: isIncome ? AppColors.success : AppColors.error,
+        ),
       ),
     );
   }

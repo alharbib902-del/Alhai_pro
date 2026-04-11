@@ -25,8 +25,8 @@ Future<void> initializeAutoPrint(WidgetRef ref) async {
   ref.read(autoPrintEnabledProvider.notifier).state = autoPrintEnabled;
 
   // Register the auto-print callback
-  ref.read(autoPrintCallbackProvider.notifier).state =
-      (String saleId) => _autoPrintReceipt(ref, saleId);
+  ref.read(autoPrintCallbackProvider.notifier).state = (String saleId) =>
+      _autoPrintReceipt(ref, saleId);
 
   // Load saved printer configuration
   await ref.read(printServiceProvider.notifier).loadSavedPrinter();
@@ -55,7 +55,8 @@ Future<bool> _autoPrintReceipt(WidgetRef ref, String saleId) async {
     final store = await db.storesDao.getStoreById(sale.storeId);
     if (store == null) {
       debugPrint(
-          'Cannot auto-print: store not found (storeId=${sale.storeId})');
+        'Cannot auto-print: store not found (storeId=${sale.storeId})',
+      );
       return false;
     }
     final storeName = store.name;
@@ -78,12 +79,14 @@ Future<bool> _autoPrintReceipt(WidgetRef ref, String saleId) async {
       cashierName: cashierName,
       customerName: sale.customerName,
       items: items
-          .map((i) => ReceiptItem(
-                name: i.productName,
-                quantity: i.qty.toDouble(),
-                unitPrice: i.unitPrice,
-                total: i.total,
-              ))
+          .map(
+            (i) => ReceiptItem(
+              name: i.productName,
+              quantity: i.qty.toDouble(),
+              unitPrice: i.unitPrice,
+              total: i.total,
+            ),
+          )
           .toList(),
       subtotal: sale.subtotal,
       discount: sale.discount,

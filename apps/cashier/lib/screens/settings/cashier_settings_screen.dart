@@ -39,8 +39,9 @@ class _CashierSettingsScreenState extends ConsumerState<CashierSettingsScreen> {
           title: l10n.settings,
           subtitle: l10n.managePreferencesSubtitle,
           showSearch: false,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push(AppRoutes.notificationsCenter),
           notificationsCount: 0,
           userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
@@ -50,9 +51,14 @@ class _CashierSettingsScreenState extends ConsumerState<CashierSettingsScreen> {
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(
-                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+            ),
             child: _buildGridWithCacheClear(
-                isWideScreen, isMediumScreen, isDark, l10n),
+              isWideScreen,
+              isMediumScreen,
+              isDark,
+              l10n,
+            ),
           ),
         ),
       ],
@@ -171,8 +177,8 @@ class _CashierSettingsScreenState extends ConsumerState<CashierSettingsScreen> {
     final crossAxisCount = isWideScreen
         ? 4
         : isMediumScreen
-            ? 3
-            : 2;
+        ? 3
+        : 2;
 
     return GridView.builder(
       shrinkWrap: true,
@@ -213,9 +219,7 @@ class _CashierSettingsScreenState extends ConsumerState<CashierSettingsScreen> {
             Text(l10n.clearCacheTitle),
           ],
         ),
-        content: Text(
-          l10n.clearCacheDialogBody,
-        ),
+        content: Text(l10n.clearCacheDialogBody),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -225,9 +229,7 @@ class _CashierSettingsScreenState extends ConsumerState<CashierSettingsScreen> {
             onPressed: () => Navigator.of(ctx).pop(true),
             icon: const Icon(Icons.cleaning_services_rounded),
             label: Text(l10n.clearAndRestart),
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.error,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
           ),
         ],
       ),
@@ -363,15 +365,12 @@ class _SettingsTileState extends State<_SettingsTile> {
                 width: 52,
                 height: 52,
                 decoration: BoxDecoration(
-                  color:
-                      widget.color.withValues(alpha: widget.isDark ? 0.2 : 0.1),
+                  color: widget.color.withValues(
+                    alpha: widget.isDark ? 0.2 : 0.1,
+                  ),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(
-                  widget.icon,
-                  color: widget.color,
-                  size: 26,
-                ),
+                child: Icon(widget.icon, color: widget.color, size: 26),
               ),
               const SizedBox(height: 14),
               Text(

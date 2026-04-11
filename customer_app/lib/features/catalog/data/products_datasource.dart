@@ -34,7 +34,8 @@ class ProductsDatasource {
             .trim();
         if (sanitized.isNotEmpty) {
           query = query.or(
-              'name.ilike.%$sanitized%,barcode.eq.$sanitized,sku.ilike.%$sanitized%');
+            'name.ilike.%$sanitized%,barcode.eq.$sanitized,sku.ilike.%$sanitized%',
+          );
         }
       }
 

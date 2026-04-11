@@ -26,23 +26,27 @@ final querySuggestionsProvider = Provider<List<QuerySuggestion>>((ref) {
 final currentQueryProvider = StateProvider<String>((ref) => '');
 
 /// مزود التقرير المولد
-final generatedReportProvider = StateNotifierProvider<GeneratedReportNotifier,
-    AsyncValue<GeneratedReport?>>((ref) {
-  return GeneratedReportNotifier();
-});
+final generatedReportProvider =
+    StateNotifierProvider<
+      GeneratedReportNotifier,
+      AsyncValue<GeneratedReport?>
+    >((ref) {
+      return GeneratedReportNotifier();
+    });
 
 /// مزود سجل التقارير
 final reportHistoryProvider =
     StateNotifierProvider<ReportHistoryNotifier, List<GeneratedReport>>((ref) {
-  return ReportHistoryNotifier();
-});
+      return ReportHistoryNotifier();
+    });
 
 /// قيمة "الكل" الافتراضية لفلتر القوالب
 const kAllCategoryFilter = '__all__';
 
 /// مزود فلتر فئة القالب
-final templateCategoryFilterProvider =
-    StateProvider<String>((ref) => kAllCategoryFilter);
+final templateCategoryFilterProvider = StateProvider<String>(
+  (ref) => kAllCategoryFilter,
+);
 
 /// مزود حالة التحميل
 final reportLoadingProvider = StateProvider<bool>((ref) => false);
@@ -64,8 +68,9 @@ class GeneratedReportNotifier
     try {
       final analyzed = AiSmartReportsService.analyzeQuery(query);
       if (analyzed.matchedTemplateId != null) {
-        final report =
-            AiSmartReportsService.generateReport(analyzed.matchedTemplateId!);
+        final report = AiSmartReportsService.generateReport(
+          analyzed.matchedTemplateId!,
+        );
         state = AsyncValue.data(report);
       } else {
         // Default to daily sales if no match
@@ -117,8 +122,9 @@ class ReportHistoryNotifier extends StateNotifier<List<GeneratedReport>> {
 // ============================================================================
 
 /// مزود بيانات التقارير من خادم AI
-final reportsApiProvider =
-    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+final reportsApiProvider = FutureProvider.autoDispose<Map<String, dynamic>>((
+  ref,
+) async {
   final api = ref.read(aiApiServiceProvider);
   final storeId = ref.read(currentStoreIdProvider)!;
   return api.getSmartReport(orgId: 'default', storeId: storeId);

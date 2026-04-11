@@ -29,7 +29,7 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
         'damaged',
         l10n.damagedDefectiveShort,
         Icons.broken_image_rounded,
-        Colors.red
+        Colors.red,
       ),
       ('expired', l10n.expiredShort, Icons.event_busy_rounded, Colors.orange),
       ('theft', l10n.theftLoss, Icons.security_rounded, Colors.purple),
@@ -69,8 +69,9 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
       }
       final dr = _getDateRange();
 
-      final result = await db.customSelect(
-        '''SELECT
+      final result = await db
+          .customSelect(
+            '''SELECT
              im.id,
              im.type,
              im.qty,
@@ -86,25 +87,29 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
              AND im.created_at >= ?
              AND im.created_at < ?
            ORDER BY im.created_at DESC''',
-        variables: [
-          Variable.withString(storeId),
-          Variable.withDateTime(dr.start),
-          Variable.withDateTime(dr.end),
-        ],
-      ).get();
+            variables: [
+              Variable.withString(storeId),
+              Variable.withDateTime(dr.start),
+              Variable.withDateTime(dr.end),
+            ],
+          )
+          .get();
 
       if (mounted) {
         final records = result
-            .map((row) => _DamagedRecord(
-                  id: row.data['id'] as String,
-                  type: row.data['type'] as String,
-                  productName: row.data['product_name'] as String? ??
-                      AppLocalizations.of(context).unknownProduct,
-                  qty: _toDouble(row.data['qty']).abs(),
-                  lossAmount: _toDouble(row.data['loss_amount']),
-                  note: row.data['note'] as String? ?? '',
-                  date: _parseDate(row.data['created_at']),
-                ))
+            .map(
+              (row) => _DamagedRecord(
+                id: row.data['id'] as String,
+                type: row.data['type'] as String,
+                productName:
+                    row.data['product_name'] as String? ??
+                    AppLocalizations.of(context).unknownProduct,
+                qty: _toDouble(row.data['qty']).abs(),
+                lossAmount: _toDouble(row.data['loss_amount']),
+                note: row.data['note'] as String? ?? '',
+                date: _parseDate(row.data['created_at']),
+              ),
+            )
             .toList();
 
         setState(() {
@@ -182,30 +187,36 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                     ],
                   ),
                   const SizedBox(height: AlhaiSpacing.sm),
-                  Text(l10n.lossType,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    l10n.lossType,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: AlhaiSpacing.xs),
                   Wrap(
                     spacing: 6,
                     children: _lossTypes(ctx)
-                        .map((t) => ChoiceChip(
-                              label: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Icon(t.$3,
-                                      size: 14,
-                                      color: lossType == t.$1
-                                          ? Colors.white
-                                          : t.$4),
-                                  const SizedBox(width: AlhaiSpacing.xxs),
-                                  Text(t.$2,
-                                      style: const TextStyle(fontSize: 12)),
-                                ],
-                              ),
-                              selected: lossType == t.$1,
-                              onSelected: (_) => setDlg(() => lossType = t.$1),
-                              selectedColor: t.$4,
-                            ))
+                        .map(
+                          (t) => ChoiceChip(
+                            label: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  t.$3,
+                                  size: 14,
+                                  color: lossType == t.$1 ? Colors.white : t.$4,
+                                ),
+                                const SizedBox(width: AlhaiSpacing.xxs),
+                                Text(
+                                  t.$2,
+                                  style: const TextStyle(fontSize: 12),
+                                ),
+                              ],
+                            ),
+                            selected: lossType == t.$1,
+                            onSelected: (_) => setDlg(() => lossType = t.$1),
+                            selectedColor: t.$4,
+                          ),
+                        )
                         .toList(),
                   ),
                   const SizedBox(height: AlhaiSpacing.sm),
@@ -222,8 +233,9 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
             ),
             actions: [
               TextButton(
-                  onPressed: () => Navigator.pop(ctx),
-                  child: Text(l10n.cancel)),
+                onPressed: () => Navigator.pop(ctx),
+                child: Text(l10n.cancel),
+              ),
               FilledButton(
                 onPressed: () async {
                   if (productName.trim().isEmpty) return;
@@ -248,8 +260,9 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(AppLocalizations.of(context)
-                              .damagedGoodsRecorded),
+                          content: Text(
+                            AppLocalizations.of(context).damagedGoodsRecorded,
+                          ),
                           backgroundColor: AppColors.success,
                         ),
                       );
@@ -258,8 +271,11 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                     if (mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                          content: Text(AppLocalizations.of(context)
-                              .errorPrefix(e.toString(), e)),
+                          content: Text(
+                            AppLocalizations.of(
+                              context,
+                            ).errorPrefix(e.toString(), e),
+                          ),
                           backgroundColor: Theme.of(context).colorScheme.error,
                         ),
                       );
@@ -306,10 +322,12 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
             ],
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
-              child: Row(children: [
-                Text(l10n.periodLabel),
-                const Icon(Icons.arrow_drop_down),
-              ]),
+              child: Row(
+                children: [
+                  Text(l10n.periodLabel),
+                  const Icon(Icons.arrow_drop_down),
+                ],
+              ),
             ),
           ),
         ],
@@ -327,10 +345,13 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(l10n.totalLosses,
-                              style: const TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.red)),
+                          Text(
+                            l10n.totalLosses,
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.red,
+                            ),
+                          ),
                           Text(
                             l10n.amountSar(_totalLoss.toStringAsFixed(2)),
                             style: const TextStyle(
@@ -348,8 +369,9 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                           final amount = byType[t.$1] ?? 0;
                           return Expanded(
                             child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 3),
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 3,
+                              ),
                               child: Column(
                                 children: [
                                   Icon(t.$3, size: 18, color: t.$4),
@@ -363,11 +385,14 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                                  Text(t.$2,
-                                      style: TextStyle(
-                                          fontSize: 9,
-                                          color: Theme.of(context).hintColor),
-                                      textAlign: TextAlign.center),
+                                  Text(
+                                    t.$2,
+                                    style: TextStyle(
+                                      fontSize: 9,
+                                      color: Theme.of(context).hintColor,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
                                 ],
                               ),
                             ),
@@ -396,15 +421,22 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                               margin: const EdgeInsets.only(bottom: 6),
                               child: ListTile(
                                 leading: CircleAvatar(
-                                  backgroundColor:
-                                      typeInfo.$2.withValues(alpha: 0.1),
-                                  child: Icon(typeInfo.$1,
-                                      color: typeInfo.$2, size: 20),
+                                  backgroundColor: typeInfo.$2.withValues(
+                                    alpha: 0.1,
+                                  ),
+                                  child: Icon(
+                                    typeInfo.$1,
+                                    color: typeInfo.$2,
+                                    size: 20,
+                                  ),
                                 ),
-                                title: Text(r.productName,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 14)),
+                                title: Text(
+                                  r.productName,
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 14,
+                                  ),
+                                ),
                                 subtitle: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
@@ -414,16 +446,19 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                                       style: const TextStyle(fontSize: 11),
                                     ),
                                     if (r.note.isNotEmpty)
-                                      Text(r.note,
-                                          style: TextStyle(
-                                              fontSize: 11,
-                                              color:
-                                                  Theme.of(context).hintColor)),
+                                      Text(
+                                        r.note,
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: Theme.of(context).hintColor,
+                                        ),
+                                      ),
                                   ],
                                 ),
                                 trailing: Text(
                                   l10n.amountSar(
-                                      r.lossAmount.toStringAsFixed(0)),
+                                    r.lossAmount.toStringAsFixed(0),
+                                  ),
                                   style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     color: typeInfo.$2,

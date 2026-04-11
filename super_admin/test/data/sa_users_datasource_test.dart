@@ -50,8 +50,10 @@ void main() {
       final ops = mock.queryLog['users']!.first;
       final inFilterOp = ops.firstWhere((op) => op.method == 'inFilter');
       expect(inFilterOp.args[0], equals('role'));
-      expect(inFilterOp.args[1],
-          containsAll(['super_admin', 'support', 'viewer']));
+      expect(
+        inFilterOp.args[1],
+        containsAll(['super_admin', 'support', 'viewer']),
+      );
     });
 
     test('adds or filter when search is provided', () async {
@@ -142,12 +144,9 @@ void main() {
     test('returns a single user by ID', () async {
       // Arrange
       mock.setResponse(
-          'users',
-          SAUserFactory.json(
-            id: 'u42',
-            name: 'Fatima',
-            role: 'owner',
-          ));
+        'users',
+        SAUserFactory.json(id: 'u42', name: 'Fatima', role: 'owner'),
+      );
 
       // Act
       final user = await ds.getUser('u42');
@@ -433,10 +432,7 @@ void main() {
       mock.setError('users', Exception('Table not found'));
 
       // Act & Assert
-      expect(
-        () => ds.getPlatformUsers(),
-        throwsA(isA<Exception>()),
-      );
+      expect(() => ds.getPlatformUsers(), throwsA(isA<Exception>()));
     });
 
     test('getUser propagates errors', () async {
@@ -444,10 +440,7 @@ void main() {
       mock.setError('users', Exception('Connection failed'));
 
       // Act & Assert
-      expect(
-        () => ds.getUser('u1'),
-        throwsA(isA<Exception>()),
-      );
+      expect(() => ds.getUser('u1'), throwsA(isA<Exception>()));
     });
 
     test('getTotalUserCount propagates errors', () async {
@@ -455,10 +448,7 @@ void main() {
       mock.setError('users', Exception('Table does not exist'));
 
       // Act & Assert
-      expect(
-        () => ds.getTotalUserCount(),
-        throwsA(isA<Exception>()),
-      );
+      expect(() => ds.getTotalUserCount(), throwsA(isA<Exception>()));
     });
 
     test('softDeleteUser propagates errors', () async {
@@ -466,10 +456,7 @@ void main() {
       mock.setError('users', Exception('Permission denied'));
 
       // Act & Assert
-      expect(
-        () => ds.softDeleteUser('u1'),
-        throwsA(isA<Exception>()),
-      );
+      expect(() => ds.softDeleteUser('u1'), throwsA(isA<Exception>()));
     });
   });
 }

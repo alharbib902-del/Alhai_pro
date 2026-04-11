@@ -41,16 +41,19 @@ class ApprovalCenterScreen extends ConsumerWidget {
                 data: (count) => count > 0
                     ? Padding(
                         padding: const EdgeInsetsDirectional.only(
-                            end: AlhaiSpacing.md),
+                          end: AlhaiSpacing.md,
+                        ),
                         child: Center(
                           child: Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: AlhaiSpacing.xs,
-                                vertical: AlhaiSpacing.xxs),
+                              horizontal: AlhaiSpacing.xs,
+                              vertical: AlhaiSpacing.xxs,
+                            ),
                             decoration: BoxDecoration(
                               color: AlhaiColors.warning,
-                              borderRadius:
-                                  BorderRadius.circular(AlhaiSpacing.sm),
+                              borderRadius: BorderRadius.circular(
+                                AlhaiSpacing.sm,
+                              ),
                             ),
                             child: Text(
                               '$count',
@@ -96,7 +99,8 @@ class ApprovalCenterScreen extends ConsumerWidget {
                   },
                   child: ListView.builder(
                     padding: EdgeInsets.all(
-                        isMobile ? AlhaiSpacing.sm : AlhaiSpacing.mdl),
+                      isMobile ? AlhaiSpacing.sm : AlhaiSpacing.mdl,
+                    ),
                     itemCount: refunds.length,
                     itemBuilder: (context, index) {
                       final refund = refunds[index];
@@ -150,7 +154,10 @@ class ApprovalCenterScreen extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(
-      BuildContext context, bool isDark, ApprovalFilter filter) {
+    BuildContext context,
+    bool isDark,
+    ApprovalFilter filter,
+  ) {
     final l10n = AppLocalizations.of(context);
     final String message;
     final IconData icon;
@@ -178,11 +185,13 @@ class ApprovalCenterScreen extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon,
-              size: 64,
-              color: isDark
-                  ? Colors.white24
-                  : Theme.of(context).colorScheme.outlineVariant),
+          Icon(
+            icon,
+            size: 64,
+            color: isDark
+                ? Colors.white24
+                : Theme.of(context).colorScheme.outlineVariant,
+          ),
           const SizedBox(height: AlhaiSpacing.md),
           Text(
             message,
@@ -220,7 +229,9 @@ class _FilterTabs extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.xs,
+      ),
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withValues(alpha: 0.03)
@@ -262,16 +273,16 @@ class _FilterTabs extends StatelessWidget {
         color: isSelected
             ? AlhaiColors.primary
             : (isDark
-                ? Colors.white70
-                : Theme.of(context).colorScheme.onSurface),
+                  ? Colors.white70
+                  : Theme.of(context).colorScheme.onSurface),
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
       ),
       side: BorderSide(
         color: isSelected
             ? AlhaiColors.primary
             : (isDark
-                ? Colors.white24
-                : Theme.of(context).colorScheme.outlineVariant),
+                  ? Colors.white24
+                  : Theme.of(context).colorScheme.outlineVariant),
       ),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
     );
@@ -383,9 +394,9 @@ class _RefundCard extends ConsumerWidget {
                             fontSize: 13,
                             color: isDark
                                 ? Colors.white54
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant,
+                                : Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                     ],
@@ -395,7 +406,9 @@ class _RefundCard extends ConsumerWidget {
                 // Status badge
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: AlhaiSpacing.xxs),
+                    horizontal: 10,
+                    vertical: AlhaiSpacing.xxs,
+                  ),
                   decoration: BoxDecoration(
                     color: statusColor.withValues(alpha: 0.12),
                     borderRadius: BorderRadius.circular(12),
@@ -522,8 +535,9 @@ class _RefundCard extends ConsumerWidget {
           content: Text(l10n.success),
           backgroundColor: AlhaiColors.success,
           behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
     }
@@ -563,8 +577,9 @@ class _RefundCard extends ConsumerWidget {
           content: Text(l10n.cancelled),
           backgroundColor: AlhaiColors.error,
           behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
     }
@@ -596,7 +611,9 @@ class _DetailChip extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+        horizontal: AlhaiSpacing.xs,
+        vertical: AlhaiSpacing.xxs,
+      ),
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withValues(alpha: 0.06)
@@ -606,11 +623,13 @@ class _DetailChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon,
-              size: 14,
-              color: isDark
-                  ? Colors.white38
-                  : Theme.of(context).colorScheme.onSurfaceVariant),
+          Icon(
+            icon,
+            size: 14,
+            color: isDark
+                ? Colors.white38
+                : Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           const SizedBox(width: AlhaiSpacing.xxs),
           Flexible(
             child: Text(

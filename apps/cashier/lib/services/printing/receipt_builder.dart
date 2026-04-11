@@ -104,7 +104,9 @@ class ReceiptBuilder {
 
     cmd
       ..printTwoColumns(
-          'ضريبة القيمة المضافة (15%):', _formatMoney(receipt.tax))
+        'ضريبة القيمة المضافة (15%):',
+        _formatMoney(receipt.tax),
+      )
       ..doubleLine()
       ..setBold(true)
       ..setTextSize(EscPosTextSize.doubleHeight)
@@ -115,11 +117,15 @@ class ReceiptBuilder {
 
     // ─── Payment Info ──────────────────────────────────
     cmd.printTwoColumns(
-        'طريقة الدفع:', _translatePaymentMethod(receipt.paymentMethod));
+      'طريقة الدفع:',
+      _translatePaymentMethod(receipt.paymentMethod),
+    );
 
     if (receipt.amountReceived != null && receipt.amountReceived! > 0) {
       cmd.printTwoColumns(
-          'المبلغ المدفوع:', _formatMoney(receipt.amountReceived!));
+        'المبلغ المدفوع:',
+        _formatMoney(receipt.amountReceived!),
+      );
     }
     if (receipt.changeAmount != null && receipt.changeAmount! > 0) {
       cmd.printTwoColumns('الباقي:', _formatMoney(receipt.changeAmount!));
@@ -179,14 +185,8 @@ class ReceiptBuilder {
       ..dashLine()
       ..printTwoColumns('حجم الورق:', size == PaperSize.mm80 ? '80mm' : '58mm')
       ..printTwoColumns('أحرف في السطر:', '${size.charsPerLine}')
-      ..printTwoColumns(
-        'التاريخ:',
-        _formatDate(DateTime.now()),
-      )
-      ..printTwoColumns(
-        'الوقت:',
-        _formatTime(DateTime.now()),
-      )
+      ..printTwoColumns('التاريخ:', _formatDate(DateTime.now()))
+      ..printTwoColumns('الوقت:', _formatTime(DateTime.now()))
       ..dashLine()
       ..setAlign(EscPosAlign.center)
       ..printLine('اختبار الخط العريض:')

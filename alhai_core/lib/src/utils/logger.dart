@@ -7,12 +7,7 @@ library;
 import 'package:flutter/foundation.dart';
 
 /// Log levels
-enum LogLevel {
-  debug,
-  info,
-  warning,
-  error,
-}
+enum LogLevel { debug, info, warning, error }
 
 /// Abstract logger interface
 ///
@@ -42,8 +37,11 @@ abstract class AppLogger {
   void clearUser();
 
   /// Add a breadcrumb for navigation/action tracking
-  void addBreadcrumb(String message,
-      {String? category, Map<String, dynamic>? data});
+  void addBreadcrumb(
+    String message, {
+    String? category,
+    Map<String, dynamic>? data,
+  });
 }
 
 /// Default console logger implementation
@@ -98,8 +96,11 @@ class ConsoleLogger implements AppLogger {
   }
 
   @override
-  void addBreadcrumb(String message,
-      {String? category, Map<String, dynamic>? data}) {
+  void addBreadcrumb(
+    String message, {
+    String? category,
+    Map<String, dynamic>? data,
+  }) {
     debug('Breadcrumb: [$category] $message${data != null ? ' | $data' : ''}');
   }
 }

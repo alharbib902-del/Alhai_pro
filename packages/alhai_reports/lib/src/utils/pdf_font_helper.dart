@@ -27,10 +27,8 @@ class PdfFontHelper {
   }
 
   /// الحصول على ThemeData مع خطوط عربية
-  static pw.ThemeData get arabicTheme => pw.ThemeData.withFont(
-        base: _regularFont,
-        bold: _boldFont,
-      );
+  static pw.ThemeData get arabicTheme =>
+      pw.ThemeData.withFont(base: _regularFont, bold: _boldFont);
 
   /// إنشاء Document مع دعم Unicode عربي
   static Future<pw.Document> createDocument() async {

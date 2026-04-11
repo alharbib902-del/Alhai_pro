@@ -40,15 +40,17 @@ void main() {
 
       // Seed 1000 products with Arabic and English names, barcodes, and SKUs
       for (int i = 0; i < 1000; i++) {
-        await db.productsDao.insertProduct(makeProduct(
-          id: 'prod_$i',
-          name: 'Product $i - منتج ${i % 50}',
-          price: 10.0 + (i * 0.1),
-          barcode: '69000${i.toString().padLeft(5, '0')}',
-          sku: 'SKU-${i.toString().padLeft(5, '0')}',
-          stockQty: 50 + (i % 200),
-          minQty: (i % 10) + 1,
-        ));
+        await db.productsDao.insertProduct(
+          makeProduct(
+            id: 'prod_$i',
+            name: 'Product $i - منتج ${i % 50}',
+            price: 10.0 + (i * 0.1),
+            barcode: '69000${i.toString().padLeft(5, '0')}',
+            sku: 'SKU-${i.toString().padLeft(5, '0')}',
+            stockQty: 50 + (i % 200),
+            minQty: (i % 10) + 1,
+          ),
+        );
       }
     });
 
@@ -62,36 +64,56 @@ void main() {
       sw.stop();
 
       expect(results, isNotEmpty, reason: 'Search should return results');
-      expect(sw.elapsedMilliseconds, lessThan(200),
-          reason: 'Search across 1000 products should complete under 200ms '
-              '(actual: ${sw.elapsedMilliseconds}ms)');
+      expect(
+        sw.elapsedMilliseconds,
+        lessThan(200),
+        reason:
+            'Search across 1000 products should complete under 200ms '
+            '(actual: ${sw.elapsedMilliseconds}ms)',
+      );
     });
 
-    test('search 1000 products by partial English name completes under 200ms',
-        () async {
-      final sw = Stopwatch()..start();
-      final results =
-          await db.productsDao.searchProducts('Product 5', 'store-1');
-      sw.stop();
+    test(
+      'search 1000 products by partial English name completes under 200ms',
+      () async {
+        final sw = Stopwatch()..start();
+        final results = await db.productsDao.searchProducts(
+          'Product 5',
+          'store-1',
+        );
+        sw.stop();
 
-      expect(results, isNotEmpty, reason: 'Search should return results');
-      expect(sw.elapsedMilliseconds, lessThan(200),
+        expect(results, isNotEmpty, reason: 'Search should return results');
+        expect(
+          sw.elapsedMilliseconds,
+          lessThan(200),
           reason:
               'English name search across 1000 products should complete under 200ms '
-              '(actual: ${sw.elapsedMilliseconds}ms)');
-    });
+              '(actual: ${sw.elapsedMilliseconds}ms)',
+        );
+      },
+    );
 
     test('search by barcode pattern completes under 100ms', () async {
       final sw = Stopwatch()..start();
-      final results =
-          await db.productsDao.searchProducts('69000005', 'store-1');
+      final results = await db.productsDao.searchProducts(
+        '69000005',
+        'store-1',
+      );
       sw.stop();
 
-      expect(results, isNotEmpty,
-          reason: 'Barcode pattern search should return results');
-      expect(sw.elapsedMilliseconds, lessThan(100),
-          reason: 'Barcode pattern search should complete under 100ms '
-              '(actual: ${sw.elapsedMilliseconds}ms)');
+      expect(
+        results,
+        isNotEmpty,
+        reason: 'Barcode pattern search should return results',
+      );
+      expect(
+        sw.elapsedMilliseconds,
+        lessThan(100),
+        reason:
+            'Barcode pattern search should complete under 100ms '
+            '(actual: ${sw.elapsedMilliseconds}ms)',
+      );
     });
   });
 
@@ -101,12 +123,14 @@ void main() {
       await seedTestData(db);
 
       for (int i = 0; i < 1000; i++) {
-        await db.productsDao.insertProduct(makeProduct(
-          id: 'prod_$i',
-          name: 'Product $i',
-          barcode: '69000${i.toString().padLeft(5, '0')}',
-          stockQty: 100,
-        ));
+        await db.productsDao.insertProduct(
+          makeProduct(
+            id: 'prod_$i',
+            name: 'Product $i',
+            barcode: '69000${i.toString().padLeft(5, '0')}',
+            stockQty: 100,
+          ),
+        );
       }
     });
 
@@ -114,50 +138,83 @@ void main() {
       await db.close();
     });
 
-    test('getProductByBarcode with 1000 products completes under 50ms',
-        () async {
-      // Lookup a barcode in the middle of the dataset
-      final sw = Stopwatch()..start();
-      final product =
-          await db.productsDao.getProductByBarcode('6900000500', 'store-1');
-      sw.stop();
+    test(
+      'getProductByBarcode with 1000 products completes under 50ms',
+      () async {
+        // Lookup a barcode in the middle of the dataset
+        final sw = Stopwatch()..start();
+        final product = await db.productsDao.getProductByBarcode(
+          '6900000500',
+          'store-1',
+        );
+        sw.stop();
 
-      expect(product, isNotNull,
-          reason: 'Barcode lookup should find the product');
-      expect(product!.id, 'prod_500');
-      expect(sw.elapsedMilliseconds, lessThan(50),
-          reason: 'Barcode lookup should complete under 50ms '
-              '(actual: ${sw.elapsedMilliseconds}ms)');
-    });
+        expect(
+          product,
+          isNotNull,
+          reason: 'Barcode lookup should find the product',
+        );
+        expect(product!.id, 'prod_500');
+        expect(
+          sw.elapsedMilliseconds,
+          lessThan(50),
+          reason:
+              'Barcode lookup should complete under 50ms '
+              '(actual: ${sw.elapsedMilliseconds}ms)',
+        );
+      },
+    );
 
-    test('quickFindByBarcode with 1000 products completes under 50ms',
-        () async {
-      final sw = Stopwatch()..start();
-      final product =
-          await db.productsDao.quickFindByBarcode('6900000750', 'store-1');
-      sw.stop();
+    test(
+      'quickFindByBarcode with 1000 products completes under 50ms',
+      () async {
+        final sw = Stopwatch()..start();
+        final product = await db.productsDao.quickFindByBarcode(
+          '6900000750',
+          'store-1',
+        );
+        sw.stop();
 
-      expect(product, isNotNull,
-          reason: 'Quick barcode lookup should find the product');
-      expect(product!.id, 'prod_750');
-      expect(sw.elapsedMilliseconds, lessThan(50),
-          reason: 'Quick barcode lookup should complete under 50ms '
-              '(actual: ${sw.elapsedMilliseconds}ms)');
-    });
+        expect(
+          product,
+          isNotNull,
+          reason: 'Quick barcode lookup should find the product',
+        );
+        expect(product!.id, 'prod_750');
+        expect(
+          sw.elapsedMilliseconds,
+          lessThan(50),
+          reason:
+              'Quick barcode lookup should complete under 50ms '
+              '(actual: ${sw.elapsedMilliseconds}ms)',
+        );
+      },
+    );
 
-    test('barcode lookup for non-existent barcode completes under 50ms',
-        () async {
-      final sw = Stopwatch()..start();
-      final product =
-          await db.productsDao.getProductByBarcode('9999999999', 'store-1');
-      sw.stop();
+    test(
+      'barcode lookup for non-existent barcode completes under 50ms',
+      () async {
+        final sw = Stopwatch()..start();
+        final product = await db.productsDao.getProductByBarcode(
+          '9999999999',
+          'store-1',
+        );
+        sw.stop();
 
-      expect(product, isNull,
-          reason: 'Non-existent barcode should return null');
-      expect(sw.elapsedMilliseconds, lessThan(50),
-          reason: 'Miss lookup should also complete under 50ms '
-              '(actual: ${sw.elapsedMilliseconds}ms)');
-    });
+        expect(
+          product,
+          isNull,
+          reason: 'Non-existent barcode should return null',
+        );
+        expect(
+          sw.elapsedMilliseconds,
+          lessThan(50),
+          reason:
+              'Miss lookup should also complete under 50ms '
+              '(actual: ${sw.elapsedMilliseconds}ms)',
+        );
+      },
+    );
   });
 
   group('Products Count Query Performance', () {
@@ -166,11 +223,9 @@ void main() {
       await seedTestData(db);
 
       for (int i = 0; i < 1000; i++) {
-        await db.productsDao.insertProduct(makeProduct(
-          id: 'prod_$i',
-          name: 'Product $i',
-          stockQty: 100,
-        ));
+        await db.productsDao.insertProduct(
+          makeProduct(id: 'prod_$i', name: 'Product $i', stockQty: 100),
+        );
       }
     });
 
@@ -184,37 +239,55 @@ void main() {
       sw.stop();
 
       expect(count, 1000, reason: 'Should count all 1000 products');
-      expect(sw.elapsedMilliseconds, lessThan(100),
-          reason: 'Count query should complete under 100ms '
-              '(actual: ${sw.elapsedMilliseconds}ms)');
+      expect(
+        sw.elapsedMilliseconds,
+        lessThan(100),
+        reason:
+            'Count query should complete under 100ms '
+            '(actual: ${sw.elapsedMilliseconds}ms)',
+      );
     });
 
-    test('getProductById for 100 random lookups completes under 200ms',
-        () async {
-      final sw = Stopwatch()..start();
-      for (int i = 0; i < 100; i++) {
-        final product = await db.productsDao.getProductById('prod_${i * 10}');
-        expect(product, isNotNull);
-      }
-      sw.stop();
+    test(
+      'getProductById for 100 random lookups completes under 200ms',
+      () async {
+        final sw = Stopwatch()..start();
+        for (int i = 0; i < 100; i++) {
+          final product = await db.productsDao.getProductById('prod_${i * 10}');
+          expect(product, isNotNull);
+        }
+        sw.stop();
 
-      expect(sw.elapsedMilliseconds, lessThan(200),
-          reason: '100 individual product lookups should complete under 200ms '
-              '(actual: ${sw.elapsedMilliseconds}ms)');
-    });
+        expect(
+          sw.elapsedMilliseconds,
+          lessThan(200),
+          reason:
+              '100 individual product lookups should complete under 200ms '
+              '(actual: ${sw.elapsedMilliseconds}ms)',
+        );
+      },
+    );
 
-    test('getProductsByCategory with 1000 products completes under 50ms',
-        () async {
-      // No products have categoryId set, so this tests the empty result path performance
-      final sw = Stopwatch()..start();
-      final products =
-          await db.productsDao.getProductsByCategory('cat-1', 'store-1');
-      sw.stop();
+    test(
+      'getProductsByCategory with 1000 products completes under 50ms',
+      () async {
+        // No products have categoryId set, so this tests the empty result path performance
+        final sw = Stopwatch()..start();
+        final products = await db.productsDao.getProductsByCategory(
+          'cat-1',
+          'store-1',
+        );
+        sw.stop();
 
-      expect(products, isEmpty);
-      expect(sw.elapsedMilliseconds, lessThan(50),
-          reason: 'Category filter query should complete under 50ms '
-              '(actual: ${sw.elapsedMilliseconds}ms)');
-    });
+        expect(products, isEmpty);
+        expect(
+          sw.elapsedMilliseconds,
+          lessThan(50),
+          reason:
+              'Category filter query should complete under 50ms '
+              '(actual: ${sw.elapsedMilliseconds}ms)',
+        );
+      },
+    );
   });
 }

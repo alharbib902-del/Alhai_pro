@@ -94,10 +94,7 @@ void main() {
 
   group('Cashier Router - Route Helpers', () {
     test('customerDetailPath generates correct path', () {
-      expect(
-        AppRoutes.customerDetailPath('123'),
-        equals('/customers/123'),
-      );
+      expect(AppRoutes.customerDetailPath('123'), equals('/customers/123'));
     });
 
     test('customerLedgerPath generates correct path', () {

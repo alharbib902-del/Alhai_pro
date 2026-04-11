@@ -75,12 +75,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               )
             : Consumer(
                 builder: (context, ref, _) {
-                  final resultsAsync = ref.watch(productsProvider((
-                    storeId: store.id,
-                    page: 1,
-                    categoryId: null,
-                    search: _query,
-                  )));
+                  final resultsAsync = ref.watch(
+                    productsProvider((
+                      storeId: store.id,
+                      page: 1,
+                      categoryId: null,
+                      search: _query,
+                    )),
+                  );
 
                   return resultsAsync.when(
                     loading: () => AlhaiShimmer(
@@ -88,8 +90,9 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                         padding: const EdgeInsets.all(AlhaiSpacing.sm),
                         itemCount: 6,
                         itemBuilder: (context, index) => Padding(
-                          padding:
-                              const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+                          padding: const EdgeInsets.only(
+                            bottom: AlhaiSpacing.sm,
+                          ),
                           child: AlhaiSkeleton.listTile(),
                         ),
                       ),
@@ -112,12 +115,14 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
                       return RefreshIndicator(
                         onRefresh: () async {
-                          ref.invalidate(productsProvider((
-                            storeId: store.id,
-                            page: 1,
-                            categoryId: null,
-                            search: _query,
-                          )));
+                          ref.invalidate(
+                            productsProvider((
+                              storeId: store.id,
+                              page: 1,
+                              categoryId: null,
+                              search: _query,
+                            )),
+                          );
                         },
                         child: ListView.builder(
                           padding: const EdgeInsets.all(AlhaiSpacing.sm),
@@ -156,13 +161,16 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                             .read(cartProvider.notifier)
                                             .addItem(product, store.id);
                                         if (added) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
                                             SnackBar(
                                               content: Text(
-                                                  'تمت إضافة ${product.name}'),
-                                              duration:
-                                                  const Duration(seconds: 1),
+                                                'تمت إضافة ${product.name}',
+                                              ),
+                                              duration: const Duration(
+                                                seconds: 1,
+                                              ),
                                             ),
                                           );
                                         } else {
@@ -183,30 +191,38 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                                                 FilledButton(
                                                   onPressed: () {
                                                     ref
-                                                        .read(cartProvider
-                                                            .notifier)
+                                                        .read(
+                                                          cartProvider.notifier,
+                                                        )
                                                         .clearAndSwitchStore(
-                                                            store.id);
+                                                          store.id,
+                                                        );
                                                     ref
-                                                        .read(cartProvider
-                                                            .notifier)
+                                                        .read(
+                                                          cartProvider.notifier,
+                                                        )
                                                         .addItem(
-                                                            product, store.id);
+                                                          product,
+                                                          store.id,
+                                                        );
                                                     Navigator.pop(ctx);
                                                     ScaffoldMessenger.of(
-                                                            context)
-                                                        .showSnackBar(
+                                                      context,
+                                                    ).showSnackBar(
                                                       SnackBar(
                                                         content: Text(
-                                                            'تمت إضافة ${product.name}'),
+                                                          'تمت إضافة ${product.name}',
+                                                        ),
                                                         duration:
                                                             const Duration(
-                                                                seconds: 1),
+                                                              seconds: 1,
+                                                            ),
                                                       ),
                                                     );
                                                   },
-                                                  child:
-                                                      const Text('مسح وإضافة'),
+                                                  child: const Text(
+                                                    'مسح وإضافة',
+                                                  ),
                                                 ),
                                               ],
                                             ),

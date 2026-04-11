@@ -24,7 +24,8 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
   Future<List<AccountsTableData>> getReceivableAccounts(String storeId) {
     return (select(accountsTable)
           ..where(
-              (a) => a.storeId.equals(storeId) & a.type.equals('receivable'))
+            (a) => a.storeId.equals(storeId) & a.type.equals('receivable'),
+          )
           ..orderBy([(a) => OrderingTerm.asc(a.name)])
           ..limit(500))
         .get();
@@ -41,16 +42,19 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
 
   /// الحصول على حساب بالمعرف
   Future<AccountsTableData?> getAccountById(String id) {
-    return (select(accountsTable)..where((a) => a.id.equals(id)))
-        .getSingleOrNull();
+    return (select(
+      accountsTable,
+    )..where((a) => a.id.equals(id))).getSingleOrNull();
   }
 
   /// الحصول على حساب العميل
   Future<AccountsTableData?> getCustomerAccount(
-      String customerId, String storeId) {
-    return (select(accountsTable)
-          ..where((a) =>
-              a.customerId.equals(customerId) & a.storeId.equals(storeId)))
+    String customerId,
+    String storeId,
+  ) {
+    return (select(accountsTable)..where(
+          (a) => a.customerId.equals(customerId) & a.storeId.equals(storeId),
+        ))
         .getSingleOrNull();
   }
 
@@ -66,12 +70,13 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
 
   /// تحديث الرصيد
   Future<int> updateBalance(String id, double newBalance) {
-    return (update(accountsTable)..where((a) => a.id.equals(id)))
-        .write(AccountsTableCompanion(
-      balance: Value(newBalance),
-      lastTransactionAt: Value(DateTime.now()),
-      updatedAt: Value(DateTime.now()),
-    ));
+    return (update(accountsTable)..where((a) => a.id.equals(id))).write(
+      AccountsTableCompanion(
+        balance: Value(newBalance),
+        lastTransactionAt: Value(DateTime.now()),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   /// إضافة للرصيد - atomic SQL to prevent race conditions
@@ -116,17 +121,20 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
 
   /// تعيين تاريخ المزامنة
   Future<int> markAsSynced(String id) {
-    return (update(accountsTable)..where((a) => a.id.equals(id)))
-        .write(AccountsTableCompanion(syncedAt: Value(DateTime.now())));
+    return (update(accountsTable)..where((a) => a.id.equals(id))).write(
+      AccountsTableCompanion(syncedAt: Value(DateTime.now())),
+    );
   }
 
   /// مراقبة الحسابات
   Stream<List<AccountsTableData>> watchReceivableAccounts(String storeId) {
     return (select(accountsTable)
-          ..where((a) =>
-              a.storeId.equals(storeId) &
-              a.type.equals('receivable') &
-              a.balance.isBiggerThanValue(0))
+          ..where(
+            (a) =>
+                a.storeId.equals(storeId) &
+                a.type.equals('receivable') &
+                a.balance.isBiggerThanValue(0),
+          )
           ..orderBy([(a) => OrderingTerm.desc(a.balance)]))
         .watch();
   }

@@ -26,8 +26,9 @@ void main() {
   tearDown(tearDownTestGetIt);
 
   group('CashInOutScreen', () {
-    testWidgets('shows loading when openShiftProvider is loading',
-        (tester) async {
+    testWidgets('shows loading when openShiftProvider is loading', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
@@ -35,14 +36,14 @@ void main() {
 
       final completer = Completer<ShiftsTableData?>();
 
-      await tester.pumpWidget(createTestWidget(
-        const CashInOutScreen(),
-        overrides: [
-          openShiftProvider.overrideWith(
-            (ref) => completer.future,
-          ),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const CashInOutScreen(),
+          overrides: [
+            openShiftProvider.overrideWith((ref) => completer.future),
+          ],
+        ),
+      );
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
@@ -55,12 +56,12 @@ void main() {
 
       suppressOverflowErrors();
 
-      await tester.pumpWidget(createTestWidget(
-        const CashInOutScreen(),
-        overrides: [
-          openShiftProvider.overrideWith((ref) async => null),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const CashInOutScreen(),
+          overrides: [openShiftProvider.overrideWith((ref) async => null)],
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.timer_off_rounded), findsOneWidget);
@@ -74,12 +75,12 @@ void main() {
 
       final shift = createTestShift(id: 'shift-1');
 
-      await tester.pumpWidget(createTestWidget(
-        const CashInOutScreen(),
-        overrides: [
-          openShiftProvider.overrideWith((ref) async => shift),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const CashInOutScreen(),
+          overrides: [openShiftProvider.overrideWith((ref) async => shift)],
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Type selector icon
@@ -98,12 +99,12 @@ void main() {
 
       final shift = createTestShift(id: 'shift-1');
 
-      await tester.pumpWidget(createTestWidget(
-        const CashInOutScreen(),
-        overrides: [
-          openShiftProvider.overrideWith((ref) async => shift),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const CashInOutScreen(),
+          overrides: [openShiftProvider.overrideWith((ref) async => shift)],
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Amount card icon
@@ -120,12 +121,12 @@ void main() {
 
       final shift = createTestShift(id: 'shift-1');
 
-      await tester.pumpWidget(createTestWidget(
-        const CashInOutScreen(),
-        overrides: [
-          openShiftProvider.overrideWith((ref) async => shift),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const CashInOutScreen(),
+          overrides: [openShiftProvider.overrideWith((ref) async => shift)],
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Reason card icon
@@ -140,12 +141,12 @@ void main() {
 
       final shift = createTestShift(id: 'shift-1');
 
-      await tester.pumpWidget(createTestWidget(
-        const CashInOutScreen(),
-        overrides: [
-          openShiftProvider.overrideWith((ref) async => shift),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const CashInOutScreen(),
+          overrides: [openShiftProvider.overrideWith((ref) async => shift)],
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Calculator icon for denomination counter

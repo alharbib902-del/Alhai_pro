@@ -54,7 +54,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
   Future<void> _upsertSetting(String key, String value) async {
     final storeId = ref.read(currentStoreIdProvider)!;
     final id = 'setting_${storeId}_$key';
-    await _db.into(_db.settingsTable).insertOnConflictUpdate(
+    await _db
+        .into(_db.settingsTable)
+        .insertOnConflictUpdate(
           SettingsTableCompanion.insert(
             id: id,
             storeId: storeId,
@@ -72,9 +74,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     });
     try {
       final storeId = ref.read(currentStoreIdProvider)!;
-      final settings = await (_db.select(_db.settingsTable)
-            ..where((s) => s.storeId.equals(storeId)))
-          .get();
+      final settings = await (_db.select(
+        _db.settingsTable,
+      )..where((s) => s.storeId.equals(storeId))).get();
       for (final s in settings) {
         switch (s.key) {
           case 'auto_backup':
@@ -124,7 +126,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           SnackBar(
             content: Text(
               AppLocalizations.of(context).backupCompletedBody(
-                  bundle.totalRows, bundle.sizeMb.toStringAsFixed(1)),
+                bundle.totalRows,
+                bundle.sizeMb.toStringAsFixed(1),
+              ),
             ),
             backgroundColor: AppColors.success,
           ),
@@ -162,8 +166,11 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 color: AppColors.success.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.check_circle_rounded,
-                  color: AppColors.success, size: 22),
+              child: const Icon(
+                Icons.check_circle_rounded,
+                color: AppColors.success,
+                size: 22,
+              ),
             ),
             const SizedBox(width: AlhaiSpacing.sm),
             Expanded(
@@ -207,7 +214,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                      AppLocalizations.of(context).backupCopiedToClipboard),
+                    AppLocalizations.of(context).backupCopiedToClipboard,
+                  ),
                   backgroundColor: AppColors.info,
                 ),
               );
@@ -235,16 +243,17 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 color: AppColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.warning_rounded,
-                  color: AppColors.warning, size: 22),
+              child: const Icon(
+                Icons.warning_rounded,
+                color: AppColors.warning,
+                size: 22,
+              ),
             ),
             const SizedBox(width: AlhaiSpacing.sm),
             Expanded(
               child: Text(
                 l10n.restoreBackup,
-                style: TextStyle(
-                  color: AppColors.getTextPrimary(isDark),
-                ),
+                style: TextStyle(color: AppColors.getTextPrimary(isDark)),
               ),
             ),
           ],
@@ -268,8 +277,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                   Expanded(
                     child: OutlinedButton.icon(
                       onPressed: () async {
-                        final data =
-                            await Clipboard.getData(Clipboard.kTextPlain);
+                        final data = await Clipboard.getData(
+                          Clipboard.kTextPlain,
+                        );
                         if (data?.text != null) {
                           controller.text = data!.text!;
                         }
@@ -308,16 +318,21 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 decoration: BoxDecoration(
-                  color:
-                      AppColors.error.withValues(alpha: isDark ? 0.12 : 0.06),
+                  color: AppColors.error.withValues(
+                    alpha: isDark ? 0.12 : 0.06,
+                  ),
                   borderRadius: BorderRadius.circular(10),
-                  border:
-                      Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                  border: Border.all(
+                    color: AppColors.error.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.error_outline_rounded,
-                        color: AppColors.error, size: 18),
+                    const Icon(
+                      Icons.error_outline_rounded,
+                      color: AppColors.error,
+                      size: 18,
+                    ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
@@ -341,9 +356,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, controller.text),
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.warning,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: AppColors.warning),
             child: Text(l10n.confirmRestore),
           ),
         ],
@@ -440,14 +453,22 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context,
-                      message: _error!, onRetry: _loadBackupSettings)
-                  : SingleChildScrollView(
-                      padding: EdgeInsets.all(
-                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: _buildContent(
-                          isWideScreen, isMediumScreen, isDark, l10n),
-                    ),
+              ? AppErrorState.general(
+                  context,
+                  message: _error!,
+                  onRetry: _loadBackupSettings,
+                )
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(
+                    isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                  ),
+                  child: _buildContent(
+                    isWideScreen,
+                    isMediumScreen,
+                    isDark,
+                    l10n,
+                  ),
+                ),
         ),
       ],
     );
@@ -509,10 +530,10 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     final statusColor = !hasBackup
         ? AppColors.getTextMuted(isDark)
         : timeSince.inHours < 24
-            ? AppColors.success
-            : timeSince.inHours < 72
-                ? AppColors.warning
-                : AppColors.error;
+        ? AppColors.success
+        : timeSince.inHours < 72
+        ? AppColors.warning
+        : AppColors.error;
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -612,8 +633,11 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               ),
               child: Row(
                 children: [
-                  Icon(Icons.info_outline_rounded,
-                      color: statusColor, size: 18),
+                  Icon(
+                    Icons.info_outline_rounded,
+                    color: statusColor,
+                    size: 18,
+                  ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
@@ -633,12 +657,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     );
   }
 
-  Widget _statusItem(
-    IconData icon,
-    String label,
-    String value,
-    bool isDark,
-  ) {
+  Widget _statusItem(IconData icon, String label, String value, bool isDark) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -694,17 +713,13 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               ),
         color: _isBackingUp ? AppColors.getSurface(isDark) : null,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
       ),
       child: Column(
         children: [
           if (_isBackingUp) ...[
             const SizedBox(height: 10),
-            const CircularProgressIndicator(
-              color: AppColors.primary,
-            ),
+            const CircularProgressIndicator(color: AppColors.primary),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
               'Exporting database...',
@@ -736,10 +751,12 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: AppColors.textOnPrimary,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AlhaiSpacing.md,
+                  ),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ),
@@ -775,8 +792,11 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.schedule_rounded,
-                    color: AppColors.info, size: 20),
+                child: const Icon(
+                  Icons.schedule_rounded,
+                  color: AppColors.info,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
@@ -823,7 +843,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                   },
                   child: Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.md, vertical: 10),
+                      horizontal: AlhaiSpacing.md,
+                      vertical: 10,
+                    ),
                     decoration: BoxDecoration(
                       color: isSelected
                           ? AppColors.info.withValues(alpha: 0.1)
@@ -874,8 +896,11 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.restore_rounded,
-                    color: AppColors.warning, size: 20),
+                child: const Icon(
+                  Icons.restore_rounded,
+                  color: AppColors.warning,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -923,16 +948,20 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                     icon: const Icon(Icons.restore_rounded, size: 20),
                     label: const Text(
                       'Restore Now',
-                      style:
-                          TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.warning,
                       side: BorderSide(
-                          color: AppColors.warning.withValues(alpha: 0.5)),
+                        color: AppColors.warning.withValues(alpha: 0.5),
+                      ),
                       padding: const EdgeInsets.symmetric(vertical: 14),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12)),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
           ),

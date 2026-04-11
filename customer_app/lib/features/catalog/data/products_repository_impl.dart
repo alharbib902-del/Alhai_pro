@@ -14,14 +14,13 @@ class ProductsRepositoryImpl implements ProductsRepository {
     int limit = 20,
     String? categoryId,
     String? searchQuery,
-  }) =>
-      _datasource.getProducts(
-        storeId,
-        page: page,
-        limit: limit,
-        categoryId: categoryId,
-        searchQuery: searchQuery,
-      );
+  }) => _datasource.getProducts(
+    storeId,
+    page: page,
+    limit: limit,
+    categoryId: categoryId,
+    searchQuery: searchQuery,
+  );
 
   @override
   Future<Product> getProduct(String id) => _datasource.getProduct(id);

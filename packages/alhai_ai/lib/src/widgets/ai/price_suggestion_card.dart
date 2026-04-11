@@ -40,15 +40,15 @@ class PriceSuggestionCard extends StatelessWidget {
             color: isSelected
                 ? AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.05)
                 : isDark
-                    ? const Color(0xFF1E293B)
-                    : Colors.white,
+                ? const Color(0xFF1E293B)
+                : Colors.white,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isSelected
                   ? AppColors.primary.withValues(alpha: 0.5)
                   : isDark
-                      ? Colors.white.withValues(alpha: 0.08)
-                      : AppColors.border,
+                  ? Colors.white.withValues(alpha: 0.08)
+                  : AppColors.border,
               width: isSelected ? 1.5 : 1,
             ),
             boxShadow: [
@@ -92,8 +92,9 @@ class PriceSuggestionCard extends StatelessWidget {
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
-                            color:
-                                isDark ? Colors.white : AppColors.textPrimary,
+                            color: isDark
+                                ? Colors.white
+                                : AppColors.textPrimary,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -202,17 +203,19 @@ class PriceSuggestionCard extends StatelessWidget {
     final confidenceText = suggestion.confidence >= 0.9
         ? 'ثقة عالية' // High confidence
         : suggestion.confidence >= 0.7
-            ? 'ثقة متوسطة' // Medium confidence
-            : 'ثقة منخفضة'; // Low confidence
+        ? 'ثقة متوسطة' // Medium confidence
+        : 'ثقة منخفضة'; // Low confidence
     final color = suggestion.confidence >= 0.9
         ? AppColors.primary
         : suggestion.confidence >= 0.7
-            ? AppColors.warning
-            : AppColors.error;
+        ? AppColors.warning
+        : AppColors.error;
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: 6, vertical: AlhaiSpacing.xxxs),
+        horizontal: 6,
+        vertical: AlhaiSpacing.xxxs,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(4),
@@ -286,8 +289,8 @@ class PriceSuggestionCard extends StatelessWidget {
             color: isHighlighted
                 ? AppColors.primary
                 : isDark
-                    ? Colors.white
-                    : AppColors.textPrimary,
+                ? Colors.white
+                : AppColors.textPrimary,
           ),
         ),
         Text(

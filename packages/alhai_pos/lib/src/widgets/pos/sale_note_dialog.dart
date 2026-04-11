@@ -25,12 +25,12 @@ class SaleNoteDialog extends StatefulWidget {
 class _SaleNoteDialogState extends State<SaleNoteDialog> {
   late final TextEditingController _controller;
   List<String> _quickNotes(AppLocalizations l10n) => [
-        l10n.quickNoteDelivery,
-        l10n.quickNoteGiftWrap,
-        l10n.quickNoteFragile,
-        l10n.quickNoteUrgent,
-        l10n.quickNoteReservation
-      ];
+    l10n.quickNoteDelivery,
+    l10n.quickNoteGiftWrap,
+    l10n.quickNoteFragile,
+    l10n.quickNoteUrgent,
+    l10n.quickNoteReservation,
+  ];
 
   @override
   void initState() {
@@ -58,17 +58,20 @@ class _SaleNoteDialogState extends State<SaleNoteDialog> {
             spacing: AlhaiSpacing.xs,
             runSpacing: AlhaiSpacing.xs,
             children: _quickNotes(l10n)
-                .map((note) => ActionChip(
-                      label: Text(note),
-                      onPressed: () {
-                        final current = _controller.text;
-                        _controller.text =
-                            current.isEmpty ? note : '$current, $note';
-                        _controller.selection = TextSelection.fromPosition(
-                          TextPosition(offset: _controller.text.length),
-                        );
-                      },
-                    ))
+                .map(
+                  (note) => ActionChip(
+                    label: Text(note),
+                    onPressed: () {
+                      final current = _controller.text;
+                      _controller.text = current.isEmpty
+                          ? note
+                          : '$current, $note';
+                      _controller.selection = TextSelection.fromPosition(
+                        TextPosition(offset: _controller.text.length),
+                      );
+                    },
+                  ),
+                )
                 .toList(),
           ),
           const SizedBox(height: AlhaiSpacing.md),
@@ -92,8 +95,10 @@ class _SaleNoteDialogState extends State<SaleNoteDialog> {
         if (_controller.text.isNotEmpty)
           TextButton(
             onPressed: () => Navigator.pop(context, ''),
-            child: Text(l10n.clearNote,
-                style: const TextStyle(color: AlhaiColors.error)),
+            child: Text(
+              l10n.clearNote,
+              style: const TextStyle(color: AlhaiColors.error),
+            ),
           ),
         FilledButton(
           onPressed: () => Navigator.pop(context, _controller.text),

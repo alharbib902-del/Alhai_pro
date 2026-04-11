@@ -25,8 +25,9 @@ void main() {
       });
 
       test('should escape script tags', () {
-        final result =
-            InputSanitizer.sanitizeHtml('<script>alert("xss")</script>');
+        final result = InputSanitizer.sanitizeHtml(
+          '<script>alert("xss")</script>',
+        );
         expect(result, isNot(contains('<script>')));
       });
 
@@ -47,10 +48,7 @@ void main() {
       });
 
       test('should remove nested tags', () {
-        expect(
-          InputSanitizer.stripHtmlTags('<div><p>text</p></div>'),
-          'text',
-        );
+        expect(InputSanitizer.stripHtmlTags('<div><p>text</p></div>'), 'text');
       });
 
       test('should handle text without tags', () {
@@ -64,8 +62,10 @@ void main() {
 
     group('sanitizeForDb', () {
       test('should remove control characters', () {
-        expect(InputSanitizer.sanitizeForDb('hello\x00world'),
-            isNot(contains('\x00')));
+        expect(
+          InputSanitizer.sanitizeForDb('hello\x00world'),
+          isNot(contains('\x00')),
+        );
       });
 
       test('should escape single quotes', () {
@@ -76,13 +76,15 @@ void main() {
         expect(InputSanitizer.sanitizeForDb('path\\to'), contains('\\\\'));
       });
 
-      test('should handle newlines (removed as control chars then escaped)',
-          () {
-        // Control chars [\x00-\x1F] are removed first, \n is \x0A
-        final result = InputSanitizer.sanitizeForDb('line1\nline2');
-        // Since \n is a control char, it gets removed in the first step
-        expect(result, isNotEmpty);
-      });
+      test(
+        'should handle newlines (removed as control chars then escaped)',
+        () {
+          // Control chars [\x00-\x1F] are removed first, \n is \x0A
+          final result = InputSanitizer.sanitizeForDb('line1\nline2');
+          // Since \n is a control char, it gets removed in the first step
+          expect(result, isNotEmpty);
+        },
+      );
 
       test('should handle tabs (removed as control chars then escaped)', () {
         // \t is \x09, a control char that gets removed first
@@ -93,23 +95,31 @@ void main() {
 
     group('sanitizeForShell', () {
       test('should remove semicolons', () {
-        expect(InputSanitizer.sanitizeForShell('cmd; rm -rf'),
-            isNot(contains(';')));
+        expect(
+          InputSanitizer.sanitizeForShell('cmd; rm -rf'),
+          isNot(contains(';')),
+        );
       });
 
       test('should remove pipes', () {
         expect(
-            InputSanitizer.sanitizeForShell('ls | grep'), isNot(contains('|')));
+          InputSanitizer.sanitizeForShell('ls | grep'),
+          isNot(contains('|')),
+        );
       });
 
       test('should remove backticks', () {
         expect(
-            InputSanitizer.sanitizeForShell('`whoami`'), isNot(contains('`')));
+          InputSanitizer.sanitizeForShell('`whoami`'),
+          isNot(contains('`')),
+        );
       });
 
       test('should remove dollar signs', () {
         expect(
-            InputSanitizer.sanitizeForShell('\$HOME'), isNot(contains('\$')));
+          InputSanitizer.sanitizeForShell('\$HOME'),
+          isNot(contains('\$')),
+        );
       });
 
       test('should preserve normal alphanumeric text', () {
@@ -119,8 +129,10 @@ void main() {
 
     group('sanitizePath', () {
       test('should remove path traversal (..)', () {
-        expect(InputSanitizer.sanitizePath('../../etc/passwd'),
-            isNot(contains('..')));
+        expect(
+          InputSanitizer.sanitizePath('../../etc/passwd'),
+          isNot(contains('..')),
+        );
       });
 
       test('should remove double slashes', () {
@@ -187,8 +199,9 @@ void main() {
       });
 
       test('should remove angle brackets from URLs', () {
-        final result =
-            InputSanitizer.sanitizeUrl('https://example.com/<script>');
+        final result = InputSanitizer.sanitizeUrl(
+          'https://example.com/<script>',
+        );
         expect(result, isNot(contains('<')));
         expect(result, isNot(contains('>')));
       });
@@ -222,7 +235,9 @@ void main() {
     group('sanitizePhone', () {
       test('should keep only digits and plus', () {
         expect(
-            InputSanitizer.sanitizePhone('+966-51-234-5678'), '+966512345678');
+          InputSanitizer.sanitizePhone('+966-51-234-5678'),
+          '+966512345678',
+        );
       });
 
       test('should remove spaces', () {
@@ -236,8 +251,10 @@ void main() {
 
     group('sanitizeEmail', () {
       test('should trim and lowercase', () {
-        expect(InputSanitizer.sanitizeEmail('  USER@EXAMPLE.COM  '),
-            'user@example.com');
+        expect(
+          InputSanitizer.sanitizeEmail('  USER@EXAMPLE.COM  '),
+          'user@example.com',
+        );
       });
     });
 
@@ -354,10 +371,7 @@ void main() {
       });
 
       test('should not flag normal text', () {
-        expect(
-          InputSanitizer.containsDangerousContent('Hello World'),
-          isFalse,
-        );
+        expect(InputSanitizer.containsDangerousContent('Hello World'), isFalse);
       });
 
       test('should not flag Arabic text', () {
@@ -371,7 +385,9 @@ void main() {
     group('sanitizeJsonString', () {
       test('should escape double quotes', () {
         expect(
-            InputSanitizer.sanitizeJsonString('say "hello"'), contains('\\"'));
+          InputSanitizer.sanitizeJsonString('say "hello"'),
+          contains('\\"'),
+        );
       });
 
       test('should escape backslashes', () {
@@ -380,7 +396,9 @@ void main() {
 
       test('should escape newlines', () {
         expect(
-            InputSanitizer.sanitizeJsonString('line1\nline2'), contains('\\n'));
+          InputSanitizer.sanitizeJsonString('line1\nline2'),
+          contains('\\n'),
+        );
       });
     });
   });

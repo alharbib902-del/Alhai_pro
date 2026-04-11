@@ -23,7 +23,9 @@ class DeliveriesListScreen extends ConsumerWidget {
           preferredSize: const Size.fromHeight(48),
           child: Padding(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+              horizontal: AlhaiSpacing.md,
+              vertical: AlhaiSpacing.xs,
+            ),
             child: SegmentedButton<DeliveryFilter>(
               selected: {filter},
               onSelectionChanged: (s) =>
@@ -66,8 +68,8 @@ class DeliveriesListScreen extends ConsumerWidget {
                     Text(
                       'لا توجد توصيلات',
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.outline,
-                          ),
+                        color: Theme.of(context).colorScheme.outline,
+                      ),
                     ),
                     const SizedBox(height: AlhaiSpacing.md),
                     OutlinedButton.icon(
@@ -92,11 +94,11 @@ class DeliveriesListScreen extends ConsumerWidget {
                       padding: const EdgeInsets.all(AlhaiSpacing.md),
                       gridDelegate:
                           const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: AlhaiSpacing.md,
-                        mainAxisSpacing: AlhaiSpacing.md,
-                        childAspectRatio: 1.8,
-                      ),
+                            crossAxisCount: 2,
+                            crossAxisSpacing: AlhaiSpacing.md,
+                            mainAxisSpacing: AlhaiSpacing.md,
+                            childAspectRatio: 1.8,
+                          ),
                       addAutomaticKeepAlives: false,
                       itemCount: list.length,
                       itemBuilder: (context, index) {

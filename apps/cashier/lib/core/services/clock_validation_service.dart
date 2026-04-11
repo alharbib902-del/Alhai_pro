@@ -87,7 +87,8 @@ class ClockValidationService {
       if (serverTime == null) {
         if (kDebugMode) {
           debugPrint(
-              '[ClockValidation] Could not parse server time from rpc response');
+            '[ClockValidation] Could not parse server time from rpc response',
+          );
         }
         // Cannot validate -- assume valid to avoid false positives
         _setValidity(true, Duration.zero);

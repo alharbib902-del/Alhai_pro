@@ -133,7 +133,7 @@ class FakeSupabaseClient {
   Future<dynamic> rpc(String fn, {Map<String, dynamic>? params}) async {
     final cfg = _mock._rpcConfigFor(fn);
     _mock._logQuery('rpc:$fn', [
-      QueryOp('rpc', [fn, params])
+      QueryOp('rpc', [fn, params]),
     ]);
     if (cfg.error != null) throw cfg.error!;
     return cfg.data;
@@ -149,19 +149,19 @@ class FakeQueryBuilder {
 
   FakeFilterBuilder select([String columns = '*']) {
     return FakeFilterBuilder._(_table, _mock, [
-      QueryOp('select', [columns])
+      QueryOp('select', [columns]),
     ]);
   }
 
   FakeFilterBuilder insert(Object values, {bool defaultToNull = true}) {
     return FakeFilterBuilder._(_table, _mock, [
-      QueryOp('insert', [values])
+      QueryOp('insert', [values]),
     ]);
   }
 
   FakeFilterBuilder update(Object values) {
     return FakeFilterBuilder._(_table, _mock, [
-      QueryOp('update', [values])
+      QueryOp('update', [values]),
     ]);
   }
 
@@ -171,7 +171,7 @@ class FakeQueryBuilder {
 
   FakeFilterBuilder upsert(Object values, {String? onConflict}) {
     return FakeFilterBuilder._(_table, _mock, [
-      QueryOp('upsert', [values])
+      QueryOp('upsert', [values]),
     ]);
   }
 }
@@ -314,19 +314,22 @@ class FakeFilterBuilder implements Future<dynamic> {
   Stream<dynamic> asStream() => _resolve().asStream();
 
   @override
-  Future<dynamic> catchError(Function onError,
-          {bool Function(Object error)? test}) =>
-      _resolve().catchError(onError, test: test);
+  Future<dynamic> catchError(
+    Function onError, {
+    bool Function(Object error)? test,
+  }) => _resolve().catchError(onError, test: test);
 
   @override
-  Future<R> then<R>(FutureOr<R> Function(dynamic value) onValue,
-          {Function? onError}) =>
-      _resolve().then(onValue, onError: onError);
+  Future<R> then<R>(
+    FutureOr<R> Function(dynamic value) onValue, {
+    Function? onError,
+  }) => _resolve().then(onValue, onError: onError);
 
   @override
-  Future<dynamic> timeout(Duration timeLimit,
-          {FutureOr<dynamic> Function()? onTimeout}) =>
-      _resolve().timeout(timeLimit, onTimeout: onTimeout);
+  Future<dynamic> timeout(
+    Duration timeLimit, {
+    FutureOr<dynamic> Function()? onTimeout,
+  }) => _resolve().timeout(timeLimit, onTimeout: onTimeout);
 
   @override
   Future<dynamic> whenComplete(FutureOr<void> Function() action) =>
@@ -386,21 +389,24 @@ class FakeCountBuilder implements Future<dynamic> {
   Stream<dynamic> asStream() => _resolve().asStream();
 
   @override
-  Future<dynamic> catchError(Function onError,
-          {bool Function(Object error)? test}) =>
-      _resolve().catchError(onError, test: test);
+  Future<dynamic> catchError(
+    Function onError, {
+    bool Function(Object error)? test,
+  }) => _resolve().catchError(onError, test: test);
 
   @override
-  Future<R> then<R>(FutureOr<R> Function(dynamic value) onValue,
-          {Function? onError}) =>
-      _resolve().then(onValue, onError: onError);
+  Future<R> then<R>(
+    FutureOr<R> Function(dynamic value) onValue, {
+    Function? onError,
+  }) => _resolve().then(onValue, onError: onError);
 
   @override
-  Future<dynamic> timeout(Duration timeLimit,
-          {FutureOr<dynamic> Function()? onTimeout}) =>
-      _resolve()
-          .then<dynamic>((v) => v)
-          .timeout(timeLimit, onTimeout: onTimeout);
+  Future<dynamic> timeout(
+    Duration timeLimit, {
+    FutureOr<dynamic> Function()? onTimeout,
+  }) => _resolve()
+      .then<dynamic>((v) => v)
+      .timeout(timeLimit, onTimeout: onTimeout);
 
   @override
   Future<dynamic> whenComplete(FutureOr<void> Function() action) =>

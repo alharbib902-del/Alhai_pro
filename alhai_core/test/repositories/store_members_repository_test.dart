@@ -18,7 +18,7 @@ void main() {
         role: UserRole.employee,
         permissions: [
           StorePermissions.manageProducts,
-          StorePermissions.manageOrders
+          StorePermissions.manageOrders,
         ],
         isActive: true,
         joinedAt: DateTime(2026, 1, 15),

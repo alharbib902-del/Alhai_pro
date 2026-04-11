@@ -128,13 +128,16 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               trailing: isSelected
-                                  ? Icon(Icons.check_circle,
-                                      color: theme.colorScheme.primary)
+                                  ? Icon(
+                                      Icons.check_circle,
+                                      color: theme.colorScheme.primary,
+                                    )
                                   : null,
                               onTap: () {
                                 ref
-                                    .read(selectedAddressProvider.notifier)
-                                    .state = address;
+                                        .read(selectedAddressProvider.notifier)
+                                        .state =
+                                    address;
                               },
                             ),
                           );
@@ -158,7 +161,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                     (
                       PaymentMethod.wallet,
                       'المحفظة',
-                      Icons.account_balance_wallet
+                      Icons.account_balance_wallet,
                     ),
                   ].map((entry) {
                     final (method, label, icon) = entry;
@@ -168,18 +171,22 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                           ? theme.colorScheme.primaryContainer
                           : null,
                       child: ListTile(
-                        leading: Icon(icon,
-                            color:
-                                isSelected ? theme.colorScheme.primary : null),
+                        leading: Icon(
+                          icon,
+                          color: isSelected ? theme.colorScheme.primary : null,
+                        ),
                         title: Text(label),
                         trailing: isSelected
-                            ? Icon(Icons.check_circle,
-                                color: theme.colorScheme.primary)
+                            ? Icon(
+                                Icons.check_circle,
+                                color: theme.colorScheme.primary,
+                              )
                             : null,
                         onTap: () {
                           ref
-                              .read(selectedPaymentMethodProvider.notifier)
-                              .state = method;
+                                  .read(selectedPaymentMethodProvider.notifier)
+                                  .state =
+                              method;
                         },
                       ),
                     );
@@ -194,8 +201,10 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                         padding: const EdgeInsets.all(AlhaiSpacing.sm),
                         child: Row(
                           children: [
-                            Icon(Icons.info_outline,
-                                color: theme.colorScheme.onErrorContainer),
+                            Icon(
+                              Icons.info_outline,
+                              color: theme.colorScheme.onErrorContainer,
+                            ),
                             const SizedBox(width: AlhaiSpacing.xs),
                             Expanded(
                               child: Text(
@@ -316,9 +325,9 @@ class _SummaryRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = isBold
-        ? Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.bold,
-            )
+        ? Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)
         : Theme.of(context).textTheme.bodyMedium;
 
     return Padding(

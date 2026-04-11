@@ -25,9 +25,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const ReceiptSettingsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const ReceiptSettingsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(ReceiptSettingsScreen), findsOneWidget);
@@ -41,9 +39,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const ReceiptSettingsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const ReceiptSettingsScreen()));
       await tester.pumpAndSettle();
 
       // Provider resolves synchronously in test, so loading state
@@ -78,9 +74,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const ReceiptSettingsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const ReceiptSettingsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(ReceiptSettingsScreen), findsOneWidget);
@@ -94,9 +88,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const ReceiptSettingsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const ReceiptSettingsScreen()));
       await tester.pumpAndSettle();
 
       // Receipt settings has toggles for show logo, customer, cashier, address

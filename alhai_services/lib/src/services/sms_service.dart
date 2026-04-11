@@ -33,13 +33,13 @@ class SmsService {
     String? twilioAccountSid,
     String? twilioAuthToken,
     String? vonageApiSecret,
-  })  : _apiUrl = apiUrl,
-        _apiKey = apiKey,
-        _senderId = senderId,
-        _provider = provider,
-        _twilioAccountSid = twilioAccountSid,
-        _twilioAuthToken = twilioAuthToken,
-        _vonageApiSecret = vonageApiSecret;
+  }) : _apiUrl = apiUrl,
+       _apiKey = apiKey,
+       _senderId = senderId,
+       _provider = provider,
+       _twilioAccountSid = twilioAccountSid,
+       _twilioAuthToken = twilioAuthToken,
+       _vonageApiSecret = vonageApiSecret;
 
   /// التحقق من التكوين
   bool get isConfigured => _apiKey != null && _apiKey.isNotEmpty;
@@ -52,10 +52,7 @@ class SmsService {
     required String message,
   }) async {
     if (!isConfigured) {
-      return const SmsResult(
-        success: false,
-        error: 'خدمة SMS غير مكونة',
-      );
+      return const SmsResult(success: false, error: 'خدمة SMS غير مكونة');
     }
 
     try {
@@ -84,15 +81,9 @@ class SmsService {
       );
     } catch (e) {
       if (e is UnimplementedError) {
-        return SmsResult(
-          success: false,
-          error: e.message,
-        );
+        return SmsResult(success: false, error: e.message);
       }
-      return SmsResult(
-        success: false,
-        error: e.toString(),
-      );
+      return SmsResult(success: false, error: e.toString());
     }
   }
 
@@ -105,10 +96,7 @@ class SmsService {
     final message =
         '${appName ?? 'الهاي'}: رمز التحقق الخاص بك هو: $otp\nصالح لمدة 5 دقائق.';
 
-    return await sendSms(
-      phoneNumber: phoneNumber,
-      message: message,
-    );
+    return await sendSms(phoneNumber: phoneNumber, message: message);
   }
 
   // ==================== رسائل محددة مسبقاً ====================
@@ -120,17 +108,15 @@ class SmsService {
     required double amount,
     String? storeName,
   }) async {
-    final message = '''
+    final message =
+        '''
 $customerName المحترم،
 لديكم مبلغ مستحق: ${amount.toStringAsFixed(2)} $_currency
 ${storeName != null ? 'من: $storeName' : ''}
 نرجو السداد في أقرب وقت.
 ''';
 
-    return await sendSms(
-      phoneNumber: phoneNumber,
-      message: message,
-    );
+    return await sendSms(phoneNumber: phoneNumber, message: message);
   }
 
   /// إرسال تأكيد طلب
@@ -139,17 +125,15 @@ ${storeName != null ? 'من: $storeName' : ''}
     required String orderNumber,
     required double total,
   }) async {
-    final message = '''
+    final message =
+        '''
 تم استلام طلبكم!
 رقم الطلب: $orderNumber
 الإجمالي: ${total.toStringAsFixed(2)} $_currency
 شكراً لتعاملكم معنا.
 ''';
 
-    return await sendSms(
-      phoneNumber: phoneNumber,
-      message: message,
-    );
+    return await sendSms(phoneNumber: phoneNumber, message: message);
   }
 
   /// إرسال تحديث حالة الطلب
@@ -160,10 +144,7 @@ ${storeName != null ? 'من: $storeName' : ''}
   }) async {
     final message = 'تحديث طلبكم #$orderNumber: $status';
 
-    return await sendSms(
-      phoneNumber: phoneNumber,
-      message: message,
-    );
+    return await sendSms(phoneNumber: phoneNumber, message: message);
   }
 
   /// إرسال رابط تتبع
@@ -172,15 +153,13 @@ ${storeName != null ? 'من: $storeName' : ''}
     required String orderNumber,
     required String trackingUrl,
   }) async {
-    final message = '''
+    final message =
+        '''
 لتتبع طلبكم #$orderNumber:
 $trackingUrl
 ''';
 
-    return await sendSms(
-      phoneNumber: phoneNumber,
-      message: message,
-    );
+    return await sendSms(phoneNumber: phoneNumber, message: message);
   }
 
   // ==================== إرسال مجمع ====================
@@ -193,10 +172,7 @@ $trackingUrl
     final results = <String, SmsResult>{};
 
     for (final phone in phoneNumbers) {
-      results[phone] = await sendSms(
-        phoneNumber: phone,
-        message: message,
-      );
+      results[phone] = await sendSms(phoneNumber: phone, message: message);
 
       // Small delay to avoid rate limiting
       await Future.delayed(const Duration(milliseconds: 100));
@@ -241,15 +217,9 @@ $trackingUrl
       );
     } catch (e) {
       if (e is UnimplementedError) {
-        return SmsBalanceResult(
-          success: false,
-          error: e.message,
-        );
+        return SmsBalanceResult(success: false, error: e.message);
       }
-      return SmsBalanceResult(
-        success: false,
-        error: e.toString(),
-      );
+      return SmsBalanceResult(success: false, error: e.toString());
     }
   }
 
@@ -299,11 +269,7 @@ $trackingUrl
             'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': 'Basic $credentials',
           },
-          body: {
-            'To': phoneNumber,
-            'From': senderId,
-            'Body': message,
-          },
+          body: {'To': phoneNumber, 'From': senderId, 'Body': message},
           isJsonBody: false, // form-urlencoded
         );
 
@@ -344,9 +310,7 @@ $trackingUrl
             'Content-Type': 'application/x-www-form-urlencoded',
             'Accept': 'application/json',
           },
-          body: {
-            'AppSid': _apiKey!,
-          },
+          body: {'AppSid': _apiKey!},
           isJsonBody: false,
         );
 
@@ -373,9 +337,7 @@ $trackingUrl
           method: 'GET',
           url:
               '${AppEndpoints.nexmoBase}/account/get-balance?api_key=${_apiKey!}&api_secret=${_vonageApiSecret ?? ''}',
-          headers: {
-            'Accept': 'application/json',
-          },
+          headers: {'Accept': 'application/json'},
           body: {},
           isJsonBody: false,
         );
@@ -429,11 +391,7 @@ class SmsResult {
   final String? messageId;
   final String? error;
 
-  const SmsResult({
-    required this.success,
-    this.messageId,
-    this.error,
-  });
+  const SmsResult({required this.success, this.messageId, this.error});
 }
 
 /// نتيجة إرسال SMS مجمع

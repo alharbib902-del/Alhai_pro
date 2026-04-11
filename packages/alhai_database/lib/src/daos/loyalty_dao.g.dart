@@ -25,10 +25,14 @@ class LoyaltyDaoManager {
       $$StoresTableTableTableManager(_db.attachedDatabase, _db.storesTable);
   $$CustomersTableTableTableManager get customersTable =>
       $$CustomersTableTableTableManager(
-          _db.attachedDatabase, _db.customersTable);
+        _db.attachedDatabase,
+        _db.customersTable,
+      );
   $$LoyaltyPointsTableTableTableManager get loyaltyPointsTable =>
       $$LoyaltyPointsTableTableTableManager(
-          _db.attachedDatabase, _db.loyaltyPointsTable);
+        _db.attachedDatabase,
+        _db.loyaltyPointsTable,
+      );
   $$UsersTableTableTableManager get usersTable =>
       $$UsersTableTableTableManager(_db.attachedDatabase, _db.usersTable);
   $$ShiftsTableTableTableManager get shiftsTable =>
@@ -37,8 +41,12 @@ class LoyaltyDaoManager {
       $$SalesTableTableTableManager(_db.attachedDatabase, _db.salesTable);
   $$LoyaltyTransactionsTableTableTableManager get loyaltyTransactionsTable =>
       $$LoyaltyTransactionsTableTableTableManager(
-          _db.attachedDatabase, _db.loyaltyTransactionsTable);
+        _db.attachedDatabase,
+        _db.loyaltyTransactionsTable,
+      );
   $$LoyaltyRewardsTableTableTableManager get loyaltyRewardsTable =>
       $$LoyaltyRewardsTableTableTableManager(
-          _db.attachedDatabase, _db.loyaltyRewardsTable);
+        _db.attachedDatabase,
+        _db.loyaltyRewardsTable,
+      );
 }

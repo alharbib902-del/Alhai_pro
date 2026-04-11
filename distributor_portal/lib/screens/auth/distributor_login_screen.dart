@@ -81,16 +81,16 @@ class _DistributorLoginScreenState
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(20),
-              border:
-                  isDark ? Border.all(color: AppColors.getBorder(true)) : null,
+              border: isDark
+                  ? Border.all(color: AppColors.getBorder(true))
+                  : null,
               boxShadow: isDark
                   ? null
                   : [
                       BoxShadow(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .shadow
-                            .withValues(alpha: 0.08),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.shadow.withValues(alpha: 0.08),
                         blurRadius: 24,
                         offset: const Offset(0, 8),
                       ),
@@ -150,8 +150,11 @@ class _DistributorLoginScreenState
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.error_outline,
-                              color: AppColors.error, size: 18),
+                          const Icon(
+                            Icons.error_outline,
+                            color: AppColors.error,
+                            size: 18,
+                          ),
                           const SizedBox(width: AlhaiSpacing.xs),
                           Expanded(
                             child: Text(
@@ -179,8 +182,9 @@ class _DistributorLoginScreenState
                         return l10n.distributorEmailLabel;
                       }
                       // Email format validation
-                      final emailRegex =
-                          RegExp(r'^[\w\-\.+]+@([\w\-]+\.)+[\w\-]{2,}$');
+                      final emailRegex = RegExp(
+                        r'^[\w\-\.+]+@([\w\-]+\.)+[\w\-]{2,}$',
+                      );
                       if (!emailRegex.hasMatch(value.trim())) {
                         return 'Please enter a valid email address';
                       }
@@ -191,14 +195,15 @@ class _DistributorLoginScreenState
                     ),
                     decoration: InputDecoration(
                       labelText: '${l10n.distributorEmailLabel} *',
-                      prefixIcon: Icon(Icons.email_outlined,
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant),
+                      prefixIcon: Icon(
+                        Icons.email_outlined,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                       filled: true,
                       fillColor: isDark
-                          ? Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest
+                          ? Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest
                           : AppColors.backgroundSecondary,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -207,7 +212,9 @@ class _DistributorLoginScreenState
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                            color: AppColors.primary, width: 2),
+                          color: AppColors.primary,
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -233,9 +240,10 @@ class _DistributorLoginScreenState
                     ),
                     decoration: InputDecoration(
                       labelText: '${l10n.distributorPasswordLabel} *',
-                      prefixIcon: Icon(Icons.lock_outline,
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant),
+                      prefixIcon: Icon(
+                        Icons.lock_outline,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                       suffixIcon: IconButton(
                         icon: Icon(
                           _obscurePassword
@@ -244,13 +252,14 @@ class _DistributorLoginScreenState
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         onPressed: () => setState(
-                            () => _obscurePassword = !_obscurePassword),
+                          () => _obscurePassword = !_obscurePassword,
+                        ),
                       ),
                       filled: true,
                       fillColor: isDark
-                          ? Theme.of(context)
-                              .colorScheme
-                              .surfaceContainerHighest
+                          ? Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest
                           : AppColors.backgroundSecondary,
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -259,7 +268,9 @@ class _DistributorLoginScreenState
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                         borderSide: const BorderSide(
-                            color: AppColors.primary, width: 2),
+                          color: AppColors.primary,
+                          width: 2,
+                        ),
                       ),
                     ),
                   ),
@@ -274,7 +285,8 @@ class _DistributorLoginScreenState
                         backgroundColor: AppColors.primary,
                         foregroundColor: AppColors.textOnPrimary,
                         padding: const EdgeInsets.symmetric(
-                            vertical: AlhaiSpacing.md),
+                          vertical: AlhaiSpacing.md,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

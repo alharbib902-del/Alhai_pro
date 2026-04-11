@@ -19,11 +19,7 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
   }) async {
     final response = await _dio.get(
       '/inventory/adjustments',
-      queryParameters: {
-        'product_id': productId,
-        'page': page,
-        'limit': limit,
-      },
+      queryParameters: {'product_id': productId, 'page': page, 'limit': limit},
     );
     final list = response.data['data'] as List<dynamic>;
     return list
@@ -55,18 +51,21 @@ class InventoryRemoteDataSourceImpl implements InventoryRemoteDataSource {
 
   @override
   Future<StockAdjustmentResponse> adjustStock(
-      AdjustStockRequest request) async {
+    AdjustStockRequest request,
+  ) async {
     final response = await _dio.post(
       '/inventory/adjust',
       data: request.toJson(),
     );
     return StockAdjustmentResponse.fromJson(
-        response.data as Map<String, dynamic>);
+      response.data as Map<String, dynamic>,
+    );
   }
 
   @override
   Future<List<LowStockProductResponse>> getLowStockProducts(
-      String storeId) async {
+    String storeId,
+  ) async {
     final response = await _dio.get(
       '/inventory/low-stock',
       queryParameters: {'store_id': storeId},

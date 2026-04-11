@@ -35,10 +35,7 @@ Widget createTestWidget(
   GoRouter? router,
 }) {
   return ProviderScope(
-    overrides: [
-      ...defaultProviderOverrides(),
-      ...overrides,
-    ],
+    overrides: [...defaultProviderOverrides(), ...overrides],
     child: router != null
         ? MaterialApp.router(
             locale: locale,

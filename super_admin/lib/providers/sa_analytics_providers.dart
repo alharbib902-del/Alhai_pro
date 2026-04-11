@@ -23,34 +23,35 @@ final saRevenuePeriodProvider = StateProvider<String>((ref) => 'last12Months');
 /// Revenue by plan breakdown.
 final saRevenueByPlanProvider =
     FutureProvider.autoDispose<List<SARevenueByPlan>>((ref) async {
-  final ds = ref.watch(saAnalyticsDatasourceProvider);
-  return ds.getRevenueByPlan();
-});
+      final ds = ref.watch(saAnalyticsDatasourceProvider);
+      return ds.getRevenueByPlan();
+    });
 
 /// Top stores by revenue.
 final saTopStoresByRevenueProvider =
     FutureProvider.autoDispose<List<SATopStoreRevenue>>((ref) async {
-  final ds = ref.watch(saAnalyticsDatasourceProvider);
-  return ds.getTopStoresByRevenue();
-});
+      final ds = ref.watch(saAnalyticsDatasourceProvider);
+      return ds.getTopStoresByRevenue();
+    });
 
 /// Top stores by transactions.
 final saTopStoresByTransactionsProvider =
     FutureProvider.autoDispose<List<SATopStoreTransactions>>((ref) async {
-  final ds = ref.watch(saAnalyticsDatasourceProvider);
-  return ds.getTopStoresByTransactions();
-});
+      final ds = ref.watch(saAnalyticsDatasourceProvider);
+      return ds.getTopStoresByTransactions();
+    });
 
 /// Active users per store (for bar chart).
 final saActiveUsersPerStoreProvider =
     FutureProvider.autoDispose<List<SAActiveUsersPerStore>>((ref) async {
-  final ds = ref.watch(saAnalyticsDatasourceProvider);
-  return ds.getActiveUsersPerStore();
-});
+      final ds = ref.watch(saAnalyticsDatasourceProvider);
+      return ds.getActiveUsersPerStore();
+    });
 
 /// Average daily transactions.
-final saAvgDailyTransactionsProvider =
-    FutureProvider.autoDispose<double>((ref) async {
+final saAvgDailyTransactionsProvider = FutureProvider.autoDispose<double>((
+  ref,
+) async {
   final ds = ref.watch(saAnalyticsDatasourceProvider);
   return ds.getAvgDailyTransactions();
 });
@@ -60,8 +61,9 @@ final saAvgDailyTransactionsProvider =
 // ============================================================================
 
 /// System health check.
-final saSystemHealthProvider =
-    FutureProvider.autoDispose<SASystemHealth>((ref) async {
+final saSystemHealthProvider = FutureProvider.autoDispose<SASystemHealth>((
+  ref,
+) async {
   final ds = ref.watch(saAnalyticsDatasourceProvider);
   return ds.getSystemHealth();
 });

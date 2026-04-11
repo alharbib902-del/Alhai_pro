@@ -104,14 +104,8 @@ void main() {
       });
 
       test('both themes have status colors extension', () {
-        expect(
-          AlhaiTheme.light.extension<AlhaiStatusColors>(),
-          isNotNull,
-        );
-        expect(
-          AlhaiTheme.dark.extension<AlhaiStatusColors>(),
-          isNotNull,
-        );
+        expect(AlhaiTheme.light.extension<AlhaiStatusColors>(), isNotNull);
+        expect(AlhaiTheme.dark.extension<AlhaiStatusColors>(), isNotNull);
       });
     });
   });

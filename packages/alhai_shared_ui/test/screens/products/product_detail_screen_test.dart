@@ -49,9 +49,7 @@ Widget _buildTestWidget({String productId = 'prod-1'}) {
       locale: const Locale('en'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: Scaffold(
-        body: ProductDetailScreen(productId: productId),
-      ),
+      home: Scaffold(body: ProductDetailScreen(productId: productId)),
     ),
   );
 }
@@ -100,8 +98,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockProductsDao.getProductById('prod-1'))
-          .thenAnswer((_) async => null);
+      when(
+        () => mockProductsDao.getProductById('prod-1'),
+      ).thenAnswer((_) async => null);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -113,8 +112,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockProductsDao.getProductById('missing'))
-          .thenAnswer((_) async => null);
+      when(
+        () => mockProductsDao.getProductById('missing'),
+      ).thenAnswer((_) async => null);
 
       await tester.pumpWidget(_buildTestWidget(productId: 'missing'));
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -127,8 +127,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockProductsDao.getProductById('prod-1'))
-          .thenAnswer((_) async => null);
+      when(
+        () => mockProductsDao.getProductById('prod-1'),
+      ).thenAnswer((_) async => null);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));

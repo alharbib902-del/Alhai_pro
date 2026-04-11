@@ -6,9 +6,9 @@ import '../data/chat_datasource.dart';
 /// Stream of chat messages for a specific order.
 final chatMessagesProvider =
     StreamProvider.family<List<Map<String, dynamic>>, String>((ref, orderId) {
-  final ds = GetIt.instance<ChatDatasource>();
-  return ds.streamMessages(orderId);
-});
+      final ds = GetIt.instance<ChatDatasource>();
+      return ds.streamMessages(orderId);
+    });
 
 /// Quick predefined messages for drivers.
 const quickMessages = [

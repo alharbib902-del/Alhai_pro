@@ -56,11 +56,15 @@ class SuppliersDao extends DatabaseAccessor<AppDatabase>
       (select(suppliersTable)..where((s) => s.id.equals(id))).getSingleOrNull();
 
   Future<List<SuppliersTableData>> searchSuppliers(
-      String query, String storeId) {
+    String query,
+    String storeId,
+  ) {
     return (select(suppliersTable)
-          ..where((s) =>
-              s.storeId.equals(storeId) &
-              (s.name.contains(query) | s.phone.contains(query)))
+          ..where(
+            (s) =>
+                s.storeId.equals(storeId) &
+                (s.name.contains(query) | s.phone.contains(query)),
+          )
           ..limit(20))
         .get();
   }
@@ -83,8 +87,11 @@ class SuppliersDao extends DatabaseAccessor<AppDatabase>
 
   Future<int> updateBalance(String id, double newBalance) {
     return (update(suppliersTable)..where((s) => s.id.equals(id))).write(
-        SuppliersTableCompanion(
-            balance: Value(newBalance), updatedAt: Value(DateTime.now())));
+      SuppliersTableCompanion(
+        balance: Value(newBalance),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   /// Updates the supplier rating (0-5).
@@ -103,8 +110,9 @@ class SuppliersDao extends DatabaseAccessor<AppDatabase>
       (delete(suppliersTable)..where((s) => s.id.equals(id))).go();
 
   Future<int> markAsSynced(String id) {
-    return (update(suppliersTable)..where((s) => s.id.equals(id)))
-        .write(SuppliersTableCompanion(syncedAt: Value(DateTime.now())));
+    return (update(suppliersTable)..where((s) => s.id.equals(id))).write(
+      SuppliersTableCompanion(syncedAt: Value(DateTime.now())),
+    );
   }
 
   Stream<List<SuppliersTableData>> watchSuppliers(String storeId) {

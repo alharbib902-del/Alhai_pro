@@ -74,21 +74,13 @@ class GradientBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final gradientColors = colors ??
-        [
-          AppColors.primaryDark,
-          AppColors.primary,
-          AppColors.primaryLight,
-        ];
+    final gradientColors =
+        colors ??
+        [AppColors.primaryDark, AppColors.primary, AppColors.primaryLight];
 
     return Container(
-      decoration: BoxDecoration(
-        gradient: _buildGradient(gradientColors),
-      ),
-      child: Opacity(
-        opacity: opacity,
-        child: child,
-      ),
+      decoration: BoxDecoration(gradient: _buildGradient(gradientColors)),
+      child: Opacity(opacity: opacity, child: child),
     );
   }
 
@@ -140,16 +132,8 @@ class LoginBackground extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = isDark
-        ? const [
-            Color(0xFF064E3B),
-            Color(0xFF065F46),
-            Color(0xFF047857),
-          ]
-        : const [
-            Color(0xFF059669),
-            Color(0xFF10B981),
-            Color(0xFF34D399),
-          ];
+        ? const [Color(0xFF064E3B), Color(0xFF065F46), Color(0xFF047857)]
+        : const [Color(0xFF059669), Color(0xFF10B981), Color(0xFF34D399)];
 
     Widget content = Stack(
       children: [
@@ -229,10 +213,7 @@ class LoginBackground extends StatelessWidget {
     );
 
     if (height != null) {
-      return SizedBox(
-        height: height,
-        child: content,
-      );
+      return SizedBox(height: height, child: content);
     }
 
     return content;
@@ -253,11 +234,7 @@ class _DiagonalLinesPainter extends CustomPainter {
 
     const spacing = 40.0;
     for (var i = 0.0; i < size.width + size.height; i += spacing) {
-      canvas.drawLine(
-        Offset(i, 0),
-        Offset(0, i),
-        paint,
-      );
+      canvas.drawLine(Offset(i, 0), Offset(0, i), paint);
     }
   }
 

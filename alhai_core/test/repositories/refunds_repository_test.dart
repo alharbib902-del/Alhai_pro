@@ -19,10 +19,7 @@ void main() {
           RefundReason.defectiveProduct: 3,
           RefundReason.priceError: 2,
         },
-        byMethod: {
-          RefundMethod.cash: 1000.0,
-          RefundMethod.card: 500.0,
-        },
+        byMethod: {RefundMethod.cash: 1000.0, RefundMethod.card: 500.0},
       );
 
       expect(summary.storeId, equals('store-1'));

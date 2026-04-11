@@ -64,11 +64,13 @@ class _SuperAdminShellState extends State<SuperAdminShell> {
           selectedIndex: selectedIndex,
           onDestinationSelected: _onItemTapped,
           destinations: navItems
-              .map((item) => NavigationDestination(
-                    icon: Icon(item.icon),
-                    selectedIcon: Icon(item.selectedIcon),
-                    label: item.label,
-                  ))
+              .map(
+                (item) => NavigationDestination(
+                  icon: Icon(item.icon),
+                  selectedIcon: Icon(item.selectedIcon),
+                  label: item.label,
+                ),
+              )
               .toList(),
         ),
       );
@@ -92,11 +94,13 @@ class _SuperAdminShellState extends State<SuperAdminShell> {
                 ),
               ),
               destinations: navItems
-                  .map((item) => NavigationRailDestination(
-                        icon: Icon(item.icon),
-                        selectedIcon: Icon(item.selectedIcon),
-                        label: Text(item.label),
-                      ))
+                  .map(
+                    (item) => NavigationRailDestination(
+                      icon: Icon(item.icon),
+                      selectedIcon: Icon(item.selectedIcon),
+                      label: Text(item.label),
+                    ),
+                  )
                   .toList(),
             ),
             const VerticalDivider(width: 1),
@@ -223,10 +227,7 @@ class _DesktopSidebar extends StatelessWidget {
 
           // Collapse toggle
           const Divider(height: 1),
-          _CollapseButton(
-            collapsed: collapsed,
-            onTap: onToggleCollapse,
-          ),
+          _CollapseButton(collapsed: collapsed, onTap: onToggleCollapse),
         ],
       ),
     );
@@ -337,8 +338,9 @@ class _SidebarTile extends StatelessWidget {
                       label,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: color,
-                        fontWeight:
-                            isSelected ? FontWeight.w600 : FontWeight.normal,
+                        fontWeight: isSelected
+                            ? FontWeight.w600
+                            : FontWeight.normal,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),

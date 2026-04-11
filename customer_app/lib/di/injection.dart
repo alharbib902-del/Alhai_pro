@@ -44,19 +44,26 @@ void configureDependencies() {
 
     // Repositories
     locator.registerLazySingleton(
-        () => AuthRepositoryImpl(locator<AuthDatasource>()));
+      () => AuthRepositoryImpl(locator<AuthDatasource>()),
+    );
     locator.registerLazySingleton(
-        () => StoresRepositoryImpl(locator<StoresDatasource>()));
+      () => StoresRepositoryImpl(locator<StoresDatasource>()),
+    );
     locator.registerLazySingleton(
-        () => ProductsRepositoryImpl(locator<ProductsDatasource>()));
+      () => ProductsRepositoryImpl(locator<ProductsDatasource>()),
+    );
     locator.registerLazySingleton(
-        () => CategoriesRepositoryImpl(locator<CategoriesDatasource>()));
+      () => CategoriesRepositoryImpl(locator<CategoriesDatasource>()),
+    );
     locator.registerLazySingleton(
-        () => OrdersRepositoryImpl(locator<OrdersDatasource>()));
+      () => OrdersRepositoryImpl(locator<OrdersDatasource>()),
+    );
     locator.registerLazySingleton(
-        () => AddressesRepositoryImpl(locator<AddressesDatasource>()));
+      () => AddressesRepositoryImpl(locator<AddressesDatasource>()),
+    );
     locator.registerLazySingleton(
-        () => DeliveryRepositoryImpl(locator<DeliveryDatasource>()));
+      () => DeliveryRepositoryImpl(locator<DeliveryDatasource>()),
+    );
   }
 
   locator.allowReassignment = false;

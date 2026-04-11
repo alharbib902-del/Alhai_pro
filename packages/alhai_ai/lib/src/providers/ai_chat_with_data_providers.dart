@@ -46,27 +46,31 @@ final queryTextProvider = StateProvider<String>((ref) => '');
 /// مزود تنفيذ استعلام
 final executeQueryActionProvider =
     Provider<Future<QueryResult> Function(String)>((ref) {
-  return (String query) async {
-    final service = ref.read(aiChatWithDataServiceProvider);
-    ref.read(isQueryLoadingProvider.notifier).state = true;
+      return (String query) async {
+        final service = ref.read(aiChatWithDataServiceProvider);
+        ref.read(isQueryLoadingProvider.notifier).state = true;
 
-    try {
-      final result =
-          await service.executeQuery(query, ref.read(currentStoreIdProvider)!);
-      ref.read(currentQueryResultProvider.notifier).state = result;
+        try {
+          final result = await service.executeQuery(
+            query,
+            ref.read(currentStoreIdProvider)!,
+          );
+          ref.read(currentQueryResultProvider.notifier).state = result;
 
-      // تحديث السجل
-      final history = List<QueryResult>.from(ref.read(queryHistoryProvider));
-      history.insert(0, result);
-      if (history.length > 50) history.removeLast();
-      ref.read(queryHistoryProvider.notifier).state = history;
+          // تحديث السجل
+          final history = List<QueryResult>.from(
+            ref.read(queryHistoryProvider),
+          );
+          history.insert(0, result);
+          if (history.length > 50) history.removeLast();
+          ref.read(queryHistoryProvider.notifier).state = history;
 
-      return result;
-    } finally {
-      ref.read(isQueryLoadingProvider.notifier).state = false;
-    }
-  };
-});
+          return result;
+        } finally {
+          ref.read(isQueryLoadingProvider.notifier).state = false;
+        }
+      };
+    });
 
 /// مزود مسح السجل
 final clearHistoryActionProvider = Provider<void Function()>((ref) {
@@ -83,13 +87,11 @@ final clearHistoryActionProvider = Provider<void Function()>((ref) {
 // ============================================================================
 
 /// مزود الدردشة مع البيانات عبر خادم AI
-final chatApiProvider =
-    Provider<Future<Map<String, dynamic>> Function(String)>((ref) {
-  final api = ref.read(aiApiServiceProvider);
-  final storeId = ref.read(currentStoreIdProvider)!;
-  return (String message) => api.chatWithData(
-        orgId: 'default',
-        storeId: storeId,
-        message: message,
-      );
-});
+final chatApiProvider = Provider<Future<Map<String, dynamic>> Function(String)>(
+  (ref) {
+    final api = ref.read(aiApiServiceProvider);
+    final storeId = ref.read(currentStoreIdProvider)!;
+    return (String message) =>
+        api.chatWithData(orgId: 'default', storeId: storeId, message: message);
+  },
+);

@@ -86,8 +86,9 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -121,13 +122,16 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
               // Status dropdown
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
+                  horizontal: AlhaiSpacing.sm,
+                  vertical: AlhaiSpacing.xxs,
+                ),
                 decoration: BoxDecoration(
                   color: _getStatusColor(_currentStatus).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                    color:
-                        _getStatusColor(_currentStatus).withValues(alpha: 0.3),
+                    color: _getStatusColor(
+                      _currentStatus,
+                    ).withValues(alpha: 0.3),
                   ),
                 ),
                 child: DropdownButtonHideUnderline(
@@ -144,8 +148,9 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                     ),
-                    dropdownColor:
-                        isDark ? const Color(0xFF334155) : Colors.white,
+                    dropdownColor: isDark
+                        ? const Color(0xFF334155)
+                        : Colors.white,
                     items: InvestigationStatus.values.map((status) {
                       return DropdownMenuItem(
                         value: status,
@@ -172,13 +177,17 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
             decoration: BoxDecoration(
               color: AppColors.warning.withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
-              border:
-                  Border.all(color: AppColors.warning.withValues(alpha: 0.2)),
+              border: Border.all(
+                color: AppColors.warning.withValues(alpha: 0.2),
+              ),
             ),
             child: Row(
               children: [
-                const Icon(Icons.lightbulb_outline_rounded,
-                    color: AppColors.warning, size: 20),
+                const Icon(
+                  Icons.lightbulb_outline_rounded,
+                  color: AppColors.warning,
+                  size: 20,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Column(
@@ -290,7 +299,9 @@ class _FraudInvestigationPanelState extends State<FraudInvestigationPanel> {
                       borderSide: const BorderSide(color: AppColors.primary),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.sm, vertical: 10),
+                      horizontal: AlhaiSpacing.sm,
+                      vertical: 10,
+                    ),
                     filled: true,
                     fillColor: isDark
                         ? Colors.white.withValues(alpha: 0.05)

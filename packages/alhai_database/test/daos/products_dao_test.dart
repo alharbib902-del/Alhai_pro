@@ -44,11 +44,9 @@ void main() {
   group('ProductsDao', () {
     test('insertProduct inserts and getAllProducts retrieves', () async {
       await db.productsDao.insertProduct(makeProduct());
-      await db.productsDao.insertProduct(makeProduct(
-        id: 'prod-2',
-        name: 'عصير برتقال',
-        price: 3.0,
-      ));
+      await db.productsDao.insertProduct(
+        makeProduct(id: 'prod-2', name: 'عصير برتقال', price: 3.0),
+      );
 
       final products = await db.productsDao.getAllProducts('store-1');
       expect(products, hasLength(2));
@@ -74,8 +72,10 @@ void main() {
     test('getProductByBarcode returns correct product', () async {
       await db.productsDao.insertProduct(makeProduct(barcode: '123456'));
 
-      final product =
-          await db.productsDao.getProductByBarcode('123456', 'store-1');
+      final product = await db.productsDao.getProductByBarcode(
+        '123456',
+        'store-1',
+      );
       expect(product, isNotNull);
       expect(product!.id, 'prod-1');
     });
@@ -83,17 +83,18 @@ void main() {
     test('getProductByBarcode returns null for wrong store', () async {
       await db.productsDao.insertProduct(makeProduct(barcode: '123456'));
 
-      final product =
-          await db.productsDao.getProductByBarcode('123456', 'other-store');
+      final product = await db.productsDao.getProductByBarcode(
+        '123456',
+        'other-store',
+      );
       expect(product, isNull);
     });
 
     test('searchProducts finds by name', () async {
       await db.productsDao.insertProduct(makeProduct());
-      await db.productsDao.insertProduct(makeProduct(
-        id: 'prod-2',
-        name: 'عصير برتقال',
-      ));
+      await db.productsDao.insertProduct(
+        makeProduct(id: 'prod-2', name: 'عصير برتقال'),
+      );
 
       final results = await db.productsDao.searchProducts('حليب', 'store-1');
       expect(results, hasLength(1));
@@ -101,8 +102,9 @@ void main() {
     });
 
     test('searchProducts finds by barcode', () async {
-      await db.productsDao
-          .insertProduct(makeProduct(barcode: 'BC001', sku: 'SKU001'));
+      await db.productsDao.insertProduct(
+        makeProduct(barcode: 'BC001', sku: 'SKU001'),
+      );
 
       final results = await db.productsDao.searchProducts('BC001', 'store-1');
       expect(results, hasLength(1));
@@ -142,40 +144,41 @@ void main() {
     test('getProductsByCategory filters correctly', () async {
       // Create category parents for the FK constraint
       final now = DateTime(2025, 1, 1);
-      await db.categoriesDao.insertCategory(CategoriesTableCompanion.insert(
-        id: 'cat-1',
-        storeId: 'store-1',
-        name: 'Cat 1',
-        createdAt: now,
-      ));
-      await db.categoriesDao.insertCategory(CategoriesTableCompanion.insert(
-        id: 'cat-2',
-        storeId: 'store-1',
-        name: 'Cat 2',
-        createdAt: now,
-      ));
+      await db.categoriesDao.insertCategory(
+        CategoriesTableCompanion.insert(
+          id: 'cat-1',
+          storeId: 'store-1',
+          name: 'Cat 1',
+          createdAt: now,
+        ),
+      );
+      await db.categoriesDao.insertCategory(
+        CategoriesTableCompanion.insert(
+          id: 'cat-2',
+          storeId: 'store-1',
+          name: 'Cat 2',
+          createdAt: now,
+        ),
+      );
 
       await db.productsDao.insertProduct(makeProduct(categoryId: 'cat-1'));
-      await db.productsDao.insertProduct(makeProduct(
-        id: 'prod-2',
-        name: 'جبنة بيضاء',
-        categoryId: 'cat-2',
-      ));
+      await db.productsDao.insertProduct(
+        makeProduct(id: 'prod-2', name: 'جبنة بيضاء', categoryId: 'cat-2'),
+      );
 
-      final results =
-          await db.productsDao.getProductsByCategory('cat-1', 'store-1');
+      final results = await db.productsDao.getProductsByCategory(
+        'cat-1',
+        'store-1',
+      );
       expect(results, hasLength(1));
       expect(results.first.id, 'prod-1');
     });
 
     test('getLowStockProducts returns products below min qty', () async {
       await db.productsDao.insertProduct(makeProduct(stockQty: 3, minQty: 5));
-      await db.productsDao.insertProduct(makeProduct(
-        id: 'prod-2',
-        name: 'عصير',
-        stockQty: 50,
-        minQty: 5,
-      ));
+      await db.productsDao.insertProduct(
+        makeProduct(id: 'prod-2', name: 'عصير', stockQty: 50, minQty: 5),
+      );
 
       final lowStock = await db.productsDao.getLowStockProducts('store-1');
       expect(lowStock, hasLength(1));
@@ -193,10 +196,9 @@ void main() {
 
     test('getUnsyncedProducts returns products without syncedAt', () async {
       await db.productsDao.insertProduct(makeProduct());
-      await db.productsDao.insertProduct(makeProduct(
-        id: 'prod-2',
-        name: 'عصير',
-      ));
+      await db.productsDao.insertProduct(
+        makeProduct(id: 'prod-2', name: 'عصير'),
+      );
       await db.productsDao.markAsSynced('prod-1');
 
       final unsynced = await db.productsDao.getUnsyncedProducts();
@@ -206,28 +208,32 @@ void main() {
 
     test('getProductsPaginated respects limit and offset', () async {
       for (var i = 0; i < 10; i++) {
-        await db.productsDao.insertProduct(makeProduct(
-          id: 'prod-$i',
-          name: 'منتج $i',
-        ));
+        await db.productsDao.insertProduct(
+          makeProduct(id: 'prod-$i', name: 'منتج $i'),
+        );
       }
 
-      final page1 = await db.productsDao
-          .getProductsPaginated('store-1', offset: 0, limit: 3);
+      final page1 = await db.productsDao.getProductsPaginated(
+        'store-1',
+        offset: 0,
+        limit: 3,
+      );
       expect(page1, hasLength(3));
 
-      final page2 = await db.productsDao
-          .getProductsPaginated('store-1', offset: 3, limit: 3);
+      final page2 = await db.productsDao.getProductsPaginated(
+        'store-1',
+        offset: 3,
+        limit: 3,
+      );
       expect(page2, hasLength(3));
       expect(page2.first.id, isNot(page1.last.id));
     });
 
     test('getProductsCount returns correct count', () async {
       for (var i = 0; i < 5; i++) {
-        await db.productsDao.insertProduct(makeProduct(
-          id: 'prod-$i',
-          name: 'منتج $i',
-        ));
+        await db.productsDao.insertProduct(
+          makeProduct(id: 'prod-$i', name: 'منتج $i'),
+        );
       }
 
       final count = await db.productsDao.getProductsCount('store-1');
@@ -256,15 +262,14 @@ void main() {
     });
 
     test('batchUpdateStock updates multiple products', () async {
-      await db.productsDao
-          .insertProduct(makeProduct(id: 'prod-1', stockQty: 50));
-      await db.productsDao
-          .insertProduct(makeProduct(id: 'prod-2', name: 'عصير', stockQty: 30));
+      await db.productsDao.insertProduct(
+        makeProduct(id: 'prod-1', stockQty: 50),
+      );
+      await db.productsDao.insertProduct(
+        makeProduct(id: 'prod-2', name: 'عصير', stockQty: 30),
+      );
 
-      await db.productsDao.batchUpdateStock({
-        'prod-1': 40,
-        'prod-2': 25,
-      });
+      await db.productsDao.batchUpdateStock({'prod-1': 40, 'prod-2': 25});
 
       final p1 = await db.productsDao.getProductById('prod-1');
       final p2 = await db.productsDao.getProductById('prod-2');
@@ -273,21 +278,27 @@ void main() {
     });
 
     test('quickFindByBarcode finds active product', () async {
-      await db.productsDao
-          .insertProduct(makeProduct(barcode: 'QF-001', isActive: true));
+      await db.productsDao.insertProduct(
+        makeProduct(barcode: 'QF-001', isActive: true),
+      );
 
-      final product =
-          await db.productsDao.quickFindByBarcode('QF-001', 'store-1');
+      final product = await db.productsDao.quickFindByBarcode(
+        'QF-001',
+        'store-1',
+      );
       expect(product, isNotNull);
       expect(product!.barcode, 'QF-001');
     });
 
     test('quickFindByBarcode ignores inactive product', () async {
-      await db.productsDao
-          .insertProduct(makeProduct(barcode: 'QF-002', isActive: false));
+      await db.productsDao.insertProduct(
+        makeProduct(barcode: 'QF-002', isActive: false),
+      );
 
-      final product =
-          await db.productsDao.quickFindByBarcode('QF-002', 'store-1');
+      final product = await db.productsDao.quickFindByBarcode(
+        'QF-002',
+        'store-1',
+      );
       expect(product, isNull);
     });
 

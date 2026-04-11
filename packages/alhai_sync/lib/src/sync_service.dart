@@ -142,8 +142,9 @@ class SyncService {
 
     // حالة 1: DELETE بعد CREATE → إلغاء كليهما
     if (operation == SyncOperation.delete) {
-      final pendingCreate =
-          pendingItems.where((item) => item.operation == 'CREATE').toList();
+      final pendingCreate = pendingItems
+          .where((item) => item.operation == 'CREATE')
+          .toList();
       if (pendingCreate.isNotEmpty) {
         developer.log(
           'SyncService: DELETE cancels pending CREATE for $tableName/$recordId - removing both',
@@ -160,8 +161,9 @@ class SyncService {
 
     // حالة 2: UPDATE بعد CREATE → دمج بيانات التحديث في الإنشاء
     if (operation == SyncOperation.update) {
-      final pendingCreate =
-          pendingItems.where((item) => item.operation == 'CREATE').toList();
+      final pendingCreate = pendingItems
+          .where((item) => item.operation == 'CREATE')
+          .toList();
       if (pendingCreate.isNotEmpty) {
         final createItem = pendingCreate.first;
         try {
@@ -443,8 +445,9 @@ class SyncService {
   }
 
   /// تنظيف سجلات المزامنة القديمة (أقدم من 7 أيام)
-  Future<int> cleanupSyncAuditLogs(
-      {Duration olderThan = const Duration(days: 7)}) {
+  Future<int> cleanupSyncAuditLogs({
+    Duration olderThan = const Duration(days: 7),
+  }) {
     return _syncQueueDao.cleanupSyncAuditLogs(olderThan: olderThan);
   }
 
@@ -464,8 +467,9 @@ class SyncService {
   }
 
   /// تنظيف جميع التعارضات المحلولة
-  Future<int> cleanupResolvedConflicts(
-      {Duration olderThan = const Duration(days: 3)}) {
+  Future<int> cleanupResolvedConflicts({
+    Duration olderThan = const Duration(days: 3),
+  }) {
     return _syncQueueDao.cleanupResolvedConflicts(olderThan: olderThan);
   }
 

@@ -154,15 +154,13 @@ class CustomerAnalyticsTab extends StatelessWidget {
                   height: 120 * values[i],
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
-                      colors: [
-                        color,
-                        color.withValues(alpha: 0.6),
-                      ],
+                      colors: [color, color.withValues(alpha: 0.6)],
                       begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
-                    borderRadius:
-                        const BorderRadius.vertical(top: Radius.circular(4)),
+                    borderRadius: const BorderRadius.vertical(
+                      top: Radius.circular(4),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 6),
@@ -199,10 +197,12 @@ class CustomerAnalyticsTab extends StatelessWidget {
               child: CustomPaint(
                 painter: PieChartPainter(
                   items
-                      .map((e) => PieSegment(
-                            value: (e['pct'] as int).toDouble(),
-                            color: e['color'] as Color,
-                          ))
+                      .map(
+                        (e) => PieSegment(
+                          value: (e['pct'] as int).toDouble(),
+                          color: e['color'] as Color,
+                        ),
+                      )
                       .toList(),
                 ),
               ),
@@ -246,7 +246,10 @@ class CustomerAnalyticsTab extends StatelessWidget {
   }
 
   Widget _buildAnalyticsStatsGrid(
-      bool isDark, AppLocalizations l10n, bool isMobile) {
+    bool isDark,
+    AppLocalizations l10n,
+    bool isMobile,
+  ) {
     // Compute real analytics from transactions
     final invoiceCount = invoiceTransactions.length;
     final avgSale = invoiceCount > 0

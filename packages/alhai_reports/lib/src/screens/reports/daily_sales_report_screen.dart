@@ -163,16 +163,21 @@ class _DailySalesReportScreenState
           ? const Center(child: CircularProgressIndicator())
           : ResponsiveBuilder(
               builder: (context, deviceType, width) {
-                final padding = getResponsiveValue<double>(context,
-                    mobile: 16, desktop: 24);
+                final padding = getResponsiveValue<double>(
+                  context,
+                  mobile: 16,
+                  desktop: 24,
+                );
                 return ListView(
                   padding: EdgeInsets.all(padding),
                   children: [
                     // Date selector
                     Card(
                       child: ListTile(
-                        leading: Icon(Icons.calendar_today,
-                            color: colorScheme.primary),
+                        leading: Icon(
+                          Icons.calendar_today,
+                          color: colorScheme.primary,
+                        ),
                         title: Text(l10n.date),
                         subtitle: Text(_formatDate(_selectedDate)),
                         trailing: Row(
@@ -181,8 +186,11 @@ class _DailySalesReportScreenState
                             IconButton(
                               icon: const AdaptiveIcon(Icons.chevron_left),
                               onPressed: () {
-                                setState(() => _selectedDate = _selectedDate
-                                    .subtract(const Duration(days: 1)));
+                                setState(
+                                  () => _selectedDate = _selectedDate.subtract(
+                                    const Duration(days: 1),
+                                  ),
+                                );
                                 _loadReportData();
                               },
                             ),
@@ -190,9 +198,11 @@ class _DailySalesReportScreenState
                               icon: const AdaptiveIcon(Icons.chevron_right),
                               onPressed: _selectedDate.isBefore(DateTime.now())
                                   ? () {
-                                      setState(() => _selectedDate =
-                                          _selectedDate
-                                              .add(const Duration(days: 1)));
+                                      setState(
+                                        () => _selectedDate = _selectedDate.add(
+                                          const Duration(days: 1),
+                                        ),
+                                      );
                                       _loadReportData();
                                     }
                                   : null,
@@ -211,12 +221,18 @@ class _DailySalesReportScreenState
                           padding: const EdgeInsets.all(AlhaiSpacing.xl),
                           child: Column(
                             children: [
-                              Icon(Icons.hourglass_empty,
-                                  size: 64, color: theme.disabledColor),
+                              Icon(
+                                Icons.hourglass_empty,
+                                size: 64,
+                                color: theme.disabledColor,
+                              ),
                               const SizedBox(height: AlhaiSpacing.md),
-                              Text(l10n.noData,
-                                  style: TextStyle(
-                                      color: colorScheme.onSurfaceVariant)),
+                              Text(
+                                l10n.noData,
+                                style: TextStyle(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -234,8 +250,10 @@ class _DailySalesReportScreenState
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(l10n.paymentMethod,
-                                    style: theme.textTheme.titleMedium),
+                                Text(
+                                  l10n.paymentMethod,
+                                  style: theme.textTheme.titleMedium,
+                                ),
                                 const Divider(),
                                 _PaymentRow(
                                   icon: Icons.money,
@@ -273,8 +291,10 @@ class _DailySalesReportScreenState
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text('${l10n.discount} & ${l10n.vat}',
-                                  style: theme.textTheme.titleMedium),
+                              Text(
+                                '${l10n.discount} & ${l10n.vat}',
+                                style: theme.textTheme.titleMedium,
+                              ),
                               const Divider(),
                               ListTile(
                                 leading: Container(
@@ -284,15 +304,18 @@ class _DailySalesReportScreenState
                                     color: Colors.orange.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: const Icon(Icons.local_offer,
-                                      color: Colors.orange),
+                                  child: const Icon(
+                                    Icons.local_offer,
+                                    color: Colors.orange,
+                                  ),
                                 ),
                                 title: Text(l10n.discount),
                                 trailing: Text(
                                   '-${CurrencyFormatter.formatCompactWithContext(context, _discounts)}',
                                   style: const TextStyle(
-                                      color: Colors.orange,
-                                      fontWeight: FontWeight.bold),
+                                    color: Colors.orange,
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                               ListTile(
@@ -303,16 +326,21 @@ class _DailySalesReportScreenState
                                     color: Colors.purple.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
-                                  child: const Icon(Icons.receipt,
-                                      color: Colors.purple),
+                                  child: const Icon(
+                                    Icons.receipt,
+                                    color: Colors.purple,
+                                  ),
                                 ),
                                 title: Text(l10n.vat),
                                 trailing: Text(
                                   CurrencyFormatter.formatWithContext(
-                                      context, _vat),
+                                    context,
+                                    _vat,
+                                  ),
                                   style: const TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.purple),
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.purple,
+                                  ),
                                 ),
                               ),
                             ],
@@ -332,17 +360,24 @@ class _DailySalesReportScreenState
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(l10n.netProfit,
-                                      style: const TextStyle(fontSize: 16)),
-                                  Text(l10n.discount,
-                                      style: TextStyle(
-                                          color: colorScheme.onSurfaceVariant,
-                                          fontSize: 12)),
+                                  Text(
+                                    l10n.netProfit,
+                                    style: const TextStyle(fontSize: 16),
+                                  ),
+                                  Text(
+                                    l10n.discount,
+                                    style: TextStyle(
+                                      color: colorScheme.onSurfaceVariant,
+                                      fontSize: 12,
+                                    ),
+                                  ),
                                 ],
                               ),
                               Text(
                                 CurrencyFormatter.formatCompactWithContext(
-                                    context, _totalSales - _discounts),
+                                  context,
+                                  _totalSales - _discounts,
+                                ),
                                 style: TextStyle(
                                   fontSize: 24,
                                   fontWeight: FontWeight.bold,
@@ -362,7 +397,10 @@ class _DailySalesReportScreenState
   }
 
   Widget _buildSummaryGrid(
-      BuildContext context, AppLocalizations l10n, DeviceType deviceType) {
+    BuildContext context,
+    AppLocalizations l10n,
+    DeviceType deviceType,
+  ) {
     final columns = deviceType == DeviceType.mobile ? 2 : 4;
     final cards = [
       _SummaryCard(
@@ -387,7 +425,9 @@ class _DailySalesReportScreenState
         title: l10n.averageSale,
         value: _totalTransactions > 0
             ? CurrencyFormatter.formatCompactWithContext(
-                context, _totalSales / _totalTransactions)
+                context,
+                _totalSales / _totalTransactions,
+              )
             : CurrencyFormatter.formatCompactWithContext(context, 0),
         icon: Icons.analytics,
         color: Colors.purple,
@@ -397,12 +437,16 @@ class _DailySalesReportScreenState
     if (columns == 4) {
       return Row(
         children: cards
-            .map((card) => Expanded(
-                    child: Padding(
-                  padding:
-                      const EdgeInsetsDirectional.only(end: AlhaiSpacing.sm),
+            .map(
+              (card) => Expanded(
+                child: Padding(
+                  padding: const EdgeInsetsDirectional.only(
+                    end: AlhaiSpacing.sm,
+                  ),
                   child: card,
-                )))
+                ),
+              ),
+            )
             .toList(),
       );
     }
@@ -436,7 +480,7 @@ class _DailySalesReportScreenState
       'الأربعاء',
       'الخميس',
       'الجمعة',
-      'السبت'
+      'السبت',
     ];
     return '${days[date.weekday % 7]} ${date.day}/${date.month}/${date.year}';
   }
@@ -456,83 +500,98 @@ class _DailySalesReportScreenState
 
   Future<pw.Document> _buildReportPdf() async {
     final pdf = await PdfFontHelper.createDocument();
-    pdf.addPage(pw.Page(
-      pageFormat: PdfPageFormat.a4,
-      textDirection: pw.TextDirection.rtl,
-      build: (context) => pw.Column(
-        crossAxisAlignment: pw.CrossAxisAlignment.start,
-        children: [
-          pw.Text('تقرير المبيعات اليومي',
-              style:
-                  pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold)),
-          pw.SizedBox(height: 10),
-          pw.Text('التاريخ: ${_formatDate(_selectedDate)}'),
-          pw.Divider(),
-          pw.SizedBox(height: 10),
-          pw.Row(
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        textDirection: pw.TextDirection.rtl,
+        build: (context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(
+              'تقرير المبيعات اليومي',
+              style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text('التاريخ: ${_formatDate(_selectedDate)}'),
+            pw.Divider(),
+            pw.SizedBox(height: 10),
+            pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text('إجمالي المبيعات'),
                 pw.Text('${_totalSales.toStringAsFixed(0)} ر.س'),
-              ]),
-          pw.Row(
+              ],
+            ),
+            pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text('عدد الفواتير'),
                 pw.Text('$_totalTransactions'),
-              ]),
-          pw.Row(
+              ],
+            ),
+            pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-              children: [
-                pw.Text('المنتجات المباعة'),
-                pw.Text('$_totalItems'),
-              ]),
-          pw.Divider(),
-          pw.Text('طرق الدفع:',
-              style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-          pw.Row(
+              children: [pw.Text('المنتجات المباعة'), pw.Text('$_totalItems')],
+            ),
+            pw.Divider(),
+            pw.Text(
+              'طرق الدفع:',
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+            ),
+            pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text('نقدي'),
                 pw.Text('${_cashSales.toStringAsFixed(0)} ر.س'),
-              ]),
-          pw.Row(
+              ],
+            ),
+            pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text('بطاقة'),
                 pw.Text('${_cardSales.toStringAsFixed(0)} ر.س'),
-              ]),
-          pw.Row(
+              ],
+            ),
+            pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text('آجل'),
                 pw.Text('${_creditSales.toStringAsFixed(0)} ر.س'),
-              ]),
-          pw.Divider(),
-          pw.Row(
+              ],
+            ),
+            pw.Divider(),
+            pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text('الخصومات'),
                 pw.Text('-${_discounts.toStringAsFixed(0)} ر.س'),
-              ]),
-          pw.Row(
+              ],
+            ),
+            pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
                 pw.Text('ضريبة القيمة المضافة'),
                 pw.Text('${_vat.toStringAsFixed(2)} ر.س'),
-              ]),
-          pw.Divider(),
-          pw.Row(
+              ],
+            ),
+            pw.Divider(),
+            pw.Row(
               mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
               children: [
-                pw.Text('صافي المبيعات',
-                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-                pw.Text('${(_totalSales - _discounts).toStringAsFixed(0)} ر.س',
-                    style: pw.TextStyle(fontWeight: pw.FontWeight.bold)),
-              ]),
-        ],
+                pw.Text(
+                  'صافي المبيعات',
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                ),
+                pw.Text(
+                  '${(_totalSales - _discounts).toStringAsFixed(0)} ر.س',
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-    ));
+    );
     return pdf;
   }
 
@@ -599,13 +658,18 @@ class _SummaryCard extends StatelessWidget {
           children: [
             Icon(icon, color: color),
             const SizedBox(height: AlhaiSpacing.xs),
-            Text(title,
-                style: TextStyle(
-                    color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
+            Text(
+              title,
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 12,
+              ),
+            ),
             const SizedBox(height: AlhaiSpacing.xxs),
-            Text(value,
-                style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            Text(
+              value,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ),
@@ -639,12 +703,18 @@ class _PaymentRow extends StatelessWidget {
             const SizedBox(width: AlhaiSpacing.xs),
             Text(label),
             const Spacer(),
-            Text(CurrencyFormatter.formatCompact(amount),
-                style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              CurrencyFormatter.formatCompact(amount),
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             const SizedBox(width: AlhaiSpacing.xs),
-            Text('(${(percentage * 100).toStringAsFixed(0)}%)',
-                style: TextStyle(
-                    color: theme.colorScheme.onSurfaceVariant, fontSize: 12)),
+            Text(
+              '(${(percentage * 100).toStringAsFixed(0)}%)',
+              style: TextStyle(
+                color: theme.colorScheme.onSurfaceVariant,
+                fontSize: 12,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: AlhaiSpacing.xxs),

@@ -12,7 +12,8 @@ part of 'auth_tokens.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 AuthTokens _$AuthTokensFromJson(Map<String, dynamic> json) {
   return _AuthTokens.fromJson(json);
@@ -37,8 +38,9 @@ mixin _$AuthTokens {
 /// @nodoc
 abstract class $AuthTokensCopyWith<$Res> {
   factory $AuthTokensCopyWith(
-          AuthTokens value, $Res Function(AuthTokens) then) =
-      _$AuthTokensCopyWithImpl<$Res, AuthTokens>;
+    AuthTokens value,
+    $Res Function(AuthTokens) then,
+  ) = _$AuthTokensCopyWithImpl<$Res, AuthTokens>;
   @useResult
   $Res call({String accessToken, String refreshToken, DateTime expiresAt});
 }
@@ -62,20 +64,23 @@ class _$AuthTokensCopyWithImpl<$Res, $Val extends AuthTokens>
     Object? refreshToken = null,
     Object? expiresAt = null,
   }) {
-    return _then(_value.copyWith(
-      accessToken: null == accessToken
-          ? _value.accessToken
-          : accessToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      refreshToken: null == refreshToken
-          ? _value.refreshToken
-          : refreshToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      expiresAt: null == expiresAt
-          ? _value.expiresAt
-          : expiresAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            accessToken: null == accessToken
+                ? _value.accessToken
+                : accessToken // ignore: cast_nullable_to_non_nullable
+                      as String,
+            refreshToken: null == refreshToken
+                ? _value.refreshToken
+                : refreshToken // ignore: cast_nullable_to_non_nullable
+                      as String,
+            expiresAt: null == expiresAt
+                ? _value.expiresAt
+                : expiresAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -83,8 +88,9 @@ class _$AuthTokensCopyWithImpl<$Res, $Val extends AuthTokens>
 abstract class _$$AuthTokensImplCopyWith<$Res>
     implements $AuthTokensCopyWith<$Res> {
   factory _$$AuthTokensImplCopyWith(
-          _$AuthTokensImpl value, $Res Function(_$AuthTokensImpl) then) =
-      __$$AuthTokensImplCopyWithImpl<$Res>;
+    _$AuthTokensImpl value,
+    $Res Function(_$AuthTokensImpl) then,
+  ) = __$$AuthTokensImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({String accessToken, String refreshToken, DateTime expiresAt});
@@ -95,8 +101,9 @@ class __$$AuthTokensImplCopyWithImpl<$Res>
     extends _$AuthTokensCopyWithImpl<$Res, _$AuthTokensImpl>
     implements _$$AuthTokensImplCopyWith<$Res> {
   __$$AuthTokensImplCopyWithImpl(
-      _$AuthTokensImpl _value, $Res Function(_$AuthTokensImpl) _then)
-      : super(_value, _then);
+    _$AuthTokensImpl _value,
+    $Res Function(_$AuthTokensImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of AuthTokens
   /// with the given fields replaced by the non-null parameter values.
@@ -107,30 +114,33 @@ class __$$AuthTokensImplCopyWithImpl<$Res>
     Object? refreshToken = null,
     Object? expiresAt = null,
   }) {
-    return _then(_$AuthTokensImpl(
-      accessToken: null == accessToken
-          ? _value.accessToken
-          : accessToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      refreshToken: null == refreshToken
-          ? _value.refreshToken
-          : refreshToken // ignore: cast_nullable_to_non_nullable
-              as String,
-      expiresAt: null == expiresAt
-          ? _value.expiresAt
-          : expiresAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$AuthTokensImpl(
+        accessToken: null == accessToken
+            ? _value.accessToken
+            : accessToken // ignore: cast_nullable_to_non_nullable
+                  as String,
+        refreshToken: null == refreshToken
+            ? _value.refreshToken
+            : refreshToken // ignore: cast_nullable_to_non_nullable
+                  as String,
+        expiresAt: null == expiresAt
+            ? _value.expiresAt
+            : expiresAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$AuthTokensImpl implements _AuthTokens {
-  const _$AuthTokensImpl(
-      {required this.accessToken,
-      required this.refreshToken,
-      required this.expiresAt});
+  const _$AuthTokensImpl({
+    required this.accessToken,
+    required this.refreshToken,
+    required this.expiresAt,
+  });
 
   factory _$AuthTokensImpl.fromJson(Map<String, dynamic> json) =>
       _$$AuthTokensImplFromJson(json);
@@ -175,17 +185,16 @@ class _$AuthTokensImpl implements _AuthTokens {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AuthTokensImplToJson(
-      this,
-    );
+    return _$$AuthTokensImplToJson(this);
   }
 }
 
 abstract class _AuthTokens implements AuthTokens {
-  const factory _AuthTokens(
-      {required final String accessToken,
-      required final String refreshToken,
-      required final DateTime expiresAt}) = _$AuthTokensImpl;
+  const factory _AuthTokens({
+    required final String accessToken,
+    required final String refreshToken,
+    required final DateTime expiresAt,
+  }) = _$AuthTokensImpl;
 
   factory _AuthTokens.fromJson(Map<String, dynamic> json) =
       _$AuthTokensImpl.fromJson;

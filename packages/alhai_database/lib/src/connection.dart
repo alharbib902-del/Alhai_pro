@@ -2,7 +2,8 @@ import 'package:drift/drift.dart';
 import 'package:drift_flutter/drift_flutter.dart';
 
 // Conditional imports for platform-specific code
-import 'connection_native.dart' if (dart.library.html) 'connection_web.dart'
+import 'connection_native.dart'
+    if (dart.library.html) 'connection_web.dart'
     as impl;
 
 /// مفتاح التشفير المخزن (يُعيّن من التطبيق عند بدء التشغيل)

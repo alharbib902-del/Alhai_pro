@@ -26,14 +26,19 @@ class InvoiceRevenueChart extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(l10n.revenueAnalysis,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.onSurface)),
+              Text(
+                l10n.revenueAnalysis,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.sm, vertical: 6),
+                  horizontal: AlhaiSpacing.sm,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: isDark
                       ? AppColors.backgroundDark
@@ -44,16 +49,21 @@ class InvoiceRevenueChart extends StatelessWidget {
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(l10n.last7Days,
-                        style: TextStyle(
-                            fontSize: 13,
-                            color: Theme.of(context).colorScheme.onSurface)),
+                    Text(
+                      l10n.last7Days,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
                     SizedBox(width: AlhaiSpacing.xxs),
-                    Icon(Icons.keyboard_arrow_down,
-                        size: 16,
-                        color: isDark
-                            ? AppColors.textMutedDark
-                            : AppColors.textSecondary),
+                    Icon(
+                      Icons.keyboard_arrow_down,
+                      size: 16,
+                      color: isDark
+                          ? AppColors.textMutedDark
+                          : AppColors.textSecondary,
+                    ),
                   ],
                 ),
               ),
@@ -65,33 +75,39 @@ class InvoiceRevenueChart extends StatelessWidget {
             child: CustomPaint(
               size: Size.infinite,
               painter: _RevenueChartPainter(
-                  isDark: isDark,
-                  gridLineColor: Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.05)),
+                isDark: isDark,
+                gridLineColor: Theme.of(
+                  context,
+                ).colorScheme.onSurface.withValues(alpha: 0.05),
+              ),
             ),
           ),
           SizedBox(height: AlhaiSpacing.sm),
           // X-axis labels
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              l10n.sat,
-              l10n.sun,
-              l10n.mon,
-              l10n.tue,
-              l10n.wed,
-              l10n.thu,
-              l10n.fri
-            ]
-                .map((d) => Text(d,
-                    style: TextStyle(
-                        fontSize: 11,
-                        color: isDark
-                            ? AppColors.textMutedDark
-                            : AppColors.textMuted)))
-                .toList(),
+            children:
+                [
+                      l10n.sat,
+                      l10n.sun,
+                      l10n.mon,
+                      l10n.tue,
+                      l10n.wed,
+                      l10n.thu,
+                      l10n.fri,
+                    ]
+                    .map(
+                      (d) => Text(
+                        d,
+                        style: TextStyle(
+                          fontSize: 11,
+                          color: isDark
+                              ? AppColors.textMutedDark
+                              : AppColors.textMuted,
+                        ),
+                      ),
+                    )
+                    .toList(),
           ),
         ],
       ),
@@ -113,7 +129,7 @@ class _RevenueChartPainter extends CustomPainter {
       18000.0,
       14000.0,
       22000.0,
-      19500.0
+      19500.0,
     ];
     const maxVal = 25000.0;
 
@@ -129,15 +145,16 @@ class _RevenueChartPainter extends CustomPainter {
 
     // Y-axis labels
     final textStyle = TextStyle(
-        fontSize: 10,
-        color: isDark ? AppColors.textMutedDark : AppColors.textSecondary);
+      fontSize: 10,
+      color: isDark ? AppColors.textMutedDark : AppColors.textSecondary,
+    );
     for (int i = 0; i <= 4; i++) {
       final value = (maxVal * i / 4).toInt();
       final label = '${(value / 1000).toStringAsFixed(0)}k';
       final textPainter = TextPainter(
-          text: TextSpan(text: label, style: textStyle),
-          textDirection: TextDirection.ltr)
-        ..layout();
+        text: TextSpan(text: label, style: textStyle),
+        textDirection: TextDirection.ltr,
+      )..layout();
       textPainter.paint(canvas, Offset(-2, size.height * (1 - i / 4) - 6));
     }
 
@@ -162,7 +179,7 @@ class _RevenueChartPainter extends CustomPainter {
         end: Alignment.bottomCenter,
         colors: [
           AppColors.primary.withValues(alpha: 0.3),
-          AppColors.primary.withValues(alpha: 0.02)
+          AppColors.primary.withValues(alpha: 0.02),
         ],
       ).createShader(Rect.fromLTWH(0, 0, size.width, size.height));
     canvas.drawPath(areaPath, areaPaint);

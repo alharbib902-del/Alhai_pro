@@ -159,8 +159,10 @@ void main() {
     test('contains InvoiceTypeCode with name attribute', () {
       final xml = builder.build(standardInvoice);
       final doc = XmlDocument.parse(xml);
-      final typeCode =
-          doc.rootElement.findAllElements('InvoiceTypeCode', namespace: '*');
+      final typeCode = doc.rootElement.findAllElements(
+        'InvoiceTypeCode',
+        namespace: '*',
+      );
       expect(typeCode, isNotEmpty);
 
       final el = typeCode.first;
@@ -225,13 +227,17 @@ void main() {
           .toList();
 
       final secondTaxTotal = directTaxTotals[1];
-      final subtotals =
-          secondTaxTotal.findAllElements('TaxSubtotal', namespace: '*');
+      final subtotals = secondTaxTotal.findAllElements(
+        'TaxSubtotal',
+        namespace: '*',
+      );
       expect(subtotals, isNotEmpty);
 
       // Should contain TaxCategory with VAT scheme
-      final taxSchemes =
-          secondTaxTotal.findAllElements('TaxScheme', namespace: '*');
+      final taxSchemes = secondTaxTotal.findAllElements(
+        'TaxScheme',
+        namespace: '*',
+      );
       expect(taxSchemes, isNotEmpty);
     });
 
@@ -244,21 +250,25 @@ void main() {
 
       // line1: 2 * 5000 = 10000, line2: 5 * 50 - 50 = 200
       // Total net: 10200
-      final lineExt =
-          lmt.findAllElements('LineExtensionAmount', namespace: '*').first;
+      final lineExt = lmt
+          .findAllElements('LineExtensionAmount', namespace: '*')
+          .first;
       expect(lineExt.innerText, '10200.00');
 
-      final taxExcl =
-          lmt.findAllElements('TaxExclusiveAmount', namespace: '*').first;
+      final taxExcl = lmt
+          .findAllElements('TaxExclusiveAmount', namespace: '*')
+          .first;
       expect(taxExcl.innerText, '10200.00');
 
       // VAT: 10200 * 0.15 = 1530
-      final taxIncl =
-          lmt.findAllElements('TaxInclusiveAmount', namespace: '*').first;
+      final taxIncl = lmt
+          .findAllElements('TaxInclusiveAmount', namespace: '*')
+          .first;
       expect(taxIncl.innerText, '11730.00');
 
-      final payable =
-          lmt.findAllElements('PayableAmount', namespace: '*').first;
+      final payable = lmt
+          .findAllElements('PayableAmount', namespace: '*')
+          .first;
       expect(payable.innerText, '11730.00');
     });
 
@@ -296,8 +306,10 @@ void main() {
       final doc = XmlDocument.parse(xml);
 
       // Find the ICV AdditionalDocumentReference
-      final addDocRefs = doc.rootElement
-          .findAllElements('AdditionalDocumentReference', namespace: '*');
+      final addDocRefs = doc.rootElement.findAllElements(
+        'AdditionalDocumentReference',
+        namespace: '*',
+      );
       final icvRef = addDocRefs.where((el) {
         final uuid = el.findAllElements('UUID', namespace: '*');
         return uuid.isNotEmpty && uuid.first.innerText == 'ICV';
@@ -312,14 +324,14 @@ void main() {
     });
 
     test('ICV uses invoiceCounterValue when provided', () {
-      final invoiceWithIcv = standardInvoice.copyWith(
-        invoiceCounterValue: 42,
-      );
+      final invoiceWithIcv = standardInvoice.copyWith(invoiceCounterValue: 42);
       final xml = builder.build(invoiceWithIcv);
       final doc = XmlDocument.parse(xml);
 
-      final addDocRefs = doc.rootElement
-          .findAllElements('AdditionalDocumentReference', namespace: '*');
+      final addDocRefs = doc.rootElement.findAllElements(
+        'AdditionalDocumentReference',
+        namespace: '*',
+      );
       final icvRef = addDocRefs.where((el) {
         final uuid = el.findAllElements('UUID', namespace: '*');
         return uuid.isNotEmpty && uuid.first.innerText == 'ICV';
@@ -371,8 +383,10 @@ void main() {
         'TaxAmount',
         'TaxableAmount',
       ]) {
-        final elements =
-            doc.rootElement.findAllElements(amountTag, namespace: '*');
+        final elements = doc.rootElement.findAllElements(
+          amountTag,
+          namespace: '*',
+        );
         for (final el in elements) {
           expect(
             el.getAttribute('currencyID'),
@@ -433,8 +447,9 @@ void main() {
       );
       final el = lineBuilder.buildLine(line, 'SAR');
 
-      final amount =
-          el.findAllElements('LineExtensionAmount', namespace: '*').first;
+      final amount = el
+          .findAllElements('LineExtensionAmount', namespace: '*')
+          .first;
       expect(amount.innerText, '100.00'); // 4 * 25
       expect(amount.getAttribute('currencyID'), 'SAR');
     });
@@ -489,8 +504,9 @@ void main() {
       final name = item.findAllElements('Name', namespace: '*').first;
       expect(name.innerText, 'Test Product');
 
-      final taxCat =
-          item.findAllElements('ClassifiedTaxCategory', namespace: '*').first;
+      final taxCat = item
+          .findAllElements('ClassifiedTaxCategory', namespace: '*')
+          .first;
       expect(taxCat, isNotNull);
 
       final catId = taxCat.findAllElements('ID', namespace: '*').first;
@@ -673,8 +689,9 @@ void main() {
       final subtotals = second.findAllElements('TaxSubtotal', namespace: '*');
       expect(subtotals.length, 1);
 
-      final taxable =
-          second.findAllElements('TaxableAmount', namespace: '*').first;
+      final taxable = second
+          .findAllElements('TaxableAmount', namespace: '*')
+          .first;
       expect(taxable.innerText, '100.00');
     });
 
@@ -780,7 +797,8 @@ void main() {
     });
 
     test('removeSignatureElements strips UBLExtensions and Signature', () {
-      const xml = '<Invoice>'
+      const xml =
+          '<Invoice>'
           '<ext:UBLExtensions xmlns:ext="urn:ext"><ext:UBLExtension>data</ext:UBLExtension></ext:UBLExtensions>'
           '<cbc:ID xmlns:cbc="urn:cbc">1</cbc:ID>'
           '<cac:Signature xmlns:cac="urn:cac">sig</cac:Signature>'

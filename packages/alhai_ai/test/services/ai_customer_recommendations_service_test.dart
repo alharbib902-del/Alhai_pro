@@ -59,15 +59,16 @@ void main() {
       final recs = await service.getRecommendations('store-1');
 
       final vips = recs.where((r) => r.segment == CustomerSegment.vip).toList();
-      final newCustomers =
-          recs.where((r) => r.segment == CustomerSegment.newCustomer).toList();
+      final newCustomers = recs
+          .where((r) => r.segment == CustomerSegment.newCustomer)
+          .toList();
 
       if (vips.isNotEmpty && newCustomers.isNotEmpty) {
         final avgVipSpend =
             vips.map((v) => v.totalSpent).reduce((a, b) => a + b) / vips.length;
         final avgNewSpend =
             newCustomers.map((v) => v.totalSpent).reduce((a, b) => a + b) /
-                newCustomers.length;
+            newCustomers.length;
         expect(avgVipSpend, greaterThan(avgNewSpend));
       }
     });
@@ -138,8 +139,10 @@ void main() {
       final segments = await service.segmentCustomers('store-1');
 
       for (int i = 0; i < segments.length - 1; i++) {
-        expect(segments[i].totalRevenue,
-            greaterThanOrEqualTo(segments[i + 1].totalRevenue));
+        expect(
+          segments[i].totalRevenue,
+          greaterThanOrEqualTo(segments[i + 1].totalRevenue),
+        );
       }
     });
 

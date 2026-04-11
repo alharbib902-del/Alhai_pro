@@ -20,8 +20,9 @@ void main() {
     salesDao = MockSalesDao();
 
     // PaymentReportsScreen uses _db.salesDao.getAllSales(storeId).
-    when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
-        .thenAnswer((_) async => []);
+    when(
+      () => salesDao.getAllSales(any(), limit: any(named: 'limit')),
+    ).thenAnswer((_) async => []);
 
     final db = setupMockDatabase(salesDao: salesDao);
     setupTestGetIt(mockDb: db);
@@ -35,9 +36,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const PaymentReportsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const PaymentReportsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(PaymentReportsScreen), findsOneWidget);
@@ -52,12 +51,11 @@ void main() {
       suppressOverflowErrors();
 
       final completer = Completer<List<SalesTableData>>();
-      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => salesDao.getAllSales(any(), limit: any(named: 'limit')),
+      ).thenAnswer((_) => completer.future);
 
-      await tester.pumpWidget(
-        createTestWidget(const PaymentReportsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const PaymentReportsScreen()));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -74,10 +72,7 @@ void main() {
       suppressOverflowErrors();
 
       await tester.pumpWidget(
-        createTestWidget(
-          const PaymentReportsScreen(),
-          theme: ThemeData.dark(),
-        ),
+        createTestWidget(const PaymentReportsScreen(), theme: ThemeData.dark()),
       );
       await tester.pumpAndSettle();
 
@@ -92,9 +87,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const PaymentReportsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const PaymentReportsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(PaymentReportsScreen), findsOneWidget);
@@ -108,9 +101,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const PaymentReportsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const PaymentReportsScreen()));
       await tester.pumpAndSettle();
 
       // Payment reports has date filter options rendered as custom InkWell chips

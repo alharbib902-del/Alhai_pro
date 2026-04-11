@@ -50,36 +50,46 @@ void main() {
     group('getSuppliers', () {
       test('returns Paginated<Supplier> on success', () async {
         // Arrange
-        when(() => mockRemote.getSuppliers(
-              any(),
-              activeOnly: any(named: 'activeOnly'),
-              page: any(named: 'page'),
-              limit: any(named: 'limit'),
-            )).thenAnswer((_) async => [testSupplierResponse]);
+        when(
+          () => mockRemote.getSuppliers(
+            any(),
+            activeOnly: any(named: 'activeOnly'),
+            page: any(named: 'page'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenAnswer((_) async => [testSupplierResponse]);
 
         // Act
-        final result =
-            await repository.getSuppliers('store-1', page: 1, limit: 20);
+        final result = await repository.getSuppliers(
+          'store-1',
+          page: 1,
+          limit: 20,
+        );
 
         // Assert
         expect(result.items, hasLength(1));
         expect(result.items.first.id, equals('sup-1'));
         expect(result.items.first.name, equals('Test Supplier'));
-        verify(() => mockRemote.getSuppliers('store-1', page: 1, limit: 20))
-            .called(1);
+        verify(
+          () => mockRemote.getSuppliers('store-1', page: 1, limit: 20),
+        ).called(1);
       });
 
       test('throws NetworkException on connection error', () async {
         // Arrange
-        when(() => mockRemote.getSuppliers(
-              any(),
-              activeOnly: any(named: 'activeOnly'),
-              page: any(named: 'page'),
-              limit: any(named: 'limit'),
-            )).thenThrow(DioException(
-          type: DioExceptionType.connectionError,
-          requestOptions: RequestOptions(path: '/suppliers'),
-        ));
+        when(
+          () => mockRemote.getSuppliers(
+            any(),
+            activeOnly: any(named: 'activeOnly'),
+            page: any(named: 'page'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenThrow(
+          DioException(
+            type: DioExceptionType.connectionError,
+            requestOptions: RequestOptions(path: '/suppliers'),
+          ),
+        );
 
         // Act & Assert
         expect(
@@ -92,8 +102,9 @@ void main() {
     group('getSupplier', () {
       test('returns Supplier on success', () async {
         // Arrange
-        when(() => mockRemote.getSupplier(any()))
-            .thenAnswer((_) async => testSupplierResponse);
+        when(
+          () => mockRemote.getSupplier(any()),
+        ).thenAnswer((_) async => testSupplierResponse);
 
         // Act
         final result = await repository.getSupplier('sup-1');
@@ -105,14 +116,16 @@ void main() {
 
       test('throws NotFoundException on 404', () async {
         // Arrange
-        when(() => mockRemote.getSupplier(any())).thenThrow(DioException(
-          type: DioExceptionType.badResponse,
-          response: Response(
-            statusCode: 404,
+        when(() => mockRemote.getSupplier(any())).thenThrow(
+          DioException(
+            type: DioExceptionType.badResponse,
+            response: Response(
+              statusCode: 404,
+              requestOptions: RequestOptions(path: '/suppliers/invalid'),
+            ),
             requestOptions: RequestOptions(path: '/suppliers/invalid'),
           ),
-          requestOptions: RequestOptions(path: '/suppliers/invalid'),
-        ));
+        );
 
         // Act & Assert
         expect(
@@ -131,8 +144,9 @@ void main() {
           phone: '0500000001',
         );
 
-        when(() => mockRemote.createSupplier(any()))
-            .thenAnswer((_) async => testSupplierResponse);
+        when(
+          () => mockRemote.createSupplier(any()),
+        ).thenAnswer((_) async => testSupplierResponse);
 
         // Act
         final result = await repository.createSupplier(params);

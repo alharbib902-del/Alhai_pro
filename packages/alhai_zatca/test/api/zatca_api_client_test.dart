@@ -26,9 +26,7 @@ void main() {
   );
 
   // Dio's default options must be non-null; mock this out.
-  final defaultBaseOptions = BaseOptions(
-    headers: <String, dynamic>{},
-  );
+  final defaultBaseOptions = BaseOptions(headers: <String, dynamic>{});
 
   setUpAll(() {
     registerFallbackValue(FakeOptions());
@@ -100,15 +98,19 @@ void main() {
 
   group('reportInvoice', () {
     test('sends POST to reporting endpoint with correct URL', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenAnswer((_) async => Response(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 200,
-            data: <String, dynamic>{},
-          ));
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 200,
+          data: <String, dynamic>{},
+        ),
+      );
 
       await client.reportInvoice(
         signedXmlBase64: 'base64xml',
@@ -117,11 +119,13 @@ void main() {
         certificate: testCertificate,
       );
 
-      final captured = verify(() => mockDio.post(
-            captureAny(),
-            data: captureAny(named: 'data'),
-            options: captureAny(named: 'options'),
-          )).captured;
+      final captured = verify(
+        () => mockDio.post(
+          captureAny(),
+          data: captureAny(named: 'data'),
+          options: captureAny(named: 'options'),
+        ),
+      ).captured;
 
       final url = captured[0] as String;
       expect(url, contains(ZatcaEndpoints.reporting));
@@ -129,15 +133,19 @@ void main() {
     });
 
     test('sends request body with invoiceHash, uuid, and invoice', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenAnswer((_) async => Response(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 200,
-            data: <String, dynamic>{},
-          ));
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 200,
+          data: <String, dynamic>{},
+        ),
+      );
 
       await client.reportInvoice(
         signedXmlBase64: 'xml-base64',
@@ -146,11 +154,13 @@ void main() {
         certificate: testCertificate,
       );
 
-      final captured = verify(() => mockDio.post(
-            any(),
-            data: captureAny(named: 'data'),
-            options: any(named: 'options'),
-          )).captured;
+      final captured = verify(
+        () => mockDio.post(
+          any(),
+          data: captureAny(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).captured;
 
       final body = captured.first as Map<String, dynamic>;
       expect(body['invoiceHash'], 'hash-value');
@@ -159,15 +169,19 @@ void main() {
     });
 
     test('includes Basic auth header built from csid and secret', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenAnswer((_) async => Response(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 200,
-            data: <String, dynamic>{},
-          ));
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 200,
+          data: <String, dynamic>{},
+        ),
+      );
 
       await client.reportInvoice(
         signedXmlBase64: 'xml',
@@ -176,11 +190,13 @@ void main() {
         certificate: testCertificate,
       );
 
-      final captured = verify(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: captureAny(named: 'options'),
-          )).captured;
+      final captured = verify(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: captureAny(named: 'options'),
+        ),
+      ).captured;
 
       final options = captured.first as Options;
       final auth = options.headers!['Authorization'] as String;
@@ -190,15 +206,19 @@ void main() {
     });
 
     test('returns success response on 200', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenAnswer((_) async => Response(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 200,
-            data: <String, dynamic>{},
-          ));
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 200,
+          data: <String, dynamic>{},
+        ),
+      );
 
       final response = await client.reportInvoice(
         signedXmlBase64: 'xml',
@@ -213,26 +233,26 @@ void main() {
     });
 
     test('returns success response on 202 (accepted with warnings)', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenAnswer((_) async => Response(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 202,
-            data: <String, dynamic>{
-              'validationResults': {
-                'warningMessages': [
-                  {
-                    'type': 'WARNING',
-                    'code': 'W-01',
-                    'message': 'Minor warning',
-                  },
-                ],
-                'errorMessages': [],
-              },
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 202,
+          data: <String, dynamic>{
+            'validationResults': {
+              'warningMessages': [
+                {'type': 'WARNING', 'code': 'W-01', 'message': 'Minor warning'},
+              ],
+              'errorMessages': [],
             },
-          ));
+          },
+        ),
+      );
 
       final response = await client.reportInvoice(
         signedXmlBase64: 'xml',
@@ -248,26 +268,30 @@ void main() {
     });
 
     test('parses 400 validation rejection with error messages', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenAnswer((_) async => Response(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 400,
-            data: <String, dynamic>{
-              'validationResults': {
-                'warningMessages': [],
-                'errorMessages': [
-                  {
-                    'type': 'ERROR',
-                    'code': 'BR-01',
-                    'message': 'Invoice number missing',
-                  },
-                ],
-              },
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 400,
+          data: <String, dynamic>{
+            'validationResults': {
+              'warningMessages': [],
+              'errorMessages': [
+                {
+                  'type': 'ERROR',
+                  'code': 'BR-01',
+                  'message': 'Invoice number missing',
+                },
+              ],
             },
-          ));
+          },
+        ),
+      );
 
       final response = await client.reportInvoice(
         signedXmlBase64: 'xml',
@@ -284,19 +308,23 @@ void main() {
     });
 
     test('converts 500 DioException to failure response', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenThrow(DioException(
-        requestOptions: RequestOptions(path: ''),
-        type: DioExceptionType.badResponse,
-        response: Response(
-          requestOptions: RequestOptions(path: ''),
-          statusCode: 500,
-          statusMessage: 'Internal Server Error',
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
         ),
-      ));
+      ).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(path: ''),
+          type: DioExceptionType.badResponse,
+          response: Response(
+            requestOptions: RequestOptions(path: ''),
+            statusCode: 500,
+            statusMessage: 'Internal Server Error',
+          ),
+        ),
+      );
 
       final response = await client.reportInvoice(
         signedXmlBase64: 'xml',
@@ -311,14 +339,18 @@ void main() {
     });
 
     test('handles connection timeout', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenThrow(DioException(
-        requestOptions: RequestOptions(path: ''),
-        type: DioExceptionType.connectionTimeout,
-      ));
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(path: ''),
+          type: DioExceptionType.connectionTimeout,
+        ),
+      );
 
       final response = await client.reportInvoice(
         signedXmlBase64: 'xml',
@@ -332,14 +364,18 @@ void main() {
     });
 
     test('handles receive timeout', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenThrow(DioException(
-        requestOptions: RequestOptions(path: ''),
-        type: DioExceptionType.receiveTimeout,
-      ));
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(path: ''),
+          type: DioExceptionType.receiveTimeout,
+        ),
+      );
 
       final response = await client.reportInvoice(
         signedXmlBase64: 'xml',
@@ -353,14 +389,18 @@ void main() {
     });
 
     test('handles connection error (network unreachable)', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenThrow(DioException(
-        requestOptions: RequestOptions(path: ''),
-        type: DioExceptionType.connectionError,
-      ));
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(path: ''),
+          type: DioExceptionType.connectionError,
+        ),
+      );
 
       final response = await client.reportInvoice(
         signedXmlBase64: 'xml',
@@ -374,16 +414,20 @@ void main() {
     });
 
     test('handles non-map JSON response gracefully', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenAnswer((_) async => Response(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 200,
-            // Unexpected shape: list instead of map
-            data: <dynamic>['unexpected'],
-          ));
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 200,
+          // Unexpected shape: list instead of map
+          data: <dynamic>['unexpected'],
+        ),
+      );
 
       final response = await client.reportInvoice(
         signedXmlBase64: 'xml',
@@ -401,52 +445,62 @@ void main() {
   // ── clearInvoice ─────────────────────────────────────────
 
   group('clearInvoice', () {
-    test('sends POST to clearance endpoint with Clearance-Status header',
-        () async {
-      when(() => mockDio.post(
+    test(
+      'sends POST to clearance endpoint with Clearance-Status header',
+      () async {
+        when(
+          () => mockDio.post(
             any(),
             data: any(named: 'data'),
             options: any(named: 'options'),
-          )).thenAnswer((_) async => Response(
+          ),
+        ).thenAnswer(
+          (_) async => Response(
             requestOptions: RequestOptions(path: ''),
             statusCode: 200,
-            data: <String, dynamic>{
-              'clearedInvoice': 'stamped-xml-base64',
-            },
-          ));
+            data: <String, dynamic>{'clearedInvoice': 'stamped-xml-base64'},
+          ),
+        );
 
-      await client.clearInvoice(
-        signedXmlBase64: 'xml',
-        invoiceHash: 'hash',
-        uuid: 'uuid',
-        certificate: testCertificate,
-      );
+        await client.clearInvoice(
+          signedXmlBase64: 'xml',
+          invoiceHash: 'hash',
+          uuid: 'uuid',
+          certificate: testCertificate,
+        );
 
-      final captured = verify(() => mockDio.post(
+        final captured = verify(
+          () => mockDio.post(
             captureAny(),
             data: any(named: 'data'),
             options: captureAny(named: 'options'),
-          )).captured;
+          ),
+        ).captured;
 
-      final url = captured[0] as String;
-      final options = captured[1] as Options;
-      expect(url, contains(ZatcaEndpoints.clearance));
-      expect(options.headers!['Clearance-Status'], '1');
-    });
+        final url = captured[0] as String;
+        final options = captured[1] as Options;
+        expect(url, contains(ZatcaEndpoints.clearance));
+        expect(options.headers!['Clearance-Status'], '1');
+      },
+    );
 
     test('returns clearedInvoice XML on success', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenAnswer((_) async => Response(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 200,
-            data: <String, dynamic>{
-              'clearedInvoice': 'base64-stamped-xml',
-              'clearanceStatus': 'CLEARED',
-            },
-          ));
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 200,
+          data: <String, dynamic>{
+            'clearedInvoice': 'base64-stamped-xml',
+            'clearanceStatus': 'CLEARED',
+          },
+        ),
+      );
 
       final response = await client.clearInvoice(
         signedXmlBase64: 'xml',
@@ -465,15 +519,19 @@ void main() {
 
   group('checkCompliance', () {
     test('sends POST to compliance check endpoint', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenAnswer((_) async => Response(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 200,
-            data: <String, dynamic>{},
-          ));
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 200,
+          data: <String, dynamic>{},
+        ),
+      );
 
       await client.checkCompliance(
         signedXmlBase64: 'xml',
@@ -482,11 +540,13 @@ void main() {
         certificate: testCertificate,
       );
 
-      final captured = verify(() => mockDio.post(
-            captureAny(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).captured;
+      final captured = verify(
+        () => mockDio.post(
+          captureAny(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).captured;
 
       expect(captured.first, contains(ZatcaEndpoints.complianceCheck));
     });
@@ -496,19 +556,23 @@ void main() {
 
   group('requestComplianceCsid', () {
     test('sends POST with OTP header and csr in body', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenAnswer((_) async => Response(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 200,
-            data: <String, dynamic>{
-              'binarySecurityToken': 'token',
-              'requestID': 'req-id',
-              'secret': 'secret',
-            },
-          ));
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 200,
+          data: <String, dynamic>{
+            'binarySecurityToken': 'token',
+            'requestID': 'req-id',
+            'secret': 'secret',
+          },
+        ),
+      );
 
       final response = await client.requestComplianceCsid(
         csrBase64: 'csr-data',
@@ -517,11 +581,13 @@ void main() {
 
       expect(response.statusCode, 200);
 
-      final captured = verify(() => mockDio.post(
-            captureAny(),
-            data: captureAny(named: 'data'),
-            options: captureAny(named: 'options'),
-          )).captured;
+      final captured = verify(
+        () => mockDio.post(
+          captureAny(),
+          data: captureAny(named: 'data'),
+          options: captureAny(named: 'options'),
+        ),
+      ).captured;
 
       final url = captured[0] as String;
       final body = captured[1] as Map<String, dynamic>;
@@ -533,25 +599,34 @@ void main() {
     });
 
     test('throws ZatcaApiException on DioException', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenThrow(DioException(
-        requestOptions: RequestOptions(path: ''),
-        type: DioExceptionType.badResponse,
-        response: Response(
-          requestOptions: RequestOptions(path: ''),
-          statusCode: 400,
-          data: {'message': 'Invalid OTP'},
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
         ),
-        message: 'Bad request',
-      ));
+      ).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(path: ''),
+          type: DioExceptionType.badResponse,
+          response: Response(
+            requestOptions: RequestOptions(path: ''),
+            statusCode: 400,
+            data: {'message': 'Invalid OTP'},
+          ),
+          message: 'Bad request',
+        ),
+      );
 
       expect(
         () => client.requestComplianceCsid(csrBase64: 'csr', otp: '000000'),
-        throwsA(isA<ZatcaApiException>()
-            .having((e) => e.statusCode, 'statusCode', 400)),
+        throwsA(
+          isA<ZatcaApiException>().having(
+            (e) => e.statusCode,
+            'statusCode',
+            400,
+          ),
+        ),
       );
     });
   });
@@ -560,30 +635,36 @@ void main() {
 
   group('requestProductionCsid', () {
     test('sends POST with compliance_request_id in body', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenAnswer((_) async => Response(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 200,
-            data: <String, dynamic>{
-              'binarySecurityToken': 'prod-token',
-              'requestID': 'prod-req-id',
-              'secret': 'prod-secret',
-            },
-          ));
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 200,
+          data: <String, dynamic>{
+            'binarySecurityToken': 'prod-token',
+            'requestID': 'prod-req-id',
+            'secret': 'prod-secret',
+          },
+        ),
+      );
 
       await client.requestProductionCsid(
         complianceRequestId: 'compliance-id-123',
         complianceCertificate: testCertificate,
       );
 
-      final captured = verify(() => mockDio.post(
-            captureAny(),
-            data: captureAny(named: 'data'),
-            options: captureAny(named: 'options'),
-          )).captured;
+      final captured = verify(
+        () => mockDio.post(
+          captureAny(),
+          data: captureAny(named: 'data'),
+          options: captureAny(named: 'options'),
+        ),
+      ).captured;
 
       final url = captured[0] as String;
       final body = captured[1] as Map<String, dynamic>;
@@ -595,19 +676,23 @@ void main() {
     });
 
     test('throws ZatcaApiException on server error', () async {
-      when(() => mockDio.post(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenThrow(DioException(
-        requestOptions: RequestOptions(path: ''),
-        type: DioExceptionType.badResponse,
-        response: Response(
-          requestOptions: RequestOptions(path: ''),
-          statusCode: 500,
+      when(
+        () => mockDio.post(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
         ),
-        message: 'Server down',
-      ));
+      ).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(path: ''),
+          type: DioExceptionType.badResponse,
+          response: Response(
+            requestOptions: RequestOptions(path: ''),
+            statusCode: 500,
+          ),
+          message: 'Server down',
+        ),
+      );
 
       expect(
         () => client.requestProductionCsid(
@@ -623,19 +708,23 @@ void main() {
 
   group('renewProductionCsid', () {
     test('sends PATCH with csr, OTP, and Basic auth', () async {
-      when(() => mockDio.patch(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenAnswer((_) async => Response(
-            requestOptions: RequestOptions(path: ''),
-            statusCode: 200,
-            data: <String, dynamic>{
-              'binarySecurityToken': 'renewed-token',
-              'requestID': 'renewed-id',
-              'secret': 'renewed-secret',
-            },
-          ));
+      when(
+        () => mockDio.patch(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenAnswer(
+        (_) async => Response(
+          requestOptions: RequestOptions(path: ''),
+          statusCode: 200,
+          data: <String, dynamic>{
+            'binarySecurityToken': 'renewed-token',
+            'requestID': 'renewed-id',
+            'secret': 'renewed-secret',
+          },
+        ),
+      );
 
       final response = await client.renewProductionCsid(
         csrBase64: 'new-csr',
@@ -645,11 +734,13 @@ void main() {
 
       expect(response.statusCode, 200);
 
-      final captured = verify(() => mockDio.patch(
-            captureAny(),
-            data: captureAny(named: 'data'),
-            options: captureAny(named: 'options'),
-          )).captured;
+      final captured = verify(
+        () => mockDio.patch(
+          captureAny(),
+          data: captureAny(named: 'data'),
+          options: captureAny(named: 'options'),
+        ),
+      ).captured;
 
       final url = captured[0] as String;
       final body = captured[1] as Map<String, dynamic>;
@@ -662,15 +753,19 @@ void main() {
     });
 
     test('throws ZatcaApiException on DioException', () async {
-      when(() => mockDio.patch(
-            any(),
-            data: any(named: 'data'),
-            options: any(named: 'options'),
-          )).thenThrow(DioException(
-        requestOptions: RequestOptions(path: ''),
-        type: DioExceptionType.connectionTimeout,
-        message: 'Timeout',
-      ));
+      when(
+        () => mockDio.patch(
+          any(),
+          data: any(named: 'data'),
+          options: any(named: 'options'),
+        ),
+      ).thenThrow(
+        DioException(
+          requestOptions: RequestOptions(path: ''),
+          type: DioExceptionType.connectionTimeout,
+          message: 'Timeout',
+        ),
+      );
 
       expect(
         () => client.renewProductionCsid(
@@ -699,10 +794,7 @@ void main() {
     });
 
     test('toString includes status code and message', () {
-      const ex = ZatcaApiException(
-        message: 'Auth failed',
-        statusCode: 401,
-      );
+      const ex = ZatcaApiException(message: 'Auth failed', statusCode: 401);
       expect(ex.toString(), 'ZatcaApiException(401): Auth failed');
     });
 

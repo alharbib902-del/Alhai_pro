@@ -12,8 +12,10 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
   TransactionsDao(super.db);
 
   /// الحصول على حركات الحساب (مع فلتر المتجر)
-  Future<List<TransactionsTableData>> getAccountTransactions(String accountId,
-      {String? storeId}) {
+  Future<List<TransactionsTableData>> getAccountTransactions(
+    String accountId, {
+    String? storeId,
+  }) {
     return (select(transactionsTable)
           ..where((t) {
             var condition = t.accountId.equals(accountId);
@@ -55,7 +57,8 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
   }) {
     return (select(transactionsTable)
           ..where((t) {
-            var condition = t.accountId.equals(accountId) &
+            var condition =
+                t.accountId.equals(accountId) &
                 t.createdAt.isBiggerOrEqualValue(start) &
                 t.createdAt.isSmallerOrEqualValue(end);
             if (storeId != null) {
@@ -83,18 +86,20 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
     required String saleId,
     String? createdBy,
   }) {
-    return insertTransaction(TransactionsTableCompanion.insert(
-      id: id,
-      storeId: storeId,
-      accountId: accountId,
-      type: 'invoice',
-      amount: amount,
-      balanceAfter: balanceAfter,
-      referenceId: Value(saleId),
-      referenceType: const Value('sale'),
-      createdBy: Value(createdBy),
-      createdAt: DateTime.now(),
-    ));
+    return insertTransaction(
+      TransactionsTableCompanion.insert(
+        id: id,
+        storeId: storeId,
+        accountId: accountId,
+        type: 'invoice',
+        amount: amount,
+        balanceAfter: balanceAfter,
+        referenceId: Value(saleId),
+        referenceType: const Value('sale'),
+        createdBy: Value(createdBy),
+        createdAt: DateTime.now(),
+      ),
+    );
   }
 
   /// تسجيل دفعة من العميل
@@ -108,18 +113,20 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
     String? description,
     String? createdBy,
   }) {
-    return insertTransaction(TransactionsTableCompanion.insert(
-      id: id,
-      storeId: storeId,
-      accountId: accountId,
-      type: 'payment',
-      amount: -amount, // سالب لأنه يخفض الرصيد
-      balanceAfter: balanceAfter,
-      paymentMethod: Value(paymentMethod),
-      description: Value(description),
-      createdBy: Value(createdBy),
-      createdAt: DateTime.now(),
-    ));
+    return insertTransaction(
+      TransactionsTableCompanion.insert(
+        id: id,
+        storeId: storeId,
+        accountId: accountId,
+        type: 'payment',
+        amount: -amount, // سالب لأنه يخفض الرصيد
+        balanceAfter: balanceAfter,
+        paymentMethod: Value(paymentMethod),
+        description: Value(description),
+        createdBy: Value(createdBy),
+        createdAt: DateTime.now(),
+      ),
+    );
   }
 
   /// تسجيل فائدة شهرية
@@ -132,27 +139,31 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
     required String periodKey, // YYYY-MM
     String? createdBy,
   }) {
-    return insertTransaction(TransactionsTableCompanion.insert(
-      id: id,
-      storeId: storeId,
-      accountId: accountId,
-      type: 'interest',
-      amount: amount,
-      balanceAfter: balanceAfter,
-      periodKey: Value(periodKey),
-      createdBy: Value(createdBy),
-      createdAt: DateTime.now(),
-    ));
+    return insertTransaction(
+      TransactionsTableCompanion.insert(
+        id: id,
+        storeId: storeId,
+        accountId: accountId,
+        type: 'interest',
+        amount: amount,
+        balanceAfter: balanceAfter,
+        periodKey: Value(periodKey),
+        createdBy: Value(createdBy),
+        createdAt: DateTime.now(),
+      ),
+    );
   }
 
   /// التحقق من وجود فائدة لفترة معينة
   Future<bool> hasInterestForPeriod(String accountId, String periodKey) async {
-    final result = await (select(transactionsTable)
-          ..where((t) =>
-              t.accountId.equals(accountId) &
-              t.type.equals('interest') &
-              t.periodKey.equals(periodKey)))
-        .get();
+    final result =
+        await (select(transactionsTable)..where(
+              (t) =>
+                  t.accountId.equals(accountId) &
+                  t.type.equals('interest') &
+                  t.periodKey.equals(periodKey),
+            ))
+            .get();
     return result.isNotEmpty;
   }
 
@@ -170,7 +181,8 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
 
   /// مراقبة حركات الحساب
   Stream<List<TransactionsTableData>> watchAccountTransactions(
-      String accountId) {
+    String accountId,
+  ) {
     return (select(transactionsTable)
           ..where((t) => t.accountId.equals(accountId))
           ..orderBy([(t) => OrderingTerm.desc(t.createdAt)])

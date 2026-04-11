@@ -12,7 +12,8 @@ part of 'chat_message.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 ChatMessage _$ChatMessageFromJson(Map<String, dynamic> json) {
   return _ChatMessage.fromJson(json);
@@ -48,20 +49,22 @@ mixin _$ChatMessage {
 /// @nodoc
 abstract class $ChatMessageCopyWith<$Res> {
   factory $ChatMessageCopyWith(
-          ChatMessage value, $Res Function(ChatMessage) then) =
-      _$ChatMessageCopyWithImpl<$Res, ChatMessage>;
+    ChatMessage value,
+    $Res Function(ChatMessage) then,
+  ) = _$ChatMessageCopyWithImpl<$Res, ChatMessage>;
   @useResult
-  $Res call(
-      {String id,
-      String orderId,
-      String sender,
-      String text,
-      String? textTranslated,
-      String? imageUrl,
-      String? language,
-      bool isRead,
-      bool isSystem,
-      DateTime timestamp});
+  $Res call({
+    String id,
+    String orderId,
+    String sender,
+    String text,
+    String? textTranslated,
+    String? imageUrl,
+    String? language,
+    bool isRead,
+    bool isSystem,
+    DateTime timestamp,
+  });
 }
 
 /// @nodoc
@@ -90,48 +93,51 @@ class _$ChatMessageCopyWithImpl<$Res, $Val extends ChatMessage>
     Object? isSystem = null,
     Object? timestamp = null,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      orderId: null == orderId
-          ? _value.orderId
-          : orderId // ignore: cast_nullable_to_non_nullable
-              as String,
-      sender: null == sender
-          ? _value.sender
-          : sender // ignore: cast_nullable_to_non_nullable
-              as String,
-      text: null == text
-          ? _value.text
-          : text // ignore: cast_nullable_to_non_nullable
-              as String,
-      textTranslated: freezed == textTranslated
-          ? _value.textTranslated
-          : textTranslated // ignore: cast_nullable_to_non_nullable
-              as String?,
-      imageUrl: freezed == imageUrl
-          ? _value.imageUrl
-          : imageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      language: freezed == language
-          ? _value.language
-          : language // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isRead: null == isRead
-          ? _value.isRead
-          : isRead // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isSystem: null == isSystem
-          ? _value.isSystem
-          : isSystem // ignore: cast_nullable_to_non_nullable
-              as bool,
-      timestamp: null == timestamp
-          ? _value.timestamp
-          : timestamp // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            orderId: null == orderId
+                ? _value.orderId
+                : orderId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            sender: null == sender
+                ? _value.sender
+                : sender // ignore: cast_nullable_to_non_nullable
+                      as String,
+            text: null == text
+                ? _value.text
+                : text // ignore: cast_nullable_to_non_nullable
+                      as String,
+            textTranslated: freezed == textTranslated
+                ? _value.textTranslated
+                : textTranslated // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            imageUrl: freezed == imageUrl
+                ? _value.imageUrl
+                : imageUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            language: freezed == language
+                ? _value.language
+                : language // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            isRead: null == isRead
+                ? _value.isRead
+                : isRead // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            isSystem: null == isSystem
+                ? _value.isSystem
+                : isSystem // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            timestamp: null == timestamp
+                ? _value.timestamp
+                : timestamp // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -139,21 +145,23 @@ class _$ChatMessageCopyWithImpl<$Res, $Val extends ChatMessage>
 abstract class _$$ChatMessageImplCopyWith<$Res>
     implements $ChatMessageCopyWith<$Res> {
   factory _$$ChatMessageImplCopyWith(
-          _$ChatMessageImpl value, $Res Function(_$ChatMessageImpl) then) =
-      __$$ChatMessageImplCopyWithImpl<$Res>;
+    _$ChatMessageImpl value,
+    $Res Function(_$ChatMessageImpl) then,
+  ) = __$$ChatMessageImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String orderId,
-      String sender,
-      String text,
-      String? textTranslated,
-      String? imageUrl,
-      String? language,
-      bool isRead,
-      bool isSystem,
-      DateTime timestamp});
+  $Res call({
+    String id,
+    String orderId,
+    String sender,
+    String text,
+    String? textTranslated,
+    String? imageUrl,
+    String? language,
+    bool isRead,
+    bool isSystem,
+    DateTime timestamp,
+  });
 }
 
 /// @nodoc
@@ -161,8 +169,9 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
     extends _$ChatMessageCopyWithImpl<$Res, _$ChatMessageImpl>
     implements _$$ChatMessageImplCopyWith<$Res> {
   __$$ChatMessageImplCopyWithImpl(
-      _$ChatMessageImpl _value, $Res Function(_$ChatMessageImpl) _then)
-      : super(_value, _then);
+    _$ChatMessageImpl _value,
+    $Res Function(_$ChatMessageImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of ChatMessage
   /// with the given fields replaced by the non-null parameter values.
@@ -180,66 +189,68 @@ class __$$ChatMessageImplCopyWithImpl<$Res>
     Object? isSystem = null,
     Object? timestamp = null,
   }) {
-    return _then(_$ChatMessageImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      orderId: null == orderId
-          ? _value.orderId
-          : orderId // ignore: cast_nullable_to_non_nullable
-              as String,
-      sender: null == sender
-          ? _value.sender
-          : sender // ignore: cast_nullable_to_non_nullable
-              as String,
-      text: null == text
-          ? _value.text
-          : text // ignore: cast_nullable_to_non_nullable
-              as String,
-      textTranslated: freezed == textTranslated
-          ? _value.textTranslated
-          : textTranslated // ignore: cast_nullable_to_non_nullable
-              as String?,
-      imageUrl: freezed == imageUrl
-          ? _value.imageUrl
-          : imageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      language: freezed == language
-          ? _value.language
-          : language // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isRead: null == isRead
-          ? _value.isRead
-          : isRead // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isSystem: null == isSystem
-          ? _value.isSystem
-          : isSystem // ignore: cast_nullable_to_non_nullable
-              as bool,
-      timestamp: null == timestamp
-          ? _value.timestamp
-          : timestamp // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$ChatMessageImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        orderId: null == orderId
+            ? _value.orderId
+            : orderId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        sender: null == sender
+            ? _value.sender
+            : sender // ignore: cast_nullable_to_non_nullable
+                  as String,
+        text: null == text
+            ? _value.text
+            : text // ignore: cast_nullable_to_non_nullable
+                  as String,
+        textTranslated: freezed == textTranslated
+            ? _value.textTranslated
+            : textTranslated // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        imageUrl: freezed == imageUrl
+            ? _value.imageUrl
+            : imageUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        language: freezed == language
+            ? _value.language
+            : language // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        isRead: null == isRead
+            ? _value.isRead
+            : isRead // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        isSystem: null == isSystem
+            ? _value.isSystem
+            : isSystem // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        timestamp: null == timestamp
+            ? _value.timestamp
+            : timestamp // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$ChatMessageImpl extends _ChatMessage {
-  const _$ChatMessageImpl(
-      {required this.id,
-      required this.orderId,
-      required this.sender,
-      required this.text,
-      this.textTranslated,
-      this.imageUrl,
-      this.language,
-      this.isRead = false,
-      this.isSystem = false,
-      required this.timestamp})
-      : super._();
+  const _$ChatMessageImpl({
+    required this.id,
+    required this.orderId,
+    required this.sender,
+    required this.text,
+    this.textTranslated,
+    this.imageUrl,
+    this.language,
+    this.isRead = false,
+    this.isSystem = false,
+    required this.timestamp,
+  }) : super._();
 
   factory _$ChatMessageImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChatMessageImplFromJson(json);
@@ -250,24 +261,24 @@ class _$ChatMessageImpl extends _ChatMessage {
   final String orderId;
   @override
   final String sender;
-// 'customer' | 'driver' | 'system'
+  // 'customer' | 'driver' | 'system'
   @override
   final String text;
   @override
   final String? textTranslated;
-// Translated version
+  // Translated version
   @override
   final String? imageUrl;
   @override
   final String? language;
-// 'ar', 'en', 'ur', 'hi', 'bn', 'id'
+  // 'ar', 'en', 'ur', 'hi', 'bn', 'id'
   @override
   @JsonKey()
   final bool isRead;
   @override
   @JsonKey()
   final bool isSystem;
-// System messages (order updates)
+  // System messages (order updates)
   @override
   final DateTime timestamp;
 
@@ -300,8 +311,19 @@ class _$ChatMessageImpl extends _ChatMessage {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, orderId, sender, text,
-      textTranslated, imageUrl, language, isRead, isSystem, timestamp);
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    orderId,
+    sender,
+    text,
+    textTranslated,
+    imageUrl,
+    language,
+    isRead,
+    isSystem,
+    timestamp,
+  );
 
   /// Create a copy of ChatMessage
   /// with the given fields replaced by the non-null parameter values.
@@ -313,24 +335,23 @@ class _$ChatMessageImpl extends _ChatMessage {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ChatMessageImplToJson(
-      this,
-    );
+    return _$$ChatMessageImplToJson(this);
   }
 }
 
 abstract class _ChatMessage extends ChatMessage {
-  const factory _ChatMessage(
-      {required final String id,
-      required final String orderId,
-      required final String sender,
-      required final String text,
-      final String? textTranslated,
-      final String? imageUrl,
-      final String? language,
-      final bool isRead,
-      final bool isSystem,
-      required final DateTime timestamp}) = _$ChatMessageImpl;
+  const factory _ChatMessage({
+    required final String id,
+    required final String orderId,
+    required final String sender,
+    required final String text,
+    final String? textTranslated,
+    final String? imageUrl,
+    final String? language,
+    final bool isRead,
+    final bool isSystem,
+    required final DateTime timestamp,
+  }) = _$ChatMessageImpl;
   const _ChatMessage._() : super._();
 
   factory _ChatMessage.fromJson(Map<String, dynamic> json) =
@@ -393,18 +414,20 @@ mixin _$ChatConversation {
 /// @nodoc
 abstract class $ChatConversationCopyWith<$Res> {
   factory $ChatConversationCopyWith(
-          ChatConversation value, $Res Function(ChatConversation) then) =
-      _$ChatConversationCopyWithImpl<$Res, ChatConversation>;
+    ChatConversation value,
+    $Res Function(ChatConversation) then,
+  ) = _$ChatConversationCopyWithImpl<$Res, ChatConversation>;
   @useResult
-  $Res call(
-      {String orderId,
-      String orderNumber,
-      String driverId,
-      String driverName,
-      String? driverPhoto,
-      ChatMessage? lastMessage,
-      int unreadCount,
-      DateTime lastActivityAt});
+  $Res call({
+    String orderId,
+    String orderNumber,
+    String driverId,
+    String driverName,
+    String? driverPhoto,
+    ChatMessage? lastMessage,
+    int unreadCount,
+    DateTime lastActivityAt,
+  });
 
   $ChatMessageCopyWith<$Res>? get lastMessage;
 }
@@ -433,40 +456,43 @@ class _$ChatConversationCopyWithImpl<$Res, $Val extends ChatConversation>
     Object? unreadCount = null,
     Object? lastActivityAt = null,
   }) {
-    return _then(_value.copyWith(
-      orderId: null == orderId
-          ? _value.orderId
-          : orderId // ignore: cast_nullable_to_non_nullable
-              as String,
-      orderNumber: null == orderNumber
-          ? _value.orderNumber
-          : orderNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-      driverId: null == driverId
-          ? _value.driverId
-          : driverId // ignore: cast_nullable_to_non_nullable
-              as String,
-      driverName: null == driverName
-          ? _value.driverName
-          : driverName // ignore: cast_nullable_to_non_nullable
-              as String,
-      driverPhoto: freezed == driverPhoto
-          ? _value.driverPhoto
-          : driverPhoto // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lastMessage: freezed == lastMessage
-          ? _value.lastMessage
-          : lastMessage // ignore: cast_nullable_to_non_nullable
-              as ChatMessage?,
-      unreadCount: null == unreadCount
-          ? _value.unreadCount
-          : unreadCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      lastActivityAt: null == lastActivityAt
-          ? _value.lastActivityAt
-          : lastActivityAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            orderId: null == orderId
+                ? _value.orderId
+                : orderId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            orderNumber: null == orderNumber
+                ? _value.orderNumber
+                : orderNumber // ignore: cast_nullable_to_non_nullable
+                      as String,
+            driverId: null == driverId
+                ? _value.driverId
+                : driverId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            driverName: null == driverName
+                ? _value.driverName
+                : driverName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            driverPhoto: freezed == driverPhoto
+                ? _value.driverPhoto
+                : driverPhoto // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            lastMessage: freezed == lastMessage
+                ? _value.lastMessage
+                : lastMessage // ignore: cast_nullable_to_non_nullable
+                      as ChatMessage?,
+            unreadCount: null == unreadCount
+                ? _value.unreadCount
+                : unreadCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            lastActivityAt: null == lastActivityAt
+                ? _value.lastActivityAt
+                : lastActivityAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 
   /// Create a copy of ChatConversation
@@ -487,20 +513,22 @@ class _$ChatConversationCopyWithImpl<$Res, $Val extends ChatConversation>
 /// @nodoc
 abstract class _$$ChatConversationImplCopyWith<$Res>
     implements $ChatConversationCopyWith<$Res> {
-  factory _$$ChatConversationImplCopyWith(_$ChatConversationImpl value,
-          $Res Function(_$ChatConversationImpl) then) =
-      __$$ChatConversationImplCopyWithImpl<$Res>;
+  factory _$$ChatConversationImplCopyWith(
+    _$ChatConversationImpl value,
+    $Res Function(_$ChatConversationImpl) then,
+  ) = __$$ChatConversationImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String orderId,
-      String orderNumber,
-      String driverId,
-      String driverName,
-      String? driverPhoto,
-      ChatMessage? lastMessage,
-      int unreadCount,
-      DateTime lastActivityAt});
+  $Res call({
+    String orderId,
+    String orderNumber,
+    String driverId,
+    String driverName,
+    String? driverPhoto,
+    ChatMessage? lastMessage,
+    int unreadCount,
+    DateTime lastActivityAt,
+  });
 
   @override
   $ChatMessageCopyWith<$Res>? get lastMessage;
@@ -510,9 +538,10 @@ abstract class _$$ChatConversationImplCopyWith<$Res>
 class __$$ChatConversationImplCopyWithImpl<$Res>
     extends _$ChatConversationCopyWithImpl<$Res, _$ChatConversationImpl>
     implements _$$ChatConversationImplCopyWith<$Res> {
-  __$$ChatConversationImplCopyWithImpl(_$ChatConversationImpl _value,
-      $Res Function(_$ChatConversationImpl) _then)
-      : super(_value, _then);
+  __$$ChatConversationImplCopyWithImpl(
+    _$ChatConversationImpl _value,
+    $Res Function(_$ChatConversationImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of ChatConversation
   /// with the given fields replaced by the non-null parameter values.
@@ -528,56 +557,58 @@ class __$$ChatConversationImplCopyWithImpl<$Res>
     Object? unreadCount = null,
     Object? lastActivityAt = null,
   }) {
-    return _then(_$ChatConversationImpl(
-      orderId: null == orderId
-          ? _value.orderId
-          : orderId // ignore: cast_nullable_to_non_nullable
-              as String,
-      orderNumber: null == orderNumber
-          ? _value.orderNumber
-          : orderNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-      driverId: null == driverId
-          ? _value.driverId
-          : driverId // ignore: cast_nullable_to_non_nullable
-              as String,
-      driverName: null == driverName
-          ? _value.driverName
-          : driverName // ignore: cast_nullable_to_non_nullable
-              as String,
-      driverPhoto: freezed == driverPhoto
-          ? _value.driverPhoto
-          : driverPhoto // ignore: cast_nullable_to_non_nullable
-              as String?,
-      lastMessage: freezed == lastMessage
-          ? _value.lastMessage
-          : lastMessage // ignore: cast_nullable_to_non_nullable
-              as ChatMessage?,
-      unreadCount: null == unreadCount
-          ? _value.unreadCount
-          : unreadCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      lastActivityAt: null == lastActivityAt
-          ? _value.lastActivityAt
-          : lastActivityAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$ChatConversationImpl(
+        orderId: null == orderId
+            ? _value.orderId
+            : orderId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        orderNumber: null == orderNumber
+            ? _value.orderNumber
+            : orderNumber // ignore: cast_nullable_to_non_nullable
+                  as String,
+        driverId: null == driverId
+            ? _value.driverId
+            : driverId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        driverName: null == driverName
+            ? _value.driverName
+            : driverName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        driverPhoto: freezed == driverPhoto
+            ? _value.driverPhoto
+            : driverPhoto // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        lastMessage: freezed == lastMessage
+            ? _value.lastMessage
+            : lastMessage // ignore: cast_nullable_to_non_nullable
+                  as ChatMessage?,
+        unreadCount: null == unreadCount
+            ? _value.unreadCount
+            : unreadCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        lastActivityAt: null == lastActivityAt
+            ? _value.lastActivityAt
+            : lastActivityAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$ChatConversationImpl extends _ChatConversation {
-  const _$ChatConversationImpl(
-      {required this.orderId,
-      required this.orderNumber,
-      required this.driverId,
-      required this.driverName,
-      this.driverPhoto,
-      this.lastMessage,
-      this.unreadCount = 0,
-      required this.lastActivityAt})
-      : super._();
+  const _$ChatConversationImpl({
+    required this.orderId,
+    required this.orderNumber,
+    required this.driverId,
+    required this.driverName,
+    this.driverPhoto,
+    this.lastMessage,
+    this.unreadCount = 0,
+    required this.lastActivityAt,
+  }) : super._();
 
   factory _$ChatConversationImpl.fromJson(Map<String, dynamic> json) =>
       _$$ChatConversationImplFromJson(json);
@@ -629,8 +660,17 @@ class _$ChatConversationImpl extends _ChatConversation {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, orderId, orderNumber, driverId,
-      driverName, driverPhoto, lastMessage, unreadCount, lastActivityAt);
+  int get hashCode => Object.hash(
+    runtimeType,
+    orderId,
+    orderNumber,
+    driverId,
+    driverName,
+    driverPhoto,
+    lastMessage,
+    unreadCount,
+    lastActivityAt,
+  );
 
   /// Create a copy of ChatConversation
   /// with the given fields replaced by the non-null parameter values.
@@ -639,26 +679,27 @@ class _$ChatConversationImpl extends _ChatConversation {
   @pragma('vm:prefer-inline')
   _$$ChatConversationImplCopyWith<_$ChatConversationImpl> get copyWith =>
       __$$ChatConversationImplCopyWithImpl<_$ChatConversationImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ChatConversationImplToJson(
-      this,
-    );
+    return _$$ChatConversationImplToJson(this);
   }
 }
 
 abstract class _ChatConversation extends ChatConversation {
-  const factory _ChatConversation(
-      {required final String orderId,
-      required final String orderNumber,
-      required final String driverId,
-      required final String driverName,
-      final String? driverPhoto,
-      final ChatMessage? lastMessage,
-      final int unreadCount,
-      required final DateTime lastActivityAt}) = _$ChatConversationImpl;
+  const factory _ChatConversation({
+    required final String orderId,
+    required final String orderNumber,
+    required final String driverId,
+    required final String driverName,
+    final String? driverPhoto,
+    final ChatMessage? lastMessage,
+    final int unreadCount,
+    required final DateTime lastActivityAt,
+  }) = _$ChatConversationImpl;
   const _ChatConversation._() : super._();
 
   factory _ChatConversation.fromJson(Map<String, dynamic> json) =

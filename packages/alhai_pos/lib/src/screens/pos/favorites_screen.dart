@@ -63,8 +63,11 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(Icons.error_outline,
-                    size: 48, color: Theme.of(context).colorScheme.error),
+                Icon(
+                  Icons.error_outline,
+                  size: 48,
+                  color: Theme.of(context).colorScheme.error,
+                ),
                 const SizedBox(height: AppSizes.md),
                 Text(
                   l10n.errorLoadingFavorites,
@@ -74,7 +77,8 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                 Text(
                   error.toString(),
                   style: AppTypography.bodySmall.copyWith(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: AppSizes.lg),
@@ -122,8 +126,11 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                       child: GridView.builder(
                         padding: const EdgeInsets.all(AppSizes.md),
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: getResponsiveGridColumns(context,
-                              mobile: 2, desktop: 4),
+                          crossAxisCount: getResponsiveGridColumns(
+                            context,
+                            mobile: 2,
+                            desktop: 4,
+                          ),
                           crossAxisSpacing: AppSizes.md,
                           mainAxisSpacing: AppSizes.md,
                           childAspectRatio: 0.85,
@@ -161,16 +168,18 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                 Expanded(
                   flex: 3,
                   child: Container(
-                    color:
-                        Theme.of(context).colorScheme.surfaceContainerHighest,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
                     child: Stack(
                       children: [
                         Center(
                           child: Icon(
                             Icons.inventory_2_outlined,
                             size: 40,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         // Stock badge
@@ -185,8 +194,9 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
                               ),
                               decoration: BoxDecoration(
                                 color: Theme.of(context).colorScheme.error,
-                                borderRadius:
-                                    BorderRadius.circular(AppSizes.radiusSm),
+                                borderRadius: BorderRadius.circular(
+                                  AppSizes.radiusSm,
+                                ),
                               ),
                               child: Text(
                                 '${favoriteData.stock}',
@@ -340,8 +350,10 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.delete_outline,
-                  color: Theme.of(context).colorScheme.error),
+              leading: Icon(
+                Icons.delete_outline,
+                color: Theme.of(context).colorScheme.error,
+              ),
               title: Text(
                 l10n.removeFromFavorites,
                 style: TextStyle(color: Theme.of(context).colorScheme.error),
@@ -365,10 +377,9 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
     await removeFavoriteById(ref, favoriteData.id);
 
     // مزامنة الحذف
-    ref.read(syncServiceProvider).enqueueDelete(
-          tableName: 'favorites',
-          recordId: favoriteData.id,
-        );
+    ref
+        .read(syncServiceProvider)
+        .enqueueDelete(tableName: 'favorites', recordId: favoriteData.id);
 
     if (!mounted) return;
 
@@ -381,14 +392,16 @@ class _FavoritesScreenState extends ConsumerState<FavoritesScreen> {
             // إعادة الإضافة عند التراجع
             await reAddFavorite(ref, favoriteData);
             // مزامنة إعادة الإضافة
-            ref.read(syncServiceProvider).enqueueCreate(
-              tableName: 'favorites',
-              recordId: favoriteData.id,
-              data: {
-                'id': favoriteData.id,
-                'product_id': favoriteData.product.id,
-              },
-            );
+            ref
+                .read(syncServiceProvider)
+                .enqueueCreate(
+                  tableName: 'favorites',
+                  recordId: favoriteData.id,
+                  data: {
+                    'id': favoriteData.id,
+                    'product_id': favoriteData.product.id,
+                  },
+                );
           },
         ),
       ),

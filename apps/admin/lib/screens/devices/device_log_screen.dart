@@ -111,103 +111,105 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
 
   /// Get icon and color based on action type
   ({IconData icon, Color color, String label}) _getActionMeta(
-      String action, AppLocalizations l10n) {
+    String action,
+    AppLocalizations l10n,
+  ) {
     switch (action) {
       case 'login':
         return (
           icon: Icons.login,
           color: AppColors.success,
-          label: l10n.auditActionLogin
+          label: l10n.auditActionLogin,
         );
       case 'logout':
         return (
           icon: Icons.logout,
           color: AppColors.warning,
-          label: l10n.auditActionLogout
+          label: l10n.auditActionLogout,
         );
       case 'saleCreate':
         return (
           icon: Icons.point_of_sale,
           color: AppColors.info,
-          label: l10n.auditActionSale
+          label: l10n.auditActionSale,
         );
       case 'saleCancel':
         return (
           icon: Icons.cancel_outlined,
           color: AppColors.error,
-          label: l10n.auditActionCancelSale
+          label: l10n.auditActionCancelSale,
         );
       case 'saleRefund':
         return (
           icon: Icons.undo,
           color: Colors.deepOrange, // specific audit action color
-          label: l10n.auditActionRefund
+          label: l10n.auditActionRefund,
         );
       case 'productCreate':
         return (
           icon: Icons.add_box_outlined,
           color: Colors.teal, // specific audit action color
-          label: l10n.auditActionAddProduct
+          label: l10n.auditActionAddProduct,
         );
       case 'productEdit':
         return (
           icon: Icons.edit,
           color: Colors.indigo, // specific audit action color
-          label: l10n.auditActionEditProduct
+          label: l10n.auditActionEditProduct,
         );
       case 'productDelete':
         return (
           icon: Icons.delete_outline,
           color: AppColors.error,
-          label: l10n.auditActionDeleteProduct
+          label: l10n.auditActionDeleteProduct,
         );
       case 'priceChange':
         return (
           icon: Icons.price_change,
           color: AppColors.warning,
-          label: l10n.auditActionPriceChange
+          label: l10n.auditActionPriceChange,
         );
       case 'stockAdjust':
         return (
           icon: Icons.inventory,
           color: Colors.purple, // specific audit action color
-          label: l10n.auditActionStockAdjust
+          label: l10n.auditActionStockAdjust,
         );
       case 'stockReceive':
         return (
           icon: Icons.move_to_inbox,
           color: Colors.cyan, // specific audit action color
-          label: l10n.auditActionStockReceive
+          label: l10n.auditActionStockReceive,
         );
       case 'shiftOpen':
         return (
           icon: Icons.play_circle_outline,
           color: AppColors.success,
-          label: l10n.auditActionOpenShift
+          label: l10n.auditActionOpenShift,
         );
       case 'shiftClose':
         return (
           icon: Icons.stop_circle_outlined,
           color: Theme.of(context).hintColor,
-          label: l10n.auditActionCloseShift
+          label: l10n.auditActionCloseShift,
         );
       case 'settingsChange':
         return (
           icon: Icons.settings,
           color: Colors.blueGrey,
-          label: l10n.auditActionSettingsChange
+          label: l10n.auditActionSettingsChange,
         );
       case 'cashDrawerOpen':
         return (
           icon: Icons.point_of_sale_outlined,
           color: Colors.brown,
-          label: l10n.auditActionCashDrawer
+          label: l10n.auditActionCashDrawer,
         );
       default:
         return (
           icon: Icons.info_outline,
           color: Theme.of(context).hintColor,
-          label: action
+          label: action,
         );
     }
   }
@@ -243,15 +245,19 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
             ),
             if (_dateRange != null)
               IconButton(
-                icon: Icon(Icons.clear,
-                    size: 20,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                icon: Icon(
+                  Icons.clear,
+                  size: 20,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
                 tooltip: l10n.clearAll,
                 onPressed: _clearDateFilter,
               ),
             IconButton(
-              icon: Icon(Icons.refresh,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+              icon: Icon(
+                Icons.refresh,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               tooltip: l10n.refresh,
               onPressed: _loadLogs,
             ),
@@ -260,7 +266,9 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
         // Search bar
         Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+            horizontal: AlhaiSpacing.md,
+            vertical: AlhaiSpacing.xs,
+          ),
           color: Theme.of(context).colorScheme.surface,
           child: TextField(
             decoration: InputDecoration(
@@ -272,10 +280,9 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
               ),
               filled: true,
               fillColor: isDark
-                  ? Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.05)
+                  ? Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.05)
                   : AppColors.border.withValues(alpha: 0.3),
               contentPadding: const EdgeInsets.symmetric(vertical: 10),
             ),
@@ -311,9 +318,7 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
           ),
         ),
         // Content area
-        Expanded(
-          child: _buildContent(isDark, l10n),
-        ),
+        Expanded(child: _buildContent(isDark, l10n)),
       ],
     );
   }
@@ -326,9 +331,12 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
           children: [
             const CircularProgressIndicator(),
             const SizedBox(height: AlhaiSpacing.md),
-            Text(l10n.loading,
-                style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(
+              l10n.loading,
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       );
@@ -339,12 +347,17 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline,
-                size: 48, color: AppColors.error.withValues(alpha: 0.7)),
+            Icon(
+              Icons.error_outline,
+              size: 48,
+              color: AppColors.error.withValues(alpha: 0.7),
+            ),
             const SizedBox(height: AlhaiSpacing.md),
-            Text(_error!,
-                style: const TextStyle(color: AppColors.error),
-                textAlign: TextAlign.center),
+            Text(
+              _error!,
+              style: const TextStyle(color: AppColors.error),
+              textAlign: TextAlign.center,
+            ),
             const SizedBox(height: AlhaiSpacing.md),
             FilledButton.icon(
               onPressed: _loadLogs,
@@ -416,13 +429,16 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
                       child: Text(
                         meta.label,
                         style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Theme.of(context).colorScheme.onSurface),
+                          fontWeight: FontWeight.w600,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 3),
+                        horizontal: 8,
+                        vertical: 3,
+                      ),
                       decoration: BoxDecoration(
                         color: meta.color.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
@@ -430,9 +446,10 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
                       child: Text(
                         log.userName,
                         style: TextStyle(
-                            color: meta.color,
-                            fontSize: 11,
-                            fontWeight: FontWeight.bold),
+                          color: meta.color,
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
                   ],
@@ -442,8 +459,9 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
                   Text(
                     log.description!,
                     style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -451,32 +469,36 @@ class _DeviceLogScreenState extends ConsumerState<DeviceLogScreen> {
                 const SizedBox(height: AlhaiSpacing.xxs),
                 Row(
                   children: [
-                    Icon(Icons.access_time,
-                        size: 12,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant),
+                    Icon(
+                      Icons.access_time,
+                      size: 12,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                     const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       timeStr,
                       style: TextStyle(
-                          fontSize: 11,
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant),
+                        fontSize: 11,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     if (log.deviceInfo != null) ...[
                       const SizedBox(width: AlhaiSpacing.sm),
-                      Icon(Icons.devices,
-                          size: 12,
-                          color:
-                              isDark ? Colors.white38 : AppColors.textTertiary),
+                      Icon(
+                        Icons.devices,
+                        size: 12,
+                        color: isDark ? Colors.white38 : AppColors.textTertiary,
+                      ),
                       const SizedBox(width: AlhaiSpacing.xxs),
                       Flexible(
                         child: Text(
                           log.deviceInfo!,
                           style: TextStyle(
-                              fontSize: 11,
-                              color: isDark
-                                  ? Colors.white38
-                                  : AppColors.textTertiary),
+                            fontSize: 11,
+                            color: isDark
+                                ? Colors.white38
+                                : AppColors.textTertiary,
+                          ),
                           overflow: TextOverflow.ellipsis,
                         ),
                       ),

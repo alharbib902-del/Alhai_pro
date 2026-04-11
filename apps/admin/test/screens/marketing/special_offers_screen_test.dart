@@ -30,8 +30,9 @@ void main() {
   group('SpecialOffersScreen', () {
     testWidgets('shows loading indicator initially', (tester) async {
       final completer = Completer<List<dynamic>>();
-      when(() => mockDiscountsDao.getAllPromotions(any()))
-          .thenAnswer((_) => completer.future.then((v) => v.cast()));
+      when(
+        () => mockDiscountsDao.getAllPromotions(any()),
+      ).thenAnswer((_) => completer.future.then((v) => v.cast()));
 
       await tester.pumpWidget(createTestWidget(const SpecialOffersScreen()));
       await tester.pump();
@@ -40,8 +41,9 @@ void main() {
     });
 
     testWidgets('shows empty state when no promotions', (tester) async {
-      when(() => mockDiscountsDao.getAllPromotions(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockDiscountsDao.getAllPromotions(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createTestWidget(const SpecialOffersScreen()));
       await tester.pumpAndSettle();
@@ -49,8 +51,9 @@ void main() {
       expect(find.byType(SpecialOffersScreen), findsOneWidget);
     });
 
-    testWidgets('displays promotions list when data is available',
-        (tester) async {
+    testWidgets('displays promotions list when data is available', (
+      tester,
+    ) async {
       final now = DateTime.now();
       final promotions = [
         PromotionsTableData(
@@ -66,8 +69,9 @@ void main() {
           createdAt: now,
         ),
       ];
-      when(() => mockDiscountsDao.getAllPromotions(any()))
-          .thenAnswer((_) async => promotions);
+      when(
+        () => mockDiscountsDao.getAllPromotions(any()),
+      ).thenAnswer((_) async => promotions);
 
       await tester.pumpWidget(createTestWidget(const SpecialOffersScreen()));
       await tester.pumpAndSettle();
@@ -101,8 +105,9 @@ void main() {
           createdAt: now.subtract(const Duration(days: 60)),
         ),
       ];
-      when(() => mockDiscountsDao.getAllPromotions(any()))
-          .thenAnswer((_) async => promotions);
+      when(
+        () => mockDiscountsDao.getAllPromotions(any()),
+      ).thenAnswer((_) async => promotions);
 
       await tester.pumpWidget(createTestWidget(const SpecialOffersScreen()));
       await tester.pumpAndSettle();
@@ -126,8 +131,9 @@ void main() {
           createdAt: now,
         ),
       ];
-      when(() => mockDiscountsDao.getAllPromotions(any()))
-          .thenAnswer((_) async => promotions);
+      when(
+        () => mockDiscountsDao.getAllPromotions(any()),
+      ).thenAnswer((_) async => promotions);
 
       await tester.pumpWidget(createTestWidget(const SpecialOffersScreen()));
       await tester.pumpAndSettle();
@@ -150,8 +156,9 @@ void main() {
           createdAt: now,
         ),
       ];
-      when(() => mockDiscountsDao.getAllPromotions(any()))
-          .thenAnswer((_) async => promotions);
+      when(
+        () => mockDiscountsDao.getAllPromotions(any()),
+      ).thenAnswer((_) async => promotions);
 
       await tester.pumpWidget(createTestWidget(const SpecialOffersScreen()));
       await tester.pumpAndSettle();

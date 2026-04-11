@@ -101,7 +101,11 @@ class SyncManager {
   final SyncService _syncService;
   final ConnectivityService _connectivityService;
   final Future<void> Function(
-      String tableName, String operation, Map<String, dynamic> payload)? onSync;
+    String tableName,
+    String operation,
+    Map<String, dynamic> payload,
+  )?
+  onSync;
   final OrgSyncService? orgSyncService;
 
   /// خدمة السحب الدوري (اختيارية - تحتاج SupabaseClient)
@@ -137,8 +141,8 @@ class SyncManager {
     this.pullSyncService,
     this.storeId,
     this.pullSyncInterval = const Duration(seconds: 30),
-  })  : _syncService = syncService,
-        _connectivityService = connectivityService;
+  }) : _syncService = syncService,
+       _connectivityService = connectivityService;
 
   /// تهيئة المدير وبدء المراقبة
   Future<void> initialize() async {
@@ -150,14 +154,16 @@ class SyncManager {
       );
       if (recovered > 0 && kDebugMode) {
         debugPrint(
-            '[SyncManager] 🔧 Recovered $recovered items stuck in syncing state (>5min)');
+          '[SyncManager] 🔧 Recovered $recovered items stuck in syncing state (>5min)',
+        );
       }
       // أيضاً استعادة العناصر بدون timeout (للتوافق مع الكود القديم)
       await _recoverStuckSyncingItems();
     } catch (e) {
       if (kDebugMode) {
         debugPrint(
-            '[SyncManager] ⚠️ Failed to recover stuck syncing items: $e');
+          '[SyncManager] ⚠️ Failed to recover stuck syncing items: $e',
+        );
       }
     }
 
@@ -166,7 +172,8 @@ class SyncManager {
       final resetCount = await _syncService.resetStuckItems();
       if (resetCount > 0 && kDebugMode) {
         debugPrint(
-            '[SyncManager] Reset $resetCount items stuck in syncing status back to pending');
+          '[SyncManager] Reset $resetCount items stuck in syncing status back to pending',
+        );
       }
     } catch (e) {
       if (kDebugMode) {
@@ -209,11 +216,13 @@ class SyncManager {
           if (kDebugMode) {
             if (retried > 0) {
               debugPrint(
-                  '[SyncManager] Retrying $retried transient conflict items (online)');
+                '[SyncManager] Retrying $retried transient conflict items (online)',
+              );
             }
             if (preserved > 0) {
               debugPrint(
-                  '[SyncManager] Preserved $preserved real conflict items for review');
+                '[SyncManager] Preserved $preserved real conflict items for review',
+              );
             }
           }
         }
@@ -225,15 +234,15 @@ class SyncManager {
     }
 
     // الاستماع لتغييرات الاتصال
-    _connectivitySubscription =
-        _connectivityService.onConnectivityChanged.listen((isOnline) {
-      if (isOnline) {
-        // محاولة المزامنة عند استعادة الاتصال
-        syncPending();
-        // سحب التحديثات أيضاً عند استعادة الاتصال
-        pullUpdates();
-      }
-    });
+    _connectivitySubscription = _connectivityService.onConnectivityChanged
+        .listen((isOnline) {
+          if (isOnline) {
+            // محاولة المزامنة عند استعادة الاتصال
+            syncPending();
+            // سحب التحديثات أيضاً عند استعادة الاتصال
+            pullUpdates();
+          }
+        });
 
     // مزامنة أولية إذا كان متصل
     if (_connectivityService.isOnline) {
@@ -251,7 +260,8 @@ class SyncManager {
     if (pullSyncService != null && storeId != null) {
       if (kDebugMode) {
         debugPrint(
-            '[SyncManager] Starting pull sync timer (interval: ${pullSyncInterval.inSeconds}s)');
+          '[SyncManager] Starting pull sync timer (interval: ${pullSyncInterval.inSeconds}s)',
+        );
       }
       _pullTimer = Timer.periodic(pullSyncInterval, (_) {
         if (_connectivityService.isOnline && !_isPulling) {
@@ -263,17 +273,20 @@ class SyncManager {
     // مؤقت يومي لتنظيف العناصر القديمة المتزامنة (أقدم من 3 أيام)
     _dailyCleanupTimer = Timer.periodic(const Duration(hours: 24), (_) async {
       try {
-        final deleted =
-            await _syncService.cleanup(olderThan: const Duration(days: 3));
+        final deleted = await _syncService.cleanup(
+          olderThan: const Duration(days: 3),
+        );
         if (kDebugMode && deleted > 0) {
           debugPrint(
-              '[SyncManager] 🧹 Daily cleanup: removed $deleted old synced items');
+            '[SyncManager] 🧹 Daily cleanup: removed $deleted old synced items',
+          );
         }
         // تنظيف سجلات المزامنة القديمة (أقدم من 7 أيام)
         final auditDeleted = await _syncService.cleanupSyncAuditLogs();
         if (kDebugMode && auditDeleted > 0) {
           debugPrint(
-              '[SyncManager] 🧹 Daily cleanup: removed $auditDeleted old sync audit logs');
+            '[SyncManager] 🧹 Daily cleanup: removed $auditDeleted old sync audit logs',
+          );
         }
       } catch (e) {
         if (kDebugMode) {
@@ -299,10 +312,14 @@ class SyncManager {
     if (_pushCircuitBreaker.isOpen) {
       if (kDebugMode) {
         debugPrint(
-            '[SyncManager] Push skipped: circuit breaker open (will reset in ${_CircuitBreaker.resetTimeout.inMinutes}m)');
+          '[SyncManager] Push skipped: circuit breaker open (will reset in ${_CircuitBreaker.resetTimeout.inMinutes}m)',
+        );
       }
       return SyncResult(
-          successCount: 0, failedCount: 0, errors: ['Circuit breaker open']);
+        successCount: 0,
+        failedCount: 0,
+        errors: ['Circuit breaker open'],
+      );
     }
 
     // Acquire shared mutex - skip if pull sync is running
@@ -325,10 +342,12 @@ class SyncManager {
 
       if (kDebugMode) {
         debugPrint(
-            '[SyncManager] 📤 Push: ${pendingItems.length} pending items');
+          '[SyncManager] 📤 Push: ${pendingItems.length} pending items',
+        );
         for (final item in pendingItems) {
           debugPrint(
-              '[SyncManager]   → ${item.tableName_}/${item.recordId} (${item.operation}, retry: ${item.retryCount})');
+            '[SyncManager]   → ${item.tableName_}/${item.recordId} (${item.operation}, retry: ${item.retryCount})',
+          );
         }
       }
 
@@ -337,10 +356,12 @@ class SyncManager {
         final health = await _syncService.getQueueHealth();
         if (health.isOverloaded && kDebugMode) {
           debugPrint(
-              '[SyncManager] ⚠️ Queue overloaded: ${health.activeCount} active items');
+            '[SyncManager] ⚠️ Queue overloaded: ${health.activeCount} active items',
+          );
         } else if (health.isWarning && kDebugMode) {
           debugPrint(
-              '[SyncManager] ⚠️ Queue warning: ${health.activeCount} active items');
+            '[SyncManager] ⚠️ Queue warning: ${health.activeCount} active items',
+          );
         }
       } catch (_) {
         // تجاهل أخطاء فحص الصحة
@@ -351,7 +372,8 @@ class SyncManager {
         if (_connectivityService.isOffline) {
           if (kDebugMode) {
             debugPrint(
-                '[SyncManager] ⚠️ Connection lost, stopping push (${pendingItems.length - successCount - failedCount} items remaining)');
+              '[SyncManager] ⚠️ Connection lost, stopping push (${pendingItems.length - successCount - failedCount} items remaining)',
+            );
           }
           break;
         }
@@ -378,9 +400,11 @@ class SyncManager {
           } else {
             if (kDebugMode) {
               debugPrint(
-                  '[SyncManager] ❌ No sync handler for ${item.tableName_} (onSync=null, orgSync=${orgSyncService != null})');
+                '[SyncManager] ❌ No sync handler for ${item.tableName_} (onSync=null, orgSync=${orgSyncService != null})',
+              );
               debugPrint(
-                  '[SyncManager] ❌ SupabaseClient may not be registered in GetIt!');
+                '[SyncManager] ❌ SupabaseClient may not be registered in GetIt!',
+              );
             }
           }
 
@@ -392,7 +416,8 @@ class SyncManager {
             _pushCircuitBreaker.recordSuccess();
             if (kDebugMode) {
               debugPrint(
-                  '[SyncManager] ✅ Synced: ${item.tableName_}/${item.recordId} (${stopwatch.elapsedMilliseconds}ms)');
+                '[SyncManager] ✅ Synced: ${item.tableName_}/${item.recordId} (${stopwatch.elapsedMilliseconds}ms)',
+              );
             }
             // تسجيل عملية ناجحة
             try {
@@ -411,10 +436,12 @@ class SyncManager {
             await _syncService.retryItem(item.id);
             failedCount++;
             errors.add(
-                '${item.tableName_}/${item.recordId}: No sync handler available');
+              '${item.tableName_}/${item.recordId}: No sync handler available',
+            );
             if (kDebugMode) {
               debugPrint(
-                  '[SyncManager] ⏳ Reverted to pending (no handler): ${item.tableName_}/${item.recordId}');
+                '[SyncManager] ⏳ Reverted to pending (no handler): ${item.tableName_}/${item.recordId}',
+              );
             }
           }
         } catch (e) {
@@ -429,7 +456,8 @@ class SyncManager {
             );
             if (kDebugMode) {
               debugPrint(
-                  '[SyncManager] 🚫 Conflict (max retries): ${item.tableName_}/${item.recordId}: $e');
+                '[SyncManager] 🚫 Conflict (max retries): ${item.tableName_}/${item.recordId}: $e',
+              );
             }
           } else {
             await _syncService.markAsFailed(item.id, e.toString());
@@ -440,14 +468,16 @@ class SyncManager {
           errors.add('${item.tableName_}/${item.recordId}: $e');
           if (kDebugMode) {
             debugPrint(
-                '[SyncManager] ❌ Failed: ${item.tableName_}/${item.recordId}: $e');
+              '[SyncManager] ❌ Failed: ${item.tableName_}/${item.recordId}: $e',
+            );
           }
 
           // If circuit breaker tripped, stop processing remaining items
           if (_pushCircuitBreaker.isOpen) {
             if (kDebugMode) {
               debugPrint(
-                  '[SyncManager] Circuit breaker opened after ${_CircuitBreaker.threshold} consecutive failures, stopping push');
+                '[SyncManager] Circuit breaker opened after ${_CircuitBreaker.threshold} consecutive failures, stopping push',
+              );
             }
             break;
           }
@@ -476,7 +506,8 @@ class SyncManager {
       // تنظيف تلقائي بعد مزامنة ناجحة (مرة واحدة في الساعة كحد أقصى)
       if (successCount > 0) {
         final now = DateTime.now();
-        final shouldCleanup = _lastCleanupTime == null ||
+        final shouldCleanup =
+            _lastCleanupTime == null ||
             now.difference(_lastCleanupTime!).inHours >= 1;
         if (shouldCleanup) {
           try {
@@ -486,7 +517,8 @@ class SyncManager {
             _lastCleanupTime = now;
             if (kDebugMode && deleted > 0) {
               debugPrint(
-                  '[SyncManager] 🧹 Auto-cleanup: removed $deleted synced items older than 6h');
+                '[SyncManager] 🧹 Auto-cleanup: removed $deleted synced items older than 6h',
+              );
             }
           } catch (e) {
             if (kDebugMode) {
@@ -523,7 +555,8 @@ class SyncManager {
     if (_pullCircuitBreaker.isOpen) {
       if (kDebugMode) {
         debugPrint(
-            '[SyncManager] Pull skipped: circuit breaker open (will reset in ${_CircuitBreaker.resetTimeout.inMinutes}m)');
+          '[SyncManager] Pull skipped: circuit breaker open (will reset in ${_CircuitBreaker.resetTimeout.inMinutes}m)',
+        );
       }
       return null;
     }
@@ -550,8 +583,9 @@ class SyncManager {
 
       if (kDebugMode && result.totalPulled > 0) {
         debugPrint(
-            '[SyncManager] Pull complete: ${result.totalPulled} records pulled'
-            '${result.skippedConflicts > 0 ? ', ${result.skippedConflicts} conflicts skipped' : ''}');
+          '[SyncManager] Pull complete: ${result.totalPulled} records pulled'
+          '${result.skippedConflicts > 0 ? ', ${result.skippedConflicts} conflicts skipped' : ''}',
+        );
       }
 
       if (result.hasErrors) {
@@ -601,13 +635,15 @@ class SyncManager {
     if (stuckItems.isNotEmpty) {
       if (kDebugMode) {
         debugPrint(
-            '[SyncManager] 🔧 Recovering ${stuckItems.length} items stuck in syncing state');
+          '[SyncManager] 🔧 Recovering ${stuckItems.length} items stuck in syncing state',
+        );
       }
       for (final item in stuckItems) {
         await _syncService.retryItem(item.id);
         if (kDebugMode) {
           debugPrint(
-              '[SyncManager]   → Recovered: ${item.tableName_}/${item.recordId}');
+            '[SyncManager]   → Recovered: ${item.tableName_}/${item.recordId}',
+          );
         }
       }
     }

@@ -26,9 +26,7 @@ Widget createTestWidget(
       theme: theme ?? ThemeData.light(),
       home: Directionality(
         textDirection: textDirection,
-        child: Scaffold(
-          body: child,
-        ),
+        child: Scaffold(body: child),
       ),
     ),
   );
@@ -53,9 +51,7 @@ Widget createSimpleTestWidget(
     theme: theme ?? ThemeData.light(),
     home: Directionality(
       textDirection: textDirection,
-      child: Scaffold(
-        body: child,
-      ),
+      child: Scaffold(body: child),
     ),
   );
 }

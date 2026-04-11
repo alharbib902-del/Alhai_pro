@@ -27,54 +27,60 @@ QueryExecutor openNativeConnection({String? dbName, String? encryptionKey}) {
   final name = dbName ?? 'pos_database';
 
   if (kDebugMode) {
-    debugPrint('WEB DATABASE: Running without encryption. '
-        'Sensitive data is accessible via browser DevTools.');
+    debugPrint(
+      'WEB DATABASE: Running without encryption. '
+      'Sensitive data is accessible via browser DevTools.',
+    );
   }
 
   // Use WasmDatabase.open() directly instead of driftDatabase() to enable:
   // - moveExistingIndexedDbToOpfs: migrate existing IndexedDB data to OPFS
   // - Better control over storage implementation selection
-  return DatabaseConnection.delayed(Future(() async {
-    final result = await WasmDatabase.open(
-      databaseName: name,
-      sqlite3Uri: Uri.parse('sqlite3.wasm'),
-      driftWorkerUri: Uri.parse('drift_worker.dart.js'),
-      // Note: moveExistingIndexedDbToOpfs was removed in drift 2.x.
-      // Drift now handles IndexedDB-to-OPFS migration automatically.
-    );
+  return DatabaseConnection.delayed(
+    Future(() async {
+      final result = await WasmDatabase.open(
+        databaseName: name,
+        sqlite3Uri: Uri.parse('sqlite3.wasm'),
+        driftWorkerUri: Uri.parse('drift_worker.dart.js'),
+        // Note: moveExistingIndexedDbToOpfs was removed in drift 2.x.
+        // Drift now handles IndexedDB-to-OPFS migration automatically.
+      );
 
-    if (kDebugMode) {
-      final impl = result.chosenImplementation;
-      final isOpfs = impl == WasmStorageImplementation.opfsShared ||
-          impl == WasmStorageImplementation.opfsLocks;
-      debugPrint(
-          'DB Storage: $impl ${isOpfs ? "(OPFS - optimal)" : "(fallback)"}');
+      if (kDebugMode) {
+        final impl = result.chosenImplementation;
+        final isOpfs =
+            impl == WasmStorageImplementation.opfsShared ||
+            impl == WasmStorageImplementation.opfsLocks;
+        debugPrint(
+          'DB Storage: $impl ${isOpfs ? "(OPFS - optimal)" : "(fallback)"}',
+        );
 
-      if (result.missingFeatures.isNotEmpty) {
-        debugPrint('Missing browser features: ${result.missingFeatures}');
+        if (result.missingFeatures.isNotEmpty) {
+          debugPrint('Missing browser features: ${result.missingFeatures}');
+        }
+
+        // Warn if using a suboptimal storage backend
+        if (impl == WasmStorageImplementation.unsafeIndexedDb) {
+          debugPrint(
+            'WARNING: Using unsafeIndexedDb - no multi-tab safety. '
+            'Data may be corrupted if app is open in multiple tabs.',
+          );
+        } else if (impl == WasmStorageImplementation.inMemory) {
+          debugPrint(
+            'WARNING: Using in-memory storage - data will be lost on page reload!',
+          );
+        }
       }
 
-      // Warn if using a suboptimal storage backend
-      if (impl == WasmStorageImplementation.unsafeIndexedDb) {
-        debugPrint(
-          'WARNING: Using unsafeIndexedDb - no multi-tab safety. '
-          'Data may be corrupted if app is open in multiple tabs.',
-        );
-      } else if (impl == WasmStorageImplementation.inMemory) {
-        debugPrint(
-          'WARNING: Using in-memory storage - data will be lost on page reload!',
-        );
-      }
-    }
+      // Request persistent storage to prevent browser eviction under storage pressure
+      _requestPersistentStorage();
 
-    // Request persistent storage to prevent browser eviction under storage pressure
-    _requestPersistentStorage();
+      // Check storage quota and warn if usage is high
+      _checkStorageQuota();
 
-    // Check storage quota and warn if usage is high
-    _checkStorageQuota();
-
-    return result.resolvedExecutor;
-  }));
+      return result.resolvedExecutor;
+    }),
+  );
 }
 
 /// Request persistent storage via navigator.storage.persist().
@@ -94,20 +100,22 @@ void _requestPersistentStorage() {
 
     // persist() returns a Promise<boolean>
     final promise = persistResult as JSPromise;
-    promise.toDart.then((JSAny? value) {
-      final granted = (value as JSBoolean?)?.toDart ?? false;
-      if (kDebugMode) {
-        debugPrint(
-          granted
-              ? 'Storage: persistent storage GRANTED - DB safe from eviction'
-              : 'Storage: persistent storage DENIED - DB may be evicted under pressure',
-        );
-      }
-    }).catchError((Object e) {
-      if (kDebugMode) {
-        debugPrint('Storage: persist() failed: $e');
-      }
-    });
+    promise.toDart
+        .then((JSAny? value) {
+          final granted = (value as JSBoolean?)?.toDart ?? false;
+          if (kDebugMode) {
+            debugPrint(
+              granted
+                  ? 'Storage: persistent storage GRANTED - DB safe from eviction'
+                  : 'Storage: persistent storage DENIED - DB may be evicted under pressure',
+            );
+          }
+        })
+        .catchError((Object e) {
+          if (kDebugMode) {
+            debugPrint('Storage: persist() failed: $e');
+          }
+        });
   } catch (e) {
     if (kDebugMode) {
       debugPrint('Storage: persist() not supported: $e');
@@ -130,32 +138,34 @@ void _checkStorageQuota() {
 
     // estimate() returns a Promise<{usage: number, quota: number}>
     final promise = estimateResult as JSPromise;
-    promise.toDart.then((JSAny? value) {
-      if (value == null) return;
-      final estimate = value as JSObject;
-      final usage = (estimate['usage'] as JSNumber?)?.toDartDouble;
-      final quota = (estimate['quota'] as JSNumber?)?.toDartDouble;
+    promise.toDart
+        .then((JSAny? value) {
+          if (value == null) return;
+          final estimate = value as JSObject;
+          final usage = (estimate['usage'] as JSNumber?)?.toDartDouble;
+          final quota = (estimate['quota'] as JSNumber?)?.toDartDouble;
 
-      if (usage != null && quota != null && quota > 0) {
-        final usagePercent = (usage / quota * 100).toStringAsFixed(1);
-        final usageMB = (usage / 1024 / 1024).toStringAsFixed(1);
-        final quotaMB = (quota / 1024 / 1024).toStringAsFixed(0);
+          if (usage != null && quota != null && quota > 0) {
+            final usagePercent = (usage / quota * 100).toStringAsFixed(1);
+            final usageMB = (usage / 1024 / 1024).toStringAsFixed(1);
+            final quotaMB = (quota / 1024 / 1024).toStringAsFixed(0);
 
-        if (usage / quota > 0.8) {
-          // Always warn about high storage usage, even in release mode
-          debugPrint(
-            'WARNING: Storage usage high: $usageMB MB / $quotaMB MB ($usagePercent%) '
-            '- consider clearing old data',
-          );
-        } else if (kDebugMode) {
-          debugPrint('Storage: $usageMB MB / $quotaMB MB ($usagePercent%)');
-        }
-      }
-    }).catchError((Object e) {
-      if (kDebugMode) {
-        debugPrint('Storage: estimate() failed: $e');
-      }
-    });
+            if (usage / quota > 0.8) {
+              // Always warn about high storage usage, even in release mode
+              debugPrint(
+                'WARNING: Storage usage high: $usageMB MB / $quotaMB MB ($usagePercent%) '
+                '- consider clearing old data',
+              );
+            } else if (kDebugMode) {
+              debugPrint('Storage: $usageMB MB / $quotaMB MB ($usagePercent%)');
+            }
+          }
+        })
+        .catchError((Object e) {
+          if (kDebugMode) {
+            debugPrint('Storage: estimate() failed: $e');
+          }
+        });
   } catch (e) {
     if (kDebugMode) {
       debugPrint('Storage: estimate() not supported: $e');

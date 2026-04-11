@@ -49,31 +49,31 @@ class _OnboardingPage {
 
 /// Build onboarding pages using l10n
 List<_OnboardingPage> _buildPages(AppLocalizations l10n) => [
-      _OnboardingPage(
-        icon: Icons.point_of_sale_rounded,
-        title: l10n.onboardingTitle1,
-        description: l10n.onboardingDesc1,
-        color: AppColors.primary,
-      ),
-      _OnboardingPage(
-        icon: Icons.wifi_off_rounded,
-        title: l10n.onboardingTitle2,
-        description: l10n.onboardingDesc2,
-        color: AppColors.info,
-      ),
-      _OnboardingPage(
-        icon: Icons.inventory_2_rounded,
-        title: l10n.onboardingTitle3,
-        description: l10n.onboardingDesc3,
-        color: AppColors.warning,
-      ),
-      _OnboardingPage(
-        icon: Icons.analytics_rounded,
-        title: l10n.onboardingTitle4,
-        description: l10n.onboardingDesc4,
-        color: AppColors.success,
-      ),
-    ];
+  _OnboardingPage(
+    icon: Icons.point_of_sale_rounded,
+    title: l10n.onboardingTitle1,
+    description: l10n.onboardingDesc1,
+    color: AppColors.primary,
+  ),
+  _OnboardingPage(
+    icon: Icons.wifi_off_rounded,
+    title: l10n.onboardingTitle2,
+    description: l10n.onboardingDesc2,
+    color: AppColors.info,
+  ),
+  _OnboardingPage(
+    icon: Icons.inventory_2_rounded,
+    title: l10n.onboardingTitle3,
+    description: l10n.onboardingDesc3,
+    color: AppColors.warning,
+  ),
+  _OnboardingPage(
+    icon: Icons.analytics_rounded,
+    title: l10n.onboardingTitle4,
+    description: l10n.onboardingDesc4,
+    color: AppColors.success,
+  ),
+];
 
 /// Cashier Onboarding Screen
 class OnboardingScreen extends ConsumerStatefulWidget {
@@ -211,8 +211,9 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                           );
                         },
                         style: OutlinedButton.styleFrom(
-                          padding:
-                              const EdgeInsets.symmetric(vertical: AppSizes.md),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSizes.md,
+                          ),
                         ),
                         child: Text(l10n.previous),
                       ),
@@ -223,12 +224,14 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   Expanded(
                     flex: 2,
                     child: FilledButton(
-                      onPressed:
-                          _isCompleting ? null : () => _nextPage(pages.length),
+                      onPressed: _isCompleting
+                          ? null
+                          : () => _nextPage(pages.length),
                       style: FilledButton.styleFrom(
                         backgroundColor: pages[_currentPage].color,
-                        padding:
-                            const EdgeInsets.symmetric(vertical: AppSizes.md),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppSizes.md,
+                        ),
                       ),
                       child: _isCompleting
                           ? SizedBox(
@@ -284,8 +287,9 @@ class _OnboardingPageWidget extends StatelessWidget {
           const SizedBox(height: AppSizes.xxxl),
           Text(
             page.title,
-            style: AppTypography.headlineLarge
-                .copyWith(fontWeight: FontWeight.bold),
+            style: AppTypography.headlineLarge.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSizes.lg),

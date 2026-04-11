@@ -8,12 +8,13 @@ import '../../core/constants/breakpoints.dart';
 class ResponsiveBuilder extends StatelessWidget {
   /// البناء الرئيسي الذي يستقبل نوع الجهاز
   final Widget Function(
-      BuildContext context, DeviceType deviceType, double screenWidth) builder;
+    BuildContext context,
+    DeviceType deviceType,
+    double screenWidth,
+  )
+  builder;
 
-  const ResponsiveBuilder({
-    super.key,
-    required this.builder,
-  });
+  const ResponsiveBuilder({super.key, required this.builder});
 
   @override
   Widget build(BuildContext context) {
@@ -66,12 +67,9 @@ class ResponsiveLayout extends StatelessWidget {
 class ScreenSizeBuilder extends StatelessWidget {
   /// البناء الذي يستقبل عرض الشاشة
   final Widget Function(BuildContext context, double width, double height)
-      builder;
+  builder;
 
-  const ScreenSizeBuilder({
-    super.key,
-    required this.builder,
-  });
+  const ScreenSizeBuilder({super.key, required this.builder});
 
   @override
   Widget build(BuildContext context) {

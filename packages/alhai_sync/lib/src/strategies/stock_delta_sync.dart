@@ -33,10 +33,10 @@ class StockDeltaSync {
     required AppDatabase db,
     required StockDeltasDao deltasDao,
     required SyncMetadataDao metadataDao,
-  })  : _client = client,
-        _db = db,
-        _deltasDao = deltasDao,
-        _metadataDao = metadataDao;
+  }) : _client = client,
+       _db = db,
+       _deltasDao = deltasDao,
+       _metadataDao = metadataDao;
 
   /// تنفيذ مزامنة دلتا المخزون
   Future<StockDeltaResult> sync({
@@ -51,8 +51,10 @@ class StockDeltaSync {
 
     try {
       // جلب التغييرات غير المزامنة
-      final pendingDeltas =
-          await _deltasDao.getPendingDeltasForStore(storeId, limit: batchSize);
+      final pendingDeltas = await _deltasDao.getPendingDeltasForStore(
+        storeId,
+        limit: batchSize,
+      );
 
       if (pendingDeltas.isEmpty) {
         return StockDeltaResult(
@@ -65,32 +67,37 @@ class StockDeltaSync {
 
       // تحويل الدلتا لصيغة JSON للإرسال
       final deltasPayload = pendingDeltas
-          .map((d) => {
-                'id': d.id,
-                'product_id': d.productId,
-                'quantity_change': d.quantityChange,
-                'device_id': d.deviceId,
-                'operation_type': d.operationType,
-                'reference_id': d.referenceId,
-                'created_at': d.createdAt.toUtc().toIso8601String(),
-              })
+          .map(
+            (d) => {
+              'id': d.id,
+              'product_id': d.productId,
+              'quantity_change': d.quantityChange,
+              'device_id': d.deviceId,
+              'operation_type': d.operationType,
+              'reference_id': d.referenceId,
+              'created_at': d.createdAt.toUtc().toIso8601String(),
+            },
+          )
           .toList();
 
       // إرسال الدلتا للسيرفر عبر RPC
-      final response = await _client.rpc(
-        'apply_stock_deltas',
-        params: {
-          'p_org_id': orgId,
-          'p_store_id': storeId,
-          'p_deltas': deltasPayload,
-        },
-      ).timeout(_networkTimeout);
+      final response = await _client
+          .rpc(
+            'apply_stock_deltas',
+            params: {
+              'p_org_id': orgId,
+              'p_store_id': storeId,
+              'p_deltas': deltasPayload,
+            },
+          )
+          .timeout(_networkTimeout);
 
       // معالجة النتيجة بنموذج مُهيكل (typed response model)
       if (response is List) {
         for (final item in response) {
-          final json =
-              item is Map<String, dynamic> ? item : <String, dynamic>{};
+          final json = item is Map<String, dynamic>
+              ? item
+              : <String, dynamic>{};
           final parsed = _StockDeltaRpcResult.fromJson(json);
 
           if (parsed.productId.isEmpty) continue;
@@ -159,8 +166,10 @@ class StockDeltaSync {
     int deltasSent = 0;
     int productsUpdated = 0;
 
-    final pendingDeltas =
-        await _deltasDao.getPendingDeltasForStore(storeId, limit: batchSize);
+    final pendingDeltas = await _deltasDao.getPendingDeltasForStore(
+      storeId,
+      limit: batchSize,
+    );
 
     if (pendingDeltas.isEmpty) {
       return StockDeltaResult(
@@ -177,18 +186,21 @@ class StockDeltaSync {
     // إرسال كل دلتا كـ inventory_movement
     for (final delta in pendingDeltas) {
       try {
-        await _client.from('inventory_movements').upsert({
-          'id': delta.id,
-          'org_id': orgId,
-          'product_id': delta.productId,
-          'store_id': storeId,
-          'type': delta.operationType,
-          'qty': delta.quantityChange,
-          'previous_qty': 0,
-          'new_qty': 0,
-          'reference_id': delta.referenceId,
-          'created_at': delta.createdAt.toUtc().toIso8601String(),
-        }, onConflict: 'id').timeout(_networkTimeout);
+        await _client
+            .from('inventory_movements')
+            .upsert({
+              'id': delta.id,
+              'org_id': orgId,
+              'product_id': delta.productId,
+              'store_id': storeId,
+              'type': delta.operationType,
+              'qty': delta.quantityChange,
+              'previous_qty': 0,
+              'new_qty': 0,
+              'reference_id': delta.referenceId,
+              'created_at': delta.createdAt.toUtc().toIso8601String(),
+            }, onConflict: 'id')
+            .timeout(_networkTimeout);
         succeededDeltaIds.add(delta.id);
         deltasSent++;
       } catch (e) {
@@ -239,11 +251,7 @@ class StockDeltaSync {
   Future<void> _updateLocalStock(String productId, double newStock) async {
     await _db.customStatement(
       'UPDATE products SET stock_qty = ?, synced_at = ? WHERE id = ?',
-      [
-        newStock,
-        DateTime.now().toUtc().toIso8601String(),
-        productId,
-      ],
+      [newStock, DateTime.now().toUtc().toIso8601String(), productId],
     );
   }
 }

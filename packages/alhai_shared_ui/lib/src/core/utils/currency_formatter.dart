@@ -34,11 +34,7 @@ class CurrencyFormatter {
   /// تنسيق مبلغ مختصر (بدون كسور عشرية)
   ///
   /// مثال: `١٬٢٣٤ ر.س` (عربي) أو `1,234 ر.س` (إنجليزي)
-  static String formatCompact(
-    double amount, {
-    String? locale,
-    String? symbol,
-  }) {
+  static String formatCompact(double amount, {String? locale, String? symbol}) {
     final effectiveSymbol = symbol ?? StoreSettings.defaultCurrencySymbol;
     final fmt = NumberFormat.currency(
       locale: locale ?? 'ar_SA',

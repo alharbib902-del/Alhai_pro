@@ -104,10 +104,7 @@ class CsrGenerator {
     final csrPem = _encodePem(csr.encodedBytes, 'CERTIFICATE REQUEST');
     final privateKeyPem = _encodeEcPrivateKey(privateKey);
 
-    return {
-      'csr': csrPem,
-      'privateKey': privateKeyPem,
-    };
+    return {'csr': csrPem, 'privateKey': privateKeyPem};
   }
 
   /// Generate an ECDSA key pair using secp256k1 curve
@@ -145,34 +142,44 @@ class CsrGenerator {
     final subject = ASN1Sequence();
 
     // C = Country
-    subject.add(_buildRdnSet(
-      ASN1ObjectIdentifier.fromComponentString('2.5.4.6'),
-      ASN1PrintableString(country),
-    ));
+    subject.add(
+      _buildRdnSet(
+        ASN1ObjectIdentifier.fromComponentString('2.5.4.6'),
+        ASN1PrintableString(country),
+      ),
+    );
 
     // O = Organization
-    subject.add(_buildRdnSet(
-      ASN1ObjectIdentifier.fromComponentString('2.5.4.10'),
-      ASN1UTF8String(organizationName),
-    ));
+    subject.add(
+      _buildRdnSet(
+        ASN1ObjectIdentifier.fromComponentString('2.5.4.10'),
+        ASN1UTF8String(organizationName),
+      ),
+    );
 
     // OU = Organization Unit
-    subject.add(_buildRdnSet(
-      ASN1ObjectIdentifier.fromComponentString('2.5.4.11'),
-      ASN1UTF8String(organizationUnit),
-    ));
+    subject.add(
+      _buildRdnSet(
+        ASN1ObjectIdentifier.fromComponentString('2.5.4.11'),
+        ASN1UTF8String(organizationUnit),
+      ),
+    );
 
     // CN = Common Name
-    subject.add(_buildRdnSet(
-      ASN1ObjectIdentifier.fromComponentString('2.5.4.3'),
-      ASN1UTF8String(commonName),
-    ));
+    subject.add(
+      _buildRdnSet(
+        ASN1ObjectIdentifier.fromComponentString('2.5.4.3'),
+        ASN1UTF8String(commonName),
+      ),
+    );
 
     // serialNumber
-    subject.add(_buildRdnSet(
-      ASN1ObjectIdentifier.fromComponentString('2.5.4.5'),
-      ASN1UTF8String(serialNumber),
-    ));
+    subject.add(
+      _buildRdnSet(
+        ASN1ObjectIdentifier.fromComponentString('2.5.4.5'),
+        ASN1UTF8String(serialNumber),
+      ),
+    );
 
     return subject;
   }
@@ -198,9 +205,7 @@ class CsrGenerator {
     // ZATCA uses "ZATCA-Code-Signing" as the template name
     final templateExt = ASN1Sequence()
       ..add(_certTemplateOid)
-      ..add(ASN1OctetString(
-        ASN1UTF8String('ZATCA-Code-Signing').encodedBytes,
-      ));
+      ..add(ASN1OctetString(ASN1UTF8String('ZATCA-Code-Signing').encodedBytes));
     extensions.add(templateExt);
 
     // Subject Alternative Name (SAN) with ZATCA-specific directory names
@@ -232,18 +237,24 @@ class CsrGenerator {
     // OID 2.5.4.15 = businessCategory
     final directoryNames = ASN1Sequence();
 
-    directoryNames.add(_buildRdnSet(
-      ASN1ObjectIdentifier.fromComponentString('2.5.4.4'),
-      ASN1UTF8String(invoiceType),
-    ));
-    directoryNames.add(_buildRdnSet(
-      ASN1ObjectIdentifier.fromComponentString('2.5.4.26'),
-      ASN1UTF8String(branchLocation),
-    ));
-    directoryNames.add(_buildRdnSet(
-      ASN1ObjectIdentifier.fromComponentString('2.5.4.15'),
-      ASN1UTF8String(industryBusinessCategory),
-    ));
+    directoryNames.add(
+      _buildRdnSet(
+        ASN1ObjectIdentifier.fromComponentString('2.5.4.4'),
+        ASN1UTF8String(invoiceType),
+      ),
+    );
+    directoryNames.add(
+      _buildRdnSet(
+        ASN1ObjectIdentifier.fromComponentString('2.5.4.26'),
+        ASN1UTF8String(branchLocation),
+      ),
+    );
+    directoryNames.add(
+      _buildRdnSet(
+        ASN1ObjectIdentifier.fromComponentString('2.5.4.15'),
+        ASN1UTF8String(industryBusinessCategory),
+      ),
+    );
 
     return directoryNames;
   }
@@ -304,10 +315,7 @@ class CsrGenerator {
   /// Sign data with ECDSA using SHA-256
   Uint8List _signData(Uint8List data, ECPrivateKey privateKey) {
     final signer = Signer('SHA-256/DET-ECDSA');
-    signer.init(
-      true,
-      PrivateKeyParameter<ECPrivateKey>(privateKey),
-    );
+    signer.init(true, PrivateKeyParameter<ECPrivateKey>(privateKey));
     final signature = signer.generateSignature(data) as ECSignature;
 
     // Encode signature as DER (SEQUENCE { INTEGER r, INTEGER s })
@@ -338,8 +346,9 @@ class CsrGenerator {
     final base64Content = base64Encode(bytes);
     final lines = <String>[];
     for (var i = 0; i < base64Content.length; i += 64) {
-      final end =
-          (i + 64 > base64Content.length) ? base64Content.length : i + 64;
+      final end = (i + 64 > base64Content.length)
+          ? base64Content.length
+          : i + 64;
       lines.add(base64Content.substring(i, end));
     }
     return '-----BEGIN $label-----\n${lines.join('\n')}\n-----END $label-----';

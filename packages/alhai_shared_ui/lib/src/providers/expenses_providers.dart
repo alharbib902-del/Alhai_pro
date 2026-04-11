@@ -20,24 +20,25 @@ const _uuid = Uuid();
 /// مراقبة المصروفات (Stream)
 final expensesStreamProvider =
     StreamProvider.autoDispose<List<ExpensesTableData>>((ref) {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return Stream.value([]);
-  final db = GetIt.I<AppDatabase>();
-  return db.expensesDao.watchExpenses(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return Stream.value([]);
+      final db = GetIt.I<AppDatabase>();
+      return db.expensesDao.watchExpenses(storeId);
+    });
 
 /// قائمة المصروفات (Future)
 final expensesListProvider =
     FutureProvider.autoDispose<List<ExpensesTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
-  final db = GetIt.I<AppDatabase>();
-  return db.expensesDao.getAllExpenses(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
+      final db = GetIt.I<AppDatabase>();
+      return db.expensesDao.getAllExpenses(storeId);
+    });
 
 /// إجمالي مصروفات اليوم
-final todayExpensesTotalProvider =
-    FutureProvider.autoDispose<double>((ref) async {
+final todayExpensesTotalProvider = FutureProvider.autoDispose<double>((
+  ref,
+) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return 0.0;
   final db = GetIt.I<AppDatabase>();
@@ -47,29 +48,29 @@ final todayExpensesTotalProvider =
 /// تصنيفات المصروفات النشطة
 final expenseCategoriesProvider =
     FutureProvider.autoDispose<List<ExpenseCategoriesTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
-  final db = GetIt.I<AppDatabase>();
-  return db.expensesDao.getActiveCategories(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
+      final db = GetIt.I<AppDatabase>();
+      return db.expensesDao.getActiveCategories(storeId);
+    });
 
 /// جميع تصنيفات المصروفات
 final allExpenseCategoriesProvider =
     FutureProvider.autoDispose<List<ExpenseCategoriesTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
-  final db = GetIt.I<AppDatabase>();
-  return db.expensesDao.getAllCategories(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
+      final db = GetIt.I<AppDatabase>();
+      return db.expensesDao.getAllCategories(storeId);
+    });
 
 /// مراقبة التصنيفات (Stream)
 final expenseCategoriesStreamProvider =
     StreamProvider.autoDispose<List<ExpenseCategoriesTableData>>((ref) {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return Stream.value([]);
-  final db = GetIt.I<AppDatabase>();
-  return db.expensesDao.watchCategories(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return Stream.value([]);
+      final db = GetIt.I<AppDatabase>();
+      return db.expensesDao.watchCategories(storeId);
+    });
 
 // ============================================================================
 // ACTION HELPERS
@@ -91,17 +92,19 @@ Future<void> addExpense(
   final id = _uuid.v4();
   final now = DateTime.now();
   final date = expenseDate ?? now;
-  await db.expensesDao.insertExpense(ExpensesTableCompanion(
-    id: Value(id),
-    storeId: Value(storeId),
-    categoryId: Value(categoryId),
-    amount: Value(amount),
-    description: Value(description),
-    paymentMethod: Value(paymentMethod),
-    createdBy: Value(createdBy),
-    expenseDate: Value(date),
-    createdAt: Value(now),
-  ));
+  await db.expensesDao.insertExpense(
+    ExpensesTableCompanion(
+      id: Value(id),
+      storeId: Value(storeId),
+      categoryId: Value(categoryId),
+      amount: Value(amount),
+      description: Value(description),
+      paymentMethod: Value(paymentMethod),
+      createdBy: Value(createdBy),
+      expenseDate: Value(date),
+      createdAt: Value(now),
+    ),
+  );
 
   // إضافة للطابور المزامنة
   try {
@@ -137,10 +140,7 @@ Future<void> deleteExpense(WidgetRef ref, String id) async {
   // إضافة للطابور المزامنة
   try {
     final syncService = ref.read(syncServiceProvider);
-    await syncService.enqueueDelete(
-      tableName: 'expenses',
-      recordId: id,
-    );
+    await syncService.enqueueDelete(tableName: 'expenses', recordId: id);
   } catch (_) {
     // المزامنة اختيارية - لا تمنع العملية المحلية
   }
@@ -160,16 +160,18 @@ Future<void> addExpenseCategory(
   final storeId = ref.read(currentStoreIdProvider);
   if (storeId == null) return;
   final db = GetIt.I<AppDatabase>();
-  await db.expensesDao.insertCategory(ExpenseCategoriesTableCompanion(
-    id: Value(_uuid.v4()),
-    storeId: Value(storeId),
-    name: Value(name),
-    nameEn: Value(nameEn),
-    icon: Value(icon),
-    color: Value(color),
-    isActive: const Value(true),
-    createdAt: Value(DateTime.now()),
-  ));
+  await db.expensesDao.insertCategory(
+    ExpenseCategoriesTableCompanion(
+      id: Value(_uuid.v4()),
+      storeId: Value(storeId),
+      name: Value(name),
+      nameEn: Value(nameEn),
+      icon: Value(icon),
+      color: Value(color),
+      isActive: const Value(true),
+      createdAt: Value(DateTime.now()),
+    ),
+  );
   ref.invalidate(expenseCategoriesProvider);
   ref.invalidate(allExpenseCategoriesProvider);
 }

@@ -22,8 +22,9 @@ void main() {
     setupTestGetIt(mockDb: db);
 
     // Default stubs
-    when(() => productsDao.searchProducts(any(), any()))
-        .thenAnswer((_) async => []);
+    when(
+      () => productsDao.searchProducts(any(), any()),
+    ).thenAnswer((_) async => []);
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -68,16 +69,19 @@ void main() {
 
       expect(find.text('Barcode Preview'), findsOneWidget);
       expect(
-          find.text(
-              '\u0627\u062e\u062a\u0631 \u0645\u0646\u062a\u062c \u0623\u0648\u0644\u0627\u064b'),
-          findsOneWidget);
+        find.text(
+          '\u0627\u062e\u062a\u0631 \u0645\u0646\u062a\u062c \u0623\u0648\u0644\u0627\u064b',
+        ),
+        findsOneWidget,
+      );
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('displays label quantity card with quick chips',
-        (tester) async {
+    testWidgets('displays label quantity card with quick chips', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
@@ -96,8 +100,9 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('print button is disabled without product selected',
-        (tester) async {
+    testWidgets('print button is disabled without product selected', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
@@ -123,10 +128,11 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      when(() => productsDao.searchProducts(any(), any()))
-          .thenAnswer((_) async => [
-                createTestProduct(name: 'Test Prod', barcode: '1234567890123'),
-              ]);
+      when(() => productsDao.searchProducts(any(), any())).thenAnswer(
+        (_) async => [
+          createTestProduct(name: 'Test Prod', barcode: '1234567890123'),
+        ],
+      );
 
       await tester.pumpWidget(createTestWidget(const PrintBarcodeScreen()));
       await tester.pumpAndSettle();
@@ -136,8 +142,9 @@ void main() {
       await tester.enterText(textFields.first, 'Test');
       await tester.pumpAndSettle();
 
-      verify(() => productsDao.searchProducts('Test', 'test-store-1'))
-          .called(1);
+      verify(
+        () => productsDao.searchProducts('Test', 'test-store-1'),
+      ).called(1);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

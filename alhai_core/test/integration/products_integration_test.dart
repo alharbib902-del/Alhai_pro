@@ -54,8 +54,9 @@ void main() {
       test('should return paginated list of products', () async {
         // Arrange
         const storeId = 'store-123';
-        when(() => mockRemote.getProducts(storeId, page: 1, limit: 20))
-            .thenAnswer((_) async => [testProductResponse]);
+        when(
+          () => mockRemote.getProducts(storeId, page: 1, limit: 20),
+        ).thenAnswer((_) async => [testProductResponse]);
 
         // Act
         final paginated = await productsRepository.getProducts(storeId);
@@ -68,8 +69,9 @@ void main() {
       test('should handle empty list', () async {
         // Arrange
         const storeId = 'store-123';
-        when(() => mockRemote.getProducts(storeId, page: 1, limit: 20))
-            .thenAnswer((_) async => []);
+        when(
+          () => mockRemote.getProducts(storeId, page: 1, limit: 20),
+        ).thenAnswer((_) async => []);
 
         // Act
         final paginated = await productsRepository.getProducts(storeId);
@@ -83,8 +85,9 @@ void main() {
       test('should return product by ID', () async {
         // Arrange
         const productId = 'prod-123';
-        when(() => mockRemote.getProduct(productId))
-            .thenAnswer((_) async => testProductResponse);
+        when(
+          () => mockRemote.getProduct(productId),
+        ).thenAnswer((_) async => testProductResponse);
 
         // Act
         final product = await productsRepository.getProduct(productId);
@@ -119,8 +122,9 @@ void main() {
       test('should return product by barcode', () async {
         // Arrange
         const barcode = '1234567890';
-        when(() => mockRemote.getByBarcode(barcode))
-            .thenAnswer((_) async => testProductResponse);
+        when(
+          () => mockRemote.getByBarcode(barcode),
+        ).thenAnswer((_) async => testProductResponse);
 
         // Act
         final product = await productsRepository.getByBarcode(barcode);
@@ -132,8 +136,9 @@ void main() {
       test('should return null for unknown barcode', () async {
         // Arrange
         const barcode = 'unknown';
-        when(() => mockRemote.getByBarcode(barcode))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockRemote.getByBarcode(barcode),
+        ).thenAnswer((_) async => null);
 
         // Act
         final product = await productsRepository.getByBarcode(barcode);
@@ -151,8 +156,9 @@ void main() {
           name: 'New Product',
           price: 15.0,
         );
-        when(() => mockRemote.createProduct(any()))
-            .thenAnswer((_) async => testProductResponse);
+        when(
+          () => mockRemote.createProduct(any()),
+        ).thenAnswer((_) async => testProductResponse);
 
         // Act
         final product = await productsRepository.createProduct(params);
@@ -171,8 +177,9 @@ void main() {
           name: 'Updated Product',
           price: 20.0,
         );
-        when(() => mockRemote.updateProduct(any(), any()))
-            .thenAnswer((_) async => testProductResponse);
+        when(
+          () => mockRemote.updateProduct(any(), any()),
+        ).thenAnswer((_) async => testProductResponse);
 
         // Act
         final product = await productsRepository.updateProduct(params);
@@ -187,8 +194,9 @@ void main() {
       test('should delete product successfully', () async {
         // Arrange
         const productId = 'prod-123';
-        when(() => mockRemote.deleteProduct(productId))
-            .thenAnswer((_) async {});
+        when(
+          () => mockRemote.deleteProduct(productId),
+        ).thenAnswer((_) async {});
 
         // Act & Assert
         await expectLater(

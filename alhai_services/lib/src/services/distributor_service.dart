@@ -67,7 +67,9 @@ class DistributorService {
 
   /// تحديث بيانات الموزع
   Future<Distributor> updateDistributor(
-      String id, Map<String, dynamic> data) async {
+    String id,
+    Map<String, dynamic> data,
+  ) async {
     return await _distributorsRepo.updateDistributor(id, data);
   }
 
@@ -80,7 +82,10 @@ class DistributorService {
 
   /// رفض موزع
   Future<Distributor> rejectDistributor(
-      String id, String rejectedBy, String reason) async {
+    String id,
+    String rejectedBy,
+    String reason,
+  ) async {
     return await _distributorsRepo.rejectDistributor(id, rejectedBy, reason);
   }
 

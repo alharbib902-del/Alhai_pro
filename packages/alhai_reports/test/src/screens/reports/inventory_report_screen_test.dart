@@ -36,8 +36,9 @@ void main() {
 
     testWidgets('shows loading indicator initially', (tester) async {
       final completer = Completer<List<ProductsTableData>>();
-      when(() => mockProductsDao.getAllProducts(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => mockProductsDao.getAllProducts(any()),
+      ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(
         buildTestableWidget(const InventoryReportScreen()),
@@ -52,8 +53,9 @@ void main() {
     });
 
     testWidgets('shows error state when loading fails', (tester) async {
-      when(() => mockProductsDao.getAllProducts(any()))
-          .thenThrow(Exception('Database error'));
+      when(
+        () => mockProductsDao.getAllProducts(any()),
+      ).thenThrow(Exception('Database error'));
 
       await tester.pumpWidget(
         buildTestableWidget(const InventoryReportScreen()),
@@ -78,24 +80,25 @@ void main() {
 
     testWidgets('shows data table when products exist', (tester) async {
       final now = DateTime.now();
-      when(() => mockProductsDao.getAllProducts(any()))
-          .thenAnswer((_) async => [
-                ProductsTableData(
-                  id: 'p1',
-                  storeId: 'test-store-id',
-                  name: 'Test Product',
-                  price: 50.0,
-                  stockQty: 100,
-                  minQty: 10,
-                  costPrice: 30.0,
-                  createdAt: now,
-                  isActive: true,
-                  trackInventory: true,
-                  onlineAvailable: false,
-                  onlineReservedQty: 0,
-                  autoReorder: false,
-                ),
-              ]);
+      when(() => mockProductsDao.getAllProducts(any())).thenAnswer(
+        (_) async => [
+          ProductsTableData(
+            id: 'p1',
+            storeId: 'test-store-id',
+            name: 'Test Product',
+            price: 50.0,
+            stockQty: 100,
+            minQty: 10,
+            costPrice: 30.0,
+            createdAt: now,
+            isActive: true,
+            trackInventory: true,
+            onlineAvailable: false,
+            onlineReservedQty: 0,
+            autoReorder: false,
+          ),
+        ],
+      );
 
       await tester.pumpWidget(
         buildTestableWidget(const InventoryReportScreen()),

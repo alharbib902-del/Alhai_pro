@@ -44,10 +44,14 @@ class SAStoresDatasource {
 
   /// Fetch a single store by ID with full details.
   Future<SAStore> getStore(String storeId) async {
-    final data = await _client.from('stores').select('''
+    final data = await _client
+        .from('stores')
+        .select('''
           *,
           subscriptions(*)
-        ''').eq('id', storeId).single();
+        ''')
+        .eq('id', storeId)
+        .single();
     return SAStore.fromJson(data);
   }
 
@@ -58,20 +62,23 @@ class SAStoresDatasource {
   Future<SAStoreUsageStats> getStoreUsageStats(String storeId) async {
     final results = await Future.wait<dynamic>([
       _client
-          .from('sales')
-          .select('id')
-          .eq('store_id', storeId)
-          .count(CountOption.exact) as Future<dynamic>,
+              .from('sales')
+              .select('id')
+              .eq('store_id', storeId)
+              .count(CountOption.exact)
+          as Future<dynamic>,
       _client
-          .from('products')
-          .select('id')
-          .eq('store_id', storeId)
-          .count(CountOption.exact) as Future<dynamic>,
+              .from('products')
+              .select('id')
+              .eq('store_id', storeId)
+              .count(CountOption.exact)
+          as Future<dynamic>,
       _client
-          .from('users')
-          .select('id')
-          .eq('store_id', storeId)
-          .count(CountOption.exact) as Future<dynamic>,
+              .from('users')
+              .select('id')
+              .eq('store_id', storeId)
+              .count(CountOption.exact)
+          as Future<dynamic>,
     ]);
 
     // branches table does not exist; default to 1 (main store)
@@ -141,7 +148,8 @@ class SAStoresDatasource {
   Future<void> updateStoreStatus(String storeId, bool isActive) async {
     await _client
         .from('stores')
-        .update({'is_active': isActive}).eq('id', storeId);
+        .update({'is_active': isActive})
+        .eq('id', storeId);
   }
 
   /// Update store subscription plan.
@@ -163,8 +171,10 @@ class SAStoresDatasource {
 
   /// Get total store count.
   Future<int> getTotalStoreCount() async {
-    final result =
-        await _client.from('stores').select('id').count(CountOption.exact);
+    final result = await _client
+        .from('stores')
+        .select('id')
+        .count(CountOption.exact);
     return result.count;
   }
 

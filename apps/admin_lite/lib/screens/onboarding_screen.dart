@@ -58,25 +58,25 @@ class _OnboardingPage {
 
 /// Build lite-specific onboarding pages
 List<_OnboardingPage> _buildLitePages(AppLocalizations l10n) => [
-      _OnboardingPage(
-        icon: Icons.speed_rounded,
-        title: l10n.welcomeTitle,
-        description: l10n.onboardingDesc1,
-        color: AppColors.primary,
-      ),
-      _OnboardingPage(
-        icon: Icons.analytics_rounded,
-        title: l10n.onboardingTitle4,
-        description: l10n.onboardingDesc4,
-        color: AppColors.info,
-      ),
-      _OnboardingPage(
-        icon: Icons.groups_rounded,
-        title: l10n.onboardingTitle3,
-        description: l10n.onboardingDesc3,
-        color: AppColors.success,
-      ),
-    ];
+  _OnboardingPage(
+    icon: Icons.speed_rounded,
+    title: l10n.welcomeTitle,
+    description: l10n.onboardingDesc1,
+    color: AppColors.primary,
+  ),
+  _OnboardingPage(
+    icon: Icons.analytics_rounded,
+    title: l10n.onboardingTitle4,
+    description: l10n.onboardingDesc4,
+    color: AppColors.info,
+  ),
+  _OnboardingPage(
+    icon: Icons.groups_rounded,
+    title: l10n.onboardingTitle3,
+    description: l10n.onboardingDesc3,
+    color: AppColors.success,
+  ),
+];
 
 /// Admin Lite Onboarding Screen
 class LiteOnboardingScreen extends ConsumerStatefulWidget {
@@ -202,8 +202,9 @@ class _LiteOnboardingScreenState extends ConsumerState<LiteOnboardingScreen> {
                           );
                         },
                         style: OutlinedButton.styleFrom(
-                          padding:
-                              const EdgeInsets.symmetric(vertical: AppSizes.md),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSizes.md,
+                          ),
                         ),
                         child: Text(l10n.previous),
                       ),
@@ -214,12 +215,14 @@ class _LiteOnboardingScreenState extends ConsumerState<LiteOnboardingScreen> {
                   Expanded(
                     flex: 2,
                     child: FilledButton(
-                      onPressed:
-                          _isCompleting ? null : () => _nextPage(pages.length),
+                      onPressed: _isCompleting
+                          ? null
+                          : () => _nextPage(pages.length),
                       style: FilledButton.styleFrom(
                         backgroundColor: pages[_currentPage].color,
-                        padding:
-                            const EdgeInsets.symmetric(vertical: AppSizes.md),
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AppSizes.md,
+                        ),
                       ),
                       child: _isCompleting
                           ? SizedBox(
@@ -273,8 +276,9 @@ class _OnboardingPageWidget extends StatelessWidget {
           const SizedBox(height: AppSizes.xxxl),
           Text(
             page.title,
-            style: AppTypography.headlineLarge
-                .copyWith(fontWeight: FontWeight.bold),
+            style: AppTypography.headlineLarge.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AppSizes.lg),

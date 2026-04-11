@@ -90,7 +90,8 @@ class XmlCanonicalizer {
         buffer.write(' xmlns="${_escapeAttrValue(namespaceDecls[prefix]!)}"');
       } else {
         buffer.write(
-            ' xmlns:$prefix="${_escapeAttrValue(namespaceDecls[prefix]!)}"');
+          ' xmlns:$prefix="${_escapeAttrValue(namespaceDecls[prefix]!)}"',
+        );
       }
     }
 

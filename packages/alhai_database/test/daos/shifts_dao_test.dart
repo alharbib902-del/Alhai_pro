@@ -123,16 +123,17 @@ void main() {
     });
 
     test('getShiftsByDateRange filters by date', () async {
-      await db.shiftsDao.openShift(makeShift(
-        id: 'shift-1',
-        openedAt: DateTime(2025, 6, 15, 8, 0),
-      ));
-      await db.shiftsDao.openShift(makeShift(
-        id: 'shift-2',
-        cashierId: 'cashier-2',
-        cashierName: 'علي',
-        openedAt: DateTime(2025, 7, 1, 8, 0),
-      ));
+      await db.shiftsDao.openShift(
+        makeShift(id: 'shift-1', openedAt: DateTime(2025, 6, 15, 8, 0)),
+      );
+      await db.shiftsDao.openShift(
+        makeShift(
+          id: 'shift-2',
+          cashierId: 'cashier-2',
+          cashierName: 'علي',
+          openedAt: DateTime(2025, 7, 1, 8, 0),
+        ),
+      );
 
       final results = await db.shiftsDao.getShiftsByDateRange(
         'store-1',

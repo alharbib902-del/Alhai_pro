@@ -30,38 +30,49 @@ void main() {
   group('ReceivingGoodsScreen', () {
     testWidgets('shows loading indicator initially', (tester) async {
       final completer = Completer<PurchasesTableData?>();
-      when(() => mockPurchasesDao.getPurchaseById(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => mockPurchasesDao.getPurchaseById(any()),
+      ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(
-          createTestWidget(const ReceivingGoodsScreen(purchaseId: 'pur-1')));
+        createTestWidget(const ReceivingGoodsScreen(purchaseId: 'pur-1')),
+      );
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets('shows error when purchase not found', (tester) async {
-      when(() => mockPurchasesDao.getPurchaseById('pur-1'))
-          .thenAnswer((_) async => null);
+      when(
+        () => mockPurchasesDao.getPurchaseById('pur-1'),
+      ).thenAnswer((_) async => null);
 
       await tester.pumpWidget(
-          createTestWidget(const ReceivingGoodsScreen(purchaseId: 'pur-1')));
+        createTestWidget(const ReceivingGoodsScreen(purchaseId: 'pur-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.error_outline), findsWidgets);
     });
 
-    testWidgets('displays receiving form when purchase is loaded',
-        (tester) async {
+    testWidgets('displays receiving form when purchase is loaded', (
+      tester,
+    ) async {
       final purchase = createTestPurchase(
-          id: 'pur-1', status: 'approved', purchaseNumber: 'PUR-001');
-      when(() => mockPurchasesDao.getPurchaseById('pur-1'))
-          .thenAnswer((_) async => purchase);
-      when(() => mockPurchasesDao.getPurchaseItems('pur-1'))
-          .thenAnswer((_) async => []);
+        id: 'pur-1',
+        status: 'approved',
+        purchaseNumber: 'PUR-001',
+      );
+      when(
+        () => mockPurchasesDao.getPurchaseById('pur-1'),
+      ).thenAnswer((_) async => purchase);
+      when(
+        () => mockPurchasesDao.getPurchaseItems('pur-1'),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(
-          createTestWidget(const ReceivingGoodsScreen(purchaseId: 'pur-1')));
+        createTestWidget(const ReceivingGoodsScreen(purchaseId: 'pur-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(ReceivingGoodsScreen), findsOneWidget);
@@ -69,14 +80,20 @@ void main() {
 
     testWidgets('shows purchase number in content', (tester) async {
       final purchase = createTestPurchase(
-          id: 'pur-1', status: 'approved', purchaseNumber: 'PUR-TEST-001');
-      when(() => mockPurchasesDao.getPurchaseById('pur-1'))
-          .thenAnswer((_) async => purchase);
-      when(() => mockPurchasesDao.getPurchaseItems('pur-1'))
-          .thenAnswer((_) async => []);
+        id: 'pur-1',
+        status: 'approved',
+        purchaseNumber: 'PUR-TEST-001',
+      );
+      when(
+        () => mockPurchasesDao.getPurchaseById('pur-1'),
+      ).thenAnswer((_) async => purchase);
+      when(
+        () => mockPurchasesDao.getPurchaseItems('pur-1'),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(
-          createTestWidget(const ReceivingGoodsScreen(purchaseId: 'pur-1')));
+        createTestWidget(const ReceivingGoodsScreen(purchaseId: 'pur-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('PUR-TEST-001'), findsWidgets);

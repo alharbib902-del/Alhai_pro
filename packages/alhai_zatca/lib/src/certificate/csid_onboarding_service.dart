@@ -27,9 +27,9 @@ class CsidOnboardingService {
     required CsrGenerator csrGenerator,
     required ComplianceApi complianceApi,
     required CertificateStorage storage,
-  })  : _csrGenerator = csrGenerator,
-        _complianceApi = complianceApi,
-        _storage = storage;
+  }) : _csrGenerator = csrGenerator,
+       _complianceApi = complianceApi,
+       _storage = storage;
 
   /// Step 1: Generate CSR and request Compliance CSID
   ///
@@ -67,7 +67,8 @@ class CsidOnboardingService {
     if (!response.isSuccess || response.binarySecurityToken == null) {
       throw OnboardingException(
         step: OnboardingStep.complianceCsid,
-        message: response.errorMessage ??
+        message:
+            response.errorMessage ??
             'Failed to obtain compliance CSID from ZATCA',
       );
     }
@@ -183,9 +184,11 @@ class CsidOnboardingService {
         );
 
         if (processed.signedXml == null || processed.invoiceHash == null) {
-          responses.add(ZatcaResponse.failure(
-            message: 'Failed to generate signed XML for ${spec.label}',
-          ));
+          responses.add(
+            ZatcaResponse.failure(
+              message: 'Failed to generate signed XML for ${spec.label}',
+            ),
+          );
           continue;
         }
 
@@ -202,7 +205,8 @@ class CsidOnboardingService {
         if (!response.isSuccess) {
           throw OnboardingException(
             step: OnboardingStep.complianceCheck,
-            message: 'Compliance check failed for ${spec.label}: '
+            message:
+                'Compliance check failed for ${spec.label}: '
                 '${response.errors.map((e) => e.message).join(', ')}',
           );
         }
@@ -229,7 +233,8 @@ class CsidOnboardingService {
     if (!response.isSuccess || response.binarySecurityToken == null) {
       throw OnboardingException(
         step: OnboardingStep.productionCsid,
-        message: response.errorMessage ??
+        message:
+            response.errorMessage ??
             'Failed to obtain production CSID from ZATCA',
       );
     }
@@ -277,7 +282,8 @@ class CsidOnboardingService {
       final failedCount = complianceResults.where((r) => !r.isSuccess).length;
       throw OnboardingException(
         step: OnboardingStep.complianceCheck,
-        message: '$failedCount of ${complianceResults.length} compliance '
+        message:
+            '$failedCount of ${complianceResults.length} compliance '
             'checks failed',
       );
     }
@@ -380,10 +386,7 @@ class OnboardingException implements Exception {
   /// Error message
   final String message;
 
-  const OnboardingException({
-    required this.step,
-    required this.message,
-  });
+  const OnboardingException({required this.step, required this.message});
 
   @override
   String toString() => 'OnboardingException(${step.name}): $message';

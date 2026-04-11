@@ -34,9 +34,7 @@ void _setLargeViewport(WidgetTester tester) {
 
 Widget _buildTestWidget() {
   return ProviderScope(
-    overrides: [
-      currentStoreIdProvider.overrideWith((ref) => 'test-store-id'),
-    ],
+    overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store-id')],
     child: MaterialApp(
       locale: const Locale('en'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -88,8 +86,9 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       final completer = Completer<List<ProductsTableData>>();
-      when(() => mockProductsDao.getLowStockProducts(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => mockProductsDao.getLowStockProducts(any()),
+      ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pump();
@@ -104,8 +103,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockProductsDao.getLowStockProducts(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockProductsDao.getLowStockProducts(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -117,8 +117,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockProductsDao.getLowStockProducts(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockProductsDao.getLowStockProducts(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));

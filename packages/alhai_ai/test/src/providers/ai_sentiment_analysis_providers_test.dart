@@ -18,10 +18,7 @@ void main() {
 
       container.read(sentimentFilterProvider.notifier).state =
           SentimentScore.positive;
-      expect(
-        container.read(sentimentFilterProvider),
-        SentimentScore.positive,
-      );
+      expect(container.read(sentimentFilterProvider), SentimentScore.positive);
     });
   });
 

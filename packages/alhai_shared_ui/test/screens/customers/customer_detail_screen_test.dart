@@ -58,16 +58,12 @@ void _setLargeViewport(WidgetTester tester) {
 
 Widget _buildTestWidget({String? customerId}) {
   return ProviderScope(
-    overrides: [
-      currentStoreIdProvider.overrideWith((ref) => 'test-store-id'),
-    ],
+    overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store-id')],
     child: MaterialApp(
       locale: const Locale('en'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: Scaffold(
-        body: CustomerDetailScreen(customerId: customerId),
-      ),
+      home: Scaffold(body: CustomerDetailScreen(customerId: customerId)),
     ),
   );
 }
@@ -122,15 +118,18 @@ void main() {
       expect(find.byType(CustomerDetailScreen), findsOneWidget);
     });
 
-    testWidgets('shows customer not found when account is null',
-        (tester) async {
+    testWidgets('shows customer not found when account is null', (
+      tester,
+    ) async {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockAccountsDao.getAccountById('missing-id'))
-          .thenAnswer((_) async => null);
-      when(() => mockTransactionsDao.getAccountTransactions('missing-id'))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockAccountsDao.getAccountById('missing-id'),
+      ).thenAnswer((_) async => null);
+      when(
+        () => mockTransactionsDao.getAccountTransactions('missing-id'),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget(customerId: 'missing-id'));
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -143,10 +142,12 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       final testAccount = _createTestAccount();
-      when(() => mockAccountsDao.getAccountById('acc-1'))
-          .thenAnswer((_) async => testAccount);
-      when(() => mockTransactionsDao.getAccountTransactions('acc-1'))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockAccountsDao.getAccountById('acc-1'),
+      ).thenAnswer((_) async => testAccount);
+      when(
+        () => mockTransactionsDao.getAccountTransactions('acc-1'),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget(customerId: 'acc-1'));
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -159,10 +160,12 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       final testAccount = _createTestAccount();
-      when(() => mockAccountsDao.getAccountById('acc-1'))
-          .thenAnswer((_) async => testAccount);
-      when(() => mockTransactionsDao.getAccountTransactions('acc-1'))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockAccountsDao.getAccountById('acc-1'),
+      ).thenAnswer((_) async => testAccount);
+      when(
+        () => mockTransactionsDao.getAccountTransactions('acc-1'),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget(customerId: 'acc-1'));
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -176,10 +179,12 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       final testAccount = _createTestAccount();
-      when(() => mockAccountsDao.getAccountById('acc-1'))
-          .thenAnswer((_) async => testAccount);
-      when(() => mockTransactionsDao.getAccountTransactions('acc-1'))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockAccountsDao.getAccountById('acc-1'),
+      ).thenAnswer((_) async => testAccount);
+      when(
+        () => mockTransactionsDao.getAccountTransactions('acc-1'),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget(customerId: 'acc-1'));
       await tester.pumpAndSettle(const Duration(seconds: 2));

@@ -56,8 +56,9 @@ void main() {
 
     group('pushPending', () {
       test('returns empty result when no pending items', () async {
-        when(() => mockSyncQueueDao.getPendingItems())
-            .thenAnswer((_) async => []);
+        when(
+          () => mockSyncQueueDao.getPendingItems(),
+        ).thenAnswer((_) async => []);
 
         final result = await strategy.pushPending();
 
@@ -82,14 +83,22 @@ void main() {
           ),
         ];
 
-        when(() => mockSyncQueueDao.getPendingItems())
-            .thenAnswer((_) async => items);
-        when(() => mockSyncQueueDao.markAsSyncing(any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockSyncQueueDao.markAsSynced(any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockMetadataDao.updateLastPushAt(any(), any(),
-            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
+        when(
+          () => mockSyncQueueDao.getPendingItems(),
+        ).thenAnswer((_) async => items);
+        when(
+          () => mockSyncQueueDao.markAsSyncing(any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockSyncQueueDao.markAsSynced(any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockMetadataDao.updateLastPushAt(
+            any(),
+            any(),
+            syncCount: any(named: 'syncCount'),
+          ),
+        ).thenAnswer((_) async {});
 
         final queryBuilder = MockSupabaseQueryBuilder();
         when(() => mockClient.from('sales')).thenAnswer((_) => queryBuilder);
@@ -114,8 +123,9 @@ void main() {
           ),
         ];
 
-        when(() => mockSyncQueueDao.getPendingItems())
-            .thenAnswer((_) async => items);
+        when(
+          () => mockSyncQueueDao.getPendingItems(),
+        ).thenAnswer((_) async => items);
 
         final result = await strategy.pushPending();
 
@@ -135,23 +145,33 @@ void main() {
           ),
         ];
 
-        when(() => mockSyncQueueDao.getPendingItems())
-            .thenAnswer((_) async => items);
-        when(() => mockSyncQueueDao.markAsSyncing(any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockSyncQueueDao.markAsFailed(any(), any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockSyncQueueDao.markAsConflict(any(), any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockMetadataDao.updateLastPushAt(any(), any(),
-            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
+        when(
+          () => mockSyncQueueDao.getPendingItems(),
+        ).thenAnswer((_) async => items);
+        when(
+          () => mockSyncQueueDao.markAsSyncing(any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockSyncQueueDao.markAsFailed(any(), any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockSyncQueueDao.markAsConflict(any(), any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockMetadataDao.updateLastPushAt(
+            any(),
+            any(),
+            syncCount: any(named: 'syncCount'),
+          ),
+        ).thenAnswer((_) async {});
 
         final queryBuilder = MockSupabaseQueryBuilder();
         when(() => mockClient.from('sales')).thenAnswer((_) => queryBuilder);
         // Make upsert fail by throwing synchronously
-        when(() => queryBuilder.upsert(any(),
-                onConflict: any(named: 'onConflict')))
-            .thenThrow(Exception('Server error'));
+        when(
+          () =>
+              queryBuilder.upsert(any(), onConflict: any(named: 'onConflict')),
+        ).thenThrow(Exception('Server error'));
 
         final result = await strategy.pushPending();
 
@@ -169,14 +189,22 @@ void main() {
           ),
         ];
 
-        when(() => mockSyncQueueDao.getPendingItems())
-            .thenAnswer((_) async => items);
-        when(() => mockSyncQueueDao.markAsSyncing(any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockSyncQueueDao.markAsSynced(any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockMetadataDao.updateLastPushAt(any(), any(),
-            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
+        when(
+          () => mockSyncQueueDao.getPendingItems(),
+        ).thenAnswer((_) async => items);
+        when(
+          () => mockSyncQueueDao.markAsSyncing(any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockSyncQueueDao.markAsSynced(any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockMetadataDao.updateLastPushAt(
+            any(),
+            any(),
+            syncCount: any(named: 'syncCount'),
+          ),
+        ).thenAnswer((_) async {});
 
         final queryBuilder = MockSupabaseQueryBuilder();
         when(() => mockClient.from('sales')).thenAnswer((_) => queryBuilder);
@@ -198,8 +226,9 @@ void main() {
           ),
         ];
 
-        when(() => mockSyncQueueDao.getPendingItems())
-            .thenAnswer((_) async => items);
+        when(
+          () => mockSyncQueueDao.getPendingItems(),
+        ).thenAnswer((_) async => items);
 
         final result = await strategy.pushPending();
 
@@ -209,8 +238,9 @@ void main() {
       });
 
       test('catches general strategy errors', () async {
-        when(() => mockSyncQueueDao.getPendingItems())
-            .thenThrow(Exception('DB connection failed'));
+        when(
+          () => mockSyncQueueDao.getPendingItems(),
+        ).thenThrow(Exception('DB connection failed'));
 
         final result = await strategy.pushPending();
 
@@ -250,20 +280,12 @@ void main() {
     });
 
     test('no errors when failedCount is 0', () {
-      final result = PushResult(
-        successCount: 5,
-        failedCount: 0,
-        errors: [],
-      );
+      final result = PushResult(successCount: 5, failedCount: 0, errors: []);
       expect(result.hasErrors, isFalse);
     });
 
     test('totalCount sums success and failed', () {
-      final result = PushResult(
-        successCount: 3,
-        failedCount: 2,
-        errors: [],
-      );
+      final result = PushResult(successCount: 3, failedCount: 2, errors: []);
       expect(result.totalCount, 5);
     });
   });

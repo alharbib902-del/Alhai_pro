@@ -47,8 +47,9 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('shows switch list tiles for shipping providers',
-        (tester) async {
+    testWidgets('shows switch list tiles for shipping providers', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();

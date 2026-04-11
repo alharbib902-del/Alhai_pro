@@ -59,13 +59,19 @@ class AuthService {
       case UserRole.storeOwner:
         return permission != 'manage_admins';
       case UserRole.employee:
-        return ['create_order', 'view_products', 'manage_cash']
-            .contains(permission);
+        return [
+          'create_order',
+          'view_products',
+          'manage_cash',
+        ].contains(permission);
       case UserRole.delivery:
         return ['view_deliveries', 'update_delivery'].contains(permission);
       case UserRole.customer:
-        return ['view_products', 'create_order', 'view_orders']
-            .contains(permission);
+        return [
+          'view_products',
+          'create_order',
+          'view_orders',
+        ].contains(permission);
     }
   }
 }

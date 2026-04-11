@@ -54,27 +54,32 @@ void main() {
     group('getDailySummary', () {
       test('returns SalesSummary on success', () async {
         // Arrange
-        when(() => mockRemote.getDailySummary(any(), any()))
-            .thenAnswer((_) async => testSalesSummaryResponse);
+        when(
+          () => mockRemote.getDailySummary(any(), any()),
+        ).thenAnswer((_) async => testSalesSummaryResponse);
 
         // Act
-        final result =
-            await repository.getDailySummary('store-1', DateTime(2026, 1, 19));
+        final result = await repository.getDailySummary(
+          'store-1',
+          DateTime(2026, 1, 19),
+        );
 
         // Assert
         expect(result.revenue, equals(10000.0));
         expect(result.ordersCount, equals(50));
-        verify(() => mockRemote.getDailySummary('store-1', '2026-01-19'))
-            .called(1);
+        verify(
+          () => mockRemote.getDailySummary('store-1', '2026-01-19'),
+        ).called(1);
       });
 
       test('throws NetworkException on connection error', () async {
         // Arrange
-        when(() => mockRemote.getDailySummary(any(), any()))
-            .thenThrow(DioException(
-          type: DioExceptionType.connectionError,
-          requestOptions: RequestOptions(path: '/reports'),
-        ));
+        when(() => mockRemote.getDailySummary(any(), any())).thenThrow(
+          DioException(
+            type: DioExceptionType.connectionError,
+            requestOptions: RequestOptions(path: '/reports'),
+          ),
+        );
 
         // Act & Assert
         expect(
@@ -87,12 +92,14 @@ void main() {
     group('getTopProducts', () {
       test('returns list of ProductSales', () async {
         // Arrange
-        when(() => mockRemote.getTopProducts(
-              any(),
-              startDate: any(named: 'startDate'),
-              endDate: any(named: 'endDate'),
-              limit: any(named: 'limit'),
-            )).thenAnswer((_) async => [testProductSalesResponse]);
+        when(
+          () => mockRemote.getTopProducts(
+            any(),
+            startDate: any(named: 'startDate'),
+            endDate: any(named: 'endDate'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenAnswer((_) async => [testProductSalesResponse]);
 
         // Act
         final result = await repository.getTopProducts(
@@ -112,8 +119,9 @@ void main() {
     group('getInventoryValue', () {
       test('returns InventoryValue on success', () async {
         // Arrange
-        when(() => mockRemote.getInventoryValue(any()))
-            .thenAnswer((_) async => testInventoryValueResponse);
+        when(
+          () => mockRemote.getInventoryValue(any()),
+        ).thenAnswer((_) async => testInventoryValueResponse);
 
         // Act
         final result = await repository.getInventoryValue('store-1');
@@ -128,12 +136,15 @@ void main() {
     group('getHourlySales', () {
       test('returns hourly sales map', () async {
         // Arrange
-        when(() => mockRemote.getHourlySales(any(), any()))
-            .thenAnswer((_) async => {'9': 500.0, '10': 800.0, '11': 1200.0});
+        when(
+          () => mockRemote.getHourlySales(any(), any()),
+        ).thenAnswer((_) async => {'9': 500.0, '10': 800.0, '11': 1200.0});
 
         // Act
-        final result =
-            await repository.getHourlySales('store-1', DateTime(2026, 1, 19));
+        final result = await repository.getHourlySales(
+          'store-1',
+          DateTime(2026, 1, 19),
+        );
 
         // Assert
         expect(result[9], equals(500.0));

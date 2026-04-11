@@ -102,19 +102,13 @@ void main() {
 
     group('calculateDiscount', () {
       test('should calculate percentage discount', () {
-        final promo = createPromotion(
-          type: PromoType.percentage,
-          value: 10.0,
-        );
+        final promo = createPromotion(type: PromoType.percentage, value: 10.0);
 
         expect(promo.calculateDiscount(200.0), equals(20.0));
       });
 
       test('should calculate fixed amount discount', () {
-        final promo = createPromotion(
-          type: PromoType.fixedAmount,
-          value: 25.0,
-        );
+        final promo = createPromotion(type: PromoType.fixedAmount, value: 25.0);
 
         expect(promo.calculateDiscount(200.0), equals(25.0));
       });
@@ -222,11 +216,17 @@ void main() {
 
     test('fromDbValue should parse values correctly', () {
       expect(
-          PromoTypeExt.fromDbValue('percentage'), equals(PromoType.percentage));
-      expect(PromoTypeExt.fromDbValue('fixed_amount'),
-          equals(PromoType.fixedAmount));
+        PromoTypeExt.fromDbValue('percentage'),
+        equals(PromoType.percentage),
+      );
       expect(
-          PromoTypeExt.fromDbValue('buy_x_get_y'), equals(PromoType.buyXGetY));
+        PromoTypeExt.fromDbValue('fixed_amount'),
+        equals(PromoType.fixedAmount),
+      );
+      expect(
+        PromoTypeExt.fromDbValue('buy_x_get_y'),
+        equals(PromoType.buyXGetY),
+      );
       expect(PromoTypeExt.fromDbValue('unknown'), equals(PromoType.percentage));
     });
   });

@@ -15,10 +15,7 @@ class ProfileScreen extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('حسابي'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('حسابي'), centerTitle: true),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -75,24 +72,30 @@ class ProfileScreen extends ConsumerWidget {
                         ListTile(
                           leading: const Icon(Icons.person_outline),
                           title: const Text('تعديل الملف الشخصي'),
-                          trailing:
-                              const Icon(Icons.arrow_forward_ios, size: 16),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                          ),
                           onTap: () => context.push('/profile-setup'),
                         ),
                         const Divider(height: 1),
                         ListTile(
                           leading: const Icon(Icons.history),
                           title: const Text('سجل الورديات'),
-                          trailing:
-                              const Icon(Icons.arrow_forward_ios, size: 16),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                          ),
                           onTap: () {},
                         ),
                         const Divider(height: 1),
                         ListTile(
                           leading: const Icon(Icons.help_outline),
                           title: const Text('المساعدة'),
-                          trailing:
-                              const Icon(Icons.arrow_forward_ios, size: 16),
+                          trailing: const Icon(
+                            Icons.arrow_forward_ios,
+                            size: 16,
+                          ),
                           onTap: () {},
                         ),
                       ],
@@ -106,8 +109,10 @@ class ProfileScreen extends ConsumerWidget {
                     button: true,
                     child: Card(
                       child: ListTile(
-                        leading:
-                            Icon(Icons.logout, color: theme.colorScheme.error),
+                        leading: Icon(
+                          Icons.logout,
+                          color: theme.colorScheme.error,
+                        ),
                         title: Text(
                           'تسجيل الخروج',
                           style: TextStyle(color: theme.colorScheme.error),
@@ -118,7 +123,8 @@ class ProfileScreen extends ConsumerWidget {
                             builder: (ctx) => AlertDialog(
                               title: const Text('تسجيل الخروج'),
                               content: const Text(
-                                  'هل تريد تسجيل الخروج من التطبيق؟'),
+                                'هل تريد تسجيل الخروج من التطبيق؟',
+                              ),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(ctx, false),
@@ -127,8 +133,9 @@ class ProfileScreen extends ConsumerWidget {
                                 FilledButton(
                                   onPressed: () => Navigator.pop(ctx, true),
                                   style: FilledButton.styleFrom(
-                                    backgroundColor:
-                                        Theme.of(ctx).colorScheme.error,
+                                    backgroundColor: Theme.of(
+                                      ctx,
+                                    ).colorScheme.error,
                                   ),
                                   child: const Text('خروج'),
                                 ),

@@ -69,7 +69,8 @@ class ZatcaModule {
     if (!getIt.isRegistered<CertificateStorage>()) {
       if (certificateStorage != null) {
         getIt.registerLazySingleton<CertificateStorage>(
-            () => certificateStorage);
+          () => certificateStorage,
+        );
       } else {
         getIt.registerLazySingleton<CertificateStorage>(
           () => InMemoryCertificateStorage(),
@@ -124,9 +125,7 @@ class ZatcaModule {
       );
     }
     if (!getIt.isRegistered<ZatcaOfflineQueue>()) {
-      getIt.registerLazySingleton<ZatcaOfflineQueue>(
-        () => ZatcaOfflineQueue(),
-      );
+      getIt.registerLazySingleton<ZatcaOfflineQueue>(() => ZatcaOfflineQueue());
     }
     if (!getIt.isRegistered<ZatcaInvoiceService>()) {
       getIt.registerLazySingleton<ZatcaInvoiceService>(

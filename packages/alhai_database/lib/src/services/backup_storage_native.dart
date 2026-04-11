@@ -130,7 +130,8 @@ Future<void> copyDatabaseFile(String backupId, {String? dbName}) async {
   if (kDebugMode) {
     final size = backupFile.lengthSync();
     debugPrint(
-        '[Backup] Native: copied DB file (${(size / 1024).toStringAsFixed(1)} KB)');
+      '[Backup] Native: copied DB file (${(size / 1024).toStringAsFixed(1)} KB)',
+    );
   }
 }
 

@@ -61,12 +61,11 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
       children: [
         AppHeader(
           title: l10n.aiFraudDetection,
-          onMenuTap:
-              !isWideScreen ? () => Scaffold.of(context).openDrawer() : null,
+          onMenuTap: !isWideScreen
+              ? () => Scaffold.of(context).openDrawer()
+              : null,
         ),
-        Expanded(
-          child: _buildContent(isDark, isWideScreen),
-        ),
+        Expanded(child: _buildContent(isDark, isWideScreen)),
       ],
     );
   }
@@ -79,10 +78,13 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
 
     return alertsAsync.when(
       loading: () => const Center(
-          child: CircularProgressIndicator(color: AppColors.primary)),
+        child: CircularProgressIndicator(color: AppColors.primary),
+      ),
       error: (e, _) => Center(
-          child: Text(
-              AppLocalizations.of(context).aiErrorWithMessage(e.toString()))),
+        child: Text(
+          AppLocalizations.of(context).aiErrorWithMessage(e.toString()),
+        ),
+      ),
       data: (alerts) {
         return SingleChildScrollView(
           padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -164,7 +166,10 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
   }
 
   Widget _buildSummaryCards(
-      bool isDark, FraudDetectionSummary summary, bool isWideScreen) {
+    bool isDark,
+    FraudDetectionSummary summary,
+    bool isWideScreen,
+  ) {
     final l10n = AppLocalizations.of(context);
     final cards = [
       _SummaryCardData(
@@ -189,8 +194,9 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
         title: l10n.aiRiskLevel,
         value: '${summary.overallRiskScore.toInt()}%',
         icon: Icons.shield_rounded,
-        color:
-            summary.overallRiskScore > 60 ? AppColors.error : AppColors.success,
+        color: summary.overallRiskScore > 60
+            ? AppColors.error
+            : AppColors.success,
       ),
     ];
 
@@ -216,8 +222,9 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color:
-                          Colors.black.withValues(alpha: isDark ? 0.2 : 0.04),
+                      color: Colors.black.withValues(
+                        alpha: isDark ? 0.2 : 0.04,
+                      ),
                       blurRadius: 8,
                       offset: const Offset(0, 2),
                     ),
@@ -251,8 +258,9 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
                           Text(
                             card.value,
                             style: TextStyle(
-                              color:
-                                  isDark ? Colors.white : AppColors.textPrimary,
+                              color: isDark
+                                  ? Colors.white
+                                  : AppColors.textPrimary,
                               fontSize: 22,
                               fontWeight: FontWeight.bold,
                             ),
@@ -278,8 +286,9 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -294,8 +303,11 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
         children: [
           Row(
             children: [
-              const Icon(Icons.speed_rounded,
-                  color: AppColors.primary, size: 22),
+              const Icon(
+                Icons.speed_rounded,
+                color: AppColors.primary,
+                size: 22,
+              ),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.aiRiskMeter,
@@ -355,8 +367,10 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
             runSpacing: 8,
             children: summary.patternCounts.entries.map((entry) {
               return Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 6,
+                ),
                 decoration: BoxDecoration(
                   color: isDark
                       ? Colors.white.withValues(alpha: 0.05)
@@ -404,8 +418,11 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.check_circle_outline_rounded,
-                size: 64, color: AppColors.success),
+            const Icon(
+              Icons.check_circle_outline_rounded,
+              size: 64,
+              color: AppColors.success,
+            ),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
               AppLocalizations.of(context).aiNoFraudAlerts,
@@ -440,13 +457,19 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
   }
 
   Widget _buildBehaviorTab(
-      bool isDark, List<BehaviorScore> scores, bool isWideScreen) {
+    bool isDark,
+    List<BehaviorScore> scores,
+    bool isWideScreen,
+  ) {
     if (isWideScreen) {
       return GridView.builder(
         padding: const EdgeInsets.all(AlhaiSpacing.xxs),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount:
-              getResponsiveGridColumns(context, mobile: 2, desktop: 4),
+          crossAxisCount: getResponsiveGridColumns(
+            context,
+            mobile: 2,
+            desktop: 4,
+          ),
           childAspectRatio: 0.75,
           crossAxisSpacing: 16,
           mainAxisSpacing: 16,
@@ -463,10 +486,7 @@ class _AiFraudDetectionScreenState extends ConsumerState<AiFraudDetectionScreen>
       itemCount: scores.length,
       separatorBuilder: (_, __) => const SizedBox(height: AlhaiSpacing.sm),
       itemBuilder: (context, index) {
-        return BehaviorScoreWidget(
-          score: scores[index],
-          compact: true,
-        );
+        return BehaviorScoreWidget(score: scores[index], compact: true);
       },
     );
   }

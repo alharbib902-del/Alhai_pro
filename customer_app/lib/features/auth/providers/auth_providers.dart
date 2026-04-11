@@ -19,17 +19,18 @@ final sendOtpProvider = FutureProvider.family<void, String>((ref, phone) async {
 
 /// Verify OTP and authenticate.
 final verifyOtpProvider =
-    FutureProvider.family<AuthResult, ({String phone, String otp})>(
-  (ref, params) async {
-    final datasource = locator<AuthDatasource>();
-    final result = await datasource.verifyOtp(params.phone, params.otp);
+    FutureProvider.family<AuthResult, ({String phone, String otp})>((
+      ref,
+      params,
+    ) async {
+      final datasource = locator<AuthDatasource>();
+      final result = await datasource.verifyOtp(params.phone, params.otp);
 
-    // Update current user state
-    ref.read(currentUserProvider.notifier).state = result.user;
+      // Update current user state
+      ref.read(currentUserProvider.notifier).state = result.user;
 
-    return result;
-  },
-);
+      return result;
+    });
 
 /// Load current user on app start.
 final loadCurrentUserProvider = FutureProvider<User?>((ref) async {

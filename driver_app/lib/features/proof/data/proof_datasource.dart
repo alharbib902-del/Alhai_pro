@@ -24,7 +24,9 @@ class ProofDatasource {
     if (photoBytes != null) {
       final fileName =
           '${deliveryId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      await _client.storage.from('delivery-proofs').uploadBinary(
+      await _client.storage
+          .from('delivery-proofs')
+          .uploadBinary(
             fileName,
             photoBytes,
             fileOptions: const FileOptions(contentType: 'image/jpeg'),

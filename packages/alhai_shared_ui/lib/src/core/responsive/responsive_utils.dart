@@ -148,22 +148,13 @@ class ResponsiveGap extends StatelessWidget {
   });
 
   /// مسافة صغيرة
-  const ResponsiveGap.sm({super.key})
-      : mobile = 8,
-        tablet = 12,
-        desktop = 16;
+  const ResponsiveGap.sm({super.key}) : mobile = 8, tablet = 12, desktop = 16;
 
   /// مسافة متوسطة
-  const ResponsiveGap.md({super.key})
-      : mobile = 16,
-        tablet = 20,
-        desktop = 24;
+  const ResponsiveGap.md({super.key}) : mobile = 16, tablet = 20, desktop = 24;
 
   /// مسافة كبيرة
-  const ResponsiveGap.lg({super.key})
-      : mobile = 24,
-        tablet = 28,
-        desktop = 32;
+  const ResponsiveGap.lg({super.key}) : mobile = 24, tablet = 28, desktop = 32;
 
   @override
   Widget build(BuildContext context) {
@@ -242,27 +233,27 @@ class ResponsiveVisibility extends StatelessWidget {
     super.key,
     required this.child,
     this.replacement,
-  })  : visibleOnMobile = true,
-        visibleOnTablet = false,
-        visibleOnDesktop = false;
+  }) : visibleOnMobile = true,
+       visibleOnTablet = false,
+       visibleOnDesktop = false;
 
   /// يظهر فقط على سطح المكتب
   const ResponsiveVisibility.desktopOnly({
     super.key,
     required this.child,
     this.replacement,
-  })  : visibleOnMobile = false,
-        visibleOnTablet = false,
-        visibleOnDesktop = true;
+  }) : visibleOnMobile = false,
+       visibleOnTablet = false,
+       visibleOnDesktop = true;
 
   /// مخفي على الجوال
   const ResponsiveVisibility.hiddenOnMobile({
     super.key,
     required this.child,
     this.replacement,
-  })  : visibleOnMobile = false,
-        visibleOnTablet = true,
-        visibleOnDesktop = true;
+  }) : visibleOnMobile = false,
+       visibleOnTablet = true,
+       visibleOnDesktop = true;
 
   @override
   Widget build(BuildContext context) {
@@ -298,12 +289,10 @@ class ResponsiveConstraints extends StatelessWidget {
   });
 
   /// قيود لـ Card/Dialog
-  const ResponsiveConstraints.card({
-    super.key,
-    required this.child,
-  })  : maxWidthMobile = double.infinity,
-        maxWidthTablet = 600,
-        maxWidthDesktop = 800;
+  const ResponsiveConstraints.card({super.key, required this.child})
+    : maxWidthMobile = double.infinity,
+      maxWidthTablet = 600,
+      maxWidthDesktop = 800;
 
   @override
   Widget build(BuildContext context) {

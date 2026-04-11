@@ -8,11 +8,9 @@ class AIService {
   final String? _visionApiKey;
   final String? _openAiApiKey;
 
-  AIService({
-    String? visionApiKey,
-    String? openAiApiKey,
-  })  : _visionApiKey = visionApiKey,
-        _openAiApiKey = openAiApiKey;
+  AIService({String? visionApiKey, String? openAiApiKey})
+    : _visionApiKey = visionApiKey,
+      _openAiApiKey = openAiApiKey;
 
   /// التحقق من تكوين OCR
   bool get isOcrConfigured => _visionApiKey != null && _visionApiKey.isNotEmpty;
@@ -25,10 +23,7 @@ class AIService {
   /// استخراج النص من صورة
   Future<OcrResult> extractText(Uint8List imageBytes) async {
     if (!isOcrConfigured) {
-      return const OcrResult(
-        success: false,
-        error: 'خدمة OCR غير مكونة',
-      );
+      return const OcrResult(success: false, error: 'خدمة OCR غير مكونة');
     }
 
     try {
@@ -43,10 +38,7 @@ class AIService {
         confidence: 0.95,
       );
     } catch (e) {
-      return OcrResult(
-        success: false,
-        error: e.toString(),
-      );
+      return OcrResult(success: false, error: e.toString());
     }
   }
 
@@ -70,10 +62,7 @@ class AIService {
         price: null,
       );
     } catch (e) {
-      return ProductOcrResult(
-        success: false,
-        error: e.toString(),
-      );
+      return ProductOcrResult(success: false, error: e.toString());
     }
   }
 
@@ -181,10 +170,7 @@ class AIService {
         }),
       );
     } catch (e) {
-      return SalesPredictionResult(
-        success: false,
-        error: e.toString(),
-      );
+      return SalesPredictionResult(success: false, error: e.toString());
     }
   }
 
@@ -213,10 +199,7 @@ class AIService {
         confidence: 0.8,
       );
     } catch (e) {
-      return InventoryPredictionResult(
-        success: false,
-        error: e.toString(),
-      );
+      return InventoryPredictionResult(success: false, error: e.toString());
     }
   }
 
@@ -243,10 +226,7 @@ class AIService {
         recommendations: [],
       );
     } catch (e) {
-      return ProductRecommendationsResult(
-        success: false,
-        error: e.toString(),
-      );
+      return ProductRecommendationsResult(success: false, error: e.toString());
     }
   }
 
@@ -257,10 +237,7 @@ class AIService {
   Future<SentimentResult> analyzeSentiment(String text) async {
     try {
       if (text.trim().isEmpty) {
-        return const SentimentResult(
-          success: false,
-          error: 'النص فارغ',
-        );
+        return const SentimentResult(success: false, error: 'النص فارغ');
       }
 
       final lowerText = text.toLowerCase();
@@ -330,10 +307,7 @@ class AIService {
         matchedKeywords: matchCount,
       );
     } catch (e) {
-      return SentimentResult(
-        success: false,
-        error: 'فشل تحليل المشاعر: $e',
-      );
+      return SentimentResult(success: false, error: 'فشل تحليل المشاعر: $e');
     }
   }
 
@@ -548,11 +522,7 @@ class BarcodeOcrResult {
   final List<String>? barcodes;
   final String? error;
 
-  const BarcodeOcrResult({
-    required this.success,
-    this.barcodes,
-    this.error,
-  });
+  const BarcodeOcrResult({required this.success, this.barcodes, this.error});
 }
 
 // ==================== نتائج التوقعات ====================

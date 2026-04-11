@@ -87,12 +87,15 @@ class AppTheme {
     final brightness = isDark ? Brightness.dark : Brightness.light;
     final scaffoldBg = isDark ? AppColors.backgroundDark : AppColors.background;
     final surface = isDark ? AppColors.surfaceDark : AppColors.surface;
-    final surfaceVariant =
-        isDark ? AppColors.surfaceVariantDark : AppColors.surfaceVariant;
-    final textPrimary =
-        isDark ? AppColors.textPrimaryDark : AppColors.textPrimary;
-    final textSecondary =
-        isDark ? AppColors.textSecondaryDark : AppColors.textSecondary;
+    final surfaceVariant = isDark
+        ? AppColors.surfaceVariantDark
+        : AppColors.surfaceVariant;
+    final textPrimary = isDark
+        ? AppColors.textPrimaryDark
+        : AppColors.textPrimary;
+    final textSecondary = isDark
+        ? AppColors.textSecondaryDark
+        : AppColors.textSecondary;
     final textMuted = isDark ? AppColors.textMutedDark : AppColors.textMuted;
     final border = isDark ? AppColors.borderDark : AppColors.border;
     final disabledBg = isDark ? AppColors.grey700 : AppColors.grey200;
@@ -155,8 +158,10 @@ class AppTheme {
           foregroundColor: AppColors.textOnPrimary,
           disabledBackgroundColor: disabledBg,
           disabledForegroundColor: disabledFg,
-          minimumSize:
-              const Size(AppButtonSize.minWidth, AppButtonSize.heightMd),
+          minimumSize: const Size(
+            AppButtonSize.minWidth,
+            AppButtonSize.heightMd,
+          ),
           padding: const EdgeInsets.symmetric(
             horizontal: AppButtonSize.paddingHorizontal,
             vertical: AppButtonSize.paddingVertical,
@@ -177,8 +182,10 @@ class AppTheme {
           foregroundColor: AppColors.textOnPrimary,
           disabledBackgroundColor: disabledBg,
           disabledForegroundColor: disabledFg,
-          minimumSize:
-              const Size(AppButtonSize.minWidth, AppButtonSize.heightMd),
+          minimumSize: const Size(
+            AppButtonSize.minWidth,
+            AppButtonSize.heightMd,
+          ),
           padding: const EdgeInsets.symmetric(
             horizontal: AppButtonSize.paddingHorizontal,
             vertical: AppButtonSize.paddingVertical,
@@ -197,8 +204,10 @@ class AppTheme {
         style: OutlinedButton.styleFrom(
           foregroundColor: AppColors.primary,
           disabledForegroundColor: disabledFg,
-          minimumSize:
-              const Size(AppButtonSize.minWidth, AppButtonSize.heightMd),
+          minimumSize: const Size(
+            AppButtonSize.minWidth,
+            AppButtonSize.heightMd,
+          ),
           padding: const EdgeInsets.symmetric(
             horizontal: AppButtonSize.paddingHorizontal,
             vertical: AppButtonSize.paddingVertical,
@@ -326,8 +335,9 @@ class AppTheme {
         backgroundColor: surface,
         surfaceTintColor: Colors.transparent,
         shape: const RoundedRectangleBorder(
-          borderRadius:
-              BorderRadiusDirectional.horizontal(start: Radius.circular(0)),
+          borderRadius: BorderRadiusDirectional.horizontal(
+            start: Radius.circular(0),
+          ),
         ),
       ),
 
@@ -342,8 +352,9 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppDialogSize.radius),
         ),
         titleTextStyle: AppTypography.titleLarge.copyWith(color: textPrimary),
-        contentTextStyle:
-            AppTypography.bodyMedium.copyWith(color: textSecondary),
+        contentTextStyle: AppTypography.bodyMedium.copyWith(
+          color: textSecondary,
+        ),
       ),
 
       // ====================================================================
@@ -403,11 +414,7 @@ class AppTheme {
       // ====================================================================
       // Divider
       // ====================================================================
-      dividerTheme: DividerThemeData(
-        color: border,
-        space: 1,
-        thickness: 1,
-      ),
+      dividerTheme: DividerThemeData(color: border, space: 1, thickness: 1),
 
       // ====================================================================
       // List Tile
@@ -418,8 +425,9 @@ class AppTheme {
           borderRadius: BorderRadius.circular(AppRadius.md),
         ),
         titleTextStyle: AppTypography.bodyLarge.copyWith(color: textPrimary),
-        subtitleTextStyle:
-            AppTypography.bodySmall.copyWith(color: textSecondary),
+        subtitleTextStyle: AppTypography.bodySmall.copyWith(
+          color: textSecondary,
+        ),
         leadingAndTrailingTextStyle: AppTypography.labelMedium.copyWith(
           color: textSecondary,
         ),
@@ -445,8 +453,9 @@ class AppTheme {
       progressIndicatorTheme: ProgressIndicatorThemeData(
         color: AppColors.primary,
         linearTrackColor: isDark ? AppColors.grey700 : AppColors.primarySurface,
-        circularTrackColor:
-            isDark ? AppColors.grey700 : AppColors.primarySurface,
+        circularTrackColor: isDark
+            ? AppColors.grey700
+            : AppColors.primarySurface,
       ),
 
       // ====================================================================

@@ -98,8 +98,10 @@ void main() {
       final forecast = await service.forecastRoi(promotions.first);
 
       for (int i = 1; i < forecast.length; i++) {
-        expect(forecast[i].projectedRevenue,
-            greaterThanOrEqualTo(forecast[i - 1].projectedRevenue));
+        expect(
+          forecast[i].projectedRevenue,
+          greaterThanOrEqualTo(forecast[i - 1].projectedRevenue),
+        );
       }
     });
 
@@ -108,8 +110,10 @@ void main() {
       final forecast = await service.forecastRoi(promotions.first);
 
       for (int i = 1; i < forecast.length; i++) {
-        expect(forecast[i].projectedCost,
-            greaterThanOrEqualTo(forecast[i - 1].projectedCost));
+        expect(
+          forecast[i].projectedCost,
+          greaterThanOrEqualTo(forecast[i - 1].projectedCost),
+        );
       }
     });
   });
@@ -131,21 +135,27 @@ void main() {
     test('getPromotionTypeLabel returns label for each type', () {
       for (final type in PromotionType.values) {
         expect(
-            AiPromotionDesignerService.getPromotionTypeLabel(type), isNotEmpty);
+          AiPromotionDesignerService.getPromotionTypeLabel(type),
+          isNotEmpty,
+        );
       }
     });
 
     test('getPromotionTypeColorValue returns color for each type', () {
       for (final type in PromotionType.values) {
-        expect(AiPromotionDesignerService.getPromotionTypeColorValue(type),
-            greaterThan(0));
+        expect(
+          AiPromotionDesignerService.getPromotionTypeColorValue(type),
+          greaterThan(0),
+        );
       }
     });
 
     test('getPromotionTypeEmoji returns emoji for each type', () {
       for (final type in PromotionType.values) {
         expect(
-            AiPromotionDesignerService.getPromotionTypeEmoji(type), isNotEmpty);
+          AiPromotionDesignerService.getPromotionTypeEmoji(type),
+          isNotEmpty,
+        );
       }
     });
 

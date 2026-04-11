@@ -52,13 +52,8 @@ void main() {
     });
 
     test('hasExistingCustomer يعود true فقط عند وجود customerId', () {
-      const withId = PhoneEntryResult(
-        phone: '0512345678',
-        customerId: 'id-1',
-      );
-      const withoutId = PhoneEntryResult(
-        phone: '0512345678',
-      );
+      const withId = PhoneEntryResult(phone: '0512345678', customerId: 'id-1');
+      const withoutId = PhoneEntryResult(phone: '0512345678');
 
       expect(withId.hasExistingCustomer, isTrue);
       expect(withoutId.hasExistingCustomer, isFalse);

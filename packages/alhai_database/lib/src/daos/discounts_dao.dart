@@ -43,11 +43,12 @@ class DiscountsDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<CouponsTableData?> getCouponByCode(String code, String storeId) {
-    return (select(couponsTable)
-          ..where((c) =>
+    return (select(couponsTable)..where(
+          (c) =>
               c.storeId.equals(storeId) &
               c.code.equals(code) &
-              c.isActive.equals(true)))
+              c.isActive.equals(true),
+        ))
         .getSingleOrNull();
   }
 
@@ -69,12 +70,13 @@ class DiscountsDao extends DatabaseAccessor<AppDatabase>
 
   Future<List<PromotionsTableData>> getActivePromotions(String storeId) {
     final now = DateTime.now();
-    return (select(promotionsTable)
-          ..where((p) =>
+    return (select(promotionsTable)..where(
+          (p) =>
               p.storeId.equals(storeId) &
               p.isActive.equals(true) &
               p.startDate.isSmallerOrEqualValue(now) &
-              p.endDate.isBiggerOrEqualValue(now)))
+              p.endDate.isBiggerOrEqualValue(now),
+        ))
         .get();
   }
 

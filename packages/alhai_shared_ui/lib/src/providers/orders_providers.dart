@@ -29,8 +29,9 @@ class OrderDetailData {
 // ============================================================================
 
 /// قائمة جميع الطلبات
-final ordersListProvider =
-    FutureProvider.autoDispose<List<OrdersTableData>>((ref) async {
+final ordersListProvider = FutureProvider.autoDispose<List<OrdersTableData>>((
+  ref,
+) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
   final db = GetIt.I<AppDatabase>();
@@ -40,24 +41,26 @@ final ordersListProvider =
 /// الطلبات حسب الحالة
 final ordersByStatusProvider = FutureProvider.autoDispose
     .family<List<OrdersTableData>, String>((ref, status) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
-  final db = GetIt.I<AppDatabase>();
-  return db.ordersDao.getOrdersByStatus(storeId, status);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
+      final db = GetIt.I<AppDatabase>();
+      return db.ordersDao.getOrdersByStatus(storeId, status);
+    });
 
 /// الطلبات المعلقة
-final pendingOrdersProvider =
-    FutureProvider.autoDispose<List<OrdersTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
-  final db = GetIt.I<AppDatabase>();
-  return db.ordersDao.getPendingOrders(storeId);
-});
+final pendingOrdersProvider = FutureProvider.autoDispose<List<OrdersTableData>>(
+  (ref) async {
+    final storeId = ref.watch(currentStoreIdProvider);
+    if (storeId == null) return [];
+    final db = GetIt.I<AppDatabase>();
+    return db.ordersDao.getPendingOrders(storeId);
+  },
+);
 
 /// إحصائيات حالات الطلبات
-final ordersStatsProvider =
-    FutureProvider.autoDispose<Map<String, int>>((ref) async {
+final ordersStatsProvider = FutureProvider.autoDispose<Map<String, int>>((
+  ref,
+) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return {};
   final db = GetIt.I<AppDatabase>();
@@ -73,8 +76,9 @@ final pendingOrdersCountProvider = FutureProvider.autoDispose<int>((ref) async {
 });
 
 /// إجمالي طلبات اليوم
-final todayOrdersTotalProvider =
-    FutureProvider.autoDispose<double>((ref) async {
+final todayOrdersTotalProvider = FutureProvider.autoDispose<double>((
+  ref,
+) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return 0.0;
   final db = GetIt.I<AppDatabase>();
@@ -84,21 +88,21 @@ final todayOrdersTotalProvider =
 /// تفاصيل طلب واحد
 final orderDetailProvider = FutureProvider.autoDispose
     .family<OrderDetailData?, String>((ref, id) async {
-  final db = GetIt.I<AppDatabase>();
-  final order = await db.ordersDao.getOrderById(id);
-  if (order == null) return null;
-  final items = await db.ordersDao.getOrderItems(id);
-  return OrderDetailData(order: order, items: items);
-});
+      final db = GetIt.I<AppDatabase>();
+      final order = await db.ordersDao.getOrderById(id);
+      if (order == null) return null;
+      final items = await db.ordersDao.getOrderItems(id);
+      return OrderDetailData(order: order, items: items);
+    });
 
 /// إحصائيات الطلبات التفصيلية
 final ordersDetailedStatsProvider =
     FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return {};
-  final db = GetIt.I<AppDatabase>();
-  return db.ordersDao.getOrdersStats(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return {};
+      final db = GetIt.I<AppDatabase>();
+      return db.ordersDao.getOrdersStats(storeId);
+    });
 
 // ============================================================================
 // ACTION HELPERS
@@ -106,7 +110,10 @@ final ordersDetailedStatsProvider =
 
 /// تحديث حالة الطلب
 Future<void> updateOrderStatus(
-    WidgetRef ref, String orderId, String newStatus) async {
+  WidgetRef ref,
+  String orderId,
+  String newStatus,
+) async {
   final db = GetIt.I<AppDatabase>();
 
   // جلب الحالة القديمة قبل التحديث
@@ -136,7 +143,7 @@ Future<void> updateOrderStatus(
       orderId,
       oldStatus,
       newStatus,
-      now.millisecondsSinceEpoch ~/ 1000
+      now.millisecondsSinceEpoch ~/ 1000,
     ],
   );
   await db.syncQueueDao.enqueue(
@@ -188,7 +195,7 @@ Future<void> cancelOrder(WidgetRef ref, String orderId, String reason) async {
       oldStatus,
       'cancelled',
       reason,
-      now.millisecondsSinceEpoch ~/ 1000
+      now.millisecondsSinceEpoch ~/ 1000,
     ],
   );
   await db.syncQueueDao.enqueue(

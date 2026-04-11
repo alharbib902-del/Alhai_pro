@@ -30,10 +30,7 @@ class ActiveDeliveryCard extends StatelessWidget {
         child: Container(
           decoration: BoxDecoration(
             border: BorderDirectional(
-              end: BorderSide(
-                color: theme.colorScheme.primary,
-                width: 4,
-              ),
+              end: BorderSide(color: theme.colorScheme.primary, width: 4),
             ),
           ),
           padding: const EdgeInsets.all(AlhaiSpacing.md),

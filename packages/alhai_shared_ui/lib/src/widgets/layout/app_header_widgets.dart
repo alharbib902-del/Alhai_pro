@@ -6,10 +6,7 @@ class _DarkModeToggle extends StatelessWidget {
   final bool isDarkMode;
   final VoidCallback onToggle;
 
-  const _DarkModeToggle({
-    required this.isDarkMode,
-    required this.onToggle,
-  });
+  const _DarkModeToggle({required this.isDarkMode, required this.onToggle});
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +32,7 @@ class _DarkModeToggle extends StatelessWidget {
               transitionBuilder: (child, animation) {
                 return RotationTransition(
                   turns: animation,
-                  child: ScaleTransition(
-                    scale: animation,
-                    child: child,
-                  ),
+                  child: ScaleTransition(scale: animation, child: child),
                 );
               },
               child: Icon(
@@ -61,11 +55,7 @@ class _SearchField extends StatefulWidget {
   final ValueChanged<String>? onChanged;
   final VoidCallback? onTap;
 
-  const _SearchField({
-    required this.hint,
-    this.onChanged,
-    this.onTap,
-  });
+  const _SearchField({required this.hint, this.onChanged, this.onTap});
 
   @override
   State<_SearchField> createState() => _SearchFieldState();
@@ -104,8 +94,8 @@ class _SearchFieldState extends State<_SearchField> {
           color: _isFocused
               ? (Theme.of(context).colorScheme.surface)
               : (isDarkMode
-                  ? AppColors.surfaceDark
-                  : AppColors.backgroundSecondary),
+                    ? AppColors.surfaceDark
+                    : AppColors.backgroundSecondary),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: _isFocused
@@ -146,8 +136,8 @@ class _SearchFieldState extends State<_SearchField> {
                 color: _isFocused
                     ? AppColors.primary
                     : (isDarkMode
-                        ? Colors.white.withAlpha(102)
-                        : AppColors.textTertiary),
+                          ? Colors.white.withAlpha(102)
+                          : AppColors.textTertiary),
                 size: 20,
               ),
             ),
@@ -237,8 +227,8 @@ class _HeaderIconButtonState extends State<_HeaderIconButton> {
             decoration: BoxDecoration(
               color: _isHovered
                   ? (widget.isDark
-                      ? Colors.white.withAlpha(26)
-                      : AppColors.backgroundSecondary)
+                        ? Colors.white.withAlpha(26)
+                        : AppColors.backgroundSecondary)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(10),
             ),
@@ -296,8 +286,8 @@ class _NotificationButtonState extends State<_NotificationButton> {
               decoration: BoxDecoration(
                 color: _isHovered
                     ? (widget.isDark
-                        ? Colors.white.withAlpha(26)
-                        : AppColors.backgroundSecondary)
+                          ? Colors.white.withAlpha(26)
+                          : AppColors.backgroundSecondary)
                     : Colors.transparent,
                 borderRadius: BorderRadius.circular(10),
               ),
@@ -355,12 +345,7 @@ class _UserInfo extends StatefulWidget {
   final String? avatarUrl;
   final VoidCallback? onTap;
 
-  const _UserInfo({
-    required this.name,
-    this.role,
-    this.avatarUrl,
-    this.onTap,
-  });
+  const _UserInfo({required this.name, this.role, this.avatarUrl, this.onTap});
 
   @override
   State<_UserInfo> createState() => _UserInfoState();
@@ -389,8 +374,8 @@ class _UserInfoState extends State<_UserInfo> {
             decoration: BoxDecoration(
               color: _isHovered
                   ? (isDark
-                      ? Colors.white.withAlpha(26)
-                      : AppColors.backgroundSecondary)
+                        ? Colors.white.withAlpha(26)
+                        : AppColors.backgroundSecondary)
                   : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
             ),
@@ -420,45 +405,49 @@ class _UserInfoState extends State<_UserInfo> {
                 const SizedBox(width: 10),
 
                 // الاسم والدور
-                Builder(builder: (context) {
-                  final isDark =
-                      Theme.of(context).brightness == Brightness.dark;
-                  return Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        widget.name,
-                        style: TextStyle(
-                          color: AppColors.getTextPrimary(isDark),
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      if (widget.role != null)
+                Builder(
+                  builder: (context) {
+                    final isDark =
+                        Theme.of(context).brightness == Brightness.dark;
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
                         Text(
-                          widget.role!,
+                          widget.name,
                           style: TextStyle(
-                            color: AppColors.getTextSecondary(isDark),
-                            fontSize: 11,
+                            color: AppColors.getTextPrimary(isDark),
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
-                    ],
-                  );
-                }),
+                        if (widget.role != null)
+                          Text(
+                            widget.role!,
+                            style: TextStyle(
+                              color: AppColors.getTextSecondary(isDark),
+                              fontSize: 11,
+                            ),
+                          ),
+                      ],
+                    );
+                  },
+                ),
 
                 SizedBox(width: AlhaiSpacing.xs),
 
                 // السهم
-                Builder(builder: (context) {
-                  final isDark =
-                      Theme.of(context).brightness == Brightness.dark;
-                  return Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: AppColors.getTextMuted(isDark),
-                    size: 18,
-                  );
-                }),
+                Builder(
+                  builder: (context) {
+                    final isDark =
+                        Theme.of(context).brightness == Brightness.dark;
+                    return Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: AppColors.getTextMuted(isDark),
+                      size: 18,
+                    );
+                  },
+                ),
               ],
             ),
           ),

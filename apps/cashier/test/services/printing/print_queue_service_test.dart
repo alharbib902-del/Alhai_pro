@@ -17,8 +17,8 @@ class _FakePrintService implements ThermalPrintService {
   PrinterStatus status = PrinterStatus.connected;
 
   /// Decide what the next call to [printReceipt] returns.
-  PrintResult Function(ReceiptData receipt) onPrintReceipt =
-      (_) => PrintResult.ok();
+  PrintResult Function(ReceiptData receipt) onPrintReceipt = (_) =>
+      PrintResult.ok();
 
   int printCallCount = 0;
 
@@ -50,9 +50,9 @@ class _FakePrintService implements ThermalPrintService {
   Future<PrintResult> printTestPage() async => PrintResult.ok();
 
   @override
-  Future<List<DiscoveredPrinter>> scanForPrinters(
-          {Duration timeout = const Duration(seconds: 10)}) async =>
-      [];
+  Future<List<DiscoveredPrinter>> scanForPrinters({
+    Duration timeout = const Duration(seconds: 10),
+  }) async => [];
 }
 
 // ---------------------------------------------------------------------------
@@ -60,17 +60,15 @@ class _FakePrintService implements ThermalPrintService {
 // ---------------------------------------------------------------------------
 
 ReceiptData _sampleReceipt({String number = 'INV-0001'}) => ReceiptData(
-      receiptNumber: number,
-      dateTime: DateTime(2026, 1, 1, 10, 30),
-      cashierName: 'Ahmed',
-      items: const [
-        ReceiptItem(name: 'Tea', quantity: 1, unitPrice: 5, total: 5),
-      ],
-      subtotal: 5,
-      tax: 0.75,
-      total: 5.75,
-      paymentMethod: 'cash',
-    );
+  receiptNumber: number,
+  dateTime: DateTime(2026, 1, 1, 10, 30),
+  cashierName: 'Ahmed',
+  items: const [ReceiptItem(name: 'Tea', quantity: 1, unitPrice: 5, total: 5)],
+  subtotal: 5,
+  tax: 0.75,
+  total: 5.75,
+  paymentMethod: 'cash',
+);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -128,8 +126,10 @@ void main() {
       expect(restored.status, equals(original.status));
       expect(restored.attempts, equals(original.attempts));
       expect(restored.lastError, equals(original.lastError));
-      expect(restored.receipt.receiptNumber,
-          equals(original.receipt.receiptNumber));
+      expect(
+        restored.receipt.receiptNumber,
+        equals(original.receipt.receiptNumber),
+      );
     });
 
     test('fromJson gracefully handles unknown status', () {
@@ -269,27 +269,29 @@ void main() {
       queue.dispose();
     });
 
-    test('retryAllFailed resets failed jobs to pending and re-enqueues',
-        () async {
-      final svc = _FakePrintService()..status = PrinterStatus.disconnected;
-      final queue = PrintQueueService(svc);
+    test(
+      'retryAllFailed resets failed jobs to pending and re-enqueues',
+      () async {
+        final svc = _FakePrintService()..status = PrinterStatus.disconnected;
+        final queue = PrintQueueService(svc);
 
-      await queue.enqueue(_sampleReceipt(number: 'R-1'));
-      await queue.enqueue(_sampleReceipt(number: 'R-2'));
-      await Future<void>.delayed(const Duration(milliseconds: 50));
-      expect(queue.failedJobs.length, equals(2));
+        await queue.enqueue(_sampleReceipt(number: 'R-1'));
+        await queue.enqueue(_sampleReceipt(number: 'R-2'));
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        expect(queue.failedJobs.length, equals(2));
 
-      // Now make the printer available again
-      svc.status = PrinterStatus.connected;
-      final count = await queue.retryAllFailed();
-      expect(count, equals(2));
+        // Now make the printer available again
+        svc.status = PrinterStatus.connected;
+        final count = await queue.retryAllFailed();
+        expect(count, equals(2));
 
-      // Allow the queue to process
-      await Future<void>.delayed(const Duration(milliseconds: 50));
-      expect(queue.failedJobs, isEmpty);
+        // Allow the queue to process
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+        expect(queue.failedJobs, isEmpty);
 
-      queue.dispose();
-    });
+        queue.dispose();
+      },
+    );
   });
 
   // -------------------------------------------------------------------------
@@ -337,8 +339,9 @@ void main() {
     });
 
     test('initialize() on malformed JSON safely returns', () async {
-      SharedPreferences.setMockInitialValues(
-          {'print_queue_failed_jobs': 'not valid json'});
+      SharedPreferences.setMockInitialValues({
+        'print_queue_failed_jobs': 'not valid json',
+      });
       final svc = _FakePrintService();
       final queue = PrintQueueService(svc);
 

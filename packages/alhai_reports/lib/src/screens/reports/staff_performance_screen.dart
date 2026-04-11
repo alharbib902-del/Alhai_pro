@@ -54,8 +54,9 @@ class _StaffPerformanceScreenState
       final dateRange = _getDateRange();
 
       // استعلام المبيعات مجمعة حسب الكاشير
-      final staffSalesResults = await db.customSelect(
-        '''SELECT
+      final staffSalesResults = await db
+          .customSelect(
+            '''SELECT
              cashier_id,
              COUNT(*) as sale_count,
              COALESCE(SUM(total), 0) as total_sales,
@@ -67,12 +68,13 @@ class _StaffPerformanceScreenState
              AND created_at < ?
            GROUP BY cashier_id
            ORDER BY total_sales DESC''',
-        variables: [
-          Variable.withString(storeId),
-          Variable.withDateTime(dateRange.start),
-          Variable.withDateTime(dateRange.end),
-        ],
-      ).get();
+            variables: [
+              Variable.withString(storeId),
+              Variable.withDateTime(dateRange.start),
+              Variable.withDateTime(dateRange.end),
+            ],
+          )
+          .get();
 
       // تحويل النتائج إلى Map للبحث السريع
       final salesMap = <String, ({int count, double total, double avg})>{};
@@ -163,11 +165,15 @@ class _StaffPerformanceScreenState
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.emoji_events,
-                                color: AppColors.warning),
+                            const Icon(
+                              Icons.emoji_events,
+                              color: AppColors.warning,
+                            ),
                             const SizedBox(width: AlhaiSpacing.xs),
-                            Text('المتصدرون',
-                                style: Theme.of(context).textTheme.titleMedium),
+                            Text(
+                              'المتصدرون',
+                              style: Theme.of(context).textTheme.titleMedium,
+                            ),
                           ],
                         ),
                         const SizedBox(height: AlhaiSpacing.md),
@@ -176,7 +182,7 @@ class _StaffPerformanceScreenState
                           final colors = [
                             AppColors.warning,
                             AppColors.grey400,
-                            const Color(0xFF795548)
+                            const Color(0xFF795548),
                           ];
                           return _LeaderItem(
                             rank: index + 1,
@@ -197,9 +203,7 @@ class _StaffPerformanceScreenState
                   return Card(
                     margin: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
                     child: ExpansionTile(
-                      leading: CircleAvatar(
-                        child: Text(staff.name[0]),
-                      ),
+                      leading: CircleAvatar(child: Text(staff.name[0])),
                       title: Text(staff.name),
                       subtitle: Text(staff.role),
                       trailing: Text(
@@ -247,35 +251,39 @@ class _StaffPerformanceScreenState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text('مقارنة المبيعات',
-                            style: Theme.of(context).textTheme.titleMedium),
+                        Text(
+                          'مقارنة المبيعات',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
                         const SizedBox(height: AlhaiSpacing.md),
                         ...List.generate(_staff.length, (index) {
                           final staff = _staff[index];
                           final rawMax = _staff.isEmpty
                               ? 0.0
                               : _staff
-                                  .map((s) => s.sales)
-                                  .reduce((a, b) => a > b ? a : b);
+                                    .map((s) => s.sales)
+                                    .reduce((a, b) => a > b ? a : b);
                           final maxSales = rawMax > 0 ? rawMax : 1.0;
                           return Padding(
                             padding: const EdgeInsets.symmetric(
-                                vertical: AlhaiSpacing.xs),
+                              vertical: AlhaiSpacing.xs,
+                            ),
                             child: Column(
                               children: [
                                 Row(
                                   children: [
                                     SizedBox(
-                                        width: 80,
-                                        child: Text(staff.name.split(' ')[0])),
+                                      width: 80,
+                                      child: Text(staff.name.split(' ')[0]),
+                                    ),
                                     Expanded(
                                       child: ClipRRect(
                                         borderRadius: BorderRadius.circular(4),
                                         child: LinearProgressIndicator(
                                           value: staff.sales / maxSales,
-                                          backgroundColor: Theme.of(context)
-                                              .dividerColor
-                                              .withValues(alpha: 0.2),
+                                          backgroundColor: Theme.of(
+                                            context,
+                                          ).dividerColor.withValues(alpha: 0.2),
                                           minHeight: 20,
                                         ),
                                       ),
@@ -287,7 +295,8 @@ class _StaffPerformanceScreenState
                                         staff.sales.toStringAsFixed(0),
                                         textAlign: TextAlign.end,
                                         style: const TextStyle(
-                                            fontWeight: FontWeight.bold),
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                       ),
                                     ),
                                   ],

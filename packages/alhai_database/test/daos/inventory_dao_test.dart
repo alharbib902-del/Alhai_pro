@@ -9,13 +9,15 @@ void main() {
     db = createTestDatabase();
     await seedTestData(db);
     // inventory_movements reference products via FK
-    await db.productsDao.insertProduct(ProductsTableCompanion.insert(
-      id: 'prod-1',
-      storeId: 'store-1',
-      name: 'P1',
-      price: 10.0,
-      createdAt: DateTime(2025, 1, 1),
-    ));
+    await db.productsDao.insertProduct(
+      ProductsTableCompanion.insert(
+        id: 'prod-1',
+        storeId: 'store-1',
+        name: 'P1',
+        price: 10.0,
+        createdAt: DateTime(2025, 1, 1),
+      ),
+    );
   });
 
   tearDown(() async {

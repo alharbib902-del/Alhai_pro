@@ -85,7 +85,8 @@ class _CustomerAccountsScreenState
         // Status filter
         bool passStatus = true;
         if (_statusFilter == 'overdue') {
-          passStatus = account.balance > 0 &&
+          passStatus =
+              account.balance > 0 &&
               account.lastTransactionAt != null &&
               DateTime.now().difference(account.lastTransactionAt!).inDays > 30;
         } else if (_statusFilter == 'paid') {
@@ -97,7 +98,8 @@ class _CustomerAccountsScreenState
         // Search filter
         bool passSearch = true;
         if (query.isNotEmpty) {
-          passSearch = account.name.toLowerCase().contains(query) ||
+          passSearch =
+              account.name.toLowerCase().contains(query) ||
               (account.phone?.toLowerCase().contains(query) ?? false);
         }
 
@@ -125,8 +127,9 @@ class _CustomerAccountsScreenState
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -137,50 +140,53 @@ class _CustomerAccountsScreenState
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(
-                      context,
-                      message: _error,
-                      onRetry: _loadAccounts,
-                    )
-                  : Column(
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.all(isMediumScreen
-                              ? AlhaiSpacing.lg
-                              : AlhaiSpacing.md),
-                          child: Column(
-                            children: [
-                              _buildSearchBar(isDark, l10n),
-                              const SizedBox(height: AlhaiSpacing.sm),
-                              _buildStatusFilters(isDark, l10n),
-                            ],
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: isMediumScreen ? 24 : 16),
-                          child: _buildSummaryStats(isDark, l10n),
-                        ),
-                        const SizedBox(height: AlhaiSpacing.sm),
-                        Expanded(
-                          child: _filteredAccounts.isEmpty
-                              ? _buildEmptyState(isDark, l10n)
-                              : ListView.separated(
-                                  padding: EdgeInsets.symmetric(
-                                      horizontal: isMediumScreen ? 24 : 16,
-                                      vertical: AlhaiSpacing.xs),
-                                  itemCount: _filteredAccounts.length,
-                                  separatorBuilder: (_, __) =>
-                                      const SizedBox(height: AlhaiSpacing.xs),
-                                  itemBuilder: (context, index) =>
-                                      _buildAccountCard(
-                                          _filteredAccounts[index],
-                                          isDark,
-                                          l10n),
-                                ),
-                        ),
-                      ],
+              ? AppErrorState.general(
+                  context,
+                  message: _error,
+                  onRetry: _loadAccounts,
+                )
+              : Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.all(
+                        isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                      ),
+                      child: Column(
+                        children: [
+                          _buildSearchBar(isDark, l10n),
+                          const SizedBox(height: AlhaiSpacing.sm),
+                          _buildStatusFilters(isDark, l10n),
+                        ],
+                      ),
                     ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: isMediumScreen ? 24 : 16,
+                      ),
+                      child: _buildSummaryStats(isDark, l10n),
+                    ),
+                    const SizedBox(height: AlhaiSpacing.sm),
+                    Expanded(
+                      child: _filteredAccounts.isEmpty
+                          ? _buildEmptyState(isDark, l10n)
+                          : ListView.separated(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: isMediumScreen ? 24 : 16,
+                                vertical: AlhaiSpacing.xs,
+                              ),
+                              itemCount: _filteredAccounts.length,
+                              separatorBuilder: (_, __) =>
+                                  const SizedBox(height: AlhaiSpacing.xs),
+                              itemBuilder: (context, index) =>
+                                  _buildAccountCard(
+                                    _filteredAccounts[index],
+                                    isDark,
+                                    l10n,
+                                  ),
+                            ),
+                    ),
+                  ],
+                ),
         ),
       ],
     );
@@ -198,13 +204,17 @@ class _CustomerAccountsScreenState
       decoration: InputDecoration(
         hintText: l10n.searchPlaceholder,
         hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
-        prefixIcon:
-            Icon(Icons.search_rounded, color: AppColors.getTextMuted(isDark)),
+        prefixIcon: Icon(
+          Icons.search_rounded,
+          color: AppColors.getTextMuted(isDark),
+        ),
         suffixIcon: _searchController.text.isNotEmpty
             ? IconButton(
                 onPressed: () => _searchController.clear(),
-                icon: Icon(Icons.clear_rounded,
-                    color: AppColors.getTextMuted(isDark)),
+                icon: Icon(
+                  Icons.clear_rounded,
+                  color: AppColors.getTextMuted(isDark),
+                ),
                 tooltip: l10n.clearField,
               )
             : null,
@@ -223,7 +233,9 @@ class _CustomerAccountsScreenState
           borderSide: const BorderSide(color: AppColors.primary, width: 2),
         ),
         contentPadding: const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.md, vertical: 14),
+          horizontal: AlhaiSpacing.md,
+          vertical: 14,
+        ),
       ),
     );
   }
@@ -238,52 +250,78 @@ class _CustomerAccountsScreenState
             _applyFilters();
           }, isDark),
           const SizedBox(width: AlhaiSpacing.xs),
-          _buildChip('Outstanding', _statusFilter == 'outstanding', () {
-            setState(() => _statusFilter = 'outstanding');
-            _applyFilters();
-          }, isDark, icon: Icons.warning_amber_rounded),
+          _buildChip(
+            'Outstanding',
+            _statusFilter == 'outstanding',
+            () {
+              setState(() => _statusFilter = 'outstanding');
+              _applyFilters();
+            },
+            isDark,
+            icon: Icons.warning_amber_rounded,
+          ),
           const SizedBox(width: AlhaiSpacing.xs),
-          _buildChip(l10n.overdue, _statusFilter == 'overdue', () {
-            setState(() => _statusFilter = 'overdue');
-            _applyFilters();
-          }, isDark, icon: Icons.schedule_rounded),
+          _buildChip(
+            l10n.overdue,
+            _statusFilter == 'overdue',
+            () {
+              setState(() => _statusFilter = 'overdue');
+              _applyFilters();
+            },
+            isDark,
+            icon: Icons.schedule_rounded,
+          ),
           const SizedBox(width: AlhaiSpacing.xs),
-          _buildChip('Paid', _statusFilter == 'paid', () {
-            setState(() => _statusFilter = 'paid');
-            _applyFilters();
-          }, isDark, icon: Icons.check_circle_outline_rounded),
+          _buildChip(
+            'Paid',
+            _statusFilter == 'paid',
+            () {
+              setState(() => _statusFilter = 'paid');
+              _applyFilters();
+            },
+            isDark,
+            icon: Icons.check_circle_outline_rounded,
+          ),
         ],
       ),
     );
   }
 
   Widget _buildChip(
-      String label, bool isSelected, VoidCallback onTap, bool isDark,
-      {IconData? icon}) {
+    String label,
+    bool isSelected,
+    VoidCallback onTap,
+    bool isDark, {
+    IconData? icon,
+  }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(999),
       child: Container(
         padding: const EdgeInsets.symmetric(
-            horizontal: 14, vertical: AlhaiSpacing.xs),
+          horizontal: 14,
+          vertical: AlhaiSpacing.xs,
+        ),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary
               : AppColors.getSurfaceVariant(isDark),
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
-              color:
-                  isSelected ? AppColors.primary : AppColors.getBorder(isDark)),
+            color: isSelected ? AppColors.primary : AppColors.getBorder(isDark),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon,
-                  size: 14,
-                  color: isSelected
-                      ? AppColors.textOnPrimary
-                      : AppColors.getTextSecondary(isDark)),
+              Icon(
+                icon,
+                size: 14,
+                color: isSelected
+                    ? AppColors.textOnPrimary
+                    : AppColors.getTextSecondary(isDark),
+              ),
               const SizedBox(width: 6),
             ],
             Text(
@@ -307,10 +345,12 @@ class _CustomerAccountsScreenState
         .where((a) => a.balance > 0)
         .fold<double>(0, (sum, a) => sum + a.balance);
     final overdueCount = _filteredAccounts
-        .where((a) =>
-            a.balance > 0 &&
-            a.lastTransactionAt != null &&
-            DateTime.now().difference(a.lastTransactionAt!).inDays > 30)
+        .where(
+          (a) =>
+              a.balance > 0 &&
+              a.lastTransactionAt != null &&
+              DateTime.now().difference(a.lastTransactionAt!).inDays > 30,
+        )
         .length;
     final count = _filteredAccounts.length;
 
@@ -326,60 +366,70 @@ class _CustomerAccountsScreenState
           Expanded(
             child: Column(
               children: [
-                Text(l10n.customers,
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.getTextSecondary(isDark))),
+                Text(
+                  l10n.customers,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
+                ),
                 const SizedBox(height: AlhaiSpacing.xxs),
-                Text('$count',
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.getTextPrimary(isDark))),
+                Text(
+                  '$count',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
+                ),
               ],
             ),
           ),
-          Container(
-            width: 1,
-            height: 40,
-            color: AppColors.getBorder(isDark),
-          ),
+          Container(width: 1, height: 40, color: AppColors.getBorder(isDark)),
           Expanded(
             child: Column(
               children: [
-                Text(l10n.totalDebit,
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.getTextSecondary(isDark))),
+                Text(
+                  l10n.totalDebit,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
+                ),
                 const SizedBox(height: AlhaiSpacing.xxs),
-                Text('${totalDebt.toStringAsFixed(0)} ${l10n.sar}',
-                    style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.error)),
+                Text(
+                  '${totalDebt.toStringAsFixed(0)} ${l10n.sar}',
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.error,
+                  ),
+                ),
               ],
             ),
           ),
-          Container(
-            width: 1,
-            height: 40,
-            color: AppColors.getBorder(isDark),
-          ),
+          Container(width: 1, height: 40, color: AppColors.getBorder(isDark)),
           Expanded(
             child: Column(
               children: [
-                Text(l10n.overdue,
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.getTextSecondary(isDark))),
+                Text(
+                  l10n.overdue,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
+                ),
                 const SizedBox(height: AlhaiSpacing.xxs),
-                Text('$overdueCount',
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: overdueCount > 0
-                            ? AppColors.warning
-                            : AppColors.success)),
+                Text(
+                  '$overdueCount',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: overdueCount > 0
+                        ? AppColors.warning
+                        : AppColors.success,
+                  ),
+                ),
               ],
             ),
           ),
@@ -389,9 +439,13 @@ class _CustomerAccountsScreenState
   }
 
   Widget _buildAccountCard(
-      AccountsTableData account, bool isDark, AppLocalizations l10n) {
+    AccountsTableData account,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final isDebt = account.balance > 0;
-    final isOverdue = isDebt &&
+    final isOverdue =
+        isDebt &&
         account.lastTransactionAt != null &&
         DateTime.now().difference(account.lastTransactionAt!).inDays > 30;
     final balanceColor = isDebt ? AppColors.error : AppColors.success;
@@ -456,7 +510,9 @@ class _CustomerAccountsScreenState
                         const SizedBox(width: AlhaiSpacing.xs),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: AlhaiSpacing.xxxs),
+                            horizontal: 6,
+                            vertical: AlhaiSpacing.xxxs,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.warning.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(999),
@@ -477,10 +533,12 @@ class _CustomerAccountsScreenState
                   Row(
                     children: [
                       if (account.phone != null) ...[
-                        Icon(Icons.phone_outlined,
-                            size: 13,
-                            color: AppColors.getTextMuted(isDark),
-                            semanticLabel: l10n.phone),
+                        Icon(
+                          Icons.phone_outlined,
+                          size: 13,
+                          color: AppColors.getTextMuted(isDark),
+                          semanticLabel: l10n.phone,
+                        ),
                         const SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           account.phone!,
@@ -509,7 +567,9 @@ class _CustomerAccountsScreenState
                 const SizedBox(height: AlhaiSpacing.xxs),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+                    horizontal: AlhaiSpacing.xs,
+                    vertical: AlhaiSpacing.xxxs,
+                  ),
                   decoration: BoxDecoration(
                     color: balanceColor.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(999),
@@ -526,10 +586,12 @@ class _CustomerAccountsScreenState
               ],
             ),
             const SizedBox(width: AlhaiSpacing.xs),
-            Icon(Icons.chevron_right_rounded,
-                color: AppColors.getTextMuted(isDark),
-                size: 20,
-                semanticLabel: l10n.details),
+            Icon(
+              Icons.chevron_right_rounded,
+              color: AppColors.getTextMuted(isDark),
+              size: 20,
+              semanticLabel: l10n.details,
+            ),
           ],
         ),
       ),

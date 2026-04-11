@@ -48,37 +48,28 @@ class UserFactory {
     );
   }
 
-  static User customer({String? id, String? name}) => create(
-        id: id,
-        name: name ?? 'عميل',
-        role: UserRole.customer,
-      );
+  static User customer({String? id, String? name}) =>
+      create(id: id, name: name ?? 'عميل', role: UserRole.customer);
 
   static User storeOwner({String? id, String? storeId}) => create(
-        id: id,
-        name: 'صاحب متجر',
-        role: UserRole.storeOwner,
-        storeId: storeId ?? 'store-1',
-      );
+    id: id,
+    name: 'صاحب متجر',
+    role: UserRole.storeOwner,
+    storeId: storeId ?? 'store-1',
+  );
 
   static User employee({String? id, String? storeId}) => create(
-        id: id,
-        name: 'موظف',
-        role: UserRole.employee,
-        storeId: storeId ?? 'store-1',
-      );
+    id: id,
+    name: 'موظف',
+    role: UserRole.employee,
+    storeId: storeId ?? 'store-1',
+  );
 
-  static User delivery({String? id}) => create(
-        id: id,
-        name: 'سائق توصيل',
-        role: UserRole.delivery,
-      );
+  static User delivery({String? id}) =>
+      create(id: id, name: 'سائق توصيل', role: UserRole.delivery);
 
-  static User superAdmin({String? id}) => create(
-        id: id,
-        name: 'مدير النظام',
-        role: UserRole.superAdmin,
-      );
+  static User superAdmin({String? id}) =>
+      create(id: id, name: 'مدير النظام', role: UserRole.superAdmin);
 
   static void reset() => _counter = 0;
 }
@@ -118,38 +109,19 @@ class ProductFactory {
     );
   }
 
-  static Product inStock({String? id, double? qty}) => create(
-        id: id,
-        stockQty: qty ?? 100,
-      );
+  static Product inStock({String? id, double? qty}) =>
+      create(id: id, stockQty: qty ?? 100);
 
-  static Product lowStock({String? id}) => create(
-        id: id,
-        stockQty: 3,
-        minQty: 5,
-      );
+  static Product lowStock({String? id}) =>
+      create(id: id, stockQty: 3, minQty: 5);
 
-  static Product outOfStock({String? id}) => create(
-        id: id,
-        stockQty: 0,
-      );
+  static Product outOfStock({String? id}) => create(id: id, stockQty: 0);
 
-  static Product withProfit({
-    String? id,
-    double? price,
-    double? costPrice,
-  }) =>
-      create(
-        id: id,
-        price: price ?? 100.0,
-        costPrice: costPrice ?? 70.0,
-      );
+  static Product withProfit({String? id, double? price, double? costPrice}) =>
+      create(id: id, price: price ?? 100.0, costPrice: costPrice ?? 70.0);
 
   static List<Product> createList(int count, {String? storeId}) {
-    return List.generate(
-      count,
-      (i) => create(storeId: storeId),
-    );
+    return List.generate(count, (i) => create(storeId: storeId));
   }
 
   static void reset() => _counter = 0;
@@ -196,31 +168,20 @@ class OrderFactory {
     );
   }
 
-  static Order pending({String? id}) => create(
-        id: id,
-        status: OrderStatus.created,
-      );
+  static Order pending({String? id}) =>
+      create(id: id, status: OrderStatus.created);
 
-  static Order confirmed({String? id}) => create(
-        id: id,
-        status: OrderStatus.confirmed,
-      );
+  static Order confirmed({String? id}) =>
+      create(id: id, status: OrderStatus.confirmed);
 
-  static Order preparing({String? id}) => create(
-        id: id,
-        status: OrderStatus.preparing,
-      );
+  static Order preparing({String? id}) =>
+      create(id: id, status: OrderStatus.preparing);
 
-  static Order delivered({String? id}) => create(
-        id: id,
-        status: OrderStatus.delivered,
-        isPaid: true,
-      );
+  static Order delivered({String? id}) =>
+      create(id: id, status: OrderStatus.delivered, isPaid: true);
 
-  static Order cancelled({String? id, String? reason}) => create(
-        id: id,
-        status: OrderStatus.cancelled,
-      );
+  static Order cancelled({String? id, String? reason}) =>
+      create(id: id, status: OrderStatus.cancelled);
 
   static void reset() => _counter = 0;
 }
@@ -334,9 +295,11 @@ class AuthTokensFactory {
     DateTime? expiresAt,
   }) {
     return AuthTokens(
-      accessToken: accessToken ??
+      accessToken:
+          accessToken ??
           'test-access-token-${DateTime.now().millisecondsSinceEpoch}',
-      refreshToken: refreshToken ??
+      refreshToken:
+          refreshToken ??
           'test-refresh-token-${DateTime.now().millisecondsSinceEpoch}',
       expiresAt: expiresAt ?? DateTime.now().add(const Duration(hours: 1)),
     );
@@ -350,7 +313,8 @@ class AuthTokensFactory {
     return AuthTokensEntity(
       accessToken: accessToken ?? 'test-access-token',
       refreshToken: refreshToken ?? 'test-refresh-token',
-      expiresAt: expiresAt ??
+      expiresAt:
+          expiresAt ??
           DateTime.now().add(const Duration(hours: 1)).toIso8601String(),
     );
   }
@@ -359,8 +323,9 @@ class AuthTokensFactory {
     return AuthTokensEntity(
       accessToken: 'expired-access-token',
       refreshToken: 'expired-refresh-token',
-      expiresAt:
-          DateTime.now().subtract(const Duration(hours: 1)).toIso8601String(),
+      expiresAt: DateTime.now()
+          .subtract(const Duration(hours: 1))
+          .toIso8601String(),
     );
   }
 
@@ -372,7 +337,8 @@ class AuthTokensFactory {
     return AuthTokensResponse(
       accessToken: accessToken ?? 'test-access-token',
       refreshToken: refreshToken ?? 'test-refresh-token',
-      expiresAt: expiresAt ??
+      expiresAt:
+          expiresAt ??
           DateTime.now().add(const Duration(hours: 1)).toIso8601String(),
     );
   }
@@ -380,10 +346,7 @@ class AuthTokensFactory {
 
 /// مصنع بيانات نتيجة المصادقة
 class AuthResultFactory {
-  static AuthResult create({
-    User? user,
-    AuthTokens? tokens,
-  }) {
+  static AuthResult create({User? user, AuthTokens? tokens}) {
     return AuthResult(
       user: user ?? UserFactory.customer(),
       tokens: tokens ?? AuthTokensFactory.createModel(),

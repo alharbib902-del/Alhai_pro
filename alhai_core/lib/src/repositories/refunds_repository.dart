@@ -36,7 +36,10 @@ abstract class RefundsRepository {
 
   /// Rejects a pending refund (supervisor)
   Future<Refund> rejectRefund(
-      String refundId, String supervisorId, String reason);
+    String refundId,
+    String supervisorId,
+    String reason,
+  );
 
   /// Completes an approved refund
   Future<Refund> completeRefund(String refundId);

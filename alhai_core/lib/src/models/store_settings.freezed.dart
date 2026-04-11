@@ -12,7 +12,8 @@ part of 'store_settings.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 StoreSettings _$StoreSettingsFromJson(Map<String, dynamic> json) {
   return _StoreSettings.fromJson(json);
@@ -45,21 +46,23 @@ mixin _$StoreSettings {
 /// @nodoc
 abstract class $StoreSettingsCopyWith<$Res> {
   factory $StoreSettingsCopyWith(
-          StoreSettings value, $Res Function(StoreSettings) then) =
-      _$StoreSettingsCopyWithImpl<$Res, StoreSettings>;
+    StoreSettings value,
+    $Res Function(StoreSettings) then,
+  ) = _$StoreSettingsCopyWithImpl<$Res, StoreSettings>;
   @useResult
-  $Res call(
-      {String id,
-      String storeId,
-      String? receiptHeader,
-      String? receiptFooter,
-      double taxRate,
-      int lowStockThreshold,
-      bool enableLoyalty,
-      int loyaltyPointsPerRial,
-      bool autoPrintReceipt,
-      String currency,
-      DateTime? updatedAt});
+  $Res call({
+    String id,
+    String storeId,
+    String? receiptHeader,
+    String? receiptFooter,
+    double taxRate,
+    int lowStockThreshold,
+    bool enableLoyalty,
+    int loyaltyPointsPerRial,
+    bool autoPrintReceipt,
+    String currency,
+    DateTime? updatedAt,
+  });
 }
 
 /// @nodoc
@@ -89,52 +92,55 @@ class _$StoreSettingsCopyWithImpl<$Res, $Val extends StoreSettings>
     Object? currency = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      receiptHeader: freezed == receiptHeader
-          ? _value.receiptHeader
-          : receiptHeader // ignore: cast_nullable_to_non_nullable
-              as String?,
-      receiptFooter: freezed == receiptFooter
-          ? _value.receiptFooter
-          : receiptFooter // ignore: cast_nullable_to_non_nullable
-              as String?,
-      taxRate: null == taxRate
-          ? _value.taxRate
-          : taxRate // ignore: cast_nullable_to_non_nullable
-              as double,
-      lowStockThreshold: null == lowStockThreshold
-          ? _value.lowStockThreshold
-          : lowStockThreshold // ignore: cast_nullable_to_non_nullable
-              as int,
-      enableLoyalty: null == enableLoyalty
-          ? _value.enableLoyalty
-          : enableLoyalty // ignore: cast_nullable_to_non_nullable
-              as bool,
-      loyaltyPointsPerRial: null == loyaltyPointsPerRial
-          ? _value.loyaltyPointsPerRial
-          : loyaltyPointsPerRial // ignore: cast_nullable_to_non_nullable
-              as int,
-      autoPrintReceipt: null == autoPrintReceipt
-          ? _value.autoPrintReceipt
-          : autoPrintReceipt // ignore: cast_nullable_to_non_nullable
-              as bool,
-      currency: null == currency
-          ? _value.currency
-          : currency // ignore: cast_nullable_to_non_nullable
-              as String,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            storeId: null == storeId
+                ? _value.storeId
+                : storeId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            receiptHeader: freezed == receiptHeader
+                ? _value.receiptHeader
+                : receiptHeader // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            receiptFooter: freezed == receiptFooter
+                ? _value.receiptFooter
+                : receiptFooter // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            taxRate: null == taxRate
+                ? _value.taxRate
+                : taxRate // ignore: cast_nullable_to_non_nullable
+                      as double,
+            lowStockThreshold: null == lowStockThreshold
+                ? _value.lowStockThreshold
+                : lowStockThreshold // ignore: cast_nullable_to_non_nullable
+                      as int,
+            enableLoyalty: null == enableLoyalty
+                ? _value.enableLoyalty
+                : enableLoyalty // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            loyaltyPointsPerRial: null == loyaltyPointsPerRial
+                ? _value.loyaltyPointsPerRial
+                : loyaltyPointsPerRial // ignore: cast_nullable_to_non_nullable
+                      as int,
+            autoPrintReceipt: null == autoPrintReceipt
+                ? _value.autoPrintReceipt
+                : autoPrintReceipt // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            currency: null == currency
+                ? _value.currency
+                : currency // ignore: cast_nullable_to_non_nullable
+                      as String,
+            updatedAt: freezed == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -142,22 +148,24 @@ class _$StoreSettingsCopyWithImpl<$Res, $Val extends StoreSettings>
 abstract class _$$StoreSettingsImplCopyWith<$Res>
     implements $StoreSettingsCopyWith<$Res> {
   factory _$$StoreSettingsImplCopyWith(
-          _$StoreSettingsImpl value, $Res Function(_$StoreSettingsImpl) then) =
-      __$$StoreSettingsImplCopyWithImpl<$Res>;
+    _$StoreSettingsImpl value,
+    $Res Function(_$StoreSettingsImpl) then,
+  ) = __$$StoreSettingsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String storeId,
-      String? receiptHeader,
-      String? receiptFooter,
-      double taxRate,
-      int lowStockThreshold,
-      bool enableLoyalty,
-      int loyaltyPointsPerRial,
-      bool autoPrintReceipt,
-      String currency,
-      DateTime? updatedAt});
+  $Res call({
+    String id,
+    String storeId,
+    String? receiptHeader,
+    String? receiptFooter,
+    double taxRate,
+    int lowStockThreshold,
+    bool enableLoyalty,
+    int loyaltyPointsPerRial,
+    bool autoPrintReceipt,
+    String currency,
+    DateTime? updatedAt,
+  });
 }
 
 /// @nodoc
@@ -165,8 +173,9 @@ class __$$StoreSettingsImplCopyWithImpl<$Res>
     extends _$StoreSettingsCopyWithImpl<$Res, _$StoreSettingsImpl>
     implements _$$StoreSettingsImplCopyWith<$Res> {
   __$$StoreSettingsImplCopyWithImpl(
-      _$StoreSettingsImpl _value, $Res Function(_$StoreSettingsImpl) _then)
-      : super(_value, _then);
+    _$StoreSettingsImpl _value,
+    $Res Function(_$StoreSettingsImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of StoreSettings
   /// with the given fields replaced by the non-null parameter values.
@@ -185,71 +194,73 @@ class __$$StoreSettingsImplCopyWithImpl<$Res>
     Object? currency = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(_$StoreSettingsImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      receiptHeader: freezed == receiptHeader
-          ? _value.receiptHeader
-          : receiptHeader // ignore: cast_nullable_to_non_nullable
-              as String?,
-      receiptFooter: freezed == receiptFooter
-          ? _value.receiptFooter
-          : receiptFooter // ignore: cast_nullable_to_non_nullable
-              as String?,
-      taxRate: null == taxRate
-          ? _value.taxRate
-          : taxRate // ignore: cast_nullable_to_non_nullable
-              as double,
-      lowStockThreshold: null == lowStockThreshold
-          ? _value.lowStockThreshold
-          : lowStockThreshold // ignore: cast_nullable_to_non_nullable
-              as int,
-      enableLoyalty: null == enableLoyalty
-          ? _value.enableLoyalty
-          : enableLoyalty // ignore: cast_nullable_to_non_nullable
-              as bool,
-      loyaltyPointsPerRial: null == loyaltyPointsPerRial
-          ? _value.loyaltyPointsPerRial
-          : loyaltyPointsPerRial // ignore: cast_nullable_to_non_nullable
-              as int,
-      autoPrintReceipt: null == autoPrintReceipt
-          ? _value.autoPrintReceipt
-          : autoPrintReceipt // ignore: cast_nullable_to_non_nullable
-              as bool,
-      currency: null == currency
-          ? _value.currency
-          : currency // ignore: cast_nullable_to_non_nullable
-              as String,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$StoreSettingsImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        storeId: null == storeId
+            ? _value.storeId
+            : storeId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        receiptHeader: freezed == receiptHeader
+            ? _value.receiptHeader
+            : receiptHeader // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        receiptFooter: freezed == receiptFooter
+            ? _value.receiptFooter
+            : receiptFooter // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        taxRate: null == taxRate
+            ? _value.taxRate
+            : taxRate // ignore: cast_nullable_to_non_nullable
+                  as double,
+        lowStockThreshold: null == lowStockThreshold
+            ? _value.lowStockThreshold
+            : lowStockThreshold // ignore: cast_nullable_to_non_nullable
+                  as int,
+        enableLoyalty: null == enableLoyalty
+            ? _value.enableLoyalty
+            : enableLoyalty // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        loyaltyPointsPerRial: null == loyaltyPointsPerRial
+            ? _value.loyaltyPointsPerRial
+            : loyaltyPointsPerRial // ignore: cast_nullable_to_non_nullable
+                  as int,
+        autoPrintReceipt: null == autoPrintReceipt
+            ? _value.autoPrintReceipt
+            : autoPrintReceipt // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        currency: null == currency
+            ? _value.currency
+            : currency // ignore: cast_nullable_to_non_nullable
+                  as String,
+        updatedAt: freezed == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$StoreSettingsImpl extends _StoreSettings {
-  const _$StoreSettingsImpl(
-      {required this.id,
-      required this.storeId,
-      this.receiptHeader,
-      this.receiptFooter,
-      this.taxRate = 15.0,
-      this.lowStockThreshold = 10,
-      this.enableLoyalty = true,
-      this.loyaltyPointsPerRial = 1,
-      this.autoPrintReceipt = true,
-      this.currency = 'SAR',
-      this.updatedAt})
-      : super._();
+  const _$StoreSettingsImpl({
+    required this.id,
+    required this.storeId,
+    this.receiptHeader,
+    this.receiptFooter,
+    this.taxRate = 15.0,
+    this.lowStockThreshold = 10,
+    this.enableLoyalty = true,
+    this.loyaltyPointsPerRial = 1,
+    this.autoPrintReceipt = true,
+    this.currency = 'SAR',
+    this.updatedAt,
+  }) : super._();
 
   factory _$StoreSettingsImpl.fromJson(Map<String, dynamic> json) =>
       _$$StoreSettingsImplFromJson(json);
@@ -317,18 +328,19 @@ class _$StoreSettingsImpl extends _StoreSettings {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      storeId,
-      receiptHeader,
-      receiptFooter,
-      taxRate,
-      lowStockThreshold,
-      enableLoyalty,
-      loyaltyPointsPerRial,
-      autoPrintReceipt,
-      currency,
-      updatedAt);
+    runtimeType,
+    id,
+    storeId,
+    receiptHeader,
+    receiptFooter,
+    taxRate,
+    lowStockThreshold,
+    enableLoyalty,
+    loyaltyPointsPerRial,
+    autoPrintReceipt,
+    currency,
+    updatedAt,
+  );
 
   /// Create a copy of StoreSettings
   /// with the given fields replaced by the non-null parameter values.
@@ -340,25 +352,24 @@ class _$StoreSettingsImpl extends _StoreSettings {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$StoreSettingsImplToJson(
-      this,
-    );
+    return _$$StoreSettingsImplToJson(this);
   }
 }
 
 abstract class _StoreSettings extends StoreSettings {
-  const factory _StoreSettings(
-      {required final String id,
-      required final String storeId,
-      final String? receiptHeader,
-      final String? receiptFooter,
-      final double taxRate,
-      final int lowStockThreshold,
-      final bool enableLoyalty,
-      final int loyaltyPointsPerRial,
-      final bool autoPrintReceipt,
-      final String currency,
-      final DateTime? updatedAt}) = _$StoreSettingsImpl;
+  const factory _StoreSettings({
+    required final String id,
+    required final String storeId,
+    final String? receiptHeader,
+    final String? receiptFooter,
+    final double taxRate,
+    final int lowStockThreshold,
+    final bool enableLoyalty,
+    final int loyaltyPointsPerRial,
+    final bool autoPrintReceipt,
+    final String currency,
+    final DateTime? updatedAt,
+  }) = _$StoreSettingsImpl;
   const _StoreSettings._() : super._();
 
   factory _StoreSettings.fromJson(Map<String, dynamic> json) =

@@ -39,8 +39,9 @@ void main() {
 
     testWidgets('shows loading state initially', (tester) async {
       final completer = Completer<List<dynamic>>();
-      when(() => mockUsersDao.getAllUsers(any()))
-          .thenAnswer((_) => completer.future.then((v) => v.cast()));
+      when(
+        () => mockUsersDao.getAllUsers(any()),
+      ).thenAnswer((_) => completer.future.then((v) => v.cast()));
 
       await tester.pumpWidget(createTestWidget(const AttendanceScreen()));
       await tester.pump();
@@ -50,10 +51,9 @@ void main() {
     });
 
     testWidgets('screen handles missing storeId gracefully', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        const AttendanceScreen(),
-        overrides: [],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(const AttendanceScreen(), overrides: []),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(AttendanceScreen), findsOneWidget);

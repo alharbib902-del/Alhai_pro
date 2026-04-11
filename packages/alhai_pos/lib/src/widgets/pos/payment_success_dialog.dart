@@ -127,9 +127,7 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
       final db = GetIt.I<AppDatabase>();
       final service = WhatsAppService(
         messagesDao: db.whatsAppMessagesDao,
-        phoneValidator: PhoneValidationService(
-          apiClient: WaSenderApiClient(),
-        ),
+        phoneValidator: PhoneValidationService(apiClient: WaSenderApiClient()),
       );
 
       await service.sendReceipt(
@@ -152,7 +150,8 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-                AppLocalizations.of(context).whatsappSendError(e.toString())),
+              AppLocalizations.of(context).whatsappSendError(e.toString()),
+            ),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -229,8 +228,9 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                         Text(
                           AppLocalizations.of(context).invoiceNumberTitle,
                           style: TextStyle(
-                            color:
-                                isDark ? Colors.white60 : AppColors.textMuted,
+                            color: isDark
+                                ? Colors.white60
+                                : AppColors.textMuted,
                           ),
                         ),
                         Text(
@@ -246,13 +246,16 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                         Text(
                           AppLocalizations.of(context).amountPaidTitle,
                           style: TextStyle(
-                            color:
-                                isDark ? Colors.white60 : AppColors.textMuted,
+                            color: isDark
+                                ? Colors.white60
+                                : AppColors.textMuted,
                           ),
                         ),
                         Text(
                           CurrencyFormatter.formatWithContext(
-                              context, widget.amount),
+                            context,
+                            widget.amount,
+                          ),
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                             color: AppColors.success,
@@ -314,18 +317,18 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                             color: AppColors.textOnPrimary,
                           ),
                         )
-                      : Icon(
-                          _sent ? Icons.check : Icons.send,
-                          size: 18,
-                        ),
-                  label: Text(_sent
-                      ? AppLocalizations.of(context).sentLabel
-                      : AppLocalizations.of(context).sendWhatsapp),
+                      : Icon(_sent ? Icons.check : Icons.send, size: 18),
+                  label: Text(
+                    _sent
+                        ? AppLocalizations.of(context).sentLabel
+                        : AppLocalizations.of(context).sendWhatsapp,
+                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.whatsappGreen,
                     foregroundColor: AppColors.textOnPrimary,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AlhaiSpacing.sm,
+                    ),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
@@ -355,7 +358,8 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                       label: Text(AppLocalizations.of(context).print),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                            vertical: AlhaiSpacing.sm),
+                          vertical: AlhaiSpacing.sm,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -374,7 +378,8 @@ class _PaymentSuccessDialogState extends State<PaymentSuccessDialog>
                       label: Text(AppLocalizations.of(context).newSaleButton),
                       style: FilledButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                            vertical: AlhaiSpacing.sm),
+                          vertical: AlhaiSpacing.sm,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),

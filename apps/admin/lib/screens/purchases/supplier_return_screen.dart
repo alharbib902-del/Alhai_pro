@@ -73,8 +73,9 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
       final sups = await db.suppliersDao.getAllSuppliers(storeId);
       if (mounted) {
         setState(() {
-          _suppliers =
-              sups.map((s) => _SupplierOption(id: s.id, name: s.name)).toList();
+          _suppliers = sups
+              .map((s) => _SupplierOption(id: s.id, name: s.name))
+              .toList();
           _isLoading = false;
         });
       }
@@ -146,11 +147,13 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
               onPressed: () {
                 if (productName.trim().isNotEmpty) {
                   setState(() {
-                    _items.add(_ReturnItem(
-                      productName: productName.trim(),
-                      qty: qty,
-                      unitCost: unitCost,
-                    ));
+                    _items.add(
+                      _ReturnItem(
+                        productName: productName.trim(),
+                        qty: qty,
+                        unitCost: unitCost,
+                      ),
+                    );
                   });
                   Navigator.pop(ctx);
                 }
@@ -168,16 +171,18 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
     if (_selectedSupplier == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(l10n.pleaseSelectSupplier),
-            backgroundColor: Theme.of(context).colorScheme.error),
+          content: Text(l10n.pleaseSelectSupplier),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
       );
       return;
     }
     if (_items.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(l10n.pleaseAddItems),
-            backgroundColor: Theme.of(context).colorScheme.error),
+          content: Text(l10n.pleaseAddItems),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
       );
       return;
     }
@@ -196,15 +201,18 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
             const SizedBox(height: AlhaiSpacing.xs),
             Text(
               l10n.creditNoteWillBeRecorded,
-              style:
-                  TextStyle(color: Theme.of(context).hintColor, fontSize: 12),
+              style: TextStyle(
+                color: Theme.of(context).hintColor,
+                fontSize: 12,
+              ),
             ),
           ],
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: Text(l10n.cancel)),
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
           FilledButton(
             onPressed: () => Navigator.pop(ctx, true),
             child: Text(l10n.confirmReturn),
@@ -271,8 +279,9 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
         setState(() => _isSaving = false);
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(l10n.errorPrefix(e.toString(), e)),
-              backgroundColor: Theme.of(context).colorScheme.error),
+            content: Text(l10n.errorPrefix(e.toString(), e)),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
         );
       }
     }
@@ -298,7 +307,9 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
               const SizedBox(height: AlhaiSpacing.sm),
               Text(_error!),
               TextButton(
-                  onPressed: _loadSuppliers, child: Text(l10n.retryAction)),
+                onPressed: _loadSuppliers,
+                child: Text(l10n.retryAction),
+              ),
             ],
           ),
         ),
@@ -315,7 +326,8 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
               icon: const Icon(Icons.check_rounded),
               label: Text(l10n.issueCreditNote),
               style: TextButton.styleFrom(
-                  foregroundColor: AppColors.textOnPrimary),
+                foregroundColor: AppColors.textOnPrimary,
+              ),
             )
           else
             const Padding(
@@ -324,7 +336,9 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    color: AppColors.textOnPrimary, strokeWidth: 2),
+                  color: AppColors.textOnPrimary,
+                  strokeWidth: 2,
+                ),
               ),
             ),
         ],
@@ -339,8 +353,10 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(l10n.supplier,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    l10n.supplier,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: AlhaiSpacing.xs),
                   DropdownButtonFormField<_SupplierOption>(
                     initialValue: _selectedSupplier,
@@ -350,10 +366,10 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
                       prefixIcon: const Icon(Icons.business_rounded),
                     ),
                     items: _suppliers
-                        .map((s) => DropdownMenuItem(
-                              value: s,
-                              child: Text(s.name),
-                            ))
+                        .map(
+                          (s) =>
+                              DropdownMenuItem(value: s, child: Text(s.name)),
+                        )
                         .toList(),
                     onChanged: (v) => setState(() => _selectedSupplier = v),
                   ),
@@ -370,20 +386,26 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(l10n.returnReason,
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    l10n.returnReason,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: AlhaiSpacing.xs),
                   Wrap(
                     spacing: 8,
                     runSpacing: 4,
                     children: _reasons(context)
-                        .map((r) => ChoiceChip(
-                              label: Text(r.$2,
-                                  style: const TextStyle(fontSize: 12)),
-                              selected: _returnReason == r.$1,
-                              onSelected: (_) =>
-                                  setState(() => _returnReason = r.$1),
-                            ))
+                        .map(
+                          (r) => ChoiceChip(
+                            label: Text(
+                              r.$2,
+                              style: const TextStyle(fontSize: 12),
+                            ),
+                            selected: _returnReason == r.$1,
+                            onSelected: (_) =>
+                                setState(() => _returnReason = r.$1),
+                          ),
+                        )
                         .toList(),
                   ),
                 ],
@@ -402,8 +424,10 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(l10n.returnedItems(_items.length),
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        l10n.returnedItems(_items.length),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       TextButton.icon(
                         onPressed: _addItem,
                         icon: const Icon(Icons.add_rounded, size: 16),
@@ -419,8 +443,10 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
                       final item = entry.value;
                       return ListTile(
                         dense: true,
-                        leading:
-                            const Icon(Icons.inventory_2_rounded, size: 20),
+                        leading: const Icon(
+                          Icons.inventory_2_rounded,
+                          size: 20,
+                        ),
                         title: Text(item.productName),
                         subtitle: Text(
                           '${item.qty} × ${item.unitCost.toStringAsFixed(2)} ${l10n.sarSuffix}',
@@ -431,12 +457,16 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
                           children: [
                             Text(
                               '${(item.qty * item.unitCost).toStringAsFixed(2)} ${l10n.sarSuffix}',
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete_outline,
-                                  size: 18, color: AppColors.error),
+                              icon: const Icon(
+                                Icons.delete_outline,
+                                size: 18,
+                                color: AppColors.error,
+                              ),
                               onPressed: () =>
                                   setState(() => _items.removeAt(i)),
                             ),
@@ -469,16 +499,20 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
               padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
                 gradient: AppColors.getErrorGradient(
-                    Theme.of(context).brightness == Brightness.dark),
+                  Theme.of(context).brightness == Brightness.dark,
+                ),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(l10n.totalReturn,
-                      style: const TextStyle(
-                          color: AppColors.textOnPrimary,
-                          fontWeight: FontWeight.bold)),
+                  Text(
+                    l10n.totalReturn,
+                    style: const TextStyle(
+                      color: AppColors.textOnPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   Text(
                     '${_totalReturn.toStringAsFixed(2)} ${l10n.sarSuffix}',
                     style: const TextStyle(
@@ -500,11 +534,14 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: AppColors.textOnPrimary),
+                        strokeWidth: 2,
+                        color: AppColors.textOnPrimary,
+                      ),
                     )
                   : const Icon(Icons.assignment_return_rounded),
-              label: Text(l10n
-                  .issueCreditNoteWithAmount(_totalReturn.toStringAsFixed(0))),
+              label: Text(
+                l10n.issueCreditNoteWithAmount(_totalReturn.toStringAsFixed(0)),
+              ),
             )
           : null,
     );
@@ -527,6 +564,9 @@ class _ReturnItem {
   final String productName;
   final double qty;
   final double unitCost;
-  const _ReturnItem(
-      {required this.productName, required this.qty, required this.unitCost});
+  const _ReturnItem({
+    required this.productName,
+    required this.qty,
+    required this.unitCost,
+  });
 }

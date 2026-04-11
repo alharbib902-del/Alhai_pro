@@ -109,11 +109,10 @@ class AlhaiRadioGroup<T> extends StatelessWidget {
 
     return RadioGroup<T>(
       groupValue: value,
-      onChanged: enabled && onChanged != null
-          ? (T? v) {
-              if (v != null) onChanged!(v);
-            }
-          : null,
+      onChanged: (T? v) {
+        if (!enabled || onChanged == null || v == null) return;
+        onChanged!(v);
+      },
       child: content,
     );
   }
@@ -142,7 +141,8 @@ class _RadioOptionWidget<T> extends StatelessWidget {
     final isSelected = groupValue == option.value;
     final isDisabled = !isGroupEnabled || !option.enabled || onTap == null;
 
-    final effectivePadding = padding ??
+    final effectivePadding =
+        padding ??
         const EdgeInsetsDirectional.symmetric(
           horizontal: AlhaiSpacing.md,
           vertical: AlhaiSpacing.sm,

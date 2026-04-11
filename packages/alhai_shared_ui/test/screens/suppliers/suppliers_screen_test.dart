@@ -67,7 +67,9 @@ Widget _buildTestWidget({
             suppliersValue?.when(
               data: (d) => Future.value(d),
               loading: () => Future.delayed(
-                  const Duration(days: 1), () => <SuppliersTableData>[]),
+                const Duration(days: 1),
+                () => <SuppliersTableData>[],
+              ),
               error: (e, _) => Future.error(e),
             ) ??
             Future.value(<SuppliersTableData>[]),
@@ -136,9 +138,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        suppliersValue: const AsyncValue.data([]),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(suppliersValue: const AsyncValue.data([])),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       // SuppliersScreen shows a Text widget for empty state, not AppEmptyState
@@ -154,9 +156,9 @@ void main() {
         _createTestSupplier(id: 's2', name: 'Supplier Two'),
       ];
 
-      await tester.pumpWidget(_buildTestWidget(
-        suppliersValue: AsyncValue.data(suppliers),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(suppliersValue: AsyncValue.data(suppliers)),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.text('Supplier One'), findsOneWidget);

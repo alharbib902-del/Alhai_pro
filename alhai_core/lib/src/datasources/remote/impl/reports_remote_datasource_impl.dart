@@ -15,13 +15,12 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
 
   @override
   Future<SalesSummaryResponse> getDailySummary(
-      String storeId, String date) async {
+    String storeId,
+    String date,
+  ) async {
     final response = await _dio.get(
       '/reports/daily-summary',
-      queryParameters: {
-        'store_id': storeId,
-        'date': date,
-      },
+      queryParameters: {'store_id': storeId, 'date': date},
     );
     return SalesSummaryResponse.fromJson(response.data as Map<String, dynamic>);
   }
@@ -95,18 +94,18 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
       queryParameters: {'store_id': storeId},
     );
     return InventoryValueResponse.fromJson(
-        response.data as Map<String, dynamic>);
+      response.data as Map<String, dynamic>,
+    );
   }
 
   @override
   Future<Map<String, double>> getHourlySales(
-      String storeId, String date) async {
+    String storeId,
+    String date,
+  ) async {
     final response = await _dio.get(
       '/reports/hourly-sales',
-      queryParameters: {
-        'store_id': storeId,
-        'date': date,
-      },
+      queryParameters: {'store_id': storeId, 'date': date},
     );
     final data = response.data as Map<String, dynamic>;
     return data.map((key, value) => MapEntry(key, (value as num).toDouble()));
@@ -120,13 +119,10 @@ class ReportsRemoteDataSourceImpl implements ReportsRemoteDataSource {
   }) async {
     final response = await _dio.get(
       '/reports/monthly-comparison',
-      queryParameters: {
-        'store_id': storeId,
-        'year': year,
-        'month': month,
-      },
+      queryParameters: {'store_id': storeId, 'year': year, 'month': month},
     );
     return MonthlyComparisonResponse.fromJson(
-        response.data as Map<String, dynamic>);
+      response.data as Map<String, dynamic>,
+    );
   }
 }

@@ -71,15 +71,19 @@ class _CustomerQuickInfoState extends State<CustomerQuickInfo> {
     final db = GetIt.I<AppDatabase>();
 
     // 1) بيانات العميل الأساسية + إحصائيات المبيعات
-    final stats = await db.customersDao
-        .getCustomerWithStats(widget.customerId, widget.storeId);
+    final stats = await db.customersDao.getCustomerWithStats(
+      widget.customerId,
+      widget.storeId,
+    );
     if (stats == null) return null;
 
     // 2) رصيد الحساب
     double balance = 0;
     try {
-      final account = await db.accountsDao
-          .getCustomerAccount(widget.customerId, widget.storeId);
+      final account = await db.accountsDao.getCustomerAccount(
+        widget.customerId,
+        widget.storeId,
+      );
       if (account != null) {
         balance = account.balance;
       }
@@ -90,8 +94,10 @@ class _CustomerQuickInfoState extends State<CustomerQuickInfo> {
     // 3) نقاط الولاء
     int? loyaltyPoints;
     try {
-      final loyalty = await db.loyaltyDao
-          .getCustomerLoyalty(widget.customerId, widget.storeId);
+      final loyalty = await db.loyaltyDao.getCustomerLoyalty(
+        widget.customerId,
+        widget.storeId,
+      );
       if (loyalty != null) {
         loyaltyPoints = loyalty.currentPoints;
       }
@@ -148,9 +154,7 @@ class _CustomerQuickInfoState extends State<CustomerQuickInfo> {
     return GestureDetector(
       onTap: widget.onTap,
       child: Container(
-        margin: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.xs,
-        ),
+        margin: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
         padding: const EdgeInsets.all(AlhaiSpacing.xs),
         decoration: BoxDecoration(
           color: colorScheme.surfaceContainerLowest,
@@ -177,7 +181,10 @@ class _CustomerQuickInfoState extends State<CustomerQuickInfo> {
   }
 
   Widget _buildCustomerHeader(
-      BuildContext context, _CustomerSummary summary, bool hasDebt) {
+    BuildContext context,
+    _CustomerSummary summary,
+    bool hasDebt,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
     final isBusiness = summary.type == 'business';
 
@@ -202,11 +209,7 @@ class _CustomerQuickInfoState extends State<CustomerQuickInfo> {
           ),
         ),
         if (hasDebt)
-          Icon(
-            Icons.warning_amber_rounded,
-            size: 14,
-            color: AppColors.warning,
-          ),
+          Icon(Icons.warning_amber_rounded, size: 14, color: AppColors.warning),
         if (isBusiness) ...[
           const SizedBox(width: AlhaiSpacing.xxs),
           Container(
@@ -298,10 +301,7 @@ class _CustomerQuickInfoState extends State<CustomerQuickInfo> {
           ),
           Text(
             label,
-            style: TextStyle(
-              fontSize: 9,
-              color: colorScheme.onSurfaceVariant,
-            ),
+            style: TextStyle(fontSize: 9, color: colorScheme.onSurfaceVariant),
           ),
         ],
       ),

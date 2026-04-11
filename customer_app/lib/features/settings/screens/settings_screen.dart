@@ -81,8 +81,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Card(
               child: ListTile(
                 leading: const Icon(Icons.language),
-                title: const Text('اللغة',
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
+                title: const Text(
+                  'اللغة',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 subtitle: const Text('العربية'),
                 trailing: const Icon(Icons.chevron_left),
                 onTap: _showLanguagePicker,
@@ -92,8 +95,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Card(
               child: SwitchListTile(
                 secondary: const Icon(Icons.notifications_outlined),
-                title: const Text('الإشعارات',
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
+                title: const Text(
+                  'الإشعارات',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 subtitle: const Text('تلقي إشعارات الطلبات'),
                 value: notificationsEnabled,
                 onChanged: _toggleNotifications,
@@ -103,8 +109,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             Card(
               child: ListTile(
                 leading: const Icon(Icons.info_outline),
-                title: const Text('عن التطبيق',
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
+                title: const Text(
+                  'عن التطبيق',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
                 subtitle: const Text('بقالة الحي - الإصدار 1.0.0'),
                 trailing: const Icon(Icons.chevron_left),
                 onTap: () {

@@ -164,7 +164,8 @@ class AlhaiEmptyState extends StatelessWidget {
           Icon(
             icon,
             size: iconSize,
-            color: iconColor ??
+            color:
+                iconColor ??
                 colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
           ),
 
@@ -194,10 +195,7 @@ class AlhaiEmptyState extends StatelessWidget {
           // Action button
           if (actionText != null && onAction != null) ...[
             SizedBox(height: spacing * 1.5),
-            FilledButton.tonal(
-              onPressed: onAction,
-              child: Text(actionText!),
-            ),
+            FilledButton.tonal(onPressed: onAction, child: Text(actionText!)),
           ],
         ],
       ),

@@ -17,10 +17,7 @@ class _FakeDistributorDatasource extends DistributorDatasource {
 
   @override
   Future<OrgSettings?> getOrgSettings() async {
-    return const OrgSettings(
-      id: 'test-org',
-      companyName: 'Test Co',
-    );
+    return const OrgSettings(id: 'test-org', companyName: 'Test Co');
   }
 }
 
@@ -28,8 +25,9 @@ void main() {
   Widget buildTestWidget() {
     return ProviderScope(
       overrides: [
-        distributorDatasourceProvider
-            .overrideWithValue(_FakeDistributorDatasource()),
+        distributorDatasourceProvider.overrideWithValue(
+          _FakeDistributorDatasource(),
+        ),
       ],
       child: MaterialApp(
         title: 'Test',

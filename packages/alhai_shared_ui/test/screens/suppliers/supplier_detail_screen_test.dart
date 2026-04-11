@@ -51,9 +51,7 @@ Widget _buildTestWidget({String? supplierId}) {
       locale: const Locale('en'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: Scaffold(
-        body: SupplierDetailScreen(supplierId: supplierId),
-      ),
+      home: Scaffold(body: SupplierDetailScreen(supplierId: supplierId)),
     ),
   );
 }
@@ -115,10 +113,12 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockSuppliersDao.getSupplierById('missing'))
-          .thenAnswer((_) async => null);
-      when(() => mockPurchasesDao.getAllPurchases(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSuppliersDao.getSupplierById('missing'),
+      ).thenAnswer((_) async => null);
+      when(
+        () => mockPurchasesDao.getAllPurchases(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget(supplierId: 'missing'));
       await tester.pumpAndSettle(const Duration(seconds: 2));

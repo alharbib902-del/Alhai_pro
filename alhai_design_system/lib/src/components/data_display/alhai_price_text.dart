@@ -62,36 +62,42 @@ class AlhaiPriceText extends StatelessWidget {
 
     switch (size) {
       case AlhaiPriceTextSize.compact:
-        effectivePriceStyle = priceStyle ??
+        effectivePriceStyle =
+            priceStyle ??
             theme.textTheme.labelLarge!.copyWith(
               color: colorScheme.primary,
               fontWeight: FontWeight.w600,
             );
-        effectiveOriginalStyle = originalPriceStyle ??
+        effectiveOriginalStyle =
+            originalPriceStyle ??
             theme.textTheme.labelSmall!.copyWith(
               color: colorScheme.onSurfaceVariant,
               decoration: TextDecoration.lineThrough,
             );
         break;
       case AlhaiPriceTextSize.regular:
-        effectivePriceStyle = priceStyle ??
+        effectivePriceStyle =
+            priceStyle ??
             theme.textTheme.titleMedium!.copyWith(
               color: colorScheme.primary,
               fontWeight: FontWeight.w600,
             );
-        effectiveOriginalStyle = originalPriceStyle ??
+        effectiveOriginalStyle =
+            originalPriceStyle ??
             theme.textTheme.bodySmall!.copyWith(
               color: colorScheme.onSurfaceVariant,
               decoration: TextDecoration.lineThrough,
             );
         break;
       case AlhaiPriceTextSize.large:
-        effectivePriceStyle = priceStyle ??
+        effectivePriceStyle =
+            priceStyle ??
             theme.textTheme.headlineSmall!.copyWith(
               color: colorScheme.primary,
               fontWeight: FontWeight.w600,
             );
-        effectiveOriginalStyle = originalPriceStyle ??
+        effectiveOriginalStyle =
+            originalPriceStyle ??
             theme.textTheme.bodyMedium!.copyWith(
               color: colorScheme.onSurfaceVariant,
               decoration: TextDecoration.lineThrough,
@@ -100,8 +106,9 @@ class AlhaiPriceText extends StatelessWidget {
     }
 
     final priceText = _formatPrice(context, amount, currency);
-    final originalText =
-        hasDiscount ? _formatPrice(context, originalAmount!, currency) : null;
+    final originalText = hasDiscount
+        ? _formatPrice(context, originalAmount!, currency)
+        : null;
 
     if (!hasDiscount) {
       return Text(
@@ -116,21 +123,18 @@ class AlhaiPriceText extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       textDirection: textDirection,
       children: [
-        Text(
-          priceText,
-          style: effectivePriceStyle,
-        ),
+        Text(priceText, style: effectivePriceStyle),
         const SizedBox(width: AlhaiSpacing.xs),
-        Text(
-          originalText!,
-          style: effectiveOriginalStyle,
-        ),
+        Text(originalText!, style: effectiveOriginalStyle),
       ],
     );
   }
 
   String _formatPrice(
-      BuildContext context, double value, String currencyLabel) {
+    BuildContext context,
+    double value,
+    String currencyLabel,
+  ) {
     // M160: Locale-aware formatting with thousands separators
     final locale = Localizations.localeOf(context).toString();
     final decimals = value.truncateToDouble() == value ? 0 : 2;

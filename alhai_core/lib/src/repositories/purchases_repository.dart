@@ -20,16 +20,15 @@ abstract class PurchasesRepository {
 
   /// Updates a purchase order
   Future<PurchaseOrder> updatePurchaseOrder(
-      String id, UpdatePurchaseOrderParams params);
+    String id,
+    UpdatePurchaseOrderParams params,
+  );
 
   /// Cancels a purchase order
   Future<void> cancelPurchaseOrder(String id, {String? reason});
 
   /// Receives items from a purchase order
-  Future<PurchaseOrder> receiveItems(
-    String id,
-    List<ReceivedItem> items,
-  );
+  Future<PurchaseOrder> receiveItems(String id, List<ReceivedItem> items);
 
   /// Records payment for a purchase order
   Future<PurchaseOrder> recordPayment(String id, double amount);
@@ -78,8 +77,5 @@ class ReceivedItem {
   final String productId;
   final int quantity;
 
-  const ReceivedItem({
-    required this.productId,
-    required this.quantity,
-  });
+  const ReceivedItem({required this.productId, required this.quantity});
 }

@@ -61,9 +61,7 @@ void _setLargeViewport(WidgetTester tester) {
 
 Widget _buildTestWidget() {
   return ProviderScope(
-    overrides: [
-      currentStoreIdProvider.overrideWith((ref) => 'test-store-id'),
-    ],
+    overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store-id')],
     child: MaterialApp(
       locale: const Locale('en'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -106,11 +104,13 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockAccountsDao.getAccountsPaginated(
-            any(),
-            offset: any(named: 'offset'),
-            limit: any(named: 'limit'),
-          )).thenAnswer((_) async => []);
+      when(
+        () => mockAccountsDao.getAccountsPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+        ),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -126,11 +126,13 @@ void main() {
       // and avoid pending timer warnings
       final completer = Completer<List<AccountsTableData>>();
 
-      when(() => mockAccountsDao.getAccountsPaginated(
-            any(),
-            offset: any(named: 'offset'),
-            limit: any(named: 'limit'),
-          )).thenAnswer((_) => completer.future);
+      when(
+        () => mockAccountsDao.getAccountsPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+        ),
+      ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pump();
@@ -151,14 +153,20 @@ void main() {
         _createTestAccount(id: 'c1', name: 'Ahmad Ali', balance: 500),
         _createTestAccount(id: 'c2', name: 'Sara Mohammed', balance: 0),
         _createTestAccount(
-            id: 'c3', name: 'Khalid Omar', balance: -200, type: 'payable'),
+          id: 'c3',
+          name: 'Khalid Omar',
+          balance: -200,
+          type: 'payable',
+        ),
       ];
 
-      when(() => mockAccountsDao.getAccountsPaginated(
-            any(),
-            offset: any(named: 'offset'),
-            limit: any(named: 'limit'),
-          )).thenAnswer((_) async => testAccounts);
+      when(
+        () => mockAccountsDao.getAccountsPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+        ),
+      ).thenAnswer((_) async => testAccounts);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -172,11 +180,13 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockAccountsDao.getAccountsPaginated(
-            any(),
-            offset: any(named: 'offset'),
-            limit: any(named: 'limit'),
-          )).thenAnswer((_) async => []);
+      when(
+        () => mockAccountsDao.getAccountsPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+        ),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -188,11 +198,13 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockAccountsDao.getAccountsPaginated(
-            any(),
-            offset: any(named: 'offset'),
-            limit: any(named: 'limit'),
-          )).thenAnswer((_) async => []);
+      when(
+        () => mockAccountsDao.getAccountsPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+        ),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -204,11 +216,13 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockAccountsDao.getAccountsPaginated(
-            any(),
-            offset: any(named: 'offset'),
-            limit: any(named: 'limit'),
-          )).thenAnswer((_) async => []);
+      when(
+        () => mockAccountsDao.getAccountsPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+        ),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));

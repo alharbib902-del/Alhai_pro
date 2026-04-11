@@ -59,9 +59,10 @@ class _ShiftOptimizationChartState extends State<ShiftOptimizationChart>
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.1)
-                : AppColors.border),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : AppColors.border,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -86,8 +87,11 @@ class _ShiftOptimizationChartState extends State<ShiftOptimizationChart>
                     ),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.calendar_view_week_rounded,
-                      color: Colors.white, size: 18),
+                  child: const Icon(
+                    Icons.calendar_view_week_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
@@ -118,12 +122,15 @@ class _ShiftOptimizationChartState extends State<ShiftOptimizationChart>
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(l10n.quiet,
-                        style: TextStyle(
-                            fontSize: 10,
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.4)
-                                : AppColors.textMuted)),
+                    Text(
+                      l10n.quiet,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.4)
+                            : AppColors.textMuted,
+                      ),
+                    ),
                     const SizedBox(width: AlhaiSpacing.xxs),
                     ...[0.1, 0.3, 0.5, 0.7, 0.9].map((v) {
                       return Container(
@@ -137,12 +144,15 @@ class _ShiftOptimizationChartState extends State<ShiftOptimizationChart>
                       );
                     }),
                     const SizedBox(width: AlhaiSpacing.xxs),
-                    Text(l10n.busy,
-                        style: TextStyle(
-                            fontSize: 10,
-                            color: isDark
-                                ? Colors.white.withValues(alpha: 0.4)
-                                : AppColors.textMuted)),
+                    Text(
+                      l10n.busy,
+                      style: TextStyle(
+                        fontSize: 10,
+                        color: isDark
+                            ? Colors.white.withValues(alpha: 0.4)
+                            : AppColors.textMuted,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -153,7 +163,11 @@ class _ShiftOptimizationChartState extends State<ShiftOptimizationChart>
           Expanded(
             child: Padding(
               padding: EdgeInsetsDirectional.fromSTEB(
-                  60, AlhaiSpacing.zero, AlhaiSpacing.md, AlhaiSpacing.xxl),
+                60,
+                AlhaiSpacing.zero,
+                AlhaiSpacing.md,
+                AlhaiSpacing.xxl,
+              ),
               child: AnimatedBuilder(
                 animation: _animation,
                 builder: (context, _) {
@@ -168,8 +182,10 @@ class _ShiftOptimizationChartState extends State<ShiftOptimizationChart>
                           _hoveredHour = null;
                         }),
                         child: CustomPaint(
-                          size:
-                              Size(constraints.maxWidth, constraints.maxHeight),
+                          size: Size(
+                            constraints.maxWidth,
+                            constraints.maxHeight,
+                          ),
                           painter: _HeatmapPainter(
                             data: widget.data,
                             animationValue: _animation.value,
@@ -292,13 +308,14 @@ class _HeatmapPainter extends CustomPainter {
         // Hovered border
         if (isHovered) {
           canvas.drawRRect(
-              rect,
-              Paint()
-                ..color = isDark
-                    ? Colors.white.withValues(alpha: 0.6)
-                    : AppColors.textPrimary
-                ..style = PaintingStyle.stroke
-                ..strokeWidth = 2);
+            rect,
+            Paint()
+              ..color = isDark
+                  ? Colors.white.withValues(alpha: 0.6)
+                  : AppColors.textPrimary
+              ..style = PaintingStyle.stroke
+              ..strokeWidth = 2,
+          );
 
           // Tooltip
           final tooltipText =
@@ -319,27 +336,30 @@ class _HeatmapPainter extends CustomPainter {
           final tooltipRect = RRect.fromRectAndRadius(
             Rect.fromCenter(
               center: Offset(
-                  tooltipX, max(tp.height / 2 + 6, tooltipY + tp.height / 2)),
+                tooltipX,
+                max(tp.height / 2 + 6, tooltipY + tp.height / 2),
+              ),
               width: tp.width + 16,
               height: tp.height + 10,
             ),
             const Radius.circular(6),
           );
-          canvas.drawRRect(tooltipRect,
-              Paint()..color = isDark ? const Color(0xFF374151) : Colors.white);
           canvas.drawRRect(
-              tooltipRect,
-              Paint()
-                ..color = isDark
-                    ? Colors.white.withValues(alpha: 0.1)
-                    : AppColors.border
-                ..style = PaintingStyle.stroke);
+            tooltipRect,
+            Paint()..color = isDark ? const Color(0xFF374151) : Colors.white,
+          );
+          canvas.drawRRect(
+            tooltipRect,
+            Paint()
+              ..color = isDark
+                  ? Colors.white.withValues(alpha: 0.1)
+                  : AppColors.border
+              ..style = PaintingStyle.stroke,
+          );
           tp.paint(
-              canvas,
-              Offset(
-                tooltipX - tp.width / 2,
-                max(6, tooltipY + 1),
-              ));
+            canvas,
+            Offset(tooltipX - tp.width / 2, max(6, tooltipY + 1)),
+          );
         }
       }
     }
@@ -359,8 +379,10 @@ class _HeatmapPainter extends CustomPainter {
         ),
         textDirection: TextDirection.rtl,
       )..layout();
-      tp.paint(canvas,
-          Offset(-tp.width - 8, day * cellH + cellH / 2 - tp.height / 2));
+      tp.paint(
+        canvas,
+        Offset(-tp.width - 8, day * cellH + cellH / 2 - tp.height / 2),
+      );
     }
 
     // Hour labels
@@ -378,8 +400,10 @@ class _HeatmapPainter extends CustomPainter {
         ),
         textDirection: TextDirection.ltr,
       )..layout();
-      tp.paint(canvas,
-          Offset(hour * cellW + cellW / 2 - tp.width / 2, size.height + 6));
+      tp.paint(
+        canvas,
+        Offset(hour * cellW + cellW / 2 - tp.width / 2, size.height + 6),
+      );
     }
   }
 

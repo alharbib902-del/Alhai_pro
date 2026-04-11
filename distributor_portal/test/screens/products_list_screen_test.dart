@@ -33,8 +33,9 @@ void main() {
   Widget buildTestWidget() {
     return ProviderScope(
       overrides: [
-        distributorDatasourceProvider
-            .overrideWithValue(_FakeDistributorDatasource()),
+        distributorDatasourceProvider.overrideWithValue(
+          _FakeDistributorDatasource(),
+        ),
       ],
       child: MaterialApp(
         title: 'Test',

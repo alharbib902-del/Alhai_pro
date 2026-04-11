@@ -143,8 +143,10 @@ class _InlinePaymentState extends State<InlinePayment> {
   double get _splitRemaining => widget.total - _splitTotalPaid;
 
   Future<void> _selectCustomer() async {
-    final customer =
-        await CustomerSearchDialog.show(context, storeId: widget.storeId);
+    final customer = await CustomerSearchDialog.show(
+      context,
+      storeId: widget.storeId,
+    );
     if (customer != null && mounted) {
       setState(() {
         _selectedCustomer = customer;
@@ -161,25 +163,29 @@ class _InlinePaymentState extends State<InlinePayment> {
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(AppLocalizations.of(context).enterValidAmountError),
-            backgroundColor: Theme.of(context).colorScheme.error),
+          content: Text(AppLocalizations.of(context).enterValidAmountError),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
       );
       return;
     }
     if (amount > 999999.99) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(AppLocalizations.of(context).amountExceedsMaxError),
-            backgroundColor: Theme.of(context).colorScheme.error),
+          content: Text(AppLocalizations.of(context).amountExceedsMaxError),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
       );
       return;
     }
     if (amount > _splitRemaining + 0.01) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content:
-                Text(AppLocalizations.of(context).amountExceedsRemainingError),
-            backgroundColor: Theme.of(context).colorScheme.error),
+          content: Text(
+            AppLocalizations.of(context).amountExceedsRemainingError,
+          ),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
       );
       return;
     }
@@ -195,8 +201,9 @@ class _InlinePaymentState extends State<InlinePayment> {
     setState(() {
       _splits.add(PaymentSplitEntry(method: _splitMethod, amount: amount));
       final remaining = _splitRemaining;
-      _splitAmountController.text =
-          remaining > 0 ? remaining.toStringAsFixed(2) : '0.00';
+      _splitAmountController.text = remaining > 0
+          ? remaining.toStringAsFixed(2)
+          : '0.00';
     });
   }
 
@@ -230,25 +237,30 @@ class _InlinePaymentState extends State<InlinePayment> {
         );
         return;
       }
-      widget.onComplete?.call(PaymentResult(
-        method: PaymentMethod.cash,
-        amountPaid: paid,
-        change: _change > 0 ? _change : 0,
-        success: true,
-      ));
+      widget.onComplete?.call(
+        PaymentResult(
+          method: PaymentMethod.cash,
+          amountPaid: paid,
+          change: _change > 0 ? _change : 0,
+          success: true,
+        ),
+      );
     } else if (_selectedMethod == PaymentMethod.card) {
-      widget.onComplete?.call(PaymentResult(
-        method: PaymentMethod.card,
-        amountPaid: widget.total,
-        change: 0,
-        success: true,
-      ));
+      widget.onComplete?.call(
+        PaymentResult(
+          method: PaymentMethod.card,
+          amountPaid: widget.total,
+          change: 0,
+          success: true,
+        ),
+      );
     } else if (_selectedMethod == PaymentMethod.credit) {
       if (_selectedCustomer == null) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(AppLocalizations.of(context).selectCustomerFirstError),
+            content: Text(
+              AppLocalizations.of(context).selectCustomerFirstError,
+            ),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -263,36 +275,41 @@ class _InlinePaymentState extends State<InlinePayment> {
         );
         return;
       }
-      widget.onComplete?.call(PaymentResult(
-        method: PaymentMethod.credit,
-        amountPaid: widget.total,
-        change: 0,
-        success: true,
-        customerId: _selectedCustomer!.id,
-        customerName: _selectedCustomer!.name,
-        customerPhone: _selectedCustomer!.phone,
-      ));
+      widget.onComplete?.call(
+        PaymentResult(
+          method: PaymentMethod.credit,
+          amountPaid: widget.total,
+          change: 0,
+          success: true,
+          customerId: _selectedCustomer!.id,
+          customerName: _selectedCustomer!.name,
+          customerPhone: _selectedCustomer!.phone,
+        ),
+      );
     } else if (_selectedMethod == PaymentMethod.mixed) {
       if (_splitRemaining > 0.01) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(AppLocalizations.of(context).completePaymentFirstError),
+            content: Text(
+              AppLocalizations.of(context).completePaymentFirstError,
+            ),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
         return;
       }
-      widget.onComplete?.call(PaymentResult(
-        method: PaymentMethod.mixed,
-        amountPaid: widget.total,
-        change: 0,
-        success: true,
-        splits: List.from(_splits),
-        customerId: _selectedCustomer?.id,
-        customerName: _selectedCustomer?.name,
-        customerPhone: _selectedCustomer?.phone,
-      ));
+      widget.onComplete?.call(
+        PaymentResult(
+          method: PaymentMethod.mixed,
+          amountPaid: widget.total,
+          change: 0,
+          success: true,
+          splits: List.from(_splits),
+          customerId: _selectedCustomer?.id,
+          customerName: _selectedCustomer?.name,
+          customerPhone: _selectedCustomer?.phone,
+        ),
+      );
     }
   }
 
@@ -427,8 +444,9 @@ class _InlinePaymentState extends State<InlinePayment> {
           focusNode: _focusNode,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           textAlign: TextAlign.center,
-          style: theme.textTheme.headlineSmall
-              ?.copyWith(fontWeight: FontWeight.bold),
+          style: theme.textTheme.headlineSmall?.copyWith(
+            fontWeight: FontWeight.bold,
+          ),
           inputFormatters: [
             FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
             LengthLimitingTextInputFormatter(12),
@@ -450,7 +468,8 @@ class _InlinePaymentState extends State<InlinePayment> {
           children: [50, 100, 200, 500].map((amount) {
             return ActionChip(
               label: Text(
-                  AppLocalizations.of(context).amountSar(amount.toString())),
+                AppLocalizations.of(context).amountSar(amount.toString()),
+              ),
               onPressed: () {
                 _amountController.text = amount.toStringAsFixed(2);
               },
@@ -464,16 +483,19 @@ class _InlinePaymentState extends State<InlinePayment> {
             decoration: BoxDecoration(
               color: AppColors.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
-              border:
-                  Border.all(color: AppColors.success.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: AppColors.success.withValues(alpha: 0.3),
+              ),
             ),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Row(
                   children: [
-                    const Icon(Icons.currency_exchange,
-                        color: AppColors.success),
+                    const Icon(
+                      Icons.currency_exchange,
+                      color: AppColors.success,
+                    ),
                     const SizedBox(width: AlhaiSpacing.xs),
                     Text(AppLocalizations.of(context).remainingLabel),
                   ],
@@ -524,8 +546,10 @@ class _InlinePaymentState extends State<InlinePayment> {
                   color: _selectedCustomer != null
                       ? AppColors.primary
                       : (isDark
-                          ? theme.colorScheme.onSurface.withValues(alpha: 0.54)
-                          : AppColors.textMuted),
+                            ? theme.colorScheme.onSurface.withValues(
+                                alpha: 0.54,
+                              )
+                            : AppColors.textMuted),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
@@ -547,8 +571,9 @@ class _InlinePaymentState extends State<InlinePayment> {
                               style: TextStyle(
                                 fontSize: 12,
                                 color: isDark
-                                    ? theme.colorScheme.onSurface
-                                        .withValues(alpha: 0.54)
+                                    ? theme.colorScheme.onSurface.withValues(
+                                        alpha: 0.54,
+                                      )
                                     : AppColors.textMuted,
                               ),
                             ),
@@ -558,8 +583,9 @@ class _InlinePaymentState extends State<InlinePayment> {
                           AppLocalizations.of(context).selectCustomerLabel,
                           style: TextStyle(
                             color: isDark
-                                ? theme.colorScheme.onSurface
-                                    .withValues(alpha: 0.54)
+                                ? theme.colorScheme.onSurface.withValues(
+                                    alpha: 0.54,
+                                  )
                                 : AppColors.textMuted,
                           ),
                         ),
@@ -599,7 +625,9 @@ class _InlinePaymentState extends State<InlinePayment> {
                     Text(AppLocalizations.of(context).currentBalanceTitle),
                     Text(
                       CurrencyFormatter.formatWithContext(
-                          context, _selectedCustomer!.balance),
+                        context,
+                        _selectedCustomer!.balance,
+                      ),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: _selectedCustomer!.balance < 0
@@ -629,8 +657,11 @@ class _InlinePaymentState extends State<InlinePayment> {
                   const SizedBox(height: AlhaiSpacing.xs),
                   Row(
                     children: [
-                      Icon(Icons.warning_amber,
-                          color: theme.colorScheme.error, size: 18),
+                      Icon(
+                        Icons.warning_amber,
+                        color: theme.colorScheme.error,
+                        size: 18,
+                      ),
                       const SizedBox(width: 6),
                       Text(
                         AppLocalizations.of(context).debtLimitExceededWarning,
@@ -665,7 +696,7 @@ class _InlinePaymentState extends State<InlinePayment> {
             gradient: LinearGradient(
               colors: [
                 AppColors.primary,
-                AppColors.primary.withValues(alpha: 0.8)
+                AppColors.primary.withValues(alpha: 0.8),
               ],
             ),
             borderRadius: BorderRadius.circular(12),
@@ -675,13 +706,19 @@ class _InlinePaymentState extends State<InlinePayment> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(AppLocalizations.of(context).paidLabel,
-                      style: const TextStyle(color: Colors.white70)),
+                  Text(
+                    AppLocalizations.of(context).paidLabel,
+                    style: const TextStyle(color: Colors.white70),
+                  ),
                   Text(
                     CurrencyFormatter.formatWithContext(
-                        context, _splitTotalPaid),
+                      context,
+                      _splitTotalPaid,
+                    ),
                     style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
@@ -694,17 +731,22 @@ class _InlinePaymentState extends State<InlinePayment> {
                         ? AppLocalizations.of(context).completeLabel
                         : AppLocalizations.of(context).remainingLabel,
                     style: const TextStyle(
-                        color: Colors.white, fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   Text(
                     _splitRemaining <= 0.01
                         ? '✓'
                         : CurrencyFormatter.formatWithContext(
-                            context, _splitRemaining),
+                            context,
+                            _splitRemaining,
+                          ),
                     style: const TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16),
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 ],
               ),
@@ -720,7 +762,9 @@ class _InlinePaymentState extends State<InlinePayment> {
             return Container(
               margin: const EdgeInsets.only(bottom: 6),
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+                horizontal: AlhaiSpacing.sm,
+                vertical: AlhaiSpacing.xs,
+              ),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(8),
                 color: isDark
@@ -731,8 +775,9 @@ class _InlinePaymentState extends State<InlinePayment> {
                 children: [
                   Icon(split.method.icon, color: split.method.color, size: 20),
                   const SizedBox(width: AlhaiSpacing.xs),
-                  Text(split.method
-                      .localizedLabel(AppLocalizations.of(context))),
+                  Text(
+                    split.method.localizedLabel(AppLocalizations.of(context)),
+                  ),
                   const Spacer(),
                   Text(
                     CurrencyFormatter.formatWithContext(context, split.amount),
@@ -741,8 +786,11 @@ class _InlinePaymentState extends State<InlinePayment> {
                   const SizedBox(width: AlhaiSpacing.xxs),
                   InkWell(
                     onTap: () => _removeSplit(i),
-                    child: Icon(Icons.close,
-                        color: theme.colorScheme.error, size: 18),
+                    child: Icon(
+                      Icons.close,
+                      color: theme.colorScheme.error,
+                      size: 18,
+                    ),
                   ),
                 ],
               ),
@@ -755,58 +803,68 @@ class _InlinePaymentState extends State<InlinePayment> {
         if (_splitRemaining > 0.01) ...[
           // طريقة الدفع للدفعة
           Row(
-            children: [
-              PaymentMethod.cash,
-              PaymentMethod.card,
-              PaymentMethod.credit
-            ].map((m) {
-              final isSelected = _splitMethod == m;
-              return Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 3),
-                  child: Material(
-                    color: isSelected
-                        ? m.color.withValues(alpha: 0.15)
-                        : (isDark
-                            ? theme.colorScheme.surfaceContainerHighest
-                            : AppColors.grey50),
-                    borderRadius: BorderRadius.circular(8),
-                    child: InkWell(
-                      onTap: () => setState(() => _splitMethod = m),
-                      borderRadius: BorderRadius.circular(8),
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: AlhaiSpacing.xs),
-                        decoration: BoxDecoration(
+            children:
+                [
+                  PaymentMethod.cash,
+                  PaymentMethod.card,
+                  PaymentMethod.credit,
+                ].map((m) {
+                  final isSelected = _splitMethod == m;
+                  return Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 3),
+                      child: Material(
+                        color: isSelected
+                            ? m.color.withValues(alpha: 0.15)
+                            : (isDark
+                                  ? theme.colorScheme.surfaceContainerHighest
+                                  : AppColors.grey50),
+                        borderRadius: BorderRadius.circular(8),
+                        child: InkWell(
+                          onTap: () => setState(() => _splitMethod = m),
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(
-                            color: isSelected ? m.color : Colors.transparent,
-                          ),
-                        ),
-                        child: Column(
-                          children: [
-                            Icon(m.icon,
-                                color: isSelected ? m.color : theme.hintColor,
-                                size: 20),
-                            const SizedBox(height: 2),
-                            Text(
-                              m.localizedLabel(AppLocalizations.of(context)),
-                              style: TextStyle(
-                                fontSize: 11,
-                                color: isSelected ? m.color : theme.hintColor,
-                                fontWeight: isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AlhaiSpacing.xs,
+                            ),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                color: isSelected
+                                    ? m.color
+                                    : Colors.transparent,
                               ),
                             ),
-                          ],
+                            child: Column(
+                              children: [
+                                Icon(
+                                  m.icon,
+                                  color: isSelected ? m.color : theme.hintColor,
+                                  size: 20,
+                                ),
+                                const SizedBox(height: 2),
+                                Text(
+                                  m.localizedLabel(
+                                    AppLocalizations.of(context),
+                                  ),
+                                  style: TextStyle(
+                                    fontSize: 11,
+                                    color: isSelected
+                                        ? m.color
+                                        : theme.hintColor,
+                                    fontWeight: isSelected
+                                        ? FontWeight.bold
+                                        : FontWeight.normal,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-              );
-            }).toList(),
+                  );
+                }).toList(),
           ),
           const SizedBox(height: AlhaiSpacing.xs),
 
@@ -816,8 +874,9 @@ class _InlinePaymentState extends State<InlinePayment> {
               Expanded(
                 child: TextField(
                   controller: _splitAmountController,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(decimal: true),
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
                   textAlign: TextAlign.center,
                   inputFormatters: [
                     FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
@@ -827,9 +886,12 @@ class _InlinePaymentState extends State<InlinePayment> {
                     hintText: AppLocalizations.of(context).amount,
                     suffixText: AppLocalizations.of(context).sarCurrency,
                     border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.sm),
+                      horizontal: AlhaiSpacing.sm,
+                      vertical: AlhaiSpacing.sm,
+                    ),
                     isDense: true,
                   ),
                   onSubmitted: (_) => _addSplit(),
@@ -842,7 +904,9 @@ class _InlinePaymentState extends State<InlinePayment> {
                 label: Text(AppLocalizations.of(context).addPayment),
                 style: FilledButton.styleFrom(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.sm),
+                    horizontal: AlhaiSpacing.sm,
+                    vertical: AlhaiSpacing.sm,
+                  ),
                   backgroundColor: AppColors.primary,
                 ),
               ),
@@ -857,7 +921,8 @@ class _InlinePaymentState extends State<InlinePayment> {
                 onPressed: _selectCustomer,
                 icon: const Icon(Icons.person_search, size: 18),
                 label: Text(
-                    AppLocalizations.of(context).selectCustomerFirstButton),
+                  AppLocalizations.of(context).selectCustomerFirstButton,
+                ),
               ),
             ),
         ],
@@ -883,8 +948,9 @@ class _PaymentMethodButton extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     return Material(
-      color:
-          isSelected ? method.color.withValues(alpha: 0.2) : Colors.transparent,
+      color: isSelected
+          ? method.color.withValues(alpha: 0.2)
+          : Colors.transparent,
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: onTap,

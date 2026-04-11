@@ -49,10 +49,12 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
     if (_searchQuery.isEmpty) return products;
     final q = _searchQuery.toLowerCase();
     return products
-        .where((p) =>
-            p.name.toLowerCase().contains(q) ||
-            (p.barcode?.toLowerCase().contains(q) ?? false) ||
-            (p.sku?.toLowerCase().contains(q) ?? false))
+        .where(
+          (p) =>
+              p.name.toLowerCase().contains(q) ||
+              (p.barcode?.toLowerCase().contains(q) ?? false) ||
+              (p.sku?.toLowerCase().contains(q) ?? false),
+        )
         .toList();
   }
 
@@ -65,15 +67,13 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
     final dataAsync = ref.watch(liteAllProductsProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.price),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(l10n.price), centerTitle: true),
       body: Column(
         children: [
           Padding(
-            padding:
-                EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+            padding: EdgeInsets.all(
+              isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg,
+            ),
             child: TextField(
               controller: _searchController,
               onChanged: _onSearchChanged,
@@ -93,17 +93,21 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
                       )
                     : null,
                 border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                        color: isDark
-                            ? Colors.white24
-                            : Theme.of(context).colorScheme.outlineVariant)),
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: isDark
+                        ? Colors.white24
+                        : Theme.of(context).colorScheme.outlineVariant,
+                  ),
+                ),
                 enabledBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide(
-                        color: isDark
-                            ? Colors.white12
-                            : Theme.of(context).colorScheme.outlineVariant)),
+                  borderRadius: BorderRadius.circular(12),
+                  borderSide: BorderSide(
+                    color: isDark
+                        ? Colors.white12
+                        : Theme.of(context).colorScheme.outlineVariant,
+                  ),
+                ),
                 filled: true,
                 fillColor: isDark
                     ? Colors.white.withValues(alpha: 0.06)
@@ -117,13 +121,15 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
                 final filtered = _filter(products);
                 if (filtered.isEmpty) {
                   return Center(
-                      child: Text(l10n.noResults,
-                          style: TextStyle(
-                              color: isDark
-                                  ? Colors.white54
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant)));
+                    child: Text(
+                      l10n.noResults,
+                      style: TextStyle(
+                        color: isDark
+                            ? Colors.white54
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  );
                 }
                 final isWide = size.width > 900;
                 if (isWide) {
@@ -152,11 +158,16 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
     );
   }
 
-  Widget _buildCardList(List<ProductsTableData> products, bool isDark,
-      bool isMobile, AppLocalizations l10n) {
+  Widget _buildCardList(
+    List<ProductsTableData> products,
+    bool isDark,
+    bool isMobile,
+    AppLocalizations l10n,
+  ) {
     return ListView.builder(
       padding: EdgeInsets.symmetric(
-          horizontal: isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+        horizontal: isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg,
+      ),
       itemCount: products.length,
       itemBuilder: (context, index) {
         final product = products[index];
@@ -169,7 +180,10 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
   }
 
   Widget _buildDataTable(
-      List<ProductsTableData> products, bool isDark, AppLocalizations l10n) {
+    List<ProductsTableData> products,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
       child: SizedBox(
@@ -185,31 +199,38 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
             DataColumn(label: Text(l10n.actionsCol)),
           ],
           rows: products
-              .map((product) => DataRow(
-                    key: ValueKey(product.id),
-                    cells: [
-                      DataCell(Text(product.name)),
-                      DataCell(Text(
-                          '${product.price.toStringAsFixed(2)} ${l10n.sar}')),
-                      DataCell(Text(product.categoryId ?? '-')),
-                      DataCell(
-                        IconButton(
-                          tooltip: l10n.edit,
-                          icon: const Icon(Icons.edit_outlined, size: 20),
-                          onPressed: () =>
-                              _showPriceDialog(context, product, isDark, l10n),
-                        ),
+              .map(
+                (product) => DataRow(
+                  key: ValueKey(product.id),
+                  cells: [
+                    DataCell(Text(product.name)),
+                    DataCell(
+                      Text('${product.price.toStringAsFixed(2)} ${l10n.sar}'),
+                    ),
+                    DataCell(Text(product.categoryId ?? '-')),
+                    DataCell(
+                      IconButton(
+                        tooltip: l10n.edit,
+                        icon: const Icon(Icons.edit_outlined, size: 20),
+                        onPressed: () =>
+                            _showPriceDialog(context, product, isDark, l10n),
                       ),
-                    ],
-                  ))
+                    ),
+                  ],
+                ),
+              )
               .toList(),
         ),
       ),
     );
   }
 
-  Widget _buildProductTile(BuildContext context, ProductsTableData product,
-      bool isDark, AppLocalizations l10n) {
+  Widget _buildProductTile(
+    BuildContext context,
+    ProductsTableData product,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
       padding: const EdgeInsets.all(AlhaiSpacing.sm),
@@ -217,9 +238,10 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-            color: isDark
-                ? Colors.white12
-                : Theme.of(context).colorScheme.outlineVariant),
+          color: isDark
+              ? Colors.white12
+              : Theme.of(context).colorScheme.outlineVariant,
+        ),
       ),
       child: Row(
         children: [
@@ -227,53 +249,72 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
             width: AlhaiSpacing.listTileCompactMinHeight,
             height: AlhaiSpacing.listTileCompactMinHeight,
             decoration: BoxDecoration(
-                color: AlhaiColors.primary.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(10)),
-            child: const Icon(Icons.inventory_2_outlined,
-                color: AlhaiColors.primary, size: 22),
+              color: AlhaiColors.primary.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
+            child: const Icon(
+              Icons.inventory_2_outlined,
+              color: AlhaiColors.primary,
+              size: 22,
+            ),
           ),
           const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(product.name,
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Colors.black87)),
-                Text(product.sku ?? product.barcode ?? '',
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: isDark
-                            ? Colors.white38
-                            : Theme.of(context).colorScheme.onSurfaceVariant)),
+                Text(
+                  product.name,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
+                Text(
+                  product.sku ?? product.barcode ?? '',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark
+                        ? Colors.white38
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
           ),
-          Text('${product.price.toStringAsFixed(0)} SAR',
-              style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 16,
-                  color: isDark ? Colors.white : Colors.black87)),
+          Text(
+            '${product.price.toStringAsFixed(0)} SAR',
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+              color: isDark ? Colors.white : Colors.black87,
+            ),
+          ),
           const SizedBox(width: AlhaiSpacing.xs),
           IconButton(
             tooltip: 'Edit price',
             onPressed: () => _showPriceDialog(context, product, isDark, l10n),
             icon: const Icon(Icons.edit, size: 18),
             style: IconButton.styleFrom(
-                backgroundColor: AlhaiColors.primary.withValues(alpha: 0.1),
-                foregroundColor: AlhaiColors.primary),
+              backgroundColor: AlhaiColors.primary.withValues(alpha: 0.1),
+              foregroundColor: AlhaiColors.primary,
+            ),
           ),
         ],
       ),
     );
   }
 
-  void _showPriceDialog(BuildContext context, ProductsTableData product,
-      bool isDark, AppLocalizations l10n) {
-    final controller =
-        TextEditingController(text: product.price.toStringAsFixed(2));
+  void _showPriceDialog(
+    BuildContext context,
+    ProductsTableData product,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
+    final controller = TextEditingController(
+      text: product.price.toStringAsFixed(2),
+    );
     String? errorText;
     showDialog(
       context: context,
@@ -285,11 +326,12 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
             children: [
               TextField(
                 controller: controller,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 textInputAction: TextInputAction.done,
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*'))
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*')),
                 ],
                 onChanged: (value) {
                   final parsed = double.tryParse(value);
@@ -308,14 +350,17 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
                   suffixText: 'SAR',
                   errorText: errorText,
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
             ],
           ),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(ctx), child: Text(l10n.cancel)),
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(l10n.cancel),
+            ),
             FilledButton(
               onPressed: () async {
                 final newPrice = double.tryParse(controller.text);
@@ -323,7 +368,9 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
                   try {
                     final db = GetIt.I<AppDatabase>();
                     final updated = product.copyWith(
-                        price: newPrice, updatedAt: Value(DateTime.now()));
+                      price: newPrice,
+                      updatedAt: Value(DateTime.now()),
+                    );
                     await db.productsDao.updateProduct(updated);
                     ref.invalidate(liteAllProductsProvider);
                     if (ctx.mounted) Navigator.pop(ctx);
@@ -334,7 +381,8 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
                           backgroundColor: AlhaiColors.success,
                           behavior: SnackBarBehavior.floating,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                       );
                     }
@@ -347,7 +395,8 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
                           backgroundColor: AlhaiColors.error,
                           behavior: SnackBarBehavior.floating,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                         ),
                       );
                     }

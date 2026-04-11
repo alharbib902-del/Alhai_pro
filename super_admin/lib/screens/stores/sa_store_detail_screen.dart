@@ -32,8 +32,9 @@ class SAStoreDetailScreen extends ConsumerWidget {
           final phone = store.phone ?? '-';
           final businessType = store.businessType ?? '-';
           final createdAt = store.createdAt ?? '';
-          final dateStr =
-              createdAt.length >= 10 ? createdAt.substring(0, 10) : createdAt;
+          final dateStr = createdAt.length >= 10
+              ? createdAt.substring(0, 10)
+              : createdAt;
 
           // Extract subscription info
           String planName = '-';
@@ -241,9 +242,9 @@ class SAStoreDetailScreen extends ConsumerWidget {
     final plans = plansAsync.valueOrNull ?? [];
 
     if (plans.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.noPlansAvailable)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.noPlansAvailable)));
       return;
     }
 
@@ -260,7 +261,8 @@ class SAStoreDetailScreen extends ConsumerWidget {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-              isUpgrade ? l10n.alreadyOnHighestPlan : l10n.alreadyOnLowestPlan),
+            isUpgrade ? l10n.alreadyOnHighestPlan : l10n.alreadyOnLowestPlan,
+          ),
         ),
       );
       return;
@@ -295,7 +297,8 @@ class SAStoreDetailScreen extends ConsumerWidget {
                     return DropdownMenuItem(
                       value: p.slug,
                       child: Text(
-                          '${p.name ?? p.slug} - $price ${l10n.sar}${l10n.perMonth}'),
+                        '${p.name ?? p.slug} - $price ${l10n.sar}${l10n.perMonth}',
+                      ),
                     );
                   }).toList(),
                   onChanged: (v) => setState(() => selectedSlug = v),
@@ -313,16 +316,18 @@ class SAStoreDetailScreen extends ConsumerWidget {
                 if (selectedSlug == null) return;
                 final ds = ref.read(saStoresDatasourceProvider);
                 await ds.updateStorePlan(storeId, selectedSlug!);
-                await ref.read(auditLogServiceProvider).log(
-                  action: 'subscription.plan_change',
-                  targetType: 'store',
-                  targetId: storeId,
-                  before: {'plan': currentPlanSlug},
-                  after: {'plan': selectedSlug},
-                  metadata: {
-                    'direction': isUpgrade ? 'upgrade' : 'downgrade',
-                  },
-                );
+                await ref
+                    .read(auditLogServiceProvider)
+                    .log(
+                      action: 'subscription.plan_change',
+                      targetType: 'store',
+                      targetId: storeId,
+                      before: {'plan': currentPlanSlug},
+                      after: {'plan': selectedSlug},
+                      metadata: {
+                        'direction': isUpgrade ? 'upgrade' : 'downgrade',
+                      },
+                    );
                 ref.invalidate(saStoreDetailProvider(storeId));
                 ref.invalidate(saStoresListProvider);
                 if (ctx.mounted) Navigator.pop(ctx);
@@ -379,8 +384,10 @@ class _StoreInfoCard extends StatelessWidget {
                 CircleAvatar(
                   radius: 24,
                   backgroundColor: theme.colorScheme.primaryContainer,
-                  child: Icon(Icons.store_rounded,
-                      color: theme.colorScheme.primary),
+                  child: Icon(
+                    Icons.store_rounded,
+                    color: theme.colorScheme.primary,
+                  ),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(

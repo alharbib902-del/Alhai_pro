@@ -33,9 +33,10 @@ class ProductDetailScreen extends ConsumerWidget {
               AspectRatio(
                 aspectRatio: 1,
                 child: AlhaiSkeleton.rectangle(
-                    width: double.infinity,
-                    height: double.infinity,
-                    borderRadius: BorderRadius.zero),
+                  width: double.infinity,
+                  height: double.infinity,
+                  borderRadius: BorderRadius.zero,
+                ),
               ),
               Padding(
                 padding: const EdgeInsets.all(AlhaiSpacing.md),
@@ -71,94 +72,98 @@ class ProductDetailScreen extends ConsumerWidget {
 
           // Shared widgets
           Widget imageSection({double? aspectRatio}) => Hero(
-                tag: 'product_${product.id}',
-                child: AspectRatio(
-                  aspectRatio: aspectRatio ?? 1,
-                  child: ProductImage(
-                    thumbnail: product.imageThumbnail,
-                    medium: product.imageMedium,
-                    large: product.imageLarge,
-                    size: ImageSize.large,
-                  ),
-                ),
-              );
+            tag: 'product_${product.id}',
+            child: AspectRatio(
+              aspectRatio: aspectRatio ?? 1,
+              child: ProductImage(
+                thumbnail: product.imageThumbnail,
+                medium: product.imageMedium,
+                large: product.imageLarge,
+                size: ImageSize.large,
+              ),
+            ),
+          );
 
           Widget detailsSection() => Padding(
-                padding: const EdgeInsets.all(AlhaiSpacing.md),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      product.name,
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: AlhaiSpacing.xs),
-                    Text(
-                      '${product.price.toStringAsFixed(2)} ر.س',
-                      style: theme.textTheme.headlineMedium?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: AlhaiSpacing.xs),
-                    Builder(builder: (context) {
-                      final statusColors =
-                          theme.extension<AlhaiStatusColors>()!;
-                      return Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 10, vertical: AlhaiSpacing.xxs),
-                        decoration: BoxDecoration(
-                          color: product.isOutOfStock
-                              ? statusColors.error.withValues(alpha: 0.1)
-                              : statusColors.success.withValues(alpha: 0.1),
-                          borderRadius: AlhaiRadius.borderSm,
-                        ),
-                        child: Text(
-                          product.isOutOfStock ? 'غير متوفر' : 'متوفر',
-                          style: TextStyle(
-                            color: product.isOutOfStock
-                                ? statusColors.error
-                                : statusColors.success,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      );
-                    }),
-                    if (product.description != null &&
-                        product.description!.isNotEmpty) ...[
-                      const SizedBox(height: AlhaiSpacing.md),
-                      Text(
-                        'الوصف',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: AlhaiSpacing.xs),
-                      Text(
-                        product.description!,
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.onSurfaceVariant,
-                        ),
-                      ),
-                    ],
-                    if (product.unit != null) ...[
-                      const SizedBox(height: AlhaiSpacing.sm),
-                      Text(
-                        'الوحدة: ${product.unit}',
-                        style: theme.textTheme.bodyMedium?.copyWith(
-                          color: theme.colorScheme.outline,
-                        ),
-                      ),
-                    ],
-                  ],
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  product.name,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              );
+                const SizedBox(height: AlhaiSpacing.xs),
+                Text(
+                  '${product.price.toStringAsFixed(2)} ر.س',
+                  style: theme.textTheme.headlineMedium?.copyWith(
+                    color: theme.colorScheme.primary,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: AlhaiSpacing.xs),
+                Builder(
+                  builder: (context) {
+                    final statusColors = theme.extension<AlhaiStatusColors>()!;
+                    return Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: AlhaiSpacing.xxs,
+                      ),
+                      decoration: BoxDecoration(
+                        color: product.isOutOfStock
+                            ? statusColors.error.withValues(alpha: 0.1)
+                            : statusColors.success.withValues(alpha: 0.1),
+                        borderRadius: AlhaiRadius.borderSm,
+                      ),
+                      child: Text(
+                        product.isOutOfStock ? 'غير متوفر' : 'متوفر',
+                        style: TextStyle(
+                          color: product.isOutOfStock
+                              ? statusColors.error
+                              : statusColors.success,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                if (product.description != null &&
+                    product.description!.isNotEmpty) ...[
+                  const SizedBox(height: AlhaiSpacing.md),
+                  Text(
+                    'الوصف',
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: AlhaiSpacing.xs),
+                  Text(
+                    product.description!,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+                if (product.unit != null) ...[
+                  const SizedBox(height: AlhaiSpacing.sm),
+                  Text(
+                    'الوحدة: ${product.unit}',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.outline,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          );
 
           return LayoutBuilder(
             builder: (context, constraints) {
-              final useSideBySide = ResponsiveHelper.isTablet(context) ||
+              final useSideBySide =
+                  ResponsiveHelper.isTablet(context) ||
                   ResponsiveHelper.isLandscape(context);
 
               return Column(
@@ -185,10 +190,7 @@ class ProductDetailScreen extends ConsumerWidget {
                         : SingleChildScrollView(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.stretch,
-                              children: [
-                                imageSection(),
-                                detailsSection(),
-                              ],
+                              children: [imageSection(), detailsSection()],
                             ),
                           ),
                   ),
@@ -243,13 +245,16 @@ class ProductDetailScreen extends ConsumerWidget {
                                           .read(cartProvider.notifier)
                                           .addItem(product, storeId);
                                       if (added) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
                                           SnackBar(
                                             content: Text(
-                                                'تمت إضافة ${product.name}'),
-                                            duration:
-                                                const Duration(seconds: 1),
+                                              'تمت إضافة ${product.name}',
+                                            ),
+                                            duration: const Duration(
+                                              seconds: 1,
+                                            ),
                                           ),
                                         );
                                       } else {
@@ -271,22 +276,30 @@ class ProductDetailScreen extends ConsumerWidget {
                                                 onPressed: () {
                                                   ref
                                                       .read(
-                                                          cartProvider.notifier)
+                                                        cartProvider.notifier,
+                                                      )
                                                       .clearAndSwitchStore(
-                                                          storeId);
+                                                        storeId,
+                                                      );
                                                   ref
                                                       .read(
-                                                          cartProvider.notifier)
+                                                        cartProvider.notifier,
+                                                      )
                                                       .addItem(
-                                                          product, storeId);
+                                                        product,
+                                                        storeId,
+                                                      );
                                                   Navigator.pop(ctx);
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
+                                                  ScaffoldMessenger.of(
+                                                    context,
+                                                  ).showSnackBar(
                                                     SnackBar(
                                                       content: Text(
-                                                          'تمت إضافة ${product.name}'),
+                                                        'تمت إضافة ${product.name}',
+                                                      ),
                                                       duration: const Duration(
-                                                          seconds: 1),
+                                                        seconds: 1,
+                                                      ),
                                                     ),
                                                   );
                                                 },

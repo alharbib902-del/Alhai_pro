@@ -19,10 +19,10 @@ import '../../core/services/sentry_service.dart';
 
 final _adminCategoriesProvider =
     FutureProvider.autoDispose<List<CategoriesTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider) ?? kDefaultStoreId;
-  final dao = getIt<AppDatabase>().categoriesDao;
-  return dao.getAllCategories(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider) ?? kDefaultStoreId;
+      final dao = getIt<AppDatabase>().categoriesDao;
+      return dao.getAllCategories(storeId);
+    });
 
 // ============================================================================
 // Predefined Colors and Icons
@@ -59,11 +59,13 @@ Color _parseColor(String? hex) {
   try {
     return Color(int.parse(hex.replaceFirst('#', '0xFF')));
   } catch (e, st) {
-    unawaited(reportError(
-      e,
-      stackTrace: st,
-      hint: 'categories_screen: parse color hex failed',
-    ));
+    unawaited(
+      reportError(
+        e,
+        stackTrace: st,
+        hint: 'categories_screen: parse color hex failed',
+      ),
+    );
     return _kCategoryColors[0];
   }
 }
@@ -78,11 +80,13 @@ IconData _parseIcon(String? iconStr) {
     final code = int.parse(iconStr);
     return IconData(code, fontFamily: 'MaterialIcons');
   } catch (e, st) {
-    unawaited(reportError(
-      e,
-      stackTrace: st,
-      hint: 'categories_screen: parse icon code failed',
-    ));
+    unawaited(
+      reportError(
+        e,
+        stackTrace: st,
+        hint: 'categories_screen: parse icon code failed',
+      ),
+    );
     return _kCategoryIcons.last;
   }
 }
@@ -170,26 +174,34 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
     final l10n = AppLocalizations.of(context);
     final now = DateTime.now();
 
-    final sanitizedName =
-        InputSanitizer.sanitize(_nameArController.text.trim());
-    final sanitizedNameEn =
-        InputSanitizer.sanitize(_nameEnController.text.trim());
+    final sanitizedName = InputSanitizer.sanitize(
+      _nameArController.text.trim(),
+    );
+    final sanitizedNameEn = InputSanitizer.sanitize(
+      _nameEnController.text.trim(),
+    );
 
     try {
       if (_isCreating) {
         final newId = 'cat_${now.millisecondsSinceEpoch}';
-        await dao.insertCategory(CategoriesTableCompanion(
-          id: drift.Value(newId),
-          storeId: drift.Value(storeId),
-          name: drift.Value(sanitizedName),
-          nameEn: drift.Value(sanitizedNameEn.isEmpty ? null : sanitizedNameEn),
-          color: drift.Value(_colorToHex(_selectedColor)),
-          icon: drift.Value(_iconToString(_selectedIcon)),
-          sortOrder: drift.Value(int.tryParse(_sortOrderController.text) ?? 0),
-          isActive: drift.Value(_isActive),
-          createdAt: drift.Value(now),
-          updatedAt: drift.Value(now),
-        ));
+        await dao.insertCategory(
+          CategoriesTableCompanion(
+            id: drift.Value(newId),
+            storeId: drift.Value(storeId),
+            name: drift.Value(sanitizedName),
+            nameEn: drift.Value(
+              sanitizedNameEn.isEmpty ? null : sanitizedNameEn,
+            ),
+            color: drift.Value(_colorToHex(_selectedColor)),
+            icon: drift.Value(_iconToString(_selectedIcon)),
+            sortOrder: drift.Value(
+              int.tryParse(_sortOrderController.text) ?? 0,
+            ),
+            isActive: drift.Value(_isActive),
+            createdAt: drift.Value(now),
+            updatedAt: drift.Value(now),
+          ),
+        );
         setState(() {
           _selectedCategoryId = newId;
           _isCreating = false;
@@ -197,16 +209,19 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
       } else if (_selectedCategoryId != null) {
         final existing = await dao.getCategoryById(_selectedCategoryId!);
         if (existing != null) {
-          await dao.updateCategory(existing.copyWith(
-            name: sanitizedName,
-            nameEn:
-                drift.Value(sanitizedNameEn.isEmpty ? null : sanitizedNameEn),
-            color: drift.Value(_colorToHex(_selectedColor)),
-            icon: drift.Value(_iconToString(_selectedIcon)),
-            sortOrder: int.tryParse(_sortOrderController.text) ?? 0,
-            isActive: _isActive,
-            updatedAt: drift.Value(now),
-          ));
+          await dao.updateCategory(
+            existing.copyWith(
+              name: sanitizedName,
+              nameEn: drift.Value(
+                sanitizedNameEn.isEmpty ? null : sanitizedNameEn,
+              ),
+              color: drift.Value(_colorToHex(_selectedColor)),
+              icon: drift.Value(_iconToString(_selectedIcon)),
+              sortOrder: int.tryParse(_sortOrderController.text) ?? 0,
+              isActive: _isActive,
+              updatedAt: drift.Value(now),
+            ),
+          );
         }
       }
 
@@ -329,8 +344,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
           title: l10n.categoriesManagement,
           subtitle: l10n.categories,
           showSearch: false,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 0,
           userName: l10n.defaultUserName,
@@ -356,15 +372,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          flex: 4,
-          child: _buildLeftPanel(isDark, l10n),
-        ),
+        Expanded(flex: 4, child: _buildLeftPanel(isDark, l10n)),
         const SizedBox(width: AlhaiSpacing.lg),
-        Expanded(
-          flex: 6,
-          child: _buildRightPanel(isDark, l10n),
-        ),
+        Expanded(flex: 6, child: _buildRightPanel(isDark, l10n)),
       ],
     );
   }
@@ -385,10 +395,11 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                   _isCreating = false;
                 }),
                 icon: Icon(
-                    Directionality.of(context) == TextDirection.rtl
-                        ? Icons.arrow_forward_rounded
-                        : Icons.arrow_back_rounded,
-                    size: 18),
+                  Directionality.of(context) == TextDirection.rtl
+                      ? Icons.arrow_forward_rounded
+                      : Icons.arrow_back_rounded,
+                  size: 18,
+                ),
                 label: Text(l10n.categories),
               ),
             ],
@@ -459,7 +470,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                     categoriesAsync.when(
                       data: (cats) => Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 8, vertical: 2),
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.primary.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(10),
@@ -485,8 +498,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                       ),
                       tooltip: l10n.addCategory,
                       style: IconButton.styleFrom(
-                        backgroundColor:
-                            AppColors.primary.withValues(alpha: 0.1),
+                        backgroundColor: AppColors.primary.withValues(
+                          alpha: 0.1,
+                        ),
                       ),
                     ),
                   ],
@@ -518,7 +532,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                         ? Colors.white.withValues(alpha: 0.05)
                         : AppColors.border.withValues(alpha: 0.15),
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 10),
+                      horizontal: 16,
+                      vertical: 10,
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: BorderSide.none,
@@ -530,7 +546,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                       borderSide: const BorderSide(
-                          color: AppColors.primary, width: 1.5),
+                        color: AppColors.primary,
+                        width: 1.5,
+                      ),
                     ),
                   ),
                   style: TextStyle(
@@ -556,10 +574,12 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                 final filtered = _searchQuery.isEmpty
                     ? categories
                     : categories
-                        .where((c) => c.name
-                            .toLowerCase()
-                            .contains(_searchQuery.toLowerCase()))
-                        .toList();
+                          .where(
+                            (c) => c.name.toLowerCase().contains(
+                              _searchQuery.toLowerCase(),
+                            ),
+                          )
+                          .toList();
 
                 if (filtered.isEmpty) {
                   return Center(
@@ -569,9 +589,7 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                         Icon(
                           Icons.category_outlined,
                           size: 48,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurfaceVariant
+                          color: Theme.of(context).colorScheme.onSurfaceVariant
                               .withValues(alpha: 0.5)
                               .withValues(alpha: 0.5),
                         ),
@@ -579,8 +597,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                         Text(
                           l10n.noCategories,
                           style: TextStyle(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             fontSize: 14,
                           ),
                         ),
@@ -590,15 +609,21 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                 }
 
                 return ListView.builder(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 8,
+                  ),
                   itemCount: filtered.length,
                   itemBuilder: (context, index) {
                     final category = filtered[index];
                     final color = _colorCache.putIfAbsent(
-                        category.id, () => _parseColor(category.color));
+                      category.id,
+                      () => _parseColor(category.color),
+                    );
                     final icon = _iconCache.putIfAbsent(
-                        category.id, () => _parseIcon(category.icon));
+                      category.id,
+                      () => _parseIcon(category.icon),
+                    );
                     final isSelected = _selectedCategoryId == category.id;
 
                     return _CategoryListItem(
@@ -724,8 +749,10 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
                 foregroundColor: Colors.white,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 20,
+                  vertical: 12,
+                ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -772,8 +799,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
             _isCreating
                 ? l10n.addCategory
                 : (_nameArController.text.isNotEmpty
-                    ? _nameArController.text
-                    : l10n.editCategory),
+                      ? _nameArController.text
+                      : l10n.editCategory),
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSurface,
               fontSize: 18,
@@ -786,10 +813,15 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
         if (!_isCreating) ...[
           OutlinedButton.icon(
             onPressed: _deleteCategory,
-            icon: const Icon(Icons.delete_outline_rounded,
-                size: 16, color: AppColors.error),
-            label: Text(l10n.deleteCategory,
-                style: const TextStyle(color: AppColors.error)),
+            icon: const Icon(
+              Icons.delete_outline_rounded,
+              size: 16,
+              color: AppColors.error,
+            ),
+            label: Text(
+              l10n.deleteCategory,
+              style: const TextStyle(color: AppColors.error),
+            ),
             style: OutlinedButton.styleFrom(
               side: BorderSide(color: AppColors.error.withValues(alpha: 0.3)),
               shape: RoundedRectangleBorder(
@@ -846,8 +878,8 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                       color: isSelected
                           ? _selectedColor.withValues(alpha: 0.15)
                           : (isDark
-                              ? Colors.white.withValues(alpha: 0.05)
-                              : AppColors.border.withValues(alpha: 0.15)),
+                                ? Colors.white.withValues(alpha: 0.05)
+                                : AppColors.border.withValues(alpha: 0.15)),
                       borderRadius: BorderRadius.circular(10),
                       border: Border.all(
                         color: isSelected ? _selectedColor : Colors.transparent,
@@ -902,8 +934,11 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
                           shape: BoxShape.circle,
                         ),
                         child: isSelected
-                            ? const Icon(Icons.check,
-                                size: 14, color: Colors.white)
+                            ? const Icon(
+                                Icons.check,
+                                size: 14,
+                                color: Colors.white,
+                              )
                             : null,
                       ),
                     ),
@@ -994,8 +1029,10 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
         fillColor: isDark
             ? Colors.white.withValues(alpha: 0.05)
             : AppColors.border.withValues(alpha: 0.15),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 14,
+        ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
@@ -1032,7 +1069,10 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
       maxLength: 5,
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
       validator: FormValidators.numeric(
-          isRequired: false, max: 99999, allowZero: true),
+        isRequired: false,
+        max: 99999,
+        allowZero: true,
+      ),
     );
   }
 
@@ -1043,7 +1083,9 @@ class _CategoriesScreenState extends ConsumerState<CategoriesScreen> {
   Widget _buildActiveSwitch(bool isDark, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withValues(alpha: 0.05)
@@ -1130,17 +1172,14 @@ class _CategoryListItemState extends State<_CategoryListItem> {
               color: widget.isSelected
                   ? AppColors.primary.withValues(alpha: 0.1)
                   : _isHovered
-                      ? (widget.isDark
-                          ? Colors.white.withValues(alpha: 0.05)
-                          : AppColors.border.withValues(alpha: 0.15))
-                      : Colors.transparent,
+                  ? (widget.isDark
+                        ? Colors.white.withValues(alpha: 0.05)
+                        : AppColors.border.withValues(alpha: 0.15))
+                  : Colors.transparent,
               borderRadius: BorderRadius.circular(12),
               border: widget.isSelected
                   ? const BorderDirectional(
-                      end: BorderSide(
-                        color: AppColors.primary,
-                        width: 3,
-                      ),
+                      end: BorderSide(color: AppColors.primary, width: 3),
                     )
                   : null,
             ),
@@ -1153,11 +1192,7 @@ class _CategoryListItemState extends State<_CategoryListItem> {
                     color: widget.color.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
-                    widget.icon,
-                    color: widget.color,
-                    size: 18,
-                  ),
+                  child: Icon(widget.icon, color: widget.color, size: 18),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
@@ -1168,8 +1203,9 @@ class _CategoryListItemState extends State<_CategoryListItem> {
                           ? AppColors.primary
                           : (Theme.of(context).colorScheme.onSurface),
                       fontSize: 14,
-                      fontWeight:
-                          widget.isSelected ? FontWeight.w600 : FontWeight.w500,
+                      fontWeight: widget.isSelected
+                          ? FontWeight.w600
+                          : FontWeight.w500,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -1177,8 +1213,10 @@ class _CategoryListItemState extends State<_CategoryListItem> {
                 ),
                 if (!widget.category.isActive)
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 6,
+                      vertical: 2,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.error.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),

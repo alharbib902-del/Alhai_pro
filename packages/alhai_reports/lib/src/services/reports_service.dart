@@ -59,14 +59,17 @@ enum ReportPeriod {
         final yesterday = today.subtract(const Duration(days: 1));
         return DateRange(yesterday, today);
       case ReportPeriod.thisWeek:
-        final startOfWeek =
-            today.subtract(Duration(days: today.weekday - 6)); // السبت
+        final startOfWeek = today.subtract(
+          Duration(days: today.weekday - 6),
+        ); // السبت
         return DateRange(startOfWeek, now);
       case ReportPeriod.lastWeek:
-        final startOfThisWeek =
-            today.subtract(Duration(days: today.weekday - 6));
-        final startOfLastWeek =
-            startOfThisWeek.subtract(const Duration(days: 7));
+        final startOfThisWeek = today.subtract(
+          Duration(days: today.weekday - 6),
+        );
+        final startOfLastWeek = startOfThisWeek.subtract(
+          const Duration(days: 7),
+        );
         return DateRange(startOfLastWeek, startOfThisWeek);
       case ReportPeriod.thisMonth:
         final startOfMonth = DateTime(now.year, now.month, 1);
@@ -330,10 +333,10 @@ class ReportsService {
     required ProductsDao productsDao,
     required InventoryDao inventoryDao,
     LoyaltyDao? loyaltyDao,
-  })  : _salesDao = salesDao,
-        _productsDao = productsDao,
-        _inventoryDao = inventoryDao,
-        _loyaltyDao = loyaltyDao;
+  }) : _salesDao = salesDao,
+       _productsDao = productsDao,
+       _inventoryDao = inventoryDao,
+       _loyaltyDao = loyaltyDao;
 
   // ============================================================================
   // SALES REPORTS
@@ -388,7 +391,8 @@ class ReportsService {
     final topProducts = await _getTopProducts(storeId, range, limit: 10);
 
     debugPrint(
-        '[ReportsService] Sales report generated: ${stats.count} sales, ${stats.total} SAR');
+      '[ReportsService] Sales report generated: ${stats.count} sales, ${stats.total} SAR',
+    );
 
     return SalesReport(
       period: range,
@@ -419,7 +423,9 @@ class ReportsService {
   // TODO(M96): Once SalesDao results are isolate-sendable, offload the
   // aggregation loop to compute() for long date ranges (30+ days).
   Future<List<DailySales>> _getDailySales(
-      String storeId, DateRange range) async {
+    String storeId,
+    DateRange range,
+  ) async {
     final dailySales = <DailySales>[];
     var currentDate = range.start;
 
@@ -431,11 +437,9 @@ class ReportsService {
         endDate: nextDate,
       );
 
-      dailySales.add(DailySales(
-        date: currentDate,
-        count: stats.count,
-        total: stats.total,
-      ));
+      dailySales.add(
+        DailySales(date: currentDate, count: stats.count, total: stats.total),
+      );
 
       currentDate = nextDate;
     }
@@ -445,7 +449,9 @@ class ReportsService {
 
   /// مقارنة مع الفترة السابقة
   Future<SalesComparison> _getSalesComparison(
-      String storeId, DateRange currentRange) async {
+    String storeId,
+    DateRange currentRange,
+  ) async {
     final currentStats = await _salesDao.getSalesStats(
       storeId,
       startDate: currentRange.start,
@@ -482,16 +488,20 @@ class ReportsService {
     int limit = 10,
   }) async {
     // استعلام مركب للحصول على أفضل المنتجات
-    final products =
-        await _productsDao.getTopSellingProducts(storeId, limit: limit);
+    final products = await _productsDao.getTopSellingProducts(
+      storeId,
+      limit: limit,
+    );
 
     return products
-        .map((p) => TopProduct(
-              productId: p.id,
-              productName: p.name,
-              quantitySold: 0, // يمكن حسابه من sale_items
-              revenue: 0, // يمكن حسابه من sale_items
-            ))
+        .map(
+          (p) => TopProduct(
+            productId: p.id,
+            productName: p.name,
+            quantitySold: 0, // يمكن حسابه من sale_items
+            revenue: 0, // يمكن حسابه من sale_items
+          ),
+        )
         .toList();
   }
 
@@ -530,22 +540,26 @@ class ReportsService {
 
       if (stock <= 0) {
         outOfStockCount++;
-        lowStockItems.add(LowStockItem(
-          productId: product.id,
-          productName: product.name,
-          currentStock: stock,
-          minStock: minStock,
-          suggestedReorder: minStock * 2,
-        ));
+        lowStockItems.add(
+          LowStockItem(
+            productId: product.id,
+            productName: product.name,
+            currentStock: stock,
+            minStock: minStock,
+            suggestedReorder: minStock * 2,
+          ),
+        );
       } else if (stock <= minStock) {
         lowStockCount++;
-        lowStockItems.add(LowStockItem(
-          productId: product.id,
-          productName: product.name,
-          currentStock: stock,
-          minStock: minStock,
-          suggestedReorder: minStock - stock + minStock,
-        ));
+        lowStockItems.add(
+          LowStockItem(
+            productId: product.id,
+            productName: product.name,
+            currentStock: stock,
+            minStock: minStock,
+            suggestedReorder: minStock - stock + minStock,
+          ),
+        );
       }
     }
 

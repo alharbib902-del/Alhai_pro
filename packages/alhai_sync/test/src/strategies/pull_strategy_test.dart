@@ -51,10 +51,12 @@ void main() {
 
     group('pullTable', () {
       test('handles error gracefully and returns result with errors', () async {
-        when(() => mockMetadataDao.getLastPullAt(any()))
-            .thenThrow(Exception('DB error'));
-        when(() => mockMetadataDao.setError(any(), any()))
-            .thenAnswer((_) async {});
+        when(
+          () => mockMetadataDao.getLastPullAt(any()),
+        ).thenThrow(Exception('DB error'));
+        when(
+          () => mockMetadataDao.setError(any(), any()),
+        ).thenAnswer((_) async {});
 
         final result = await strategy.pullTable(
           tableName: 'products',
@@ -69,16 +71,22 @@ void main() {
       });
 
       test('updates metadata after successful pull with 0 records', () async {
-        when(() => mockMetadataDao.getLastPullAt('products'))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockMetadataDao.getLastPullAt('products'),
+        ).thenAnswer((_) async => null);
 
         final queryBuilder = MockSupabaseQueryBuilder();
         final filterBuilder = MockPostgrestFilterBuilder();
         when(() => mockClient.from('products')).thenAnswer((_) => queryBuilder);
         setupSelectChain(queryBuilder, filterBuilder, data: []);
 
-        when(() => mockMetadataDao.updateLastPullAt(any(), any(),
-            syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
+        when(
+          () => mockMetadataDao.updateLastPullAt(
+            any(),
+            any(),
+            syncCount: any(named: 'syncCount'),
+          ),
+        ).thenAnswer((_) async {});
         when(() => mockMetadataDao.clearError(any())).thenAnswer((_) async {});
 
         final result = await strategy.pullTable(
@@ -90,11 +98,10 @@ void main() {
         expect(result.tableName, 'products');
         expect(result.hasErrors, isFalse);
         expect(result.recordsPulled, 0);
-        verify(() => mockMetadataDao.updateLastPullAt(
-              'products',
-              any(),
-              syncCount: 0,
-            )).called(1);
+        verify(
+          () =>
+              mockMetadataDao.updateLastPullAt('products', any(), syncCount: 0),
+        ).called(1);
         verify(() => mockMetadataDao.clearError('products')).called(1);
       });
     });
@@ -103,19 +110,27 @@ void main() {
       test('pulls all tables and returns results', () async {
         // For each table, mock the pull to succeed with no records
         for (final tableName in PullStrategy.pullTables) {
-          when(() => mockMetadataDao.getLastPullAt(tableName))
-              .thenAnswer((_) async => null);
+          when(
+            () => mockMetadataDao.getLastPullAt(tableName),
+          ).thenAnswer((_) async => null);
 
           final queryBuilder = MockSupabaseQueryBuilder();
           final filterBuilder = MockPostgrestFilterBuilder();
-          when(() => mockClient.from(tableName))
-              .thenAnswer((_) => queryBuilder);
+          when(
+            () => mockClient.from(tableName),
+          ).thenAnswer((_) => queryBuilder);
           setupSelectChain(queryBuilder, filterBuilder, data: []);
 
-          when(() => mockMetadataDao.updateLastPullAt(tableName, any(),
-              syncCount: any(named: 'syncCount'))).thenAnswer((_) async {});
-          when(() => mockMetadataDao.clearError(tableName))
-              .thenAnswer((_) async {});
+          when(
+            () => mockMetadataDao.updateLastPullAt(
+              tableName,
+              any(),
+              syncCount: any(named: 'syncCount'),
+            ),
+          ).thenAnswer((_) async {});
+          when(
+            () => mockMetadataDao.clearError(tableName),
+          ).thenAnswer((_) async {});
         }
 
         final results = await strategy.pullAll(

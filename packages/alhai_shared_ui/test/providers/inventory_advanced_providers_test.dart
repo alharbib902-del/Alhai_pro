@@ -19,9 +19,9 @@ void main() {
 
   group('expiryTrackingProvider', () {
     test('returns empty list when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(expiryTrackingProvider.future);
@@ -31,9 +31,9 @@ void main() {
 
   group('stockTransfersListProvider', () {
     test('returns empty list when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(stockTransfersListProvider.future);
@@ -43,9 +43,9 @@ void main() {
 
   group('stockTakesListProvider', () {
     test('returns empty list when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(stockTakesListProvider.future);

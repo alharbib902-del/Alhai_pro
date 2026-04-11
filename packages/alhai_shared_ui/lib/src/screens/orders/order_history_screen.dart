@@ -77,10 +77,13 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
         final start = _dateRange!.start;
         final end = _dateRange!.end.add(const Duration(days: 1));
         filtered = filtered
-            .where((o) =>
-                o.orderDate
-                    .isAfter(start.subtract(const Duration(seconds: 1))) &&
-                o.orderDate.isBefore(end))
+            .where(
+              (o) =>
+                  o.orderDate.isAfter(
+                    start.subtract(const Duration(seconds: 1)),
+                  ) &&
+                  o.orderDate.isBefore(end),
+            )
             .toList();
       }
 
@@ -126,10 +129,13 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
         final start = _dateRange!.start;
         final end = _dateRange!.end.add(const Duration(days: 1));
         filteredOrders = filteredOrders
-            .where((o) =>
-                o.orderDate
-                    .isAfter(start.subtract(const Duration(seconds: 1))) &&
-                o.orderDate.isBefore(end))
+            .where(
+              (o) =>
+                  o.orderDate.isAfter(
+                    start.subtract(const Duration(seconds: 1)),
+                  ) &&
+                  o.orderDate.isBefore(end),
+            )
             .toList();
       }
 
@@ -159,9 +165,11 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
     if (_searchController.text.isNotEmpty) {
       final query = _searchController.text.toLowerCase();
       list = list
-          .where((o) =>
-              o.orderNumber.toLowerCase().contains(query) ||
-              (o.customerId ?? '').toLowerCase().contains(query))
+          .where(
+            (o) =>
+                o.orderNumber.toLowerCase().contains(query) ||
+                (o.customerId ?? '').toLowerCase().contains(query),
+          )
           .toList();
     }
     return list;
@@ -189,16 +197,21 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.error_outline,
-                  size: 64,
-                  color: isDark
-                      ? AppColors.error.withValues(alpha: 0.7)
-                      : AppColors.error.withValues(alpha: 0.5)),
+              Icon(
+                Icons.error_outline,
+                size: 64,
+                color: isDark
+                    ? AppColors.error.withValues(alpha: 0.7)
+                    : AppColors.error.withValues(alpha: 0.5),
+              ),
               SizedBox(height: AlhaiSpacing.md),
-              Text(l10n.errorOccurred,
-                  style: TextStyle(
-                      fontSize: 18,
-                      color: Theme.of(context).colorScheme.onSurface)),
+              Text(
+                l10n.errorOccurred,
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
               SizedBox(height: AlhaiSpacing.xs),
               TextButton.icon(
                 onPressed: _loadData,
@@ -244,7 +257,9 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
               // Search bar
               Padding(
                 padding: EdgeInsets.symmetric(
-                    horizontal: horizontalPadding, vertical: AlhaiSpacing.md),
+                  horizontal: horizontalPadding,
+                  vertical: AlhaiSpacing.md,
+                ),
                 child: TextField(
                   controller: _searchController,
                   decoration: InputDecoration(
@@ -253,8 +268,9 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.md,
+                    ),
                   ),
                   onChanged: (_) => setState(() {}),
                 ),
@@ -276,27 +292,31 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                             setState(() => _filterStatus = 'all');
                             _loadData();
                           },
-                          deleteIconColor:
-                              Theme.of(context).colorScheme.onSurfaceVariant,
+                          deleteIconColor: Theme.of(
+                            context,
+                          ).colorScheme.onSurfaceVariant,
                         ),
                       if (_filterChannel != 'all')
                         Chip(
                           label: Text(_getChannelName(_filterChannel, l10n)),
                           onDeleted: () =>
                               setState(() => _filterChannel = 'all'),
-                          deleteIconColor:
-                              Theme.of(context).colorScheme.onSurfaceVariant,
+                          deleteIconColor: Theme.of(
+                            context,
+                          ).colorScheme.onSurfaceVariant,
                         ),
                       if (_dateRange != null)
                         Chip(
                           label: Text(
-                              '${_dateRange!.start.day}/${_dateRange!.start.month} - ${_dateRange!.end.day}/${_dateRange!.end.month}'),
+                            '${_dateRange!.start.day}/${_dateRange!.start.month} - ${_dateRange!.end.day}/${_dateRange!.end.month}',
+                          ),
                           onDeleted: () {
                             setState(() => _dateRange = null);
                             _loadData();
                           },
-                          deleteIconColor:
-                              Theme.of(context).colorScheme.onSurfaceVariant,
+                          deleteIconColor: Theme.of(
+                            context,
+                          ).colorScheme.onSurfaceVariant,
                         ),
                     ],
                   ),
@@ -305,7 +325,9 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
               // Stats row
               Container(
                 padding: EdgeInsets.symmetric(
-                    horizontal: horizontalPadding, vertical: AlhaiSpacing.md),
+                  horizontal: horizontalPadding,
+                  vertical: AlhaiSpacing.md,
+                ),
                 child: Row(
                   children: [
                     _StatBadge(
@@ -346,19 +368,24 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Icon(Icons.receipt_long,
-                                size: 64,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant
-                                    .withValues(alpha: 0.3)),
+                            Icon(
+                              Icons.receipt_long,
+                              size: 64,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurfaceVariant
+                                  .withValues(alpha: 0.3),
+                            ),
                             SizedBox(height: AlhaiSpacing.md),
-                            Text(l10n.noOrders,
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant)),
+                            Text(
+                              l10n.noOrders,
+                              style: TextStyle(
+                                fontSize: 18,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
                           ],
                         ),
                       )
@@ -368,27 +395,31 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                             ? GridView.builder(
                                 controller: _scrollController,
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: horizontalPadding),
+                                  horizontal: horizontalPadding,
+                                ),
                                 gridDelegate:
                                     const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  crossAxisSpacing: 16,
-                                  mainAxisSpacing: 0,
-                                  childAspectRatio: 2.8,
-                                ),
-                                itemCount: _filteredOrders.length +
+                                      crossAxisCount: 2,
+                                      crossAxisSpacing: 16,
+                                      mainAxisSpacing: 0,
+                                      childAspectRatio: 2.8,
+                                    ),
+                                itemCount:
+                                    _filteredOrders.length +
                                     (_isLoadingMore ? 2 : 0),
                                 itemBuilder: (context, index) {
                                   if (index >= _filteredOrders.length) {
                                     return const Padding(
                                       padding: EdgeInsets.symmetric(
-                                          vertical: AlhaiSpacing.md),
+                                        vertical: AlhaiSpacing.md,
+                                      ),
                                       child: Center(
                                         child: SizedBox(
                                           width: 24,
                                           height: 24,
                                           child: CircularProgressIndicator(
-                                              strokeWidth: 2),
+                                            strokeWidth: 2,
+                                          ),
                                         ),
                                       ),
                                     );
@@ -403,20 +434,24 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
                             : AnimatedListView(
                                 controller: _scrollController,
                                 padding: EdgeInsets.symmetric(
-                                    horizontal: horizontalPadding),
-                                itemCount: _filteredOrders.length +
+                                  horizontal: horizontalPadding,
+                                ),
+                                itemCount:
+                                    _filteredOrders.length +
                                     (_isLoadingMore ? 1 : 0),
                                 itemBuilder: (context, index) {
                                   if (index >= _filteredOrders.length) {
                                     return const Padding(
                                       padding: EdgeInsets.symmetric(
-                                          vertical: AlhaiSpacing.md),
+                                        vertical: AlhaiSpacing.md,
+                                      ),
                                       child: Center(
                                         child: SizedBox(
                                           width: 24,
                                           height: 24,
                                           child: CircularProgressIndicator(
-                                              strokeWidth: 2),
+                                            strokeWidth: 2,
+                                          ),
                                         ),
                                       ),
                                     );
@@ -495,9 +530,13 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.filterOrders,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                l10n.filterOrders,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               SizedBox(height: AlhaiSpacing.md),
               Text(l10n.status),
               SizedBox(height: AlhaiSpacing.xs),
@@ -611,7 +650,7 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
           recordId: orderId,
           changes: {
             'status': newStatus,
-            'updatedAt': DateTime.now().toIso8601String()
+            'updatedAt': DateTime.now().toIso8601String(),
           },
         );
       } catch (_) {
@@ -624,16 +663,16 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text('${AppLocalizations.of(context).status}: $newStatus')),
+            content: Text('${AppLocalizations.of(context).status}: $newStatus'),
+          ),
         );
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content:
-                  Text('${AppLocalizations.of(context).errorOccurred}: $e')),
+            content: Text('${AppLocalizations.of(context).errorOccurred}: $e'),
+          ),
         );
       }
     }
@@ -651,243 +690,280 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
         expand: false,
         builder: (context, scrollController) =>
             FutureBuilder<List<OrderItemsTableData>>(
-          future: GetIt.I<AppDatabase>().ordersDao.getOrderItems(order.id),
-          builder: (context, snapshot) {
-            final items = snapshot.data ?? [];
-            return ListView(
-              controller: scrollController,
-              padding: const EdgeInsets.all(AlhaiSpacing.lg),
-              children: [
-                Center(
-                  child: Container(
-                    width: 40,
-                    height: 4,
-                    margin: const EdgeInsets.only(bottom: AlhaiSpacing.lg),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context).dividerColor,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              future: GetIt.I<AppDatabase>().ordersDao.getOrderItems(order.id),
+              builder: (context, snapshot) {
+                final items = snapshot.data ?? [];
+                return ListView(
+                  controller: scrollController,
+                  padding: const EdgeInsets.all(AlhaiSpacing.lg),
                   children: [
-                    Text(order.orderNumber,
-                        style: Theme.of(context).textTheme.titleLarge),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.sm,
-                          vertical: AlhaiSpacing.xxs),
-                      decoration: BoxDecoration(
-                        color: _getStatusColor(order.status)
-                            .withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: Text(
-                        _getStatusName(order.status, l10n),
-                        style: TextStyle(
-                            color: _getStatusColor(order.status),
-                            fontWeight: FontWeight.w500),
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: AlhaiSpacing.md),
-                _DetailRow(
-                    icon: Icons.person,
-                    label: l10n.customer,
-                    value: order.customerId ?? l10n.guestCustomer),
-                _DetailRow(
-                    icon: Icons.access_time,
-                    label: l10n.date,
-                    value: _formatDateTime(order.orderDate, l10n)),
-                _DetailRow(
-                    icon: Icons.shopping_bag,
-                    label: l10n.products,
-                    value: '${items.length}'),
-                _DetailRow(
-                    icon: Icons.payment,
-                    label: l10n.payment,
-                    value:
-                        _getPaymentName(order.paymentMethod ?? 'cash', l10n)),
-                _DetailRow(
-                    icon: Icons.storefront,
-                    label: l10n.channelLabel,
-                    value: _getChannelName(order.channel, l10n)),
-
-                // عرض عناصر الطلب الحقيقية
-                if (items.isNotEmpty) ...[
-                  const Divider(height: 24),
-                  Text(l10n.products,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16)),
-                  SizedBox(height: AlhaiSpacing.xs),
-                  ...items.map((item) => Padding(
-                        padding: const EdgeInsets.symmetric(
-                            vertical: AlhaiSpacing.xxs),
-                        child: Row(
-                          children: [
-                            Expanded(
-                                child: Text(item.productName,
-                                    style: const TextStyle(fontSize: 14))),
-                            Text('x${item.quantity.toStringAsFixed(0)}',
-                                style: TextStyle(
-                                    fontSize: 13,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant)),
-                            SizedBox(width: AlhaiSpacing.sm),
-                            Text(
-                                l10n.priceWithCurrency(
-                                    item.total.toStringAsFixed(0)),
-                                style: const TextStyle(
-                                    fontWeight: FontWeight.w500)),
-                          ],
+                    Center(
+                      child: Container(
+                        width: 40,
+                        height: 4,
+                        margin: const EdgeInsets.only(bottom: AlhaiSpacing.lg),
+                        decoration: BoxDecoration(
+                          color: Theme.of(context).dividerColor,
+                          borderRadius: BorderRadius.circular(2),
                         ),
-                      )),
-                ],
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          order.orderNumber,
+                          style: Theme.of(context).textTheme.titleLarge,
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AlhaiSpacing.sm,
+                            vertical: AlhaiSpacing.xxs,
+                          ),
+                          decoration: BoxDecoration(
+                            color: _getStatusColor(
+                              order.status,
+                            ).withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(16),
+                          ),
+                          child: Text(
+                            _getStatusName(order.status, l10n),
+                            style: TextStyle(
+                              color: _getStatusColor(order.status),
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: AlhaiSpacing.md),
+                    _DetailRow(
+                      icon: Icons.person,
+                      label: l10n.customer,
+                      value: order.customerId ?? l10n.guestCustomer,
+                    ),
+                    _DetailRow(
+                      icon: Icons.access_time,
+                      label: l10n.date,
+                      value: _formatDateTime(order.orderDate, l10n),
+                    ),
+                    _DetailRow(
+                      icon: Icons.shopping_bag,
+                      label: l10n.products,
+                      value: '${items.length}',
+                    ),
+                    _DetailRow(
+                      icon: Icons.payment,
+                      label: l10n.payment,
+                      value: _getPaymentName(
+                        order.paymentMethod ?? 'cash',
+                        l10n,
+                      ),
+                    ),
+                    _DetailRow(
+                      icon: Icons.storefront,
+                      label: l10n.channelLabel,
+                      value: _getChannelName(order.channel, l10n),
+                    ),
 
-                const Divider(height: 32),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(l10n.total, style: const TextStyle(fontSize: 18)),
-                    Text(
-                      l10n.priceWithCurrency(order.total.toStringAsFixed(0)),
-                      style: TextStyle(
-                          fontSize: 24,
+                    // عرض عناصر الطلب الحقيقية
+                    if (items.isNotEmpty) ...[
+                      const Divider(height: 24),
+                      Text(
+                        l10n.products,
+                        style: const TextStyle(
                           fontWeight: FontWeight.bold,
-                          color: AppColors.success),
-                    ),
-                  ],
-                ),
-                SizedBox(height: AlhaiSpacing.lg),
-
-                // أزرار تحديث الحالة حسب الحالة الحالية
-                if (order.status == 'created') ...[
-                  FilledButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _updateOrderStatus(order.id, 'confirmed');
-                    },
-                    icon: const Icon(Icons.check),
-                    label: Text(l10n.orderStatusConfirmed),
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 48),
-                    ),
-                  ),
-                  SizedBox(height: AlhaiSpacing.xs),
-                ] else if (order.status == 'confirmed') ...[
-                  FilledButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _updateOrderStatus(order.id, 'preparing');
-                    },
-                    icon: const Icon(Icons.restaurant),
-                    label: Text(l10n.orderStatusPreparing),
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 48),
-                    ),
-                  ),
-                  SizedBox(height: AlhaiSpacing.xs),
-                ] else if (order.status == 'preparing') ...[
-                  FilledButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _updateOrderStatus(order.id, 'ready');
-                    },
-                    icon: const Icon(Icons.check_circle),
-                    label: Text(l10n.orderStatusReady),
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 48),
-                    ),
-                  ),
-                  SizedBox(height: AlhaiSpacing.xs),
-                ] else if (order.status == 'ready') ...[
-                  FilledButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _updateOrderStatus(order.id, 'out_for_delivery');
-                    },
-                    icon: const Icon(Icons.delivery_dining),
-                    label: Text(l10n.orderStatusDelivering),
-                    style: FilledButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 48),
-                    ),
-                  ),
-                  SizedBox(height: AlhaiSpacing.xs),
-                ] else if (order.status == 'out_for_delivery') ...[
-                  FilledButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _updateOrderStatus(order.id, 'delivered');
-                    },
-                    icon: const Icon(Icons.done_all),
-                    label: Text(l10n.completed),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.success,
-                      minimumSize: const Size(double.infinity, 48),
-                    ),
-                  ),
-                  SizedBox(height: AlhaiSpacing.xs),
-                ],
-
-                Row(
-                  children: [
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.print),
-                        label: Text(l10n.printReceipt),
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                    SizedBox(width: AlhaiSpacing.sm),
-                    Expanded(
-                      child: OutlinedButton.icon(
-                        onPressed: () {},
-                        icon: const Icon(Icons.share),
-                        label: Text(l10n.shareAction),
+                      SizedBox(height: AlhaiSpacing.xs),
+                      ...items.map(
+                        (item) => Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AlhaiSpacing.xxs,
+                          ),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  item.productName,
+                                  style: const TextStyle(fontSize: 14),
+                                ),
+                              ),
+                              Text(
+                                'x${item.quantity.toStringAsFixed(0)}',
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
+                                ),
+                              ),
+                              SizedBox(width: AlhaiSpacing.sm),
+                              Text(
+                                l10n.priceWithCurrency(
+                                  item.total.toStringAsFixed(0),
+                                ),
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       ),
+                    ],
+
+                    const Divider(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(l10n.total, style: const TextStyle(fontSize: 18)),
+                        Text(
+                          l10n.priceWithCurrency(
+                            order.total.toStringAsFixed(0),
+                          ),
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.success,
+                          ),
+                        ),
+                      ],
                     ),
+                    SizedBox(height: AlhaiSpacing.lg),
+
+                    // أزرار تحديث الحالة حسب الحالة الحالية
+                    if (order.status == 'created') ...[
+                      FilledButton.icon(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _updateOrderStatus(order.id, 'confirmed');
+                        },
+                        icon: const Icon(Icons.check),
+                        label: Text(l10n.orderStatusConfirmed),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 48),
+                        ),
+                      ),
+                      SizedBox(height: AlhaiSpacing.xs),
+                    ] else if (order.status == 'confirmed') ...[
+                      FilledButton.icon(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _updateOrderStatus(order.id, 'preparing');
+                        },
+                        icon: const Icon(Icons.restaurant),
+                        label: Text(l10n.orderStatusPreparing),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 48),
+                        ),
+                      ),
+                      SizedBox(height: AlhaiSpacing.xs),
+                    ] else if (order.status == 'preparing') ...[
+                      FilledButton.icon(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _updateOrderStatus(order.id, 'ready');
+                        },
+                        icon: const Icon(Icons.check_circle),
+                        label: Text(l10n.orderStatusReady),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 48),
+                        ),
+                      ),
+                      SizedBox(height: AlhaiSpacing.xs),
+                    ] else if (order.status == 'ready') ...[
+                      FilledButton.icon(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _updateOrderStatus(order.id, 'out_for_delivery');
+                        },
+                        icon: const Icon(Icons.delivery_dining),
+                        label: Text(l10n.orderStatusDelivering),
+                        style: FilledButton.styleFrom(
+                          minimumSize: const Size(double.infinity, 48),
+                        ),
+                      ),
+                      SizedBox(height: AlhaiSpacing.xs),
+                    ] else if (order.status == 'out_for_delivery') ...[
+                      FilledButton.icon(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _updateOrderStatus(order.id, 'delivered');
+                        },
+                        icon: const Icon(Icons.done_all),
+                        label: Text(l10n.completed),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.success,
+                          minimumSize: const Size(double.infinity, 48),
+                        ),
+                      ),
+                      SizedBox(height: AlhaiSpacing.xs),
+                    ],
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () {},
+                            icon: const Icon(Icons.print),
+                            label: Text(l10n.printReceipt),
+                          ),
+                        ),
+                        SizedBox(width: AlhaiSpacing.sm),
+                        Expanded(
+                          child: OutlinedButton.icon(
+                            onPressed: () {},
+                            icon: const Icon(Icons.share),
+                            label: Text(l10n.shareAction),
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (order.status == 'delivered') ...[
+                      SizedBox(height: AlhaiSpacing.sm),
+                      FilledButton.icon(
+                        onPressed: () {},
+                        icon: const Icon(Icons.replay),
+                        label: Text(l10n.returnText),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.warning,
+                          minimumSize: const Size(double.infinity, 48),
+                        ),
+                      ),
+                    ],
+                    // زر إلغاء الطلب إذا لم يكتمل
+                    if (order.status != 'delivered' &&
+                        order.status != 'cancelled') ...[
+                      SizedBox(height: AlhaiSpacing.sm),
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          _updateOrderStatus(order.id, 'cancelled');
+                        },
+                        icon: Icon(
+                          Icons.cancel,
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                        label: Text(
+                          l10n.cancelled,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                        style: OutlinedButton.styleFrom(
+                          side: BorderSide(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                          minimumSize: const Size(double.infinity, 48),
+                        ),
+                      ),
+                    ],
                   ],
-                ),
-                if (order.status == 'delivered') ...[
-                  SizedBox(height: AlhaiSpacing.sm),
-                  FilledButton.icon(
-                    onPressed: () {},
-                    icon: const Icon(Icons.replay),
-                    label: Text(l10n.returnText),
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.warning,
-                      minimumSize: const Size(double.infinity, 48),
-                    ),
-                  ),
-                ],
-                // زر إلغاء الطلب إذا لم يكتمل
-                if (order.status != 'delivered' &&
-                    order.status != 'cancelled') ...[
-                  SizedBox(height: AlhaiSpacing.sm),
-                  OutlinedButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      _updateOrderStatus(order.id, 'cancelled');
-                    },
-                    icon: Icon(Icons.cancel,
-                        color: Theme.of(context).colorScheme.error),
-                    label: Text(l10n.cancelled,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.error)),
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(
-                          color: Theme.of(context).colorScheme.error),
-                      minimumSize: const Size(double.infinity, 48),
-                    ),
-                  ),
-                ],
-              ],
-            );
-          },
-        ),
+                );
+              },
+            ),
       ),
     );
   }
@@ -950,18 +1026,18 @@ class _OrderHistoryScreenState extends ConsumerState<OrderHistoryScreen> {
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.exportedAsExcel)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(l10n.exportedAsExcel)));
             },
             child: const Text('Excel'),
           ),
           TextButton(
             onPressed: () {
               Navigator.pop(context);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(l10n.exportedAsPdf)),
-              );
+              ScaffoldMessenger.of(
+                context,
+              ).showSnackBar(SnackBar(content: Text(l10n.exportedAsPdf)));
             },
             child: const Text('PDF'),
           ),
@@ -997,8 +1073,10 @@ class _OrderCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(AlhaiSpacing.xs),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(order.status, context)
-                          .withValues(alpha: 0.1),
+                      color: _getStatusColor(
+                        order.status,
+                        context,
+                      ).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Icon(
@@ -1011,11 +1089,13 @@ class _OrderCard extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(order.orderNumber,
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color:
-                                    Theme.of(context).colorScheme.onSurface)),
+                        Text(
+                          order.orderNumber,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
                         Text(
                           order.customerId ?? l10n.guestCustomer,
                           style: TextStyle(fontSize: 13, color: subtleColor),
@@ -1029,9 +1109,10 @@ class _OrderCard extends StatelessWidget {
                       Text(
                         l10n.priceWithCurrency(order.total.toStringAsFixed(0)),
                         style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16,
-                            color: Theme.of(context).colorScheme.onSurface),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
                       ),
                       Text(
                         _getChannelName(order.channel, l10n),
@@ -1060,11 +1141,14 @@ class _OrderCard extends StatelessWidget {
                   const Spacer(),
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.xs,
-                        vertical: AlhaiSpacing.xxxs),
+                      horizontal: AlhaiSpacing.xs,
+                      vertical: AlhaiSpacing.xxxs,
+                    ),
                     decoration: BoxDecoration(
-                      color: _getStatusColor(order.status, context)
-                          .withValues(alpha: 0.1),
+                      color: _getStatusColor(
+                        order.status,
+                        context,
+                      ).withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: Text(
@@ -1187,14 +1271,19 @@ class _StatBadge extends StatelessWidget {
   final String value;
   final Color color;
 
-  const _StatBadge(
-      {required this.label, required this.value, required this.color});
+  const _StatBadge({
+    required this.label,
+    required this.value,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AlhaiSpacing.sm,
+        vertical: 6,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
@@ -1202,8 +1291,10 @@ class _StatBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(value,
-              style: TextStyle(fontWeight: FontWeight.bold, color: color)),
+          Text(
+            value,
+            style: TextStyle(fontWeight: FontWeight.bold, color: color),
+          ),
           SizedBox(width: AlhaiSpacing.xxs),
           Text(label, style: TextStyle(fontSize: 12, color: color)),
         ],
@@ -1217,8 +1308,11 @@ class _DetailRow extends StatelessWidget {
   final String label;
   final String value;
 
-  const _DetailRow(
-      {required this.icon, required this.label, required this.value});
+  const _DetailRow({
+    required this.icon,
+    required this.label,
+    required this.value,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -1231,10 +1325,13 @@ class _DetailRow extends StatelessWidget {
           SizedBox(width: AlhaiSpacing.sm),
           Text(label, style: TextStyle(color: subtleColor)),
           const Spacer(),
-          Text(value,
-              style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.onSurface)),
+          Text(
+            value,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
         ],
       ),
     );

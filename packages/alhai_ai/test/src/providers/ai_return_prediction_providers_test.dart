@@ -8,9 +8,7 @@ void main() {
   group('selectedRiskFilterProvider', () {
     test('initial value is null (show all)', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -19,25 +17,18 @@ void main() {
 
     test('can be updated to high risk', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
       container.read(selectedRiskFilterProvider.notifier).state =
           ReturnRiskLevel.high;
-      expect(
-        container.read(selectedRiskFilterProvider),
-        ReturnRiskLevel.high,
-      );
+      expect(container.read(selectedRiskFilterProvider), ReturnRiskLevel.high);
     });
 
     test('can be cleared back to null', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -58,9 +49,7 @@ void main() {
   group('aiReturnPredictionServiceProvider', () {
     test('provides AiReturnPredictionService instance', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 

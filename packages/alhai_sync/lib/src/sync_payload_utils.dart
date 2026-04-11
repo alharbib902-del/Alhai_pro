@@ -128,15 +128,13 @@ Map<String, dynamic> mapColumnsToLocal(
 List<Map<String, dynamic>> batchMapColumnsToRemote(
   String tableName,
   List<Map<String, dynamic>> records,
-) =>
-    records.map((r) => mapColumnsToRemote(tableName, r)).toList();
+) => records.map((r) => mapColumnsToRemote(tableName, r)).toList();
 
 /// Batch variant of [mapColumnsToLocal].
 List<Map<String, dynamic>> batchMapColumnsToLocal(
   String tableName,
   List<Map<String, dynamic>> records,
-) =>
-    records.map((r) => mapColumnsToLocal(tableName, r)).toList();
+) => records.map((r) => mapColumnsToLocal(tableName, r)).toList();
 
 /// Renames keys in [map] according to [renames].
 Map<String, dynamic> _renameKeys(

@@ -87,7 +87,8 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
           method: 'card',
           originalAmount: order.total - half,
           controller: TextEditingController(
-              text: (order.total - half).toStringAsFixed(2)),
+            text: (order.total - half).toStringAsFixed(2),
+          ),
         ),
       ];
     }
@@ -102,7 +103,9 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
 
   double get _totalRefund {
     return _methods.fold<double>(
-        0, (sum, m) => sum + (double.tryParse(m.controller.text) ?? 0));
+      0,
+      (sum, m) => sum + (double.tryParse(m.controller.text) ?? 0),
+    );
   }
 
   double get _maxRefund => _order?.total ?? 0;
@@ -142,19 +145,21 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
             child: _isLoading
                 ? const AppLoadingState()
                 : _error != null
-                    ? AppErrorState.general(context,
-                        message: _error!, onRetry: _loadData)
-                    : _order == null
-                        ? _buildNotFound(isDark, l10n)
-                        : SingleChildScrollView(
-                            padding: EdgeInsets.all(isMediumScreen
-                                ? AlhaiSpacing.lg
-                                : AlhaiSpacing.md),
-                            child: isWideScreen
-                                ? _buildWideLayout(isDark, l10n)
-                                : _buildNarrowLayout(
-                                    isDark, l10n, isMediumScreen),
-                          ),
+                ? AppErrorState.general(
+                    context,
+                    message: _error!,
+                    onRetry: _loadData,
+                  )
+                : _order == null
+                ? _buildNotFound(isDark, l10n)
+                : SingleChildScrollView(
+                    padding: EdgeInsets.all(
+                      isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                    ),
+                    child: isWideScreen
+                        ? _buildWideLayout(isDark, l10n)
+                        : _buildNarrowLayout(isDark, l10n, isMediumScreen),
+                  ),
           ),
           if (_order != null) _buildBottomBar(isDark, l10n),
         ],
@@ -165,7 +170,9 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
   Widget _buildTopBar(bool isDark, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(
@@ -178,13 +185,16 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
           children: [
             IconButton(
               onPressed: () => context.pop(),
-              icon: Icon(Icons.arrow_back_rounded,
-                  color: AppColors.getTextPrimary(isDark)),
+              icon: Icon(
+                Icons.arrow_back_rounded,
+                color: AppColors.getTextPrimary(isDark),
+              ),
               tooltip: l10n.back,
               style: IconButton.styleFrom(
                 backgroundColor: AppColors.getSurfaceVariant(isDark),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(width: AlhaiSpacing.sm),
@@ -221,15 +231,20 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.receipt_long_outlined,
-              size: 64,
-              color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
+          Icon(
+            Icons.receipt_long_outlined,
+            size: 64,
+            color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4),
+          ),
           const SizedBox(height: AlhaiSpacing.md),
-          Text(l10n.orderNotFound,
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.getTextMuted(isDark))),
+          Text(
+            l10n.orderNotFound,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: AppColors.getTextMuted(isDark),
+            ),
+          ),
         ],
       ),
     );
@@ -239,21 +254,18 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(
-          flex: 3,
-          child: _buildOriginalPaymentsCard(isDark, l10n),
-        ),
+        Expanded(flex: 3, child: _buildOriginalPaymentsCard(isDark, l10n)),
         const SizedBox(width: AlhaiSpacing.lg),
-        Expanded(
-          flex: 2,
-          child: _buildRefundSummaryCard(isDark, l10n),
-        ),
+        Expanded(flex: 2, child: _buildRefundSummaryCard(isDark, l10n)),
       ],
     );
   }
 
   Widget _buildNarrowLayout(
-      bool isDark, AppLocalizations l10n, bool isMediumScreen) {
+    bool isDark,
+    AppLocalizations l10n,
+    bool isMediumScreen,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -284,8 +296,11 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
                   color: AppColors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.assignment_return_rounded,
-                    color: AppColors.error, size: 20),
+                child: const Icon(
+                  Icons.assignment_return_rounded,
+                  color: AppColors.error,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -316,7 +331,10 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
   }
 
   Widget _buildRefundMethodCard(
-      _RefundMethod method, bool isDark, AppLocalizations l10n) {
+    _RefundMethod method,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final icon = _getPaymentIcon(method.method);
     final color = _getPaymentColor(method.method);
     final label = _getPaymentLabel(method.method, l10n);
@@ -363,15 +381,19 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
             ),
             TextButton(
               onPressed: () {
-                method.controller.text =
-                    method.originalAmount.toStringAsFixed(2);
+                method.controller.text = method.originalAmount.toStringAsFixed(
+                  2,
+                );
                 setState(() {});
               },
-              child: Text(l10n.full,
-                  style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w600,
-                      color: AppColors.primary)),
+              child: Text(
+                l10n.full,
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.primary,
+                ),
+              ),
             ),
           ],
         ),
@@ -382,8 +404,9 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
-            color:
-                isOverMax ? AppColors.error : AppColors.getTextPrimary(isDark),
+            color: isOverMax
+                ? AppColors.error
+                : AppColors.getTextPrimary(isDark),
           ),
           onChanged: (_) => setState(() {}),
           decoration: InputDecoration(
@@ -391,7 +414,9 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
             hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
             suffixText: l10n.sar,
             suffixStyle: TextStyle(
-                fontSize: 14, color: AppColors.getTextSecondary(isDark)),
+              fontSize: 14,
+              color: AppColors.getTextSecondary(isDark),
+            ),
             prefixIcon: Padding(
               padding: const EdgeInsets.all(AlhaiSpacing.sm),
               child: Icon(Icons.remove_rounded, size: 20, color: color),
@@ -399,27 +424,32 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                  color: isOverMax
-                      ? AppColors.error
-                      : AppColors.getBorder(isDark)),
+                color: isOverMax
+                    ? AppColors.error
+                    : AppColors.getBorder(isDark),
+              ),
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                  color: isOverMax
-                      ? AppColors.error
-                      : AppColors.getBorder(isDark)),
+                color: isOverMax
+                    ? AppColors.error
+                    : AppColors.getBorder(isDark),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
               borderSide: BorderSide(
-                  color: isOverMax ? AppColors.error : AppColors.primary,
-                  width: 2),
+                color: isOverMax ? AppColors.error : AppColors.primary,
+                width: 2,
+              ),
             ),
             filled: true,
             fillColor: AppColors.getSurfaceVariant(isDark),
             contentPadding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.md, vertical: 14),
+              horizontal: AlhaiSpacing.md,
+              vertical: 14,
+            ),
           ),
         ),
         if (isOverMax) ...[
@@ -460,8 +490,11 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.calculate_rounded,
-                    color: AppColors.warning, size: 20),
+                child: const Icon(
+                  Icons.calculate_rounded,
+                  color: AppColors.warning,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -475,8 +508,11 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
             ],
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
-          _buildSummaryRow('Original Total',
-              '${max.toStringAsFixed(2)} ${l10n.sar}', isDark),
+          _buildSummaryRow(
+            'Original Total',
+            '${max.toStringAsFixed(2)} ${l10n.sar}',
+            isDark,
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           ..._methods.map((m) {
             final refund = double.tryParse(m.controller.text) ?? 0;
@@ -520,8 +556,9 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
               decoration: BoxDecoration(
                 color: AppColors.error.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(10),
-                border:
-                    Border.all(color: AppColors.error.withValues(alpha: 0.3)),
+                border: Border.all(
+                  color: AppColors.error.withValues(alpha: 0.3),
+                ),
               ),
               child: const Row(
                 children: [
@@ -531,9 +568,10 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
                     child: Text(
                       'Total refund exceeds original payment',
                       style: TextStyle(
-                          fontSize: 12,
-                          color: AppColors.error,
-                          fontWeight: FontWeight.w500),
+                        fontSize: 12,
+                        color: AppColors.error,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ],
@@ -545,19 +583,30 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
     );
   }
 
-  Widget _buildSummaryRow(String label, String value, bool isDark,
-      {Color? color}) {
+  Widget _buildSummaryRow(
+    String label,
+    String value,
+    bool isDark, {
+    Color? color,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label,
-            style: TextStyle(
-                fontSize: 13, color: AppColors.getTextSecondary(isDark))),
-        Text(value,
-            style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                color: color ?? AppColors.getTextPrimary(isDark))),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            color: AppColors.getTextSecondary(isDark),
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: color ?? AppColors.getTextPrimary(isDark),
+          ),
+        ),
       ],
     );
   }
@@ -568,7 +617,8 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(
-            top: BorderSide(color: AppColors.getBorder(isDark), width: 1)),
+          top: BorderSide(color: AppColors.getBorder(isDark), width: 1),
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.06),
@@ -582,25 +632,30 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
         child: SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
-            onPressed:
-                _isSubmitting || !_isValid ? null : () => _submitRefund(l10n),
+            onPressed: _isSubmitting || !_isValid
+                ? null
+                : () => _submitRefund(l10n),
             icon: _isSubmitting
                 ? const SizedBox(
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: AppColors.textOnPrimary),
+                      strokeWidth: 2,
+                      color: AppColors.textOnPrimary,
+                    ),
                   )
                 : const Icon(Icons.assignment_return_rounded, size: 20),
-            label: Text(l10n.processRefund,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            label: Text(
+              l10n.processRefund,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.error,
               foregroundColor: AppColors.textOnPrimary,
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),

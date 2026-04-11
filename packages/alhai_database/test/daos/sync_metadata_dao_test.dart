@@ -16,8 +16,11 @@ void main() {
   group('SyncMetadataDao', () {
     test('updateLastPullAt creates or updates record', () async {
       final pullTime = DateTime(2025, 6, 15, 10, 0);
-      await db.syncMetadataDao
-          .updateLastPullAt('products', pullTime, syncCount: 50);
+      await db.syncMetadataDao.updateLastPullAt(
+        'products',
+        pullTime,
+        syncCount: 50,
+      );
 
       final metadata = await db.syncMetadataDao.getForTable('products');
       expect(metadata, isNotNull);
@@ -28,8 +31,11 @@ void main() {
 
     test('updateLastPushAt creates or updates record', () async {
       final pushTime = DateTime(2025, 6, 15, 11, 0);
-      await db.syncMetadataDao
-          .updateLastPushAt('sales', pushTime, syncCount: 10);
+      await db.syncMetadataDao.updateLastPushAt(
+        'sales',
+        pushTime,
+        syncCount: 10,
+      );
 
       final metadata = await db.syncMetadataDao.getForTable('sales');
       expect(metadata, isNotNull);

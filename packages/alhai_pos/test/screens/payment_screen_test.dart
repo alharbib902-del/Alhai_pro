@@ -47,7 +47,8 @@ Widget _buildTestWidget({
   CartState? cartState,
   List<Override> overrides = const [],
 }) {
-  final cart = cartState ??
+  final cart =
+      cartState ??
       CartState(
         items: [
           createTestCartItem(
@@ -147,18 +148,20 @@ void main() {
       setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        cartState: CartState(
-          items: [
-            createTestCartItem(
-              productId: 'p1',
-              productName: 'Test Item',
-              price: 25.0,
-              quantity: 1,
-            ),
-          ],
+      await tester.pumpWidget(
+        _buildTestWidget(
+          cartState: CartState(
+            items: [
+              createTestCartItem(
+                productId: 'p1',
+                productName: 'Test Item',
+                price: 25.0,
+                quantity: 1,
+              ),
+            ],
+          ),
         ),
-      ));
+      );
       await tester.pump(const Duration(seconds: 1));
       await tester.pump(const Duration(seconds: 1));
       tester.takeException();
@@ -170,9 +173,7 @@ void main() {
       setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        cartState: const CartState(),
-      ));
+      await tester.pumpWidget(_buildTestWidget(cartState: const CartState()));
       await tester.pump(const Duration(seconds: 1));
       await tester.pump(const Duration(seconds: 1));
       tester.takeException();

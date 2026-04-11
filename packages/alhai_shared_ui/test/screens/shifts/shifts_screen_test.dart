@@ -118,9 +118,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        shiftsValue: const AsyncValue.data([]),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(shiftsValue: const AsyncValue.data([])),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byType(AppEmptyState), findsOneWidget);
@@ -131,10 +131,12 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       final completer = Completer<List<ShiftsTableData>>();
-      await tester.pumpWidget(_buildTestWidget(
-        shiftsValue: const AsyncValue.loading(),
-        loadingCompleter: completer,
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          shiftsValue: const AsyncValue.loading(),
+          loadingCompleter: completer,
+        ),
+      );
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);

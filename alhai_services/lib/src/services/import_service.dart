@@ -35,8 +35,9 @@ class ImportService {
           name: values[1].trim(),
           price: double.tryParse(values[2].trim()) ?? 0,
           barcode: values[0].trim().isNotEmpty ? values[0].trim() : null,
-          stockQty:
-              values.length > 3 ? (double.tryParse(values[3].trim()) ?? 0) : 0,
+          stockQty: values.length > 3
+              ? (double.tryParse(values[3].trim()) ?? 0)
+              : 0,
           categoryId: values.length > 4 && values[4].trim().isNotEmpty
               ? values[4].trim()
               : null,
@@ -51,7 +52,8 @@ class ImportService {
 
         if (product.price <= 0) {
           failed.add(
-              ImportError(line: i + 1, error: 'السعر يجب أن يكون أكبر من صفر'));
+            ImportError(line: i + 1, error: 'السعر يجب أن يكون أكبر من صفر'),
+          );
           continue;
         }
 
@@ -133,11 +135,7 @@ class ImportService {
           failed: [],
         );
       } else if (data is Map<String, dynamic>) {
-        return ImportResult(
-          success: true,
-          imported: [data],
-          failed: [],
-        );
+        return ImportResult(success: true, imported: [data], failed: []);
       } else {
         return ImportResult(
           success: false,
@@ -158,7 +156,9 @@ class ImportService {
 
   /// التحقق من صحة ملف CSV
   CsvValidationResult validateCsv(
-      String csvContent, List<String> requiredColumns) {
+    String csvContent,
+    List<String> requiredColumns,
+  ) {
     final lines = const LineSplitter().convert(csvContent);
     if (lines.isEmpty) {
       return CsvValidationResult(
@@ -171,8 +171,9 @@ class ImportService {
     }
 
     final headerValues = _parseCsvLine(lines[0]);
-    final missingColumns =
-        requiredColumns.where((col) => !headerValues.contains(col)).toList();
+    final missingColumns = requiredColumns
+        .where((col) => !headerValues.contains(col))
+        .toList();
 
     return CsvValidationResult(
       isValid: missingColumns.isEmpty,
@@ -249,10 +250,7 @@ class ImportError {
   final int line;
   final String error;
 
-  const ImportError({
-    required this.line,
-    required this.error,
-  });
+  const ImportError({required this.line, required this.error});
 }
 
 /// نتيجة التحقق من CSV

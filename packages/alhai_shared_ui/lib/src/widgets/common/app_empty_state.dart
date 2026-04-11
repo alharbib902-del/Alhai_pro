@@ -69,10 +69,7 @@ class AppEmptyState extends StatelessWidget {
   }
 
   /// لا توجد منتجات
-  static AppEmptyState noProducts(
-    BuildContext context, {
-    VoidCallback? onAdd,
-  }) {
+  static AppEmptyState noProducts(BuildContext context, {VoidCallback? onAdd}) {
     final l10n = AppLocalizations.of(context);
     return AppEmptyState(
       icon: Icons.inventory_2_outlined,
@@ -220,10 +217,7 @@ class AppEmptyState extends StatelessWidget {
   }
 
   /// لا توجد عروض
-  static AppEmptyState noOffers(
-    BuildContext context, {
-    VoidCallback? onAdd,
-  }) {
+  static AppEmptyState noOffers(BuildContext context, {VoidCallback? onAdd}) {
     final l10n = AppLocalizations.of(context);
     return AppEmptyState(
       icon: Icons.local_offer_outlined,
@@ -254,11 +248,7 @@ class AppEmptyState extends StatelessWidget {
                 color: defaultIconColor.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                size: iconSize,
-                color: defaultIconColor,
-              ),
+              child: Icon(icon, size: iconSize, color: defaultIconColor),
             ),
 
             const SizedBox(height: AppSpacing.xl),
@@ -375,11 +365,7 @@ class AppErrorState extends StatelessWidget {
                 color: AppColors.error.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
-              child: Icon(
-                icon,
-                size: 56,
-                color: AppColors.error,
-              ),
+              child: Icon(icon, size: 56, color: AppColors.error),
             ),
 
             const SizedBox(height: AppSpacing.xl),
@@ -434,12 +420,7 @@ class AppLoadingState extends StatelessWidget {
   /// لون المؤشر
   final Color? color;
 
-  const AppLoadingState({
-    super.key,
-    this.message,
-    this.size = 40,
-    this.color,
-  });
+  const AppLoadingState({super.key, this.message, this.size = 40, this.color});
 
   @override
   Widget build(BuildContext context) {
@@ -451,9 +432,7 @@ class AppLoadingState extends StatelessWidget {
             width: size,
             height: size,
             child: CircularProgressIndicator(
-              valueColor: AlwaysStoppedAnimation(
-                color ?? AppColors.primary,
-              ),
+              valueColor: AlwaysStoppedAnimation(color ?? AppColors.primary),
               strokeWidth: 3,
             ),
           ),
@@ -487,11 +466,7 @@ class AppShimmer extends StatelessWidget {
   /// مفعل
   final bool enabled;
 
-  const AppShimmer({
-    super.key,
-    required this.child,
-    this.enabled = true,
-  });
+  const AppShimmer({super.key, required this.child, this.enabled = true});
 
   @override
   Widget build(BuildContext context) {
@@ -522,20 +497,12 @@ class AppSkeletonBox extends StatelessWidget {
 
   /// سطر نص
   factory AppSkeletonBox.text({double width = 100}) {
-    return AppSkeletonBox(
-      width: width,
-      height: 16,
-      borderRadius: AppRadius.xs,
-    );
+    return AppSkeletonBox(width: width, height: 16, borderRadius: AppRadius.xs);
   }
 
   /// دائرة (Avatar)
   factory AppSkeletonBox.circle({double size = 40}) {
-    return AppSkeletonBox(
-      width: size,
-      height: size,
-      borderRadius: size / 2,
-    );
+    return AppSkeletonBox(width: size, height: size, borderRadius: size / 2);
   }
 
   /// كارد

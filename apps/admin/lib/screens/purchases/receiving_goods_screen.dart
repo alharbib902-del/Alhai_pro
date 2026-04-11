@@ -51,9 +51,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
   void _ensureControllers(List<PurchaseItemsTableData> items) {
     for (final item in items) {
       if (!_qtyControllers.containsKey(item.id)) {
-        _qtyControllers[item.id] = TextEditingController(
-          text: '${item.qty}',
-        );
+        _qtyControllers[item.id] = TextEditingController(text: '${item.qty}');
       }
     }
   }
@@ -140,9 +138,11 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
           FilledButton.icon(
             onPressed: () =>
                 context.go(AppRoutes.purchaseDetailPath(widget.purchaseId)),
-            icon: Icon(Directionality.of(context) == TextDirection.rtl
-                ? Icons.arrow_forward_rounded
-                : Icons.arrow_back_rounded),
+            icon: Icon(
+              Directionality.of(context) == TextDirection.rtl
+                  ? Icons.arrow_forward_rounded
+                  : Icons.arrow_back_rounded,
+            ),
             label: Text(AppLocalizations.of(context).goBack),
           ),
         ],
@@ -175,8 +175,9 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                 Row(
                   children: [
                     IconButton(
-                      onPressed: () => context
-                          .go(AppRoutes.purchaseDetailPath(widget.purchaseId)),
+                      onPressed: () => context.go(
+                        AppRoutes.purchaseDetailPath(widget.purchaseId),
+                      ),
                       icon: Icon(
                         Directionality.of(context) == TextDirection.rtl
                             ? Icons.arrow_forward_rounded
@@ -258,9 +259,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -273,8 +272,11 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.receipt_long_rounded,
-                    color: AppColors.primary, size: 20),
+                child: const Icon(
+                  Icons.receipt_long_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -288,16 +290,23 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
             ],
           ),
           const SizedBox(height: AlhaiSpacing.md),
-          _infoRow(AppLocalizations.of(context).orderNumber,
-              purchase.purchaseNumber, isDark),
+          _infoRow(
+            AppLocalizations.of(context).orderNumber,
+            purchase.purchaseNumber,
+            isDark,
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
-          _infoRow(AppLocalizations.of(context).supplierInfoLabel,
-              purchase.supplierName ?? '-', isDark),
+          _infoRow(
+            AppLocalizations.of(context).supplierInfoLabel,
+            purchase.supplierName ?? '-',
+            isDark,
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           _infoRow(
             AppLocalizations.of(context).totalLabel,
-            AppLocalizations.of(context)
-                .amountSar(purchase.total.toStringAsFixed(2)),
+            AppLocalizations.of(
+              context,
+            ).amountSar(purchase.total.toStringAsFixed(2)),
             isDark,
             valueColor: isDark ? AppColors.primaryLight : AppColors.primaryDark,
           ),
@@ -306,8 +315,12 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
     );
   }
 
-  Widget _infoRow(String label, String value, bool isDark,
-      {Color? valueColor}) {
+  Widget _infoRow(
+    String label,
+    String value,
+    bool isDark, {
+    Color? valueColor,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -341,9 +354,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,8 +367,11 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.inventory_2_rounded,
-                    color: AppColors.info, size: 20),
+                child: const Icon(
+                  Icons.inventory_2_rounded,
+                  color: AppColors.info,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -371,9 +385,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
             ],
           ),
           const SizedBox(height: AlhaiSpacing.md),
-          Divider(
-            color: Theme.of(context).dividerColor,
-          ),
+          Divider(color: Theme.of(context).dividerColor),
           if (items.isEmpty)
             AppEmptyState.noProducts(context)
           else
@@ -381,16 +393,15 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
               itemCount: items.length,
-              separatorBuilder: (_, __) => Divider(
-                height: 1,
-                color: Theme.of(context).dividerColor,
-              ),
+              separatorBuilder: (_, __) =>
+                  Divider(height: 1, color: Theme.of(context).dividerColor),
               itemBuilder: (context, index) {
                 final item = items[index];
                 final qtyCtrl = _qtyControllers[item.id]!;
                 return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AlhaiSpacing.sm,
+                  ),
                   child: isWide
                       ? Row(
                           children: [
@@ -401,28 +412,32 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                                 item.productName,
                                 style: TextStyle(
                                   fontWeight: FontWeight.w600,
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                               ),
                             ),
                             // Ordered qty
                             Expanded(
                               child: Text(
-                                AppLocalizations.of(context)
-                                    .orderedQty(item.qty.toInt()),
+                                AppLocalizations.of(
+                                  context,
+                                ).orderedQty(item.qty.toInt()),
                                 style: TextStyle(
                                   fontSize: 13,
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurfaceVariant,
                                 ),
                               ),
                             ),
                             // Received qty (editable)
                             ConstrainedBox(
                               constraints: const BoxConstraints(
-                                  minWidth: 80, maxWidth: 120),
+                                minWidth: 80,
+                                maxWidth: 120,
+                              ),
                               child: TextFormField(
                                 controller: qtyCtrl,
                                 keyboardType: TextInputType.number,
@@ -433,8 +448,9 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                                   }
                                 },
                                 decoration: InputDecoration(
-                                  labelText: AppLocalizations.of(context)
-                                      .receivedQtyLabel,
+                                  labelText: AppLocalizations.of(
+                                    context,
+                                  ).receivedQtyLabel,
                                   isDense: true,
                                   border: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(8),
@@ -449,12 +465,14 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                             // Unit cost
                             Expanded(
                               child: Text(
-                                AppLocalizations.of(context).amountSar(
-                                    item.unitCost.toStringAsFixed(2)),
+                                AppLocalizations.of(
+                                  context,
+                                ).amountSar(item.unitCost.toStringAsFixed(2)),
                                 textAlign: TextAlign.end,
                                 style: TextStyle(
-                                  color:
-                                      Theme.of(context).colorScheme.onSurface,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
                                 ),
                               ),
                             ),
@@ -474,24 +492,26 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                             Row(
                               children: [
                                 Text(
-                                  AppLocalizations.of(context)
-                                      .orderedQty(item.qty.toInt()),
+                                  AppLocalizations.of(
+                                    context,
+                                  ).orderedQty(item.qty.toInt()),
                                   style: TextStyle(
                                     fontSize: 13,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                                 const SizedBox(width: AlhaiSpacing.sm),
                                 Text(
                                   AppLocalizations.of(context).pricePerUnit(
-                                      item.unitCost.toStringAsFixed(2)),
+                                    item.unitCost.toStringAsFixed(2),
+                                  ),
                                   style: TextStyle(
                                     fontSize: 13,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
                                   ),
                                 ),
                                 const Spacer(),
@@ -507,17 +527,18 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                                       }
                                     },
                                     decoration: InputDecoration(
-                                      labelText: AppLocalizations.of(context)
-                                          .receivedQtyLabel,
+                                      labelText: AppLocalizations.of(
+                                        context,
+                                      ).receivedQtyLabel,
                                       isDense: true,
                                       border: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       contentPadding:
                                           const EdgeInsets.symmetric(
-                                        horizontal: 8,
-                                        vertical: 8,
-                                      ),
+                                            horizontal: 8,
+                                            vertical: 8,
+                                          ),
                                     ),
                                   ),
                                 ),
@@ -542,9 +563,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -557,8 +576,11 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.person_rounded,
-                    color: AppColors.warning, size: 20),
+                child: const Icon(
+                  Icons.person_rounded,
+                  color: AppColors.warning,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -635,9 +657,11 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
                 ),
               )
             : const Icon(Icons.check_circle_rounded),
-        label: Text(_isSaving
-            ? AppLocalizations.of(context).confirmingReceipt
-            : AppLocalizations.of(context).confirmReceipt),
+        label: Text(
+          _isSaving
+              ? AppLocalizations.of(context).confirmingReceipt
+              : AppLocalizations.of(context).confirmReceipt,
+        ),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
@@ -667,28 +691,31 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
 
       // 2. Update notes with receiver info
       final receiverData = jsonEncode({
-        'receivedBy':
-            InputSanitizer.sanitizeName(_receiverNameController.text.trim()),
+        'receivedBy': InputSanitizer.sanitizeName(
+          _receiverNameController.text.trim(),
+        ),
         'receiveNotes': InputSanitizer.sanitize(_notesController.text.trim()),
         'receivedAt': DateTime.now().toIso8601String(),
       });
 
-      final existingPurchase =
-          await db.purchasesDao.getPurchaseById(widget.purchaseId);
+      final existingPurchase = await db.purchasesDao.getPurchaseById(
+        widget.purchaseId,
+      );
       if (existingPurchase != null) {
         final currentNotes = existingPurchase.notes ?? '';
         final updatedNotes = currentNotes.isEmpty
             ? receiverData
             : '$currentNotes\n---\n$receiverData';
 
-        await db.purchasesDao.updatePurchase(existingPurchase.copyWith(
-          notes: Value(updatedNotes),
-        ));
+        await db.purchasesDao.updatePurchase(
+          existingPurchase.copyWith(notes: Value(updatedNotes)),
+        );
       }
 
       // 3. Update product stock for each item
-      final asyncDetail =
-          ref.read(purchaseDetailProvider(widget.purchaseId)).valueOrNull;
+      final asyncDetail = ref
+          .read(purchaseDetailProvider(widget.purchaseId))
+          .valueOrNull;
       if (asyncDetail != null) {
         for (final item in asyncDetail.items) {
           final receivedQty =
@@ -720,15 +747,17 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
 
       // 4. Sync and invalidate
       try {
-        await ref.read(syncServiceProvider).enqueueUpdate(
-          tableName: 'purchases',
-          recordId: widget.purchaseId,
-          changes: {
-            'id': widget.purchaseId,
-            'status': 'received',
-            'received_at': DateTime.now().toIso8601String(),
-          },
-        );
+        await ref
+            .read(syncServiceProvider)
+            .enqueueUpdate(
+              tableName: 'purchases',
+              recordId: widget.purchaseId,
+              changes: {
+                'id': widget.purchaseId,
+                'status': 'received',
+                'received_at': DateTime.now().toIso8601String(),
+              },
+            );
       } catch (e) {
         debugPrint('Sync enqueue error: $e');
       }

@@ -14,11 +14,9 @@ class OrgCatalogService {
   final AppDatabase _db;
   static const _uuid = Uuid();
 
-  OrgCatalogService({
-    required SupabaseClient client,
-    required AppDatabase db,
-  })  : _client = client,
-        _db = db;
+  OrgCatalogService({required SupabaseClient client, required AppDatabase db})
+    : _client = client,
+      _db = db;
 
   /// نسخ كتالوج المنظمة لفرع جديد
   ///
@@ -69,7 +67,8 @@ class OrgCatalogService {
 
     if (kDebugMode) {
       debugPrint(
-          'OrgCatalogService: cloned $cloned products to store $storeId');
+        'OrgCatalogService: cloned $cloned products to store $storeId',
+      );
     }
 
     return cloned;
@@ -78,9 +77,10 @@ class OrgCatalogService {
   /// مزامنة صور المنظمة لكل الفروع (عبر RPC)
   Future<int> syncOrgProductToStores(String orgProductId) async {
     try {
-      final result = await _client.rpc('sync_org_product_to_stores', params: {
-        'p_org_product_id': orgProductId,
-      });
+      final result = await _client.rpc(
+        'sync_org_product_to_stores',
+        params: {'p_org_product_id': orgProductId},
+      );
       return result as int? ?? 0;
     } catch (e) {
       if (kDebugMode) {
@@ -109,8 +109,10 @@ class OrgCatalogService {
   }
 
   /// الحصول على رابط صورة المنتج (فرع → منظمة → placeholder)
-  static String? getProductImageUrl(ProductsTableData product,
-      {String size = 'thumbnail'}) {
+  static String? getProductImageUrl(
+    ProductsTableData product, {
+    String size = 'thumbnail',
+  }) {
     switch (size) {
       case 'thumbnail':
         return product.imageThumbnail ?? product.orgImageThumbnail;

@@ -43,8 +43,9 @@ Future<void> clearAllWebCache() async {
 
   // Unregister Service Workers
   try {
-    final registrations =
-        await web.window.navigator.serviceWorker.getRegistrations().toDart;
+    final registrations = await web.window.navigator.serviceWorker
+        .getRegistrations()
+        .toDart;
     for (final reg in registrations.toDart) {
       await reg.unregister().toDart;
     }

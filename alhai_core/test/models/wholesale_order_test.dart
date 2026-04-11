@@ -21,7 +21,8 @@ void main() {
         storeName: 'Test Store',
         status: status,
         paymentMethod: WholesalePaymentMethod.bankTransfer,
-        items: items ??
+        items:
+            items ??
             [
               const WholesaleOrderItem(
                 productId: 'p1',
@@ -136,7 +137,9 @@ void main() {
         expect(order.orderNumber, equals('WO-100'));
         expect(order.status, equals(WholesaleOrderStatus.pending));
         expect(
-            order.paymentMethod, equals(WholesalePaymentMethod.bankTransfer));
+          order.paymentMethod,
+          equals(WholesalePaymentMethod.bankTransfer),
+        );
         expect(order.items, hasLength(1));
         expect(order.total, equals(575.0));
       });
@@ -158,13 +161,19 @@ void main() {
   group('WholesaleOrderStatus Extensions', () {
     test('displayNameAr should return Arabic names', () {
       expect(
-          WholesaleOrderStatus.pending.displayNameAr, equals('قيد الانتظار'));
+        WholesaleOrderStatus.pending.displayNameAr,
+        equals('قيد الانتظار'),
+      );
       expect(WholesaleOrderStatus.confirmed.displayNameAr, equals('مؤكد'));
       expect(
-          WholesaleOrderStatus.processing.displayNameAr, equals('قيد التجهيز'));
+        WholesaleOrderStatus.processing.displayNameAr,
+        equals('قيد التجهيز'),
+      );
       expect(WholesaleOrderStatus.shipped.displayNameAr, equals('في الطريق'));
       expect(
-          WholesaleOrderStatus.delivered.displayNameAr, equals('تم التوصيل'));
+        WholesaleOrderStatus.delivered.displayNameAr,
+        equals('تم التوصيل'),
+      );
       expect(WholesaleOrderStatus.cancelled.displayNameAr, equals('ملغي'));
     });
 
@@ -181,8 +190,10 @@ void main() {
   group('WholesalePaymentMethod Extensions', () {
     test('displayNameAr should return Arabic names', () {
       expect(WholesalePaymentMethod.cash.displayNameAr, equals('نقداً'));
-      expect(WholesalePaymentMethod.bankTransfer.displayNameAr,
-          equals('تحويل بنكي'));
+      expect(
+        WholesalePaymentMethod.bankTransfer.displayNameAr,
+        equals('تحويل بنكي'),
+      );
       expect(WholesalePaymentMethod.credit.displayNameAr, equals('آجل'));
       expect(WholesalePaymentMethod.check.displayNameAr, equals('شيك'));
       expect(WholesalePaymentMethod.app.displayNameAr, equals('تطبيق'));

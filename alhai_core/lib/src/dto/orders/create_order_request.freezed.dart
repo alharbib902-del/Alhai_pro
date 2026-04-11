@@ -12,7 +12,8 @@ part of 'create_order_request.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 CreateOrderRequest _$CreateOrderRequestFromJson(Map<String, dynamic> json) {
   return _CreateOrderRequest.fromJson(json);
@@ -45,16 +46,18 @@ mixin _$CreateOrderRequest {
 /// @nodoc
 abstract class $CreateOrderRequestCopyWith<$Res> {
   factory $CreateOrderRequestCopyWith(
-          CreateOrderRequest value, $Res Function(CreateOrderRequest) then) =
-      _$CreateOrderRequestCopyWithImpl<$Res, CreateOrderRequest>;
+    CreateOrderRequest value,
+    $Res Function(CreateOrderRequest) then,
+  ) = _$CreateOrderRequestCopyWithImpl<$Res, CreateOrderRequest>;
   @useResult
-  $Res call(
-      {@JsonKey(name: 'client_order_id') String clientOrderId,
-      @JsonKey(name: 'store_id') String storeId,
-      List<OrderItemRequest> items,
-      @JsonKey(name: 'delivery_address') String? deliveryAddress,
-      @JsonKey(name: 'payment_method') String paymentMethod,
-      @JsonKey(name: 'delivery_fee') double deliveryFee});
+  $Res call({
+    @JsonKey(name: 'client_order_id') String clientOrderId,
+    @JsonKey(name: 'store_id') String storeId,
+    List<OrderItemRequest> items,
+    @JsonKey(name: 'delivery_address') String? deliveryAddress,
+    @JsonKey(name: 'payment_method') String paymentMethod,
+    @JsonKey(name: 'delivery_fee') double deliveryFee,
+  });
 }
 
 /// @nodoc
@@ -79,59 +82,65 @@ class _$CreateOrderRequestCopyWithImpl<$Res, $Val extends CreateOrderRequest>
     Object? paymentMethod = null,
     Object? deliveryFee = null,
   }) {
-    return _then(_value.copyWith(
-      clientOrderId: null == clientOrderId
-          ? _value.clientOrderId
-          : clientOrderId // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      items: null == items
-          ? _value.items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<OrderItemRequest>,
-      deliveryAddress: freezed == deliveryAddress
-          ? _value.deliveryAddress
-          : deliveryAddress // ignore: cast_nullable_to_non_nullable
-              as String?,
-      paymentMethod: null == paymentMethod
-          ? _value.paymentMethod
-          : paymentMethod // ignore: cast_nullable_to_non_nullable
-              as String,
-      deliveryFee: null == deliveryFee
-          ? _value.deliveryFee
-          : deliveryFee // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            clientOrderId: null == clientOrderId
+                ? _value.clientOrderId
+                : clientOrderId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            storeId: null == storeId
+                ? _value.storeId
+                : storeId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            items: null == items
+                ? _value.items
+                : items // ignore: cast_nullable_to_non_nullable
+                      as List<OrderItemRequest>,
+            deliveryAddress: freezed == deliveryAddress
+                ? _value.deliveryAddress
+                : deliveryAddress // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            paymentMethod: null == paymentMethod
+                ? _value.paymentMethod
+                : paymentMethod // ignore: cast_nullable_to_non_nullable
+                      as String,
+            deliveryFee: null == deliveryFee
+                ? _value.deliveryFee
+                : deliveryFee // ignore: cast_nullable_to_non_nullable
+                      as double,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$CreateOrderRequestImplCopyWith<$Res>
     implements $CreateOrderRequestCopyWith<$Res> {
-  factory _$$CreateOrderRequestImplCopyWith(_$CreateOrderRequestImpl value,
-          $Res Function(_$CreateOrderRequestImpl) then) =
-      __$$CreateOrderRequestImplCopyWithImpl<$Res>;
+  factory _$$CreateOrderRequestImplCopyWith(
+    _$CreateOrderRequestImpl value,
+    $Res Function(_$CreateOrderRequestImpl) then,
+  ) = __$$CreateOrderRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {@JsonKey(name: 'client_order_id') String clientOrderId,
-      @JsonKey(name: 'store_id') String storeId,
-      List<OrderItemRequest> items,
-      @JsonKey(name: 'delivery_address') String? deliveryAddress,
-      @JsonKey(name: 'payment_method') String paymentMethod,
-      @JsonKey(name: 'delivery_fee') double deliveryFee});
+  $Res call({
+    @JsonKey(name: 'client_order_id') String clientOrderId,
+    @JsonKey(name: 'store_id') String storeId,
+    List<OrderItemRequest> items,
+    @JsonKey(name: 'delivery_address') String? deliveryAddress,
+    @JsonKey(name: 'payment_method') String paymentMethod,
+    @JsonKey(name: 'delivery_fee') double deliveryFee,
+  });
 }
 
 /// @nodoc
 class __$$CreateOrderRequestImplCopyWithImpl<$Res>
     extends _$CreateOrderRequestCopyWithImpl<$Res, _$CreateOrderRequestImpl>
     implements _$$CreateOrderRequestImplCopyWith<$Res> {
-  __$$CreateOrderRequestImplCopyWithImpl(_$CreateOrderRequestImpl _value,
-      $Res Function(_$CreateOrderRequestImpl) _then)
-      : super(_value, _then);
+  __$$CreateOrderRequestImplCopyWithImpl(
+    _$CreateOrderRequestImpl _value,
+    $Res Function(_$CreateOrderRequestImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of CreateOrderRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -145,47 +154,49 @@ class __$$CreateOrderRequestImplCopyWithImpl<$Res>
     Object? paymentMethod = null,
     Object? deliveryFee = null,
   }) {
-    return _then(_$CreateOrderRequestImpl(
-      clientOrderId: null == clientOrderId
-          ? _value.clientOrderId
-          : clientOrderId // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      items: null == items
-          ? _value._items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<OrderItemRequest>,
-      deliveryAddress: freezed == deliveryAddress
-          ? _value.deliveryAddress
-          : deliveryAddress // ignore: cast_nullable_to_non_nullable
-              as String?,
-      paymentMethod: null == paymentMethod
-          ? _value.paymentMethod
-          : paymentMethod // ignore: cast_nullable_to_non_nullable
-              as String,
-      deliveryFee: null == deliveryFee
-          ? _value.deliveryFee
-          : deliveryFee // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
+    return _then(
+      _$CreateOrderRequestImpl(
+        clientOrderId: null == clientOrderId
+            ? _value.clientOrderId
+            : clientOrderId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        storeId: null == storeId
+            ? _value.storeId
+            : storeId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        items: null == items
+            ? _value._items
+            : items // ignore: cast_nullable_to_non_nullable
+                  as List<OrderItemRequest>,
+        deliveryAddress: freezed == deliveryAddress
+            ? _value.deliveryAddress
+            : deliveryAddress // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        paymentMethod: null == paymentMethod
+            ? _value.paymentMethod
+            : paymentMethod // ignore: cast_nullable_to_non_nullable
+                  as String,
+        deliveryFee: null == deliveryFee
+            ? _value.deliveryFee
+            : deliveryFee // ignore: cast_nullable_to_non_nullable
+                  as double,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$CreateOrderRequestImpl extends _CreateOrderRequest {
-  const _$CreateOrderRequestImpl(
-      {@JsonKey(name: 'client_order_id') required this.clientOrderId,
-      @JsonKey(name: 'store_id') required this.storeId,
-      required final List<OrderItemRequest> items,
-      @JsonKey(name: 'delivery_address') this.deliveryAddress,
-      @JsonKey(name: 'payment_method') required this.paymentMethod,
-      @JsonKey(name: 'delivery_fee') this.deliveryFee = 0})
-      : _items = items,
-        super._();
+  const _$CreateOrderRequestImpl({
+    @JsonKey(name: 'client_order_id') required this.clientOrderId,
+    @JsonKey(name: 'store_id') required this.storeId,
+    required final List<OrderItemRequest> items,
+    @JsonKey(name: 'delivery_address') this.deliveryAddress,
+    @JsonKey(name: 'payment_method') required this.paymentMethod,
+    @JsonKey(name: 'delivery_fee') this.deliveryFee = 0,
+  }) : _items = items,
+       super._();
 
   factory _$CreateOrderRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$CreateOrderRequestImplFromJson(json);
@@ -239,13 +250,14 @@ class _$CreateOrderRequestImpl extends _CreateOrderRequest {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      clientOrderId,
-      storeId,
-      const DeepCollectionEquality().hash(_items),
-      deliveryAddress,
-      paymentMethod,
-      deliveryFee);
+    runtimeType,
+    clientOrderId,
+    storeId,
+    const DeepCollectionEquality().hash(_items),
+    deliveryAddress,
+    paymentMethod,
+    deliveryFee,
+  );
 
   /// Create a copy of CreateOrderRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -254,25 +266,25 @@ class _$CreateOrderRequestImpl extends _CreateOrderRequest {
   @pragma('vm:prefer-inline')
   _$$CreateOrderRequestImplCopyWith<_$CreateOrderRequestImpl> get copyWith =>
       __$$CreateOrderRequestImplCopyWithImpl<_$CreateOrderRequestImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CreateOrderRequestImplToJson(
-      this,
-    );
+    return _$$CreateOrderRequestImplToJson(this);
   }
 }
 
 abstract class _CreateOrderRequest extends CreateOrderRequest {
-  const factory _CreateOrderRequest(
-      {@JsonKey(name: 'client_order_id') required final String clientOrderId,
-      @JsonKey(name: 'store_id') required final String storeId,
-      required final List<OrderItemRequest> items,
-      @JsonKey(name: 'delivery_address') final String? deliveryAddress,
-      @JsonKey(name: 'payment_method') required final String paymentMethod,
-      @JsonKey(name: 'delivery_fee')
-      final double deliveryFee}) = _$CreateOrderRequestImpl;
+  const factory _CreateOrderRequest({
+    @JsonKey(name: 'client_order_id') required final String clientOrderId,
+    @JsonKey(name: 'store_id') required final String storeId,
+    required final List<OrderItemRequest> items,
+    @JsonKey(name: 'delivery_address') final String? deliveryAddress,
+    @JsonKey(name: 'payment_method') required final String paymentMethod,
+    @JsonKey(name: 'delivery_fee') final double deliveryFee,
+  }) = _$CreateOrderRequestImpl;
   const _CreateOrderRequest._() : super._();
 
   factory _CreateOrderRequest.fromJson(Map<String, dynamic> json) =

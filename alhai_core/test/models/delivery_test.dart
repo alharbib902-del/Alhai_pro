@@ -131,11 +131,17 @@ void main() {
 
     test('fromApi should parse correctly', () {
       expect(
-          DeliveryStatusX.fromApi('assigned'), equals(DeliveryStatus.assigned));
-      expect(DeliveryStatusX.fromApi('delivered'),
-          equals(DeliveryStatus.delivered));
+        DeliveryStatusX.fromApi('assigned'),
+        equals(DeliveryStatus.assigned),
+      );
       expect(
-          DeliveryStatusX.fromApi('unknown'), equals(DeliveryStatus.assigned));
+        DeliveryStatusX.fromApi('delivered'),
+        equals(DeliveryStatus.delivered),
+      );
+      expect(
+        DeliveryStatusX.fromApi('unknown'),
+        equals(DeliveryStatus.assigned),
+      );
     });
   });
 }

@@ -64,8 +64,10 @@ void main() {
     });
 
     test('AppRoutes defines AI customer recommendations route', () {
-      expect(AppRoutes.aiCustomerRecommendations,
-          equals('/ai/customer-recommendations'));
+      expect(
+        AppRoutes.aiCustomerRecommendations,
+        equals('/ai/customer-recommendations'),
+      );
     });
 
     test('AppRoutes defines AI smart inventory route', () {
@@ -179,31 +181,19 @@ void main() {
 
   group('Admin Lite Router - Route Helpers', () {
     test('productDetailPath generates correct path', () {
-      expect(
-        AppRoutes.productDetailPath('abc'),
-        equals('/products/abc'),
-      );
+      expect(AppRoutes.productDetailPath('abc'), equals('/products/abc'));
     });
 
     test('customerDetailPath generates correct path', () {
-      expect(
-        AppRoutes.customerDetailPath('123'),
-        equals('/customers/123'),
-      );
+      expect(AppRoutes.customerDetailPath('123'), equals('/customers/123'));
     });
 
     test('supplierDetailPath generates correct path', () {
-      expect(
-        AppRoutes.supplierDetailPath('456'),
-        equals('/suppliers/456'),
-      );
+      expect(AppRoutes.supplierDetailPath('456'), equals('/suppliers/456'));
     });
 
     test('invoiceDetailPath generates correct path', () {
-      expect(
-        AppRoutes.invoiceDetailPath('789'),
-        equals('/invoices/789'),
-      );
+      expect(AppRoutes.invoiceDetailPath('789'), equals('/invoices/789'));
     });
   });
 }

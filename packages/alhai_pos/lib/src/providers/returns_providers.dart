@@ -29,8 +29,9 @@ class ReturnDetailData {
 // ============================================================================
 
 /// قائمة جميع المرتجعات
-final returnsListProvider =
-    FutureProvider.autoDispose<List<ReturnsTableData>>((ref) async {
+final returnsListProvider = FutureProvider.autoDispose<List<ReturnsTableData>>((
+  ref,
+) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
   final db = GetIt.I<AppDatabase>();
@@ -40,12 +41,12 @@ final returnsListProvider =
 /// تفاصيل مرتجع واحد
 final returnDetailProvider = FutureProvider.autoDispose
     .family<ReturnDetailData?, String>((ref, id) async {
-  final db = GetIt.I<AppDatabase>();
-  final returnData = await db.returnsDao.getReturnById(id);
-  if (returnData == null) return null;
-  final items = await db.returnsDao.getReturnItems(id);
-  return ReturnDetailData(returnData: returnData, items: items);
-});
+      final db = GetIt.I<AppDatabase>();
+      final returnData = await db.returnsDao.getReturnById(id);
+      if (returnData == null) return null;
+      final items = await db.returnsDao.getReturnItems(id);
+      return ReturnDetailData(returnData: returnData, items: items);
+    });
 
 // ============================================================================
 // ACTION HELPERS
@@ -71,21 +72,23 @@ Future<String> createReturn(
   final id = _uuid.v4();
   final returnNumber = 'RET-${DateTime.now().millisecondsSinceEpoch}';
 
-  await db.returnsDao.insertReturn(ReturnsTableCompanion(
-    id: Value(id),
-    returnNumber: Value(returnNumber),
-    saleId: Value(saleId),
-    storeId: Value(storeId),
-    customerId: Value(customerId),
-    customerName: Value(customerName),
-    reason: Value(reason),
-    totalRefund: Value(totalRefund),
-    refundMethod: Value(refundMethod),
-    status: const Value('completed'),
-    notes: Value(notes),
-    createdBy: Value(createdBy),
-    createdAt: Value(DateTime.now()),
-  ));
+  await db.returnsDao.insertReturn(
+    ReturnsTableCompanion(
+      id: Value(id),
+      returnNumber: Value(returnNumber),
+      saleId: Value(saleId),
+      storeId: Value(storeId),
+      customerId: Value(customerId),
+      customerName: Value(customerName),
+      reason: Value(reason),
+      totalRefund: Value(totalRefund),
+      refundMethod: Value(refundMethod),
+      status: const Value('completed'),
+      notes: Value(notes),
+      createdBy: Value(createdBy),
+      createdAt: Value(DateTime.now()),
+    ),
+  );
 
   if (items.isNotEmpty) {
     await db.returnsDao.insertReturnItems(items);

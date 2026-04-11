@@ -25,9 +25,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const AddPaymentDeviceScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const AddPaymentDeviceScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(AddPaymentDeviceScreen), findsOneWidget);
@@ -41,9 +39,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const AddPaymentDeviceScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const AddPaymentDeviceScreen()));
       await tester.pumpAndSettle();
 
       // The form has name, IP address, and port text fields
@@ -77,9 +73,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const AddPaymentDeviceScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const AddPaymentDeviceScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(AddPaymentDeviceScreen), findsOneWidget);
@@ -93,9 +87,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const AddPaymentDeviceScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const AddPaymentDeviceScreen()));
       await tester.pumpAndSettle();
 
       // Device type selector uses custom GestureDetector chips

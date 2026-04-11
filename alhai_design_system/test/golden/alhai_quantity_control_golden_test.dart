@@ -10,10 +10,7 @@ import 'package:alhai_design_system/src/components/inputs/alhai_quantity_control
 void main() {
   group('AlhaiQuantityControl Golden Tests', () {
     testGoldens('Quantity control sizes', (tester) async {
-      final builder = GoldenBuilder.grid(
-        columns: 2,
-        widthToHeightRatio: 2,
-      )
+      final builder = GoldenBuilder.grid(columns: 2, widthToHeightRatio: 2)
         ..addScenario(
           'Compact',
           AlhaiQuantityControl(
@@ -43,26 +40,15 @@ void main() {
       final builder = GoldenBuilder.column()
         ..addScenario(
           'Min Value',
-          AlhaiQuantityControl(
-            quantity: 1,
-            min: 1,
-            onChanged: (_) {},
-          ),
+          AlhaiQuantityControl(quantity: 1, min: 1, onChanged: (_) {}),
         )
         ..addScenario(
           'Normal Value',
-          AlhaiQuantityControl(
-            quantity: 5,
-            onChanged: (_) {},
-          ),
+          AlhaiQuantityControl(quantity: 5, onChanged: (_) {}),
         )
         ..addScenario(
           'Max Value',
-          AlhaiQuantityControl(
-            quantity: 10,
-            max: 10,
-            onChanged: (_) {},
-          ),
+          AlhaiQuantityControl(quantity: 10, max: 10, onChanged: (_) {}),
         );
 
       await tester.pumpWidgetBuilder(

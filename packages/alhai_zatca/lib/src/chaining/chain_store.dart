@@ -9,10 +9,7 @@ abstract class ChainStore {
   Future<String?> getLastHash({required String storeId});
 
   /// Save the latest invoice hash for a store
-  Future<void> saveLastHash({
-    required String storeId,
-    required String hash,
-  });
+  Future<void> saveLastHash({required String storeId, required String hash});
 
   /// Delete the stored hash for a store (reset chain)
   Future<void> deleteLastHash({required String storeId});

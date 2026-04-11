@@ -56,10 +56,7 @@ class OrgSyncService {
     }
   }
 
-  Future<void> _upsert(
-    String tableName,
-    Map<String, dynamic> payload,
-  ) async {
+  Future<void> _upsert(String tableName, Map<String, dynamic> payload) async {
     final cleanPayload = _cleanPayload(payload, tableName: tableName);
     try {
       await _client
@@ -69,7 +66,8 @@ class OrgSyncService {
     } on PostgrestException catch (e) {
       if (kDebugMode) {
         debugPrint(
-            'OrgSync upsert DB error for $tableName: ${e.code} ${e.message}');
+          'OrgSync upsert DB error for $tableName: ${e.code} ${e.message}',
+        );
       }
       rethrow;
     } on TimeoutException {
@@ -85,10 +83,7 @@ class OrgSyncService {
     }
   }
 
-  Future<void> _delete(
-    String tableName,
-    Map<String, dynamic> payload,
-  ) async {
+  Future<void> _delete(String tableName, Map<String, dynamic> payload) async {
     final id = payload['id'] as String?;
     if (id == null) {
       throw ArgumentError('Delete operation requires an "id" field');
@@ -102,7 +97,8 @@ class OrgSyncService {
     } on PostgrestException catch (e) {
       if (kDebugMode) {
         debugPrint(
-            'OrgSync delete DB error for $tableName: ${e.code} ${e.message}');
+          'OrgSync delete DB error for $tableName: ${e.code} ${e.message}',
+        );
       }
       rethrow;
     } on TimeoutException {
@@ -143,7 +139,8 @@ class OrgSyncService {
     } on PostgrestException catch (e) {
       if (kDebugMode) {
         debugPrint(
-            'OrgSync fetch DB error for $tableName: ${e.code} ${e.message}');
+          'OrgSync fetch DB error for $tableName: ${e.code} ${e.message}',
+        );
       }
       rethrow;
     } on TimeoutException {
@@ -178,7 +175,8 @@ class OrgSyncService {
     } on PostgrestException catch (e) {
       if (kDebugMode) {
         debugPrint(
-            'OrgSync fetch DB error for $tableName: ${e.code} ${e.message}');
+          'OrgSync fetch DB error for $tableName: ${e.code} ${e.message}',
+        );
       }
       rethrow;
     } on TimeoutException {

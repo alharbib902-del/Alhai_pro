@@ -12,7 +12,8 @@ part of 'pricing_tier.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 PricingTier _$PricingTierFromJson(Map<String, dynamic> json) {
   return _PricingTier.fromJson(json);
@@ -50,26 +51,28 @@ mixin _$PricingTier {
 /// @nodoc
 abstract class $PricingTierCopyWith<$Res> {
   factory $PricingTierCopyWith(
-          PricingTier value, $Res Function(PricingTier) then) =
-      _$PricingTierCopyWithImpl<$Res, PricingTier>;
+    PricingTier value,
+    $Res Function(PricingTier) then,
+  ) = _$PricingTierCopyWithImpl<$Res, PricingTier>;
   @useResult
-  $Res call(
-      {String id,
-      String distributorId,
-      String name,
-      String? description,
-      PricingTierType type,
-      int? minQuantity,
-      int? maxQuantity,
-      double? discountPercent,
-      double? discountAmount,
-      List<String>? applicableStoreIds,
-      List<String>? applicableProductIds,
-      bool isActive,
-      DateTime? startDate,
-      DateTime? endDate,
-      DateTime createdAt,
-      DateTime? updatedAt});
+  $Res call({
+    String id,
+    String distributorId,
+    String name,
+    String? description,
+    PricingTierType type,
+    int? minQuantity,
+    int? maxQuantity,
+    double? discountPercent,
+    double? discountAmount,
+    List<String>? applicableStoreIds,
+    List<String>? applicableProductIds,
+    bool isActive,
+    DateTime? startDate,
+    DateTime? endDate,
+    DateTime createdAt,
+    DateTime? updatedAt,
+  });
 }
 
 /// @nodoc
@@ -104,72 +107,75 @@ class _$PricingTierCopyWithImpl<$Res, $Val extends PricingTier>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      distributorId: null == distributorId
-          ? _value.distributorId
-          : distributorId // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String?,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as PricingTierType,
-      minQuantity: freezed == minQuantity
-          ? _value.minQuantity
-          : minQuantity // ignore: cast_nullable_to_non_nullable
-              as int?,
-      maxQuantity: freezed == maxQuantity
-          ? _value.maxQuantity
-          : maxQuantity // ignore: cast_nullable_to_non_nullable
-              as int?,
-      discountPercent: freezed == discountPercent
-          ? _value.discountPercent
-          : discountPercent // ignore: cast_nullable_to_non_nullable
-              as double?,
-      discountAmount: freezed == discountAmount
-          ? _value.discountAmount
-          : discountAmount // ignore: cast_nullable_to_non_nullable
-              as double?,
-      applicableStoreIds: freezed == applicableStoreIds
-          ? _value.applicableStoreIds
-          : applicableStoreIds // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      applicableProductIds: freezed == applicableProductIds
-          ? _value.applicableProductIds
-          : applicableProductIds // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
-      startDate: freezed == startDate
-          ? _value.startDate
-          : startDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      endDate: freezed == endDate
-          ? _value.endDate
-          : endDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            distributorId: null == distributorId
+                ? _value.distributorId
+                : distributorId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            description: freezed == description
+                ? _value.description
+                : description // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as PricingTierType,
+            minQuantity: freezed == minQuantity
+                ? _value.minQuantity
+                : minQuantity // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            maxQuantity: freezed == maxQuantity
+                ? _value.maxQuantity
+                : maxQuantity // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            discountPercent: freezed == discountPercent
+                ? _value.discountPercent
+                : discountPercent // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            discountAmount: freezed == discountAmount
+                ? _value.discountAmount
+                : discountAmount // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            applicableStoreIds: freezed == applicableStoreIds
+                ? _value.applicableStoreIds
+                : applicableStoreIds // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
+            applicableProductIds: freezed == applicableProductIds
+                ? _value.applicableProductIds
+                : applicableProductIds // ignore: cast_nullable_to_non_nullable
+                      as List<String>?,
+            isActive: null == isActive
+                ? _value.isActive
+                : isActive // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            startDate: freezed == startDate
+                ? _value.startDate
+                : startDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            endDate: freezed == endDate
+                ? _value.endDate
+                : endDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            updatedAt: freezed == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -177,27 +183,29 @@ class _$PricingTierCopyWithImpl<$Res, $Val extends PricingTier>
 abstract class _$$PricingTierImplCopyWith<$Res>
     implements $PricingTierCopyWith<$Res> {
   factory _$$PricingTierImplCopyWith(
-          _$PricingTierImpl value, $Res Function(_$PricingTierImpl) then) =
-      __$$PricingTierImplCopyWithImpl<$Res>;
+    _$PricingTierImpl value,
+    $Res Function(_$PricingTierImpl) then,
+  ) = __$$PricingTierImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String distributorId,
-      String name,
-      String? description,
-      PricingTierType type,
-      int? minQuantity,
-      int? maxQuantity,
-      double? discountPercent,
-      double? discountAmount,
-      List<String>? applicableStoreIds,
-      List<String>? applicableProductIds,
-      bool isActive,
-      DateTime? startDate,
-      DateTime? endDate,
-      DateTime createdAt,
-      DateTime? updatedAt});
+  $Res call({
+    String id,
+    String distributorId,
+    String name,
+    String? description,
+    PricingTierType type,
+    int? minQuantity,
+    int? maxQuantity,
+    double? discountPercent,
+    double? discountAmount,
+    List<String>? applicableStoreIds,
+    List<String>? applicableProductIds,
+    bool isActive,
+    DateTime? startDate,
+    DateTime? endDate,
+    DateTime createdAt,
+    DateTime? updatedAt,
+  });
 }
 
 /// @nodoc
@@ -205,8 +213,9 @@ class __$$PricingTierImplCopyWithImpl<$Res>
     extends _$PricingTierCopyWithImpl<$Res, _$PricingTierImpl>
     implements _$$PricingTierImplCopyWith<$Res> {
   __$$PricingTierImplCopyWithImpl(
-      _$PricingTierImpl _value, $Res Function(_$PricingTierImpl) _then)
-      : super(_value, _then);
+    _$PricingTierImpl _value,
+    $Res Function(_$PricingTierImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of PricingTier
   /// with the given fields replaced by the non-null parameter values.
@@ -230,98 +239,100 @@ class __$$PricingTierImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(_$PricingTierImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      distributorId: null == distributorId
-          ? _value.distributorId
-          : distributorId // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      description: freezed == description
-          ? _value.description
-          : description // ignore: cast_nullable_to_non_nullable
-              as String?,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as PricingTierType,
-      minQuantity: freezed == minQuantity
-          ? _value.minQuantity
-          : minQuantity // ignore: cast_nullable_to_non_nullable
-              as int?,
-      maxQuantity: freezed == maxQuantity
-          ? _value.maxQuantity
-          : maxQuantity // ignore: cast_nullable_to_non_nullable
-              as int?,
-      discountPercent: freezed == discountPercent
-          ? _value.discountPercent
-          : discountPercent // ignore: cast_nullable_to_non_nullable
-              as double?,
-      discountAmount: freezed == discountAmount
-          ? _value.discountAmount
-          : discountAmount // ignore: cast_nullable_to_non_nullable
-              as double?,
-      applicableStoreIds: freezed == applicableStoreIds
-          ? _value._applicableStoreIds
-          : applicableStoreIds // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      applicableProductIds: freezed == applicableProductIds
-          ? _value._applicableProductIds
-          : applicableProductIds // ignore: cast_nullable_to_non_nullable
-              as List<String>?,
-      isActive: null == isActive
-          ? _value.isActive
-          : isActive // ignore: cast_nullable_to_non_nullable
-              as bool,
-      startDate: freezed == startDate
-          ? _value.startDate
-          : startDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      endDate: freezed == endDate
-          ? _value.endDate
-          : endDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$PricingTierImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        distributorId: null == distributorId
+            ? _value.distributorId
+            : distributorId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        description: freezed == description
+            ? _value.description
+            : description // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as PricingTierType,
+        minQuantity: freezed == minQuantity
+            ? _value.minQuantity
+            : minQuantity // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        maxQuantity: freezed == maxQuantity
+            ? _value.maxQuantity
+            : maxQuantity // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        discountPercent: freezed == discountPercent
+            ? _value.discountPercent
+            : discountPercent // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        discountAmount: freezed == discountAmount
+            ? _value.discountAmount
+            : discountAmount // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        applicableStoreIds: freezed == applicableStoreIds
+            ? _value._applicableStoreIds
+            : applicableStoreIds // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
+        applicableProductIds: freezed == applicableProductIds
+            ? _value._applicableProductIds
+            : applicableProductIds // ignore: cast_nullable_to_non_nullable
+                  as List<String>?,
+        isActive: null == isActive
+            ? _value.isActive
+            : isActive // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        startDate: freezed == startDate
+            ? _value.startDate
+            : startDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        endDate: freezed == endDate
+            ? _value.endDate
+            : endDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        updatedAt: freezed == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$PricingTierImpl extends _PricingTier {
-  const _$PricingTierImpl(
-      {required this.id,
-      required this.distributorId,
-      required this.name,
-      this.description,
-      required this.type,
-      this.minQuantity,
-      this.maxQuantity,
-      this.discountPercent,
-      this.discountAmount,
-      final List<String>? applicableStoreIds,
-      final List<String>? applicableProductIds,
-      this.isActive = true,
-      this.startDate,
-      this.endDate,
-      required this.createdAt,
-      this.updatedAt})
-      : _applicableStoreIds = applicableStoreIds,
-        _applicableProductIds = applicableProductIds,
-        super._();
+  const _$PricingTierImpl({
+    required this.id,
+    required this.distributorId,
+    required this.name,
+    this.description,
+    required this.type,
+    this.minQuantity,
+    this.maxQuantity,
+    this.discountPercent,
+    this.discountAmount,
+    final List<String>? applicableStoreIds,
+    final List<String>? applicableProductIds,
+    this.isActive = true,
+    this.startDate,
+    this.endDate,
+    required this.createdAt,
+    this.updatedAt,
+  }) : _applicableStoreIds = applicableStoreIds,
+       _applicableProductIds = applicableProductIds,
+       super._();
 
   factory _$PricingTierImpl.fromJson(Map<String, dynamic> json) =>
       _$$PricingTierImplFromJson(json);
@@ -403,10 +414,14 @@ class _$PricingTierImpl extends _PricingTier {
                 other.discountPercent == discountPercent) &&
             (identical(other.discountAmount, discountAmount) ||
                 other.discountAmount == discountAmount) &&
-            const DeepCollectionEquality()
-                .equals(other._applicableStoreIds, _applicableStoreIds) &&
-            const DeepCollectionEquality()
-                .equals(other._applicableProductIds, _applicableProductIds) &&
+            const DeepCollectionEquality().equals(
+              other._applicableStoreIds,
+              _applicableStoreIds,
+            ) &&
+            const DeepCollectionEquality().equals(
+              other._applicableProductIds,
+              _applicableProductIds,
+            ) &&
             (identical(other.isActive, isActive) ||
                 other.isActive == isActive) &&
             (identical(other.startDate, startDate) ||
@@ -421,23 +436,24 @@ class _$PricingTierImpl extends _PricingTier {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      distributorId,
-      name,
-      description,
-      type,
-      minQuantity,
-      maxQuantity,
-      discountPercent,
-      discountAmount,
-      const DeepCollectionEquality().hash(_applicableStoreIds),
-      const DeepCollectionEquality().hash(_applicableProductIds),
-      isActive,
-      startDate,
-      endDate,
-      createdAt,
-      updatedAt);
+    runtimeType,
+    id,
+    distributorId,
+    name,
+    description,
+    type,
+    minQuantity,
+    maxQuantity,
+    discountPercent,
+    discountAmount,
+    const DeepCollectionEquality().hash(_applicableStoreIds),
+    const DeepCollectionEquality().hash(_applicableProductIds),
+    isActive,
+    startDate,
+    endDate,
+    createdAt,
+    updatedAt,
+  );
 
   /// Create a copy of PricingTier
   /// with the given fields replaced by the non-null parameter values.
@@ -449,30 +465,29 @@ class _$PricingTierImpl extends _PricingTier {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PricingTierImplToJson(
-      this,
-    );
+    return _$$PricingTierImplToJson(this);
   }
 }
 
 abstract class _PricingTier extends PricingTier {
-  const factory _PricingTier(
-      {required final String id,
-      required final String distributorId,
-      required final String name,
-      final String? description,
-      required final PricingTierType type,
-      final int? minQuantity,
-      final int? maxQuantity,
-      final double? discountPercent,
-      final double? discountAmount,
-      final List<String>? applicableStoreIds,
-      final List<String>? applicableProductIds,
-      final bool isActive,
-      final DateTime? startDate,
-      final DateTime? endDate,
-      required final DateTime createdAt,
-      final DateTime? updatedAt}) = _$PricingTierImpl;
+  const factory _PricingTier({
+    required final String id,
+    required final String distributorId,
+    required final String name,
+    final String? description,
+    required final PricingTierType type,
+    final int? minQuantity,
+    final int? maxQuantity,
+    final double? discountPercent,
+    final double? discountAmount,
+    final List<String>? applicableStoreIds,
+    final List<String>? applicableProductIds,
+    final bool isActive,
+    final DateTime? startDate,
+    final DateTime? endDate,
+    required final DateTime createdAt,
+    final DateTime? updatedAt,
+  }) = _$PricingTierImpl;
   const _PricingTier._() : super._();
 
   factory _PricingTier.fromJson(Map<String, dynamic> json) =
@@ -556,27 +571,29 @@ mixin _$DistributorProduct {
 /// @nodoc
 abstract class $DistributorProductCopyWith<$Res> {
   factory $DistributorProductCopyWith(
-          DistributorProduct value, $Res Function(DistributorProduct) then) =
-      _$DistributorProductCopyWithImpl<$Res, DistributorProduct>;
+    DistributorProduct value,
+    $Res Function(DistributorProduct) then,
+  ) = _$DistributorProductCopyWithImpl<$Res, DistributorProduct>;
   @useResult
-  $Res call(
-      {String id,
-      String distributorId,
-      String productId,
-      String productName,
-      String? productSku,
-      String? barcode,
-      String? imageUrl,
-      String? category,
-      double wholesalePrice,
-      double? retailPrice,
-      int stockQuantity,
-      int? minOrderQuantity,
-      String? unit,
-      bool isAvailable,
-      List<PricingTier>? pricingTiers,
-      DateTime createdAt,
-      DateTime? updatedAt});
+  $Res call({
+    String id,
+    String distributorId,
+    String productId,
+    String productName,
+    String? productSku,
+    String? barcode,
+    String? imageUrl,
+    String? category,
+    double wholesalePrice,
+    double? retailPrice,
+    int stockQuantity,
+    int? minOrderQuantity,
+    String? unit,
+    bool isAvailable,
+    List<PricingTier>? pricingTiers,
+    DateTime createdAt,
+    DateTime? updatedAt,
+  });
 }
 
 /// @nodoc
@@ -612,114 +629,120 @@ class _$DistributorProductCopyWithImpl<$Res, $Val extends DistributorProduct>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      distributorId: null == distributorId
-          ? _value.distributorId
-          : distributorId // ignore: cast_nullable_to_non_nullable
-              as String,
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      productName: null == productName
-          ? _value.productName
-          : productName // ignore: cast_nullable_to_non_nullable
-              as String,
-      productSku: freezed == productSku
-          ? _value.productSku
-          : productSku // ignore: cast_nullable_to_non_nullable
-              as String?,
-      barcode: freezed == barcode
-          ? _value.barcode
-          : barcode // ignore: cast_nullable_to_non_nullable
-              as String?,
-      imageUrl: freezed == imageUrl
-          ? _value.imageUrl
-          : imageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      category: freezed == category
-          ? _value.category
-          : category // ignore: cast_nullable_to_non_nullable
-              as String?,
-      wholesalePrice: null == wholesalePrice
-          ? _value.wholesalePrice
-          : wholesalePrice // ignore: cast_nullable_to_non_nullable
-              as double,
-      retailPrice: freezed == retailPrice
-          ? _value.retailPrice
-          : retailPrice // ignore: cast_nullable_to_non_nullable
-              as double?,
-      stockQuantity: null == stockQuantity
-          ? _value.stockQuantity
-          : stockQuantity // ignore: cast_nullable_to_non_nullable
-              as int,
-      minOrderQuantity: freezed == minOrderQuantity
-          ? _value.minOrderQuantity
-          : minOrderQuantity // ignore: cast_nullable_to_non_nullable
-              as int?,
-      unit: freezed == unit
-          ? _value.unit
-          : unit // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isAvailable: null == isAvailable
-          ? _value.isAvailable
-          : isAvailable // ignore: cast_nullable_to_non_nullable
-              as bool,
-      pricingTiers: freezed == pricingTiers
-          ? _value.pricingTiers
-          : pricingTiers // ignore: cast_nullable_to_non_nullable
-              as List<PricingTier>?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            distributorId: null == distributorId
+                ? _value.distributorId
+                : distributorId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            productId: null == productId
+                ? _value.productId
+                : productId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            productName: null == productName
+                ? _value.productName
+                : productName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            productSku: freezed == productSku
+                ? _value.productSku
+                : productSku // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            barcode: freezed == barcode
+                ? _value.barcode
+                : barcode // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            imageUrl: freezed == imageUrl
+                ? _value.imageUrl
+                : imageUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            category: freezed == category
+                ? _value.category
+                : category // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            wholesalePrice: null == wholesalePrice
+                ? _value.wholesalePrice
+                : wholesalePrice // ignore: cast_nullable_to_non_nullable
+                      as double,
+            retailPrice: freezed == retailPrice
+                ? _value.retailPrice
+                : retailPrice // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            stockQuantity: null == stockQuantity
+                ? _value.stockQuantity
+                : stockQuantity // ignore: cast_nullable_to_non_nullable
+                      as int,
+            minOrderQuantity: freezed == minOrderQuantity
+                ? _value.minOrderQuantity
+                : minOrderQuantity // ignore: cast_nullable_to_non_nullable
+                      as int?,
+            unit: freezed == unit
+                ? _value.unit
+                : unit // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            isAvailable: null == isAvailable
+                ? _value.isAvailable
+                : isAvailable // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            pricingTiers: freezed == pricingTiers
+                ? _value.pricingTiers
+                : pricingTiers // ignore: cast_nullable_to_non_nullable
+                      as List<PricingTier>?,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            updatedAt: freezed == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$DistributorProductImplCopyWith<$Res>
     implements $DistributorProductCopyWith<$Res> {
-  factory _$$DistributorProductImplCopyWith(_$DistributorProductImpl value,
-          $Res Function(_$DistributorProductImpl) then) =
-      __$$DistributorProductImplCopyWithImpl<$Res>;
+  factory _$$DistributorProductImplCopyWith(
+    _$DistributorProductImpl value,
+    $Res Function(_$DistributorProductImpl) then,
+  ) = __$$DistributorProductImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String distributorId,
-      String productId,
-      String productName,
-      String? productSku,
-      String? barcode,
-      String? imageUrl,
-      String? category,
-      double wholesalePrice,
-      double? retailPrice,
-      int stockQuantity,
-      int? minOrderQuantity,
-      String? unit,
-      bool isAvailable,
-      List<PricingTier>? pricingTiers,
-      DateTime createdAt,
-      DateTime? updatedAt});
+  $Res call({
+    String id,
+    String distributorId,
+    String productId,
+    String productName,
+    String? productSku,
+    String? barcode,
+    String? imageUrl,
+    String? category,
+    double wholesalePrice,
+    double? retailPrice,
+    int stockQuantity,
+    int? minOrderQuantity,
+    String? unit,
+    bool isAvailable,
+    List<PricingTier>? pricingTiers,
+    DateTime createdAt,
+    DateTime? updatedAt,
+  });
 }
 
 /// @nodoc
 class __$$DistributorProductImplCopyWithImpl<$Res>
     extends _$DistributorProductCopyWithImpl<$Res, _$DistributorProductImpl>
     implements _$$DistributorProductImplCopyWith<$Res> {
-  __$$DistributorProductImplCopyWithImpl(_$DistributorProductImpl _value,
-      $Res Function(_$DistributorProductImpl) _then)
-      : super(_value, _then);
+  __$$DistributorProductImplCopyWithImpl(
+    _$DistributorProductImpl _value,
+    $Res Function(_$DistributorProductImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of DistributorProduct
   /// with the given fields replaced by the non-null parameter values.
@@ -744,102 +767,104 @@ class __$$DistributorProductImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(_$DistributorProductImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      distributorId: null == distributorId
-          ? _value.distributorId
-          : distributorId // ignore: cast_nullable_to_non_nullable
-              as String,
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      productName: null == productName
-          ? _value.productName
-          : productName // ignore: cast_nullable_to_non_nullable
-              as String,
-      productSku: freezed == productSku
-          ? _value.productSku
-          : productSku // ignore: cast_nullable_to_non_nullable
-              as String?,
-      barcode: freezed == barcode
-          ? _value.barcode
-          : barcode // ignore: cast_nullable_to_non_nullable
-              as String?,
-      imageUrl: freezed == imageUrl
-          ? _value.imageUrl
-          : imageUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      category: freezed == category
-          ? _value.category
-          : category // ignore: cast_nullable_to_non_nullable
-              as String?,
-      wholesalePrice: null == wholesalePrice
-          ? _value.wholesalePrice
-          : wholesalePrice // ignore: cast_nullable_to_non_nullable
-              as double,
-      retailPrice: freezed == retailPrice
-          ? _value.retailPrice
-          : retailPrice // ignore: cast_nullable_to_non_nullable
-              as double?,
-      stockQuantity: null == stockQuantity
-          ? _value.stockQuantity
-          : stockQuantity // ignore: cast_nullable_to_non_nullable
-              as int,
-      minOrderQuantity: freezed == minOrderQuantity
-          ? _value.minOrderQuantity
-          : minOrderQuantity // ignore: cast_nullable_to_non_nullable
-              as int?,
-      unit: freezed == unit
-          ? _value.unit
-          : unit // ignore: cast_nullable_to_non_nullable
-              as String?,
-      isAvailable: null == isAvailable
-          ? _value.isAvailable
-          : isAvailable // ignore: cast_nullable_to_non_nullable
-              as bool,
-      pricingTiers: freezed == pricingTiers
-          ? _value._pricingTiers
-          : pricingTiers // ignore: cast_nullable_to_non_nullable
-              as List<PricingTier>?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$DistributorProductImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        distributorId: null == distributorId
+            ? _value.distributorId
+            : distributorId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        productId: null == productId
+            ? _value.productId
+            : productId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        productName: null == productName
+            ? _value.productName
+            : productName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        productSku: freezed == productSku
+            ? _value.productSku
+            : productSku // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        barcode: freezed == barcode
+            ? _value.barcode
+            : barcode // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        imageUrl: freezed == imageUrl
+            ? _value.imageUrl
+            : imageUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        category: freezed == category
+            ? _value.category
+            : category // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        wholesalePrice: null == wholesalePrice
+            ? _value.wholesalePrice
+            : wholesalePrice // ignore: cast_nullable_to_non_nullable
+                  as double,
+        retailPrice: freezed == retailPrice
+            ? _value.retailPrice
+            : retailPrice // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        stockQuantity: null == stockQuantity
+            ? _value.stockQuantity
+            : stockQuantity // ignore: cast_nullable_to_non_nullable
+                  as int,
+        minOrderQuantity: freezed == minOrderQuantity
+            ? _value.minOrderQuantity
+            : minOrderQuantity // ignore: cast_nullable_to_non_nullable
+                  as int?,
+        unit: freezed == unit
+            ? _value.unit
+            : unit // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        isAvailable: null == isAvailable
+            ? _value.isAvailable
+            : isAvailable // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        pricingTiers: freezed == pricingTiers
+            ? _value._pricingTiers
+            : pricingTiers // ignore: cast_nullable_to_non_nullable
+                  as List<PricingTier>?,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        updatedAt: freezed == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$DistributorProductImpl extends _DistributorProduct {
-  const _$DistributorProductImpl(
-      {required this.id,
-      required this.distributorId,
-      required this.productId,
-      required this.productName,
-      this.productSku,
-      this.barcode,
-      this.imageUrl,
-      this.category,
-      required this.wholesalePrice,
-      this.retailPrice,
-      this.stockQuantity = 0,
-      this.minOrderQuantity,
-      this.unit,
-      this.isAvailable = true,
-      final List<PricingTier>? pricingTiers,
-      required this.createdAt,
-      this.updatedAt})
-      : _pricingTiers = pricingTiers,
-        super._();
+  const _$DistributorProductImpl({
+    required this.id,
+    required this.distributorId,
+    required this.productId,
+    required this.productName,
+    this.productSku,
+    this.barcode,
+    this.imageUrl,
+    this.category,
+    required this.wholesalePrice,
+    this.retailPrice,
+    this.stockQuantity = 0,
+    this.minOrderQuantity,
+    this.unit,
+    this.isAvailable = true,
+    final List<PricingTier>? pricingTiers,
+    required this.createdAt,
+    this.updatedAt,
+  }) : _pricingTiers = pricingTiers,
+       super._();
 
   factory _$DistributorProductImpl.fromJson(Map<String, dynamic> json) =>
       _$$DistributorProductImplFromJson(json);
@@ -924,8 +949,10 @@ class _$DistributorProductImpl extends _DistributorProduct {
             (identical(other.unit, unit) || other.unit == unit) &&
             (identical(other.isAvailable, isAvailable) ||
                 other.isAvailable == isAvailable) &&
-            const DeepCollectionEquality()
-                .equals(other._pricingTiers, _pricingTiers) &&
+            const DeepCollectionEquality().equals(
+              other._pricingTiers,
+              _pricingTiers,
+            ) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -935,24 +962,25 @@ class _$DistributorProductImpl extends _DistributorProduct {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      distributorId,
-      productId,
-      productName,
-      productSku,
-      barcode,
-      imageUrl,
-      category,
-      wholesalePrice,
-      retailPrice,
-      stockQuantity,
-      minOrderQuantity,
-      unit,
-      isAvailable,
-      const DeepCollectionEquality().hash(_pricingTiers),
-      createdAt,
-      updatedAt);
+    runtimeType,
+    id,
+    distributorId,
+    productId,
+    productName,
+    productSku,
+    barcode,
+    imageUrl,
+    category,
+    wholesalePrice,
+    retailPrice,
+    stockQuantity,
+    minOrderQuantity,
+    unit,
+    isAvailable,
+    const DeepCollectionEquality().hash(_pricingTiers),
+    createdAt,
+    updatedAt,
+  );
 
   /// Create a copy of DistributorProduct
   /// with the given fields replaced by the non-null parameter values.
@@ -961,35 +989,36 @@ class _$DistributorProductImpl extends _DistributorProduct {
   @pragma('vm:prefer-inline')
   _$$DistributorProductImplCopyWith<_$DistributorProductImpl> get copyWith =>
       __$$DistributorProductImplCopyWithImpl<_$DistributorProductImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$DistributorProductImplToJson(
-      this,
-    );
+    return _$$DistributorProductImplToJson(this);
   }
 }
 
 abstract class _DistributorProduct extends DistributorProduct {
-  const factory _DistributorProduct(
-      {required final String id,
-      required final String distributorId,
-      required final String productId,
-      required final String productName,
-      final String? productSku,
-      final String? barcode,
-      final String? imageUrl,
-      final String? category,
-      required final double wholesalePrice,
-      final double? retailPrice,
-      final int stockQuantity,
-      final int? minOrderQuantity,
-      final String? unit,
-      final bool isAvailable,
-      final List<PricingTier>? pricingTiers,
-      required final DateTime createdAt,
-      final DateTime? updatedAt}) = _$DistributorProductImpl;
+  const factory _DistributorProduct({
+    required final String id,
+    required final String distributorId,
+    required final String productId,
+    required final String productName,
+    final String? productSku,
+    final String? barcode,
+    final String? imageUrl,
+    final String? category,
+    required final double wholesalePrice,
+    final double? retailPrice,
+    final int stockQuantity,
+    final int? minOrderQuantity,
+    final String? unit,
+    final bool isAvailable,
+    final List<PricingTier>? pricingTiers,
+    required final DateTime createdAt,
+    final DateTime? updatedAt,
+  }) = _$DistributorProductImpl;
   const _DistributorProduct._() : super._();
 
   factory _DistributorProduct.fromJson(Map<String, dynamic> json) =

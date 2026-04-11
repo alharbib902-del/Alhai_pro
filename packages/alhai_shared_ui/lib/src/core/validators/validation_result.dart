@@ -30,24 +30,28 @@ class ValidationResult {
 
   /// نتيجة ناجحة
   const ValidationResult.success()
-      : isValid = true,
-        errorAr = null,
-        errorEn = null,
-        errorCode = null;
+    : isValid = true,
+      errorAr = null,
+      errorEn = null,
+      errorCode = null;
 
   /// نتيجة فاشلة
   const ValidationResult.failure({
     required String messageAr,
     required String messageEn,
     String? code,
-  })  : isValid = false,
-        errorAr = messageAr,
-        errorEn = messageEn,
-        errorCode = code;
+  }) : isValid = false,
+       errorAr = messageAr,
+       errorEn = messageEn,
+       errorCode = code;
 
   /// Factory constructor للاستخدام العام
-  factory ValidationResult.fromBool(bool valid,
-      {String? errorAr, String? errorEn, String? code}) {
+  factory ValidationResult.fromBool(
+    bool valid, {
+    String? errorAr,
+    String? errorEn,
+    String? code,
+  }) {
     return ValidationResult._internal(
       isValid: valid,
       errorAr: errorAr,

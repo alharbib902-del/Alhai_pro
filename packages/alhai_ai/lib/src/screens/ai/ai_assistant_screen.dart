@@ -80,8 +80,9 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
         AppHeader(
           title: l10n.aiAssistant,
           subtitle: l10n.aiAskAboutStore,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           actions: [
             // زر مسح المحادثة
             IconButton(
@@ -118,14 +119,19 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
   ) {
     return Container(
       margin: isWideScreen
-          ? EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.lg, AlhaiSpacing.zero,
-              AlhaiSpacing.lg, AlhaiSpacing.zero)
+          ? EdgeInsetsDirectional.fromSTEB(
+              AlhaiSpacing.lg,
+              AlhaiSpacing.zero,
+              AlhaiSpacing.lg,
+              AlhaiSpacing.zero,
+            )
           : EdgeInsets.zero,
       decoration: isWideScreen
           ? BoxDecoration(
               color: isDark ? const Color(0xFF0F172A) : Colors.white,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
               border: Border.all(
                 color: isDark
                     ? Colors.white.withValues(alpha: 0.08)
@@ -162,8 +168,9 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
                 ? _buildEmptyState(isDark)
                 : ListView.builder(
                     controller: _scrollController,
-                    padding:
-                        const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AlhaiSpacing.md,
+                    ),
                     itemCount: messages.length + (isProcessing ? 1 : 0),
                     itemBuilder: (context, index) {
                       if (index == messages.length && isProcessing) {
@@ -178,10 +185,7 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
           ),
 
           // حقل الإدخال
-          AiChatInput(
-            onSend: _handleSendMessage,
-            isProcessing: isProcessing,
-          ),
+          AiChatInput(onSend: _handleSendMessage, isProcessing: isProcessing),
         ],
       ),
     );
@@ -241,7 +245,9 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
   Widget _buildTypingIndicator(bool isDark) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.xxs,
+      ),
       child: Row(
         children: [
           Container(
@@ -260,7 +266,9 @@ class _AiAssistantScreenState extends ConsumerState<AiAssistantScreen> {
           const SizedBox(width: AlhaiSpacing.xs),
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+              horizontal: AlhaiSpacing.md,
+              vertical: AlhaiSpacing.sm,
+            ),
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1E293B) : Colors.white,
               borderRadius: const BorderRadius.only(

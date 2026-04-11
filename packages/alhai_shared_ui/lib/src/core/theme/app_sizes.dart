@@ -46,28 +46,28 @@ class AppSizes {
 
   // Shadows
   static List<BoxShadow> get shadowSm => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.04),
-          blurRadius: 4,
-          offset: const Offset(0, 1),
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.04),
+      blurRadius: 4,
+      offset: const Offset(0, 1),
+    ),
+  ];
 
   static List<BoxShadow> get shadowMd => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.06),
-          blurRadius: 8,
-          offset: const Offset(0, 2),
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.06),
+      blurRadius: 8,
+      offset: const Offset(0, 2),
+    ),
+  ];
 
   static List<BoxShadow> get shadowLg => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.08),
-          blurRadius: 16,
-          offset: const Offset(0, 4),
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.08),
+      blurRadius: 16,
+      offset: const Offset(0, 4),
+    ),
+  ];
 }
 
 // ============================================================================
@@ -155,65 +155,67 @@ class AppShadows {
 
   /// ظل صغير
   static List<BoxShadow> get sm => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.04),
-          blurRadius: 4,
-          offset: const Offset(0, 1),
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.04),
+      blurRadius: 4,
+      offset: const Offset(0, 1),
+    ),
+  ];
 
   /// ظل متوسط
   static List<BoxShadow> get md => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.06),
-          blurRadius: 8,
-          offset: const Offset(0, 2),
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.06),
+      blurRadius: 8,
+      offset: const Offset(0, 2),
+    ),
+  ];
 
   /// ظل كبير
   static List<BoxShadow> get lg => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.08),
-          blurRadius: 16,
-          offset: const Offset(0, 4),
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.08),
+      blurRadius: 16,
+      offset: const Offset(0, 4),
+    ),
+  ];
 
   /// ظل كبير جداً
   static List<BoxShadow> get xl => [
-        BoxShadow(
-          color: Colors.black.withValues(alpha: 0.10),
-          blurRadius: 24,
-          offset: const Offset(0, 8),
-        ),
-      ];
+    BoxShadow(
+      color: Colors.black.withValues(alpha: 0.10),
+      blurRadius: 24,
+      offset: const Offset(0, 8),
+    ),
+  ];
 
   /// ظل ملون (للأزرار)
   static List<BoxShadow> get primarySm => [
-        BoxShadow(
-          color: AppColors.primary.withValues(alpha: 0.25),
-          blurRadius: 8,
-          offset: const Offset(0, 2),
-        ),
-      ];
+    BoxShadow(
+      color: AppColors.primary.withValues(alpha: 0.25),
+      blurRadius: 8,
+      offset: const Offset(0, 2),
+    ),
+  ];
 
   /// ظل ملون متوسط
   static List<BoxShadow> get primaryMd => [
-        BoxShadow(
-          color: AppColors.primary.withValues(alpha: 0.30),
-          blurRadius: 12,
-          offset: const Offset(0, 4),
-        ),
-      ];
+    BoxShadow(
+      color: AppColors.primary.withValues(alpha: 0.30),
+      blurRadius: 12,
+      offset: const Offset(0, 4),
+    ),
+  ];
 
   /// بدون ظل
   static List<BoxShadow> get none => [];
 
   /// ظلال تتكيف مع الوضع الداكن/الفاتح
   /// في الوضع الداكن: ظل أغمق مع alpha أعلى لأن الخلفية داكنة
-  static List<BoxShadow> of(BuildContext context,
-      {ShadowSize size = ShadowSize.md}) {
+  static List<BoxShadow> of(
+    BuildContext context, {
+    ShadowSize size = ShadowSize.md,
+  }) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     switch (size) {
       case ShadowSize.sm:

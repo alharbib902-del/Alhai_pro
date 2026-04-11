@@ -115,7 +115,8 @@ void main() {
       });
 
       test('throws on malformed base64 between PEM markers', () {
-        const badPem = '-----BEGIN CERTIFICATE-----\n'
+        const badPem =
+            '-----BEGIN CERTIFICATE-----\n'
             '!!!!!!not-valid-base64!!!!!\n'
             '-----END CERTIFICATE-----';
         expect(() => parser.parseCertificate(badPem), throwsA(isA<Object>()));

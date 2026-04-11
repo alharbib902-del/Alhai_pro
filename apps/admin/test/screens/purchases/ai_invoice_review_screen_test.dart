@@ -52,24 +52,30 @@ void main() {
 
   group('AiInvoiceReviewScreen', () {
     testWidgets('renders the review screen', (tester) async {
-      when(() => mockSuppliersDao.getActiveSuppliers(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSuppliersDao.getActiveSuppliers(any()),
+      ).thenAnswer((_) async => []);
 
-      await tester.pumpWidget(createTestWidget(
-        AiInvoiceReviewScreen(invoiceData: createTestInvoiceResult()),
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          AiInvoiceReviewScreen(invoiceData: createTestInvoiceResult()),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(AiInvoiceReviewScreen), findsOneWidget);
     });
 
     testWidgets('displays invoice items', (tester) async {
-      when(() => mockSuppliersDao.getActiveSuppliers(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSuppliersDao.getActiveSuppliers(any()),
+      ).thenAnswer((_) async => []);
 
-      await tester.pumpWidget(createTestWidget(
-        AiInvoiceReviewScreen(invoiceData: createTestInvoiceResult()),
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          AiInvoiceReviewScreen(invoiceData: createTestInvoiceResult()),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('منتج تجريبي'), findsWidgets);
@@ -77,24 +83,30 @@ void main() {
     });
 
     testWidgets('shows supplier name from invoice', (tester) async {
-      when(() => mockSuppliersDao.getActiveSuppliers(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSuppliersDao.getActiveSuppliers(any()),
+      ).thenAnswer((_) async => []);
 
-      await tester.pumpWidget(createTestWidget(
-        AiInvoiceReviewScreen(invoiceData: createTestInvoiceResult()),
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          AiInvoiceReviewScreen(invoiceData: createTestInvoiceResult()),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('مورد تجريبي'), findsWidgets);
     });
 
     testWidgets('shows confidence indicators', (tester) async {
-      when(() => mockSuppliersDao.getActiveSuppliers(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSuppliersDao.getActiveSuppliers(any()),
+      ).thenAnswer((_) async => []);
 
-      await tester.pumpWidget(createTestWidget(
-        AiInvoiceReviewScreen(invoiceData: createTestInvoiceResult()),
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          AiInvoiceReviewScreen(invoiceData: createTestInvoiceResult()),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Screen should render with items

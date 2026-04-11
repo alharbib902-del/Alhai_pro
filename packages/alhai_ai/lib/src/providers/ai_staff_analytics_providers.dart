@@ -13,8 +13,9 @@ import 'package:alhai_auth/alhai_auth.dart';
 // ============================================================================
 
 /// مزود أداء الموظفين
-final staffPerformanceProvider =
-    FutureProvider<List<StaffPerformance>>((ref) async {
+final staffPerformanceProvider = FutureProvider<List<StaffPerformance>>((
+  ref,
+) async {
   await Future.delayed(const Duration(milliseconds: 400));
   return AiStaffAnalyticsService.getStaffPerformance();
 });
@@ -43,24 +44,21 @@ final teamSummaryProvider = Provider<TeamPerformanceSummary>((ref) {
 final selectedStaffProvider = StateProvider<String?>((ref) => null);
 
 /// مزود فلتر الفترة
-final staffPeriodFilterProvider =
-    StateProvider<StaffPeriod>((ref) => StaffPeriod.thisWeek);
+final staffPeriodFilterProvider = StateProvider<StaffPeriod>(
+  (ref) => StaffPeriod.thisWeek,
+);
 
 /// فترة العرض
-enum StaffPeriod {
-  today,
-  thisWeek,
-  thisMonth,
-  lastMonth,
-}
+enum StaffPeriod { today, thisWeek, thisMonth, lastMonth }
 
 // ============================================================================
 // REMOTE API PROVIDER - مزود API البعيد
 // ============================================================================
 
 /// مزود بيانات تحليل الموظفين من خادم AI
-final staffApiProvider =
-    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+final staffApiProvider = FutureProvider.autoDispose<Map<String, dynamic>>((
+  ref,
+) async {
   final api = ref.read(aiApiServiceProvider);
   final storeId = ref.read(currentStoreIdProvider)!;
   return api.analyzeStaff(orgId: 'default', storeId: storeId);

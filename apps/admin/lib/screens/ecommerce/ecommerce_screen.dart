@@ -69,9 +69,9 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
         return;
       }
       final products = await db.productsDao.getAllProducts(storeId);
-      final settingsRows = await (db.select(db.settingsTable)
-            ..where((s) => s.storeId.equals(storeId) & s.key.like('ecom_%')))
-          .get();
+      final settingsRows = await (db.select(
+        db.settingsTable,
+      )..where((s) => s.storeId.equals(storeId) & s.key.like('ecom_%'))).get();
       final settings = <String, String>{};
       for (final row in settingsRows) {
         settings[row.key] = row.value;
@@ -105,14 +105,18 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
   }
 
   Future<void> _toggleOnlineAvailability(
-      String productId, bool newValue) async {
+    String productId,
+    bool newValue,
+  ) async {
     try {
       final db = getIt<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
 
       final key = 'ecom_product_${productId}_online';
-      await db.into(db.settingsTable).insertOnConflictUpdate(
+      await db
+          .into(db.settingsTable)
+          .insertOnConflictUpdate(
             SettingsTableCompanion.insert(
               id: '${storeId}_$key',
               storeId: storeId,
@@ -127,9 +131,9 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
       });
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.errorWithDetails('$e'))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.errorWithDetails('$e'))));
       }
     }
   }
@@ -140,7 +144,9 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
 
-      await db.into(db.settingsTable).insertOnConflictUpdate(
+      await db
+          .into(db.settingsTable)
+          .insertOnConflictUpdate(
             SettingsTableCompanion.insert(
               id: '${storeId}_$key',
               storeId: storeId,
@@ -154,9 +160,9 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
       });
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(l10n.errorWithDetails('$e'))),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(l10n.errorWithDetails('$e'))));
       }
     }
   }
@@ -184,19 +190,23 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
           child: TabBar(
             controller: _tabController,
             labelColor: AppColors.primary,
-            unselectedLabelColor:
-                Theme.of(context).colorScheme.onSurfaceVariant,
+            unselectedLabelColor: Theme.of(
+              context,
+            ).colorScheme.onSurfaceVariant,
             indicatorColor: AppColors.primary,
             tabs: [
               Tab(
-                  icon: const Icon(Icons.shopping_bag_outlined),
-                  text: l10n.products),
+                icon: const Icon(Icons.shopping_bag_outlined),
+                text: l10n.products,
+              ),
               Tab(
-                  icon: const Icon(Icons.article_outlined),
-                  text: l10n.ecommerceSection),
+                icon: const Icon(Icons.article_outlined),
+                text: l10n.ecommerceSection,
+              ),
               Tab(
-                  icon: const Icon(Icons.settings_outlined),
-                  text: l10n.settings),
+                icon: const Icon(Icons.settings_outlined),
+                text: l10n.settings,
+              ),
             ],
           ),
         ),
@@ -333,9 +343,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
         children: [
@@ -344,10 +352,9 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             height: 56,
             decoration: BoxDecoration(
               color: isDark
-                  ? Theme.of(context)
-                      .colorScheme
-                      .onSurface
-                      .withValues(alpha: 0.05)
+                  ? Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.05)
                   : AppColors.border.withValues(alpha: 0.3),
               borderRadius: BorderRadius.circular(10),
             ),
@@ -357,16 +364,14 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                     child: CachedNetworkImage(
                       imageUrl: product.imageThumbnail!,
                       fit: BoxFit.cover,
-                      placeholder: (_, __) => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      placeholder: (_, __) =>
+                          const Center(child: CircularProgressIndicator()),
                       errorWidget: (_, __, ___) => Icon(
                         Icons.image_not_supported_outlined,
                         color: isDark
-                            ? Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.24)
+                            ? Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.24)
                             : AppColors.textTertiary,
                       ),
                     ),
@@ -374,10 +379,9 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                 : Icon(
                     Icons.inventory_2_outlined,
                     color: isDark
-                        ? Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.24)
+                        ? Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.24)
                         : AppColors.textTertiary,
                   ),
           ),
@@ -408,7 +412,9 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 6, vertical: 2),
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
                       decoration: BoxDecoration(
                         color: product.stockQty > 0
                             ? AppColors.success.withValues(alpha: 0.1)
@@ -429,7 +435,9 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                     if (!product.isActive)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.warning.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(6),
@@ -483,8 +491,9 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
     }
 
     // Simulated online orders from product data; in production, use ordersDao
-    final onlineProducts =
-        _products.where((p) => _isProductOnline(p.id)).toList();
+    final onlineProducts = _products
+        .where((p) => _isProductOnline(p.id))
+        .toList();
 
     if (onlineProducts.isEmpty) {
       return _buildEmptyState(
@@ -621,7 +630,10 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
           _buildInputField('Delivery Fee', _deliveryFeeController, isDark),
           const SizedBox(height: AlhaiSpacing.sm),
           _buildInputField(
-              'Free Shipping Limit', _freeShippingLimitController, isDark),
+            'Free Shipping Limit',
+            _freeShippingLimitController,
+            isDark,
+          ),
           const SizedBox(height: AlhaiSpacing.md),
           // Delivery Zones Link
           Card(
@@ -629,7 +641,8 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
               leading: const Icon(Icons.map_rounded, color: AppColors.primary),
               title: Text(AppLocalizations.of(context).deliveryZones),
               subtitle: Text(
-                  AppLocalizations.of(context).manageDeliveryZonesAndPricing),
+                AppLocalizations.of(context).manageDeliveryZonesAndPricing,
+              ),
               trailing: const Icon(Icons.arrow_forward_ios_rounded, size: 16),
               onTap: () => context.push('/ecommerce/delivery-zones'),
             ),
@@ -640,15 +653,21 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
             child: ElevatedButton.icon(
               onPressed: () async {
                 await _saveEcomSetting(
-                    'ecom_min_order', _minOrderController.text);
+                  'ecom_min_order',
+                  _minOrderController.text,
+                );
                 await _saveEcomSetting(
-                    'ecom_delivery_fee', _deliveryFeeController.text);
-                await _saveEcomSetting('ecom_free_shipping_limit',
-                    _freeShippingLimitController.text);
+                  'ecom_delivery_fee',
+                  _deliveryFeeController.text,
+                );
+                await _saveEcomSetting(
+                  'ecom_free_shipping_limit',
+                  _freeShippingLimitController.text,
+                );
                 if (mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(l10n.settingsSaved)),
-                  );
+                  ScaffoldMessenger.of(
+                    context,
+                  ).showSnackBar(SnackBar(content: Text(l10n.settingsSaved)));
                 }
               },
               icon: const Icon(Icons.save),
@@ -675,14 +694,18 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline,
-              size: 64, color: AppColors.error.withValues(alpha: 0.7)),
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: AppColors.error.withValues(alpha: 0.7),
+          ),
           const SizedBox(height: AlhaiSpacing.md),
           Text(
             _error!,
             style: TextStyle(
-                fontSize: 16,
-                color: Theme.of(context).colorScheme.onSurfaceVariant),
+              fontSize: 16,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AlhaiSpacing.md),
@@ -708,14 +731,15 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon,
-                size: 80,
-                color: isDark
-                    ? Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.24)
-                    : AppColors.textTertiary),
+            Icon(
+              icon,
+              size: 80,
+              color: isDark
+                  ? Theme.of(
+                      context,
+                    ).colorScheme.onSurface.withValues(alpha: 0.24)
+                  : AppColors.textTertiary,
+            ),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
               title,
@@ -730,10 +754,9 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
               style: TextStyle(
                 fontSize: 13,
                 color: isDark
-                    ? Theme.of(context)
-                        .colorScheme
-                        .onSurface
-                        .withValues(alpha: 0.38)
+                    ? Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.38)
                     : AppColors.textTertiary,
               ),
               textAlign: TextAlign.center,
@@ -757,9 +780,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -798,9 +819,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
@@ -831,10 +850,9 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
               ? Icons.chevron_left_rounded
               : Icons.chevron_right_rounded,
           size: 16,
-          color: Theme.of(context)
-              .colorScheme
-              .onSurfaceVariant
-              .withValues(alpha: 0.5),
+          color: Theme.of(
+            context,
+          ).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
         ),
       ),
     );
@@ -854,9 +872,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: ListTile(
         contentPadding: EdgeInsets.zero,
@@ -893,9 +909,7 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
     return TextField(
       decoration: InputDecoration(
         labelText: label,
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         filled: true,
         fillColor: isDark
             ? Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.05)

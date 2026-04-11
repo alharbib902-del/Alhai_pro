@@ -35,10 +35,7 @@ abstract class DistributorsRepository {
   });
 
   /// Updates distributor profile
-  Future<Distributor> updateDistributor(
-    String id,
-    Map<String, dynamic> data,
-  );
+  Future<Distributor> updateDistributor(String id, Map<String, dynamic> data);
 
   /// Approves a distributor (admin)
   Future<Distributor> approveDistributor(String id, String approvedBy);

@@ -16,8 +16,8 @@ class UblInvoiceBuilder {
   UblInvoiceBuilder({
     InvoiceLineBuilder? lineBuilder,
     TaxTotalBuilder? taxBuilder,
-  })  : _lineBuilder = lineBuilder ?? InvoiceLineBuilder(),
-        _taxBuilder = taxBuilder ?? TaxTotalBuilder();
+  }) : _lineBuilder = lineBuilder ?? InvoiceLineBuilder(),
+       _taxBuilder = taxBuilder ?? TaxTotalBuilder();
 
   /// ZATCA reporting profile ID
   static const String _profileId = 'reporting:1.0';
@@ -64,85 +64,72 @@ class UblInvoiceBuilder {
     // 10. BillingReference (for credit/debit notes)
     if (invoice.billingReferenceId != null) {
       children.add(
-        XmlElement(
-          XmlName('BillingReference', 'cac'),
-          [],
-          [
-            XmlElement(
-              XmlName('InvoiceDocumentReference', 'cac'),
-              [],
-              [_cbcElement('ID', invoice.billingReferenceId!)],
-            ),
-          ],
-        ),
+        XmlElement(XmlName('BillingReference', 'cac'), [], [
+          XmlElement(XmlName('InvoiceDocumentReference', 'cac'), [], [
+            _cbcElement('ID', invoice.billingReferenceId!),
+          ]),
+        ]),
       );
     }
 
     // 11. ContractDocumentReference
     if (invoice.contractId != null) {
       children.add(
-        XmlElement(
-          XmlName('ContractDocumentReference', 'cac'),
-          [],
-          [_cbcElement('ID', invoice.contractId!)],
-        ),
+        XmlElement(XmlName('ContractDocumentReference', 'cac'), [], [
+          _cbcElement('ID', invoice.contractId!),
+        ]),
       );
     }
 
     // 12. PurchaseOrderReference (BT-13)
     if (invoice.purchaseOrderId != null) {
       children.add(
-        XmlElement(
-          XmlName('OrderReference', 'cac'),
-          [],
-          [_cbcElement('ID', invoice.purchaseOrderId!)],
-        ),
+        XmlElement(XmlName('OrderReference', 'cac'), [], [
+          _cbcElement('ID', invoice.purchaseOrderId!),
+        ]),
       );
     }
 
     // 13. AdditionalDocumentReference - ICV (Invoice Counter Value)
     // ZATCA requires ICV to be a pure sequential integer, not the invoice number
-    children.add(_buildDocumentReference(
-      id: invoice.resolvedIcv,
-      uuid: 'ICV',
-    ));
+    children.add(_buildDocumentReference(id: invoice.resolvedIcv, uuid: 'ICV'));
 
     // 14. AdditionalDocumentReference - PIH (Previous Invoice Hash)
     if (invoice.previousInvoiceHash != null) {
-      children.add(_buildDocumentReference(
-        id: 'PIH',
-        uuid: 'PIH',
-        attachmentContent: invoice.previousInvoiceHash!,
-        mimeCode: 'text/plain',
-      ));
+      children.add(
+        _buildDocumentReference(
+          id: 'PIH',
+          uuid: 'PIH',
+          attachmentContent: invoice.previousInvoiceHash!,
+          mimeCode: 'text/plain',
+        ),
+      );
     }
 
     // 15. AdditionalDocumentReference - QR code
     if (invoice.qrCode != null) {
-      children.add(_buildDocumentReference(
-        id: 'QR',
-        uuid: 'QR',
-        attachmentContent: invoice.qrCode!,
-        mimeCode: 'text/plain',
-      ));
+      children.add(
+        _buildDocumentReference(
+          id: 'QR',
+          uuid: 'QR',
+          attachmentContent: invoice.qrCode!,
+          mimeCode: 'text/plain',
+        ),
+      );
     }
 
     // 16. Signature placeholder
     children.add(
-      XmlElement(
-        XmlName('Signature', 'cac'),
-        [],
-        [
-          _cbcElement(
-            'ID',
-            'urn:oasis:names:specification:ubl:signature:Invoice',
-          ),
-          _cbcElement(
-            'SignatureMethod',
-            'urn:oasis:names:specification:ubl:dsig:enveloped:xades',
-          ),
-        ],
-      ),
+      XmlElement(XmlName('Signature', 'cac'), [], [
+        _cbcElement(
+          'ID',
+          'urn:oasis:names:specification:ubl:signature:Invoice',
+        ),
+        _cbcElement(
+          'SignatureMethod',
+          'urn:oasis:names:specification:ubl:dsig:enveloped:xades',
+        ),
+      ]),
     );
 
     // 17. AccountingSupplierParty
@@ -169,19 +156,15 @@ class UblInvoiceBuilder {
     );
 
     // Build root element with all namespaces
-    final root = XmlElement(
-      XmlName('Invoice'),
-      [
-        XmlAttribute(XmlName('xmlns'), UblNamespaces.invoice),
-        XmlAttribute(XmlName('cac', 'xmlns'), UblNamespaces.cac),
-        XmlAttribute(XmlName('cbc', 'xmlns'), UblNamespaces.cbc),
-        XmlAttribute(XmlName('ext', 'xmlns'), UblNamespaces.ext),
-        XmlAttribute(XmlName('sig', 'xmlns'), UblNamespaces.sig),
-        XmlAttribute(XmlName('sac', 'xmlns'), UblNamespaces.sac),
-        XmlAttribute(XmlName('sbc', 'xmlns'), UblNamespaces.sbc),
-      ],
-      children,
-    );
+    final root = XmlElement(XmlName('Invoice'), [
+      XmlAttribute(XmlName('xmlns'), UblNamespaces.invoice),
+      XmlAttribute(XmlName('cac', 'xmlns'), UblNamespaces.cac),
+      XmlAttribute(XmlName('cbc', 'xmlns'), UblNamespaces.cbc),
+      XmlAttribute(XmlName('ext', 'xmlns'), UblNamespaces.ext),
+      XmlAttribute(XmlName('sig', 'xmlns'), UblNamespaces.sig),
+      XmlAttribute(XmlName('sac', 'xmlns'), UblNamespaces.sac),
+      XmlAttribute(XmlName('sbc', 'xmlns'), UblNamespaces.sbc),
+    ], children);
 
     // Build complete document with XML declaration
     final document = XmlDocument([
@@ -210,40 +193,24 @@ class UblInvoiceBuilder {
           ? [XmlText(signatureContent)]
           : [
               // Empty placeholder for signing step to populate
-              XmlElement(
-                XmlName('UBLDocumentSignatures', 'sig'),
-                [],
-                [
-                  XmlElement(
-                    XmlName('SignatureInformation', 'sac'),
-                    [],
-                    [
-                      _cbcElement(
-                        'ID',
-                        'urn:oasis:names:specification:ubl:signature:1',
-                      ),
-                      _sbcElement(
-                        'ReferencedSignatureID',
-                        'urn:oasis:names:specification:ubl:signature:Invoice',
-                      ),
-                    ],
+              XmlElement(XmlName('UBLDocumentSignatures', 'sig'), [], [
+                XmlElement(XmlName('SignatureInformation', 'sac'), [], [
+                  _cbcElement(
+                    'ID',
+                    'urn:oasis:names:specification:ubl:signature:1',
                   ),
-                ],
-              ),
+                  _sbcElement(
+                    'ReferencedSignatureID',
+                    'urn:oasis:names:specification:ubl:signature:Invoice',
+                  ),
+                ]),
+              ]),
             ],
     );
 
-    return XmlElement(
-      XmlName('UBLExtensions', 'ext'),
-      [],
-      [
-        XmlElement(
-          XmlName('UBLExtension', 'ext'),
-          [],
-          [extensionContent],
-        ),
-      ],
-    );
+    return XmlElement(XmlName('UBLExtensions', 'ext'), [], [
+      XmlElement(XmlName('UBLExtension', 'ext'), [], [extensionContent]),
+    ]);
   }
 
   // ─── Parties ─────────────────────────────────────────────
@@ -263,18 +230,14 @@ class UblInvoiceBuilder {
       );
     }
     if (seller.district != null) {
-      addressChildren.add(
-        _cbcElement('CitySubdivisionName', seller.district!),
-      );
+      addressChildren.add(_cbcElement('CitySubdivisionName', seller.district!));
     }
     addressChildren.add(_cbcElement('CityName', seller.city));
     addressChildren.add(_cbcElement('PostalZone', seller.postalCode));
     addressChildren.add(
-      XmlElement(
-        XmlName('Country', 'cac'),
-        [],
-        [_cbcElement('IdentificationCode', seller.countryCode)],
-      ),
+      XmlElement(XmlName('Country', 'cac'), [], [
+        _cbcElement('IdentificationCode', seller.countryCode),
+      ]),
     );
 
     // PartyIdentification elements
@@ -283,76 +246,47 @@ class UblInvoiceBuilder {
     // Primary: CRN if available
     if (seller.crNumber != null) {
       partyIds.add(
-        XmlElement(
-          XmlName('PartyIdentification', 'cac'),
-          [],
-          [
-            _cbcElement('ID', seller.crNumber!,
-                attributes: {'schemeID': 'CRN'}),
-          ],
-        ),
+        XmlElement(XmlName('PartyIdentification', 'cac'), [], [
+          _cbcElement('ID', seller.crNumber!, attributes: {'schemeID': 'CRN'}),
+        ]),
       );
     }
 
     // Additional ID
     if (seller.additionalId != null) {
       partyIds.add(
-        XmlElement(
-          XmlName('PartyIdentification', 'cac'),
-          [],
-          [
-            _cbcElement('ID', seller.additionalId!, attributes: {
-              'schemeID': seller.additionalIdScheme ?? 'OTH',
-            }),
-          ],
-        ),
+        XmlElement(XmlName('PartyIdentification', 'cac'), [], [
+          _cbcElement(
+            'ID',
+            seller.additionalId!,
+            attributes: {'schemeID': seller.additionalIdScheme ?? 'OTH'},
+          ),
+        ]),
       );
     }
 
     // PartyTaxScheme
-    final partyTaxScheme = XmlElement(
-      XmlName('PartyTaxScheme', 'cac'),
-      [],
-      [
-        _cbcElement('CompanyID', seller.vatNumber),
-        XmlElement(
-          XmlName('TaxScheme', 'cac'),
-          [],
-          [_cbcElement('ID', 'VAT')],
-        ),
-      ],
-    );
+    final partyTaxScheme = XmlElement(XmlName('PartyTaxScheme', 'cac'), [], [
+      _cbcElement('CompanyID', seller.vatNumber),
+      XmlElement(XmlName('TaxScheme', 'cac'), [], [_cbcElement('ID', 'VAT')]),
+    ]);
 
     // PartyLegalEntity
-    final partyLegal = XmlElement(
-      XmlName('PartyLegalEntity', 'cac'),
-      [],
-      [_cbcElement('RegistrationName', seller.name)],
-    );
+    final partyLegal = XmlElement(XmlName('PartyLegalEntity', 'cac'), [], [
+      _cbcElement('RegistrationName', seller.name),
+    ]);
 
     // Assemble Party
     final partyChildren = <XmlNode>[
       ...partyIds,
-      XmlElement(
-        XmlName('PostalAddress', 'cac'),
-        [],
-        addressChildren,
-      ),
+      XmlElement(XmlName('PostalAddress', 'cac'), [], addressChildren),
       partyTaxScheme,
       partyLegal,
     ];
 
-    return XmlElement(
-      XmlName('AccountingSupplierParty', 'cac'),
-      [],
-      [
-        XmlElement(
-          XmlName('Party', 'cac'),
-          [],
-          partyChildren,
-        ),
-      ],
-    );
+    return XmlElement(XmlName('AccountingSupplierParty', 'cac'), [], [
+      XmlElement(XmlName('Party', 'cac'), [], partyChildren),
+    ]);
   }
 
   /// Build the AccountingCustomerParty element
@@ -364,14 +298,13 @@ class UblInvoiceBuilder {
     // PartyIdentification (buyer ID)
     if (buyer?.buyerId != null) {
       partyChildren.add(
-        XmlElement(
-          XmlName('PartyIdentification', 'cac'),
-          [],
-          [
-            _cbcElement('ID', buyer!.buyerId!,
-                attributes: {'schemeID': buyer.buyerIdScheme ?? 'NAT'}),
-          ],
-        ),
+        XmlElement(XmlName('PartyIdentification', 'cac'), [], [
+          _cbcElement(
+            'ID',
+            buyer!.buyerId!,
+            attributes: {'schemeID': buyer.buyerIdScheme ?? 'NAT'},
+          ),
+        ]),
       );
     }
 
@@ -382,12 +315,14 @@ class UblInvoiceBuilder {
         addressChildren.add(_cbcElement('StreetName', buyer!.streetName!));
       }
       if (buyer?.buildingNumber != null) {
-        addressChildren
-            .add(_cbcElement('BuildingNumber', buyer!.buildingNumber!));
+        addressChildren.add(
+          _cbcElement('BuildingNumber', buyer!.buildingNumber!),
+        );
       }
       if (buyer?.district != null) {
-        addressChildren
-            .add(_cbcElement('CitySubdivisionName', buyer!.district!));
+        addressChildren.add(
+          _cbcElement('CitySubdivisionName', buyer!.district!),
+        );
       }
       if (buyer?.city != null) {
         addressChildren.add(_cbcElement('CityName', buyer!.city!));
@@ -397,62 +332,40 @@ class UblInvoiceBuilder {
       }
       if (buyer?.countryCode != null) {
         addressChildren.add(
-          XmlElement(
-            XmlName('Country', 'cac'),
-            [],
-            [_cbcElement('IdentificationCode', buyer!.countryCode!)],
-          ),
+          XmlElement(XmlName('Country', 'cac'), [], [
+            _cbcElement('IdentificationCode', buyer!.countryCode!),
+          ]),
         );
       }
       partyChildren.add(
-        XmlElement(
-          XmlName('PostalAddress', 'cac'),
-          [],
-          addressChildren,
-        ),
+        XmlElement(XmlName('PostalAddress', 'cac'), [], addressChildren),
       );
     }
 
     // PartyTaxScheme
     if (buyer?.vatNumber != null) {
       partyChildren.add(
-        XmlElement(
-          XmlName('PartyTaxScheme', 'cac'),
-          [],
-          [
-            _cbcElement('CompanyID', buyer!.vatNumber!),
-            XmlElement(
-              XmlName('TaxScheme', 'cac'),
-              [],
-              [_cbcElement('ID', 'VAT')],
-            ),
-          ],
-        ),
+        XmlElement(XmlName('PartyTaxScheme', 'cac'), [], [
+          _cbcElement('CompanyID', buyer!.vatNumber!),
+          XmlElement(XmlName('TaxScheme', 'cac'), [], [
+            _cbcElement('ID', 'VAT'),
+          ]),
+        ]),
       );
     }
 
     // PartyLegalEntity
     if (buyer?.name != null) {
       partyChildren.add(
-        XmlElement(
-          XmlName('PartyLegalEntity', 'cac'),
-          [],
-          [_cbcElement('RegistrationName', buyer!.name!)],
-        ),
+        XmlElement(XmlName('PartyLegalEntity', 'cac'), [], [
+          _cbcElement('RegistrationName', buyer!.name!),
+        ]),
       );
     }
 
-    return XmlElement(
-      XmlName('AccountingCustomerParty', 'cac'),
-      [],
-      [
-        XmlElement(
-          XmlName('Party', 'cac'),
-          [],
-          partyChildren,
-        ),
-      ],
-    );
+    return XmlElement(XmlName('AccountingCustomerParty', 'cac'), [], [
+      XmlElement(XmlName('Party', 'cac'), [], partyChildren),
+    ]);
   }
 
   // ─── Monetary ────────────────────────────────────────────
@@ -461,37 +374,33 @@ class UblInvoiceBuilder {
   XmlElement _buildLegalMonetaryTotal(ZatcaInvoice invoice) {
     final cc = invoice.currencyCode;
 
-    return XmlElement(
-      XmlName('LegalMonetaryTotal', 'cac'),
-      [],
-      [
-        _cbcElement(
-          'LineExtensionAmount',
-          _fmtAmount(invoice.totalLineNetAmount),
-          attributes: {'currencyID': cc},
-        ),
-        _cbcElement(
-          'TaxExclusiveAmount',
-          _fmtAmount(invoice.taxableAmount),
-          attributes: {'currencyID': cc},
-        ),
-        _cbcElement(
-          'TaxInclusiveAmount',
-          _fmtAmount(invoice.totalWithVat),
-          attributes: {'currencyID': cc},
-        ),
-        _cbcElement(
-          'AllowanceTotalAmount',
-          _fmtAmount(invoice.totalAllowance),
-          attributes: {'currencyID': cc},
-        ),
-        _cbcElement(
-          'PayableAmount',
-          _fmtAmount(invoice.totalWithVat),
-          attributes: {'currencyID': cc},
-        ),
-      ],
-    );
+    return XmlElement(XmlName('LegalMonetaryTotal', 'cac'), [], [
+      _cbcElement(
+        'LineExtensionAmount',
+        _fmtAmount(invoice.totalLineNetAmount),
+        attributes: {'currencyID': cc},
+      ),
+      _cbcElement(
+        'TaxExclusiveAmount',
+        _fmtAmount(invoice.taxableAmount),
+        attributes: {'currencyID': cc},
+      ),
+      _cbcElement(
+        'TaxInclusiveAmount',
+        _fmtAmount(invoice.totalWithVat),
+        attributes: {'currencyID': cc},
+      ),
+      _cbcElement(
+        'AllowanceTotalAmount',
+        _fmtAmount(invoice.totalAllowance),
+        attributes: {'currencyID': cc},
+      ),
+      _cbcElement(
+        'PayableAmount',
+        _fmtAmount(invoice.totalWithVat),
+        attributes: {'currencyID': cc},
+      ),
+    ]);
   }
 
   // ─── Allowances ──────────────────────────────────────────
@@ -501,36 +410,26 @@ class UblInvoiceBuilder {
     if (invoice.documentDiscount <= 0) return [];
 
     return [
-      XmlElement(
-        XmlName('AllowanceCharge', 'cac'),
-        [],
-        [
-          _cbcElement('ChargeIndicator', 'false'),
-          _cbcElement('AllowanceChargeReasonCode', '95'),
-          _cbcElement(
-            'AllowanceChargeReason',
-            invoice.documentDiscountReason ?? 'Discount',
-          ),
-          _cbcElement(
-            'Amount',
-            _fmtAmount(invoice.documentDiscount),
-            attributes: {'currencyID': invoice.currencyCode},
-          ),
-          XmlElement(
-            XmlName('TaxCategory', 'cac'),
-            [],
-            [
-              _cbcElement('ID', 'S'),
-              _cbcElement('Percent', '15.00'),
-              XmlElement(
-                XmlName('TaxScheme', 'cac'),
-                [],
-                [_cbcElement('ID', 'VAT')],
-              ),
-            ],
-          ),
-        ],
-      ),
+      XmlElement(XmlName('AllowanceCharge', 'cac'), [], [
+        _cbcElement('ChargeIndicator', 'false'),
+        _cbcElement('AllowanceChargeReasonCode', '95'),
+        _cbcElement(
+          'AllowanceChargeReason',
+          invoice.documentDiscountReason ?? 'Discount',
+        ),
+        _cbcElement(
+          'Amount',
+          _fmtAmount(invoice.documentDiscount),
+          attributes: {'currencyID': invoice.currencyCode},
+        ),
+        XmlElement(XmlName('TaxCategory', 'cac'), [], [
+          _cbcElement('ID', 'S'),
+          _cbcElement('Percent', '15.00'),
+          XmlElement(XmlName('TaxScheme', 'cac'), [], [
+            _cbcElement('ID', 'VAT'),
+          ]),
+        ]),
+      ]),
     ];
   }
 
@@ -543,16 +442,10 @@ class UblInvoiceBuilder {
     ];
 
     if (invoice.paymentNote != null) {
-      children.add(
-        _cbcElement('InstructionNote', invoice.paymentNote!),
-      );
+      children.add(_cbcElement('InstructionNote', invoice.paymentNote!));
     }
 
-    return XmlElement(
-      XmlName('PaymentMeans', 'cac'),
-      [],
-      children,
-    );
+    return XmlElement(XmlName('PaymentMeans', 'cac'), [], children);
   }
 
   // ─── Document References ─────────────────────────────────
@@ -571,22 +464,13 @@ class UblInvoiceBuilder {
 
     if (attachmentContent != null) {
       children.add(
-        XmlElement(
-          XmlName('Attachment', 'cac'),
-          [],
-          [
-            XmlElement(
-              XmlName('EmbeddedDocumentBinaryObject', 'cbc'),
-              [
-                XmlAttribute(
-                  XmlName('mimeCode'),
-                  mimeCode ?? 'text/plain',
-                ),
-              ],
-              [XmlText(attachmentContent)],
-            ),
-          ],
-        ),
+        XmlElement(XmlName('Attachment', 'cac'), [], [
+          XmlElement(
+            XmlName('EmbeddedDocumentBinaryObject', 'cbc'),
+            [XmlAttribute(XmlName('mimeCode'), mimeCode ?? 'text/plain')],
+            [XmlText(attachmentContent)],
+          ),
+        ]),
       );
     }
 
@@ -622,8 +506,7 @@ class UblInvoiceBuilder {
   }) {
     return XmlElement(
       XmlName(name, 'cbc'),
-      (attributes ?? {})
-          .entries
+      (attributes ?? {}).entries
           .map((e) => XmlAttribute(XmlName(e.key), e.value))
           .toList(),
       [XmlText(text)],
@@ -632,10 +515,6 @@ class UblInvoiceBuilder {
 
   /// Create a sbc: namespaced element
   static XmlElement _sbcElement(String name, String text) {
-    return XmlElement(
-      XmlName(name, 'sbc'),
-      [],
-      [XmlText(text)],
-    );
+    return XmlElement(XmlName(name, 'sbc'), [], [XmlText(text)]);
   }
 }

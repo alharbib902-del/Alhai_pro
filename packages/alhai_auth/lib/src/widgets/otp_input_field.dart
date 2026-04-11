@@ -61,14 +61,8 @@ class OtpInputFieldState extends State<OtpInputField>
   @override
   void initState() {
     super.initState();
-    _controllers = List.generate(
-      widget.length,
-      (_) => TextEditingController(),
-    );
-    _focusNodes = List.generate(
-      widget.length,
-      (_) => FocusNode(),
-    );
+    _controllers = List.generate(widget.length, (_) => TextEditingController());
+    _focusNodes = List.generate(widget.length, (_) => FocusNode());
 
     // Animation للاهتزاز عند الخطأ
     _shakeController = AnimationController(
@@ -231,8 +225,9 @@ class OtpInputFieldState extends State<OtpInputField>
               children: List.generate(widget.length, (index) {
                 return Padding(
                   padding: EdgeInsets.symmetric(
-                    horizontal:
-                        index == 0 || index == widget.length - 1 ? 0 : 4,
+                    horizontal: index == 0 || index == widget.length - 1
+                        ? 0
+                        : 4,
                   ),
                   child: _buildOtpBox(index),
                 );
@@ -299,9 +294,7 @@ class OtpInputFieldState extends State<OtpInputField>
           textAlign: TextAlign.center,
           keyboardType: TextInputType.number,
           maxLength: 1,
-          inputFormatters: [
-            FilteringTextInputFormatter.digitsOnly,
-          ],
+          inputFormatters: [FilteringTextInputFormatter.digitsOnly],
           decoration: const InputDecoration(
             counterText: '',
             border: InputBorder.none,
@@ -313,10 +306,10 @@ class OtpInputFieldState extends State<OtpInputField>
             color: widget.isError
                 ? AppColors.error
                 : widget.isSuccess
-                    ? AppColors.success
-                    : isDark
-                        ? Colors.white
-                        : AppColors.textPrimary,
+                ? AppColors.success
+                : isDark
+                ? Colors.white
+                : AppColors.textPrimary,
           ),
           onChanged: (value) => _onChanged(index, value),
         ),
@@ -407,8 +400,9 @@ class OtpInputWithLabel extends StatelessWidget {
             decoration: BoxDecoration(
               color: AppColors.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
-              border:
-                  Border.all(color: AppColors.success.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: AppColors.success.withValues(alpha: 0.3),
+              ),
             ),
             child: const Row(
               children: [
@@ -421,10 +415,7 @@ class OtpInputWithLabel extends StatelessWidget {
                 Expanded(
                   child: Text(
                     'تم التحقق بنجاح',
-                    style: TextStyle(
-                      color: AppColors.success,
-                      fontSize: 13,
-                    ),
+                    style: TextStyle(color: AppColors.success, fontSize: 13),
                   ),
                 ),
               ],

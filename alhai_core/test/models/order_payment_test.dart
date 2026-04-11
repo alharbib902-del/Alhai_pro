@@ -106,10 +106,7 @@ void main() {
       });
 
       test('should serialize to JSON and back', () {
-        final payment = createPayment(
-          method: PaymentMethod.card,
-          amount: 75.0,
-        );
+        final payment = createPayment(method: PaymentMethod.card, amount: 75.0);
         final json = payment.toJson();
         final restored = OrderPayment.fromJson(json);
 

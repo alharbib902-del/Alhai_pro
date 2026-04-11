@@ -129,12 +129,12 @@ void main() {
     });
 
     test('failed factory uses errorType arabicMessage as default', () {
-      final result = PaymentResult.failed(
-        errorType: PaymentErrorType.network,
-      );
+      final result = PaymentResult.failed(errorType: PaymentErrorType.network);
 
       expect(
-          result.errorMessage, equals(PaymentErrorType.network.arabicMessage));
+        result.errorMessage,
+        equals(PaymentErrorType.network.arabicMessage),
+      );
     });
 
     test('failed factory allows custom error message', () {

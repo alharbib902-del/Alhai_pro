@@ -15,9 +15,8 @@ import '../products_repository.dart';
 class ProductsRepositoryImpl implements ProductsRepository {
   final ProductsRemoteDataSource _remote;
 
-  ProductsRepositoryImpl({
-    required ProductsRemoteDataSource remote,
-  }) : _remote = remote;
+  ProductsRepositoryImpl({required ProductsRemoteDataSource remote})
+    : _remote = remote;
 
   @override
   Future<Paginated<Product>> getProducts(

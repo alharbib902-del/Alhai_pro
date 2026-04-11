@@ -107,7 +107,8 @@ class OrderDetailScreen extends ConsumerWidget {
                     return ListTile(
                       title: Text(item.name),
                       subtitle: Text(
-                          '${item.unitPrice.toStringAsFixed(2)} ر.س × ${item.qty}'),
+                        '${item.unitPrice.toStringAsFixed(2)} ر.س × ${item.qty}',
+                      ),
                       trailing: Text(
                         '${item.lineTotal.toStringAsFixed(2)} ر.س',
                         style: theme.textTheme.titleSmall?.copyWith(
@@ -127,17 +128,20 @@ class OrderDetailScreen extends ConsumerWidget {
                   child: Column(
                     children: [
                       _TotalRow(
-                          label: 'المجموع الفرعي',
-                          value: '${order.subtotal.toStringAsFixed(2)} ر.س'),
+                        label: 'المجموع الفرعي',
+                        value: '${order.subtotal.toStringAsFixed(2)} ر.س',
+                      ),
                       if (order.discount > 0)
                         _TotalRow(
-                            label: 'الخصم',
-                            value: '-${order.discount.toStringAsFixed(2)} ر.س'),
+                          label: 'الخصم',
+                          value: '-${order.discount.toStringAsFixed(2)} ر.س',
+                        ),
                       _TotalRow(
-                          label: 'التوصيل',
-                          value: order.deliveryFee > 0
-                              ? '${order.deliveryFee.toStringAsFixed(2)} ر.س'
-                              : 'مجاني'),
+                        label: 'التوصيل',
+                        value: order.deliveryFee > 0
+                            ? '${order.deliveryFee.toStringAsFixed(2)} ر.س'
+                            : 'مجاني',
+                      ),
                       const Divider(),
                       _TotalRow(
                         label: 'الإجمالي',
@@ -198,8 +202,10 @@ class OrderDetailScreen extends ConsumerWidget {
     }
 
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AlhaiSpacing.sm,
+        vertical: 6,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
@@ -216,7 +222,10 @@ class OrderDetailScreen extends ConsumerWidget {
   }
 
   Future<void> _cancelOrder(
-      BuildContext context, WidgetRef ref, String orderId) async {
+    BuildContext context,
+    WidgetRef ref,
+    String orderId,
+  ) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
@@ -288,8 +297,11 @@ class _OrderTimeline extends StatelessWidget {
                             : theme.colorScheme.surfaceContainerHighest,
                       ),
                       child: isComplete
-                          ? Icon(Icons.check,
-                              size: 14, color: theme.colorScheme.onPrimary)
+                          ? Icon(
+                              Icons.check,
+                              size: 14,
+                              color: theme.colorScheme.onPrimary,
+                            )
                           : null,
                     ),
                     if (index < steps.length - 1)
@@ -338,17 +350,19 @@ class _TotalRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final style = isBold
-        ? Theme.of(context)
-            .textTheme
-            .titleMedium
-            ?.copyWith(fontWeight: FontWeight.bold)
+        ? Theme.of(
+            context,
+          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)
         : Theme.of(context).textTheme.bodyMedium;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [Text(label, style: style), Text(value, style: style)],
+        children: [
+          Text(label, style: style),
+          Text(value, style: style),
+        ],
       ),
     );
   }

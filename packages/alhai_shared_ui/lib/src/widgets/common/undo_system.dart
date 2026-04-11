@@ -73,8 +73,8 @@ class UndoStackNotifier extends StateNotifier<List<UndoableAction>> {
 /// مزود الـ Undo Stack
 final undoStackProvider =
     StateNotifierProvider<UndoStackNotifier, List<UndoableAction>>(
-  (ref) => UndoStackNotifier(),
-);
+      (ref) => UndoStackNotifier(),
+    );
 
 /// مزود هل يمكن التراجع
 final canUndoProvider = Provider<bool>((ref) {
@@ -92,7 +92,9 @@ void showUndoSnackBar(
   Duration duration = const Duration(seconds: 5),
 }) {
   // تسجيل العملية
-  ref.read(undoStackProvider.notifier).push(
+  ref
+      .read(undoStackProvider.notifier)
+      .push(
         UndoableAction(
           type: actionType,
           description: message,
@@ -156,7 +158,8 @@ Future<bool> confirmLargeOperation(
                 color: AlhaiColors.warning.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                    color: AlhaiColors.warning.withValues(alpha: 0.3)),
+                  color: AlhaiColors.warning.withValues(alpha: 0.3),
+                ),
               ),
               child: Row(
                 children: [

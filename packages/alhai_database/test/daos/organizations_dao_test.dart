@@ -44,10 +44,9 @@ void main() {
 
     test('getAllOrganizations returns all orgs', () async {
       await db.organizationsDao.insertOrganization(makeOrg());
-      await db.organizationsDao.insertOrganization(makeOrg(
-        id: 'org-2',
-        name: 'مؤسسة أخرى',
-      ));
+      await db.organizationsDao.insertOrganization(
+        makeOrg(id: 'org-2', name: 'مؤسسة أخرى'),
+      );
 
       final orgs = await db.organizationsDao.getAllOrganizations();
       expect(orgs, hasLength(2));
@@ -119,8 +118,9 @@ void main() {
         ),
       );
 
-      final activeSub =
-          await db.organizationsDao.getActiveSubscription('org-1');
+      final activeSub = await db.organizationsDao.getActiveSubscription(
+        'org-1',
+      );
       expect(activeSub, isNotNull);
     });
 
@@ -138,8 +138,9 @@ void main() {
         ),
       );
 
-      final activeSub =
-          await db.organizationsDao.getActiveSubscription('org-1');
+      final activeSub = await db.organizationsDao.getActiveSubscription(
+        'org-1',
+      );
       expect(activeSub, isNull);
     });
 

@@ -79,41 +79,51 @@ class _ComparisonReportScreenState
   }
 
   Future<_PeriodData> _fetchPeriod(
-      AppDatabase db, String storeId, DateTime start, DateTime end) async {
-    final salesResult = await db.customSelect(
-      '''SELECT
+    AppDatabase db,
+    String storeId,
+    DateTime start,
+    DateTime end,
+  ) async {
+    final salesResult = await db
+        .customSelect(
+          '''SELECT
            COUNT(*) as cnt,
            COALESCE(SUM(total), 0) as revenue,
            COALESCE(SUM(tax), 0) as tax
          FROM sales
          WHERE store_id = ? AND status = 'completed'
            AND created_at >= ? AND created_at < ?''',
-      variables: [
-        Variable.withString(storeId),
-        Variable.withDateTime(start),
-        Variable.withDateTime(end),
-      ],
-    ).getSingle();
+          variables: [
+            Variable.withString(storeId),
+            Variable.withDateTime(start),
+            Variable.withDateTime(end),
+          ],
+        )
+        .getSingle();
 
-    final purchResult = await db.customSelect(
-      '''SELECT COALESCE(SUM(total), 0) as total
+    final purchResult = await db
+        .customSelect(
+          '''SELECT COALESCE(SUM(total), 0) as total
          FROM purchases WHERE store_id = ? AND created_at >= ? AND created_at < ?''',
-      variables: [
-        Variable.withString(storeId),
-        Variable.withDateTime(start),
-        Variable.withDateTime(end),
-      ],
-    ).getSingle();
+          variables: [
+            Variable.withString(storeId),
+            Variable.withDateTime(start),
+            Variable.withDateTime(end),
+          ],
+        )
+        .getSingle();
 
-    final expResult = await db.customSelect(
-      '''SELECT COALESCE(SUM(amount), 0) as total
+    final expResult = await db
+        .customSelect(
+          '''SELECT COALESCE(SUM(amount), 0) as total
          FROM expenses WHERE store_id = ? AND created_at >= ? AND created_at < ?''',
-      variables: [
-        Variable.withString(storeId),
-        Variable.withDateTime(start),
-        Variable.withDateTime(end),
-      ],
-    ).getSingle();
+          variables: [
+            Variable.withString(storeId),
+            Variable.withDateTime(start),
+            Variable.withDateTime(end),
+          ],
+        )
+        .getSingle();
 
     final revenue = _toDouble(salesResult.data['revenue']);
     final purchases = _toDouble(purchResult.data['total']);
@@ -219,7 +229,9 @@ class _ComparisonReportScreenState
               const SizedBox(height: AlhaiSpacing.sm),
               Text(_error ?? 'خطأ في تحميل البيانات'),
               TextButton(
-                  onPressed: _loadData, child: const Text('إعادة المحاولة')),
+                onPressed: _loadData,
+                child: const Text('إعادة المحاولة'),
+              ),
             ],
           ),
         ),
@@ -260,34 +272,44 @@ class _ComparisonReportScreenState
             Row(
               children: [
                 Expanded(
-                    flex: 2,
-                    child: Text('المؤشر',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurfaceVariant))),
-                Expanded(
-                  child: Text(_currentLabel(),
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.blue)),
+                  flex: 2,
+                  child: Text(
+                    'المؤشر',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ),
                 Expanded(
-                  child: Text(_previousLabel(),
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant)),
+                  child: Text(
+                    _currentLabel(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue,
+                    ),
+                  ),
                 ),
                 Expanded(
-                  child: Text('التغيير',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant)),
+                  child: Text(
+                    _previousLabel(),
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: Text(
+                    'التغيير',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ),
               ],
             ),
@@ -362,8 +384,9 @@ class _CompRow extends StatelessWidget {
         ? ((current - previous) / previous) * 100
         : (current != 0 ? 100.0 : 0.0);
     final isPositive = higherIsBetter ? change >= 0 : change <= 0;
-    final changeColor =
-        isPositive ? Colors.green.shade700 : Colors.red.shade700;
+    final changeColor = isPositive
+        ? Colors.green.shade700
+        : Colors.red.shade700;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
@@ -399,8 +422,9 @@ class _CompRow extends StatelessWidget {
                   : '${previous.toStringAsFixed(0)} ر.س',
               textAlign: TextAlign.center,
               style: TextStyle(
-                  fontSize: 13,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ),
           Expanded(

@@ -22,7 +22,10 @@ abstract class PromotionsRepository {
 
   /// Validates and applies a promotion code
   Future<Promotion?> validateCode(
-      String storeId, String code, double orderTotal);
+    String storeId,
+    String code,
+    double orderTotal,
+  );
 
   /// Creates a new promotion
   Future<Promotion> createPromotion({

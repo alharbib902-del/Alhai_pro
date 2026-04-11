@@ -7,18 +7,18 @@ import '../../helpers/test_helpers.dart';
 void main() {
   group('AlhaiSwitch', () {
     testWidgets('renders correctly with value false', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        AlhaiSwitch(value: false, onChanged: (_) {}),
-      ));
+      await tester.pumpWidget(
+        createTestWidget(AlhaiSwitch(value: false, onChanged: (_) {})),
+      );
 
       expect(find.byType(AlhaiSwitch), findsOneWidget);
       expect(find.byType(Switch), findsOneWidget);
     });
 
     testWidgets('renders correctly with value true', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        AlhaiSwitch(value: true, onChanged: (_) {}),
-      ));
+      await tester.pumpWidget(
+        createTestWidget(AlhaiSwitch(value: true, onChanged: (_) {})),
+      );
 
       final switchWidget = tester.widget<Switch>(find.byType(Switch));
       expect(switchWidget.value, isTrue);
@@ -26,12 +26,11 @@ void main() {
 
     testWidgets('calls onChanged when toggled', (tester) async {
       bool? changedValue;
-      await tester.pumpWidget(createTestWidget(
-        AlhaiSwitch(
-          value: false,
-          onChanged: (value) => changedValue = value,
+      await tester.pumpWidget(
+        createTestWidget(
+          AlhaiSwitch(value: false, onChanged: (value) => changedValue = value),
         ),
-      ));
+      );
 
       await tester.tap(find.byType(Switch));
       await tester.pump();
@@ -40,66 +39,68 @@ void main() {
     });
 
     testWidgets('shows label text', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        AlhaiSwitch(
-          value: false,
-          label: 'Dark Mode',
-          onChanged: (_) {},
+      await tester.pumpWidget(
+        createTestWidget(
+          AlhaiSwitch(value: false, label: 'Dark Mode', onChanged: (_) {}),
         ),
-      ));
+      );
 
       expect(find.text('Dark Mode'), findsOneWidget);
     });
 
     testWidgets('shows subtitle text', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        AlhaiSwitch(
-          value: false,
-          label: 'Notifications',
-          subtitle: 'Receive push notifications',
-          onChanged: (_) {},
+      await tester.pumpWidget(
+        createTestWidget(
+          AlhaiSwitch(
+            value: false,
+            label: 'Notifications',
+            subtitle: 'Receive push notifications',
+            onChanged: (_) {},
+          ),
         ),
-      ));
+      );
 
       expect(find.text('Notifications'), findsOneWidget);
       expect(find.text('Receive push notifications'), findsOneWidget);
     });
 
     testWidgets('shows leading widget', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        AlhaiSwitch(
-          value: false,
-          label: 'Dark Mode',
-          leading: const Icon(Icons.dark_mode),
-          onChanged: (_) {},
+      await tester.pumpWidget(
+        createTestWidget(
+          AlhaiSwitch(
+            value: false,
+            label: 'Dark Mode',
+            leading: const Icon(Icons.dark_mode),
+            onChanged: (_) {},
+          ),
         ),
-      ));
+      );
 
       expect(find.byIcon(Icons.dark_mode), findsOneWidget);
     });
 
     testWidgets('is disabled when onChanged is null', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        const AlhaiSwitch(
-          value: false,
-          onChanged: null,
-          label: 'Disabled',
+      await tester.pumpWidget(
+        createTestWidget(
+          const AlhaiSwitch(value: false, onChanged: null, label: 'Disabled'),
         ),
-      ));
+      );
 
       final switchWidget = tester.widget<Switch>(find.byType(Switch));
       expect(switchWidget.onChanged, isNull);
     });
 
     testWidgets('is disabled when enabled is false', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        AlhaiSwitch(
-          value: false,
-          enabled: false,
-          onChanged: (_) {},
-          label: 'Disabled',
+      await tester.pumpWidget(
+        createTestWidget(
+          AlhaiSwitch(
+            value: false,
+            enabled: false,
+            onChanged: (_) {},
+            label: 'Disabled',
+          ),
         ),
-      ));
+      );
 
       final switchWidget = tester.widget<Switch>(find.byType(Switch));
       expect(switchWidget.onChanged, isNull);
@@ -107,13 +108,15 @@ void main() {
 
     testWidgets('label tap toggles switch', (tester) async {
       bool? changedValue;
-      await tester.pumpWidget(createTestWidget(
-        AlhaiSwitch(
-          value: false,
-          label: 'Click me',
-          onChanged: (value) => changedValue = value,
+      await tester.pumpWidget(
+        createTestWidget(
+          AlhaiSwitch(
+            value: false,
+            label: 'Click me',
+            onChanged: (value) => changedValue = value,
+          ),
         ),
-      ));
+      );
 
       await tester.tap(find.text('Click me'));
       await tester.pump();
@@ -122,14 +125,16 @@ void main() {
     });
 
     testWidgets('applies reduced opacity when disabled', (tester) async {
-      await tester.pumpWidget(createTestWidget(
-        AlhaiSwitch(
-          value: false,
-          enabled: false,
-          label: 'Disabled',
-          onChanged: (_) {},
+      await tester.pumpWidget(
+        createTestWidget(
+          AlhaiSwitch(
+            value: false,
+            enabled: false,
+            label: 'Disabled',
+            onChanged: (_) {},
+          ),
         ),
-      ));
+      );
 
       // Find the Opacity widget with the disabled opacity value
       final opacityFinder = find.byWidgetPredicate(
@@ -141,12 +146,11 @@ void main() {
     testWidgets('can be toggled off', (tester) async {
       bool? newValue;
 
-      await tester.pumpWidget(createTestWidget(
-        AlhaiSwitch(
-          value: true,
-          onChanged: (value) => newValue = value,
+      await tester.pumpWidget(
+        createTestWidget(
+          AlhaiSwitch(value: true, onChanged: (value) => newValue = value),
         ),
-      ));
+      );
 
       await tester.tap(find.byType(Switch));
       await tester.pump();

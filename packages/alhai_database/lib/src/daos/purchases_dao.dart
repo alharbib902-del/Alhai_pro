@@ -20,7 +20,9 @@ class PurchasesDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<List<PurchasesTableData>> getPurchasesByStatus(
-      String storeId, String status) {
+    String storeId,
+    String status,
+  ) {
     return (select(purchasesTable)
           ..where((p) => p.storeId.equals(storeId) & p.status.equals(status))
           ..limit(500))
@@ -37,44 +39,51 @@ class PurchasesDao extends DatabaseAccessor<AppDatabase>
 
   Future<int> updateStatus(String id, String status) {
     return (update(purchasesTable)..where((p) => p.id.equals(id))).write(
-        PurchasesTableCompanion(
-            status: Value(status), updatedAt: Value(DateTime.now())));
+      PurchasesTableCompanion(
+        status: Value(status),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   Future<int> receivePurchase(String id) {
     return (update(purchasesTable)..where((p) => p.id.equals(id))).write(
-        PurchasesTableCompanion(
-            status: const Value('received'),
-            receivedAt: Value(DateTime.now()),
-            updatedAt: Value(DateTime.now())));
+      PurchasesTableCompanion(
+        status: const Value('received'),
+        receivedAt: Value(DateTime.now()),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   Future<int> deletePurchase(String id) =>
       (delete(purchasesTable)..where((p) => p.id.equals(id))).go();
 
   Future<int> markAsSynced(String id) {
-    return (update(purchasesTable)..where((p) => p.id.equals(id)))
-        .write(PurchasesTableCompanion(syncedAt: Value(DateTime.now())));
+    return (update(purchasesTable)..where((p) => p.id.equals(id))).write(
+      PurchasesTableCompanion(syncedAt: Value(DateTime.now())),
+    );
   }
 
   // Purchase items
   Future<List<PurchaseItemsTableData>> getPurchaseItems(String purchaseId) {
-    return (select(purchaseItemsTable)
-          ..where((i) => i.purchaseId.equals(purchaseId)))
-        .get();
+    return (select(
+      purchaseItemsTable,
+    )..where((i) => i.purchaseId.equals(purchaseId))).get();
   }
 
   Future<void> insertPurchaseItems(
-      List<PurchaseItemsTableCompanion> items) async {
+    List<PurchaseItemsTableCompanion> items,
+  ) async {
     await batch((b) {
       b.insertAll(purchaseItemsTable, items);
     });
   }
 
   Future<int> deletePurchaseItems(String purchaseId) {
-    return (delete(purchaseItemsTable)
-          ..where((i) => i.purchaseId.equals(purchaseId)))
-        .go();
+    return (delete(
+      purchaseItemsTable,
+    )..where((i) => i.purchaseId.equals(purchaseId))).go();
   }
 
   // ── Pagination ─────────────────────────────────────────────────

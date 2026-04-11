@@ -82,14 +82,14 @@ class MascotWidget extends StatelessWidget {
               animate: animate,
             )
           : use3DImage
-              ? _NetworkMascot(
-                  size: size.value,
-                  imageUrl: customImageUrl ?? MascotAssets.mascot3DUrl,
-                  animate: animate,
-                )
-              : (animate
-                  ? _AnimatedMascot(size: size.value, pose: pose)
-                  : _StaticMascot(size: size.value, pose: pose)),
+          ? _NetworkMascot(
+              size: size.value,
+              imageUrl: customImageUrl ?? MascotAssets.mascot3DUrl,
+              animate: animate,
+            )
+          : (animate
+                ? _AnimatedMascot(size: size.value, pose: pose)
+                : _StaticMascot(size: size.value, pose: pose)),
     );
   }
 }
@@ -130,10 +130,7 @@ class _LocalMascotState extends State<_LocalMascot>
     _bounceAnimation = Tween<double>(
       begin: 0,
       end: 15,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -157,10 +154,8 @@ class _LocalMascotState extends State<_LocalMascot>
         width: widget.size,
         height: widget.size,
         fit: BoxFit.contain,
-        errorBuilder: (context, error, stackTrace) => _StaticMascot(
-          size: widget.size,
-          pose: MascotPose.waving,
-        ),
+        errorBuilder: (context, error, stackTrace) =>
+            _StaticMascot(size: widget.size, pose: MascotPose.waving),
       ),
     );
   }
@@ -202,10 +197,7 @@ class _NetworkMascotState extends State<_NetworkMascot>
     _bounceAnimation = Tween<double>(
       begin: 0,
       end: 10,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -230,10 +222,8 @@ class _NetworkMascotState extends State<_NetworkMascot>
         height: widget.size,
         fit: BoxFit.contain,
         placeholder: (context, url) => _buildLoadingPlaceholder(),
-        errorWidget: (context, url, error) => _StaticMascot(
-          size: widget.size,
-          pose: MascotPose.waving,
-        ),
+        errorWidget: (context, url, error) =>
+            _StaticMascot(size: widget.size, pose: MascotPose.waving),
       ),
     );
   }
@@ -286,10 +276,7 @@ class _AnimatedMascotState extends State<_AnimatedMascot>
     _bounceAnimation = Tween<double>(
       begin: 0,
       end: 10,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: Curves.easeInOut,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
   }
 
   @override
@@ -342,16 +329,19 @@ class _MascotPainter extends CustomPainter {
 
     // ظل أرضي 3D
     final shadowPaint = Paint()
-      ..shader = RadialGradient(
-        colors: [
-          Colors.black.withValues(alpha: 0.2),
-          Colors.black.withValues(alpha: 0.0),
-        ],
-      ).createShader(Rect.fromCenter(
-        center: Offset(center.dx, size.height * 0.88),
-        width: size.width * 0.6,
-        height: size.height * 0.1,
-      ));
+      ..shader =
+          RadialGradient(
+            colors: [
+              Colors.black.withValues(alpha: 0.2),
+              Colors.black.withValues(alpha: 0.0),
+            ],
+          ).createShader(
+            Rect.fromCenter(
+              center: Offset(center.dx, size.height * 0.88),
+              width: size.width * 0.6,
+              height: size.height * 0.1,
+            ),
+          );
     canvas.drawOval(
       Rect.fromCenter(
         center: Offset(center.dx, size.height * 0.88),
@@ -374,11 +364,13 @@ class _MascotPainter extends CustomPainter {
     );
 
     final bodyPaint = Paint()
-      ..shader = bodyGradient.createShader(Rect.fromCenter(
-        center: Offset(center.dx, center.dy + size.height * 0.15),
-        width: size.width * 0.5,
-        height: size.height * 0.4,
-      ))
+      ..shader = bodyGradient.createShader(
+        Rect.fromCenter(
+          center: Offset(center.dx, center.dy + size.height * 0.15),
+          width: size.width * 0.5,
+          height: size.height * 0.4,
+        ),
+      )
       ..style = PaintingStyle.fill;
 
     final bodyPath = Path()
@@ -426,11 +418,13 @@ class _MascotPainter extends CustomPainter {
     );
 
     final headBgPaint = Paint()
-      ..shader = headGradient.createShader(Rect.fromCenter(
-        center: Offset(center.dx, center.dy - headRadius * 0.3),
-        width: headRadius * 2,
-        height: headRadius * 1.8,
-      ))
+      ..shader = headGradient.createShader(
+        Rect.fromCenter(
+          center: Offset(center.dx, center.dy - headRadius * 0.3),
+          width: headRadius * 2,
+          height: headRadius * 1.8,
+        ),
+      )
       ..style = PaintingStyle.fill;
     canvas.drawRRect(
       RRect.fromRectAndRadius(
@@ -446,18 +440,21 @@ class _MascotPainter extends CustomPainter {
 
     // انعكاس الرأس (3D metallic)
     final headHighlightPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Colors.white.withValues(alpha: 0.4),
-          Colors.white.withValues(alpha: 0.0),
-        ],
-      ).createShader(Rect.fromCenter(
-        center: Offset(center.dx, center.dy - headRadius * 0.6),
-        width: headRadius * 1.6,
-        height: headRadius * 0.8,
-      ))
+      ..shader =
+          LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Colors.white.withValues(alpha: 0.4),
+              Colors.white.withValues(alpha: 0.0),
+            ],
+          ).createShader(
+            Rect.fromCenter(
+              center: Offset(center.dx, center.dy - headRadius * 0.6),
+              width: headRadius * 1.6,
+              height: headRadius * 0.8,
+            ),
+          )
       ..style = PaintingStyle.fill;
     canvas.drawRRect(
       RRect.fromRectAndRadius(
@@ -475,19 +472,17 @@ class _MascotPainter extends CustomPainter {
     const faceGradient = LinearGradient(
       begin: Alignment.topLeft,
       end: Alignment.bottomRight,
-      colors: [
-        Color(0xFF2A2A4A),
-        Color(0xFF1A1A2E),
-        Color(0xFF151528),
-      ],
+      colors: [Color(0xFF2A2A4A), Color(0xFF1A1A2E), Color(0xFF151528)],
     );
 
     final facePaint = Paint()
-      ..shader = faceGradient.createShader(Rect.fromCenter(
-        center: Offset(center.dx, center.dy - headRadius * 0.2),
-        width: headRadius * 1.6,
-        height: headRadius * 1.2,
-      ))
+      ..shader = faceGradient.createShader(
+        Rect.fromCenter(
+          center: Offset(center.dx, center.dy - headRadius * 0.2),
+          width: headRadius * 1.6,
+          height: headRadius * 1.2,
+        ),
+      )
       ..style = PaintingStyle.fill;
     canvas.drawRRect(
       RRect.fromRectAndRadius(
@@ -542,12 +537,14 @@ class _MascotPainter extends CustomPainter {
     );
 
     final antennaPaint = Paint()
-      ..shader = antennaGradient.createShader(Rect.fromLTWH(
-        center.dx - 4,
-        center.dy - headRadius * 1.6,
-        8,
-        headRadius * 0.5,
-      ))
+      ..shader = antennaGradient.createShader(
+        Rect.fromLTWH(
+          center.dx - 4,
+          center.dy - headRadius * 1.6,
+          8,
+          headRadius * 0.5,
+        ),
+      )
       ..style = PaintingStyle.fill;
 
     // قاعدة الأنتينا
@@ -572,10 +569,7 @@ class _MascotPainter extends CustomPainter {
 
     // الأيدي - 3D metallic
     const handGradient = RadialGradient(
-      colors: [
-        AppColors.primaryLight,
-        AppColors.primary,
-      ],
+      colors: [AppColors.primaryLight, AppColors.primary],
     );
 
     // يد يمنى
@@ -613,10 +607,7 @@ class _MascotPainter extends CustomPainter {
     const legGradient = LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
-      colors: [
-        AppColors.primary,
-        AppColors.primaryDark,
-      ],
+      colors: [AppColors.primary, AppColors.primaryDark],
     );
 
     _draw3DFoot(
@@ -646,10 +637,7 @@ class _MascotPainter extends CustomPainter {
 
     // البؤبؤ
     const pupilGradient = RadialGradient(
-      colors: [
-        AppColors.primaryLight,
-        AppColors.primary,
-      ],
+      colors: [AppColors.primaryLight, AppColors.primary],
     );
     final pupilPaint = Paint()
       ..shader = pupilGradient.createShader(
@@ -690,7 +678,11 @@ class _MascotPainter extends CustomPainter {
   }
 
   void _draw3DHand(
-      Canvas canvas, Offset center, double radius, Gradient gradient) {
+    Canvas canvas,
+    Offset center,
+    double radius,
+    Gradient gradient,
+  ) {
     final handPaint = Paint()
       ..shader = gradient.createShader(
         Rect.fromCircle(center: center, radius: radius),
@@ -713,19 +705,17 @@ class _MascotPainter extends CustomPainter {
     const laptopGradient = LinearGradient(
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
-      colors: [
-        Color(0xFFE0E0E0),
-        Color(0xFFF5F5F5),
-        Colors.white,
-      ],
+      colors: [Color(0xFFE0E0E0), Color(0xFFF5F5F5), Colors.white],
     );
 
     final laptopPaint = Paint()
-      ..shader = laptopGradient.createShader(Rect.fromCenter(
-        center: Offset(center.dx, center.dy + size.height * 0.22),
-        width: size.width * 0.4,
-        height: size.height * 0.08,
-      ));
+      ..shader = laptopGradient.createShader(
+        Rect.fromCenter(
+          center: Offset(center.dx, center.dy + size.height * 0.22),
+          width: size.width * 0.4,
+          height: size.height * 0.08,
+        ),
+      );
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(
@@ -751,11 +741,13 @@ class _MascotPainter extends CustomPainter {
     );
 
     final screenPaint = Paint()
-      ..shader = screenGradient.createShader(Rect.fromCenter(
-        center: Offset(center.dx, center.dy + size.height * 0.15),
-        width: size.width * 0.35,
-        height: size.height * 0.1,
-      ));
+      ..shader = screenGradient.createShader(
+        Rect.fromCenter(
+          center: Offset(center.dx, center.dy + size.height * 0.15),
+          width: size.width * 0.35,
+          height: size.height * 0.1,
+        ),
+      );
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(
@@ -771,24 +763,31 @@ class _MascotPainter extends CustomPainter {
 
     // انعكاس الشاشة
     final screenReflectPaint = Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Colors.white.withValues(alpha: 0.3),
-          Colors.white.withValues(alpha: 0.0),
-        ],
-      ).createShader(Rect.fromCenter(
-        center: Offset(
-            center.dx - size.width * 0.05, center.dy + size.height * 0.13),
-        width: size.width * 0.15,
-        height: size.height * 0.04,
-      ));
+      ..shader =
+          LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Colors.white.withValues(alpha: 0.3),
+              Colors.white.withValues(alpha: 0.0),
+            ],
+          ).createShader(
+            Rect.fromCenter(
+              center: Offset(
+                center.dx - size.width * 0.05,
+                center.dy + size.height * 0.13,
+              ),
+              width: size.width * 0.15,
+              height: size.height * 0.04,
+            ),
+          );
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromCenter(
           center: Offset(
-              center.dx - size.width * 0.05, center.dy + size.height * 0.13),
+            center.dx - size.width * 0.05,
+            center.dy + size.height * 0.13,
+          ),
           width: size.width * 0.15,
           height: size.height * 0.04,
         ),
@@ -799,13 +798,19 @@ class _MascotPainter extends CustomPainter {
   }
 
   void _draw3DFoot(
-      Canvas canvas, Offset center, Size footSize, Gradient gradient) {
+    Canvas canvas,
+    Offset center,
+    Size footSize,
+    Gradient gradient,
+  ) {
     final footPaint = Paint()
-      ..shader = gradient.createShader(Rect.fromCenter(
-        center: center,
-        width: footSize.width,
-        height: footSize.height,
-      ));
+      ..shader = gradient.createShader(
+        Rect.fromCenter(
+          center: center,
+          width: footSize.width,
+          height: footSize.height,
+        ),
+      );
     canvas.drawOval(
       Rect.fromCenter(
         center: center,
@@ -853,7 +858,9 @@ class MascotWithMessage extends StatelessWidget {
         Container(
           margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
+            horizontal: AlhaiSpacing.mdl,
+            vertical: AlhaiSpacing.sm,
+          ),
           decoration: BoxDecoration(
             color: Colors.white,
             borderRadius: BorderRadius.circular(20),

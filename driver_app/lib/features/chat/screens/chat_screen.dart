@@ -18,10 +18,7 @@ class _LocalMessage {
   final String text;
   _SendStatus status = _SendStatus.sending;
 
-  _LocalMessage({
-    required this.id,
-    required this.text,
-  });
+  _LocalMessage({required this.id, required this.text});
 }
 
 // ─── Screen ─────────────────────────────────────────────────────────────────
@@ -92,10 +89,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   Future<void> _doSend(_LocalMessage msg) async {
     final ds = GetIt.instance<ChatDatasource>();
     try {
-      await ds.sendMessage(
-        orderId: widget.orderId,
-        text: msg.text,
-      );
+      await ds.sendMessage(orderId: widget.orderId, text: msg.text);
       if (mounted) {
         setState(() => msg.status = _SendStatus.sent);
         _scrollToBottom();
@@ -119,10 +113,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     final currentUserId = Supabase.instance.client.auth.currentUser?.id;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('المحادثة'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('المحادثة'), centerTitle: true),
       body: Column(
         children: [
           // Messages list
@@ -137,9 +128,11 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
                 // Filter pending: only keep those not yet in stream
                 final stillPending = _pendingMessages
-                    .where((pm) =>
-                        pm.status != _SendStatus.sent ||
-                        !confirmedIds.contains(pm.text))
+                    .where(
+                      (pm) =>
+                          pm.status != _SendStatus.sent ||
+                          !confirmedIds.contains(pm.text),
+                    )
                     .toList();
 
                 final isEmpty = list.isEmpty && stillPending.isEmpty;
@@ -172,7 +165,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           return Padding(
                             key: ValueKey('sys_$msgId'),
                             padding: const EdgeInsets.symmetric(
-                                vertical: AlhaiSpacing.xs),
+                              vertical: AlhaiSpacing.xs,
+                            ),
                             child: Center(
                               child: Text(
                                 msg['text'] as String? ?? '',
@@ -189,8 +183,10 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                           text: msg['text'] as String? ?? '',
                           isMe: isMe,
                           senderType: msg['sender_type'] as String? ?? '',
-                          time: DateTime.tryParse(
-                                  msg['created_at'] as String? ?? '') ??
+                          time:
+                              DateTime.tryParse(
+                                msg['created_at'] as String? ?? '',
+                              ) ??
                               DateTime.now(),
                           sendStatus: _SendStatus.sent,
                           onRetry: null,
@@ -268,9 +264,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
             ),
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
-              border: Border(
-                top: BorderSide(color: theme.dividerColor),
-              ),
+              border: Border(top: BorderSide(color: theme.dividerColor)),
             ),
             child: SafeArea(
               child: Row(
@@ -360,8 +354,8 @@ class _MessageBubble extends StatelessWidget {
             color: sendStatus == _SendStatus.failed
                 ? theme.colorScheme.errorContainer
                 : isMe
-                    ? theme.colorScheme.primary
-                    : theme.colorScheme.surfaceContainerHighest,
+                ? theme.colorScheme.primary
+                : theme.colorScheme.surfaceContainerHighest,
             borderRadius: BorderRadius.only(
               topLeft: const Radius.circular(16),
               topRight: const Radius.circular(16),
@@ -378,8 +372,8 @@ class _MessageBubble extends StatelessWidget {
                   color: sendStatus == _SendStatus.failed
                       ? theme.colorScheme.onErrorContainer
                       : isMe
-                          ? theme.colorScheme.onPrimary
-                          : theme.colorScheme.onSurface,
+                      ? theme.colorScheme.onPrimary
+                      : theme.colorScheme.onSurface,
                 ),
               ),
               const SizedBox(height: AlhaiSpacing.xxs),
@@ -391,12 +385,12 @@ class _MessageBubble extends StatelessWidget {
                     style: TextStyle(
                       fontSize: 10,
                       color: sendStatus == _SendStatus.failed
-                          ? theme.colorScheme.onErrorContainer
-                              .withValues(alpha: 0.7)
+                          ? theme.colorScheme.onErrorContainer.withValues(
+                              alpha: 0.7,
+                            )
                           : isMe
-                              ? theme.colorScheme.onPrimary
-                                  .withValues(alpha: 0.7)
-                              : theme.colorScheme.outline,
+                          ? theme.colorScheme.onPrimary.withValues(alpha: 0.7)
+                          : theme.colorScheme.outline,
                     ),
                   ),
                   if (isMe) ...[
@@ -456,8 +450,11 @@ class _SendStatusIcon extends StatelessWidget {
           ),
         );
       case _SendStatus.sent:
-        return Icon(Icons.done,
-            size: 12, color: foreground.withValues(alpha: 0.7));
+        return Icon(
+          Icons.done,
+          size: 12,
+          color: foreground.withValues(alpha: 0.7),
+        );
       case _SendStatus.failed:
         return GestureDetector(
           onTap: onRetry,

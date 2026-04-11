@@ -67,15 +67,17 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
         if (_dateFilter == 'today') {
           return order.createdAt.isAfter(todayStart);
         } else if (_dateFilter == 'week') {
-          return order.createdAt
-              .isAfter(todayStart.subtract(const Duration(days: 7)));
+          return order.createdAt.isAfter(
+            todayStart.subtract(const Duration(days: 7)),
+          );
         } else if (_dateFilter == 'month') {
           return order.createdAt.month == now.month &&
               order.createdAt.year == now.year;
         } else if (_dateFilter == 'custom' && _customRange != null) {
           return order.createdAt.isAfter(_customRange!.start) &&
-              order.createdAt
-                  .isBefore(_customRange!.end.add(const Duration(days: 1)));
+              order.createdAt.isBefore(
+                _customRange!.end.add(const Duration(days: 1)),
+              );
         }
         return true;
       }).toList();
@@ -138,8 +140,9 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -150,14 +153,22 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context,
-                      message: _error!, onRetry: _loadData)
-                  : SingleChildScrollView(
-                      padding: EdgeInsets.all(
-                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: _buildContent(
-                          isWideScreen, isMediumScreen, isDark, l10n),
-                    ),
+              ? AppErrorState.general(
+                  context,
+                  message: _error!,
+                  onRetry: _loadData,
+                )
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(
+                    isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                  ),
+                  child: _buildContent(
+                    isWideScreen,
+                    isMediumScreen,
+                    isDark,
+                    l10n,
+                  ),
+                ),
         ),
       ],
     );
@@ -168,8 +179,12 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
     return '${now.day}/${now.month}/${now.year} \u2022 ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
-      AppLocalizations l10n) {
+  Widget _buildContent(
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -217,62 +232,79 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
             _loadData();
           }, isDark),
           const SizedBox(width: AlhaiSpacing.xs),
-          _buildChip(l10n.dateFromTo, _dateFilter == 'custom', () async {
-            final picked = await showDateRangePicker(
-              context: context,
-              firstDate: DateTime(2020),
-              lastDate: DateTime.now(),
-              initialDateRange: _customRange,
-            );
-            if (picked != null) {
-              setState(() {
-                _dateFilter = 'custom';
-                _customRange = picked;
-              });
-              _loadData();
-            }
-          }, isDark, icon: Icons.date_range_outlined),
+          _buildChip(
+            l10n.dateFromTo,
+            _dateFilter == 'custom',
+            () async {
+              final picked = await showDateRangePicker(
+                context: context,
+                firstDate: DateTime(2020),
+                lastDate: DateTime.now(),
+                initialDateRange: _customRange,
+              );
+              if (picked != null) {
+                setState(() {
+                  _dateFilter = 'custom';
+                  _customRange = picked;
+                });
+                _loadData();
+              }
+            },
+            isDark,
+            icon: Icons.date_range_outlined,
+          ),
         ],
       ),
     );
   }
 
   Widget _buildChip(
-      String label, bool isSelected, VoidCallback onTap, bool isDark,
-      {IconData? icon}) {
+    String label,
+    bool isSelected,
+    VoidCallback onTap,
+    bool isDark, {
+    IconData? icon,
+  }) {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(999),
       child: Container(
         padding: const EdgeInsets.symmetric(
-            horizontal: 14, vertical: AlhaiSpacing.xs),
+          horizontal: 14,
+          vertical: AlhaiSpacing.xs,
+        ),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary
               : AppColors.getSurfaceVariant(isDark),
           borderRadius: BorderRadius.circular(999),
           border: Border.all(
-              color:
-                  isSelected ? AppColors.primary : AppColors.getBorder(isDark)),
+            color: isSelected ? AppColors.primary : AppColors.getBorder(isDark),
+          ),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             if (icon != null) ...[
-              Icon(icon,
-                  size: 14,
-                  color: isSelected
-                      ? AppColors.textOnPrimary
-                      : AppColors.getTextSecondary(isDark)),
+              Icon(
+                icon,
+                size: 14,
+                color: isSelected
+                    ? AppColors.textOnPrimary
+                    : AppColors.getTextSecondary(isDark),
+              ),
               const SizedBox(width: 6),
             ],
-            Text(label,
-                style: TextStyle(
-                    fontSize: 13,
-                    fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                    color: isSelected
-                        ? AppColors.textOnPrimary
-                        : AppColors.getTextSecondary(isDark))),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                color: isSelected
+                    ? AppColors.textOnPrimary
+                    : AppColors.getTextSecondary(isDark),
+              ),
+            ),
           ],
         ),
       ),
@@ -297,15 +329,21 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.pie_chart_rounded,
-                    color: AppColors.primary, size: 20),
+                child: const Icon(
+                  Icons.pie_chart_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text(l10n.paymentDistribution,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.getTextPrimary(isDark))),
+              Text(
+                l10n.paymentDistribution,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.lg),
@@ -329,15 +367,21 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.pie_chart_outline_rounded,
-                            size: 48,
-                            color: AppColors.getTextMuted(isDark)
-                                .withValues(alpha: 0.3)),
+                        Icon(
+                          Icons.pie_chart_outline_rounded,
+                          size: 48,
+                          color: AppColors.getTextMuted(
+                            isDark,
+                          ).withValues(alpha: 0.3),
+                        ),
                         const SizedBox(height: AlhaiSpacing.xs),
-                        Text(l10n.noData,
-                            style: TextStyle(
-                                fontSize: 13,
-                                color: AppColors.getTextMuted(isDark))),
+                        Text(
+                          l10n.noData,
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: AppColors.getTextMuted(isDark),
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -369,9 +413,13 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
           decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 6),
-        Text(label,
-            style: TextStyle(
-                fontSize: 12, color: AppColors.getTextSecondary(isDark))),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 12,
+            color: AppColors.getTextSecondary(isDark),
+          ),
+        ),
       ],
     );
   }
@@ -395,15 +443,21 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.list_alt_rounded,
-                    color: AppColors.info, size: 20),
+                child: const Icon(
+                  Icons.list_alt_rounded,
+                  color: AppColors.info,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text(l10n.breakdown,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.getTextPrimary(isDark))),
+              Text(
+                l10n.breakdown,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
@@ -480,31 +534,43 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(label,
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.getTextPrimary(isDark))),
-                    Text(l10n.nTransactions(count),
-                        style: TextStyle(
-                            fontSize: 12,
-                            color: AppColors.getTextMuted(isDark))),
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.getTextPrimary(isDark),
+                      ),
+                    ),
+                    Text(
+                      l10n.nTransactions(count),
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.getTextMuted(isDark),
+                      ),
+                    ),
                   ],
                 ),
               ),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text('${total.toStringAsFixed(0)} ${l10n.sar}',
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: color)),
-                  Text('$percentage%',
-                      style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          color: AppColors.getTextSecondary(isDark))),
+                  Text(
+                    '${total.toStringAsFixed(0)} ${l10n.sar}',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: color,
+                    ),
+                  ),
+                  Text(
+                    '$percentage%',
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.getTextSecondary(isDark),
+                    ),
+                  ),
                 ],
               ),
             ],
@@ -544,31 +610,44 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.grandTotal,
-                    style: TextStyle(
-                        fontSize: 14,
-                        color: AppColors.getTextSecondary(isDark))),
+                Text(
+                  l10n.grandTotal,
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
+                ),
                 const SizedBox(height: AlhaiSpacing.xxs),
-                Text('${_grandTotal.toStringAsFixed(0)} ${l10n.sar}',
-                    style: const TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.primary)),
+                Text(
+                  '${_grandTotal.toStringAsFixed(0)} ${l10n.sar}',
+                  style: const TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w800,
+                    color: AppColors.primary,
+                  ),
+                ),
               ],
             ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(l10n.totalTransactions,
-                  style: TextStyle(
-                      fontSize: 12, color: AppColors.getTextSecondary(isDark))),
+              Text(
+                l10n.totalTransactions,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: AppColors.getTextSecondary(isDark),
+                ),
+              ),
               const SizedBox(height: AlhaiSpacing.xxs),
-              Text('$_totalCount',
-                  style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.getTextPrimary(isDark))),
+              Text(
+                '$_totalCount',
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w800,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
             ],
           ),
         ],

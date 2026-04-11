@@ -53,19 +53,22 @@ class LiteNotificationsListScreen extends ConsumerWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.notifications_off_outlined,
-                      size: 64,
-                      color: isDark
-                          ? Colors.white24
-                          : Theme.of(context).colorScheme.outlineVariant),
+                  Icon(
+                    Icons.notifications_off_outlined,
+                    size: 64,
+                    color: isDark
+                        ? Colors.white24
+                        : Theme.of(context).colorScheme.outlineVariant,
+                  ),
                   const SizedBox(height: AlhaiSpacing.md),
-                  Text(l10n.noResults,
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                          color: isDark
-                              ? Colors.white54
-                              : Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant)),
+                  Text(
+                    l10n.noResults,
+                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                      color: isDark
+                          ? Colors.white54
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ],
               ),
             );
@@ -93,34 +96,41 @@ class LiteNotificationsListScreen extends ConsumerWidget {
           return RefreshIndicator(
             onRefresh: () async => ref.invalidate(liteNotificationsProvider),
             child: ListView(
-              padding:
-                  EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+              padding: EdgeInsets.all(
+                isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg,
+              ),
               children: [
                 if (todayItems.isNotEmpty) ...[
                   _buildDateHeader(l10n.today, isDark),
                   const SizedBox(height: AlhaiSpacing.xs),
-                  ...todayItems.map((n) => KeyedSubtree(
-                        key: ValueKey(n.id),
-                        child: _buildNotificationTile(context, n, isDark, ref),
-                      )),
+                  ...todayItems.map(
+                    (n) => KeyedSubtree(
+                      key: ValueKey(n.id),
+                      child: _buildNotificationTile(context, n, isDark, ref),
+                    ),
+                  ),
                   const SizedBox(height: AlhaiSpacing.lg),
                 ],
                 if (yesterdayItems.isNotEmpty) ...[
                   _buildDateHeader(l10n.yesterday, isDark),
                   const SizedBox(height: AlhaiSpacing.xs),
-                  ...yesterdayItems.map((n) => KeyedSubtree(
-                        key: ValueKey(n.id),
-                        child: _buildNotificationTile(context, n, isDark, ref),
-                      )),
+                  ...yesterdayItems.map(
+                    (n) => KeyedSubtree(
+                      key: ValueKey(n.id),
+                      child: _buildNotificationTile(context, n, isDark, ref),
+                    ),
+                  ),
                   const SizedBox(height: AlhaiSpacing.lg),
                 ],
                 if (olderItems.isNotEmpty) ...[
                   _buildDateHeader('Older', isDark),
                   const SizedBox(height: AlhaiSpacing.xs),
-                  ...olderItems.map((n) => KeyedSubtree(
-                        key: ValueKey(n.id),
-                        child: _buildNotificationTile(context, n, isDark, ref),
-                      )),
+                  ...olderItems.map(
+                    (n) => KeyedSubtree(
+                      key: ValueKey(n.id),
+                      child: _buildNotificationTile(context, n, isDark, ref),
+                    ),
+                  ),
                 ],
               ],
             ),
@@ -133,9 +143,10 @@ class LiteNotificationsListScreen extends ConsumerWidget {
             children: [
               Text(l10n.errorOccurred),
               TextButton.icon(
-                  onPressed: () => ref.invalidate(liteNotificationsProvider),
-                  icon: const Icon(Icons.refresh_rounded),
-                  label: Text(l10n.tryAgain)),
+                onPressed: () => ref.invalidate(liteNotificationsProvider),
+                icon: const Icon(Icons.refresh_rounded),
+                label: Text(l10n.tryAgain),
+              ),
             ],
           ),
         ),
@@ -147,11 +158,15 @@ class LiteNotificationsListScreen extends ConsumerWidget {
     return Padding(
       padding: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
       child: Builder(
-          builder: (context) => Text(label,
-              style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant))),
+        builder: (context) => Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
+        ),
+      ),
     );
   }
 
@@ -177,8 +192,12 @@ class LiteNotificationsListScreen extends ConsumerWidget {
     };
   }
 
-  Widget _buildNotificationTile(BuildContext context,
-      NotificationsTableData notification, bool isDark, WidgetRef ref) {
+  Widget _buildNotificationTile(
+    BuildContext context,
+    NotificationsTableData notification,
+    bool isDark,
+    WidgetRef ref,
+  ) {
     final color = _notificationColor(notification.type);
     final icon = _notificationIcon(notification.type);
     final time =
@@ -197,16 +216,18 @@ class LiteNotificationsListScreen extends ConsumerWidget {
         padding: const EdgeInsets.all(AlhaiSpacing.sm),
         decoration: BoxDecoration(
           color: isDark
-              ? Colors.white
-                  .withValues(alpha: notification.isRead ? 0.04 : 0.08)
+              ? Colors.white.withValues(
+                  alpha: notification.isRead ? 0.04 : 0.08,
+                )
               : (notification.isRead
-                  ? Theme.of(context).colorScheme.surface
-                  : color.withValues(alpha: 0.04)),
+                    ? Theme.of(context).colorScheme.surface
+                    : color.withValues(alpha: 0.04)),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-              color: isDark
-                  ? Colors.white12
-                  : Theme.of(context).colorScheme.outlineVariant),
+            color: isDark
+                ? Colors.white12
+                : Theme.of(context).colorScheme.outlineVariant,
+          ),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,8 +236,9 @@ class LiteNotificationsListScreen extends ConsumerWidget {
               width: AlhaiSpacing.avatarMd,
               height: AlhaiSpacing.avatarMd,
               decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.12),
-                  borderRadius: BorderRadius.circular(10)),
+                color: color.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
+              ),
               child: Icon(icon, color: color, size: 20),
             ),
             const SizedBox(width: AlhaiSpacing.sm),
@@ -224,26 +246,35 @@ class LiteNotificationsListScreen extends ConsumerWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(notification.title,
-                      style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: notification.isRead
-                              ? FontWeight.normal
-                              : FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface)),
+                  Text(
+                    notification.title,
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: notification.isRead
+                          ? FontWeight.normal
+                          : FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
                   const SizedBox(height: AlhaiSpacing.xxxs),
-                  Text(notification.body,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: isDark
-                              ? Colors.white38
-                              : Theme.of(context).colorScheme.onSurfaceVariant),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis),
+                  Text(
+                    notification.body,
+                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: isDark
+                          ? Colors.white38
+                          : Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                   const SizedBox(height: AlhaiSpacing.xxs),
-                  Text(time,
-                      style: TextStyle(
-                          fontSize: 11,
-                          color: Theme.of(context).colorScheme.outline)),
+                  Text(
+                    time,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Theme.of(context).colorScheme.outline,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -253,7 +284,9 @@ class LiteNotificationsListScreen extends ConsumerWidget {
                 height: 8,
                 margin: const EdgeInsets.only(top: AlhaiSpacing.xxs),
                 decoration: BoxDecoration(
-                    color: AlhaiColors.primary, shape: BoxShape.circle),
+                  color: AlhaiColors.primary,
+                  shape: BoxShape.circle,
+                ),
               ),
           ],
         ),

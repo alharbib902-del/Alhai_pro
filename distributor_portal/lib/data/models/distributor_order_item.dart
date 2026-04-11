@@ -62,6 +62,13 @@ class DistributorOrderItem {
           distributorPrice == other.distributorPrice;
 
   @override
-  int get hashCode => Object.hash(id, orderId, productId, productName, quantity,
-      suggestedPrice, distributorPrice);
+  int get hashCode => Object.hash(
+    id,
+    orderId,
+    productId,
+    productName,
+    quantity,
+    suggestedPrice,
+    distributorPrice,
+  );
 }

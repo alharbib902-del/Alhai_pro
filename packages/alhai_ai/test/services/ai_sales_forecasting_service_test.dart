@@ -129,11 +129,14 @@ void main() {
 
   group('generateForecast', () {
     test('generates forecasts with empty sales data', () async {
-      when(() => mockSalesDao.getSalesByDateRange(any(), any(), any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSalesDao.getSalesByDateRange(any(), any(), any()),
+      ).thenAnswer((_) async => []);
 
-      final result =
-          await service.generateForecast('store-1', ForecastPeriod.daily);
+      final result = await service.generateForecast(
+        'store-1',
+        ForecastPeriod.daily,
+      );
 
       expect(result.forecasts, isNotEmpty);
       expect(result.trend, isNotNull);
@@ -143,11 +146,14 @@ void main() {
     });
 
     test('generates forecasts for weekly period', () async {
-      when(() => mockSalesDao.getSalesByDateRange(any(), any(), any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSalesDao.getSalesByDateRange(any(), any(), any()),
+      ).thenAnswer((_) async => []);
 
-      final result =
-          await service.generateForecast('store-1', ForecastPeriod.weekly);
+      final result = await service.generateForecast(
+        'store-1',
+        ForecastPeriod.weekly,
+      );
 
       expect(result.forecasts, isNotEmpty);
       expect(result.nextWeekTotal, greaterThan(0));
@@ -155,11 +161,14 @@ void main() {
     });
 
     test('generates forecasts for monthly period', () async {
-      when(() => mockSalesDao.getSalesByDateRange(any(), any(), any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSalesDao.getSalesByDateRange(any(), any(), any()),
+      ).thenAnswer((_) async => []);
 
-      final result =
-          await service.generateForecast('store-1', ForecastPeriod.monthly);
+      final result = await service.generateForecast(
+        'store-1',
+        ForecastPeriod.monthly,
+      );
 
       expect(result.forecasts, isNotEmpty);
     });
@@ -175,11 +184,14 @@ void main() {
         ),
       );
 
-      when(() => mockSalesDao.getSalesByDateRange(any(), any(), any()))
-          .thenAnswer((_) async => sales);
+      when(
+        () => mockSalesDao.getSalesByDateRange(any(), any(), any()),
+      ).thenAnswer((_) async => sales);
 
-      final result =
-          await service.generateForecast('store-1', ForecastPeriod.daily);
+      final result = await service.generateForecast(
+        'store-1',
+        ForecastPeriod.daily,
+      );
 
       expect(result.forecasts, isNotEmpty);
       expect(result.accuracy, greaterThan(0));
@@ -188,8 +200,9 @@ void main() {
 
   group('detectSeasonalPatterns', () {
     test('returns patterns even with no sales data', () async {
-      when(() => mockSalesDao.getSalesByDateRange(any(), any(), any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSalesDao.getSalesByDateRange(any(), any(), any()),
+      ).thenAnswer((_) async => []);
 
       final patterns = await service.detectSeasonalPatterns('store-1');
 
@@ -199,8 +212,9 @@ void main() {
 
   group('simulateWhatIf', () {
     test('returns result with discount scenario', () async {
-      when(() => mockSalesDao.getSalesByDateRange(any(), any(), any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSalesDao.getSalesByDateRange(any(), any(), any()),
+      ).thenAnswer((_) async => []);
 
       final result = await service.simulateWhatIf(
         'store-1',
@@ -213,8 +227,9 @@ void main() {
     });
 
     test('returns result with price change scenario', () async {
-      when(() => mockSalesDao.getSalesByDateRange(any(), any(), any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSalesDao.getSalesByDateRange(any(), any(), any()),
+      ).thenAnswer((_) async => []);
 
       final result = await service.simulateWhatIf(
         'store-1',
@@ -235,8 +250,9 @@ void main() {
         ),
       );
 
-      when(() => mockSalesDao.getSalesByDateRange(any(), any(), any()))
-          .thenAnswer((_) async => sales);
+      when(
+        () => mockSalesDao.getSalesByDateRange(any(), any(), any()),
+      ).thenAnswer((_) async => sales);
 
       final result = await service.simulateWhatIf(
         'store-1',
@@ -247,8 +263,9 @@ void main() {
     });
 
     test('no changes scenario returns default explanation', () async {
-      when(() => mockSalesDao.getSalesByDateRange(any(), any(), any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSalesDao.getSalesByDateRange(any(), any(), any()),
+      ).thenAnswer((_) async => []);
 
       final result = await service.simulateWhatIf(
         'store-1',

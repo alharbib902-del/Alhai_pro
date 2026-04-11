@@ -150,10 +150,9 @@ class ProductImage extends StatelessWidget {
         child: Icon(
           Icons.image_outlined,
           size: _getIconSize(),
-          color: Theme.of(context)
-              .colorScheme
-              .onSurfaceVariant
-              .withValues(alpha: 0.5),
+          color: Theme.of(
+            context,
+          ).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
         ),
       ),
     );
@@ -164,8 +163,9 @@ class ProductImage extends StatelessWidget {
       width: width,
       height: height,
       decoration: BoxDecoration(
-        color:
-            Theme.of(context).colorScheme.errorContainer.withValues(alpha: 0.1),
+        color: Theme.of(
+          context,
+        ).colorScheme.errorContainer.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(AlhaiRadius.sm),
       ),
       child: Center(

@@ -38,10 +38,7 @@ class SaleResult {
   final String saleId;
   final List<PriceCorrection> priceCorrections;
 
-  const SaleResult({
-    required this.saleId,
-    this.priceCorrections = const [],
-  });
+  const SaleResult({required this.saleId, this.priceCorrections = const []});
 
   bool get hadPriceCorrections => priceCorrections.isNotEmpty;
 }
@@ -65,10 +62,10 @@ class SaleService {
     required SyncService syncService,
     InvoiceService? invoiceService,
     Duration Function()? clockOffsetProvider,
-  })  : _db = db,
-        _syncService = syncService,
-        _invoiceService = invoiceService,
-        _clockOffsetProvider = clockOffsetProvider;
+  }) : _db = db,
+       _syncService = syncService,
+       _invoiceService = invoiceService,
+       _clockOffsetProvider = clockOffsetProvider;
 
   /// Get a corrected timestamp that accounts for device clock drift.
   /// ZATCA requires accurate timestamps; this uses the server-measured offset.
@@ -129,14 +126,16 @@ class SaleService {
           if (cashierId.isNotEmpty) {
             final existingUser = await _db.usersDao.getUserById(cashierId);
             if (existingUser == null) {
-              await _db.usersDao.ensureUser(UsersTableCompanion.insert(
-                id: cashierId,
-                storeId: Value(storeId),
-                name: 'Cashier',
-                role: const Value('cashier'),
-                isActive: const Value(true),
-                createdAt: now,
-              ));
+              await _db.usersDao.ensureUser(
+                UsersTableCompanion.insert(
+                  id: cashierId,
+                  storeId: Value(storeId),
+                  name: 'Cashier',
+                  role: const Value('cashier'),
+                  isActive: const Value(true),
+                  createdAt: now,
+                ),
+              );
             }
           }
 
@@ -146,12 +145,14 @@ class SaleService {
           if (customerId != null &&
               customerId != 'walk-in' &&
               customerId.isNotEmpty) {
-            final existingCustomer =
-                await _db.customersDao.getCustomerById(customerId);
+            final existingCustomer = await _db.customersDao.getCustomerById(
+              customerId,
+            );
             if (existingCustomer == null) {
               if (kDebugMode) {
                 debugPrint(
-                    '[SaleService] Customer $customerId not found in DB, setting to null');
+                  '[SaleService] Customer $customerId not found in DB, setting to null',
+                );
               }
               validCustomerId = null;
             }
@@ -163,8 +164,9 @@ class SaleService {
           final freshProducts = <String, ProductsTableData>{};
           correctedPrices = <String, double>{};
           for (final item in items) {
-            final product =
-                await _db.productsDao.getProductById(item.product.id);
+            final product = await _db.productsDao.getProductById(
+              item.product.id,
+            );
             if (product == null) {
               throw SaleException(
                 message: 'Product not found in DB: ${item.product.id}',
@@ -179,13 +181,15 @@ class SaleService {
             if (item.customPrice == null &&
                 product.price != item.effectivePrice) {
               correctedPrices[item.product.id] = product.price;
-              priceCorrections.add(PriceCorrection(
-                productId: item.product.id,
-                productName: item.product.name,
-                cartPrice: item.effectivePrice,
-                dbPrice: product.price,
-                quantity: item.quantity,
-              ));
+              priceCorrections.add(
+                PriceCorrection(
+                  productId: item.product.id,
+                  productName: item.product.name,
+                  cartPrice: item.effectivePrice,
+                  dbPrice: product.price,
+                  quantity: item.quantity,
+                ),
+              );
               if (kDebugMode) {
                 debugPrint(
                   '[SaleService] Price correction: "${item.product.name}" '
@@ -242,31 +246,33 @@ class SaleService {
           } else {
             isPaid = true;
           }
-          await _db.salesDao.insertSale(SalesTableCompanion.insert(
-            id: saleId,
-            storeId: storeId,
-            receiptNo: receiptNo,
-            cashierId: cashierId,
-            shiftId: Value(shiftId),
-            customerId: Value(validCustomerId),
-            customerName: Value(customerName),
-            customerPhone: Value(customerPhone),
-            subtotal: correctedSubtotal,
-            discount: Value(discount),
-            tax: Value(correctedTax),
-            total: correctedTotal,
-            paymentMethod: paymentMethod,
-            amountReceived: Value(amountReceived),
-            changeAmount: Value(changeAmount),
-            cashAmount: Value(cashAmount),
-            cardAmount: Value(cardAmount),
-            creditAmount: Value(creditAmount),
-            notes: Value(notes ?? ''),
-            channel: const Value('POS'),
-            status: const Value('completed'),
-            isPaid: Value(isPaid),
-            createdAt: now,
-          ));
+          await _db.salesDao.insertSale(
+            SalesTableCompanion.insert(
+              id: saleId,
+              storeId: storeId,
+              receiptNo: receiptNo,
+              cashierId: cashierId,
+              shiftId: Value(shiftId),
+              customerId: Value(validCustomerId),
+              customerName: Value(customerName),
+              customerPhone: Value(customerPhone),
+              subtotal: correctedSubtotal,
+              discount: Value(discount),
+              tax: Value(correctedTax),
+              total: correctedTotal,
+              paymentMethod: paymentMethod,
+              amountReceived: Value(amountReceived),
+              changeAmount: Value(changeAmount),
+              cashAmount: Value(cashAmount),
+              cardAmount: Value(cardAmount),
+              creditAmount: Value(creditAmount),
+              notes: Value(notes ?? ''),
+              channel: const Value('POS'),
+              status: const Value('completed'),
+              isPaid: Value(isPaid),
+              createdAt: now,
+            ),
+          );
 
           // 3. جلب org_id من المتجر (نحتاجه لدلتا المخزون والدين)
           try {
@@ -284,17 +290,19 @@ class SaleService {
                 correctedPrices[item.product.id] ?? item.effectivePrice;
             final itemId = _uuid.v4();
             insertedItemIds.add(itemId);
-            await _db.saleItemsDao.insertItem(SaleItemsTableCompanion.insert(
-              id: itemId,
-              saleId: saleId,
-              productId: item.product.id,
-              productName: item.product.name,
-              unitPrice: unitPrice,
-              qty: item.quantity.toDouble(),
-              subtotal: unitPrice * item.quantity,
-              discount: const Value(0),
-              total: unitPrice * item.quantity,
-            ));
+            await _db.saleItemsDao.insertItem(
+              SaleItemsTableCompanion.insert(
+                id: itemId,
+                saleId: saleId,
+                productId: item.product.id,
+                productName: item.product.name,
+                unitPrice: unitPrice,
+                qty: item.quantity.toDouble(),
+                subtotal: unitPrice * item.quantity,
+                discount: const Value(0),
+                total: unitPrice * item.quantity,
+              ),
+            );
 
             // خصم المخزون
             final movementId = _uuid.v4();
@@ -335,23 +343,26 @@ class SaleService {
                 : correctedTotal - (amountReceived ?? 0);
 
             if (debtAmount > 0) {
-              var account = await _db.accountsDao
-                  .getCustomerAccount(validCustomerId!, storeId);
+              var account = await _db.accountsDao.getCustomerAccount(
+                validCustomerId!,
+                storeId,
+              );
 
               if (account == null) {
                 final accountId = _uuid.v4();
-                await _db.accountsDao
-                    .insertAccount(AccountsTableCompanion.insert(
-                  id: accountId,
-                  storeId: storeId,
-                  orgId: Value(orgId),
-                  type: 'receivable',
-                  customerId: Value(validCustomerId),
-                  name: customerName ?? 'عميل',
-                  phone: Value(customerPhone),
-                  balance: Value(debtAmount),
-                  createdAt: now,
-                ));
+                await _db.accountsDao.insertAccount(
+                  AccountsTableCompanion.insert(
+                    id: accountId,
+                    storeId: storeId,
+                    orgId: Value(orgId),
+                    type: 'receivable',
+                    customerId: Value(validCustomerId),
+                    name: customerName ?? 'عميل',
+                    phone: Value(customerPhone),
+                    balance: Value(debtAmount),
+                    createdAt: now,
+                  ),
+                );
                 await _db.transactionsDao.recordInvoice(
                   id: _uuid.v4(),
                   storeId: storeId,
@@ -376,7 +387,8 @@ class SaleService {
               }
               if (kDebugMode) {
                 debugPrint(
-                    '[SaleService] Recorded credit debt: $debtAmount for customer $validCustomerId');
+                  '[SaleService] Recorded credit debt: $debtAmount for customer $validCustomerId',
+                );
               }
             }
           }
@@ -389,12 +401,13 @@ class SaleService {
         final errorStr = e.toString().toLowerCase();
         final isUniqueViolation =
             errorStr.contains('unique constraint failed') ||
-                errorStr.contains('unique constraint') ||
-                errorStr.contains('idx_sales_store_receipt_unique');
+            errorStr.contains('unique constraint') ||
+            errorStr.contains('idx_sales_store_receipt_unique');
         if (isUniqueViolation && attempt < maxRetries - 1) {
           if (kDebugMode) {
             debugPrint(
-                '[SaleService] Receipt number collision (attempt ${attempt + 1}/$maxRetries), retrying...');
+              '[SaleService] Receipt number collision (attempt ${attempt + 1}/$maxRetries), retrying...',
+            );
           }
           // Clear price corrections collected in the failed attempt to avoid duplicates on retry
           priceCorrections.clear();
@@ -470,7 +483,8 @@ class SaleService {
       // Sync enqueue failed -- sale is saved locally, next sync cycle will pick it up
       if (kDebugMode) {
         debugPrint(
-            '[SaleService] Sync enqueue failed (non-blocking, sale saved locally): $e');
+          '[SaleService] Sync enqueue failed (non-blocking, sale saved locally): $e',
+        );
       }
     }
 
@@ -480,10 +494,7 @@ class SaleService {
         final sale = await _db.salesDao.getSaleById(saleId);
         final saleItems = await _db.saleItemsDao.getItemsBySaleId(saleId);
         if (sale != null && saleItems.isNotEmpty) {
-          await _invoiceService.createFromSale(
-            sale: sale,
-            items: saleItems,
-          );
+          await _invoiceService.createFromSale(sale: sale, items: saleItems);
           if (kDebugMode) {
             debugPrint('[SaleService] Invoice created for sale $saleId');
           }
@@ -491,15 +502,13 @@ class SaleService {
       } catch (e) {
         if (kDebugMode) {
           debugPrint(
-              '[SaleService] Invoice creation failed (non-blocking): $e');
+            '[SaleService] Invoice creation failed (non-blocking): $e',
+          );
         }
       }
     }
 
-    return SaleResult(
-      saleId: saleId,
-      priceCorrections: priceCorrections,
-    );
+    return SaleResult(saleId: saleId, priceCorrections: priceCorrections);
   }
 
   /// إلغاء بيع
@@ -524,18 +533,15 @@ class SaleService {
       await _syncService.enqueueUpdate(
         tableName: 'sales',
         recordId: saleId,
-        changes: {
-          'id': saleId,
-          'status': 'voided',
-          'reason': reason,
-        },
+        changes: {'id': saleId, 'status': 'voided', 'reason': reason},
         priority: SyncPriority.high,
       );
     } catch (e) {
       // Sync enqueue failed -- void is saved locally, next sync cycle will pick it up
       if (kDebugMode) {
         debugPrint(
-            '[SaleService] voidSale sync enqueue failed (non-blocking, void saved locally): $e');
+          '[SaleService] voidSale sync enqueue failed (non-blocking, void saved locally): $e',
+        );
       }
     }
   }
@@ -576,14 +582,17 @@ class SaleService {
     try {
       // استعلام مباشر: جميع المبيعات المكتملة في آخر 7 أيام
       final sevenDaysAgo = DateTime.now().subtract(const Duration(days: 7));
-      final salesRows = await _db.customSelect(
-        "SELECT id FROM sales WHERE status = 'completed' AND deleted_at IS NULL AND created_at >= ?",
-        variables: [Variable.withDateTime(sevenDaysAgo)],
-      ).get();
+      final salesRows = await _db
+          .customSelect(
+            "SELECT id FROM sales WHERE status = 'completed' AND deleted_at IS NULL AND created_at >= ?",
+            variables: [Variable.withDateTime(sevenDaysAgo)],
+          )
+          .get();
 
       if (kDebugMode) {
         debugPrint(
-            '[SaleService] Repair: checking ${salesRows.length} recent sales for missing items sync');
+          '[SaleService] Repair: checking ${salesRows.length} recent sales for missing items sync',
+        );
       }
 
       for (final row in salesRows) {
@@ -591,10 +600,12 @@ class SaleService {
 
         // التحقق: هل يوجد أي عنصر sale_items في طابور المزامنة لهذا البيع؟
         // نبحث في payload عن saleId (يغطي الـ UUIDs القديمة والجديدة)
-        final existingSyncEntries = await _db.customSelect(
-          "SELECT COUNT(*) as cnt FROM sync_queue WHERE table_name = 'sale_items' AND payload LIKE ?",
-          variables: [Variable.withString('%"saleId":"$saleId"%')],
-        ).getSingle();
+        final existingSyncEntries = await _db
+            .customSelect(
+              "SELECT COUNT(*) as cnt FROM sync_queue WHERE table_name = 'sale_items' AND payload LIKE ?",
+              variables: [Variable.withString('%"saleId":"$saleId"%')],
+            )
+            .getSingle();
 
         final syncedItemsCount = existingSyncEntries.data['cnt'] as int? ?? 0;
 
@@ -606,14 +617,16 @@ class SaleService {
         if (syncedItemsCount >= localItems.length) {
           if (kDebugMode) {
             debugPrint(
-                '[SaleService] Sale $saleId: $syncedItemsCount sync entries for ${localItems.length} local items -- OK');
+              '[SaleService] Sale $saleId: $syncedItemsCount sync entries for ${localItems.length} local items -- OK',
+            );
           }
           continue;
         }
 
         if (kDebugMode) {
           debugPrint(
-              '[SaleService] Sale $saleId: $syncedItemsCount sync entries for ${localItems.length} local items -- needs repair');
+            '[SaleService] Sale $saleId: $syncedItemsCount sync entries for ${localItems.length} local items -- needs repair',
+          );
         }
 
         // إذا لم يكن هناك أي عناصر في طابور المزامنة لهذا البيع، نضيف الكل
@@ -621,7 +634,8 @@ class SaleService {
         if (syncedItemsCount > 0) {
           if (kDebugMode) {
             debugPrint(
-                '[SaleService] Skipping partial repair for sale $saleId (has $syncedItemsCount/${localItems.length})');
+              '[SaleService] Skipping partial repair for sale $saleId (has $syncedItemsCount/${localItems.length})',
+            );
           }
           continue;
         }
@@ -648,7 +662,8 @@ class SaleService {
             repairedCount++;
             if (kDebugMode) {
               debugPrint(
-                  '[SaleService] Repaired: sale_items/${item.id} for sale $saleId');
+                '[SaleService] Repaired: sale_items/${item.id} for sale $saleId',
+              );
             }
           } catch (e) {
             if (kDebugMode) {
@@ -660,7 +675,8 @@ class SaleService {
 
       if (kDebugMode) {
         debugPrint(
-            '[SaleService] Repair complete: $repairedCount items added to sync queue');
+          '[SaleService] Repair complete: $repairedCount items added to sync queue',
+        );
       }
     } catch (e) {
       if (kDebugMode) {
@@ -685,7 +701,8 @@ class SaleService {
 
       if (kDebugMode) {
         debugPrint(
-            '[SaleService] RepairSync: checking ${salesInQueue.length} sales with customerId in queue');
+          '[SaleService] RepairSync: checking ${salesInQueue.length} sales with customerId in queue',
+        );
       }
 
       for (final row in salesInQueue) {
@@ -693,27 +710,31 @@ class SaleService {
         final payload = row.data['payload'] as String;
 
         // استخراج customerId من الـ payload (قيمة غير null)
-        final customerIdMatch =
-            RegExp(r'"customerId":"([^"]+)"').firstMatch(payload);
+        final customerIdMatch = RegExp(
+          r'"customerId":"([^"]+)"',
+        ).firstMatch(payload);
         if (customerIdMatch == null) continue;
 
         final customerId = customerIdMatch.group(1)!;
 
         if (kDebugMode) {
           debugPrint(
-              '[SaleService] Sale queue $queueId has customerId: $customerId -- removing to fix FK');
+            '[SaleService] Sale queue $queueId has customerId: $customerId -- removing to fix FK',
+          );
         }
 
         // إزالة customerId من الـ payload
         final fixedPayload = payload.replaceAll(
-            '"customerId":"$customerId"', '"customerId":null');
+          '"customerId":"$customerId"',
+          '"customerId":null',
+        );
 
         // استخدام customUpdate (يعمل مع web/wasm على عكس customStatement)
         await _db.customUpdate(
           "UPDATE sync_queue SET payload = ?, status = 'pending', retry_count = 0, last_error = NULL WHERE id = ?",
           variables: [
             Variable.withString(fixedPayload),
-            Variable.withString(queueId)
+            Variable.withString(queueId),
           ],
           updates: {},
           updateKind: UpdateKind.update,
@@ -727,7 +748,8 @@ class SaleService {
 
       if (kDebugMode) {
         debugPrint(
-            '[SaleService] RepairSync complete: $repairedCount sales fixed');
+          '[SaleService] RepairSync complete: $repairedCount sales fixed',
+        );
       }
     } catch (e) {
       if (kDebugMode) {

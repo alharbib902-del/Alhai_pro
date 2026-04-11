@@ -38,11 +38,13 @@ void main() {
     });
 
     group('isOwed', () {
-      test('should return true when balance is positive (store owes supplier)',
-          () {
-        final supplier = createSupplier(balance: 500.0);
-        expect(supplier.isOwed, isTrue);
-      });
+      test(
+        'should return true when balance is positive (store owes supplier)',
+        () {
+          final supplier = createSupplier(balance: 500.0);
+          expect(supplier.isOwed, isTrue);
+        },
+      );
 
       test('should return false when balance is zero', () {
         final supplier = createSupplier(balance: 0);

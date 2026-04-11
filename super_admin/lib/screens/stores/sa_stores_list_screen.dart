@@ -33,9 +33,9 @@ class _SAStoresListScreenState extends ConsumerState<SAStoresListScreen> {
   }
 
   void _applySearch(String query) {
-    ref.read(saStoresFilterProvider.notifier).update(
-          (state) => state.copyWith(search: query),
-        );
+    ref
+        .read(saStoresFilterProvider.notifier)
+        .update((state) => state.copyWith(search: query));
   }
 
   @override
@@ -84,10 +84,12 @@ class _SAStoresListScreenState extends ConsumerState<SAStoresListScreen> {
                     controller: _searchController,
                     onChanged: (query) {
                       _debounceTimer?.cancel();
-                      _debounceTimer =
-                          Timer(const Duration(milliseconds: 300), () {
-                        _applySearch(query);
-                      });
+                      _debounceTimer = Timer(
+                        const Duration(milliseconds: 300),
+                        () {
+                          _applySearch(query);
+                        },
+                      );
                     },
                     decoration: InputDecoration(
                       hintText: l10n.searchStores,
@@ -160,13 +162,21 @@ class _SAStoresListScreenState extends ConsumerState<SAStoresListScreen> {
                       ),
                       columns: [
                         DataColumn2(
-                            label: Text(l10n.storeName), size: ColumnSize.L),
+                          label: Text(l10n.storeName),
+                          size: ColumnSize.L,
+                        ),
                         DataColumn2(
-                            label: Text(l10n.storeStatus), fixedWidth: 120),
+                          label: Text(l10n.storeStatus),
+                          fixedWidth: 120,
+                        ),
                         DataColumn2(
-                            label: Text(l10n.storePlan), fixedWidth: 140),
+                          label: Text(l10n.storePlan),
+                          fixedWidth: 140,
+                        ),
                         DataColumn2(
-                            label: Text(l10n.storeCreatedAt), fixedWidth: 130),
+                          label: Text(l10n.storeCreatedAt),
+                          fixedWidth: 130,
+                        ),
                         const DataColumn2(label: SizedBox(), fixedWidth: 56),
                       ],
                       source: _StoresDataSource(
@@ -211,8 +221,9 @@ class _StoresDataSource extends DataTableSource {
 
     final name = store.name.isEmpty ? 'Unnamed' : store.name;
     final createdAt = store.createdAt ?? '';
-    final dateStr =
-        createdAt.length >= 10 ? createdAt.substring(0, 10) : createdAt;
+    final dateStr = createdAt.length >= 10
+        ? createdAt.substring(0, 10)
+        : createdAt;
 
     // Extract plan from typed subscription
     final planName = store.planName;
@@ -284,21 +295,21 @@ class _StatusBadge extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final (color, bgColor) = switch (status) {
       'active' => (
-          isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
-          isDark ? const Color(0xFF1B3A2A) : const Color(0xFFDCFCE7),
-        ),
+        isDark ? const Color(0xFF4ADE80) : const Color(0xFF15803D),
+        isDark ? const Color(0xFF1B3A2A) : const Color(0xFFDCFCE7),
+      ),
       'suspended' => (
-          isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C),
-          isDark ? const Color(0xFF3A1B1B) : const Color(0xFFFEE2E2),
-        ),
+        isDark ? const Color(0xFFF87171) : const Color(0xFFB91C1C),
+        isDark ? const Color(0xFF3A1B1B) : const Color(0xFFFEE2E2),
+      ),
       'trial' => (
-          isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309),
-          isDark ? const Color(0xFF3A2F1B) : const Color(0xFFFEF3C7),
-        ),
+        isDark ? const Color(0xFFFBBF24) : const Color(0xFFB45309),
+        isDark ? const Color(0xFF3A2F1B) : const Color(0xFFFEF3C7),
+      ),
       _ => (
-          isDark ? const Color(0xFF9CA3AF) : const Color(0xFF4B5563),
-          isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF3F4F6),
-        ),
+        isDark ? const Color(0xFF9CA3AF) : const Color(0xFF4B5563),
+        isDark ? const Color(0xFF2A2A2A) : const Color(0xFFF3F4F6),
+      ),
     };
 
     return Container(
@@ -313,9 +324,9 @@ class _StatusBadge extends StatelessWidget {
       child: Text(
         status.toUpperCase(),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
-            ),
+          color: color,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }
@@ -349,9 +360,9 @@ class _PlanBadge extends StatelessWidget {
       child: Text(
         plan,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
-            ),
+          color: color,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

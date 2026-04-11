@@ -60,8 +60,9 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -71,7 +72,8 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(
-                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+            ),
             child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
           ),
         ),
@@ -84,8 +86,12 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
     return '${now.day}/${now.month}/${now.year} \u2022 ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
-      AppLocalizations l10n) {
+  Widget _buildContent(
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     if (isWideScreen) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -103,10 +109,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
             ),
           ),
           const SizedBox(width: AlhaiSpacing.lg),
-          Expanded(
-            flex: 2,
-            child: _buildRecentCouponsCard(isDark, l10n),
-          ),
+          Expanded(flex: 2, child: _buildRecentCouponsCard(isDark, l10n)),
         ],
       );
     }
@@ -118,11 +121,11 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
         SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         if (_isValidated && _discountDetails != null) ...[
           _buildDiscountDetailsCard(isDark, l10n),
-          SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md)
+          SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         ],
         if (_validationError != null) ...[
           _buildErrorCard(isDark, l10n),
-          SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md)
+          SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         ],
         _buildRecentCouponsCard(isDark, l10n),
       ],
@@ -148,15 +151,21 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.confirmation_number_rounded,
-                    color: AppColors.primary, size: 20),
+                child: const Icon(
+                  Icons.confirmation_number_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text(l10n.enterCouponCode,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.getTextPrimary(isDark))),
+              Text(
+                l10n.enterCouponCode,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
@@ -195,13 +204,17 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: AppColors.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
               ),
               filled: true,
               fillColor: AppColors.getSurfaceVariant(isDark),
               contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.md, vertical: 18),
+                horizontal: AlhaiSpacing.md,
+                vertical: 18,
+              ),
             ),
           ),
           const SizedBox(height: AlhaiSpacing.md),
@@ -212,8 +225,9 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                      content: Text(l10n.scanBarcode),
-                      backgroundColor: AppColors.info),
+                    content: Text(l10n.scanBarcode),
+                    backgroundColor: AppColors.info,
+                  ),
                 );
               },
               icon: const Icon(Icons.qr_code_scanner_rounded, size: 18),
@@ -223,7 +237,8 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                 side: BorderSide(color: AppColors.info.withValues(alpha: 0.5)),
                 padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ),
@@ -240,7 +255,8 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                       ? const SizedBox(
                           width: 18,
                           height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2))
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
                       : const Icon(Icons.check_circle_outlined, size: 18),
                   label: Text(l10n.validateCoupon),
                   style: OutlinedButton.styleFrom(
@@ -248,7 +264,8 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                     side: BorderSide(color: AppColors.getBorder(isDark)),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
@@ -265,7 +282,8 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                     foregroundColor: AppColors.textOnPrimary,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12)),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
                 ),
               ),
@@ -290,25 +308,40 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
         children: [
           Row(
             children: [
-              const Icon(Icons.check_circle_rounded,
-                  color: AppColors.success, size: 24),
+              const Icon(
+                Icons.check_circle_rounded,
+                color: AppColors.success,
+                size: 24,
+              ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text(l10n.couponValid,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.getTextPrimary(isDark))),
+              Text(
+                l10n.couponValid,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.md),
           _buildDetailRow(l10n.discountType, details['type'] as String, isDark),
           _buildDetailRow(
-              l10n.discountValue, details['value'] as String, isDark),
+            l10n.discountValue,
+            details['value'] as String,
+            isDark,
+          ),
           _buildDetailRow(
-              'Valid Until', details['validUntil'] as String, isDark),
+            'Valid Until',
+            details['validUntil'] as String,
+            isDark,
+          ),
           if (details['minPurchase'] != null)
             _buildDetailRow(
-                'Minimum Purchase', details['minPurchase'] as String, isDark),
+              'Minimum Purchase',
+              details['minPurchase'] as String,
+              isDark,
+            ),
         ],
       ),
     );
@@ -320,14 +353,21 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: TextStyle(
-                  fontSize: 13, color: AppColors.getTextSecondary(isDark))),
-          Text(value,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.getTextPrimary(isDark))),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              color: AppColors.getTextSecondary(isDark),
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: AppColors.getTextPrimary(isDark),
+            ),
+          ),
         ],
       ),
     );
@@ -343,16 +383,20 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
       ),
       child: Row(
         children: [
-          const Icon(Icons.error_outline_rounded,
-              color: AppColors.error, size: 24),
+          const Icon(
+            Icons.error_outline_rounded,
+            color: AppColors.error,
+            size: 24,
+          ),
           const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Text(
               _validationError!,
               style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.getTextPrimary(isDark)),
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: AppColors.getTextPrimary(isDark),
+              ),
             ),
           ),
         ],
@@ -379,15 +423,21 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.history_rounded,
-                    color: AppColors.warning, size: 20),
+                child: const Icon(
+                  Icons.history_rounded,
+                  color: AppColors.warning,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text(l10n.recentCoupons,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.getTextPrimary(isDark))),
+              Text(
+                l10n.recentCoupons,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.md),
@@ -395,9 +445,13 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
             Center(
               child: Padding(
                 padding: const EdgeInsets.all(AlhaiSpacing.md),
-                child: Text(l10n.noRecentCoupons,
-                    style: TextStyle(
-                        fontSize: 13, color: AppColors.getTextMuted(isDark))),
+                child: Text(
+                  l10n.noRecentCoupons,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: AppColors.getTextMuted(isDark),
+                  ),
+                ),
               ),
             )
           else
@@ -430,42 +484,53 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                           borderRadius: BorderRadius.circular(8),
                         ),
                         alignment: Alignment.center,
-                        child: const Icon(Icons.confirmation_number_outlined,
-                            color: AppColors.primary, size: 18),
+                        child: const Icon(
+                          Icons.confirmation_number_outlined,
+                          color: AppColors.primary,
+                          size: 18,
+                        ),
                       ),
                       const SizedBox(width: AlhaiSpacing.sm),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(coupon['code'] as String,
-                                style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColors.getTextPrimary(isDark),
-                                    fontFamily: 'monospace')),
+                            Text(
+                              coupon['code'] as String,
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.getTextPrimary(isDark),
+                                fontFamily: 'monospace',
+                              ),
+                            ),
                             Text(
                               '${date.day}/${date.month}/${date.year} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}',
                               style: TextStyle(
-                                  fontSize: 11,
-                                  color: AppColors.getTextMuted(isDark)),
+                                fontSize: 11,
+                                color: AppColors.getTextMuted(isDark),
+                              ),
                             ),
                           ],
                         ),
                       ),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: AlhaiSpacing.xs,
-                            vertical: AlhaiSpacing.xxs),
+                          horizontal: AlhaiSpacing.xs,
+                          vertical: AlhaiSpacing.xxs,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.success.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(999),
                         ),
-                        child: Text(coupon['discount'] as String,
-                            style: const TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.success)),
+                        child: Text(
+                          coupon['discount'] as String,
+                          style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.success,
+                          ),
+                        ),
                       ),
                     ],
                   ),
@@ -494,8 +559,9 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
 
       // Try to find discount by code
       final discounts = await _db.discountsDao.getActiveDiscounts(storeId);
-      final match =
-          discounts.where((d) => d.name.toUpperCase() == code).toList();
+      final match = discounts
+          .where((d) => d.name.toUpperCase() == code)
+          .toList();
 
       if (match.isNotEmpty) {
         final discount = match.first;
@@ -526,8 +592,9 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
       reportError(e, stackTrace: stack, hint: 'Validate coupon code');
       if (mounted) {
         setState(() {
-          _validationError =
-              AppLocalizations.of(context).errorWithDetails('$e');
+          _validationError = AppLocalizations.of(
+            context,
+          ).errorWithDetails('$e');
         });
       }
     } finally {
@@ -539,7 +606,9 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
     final l10n = AppLocalizations.of(context);
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-          content: Text(l10n.couponCode), backgroundColor: AppColors.success),
+        content: Text(l10n.couponCode),
+        backgroundColor: AppColors.success,
+      ),
     );
     context.pop();
   }

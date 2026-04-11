@@ -56,7 +56,9 @@ class StoreMemberService {
 
   /// تحديث صلاحيات الموظف
   Future<StoreMember> updatePermissions(
-      String memberId, List<String> permissions) async {
+    String memberId,
+    List<String> permissions,
+  ) async {
     return await _membersRepo.updatePermissions(memberId, permissions);
   }
 
@@ -77,7 +79,10 @@ class StoreMemberService {
 
   /// التحقق من صلاحية
   Future<bool> hasPermission(
-      String userId, String storeId, String permission) async {
+    String userId,
+    String storeId,
+    String permission,
+  ) async {
     return await _membersRepo.hasPermission(userId, storeId, permission);
   }
 

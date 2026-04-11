@@ -55,32 +55,40 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
       }
 
       // Cash in drawer - sum of completed sales - expenses - payables
-      final cashResult = await db.customSelect(
-        '''SELECT COALESCE(SUM(CASE WHEN type IN ('sale','cash_in') THEN amount ELSE -amount END), 0) as cash
+      final cashResult = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(CASE WHEN type IN ('sale','cash_in') THEN amount ELSE -amount END), 0) as cash
            FROM transactions WHERE store_id = ?''',
-        variables: [Variable.withString(storeId)],
-      ).getSingle();
+            variables: [Variable.withString(storeId)],
+          )
+          .getSingle();
 
       // Accounts receivable (customer debts)
-      final receivables = await db.customSelect(
-        '''SELECT COALESCE(SUM(balance), 0) as total
+      final receivables = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(balance), 0) as total
            FROM accounts WHERE store_id = ? AND type = 'receivable' AND balance > 0''',
-        variables: [Variable.withString(storeId)],
-      ).getSingle();
+            variables: [Variable.withString(storeId)],
+          )
+          .getSingle();
 
       // Inventory value
-      final invResult = await db.customSelect(
-        '''SELECT COALESCE(SUM(p.current_stock * COALESCE(p.cost_price, p.price * 0.7)), 0) as total
+      final invResult = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(p.current_stock * COALESCE(p.cost_price, p.price * 0.7)), 0) as total
            FROM products p WHERE p.store_id = ? AND p.current_stock > 0''',
-        variables: [Variable.withString(storeId)],
-      ).getSingle();
+            variables: [Variable.withString(storeId)],
+          )
+          .getSingle();
 
       // Accounts payable (supplier debts)
-      final payables = await db.customSelect(
-        '''SELECT COALESCE(SUM(balance), 0) as total
+      final payables = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(balance), 0) as total
            FROM accounts WHERE store_id = ? AND type = 'payable' AND balance > 0''',
-        variables: [Variable.withString(storeId)],
-      ).getSingle();
+            variables: [Variable.withString(storeId)],
+          )
+          .getSingle();
 
       if (mounted) {
         setState(() {
@@ -130,7 +138,9 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
               Text(_error!),
               const SizedBox(height: AlhaiSpacing.sm),
               ElevatedButton(
-                  onPressed: _loadData, child: const Text('إعادة المحاولة')),
+                onPressed: _loadData,
+                child: const Text('إعادة المحاولة'),
+              ),
             ],
           ),
         ),
@@ -159,7 +169,9 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
               Center(
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                    horizontal: AlhaiSpacing.md,
+                    vertical: AlhaiSpacing.xs,
+                  ),
                   decoration: BoxDecoration(
                     color: theme.colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(20),
@@ -189,7 +201,9 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
                 items: [
                   _LineItem(label: 'النقد في الصندوق', amount: _cashInDrawer),
                   _LineItem(
-                      label: 'ذمم مدينة (عملاء)', amount: _accountsReceivable),
+                    label: 'ذمم مدينة (عملاء)',
+                    amount: _accountsReceivable,
+                  ),
                   _LineItem(label: 'قيمة المخزون', amount: _inventoryValue),
                 ],
                 total: _totalCurrentAssets,
@@ -197,9 +211,10 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
               ),
               const SizedBox(height: AlhaiSpacing.sm),
               _TotalRow(
-                  label: 'إجمالي الأصول',
-                  amount: _totalAssets,
-                  color: AlhaiColors.info),
+                label: 'إجمالي الأصول',
+                amount: _totalAssets,
+                color: AlhaiColors.info,
+              ),
 
               const SizedBox(height: AlhaiSpacing.mdl),
               const Divider(thickness: 2),
@@ -218,16 +233,19 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
                 isDark: isDark,
                 items: [
                   _LineItem(
-                      label: 'ذمم دائنة (موردون)', amount: _accountsPayable),
+                    label: 'ذمم دائنة (موردون)',
+                    amount: _accountsPayable,
+                  ),
                 ],
                 total: _totalLiabilities,
                 totalLabel: 'إجمالي الالتزامات المتداولة',
               ),
               const SizedBox(height: AlhaiSpacing.sm),
               _TotalRow(
-                  label: 'إجمالي الالتزامات',
-                  amount: _totalLiabilities,
-                  color: AlhaiColors.error),
+                label: 'إجمالي الالتزامات',
+                amount: _totalLiabilities,
+                color: AlhaiColors.error,
+              ),
 
               const SizedBox(height: AlhaiSpacing.mdl),
               const Divider(thickness: 2),
@@ -250,9 +268,13 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('صافي حقوق الملكية',
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold)),
+                      const Text(
+                        'صافي حقوق الملكية',
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       Text(
                         '${_equity.toStringAsFixed(0)} ر.س',
                         style: TextStyle(
@@ -278,10 +300,13 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
                   padding: const EdgeInsets.all(AlhaiSpacing.md),
                   child: Column(
                     children: [
-                      Text('معادلة المحاسبة',
-                          style: TextStyle(
-                              fontSize: 12,
-                              color: theme.colorScheme.onSurfaceVariant)),
+                      Text(
+                        'معادلة المحاسبة',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
                       const SizedBox(height: AlhaiSpacing.xs),
                       Text(
                         'الأصول = الالتزامات + حقوق الملكية',
@@ -293,7 +318,8 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
                         '${_totalLiabilities.toStringAsFixed(0)} + '
                         '${_equity.toStringAsFixed(0)}',
                         style: TextStyle(
-                          color: (_totalAssets - _totalLiabilities - _equity)
+                          color:
+                              (_totalAssets - _totalLiabilities - _equity)
                                       .abs() <
                                   1
                               ? AlhaiColors.success
@@ -332,14 +358,22 @@ class _SectionHeader extends StatelessWidget {
       children: [
         Icon(icon, color: color, size: 22),
         const SizedBox(width: AlhaiSpacing.xs),
-        Text(title,
-            style: TextStyle(
-                fontSize: 16, fontWeight: FontWeight.bold, color: color)),
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
+        ),
         const Spacer(),
         Text(
           '${total.toStringAsFixed(0)} ر.س',
           style: TextStyle(
-              fontSize: 14, fontWeight: FontWeight.bold, color: color),
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
         ),
       ],
     );
@@ -369,39 +403,50 @@ class _GroupCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                )),
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 13,
+                fontWeight: FontWeight.w600,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
             const Divider(),
-            ...items.map((item) => Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(item.label, style: const TextStyle(fontSize: 13)),
-                      Text(
-                        '${item.amount.toStringAsFixed(0)} ر.س',
-                        style: const TextStyle(
-                            fontSize: 13, fontWeight: FontWeight.w500),
+            ...items.map(
+              (item) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(item.label, style: const TextStyle(fontSize: 13)),
+                    Text(
+                      '${item.amount.toStringAsFixed(0)} ر.س',
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w500,
                       ),
-                    ],
-                  ),
-                )),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             const Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(totalLabel,
-                    style: const TextStyle(
-                        fontSize: 13, fontWeight: FontWeight.bold)),
+                Text(
+                  totalLabel,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
                 Text(
                   '${total.toStringAsFixed(0)} ر.س',
                   style: const TextStyle(
-                      fontSize: 13, fontWeight: FontWeight.bold),
+                    fontSize: 13,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -417,14 +462,19 @@ class _TotalRow extends StatelessWidget {
   final double amount;
   final Color color;
 
-  const _TotalRow(
-      {required this.label, required this.amount, required this.color});
+  const _TotalRow({
+    required this.label,
+    required this.amount,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(8),
@@ -432,13 +482,21 @@ class _TotalRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, color: color, fontSize: 15)),
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: color,
+              fontSize: 15,
+            ),
+          ),
           Text(
             '${amount.toStringAsFixed(0)} ر.س',
             style: TextStyle(
-                fontWeight: FontWeight.bold, color: color, fontSize: 15),
+              fontWeight: FontWeight.bold,
+              color: color,
+              fontSize: 15,
+            ),
           ),
         ],
       ),

@@ -36,15 +36,21 @@ class LitePendingApprovalsScreen extends ConsumerWidget {
             data: (items) => Container(
               margin: const EdgeInsetsDirectional.only(end: AlhaiSpacing.md),
               padding: const EdgeInsets.symmetric(
-                  horizontal: 10, vertical: AlhaiSpacing.xxs),
+                horizontal: 10,
+                vertical: AlhaiSpacing.xxs,
+              ),
               decoration: BoxDecoration(
-                  color: AlhaiColors.warning,
-                  borderRadius: BorderRadius.circular(12)),
-              child: Text('${items.length}',
-                  style: const TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 13)),
+                color: AlhaiColors.warning,
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Text(
+                '${items.length}',
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 13,
+                ),
+              ),
             ),
             loading: () => const SizedBox.shrink(),
             error: (_, __) => const SizedBox.shrink(),
@@ -57,12 +63,18 @@ class LitePendingApprovalsScreen extends ConsumerWidget {
           return RefreshIndicator(
             onRefresh: () async => ref.invalidate(litePendingApprovalsProvider),
             child: ListView.builder(
-              padding:
-                  EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+              padding: EdgeInsets.all(
+                isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg,
+              ),
               itemCount: items.length,
               itemBuilder: (context, index) {
                 return _buildApprovalCard(
-                    context, items[index], isDark, l10n, ref);
+                  context,
+                  items[index],
+                  isDark,
+                  l10n,
+                  ref,
+                );
               },
             ),
           );
@@ -74,9 +86,10 @@ class LitePendingApprovalsScreen extends ConsumerWidget {
             children: [
               Text(l10n.errorOccurred),
               TextButton.icon(
-                  onPressed: () => ref.invalidate(litePendingApprovalsProvider),
-                  icon: const Icon(Icons.refresh_rounded),
-                  label: Text(l10n.tryAgain)),
+                onPressed: () => ref.invalidate(litePendingApprovalsProvider),
+                icon: const Icon(Icons.refresh_rounded),
+                label: Text(l10n.tryAgain),
+              ),
             ],
           ),
         ),
@@ -85,30 +98,43 @@ class LitePendingApprovalsScreen extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(
-      BuildContext context, bool isDark, AppLocalizations l10n) {
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.check_circle_outline,
-              size: 64,
-              color: isDark
-                  ? Colors.white24
-                  : AlhaiColors.success.withValues(alpha: 0.5)),
+          Icon(
+            Icons.check_circle_outline,
+            size: 64,
+            color: isDark
+                ? Colors.white24
+                : AlhaiColors.success.withValues(alpha: 0.5),
+          ),
           const SizedBox(height: AlhaiSpacing.md),
-          Text(l10n.noResults,
-              style: TextStyle(
-                  fontSize: 16,
-                  color: isDark
-                      ? Colors.white54
-                      : Theme.of(context).colorScheme.onSurfaceVariant)),
+          Text(
+            l10n.noResults,
+            style: TextStyle(
+              fontSize: 16,
+              color: isDark
+                  ? Colors.white54
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Future<void> _handleAction(BuildContext context, WidgetRef ref,
-      PendingApprovalItem item, String newStatus, AppLocalizations l10n) async {
+  Future<void> _handleAction(
+    BuildContext context,
+    WidgetRef ref,
+    PendingApprovalItem item,
+    String newStatus,
+    AppLocalizations l10n,
+  ) async {
     // PIN verification
     final approved = await ManagerApprovalScreen.showApprovalDialog(
       context,
@@ -129,10 +155,11 @@ class LitePendingApprovalsScreen extends ConsumerWidget {
     if (item.type == 'refund') {
       final fn = newStatus == 'approved' ? approveRefund : rejectRefund;
       await fn(
-          returnId: item.id,
-          storeId: storeId,
-          userId: userId,
-          userName: userName);
+        returnId: item.id,
+        storeId: storeId,
+        userId: userId,
+        userName: userName,
+      );
     } else {
       final db = GetIt.I<AppDatabase>();
       await db.purchasesDao.updateStatus(item.id, newStatus);
@@ -162,8 +189,13 @@ class LitePendingApprovalsScreen extends ConsumerWidget {
     return '${diff.inDays}d ago';
   }
 
-  Widget _buildApprovalCard(BuildContext context, PendingApprovalItem item,
-      bool isDark, AppLocalizations l10n, WidgetRef ref) {
+  Widget _buildApprovalCard(
+    BuildContext context,
+    PendingApprovalItem item,
+    bool isDark,
+    AppLocalizations l10n,
+    WidgetRef ref,
+  ) {
     final color = _typeColor(item.type);
     final icon = _typeIcon(item.type);
 
@@ -174,9 +206,10 @@ class LitePendingApprovalsScreen extends ConsumerWidget {
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-            color: isDark
-                ? Colors.white12
-                : Theme.of(context).colorScheme.outlineVariant),
+          color: isDark
+              ? Colors.white12
+              : Theme.of(context).colorScheme.outlineVariant,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,8 +220,9 @@ class LitePendingApprovalsScreen extends ConsumerWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(10)),
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: Icon(icon, color: color, size: 20),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
@@ -197,56 +231,77 @@ class LitePendingApprovalsScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                        item.type == 'refund'
-                            ? 'Refund Request'
-                            : 'Purchase Order',
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white : Colors.black87)),
-                    Text(item.reference,
-                        style: TextStyle(
-                            fontSize: 12,
-                            color: isDark
-                                ? Colors.white38
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant)),
+                      item.type == 'refund'
+                          ? 'Refund Request'
+                          : 'Purchase Order',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    Text(
+                      item.reference,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark
+                            ? Colors.white38
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                   ],
                 ),
               ),
-              Text('${item.amount.toStringAsFixed(0)} SAR',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16,
-                      color: isDark ? Colors.white : Colors.black87)),
+              Text(
+                '${item.amount.toStringAsFixed(0)} SAR',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.sm),
-          Text(item.description,
-              style: TextStyle(
-                  fontSize: 13,
-                  color: isDark
-                      ? Colors.white54
-                      : Theme.of(context).colorScheme.onSurfaceVariant)),
+          Text(
+            item.description,
+            style: TextStyle(
+              fontSize: 13,
+              color: isDark
+                  ? Colors.white54
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           Row(
             children: [
-              Icon(Icons.person,
-                  size: 14, color: isDark ? Colors.white24 : Colors.black38),
+              Icon(
+                Icons.person,
+                size: 14,
+                color: isDark ? Colors.white24 : Colors.black38,
+              ),
               const SizedBox(width: AlhaiSpacing.xxs),
-              Text(item.requestedBy,
-                  style: TextStyle(
-                      fontSize: 12,
-                      color: isDark ? Colors.white38 : Colors.black45)),
+              Text(
+                item.requestedBy,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isDark ? Colors.white38 : Colors.black45,
+                ),
+              ),
               const SizedBox(width: AlhaiSpacing.md),
-              Icon(Icons.access_time,
-                  size: 14, color: isDark ? Colors.white24 : Colors.black38),
+              Icon(
+                Icons.access_time,
+                size: 14,
+                color: isDark ? Colors.white24 : Colors.black38,
+              ),
               const SizedBox(width: AlhaiSpacing.xxs),
-              Text(_timeAgo(item.createdAt),
-                  style: TextStyle(
-                      fontSize: 12,
-                      color: isDark ? Colors.white38 : Colors.black45)),
+              Text(
+                _timeAgo(item.createdAt),
+                style: TextStyle(
+                  fontSize: 12,
+                  color: isDark ? Colors.white38 : Colors.black45,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.md),
@@ -264,7 +319,8 @@ class LitePendingApprovalsScreen extends ConsumerWidget {
                     foregroundColor: AlhaiColors.error,
                     side: const BorderSide(color: AlhaiColors.error),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                   ),
                 ),
@@ -279,7 +335,8 @@ class LitePendingApprovalsScreen extends ConsumerWidget {
                   style: FilledButton.styleFrom(
                     backgroundColor: AlhaiColors.success,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                     padding: const EdgeInsets.symmetric(vertical: 10),
                   ),
                 ),

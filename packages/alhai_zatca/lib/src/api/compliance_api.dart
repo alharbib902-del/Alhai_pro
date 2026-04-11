@@ -63,10 +63,7 @@ class ComplianceApi {
         errorMessage: _extractErrorMessage(data),
       );
     } on ZatcaApiException catch (e) {
-      return ComplianceCsidResponse(
-        isSuccess: false,
-        errorMessage: e.message,
-      );
+      return ComplianceCsidResponse(isSuccess: false, errorMessage: e.message);
     } catch (e) {
       return ComplianceCsidResponse(
         isSuccess: false,
@@ -137,10 +134,7 @@ class ComplianceApi {
         errorMessage: _extractErrorMessage(data),
       );
     } on ZatcaApiException catch (e) {
-      return ProductionCsidResponse(
-        isSuccess: false,
-        errorMessage: e.message,
-      );
+      return ProductionCsidResponse(isSuccess: false, errorMessage: e.message);
     } catch (e) {
       return ProductionCsidResponse(
         isSuccess: false,

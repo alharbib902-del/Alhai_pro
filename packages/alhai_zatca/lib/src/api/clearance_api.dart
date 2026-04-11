@@ -93,17 +93,13 @@ class ClearanceApi {
         // Server error -- retry after delay
         attempts++;
         if (attempts <= maxRetries) {
-          await Future<void>.delayed(
-            Duration(seconds: 1 << attempts),
-          );
+          await Future<void>.delayed(Duration(seconds: 1 << attempts));
         }
       } catch (e) {
         lastResponse = ZatcaResponse.failure(message: e.toString());
         attempts++;
         if (attempts <= maxRetries) {
-          await Future<void>.delayed(
-            Duration(seconds: 1 << attempts),
-          );
+          await Future<void>.delayed(Duration(seconds: 1 << attempts));
         }
       }
     }
@@ -113,8 +109,9 @@ class ClearanceApi {
 
     return ClearanceResult(
       response: finalResponse,
-      stampedXmlBase64:
-          finalResponse.isSuccess ? finalResponse.clearedInvoiceXml : null,
+      stampedXmlBase64: finalResponse.isSuccess
+          ? finalResponse.clearedInvoiceXml
+          : null,
     );
   }
 }
@@ -127,10 +124,7 @@ class ClearanceResult {
   /// The ZATCA-stamped invoice XML (base64), or null if not cleared
   final String? stampedXmlBase64;
 
-  const ClearanceResult({
-    required this.response,
-    this.stampedXmlBase64,
-  });
+  const ClearanceResult({required this.response, this.stampedXmlBase64});
 
   /// Whether the invoice was successfully cleared
   bool get isCleared => response.isSuccess && stampedXmlBase64 != null;

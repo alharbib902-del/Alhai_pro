@@ -64,7 +64,9 @@ class LocalCacheService {
 
   /// Persist a single delivery's full detail (includes order items).
   Future<void> cacheDeliveryDetail(
-      String id, Map<String, dynamic> delivery) async {
+    String id,
+    Map<String, dynamic> delivery,
+  ) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('cache_delivery_$id', jsonEncode(delivery));
     await _setTimestamp(prefs, 'delivery_$id');
@@ -93,7 +95,9 @@ class LocalCacheService {
   /// Call before sending the mutation; revert by calling [cacheDeliveryDetail]
   /// with the original map if the server rejects the change.
   Future<void> patchCachedDelivery(
-      String id, Map<String, dynamic> patch) async {
+    String id,
+    Map<String, dynamic> patch,
+  ) async {
     final existing = await getCachedDeliveryDetail(id) ?? {};
     final merged = {...existing, ...patch};
     await cacheDeliveryDetail(id, merged);
@@ -169,8 +173,10 @@ class LocalCacheService {
     _deliveriesCache = null;
     _profileCache = null;
     final prefs = await SharedPreferences.getInstance();
-    final toRemove =
-        prefs.getKeys().where((k) => k.startsWith('cache_')).toList();
+    final toRemove = prefs
+        .getKeys()
+        .where((k) => k.startsWith('cache_'))
+        .toList();
     for (final key in toRemove) {
       await prefs.remove(key);
     }

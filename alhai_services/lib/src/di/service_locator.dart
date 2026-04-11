@@ -15,9 +15,7 @@ void _registerCoreServices() {
   // Auth Service
   if (!serviceLocator.isRegistered<AuthService>()) {
     serviceLocator.registerLazySingleton<AuthService>(
-      () => AuthService(
-        serviceLocator<AuthRepository>(),
-      ),
+      () => AuthService(serviceLocator<AuthRepository>()),
     );
   }
 
@@ -56,36 +54,28 @@ void _registerCoreServices() {
   // Debt Service
   if (!serviceLocator.isRegistered<DebtService>()) {
     serviceLocator.registerLazySingleton<DebtService>(
-      () => DebtService(
-        serviceLocator<DebtsRepository>(),
-      ),
+      () => DebtService(serviceLocator<DebtsRepository>()),
     );
   }
 
   // Report Service
   if (!serviceLocator.isRegistered<ReportService>()) {
     serviceLocator.registerLazySingleton<ReportService>(
-      () => ReportService(
-        serviceLocator<ReportsRepository>(),
-      ),
+      () => ReportService(serviceLocator<ReportsRepository>()),
     );
   }
 
   // Refund Service
   if (!serviceLocator.isRegistered<RefundService>()) {
     serviceLocator.registerLazySingleton<RefundService>(
-      () => RefundService(
-        serviceLocator<RefundsRepository>(),
-      ),
+      () => RefundService(serviceLocator<RefundsRepository>()),
     );
   }
 
   // Delivery Service
   if (!serviceLocator.isRegistered<DeliveryService>()) {
     serviceLocator.registerLazySingleton<DeliveryService>(
-      () => DeliveryService(
-        serviceLocator<DeliveryRepository>(),
-      ),
+      () => DeliveryService(serviceLocator<DeliveryRepository>()),
     );
   }
 
@@ -102,18 +92,14 @@ void _registerCoreServices() {
   // Notification Service
   if (!serviceLocator.isRegistered<NotificationService>()) {
     serviceLocator.registerLazySingleton<NotificationService>(
-      () => NotificationService(
-        serviceLocator<NotificationsRepository>(),
-      ),
+      () => NotificationService(serviceLocator<NotificationsRepository>()),
     );
   }
 
   // Promotion Service
   if (!serviceLocator.isRegistered<PromotionService>()) {
     serviceLocator.registerLazySingleton<PromotionService>(
-      () => PromotionService(
-        serviceLocator<PromotionsRepository>(),
-      ),
+      () => PromotionService(serviceLocator<PromotionsRepository>()),
     );
   }
 }
@@ -122,108 +108,84 @@ void _registerAdditionalServices() {
   // Wholesale Service
   if (!serviceLocator.isRegistered<WholesaleService>()) {
     serviceLocator.registerLazySingleton<WholesaleService>(
-      () => WholesaleService(
-        serviceLocator<WholesaleOrdersRepository>(),
-      ),
+      () => WholesaleService(serviceLocator<WholesaleOrdersRepository>()),
     );
   }
 
   // Distributor Service
   if (!serviceLocator.isRegistered<DistributorService>()) {
     serviceLocator.registerLazySingleton<DistributorService>(
-      () => DistributorService(
-        serviceLocator<DistributorsRepository>(),
-      ),
+      () => DistributorService(serviceLocator<DistributorsRepository>()),
     );
   }
 
   // Store Service
   if (!serviceLocator.isRegistered<StoreService>()) {
     serviceLocator.registerLazySingleton<StoreService>(
-      () => StoreService(
-        serviceLocator<StoresRepository>(),
-      ),
+      () => StoreService(serviceLocator<StoresRepository>()),
     );
   }
 
   // Settings Service
   if (!serviceLocator.isRegistered<SettingsService>()) {
     serviceLocator.registerLazySingleton<SettingsService>(
-      () => SettingsService(
-        serviceLocator<StoreSettingsRepository>(),
-      ),
+      () => SettingsService(serviceLocator<StoreSettingsRepository>()),
     );
   }
 
   // Address Service
   if (!serviceLocator.isRegistered<AddressService>()) {
     serviceLocator.registerLazySingleton<AddressService>(
-      () => AddressService(
-        serviceLocator<AddressesRepository>(),
-      ),
+      () => AddressService(serviceLocator<AddressesRepository>()),
     );
   }
 
   // Analytics Service
   if (!serviceLocator.isRegistered<AnalyticsService>()) {
     serviceLocator.registerLazySingleton<AnalyticsService>(
-      () => AnalyticsService(
-        serviceLocator<AnalyticsRepository>(),
-      ),
+      () => AnalyticsService(serviceLocator<AnalyticsRepository>()),
     );
   }
 
   // Activity Log Service
   if (!serviceLocator.isRegistered<ActivityLogService>()) {
     serviceLocator.registerLazySingleton<ActivityLogService>(
-      () => ActivityLogService(
-        serviceLocator<ActivityLogsRepository>(),
-      ),
+      () => ActivityLogService(serviceLocator<ActivityLogsRepository>()),
     );
   }
 
   // Transfer Service
   if (!serviceLocator.isRegistered<TransferService>()) {
     serviceLocator.registerLazySingleton<TransferService>(
-      () => TransferService(
-        serviceLocator<TransfersRepository>(),
-      ),
+      () => TransferService(serviceLocator<TransfersRepository>()),
     );
   }
 
   // Loyalty Service
   if (!serviceLocator.isRegistered<LoyaltyService>()) {
     serviceLocator.registerLazySingleton<LoyaltyService>(
-      () => LoyaltyService(
-        serviceLocator<LoyaltyRepository>(),
-      ),
+      () => LoyaltyService(serviceLocator<LoyaltyRepository>()),
     );
   }
 
   // Store Member Service
   if (!serviceLocator.isRegistered<StoreMemberService>()) {
     serviceLocator.registerLazySingleton<StoreMemberService>(
-      () => StoreMemberService(
-        serviceLocator<StoreMembersRepository>(),
-      ),
+      () => StoreMemberService(serviceLocator<StoreMembersRepository>()),
     );
   }
 
   // Rating Service
   if (!serviceLocator.isRegistered<RatingService>()) {
     serviceLocator.registerLazySingleton<RatingService>(
-      () => RatingService(
-        serviceLocator<RatingsRepository>(),
-      ),
+      () => RatingService(serviceLocator<RatingsRepository>()),
     );
   }
 
   // Chat Service
   if (!serviceLocator.isRegistered<ChatService>()) {
     serviceLocator.registerLazySingleton<ChatService>(
-      () => ChatService(
-        serviceLocator<ChatsRepository>(),
-      ),
+      () => ChatService(serviceLocator<ChatsRepository>()),
     );
   }
 
@@ -238,9 +200,7 @@ void _registerAdditionalServices() {
 
   // Print Service
   if (!serviceLocator.isRegistered<PrintService>()) {
-    serviceLocator.registerLazySingleton<PrintService>(
-      () => PrintService(),
-    );
+    serviceLocator.registerLazySingleton<PrintService>(() => PrintService());
   }
 
   // Barcode Service
@@ -252,16 +212,12 @@ void _registerAdditionalServices() {
 
   // Export Service
   if (!serviceLocator.isRegistered<ExportService>()) {
-    serviceLocator.registerLazySingleton<ExportService>(
-      () => ExportService(),
-    );
+    serviceLocator.registerLazySingleton<ExportService>(() => ExportService());
   }
 
   // Import Service
   if (!serviceLocator.isRegistered<ImportService>()) {
-    serviceLocator.registerLazySingleton<ImportService>(
-      () => ImportService(),
-    );
+    serviceLocator.registerLazySingleton<ImportService>(() => ImportService());
   }
 
   // Search Service
@@ -277,23 +233,17 @@ void _registerAdditionalServices() {
 
   // Cache Service
   if (!serviceLocator.isRegistered<CacheService>()) {
-    serviceLocator.registerLazySingleton<CacheService>(
-      () => CacheService(),
-    );
+    serviceLocator.registerLazySingleton<CacheService>(() => CacheService());
   }
 
   // Config Service
   if (!serviceLocator.isRegistered<ConfigService>()) {
-    serviceLocator.registerLazySingleton<ConfigService>(
-      () => ConfigService(),
-    );
+    serviceLocator.registerLazySingleton<ConfigService>(() => ConfigService());
   }
 
   // Backup Service
   if (!serviceLocator.isRegistered<BackupService>()) {
-    serviceLocator.registerLazySingleton<BackupService>(
-      () => BackupService(),
-    );
+    serviceLocator.registerLazySingleton<BackupService>(() => BackupService());
   }
 
   // ==================== الدفعة الرابعة (External Services) ====================
@@ -302,9 +252,7 @@ void _registerAdditionalServices() {
 
   // AI Service
   if (!serviceLocator.isRegistered<AIService>()) {
-    serviceLocator.registerLazySingleton<AIService>(
-      () => AIService(),
-    );
+    serviceLocator.registerLazySingleton<AIService>(() => AIService());
   }
 
   // Geo Notification Service
@@ -316,9 +264,7 @@ void _registerAdditionalServices() {
 
   // SMS Service
   if (!serviceLocator.isRegistered<SmsService>()) {
-    serviceLocator.registerLazySingleton<SmsService>(
-      () => SmsService(),
-    );
+    serviceLocator.registerLazySingleton<SmsService>(() => SmsService());
   }
 
   // ==================== الدفعة الخامسة (Offline/Critical Services) ====================

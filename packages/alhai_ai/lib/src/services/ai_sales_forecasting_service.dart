@@ -92,10 +92,7 @@ class WhatIfScenario {
   final double discountPercent;
   final double priceChangePercent;
 
-  const WhatIfScenario({
-    this.discountPercent = 0,
-    this.priceChangePercent = 0,
-  });
+  const WhatIfScenario({this.discountPercent = 0, this.priceChangePercent = 0});
 }
 
 /// نتيجة "ماذا لو"
@@ -157,14 +154,20 @@ class AiSalesForecastingService {
     // الحصول على بيانات المبيعات التاريخية
     final now = DateTime.now();
     final thirtyDaysAgo = now.subtract(const Duration(days: 30));
-    final historicalSales =
-        await _db.salesDao.getSalesByDateRange(storeId, thirtyDaysAgo, now);
+    final historicalSales = await _db.salesDao.getSalesByDateRange(
+      storeId,
+      thirtyDaysAgo,
+      now,
+    );
 
     // تجميع المبيعات اليومية
     final dailySales = <DateTime, double>{};
     for (final sale in historicalSales) {
       final day = DateTime(
-          sale.createdAt.year, sale.createdAt.month, sale.createdAt.day);
+        sale.createdAt.year,
+        sale.createdAt.month,
+        sale.createdAt.day,
+      );
       dailySales[day] = (dailySales[day] ?? 0) + sale.total;
     }
 
@@ -183,8 +186,8 @@ class AiSalesForecastingService {
     final forecastDays = period == ForecastPeriod.daily
         ? 14
         : period == ForecastPeriod.weekly
-            ? 28
-            : 60;
+        ? 28
+        : 60;
 
     final avgDaily = values.isNotEmpty
         ? values.reduce((a, b) => a + b) / values.length
@@ -195,14 +198,17 @@ class AiSalesForecastingService {
     for (var i = max(0, sortedDays.length - 14); i < sortedDays.length; i++) {
       final date = sortedDays[i];
       final actual = dailySales[date]!;
-      final predicted =
-          i < movingAvg.length + 6 ? movingAvg[max(0, i - 6)] : lastAvg;
-      forecasts.add(DailyForecast(
-        date: date,
-        predicted: predicted,
-        actual: actual,
-        confidence: 0.9,
-      ));
+      final predicted = i < movingAvg.length + 6
+          ? movingAvg[max(0, i - 6)]
+          : lastAvg;
+      forecasts.add(
+        DailyForecast(
+          date: date,
+          predicted: predicted,
+          actual: actual,
+          confidence: 0.9,
+        ),
+      );
     }
 
     // توقعات مستقبلية
@@ -211,16 +217,19 @@ class AiSalesForecastingService {
       final dayOfWeek = date.weekday;
       final seasonalFactor = _getDayOfWeekFactor(dayOfWeek);
       final trend = _calculateTrend(values);
-      final predicted = lastAvg * seasonalFactor +
+      final predicted =
+          lastAvg * seasonalFactor +
           (trend * i) +
           (_random.nextDouble() * 100 - 50);
       final confidence = max(0.5, 0.95 - (i * 0.01));
 
-      forecasts.add(DailyForecast(
-        date: date,
-        predicted: max(0, predicted),
-        confidence: confidence,
-      ));
+      forecasts.add(
+        DailyForecast(
+          date: date,
+          predicted: max(0, predicted),
+          confidence: confidence,
+        ),
+      );
     }
 
     // اكتشاف الأنماط الموسمية
@@ -231,25 +240,28 @@ class AiSalesForecastingService {
     final trend = trendValue > 50
         ? TrendDirection.up
         : trendValue < -50
-            ? TrendDirection.down
-            : TrendDirection.stable;
+        ? TrendDirection.down
+        : TrendDirection.stable;
 
     // حساب الدقة
     final accuracy = _calculateAccuracy(forecasts);
 
     // إجمالي الأسبوع والشهر القادم
     final futureForecasts = forecasts.where((f) => f.actual == null).toList();
-    final nextWeek =
-        futureForecasts.take(7).fold<double>(0, (sum, f) => sum + f.predicted);
-    final nextMonth =
-        futureForecasts.fold<double>(0, (sum, f) => sum + f.predicted);
+    final nextWeek = futureForecasts
+        .take(7)
+        .fold<double>(0, (sum, f) => sum + f.predicted);
+    final nextMonth = futureForecasts.fold<double>(
+      0,
+      (sum, f) => sum + f.predicted,
+    );
 
     // الملخص
     final trendText = trend == TrendDirection.up
         ? 'المبيعات في اتجاه صاعد' // Sales trending up
         : trend == TrendDirection.down
-            ? 'المبيعات في اتجاه هابط' // Sales trending down
-            : 'المبيعات مستقرة'; // Sales stable
+        ? 'المبيعات في اتجاه هابط' // Sales trending down
+        : 'المبيعات مستقرة'; // Sales stable
 
     return ForecastResult(
       forecasts: forecasts,
@@ -268,13 +280,19 @@ class AiSalesForecastingService {
   Future<List<SeasonalPattern>> detectSeasonalPatterns(String storeId) async {
     final now = DateTime.now();
     final thirtyDaysAgo = now.subtract(const Duration(days: 30));
-    final sales =
-        await _db.salesDao.getSalesByDateRange(storeId, thirtyDaysAgo, now);
+    final sales = await _db.salesDao.getSalesByDateRange(
+      storeId,
+      thirtyDaysAgo,
+      now,
+    );
 
     final dailySales = <DateTime, double>{};
     for (final sale in sales) {
       final day = DateTime(
-          sale.createdAt.year, sale.createdAt.month, sale.createdAt.day);
+        sale.createdAt.year,
+        sale.createdAt.month,
+        sale.createdAt.day,
+      );
       dailySales[day] = (dailySales[day] ?? 0) + sale.total;
     }
 
@@ -305,9 +323,11 @@ class AiSalesForecastingService {
 
     // حساب تأثير الخصم (مرونة سعرية مبسطة)
     // Price elasticity: كل 1% خصم يزيد الحجم ~1.5%
-    final volumeIncrease = scenario.discountPercent * 1.5 +
+    final volumeIncrease =
+        scenario.discountPercent * 1.5 +
         scenario.priceChangePercent.abs() * 0.8;
-    final revenuePerUnit = 1.0 -
+    final revenuePerUnit =
+        1.0 -
         (scenario.discountPercent / 100) +
         (scenario.priceChangePercent / 100);
     final volumeMultiplier = 1.0 + (volumeIncrease / 100);
@@ -315,21 +335,24 @@ class AiSalesForecastingService {
     final projectedMonthlyRevenue =
         monthlyRevenue * revenuePerUnit * volumeMultiplier;
     final change = projectedMonthlyRevenue - monthlyRevenue;
-    final changePercent =
-        monthlyRevenue > 0 ? (change / monthlyRevenue) * 100 : 0.0;
+    final changePercent = monthlyRevenue > 0
+        ? (change / monthlyRevenue) * 100
+        : 0.0;
 
     // شرح النتيجة
     final explanationParts = <String>[];
     if (scenario.discountPercent > 0) {
       explanationParts.add(
-          'خصم ${scenario.discountPercent.toStringAsFixed(0)}% سيزيد حجم المبيعات بنسبة ${(scenario.discountPercent * 1.5).toStringAsFixed(1)}%');
+        'خصم ${scenario.discountPercent.toStringAsFixed(0)}% سيزيد حجم المبيعات بنسبة ${(scenario.discountPercent * 1.5).toStringAsFixed(1)}%',
+      );
       // X% discount will increase volume by Y%
     }
     if (scenario.priceChangePercent != 0) {
       final direction = scenario.priceChangePercent > 0 ? 'رفع' : 'خفض';
       // raise / lower
       explanationParts.add(
-          '$direction السعر ${scenario.priceChangePercent.abs().toStringAsFixed(0)}% سيؤثر على الحجم بنسبة ${(scenario.priceChangePercent.abs() * 0.8).toStringAsFixed(1)}%');
+        '$direction السعر ${scenario.priceChangePercent.abs().toStringAsFixed(0)}% سيؤثر على الحجم بنسبة ${(scenario.priceChangePercent.abs() * 0.8).toStringAsFixed(1)}%',
+      );
     }
 
     return WhatIfResult(
@@ -350,7 +373,9 @@ class AiSalesForecastingService {
 
   /// توليد بيانات تاريخية وهمية واقعية
   void _generateMockHistoricalData(
-      Map<DateTime, double> dailySales, DateTime now) {
+    Map<DateTime, double> dailySales,
+    DateTime now,
+  ) {
     final baseValues = [
       1200.0,
       1450.0,
@@ -385,8 +410,11 @@ class AiSalesForecastingService {
     ];
 
     for (var i = 30; i >= 1; i--) {
-      final date =
-          DateTime(now.year, now.month, now.day).subtract(Duration(days: i));
+      final date = DateTime(
+        now.year,
+        now.month,
+        now.day,
+      ).subtract(Duration(days: i));
       if (!dailySales.containsKey(date)) {
         final baseIdx = (30 - i) % baseValues.length;
         final noise = (_random.nextDouble() * 200) - 100;
@@ -445,7 +473,8 @@ class AiSalesForecastingService {
 
   /// اكتشاف الأنماط الموسمية
   List<SeasonalPattern> _detectSeasonalPatterns(
-      Map<DateTime, double> dailySales) {
+    Map<DateTime, double> dailySales,
+  ) {
     if (dailySales.isEmpty) return [];
 
     final avgAll =
@@ -489,12 +518,14 @@ class AiSalesForecastingService {
         // Normal performance
       }
 
-      patterns.add(SeasonalPattern(
-        name: dayName,
-        dayOfWeek: entry.key,
-        multiplier: multiplier,
-        description: description,
-      ));
+      patterns.add(
+        SeasonalPattern(
+          name: dayName,
+          dayOfWeek: entry.key,
+          multiplier: multiplier,
+          description: description,
+        ),
+      );
     }
 
     // ترتيب حسب يوم الأسبوع

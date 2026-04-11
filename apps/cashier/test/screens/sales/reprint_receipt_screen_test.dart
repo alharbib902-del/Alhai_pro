@@ -32,8 +32,9 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
-          .thenAnswer((_) async => <SalesTableData>[]);
+      when(
+        () => salesDao.getAllSales(any(), limit: any(named: 'limit')),
+      ).thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const ReprintReceiptScreen()));
 
@@ -46,8 +47,9 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
-          .thenAnswer((_) async => <SalesTableData>[]);
+      when(
+        () => salesDao.getAllSales(any(), limit: any(named: 'limit')),
+      ).thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const ReprintReceiptScreen()));
       await tester.pumpAndSettle();
@@ -67,15 +69,12 @@ void main() {
           total: 100.0,
           createdAt: DateTime.now().subtract(const Duration(hours: 1)),
         ),
-        createTestSale(
-          id: 'sale-2',
-          total: 200.0,
-          createdAt: DateTime.now(),
-        ),
+        createTestSale(id: 'sale-2', total: 200.0, createdAt: DateTime.now()),
       ];
 
-      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
-          .thenAnswer((_) async => sales);
+      when(
+        () => salesDao.getAllSales(any(), limit: any(named: 'limit')),
+      ).thenAnswer((_) async => sales);
 
       await tester.pumpWidget(createTestWidget(const ReprintReceiptScreen()));
       await tester.pumpAndSettle();
@@ -90,8 +89,9 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
-          .thenAnswer((_) async => <SalesTableData>[]);
+      when(
+        () => salesDao.getAllSales(any(), limit: any(named: 'limit')),
+      ).thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const ReprintReceiptScreen()));
       await tester.pumpAndSettle();
@@ -106,8 +106,9 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => salesDao.getAllSales(any(), limit: any(named: 'limit')))
-          .thenAnswer((_) async => <SalesTableData>[]);
+      when(
+        () => salesDao.getAllSales(any(), limit: any(named: 'limit')),
+      ).thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const ReprintReceiptScreen()));
       await tester.pumpAndSettle();

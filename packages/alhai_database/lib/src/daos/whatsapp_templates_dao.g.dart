@@ -14,5 +14,7 @@ class WhatsAppTemplatesDaoManager {
   WhatsAppTemplatesDaoManager(this._db);
   $$WhatsAppTemplatesTableTableTableManager get whatsAppTemplatesTable =>
       $$WhatsAppTemplatesTableTableTableManager(
-          _db.attachedDatabase, _db.whatsAppTemplatesTable);
+        _db.attachedDatabase,
+        _db.whatsAppTemplatesTable,
+      );
 }

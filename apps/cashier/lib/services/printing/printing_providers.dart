@@ -25,8 +25,8 @@ const _kPrefAutoPrint = 'pref_auto_print'; // true | false
 /// The currently active print service
 final printServiceProvider =
     StateNotifierProvider<PrintServiceNotifier, ThermalPrintService?>(
-  (ref) => PrintServiceNotifier(),
-);
+      (ref) => PrintServiceNotifier(),
+    );
 
 /// Whether auto-print is enabled after payment
 final autoPrintEnabledProvider = StateProvider<bool>((ref) => false);
@@ -69,12 +69,14 @@ class PrintServiceNotifier extends StateNotifier<ThermalPrintService?> {
       if (address != null) {
         final connectionType = _parseConnectionType(type);
         if (connectionType != null) {
-          await service.connect(DiscoveredPrinter(
-            id: address,
-            name: name,
-            type: connectionType,
-            address: address,
-          ));
+          await service.connect(
+            DiscoveredPrinter(
+              id: address,
+              name: name,
+              type: connectionType,
+              address: address,
+            ),
+          );
         }
       }
     } catch (e) {
@@ -207,10 +209,7 @@ Future<PrintResult> printReceiptWithService(
 ///
 /// Returns the job ID. The print will be retried up to 3 times
 /// with exponential backoff. Failed jobs are persisted for manual reprint.
-Future<String?> printReceiptQueued(
-  WidgetRef ref,
-  ReceiptData receipt,
-) async {
+Future<String?> printReceiptQueued(WidgetRef ref, ReceiptData receipt) async {
   final queue = ref.read(printQueueProvider);
   if (queue == null) {
     if (kDebugMode) debugPrint('Print queue not available (no printer set)');

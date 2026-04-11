@@ -13,8 +13,9 @@ class SaleItemsDao extends DatabaseAccessor<AppDatabase>
 
   /// الحصول على عناصر البيع
   Future<List<SaleItemsTableData>> getItemsBySaleId(String saleId) {
-    return (select(saleItemsTable)..where((i) => i.saleId.equals(saleId)))
-        .get();
+    return (select(
+      saleItemsTable,
+    )..where((i) => i.saleId.equals(saleId))).get();
   }
 
   /// إدراج عنصر
@@ -53,7 +54,8 @@ class SaleItemsDao extends DatabaseAccessor<AppDatabase>
 
   /// عناصر البيع مع تفاصيل المنتج
   Future<List<SaleItemWithProduct>> getItemsWithProductDetails(
-      String saleId) async {
+    String saleId,
+  ) async {
     final result = await customSelect(
       '''SELECT si.*,
               p.name as product_name, p.sku as product_sku,
@@ -66,18 +68,20 @@ class SaleItemsDao extends DatabaseAccessor<AppDatabase>
     ).get();
 
     return result
-        .map((row) => SaleItemWithProduct(
-              id: row.data['id'] as String,
-              saleId: row.data['sale_id'] as String,
-              productId: row.data['product_id'] as String,
-              productName: row.data['product_name'] as String? ?? '',
-              productSku: row.data['product_sku'] as String?,
-              productBarcode: row.data['product_barcode'] as String?,
-              productImage: row.data['product_image'] as String?,
-              qty: _toDouble(row.data['qty']),
-              price: _toDouble(row.data['price']),
-              total: _toDouble(row.data['total']),
-            ))
+        .map(
+          (row) => SaleItemWithProduct(
+            id: row.data['id'] as String,
+            saleId: row.data['sale_id'] as String,
+            productId: row.data['product_id'] as String,
+            productName: row.data['product_name'] as String? ?? '',
+            productSku: row.data['product_sku'] as String?,
+            productBarcode: row.data['product_barcode'] as String?,
+            productImage: row.data['product_image'] as String?,
+            qty: _toDouble(row.data['qty']),
+            price: _toDouble(row.data['price']),
+            total: _toDouble(row.data['total']),
+          ),
+        )
         .toList();
   }
 
@@ -141,15 +145,17 @@ class SaleItemsDao extends DatabaseAccessor<AppDatabase>
     ).get();
 
     return result
-        .map((row) => ProductSalesSummary(
-              productId: row.data['id'] as String,
-              productName: row.data['name'] as String,
-              productBarcode: row.data['barcode'] as String?,
-              productImage: row.data['image_thumbnail'] as String?,
-              totalQty: _toDouble(row.data['total_qty']),
-              totalRevenue: _toDouble(row.data['total_revenue']),
-              saleCount: row.data['sale_count'] as int? ?? 0,
-            ))
+        .map(
+          (row) => ProductSalesSummary(
+            productId: row.data['id'] as String,
+            productName: row.data['name'] as String,
+            productBarcode: row.data['barcode'] as String?,
+            productImage: row.data['image_thumbnail'] as String?,
+            totalQty: _toDouble(row.data['total_qty']),
+            totalRevenue: _toDouble(row.data['total_revenue']),
+            saleCount: row.data['sale_count'] as int? ?? 0,
+          ),
+        )
         .toList();
   }
 

@@ -44,9 +44,7 @@ class DebtsRemoteDataSourceImpl implements DebtsRemoteDataSource {
 
   @override
   Future<List<DebtResponse>> getPartyDebts(String partyId) async {
-    final response = await _dio.get(
-      '/debts/party/$partyId',
-    );
+    final response = await _dio.get('/debts/party/$partyId');
     final list = response.data['data'] as List<dynamic>;
     return list
         .map((e) => DebtResponse.fromJson(e as Map<String, dynamic>))
@@ -55,16 +53,14 @@ class DebtsRemoteDataSourceImpl implements DebtsRemoteDataSource {
 
   @override
   Future<DebtResponse> createDebt(CreateDebtRequest request) async {
-    final response = await _dio.post(
-      '/debts',
-      data: request.toJson(),
-    );
+    final response = await _dio.post('/debts', data: request.toJson());
     return DebtResponse.fromJson(response.data as Map<String, dynamic>);
   }
 
   @override
   Future<DebtPaymentResponse> recordPayment(
-      RecordPaymentRequest request) async {
+    RecordPaymentRequest request,
+  ) async {
     final response = await _dio.post(
       '/debts/${request.debtId}/payments',
       data: request.toJson(),

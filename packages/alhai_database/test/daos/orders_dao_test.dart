@@ -11,13 +11,15 @@ void main() {
     // order_items reference products via FK
     final now = DateTime(2025, 1, 1);
     for (var i = 1; i <= 2; i++) {
-      await db.productsDao.insertProduct(ProductsTableCompanion.insert(
-        id: 'prod-$i',
-        storeId: 'store-1',
-        name: 'P$i',
-        price: 10.0,
-        createdAt: now,
-      ));
+      await db.productsDao.insertProduct(
+        ProductsTableCompanion.insert(
+          id: 'prod-$i',
+          storeId: 'store-1',
+          name: 'P$i',
+          price: 10.0,
+          createdAt: now,
+        ),
+      );
     }
   });
 
@@ -92,10 +94,9 @@ void main() {
 
     test('getOrders returns all orders for store', () async {
       await db.ordersDao.createOrder(makeOrder());
-      await db.ordersDao.createOrder(makeOrder(
-        id: 'order-2',
-        orderNumber: 'ORD-20250615-002',
-      ));
+      await db.ordersDao.createOrder(
+        makeOrder(id: 'order-2', orderNumber: 'ORD-20250615-002'),
+      );
 
       final orders = await db.ordersDao.getOrders('store-1');
       expect(orders, hasLength(2));
@@ -103,27 +104,31 @@ void main() {
 
     test('getOrdersByStatus filters correctly', () async {
       await db.ordersDao.createOrder(makeOrder(id: 'o1', status: 'created'));
-      await db.ordersDao.createOrder(makeOrder(
-        id: 'o2',
-        orderNumber: 'ORD-002',
-        status: 'delivered',
-      ));
+      await db.ordersDao.createOrder(
+        makeOrder(id: 'o2', orderNumber: 'ORD-002', status: 'delivered'),
+      );
 
-      final pending =
-          await db.ordersDao.getOrdersByStatus('store-1', 'created');
+      final pending = await db.ordersDao.getOrdersByStatus(
+        'store-1',
+        'created',
+      );
       expect(pending, hasLength(1));
       expect(pending.first.id, 'o1');
     });
 
     test('getPendingOrders returns all non-completed orders', () async {
       await db.ordersDao.createOrder(
-          makeOrder(id: 'o1', orderNumber: 'ORD-1', status: 'created'));
+        makeOrder(id: 'o1', orderNumber: 'ORD-1', status: 'created'),
+      );
       await db.ordersDao.createOrder(
-          makeOrder(id: 'o2', orderNumber: 'ORD-2', status: 'confirmed'));
+        makeOrder(id: 'o2', orderNumber: 'ORD-2', status: 'confirmed'),
+      );
       await db.ordersDao.createOrder(
-          makeOrder(id: 'o3', orderNumber: 'ORD-3', status: 'delivered'));
+        makeOrder(id: 'o3', orderNumber: 'ORD-3', status: 'delivered'),
+      );
       await db.ordersDao.createOrder(
-          makeOrder(id: 'o4', orderNumber: 'ORD-4', status: 'cancelled'));
+        makeOrder(id: 'o4', orderNumber: 'ORD-4', status: 'cancelled'),
+      );
 
       final pending = await db.ordersDao.getPendingOrders('store-1');
       expect(pending, hasLength(2)); // pending + confirmed
@@ -164,11 +169,9 @@ void main() {
     test('addOrderItem and getOrderItems', () async {
       await db.ordersDao.createOrder(makeOrder());
       await db.ordersDao.addOrderItem(makeOrderItem());
-      await db.ordersDao.addOrderItem(makeOrderItem(
-        id: 'oi-2',
-        productName: 'كولا',
-        productId: 'prod-2',
-      ));
+      await db.ordersDao.addOrderItem(
+        makeOrderItem(id: 'oi-2', productName: 'كولا', productId: 'prod-2'),
+      );
 
       final items = await db.ordersDao.getOrderItems('order-1');
       expect(items, hasLength(2));

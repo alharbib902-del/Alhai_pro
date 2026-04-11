@@ -10,21 +10,10 @@ import 'dart:typed_data';
 import 'receipt_data.dart';
 
 /// Connection type of a discovered printer
-enum PrinterConnectionType {
-  bluetooth,
-  network,
-  usb,
-  sunmi,
-}
+enum PrinterConnectionType { bluetooth, network, usb, sunmi }
 
 /// Status of the print service
-enum PrinterStatus {
-  disconnected,
-  connecting,
-  connected,
-  printing,
-  error,
-}
+enum PrinterStatus { disconnected, connecting, connected, printing, error }
 
 /// A discovered printer device
 class DiscoveredPrinter {

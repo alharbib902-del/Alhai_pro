@@ -149,11 +149,7 @@ class KeyboardShortcutHint extends StatelessWidget {
   final String shortcut;
   final String? label;
 
-  const KeyboardShortcutHint({
-    super.key,
-    required this.shortcut,
-    this.label,
-  });
+  const KeyboardShortcutHint({super.key, required this.shortcut, this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -181,10 +177,7 @@ class KeyboardShortcutHint extends StatelessWidget {
         ),
         if (label != null) ...[
           const SizedBox(width: AlhaiSpacing.xxs),
-          Text(
-            label!,
-            style: theme.textTheme.labelSmall,
-          ),
+          Text(label!, style: theme.textTheme.labelSmall),
         ],
       ],
     );

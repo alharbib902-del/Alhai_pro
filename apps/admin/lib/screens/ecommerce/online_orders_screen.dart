@@ -51,17 +51,19 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
       // Map DB rows to UI model. Empty DB results in empty list,
       // which the UI handles via AppEmptyState.noOrders.
       _orders = dbOrders
-          .map((o) => _OnlineOrder(
-                id: o.orderNumber,
-                customerName: o.customerId ?? '',
-                phone: '',
-                items: [o.notes ?? ''],
-                total: o.total,
-                status: o.status,
-                platform: o.channel,
-                address: o.deliveryAddress ?? '',
-                createdAt: o.orderDate,
-              ))
+          .map(
+            (o) => _OnlineOrder(
+              id: o.orderNumber,
+              customerName: o.customerId ?? '',
+              phone: '',
+              items: [o.notes ?? ''],
+              total: o.total,
+              status: o.status,
+              platform: o.channel,
+              address: o.deliveryAddress ?? '',
+              createdAt: o.orderDate,
+            ),
+          )
           .toList();
     } catch (e, st) {
       await reportError(
@@ -218,9 +220,10 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                 child: Text(
                   '$pendingCount',
                   style: TextStyle(
-                      color: Theme.of(context).colorScheme.onError,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold),
+                    color: Theme.of(context).colorScheme.onError,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
@@ -228,9 +231,10 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
         ),
         actions: [
           IconButton(
-              icon: const Icon(Icons.refresh_rounded),
-              onPressed: _loadOrders,
-              tooltip: AppLocalizations.of(context).retry),
+            icon: const Icon(Icons.refresh_rounded),
+            onPressed: _loadOrders,
+            tooltip: AppLocalizations.of(context).retry,
+          ),
         ],
       ),
       body: Column(
@@ -250,26 +254,30 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
                 return Padding(
                   padding: const EdgeInsetsDirectional.only(start: 6),
                   child: FilterChip(
-                    label: Text('${tab.$2} ${count > 0 ? "($count)" : ""}',
-                        style: TextStyle(
-                          fontSize: 12,
-                          color: isSelected
-                              ? Theme.of(context).colorScheme.onPrimary
-                              : null,
-                        )),
+                    label: Text(
+                      '${tab.$2} ${count > 0 ? "($count)" : ""}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.onPrimary
+                            : null,
+                      ),
+                    ),
                     selected: isSelected,
                     onSelected: (_) {
                       setState(() => _statusFilter = tab.$1);
                       _applyFilter();
                     },
-                    selectedColor:
-                        _statusColor(tab.$1 == 'all' ? 'preparing' : tab.$1),
-                    backgroundColor:
-                        _statusColor(tab.$1 == 'all' ? 'preparing' : tab.$1)
-                            .withValues(alpha: 0.1),
+                    selectedColor: _statusColor(
+                      tab.$1 == 'all' ? 'preparing' : tab.$1,
+                    ),
+                    backgroundColor: _statusColor(
+                      tab.$1 == 'all' ? 'preparing' : tab.$1,
+                    ).withValues(alpha: 0.1),
                     showCheckmark: false,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.xxs),
+                      horizontal: AlhaiSpacing.xxs,
+                    ),
                   ),
                 );
               }).toList(),
@@ -281,197 +289,216 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _filteredOrders.isEmpty
-                    ? AppEmptyState.noOrders(context)
-                    : RefreshIndicator(
-                        onRefresh: _loadOrders,
-                        child: ListView.builder(
-                          padding: const EdgeInsets.all(AlhaiSpacing.sm),
-                          itemCount: _filteredOrders.length,
-                          itemBuilder: (ctx, i) {
-                            final order = _filteredOrders[i];
-                            final color = _statusColor(order.status);
-                            return Card(
-                              margin: const EdgeInsets.only(bottom: 10),
-                              child: Padding(
-                                padding: const EdgeInsets.all(14),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                ? AppEmptyState.noOrders(context)
+                : RefreshIndicator(
+                    onRefresh: _loadOrders,
+                    child: ListView.builder(
+                      padding: const EdgeInsets.all(AlhaiSpacing.sm),
+                      itemCount: _filteredOrders.length,
+                      itemBuilder: (ctx, i) {
+                        final order = _filteredOrders[i];
+                        final color = _statusColor(order.status);
+                        return Card(
+                          margin: const EdgeInsets.only(bottom: 10),
+                          child: Padding(
+                            padding: const EdgeInsets.all(14),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Header
+                                Row(
                                   children: [
-                                    // Header
-                                    Row(
-                                      children: [
-                                        Text(_platformIcon(order.platform),
-                                            style:
-                                                const TextStyle(fontSize: 18)),
-                                        const SizedBox(width: AlhaiSpacing.xs),
-                                        Expanded(
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(order.customerName,
-                                                  style: const TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.bold)),
-                                              Text(order.id,
-                                                  style: TextStyle(
-                                                      fontSize: 11,
-                                                      color: Theme.of(context)
-                                                          .hintColor)),
-                                            ],
-                                          ),
-                                        ),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            color: color.withValues(alpha: 0.1),
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            border: Border.all(
-                                                color: color.withValues(
-                                                    alpha: 0.3)),
-                                          ),
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Icon(_statusIcon(order.status),
-                                                  size: 12, color: color),
-                                              const SizedBox(width: 4),
-                                              Text(
-                                                _statusLabel(
-                                                    order.status, context),
-                                                style: TextStyle(
-                                                  fontSize: 11,
-                                                  color: color,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ],
+                                    Text(
+                                      _platformIcon(order.platform),
+                                      style: const TextStyle(fontSize: 18),
                                     ),
-                                    const Divider(height: 16),
-
-                                    // Items
-                                    ...order.items.map((item) => Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 2),
-                                          child: Row(
-                                            children: [
-                                              ExcludeSemantics(
-                                                  child: Icon(Icons.circle,
-                                                      size: 6,
-                                                      color: Theme.of(context)
-                                                          .hintColor)),
-                                              const SizedBox(width: 6),
-                                              Text(item,
-                                                  style: const TextStyle(
-                                                      fontSize: 13)),
-                                            ],
-                                          ),
-                                        )),
-
-                                    const SizedBox(height: AlhaiSpacing.xs),
-
-                                    // Footer
-                                    Row(
-                                      children: [
-                                        ExcludeSemantics(
-                                          child: Icon(Icons.location_on_rounded,
-                                              size: 14,
-                                              color:
-                                                  Theme.of(context).hintColor),
-                                        ),
-                                        const SizedBox(width: AlhaiSpacing.xxs),
-                                        Expanded(
-                                          child: Text(
-                                            order.address,
-                                            style: TextStyle(
-                                                fontSize: 11,
-                                                color: Theme.of(context)
-                                                    .hintColor),
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                        ),
-                                        Text(
-                                          AppLocalizations.of(context)
-                                              .amountSar(order.total
-                                                  .toStringAsFixed(2)),
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.bold,
-                                            fontSize: 15,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
-                                    const SizedBox(height: 6),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          _timeAgo(order.createdAt, context),
-                                          style: TextStyle(
-                                              fontSize: 11,
-                                              color:
-                                                  Theme.of(context).hintColor),
-                                        ),
-                                        if (_nextStatusLabel(
-                                                order.status, context)
-                                            .isNotEmpty)
-                                          SizedBox(
-                                            height: 30,
-                                            child: FilledButton(
-                                              onPressed: () {
-                                                setState(() {
-                                                  final idx =
-                                                      _orders.indexOf(order);
-                                                  if (idx >= 0) {
-                                                    _orders[idx] = _OnlineOrder(
-                                                      id: order.id,
-                                                      customerName:
-                                                          order.customerName,
-                                                      phone: order.phone,
-                                                      items: order.items,
-                                                      total: order.total,
-                                                      status: _nextStatus(
-                                                          order.status),
-                                                      platform: order.platform,
-                                                      address: order.address,
-                                                      createdAt:
-                                                          order.createdAt,
-                                                    );
-                                                  }
-                                                });
-                                                _applyFilter();
-                                              },
-                                              style: FilledButton.styleFrom(
-                                                padding:
-                                                    const EdgeInsets.symmetric(
-                                                        horizontal:
-                                                            AlhaiSpacing.sm),
-                                                backgroundColor: color,
-                                              ),
-                                              child: Text(
-                                                _nextStatusLabel(
-                                                    order.status, context),
-                                                style: const TextStyle(
-                                                    fontSize: 12),
-                                              ),
+                                    const SizedBox(width: AlhaiSpacing.xs),
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            order.customerName,
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                      ],
+                                          Text(
+                                            order.id,
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: Theme.of(
+                                                context,
+                                              ).hintColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    Container(
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 10,
+                                        vertical: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: color.withValues(alpha: 0.1),
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                          color: color.withValues(alpha: 0.3),
+                                        ),
+                                      ),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(
+                                            _statusIcon(order.status),
+                                            size: 12,
+                                            color: color,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            _statusLabel(order.status, context),
+                                            style: TextStyle(
+                                              fontSize: 11,
+                                              color: color,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ],
                                 ),
-                              ),
-                            );
-                          },
-                        ),
-                      ),
+                                const Divider(height: 16),
+
+                                // Items
+                                ...order.items.map(
+                                  (item) => Padding(
+                                    padding: const EdgeInsets.only(bottom: 2),
+                                    child: Row(
+                                      children: [
+                                        ExcludeSemantics(
+                                          child: Icon(
+                                            Icons.circle,
+                                            size: 6,
+                                            color: Theme.of(context).hintColor,
+                                          ),
+                                        ),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          item,
+                                          style: const TextStyle(fontSize: 13),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
+                                const SizedBox(height: AlhaiSpacing.xs),
+
+                                // Footer
+                                Row(
+                                  children: [
+                                    ExcludeSemantics(
+                                      child: Icon(
+                                        Icons.location_on_rounded,
+                                        size: 14,
+                                        color: Theme.of(context).hintColor,
+                                      ),
+                                    ),
+                                    const SizedBox(width: AlhaiSpacing.xxs),
+                                    Expanded(
+                                      child: Text(
+                                        order.address,
+                                        style: TextStyle(
+                                          fontSize: 11,
+                                          color: Theme.of(context).hintColor,
+                                        ),
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                    Text(
+                                      AppLocalizations.of(context).amountSar(
+                                        order.total.toStringAsFixed(2),
+                                      ),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 15,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+
+                                const SizedBox(height: 6),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      _timeAgo(order.createdAt, context),
+                                      style: TextStyle(
+                                        fontSize: 11,
+                                        color: Theme.of(context).hintColor,
+                                      ),
+                                    ),
+                                    if (_nextStatusLabel(
+                                      order.status,
+                                      context,
+                                    ).isNotEmpty)
+                                      SizedBox(
+                                        height: 30,
+                                        child: FilledButton(
+                                          onPressed: () {
+                                            setState(() {
+                                              final idx = _orders.indexOf(
+                                                order,
+                                              );
+                                              if (idx >= 0) {
+                                                _orders[idx] = _OnlineOrder(
+                                                  id: order.id,
+                                                  customerName:
+                                                      order.customerName,
+                                                  phone: order.phone,
+                                                  items: order.items,
+                                                  total: order.total,
+                                                  status: _nextStatus(
+                                                    order.status,
+                                                  ),
+                                                  platform: order.platform,
+                                                  address: order.address,
+                                                  createdAt: order.createdAt,
+                                                );
+                                              }
+                                            });
+                                            _applyFilter();
+                                          },
+                                          style: FilledButton.styleFrom(
+                                            padding: const EdgeInsets.symmetric(
+                                              horizontal: AlhaiSpacing.sm,
+                                            ),
+                                            backgroundColor: color,
+                                          ),
+                                          child: Text(
+                                            _nextStatusLabel(
+                                              order.status,
+                                              context,
+                                            ),
+                                            style: const TextStyle(
+                                              fontSize: 12,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
           ),
         ],
       ),

@@ -59,8 +59,9 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
       }
 
       // استعلام إجمالي المبيعات وإجمالي الضريبة الفعلية من جدول المبيعات
-      final taxResult = await db.customSelect(
-        '''SELECT
+      final taxResult = await db
+          .customSelect(
+            '''SELECT
              COALESCE(SUM(total), 0) as total_sales,
              COALESCE(SUM(tax), 0) as total_tax,
              COUNT(*) as sale_count
@@ -69,12 +70,13 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
              AND status = 'completed'
              AND created_at >= ?
              AND created_at < ?''',
-        variables: [
-          Variable.withString(storeId),
-          Variable.withDateTime(startDate),
-          Variable.withDateTime(now),
-        ],
-      ).getSingle();
+            variables: [
+              Variable.withString(storeId),
+              Variable.withDateTime(startDate),
+              Variable.withDateTime(now),
+            ],
+          )
+          .getSingle();
 
       _totalSales = (taxResult.data['total_sales'] is int)
           ? (taxResult.data['total_sales'] as int).toDouble()
@@ -90,8 +92,9 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
       }
 
       // استعلام الضريبة حسب طريقة الدفع
-      final paymentTaxResults = await db.customSelect(
-        '''SELECT
+      final paymentTaxResults = await db
+          .customSelect(
+            '''SELECT
              payment_method,
              COALESCE(SUM(total), 0) as method_total,
              COALESCE(SUM(tax), 0) as method_tax,
@@ -103,12 +106,13 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
              AND created_at < ?
            GROUP BY payment_method
            ORDER BY method_total DESC''',
-        variables: [
-          Variable.withString(storeId),
-          Variable.withDateTime(startDate),
-          Variable.withDateTime(now),
-        ],
-      ).get();
+            variables: [
+              Variable.withString(storeId),
+              Variable.withDateTime(startDate),
+              Variable.withDateTime(now),
+            ],
+          )
+          .get();
 
       _taxByPayment = paymentTaxResults.map((row) {
         final method = row.data['payment_method'] as String? ?? 'unknown';
@@ -204,13 +208,17 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
         title: Text(l10n.taxReportTitle),
         actions: [
           IconButton(
-              icon: const Icon(Icons.file_download),
-              onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.exportReportAction)))),
+            icon: const Icon(Icons.file_download),
+            onPressed: () => ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(l10n.exportReportAction))),
+          ),
           IconButton(
-              icon: const Icon(Icons.print),
-              onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(l10n.printReportAction)))),
+            icon: const Icon(Icons.print),
+            onPressed: () => ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(l10n.printReportAction))),
+          ),
         ],
       ),
       body: SingleChildScrollView(
@@ -242,26 +250,35 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
                 width: double.infinity,
                 padding: const EdgeInsets.all(AlhaiSpacing.mdl),
                 decoration: BoxDecoration(
-                  gradient: LinearGradient(colors: const [
-                    AlhaiColors.successDark,
-                    AlhaiColors.success
-                  ]),
+                  gradient: LinearGradient(
+                    colors: const [
+                      AlhaiColors.successDark,
+                      AlhaiColors.success,
+                    ],
+                  ),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(l10n.netTaxDue,
-                        style: const TextStyle(color: Colors.white70)),
+                    Text(
+                      l10n.netTaxDue,
+                      style: const TextStyle(color: Colors.white70),
+                    ),
                     const SizedBox(height: AlhaiSpacing.xs),
-                    Text('${_netTax.toStringAsFixed(2)} ${l10n.sar}',
-                        style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 32,
-                            fontWeight: FontWeight.bold)),
+                    Text(
+                      '${_netTax.toStringAsFixed(2)} ${l10n.sar}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     const SizedBox(height: AlhaiSpacing.xxs),
-                    Text('${DateTime.now().month}/${DateTime.now().year}',
-                        style: const TextStyle(color: Colors.white70)),
+                    Text(
+                      '${DateTime.now().month}/${DateTime.now().year}',
+                      style: const TextStyle(color: Colors.white70),
+                    ),
                   ],
                 ),
               ),
@@ -273,18 +290,22 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
             Row(
               children: [
                 Expanded(
-                    child: _DetailCard(
-                        title: l10n.salesTaxCollected,
-                        subtitle: l10n.salesTaxSubtitle,
-                        value: _salesTax.toStringAsFixed(2),
-                        color: AlhaiColors.info)),
+                  child: _DetailCard(
+                    title: l10n.salesTaxCollected,
+                    subtitle: l10n.salesTaxSubtitle,
+                    value: _salesTax.toStringAsFixed(2),
+                    color: AlhaiColors.info,
+                  ),
+                ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
-                    child: _DetailCard(
-                        title: l10n.purchasesTaxPaid,
-                        subtitle: l10n.purchasesTaxSubtitle,
-                        value: _purchasesTax.toStringAsFixed(2),
-                        color: Colors.orange)),
+                  child: _DetailCard(
+                    title: l10n.purchasesTaxPaid,
+                    subtitle: l10n.purchasesTaxSubtitle,
+                    value: _purchasesTax.toStringAsFixed(2),
+                    color: Colors.orange,
+                  ),
+                ),
               ],
             ),
 
@@ -292,17 +313,21 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
 
             // تفاصيل الضريبة حسب طريقة الدفع
             if (_taxByPayment.isNotEmpty) ...[
-              Text(l10n.taxByPaymentMethod,
-                  style: Theme.of(context).textTheme.titleMedium),
+              Text(
+                l10n.taxByPaymentMethod,
+                style: Theme.of(context).textTheme.titleMedium,
+              ),
               const SizedBox(height: AlhaiSpacing.sm),
               Card(
                 child: Column(
                   children: _taxByPayment
-                      .map((item) => _TaxRow(
-                            label:
-                                '${_translatePaymentMethod(context, item.method)} (${l10n.invoiceCount(item.count)})',
-                            value: item.tax.toStringAsFixed(2),
-                          ))
+                      .map(
+                        (item) => _TaxRow(
+                          label:
+                              '${_translatePaymentMethod(context, item.method)} (${l10n.invoiceCount(item.count)})',
+                          value: item.tax.toStringAsFixed(2),
+                        ),
+                      )
                       .toList(),
                 ),
               ),
@@ -310,39 +335,48 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
             ],
 
             // جدول التفاصيل
-            Text(l10n.taxDetailsTitle,
-                style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              l10n.taxDetailsTitle,
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const SizedBox(height: AlhaiSpacing.sm),
             Card(
               child: Column(
                 children: [
                   _TaxRow(
-                      label: l10n.totalSales,
-                      value: _totalSales.toStringAsFixed(2)),
+                    label: l10n.totalSales,
+                    value: _totalSales.toStringAsFixed(2),
+                  ),
                   _TaxRow(
-                      label: l10n.taxableSales,
-                      value: _totalSales.toStringAsFixed(2)),
+                    label: l10n.taxableSales,
+                    value: _totalSales.toStringAsFixed(2),
+                  ),
                   _TaxRow(
-                      label: l10n.salesTax15,
-                      value: _salesTax.toStringAsFixed(2),
-                      highlight: true),
+                    label: l10n.salesTax15,
+                    value: _salesTax.toStringAsFixed(2),
+                    highlight: true,
+                  ),
                   const Divider(height: 1),
                   _TaxRow(
-                      label: l10n.totalPurchases,
-                      value: _totalPurchases.toStringAsFixed(2)),
+                    label: l10n.totalPurchases,
+                    value: _totalPurchases.toStringAsFixed(2),
+                  ),
                   _TaxRow(
-                      label: l10n.taxablePurchases,
-                      value: _totalPurchases.toStringAsFixed(2)),
+                    label: l10n.taxablePurchases,
+                    value: _totalPurchases.toStringAsFixed(2),
+                  ),
                   _TaxRow(
-                      label: l10n.purchasesTax15,
-                      value: _purchasesTax.toStringAsFixed(2),
-                      highlight: true),
+                    label: l10n.purchasesTax15,
+                    value: _purchasesTax.toStringAsFixed(2),
+                    highlight: true,
+                  ),
                   const Divider(height: 1),
                   _TaxRow(
-                      label: l10n.netTax,
-                      value: _netTax.toStringAsFixed(2),
-                      highlight: true,
-                      isTotal: true),
+                    label: l10n.netTax,
+                    value: _netTax.toStringAsFixed(2),
+                    highlight: true,
+                    isTotal: true,
+                  ),
                 ],
               ),
             ),
@@ -362,12 +396,17 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(l10n.zatcaReminder,
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: AlhaiColors.info)),
-                          Text(l10n.zatcaDeadline,
-                              style: const TextStyle(fontSize: 12)),
+                          Text(
+                            l10n.zatcaReminder,
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: AlhaiColors.info,
+                            ),
+                          ),
+                          Text(
+                            l10n.zatcaDeadline,
+                            style: const TextStyle(fontSize: 12),
+                          ),
                         ],
                       ),
                     ),
@@ -456,11 +495,12 @@ class _TaxByPaymentMethod {
 class _DetailCard extends StatelessWidget {
   final String title, subtitle, value;
   final Color color;
-  const _DetailCard(
-      {required this.title,
-      required this.subtitle,
-      required this.value,
-      required this.color});
+  const _DetailCard({
+    required this.title,
+    required this.subtitle,
+    required this.value,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -470,16 +510,22 @@ class _DetailCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title,
-                style: TextStyle(color: color, fontWeight: FontWeight.bold)),
-            Text(subtitle,
-                style: TextStyle(
-                    fontSize: 11,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(
+              title,
+              style: TextStyle(color: color, fontWeight: FontWeight.bold),
+            ),
+            Text(
+              subtitle,
+              style: TextStyle(
+                fontSize: 11,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
             const SizedBox(height: AlhaiSpacing.xs),
-            Text('$value ${AppLocalizations.of(context).sar}',
-                style:
-                    const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text(
+              '$value ${AppLocalizations.of(context).sar}',
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
           ],
         ),
       ),
@@ -490,31 +536,40 @@ class _DetailCard extends StatelessWidget {
 class _TaxRow extends StatelessWidget {
   final String label, value;
   final bool highlight, isTotal;
-  const _TaxRow(
-      {required this.label,
-      required this.value,
-      this.highlight = false,
-      this.isTotal = false});
+  const _TaxRow({
+    required this.label,
+    required this.value,
+    this.highlight = false,
+    this.isTotal = false,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.sm,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: TextStyle(
-                  fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
-                  fontSize: isTotal ? 16 : 14)),
-          Text('$value ${AppLocalizations.of(context).sar}',
-              style: TextStyle(
-                  fontWeight: highlight ? FontWeight.bold : FontWeight.normal,
-                  color: isTotal
-                      ? AlhaiColors.success
-                      : (highlight ? AlhaiColors.info : null),
-                  fontSize: isTotal ? 18 : 14)),
+          Text(
+            label,
+            style: TextStyle(
+              fontWeight: isTotal ? FontWeight.bold : FontWeight.normal,
+              fontSize: isTotal ? 16 : 14,
+            ),
+          ),
+          Text(
+            '$value ${AppLocalizations.of(context).sar}',
+            style: TextStyle(
+              fontWeight: highlight ? FontWeight.bold : FontWeight.normal,
+              color: isTotal
+                  ? AlhaiColors.success
+                  : (highlight ? AlhaiColors.info : null),
+              fontSize: isTotal ? 18 : 14,
+            ),
+          ),
         ],
       ),
     );

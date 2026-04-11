@@ -25,8 +25,8 @@ enum MemoryPressureLevel {
 }
 
 /// نوع الإجراء عند ضغط الذاكرة
-typedef MemoryCleanupCallback = Future<void> Function(
-    MemoryPressureLevel level);
+typedef MemoryCleanupCallback =
+    Future<void> Function(MemoryPressureLevel level);
 
 /// خدمة مراقبة الذاكرة
 class MemoryMonitor {
@@ -60,9 +60,7 @@ class MemoryMonitor {
   static const int criticalMemoryMB = 130;
 
   /// بدء المراقبة
-  void startMonitoring({
-    Duration interval = const Duration(seconds: 30),
-  }) {
+  void startMonitoring({Duration interval = const Duration(seconds: 30)}) {
     if (_isMonitoring) return;
 
     _isMonitoring = true;

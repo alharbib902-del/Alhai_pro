@@ -34,8 +34,9 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
       children: [
         AppHeader(
           title: l10n.theme,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
@@ -44,7 +45,8 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(
-                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+            ),
             child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
           ),
         ),
@@ -52,8 +54,12 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
     );
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
-      AppLocalizations l10n) {
+  Widget _buildContent(
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final themeState = ref.watch(themeProvider);
 
     return Column(
@@ -65,78 +71,77 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
         SizedBox(height: AlhaiSpacing.lg),
 
         // Theme options
-        _buildSettingsGroup(
-          l10n.theme,
-          [
-            _buildThemeOptionTile(
-              icon: Icons.light_mode_rounded,
-              title: l10n.lightMode,
-              subtitle:
-                  '\u0645\u0638\u0647\u0631 \u0641\u0627\u062a\u062d \u0645\u0631\u064a\u062d \u0644\u0644\u0639\u064a\u0646',
-              isSelected: themeState.themeMode == ThemeMode.light,
-              isDark: isDark,
-              onTap: () {
-                ref.read(themeProvider.notifier).enableLightMode();
-                if (themeState.themeMode != ThemeMode.light) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                          '\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 ${l10n.lightMode}'),
-                      backgroundColor: AppColors.success,
-                      behavior: SnackBarBehavior.floating,
-                      duration: const Duration(seconds: 2),
+        _buildSettingsGroup(l10n.theme, [
+          _buildThemeOptionTile(
+            icon: Icons.light_mode_rounded,
+            title: l10n.lightMode,
+            subtitle:
+                '\u0645\u0638\u0647\u0631 \u0641\u0627\u062a\u062d \u0645\u0631\u064a\u062d \u0644\u0644\u0639\u064a\u0646',
+            isSelected: themeState.themeMode == ThemeMode.light,
+            isDark: isDark,
+            onTap: () {
+              ref.read(themeProvider.notifier).enableLightMode();
+              if (themeState.themeMode != ThemeMode.light) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      '\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 ${l10n.lightMode}',
                     ),
-                  );
-                }
-              },
-            ),
-            _buildThemeOptionTile(
-              icon: Icons.dark_mode_rounded,
-              title: l10n.darkMode,
-              subtitle:
-                  '\u0645\u0638\u0647\u0631 \u0645\u0638\u0644\u0645 \u064a\u062d\u0645\u064a \u0627\u0644\u0639\u064a\u0646',
-              isSelected: themeState.themeMode == ThemeMode.dark,
-              isDark: isDark,
-              onTap: () {
-                ref.read(themeProvider.notifier).enableDarkMode();
-                if (themeState.themeMode != ThemeMode.dark) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                          '\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 ${l10n.darkMode}'),
-                      backgroundColor: AppColors.success,
-                      behavior: SnackBarBehavior.floating,
-                      duration: const Duration(seconds: 2),
+                    backgroundColor: AppColors.success,
+                    behavior: SnackBarBehavior.floating,
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              }
+            },
+          ),
+          _buildThemeOptionTile(
+            icon: Icons.dark_mode_rounded,
+            title: l10n.darkMode,
+            subtitle:
+                '\u0645\u0638\u0647\u0631 \u0645\u0638\u0644\u0645 \u064a\u062d\u0645\u064a \u0627\u0644\u0639\u064a\u0646',
+            isSelected: themeState.themeMode == ThemeMode.dark,
+            isDark: isDark,
+            onTap: () {
+              ref.read(themeProvider.notifier).enableDarkMode();
+              if (themeState.themeMode != ThemeMode.dark) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      '\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 ${l10n.darkMode}',
                     ),
-                  );
-                }
-              },
-            ),
-            _buildThemeOptionTile(
-              icon: Icons.settings_suggest_rounded,
-              title: l10n.systemMode,
-              subtitle:
-                  '\u064a\u062a\u0628\u0639 \u0625\u0639\u062f\u0627\u062f\u0627\u062a \u062c\u0647\u0627\u0632\u0643 \u062a\u0644\u0642\u0627\u0626\u064a\u0627\u064b',
-              isSelected: themeState.themeMode == ThemeMode.system,
-              isDark: isDark,
-              onTap: () {
-                ref.read(themeProvider.notifier).enableSystemMode();
-                if (themeState.themeMode != ThemeMode.system) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                          '\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 ${l10n.systemMode}'),
-                      backgroundColor: AppColors.success,
-                      behavior: SnackBarBehavior.floating,
-                      duration: const Duration(seconds: 2),
+                    backgroundColor: AppColors.success,
+                    behavior: SnackBarBehavior.floating,
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              }
+            },
+          ),
+          _buildThemeOptionTile(
+            icon: Icons.settings_suggest_rounded,
+            title: l10n.systemMode,
+            subtitle:
+                '\u064a\u062a\u0628\u0639 \u0625\u0639\u062f\u0627\u062f\u0627\u062a \u062c\u0647\u0627\u0632\u0643 \u062a\u0644\u0642\u0627\u0626\u064a\u0627\u064b',
+            isSelected: themeState.themeMode == ThemeMode.system,
+            isDark: isDark,
+            onTap: () {
+              ref.read(themeProvider.notifier).enableSystemMode();
+              if (themeState.themeMode != ThemeMode.system) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      '\u062A\u0645 \u062A\u0641\u0639\u064A\u0644 ${l10n.systemMode}',
                     ),
-                  );
-                }
-              },
-            ),
-          ],
-          isDark,
-        ),
+                    backgroundColor: AppColors.success,
+                    behavior: SnackBarBehavior.floating,
+                    duration: const Duration(seconds: 2),
+                  ),
+                );
+              }
+            },
+          ),
+        ], isDark),
       ],
     );
   }
@@ -147,9 +152,7 @@ class _ThemeScreenState extends ConsumerState<ThemeScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -250,9 +253,7 @@ class _ThemePreview extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: 0.05),
@@ -295,20 +296,24 @@ class _ThemePreview extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                  child: _MiniCard(isDark: isDark, color: AppColors.primary)),
+                child: _MiniCard(isDark: isDark, color: AppColors.primary),
+              ),
               SizedBox(width: AlhaiSpacing.xs),
               Expanded(
-                  child: _MiniCard(isDark: isDark, color: AppColors.secondary)),
+                child: _MiniCard(isDark: isDark, color: AppColors.secondary),
+              ),
             ],
           ),
           SizedBox(height: AlhaiSpacing.xs),
           Row(
             children: [
               Expanded(
-                  child: _MiniCard(isDark: isDark, color: AppColors.success)),
+                child: _MiniCard(isDark: isDark, color: AppColors.success),
+              ),
               SizedBox(width: AlhaiSpacing.xs),
               Expanded(
-                  child: _MiniCard(isDark: isDark, color: AppColors.warning)),
+                child: _MiniCard(isDark: isDark, color: AppColors.warning),
+              ),
             ],
           ),
         ],

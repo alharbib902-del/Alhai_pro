@@ -59,7 +59,9 @@ Widget _buildTestWidget({
             invoicesValue?.when(
               data: (d) => Future.value(d),
               loading: () => Future.delayed(
-                  const Duration(days: 1), () => <SalesTableData>[]),
+                const Duration(days: 1),
+                () => <SalesTableData>[],
+              ),
               error: (e, _) => Future.error(e),
             ) ??
             Future.value(<SalesTableData>[]),
@@ -69,13 +71,26 @@ Widget _buildTestWidget({
             statsValue?.when(
               data: (d) => Future.value(d),
               loading: () => Future.delayed(
-                  const Duration(days: 1),
-                  () => const SalesStats(
-                      count: 0, total: 0, average: 0, maxSale: 0, minSale: 0)),
+                const Duration(days: 1),
+                () => const SalesStats(
+                  count: 0,
+                  total: 0,
+                  average: 0,
+                  maxSale: 0,
+                  minSale: 0,
+                ),
+              ),
               error: (e, _) => Future.error(e),
             ) ??
-            Future.value(const SalesStats(
-                count: 0, total: 0, average: 0, maxSale: 0, minSale: 0)),
+            Future.value(
+              const SalesStats(
+                count: 0,
+                total: 0,
+                average: 0,
+                maxSale: 0,
+                minSale: 0,
+              ),
+            ),
       ),
       paymentMethodStatsProvider.overrideWith(
         (ref) => Future.value(<PaymentMethodStats>[]),
@@ -125,9 +140,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        invoicesValue: const AsyncValue.data([]),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(invoicesValue: const AsyncValue.data([])),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byType(AppEmptyState), findsOneWidget);
@@ -142,16 +157,27 @@ void main() {
       final testSales = [
         _createTestSale(id: 'sale-1', receiptNo: 'INV-001', total: 150.0),
         _createTestSale(
-            id: 'sale-2', receiptNo: 'INV-002', total: 250.0, status: 'voided'),
+          id: 'sale-2',
+          receiptNo: 'INV-002',
+          total: 250.0,
+          status: 'voided',
+        ),
       ];
 
-      await tester.pumpWidget(_buildTestWidget(
-        invoicesValue: AsyncValue.data(testSales),
-        statsValue: const AsyncValue.data(
-          SalesStats(
-              count: 2, total: 400, average: 200, maxSale: 250, minSale: 150),
+      await tester.pumpWidget(
+        _buildTestWidget(
+          invoicesValue: AsyncValue.data(testSales),
+          statsValue: const AsyncValue.data(
+            SalesStats(
+              count: 2,
+              total: 400,
+              average: 200,
+              maxSale: 250,
+              minSale: 150,
+            ),
+          ),
         ),
-      ));
+      );
       await tester.pump(const Duration(seconds: 1));
       await tester.pump(const Duration(seconds: 1));
       // Consume any pending overflow exceptions from the test framework
@@ -166,10 +192,14 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        invoicesValue:
-            AsyncValue.error(Exception('DB error'), StackTrace.current),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          invoicesValue: AsyncValue.error(
+            Exception('DB error'),
+            StackTrace.current,
+          ),
+        ),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byIcon(Icons.error_outline), findsOneWidget);

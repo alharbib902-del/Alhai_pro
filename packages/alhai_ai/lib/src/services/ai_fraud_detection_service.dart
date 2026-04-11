@@ -233,7 +233,7 @@ class AiFraudDetectionService {
           'TXN-005',
           'TXN-006',
           'TXN-007',
-          'TXN-008'
+          'TXN-008',
         ],
         cashierId: 'CSH-003',
         cashierName: 'سعد الحربي', // Saad Al-Harbi
@@ -463,8 +463,9 @@ class AiFraudDetectionService {
   /// الحصول على الملخص - Get Summary
   Future<FraudDetectionSummary> getSummary(String storeId) async {
     final alerts = await getAlerts(storeId);
-    final criticalCount =
-        alerts.where((a) => a.severity == FraudSeverity.critical).length;
+    final criticalCount = alerts
+        .where((a) => a.severity == FraudSeverity.critical)
+        .length;
     final unreviewedCount = alerts.where((a) => !a.isReviewed).length;
 
     final patternCounts = <FraudPattern, int>{};

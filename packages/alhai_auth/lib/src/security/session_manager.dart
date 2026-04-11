@@ -70,10 +70,7 @@ class SessionManager {
       expiry: expiry,
     );
 
-    await SecureStorageService.saveUserData(
-      userId: userId,
-      storeId: storeId,
-    );
+    await SecureStorageService.saveUserData(userId: userId, storeId: storeId);
   }
 
   /// تجديد الجلسة

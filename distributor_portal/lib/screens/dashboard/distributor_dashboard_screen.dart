@@ -168,7 +168,8 @@ class _OnboardingCard extends StatelessWidget {
         icon: Icons.receipt_long_rounded,
         color: AppColors.primary,
         title: l10n?.distributorOrders ?? 'Review Orders',
-        subtitle: l10n?.distributorReviewOrdersDesc ??
+        subtitle:
+            l10n?.distributorReviewOrdersDesc ??
             'Review and manage incoming purchase orders from stores',
         route: '/orders',
       ),
@@ -176,7 +177,8 @@ class _OnboardingCard extends StatelessWidget {
         icon: Icons.price_change_rounded,
         color: AppColors.secondary,
         title: l10n?.distributorManagePrices ?? 'Manage Prices',
-        subtitle: l10n?.distributorManagePricesDesc ??
+        subtitle:
+            l10n?.distributorManagePricesDesc ??
             'Set and update product prices for your distribution',
         route: '/pricing',
       ),
@@ -184,7 +186,8 @@ class _OnboardingCard extends StatelessWidget {
         icon: Icons.bar_chart_rounded,
         color: AppColors.info,
         title: l10n?.distributorViewReports ?? 'View Reports',
-        subtitle: l10n?.distributorViewReportsDesc ??
+        subtitle:
+            l10n?.distributorViewReportsDesc ??
             'Track sales performance and view analytics',
         route: '/reports',
       ),
@@ -192,7 +195,8 @@ class _OnboardingCard extends StatelessWidget {
         icon: Icons.settings_rounded,
         color: AppColors.warning,
         title: l10n?.distributorUpdateSettings ?? 'Update Settings',
-        subtitle: l10n?.distributorUpdateSettingsDesc ??
+        subtitle:
+            l10n?.distributorUpdateSettingsDesc ??
             'Configure company info, delivery zones, and notifications',
         route: '/settings',
       ),
@@ -204,9 +208,7 @@ class _OnboardingCard extends StatelessWidget {
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(AlhaiRadius.lg),
         boxShadow: AppColors.getCardShadow(isDark),
-        border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AppColors.primary.withValues(alpha: 0.3)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -216,13 +218,17 @@ class _OnboardingCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 decoration: BoxDecoration(
-                  color:
-                      AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
+                  color: AppColors.primary.withValues(
+                    alpha: isDark ? 0.2 : 0.1,
+                  ),
                   borderRadius: BorderRadius.circular(AlhaiRadius.md),
                 ),
                 child: ExcludeSemantics(
-                  child: const Icon(Icons.waving_hand_rounded,
-                      color: AppColors.primary, size: 28),
+                  child: const Icon(
+                    Icons.waving_hand_rounded,
+                    color: AppColors.primary,
+                    size: 28,
+                  ),
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.md),
@@ -263,8 +269,8 @@ class _OnboardingCard extends StatelessWidget {
                 width: screenWidth >= AlhaiBreakpoints.desktop
                     ? (screenWidth - 120) / 4
                     : screenWidth >= AlhaiBreakpoints.tablet
-                        ? (screenWidth - 90) / 2
-                        : double.infinity,
+                    ? (screenWidth - 90) / 2
+                    : double.infinity,
                 child: Semantics(
                   button: true,
                   label: '${step.title}: ${step.subtitle}',
@@ -274,8 +280,9 @@ class _OnboardingCard extends StatelessWidget {
                     child: Container(
                       padding: const EdgeInsets.all(AlhaiSpacing.md),
                       decoration: BoxDecoration(
-                        color:
-                            step.color.withValues(alpha: isDark ? 0.08 : 0.04),
+                        color: step.color.withValues(
+                          alpha: isDark ? 0.08 : 0.04,
+                        ),
                         borderRadius: BorderRadius.circular(AlhaiRadius.md),
                         border: Border.all(
                           color: step.color.withValues(alpha: 0.2),
@@ -399,8 +406,11 @@ class _ChartCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     final width = MediaQuery.sizeOf(context).width;
-    final maxY = monthlySales.fold<double>(
-            0, (max, s) => s.amount > max ? s.amount : max) *
+    final maxY =
+        monthlySales.fold<double>(
+          0,
+          (max, s) => s.amount > max ? s.amount : max,
+        ) *
         1.2;
 
     return Container(
@@ -432,8 +442,9 @@ class _ChartCard extends StatelessWidget {
                   enabled: true,
                   touchTooltipData: BarTouchTooltipData(
                     tooltipRoundedRadius: 8,
-                    tooltipBgColor:
-                        isDark ? AppColors.getSurface(true) : AppColors.grey800,
+                    tooltipBgColor: isDark
+                        ? AppColors.getSurface(true)
+                        : AppColors.grey800,
                     getTooltipItem: (group, groupIndex, rod, rodIndex) {
                       return BarTooltipItem(
                         '${(rod.toY / 1000).toStringAsFixed(0)}K',
@@ -463,8 +474,9 @@ class _ChartCard extends StatelessWidget {
                         final idx = value.toInt();
                         if (idx >= 0 && idx < monthlySales.length) {
                           return Padding(
-                            padding:
-                                const EdgeInsets.only(top: AlhaiSpacing.xs),
+                            padding: const EdgeInsets.only(
+                              top: AlhaiSpacing.xs,
+                            ),
                             child: Text(
                               monthlySales[idx].month,
                               style: TextStyle(
@@ -519,12 +531,14 @@ class _ChartCard extends StatelessWidget {
                         ),
                         width: 20,
                         borderRadius: const BorderRadius.vertical(
-                            top: Radius.circular(6)),
+                          top: Radius.circular(6),
+                        ),
                         backDrawRodData: BackgroundBarChartRodData(
                           show: true,
                           toY: maxY > 0 ? maxY : 100,
-                          color: AppColors.primary
-                              .withValues(alpha: isDark ? 0.08 : 0.04),
+                          color: AppColors.primary.withValues(
+                            alpha: isDark ? 0.08 : 0.04,
+                          ),
                         ),
                       ),
                     ],
@@ -613,51 +627,53 @@ class _RecentOrdersCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AlhaiSpacing.md),
-          ...orders.map((order) => Padding(
-                padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
-                child: InkWell(
-                  borderRadius: BorderRadius.circular(AlhaiRadius.sm),
-                  onTap: () => context.go('/orders/${order.id}'),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          order.purchaseNumber,
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.getTextPrimary(isDark),
-                          ),
+          ...orders.map(
+            (order) => Padding(
+              padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+              child: InkWell(
+                borderRadius: BorderRadius.circular(AlhaiRadius.sm),
+                onTap: () => context.go('/orders/${order.id}'),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        order.purchaseNumber,
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.getTextPrimary(isDark),
                         ),
                       ),
-                      Expanded(
-                        flex: 3,
-                        child: Text(
-                          order.storeName,
-                          style: TextStyle(
-                            color: AppColors.getTextSecondary(isDark),
-                          ),
+                    ),
+                    Expanded(
+                      flex: 3,
+                      child: Text(
+                        order.storeName,
+                        style: TextStyle(
+                          color: AppColors.getTextSecondary(isDark),
                         ),
                       ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          '${NumberFormat('#,##0').format(order.total)} ${l10n?.distributorSar ?? 'SAR'}',
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.getTextPrimary(isDark),
-                          ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Text(
+                        '${NumberFormat('#,##0').format(order.total)} ${l10n?.distributorSar ?? 'SAR'}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: AppColors.getTextPrimary(isDark),
                         ),
                       ),
-                      StatusBadge(
-                        status: order.status,
-                        label: _statusLabel(order.status),
-                        isDark: isDark,
-                      ),
-                    ],
-                  ),
+                    ),
+                    StatusBadge(
+                      status: order.status,
+                      label: _statusLabel(order.status),
+                      isDark: isDark,
+                    ),
+                  ],
                 ),
-              )),
+              ),
+            ),
+          ),
         ],
       ),
     );

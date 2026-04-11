@@ -85,8 +85,9 @@ class _ExpenseCategoriesScreenState
             subtitle: _getDateSubtitle(l10n),
             showSearch: isWideScreen,
             searchHint: l10n.searchPlaceholder,
-            onMenuTap:
-                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
@@ -94,28 +95,36 @@ class _ExpenseCategoriesScreenState
             onUserTap: () {},
           ),
           Expanded(
-            child: ref.watch(allExpenseCategoriesProvider).when(
+            child: ref
+                .watch(allExpenseCategoriesProvider)
+                .when(
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
                   error: (e, _) =>
                       Center(child: Text(l10n.errorPrefix('$e', e))),
                   data: (categoriesData) {
                     final categories = categoriesData.map(_fromData).toList();
-                    final totalBudget =
-                        categories.fold(0.0, (sum, c) => sum + c.budget);
-                    final totalSpent =
-                        categories.fold(0.0, (sum, c) => sum + c.spent);
+                    final totalBudget = categories.fold(
+                      0.0,
+                      (sum, c) => sum + c.budget,
+                    );
+                    final totalSpent = categories.fold(
+                      0.0,
+                      (sum, c) => sum + c.spent,
+                    );
                     return SingleChildScrollView(
                       padding: EdgeInsets.all(
-                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                        isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                      ),
                       child: _buildContent(
-                          categories,
-                          isWideScreen,
-                          isMediumScreen,
-                          isDark,
-                          l10n,
-                          totalBudget,
-                          totalSpent),
+                        categories,
+                        isWideScreen,
+                        isMediumScreen,
+                        isDark,
+                        l10n,
+                        totalBudget,
+                        totalSpent,
+                      ),
                     );
                   },
                 ),
@@ -132,13 +141,14 @@ class _ExpenseCategoriesScreenState
   }
 
   Widget _buildContent(
-      List<ExpenseCategory> categories,
-      bool isWideScreen,
-      bool isMediumScreen,
-      bool isDark,
-      AppLocalizations l10n,
-      double totalBudget,
-      double totalSpent) {
+    List<ExpenseCategory> categories,
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+    double totalBudget,
+    double totalSpent,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -158,7 +168,10 @@ class _ExpenseCategoriesScreenState
   }
 
   Widget _buildBudgetSummary(
-      double totalBudget, double totalSpent, bool isDark) {
+    double totalBudget,
+    double totalSpent,
+    bool isDark,
+  ) {
     final l10n = AppLocalizations.of(context);
     final percentage = totalBudget > 0 ? totalSpent / totalBudget * 100 : 0.0;
     final remaining = totalBudget - totalSpent;
@@ -189,22 +202,26 @@ class _ExpenseCategoriesScreenState
                   Text(
                     l10n.monthlyBudget,
                     style: TextStyle(
-                        color: Colors.white.withValues(alpha: 0.7),
-                        fontSize: 14),
+                      color: Colors.white.withValues(alpha: 0.7),
+                      fontSize: 14,
+                    ),
                   ),
                   SizedBox(height: AlhaiSpacing.xxs),
                   Text(
                     CurrencyFormatter.formatCompact(totalBudget),
                     style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold),
+                      color: Colors.white,
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ],
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                  horizontal: AlhaiSpacing.md,
+                  vertical: AlhaiSpacing.xs,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
@@ -212,9 +229,10 @@ class _ExpenseCategoriesScreenState
                 child: Text(
                   '${percentage.toStringAsFixed(0)}%',
                   style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
@@ -227,7 +245,8 @@ class _ExpenseCategoriesScreenState
               minHeight: 8,
               backgroundColor: Colors.white.withValues(alpha: 0.3),
               valueColor: AlwaysStoppedAnimation(
-                  percentage > 90 ? AppColors.error : Colors.white),
+                percentage > 90 ? AppColors.error : Colors.white,
+              ),
             ),
           ),
           SizedBox(height: AlhaiSpacing.mdl),
@@ -235,14 +254,16 @@ class _ExpenseCategoriesScreenState
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
               _buildSummaryStat(
-                  l10n.spentAmount,
-                  CurrencyFormatter.formatCompact(totalSpent),
-                  Icons.arrow_upward),
+                l10n.spentAmount,
+                CurrencyFormatter.formatCompact(totalSpent),
+                Icons.arrow_upward,
+              ),
               Container(height: 40, width: 1, color: Colors.white24),
               _buildSummaryStat(
-                  l10n.remainingAmount,
-                  CurrencyFormatter.formatCompact(remaining),
-                  Icons.account_balance_wallet),
+                l10n.remainingAmount,
+                CurrencyFormatter.formatCompact(remaining),
+                Icons.account_balance_wallet,
+              ),
             ],
           ),
         ],
@@ -258,14 +279,21 @@ class _ExpenseCategoriesScreenState
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label,
-                style: TextStyle(
-                    color: Colors.white.withValues(alpha: 0.7), fontSize: 12)),
-            Text(value,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 14)),
+            Text(
+              label,
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.7),
+                fontSize: 12,
+              ),
+            ),
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: 14,
+              ),
+            ),
           ],
         ),
       ],
@@ -273,35 +301,49 @@ class _ExpenseCategoriesScreenState
   }
 
   Widget _buildCategoriesGrid(
-      List<ExpenseCategory> categories, bool isDark, AppLocalizations l10n) {
+    List<ExpenseCategory> categories,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Wrap(
       spacing: 16,
       runSpacing: 16,
       children: categories
-          .map((cat) => SizedBox(
-                width: 340,
-                child: _buildCategoryCard(cat, isDark, l10n),
-              ))
+          .map(
+            (cat) => SizedBox(
+              width: 340,
+              child: _buildCategoryCard(cat, isDark, l10n),
+            ),
+          )
           .toList(),
     );
   }
 
   Widget _buildCategoriesList(
-      List<ExpenseCategory> categories, bool isDark, AppLocalizations l10n) {
+    List<ExpenseCategory> categories,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Column(
       children: categories
-          .map((cat) => Padding(
-                padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
-                child: _buildCategoryCard(cat, isDark, l10n),
-              ))
+          .map(
+            (cat) => Padding(
+              padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+              child: _buildCategoryCard(cat, isDark, l10n),
+            ),
+          )
           .toList(),
     );
   }
 
   Widget _buildCategoryCard(
-      ExpenseCategory category, bool isDark, AppLocalizations l10n) {
-    final percentage =
-        category.budget > 0 ? category.spent / category.budget * 100 : 0.0;
+    ExpenseCategory category,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
+    final percentage = category.budget > 0
+        ? category.spent / category.budget * 100
+        : 0.0;
     final isOverBudget = percentage > 100;
 
     return Container(
@@ -309,9 +351,7 @@ class _ExpenseCategoriesScreenState
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
         boxShadow: AppShadows.of(context, size: ShadowSize.md),
       ),
       child: InkWell(
@@ -350,7 +390,9 @@ class _ExpenseCategoriesScreenState
                           if (isOverBudget)
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: 6, vertical: AlhaiSpacing.xxxs),
+                                horizontal: 6,
+                                vertical: AlhaiSpacing.xxxs,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.error.withValues(alpha: 0.1),
                                 borderRadius: BorderRadius.circular(6),
@@ -358,13 +400,19 @@ class _ExpenseCategoriesScreenState
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.warning,
-                                      size: 12, color: AppColors.error),
+                                  const Icon(
+                                    Icons.warning,
+                                    size: 12,
+                                    color: AppColors.error,
+                                  ),
                                   SizedBox(width: AlhaiSpacing.xxxs),
-                                  Text(l10n.overBudget,
-                                      style: const TextStyle(
-                                          color: AppColors.error,
-                                          fontSize: 10)),
+                                  Text(
+                                    l10n.overBudget,
+                                    style: const TextStyle(
+                                      color: AppColors.error,
+                                      fontSize: 10,
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -382,33 +430,45 @@ class _ExpenseCategoriesScreenState
                   ),
                 ),
                 PopupMenuButton<String>(
-                  icon: Icon(Icons.more_vert,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  icon: Icon(
+                    Icons.more_vert,
+                    color: Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
                   onSelected: (value) => _handleCategoryAction(value, category),
                   itemBuilder: (context) => [
                     PopupMenuItem(
-                        value: 'edit',
-                        child: ListTile(
-                            leading: const Icon(Icons.edit),
-                            title: Text(l10n.edit),
-                            contentPadding: EdgeInsets.zero,
-                            dense: true)),
+                      value: 'edit',
+                      child: ListTile(
+                        leading: const Icon(Icons.edit),
+                        title: Text(l10n.edit),
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                      ),
+                    ),
                     PopupMenuItem(
-                        value: 'view',
-                        child: ListTile(
-                            leading: const Icon(Icons.visibility),
-                            title: Text(l10n.viewDetails),
-                            contentPadding: EdgeInsets.zero,
-                            dense: true)),
+                      value: 'view',
+                      child: ListTile(
+                        leading: const Icon(Icons.visibility),
+                        title: Text(l10n.viewDetails),
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                      ),
+                    ),
                     PopupMenuItem(
-                        value: 'delete',
-                        child: ListTile(
-                            leading: const Icon(Icons.delete,
-                                color: AppColors.error),
-                            title: Text(l10n.delete,
-                                style: const TextStyle(color: AppColors.error)),
-                            contentPadding: EdgeInsets.zero,
-                            dense: true)),
+                      value: 'delete',
+                      child: ListTile(
+                        leading: const Icon(
+                          Icons.delete,
+                          color: AppColors.error,
+                        ),
+                        title: Text(
+                          l10n.delete,
+                          style: const TextStyle(color: AppColors.error),
+                        ),
+                        contentPadding: EdgeInsets.zero,
+                        dense: true,
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -422,10 +482,12 @@ class _ExpenseCategoriesScreenState
                     child: LinearProgressIndicator(
                       value: (percentage / 100).clamp(0.0, 1.0),
                       minHeight: 6,
-                      backgroundColor:
-                          Theme.of(context).colorScheme.surfaceContainerHighest,
+                      backgroundColor: Theme.of(
+                        context,
+                      ).colorScheme.surfaceContainerHighest,
                       valueColor: AlwaysStoppedAnimation(
-                          isOverBudget ? AppColors.error : category.color),
+                        isOverBudget ? AppColors.error : category.color,
+                      ),
                     ),
                   ),
                 ),
@@ -446,7 +508,8 @@ class _ExpenseCategoriesScreenState
               children: [
                 Text(
                   l10n.spentLabel(
-                      CurrencyFormatter.formatCompact(category.spent)),
+                    CurrencyFormatter.formatCompact(category.spent),
+                  ),
                   style: TextStyle(
                     color: isOverBudget
                         ? AppColors.error
@@ -455,8 +518,11 @@ class _ExpenseCategoriesScreenState
                   ),
                 ),
                 Text(
-                  l10n.remainingLabel2(CurrencyFormatter.formatCompact(
-                      category.budget - category.spent)),
+                  l10n.remainingLabel2(
+                    CurrencyFormatter.formatCompact(
+                      category.budget - category.spent,
+                    ),
+                  ),
                   style: TextStyle(
                     color: isOverBudget ? AppColors.error : AppColors.success,
                     fontSize: 12,
@@ -489,11 +555,13 @@ class _ExpenseCategoriesScreenState
             Padding(
               padding: const EdgeInsets.all(AlhaiSpacing.md),
               child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                      color: AppColors.grey300,
-                      borderRadius: BorderRadius.circular(2))),
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppColors.grey300,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
             ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl),
@@ -502,8 +570,9 @@ class _ExpenseCategoriesScreenState
                   Container(
                     padding: const EdgeInsets.all(AlhaiSpacing.sm),
                     decoration: BoxDecoration(
-                        color: category.color.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(12)),
+                      color: category.color.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                     child: Icon(category.icon, color: category.color, size: 28),
                   ),
                   SizedBox(width: AlhaiSpacing.sm),
@@ -511,24 +580,30 @@ class _ExpenseCategoriesScreenState
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(category.name,
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontWeight: FontWeight.bold,
-                                color:
-                                    Theme.of(context).colorScheme.onSurface)),
-                        Text(l10n.expensesThisMonth(category.expensesCount),
-                            style: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant,
-                                fontSize: 13)),
+                        Text(
+                          category.name,
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.onSurface,
+                          ),
+                        ),
+                        Text(
+                          l10n.expensesThisMonth(category.expensesCount),
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
+                            fontSize: 13,
+                          ),
+                        ),
                       ],
                     ),
                   ),
                   IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.close)),
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.close),
+                  ),
                 ],
               ),
             ),
@@ -538,26 +613,33 @@ class _ExpenseCategoriesScreenState
               child: Row(
                 children: [
                   Expanded(
-                      child: _buildDetailStat(
-                          l10n.budgetLabel,
-                          CurrencyFormatter.formatCompact(category.budget),
-                          AppColors.info,
-                          isDark)),
+                    child: _buildDetailStat(
+                      l10n.budgetLabel,
+                      CurrencyFormatter.formatCompact(category.budget),
+                      AppColors.info,
+                      isDark,
+                    ),
+                  ),
                   SizedBox(width: AlhaiSpacing.xs),
                   Expanded(
-                      child: _buildDetailStat(
-                          l10n.spentAmount,
-                          CurrencyFormatter.formatCompact(category.spent),
-                          AppColors.warning,
-                          isDark)),
+                    child: _buildDetailStat(
+                      l10n.spentAmount,
+                      CurrencyFormatter.formatCompact(category.spent),
+                      AppColors.warning,
+                      isDark,
+                    ),
+                  ),
                   SizedBox(width: AlhaiSpacing.xs),
                   Expanded(
-                      child: _buildDetailStat(
-                          l10n.remainingAmount,
-                          CurrencyFormatter.formatCompact(
-                              category.budget - category.spent),
-                          AppColors.success,
-                          isDark)),
+                    child: _buildDetailStat(
+                      l10n.remainingAmount,
+                      CurrencyFormatter.formatCompact(
+                        category.budget - category.spent,
+                      ),
+                      AppColors.success,
+                      isDark,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -566,44 +648,56 @@ class _ExpenseCategoriesScreenState
               padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl),
               child: Row(
                 children: [
-                  Text(l10n.recentExpenses,
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface)),
+                  Text(
+                    l10n.recentExpenses,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
+                  ),
                   const Spacer(),
                   TextButton(
-                      onPressed: () {},
-                      child: Text(AppLocalizations.of(context).viewAll)),
+                    onPressed: () {},
+                    child: Text(AppLocalizations.of(context).viewAll),
+                  ),
                 ],
               ),
             ),
             Expanded(
               child: ListView.builder(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.mdl),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.mdl,
+                ),
                 itemCount: 5,
                 itemBuilder: (context, index) {
                   return ListTile(
                     leading: CircleAvatar(
                       backgroundColor: category.color.withValues(alpha: 0.1),
-                      child:
-                          Icon(Icons.receipt, color: category.color, size: 20),
+                      child: Icon(
+                        Icons.receipt,
+                        color: category.color,
+                        size: 20,
+                      ),
                     ),
-                    title: Text(l10n.expenseNumber(1000 + index),
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface)),
+                    title: Text(
+                      l10n.expenseNumber(1000 + index),
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
+                    ),
                     subtitle: Text(
                       '${DateTime.now().subtract(Duration(days: index)).day}/${DateTime.now().month}/${DateTime.now().year}',
                       style: TextStyle(
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     trailing: Text(
                       CurrencyFormatter.formatCompact(category.spent / 5),
                       style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: Theme.of(context).colorScheme.onSurface),
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
                   );
                 },
@@ -616,7 +710,11 @@ class _ExpenseCategoriesScreenState
   }
 
   Widget _buildDetailStat(
-      String label, String value, Color color, bool isDark) {
+    String label,
+    String value,
+    Color color,
+    bool isDark,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.sm),
       decoration: BoxDecoration(
@@ -625,14 +723,22 @@ class _ExpenseCategoriesScreenState
       ),
       child: Column(
         children: [
-          Text(value,
-              style: TextStyle(
-                  color: color, fontWeight: FontWeight.bold, fontSize: 14)),
+          Text(
+            value,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+            ),
+          ),
           SizedBox(height: AlhaiSpacing.xxs),
-          Text(label,
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontSize: 11)),
+          Text(
+            label,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 11,
+            ),
+          ),
         ],
       ),
     );
@@ -646,20 +752,29 @@ class _ExpenseCategoriesScreenState
         onSave: (name, icon, color, budget) async {
           // Find the icon/color key for storage
           final iconKey = _iconMap.entries
-              .firstWhere((e) => e.value == icon,
-                  orElse: () => const MapEntry('category', Icons.category))
+              .firstWhere(
+                (e) => e.value == icon,
+                orElse: () => const MapEntry('category', Icons.category),
+              )
               .key;
           final colorKey = _colorMap.entries
-              .firstWhere((e) => e.value == color,
-                  orElse: () => const MapEntry('primary', AppColors.primary))
+              .firstWhere(
+                (e) => e.value == color,
+                orElse: () => const MapEntry('primary', AppColors.primary),
+              )
               .key;
-          await addExpenseCategory(ref,
-              name: name, icon: iconKey, color: colorKey);
+          await addExpenseCategory(
+            ref,
+            name: name,
+            icon: iconKey,
+            color: colorKey,
+          );
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
-                  content: Text('${l10n.categorySavedSuccess}: $name'),
-                  backgroundColor: AppColors.success),
+                content: Text('${l10n.categorySavedSuccess}: $name'),
+                backgroundColor: AppColors.success,
+              ),
             );
           }
         },
@@ -691,8 +806,9 @@ class _ExpenseCategoriesScreenState
           // TODO: implement update category when DAO supports it
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-                content: Text('${l10n.categorySavedSuccess}: $name'),
-                backgroundColor: AppColors.success),
+              content: Text('${l10n.categorySavedSuccess}: $name'),
+              backgroundColor: AppColors.success,
+            ),
           );
         },
       ),
@@ -708,8 +824,9 @@ class _ExpenseCategoriesScreenState
         content: Text(l10n.deleteCategoryConfirm),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(l10n.cancel)),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.cancel),
+          ),
           FilledButton(
             onPressed: () async {
               Navigator.pop(dialogContext);
@@ -718,8 +835,9 @@ class _ExpenseCategoriesScreenState
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                      content: Text(l10n.categoryDeletedSuccess),
-                      backgroundColor: AppColors.error),
+                    content: Text(l10n.categoryDeletedSuccess),
+                    backgroundColor: AppColors.error,
+                  ),
                 );
               }
             },
@@ -788,7 +906,8 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
     super.initState();
     _nameController = TextEditingController(text: widget.category?.name ?? '');
     _budgetController = TextEditingController(
-        text: widget.category?.budget.toStringAsFixed(0) ?? '');
+      text: widget.category?.budget.toStringAsFixed(0) ?? '',
+    );
     _selectedIcon = widget.category?.icon ?? Icons.category;
     _selectedColor = widget.category?.color ?? AppColors.primary;
   }
@@ -804,32 +923,37 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
     return AlertDialog(
-      title:
-          Text(widget.category == null ? l10n.addCategory : l10n.editCategory),
+      title: Text(
+        widget.category == null ? l10n.addCategory : l10n.editCategory,
+      ),
       content: SingleChildScrollView(
         child: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
-                controller: _nameController,
-                decoration: InputDecoration(
-                    labelText: l10n.categoryName,
-                    hintText: l10n.categoryNameHint)),
+              controller: _nameController,
+              decoration: InputDecoration(
+                labelText: l10n.categoryName,
+                hintText: l10n.categoryNameHint,
+              ),
+            ),
             SizedBox(height: AlhaiSpacing.md),
             TextField(
               controller: _budgetController,
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
               decoration: InputDecoration(
-                  labelText: l10n.monthlyBudgetLabel,
-                  hintText: '5000',
-                  suffixText: l10n.sar),
+                labelText: l10n.monthlyBudgetLabel,
+                hintText: '5000',
+                suffixText: l10n.sar,
+              ),
             ),
             SizedBox(height: AlhaiSpacing.md),
-            Text(l10n.categoryIcon,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            Text(
+              l10n.categoryIcon,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
             SizedBox(height: AlhaiSpacing.xs),
             Wrap(
               spacing: 8,
@@ -847,21 +971,23 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                           : Colors.transparent,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                          color:
-                              isSelected ? _selectedColor : AppColors.grey300),
+                        color: isSelected ? _selectedColor : AppColors.grey300,
+                      ),
                     ),
-                    child: Icon(icon,
-                        color:
-                            isSelected ? _selectedColor : AppColors.textMuted,
-                        size: 24),
+                    child: Icon(
+                      icon,
+                      color: isSelected ? _selectedColor : AppColors.textMuted,
+                      size: 24,
+                    ),
                   ),
                 );
               }).toList(),
             ),
             SizedBox(height: AlhaiSpacing.md),
-            Text(l10n.categoryColor,
-                style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+            Text(
+              l10n.categoryColor,
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+            ),
             SizedBox(height: AlhaiSpacing.xs),
             Wrap(
               spacing: 8,
@@ -878,10 +1004,11 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
                       color: color,
                       shape: BoxShape.circle,
                       border: Border.all(
-                          color: isSelected
-                              ? Theme.of(context).colorScheme.onSurface
-                              : Colors.transparent,
-                          width: 3),
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.onSurface
+                            : Colors.transparent,
+                        width: 3,
+                      ),
                     ),
                     child: isSelected
                         ? const Icon(Icons.check, color: Colors.white, size: 20)
@@ -895,12 +1022,18 @@ class _CategoryFormDialogState extends State<_CategoryFormDialog> {
       ),
       actions: [
         TextButton(
-            onPressed: () => Navigator.pop(context), child: Text(l10n.cancel)),
+          onPressed: () => Navigator.pop(context),
+          child: Text(l10n.cancel),
+        ),
         FilledButton(
           onPressed: () {
             if (_nameController.text.isNotEmpty) {
-              widget.onSave(_nameController.text, _selectedIcon, _selectedColor,
-                  double.tryParse(_budgetController.text) ?? 0);
+              widget.onSave(
+                _nameController.text,
+                _selectedIcon,
+                _selectedColor,
+                double.tryParse(_budgetController.text) ?? 0,
+              );
               Navigator.pop(context);
             }
           },

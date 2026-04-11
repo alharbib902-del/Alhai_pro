@@ -36,10 +36,12 @@ void main() {
     testWidgets('shows loading indicator initially', (tester) async {
       final completerPromos = Completer<List<dynamic>>();
       final completerProducts = Completer<List<dynamic>>();
-      when(() => mockDiscountsDao.getActivePromotions(any()))
-          .thenAnswer((_) => completerPromos.future.then((v) => v.cast()));
-      when(() => mockProductsDao.getLowStockProducts(any()))
-          .thenAnswer((_) => completerProducts.future.then((v) => v.cast()));
+      when(
+        () => mockDiscountsDao.getActivePromotions(any()),
+      ).thenAnswer((_) => completerPromos.future.then((v) => v.cast()));
+      when(
+        () => mockProductsDao.getLowStockProducts(any()),
+      ).thenAnswer((_) => completerProducts.future.then((v) => v.cast()));
 
       await tester.pumpWidget(createTestWidget(const SmartPromotionsScreen()));
       await tester.pump();
@@ -48,10 +50,12 @@ void main() {
     });
 
     testWidgets('renders three tabs', (tester) async {
-      when(() => mockDiscountsDao.getActivePromotions(any()))
-          .thenAnswer((_) async => []);
-      when(() => mockProductsDao.getLowStockProducts(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockDiscountsDao.getActivePromotions(any()),
+      ).thenAnswer((_) async => []);
+      when(
+        () => mockProductsDao.getLowStockProducts(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createTestWidget(const SmartPromotionsScreen()));
       await tester.pumpAndSettle();
@@ -60,12 +64,15 @@ void main() {
       expect(find.byType(TabBar), findsOneWidget);
     });
 
-    testWidgets('shows AI suggestions tab with no suggestions message',
-        (tester) async {
-      when(() => mockDiscountsDao.getActivePromotions(any()))
-          .thenAnswer((_) async => []);
-      when(() => mockProductsDao.getLowStockProducts(any()))
-          .thenAnswer((_) async => []);
+    testWidgets('shows AI suggestions tab with no suggestions message', (
+      tester,
+    ) async {
+      when(
+        () => mockDiscountsDao.getActivePromotions(any()),
+      ).thenAnswer((_) async => []);
+      when(
+        () => mockProductsDao.getLowStockProducts(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createTestWidget(const SmartPromotionsScreen()));
       await tester.pumpAndSettle();
@@ -74,19 +81,22 @@ void main() {
       expect(find.byIcon(Icons.lightbulb_outline), findsWidgets);
     });
 
-    testWidgets('shows suggestion cards for low stock products',
-        (tester) async {
-      when(() => mockDiscountsDao.getActivePromotions(any()))
-          .thenAnswer((_) async => []);
-      when(() => mockProductsDao.getLowStockProducts(any()))
-          .thenAnswer((_) async => [
-                createTestProduct(
-                  id: 'p-1',
-                  name: 'منتج بطيء',
-                  stockQty: 2,
-                  minQty: 10,
-                ),
-              ]);
+    testWidgets('shows suggestion cards for low stock products', (
+      tester,
+    ) async {
+      when(
+        () => mockDiscountsDao.getActivePromotions(any()),
+      ).thenAnswer((_) async => []);
+      when(() => mockProductsDao.getLowStockProducts(any())).thenAnswer(
+        (_) async => [
+          createTestProduct(
+            id: 'p-1',
+            name: 'منتج بطيء',
+            stockQty: 2,
+            minQty: 10,
+          ),
+        ],
+      );
 
       await tester.pumpWidget(createTestWidget(const SmartPromotionsScreen()));
       await tester.pumpAndSettle();
@@ -109,10 +119,12 @@ void main() {
           createdAt: now,
         ),
       ];
-      when(() => mockDiscountsDao.getActivePromotions(any()))
-          .thenAnswer((_) async => activePromotions);
-      when(() => mockProductsDao.getLowStockProducts(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockDiscountsDao.getActivePromotions(any()),
+      ).thenAnswer((_) async => activePromotions);
+      when(
+        () => mockProductsDao.getLowStockProducts(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createTestWidget(const SmartPromotionsScreen()));
       await tester.pumpAndSettle();
@@ -125,10 +137,12 @@ void main() {
     });
 
     testWidgets('shows history tab placeholder', (tester) async {
-      when(() => mockDiscountsDao.getActivePromotions(any()))
-          .thenAnswer((_) async => []);
-      when(() => mockProductsDao.getLowStockProducts(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockDiscountsDao.getActivePromotions(any()),
+      ).thenAnswer((_) async => []);
+      when(
+        () => mockProductsDao.getLowStockProducts(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createTestWidget(const SmartPromotionsScreen()));
       await tester.pumpAndSettle();

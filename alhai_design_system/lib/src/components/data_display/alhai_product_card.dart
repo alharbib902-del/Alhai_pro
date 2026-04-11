@@ -111,9 +111,9 @@ class AlhaiProductCard extends StatelessWidget {
     this.semanticsLabel,
     this.imageSemanticLabel,
   }) : assert(
-          ctaMode != AlhaiProductCardCtaMode.add || addButtonLabel != null,
-          'addButtonLabel is required when ctaMode is add',
-        );
+         ctaMode != AlhaiProductCardCtaMode.add || addButtonLabel != null,
+         'addButtonLabel is required when ctaMode is add',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +155,11 @@ class AlhaiProductCard extends StatelessWidget {
                 children: [
                   // Image section
                   _buildImageSection(
-                      context, theme, colorScheme, showDiscountBadge),
+                    context,
+                    theme,
+                    colorScheme,
+                    showDiscountBadge,
+                  ),
 
                   // Content section
                   Padding(
@@ -181,8 +185,9 @@ class AlhaiProductCard extends StatelessWidget {
                         AlhaiPriceText.compact(
                           amount: priceAmount,
                           currency: currency,
-                          originalAmount:
-                              hasPriceDiscount ? originalPriceAmount : null,
+                          originalAmount: hasPriceDiscount
+                              ? originalPriceAmount
+                              : null,
                         ),
 
                         // CTA
@@ -342,9 +347,7 @@ class _DiscountBadge extends StatelessWidget {
       ),
       child: Text(
         label,
-        style: theme.textTheme.labelSmall?.copyWith(
-          color: colorScheme.onError,
-        ),
+        style: theme.textTheme.labelSmall?.copyWith(color: colorScheme.onError),
       ),
     );
   }

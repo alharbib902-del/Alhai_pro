@@ -75,10 +75,7 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
     )..repeat(reverse: true);
 
     _pulseAnimation = Tween<double>(begin: 0.85, end: 1.0).animate(
-      CurvedAnimation(
-        parent: _pulseController,
-        curve: AlhaiMotion.standard,
-      ),
+      CurvedAnimation(parent: _pulseController, curve: AlhaiMotion.standard),
     );
 
     _startIdleSlideTimer();
@@ -175,10 +172,7 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
     return IgnorePointer(
       child: Directionality(
         textDirection: TextDirection.rtl,
-        child: Scaffold(
-          backgroundColor: AppColors.backgroundDark,
-          body: body,
-        ),
+        child: Scaffold(backgroundColor: AppColors.backgroundDark, body: body),
       ),
     );
   }
@@ -221,8 +215,9 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
     ];
 
     // شريحة NFC - فقط إذا كانت الميزة مفعّلة
-    final featureSettings =
-        ref.watch(cashierFeatureSettingsProvider).valueOrNull;
+    final featureSettings = ref
+        .watch(cashierFeatureSettingsProvider)
+        .valueOrNull;
     if (featureSettings?.enableNfcPayment == true) {
       slides.insert(
         1,
@@ -373,10 +368,7 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
                 children: [
                   // رأس الجدول
                   _buildTableHeader(),
-                  const Divider(
-                    color: AppColors.borderDark,
-                    height: 1,
-                  ),
+                  const Divider(color: AppColors.borderDark, height: 1),
 
                   // عناصر الفاتورة
                   Expanded(
@@ -398,10 +390,7 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
                   ),
 
                   // الفاصل قبل المجاميع
-                  const Divider(
-                    color: AppColors.borderDark,
-                    height: 1,
-                  ),
+                  const Divider(color: AppColors.borderDark, height: 1),
 
                   // المجاميع
                   _buildTotalsSection(state),
@@ -419,11 +408,7 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
     if (storeName.isEmpty) return const SizedBox.shrink();
     return Row(
       children: [
-        const Icon(
-          Icons.store_rounded,
-          color: AlhaiColors.primary,
-          size: 28,
-        ),
+        const Icon(Icons.store_rounded, color: AlhaiColors.primary, size: 28),
         const SizedBox(width: AlhaiSpacing.sm),
         Expanded(
           child: Text(
@@ -522,9 +507,7 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
             width: 100,
             child: Text(
               _formatPrice(item.unitPrice),
-              style: textStyle.copyWith(
-                color: AppColors.textSecondaryDark,
-              ),
+              style: textStyle.copyWith(color: AppColors.textSecondaryDark),
               textAlign: TextAlign.center,
             ),
           ),
@@ -600,11 +583,7 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
   }
 
   /// صف ملخص (فرعي / خصم / ضريبة)
-  Widget _buildSummaryRow(
-    String label,
-    String value, {
-    Color? valueColor,
-  }) {
+  Widget _buildSummaryRow(String label, String value, {Color? valueColor}) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -697,7 +676,8 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
 
   Widget _buildNfcWaitingView(CustomerDisplayState state) {
     final nfcStatus = state.nfcStatus ?? NfcDisplayStatus.waitingForTap;
-    final isError = nfcStatus == NfcDisplayStatus.failed ||
+    final isError =
+        nfcStatus == NfcDisplayStatus.failed ||
         nfcStatus == NfcDisplayStatus.cancelled ||
         nfcStatus == NfcDisplayStatus.timeout;
 
@@ -757,8 +737,9 @@ class _CustomerDisplayScreenState extends ConsumerState<CustomerDisplayScreen>
                 statusMessage,
                 key: ValueKey(statusMessage),
                 style: AlhaiTypography.headlineMedium.copyWith(
-                  color:
-                      isError ? AlhaiColors.error : AppColors.textPrimaryDark,
+                  color: isError
+                      ? AlhaiColors.error
+                      : AppColors.textPrimaryDark,
                 ),
                 textAlign: TextAlign.center,
               ),

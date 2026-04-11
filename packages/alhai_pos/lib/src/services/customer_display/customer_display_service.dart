@@ -141,14 +141,16 @@ class CustomerDisplayService {
     required double tax,
     required double total,
   }) {
-    _send(CustomerDisplayState.cart(
-      items: items,
-      subtotal: subtotal,
-      discount: discount,
-      tax: tax,
-      total: total,
-      storeName: _storeName,
-    ));
+    _send(
+      CustomerDisplayState.cart(
+        items: items,
+        subtotal: subtotal,
+        discount: discount,
+        tax: tax,
+        total: total,
+        storeName: _storeName,
+      ),
+    );
   }
 
   /// عرض خطوة إدخال رقم الجوال
@@ -156,24 +158,25 @@ class CustomerDisplayService {
     required List<DisplayCartItem> items,
     required double total,
   }) {
-    _send(CustomerDisplayState.phoneEntry(
-      items: items,
-      total: total,
-      storeName: _storeName,
-    ));
+    _send(
+      CustomerDisplayState.phoneEntry(
+        items: items,
+        total: total,
+        storeName: _storeName,
+      ),
+    );
   }
 
   /// عرض حالة الدفع
-  void showPayment({
-    required double total,
-    required String paymentMethodName,
-  }) {
-    _send(CustomerDisplayState(
-      phase: CustomerDisplayPhase.payment,
-      storeName: _storeName,
-      total: total,
-      paymentMethodName: paymentMethodName,
-    ));
+  void showPayment({required double total, required String paymentMethodName}) {
+    _send(
+      CustomerDisplayState(
+        phase: CustomerDisplayPhase.payment,
+        storeName: _storeName,
+        total: total,
+        paymentMethodName: paymentMethodName,
+      ),
+    );
   }
 
   /// عرض انتظار NFC
@@ -182,43 +185,40 @@ class CustomerDisplayService {
     NfcDisplayStatus status = NfcDisplayStatus.waitingForTap,
     String? message,
   }) {
-    _send(CustomerDisplayState.nfcWaiting(
-      total: total,
-      nfcStatus: status,
-      nfcMessage: message,
-      storeName: _storeName,
-    ));
+    _send(
+      CustomerDisplayState.nfcWaiting(
+        total: total,
+        nfcStatus: status,
+        nfcMessage: message,
+        storeName: _storeName,
+      ),
+    );
   }
 
   /// تحديث حالة NFC
-  void updateNfcStatus({
-    required NfcDisplayStatus status,
-    String? message,
-  }) {
-    _send(_lastState.copyWith(
-      nfcStatus: status,
-      nfcMessage: message,
-    ));
+  void updateNfcStatus({required NfcDisplayStatus status, String? message}) {
+    _send(_lastState.copyWith(nfcStatus: status, nfcMessage: message));
   }
 
   /// عرض نجاح الدفع
-  void showSuccess({
-    required double total,
-    String? message,
-  }) {
-    _send(CustomerDisplayState.success(
-      total: total,
-      resultMessage: message,
-      storeName: _storeName,
-    ));
+  void showSuccess({required double total, String? message}) {
+    _send(
+      CustomerDisplayState.success(
+        total: total,
+        resultMessage: message,
+        storeName: _storeName,
+      ),
+    );
   }
 
   /// عرض فشل الدفع
   void showFailure({String? message}) {
-    _send(CustomerDisplayState.failure(
-      resultMessage: message,
-      storeName: _storeName,
-    ));
+    _send(
+      CustomerDisplayState.failure(
+        resultMessage: message,
+        storeName: _storeName,
+      ),
+    );
   }
 
   /// إعادة تعيين للحالة الافتراضية

@@ -61,9 +61,9 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
     });
     try {
       final storeId = ref.read(currentStoreIdProvider)!;
-      final settings = await (_db.select(_db.settingsTable)
-            ..where((s) => s.storeId.equals(storeId)))
-          .get();
+      final settings = await (_db.select(
+        _db.settingsTable,
+      )..where((s) => s.storeId.equals(storeId))).get();
       for (final s in settings) {
         switch (s.key) {
           case 'receipt_header':
@@ -93,7 +93,9 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
   Future<void> _upsertSetting(String key, String value) async {
     final storeId = ref.read(currentStoreIdProvider)!;
     final id = 'setting_${storeId}_$key';
-    await _db.into(_db.settingsTable).insertOnConflictUpdate(
+    await _db
+        .into(_db.settingsTable)
+        .insertOnConflictUpdate(
           SettingsTableCompanion.insert(
             id: id,
             storeId: storeId,
@@ -133,8 +135,9 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(AppLocalizations.of(context).errorSavingSettings('$e')),
+            content: Text(
+              AppLocalizations.of(context).errorSavingSettings('$e'),
+            ),
             backgroundColor: AppColors.error,
           ),
         );
@@ -175,14 +178,22 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context,
-                      message: _error!, onRetry: _loadSettings)
-                  : SingleChildScrollView(
-                      padding: EdgeInsets.all(
-                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: _buildContent(
-                          isWideScreen, isMediumScreen, isDark, l10n),
-                    ),
+              ? AppErrorState.general(
+                  context,
+                  message: _error!,
+                  onRetry: _loadSettings,
+                )
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(
+                    isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                  ),
+                  child: _buildContent(
+                    isWideScreen,
+                    isMediumScreen,
+                    isDark,
+                    l10n,
+                  ),
+                ),
         ),
       ],
     );
@@ -213,10 +224,7 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
             ),
           ),
           const SizedBox(width: AlhaiSpacing.lg),
-          Expanded(
-            flex: 2,
-            child: _buildPreviewCard(isDark, l10n),
-          ),
+          Expanded(flex: 2, child: _buildPreviewCard(isDark, l10n)),
         ],
       );
     }
@@ -381,8 +389,9 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
                   child: GestureDetector(
                     onTap: () => setState(() => _receiptWidth = width),
                     child: Container(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AlhaiSpacing.md,
+                      ),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? AppColors.primary.withValues(alpha: 0.1)
@@ -506,31 +515,23 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
                     ),
                     textAlign: TextAlign.center,
                   ),
-                Divider(
-                  color: AppColors.getBorder(isDark),
-                  height: 16,
-                ),
+                Divider(color: AppColors.getBorder(isDark), height: 16),
                 if (_showCashierName)
                   _previewRow(l10n.cashier, 'Sample Cashier Name', isDark),
                 if (_showCustomerName)
                   _previewRow(l10n.customer, l10n.cashCustomer, isDark),
-                Divider(
-                  color: AppColors.getBorder(isDark),
-                  height: 16,
-                ),
+                Divider(color: AppColors.getBorder(isDark), height: 16),
                 _previewRow('Sample Product', '25.00', isDark),
                 _previewRow('Sample Product 2', '15.50', isDark),
-                Divider(
-                  color: AppColors.getBorder(isDark),
-                  height: 16,
+                Divider(color: AppColors.getBorder(isDark), height: 16),
+                _previewRow(
+                  l10n.total,
+                  '40.50 ${l10n.sar}',
+                  isDark,
+                  bold: true,
                 ),
-                _previewRow(l10n.total, '40.50 ${l10n.sar}', isDark,
-                    bold: true),
                 if (_footerController.text.isNotEmpty) ...[
-                  Divider(
-                    color: AppColors.getBorder(isDark),
-                    height: 16,
-                  ),
+                  Divider(color: AppColors.getBorder(isDark), height: 16),
                   Text(
                     _footerController.text,
                     style: TextStyle(
@@ -548,8 +549,12 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
     );
   }
 
-  Widget _previewRow(String label, String value, bool isDark,
-      {bool bold = false}) {
+  Widget _previewRow(
+    String label,
+    String value,
+    bool isDark, {
+    bool bold = false,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxxs),
       child: Row(
@@ -586,7 +591,9 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: AppColors.textOnPrimary),
+                  strokeWidth: 2,
+                  color: AppColors.textOnPrimary,
+                ),
               )
             : const Icon(Icons.save_rounded, size: 20),
         label: Text(
@@ -597,8 +604,9 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
     );

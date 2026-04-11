@@ -50,8 +50,9 @@ class _PaymentMethodCardState extends State<PaymentMethodCard> {
   Widget build(BuildContext context) {
     final isDisabled = widget.disabled;
     final colorScheme = Theme.of(context).colorScheme;
-    final effectiveColor =
-        isDisabled ? colorScheme.onSurfaceVariant : widget.color;
+    final effectiveColor = isDisabled
+        ? colorScheme.onSurfaceVariant
+        : widget.color;
 
     return Semantics(
       label: isDisabled
@@ -74,24 +75,24 @@ class _PaymentMethodCardState extends State<PaymentMethodCard> {
               color: isDisabled
                   ? colorScheme.surfaceContainerLow
                   : widget.selected
-                      ? widget.color.withValues(alpha: 0.1)
-                      : _isHovered
-                          ? colorScheme.surfaceContainerLow
-                          : AppColors.surface,
+                  ? widget.color.withValues(alpha: 0.1)
+                  : _isHovered
+                  ? colorScheme.surfaceContainerLow
+                  : AppColors.surface,
               borderRadius: BorderRadius.circular(AppRadius.lg),
               border: Border.all(
                 color: isDisabled
                     ? colorScheme.outlineVariant
                     : widget.selected
-                        ? widget.color
-                        : AppColors.border,
+                    ? widget.color
+                    : AppColors.border,
                 width: widget.selected ? 2 : 1,
               ),
               boxShadow: isDisabled
                   ? null
                   : widget.selected || _isHovered
-                      ? AppShadows.md
-                      : AppShadows.sm,
+                  ? AppShadows.md
+                  : AppShadows.sm,
             ),
             child: Material(
               color: Colors.transparent,
@@ -109,7 +110,8 @@ class _PaymentMethodCardState extends State<PaymentMethodCard> {
                         height: widget.selected ? 72 : 64,
                         decoration: BoxDecoration(
                           color: effectiveColor.withValues(
-                              alpha: widget.selected ? 0.2 : 0.1),
+                            alpha: widget.selected ? 0.2 : 0.1,
+                          ),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(
@@ -128,8 +130,8 @@ class _PaymentMethodCardState extends State<PaymentMethodCard> {
                           color: isDisabled
                               ? AppColors.textMuted
                               : widget.selected
-                                  ? widget.color
-                                  : AppColors.textPrimary,
+                              ? widget.color
+                              : AppColors.textPrimary,
                           fontWeight: widget.selected
                               ? FontWeight.w700
                               : FontWeight.w500,
@@ -214,8 +216,9 @@ class _QuickAmountChipState extends State<QuickAmountChip> {
         child: AnimatedContainer(
           duration: AppDurations.fast,
           child: Material(
-            color:
-                _isHovered ? color.withValues(alpha: 0.1) : AppColors.surface,
+            color: _isHovered
+                ? color.withValues(alpha: 0.1)
+                : AppColors.surface,
             borderRadius: BorderRadius.circular(AppRadius.full),
             child: InkWell(
               onTap: widget.onTap,
@@ -274,8 +277,11 @@ class PaymentSummaryRow extends StatelessWidget {
         Row(
           children: [
             if (icon != null) ...[
-              Icon(icon,
-                  size: 14, color: valueColor ?? AppColors.textSecondary),
+              Icon(
+                icon,
+                size: 14,
+                color: valueColor ?? AppColors.textSecondary,
+              ),
               const SizedBox(width: AlhaiSpacing.xxs),
             ],
             Text(

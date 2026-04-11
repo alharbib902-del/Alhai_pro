@@ -26,10 +26,7 @@ void main() {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      expect(
-        container.read(competitorSortProvider),
-        CompetitorSortType.name,
-      );
+      expect(container.read(competitorSortProvider), CompetitorSortType.name);
     });
 
     test('can be updated to priceDiff', () {

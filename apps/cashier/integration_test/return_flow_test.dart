@@ -37,10 +37,9 @@ void main() {
     group('Step 1: Access Returns', () {
       testWidgets('returns screen loads successfully', (tester) async {
         // Arrange: Navigate to the Returns screen
-        await tester.pumpWidget(buildTestApp(
-          initialRoute: '/returns',
-          isAuthenticated: true,
-        ));
+        await tester.pumpWidget(
+          buildTestApp(initialRoute: '/returns', isAuthenticated: true),
+        );
         await pumpAndSettleWithTimeout(tester);
 
         // Assert: Returns screen is visible with its main layout
@@ -48,144 +47,126 @@ void main() {
         expect(find.byType(Scaffold), findsWidgets);
       });
 
-      testWidgets(
-        'returns screen shows sales and purchase tabs',
-        (tester) async {
-          // Arrange
-          await tester.pumpWidget(buildTestApp(
-            initialRoute: '/returns',
-            isAuthenticated: true,
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('returns screen shows sales and purchase tabs', (
+        tester,
+      ) async {
+        // Arrange
+        await tester.pumpWidget(
+          buildTestApp(initialRoute: '/returns', isAuthenticated: true),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: ReturnsScreen has tab filtering for sales vs purchase returns.
-          // The _activeTab defaults to 'sales'.
-          expect(find.byType(ReturnsScreen), findsOneWidget);
-        },
-      );
+        // Assert: ReturnsScreen has tab filtering for sales vs purchase returns.
+        // The _activeTab defaults to 'sales'.
+        expect(find.byType(ReturnsScreen), findsOneWidget);
+      });
 
-      testWidgets(
-        'returns screen has create return action',
-        (tester) async {
-          // Arrange
-          await tester.pumpWidget(buildTestApp(
-            initialRoute: '/returns',
-            isAuthenticated: true,
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('returns screen has create return action', (tester) async {
+        // Arrange
+        await tester.pumpWidget(
+          buildTestApp(initialRoute: '/returns', isAuthenticated: true),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: There should be a button/FAB to initiate a new return.
-          // ReturnsScreen uses a CreateReturnDrawer that opens via an action.
-          expect(find.byType(ReturnsScreen), findsOneWidget);
-          // Look for add/create icons commonly used for new return action
-          // The presence of the screen confirms the route is correct
-          expect(find.byType(Scaffold), findsWidgets);
-        },
-      );
+        // Assert: There should be a button/FAB to initiate a new return.
+        // ReturnsScreen uses a CreateReturnDrawer that opens via an action.
+        expect(find.byType(ReturnsScreen), findsOneWidget);
+        // Look for add/create icons commonly used for new return action
+        // The presence of the screen confirms the route is correct
+        expect(find.byType(Scaffold), findsWidgets);
+      });
     });
 
     // ========================================================================
     // Step 2: Search for Invoice
     // ========================================================================
     group('Step 2: Search Invoice', () {
-      testWidgets(
-        'returns screen has a search input for invoice lookup',
-        (tester) async {
-          // Arrange
-          await tester.pumpWidget(buildTestApp(
-            initialRoute: '/returns',
-            isAuthenticated: true,
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('returns screen has a search input for invoice lookup', (
+        tester,
+      ) async {
+        // Arrange
+        await tester.pumpWidget(
+          buildTestApp(initialRoute: '/returns', isAuthenticated: true),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Returns screen renders with search capability.
-          // _ReturnsScreenState has _searchQuery field.
-          expect(find.byType(ReturnsScreen), findsOneWidget);
-        },
-      );
+        // Assert: Returns screen renders with search capability.
+        // _ReturnsScreenState has _searchQuery field.
+        expect(find.byType(ReturnsScreen), findsOneWidget);
+      });
 
-      testWidgets(
-        'entering invoice number filters the returns list',
-        (tester) async {
-          // Arrange
-          await tester.pumpWidget(buildTestApp(
-            initialRoute: '/returns',
-            isAuthenticated: true,
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('entering invoice number filters the returns list', (
+        tester,
+      ) async {
+        // Arrange
+        await tester.pumpWidget(
+          buildTestApp(initialRoute: '/returns', isAuthenticated: true),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Act: Find search input and enter an invoice number
-          final textFields = find.byType(TextField);
-          if (textFields.evaluate().isNotEmpty) {
-            await tester.enterText(textFields.first, kTestInvoiceNo);
-            await tester.pump(const Duration(milliseconds: 300));
-          }
+        // Act: Find search input and enter an invoice number
+        final textFields = find.byType(TextField);
+        if (textFields.evaluate().isNotEmpty) {
+          await tester.enterText(textFields.first, kTestInvoiceNo);
+          await tester.pump(const Duration(milliseconds: 300));
+        }
 
-          // Assert: Screen is still displayed (filtered results)
-          expect(find.byType(ReturnsScreen), findsOneWidget);
-        },
-      );
+        // Assert: Screen is still displayed (filtered results)
+        expect(find.byType(ReturnsScreen), findsOneWidget);
+      });
     });
 
     // ========================================================================
     // Step 3: Select Return Items
     // ========================================================================
     group('Step 3: Select Items to Return', () {
-      testWidgets(
-        'refund request screen loads from returns route',
-        (tester) async {
-          // Arrange: Navigate to the refund request screen.
-          // In the real flow, this is reached after selecting an invoice.
-          await tester.pumpWidget(buildTestApp(
-            initialRoute: '/returns/request',
-            isAuthenticated: true,
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('refund request screen loads from returns route', (
+        tester,
+      ) async {
+        // Arrange: Navigate to the refund request screen.
+        // In the real flow, this is reached after selecting an invoice.
+        await tester.pumpWidget(
+          buildTestApp(initialRoute: '/returns/request', isAuthenticated: true),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Refund request screen is displayed
-          expect(find.byType(RefundRequestScreen), findsOneWidget);
-        },
-      );
+        // Assert: Refund request screen is displayed
+        expect(find.byType(RefundRequestScreen), findsOneWidget);
+      });
 
-      testWidgets(
-        'refund request screen shows items from the original sale',
-        (tester) async {
-          // Arrange
-          await tester.pumpWidget(buildTestApp(
-            initialRoute: '/returns/request',
-            isAuthenticated: true,
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('refund request screen shows items from the original sale', (
+        tester,
+      ) async {
+        // Arrange
+        await tester.pumpWidget(
+          buildTestApp(initialRoute: '/returns/request', isAuthenticated: true),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: The screen should display sale items with checkboxes
-          // or selection controls to choose which items to return.
-          expect(find.byType(RefundRequestScreen), findsOneWidget);
-          expect(find.byType(Scaffold), findsWidgets);
-        },
-      );
+        // Assert: The screen should display sale items with checkboxes
+        // or selection controls to choose which items to return.
+        expect(find.byType(RefundRequestScreen), findsOneWidget);
+        expect(find.byType(Scaffold), findsWidgets);
+      });
 
-      testWidgets(
-        'selecting items updates the refund total',
-        (tester) async {
-          // Arrange
-          await tester.pumpWidget(buildTestApp(
-            initialRoute: '/returns/request',
-            isAuthenticated: true,
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('selecting items updates the refund total', (tester) async {
+        // Arrange
+        await tester.pumpWidget(
+          buildTestApp(initialRoute: '/returns/request', isAuthenticated: true),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Act: Tap on checkboxes to select items for return.
-          // RefundRequestScreen renders a list of sale items with selection.
-          final checkboxes = find.byType(Checkbox);
-          if (checkboxes.evaluate().isNotEmpty) {
-            await tester.tap(checkboxes.first);
-            await tester.pump();
-          }
+        // Act: Tap on checkboxes to select items for return.
+        // RefundRequestScreen renders a list of sale items with selection.
+        final checkboxes = find.byType(Checkbox);
+        if (checkboxes.evaluate().isNotEmpty) {
+          await tester.tap(checkboxes.first);
+          await tester.pump();
+        }
 
-          // Assert: Screen remains functional with updated total
-          expect(find.byType(RefundRequestScreen), findsOneWidget);
-        },
-      );
+        // Assert: Screen remains functional with updated total
+        expect(find.byType(RefundRequestScreen), findsOneWidget);
+      });
     });
 
     // ========================================================================
@@ -194,152 +175,141 @@ void main() {
     group('Step 4: Return Reason', () {
       testWidgets('refund reason screen loads', (tester) async {
         // Arrange: Navigate to reason selection
-        await tester.pumpWidget(buildTestApp(
-          initialRoute: '/returns/reason',
-          isAuthenticated: true,
-        ));
+        await tester.pumpWidget(
+          buildTestApp(initialRoute: '/returns/reason', isAuthenticated: true),
+        );
         await pumpAndSettleWithTimeout(tester);
 
         // Assert: Refund reason screen is displayed
         expect(find.byType(RefundReasonScreen), findsOneWidget);
       });
 
-      testWidgets(
-        'reason screen shows predefined return reasons',
-        (tester) async {
-          // Arrange
-          await tester.pumpWidget(buildTestApp(
-            initialRoute: '/returns/reason',
-            isAuthenticated: true,
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('reason screen shows predefined return reasons', (
+        tester,
+      ) async {
+        // Arrange
+        await tester.pumpWidget(
+          buildTestApp(initialRoute: '/returns/reason', isAuthenticated: true),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: RefundReasonScreen should display the standard reasons:
-          // defective, wrong product, customer request, other.
-          expect(find.byType(RefundReasonScreen), findsOneWidget);
-          expect(find.byType(Scaffold), findsWidgets);
-        },
-      );
+        // Assert: RefundReasonScreen should display the standard reasons:
+        // defective, wrong product, customer request, other.
+        expect(find.byType(RefundReasonScreen), findsOneWidget);
+        expect(find.byType(Scaffold), findsWidgets);
+      });
 
-      testWidgets(
-        'selecting a reason enables the proceed button',
-        (tester) async {
-          // Arrange
-          await tester.pumpWidget(buildTestApp(
-            initialRoute: '/returns/reason',
-            isAuthenticated: true,
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('selecting a reason enables the proceed button', (
+        tester,
+      ) async {
+        // Arrange
+        await tester.pumpWidget(
+          buildTestApp(initialRoute: '/returns/reason', isAuthenticated: true),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Act: Tap on one of the reason options.
-          // Reasons are typically rendered as ListTiles or RadioListTiles.
-          final radioTiles = find.byType(RadioListTile);
-          if (radioTiles.evaluate().isNotEmpty) {
-            await tester.tap(radioTiles.first);
-            await tester.pump();
-          }
+        // Act: Tap on one of the reason options.
+        // Reasons are typically rendered as ListTiles or RadioListTiles.
+        final radioTiles = find.byType(RadioListTile);
+        if (radioTiles.evaluate().isNotEmpty) {
+          await tester.tap(radioTiles.first);
+          await tester.pump();
+        }
 
-          // Assert: Screen is still functional
-          expect(find.byType(RefundReasonScreen), findsOneWidget);
-        },
-      );
+        // Assert: Screen is still functional
+        expect(find.byType(RefundReasonScreen), findsOneWidget);
+      });
     });
 
     // ========================================================================
     // Step 5: ZATCA Credit Note
     // ========================================================================
     group('Step 5: ZATCA Credit Note', () {
-      testWidgets(
-        'completing return navigates to refund receipt',
-        (tester) async {
-          // Arrange: The refund receipt is shown after processing the return.
-          // We verify the route renders correctly.
-          await tester.pumpWidget(buildTestApp(
+      testWidgets('completing return navigates to refund receipt', (
+        tester,
+      ) async {
+        // Arrange: The refund receipt is shown after processing the return.
+        // We verify the route renders correctly.
+        await tester.pumpWidget(
+          buildTestApp(
             initialRoute: '/returns/receipt/test-return-001',
             isAuthenticated: true,
-          ));
-          await pumpAndSettleWithTimeout(tester);
+          ),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Refund receipt screen loads
-          expect(find.byType(RefundReceiptScreen), findsOneWidget);
-        },
-      );
+        // Assert: Refund receipt screen loads
+        expect(find.byType(RefundReceiptScreen), findsOneWidget);
+      });
 
-      testWidgets(
-        'refund receipt contains credit note information',
-        (tester) async {
-          // Arrange
-          await tester.pumpWidget(buildTestApp(
+      testWidgets('refund receipt contains credit note information', (
+        tester,
+      ) async {
+        // Arrange
+        await tester.pumpWidget(
+          buildTestApp(
             initialRoute: '/returns/receipt/test-return-001',
             isAuthenticated: true,
-          ));
-          await pumpAndSettleWithTimeout(tester);
+          ),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: The refund receipt screen should display:
-          // - Return ID / credit note number
-          // - Returned items
-          // - Refund amount
-          // - ZATCA QR code for the credit note
-          expect(find.byType(RefundReceiptScreen), findsOneWidget);
-          expect(find.byType(Scaffold), findsWidgets);
-        },
-      );
+        // Assert: The refund receipt screen should display:
+        // - Return ID / credit note number
+        // - Returned items
+        // - Refund amount
+        // - ZATCA QR code for the credit note
+        expect(find.byType(RefundReceiptScreen), findsOneWidget);
+        expect(find.byType(Scaffold), findsWidgets);
+      });
     });
 
     // ========================================================================
     // Step 6: Inventory Restoration
     // ========================================================================
     group('Step 6: Inventory Restored', () {
-      testWidgets(
-        'inventory screen is accessible after refund',
-        (tester) async {
-          // Arrange: After completing a return, verify inventory screen loads.
-          // In a full integration test with DB, stock quantities would be checked.
-          await tester.pumpWidget(buildTestApp(
-            initialRoute: '/inventory',
-            isAuthenticated: true,
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('inventory screen is accessible after refund', (
+        tester,
+      ) async {
+        // Arrange: After completing a return, verify inventory screen loads.
+        // In a full integration test with DB, stock quantities would be checked.
+        await tester.pumpWidget(
+          buildTestApp(initialRoute: '/inventory', isAuthenticated: true),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Inventory screen loads without errors
-          expect(find.byType(Scaffold), findsWidgets);
-        },
-      );
+        // Assert: Inventory screen loads without errors
+        expect(find.byType(Scaffold), findsWidgets);
+      });
     });
 
     // ========================================================================
     // Step 7: Admin Report Updated
     // ========================================================================
     group('Step 7: Admin Report Updated', () {
-      testWidgets(
-        'reports screen is accessible to verify refund data',
-        (tester) async {
-          // Arrange: Navigate to reports
-          await tester.pumpWidget(buildTestApp(
-            initialRoute: '/reports',
-            isAuthenticated: true,
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('reports screen is accessible to verify refund data', (
+        tester,
+      ) async {
+        // Arrange: Navigate to reports
+        await tester.pumpWidget(
+          buildTestApp(initialRoute: '/reports', isAuthenticated: true),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Reports screen loads
-          expect(find.byType(Scaffold), findsWidgets);
-        },
-      );
+        // Assert: Reports screen loads
+        expect(find.byType(Scaffold), findsWidgets);
+      });
 
-      testWidgets(
-        'sales history shows refunded transactions',
-        (tester) async {
-          // Arrange: Navigate to sales list
-          await tester.pumpWidget(buildTestApp(
-            initialRoute: '/sales',
-            isAuthenticated: true,
-          ));
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('sales history shows refunded transactions', (tester) async {
+        // Arrange: Navigate to sales list
+        await tester.pumpWidget(
+          buildTestApp(initialRoute: '/sales', isAuthenticated: true),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Sales screen loads (refunded sales should appear here)
-          expect(find.byType(Scaffold), findsWidgets);
-        },
-      );
+        // Assert: Sales screen loads (refunded sales should appear here)
+        expect(find.byType(Scaffold), findsWidgets);
+      });
     });
 
     // ========================================================================
@@ -350,10 +320,9 @@ void main() {
         'full flow: Returns -> search invoice -> select items -> reason -> credit note',
         (tester) async {
           // Arrange: Start at returns screen
-          await tester.pumpWidget(buildTestApp(
-            initialRoute: '/returns',
-            isAuthenticated: true,
-          ));
+          await tester.pumpWidget(
+            buildTestApp(initialRoute: '/returns', isAuthenticated: true),
+          );
           await pumpAndSettleWithTimeout(tester);
 
           // Step 1: Verify Returns screen is displayed

@@ -2,7 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 
-import 'gzip_helper_stub.dart' if (dart.library.io) 'gzip_helper_native.dart'
+import 'gzip_helper_stub.dart'
+    if (dart.library.io) 'gzip_helper_native.dart'
     as gzip_helper;
 
 /// خدمة النسخ الاحتياطي
@@ -52,10 +53,7 @@ class BackupService {
       final data = jsonDecode(decompressed) as Map<String, dynamic>;
       final backup = BackupData.fromJson(data);
 
-      return RestoreResult(
-        success: true,
-        backup: backup,
-      );
+      return RestoreResult(success: true, backup: backup);
     } catch (e) {
       return RestoreResult(
         success: false,
@@ -131,7 +129,8 @@ class BackupService {
       // re-exported). debugPrint is a minimal upgrade from print() because it
       // is a no-op in release mode.
       debugPrint(
-          '[Backup] Compressed: ${rawBytes.length} -> ${gzipBytes.length} bytes (${ratio.toStringAsFixed(1)}% reduction)');
+        '[Backup] Compressed: ${rawBytes.length} -> ${gzipBytes.length} bytes (${ratio.toStringAsFixed(1)}% reduction)',
+      );
       return compressed;
     } catch (_) {
       // Fallback to plain base64 if gzip is unavailable (e.g., web platform)
@@ -177,26 +176,25 @@ class BackupData {
   });
 
   factory BackupData.fromJson(Map<String, dynamic> json) => BackupData(
-        id: json['id'] as String,
-        storeId: json['storeId'] as String,
-        type: BackupType.values.firstWhere(
-          (t) => t.name == json['type'],
-          orElse: () => BackupType.full,
-        ),
-        data: json['data'] as Map<String, dynamic>,
-        createdAt:
-            DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now(),
-        version: json['version'] as String,
-      );
+    id: json['id'] as String,
+    storeId: json['storeId'] as String,
+    type: BackupType.values.firstWhere(
+      (t) => t.name == json['type'],
+      orElse: () => BackupType.full,
+    ),
+    data: json['data'] as Map<String, dynamic>,
+    createdAt: DateTime.tryParse(json['createdAt'] as String) ?? DateTime.now(),
+    version: json['version'] as String,
+  );
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'storeId': storeId,
-        'type': type.name,
-        'data': data,
-        'createdAt': createdAt.toIso8601String(),
-        'version': version,
-      };
+    'id': id,
+    'storeId': storeId,
+    'type': type.name,
+    'data': data,
+    'createdAt': createdAt.toIso8601String(),
+    'version': version,
+  };
 }
 
 /// نوع النسخة الاحتياطية
@@ -229,11 +227,7 @@ class RestoreResult {
   final String? error;
   final BackupData? backup;
 
-  const RestoreResult({
-    required this.success,
-    this.error,
-    this.backup,
-  });
+  const RestoreResult({required this.success, this.error, this.backup});
 }
 
 /// نتيجة التحقق

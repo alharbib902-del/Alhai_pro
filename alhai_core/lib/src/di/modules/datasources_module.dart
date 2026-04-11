@@ -41,11 +41,7 @@ abstract class DataSourcesModule {
   AuthLocalDataSource authLocalDataSource(
     FlutterSecureStorage secureStorage,
     SharedPreferences prefs,
-  ) =>
-      AuthLocalDataSourceImpl(
-        secureStorage: secureStorage,
-        prefs: prefs,
-      );
+  ) => AuthLocalDataSourceImpl(secureStorage: secureStorage, prefs: prefs);
 
   // ============================================
   // Auth & Core Remote DataSources
@@ -53,9 +49,7 @@ abstract class DataSourcesModule {
 
   /// AuthRemoteDataSource implementation
   @lazySingleton
-  AuthRemoteDataSource authRemoteDataSource(
-    @Named('apiDio') Dio dio,
-  ) =>
+  AuthRemoteDataSource authRemoteDataSource(@Named('apiDio') Dio dio) =>
       AuthRemoteDataSourceImpl(dio: dio);
 
   // ============================================
@@ -64,17 +58,14 @@ abstract class DataSourcesModule {
 
   /// ProductsRemoteDataSource implementation
   @lazySingleton
-  ProductsRemoteDataSource productsRemoteDataSource(
-    @Named('apiDio') Dio dio,
-  ) =>
+  ProductsRemoteDataSource productsRemoteDataSource(@Named('apiDio') Dio dio) =>
       ProductsRemoteDataSourceImpl(dio: dio);
 
   /// CategoriesRemoteDataSource implementation
   @lazySingleton
   CategoriesRemoteDataSource categoriesRemoteDataSource(
     @Named('apiDio') Dio dio,
-  ) =>
-      CategoriesRemoteDataSourceImpl(dio: dio);
+  ) => CategoriesRemoteDataSourceImpl(dio: dio);
 
   // ============================================
   // Orders & Delivery
@@ -82,24 +73,19 @@ abstract class DataSourcesModule {
 
   /// OrdersRemoteDataSource implementation
   @lazySingleton
-  OrdersRemoteDataSource ordersRemoteDataSource(
-    @Named('apiDio') Dio dio,
-  ) =>
+  OrdersRemoteDataSource ordersRemoteDataSource(@Named('apiDio') Dio dio) =>
       OrdersRemoteDataSourceImpl(dio: dio);
 
   /// DeliveryRemoteDataSource implementation
   @lazySingleton
-  DeliveryRemoteDataSource deliveryRemoteDataSource(
-    @Named('apiDio') Dio dio,
-  ) =>
+  DeliveryRemoteDataSource deliveryRemoteDataSource(@Named('apiDio') Dio dio) =>
       DeliveryRemoteDataSourceImpl(dio: dio);
 
   /// AddressesRemoteDataSource implementation
   @lazySingleton
   AddressesRemoteDataSource addressesRemoteDataSource(
     @Named('apiDio') Dio dio,
-  ) =>
-      AddressesRemoteDataSourceImpl(dio: dio);
+  ) => AddressesRemoteDataSourceImpl(dio: dio);
 
   // ============================================
   // Stores
@@ -107,9 +93,7 @@ abstract class DataSourcesModule {
 
   /// StoresRemoteDataSource implementation
   @lazySingleton
-  StoresRemoteDataSource storesRemoteDataSource(
-    @Named('apiDio') Dio dio,
-  ) =>
+  StoresRemoteDataSource storesRemoteDataSource(@Named('apiDio') Dio dio) =>
       StoresRemoteDataSourceImpl(dio: dio);
 
   // ============================================
@@ -120,22 +104,19 @@ abstract class DataSourcesModule {
   @lazySingleton
   InventoryRemoteDataSource inventoryRemoteDataSource(
     @Named('apiDio') Dio dio,
-  ) =>
-      InventoryRemoteDataSourceImpl(dio: dio);
+  ) => InventoryRemoteDataSourceImpl(dio: dio);
 
   /// SuppliersRemoteDataSource implementation
   @lazySingleton
   SuppliersRemoteDataSource suppliersRemoteDataSource(
     @Named('apiDio') Dio dio,
-  ) =>
-      SuppliersRemoteDataSourceImpl(dio: dio);
+  ) => SuppliersRemoteDataSourceImpl(dio: dio);
 
   /// PurchasesRemoteDataSource implementation
   @lazySingleton
   PurchasesRemoteDataSource purchasesRemoteDataSource(
     @Named('apiDio') Dio dio,
-  ) =>
-      PurchasesRemoteDataSourceImpl(dio: dio);
+  ) => PurchasesRemoteDataSourceImpl(dio: dio);
 
   // ============================================
   // Financial
@@ -143,9 +124,7 @@ abstract class DataSourcesModule {
 
   /// DebtsRemoteDataSource implementation
   @lazySingleton
-  DebtsRemoteDataSource debtsRemoteDataSource(
-    @Named('apiDio') Dio dio,
-  ) =>
+  DebtsRemoteDataSource debtsRemoteDataSource(@Named('apiDio') Dio dio) =>
       DebtsRemoteDataSourceImpl(dio: dio);
 
   // ============================================
@@ -154,15 +133,12 @@ abstract class DataSourcesModule {
 
   /// ReportsRemoteDataSource implementation
   @lazySingleton
-  ReportsRemoteDataSource reportsRemoteDataSource(
-    @Named('apiDio') Dio dio,
-  ) =>
+  ReportsRemoteDataSource reportsRemoteDataSource(@Named('apiDio') Dio dio) =>
       ReportsRemoteDataSourceImpl(dio: dio);
 
   /// AnalyticsRemoteDataSource implementation
   @lazySingleton
   AnalyticsRemoteDataSource analyticsRemoteDataSource(
     @Named('apiDio') Dio dio,
-  ) =>
-      AnalyticsRemoteDataSourceImpl(dio: dio);
+  ) => AnalyticsRemoteDataSourceImpl(dio: dio);
 }

@@ -21,13 +21,13 @@ class UserEntity {
 
   /// Converts to JSON for storage
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'phone': phone,
-        'name': name,
-        'role': role,
-        'store_id': storeId,
-        'created_at': createdAt,
-      };
+    'id': id,
+    'phone': phone,
+    'name': name,
+    'role': role,
+    'store_id': storeId,
+    'created_at': createdAt,
+  };
 
   /// Creates from JSON storage
   factory UserEntity.fromJson(Map<String, dynamic> json) {

@@ -57,15 +57,18 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
       }
 
       // Load balance from settings
-      final balanceRow = await (db.select(db.settingsTable)
-            ..where((s) =>
-                s.storeId.equals(storeId) & s.key.equals('wallet_balance')))
-          .getSingleOrNull();
+      final balanceRow =
+          await (db.select(db.settingsTable)..where(
+                (s) =>
+                    s.storeId.equals(storeId) & s.key.equals('wallet_balance'),
+              ))
+              .getSingleOrNull();
       final balance = double.tryParse(balanceRow?.value ?? '0') ?? 0.0;
 
       // Load transactions
-      final transactions =
-          await db.transactionsDao.getAccountTransactions(storeId);
+      final transactions = await db.transactionsDao.getAccountTransactions(
+        storeId,
+      );
 
       // Calculate totals
       double deposits = 0.0;
@@ -104,7 +107,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
 
   List<TransactionsTableData> get _deposits => _allTransactions
       .where(
-          (t) => t.type == 'deposit' || (t.type == 'payment' && t.amount > 0))
+        (t) => t.type == 'deposit' || (t.type == 'payment' && t.amount > 0),
+      )
       .toList();
 
   List<TransactionsTableData> get _transfers =>
@@ -149,14 +153,17 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                 ),
                 child: _isLoading
                     ? const Center(
-                        child: CircularProgressIndicator(color: Colors.white))
+                        child: CircularProgressIndicator(color: Colors.white),
+                      )
                     : Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
                             l10n.wallet,
                             style: const TextStyle(
-                                color: Colors.white70, fontSize: 14),
+                              color: Colors.white70,
+                              fontSize: 14,
+                            ),
                           ),
                           const SizedBox(height: AlhaiSpacing.xs),
                           Text(
@@ -196,8 +203,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
               TabBar(
                 controller: _tabController,
                 labelColor: AppColors.primary,
-                unselectedLabelColor:
-                    Theme.of(context).colorScheme.onSurfaceVariant,
+                unselectedLabelColor: Theme.of(
+                  context,
+                ).colorScheme.onSurfaceVariant,
                 indicatorColor: AppColors.primary,
                 tabs: [
                   Tab(text: l10n.all),
@@ -212,15 +220,15 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
           child: _isLoading
               ? const Center(child: CircularProgressIndicator())
               : _error != null
-                  ? _buildErrorState(isDark, l10n)
-                  : TabBarView(
-                      controller: _tabController,
-                      children: [
-                        _buildTransactionsTab(isDark, _allTransactions),
-                        _buildTransactionsTab(isDark, _deposits),
-                        _buildTransactionsTab(isDark, _transfers),
-                      ],
-                    ),
+              ? _buildErrorState(isDark, l10n)
+              : TabBarView(
+                  controller: _tabController,
+                  children: [
+                    _buildTransactionsTab(isDark, _allTransactions),
+                    _buildTransactionsTab(isDark, _deposits),
+                    _buildTransactionsTab(isDark, _transfers),
+                  ],
+                ),
         ),
       ],
     );
@@ -231,14 +239,18 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.error_outline,
-              size: 64, color: AppColors.error.withValues(alpha: 0.7)),
+          Icon(
+            Icons.error_outline,
+            size: 64,
+            color: AppColors.error.withValues(alpha: 0.7),
+          ),
           const SizedBox(height: AlhaiSpacing.md),
           Text(
             _error!,
             style: TextStyle(
-                fontSize: 16,
-                color: Theme.of(context).colorScheme.onSurfaceVariant),
+              fontSize: 16,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: AlhaiSpacing.md),
@@ -253,7 +265,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
   }
 
   Widget _buildTransactionsTab(
-      bool isDark, List<TransactionsTableData> transactions) {
+    bool isDark,
+    List<TransactionsTableData> transactions,
+  ) {
     if (transactions.isEmpty) {
       if (_tabController.index == 0) {
         return AppEmptyState.noData(
@@ -268,10 +282,7 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
           description: 'اضغط + لإضافة إيداع جديد',
         );
       } else {
-        return AppEmptyState(
-          icon: Icons.swap_horiz,
-          title: 'لا توجد تحويلات',
-        );
+        return AppEmptyState(icon: Icons.swap_horiz, title: 'لا توجد تحويلات');
       }
     }
 
@@ -327,8 +338,9 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                   Text(
                     transaction.description!,
                     style: TextStyle(
-                        fontSize: 12,
-                        color: Theme.of(context).colorScheme.onSurfaceVariant),
+                      fontSize: 12,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -337,13 +349,13 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                 Text(
                   _formatDateTime(transaction.createdAt),
                   style: TextStyle(
-                      fontSize: 11,
-                      color: isDark
-                          ? Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.38)
-                          : AppColors.textTertiary),
+                    fontSize: 11,
+                    color: isDark
+                        ? Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.38)
+                        : AppColors.textTertiary,
+                  ),
                 ),
               ],
             ),
@@ -364,13 +376,13 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                 Text(
                   _getPaymentMethodLabel(transaction.paymentMethod!),
                   style: TextStyle(
-                      fontSize: 10,
-                      color: isDark
-                          ? Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.38)
-                          : AppColors.textTertiary),
+                    fontSize: 10,
+                    color: isDark
+                        ? Theme.of(
+                            context,
+                          ).colorScheme.onSurface.withValues(alpha: 0.38)
+                        : AppColors.textTertiary,
+                  ),
                 ),
             ],
           ),
@@ -457,7 +469,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                 decoration: InputDecoration(
                   labelText: 'Amount',
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 keyboardType: TextInputType.number,
               ),
@@ -467,7 +480,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                 decoration: InputDecoration(
                   labelText: 'Payment Method',
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 items: const [
                   DropdownMenuItem(value: 'bank', child: Text('Bank Transfer')),
@@ -486,7 +500,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
                 decoration: InputDecoration(
                   labelText: 'Note',
                   border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 maxLines: 2,
               ),
@@ -494,29 +509,34 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
           ),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(ctx),
-                child: const Text('Cancel')),
+              onPressed: () => Navigator.pop(ctx),
+              child: const Text('Cancel'),
+            ),
             ElevatedButton(
               onPressed: () {
                 final amount = double.tryParse(amountController.text);
                 if (amount == null || amount <= 0) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     const SnackBar(
-                        content: Text('Please enter a valid amount')),
+                      content: Text('Please enter a valid amount'),
+                    ),
                   );
                   return;
                 }
                 Navigator.pop(ctx);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                      content: Text(
-                          'Deposit of ${amount.toStringAsFixed(2)} recorded')),
+                    content: Text(
+                      'Deposit of ${amount.toStringAsFixed(2)} recorded',
+                    ),
+                  ),
                 );
                 _loadData();
               },
               style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white),
+                backgroundColor: AppColors.primary,
+                foregroundColor: Colors.white,
+              ),
               child: const Text('Deposit'),
             ),
           ],
@@ -547,13 +567,18 @@ class _WalletInfoChip extends StatelessWidget {
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(label,
-                style: const TextStyle(color: Colors.white54, fontSize: 10)),
-            Text(value,
-                style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600)),
+            Text(
+              label,
+              style: const TextStyle(color: Colors.white54, fontSize: 10),
+            ),
+            Text(
+              value,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 12,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
           ],
         ),
       ],

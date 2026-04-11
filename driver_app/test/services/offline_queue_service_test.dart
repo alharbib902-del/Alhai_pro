@@ -27,29 +27,29 @@ void main() {
   final Map<String, String> secureStorageData = {};
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
       .setMockMethodCallHandler(
-    const MethodChannel('plugins.it_nomads.com/flutter_secure_storage'),
-    (MethodCall methodCall) async {
-      switch (methodCall.method) {
-        case 'read':
-          final key = methodCall.arguments['key'] as String;
-          return secureStorageData[key];
-        case 'write':
-          final key = methodCall.arguments['key'] as String;
-          final value = methodCall.arguments['value'] as String;
-          secureStorageData[key] = value;
-          return null;
-        case 'delete':
-          final key = methodCall.arguments['key'] as String;
-          secureStorageData.remove(key);
-          return null;
-        case 'deleteAll':
-          secureStorageData.clear();
-          return null;
-        default:
-          return null;
-      }
-    },
-  );
+        const MethodChannel('plugins.it_nomads.com/flutter_secure_storage'),
+        (MethodCall methodCall) async {
+          switch (methodCall.method) {
+            case 'read':
+              final key = methodCall.arguments['key'] as String;
+              return secureStorageData[key];
+            case 'write':
+              final key = methodCall.arguments['key'] as String;
+              final value = methodCall.arguments['value'] as String;
+              secureStorageData[key] = value;
+              return null;
+            case 'delete':
+              final key = methodCall.arguments['key'] as String;
+              secureStorageData.remove(key);
+              return null;
+            case 'deleteAll':
+              secureStorageData.clear();
+              return null;
+            default:
+              return null;
+          }
+        },
+      );
 
   late OfflineQueueService service;
   late MockDeliveryDatasource mockDatasource;
@@ -90,42 +90,52 @@ void main() {
       expect(await service.totalCount(), 1);
     });
 
-    test('duplicate deliveryId + status deduplicates (returns false)',
-        () async {
-      await service.enqueue(deliveryId: 'del-dup', status: 'picked_up');
-      final result =
-          await service.enqueue(deliveryId: 'del-dup', status: 'picked_up');
+    test(
+      'duplicate deliveryId + status deduplicates (returns false)',
+      () async {
+        await service.enqueue(deliveryId: 'del-dup', status: 'picked_up');
+        final result = await service.enqueue(
+          deliveryId: 'del-dup',
+          status: 'picked_up',
+        );
 
-      expect(result, false);
-      expect(await service.totalCount(), 1);
-    });
+        expect(result, false);
+        expect(await service.totalCount(), 1);
+      },
+    );
 
-    test('same deliveryId with different status creates separate entries',
-        () async {
-      await service.enqueue(deliveryId: 'del-x', status: 'picked_up');
-      await service.enqueue(deliveryId: 'del-x', status: 'delivered');
+    test(
+      'same deliveryId with different status creates separate entries',
+      () async {
+        await service.enqueue(deliveryId: 'del-x', status: 'picked_up');
+        await service.enqueue(deliveryId: 'del-x', status: 'delivered');
 
-      expect(await service.totalCount(), 2);
-    });
+        expect(await service.totalCount(), 2);
+      },
+    );
 
     test('flush with datasource processes pending items', () async {
       await service.enqueue(deliveryId: 'del-flush', status: 'picked_up');
 
-      when(() => mockDatasource.updateStatus(
-            'del-flush',
-            'picked_up',
-            notes: any(named: 'notes'),
-          )).thenAnswer((_) async => {'success': true});
+      when(
+        () => mockDatasource.updateStatus(
+          'del-flush',
+          'picked_up',
+          notes: any(named: 'notes'),
+        ),
+      ).thenAnswer((_) async => {'success': true});
 
       final processed = await service.flushQueue(mockDatasource);
 
       expect(processed, 1);
       expect(await service.totalCount(), 0);
-      verify(() => mockDatasource.updateStatus(
-            'del-flush',
-            'picked_up',
-            notes: any(named: 'notes'),
-          )).called(1);
+      verify(
+        () => mockDatasource.updateStatus(
+          'del-flush',
+          'picked_up',
+          notes: any(named: 'notes'),
+        ),
+      ).called(1);
     });
 
     test('flush on empty queue returns 0', () async {
@@ -147,14 +157,15 @@ void main() {
     test('server rejection (success=false) removes item', () async {
       await service.enqueue(deliveryId: 'del-reject', status: 'picked_up');
 
-      when(() => mockDatasource.updateStatus(
-            'del-reject',
-            'picked_up',
-            notes: any(named: 'notes'),
-          )).thenAnswer((_) async => {
-            'success': false,
-            'error': 'Invalid transition',
-          });
+      when(
+        () => mockDatasource.updateStatus(
+          'del-reject',
+          'picked_up',
+          notes: any(named: 'notes'),
+        ),
+      ).thenAnswer(
+        (_) async => {'success': false, 'error': 'Invalid transition'},
+      );
 
       final processed = await service.flushQueue(mockDatasource);
 
@@ -170,11 +181,13 @@ void main() {
     test('network error increments retryCount', () async {
       await service.enqueue(deliveryId: 'net-err', status: 'picked_up');
 
-      when(() => mockDatasource.updateStatus(
-            'net-err',
-            'picked_up',
-            notes: any(named: 'notes'),
-          )).thenThrow(Exception('SocketException: Connection refused'));
+      when(
+        () => mockDatasource.updateStatus(
+          'net-err',
+          'picked_up',
+          notes: any(named: 'notes'),
+        ),
+      ).thenThrow(Exception('SocketException: Connection refused'));
 
       await service.flushQueue(mockDatasource);
 
@@ -187,11 +200,13 @@ void main() {
     test('409 conflict marks item as conflict (not retried)', () async {
       await service.enqueue(deliveryId: 'conflict-1', status: 'picked_up');
 
-      when(() => mockDatasource.updateStatus(
-            'conflict-1',
-            'picked_up',
-            notes: any(named: 'notes'),
-          )).thenThrow(Exception('409 Conflict'));
+      when(
+        () => mockDatasource.updateStatus(
+          'conflict-1',
+          'picked_up',
+          notes: any(named: 'notes'),
+        ),
+      ).thenThrow(Exception('409 Conflict'));
 
       await service.flushQueue(mockDatasource);
 
@@ -202,11 +217,13 @@ void main() {
     test('400 validation error removes item from queue', () async {
       await service.enqueue(deliveryId: 'val-err', status: 'picked_up');
 
-      when(() => mockDatasource.updateStatus(
-            'val-err',
-            'picked_up',
-            notes: any(named: 'notes'),
-          )).thenThrow(Exception('400 Bad Request: validation'));
+      when(
+        () => mockDatasource.updateStatus(
+          'val-err',
+          'picked_up',
+          notes: any(named: 'notes'),
+        ),
+      ).thenThrow(Exception('400 Bad Request: validation'));
 
       await service.flushQueue(mockDatasource);
 
@@ -216,11 +233,13 @@ void main() {
     test('422 validation error removes item from queue', () async {
       await service.enqueue(deliveryId: 'val-422', status: 'delivered');
 
-      when(() => mockDatasource.updateStatus(
-            'val-422',
-            'delivered',
-            notes: any(named: 'notes'),
-          )).thenThrow(Exception('422 Unprocessable: invalid field'));
+      when(
+        () => mockDatasource.updateStatus(
+          'val-422',
+          'delivered',
+          notes: any(named: 'notes'),
+        ),
+      ).thenThrow(Exception('422 Unprocessable: invalid field'));
 
       await service.flushQueue(mockDatasource);
 
@@ -230,11 +249,13 @@ void main() {
     test('error containing "invalid" classified as validation', () async {
       await service.enqueue(deliveryId: 'inv-err', status: 'picked_up');
 
-      when(() => mockDatasource.updateStatus(
-            'inv-err',
-            'picked_up',
-            notes: any(named: 'notes'),
-          )).thenThrow(Exception('Field is invalid'));
+      when(
+        () => mockDatasource.updateStatus(
+          'inv-err',
+          'picked_up',
+          notes: any(named: 'notes'),
+        ),
+      ).thenThrow(Exception('Field is invalid'));
 
       await service.flushQueue(mockDatasource);
 
@@ -250,11 +271,13 @@ void main() {
     test('retryCount increments with each network failure', () async {
       await service.enqueue(deliveryId: 'backoff-1', status: 'picked_up');
 
-      when(() => mockDatasource.updateStatus(
-            'backoff-1',
-            'picked_up',
-            notes: any(named: 'notes'),
-          )).thenThrow(Exception('SocketException timeout'));
+      when(
+        () => mockDatasource.updateStatus(
+          'backoff-1',
+          'picked_up',
+          notes: any(named: 'notes'),
+        ),
+      ).thenThrow(Exception('SocketException timeout'));
 
       // First failure: retryCount 0 -> 1
       await service.flushQueue(mockDatasource);
@@ -279,11 +302,13 @@ void main() {
       await service.enqueue(deliveryId: 'max-retry', status: 'picked_up');
 
       var callCount = 0;
-      when(() => mockDatasource.updateStatus(
-            'max-retry',
-            'picked_up',
-            notes: any(named: 'notes'),
-          )).thenAnswer((_) async {
+      when(
+        () => mockDatasource.updateStatus(
+          'max-retry',
+          'picked_up',
+          notes: any(named: 'notes'),
+        ),
+      ).thenAnswer((_) async {
         callCount++;
         throw Exception('network timeout');
       });
@@ -306,20 +331,19 @@ void main() {
     test('processes items in batches of 5', () async {
       // Enqueue 8 items
       for (var i = 0; i < 8; i++) {
-        await service.enqueue(
-          deliveryId: 'batch-del-$i',
-          status: 'picked_up',
-        );
+        await service.enqueue(deliveryId: 'batch-del-$i', status: 'picked_up');
       }
 
       expect(await service.totalCount(), 8);
 
       var processedDeliveries = <String>[];
-      when(() => mockDatasource.updateStatus(
-            any(),
-            any(),
-            notes: any(named: 'notes'),
-          )).thenAnswer((invocation) async {
+      when(
+        () => mockDatasource.updateStatus(
+          any(),
+          any(),
+          notes: any(named: 'notes'),
+        ),
+      ).thenAnswer((invocation) async {
         processedDeliveries.add(invocation.positionalArguments[0] as String);
         return {'success': true};
       });
@@ -371,11 +395,13 @@ void main() {
       await service.enqueue(deliveryId: 'pc1', status: 'picked_up');
 
       // Mark one as conflict
-      when(() => mockDatasource.updateStatus(
-            'pc1',
-            'picked_up',
-            notes: any(named: 'notes'),
-          )).thenThrow(Exception('409 Conflict'));
+      when(
+        () => mockDatasource.updateStatus(
+          'pc1',
+          'picked_up',
+          notes: any(named: 'notes'),
+        ),
+      ).thenThrow(Exception('409 Conflict'));
       await service.flushQueue(mockDatasource);
 
       // Add another pending
@@ -390,16 +416,20 @@ void main() {
       await service.enqueue(deliveryId: 'tc2', status: 'delivered');
 
       // Make one a conflict
-      when(() => mockDatasource.updateStatus(
-            'tc1',
-            'picked_up',
-            notes: any(named: 'notes'),
-          )).thenThrow(Exception('409 Conflict'));
-      when(() => mockDatasource.updateStatus(
-            'tc2',
-            'delivered',
-            notes: any(named: 'notes'),
-          )).thenAnswer((_) async => {'success': true});
+      when(
+        () => mockDatasource.updateStatus(
+          'tc1',
+          'picked_up',
+          notes: any(named: 'notes'),
+        ),
+      ).thenThrow(Exception('409 Conflict'));
+      when(
+        () => mockDatasource.updateStatus(
+          'tc2',
+          'delivered',
+          notes: any(named: 'notes'),
+        ),
+      ).thenAnswer((_) async => {'success': true});
 
       await service.flushQueue(mockDatasource);
 
@@ -424,11 +454,13 @@ void main() {
     test('onSyncEvent fires on flush', () async {
       await service.enqueue(deliveryId: 'cb-flush', status: 'picked_up');
 
-      when(() => mockDatasource.updateStatus(
-            'cb-flush',
-            'picked_up',
-            notes: any(named: 'notes'),
-          )).thenAnswer((_) async => {'success': true});
+      when(
+        () => mockDatasource.updateStatus(
+          'cb-flush',
+          'picked_up',
+          notes: any(named: 'notes'),
+        ),
+      ).thenAnswer((_) async => {'success': true});
 
       final messages = <String>[];
       service.onSyncEvent = (msg, _) => messages.add(msg);
@@ -459,8 +491,9 @@ void _clearBackoff(Map<String, String> storageData) {
   if (raw == null) return;
   try {
     final items = jsonDecode(raw) as List;
-    final pastDate =
-        DateTime.now().subtract(const Duration(hours: 1)).toIso8601String();
+    final pastDate = DateTime.now()
+        .subtract(const Duration(hours: 1))
+        .toIso8601String();
     for (final item in items) {
       if (item is Map<String, dynamic> && item['last_attempt'] != null) {
         item['last_attempt'] = pastDate;

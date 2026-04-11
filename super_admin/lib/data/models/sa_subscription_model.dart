@@ -39,7 +39,8 @@ class SASubscription {
     return SASubscription(
       id: json['id'] as String? ?? '',
       status: json['status'] as String?,
-      startDate: json['start_date'] as String? ??
+      startDate:
+          json['start_date'] as String? ??
           json['current_period_start'] as String?,
       endDate:
           json['end_date'] as String? ?? json['current_period_end'] as String?,
@@ -50,7 +51,8 @@ class SASubscription {
       store: rawStore is Map<String, dynamic>
           ? SASubscriptionStore.fromJson(rawStore)
           : null,
-      planSlug: json['plan'] as String? ??
+      planSlug:
+          json['plan'] as String? ??
           (rawPlan is Map<String, dynamic> ? rawPlan['slug'] as String? : null),
     );
   }
@@ -72,22 +74,24 @@ class SASubscription {
       planSlug: json['plan'] as String?,
       store: storeName != null
           ? SASubscriptionStore(
-              id: json['org_id'] as String? ?? '', name: storeName)
+              id: json['org_id'] as String? ?? '',
+              name: storeName,
+            )
           : null,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'status': status,
-        'current_period_start': startDate,
-        'current_period_end': endDate,
-        'org_id': orgId,
-        'plan': planSlug,
-        'amount': amount,
-        'currency': currency,
-        'billing_cycle': billingCycle,
-      };
+    'id': id,
+    'status': status,
+    'current_period_start': startDate,
+    'current_period_end': endDate,
+    'org_id': orgId,
+    'plan': planSlug,
+    'amount': amount,
+    'currency': currency,
+    'billing_cycle': billingCycle,
+  };
 
   /// Convenience: store name.
   String get storeName => store?.name ?? 'Unknown';
@@ -108,10 +112,7 @@ class SASubscriptionStore {
   final String id;
   final String? name;
 
-  const SASubscriptionStore({
-    required this.id,
-    this.name,
-  });
+  const SASubscriptionStore({required this.id, this.name});
 
   factory SASubscriptionStore.fromJson(Map<String, dynamic> json) {
     return SASubscriptionStore(
@@ -120,10 +121,7 @@ class SASubscriptionStore {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-      };
+  Map<String, dynamic> toJson() => {'id': id, 'name': name};
 }
 
 /// Typed model for a plan.
@@ -170,17 +168,17 @@ class SAPlan {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'slug': slug,
-        'monthly_price': monthlyPrice,
-        'yearly_price': yearlyPrice,
-        'max_branches': maxBranches,
-        'max_products': maxProducts,
-        'max_users': maxUsers,
-        'features': features,
-        'created_at': createdAt,
-      };
+    'id': id,
+    'name': name,
+    'slug': slug,
+    'monthly_price': monthlyPrice,
+    'yearly_price': yearlyPrice,
+    'max_branches': maxBranches,
+    'max_products': maxProducts,
+    'max_users': maxUsers,
+    'features': features,
+    'created_at': createdAt,
+  };
 }
 
 /// Typed model for a billing invoice.
@@ -229,15 +227,15 @@ class SABillingInvoice {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'invoice_number': invoiceNumber,
-        'amount': amount,
-        'status': status,
-        'issued_at': issuedAt,
-        'due_at': dueAt,
-        'stores': store?.toJson(),
-        'plans': plan?.toJson(),
-      };
+    'id': id,
+    'invoice_number': invoiceNumber,
+    'amount': amount,
+    'status': status,
+    'issued_at': issuedAt,
+    'due_at': dueAt,
+    'stores': store?.toJson(),
+    'plans': plan?.toJson(),
+  };
 
   /// Convenience: store name.
   String get storeName => store?.name ?? 'Unknown';

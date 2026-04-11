@@ -103,18 +103,21 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
 
   Future<void> _connectPrinter(DiscoveredPrinter printer) async {
     try {
-      final success =
-          await ref.read(printServiceProvider.notifier).connectAndSave(printer);
+      final success = await ref
+          .read(printServiceProvider.notifier)
+          .connectAndSave(printer);
 
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
               success
-                  ? AppLocalizations.of(context)
-                      .connectedToPrinterName(printer.name)
-                  : AppLocalizations.of(context)
-                      .connectionFailedToPrinter(printer.name),
+                  ? AppLocalizations.of(
+                      context,
+                    ).connectedToPrinterName(printer.name)
+                  : AppLocalizations.of(
+                      context,
+                    ).connectionFailedToPrinter(printer.name),
             ),
             backgroundColor: success ? AppColors.success : AppColors.error,
           ),
@@ -174,8 +177,9 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                   ? l10n.testPageSentSuccess
                   : l10n.testFailedMsg(result.error ?? ''),
             ),
-            backgroundColor:
-                result.success ? AppColors.success : AppColors.error,
+            backgroundColor: result.success
+                ? AppColors.success
+                : AppColors.error,
           ),
         );
       }
@@ -270,7 +274,8 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(
-                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -314,8 +319,9 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
     AppLocalizations l10n,
   ) {
     final statusColor = isConnected ? AppColors.success : AppColors.error;
-    final statusIcon =
-        isConnected ? Icons.check_circle_rounded : Icons.cancel_rounded;
+    final statusIcon = isConnected
+        ? Icons.check_circle_rounded
+        : Icons.cancel_rounded;
     final statusText = isConnected ? 'متصل بالطابعة' : 'لا توجد طابعة متصلة';
 
     return Container(
@@ -323,10 +329,7 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: statusColor.withValues(alpha: 0.3),
-          width: 2,
-        ),
+        border: Border.all(color: statusColor.withValues(alpha: 0.3), width: 2),
       ),
       child: Column(
         children: [
@@ -387,10 +390,12 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.info,
                       side: BorderSide(
-                          color: AppColors.info.withValues(alpha: 0.5)),
+                        color: AppColors.info.withValues(alpha: 0.5),
+                      ),
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ),
                 ),
@@ -403,10 +408,12 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.warning,
                       side: BorderSide(
-                          color: AppColors.warning.withValues(alpha: 0.5)),
+                        color: AppColors.warning.withValues(alpha: 0.5),
+                      ),
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ),
                 ),
@@ -419,10 +426,12 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.error,
                       side: BorderSide(
-                          color: AppColors.error.withValues(alpha: 0.5)),
+                        color: AppColors.error.withValues(alpha: 0.5),
+                      ),
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8)),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
                     ),
                   ),
                 ),
@@ -473,7 +482,11 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
               _connectionChip('bluetooth', 'بلوتوث', Icons.bluetooth, isDark),
               _connectionChip('network', 'شبكة', Icons.wifi_rounded, isDark),
               _connectionChip(
-                  'sunmi', 'Sunmi', Icons.smartphone_rounded, isDark),
+                'sunmi',
+                'Sunmi',
+                Icons.smartphone_rounded,
+                isDark,
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.md),
@@ -498,14 +511,16 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                     onChanged: (v) => _networkIp = v,
                     decoration: InputDecoration(
                       hintText: '192.168.1.100',
-                      hintStyle:
-                          TextStyle(color: AppColors.getTextMuted(isDark)),
+                      hintStyle: TextStyle(
+                        color: AppColors.getTextMuted(isDark),
+                      ),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(10),
                       ),
                       contentPadding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.md,
-                          vertical: AlhaiSpacing.sm),
+                        horizontal: AlhaiSpacing.md,
+                        vertical: AlhaiSpacing.sm,
+                      ),
                       isDense: true,
                     ),
                   ),
@@ -516,10 +531,12 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.primary,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.mdl,
-                        vertical: AlhaiSpacing.sm),
+                      horizontal: AlhaiSpacing.mdl,
+                      vertical: AlhaiSpacing.sm,
+                    ),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                   child: Text(AppLocalizations.of(context).connectBtn),
                 ),
@@ -547,10 +564,12 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                 label: Text(_isScanning ? 'جاري البحث...' : 'بحث عن طابعات'),
                 style: FilledButton.styleFrom(
                   backgroundColor: AppColors.primary,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.sm),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: AlhaiSpacing.sm,
+                  ),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               ),
             ),
@@ -560,7 +579,11 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
   }
 
   Widget _connectionChip(
-      String value, String label, IconData icon, bool isDark) {
+    String value,
+    String label,
+    IconData icon,
+    bool isDark,
+  ) {
     final isSelected = _selectedConnectionType == value;
     return ChoiceChip(
       avatar: Icon(icon, size: 18),
@@ -569,8 +592,9 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
       onSelected: (_) => setState(() => _selectedConnectionType = value),
       selectedColor: AppColors.primary.withValues(alpha: 0.15),
       labelStyle: TextStyle(
-        color:
-            isSelected ? AppColors.primary : AppColors.getTextPrimary(isDark),
+        color: isSelected
+            ? AppColors.primary
+            : AppColors.getTextPrimary(isDark),
         fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
       ),
       shape: RoundedRectangleBorder(
@@ -605,14 +629,17 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.sm),
           ..._discoveredPrinters.map((printer) {
-            final connectedName =
-                ref.read(printServiceProvider)?.connectedPrinterName;
+            final connectedName = ref
+                .read(printServiceProvider)
+                ?.connectedPrinterName;
             final isThisConnected = connectedName == printer.name;
 
             return Container(
               margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+                horizontal: AlhaiSpacing.md,
+                vertical: AlhaiSpacing.sm,
+              ),
               decoration: BoxDecoration(
                 color: isThisConnected
                     ? AppColors.success.withValues(alpha: 0.05)
@@ -659,7 +686,9 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                   if (isThisConnected)
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 10, vertical: AlhaiSpacing.xxs),
+                        horizontal: 10,
+                        vertical: AlhaiSpacing.xxs,
+                      ),
                       decoration: BoxDecoration(
                         color: AppColors.success.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
@@ -679,9 +708,12 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                       style: OutlinedButton.styleFrom(
                         foregroundColor: AppColors.primary,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: AlhaiSpacing.md, vertical: 6),
+                          horizontal: AlhaiSpacing.md,
+                          vertical: 6,
+                        ),
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(8)),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                       child: Text(AppLocalizations.of(context).connectBtn),
                     ),
@@ -776,9 +808,7 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                     .setPaperSize(sizes.first);
                 setState(() {});
               },
-              style: ButtonStyle(
-                visualDensity: VisualDensity.compact,
-              ),
+              style: ButtonStyle(visualDensity: VisualDensity.compact),
             ),
           ),
         ],

@@ -23,9 +23,7 @@ void main() {
 
   group('ProfitReportScreen', () {
     testWidgets('renders without crashing', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const ProfitReportScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const ProfitReportScreen()));
       // The screen may show loading or error - either is fine, it should not crash
       await tester.pumpAndSettle();
 
@@ -36,23 +34,30 @@ void main() {
       // Make the DAO call slow so we see loading
       final completer = Completer<SalesStats>();
       final mocks = setupMockGetIt();
-      when(() => mocks.salesDao.getSalesStats(
-            any(),
-            startDate: any(named: 'startDate'),
-            endDate: any(named: 'endDate'),
-            cashierId: any(named: 'cashierId'),
-          )).thenAnswer((_) => completer.future);
-      await tester.pumpWidget(
-        buildTestableWidget(const ProfitReportScreen()),
-      );
+      when(
+        () => mocks.salesDao.getSalesStats(
+          any(),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          cashierId: any(named: 'cashierId'),
+        ),
+      ).thenAnswer((_) => completer.future);
+      await tester.pumpWidget(buildTestableWidget(const ProfitReportScreen()));
       await tester.pump();
 
       // Screen should be in loading state
       expect(find.byType(ProfitReportScreen), findsOneWidget);
 
       // Complete the future to avoid pending timer warnings
-      completer.complete(const SalesStats(
-          count: 0, total: 0, average: 0, maxSale: 0, minSale: 0));
+      completer.complete(
+        const SalesStats(
+          count: 0,
+          total: 0,
+          average: 0,
+          maxSale: 0,
+          minSale: 0,
+        ),
+      );
       await tester.pumpAndSettle();
     });
 
@@ -61,16 +66,16 @@ void main() {
       // so it will hit the catch block and show error state.
       // Also make getSalesStats throw to guarantee error.
       final mocks = setupMockGetIt();
-      when(() => mocks.salesDao.getSalesStats(
-            any(),
-            startDate: any(named: 'startDate'),
-            endDate: any(named: 'endDate'),
-            cashierId: any(named: 'cashierId'),
-          )).thenThrow(Exception('Database error'));
+      when(
+        () => mocks.salesDao.getSalesStats(
+          any(),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          cashierId: any(named: 'cashierId'),
+        ),
+      ).thenThrow(Exception('Database error'));
 
-      await tester.pumpWidget(
-        buildTestableWidget(const ProfitReportScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const ProfitReportScreen()));
       await tester.pumpAndSettle();
 
       // Error state shows error icon
@@ -79,16 +84,16 @@ void main() {
 
     testWidgets('error state has retry button', (tester) async {
       final mocks = setupMockGetIt();
-      when(() => mocks.salesDao.getSalesStats(
-            any(),
-            startDate: any(named: 'startDate'),
-            endDate: any(named: 'endDate'),
-            cashierId: any(named: 'cashierId'),
-          )).thenThrow(Exception('DB error'));
+      when(
+        () => mocks.salesDao.getSalesStats(
+          any(),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          cashierId: any(named: 'cashierId'),
+        ),
+      ).thenThrow(Exception('DB error'));
 
-      await tester.pumpWidget(
-        buildTestableWidget(const ProfitReportScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const ProfitReportScreen()));
       await tester.pumpAndSettle();
 
       // Error state has retry button (ElevatedButton)
@@ -97,10 +102,7 @@ void main() {
 
     testWidgets('renders with null storeId gracefully', (tester) async {
       await tester.pumpWidget(
-        buildTestableWidget(
-          const ProfitReportScreen(),
-          storeId: null,
-        ),
+        buildTestableWidget(const ProfitReportScreen(), storeId: null),
       );
       await tester.pumpAndSettle();
 
@@ -109,9 +111,7 @@ void main() {
     });
 
     testWidgets('shows app bar with correct title', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const ProfitReportScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const ProfitReportScreen()));
       await tester.pumpAndSettle();
 
       // There should be an AppBar
@@ -121,16 +121,16 @@ void main() {
     testWidgets('has export button in app bar', (tester) async {
       // Force error state so app bar actions are still present
       final mocks = setupMockGetIt();
-      when(() => mocks.salesDao.getSalesStats(
-            any(),
-            startDate: any(named: 'startDate'),
-            endDate: any(named: 'endDate'),
-            cashierId: any(named: 'cashierId'),
-          )).thenThrow(Exception('DB error'));
+      when(
+        () => mocks.salesDao.getSalesStats(
+          any(),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          cashierId: any(named: 'cashierId'),
+        ),
+      ).thenThrow(Exception('DB error'));
 
-      await tester.pumpWidget(
-        buildTestableWidget(const ProfitReportScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const ProfitReportScreen()));
       await tester.pumpAndSettle();
 
       // The error state scaffold also has an app bar but no action buttons

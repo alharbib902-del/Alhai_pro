@@ -86,10 +86,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           final categories = await ref.read(categoriesProvider.future);
           category = categories.firstWhere(
             (c) => c.id == product.categoryId,
-            orElse: () => const Category(
-              id: '',
-              name: '',
-            ),
+            orElse: () => const Category(id: '', name: ''),
           );
           if (category.id.isEmpty) category = null;
         } catch (_) {}
@@ -99,15 +96,18 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
       List<InventoryMovementsTableData> movements = [];
       try {
         movements = await db.inventoryDao.getMovementsByProduct(
-            widget.productId,
-            storeId: productData.storeId);
+          widget.productId,
+          storeId: productData.storeId,
+        );
       } catch (_) {}
 
       // 4. Load total sales count
       int salesCount = 0;
       try {
-        final count = await db.saleItemsDao
-            .getProductSalesCount(widget.productId, productData.storeId);
+        final count = await db.saleItemsDao.getProductSalesCount(
+          widget.productId,
+          productData.storeId,
+        );
         salesCount = count.toInt();
       } catch (_) {}
 
@@ -137,8 +137,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           ),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           margin: const EdgeInsets.all(AlhaiSpacing.md),
           duration: const Duration(seconds: 2),
         ),
@@ -159,8 +160,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           title: _product?.name ?? l10n.productDetails,
           subtitle: l10n.productDetails,
           showSearch: false,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.defaultUserName,
@@ -174,8 +176,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                     size: AlhaiButtonSize.small,
                     leadingIcon: Icons.edit_outlined,
                     onPressed: () async {
-                      await context
-                          .push(AppRoutes.productsEditPath(_product!.id));
+                      await context.push(
+                        AppRoutes.productsEditPath(_product!.id),
+                      );
                       _loadProductData();
                     },
                   ),
@@ -202,7 +205,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             child: SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: EdgeInsets.all(
-                  isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+              ),
               child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
             ),
           ),
@@ -214,8 +218,12 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   // CONTENT
   // ============================================================================
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
-      AppLocalizations l10n) {
+  Widget _buildContent(
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     if (_isLoading) {
       return const Center(
         child: Padding(
@@ -246,10 +254,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             child: _buildLeftColumn(isDark, isMediumScreen, l10n),
           ),
           SizedBox(width: AlhaiSpacing.lg),
-          Expanded(
-            flex: 2,
-            child: _buildRightColumn(isDark, l10n),
-          ),
+          Expanded(flex: 2, child: _buildRightColumn(isDark, l10n)),
         ],
       );
     }
@@ -262,7 +267,10 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   // ============================================================================
 
   Widget _buildLeftColumn(
-      bool isDark, bool isMediumScreen, AppLocalizations l10n) {
+    bool isDark,
+    bool isMediumScreen,
+    AppLocalizations l10n,
+  ) {
     return Column(
       children: [
         _buildProductInfoCard(isDark, isMediumScreen, l10n),
@@ -317,7 +325,10 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   // ============================================================================
 
   Widget _buildProductInfoCard(
-      bool isDark, bool isMediumScreen, AppLocalizations l10n) {
+    bool isDark,
+    bool isMediumScreen,
+    AppLocalizations l10n,
+  ) {
     final product = _product!;
 
     return _card(
@@ -361,35 +372,40 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                                   width: 200,
                                   height: 200,
                                   decoration: BoxDecoration(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .scrim
-                                        .withValues(alpha: 0.5),
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.scrim.withValues(alpha: 0.5),
                                   ),
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       IconButton(
-                                        icon: Icon(Icons.edit_outlined,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                            size: 22),
+                                        icon: Icon(
+                                          Icons.edit_outlined,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onPrimary,
+                                          size: 22,
+                                        ),
                                         onPressed: () async {
                                           await context.push(
-                                              AppRoutes.productsEditPath(
-                                                  product.id));
+                                            AppRoutes.productsEditPath(
+                                              product.id,
+                                            ),
+                                          );
                                           _loadProductData();
                                         },
                                         tooltip: l10n.edit,
                                       ),
                                       SizedBox(width: AlhaiSpacing.xs),
                                       IconButton(
-                                        icon: Icon(Icons.fullscreen_rounded,
-                                            color: Theme.of(context)
-                                                .colorScheme
-                                                .onPrimary,
-                                            size: 22),
+                                        icon: Icon(
+                                          Icons.fullscreen_rounded,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.onPrimary,
+                                          size: 22,
+                                        ),
                                         onPressed: () {
                                           // TODO: Full screen image viewer
                                         },
@@ -410,9 +426,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   ],
                 ),
                 SizedBox(width: AlhaiSpacing.lg),
-                Expanded(
-                  child: _buildProductMeta(product, isDark, l10n),
-                ),
+                Expanded(child: _buildProductMeta(product, isDark, l10n)),
               ],
             )
           else ...[
@@ -446,7 +460,10 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   }
 
   Widget _buildProductMeta(
-      Product product, bool isDark, AppLocalizations l10n) {
+    Product product,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -458,9 +475,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             child: Text(
               product.name,
               style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.getTextPrimary(isDark),
-                  ),
+                fontWeight: FontWeight.bold,
+                color: AppColors.getTextPrimary(isDark),
+              ),
             ),
           ),
         ),
@@ -500,17 +517,17 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           Text(
             l10n.description,
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.getTextPrimary(isDark),
-                ),
+              fontWeight: FontWeight.w600,
+              color: AppColors.getTextPrimary(isDark),
+            ),
           ),
           SizedBox(height: AlhaiSpacing.xxs),
           Text(
             product.description!,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: AppColors.getTextSecondary(isDark),
-                  height: 1.6,
-                ),
+              color: AppColors.getTextSecondary(isDark),
+              height: 1.6,
+            ),
           ),
         ],
       ],
@@ -518,20 +535,21 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   }
 
   Widget _buildPriceSection(
-      Product product, bool isDark, AppLocalizations l10n) {
+    Product product,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
-        color: Theme.of(context)
-            .colorScheme
-            .primaryContainer
-            .withValues(alpha: 0.3),
+        color: Theme.of(
+          context,
+        ).colorScheme.primaryContainer.withValues(alpha: 0.3),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: Theme.of(context)
-              .colorScheme
-              .primaryContainer
-              .withValues(alpha: 0.5),
+          color: Theme.of(
+            context,
+          ).colorScheme.primaryContainer.withValues(alpha: 0.5),
         ),
       ),
       child: Row(
@@ -543,8 +561,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 Text(
                   l10n.sellingPrice,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.getTextSecondary(isDark),
-                      ),
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
                 ),
                 SizedBox(height: AlhaiSpacing.xxs),
                 AlhaiPriceText(
@@ -555,11 +573,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               ],
             ),
           ),
-          Container(
-            width: 1,
-            height: 40,
-            color: AppColors.getBorder(isDark),
-          ),
+          Container(width: 1, height: 40, color: AppColors.getBorder(isDark)),
           Expanded(
             child: Padding(
               padding: const EdgeInsetsDirectional.only(start: 16),
@@ -569,27 +583,23 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   Text(
                     l10n.costPrice,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.getTextSecondary(isDark),
-                        ),
+                      color: AppColors.getTextSecondary(isDark),
+                    ),
                   ),
                   SizedBox(height: AlhaiSpacing.xxs),
                   Text(
                     CurrencyFormatter.format(product.costPrice ?? 0),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.getTextPrimary(isDark),
-                        ),
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.getTextPrimary(isDark),
+                    ),
                   ),
                 ],
               ),
             ),
           ),
           if (product.profitMargin != null) ...[
-            Container(
-              width: 1,
-              height: 40,
-              color: AppColors.getBorder(isDark),
-            ),
+            Container(width: 1, height: 40, color: AppColors.getBorder(isDark)),
             Expanded(
               child: Padding(
                 padding: const EdgeInsetsDirectional.only(start: 16),
@@ -599,16 +609,16 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                     Text(
                       l10n.profitMargin,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.getTextSecondary(isDark),
-                          ),
+                        color: AppColors.getTextSecondary(isDark),
+                      ),
                     ),
                     SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       '${product.profitMargin!.toStringAsFixed(1)}%',
                       style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.success,
-                          ),
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.success,
+                      ),
                     ),
                   ],
                 ),
@@ -626,8 +636,10 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
   Widget _buildStockPanel(bool isDark, AppLocalizations l10n) {
     final product = _product!;
-    final stockColor =
-        AppColors.getStockColor(product.stockQty, product.minQty);
+    final stockColor = AppColors.getStockColor(
+      product.stockQty,
+      product.minQty,
+    );
 
     return _card(
       isDark: isDark,
@@ -636,15 +648,18 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.inventory_2_outlined,
-                  size: 20, color: AppColors.getTextSecondary(isDark)),
+              Icon(
+                Icons.inventory_2_outlined,
+                size: 20,
+                color: AppColors.getTextSecondary(isDark),
+              ),
               SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.stockStatus,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.getTextPrimary(isDark),
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
               ),
             ],
           ),
@@ -723,9 +738,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
       decoration: BoxDecoration(
         color: color.withValues(alpha: isDark ? 0.15 : 0.08),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: color.withValues(alpha: isDark ? 0.3 : 0.2),
-        ),
+        border: Border.all(color: color.withValues(alpha: isDark ? 0.3 : 0.2)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -735,16 +748,16 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           Text(
             value,
             style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: color,
-                ),
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
           ),
           SizedBox(height: AlhaiSpacing.xxxs),
           Text(
             '$label ($suffix)',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.getTextSecondary(isDark),
-                ),
+              color: AppColors.getTextSecondary(isDark),
+            ),
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
           ),
@@ -759,8 +772,10 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
 
   Widget _buildMobileStockCard(bool isDark, AppLocalizations l10n) {
     final product = _product!;
-    final stockColor =
-        AppColors.getStockColor(product.stockQty, product.minQty);
+    final stockColor = AppColors.getStockColor(
+      product.stockQty,
+      product.minQty,
+    );
 
     return _card(
       isDark: isDark,
@@ -769,20 +784,25 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         children: [
           Row(
             children: [
-              Icon(Icons.inventory_2_outlined,
-                  size: 20, color: AppColors.getTextSecondary(isDark)),
+              Icon(
+                Icons.inventory_2_outlined,
+                size: 20,
+                color: AppColors.getTextSecondary(isDark),
+              ),
               SizedBox(width: AlhaiSpacing.xs),
               Text(
                 l10n.stockStatus,
                 style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.getTextPrimary(isDark),
-                    ),
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
               ),
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: AlhaiSpacing.xxs),
+                  horizontal: 10,
+                  vertical: AlhaiSpacing.xxs,
+                ),
                 decoration: BoxDecoration(
                   color: stockColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
@@ -791,12 +811,12 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   product.isOutOfStock
                       ? l10n.outOfStock
                       : product.isLowStock
-                          ? l10n.lowStock
-                          : l10n.inStock,
+                      ? l10n.lowStock
+                      : l10n.inStock,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: stockColor,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    color: stockColor,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
@@ -838,16 +858,16 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         Text(
           value,
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: AppColors.getTextPrimary(isDark),
-              ),
+            fontWeight: FontWeight.bold,
+            color: AppColors.getTextPrimary(isDark),
+          ),
         ),
         SizedBox(height: AlhaiSpacing.xxxs),
         Text(
           label,
           style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                color: AppColors.getTextSecondary(isDark),
-              ),
+            color: AppColors.getTextSecondary(isDark),
+          ),
           textAlign: TextAlign.center,
         ),
       ],
@@ -905,12 +925,12 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: DataTable(
           headingTextStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppColors.getTextSecondary(isDark),
-              ),
+            fontWeight: FontWeight.w600,
+            color: AppColors.getTextSecondary(isDark),
+          ),
           dataTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.getTextPrimary(isDark),
-              ),
+            color: AppColors.getTextPrimary(isDark),
+          ),
           columnSpacing: 24,
           columns: [
             DataColumn(label: Text(l10n.date)),
@@ -921,32 +941,42 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           ],
           rows: _stockMovements.take(10).map((m) {
             final isPositive = m.qty > 0;
-            return DataRow(cells: [
-              DataCell(Text(
-                '${m.createdAt.day}/${m.createdAt.month}/${m.createdAt.year}',
-                style: const TextStyle(fontFamily: 'monospace'),
-              )),
-              DataCell(_movementTypeBadge(m.type, isDark, l10n)),
-              DataCell(Text(
-                '${isPositive ? "+" : ""}${m.qty}',
-                style: TextStyle(
-                  fontWeight: FontWeight.w600,
-                  color: isPositive ? AppColors.success : AppColors.error,
+            return DataRow(
+              cells: [
+                DataCell(
+                  Text(
+                    '${m.createdAt.day}/${m.createdAt.month}/${m.createdAt.year}',
+                    style: const TextStyle(fontFamily: 'monospace'),
+                  ),
                 ),
-              )),
-              DataCell(Text(
-                m.referenceId ?? '-',
-                style: TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 12,
-                  color: AppColors.getTextMuted(isDark),
+                DataCell(_movementTypeBadge(m.type, isDark, l10n)),
+                DataCell(
+                  Text(
+                    '${isPositive ? "+" : ""}${m.qty}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: isPositive ? AppColors.success : AppColors.error,
+                    ),
+                  ),
                 ),
-              )),
-              DataCell(Text(
-                '${m.newQty}',
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              )),
-            ]);
+                DataCell(
+                  Text(
+                    m.referenceId ?? '-',
+                    style: TextStyle(
+                      fontFamily: 'monospace',
+                      fontSize: 12,
+                      color: AppColors.getTextMuted(isDark),
+                    ),
+                  ),
+                ),
+                DataCell(
+                  Text(
+                    '${m.newQty}',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
+            );
           }).toList(),
         ),
       ),
@@ -988,12 +1018,12 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: DataTable(
           headingTextStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppColors.getTextSecondary(isDark),
-              ),
+            fontWeight: FontWeight.w600,
+            color: AppColors.getTextSecondary(isDark),
+          ),
           dataTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.getTextPrimary(isDark),
-              ),
+            color: AppColors.getTextPrimary(isDark),
+          ),
           columnSpacing: 24,
           columns: [
             DataColumn(label: Text(l10n.date)),
@@ -1002,24 +1032,32 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             DataColumn(label: Text(l10n.reason)),
           ],
           rows: sampleData.map((item) {
-            return DataRow(cells: [
-              DataCell(Text(
-                '${item.date.day}/${item.date.month}/${item.date.year}',
-                style: const TextStyle(fontFamily: 'monospace'),
-              )),
-              DataCell(Text(
-                CurrencyFormatter.format(item.oldPrice),
-                style: TextStyle(
-                  color: AppColors.getTextMuted(isDark),
-                  decoration: TextDecoration.lineThrough,
+            return DataRow(
+              cells: [
+                DataCell(
+                  Text(
+                    '${item.date.day}/${item.date.month}/${item.date.year}',
+                    style: const TextStyle(fontFamily: 'monospace'),
+                  ),
                 ),
-              )),
-              DataCell(Text(
-                CurrencyFormatter.format(item.newPrice),
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              )),
-              DataCell(Text(item.reason)),
-            ]);
+                DataCell(
+                  Text(
+                    CurrencyFormatter.format(item.oldPrice),
+                    style: TextStyle(
+                      color: AppColors.getTextMuted(isDark),
+                      decoration: TextDecoration.lineThrough,
+                    ),
+                  ),
+                ),
+                DataCell(
+                  Text(
+                    CurrencyFormatter.format(item.newPrice),
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+                DataCell(Text(item.reason)),
+              ],
+            );
           }).toList(),
         ),
       ),
@@ -1067,12 +1105,12 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
         padding: const EdgeInsets.all(AlhaiSpacing.md),
         child: DataTable(
           headingTextStyle: Theme.of(context).textTheme.bodySmall?.copyWith(
-                fontWeight: FontWeight.w600,
-                color: AppColors.getTextSecondary(isDark),
-              ),
+            fontWeight: FontWeight.w600,
+            color: AppColors.getTextSecondary(isDark),
+          ),
           dataTextStyle: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.getTextPrimary(isDark),
-              ),
+            color: AppColors.getTextPrimary(isDark),
+          ),
           columnSpacing: 24,
           columns: [
             DataColumn(label: Text(l10n.invoiceNumber)),
@@ -1081,33 +1119,41 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             DataColumn(label: Text(l10n.total), numeric: true),
           ],
           rows: sampleSales.map((sale) {
-            return DataRow(cells: [
-              DataCell(
-                InkWell(
-                  onTap: () {},
-                  child: Text(
-                    sale.invoiceNo,
-                    style: const TextStyle(
-                      fontFamily: 'monospace',
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w600,
+            return DataRow(
+              cells: [
+                DataCell(
+                  InkWell(
+                    onTap: () {},
+                    child: Text(
+                      sale.invoiceNo,
+                      style: const TextStyle(
+                        fontFamily: 'monospace',
+                        color: AppColors.primary,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              DataCell(Text(
-                '${sale.date.day}/${sale.date.month}/${sale.date.year}',
-                style: const TextStyle(fontFamily: 'monospace'),
-              )),
-              DataCell(Text(
-                '${sale.qty}',
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              )),
-              DataCell(Text(
-                CurrencyFormatter.format(sale.total),
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              )),
-            ]);
+                DataCell(
+                  Text(
+                    '${sale.date.day}/${sale.date.month}/${sale.date.year}',
+                    style: const TextStyle(fontFamily: 'monospace'),
+                  ),
+                ),
+                DataCell(
+                  Text(
+                    '${sale.qty}',
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+                DataCell(
+                  Text(
+                    CurrencyFormatter.format(sale.total),
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
+            );
           }).toList(),
         ),
       ),
@@ -1135,23 +1181,26 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                     color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.shopping_bag_outlined,
-                      size: 20, color: AppColors.primary),
+                  child: const Icon(
+                    Icons.shopping_bag_outlined,
+                    size: 20,
+                    color: AppColors.primary,
+                  ),
                 ),
                 SizedBox(height: AlhaiSpacing.sm),
                 Text(
                   '$_totalSalesCount',
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.getTextPrimary(isDark),
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
                 ),
                 SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
                   l10n.totalSales,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.getTextSecondary(isDark),
-                      ),
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
                 ),
               ],
             ),
@@ -1170,23 +1219,26 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                     color: AppColors.secondary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: const Icon(Icons.monetization_on_outlined,
-                      size: 20, color: AppColors.secondary),
+                  child: const Icon(
+                    Icons.monetization_on_outlined,
+                    size: 20,
+                    color: AppColors.secondary,
+                  ),
                 ),
                 SizedBox(height: AlhaiSpacing.sm),
                 Text(
                   CurrencyFormatter.formatCompact(revenue),
                   style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.getTextPrimary(isDark),
-                      ),
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
                 ),
                 SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
                   l10n.revenue,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: AppColors.getTextSecondary(isDark),
-                      ),
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
                 ),
               ],
             ),
@@ -1209,9 +1261,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           Text(
             l10n.categoryLabel,
             style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.getTextPrimary(isDark),
-                ),
+              fontWeight: FontWeight.bold,
+              color: AppColors.getTextPrimary(isDark),
+            ),
           ),
           SizedBox(height: AlhaiSpacing.sm),
           Row(
@@ -1219,10 +1271,11 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(10),
                 decoration: BoxDecoration(
-                  color: (_category != null
-                          ? AppColors.getCategoryColor(_category!.name)
-                          : AppColors.grey400)
-                      .withValues(alpha: 0.1),
+                  color:
+                      (_category != null
+                              ? AppColors.getCategoryColor(_category!.name)
+                              : AppColors.grey400)
+                          .withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(
@@ -1241,9 +1294,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                     Text(
                       _category?.name ?? l10n.uncategorized,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            fontWeight: FontWeight.w600,
-                            color: AppColors.getTextPrimary(isDark),
-                          ),
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.getTextPrimary(isDark),
+                      ),
                     ),
                   ],
                 ),
@@ -1268,8 +1321,11 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.local_shipping_outlined,
-                    size: 20, color: AppColors.info),
+                child: const Icon(
+                  Icons.local_shipping_outlined,
+                  size: 20,
+                  color: AppColors.info,
+                ),
               ),
               SizedBox(width: AlhaiSpacing.sm),
               Expanded(
@@ -1279,15 +1335,15 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                     Text(
                       l10n.supplier,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.getTextMuted(isDark),
-                          ),
+                        color: AppColors.getTextMuted(isDark),
+                      ),
                     ),
                     SizedBox(height: AlhaiSpacing.xxxs),
                     Text(
                       l10n.noSupplier,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: AppColors.getTextSecondary(isDark),
-                          ),
+                        color: AppColors.getTextSecondary(isDark),
+                      ),
                     ),
                   ],
                 ),
@@ -1335,17 +1391,20 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   color: AppColors.primary.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.receipt_outlined,
-                    size: 20, color: AppColors.primaryLight),
+                child: const Icon(
+                  Icons.receipt_outlined,
+                  size: 20,
+                  color: AppColors.primaryLight,
+                ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: Text(
                   l10n.lastSale,
                   style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w600,
-                      ),
+                    color: Colors.white,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
@@ -1354,18 +1413,20 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           Text(
             '#ORD-0245',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: AppColors.primaryLight,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: 'monospace',
-                ),
+              color: AppColors.primaryLight,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'monospace',
+            ),
           ),
           SizedBox(height: AlhaiSpacing.xxs),
           Text(
             _formatRelativeTime(
-                DateTime.now().subtract(const Duration(hours: 2)), l10n),
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Colors.white70,
-                ),
+              DateTime.now().subtract(const Duration(hours: 2)),
+              l10n,
+            ),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: Colors.white70),
           ),
           SizedBox(height: AlhaiSpacing.sm),
           Row(
@@ -1374,15 +1435,17 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
               Text(
                 '3 ${l10n.units} • 37.50 ${l10n.sar}',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.white,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  color: Colors.white,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
               InkWell(
                 onTap: () {},
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.sm, vertical: 6),
+                    horizontal: AlhaiSpacing.sm,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.primary.withValues(alpha: 0.2),
                     borderRadius: BorderRadius.circular(20),
@@ -1390,9 +1453,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   child: Text(
                     l10n.viewAll,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.primaryLight,
-                          fontWeight: FontWeight.w600,
-                        ),
+                      color: AppColors.primaryLight,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),
@@ -1418,9 +1481,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
         boxShadow: AppShadows.of(context, size: ShadowSize.md),
       ),
       child: child,
@@ -1431,7 +1492,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     final color = isActive ? AppColors.success : AppColors.grey400;
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: 10, vertical: AlhaiSpacing.xxs),
+        horizontal: 10,
+        vertical: AlhaiSpacing.xxs,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
@@ -1443,18 +1506,15 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           Container(
             width: 6,
             height: 6,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           const SizedBox(width: 6),
           Text(
             isActive ? l10n.active : l10n.inactive,
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: color,
-                  fontWeight: FontWeight.w600,
-                ),
+              color: color,
+              fontWeight: FontWeight.w600,
+            ),
           ),
         ],
       ),
@@ -1472,9 +1532,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -1482,19 +1540,19 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           Text(
             '$label: ',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: AppColors.getTextMuted(isDark),
-                ),
+              color: AppColors.getTextMuted(isDark),
+            ),
           ),
           Directionality(
             textDirection: TextDirection.ltr,
             child: Text(
               value,
               style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                    fontFamily: 'monospace',
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.getTextPrimary(isDark),
-                    letterSpacing: 0.5,
-                  ),
+                fontFamily: 'monospace',
+                fontWeight: FontWeight.w600,
+                color: AppColors.getTextPrimary(isDark),
+                letterSpacing: 0.5,
+              ),
             ),
           ),
           const SizedBox(width: 6),
@@ -1543,8 +1601,10 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
     }
 
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 3),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AlhaiSpacing.xs,
+        vertical: 3,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(6),
@@ -1552,10 +1612,10 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
       child: Text(
         label,
         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
-              fontSize: 11,
-            ),
+          color: color,
+          fontWeight: FontWeight.w600,
+          fontSize: 11,
+        ),
       ),
     );
   }
@@ -1598,10 +1658,14 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 onTap: () => Navigator.pop(context),
               ),
               ListTile(
-                leading:
-                    const Icon(Icons.delete_outline, color: AppColors.error),
-                title: Text(l10n.delete,
-                    style: const TextStyle(color: AppColors.error)),
+                leading: const Icon(
+                  Icons.delete_outline,
+                  color: AppColors.error,
+                ),
+                title: Text(
+                  l10n.delete,
+                  style: const TextStyle(color: AppColors.error),
+                ),
                 onTap: () => Navigator.pop(context),
               ),
               SizedBox(height: AlhaiSpacing.xs),

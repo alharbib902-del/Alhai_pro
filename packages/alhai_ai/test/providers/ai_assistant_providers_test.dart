@@ -22,9 +22,7 @@ void main() {
 
     test('initial state has welcome message', () {
       container = ProviderContainer(
-        overrides: [
-          aiAssistantServiceProvider.overrideWithValue(mockService),
-        ],
+        overrides: [aiAssistantServiceProvider.overrideWithValue(mockService)],
       );
 
       final messages = container.read(chatMessagesProvider);
@@ -34,9 +32,7 @@ void main() {
 
     test('initial state has suggested actions', () {
       container = ProviderContainer(
-        overrides: [
-          aiAssistantServiceProvider.overrideWithValue(mockService),
-        ],
+        overrides: [aiAssistantServiceProvider.overrideWithValue(mockService)],
       );
 
       final messages = container.read(chatMessagesProvider);
@@ -46,9 +42,7 @@ void main() {
 
     test('isProcessingProvider initial state is false', () {
       container = ProviderContainer(
-        overrides: [
-          aiAssistantServiceProvider.overrideWithValue(mockService),
-        ],
+        overrides: [aiAssistantServiceProvider.overrideWithValue(mockService)],
       );
 
       expect(container.read(isProcessingProvider), isFalse);
@@ -56,9 +50,7 @@ void main() {
 
     test('clearChat resets to single welcome message', () {
       container = ProviderContainer(
-        overrides: [
-          aiAssistantServiceProvider.overrideWithValue(mockService),
-        ],
+        overrides: [aiAssistantServiceProvider.overrideWithValue(mockService)],
       );
 
       final notifier = container.read(chatMessagesProvider.notifier);
@@ -84,9 +76,7 @@ void main() {
       ]);
 
       final container = ProviderContainer(
-        overrides: [
-          aiAssistantServiceProvider.overrideWithValue(mockService),
-        ],
+        overrides: [aiAssistantServiceProvider.overrideWithValue(mockService)],
       );
       addTearDown(container.dispose);
 

@@ -14,8 +14,9 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
   /// Get all transfers for a store (as sender or receiver)
   Future<List<StockTransfersTableData>> getByStore(String storeId) {
     return (select(stockTransfersTable)
-          ..where((t) =>
-              t.fromStoreId.equals(storeId) | t.toStoreId.equals(storeId))
+          ..where(
+            (t) => t.fromStoreId.equals(storeId) | t.toStoreId.equals(storeId),
+          )
           ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
         .get();
   }
@@ -39,16 +40,20 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
   /// Get pending incoming transfers (awaiting approval)
   Future<List<StockTransfersTableData>> getPendingIncoming(String storeId) {
     return (select(stockTransfersTable)
-          ..where((t) =>
-              t.toStoreId.equals(storeId) & t.approvalStatus.equals('pending'))
+          ..where(
+            (t) =>
+                t.toStoreId.equals(storeId) &
+                t.approvalStatus.equals('pending'),
+          )
           ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
         .get();
   }
 
   /// Get transfer by ID
   Future<StockTransfersTableData?> getById(String id) {
-    return (select(stockTransfersTable)..where((t) => t.id.equals(id)))
-        .getSingleOrNull();
+    return (select(
+      stockTransfersTable,
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   /// Insert or update transfer
@@ -64,8 +69,9 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
     return (update(stockTransfersTable)..where((t) => t.id.equals(id))).write(
       StockTransfersTableCompanion(
         approvalStatus: Value(approvalStatus),
-        approvedBy:
-            approvedBy != null ? Value(approvedBy) : const Value.absent(),
+        approvedBy: approvedBy != null
+            ? Value(approvedBy)
+            : const Value.absent(),
         approvedAt: approvalStatus == 'approved'
             ? Value(DateTime.now())
             : const Value.absent(),
@@ -125,8 +131,9 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
   /// Watch transfers for a store
   Stream<List<StockTransfersTableData>> watchByStore(String storeId) {
     return (select(stockTransfersTable)
-          ..where((t) =>
-              t.fromStoreId.equals(storeId) | t.toStoreId.equals(storeId))
+          ..where(
+            (t) => t.fromStoreId.equals(storeId) | t.toStoreId.equals(storeId),
+          )
           ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
         .watch();
   }
@@ -136,8 +143,10 @@ class StockTransfersDao extends DatabaseAccessor<AppDatabase>
     final count = stockTransfersTable.id.count();
     final query = selectOnly(stockTransfersTable)
       ..addColumns([count])
-      ..where(stockTransfersTable.toStoreId.equals(storeId) &
-          stockTransfersTable.approvalStatus.equals('pending'));
+      ..where(
+        stockTransfersTable.toStoreId.equals(storeId) &
+            stockTransfersTable.approvalStatus.equals('pending'),
+      );
     return query.map((row) => row.read(count) ?? 0).watchSingle();
   }
 }

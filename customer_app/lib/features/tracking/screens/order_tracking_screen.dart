@@ -58,16 +58,19 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
 
           // Delivery destination marker
           if (delivery.deliveryAddress.lat != 0) {
-            markers.add(Marker(
-              markerId: const MarkerId('destination'),
-              position: LatLng(
-                delivery.deliveryAddress.lat,
-                delivery.deliveryAddress.lng,
+            markers.add(
+              Marker(
+                markerId: const MarkerId('destination'),
+                position: LatLng(
+                  delivery.deliveryAddress.lat,
+                  delivery.deliveryAddress.lng,
+                ),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueRed,
+                ),
+                infoWindow: const InfoWindow(title: 'عنوان التوصيل'),
               ),
-              icon: BitmapDescriptor.defaultMarkerWithHue(
-                  BitmapDescriptor.hueRed),
-              infoWindow: const InfoWindow(title: 'عنوان التوصيل'),
-            ));
+            );
           }
 
           // Driver location marker (real-time)
@@ -88,23 +91,26 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
           driverLng ??= delivery.driverLng;
 
           if (driverLat != null && driverLng != null) {
-            markers.add(Marker(
-              markerId: const MarkerId('driver'),
-              position: LatLng(driverLat!, driverLng!),
-              icon: BitmapDescriptor.defaultMarkerWithHue(
-                  BitmapDescriptor.hueBlue),
-              infoWindow: InfoWindow(title: delivery.driverName ?? 'السائق'),
-            ));
+            markers.add(
+              Marker(
+                markerId: const MarkerId('driver'),
+                position: LatLng(driverLat!, driverLng!),
+                icon: BitmapDescriptor.defaultMarkerWithHue(
+                  BitmapDescriptor.hueBlue,
+                ),
+                infoWindow: InfoWindow(title: delivery.driverName ?? 'السائق'),
+              ),
+            );
           }
 
           final initialTarget = driverLat != null && driverLng != null
               ? LatLng(driverLat!, driverLng!)
               : delivery.deliveryAddress.lat != 0
-                  ? LatLng(
-                      delivery.deliveryAddress.lat,
-                      delivery.deliveryAddress.lng,
-                    )
-                  : const LatLng(24.7136, 46.6753);
+              ? LatLng(
+                  delivery.deliveryAddress.lat,
+                  delivery.deliveryAddress.lng,
+                )
+              : const LatLng(24.7136, 46.6753);
 
           return Column(
             children: [
@@ -161,10 +167,11 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                             if (delivery.driverPhone != null)
                               Padding(
                                 padding: const EdgeInsetsDirectional.fromSTEB(
-                                    AlhaiSpacing.md,
-                                    0,
-                                    AlhaiSpacing.md,
-                                    AlhaiSpacing.sm),
+                                  AlhaiSpacing.md,
+                                  0,
+                                  AlhaiSpacing.md,
+                                  AlhaiSpacing.sm,
+                                ),
                                 child: Row(
                                   children: [
                                     Expanded(
@@ -180,10 +187,12 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                                       child: OutlinedButton.icon(
                                         onPressed: () {
                                           context.push(
-                                              '/orders/${widget.orderId}/chat');
+                                            '/orders/${widget.orderId}/chat',
+                                          );
                                         },
                                         icon: const Icon(
-                                            Icons.chat_bubble_outline),
+                                          Icons.chat_bubble_outline,
+                                        ),
                                         label: const Text('محادثة'),
                                       ),
                                     ),
@@ -220,8 +229,11 @@ class _WaitingForDriver extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.delivery_dining,
-              size: 64, color: theme.colorScheme.outline),
+          Icon(
+            Icons.delivery_dining,
+            size: 64,
+            color: theme.colorScheme.outline,
+          ),
           const SizedBox(height: AlhaiSpacing.md),
           Text(
             'في انتظار تعيين سائق',

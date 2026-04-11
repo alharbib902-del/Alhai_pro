@@ -23,10 +23,7 @@ void main() {
 
     test('copyWith overrides specified values', () {
       const state = ReportExportState();
-      final updated = state.copyWith(
-        isExporting: true,
-        error: 'Export failed',
-      );
+      final updated = state.copyWith(isExporting: true, error: 'Export failed');
       expect(updated.isExporting, isTrue);
       expect(updated.error, equals('Export failed'));
     });
@@ -40,8 +37,11 @@ void main() {
 
     test('all ReportPeriod values have Arabic names', () {
       for (final period in ReportPeriod.values) {
-        expect(period.arabicName, isNotEmpty,
-            reason: '${period.name} should have an Arabic name');
+        expect(
+          period.arabicName,
+          isNotEmpty,
+          reason: '${period.name} should have an Arabic name',
+        );
       }
     });
   });

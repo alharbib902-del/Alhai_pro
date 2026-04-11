@@ -32,7 +32,8 @@ class DatabaseHealthReport {
   bool get isHealthy => status == DatabaseHealthStatus.ok;
 
   @override
-  String toString() => 'DatabaseHealthReport('
+  String toString() =>
+      'DatabaseHealthReport('
       'status: $status, '
       'messages: ${messages.length}, '
       'fkErrors: $foreignKeyErrors)';
@@ -89,22 +90,22 @@ class BackupInfo {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'type': type,
-        'createdAt': createdAt.toIso8601String(),
-        'sizeBytes': sizeBytes,
-        'schemaVersion': schemaVersion,
-        'notes': notes,
-      };
+    'id': id,
+    'type': type,
+    'createdAt': createdAt.toIso8601String(),
+    'sizeBytes': sizeBytes,
+    'schemaVersion': schemaVersion,
+    'notes': notes,
+  };
 
   factory BackupInfo.fromJson(Map<String, dynamic> json) => BackupInfo(
-        id: json['id'] as String,
-        type: json['type'] as String,
-        createdAt: DateTime.parse(json['createdAt'] as String),
-        sizeBytes: json['sizeBytes'] as int? ?? 0,
-        schemaVersion: json['schemaVersion'] as int? ?? 0,
-        notes: json['notes'] as String?,
-      );
+    id: json['id'] as String,
+    type: json['type'] as String,
+    createdAt: DateTime.parse(json['createdAt'] as String),
+    sizeBytes: json['sizeBytes'] as int? ?? 0,
+    schemaVersion: json['schemaVersion'] as int? ?? 0,
+    notes: json['notes'] as String?,
+  );
 }
 
 /// خدمة النسخ الاحتياطي لقاعدة البيانات
@@ -175,9 +176,11 @@ class DatabaseBackupService {
     });
 
     if (kDebugMode) {
-      debugPrint('[Backup] Periodic backup started '
-          '(interval: ${backupInterval.inMinutes} minutes, '
-          'max: $maxBackups backups)');
+      debugPrint(
+        '[Backup] Periodic backup started '
+        '(interval: ${backupInterval.inMinutes} minutes, '
+        'max: $maxBackups backups)',
+      );
     }
   }
 
@@ -236,7 +239,8 @@ class DatabaseBackupService {
 
     if (kDebugMode) {
       debugPrint(
-          '[Backup] Creating pre-migration backup (v$fromVersion): $backupId');
+        '[Backup] Creating pre-migration backup (v$fromVersion): $backupId',
+      );
     }
 
     // تصدير البيانات كـ JSON
@@ -256,7 +260,8 @@ class DatabaseBackupService {
 
     if (kDebugMode) {
       debugPrint(
-          '[Backup] Pre-migration backup completed: ${info.formattedSize}');
+        '[Backup] Pre-migration backup completed: ${info.formattedSize}',
+      );
     }
 
     return info;
@@ -270,7 +275,8 @@ class DatabaseBackupService {
 
     if (kDebugMode) {
       debugPrint(
-          '[Backup] Creating post-migration backup (v$toVersion): $backupId');
+        '[Backup] Creating post-migration backup (v$toVersion): $backupId',
+      );
     }
 
     // تصدير البيانات كـ JSON
@@ -291,7 +297,8 @@ class DatabaseBackupService {
 
     if (kDebugMode) {
       debugPrint(
-          '[Backup] Post-migration backup completed: ${info.formattedSize}');
+        '[Backup] Post-migration backup completed: ${info.formattedSize}',
+      );
     }
 
     return info;
@@ -428,10 +435,9 @@ class DatabaseBackupService {
 
     try {
       // فحص البنية الداخلية
-      final integrityResult = await _db.customSelect(
-        'PRAGMA integrity_check',
-        readsFrom: {},
-      ).get();
+      final integrityResult = await _db
+          .customSelect('PRAGMA integrity_check', readsFrom: {})
+          .get();
 
       for (final row in integrityResult) {
         final msg = row.read<String>('integrity_check');
@@ -451,10 +457,9 @@ class DatabaseBackupService {
 
     try {
       // فحص المفاتيح الأجنبية
-      final fkResult = await _db.customSelect(
-        'PRAGMA foreign_key_check',
-        readsFrom: {},
-      ).get();
+      final fkResult = await _db
+          .customSelect('PRAGMA foreign_key_check', readsFrom: {})
+          .get();
 
       fkErrors = fkResult.length;
       if (fkErrors > 0) {
@@ -474,14 +479,12 @@ class DatabaseBackupService {
 
     // فحص حجم قاعدة البيانات
     try {
-      final pageCount = await _db.customSelect(
-        'PRAGMA page_count',
-        readsFrom: {},
-      ).getSingle();
-      final pageSize = await _db.customSelect(
-        'PRAGMA page_size',
-        readsFrom: {},
-      ).getSingle();
+      final pageCount = await _db
+          .customSelect('PRAGMA page_count', readsFrom: {})
+          .getSingle();
+      final pageSize = await _db
+          .customSelect('PRAGMA page_size', readsFrom: {})
+          .getSingle();
 
       final pages = pageCount.read<int>('page_count');
       final size = pageSize.read<int>('page_size');
@@ -583,8 +586,10 @@ class DatabaseBackupService {
     for (final backup in backups) {
       try {
         if (kDebugMode) {
-          debugPrint('[Backup] Trying backup: ${backup.id} '
-              '(${backup.createdAt.toIso8601String()})');
+          debugPrint(
+            '[Backup] Trying backup: ${backup.id} '
+            '(${backup.createdAt.toIso8601String()})',
+          );
         }
 
         await recoverFromBackup(backup.id);
@@ -671,10 +676,9 @@ class DatabaseBackupService {
 
     for (final tableName in _criticalTables) {
       try {
-        final rows = await _db.customSelect(
-          'SELECT * FROM $tableName',
-          readsFrom: {},
-        ).get();
+        final rows = await _db
+            .customSelect('SELECT * FROM $tableName', readsFrom: {})
+            .get();
 
         if (rows.isEmpty) continue;
 
@@ -714,9 +718,7 @@ class DatabaseBackupService {
   Future<void> _removeBackupInfo(String backupId) async {
     final metadata = await storage.loadBackupMetadata();
     final backups = (metadata['backups'] as List<dynamic>?)?.toList() ?? [];
-    backups.removeWhere(
-      (b) => (b as Map<String, dynamic>)['id'] == backupId,
-    );
+    backups.removeWhere((b) => (b as Map<String, dynamic>)['id'] == backupId);
     metadata['backups'] = backups;
     await storage.saveBackupMetadata(metadata);
   }

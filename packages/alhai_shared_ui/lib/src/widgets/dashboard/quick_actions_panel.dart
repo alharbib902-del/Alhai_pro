@@ -108,14 +108,14 @@ class QuickActionsPanel extends StatelessWidget {
                       l10n.newSale,
                       onNewSale,
                       true,
-                      null
+                      null,
                     ),
                     (
                       Icons.add_box_rounded,
                       l10n.addProduct,
                       onAddProduct,
                       false,
-                      null
+                      null,
                     ),
                     (Icons.replay_rounded, l10n.refund, onRefund, false, null),
                     (
@@ -123,35 +123,35 @@ class QuickActionsPanel extends StatelessWidget {
                       l10n.dailyReport,
                       onDailyReport,
                       false,
-                      null
+                      null,
                     ),
                     (
                       Icons.inventory_2_rounded,
                       l10n.inventory,
                       onInventory,
                       false,
-                      inventoryBadge
+                      inventoryBadge,
                     ),
                     (
                       Icons.people_rounded,
                       l10n.customers,
                       onCustomers,
                       false,
-                      null
+                      null,
                     ),
                     (
                       Icons.settings_rounded,
                       l10n.settings,
                       onSettings,
                       false,
-                      null
+                      null,
                     ),
                     (
                       Icons.nightlight_round,
                       l10n.closeDay,
                       onCloseDay,
                       false,
-                      null
+                      null,
                     ),
                   ];
                   final action = actions[index];

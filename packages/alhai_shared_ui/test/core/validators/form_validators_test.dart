@@ -155,15 +155,19 @@ void main() {
       });
 
       test('should use custom field name in error message (Arabic)', () {
-        final validator =
-            FormValidators.requiredField(fieldName: 'الاسم', locale: 'ar');
+        final validator = FormValidators.requiredField(
+          fieldName: 'الاسم',
+          locale: 'ar',
+        );
         final error = validator('');
         expect(error, contains('الاسم'));
       });
 
       test('should use custom field name in error message (English)', () {
-        final validator =
-            FormValidators.requiredField(fieldName: 'Name', locale: 'en');
+        final validator = FormValidators.requiredField(
+          fieldName: 'Name',
+          locale: 'en',
+        );
         final error = validator('');
         expect(error, contains('Name'));
       });

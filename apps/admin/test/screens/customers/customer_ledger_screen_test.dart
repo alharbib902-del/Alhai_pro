@@ -24,8 +24,9 @@ void main() {
     setupTestGetIt(mockDb: db);
 
     when(() => accountsDao.getAccountById(any())).thenAnswer((_) async => null);
-    when(() => transactionsDao.getAccountTransactions(any()))
-        .thenAnswer((_) async => []);
+    when(
+      () => transactionsDao.getAccountTransactions(any()),
+    ).thenAnswer((_) async => []);
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -36,8 +37,11 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(createTestWidget(
-          const CustomerLedgerScreen(customerId: 'test-customer-1')));
+      await tester.pumpWidget(
+        createTestWidget(
+          const CustomerLedgerScreen(customerId: 'test-customer-1'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(CustomerLedgerScreen), findsOneWidget);
@@ -51,8 +55,11 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(createTestWidget(
-          const CustomerLedgerScreen(customerId: 'test-customer-1')));
+      await tester.pumpWidget(
+        createTestWidget(
+          const CustomerLedgerScreen(customerId: 'test-customer-1'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.refresh_rounded), findsWidgets);
@@ -66,8 +73,11 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(createTestWidget(
-          const CustomerLedgerScreen(customerId: 'test-customer-1')));
+      await tester.pumpWidget(
+        createTestWidget(
+          const CustomerLedgerScreen(customerId: 'test-customer-1'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.receipt_long_outlined), findsWidgets);
@@ -81,8 +91,11 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(createTestWidget(
-          const CustomerLedgerScreen(customerId: 'test-customer-1')));
+      await tester.pumpWidget(
+        createTestWidget(
+          const CustomerLedgerScreen(customerId: 'test-customer-1'),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.add_circle_outline), findsWidgets);

@@ -14,7 +14,7 @@ class InvoiceHasher {
   final XmlCanonicalizer _canonicalizer;
 
   InvoiceHasher({XmlCanonicalizer? canonicalizer})
-      : _canonicalizer = canonicalizer ?? XmlCanonicalizer();
+    : _canonicalizer = canonicalizer ?? XmlCanonicalizer();
 
   /// Compute the SHA-256 hash of a ZATCA invoice XML
   ///

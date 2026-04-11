@@ -15,10 +15,7 @@ class _Denomination {
   final double value;
   final bool isNote;
 
-  const _Denomination({
-    required this.value,
-    required this.isNote,
-  });
+  const _Denomination({required this.value, required this.isNote});
 
   /// Returns the localized label for this denomination
   String label(AppLocalizations l10n) {
@@ -125,8 +122,10 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
           ),
           child: Column(
             children: [
-              Text(l10n.totalAmountLabel,
-                  style: const TextStyle(color: Colors.white70, fontSize: 13)),
+              Text(
+                l10n.totalAmountLabel,
+                style: const TextStyle(color: Colors.white70, fontSize: 13),
+              ),
               const SizedBox(height: AlhaiSpacing.xxs),
               Text(
                 l10n.amountRiyal(_total.toStringAsFixed(2)),
@@ -217,8 +216,9 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
               decoration: InputDecoration(
                 contentPadding: EdgeInsets.zero,
-                border:
-                    OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
                 filled: true,
                 fillColor: Theme.of(context).colorScheme.surface,
               ),
@@ -227,8 +227,10 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
           ),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
-            child: Text('\u00d7',
-                style: TextStyle(color: AppColors.textSecondary)),
+            child: Text(
+              '\u00d7',
+              style: TextStyle(color: AppColors.textSecondary),
+            ),
           ),
           Expanded(
             child: Text(
@@ -269,15 +271,18 @@ Future<double?> showDenominationCounterSheet(
           builder: (_, scrollCtrl) => Container(
             decoration: BoxDecoration(
               color: isDark ? AppColors.backgroundDark : AppColors.surface,
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(20)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(20),
+              ),
             ),
             child: Column(
               children: [
                 Center(
                   child: Container(
-                    margin:
-                        const EdgeInsets.only(top: 10, bottom: AlhaiSpacing.xs),
+                    margin: const EdgeInsets.only(
+                      top: 10,
+                      bottom: AlhaiSpacing.xs,
+                    ),
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
@@ -287,16 +292,23 @@ Future<double?> showDenominationCounterSheet(
                   ),
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.md,
+                  ),
                   child: Row(
                     children: [
-                      const Icon(Icons.calculate_rounded,
-                          color: AppColors.denominationAccent),
+                      const Icon(
+                        Icons.calculate_rounded,
+                        color: AppColors.denominationAccent,
+                      ),
                       const SizedBox(width: AlhaiSpacing.xs),
-                      Text(l10n.countCurrency,
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text(
+                        l10n.countCurrency,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const Spacer(),
                       IconButton(
                         icon: const Icon(Icons.close),
@@ -341,8 +353,11 @@ Future<double?> showDenominationCounterSheet(
                         child: FilledButton.icon(
                           onPressed: () => Navigator.pop(ctx, currentTotal),
                           icon: const Icon(Icons.check),
-                          label: Text(l10n.confirmAmountSar(
-                              currentTotal.toStringAsFixed(2))),
+                          label: Text(
+                            l10n.confirmAmountSar(
+                              currentTotal.toStringAsFixed(2),
+                            ),
+                          ),
                         ),
                       ),
                     ],

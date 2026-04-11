@@ -11,8 +11,10 @@ import '../helpers/pos_test_helpers.dart';
 // Override MockAppDatabase to handle the generic transaction method
 class TestMockAppDatabase extends MockAppDatabase {
   @override
-  Future<T> transaction<T>(Future<T> Function() action,
-      {bool requireNew = false}) async {
+  Future<T> transaction<T>(
+    Future<T> Function() action, {
+    bool requireNew = false,
+  }) async {
     return await action();
   }
 }
@@ -65,10 +67,7 @@ void main() {
     when(() => mockDb.customersDao).thenReturn(mockCustomersDao);
     when(() => mockDb.storesDao).thenReturn(mockStoresDao);
 
-    saleService = SaleService(
-      db: mockDb,
-      syncService: mockSyncService,
-    );
+    saleService = SaleService(db: mockDb, syncService: mockSyncService);
   });
 
   // Helper to set up common mocks for createSale
@@ -76,44 +75,54 @@ void main() {
     required ProductsTableData product,
     int todayStoreCount = 0,
   }) {
-    when(() => mockSalesDao.getTodayStoreCount(any()))
-        .thenAnswer((_) async => todayStoreCount);
+    when(
+      () => mockSalesDao.getTodayStoreCount(any()),
+    ).thenAnswer((_) async => todayStoreCount);
     when(() => mockSalesDao.insertSale(any())).thenAnswer((_) async => 1);
-    when(() => mockProductsDao.getProductById(product.id))
-        .thenAnswer((_) async => product);
+    when(
+      () => mockProductsDao.getProductById(product.id),
+    ).thenAnswer((_) async => product);
     when(() => mockSaleItemsDao.insertItem(any())).thenAnswer((_) async => 1);
-    when(() => mockInventoryDao.recordSaleMovement(
-          id: any(named: 'id'),
-          productId: any(named: 'productId'),
-          storeId: any(named: 'storeId'),
-          qty: any(named: 'qty'),
-          previousQty: any(named: 'previousQty'),
-          saleId: any(named: 'saleId'),
-        )).thenAnswer((_) async => 1);
-    when(() => mockProductsDao.updateStock(any(), any()))
-        .thenAnswer((_) async => 1);
-    when(() => mockSyncService.enqueueCreate(
-          tableName: any(named: 'tableName'),
-          recordId: any(named: 'recordId'),
-          data: any(named: 'data'),
-          priority: any(named: 'priority'),
-        )).thenAnswer((_) async => 'sync-1');
+    when(
+      () => mockInventoryDao.recordSaleMovement(
+        id: any(named: 'id'),
+        productId: any(named: 'productId'),
+        storeId: any(named: 'storeId'),
+        qty: any(named: 'qty'),
+        previousQty: any(named: 'previousQty'),
+        saleId: any(named: 'saleId'),
+      ),
+    ).thenAnswer((_) async => 1);
+    when(
+      () => mockProductsDao.updateStock(any(), any()),
+    ).thenAnswer((_) async => 1);
+    when(
+      () => mockSyncService.enqueueCreate(
+        tableName: any(named: 'tableName'),
+        recordId: any(named: 'recordId'),
+        data: any(named: 'data'),
+        priority: any(named: 'priority'),
+      ),
+    ).thenAnswer((_) async => 'sync-1');
     // Additional DAOs used by createSale
     when(() => mockUsersDao.getUserById(any())).thenAnswer((_) async => null);
     when(() => mockUsersDao.ensureUser(any())).thenAnswer((_) async => 1);
-    when(() => mockCustomersDao.getCustomerById(any()))
-        .thenAnswer((_) async => null);
+    when(
+      () => mockCustomersDao.getCustomerById(any()),
+    ).thenAnswer((_) async => null);
     when(() => mockStoresDao.getStoreById(any())).thenAnswer((_) async => null);
-    when(() => mockStockDeltasDao.addDelta(
-          id: any(named: 'id'),
-          productId: any(named: 'productId'),
-          storeId: any(named: 'storeId'),
-          orgId: any(named: 'orgId'),
-          quantityChange: any(named: 'quantityChange'),
-          deviceId: any(named: 'deviceId'),
-          operationType: any(named: 'operationType'),
-          referenceId: any(named: 'referenceId'),
-        )).thenAnswer((_) async => 1);
+    when(
+      () => mockStockDeltasDao.addDelta(
+        id: any(named: 'id'),
+        productId: any(named: 'productId'),
+        storeId: any(named: 'storeId'),
+        orgId: any(named: 'orgId'),
+        quantityChange: any(named: 'quantityChange'),
+        deviceId: any(named: 'deviceId'),
+        operationType: any(named: 'operationType'),
+        referenceId: any(named: 'referenceId'),
+      ),
+    ).thenAnswer((_) async => 1);
   }
 
   group('SaleService', () {
@@ -165,16 +174,20 @@ void main() {
           quantity: 1,
         );
 
-        when(() => mockSalesDao.getTodayStoreCount(any()))
-            .thenAnswer((_) async => 0);
+        when(
+          () => mockSalesDao.getTodayStoreCount(any()),
+        ).thenAnswer((_) async => 0);
         when(() => mockSalesDao.insertSale(any())).thenAnswer((_) async => 1);
-        when(() => mockProductsDao.getProductById('missing-prod'))
-            .thenAnswer((_) async => null);
-        when(() => mockUsersDao.getUserById(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockProductsDao.getProductById('missing-prod'),
+        ).thenAnswer((_) async => null);
+        when(
+          () => mockUsersDao.getUserById(any()),
+        ).thenAnswer((_) async => null);
         when(() => mockUsersDao.ensureUser(any())).thenAnswer((_) async => 1);
-        when(() => mockCustomersDao.getCustomerById(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockCustomersDao.getCustomerById(any()),
+        ).thenAnswer((_) async => null);
 
         // Act & Assert
         expect(
@@ -206,16 +219,20 @@ void main() {
           quantity: 5, // requesting more than available
         );
 
-        when(() => mockSalesDao.getTodayStoreCount(any()))
-            .thenAnswer((_) async => 0);
+        when(
+          () => mockSalesDao.getTodayStoreCount(any()),
+        ).thenAnswer((_) async => 0);
         when(() => mockSalesDao.insertSale(any())).thenAnswer((_) async => 1);
-        when(() => mockProductsDao.getProductById('prod-1'))
-            .thenAnswer((_) async => product);
-        when(() => mockUsersDao.getUserById(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockProductsDao.getProductById('prod-1'),
+        ).thenAnswer((_) async => product);
+        when(
+          () => mockUsersDao.getUserById(any()),
+        ).thenAnswer((_) async => null);
         when(() => mockUsersDao.ensureUser(any())).thenAnswer((_) async => 1);
-        when(() => mockCustomersDao.getCustomerById(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockCustomersDao.getCustomerById(any()),
+        ).thenAnswer((_) async => null);
 
         // Act & Assert
         expect(
@@ -296,12 +313,14 @@ void main() {
         );
 
         // Assert
-        verify(() => mockSyncService.enqueueCreate(
-              tableName: 'sales',
-              recordId: any(named: 'recordId'),
-              data: any(named: 'data'),
-              priority: SyncPriority.high,
-            )).called(1);
+        verify(
+          () => mockSyncService.enqueueCreate(
+            tableName: 'sales',
+            recordId: any(named: 'recordId'),
+            data: any(named: 'data'),
+            priority: SyncPriority.high,
+          ),
+        ).called(1);
       });
 
       test('should create debt when payment method is credit', () async {
@@ -324,30 +343,35 @@ void main() {
         setupCreateSaleMocks(product: product);
 
         // Mock customer exists in DB (required for debt creation)
-        when(() => mockCustomersDao.getCustomerById('cust-1'))
-            .thenAnswer((_) async => CustomersTableData(
-                  id: 'cust-1',
-                  storeId: 'store-1',
-                  name: 'Test Customer',
-                  type: 'individual',
-                  isActive: true,
-                  createdAt: DateTime(2026, 1, 1),
-                ));
+        when(() => mockCustomersDao.getCustomerById('cust-1')).thenAnswer(
+          (_) async => CustomersTableData(
+            id: 'cust-1',
+            storeId: 'store-1',
+            name: 'Test Customer',
+            type: 'individual',
+            isActive: true,
+            createdAt: DateTime(2026, 1, 1),
+          ),
+        );
 
         // No existing account for this customer
-        when(() => mockAccountsDao.getCustomerAccount('cust-1', 'store-1'))
-            .thenAnswer((_) async => null);
-        when(() => mockAccountsDao.insertAccount(any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockTransactionsDao.recordInvoice(
-              id: any(named: 'id'),
-              storeId: any(named: 'storeId'),
-              accountId: any(named: 'accountId'),
-              amount: any(named: 'amount'),
-              balanceAfter: any(named: 'balanceAfter'),
-              saleId: any(named: 'saleId'),
-              createdBy: any(named: 'createdBy'),
-            )).thenAnswer((_) async => 1);
+        when(
+          () => mockAccountsDao.getCustomerAccount('cust-1', 'store-1'),
+        ).thenAnswer((_) async => null);
+        when(
+          () => mockAccountsDao.insertAccount(any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockTransactionsDao.recordInvoice(
+            id: any(named: 'id'),
+            storeId: any(named: 'storeId'),
+            accountId: any(named: 'accountId'),
+            amount: any(named: 'amount'),
+            balanceAfter: any(named: 'balanceAfter'),
+            saleId: any(named: 'saleId'),
+            createdBy: any(named: 'createdBy'),
+          ),
+        ).thenAnswer((_) async => 1);
 
         // Capture the SalesTableCompanion to verify isPaid
         SalesTableCompanion? capturedSale;
@@ -380,15 +404,17 @@ void main() {
         verify(() => mockAccountsDao.insertAccount(any())).called(1);
 
         // Verify transactions DAO recorded a debt transaction
-        verify(() => mockTransactionsDao.recordInvoice(
-              id: any(named: 'id'),
-              storeId: 'store-1',
-              accountId: any(named: 'accountId'),
-              amount: 115.0,
-              balanceAfter: 115.0,
-              saleId: result.saleId,
-              createdBy: 'cashier-1',
-            )).called(1);
+        verify(
+          () => mockTransactionsDao.recordInvoice(
+            id: any(named: 'id'),
+            storeId: 'store-1',
+            accountId: any(named: 'accountId'),
+            amount: 115.0,
+            balanceAfter: 115.0,
+            saleId: result.saleId,
+            createdBy: 'cashier-1',
+          ),
+        ).called(1);
       });
 
       test('should create sale with empty cart (no items)', () async {
@@ -437,45 +463,58 @@ void main() {
         );
 
         // Set up all common mocks except insertSale (we override it below)
-        when(() => mockSalesDao.getTodayStoreCount(any()))
-            .thenAnswer((_) async => 5);
-        when(() => mockProductsDao.getProductById('prod-1'))
-            .thenAnswer((_) async => product);
-        when(() => mockSaleItemsDao.insertItem(any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockInventoryDao.recordSaleMovement(
-              id: any(named: 'id'),
-              productId: any(named: 'productId'),
-              storeId: any(named: 'storeId'),
-              qty: any(named: 'qty'),
-              previousQty: any(named: 'previousQty'),
-              saleId: any(named: 'saleId'),
-            )).thenAnswer((_) async => 1);
-        when(() => mockProductsDao.updateStock(any(), any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockSyncService.enqueueCreate(
-              tableName: any(named: 'tableName'),
-              recordId: any(named: 'recordId'),
-              data: any(named: 'data'),
-              priority: any(named: 'priority'),
-            )).thenAnswer((_) async => 'sync-1');
-        when(() => mockUsersDao.getUserById(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockSalesDao.getTodayStoreCount(any()),
+        ).thenAnswer((_) async => 5);
+        when(
+          () => mockProductsDao.getProductById('prod-1'),
+        ).thenAnswer((_) async => product);
+        when(
+          () => mockSaleItemsDao.insertItem(any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockInventoryDao.recordSaleMovement(
+            id: any(named: 'id'),
+            productId: any(named: 'productId'),
+            storeId: any(named: 'storeId'),
+            qty: any(named: 'qty'),
+            previousQty: any(named: 'previousQty'),
+            saleId: any(named: 'saleId'),
+          ),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockProductsDao.updateStock(any(), any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockSyncService.enqueueCreate(
+            tableName: any(named: 'tableName'),
+            recordId: any(named: 'recordId'),
+            data: any(named: 'data'),
+            priority: any(named: 'priority'),
+          ),
+        ).thenAnswer((_) async => 'sync-1');
+        when(
+          () => mockUsersDao.getUserById(any()),
+        ).thenAnswer((_) async => null);
         when(() => mockUsersDao.ensureUser(any())).thenAnswer((_) async => 1);
-        when(() => mockCustomersDao.getCustomerById(any()))
-            .thenAnswer((_) async => null);
-        when(() => mockStoresDao.getStoreById(any()))
-            .thenAnswer((_) async => null);
-        when(() => mockStockDeltasDao.addDelta(
-              id: any(named: 'id'),
-              productId: any(named: 'productId'),
-              storeId: any(named: 'storeId'),
-              orgId: any(named: 'orgId'),
-              quantityChange: any(named: 'quantityChange'),
-              deviceId: any(named: 'deviceId'),
-              operationType: any(named: 'operationType'),
-              referenceId: any(named: 'referenceId'),
-            )).thenAnswer((_) async => 1);
+        when(
+          () => mockCustomersDao.getCustomerById(any()),
+        ).thenAnswer((_) async => null);
+        when(
+          () => mockStoresDao.getStoreById(any()),
+        ).thenAnswer((_) async => null);
+        when(
+          () => mockStockDeltasDao.addDelta(
+            id: any(named: 'id'),
+            productId: any(named: 'productId'),
+            storeId: any(named: 'storeId'),
+            orgId: any(named: 'orgId'),
+            quantityChange: any(named: 'quantityChange'),
+            deviceId: any(named: 'deviceId'),
+            operationType: any(named: 'operationType'),
+            referenceId: any(named: 'referenceId'),
+          ),
+        ).thenAnswer((_) async => 1);
 
         // First insertSale throws unique constraint error, second succeeds
         int insertCallCount = 0;
@@ -487,7 +526,8 @@ void main() {
           capturedReceipts.add(companion.receiptNo.value);
           if (insertCallCount == 1) {
             throw Exception(
-                'UNIQUE constraint failed: idx_sales_store_receipt_unique');
+              'UNIQUE constraint failed: idx_sales_store_receipt_unique',
+            );
           }
           return Future.value(1);
         });
@@ -535,30 +575,35 @@ void main() {
         setupCreateSaleMocks(product: product);
 
         // Mock customer exists in DB
-        when(() => mockCustomersDao.getCustomerById('cust-1'))
-            .thenAnswer((_) async => CustomersTableData(
-                  id: 'cust-1',
-                  storeId: 'store-1',
-                  name: 'Split Customer',
-                  type: 'individual',
-                  isActive: true,
-                  createdAt: DateTime(2026, 1, 1),
-                ));
+        when(() => mockCustomersDao.getCustomerById('cust-1')).thenAnswer(
+          (_) async => CustomersTableData(
+            id: 'cust-1',
+            storeId: 'store-1',
+            name: 'Split Customer',
+            type: 'individual',
+            isActive: true,
+            createdAt: DateTime(2026, 1, 1),
+          ),
+        );
 
         // No existing account for this customer
-        when(() => mockAccountsDao.getCustomerAccount('cust-1', 'store-1'))
-            .thenAnswer((_) async => null);
-        when(() => mockAccountsDao.insertAccount(any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockTransactionsDao.recordInvoice(
-              id: any(named: 'id'),
-              storeId: any(named: 'storeId'),
-              accountId: any(named: 'accountId'),
-              amount: any(named: 'amount'),
-              balanceAfter: any(named: 'balanceAfter'),
-              saleId: any(named: 'saleId'),
-              createdBy: any(named: 'createdBy'),
-            )).thenAnswer((_) async => 1);
+        when(
+          () => mockAccountsDao.getCustomerAccount('cust-1', 'store-1'),
+        ).thenAnswer((_) async => null);
+        when(
+          () => mockAccountsDao.insertAccount(any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockTransactionsDao.recordInvoice(
+            id: any(named: 'id'),
+            storeId: any(named: 'storeId'),
+            accountId: any(named: 'accountId'),
+            amount: any(named: 'amount'),
+            balanceAfter: any(named: 'balanceAfter'),
+            saleId: any(named: 'saleId'),
+            createdBy: any(named: 'createdBy'),
+          ),
+        ).thenAnswer((_) async => 1);
 
         // Capture the SalesTableCompanion to verify isPaid and amounts
         SalesTableCompanion? capturedSale;
@@ -596,15 +641,17 @@ void main() {
 
         // Verify debt created for the unpaid portion (total - amountReceived = 20)
         verify(() => mockAccountsDao.insertAccount(any())).called(1);
-        verify(() => mockTransactionsDao.recordInvoice(
-              id: any(named: 'id'),
-              storeId: 'store-1',
-              accountId: any(named: 'accountId'),
-              amount: 20.0,
-              balanceAfter: 20.0,
-              saleId: result.saleId,
-              createdBy: 'cashier-1',
-            )).called(1);
+        verify(
+          () => mockTransactionsDao.recordInvoice(
+            id: any(named: 'id'),
+            storeId: 'store-1',
+            accountId: any(named: 'accountId'),
+            amount: 20.0,
+            balanceAfter: 20.0,
+            saleId: result.saleId,
+            createdBy: 'cashier-1',
+          ),
+        ).called(1);
       });
     });
 
@@ -617,33 +664,39 @@ void main() {
           status: 'completed',
         );
 
-        when(() => mockSalesDao.getSaleById('sale-1'))
-            .thenAnswer((_) async => sale);
+        when(
+          () => mockSalesDao.getSaleById('sale-1'),
+        ).thenAnswer((_) async => sale);
         when(() => mockSalesDao.voidSale('sale-1')).thenAnswer((_) async => 1);
-        when(() => mockSyncService.enqueueUpdate(
-              tableName: any(named: 'tableName'),
-              recordId: any(named: 'recordId'),
-              changes: any(named: 'changes'),
-              priority: any(named: 'priority'),
-            )).thenAnswer((_) async => 'sync-1');
+        when(
+          () => mockSyncService.enqueueUpdate(
+            tableName: any(named: 'tableName'),
+            recordId: any(named: 'recordId'),
+            changes: any(named: 'changes'),
+            priority: any(named: 'priority'),
+          ),
+        ).thenAnswer((_) async => 'sync-1');
 
         // Act
         await saleService.voidSale('sale-1', reason: 'Customer request');
 
         // Assert - voidSale delegates stock restoration to salesDao.voidSale
         verify(() => mockSalesDao.voidSale('sale-1')).called(1);
-        verify(() => mockSyncService.enqueueUpdate(
-              tableName: 'sales',
-              recordId: 'sale-1',
-              changes: any(named: 'changes'),
-              priority: SyncPriority.high,
-            )).called(1);
+        verify(
+          () => mockSyncService.enqueueUpdate(
+            tableName: 'sales',
+            recordId: 'sale-1',
+            changes: any(named: 'changes'),
+            priority: SyncPriority.high,
+          ),
+        ).called(1);
       });
 
       test('should throw SaleException when sale not found', () async {
         // Arrange
-        when(() => mockSalesDao.getSaleById('non-existent'))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockSalesDao.getSaleById('non-existent'),
+        ).thenAnswer((_) async => null);
 
         // Act & Assert
         expect(
@@ -659,8 +712,9 @@ void main() {
           status: 'voided',
         );
 
-        when(() => mockSalesDao.getSaleById('sale-1'))
-            .thenAnswer((_) async => voidedSale);
+        when(
+          () => mockSalesDao.getSaleById('sale-1'),
+        ).thenAnswer((_) async => voidedSale);
 
         // Act & Assert
         expect(
@@ -673,8 +727,9 @@ void main() {
     group('getTodayTotal', () {
       test('should return total for today', () async {
         // Arrange
-        when(() => mockSalesDao.getTodayTotal(any(), any()))
-            .thenAnswer((_) async => 1500.0);
+        when(
+          () => mockSalesDao.getTodayTotal(any(), any()),
+        ).thenAnswer((_) async => 1500.0);
 
         // Act
         final result = await saleService.getTodayTotal('store-1', 'cashier-1');
@@ -687,8 +742,9 @@ void main() {
     group('getTodayCount', () {
       test('should return count for today', () async {
         // Arrange
-        when(() => mockSalesDao.getTodayCount(any(), any()))
-            .thenAnswer((_) async => 25);
+        when(
+          () => mockSalesDao.getTodayCount(any(), any()),
+        ).thenAnswer((_) async => 25);
 
         // Act
         final result = await saleService.getTodayCount('store-1', 'cashier-1');
@@ -713,45 +769,58 @@ void main() {
           quantity: 1,
         );
 
-        when(() => mockSalesDao.getTodayStoreCount(any()))
-            .thenAnswer((_) async => 5); // 5 previous sales today
-        when(() => mockProductsDao.getProductById('prod-1'))
-            .thenAnswer((_) async => product);
-        when(() => mockSaleItemsDao.insertItem(any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockInventoryDao.recordSaleMovement(
-              id: any(named: 'id'),
-              productId: any(named: 'productId'),
-              storeId: any(named: 'storeId'),
-              qty: any(named: 'qty'),
-              previousQty: any(named: 'previousQty'),
-              saleId: any(named: 'saleId'),
-            )).thenAnswer((_) async => 1);
-        when(() => mockProductsDao.updateStock(any(), any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockSyncService.enqueueCreate(
-              tableName: any(named: 'tableName'),
-              recordId: any(named: 'recordId'),
-              data: any(named: 'data'),
-              priority: any(named: 'priority'),
-            )).thenAnswer((_) async => 'sync-1');
-        when(() => mockUsersDao.getUserById(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockSalesDao.getTodayStoreCount(any()),
+        ).thenAnswer((_) async => 5); // 5 previous sales today
+        when(
+          () => mockProductsDao.getProductById('prod-1'),
+        ).thenAnswer((_) async => product);
+        when(
+          () => mockSaleItemsDao.insertItem(any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockInventoryDao.recordSaleMovement(
+            id: any(named: 'id'),
+            productId: any(named: 'productId'),
+            storeId: any(named: 'storeId'),
+            qty: any(named: 'qty'),
+            previousQty: any(named: 'previousQty'),
+            saleId: any(named: 'saleId'),
+          ),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockProductsDao.updateStock(any(), any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockSyncService.enqueueCreate(
+            tableName: any(named: 'tableName'),
+            recordId: any(named: 'recordId'),
+            data: any(named: 'data'),
+            priority: any(named: 'priority'),
+          ),
+        ).thenAnswer((_) async => 'sync-1');
+        when(
+          () => mockUsersDao.getUserById(any()),
+        ).thenAnswer((_) async => null);
         when(() => mockUsersDao.ensureUser(any())).thenAnswer((_) async => 1);
-        when(() => mockCustomersDao.getCustomerById(any()))
-            .thenAnswer((_) async => null);
-        when(() => mockStoresDao.getStoreById(any()))
-            .thenAnswer((_) async => null);
-        when(() => mockStockDeltasDao.addDelta(
-              id: any(named: 'id'),
-              productId: any(named: 'productId'),
-              storeId: any(named: 'storeId'),
-              orgId: any(named: 'orgId'),
-              quantityChange: any(named: 'quantityChange'),
-              deviceId: any(named: 'deviceId'),
-              operationType: any(named: 'operationType'),
-              referenceId: any(named: 'referenceId'),
-            )).thenAnswer((_) async => 1);
+        when(
+          () => mockCustomersDao.getCustomerById(any()),
+        ).thenAnswer((_) async => null);
+        when(
+          () => mockStoresDao.getStoreById(any()),
+        ).thenAnswer((_) async => null);
+        when(
+          () => mockStockDeltasDao.addDelta(
+            id: any(named: 'id'),
+            productId: any(named: 'productId'),
+            storeId: any(named: 'storeId'),
+            orgId: any(named: 'orgId'),
+            quantityChange: any(named: 'quantityChange'),
+            deviceId: any(named: 'deviceId'),
+            operationType: any(named: 'operationType'),
+            referenceId: any(named: 'referenceId'),
+          ),
+        ).thenAnswer((_) async => 1);
 
         // Capture the SalesTableCompanion passed to insertSale
         SalesTableCompanion? capturedCompanion;

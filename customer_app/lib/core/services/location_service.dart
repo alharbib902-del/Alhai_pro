@@ -22,12 +22,7 @@ class LocationService {
   }
 
   /// Distance in km between two points.
-  static double distanceKm(
-    double lat1,
-    double lng1,
-    double lat2,
-    double lng2,
-  ) {
+  static double distanceKm(double lat1, double lng1, double lat2, double lng2) {
     return Geolocator.distanceBetween(lat1, lng1, lat2, lng2) / 1000;
   }
 }

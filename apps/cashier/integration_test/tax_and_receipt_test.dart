@@ -92,8 +92,9 @@ void main() {
       expect(vat, closeTo(15.0, 0.001));
     });
 
-    testWidgets('single-item breakdown matches expected totals',
-        (tester) async {
+    testWidgets('single-item breakdown matches expected totals', (
+      tester,
+    ) async {
       // One unit of Milk at 6.50 SAR
       final milk = testProducts[0];
       final breakdown = VatCalculator.lineBreakdown(
@@ -130,8 +131,9 @@ void main() {
   // policy allows). The invoice total must sum them correctly.
   // ==========================================================================
   group('Tax & Receipt: Mixed Tax Items', () {
-    testWidgets('zero-rated + standard-rated items sum correctly',
-        (tester) async {
+    testWidgets('zero-rated + standard-rated items sum correctly', (
+      tester,
+    ) async {
       // Taxable: 100 SAR net at 15% -> 115 gross
       final taxable = VatCalculator.breakdownFromNet(netAmount: 100.0);
       // Zero-rated: 50 SAR net at 0% -> 50 gross
@@ -148,10 +150,14 @@ void main() {
     });
 
     testWidgets('all zero-rated produces zero VAT', (tester) async {
-      final exportA =
-          VatCalculator.breakdownFromNet(netAmount: 200.0, vatRate: 0.0);
-      final exportB =
-          VatCalculator.breakdownFromNet(netAmount: 350.0, vatRate: 0.0);
+      final exportA = VatCalculator.breakdownFromNet(
+        netAmount: 200.0,
+        vatRate: 0.0,
+      );
+      final exportB = VatCalculator.breakdownFromNet(
+        netAmount: 350.0,
+        vatRate: 0.0,
+      );
 
       final total = VatCalculator.sumBreakdowns([exportA, exportB]);
       expect(total.vatAmount, closeTo(0.0, 0.001));
@@ -168,8 +174,9 @@ void main() {
   // on rebates.
   // ==========================================================================
   group('Tax & Receipt: Discount Before Tax', () {
-    testWidgets('discount applied to line reduces VAT proportionally',
-        (tester) async {
+    testWidgets('discount applied to line reduces VAT proportionally', (
+      tester,
+    ) async {
       // 5 units of Rice at 32.00 each = 160 net
       // Apply 10 SAR discount -> 150 net
       // VAT @ 15% = 22.50 -> gross 172.50
@@ -212,8 +219,9 @@ void main() {
   // internally).
   // ==========================================================================
   group('Tax & Receipt: Multi-Payment Split', () {
-    testWidgets('three-way split (cash/card/wallet) sums to total',
-        (tester) async {
+    testWidgets('three-way split (cash/card/wallet) sums to total', (
+      tester,
+    ) async {
       // Invoice total: 230.00 SAR
       const cashPart = 100.00;
       const cardPart = 80.00;
@@ -223,14 +231,14 @@ void main() {
       expect(total, closeTo(230.00, 0.001));
     });
 
-    testWidgets('payment screen loads and accepts amount entry',
-        (tester) async {
+    testWidgets('payment screen loads and accepts amount entry', (
+      tester,
+    ) async {
       // Exercise the real PaymentScreen: the user types a cash amount
       // for a split payment.
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos/payment',
-        isAuthenticated: true,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos/payment', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       expect(find.byType(PaymentScreen), findsOneWidget);
@@ -267,25 +275,24 @@ void main() {
   // ==========================================================================
   group('Tax & Receipt: Receipt Preview', () {
     testWidgets('receipt screen renders scaffold for preview', (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos/receipt',
-        isAuthenticated: true,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos/receipt', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       expect(find.byType(ReceiptScreen), findsOneWidget);
       expect(find.byType(Scaffold), findsWidgets);
     });
 
-    testWidgets('receipt screen survives rapid navigation cycles',
-        (tester) async {
+    testWidgets('receipt screen survives rapid navigation cycles', (
+      tester,
+    ) async {
       // Mount and unmount quickly to catch dispose-related regressions in
       // the preview state machine.
       for (var i = 0; i < 3; i++) {
-        await tester.pumpWidget(buildTestApp(
-          initialRoute: '/pos/receipt',
-          isAuthenticated: true,
-        ));
+        await tester.pumpWidget(
+          buildTestApp(initialRoute: '/pos/receipt', isAuthenticated: true),
+        );
         await pumpAndSettleWithTimeout(tester);
         expect(find.byType(ReceiptScreen), findsOneWidget);
       }
@@ -302,8 +309,9 @@ void main() {
   // for a typical receipt's worth of data.
   // ==========================================================================
   group('Tax & Receipt: ZATCA QR Presence', () {
-    testWidgets('fake QR builder produces non-empty payload for sale',
-        (tester) async {
+    testWidgets('fake QR builder produces non-empty payload for sale', (
+      tester,
+    ) async {
       final breakdown = VatCalculator.breakdownFromNet(netAmount: 100.0);
       final fake = _FakeZatcaQrBuilder();
 
@@ -324,25 +332,24 @@ void main() {
       expect(qr.contains('115.00'), true); // Gross amount
     });
 
-    testWidgets(
-      'QR payload contents reflect a different sale amount',
-      (tester) async {
-        final breakdown = VatCalculator.breakdownFromNet(netAmount: 500.0);
-        final fake = _FakeZatcaQrBuilder();
+    testWidgets('QR payload contents reflect a different sale amount', (
+      tester,
+    ) async {
+      final breakdown = VatCalculator.breakdownFromNet(netAmount: 500.0);
+      final fake = _FakeZatcaQrBuilder();
 
-        final qr = fake.build(
-          sellerName: kTestStoreName,
-          vatNumber: '300000000000003',
-          timestamp: DateTime(2026, 4, 10, 16, 0),
-          totalWithVat: breakdown.grossAmount,
-          vatAmount: breakdown.vatAmount,
-        );
+      final qr = fake.build(
+        sellerName: kTestStoreName,
+        vatNumber: '300000000000003',
+        timestamp: DateTime(2026, 4, 10, 16, 0),
+        totalWithVat: breakdown.grossAmount,
+        vatAmount: breakdown.vatAmount,
+      );
 
-        // Gross for net 500 @ 15% = 575.00; VAT = 75.00
-        expect(qr.contains('575.00'), true);
-        expect(qr.contains('75.00'), true);
-      },
-    );
+      // Gross for net 500 @ 15% = 575.00; VAT = 75.00
+      expect(qr.contains('575.00'), true);
+      expect(qr.contains('75.00'), true);
+    });
 
     // NOTE on skipped path:
     // We intentionally skip a test that would call the *real*
@@ -373,12 +380,12 @@ void main() {
   // `buildTestApp`.
   // ==========================================================================
   group('Tax & Receipt: Arabic Receipt Rendering', () {
-    testWidgets('receipt screen renders without layout errors under Arabic',
-        (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos/receipt',
-        isAuthenticated: true,
-      ));
+    testWidgets('receipt screen renders without layout errors under Arabic', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos/receipt', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       // No overflow or layout exceptions should have been thrown.
@@ -412,8 +419,9 @@ void main() {
   // displayed value is always 2dp.
   // ==========================================================================
   group('Tax & Receipt: Halala Rounding', () {
-    testWidgets('arithmetic rounding never loses more than 0.005 SAR',
-        (tester) async {
+    testWidgets('arithmetic rounding never loses more than 0.005 SAR', (
+      tester,
+    ) async {
       // 3 items at 6.50 each = 19.50 net; VAT @15% = 2.925 -> rounds to 2.93
       final breakdown = VatCalculator.lineBreakdown(
         unitPrice: 6.50,
@@ -425,8 +433,9 @@ void main() {
       expect(breakdown.grossAmount, closeTo(22.43, 0.005));
     });
 
-    testWidgets('validateTotals tolerates 0.01 SAR rounding drift',
-        (tester) async {
+    testWidgets('validateTotals tolerates 0.01 SAR rounding drift', (
+      tester,
+    ) async {
       // Build an intentionally slightly-off breakdown that still validates
       const net = 99.99;
       const vat = 15.00; // Rounded up from 14.9985
@@ -449,8 +458,9 @@ void main() {
       expect(_roundHalala(123.456), closeTo(123.46, 0.001));
     });
 
-    testWidgets('VatBreakdown toString exposes the rounded values',
-        (tester) async {
+    testWidgets('VatBreakdown toString exposes the rounded values', (
+      tester,
+    ) async {
       // Quick check that the shape of VatBreakdown matches what
       // downstream printing code will consume. Avoids surprise renames.
       const breakdown = VatBreakdown(

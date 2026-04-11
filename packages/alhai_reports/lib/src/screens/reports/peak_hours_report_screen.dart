@@ -47,14 +47,18 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
       final storeId = ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
 
       // Load hourly data for today
-      final hourlySales =
-          await db.salesDao.getHourlySales(storeId, DateTime.now());
+      final hourlySales = await db.salesDao.getHourlySales(
+        storeId,
+        DateTime.now(),
+      );
       _hourlyData = hourlySales
-          .map((h) => HourlyData(
-                hour: h.hour,
-                transactions: h.count,
-                revenue: h.total,
-              ))
+          .map(
+            (h) => HourlyData(
+              hour: h.hour,
+              transactions: h.count,
+              revenue: h.total,
+            ),
+          )
           .toList();
 
       // Load daily data by iterating last 7 days
@@ -72,11 +76,13 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
           );
           // weekday: 1=Monday ... 7=Sunday; map to Arabic week starting Saturday
           final arabicDayIndex = (date.weekday + 1) % 7; // Saturday=0
-          dailyList.add(DailyData(
-            day: dayNames[arabicDayIndex],
-            transactions: daySales.count,
-            revenue: daySales.total,
-          ));
+          dailyList.add(
+            DailyData(
+              day: dayNames[arabicDayIndex],
+              transactions: daySales.count,
+              revenue: daySales.total,
+            ),
+          );
         } catch (_) {
           // Skip days that fail
         }
@@ -153,8 +159,11 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.calendar_today,
-                    size: 16, color: AppColors.primary),
+                const Icon(
+                  Icons.calendar_today,
+                  size: 16,
+                  color: AppColors.primary,
+                ),
                 const SizedBox(width: AppSizes.sm),
                 Text(
                   '${_formatDate(_dateRange.start)} - ${_formatDate(_dateRange.end)}',
@@ -204,7 +213,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
     );
     final avgTransactions =
         _hourlyData.fold(0, (sum, h) => sum + h.transactions) ~/
-            _hourlyData.length;
+        _hourlyData.length;
 
     return Row(
       children: [
@@ -212,8 +221,9 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
           child: _buildSummaryCard(
             AppLocalizations.of(context).peakHourLabel,
             '${peakHour.hour}:00',
-            AppLocalizations.of(context)
-                .transactionsWithCount(peakHour.transactions),
+            AppLocalizations.of(
+              context,
+            ).transactionsWithCount(peakHour.transactions),
             Icons.schedule,
             AppColors.error,
           ),
@@ -223,8 +233,9 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
           child: _buildSummaryCard(
             AppLocalizations.of(context).peakDayLabel,
             peakDay.day,
-            AppLocalizations.of(context)
-                .transactionsWithCount(peakDay.transactions),
+            AppLocalizations.of(
+              context,
+            ).transactionsWithCount(peakDay.transactions),
             Icons.event,
             AppColors.primary,
           ),
@@ -333,8 +344,9 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
 
           return Expanded(
             child: Padding(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxxs),
+              padding: const EdgeInsets.symmetric(
+                horizontal: AlhaiSpacing.xxxs,
+              ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
@@ -461,7 +473,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
       l10n.tueShort,
       l10n.wedShort,
       l10n.thuShort,
-      l10n.friShort
+      l10n.friShort,
     ];
 
     return Card(
@@ -754,9 +766,7 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
 
   void _exportReport() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context).exportingReport),
-      ),
+      SnackBar(content: Text(AppLocalizations.of(context).exportingReport)),
     );
   }
 }

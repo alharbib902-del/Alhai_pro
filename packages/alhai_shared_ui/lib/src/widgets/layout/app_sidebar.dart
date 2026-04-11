@@ -38,10 +38,7 @@ class SidebarGroup {
   final String? title;
   final List<AppSidebarItem> items;
 
-  const SidebarGroup({
-    this.title,
-    required this.items,
-  });
+  const SidebarGroup({this.title, required this.items});
 }
 
 /// القائمة الجانبية
@@ -170,16 +167,20 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
                           child: Icon(
                             Icons.close_rounded,
                             size: 16,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         )
                       : null,
                   filled: true,
-                  fillColor:
-                      Theme.of(context).colorScheme.surfaceContainerHighest,
+                  fillColor: Theme.of(
+                    context,
+                  ).colorScheme.surfaceContainerHighest,
                   contentPadding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.sm, vertical: 10),
+                    horizontal: AlhaiSpacing.sm,
+                    vertical: 10,
+                  ),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(10),
                     borderSide: BorderSide.none,
@@ -218,8 +219,9 @@ class _AppSidebarState extends ConsumerState<AppSidebar> {
                           l10n.noResults,
                           style: TextStyle(
                             fontSize: 12,
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                         ),
                       ],

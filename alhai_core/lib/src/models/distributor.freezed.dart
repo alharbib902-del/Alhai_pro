@@ -12,7 +12,8 @@ part of 'distributor.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 Distributor _$DistributorFromJson(Map<String, dynamic> json) {
   return _Distributor.fromJson(json);
@@ -59,35 +60,37 @@ mixin _$Distributor {
 /// @nodoc
 abstract class $DistributorCopyWith<$Res> {
   factory $DistributorCopyWith(
-          Distributor value, $Res Function(Distributor) then) =
-      _$DistributorCopyWithImpl<$Res, Distributor>;
+    Distributor value,
+    $Res Function(Distributor) then,
+  ) = _$DistributorCopyWithImpl<$Res, Distributor>;
   @useResult
-  $Res call(
-      {String id,
-      String userId,
-      String companyName,
-      String? companyNameEn,
-      String commercialRegister,
-      String vatNumber,
-      String? logoUrl,
-      String? address,
-      String? city,
-      String? phone,
-      String? email,
-      String? website,
-      DistributorStatus status,
-      DistributorTier tier,
-      int totalProducts,
-      int totalOrders,
-      double totalRevenue,
-      double avgRating,
-      int ratingCount,
-      bool isFeatured,
-      DateTime? approvedAt,
-      String? approvedBy,
-      String? rejectionReason,
-      DateTime createdAt,
-      DateTime? updatedAt});
+  $Res call({
+    String id,
+    String userId,
+    String companyName,
+    String? companyNameEn,
+    String commercialRegister,
+    String vatNumber,
+    String? logoUrl,
+    String? address,
+    String? city,
+    String? phone,
+    String? email,
+    String? website,
+    DistributorStatus status,
+    DistributorTier tier,
+    int totalProducts,
+    int totalOrders,
+    double totalRevenue,
+    double avgRating,
+    int ratingCount,
+    bool isFeatured,
+    DateTime? approvedAt,
+    String? approvedBy,
+    String? rejectionReason,
+    DateTime createdAt,
+    DateTime? updatedAt,
+  });
 }
 
 /// @nodoc
@@ -131,108 +134,111 @@ class _$DistributorCopyWithImpl<$Res, $Val extends Distributor>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      companyName: null == companyName
-          ? _value.companyName
-          : companyName // ignore: cast_nullable_to_non_nullable
-              as String,
-      companyNameEn: freezed == companyNameEn
-          ? _value.companyNameEn
-          : companyNameEn // ignore: cast_nullable_to_non_nullable
-              as String?,
-      commercialRegister: null == commercialRegister
-          ? _value.commercialRegister
-          : commercialRegister // ignore: cast_nullable_to_non_nullable
-              as String,
-      vatNumber: null == vatNumber
-          ? _value.vatNumber
-          : vatNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-      logoUrl: freezed == logoUrl
-          ? _value.logoUrl
-          : logoUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      address: freezed == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String?,
-      city: freezed == city
-          ? _value.city
-          : city // ignore: cast_nullable_to_non_nullable
-              as String?,
-      phone: freezed == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String?,
-      email: freezed == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String?,
-      website: freezed == website
-          ? _value.website
-          : website // ignore: cast_nullable_to_non_nullable
-              as String?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as DistributorStatus,
-      tier: null == tier
-          ? _value.tier
-          : tier // ignore: cast_nullable_to_non_nullable
-              as DistributorTier,
-      totalProducts: null == totalProducts
-          ? _value.totalProducts
-          : totalProducts // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalOrders: null == totalOrders
-          ? _value.totalOrders
-          : totalOrders // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalRevenue: null == totalRevenue
-          ? _value.totalRevenue
-          : totalRevenue // ignore: cast_nullable_to_non_nullable
-              as double,
-      avgRating: null == avgRating
-          ? _value.avgRating
-          : avgRating // ignore: cast_nullable_to_non_nullable
-              as double,
-      ratingCount: null == ratingCount
-          ? _value.ratingCount
-          : ratingCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      isFeatured: null == isFeatured
-          ? _value.isFeatured
-          : isFeatured // ignore: cast_nullable_to_non_nullable
-              as bool,
-      approvedAt: freezed == approvedAt
-          ? _value.approvedAt
-          : approvedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      approvedBy: freezed == approvedBy
-          ? _value.approvedBy
-          : approvedBy // ignore: cast_nullable_to_non_nullable
-              as String?,
-      rejectionReason: freezed == rejectionReason
-          ? _value.rejectionReason
-          : rejectionReason // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            userId: null == userId
+                ? _value.userId
+                : userId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            companyName: null == companyName
+                ? _value.companyName
+                : companyName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            companyNameEn: freezed == companyNameEn
+                ? _value.companyNameEn
+                : companyNameEn // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            commercialRegister: null == commercialRegister
+                ? _value.commercialRegister
+                : commercialRegister // ignore: cast_nullable_to_non_nullable
+                      as String,
+            vatNumber: null == vatNumber
+                ? _value.vatNumber
+                : vatNumber // ignore: cast_nullable_to_non_nullable
+                      as String,
+            logoUrl: freezed == logoUrl
+                ? _value.logoUrl
+                : logoUrl // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            address: freezed == address
+                ? _value.address
+                : address // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            city: freezed == city
+                ? _value.city
+                : city // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            phone: freezed == phone
+                ? _value.phone
+                : phone // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            email: freezed == email
+                ? _value.email
+                : email // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            website: freezed == website
+                ? _value.website
+                : website // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as DistributorStatus,
+            tier: null == tier
+                ? _value.tier
+                : tier // ignore: cast_nullable_to_non_nullable
+                      as DistributorTier,
+            totalProducts: null == totalProducts
+                ? _value.totalProducts
+                : totalProducts // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalOrders: null == totalOrders
+                ? _value.totalOrders
+                : totalOrders // ignore: cast_nullable_to_non_nullable
+                      as int,
+            totalRevenue: null == totalRevenue
+                ? _value.totalRevenue
+                : totalRevenue // ignore: cast_nullable_to_non_nullable
+                      as double,
+            avgRating: null == avgRating
+                ? _value.avgRating
+                : avgRating // ignore: cast_nullable_to_non_nullable
+                      as double,
+            ratingCount: null == ratingCount
+                ? _value.ratingCount
+                : ratingCount // ignore: cast_nullable_to_non_nullable
+                      as int,
+            isFeatured: null == isFeatured
+                ? _value.isFeatured
+                : isFeatured // ignore: cast_nullable_to_non_nullable
+                      as bool,
+            approvedAt: freezed == approvedAt
+                ? _value.approvedAt
+                : approvedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            approvedBy: freezed == approvedBy
+                ? _value.approvedBy
+                : approvedBy // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            rejectionReason: freezed == rejectionReason
+                ? _value.rejectionReason
+                : rejectionReason // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            updatedAt: freezed == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -240,36 +246,38 @@ class _$DistributorCopyWithImpl<$Res, $Val extends Distributor>
 abstract class _$$DistributorImplCopyWith<$Res>
     implements $DistributorCopyWith<$Res> {
   factory _$$DistributorImplCopyWith(
-          _$DistributorImpl value, $Res Function(_$DistributorImpl) then) =
-      __$$DistributorImplCopyWithImpl<$Res>;
+    _$DistributorImpl value,
+    $Res Function(_$DistributorImpl) then,
+  ) = __$$DistributorImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String userId,
-      String companyName,
-      String? companyNameEn,
-      String commercialRegister,
-      String vatNumber,
-      String? logoUrl,
-      String? address,
-      String? city,
-      String? phone,
-      String? email,
-      String? website,
-      DistributorStatus status,
-      DistributorTier tier,
-      int totalProducts,
-      int totalOrders,
-      double totalRevenue,
-      double avgRating,
-      int ratingCount,
-      bool isFeatured,
-      DateTime? approvedAt,
-      String? approvedBy,
-      String? rejectionReason,
-      DateTime createdAt,
-      DateTime? updatedAt});
+  $Res call({
+    String id,
+    String userId,
+    String companyName,
+    String? companyNameEn,
+    String commercialRegister,
+    String vatNumber,
+    String? logoUrl,
+    String? address,
+    String? city,
+    String? phone,
+    String? email,
+    String? website,
+    DistributorStatus status,
+    DistributorTier tier,
+    int totalProducts,
+    int totalOrders,
+    double totalRevenue,
+    double avgRating,
+    int ratingCount,
+    bool isFeatured,
+    DateTime? approvedAt,
+    String? approvedBy,
+    String? rejectionReason,
+    DateTime createdAt,
+    DateTime? updatedAt,
+  });
 }
 
 /// @nodoc
@@ -277,8 +285,9 @@ class __$$DistributorImplCopyWithImpl<$Res>
     extends _$DistributorCopyWithImpl<$Res, _$DistributorImpl>
     implements _$$DistributorImplCopyWith<$Res> {
   __$$DistributorImplCopyWithImpl(
-      _$DistributorImpl _value, $Res Function(_$DistributorImpl) _then)
-      : super(_value, _then);
+    _$DistributorImpl _value,
+    $Res Function(_$DistributorImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of Distributor
   /// with the given fields replaced by the non-null parameter values.
@@ -311,141 +320,143 @@ class __$$DistributorImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(_$DistributorImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      userId: null == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String,
-      companyName: null == companyName
-          ? _value.companyName
-          : companyName // ignore: cast_nullable_to_non_nullable
-              as String,
-      companyNameEn: freezed == companyNameEn
-          ? _value.companyNameEn
-          : companyNameEn // ignore: cast_nullable_to_non_nullable
-              as String?,
-      commercialRegister: null == commercialRegister
-          ? _value.commercialRegister
-          : commercialRegister // ignore: cast_nullable_to_non_nullable
-              as String,
-      vatNumber: null == vatNumber
-          ? _value.vatNumber
-          : vatNumber // ignore: cast_nullable_to_non_nullable
-              as String,
-      logoUrl: freezed == logoUrl
-          ? _value.logoUrl
-          : logoUrl // ignore: cast_nullable_to_non_nullable
-              as String?,
-      address: freezed == address
-          ? _value.address
-          : address // ignore: cast_nullable_to_non_nullable
-              as String?,
-      city: freezed == city
-          ? _value.city
-          : city // ignore: cast_nullable_to_non_nullable
-              as String?,
-      phone: freezed == phone
-          ? _value.phone
-          : phone // ignore: cast_nullable_to_non_nullable
-              as String?,
-      email: freezed == email
-          ? _value.email
-          : email // ignore: cast_nullable_to_non_nullable
-              as String?,
-      website: freezed == website
-          ? _value.website
-          : website // ignore: cast_nullable_to_non_nullable
-              as String?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as DistributorStatus,
-      tier: null == tier
-          ? _value.tier
-          : tier // ignore: cast_nullable_to_non_nullable
-              as DistributorTier,
-      totalProducts: null == totalProducts
-          ? _value.totalProducts
-          : totalProducts // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalOrders: null == totalOrders
-          ? _value.totalOrders
-          : totalOrders // ignore: cast_nullable_to_non_nullable
-              as int,
-      totalRevenue: null == totalRevenue
-          ? _value.totalRevenue
-          : totalRevenue // ignore: cast_nullable_to_non_nullable
-              as double,
-      avgRating: null == avgRating
-          ? _value.avgRating
-          : avgRating // ignore: cast_nullable_to_non_nullable
-              as double,
-      ratingCount: null == ratingCount
-          ? _value.ratingCount
-          : ratingCount // ignore: cast_nullable_to_non_nullable
-              as int,
-      isFeatured: null == isFeatured
-          ? _value.isFeatured
-          : isFeatured // ignore: cast_nullable_to_non_nullable
-              as bool,
-      approvedAt: freezed == approvedAt
-          ? _value.approvedAt
-          : approvedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      approvedBy: freezed == approvedBy
-          ? _value.approvedBy
-          : approvedBy // ignore: cast_nullable_to_non_nullable
-              as String?,
-      rejectionReason: freezed == rejectionReason
-          ? _value.rejectionReason
-          : rejectionReason // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$DistributorImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        userId: null == userId
+            ? _value.userId
+            : userId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        companyName: null == companyName
+            ? _value.companyName
+            : companyName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        companyNameEn: freezed == companyNameEn
+            ? _value.companyNameEn
+            : companyNameEn // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        commercialRegister: null == commercialRegister
+            ? _value.commercialRegister
+            : commercialRegister // ignore: cast_nullable_to_non_nullable
+                  as String,
+        vatNumber: null == vatNumber
+            ? _value.vatNumber
+            : vatNumber // ignore: cast_nullable_to_non_nullable
+                  as String,
+        logoUrl: freezed == logoUrl
+            ? _value.logoUrl
+            : logoUrl // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        address: freezed == address
+            ? _value.address
+            : address // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        city: freezed == city
+            ? _value.city
+            : city // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        phone: freezed == phone
+            ? _value.phone
+            : phone // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        email: freezed == email
+            ? _value.email
+            : email // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        website: freezed == website
+            ? _value.website
+            : website // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as DistributorStatus,
+        tier: null == tier
+            ? _value.tier
+            : tier // ignore: cast_nullable_to_non_nullable
+                  as DistributorTier,
+        totalProducts: null == totalProducts
+            ? _value.totalProducts
+            : totalProducts // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalOrders: null == totalOrders
+            ? _value.totalOrders
+            : totalOrders // ignore: cast_nullable_to_non_nullable
+                  as int,
+        totalRevenue: null == totalRevenue
+            ? _value.totalRevenue
+            : totalRevenue // ignore: cast_nullable_to_non_nullable
+                  as double,
+        avgRating: null == avgRating
+            ? _value.avgRating
+            : avgRating // ignore: cast_nullable_to_non_nullable
+                  as double,
+        ratingCount: null == ratingCount
+            ? _value.ratingCount
+            : ratingCount // ignore: cast_nullable_to_non_nullable
+                  as int,
+        isFeatured: null == isFeatured
+            ? _value.isFeatured
+            : isFeatured // ignore: cast_nullable_to_non_nullable
+                  as bool,
+        approvedAt: freezed == approvedAt
+            ? _value.approvedAt
+            : approvedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        approvedBy: freezed == approvedBy
+            ? _value.approvedBy
+            : approvedBy // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        rejectionReason: freezed == rejectionReason
+            ? _value.rejectionReason
+            : rejectionReason // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        updatedAt: freezed == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$DistributorImpl extends _Distributor {
-  const _$DistributorImpl(
-      {required this.id,
-      required this.userId,
-      required this.companyName,
-      this.companyNameEn,
-      required this.commercialRegister,
-      required this.vatNumber,
-      this.logoUrl,
-      this.address,
-      this.city,
-      this.phone,
-      this.email,
-      this.website,
-      this.status = DistributorStatus.pending,
-      this.tier = DistributorTier.free,
-      this.totalProducts = 0,
-      this.totalOrders = 0,
-      this.totalRevenue = 0.0,
-      this.avgRating = 0.0,
-      this.ratingCount = 0,
-      this.isFeatured = false,
-      this.approvedAt,
-      this.approvedBy,
-      this.rejectionReason,
-      required this.createdAt,
-      this.updatedAt})
-      : super._();
+  const _$DistributorImpl({
+    required this.id,
+    required this.userId,
+    required this.companyName,
+    this.companyNameEn,
+    required this.commercialRegister,
+    required this.vatNumber,
+    this.logoUrl,
+    this.address,
+    this.city,
+    this.phone,
+    this.email,
+    this.website,
+    this.status = DistributorStatus.pending,
+    this.tier = DistributorTier.free,
+    this.totalProducts = 0,
+    this.totalOrders = 0,
+    this.totalRevenue = 0.0,
+    this.avgRating = 0.0,
+    this.ratingCount = 0,
+    this.isFeatured = false,
+    this.approvedAt,
+    this.approvedBy,
+    this.rejectionReason,
+    required this.createdAt,
+    this.updatedAt,
+  }) : super._();
 
   factory _$DistributorImpl.fromJson(Map<String, dynamic> json) =>
       _$$DistributorImplFromJson(json);
@@ -564,33 +575,33 @@ class _$DistributorImpl extends _Distributor {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
-        runtimeType,
-        id,
-        userId,
-        companyName,
-        companyNameEn,
-        commercialRegister,
-        vatNumber,
-        logoUrl,
-        address,
-        city,
-        phone,
-        email,
-        website,
-        status,
-        tier,
-        totalProducts,
-        totalOrders,
-        totalRevenue,
-        avgRating,
-        ratingCount,
-        isFeatured,
-        approvedAt,
-        approvedBy,
-        rejectionReason,
-        createdAt,
-        updatedAt
-      ]);
+    runtimeType,
+    id,
+    userId,
+    companyName,
+    companyNameEn,
+    commercialRegister,
+    vatNumber,
+    logoUrl,
+    address,
+    city,
+    phone,
+    email,
+    website,
+    status,
+    tier,
+    totalProducts,
+    totalOrders,
+    totalRevenue,
+    avgRating,
+    ratingCount,
+    isFeatured,
+    approvedAt,
+    approvedBy,
+    rejectionReason,
+    createdAt,
+    updatedAt,
+  ]);
 
   /// Create a copy of Distributor
   /// with the given fields replaced by the non-null parameter values.
@@ -602,39 +613,38 @@ class _$DistributorImpl extends _Distributor {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$DistributorImplToJson(
-      this,
-    );
+    return _$$DistributorImplToJson(this);
   }
 }
 
 abstract class _Distributor extends Distributor {
-  const factory _Distributor(
-      {required final String id,
-      required final String userId,
-      required final String companyName,
-      final String? companyNameEn,
-      required final String commercialRegister,
-      required final String vatNumber,
-      final String? logoUrl,
-      final String? address,
-      final String? city,
-      final String? phone,
-      final String? email,
-      final String? website,
-      final DistributorStatus status,
-      final DistributorTier tier,
-      final int totalProducts,
-      final int totalOrders,
-      final double totalRevenue,
-      final double avgRating,
-      final int ratingCount,
-      final bool isFeatured,
-      final DateTime? approvedAt,
-      final String? approvedBy,
-      final String? rejectionReason,
-      required final DateTime createdAt,
-      final DateTime? updatedAt}) = _$DistributorImpl;
+  const factory _Distributor({
+    required final String id,
+    required final String userId,
+    required final String companyName,
+    final String? companyNameEn,
+    required final String commercialRegister,
+    required final String vatNumber,
+    final String? logoUrl,
+    final String? address,
+    final String? city,
+    final String? phone,
+    final String? email,
+    final String? website,
+    final DistributorStatus status,
+    final DistributorTier tier,
+    final int totalProducts,
+    final int totalOrders,
+    final double totalRevenue,
+    final double avgRating,
+    final int ratingCount,
+    final bool isFeatured,
+    final DateTime? approvedAt,
+    final String? approvedBy,
+    final String? rejectionReason,
+    required final DateTime createdAt,
+    final DateTime? updatedAt,
+  }) = _$DistributorImpl;
   const _Distributor._() : super._();
 
   factory _Distributor.fromJson(Map<String, dynamic> json) =

@@ -9,10 +9,7 @@ import 'connectivity_banner.dart';
 class DriverNavigationShell extends ConsumerWidget {
   final StatefulNavigationShell navigationShell;
 
-  const DriverNavigationShell({
-    super.key,
-    required this.navigationShell,
-  });
+  const DriverNavigationShell({super.key, required this.navigationShell});
 
   void _onTap(int index) {
     navigationShell.goBranch(

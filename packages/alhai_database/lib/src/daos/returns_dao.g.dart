@@ -28,17 +28,23 @@ class ReturnsDaoManager {
       $$ShiftsTableTableTableManager(_db.attachedDatabase, _db.shiftsTable);
   $$CustomersTableTableTableManager get customersTable =>
       $$CustomersTableTableTableManager(
-          _db.attachedDatabase, _db.customersTable);
+        _db.attachedDatabase,
+        _db.customersTable,
+      );
   $$SalesTableTableTableManager get salesTable =>
       $$SalesTableTableTableManager(_db.attachedDatabase, _db.salesTable);
   $$ReturnsTableTableTableManager get returnsTable =>
       $$ReturnsTableTableTableManager(_db.attachedDatabase, _db.returnsTable);
   $$CategoriesTableTableTableManager get categoriesTable =>
       $$CategoriesTableTableTableManager(
-          _db.attachedDatabase, _db.categoriesTable);
+        _db.attachedDatabase,
+        _db.categoriesTable,
+      );
   $$ProductsTableTableTableManager get productsTable =>
       $$ProductsTableTableTableManager(_db.attachedDatabase, _db.productsTable);
   $$ReturnItemsTableTableTableManager get returnItemsTable =>
       $$ReturnItemsTableTableTableManager(
-          _db.attachedDatabase, _db.returnItemsTable);
+        _db.attachedDatabase,
+        _db.returnItemsTable,
+      );
 }

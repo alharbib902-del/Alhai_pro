@@ -13,14 +13,7 @@ import 'dart:math';
 // ============================================================================
 
 /// نوع الرسم البياني
-enum ChartType {
-  barChart,
-  lineChart,
-  pieChart,
-  table,
-  number,
-  heatmap,
-}
+enum ChartType { barChart, lineChart, pieChart, table, number, heatmap }
 
 /// استعلام بلغة طبيعية
 class NaturalLanguageQuery {
@@ -250,37 +243,45 @@ class AiSmartReportsService {
   static List<QuerySuggestion> getSuggestions() {
     return const [
       QuerySuggestion(
-          text: 'كم مبيعات اليوم؟',
-          category: 'مبيعات',
-          expectedChart: ChartType.number),
+        text: 'كم مبيعات اليوم؟',
+        category: 'مبيعات',
+        expectedChart: ChartType.number,
+      ),
       QuerySuggestion(
-          text: 'أفضل 10 منتجات مبيعاً',
-          category: 'منتجات',
-          expectedChart: ChartType.barChart),
+        text: 'أفضل 10 منتجات مبيعاً',
+        category: 'منتجات',
+        expectedChart: ChartType.barChart,
+      ),
       QuerySuggestion(
-          text: 'مقارنة شهرية للمبيعات',
-          category: 'مبيعات',
-          expectedChart: ChartType.lineChart),
+        text: 'مقارنة شهرية للمبيعات',
+        category: 'مبيعات',
+        expectedChart: ChartType.lineChart,
+      ),
       QuerySuggestion(
-          text: 'توزيع المبيعات حسب التصنيف',
-          category: 'منتجات',
-          expectedChart: ChartType.pieChart),
+        text: 'توزيع المبيعات حسب التصنيف',
+        category: 'منتجات',
+        expectedChart: ChartType.pieChart,
+      ),
       QuerySuggestion(
-          text: 'ما هي أوقات الذروة؟',
-          category: 'عملاء',
-          expectedChart: ChartType.lineChart),
+        text: 'ما هي أوقات الذروة؟',
+        category: 'عملاء',
+        expectedChart: ChartType.lineChart,
+      ),
       QuerySuggestion(
-          text: 'منتجات قاربت على النفاد',
-          category: 'مخزون',
-          expectedChart: ChartType.table),
+        text: 'منتجات قاربت على النفاد',
+        category: 'مخزون',
+        expectedChart: ChartType.table,
+      ),
       QuerySuggestion(
-          text: 'هوامش الربح للمنتجات',
-          category: 'مالية',
-          expectedChart: ChartType.table),
+        text: 'هوامش الربح للمنتجات',
+        category: 'مالية',
+        expectedChart: ChartType.table,
+      ),
       QuerySuggestion(
-          text: 'إجمالي إيرادات هذا الشهر',
-          category: 'مالية',
-          expectedChart: ChartType.number),
+        text: 'إجمالي إيرادات هذا الشهر',
+        category: 'مالية',
+        expectedChart: ChartType.number,
+      ),
     ];
   }
 
@@ -315,7 +316,7 @@ class AiSmartReportsService {
       'لـ',
       'عرض',
       'أعطني',
-      'أرني'
+      'أرني',
     };
     return query
         .split(RegExp(r'[\s,،.؟?!]+'))
@@ -413,8 +414,8 @@ class AiSmartReportsService {
     final data = products.asMap().entries.map((e) {
       return ReportDataRow(
         label: e.value,
-        value:
-            ((_random.nextDouble() * 500 + 100) * (10 - e.key)).roundToDouble(),
+        value: ((_random.nextDouble() * 500 + 100) * (10 - e.key))
+            .roundToDouble(),
         category: [
           'ألبان',
           'أرز',
@@ -425,7 +426,7 @@ class AiSmartReportsService {
           'سكر',
           'مشروبات',
           'لحوم',
-          'مشروبات'
+          'مشروبات',
         ][e.key],
       );
     }).toList();
@@ -457,7 +458,7 @@ class AiSmartReportsService {
       'سبتمبر',
       'أكتوبر',
       'نوفمبر',
-      'ديسمبر'
+      'ديسمبر',
     ];
     final data = months.asMap().entries.map((e) {
       return ReportDataRow(
@@ -607,7 +608,10 @@ class AiSmartReportsService {
       chartType: ChartType.number,
       data: const [
         ReportDataRow(
-            label: 'إجمالي الشهر', value: 185750, previousValue: 171200),
+          label: 'إجمالي الشهر',
+          value: 185750,
+          previousValue: 171200,
+        ),
       ],
       generatedAt: DateTime.now(),
       templateId: 'total_revenue',

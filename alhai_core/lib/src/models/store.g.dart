@@ -7,31 +7,31 @@ part of 'store.dart';
 // **************************************************************************
 
 _$StoreImpl _$$StoreImplFromJson(Map<String, dynamic> json) => _$StoreImpl(
-      id: json['id'] as String,
-      name: json['name'] as String,
-      address: json['address'] as String,
-      phone: json['phone'] as String?,
-      email: json['email'] as String?,
-      lat: (json['lat'] as num).toDouble(),
-      lng: (json['lng'] as num).toDouble(),
-      imageUrl: json['imageUrl'] as String?,
-      logoUrl: json['logoUrl'] as String?,
-      description: json['description'] as String?,
-      isActive: json['isActive'] as bool,
-      ownerId: json['ownerId'] as String,
-      deliveryRadius: (json['deliveryRadius'] as num?)?.toDouble(),
-      minOrderAmount: (json['minOrderAmount'] as num?)?.toDouble(),
-      deliveryFee: (json['deliveryFee'] as num?)?.toDouble(),
-      acceptsDelivery: json['acceptsDelivery'] as bool? ?? true,
-      acceptsPickup: json['acceptsPickup'] as bool? ?? true,
-      workingHours: json['workingHours'] == null
-          ? null
-          : WorkingHours.fromJson(json['workingHours'] as Map<String, dynamic>),
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      updatedAt: json['updatedAt'] == null
-          ? null
-          : DateTime.parse(json['updatedAt'] as String),
-    );
+  id: json['id'] as String,
+  name: json['name'] as String,
+  address: json['address'] as String,
+  phone: json['phone'] as String?,
+  email: json['email'] as String?,
+  lat: (json['lat'] as num).toDouble(),
+  lng: (json['lng'] as num).toDouble(),
+  imageUrl: json['imageUrl'] as String?,
+  logoUrl: json['logoUrl'] as String?,
+  description: json['description'] as String?,
+  isActive: json['isActive'] as bool,
+  ownerId: json['ownerId'] as String,
+  deliveryRadius: (json['deliveryRadius'] as num?)?.toDouble(),
+  minOrderAmount: (json['minOrderAmount'] as num?)?.toDouble(),
+  deliveryFee: (json['deliveryFee'] as num?)?.toDouble(),
+  acceptsDelivery: json['acceptsDelivery'] as bool? ?? true,
+  acceptsPickup: json['acceptsPickup'] as bool? ?? true,
+  workingHours: json['workingHours'] == null
+      ? null
+      : WorkingHours.fromJson(json['workingHours'] as Map<String, dynamic>),
+  createdAt: DateTime.parse(json['createdAt'] as String),
+  updatedAt: json['updatedAt'] == null
+      ? null
+      : DateTime.parse(json['updatedAt'] as String),
+);
 
 Map<String, dynamic> _$$StoreImplToJson(_$StoreImpl instance) =>
     <String, dynamic>{

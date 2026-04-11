@@ -68,10 +68,7 @@ class GeoNotificationService {
         sentCount: 0, // Would be actual count
       );
     } catch (e) {
-      return GeoNotificationResult(
-        success: false,
-        error: e.toString(),
-      );
+      return GeoNotificationResult(success: false, error: e.toString());
     }
   }
 
@@ -86,15 +83,9 @@ class GeoNotificationService {
       // TODO: Implement district-based notification
       await Future.delayed(const Duration(milliseconds: 500));
 
-      return GeoNotificationResult(
-        success: true,
-        sentCount: 0,
-      );
+      return GeoNotificationResult(success: true, sentCount: 0);
     } catch (e) {
-      return GeoNotificationResult(
-        success: false,
-        error: e.toString(),
-      );
+      return GeoNotificationResult(success: false, error: e.toString());
     }
   }
 
@@ -125,14 +116,19 @@ class GeoNotificationService {
   // ==================== Helpers ====================
 
   double _calculateDistance(
-      double lat1, double lng1, double lat2, double lng2) {
+    double lat1,
+    double lng1,
+    double lat2,
+    double lng2,
+  ) {
     // Haversine formula
     const earthRadius = 6371.0; // km
 
     final dLat = _toRadians(lat2 - lat1);
     final dLng = _toRadians(lng2 - lng1);
 
-    final a = _sin(dLat / 2) * _sin(dLat / 2) +
+    final a =
+        _sin(dLat / 2) * _sin(dLat / 2) +
         _cos(_toRadians(lat1)) *
             _cos(_toRadians(lat2)) *
             _sin(dLng / 2) *

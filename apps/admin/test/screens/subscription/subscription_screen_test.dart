@@ -71,10 +71,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // FilledButton.icon() creates a private subclass; use predicate
-      expect(
-        find.byWidgetPredicate((w) => w is FilledButton),
-        findsWidgets,
-      );
+      expect(find.byWidgetPredicate((w) => w is FilledButton), findsWidgets);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

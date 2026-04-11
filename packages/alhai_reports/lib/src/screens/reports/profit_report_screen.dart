@@ -73,8 +73,9 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
         ['الضرائب', _taxes.toStringAsFixed(2)],
         ['صافي الربح', _netProfit.toStringAsFixed(2)],
         ['هامش الربح', '${_profitMargin.toStringAsFixed(1)}%'],
-        ..._topProducts
-            .map((p) => [p.name, (p.revenue - p.cost).toStringAsFixed(2)]),
+        ..._topProducts.map(
+          (p) => [p.name, (p.revenue - p.cost).toStringAsFixed(2)],
+        ),
       ],
     );
     if (mounted) CsvExportHelper.showResultSnackBar(context, result);
@@ -108,13 +109,16 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
         dateRange.start,
         dateRange.end,
       );
-      final totalExpenses =
-          expensesList.fold<double>(0.0, (sum, e) => sum + e.amount);
+      final totalExpenses = expensesList.fold<double>(
+        0.0,
+        (sum, e) => sum + e.amount,
+      );
 
       final totalRevenue = salesStats.total;
 
-      final cogsResult = await db.customSelect(
-        '''SELECT COALESCE(SUM(si.qty * COALESCE(p.cost_price, 0)), 0) as total_cost
+      final cogsResult = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(si.qty * COALESCE(p.cost_price, 0)), 0) as total_cost
            FROM sale_items si
            INNER JOIN sales s ON s.id = si.sale_id
            LEFT JOIN products p ON p.id = si.product_id
@@ -122,12 +126,13 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
              AND s.status = 'completed'
              AND s.created_at >= ?
              AND s.created_at < ?''',
-        variables: [
-          Variable.withString(storeId),
-          Variable.withDateTime(dateRange.start),
-          Variable.withDateTime(dateRange.end),
-        ],
-      ).getSingle();
+            variables: [
+              Variable.withString(storeId),
+              Variable.withDateTime(dateRange.start),
+              Variable.withDateTime(dateRange.end),
+            ],
+          )
+          .getSingle();
       var costOfGoods = (cogsResult.data['total_cost'] is int)
           ? (cogsResult.data['total_cost'] as int).toDouble()
           : cogsResult.data['total_cost'] as double? ?? 0.0;
@@ -135,25 +140,28 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
         costOfGoods = totalRevenue * 0.68;
       }
 
-      final taxResult = await db.customSelect(
-        '''SELECT COALESCE(SUM(tax), 0) as total_tax
+      final taxResult = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(tax), 0) as total_tax
            FROM sales
            WHERE store_id = ?
              AND status = 'completed'
              AND created_at >= ?
              AND created_at < ?''',
-        variables: [
-          Variable.withString(storeId),
-          Variable.withDateTime(dateRange.start),
-          Variable.withDateTime(dateRange.end),
-        ],
-      ).getSingle();
+            variables: [
+              Variable.withString(storeId),
+              Variable.withDateTime(dateRange.start),
+              Variable.withDateTime(dateRange.end),
+            ],
+          )
+          .getSingle();
       final totalTaxes = (taxResult.data['total_tax'] is int)
           ? (taxResult.data['total_tax'] as int).toDouble()
           : taxResult.data['total_tax'] as double? ?? 0.0;
 
-      final topProductResults = await db.customSelect(
-        '''SELECT
+      final topProductResults = await db
+          .customSelect(
+            '''SELECT
              p.name,
              COALESCE(SUM(si.total), 0) as revenue,
              COALESCE(SUM(si.qty * COALESCE(p.cost_price, 0)), 0) as cost
@@ -167,12 +175,13 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
            GROUP BY si.product_id
            ORDER BY revenue DESC
            LIMIT 4''',
-        variables: [
-          Variable.withString(storeId),
-          Variable.withDateTime(dateRange.start),
-          Variable.withDateTime(dateRange.end),
-        ],
-      ).get();
+            variables: [
+              Variable.withString(storeId),
+              Variable.withDateTime(dateRange.start),
+              Variable.withDateTime(dateRange.end),
+            ],
+          )
+          .get();
 
       final topProductData = topProductResults.map((row) {
         final revenue = (row.data['revenue'] is int)
@@ -282,8 +291,11 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
       ),
       body: ResponsiveBuilder(
         builder: (context, deviceType, width) {
-          final padding =
-              getResponsiveValue<double>(context, mobile: 16, desktop: 24);
+          final padding = getResponsiveValue<double>(
+            context,
+            mobile: 16,
+            desktop: 24,
+          );
           return ListView(
             padding: EdgeInsets.all(padding),
             children: [
@@ -311,8 +323,9 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
                       const SizedBox(height: AlhaiSpacing.xs),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: AlhaiSpacing.sm,
-                            vertical: AlhaiSpacing.xxs),
+                          horizontal: AlhaiSpacing.sm,
+                          vertical: AlhaiSpacing.xxs,
+                        ),
                         decoration: BoxDecoration(
                           color: colorScheme.surface,
                           borderRadius: BorderRadius.circular(16),
@@ -340,8 +353,10 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(l10n.profitReport,
-                          style: theme.textTheme.titleMedium),
+                      Text(
+                        l10n.profitReport,
+                        style: theme.textTheme.titleMedium,
+                      ),
                       const Divider(),
                       _StatementRow(
                         label: l10n.revenue,
@@ -409,22 +424,26 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
                                       .toInt()
                                       .clamp(1, 100),
                                   child: Container(
-                                      color: AlhaiColors.error
-                                          .withValues(alpha: 0.7)),
+                                    color: AlhaiColors.error.withValues(
+                                      alpha: 0.7,
+                                    ),
+                                  ),
                                 ),
                                 Expanded(
                                   flex: (_expenses / _totalRevenue * 100)
                                       .toInt()
                                       .clamp(1, 100),
-                                  child:
-                                      Container(color: Colors.orange.shade300),
+                                  child: Container(
+                                    color: Colors.orange.shade300,
+                                  ),
                                 ),
                                 Expanded(
                                   flex: (_taxes / _totalRevenue * 100)
                                       .toInt()
                                       .clamp(1, 100),
-                                  child:
-                                      Container(color: Colors.purple.shade300),
+                                  child: Container(
+                                    color: Colors.purple.shade300,
+                                  ),
                                 ),
                                 Expanded(
                                   flex: (_netProfit / _totalRevenue * 100)
@@ -442,21 +461,25 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
                           runSpacing: 8,
                           children: [
                             _LegendItem(
-                                color: AlhaiColors.error.withValues(alpha: 0.7),
-                                label: l10n.costs,
-                                percent: _costOfGoods / _totalRevenue * 100),
+                              color: AlhaiColors.error.withValues(alpha: 0.7),
+                              label: l10n.costs,
+                              percent: _costOfGoods / _totalRevenue * 100,
+                            ),
                             _LegendItem(
-                                color: Colors.orange.shade300,
-                                label: l10n.expenses,
-                                percent: _expenses / _totalRevenue * 100),
+                              color: Colors.orange.shade300,
+                              label: l10n.expenses,
+                              percent: _expenses / _totalRevenue * 100,
+                            ),
                             _LegendItem(
-                                color: Colors.purple.shade300,
-                                label: l10n.vat,
-                                percent: _taxes / _totalRevenue * 100),
+                              color: Colors.purple.shade300,
+                              label: l10n.vat,
+                              percent: _taxes / _totalRevenue * 100,
+                            ),
                             _LegendItem(
-                                color: AlhaiColors.success,
-                                label: l10n.netProfit,
-                                percent: _netProfit / _totalRevenue * 100),
+                              color: AlhaiColors.success,
+                              label: l10n.netProfit,
+                              percent: _netProfit / _totalRevenue * 100,
+                            ),
                           ],
                         ),
                       ] else ...[
@@ -486,11 +509,13 @@ class _ProfitReportScreenState extends ConsumerState<ProfitReportScreen> {
                           child: Center(child: Text(l10n.noData)),
                         )
                       else
-                        ..._topProducts.map((p) => _ProductProfitRow(
-                              name: p.name,
-                              revenue: p.revenue,
-                              cost: p.cost,
-                            )),
+                        ..._topProducts.map(
+                          (p) => _ProductProfitRow(
+                            name: p.name,
+                            revenue: p.revenue,
+                            cost: p.cost,
+                          ),
+                        ),
                     ],
                   ),
                 ),
@@ -544,16 +569,18 @@ class _StatementRow extends StatelessWidget {
           Text(
             label,
             style: TextStyle(
-              fontWeight:
-                  isHeader || isBold ? FontWeight.bold : FontWeight.normal,
+              fontWeight: isHeader || isBold
+                  ? FontWeight.bold
+                  : FontWeight.normal,
               fontSize: isBold ? 16 : 14,
             ),
           ),
           Text(
             '${value >= 0 ? '' : ''}${value.toStringAsFixed(0)} ${l10n.sar}',
             style: TextStyle(
-              fontWeight:
-                  isHeader || isBold ? FontWeight.bold : FontWeight.normal,
+              fontWeight: isHeader || isBold
+                  ? FontWeight.bold
+                  : FontWeight.normal,
               color: color,
               fontSize: isBold ? 16 : 14,
             ),
@@ -581,13 +608,18 @@ class _LegendItem extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       children: [
         Container(
-            width: 12,
-            height: 12,
-            decoration: BoxDecoration(
-                color: color, borderRadius: BorderRadius.circular(2))),
+          width: 12,
+          height: 12,
+          decoration: BoxDecoration(
+            color: color,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
         const SizedBox(width: AlhaiSpacing.xxs),
-        Text('$label (${percent.toStringAsFixed(0)}%)',
-            style: const TextStyle(fontSize: 12)),
+        Text(
+          '$label (${percent.toStringAsFixed(0)}%)',
+          style: const TextStyle(fontSize: 12),
+        ),
       ],
     );
   }
@@ -597,8 +629,11 @@ class _TopProductData {
   final String name;
   final double revenue;
   final double cost;
-  const _TopProductData(
-      {required this.name, required this.revenue, required this.cost});
+  const _TopProductData({
+    required this.name,
+    required this.revenue,
+    required this.cost,
+  });
 }
 
 class _ProductProfitRow extends StatelessWidget {
@@ -630,12 +665,16 @@ class _ProductProfitRow extends StatelessWidget {
           Text(
             '+${profit.toStringAsFixed(0)} ${l10n.sar}',
             style: TextStyle(
-                fontWeight: FontWeight.bold, color: AlhaiColors.success),
+              fontWeight: FontWeight.bold,
+              color: AlhaiColors.success,
+            ),
           ),
           Text(
             '${l10n.revenue}: ${revenue.toStringAsFixed(0)}',
             style: TextStyle(
-                fontSize: 11, color: theme.colorScheme.onSurfaceVariant),
+              fontSize: 11,
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),

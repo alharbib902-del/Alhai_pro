@@ -11,10 +11,7 @@ import 'package:cashier/screens/inventory/transfer_inventory_screen.dart';
 import '../../helpers/test_helpers.dart';
 import '../../helpers/mock_database.dart';
 
-StoresTableData _createTestStore({
-  required String id,
-  required String name,
-}) {
+StoresTableData _createTestStore({required String id, required String name}) {
   return StoresTableData(
     id: id,
     name: name,
@@ -46,16 +43,20 @@ void main() {
     setupTestGetIt(mockDb: db);
 
     // Default stubs
-    when(() => storesDao.getAllStores()).thenAnswer((_) async => [
-          _createTestStore(id: 'test-store-1', name: 'Main Branch'),
-          _createTestStore(id: 'store-2', name: 'Branch 2'),
-          _createTestStore(id: 'store-3', name: 'Branch 3'),
-        ]);
-    when(() => productsDao.searchProducts(any(), any()))
-        .thenAnswer((_) async => []);
+    when(() => storesDao.getAllStores()).thenAnswer(
+      (_) async => [
+        _createTestStore(id: 'test-store-1', name: 'Main Branch'),
+        _createTestStore(id: 'store-2', name: 'Branch 2'),
+        _createTestStore(id: 'store-3', name: 'Branch 3'),
+      ],
+    );
+    when(
+      () => productsDao.searchProducts(any(), any()),
+    ).thenAnswer((_) async => []);
     when(() => inventoryDao.insertMovement(any())).thenAnswer((_) async => 1);
-    when(() => productsDao.updateStock(any(), any()))
-        .thenAnswer((_) async => 1);
+    when(
+      () => productsDao.updateStock(any(), any()),
+    ).thenAnswer((_) async => 1);
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -66,8 +67,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const TransferInventoryScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const TransferInventoryScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(TransferInventoryScreen), findsOneWidget);
@@ -85,8 +87,9 @@ void main() {
       final completer = Completer<List<StoresTableData>>();
       when(() => storesDao.getAllStores()).thenAnswer((_) => completer.future);
 
-      await tester
-          .pumpWidget(createTestWidget(const TransferInventoryScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const TransferInventoryScreen()),
+      );
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -104,32 +107,41 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const TransferInventoryScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const TransferInventoryScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(
-          find.text(
-              '\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u0646\u0642\u0644'),
-          findsOneWidget);
-      expect(find.text('\u0645\u0646 \u0627\u0644\u0641\u0631\u0639'),
-          findsOneWidget);
-      expect(find.text('\u0625\u0644\u0649 \u0627\u0644\u0641\u0631\u0639'),
-          findsOneWidget);
+        find.text(
+          '\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u0646\u0642\u0644',
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.text('\u0645\u0646 \u0627\u0644\u0641\u0631\u0639'),
+        findsOneWidget,
+      );
+      expect(
+        find.text('\u0625\u0644\u0649 \u0627\u0644\u0641\u0631\u0639'),
+        findsOneWidget,
+      );
       expect(find.text('\u0627\u0644\u062d\u0627\u0644\u064a'), findsOneWidget);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('displays destination stores dropdown (excludes current)',
-        (tester) async {
+    testWidgets('displays destination stores dropdown (excludes current)', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const TransferInventoryScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const TransferInventoryScreen()),
+      );
       await tester.pumpAndSettle();
 
       // The dropdown should be present
@@ -139,20 +151,24 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('submit button is disabled without required data',
-        (tester) async {
+    testWidgets('submit button is disabled without required data', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const TransferInventoryScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const TransferInventoryScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(
-          find.text(
-              '\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0646\u0642\u0644'),
-          findsOneWidget);
+        find.text(
+          '\u0625\u0631\u0633\u0627\u0644 \u0627\u0644\u0646\u0642\u0644',
+        ),
+        findsOneWidget,
+      );
 
       // Find submit button (FilledButton.icon creates a subclass)
       final filledButtons = find.byWidgetPredicate((w) => w is FilledButton);
@@ -168,8 +184,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const TransferInventoryScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const TransferInventoryScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.search_rounded), findsWidgets);

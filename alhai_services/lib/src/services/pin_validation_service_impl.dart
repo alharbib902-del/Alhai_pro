@@ -26,9 +26,8 @@ class PinValidationServiceImpl implements PinValidationService {
   static const Duration _lockoutDuration = Duration(minutes: 15);
   static const Duration _emergencyCodeValidity = Duration(hours: 24);
 
-  PinValidationServiceImpl({
-    required StoreMembersRepository membersRepository,
-  }) : _membersRepository = membersRepository;
+  PinValidationServiceImpl({required StoreMembersRepository membersRepository})
+    : _membersRepository = membersRepository;
 
   @override
   Future<PinValidationResult> validatePin(PinValidationRequest request) async {
@@ -82,15 +81,14 @@ class PinValidationServiceImpl implements PinValidationService {
         );
       }
     } catch (e) {
-      return PinValidationResult.failure(
-        errorMessage: 'فشل التحقق من PIN: $e',
-      );
+      return PinValidationResult.failure(errorMessage: 'فشل التحقق من PIN: $e');
     }
   }
 
   @override
   Future<PinValidationResult> validatePinOffline(
-      PinValidationRequest request) async {
+    PinValidationRequest request,
+  ) async {
     try {
       // Check if offline validation is available
       if (!await isOfflineValidationAvailable()) {
@@ -131,9 +129,7 @@ class PinValidationServiceImpl implements PinValidationService {
         );
       }
 
-      return PinValidationResult.failure(
-        errorMessage: 'رمز PIN غير صحيح',
-      );
+      return PinValidationResult.failure(errorMessage: 'رمز PIN غير صحيح');
     } catch (e) {
       return PinValidationResult.failure(
         errorMessage: 'فشل التحقق غير المتصل: $e',
@@ -163,9 +159,7 @@ class PinValidationServiceImpl implements PinValidationService {
     final emergencyCode = _emergencyCodes[code];
 
     if (emergencyCode == null) {
-      return PinValidationResult.failure(
-        errorMessage: 'رمز الطوارئ غير صحيح',
-      );
+      return PinValidationResult.failure(errorMessage: 'رمز الطوارئ غير صحيح');
     }
 
     if (emergencyCode.isUsed) {
@@ -209,11 +203,13 @@ class PinValidationServiceImpl implements PinValidationService {
         // Only sync secrets for supervisors and managers
         final roleName = member.role.name.toUpperCase();
         if (roleName == 'SUPERVISOR' || roleName == 'MANAGER') {
-          _cachedSecrets.add(TotpSecret(
-            userId: member.id,
-            secret: _generateSecretForUser(member.id),
-            syncedAt: DateTime.now(),
-          ));
+          _cachedSecrets.add(
+            TotpSecret(
+              userId: member.id,
+              secret: _generateSecretForUser(member.id),
+              syncedAt: DateTime.now(),
+            ),
+          );
         }
       }
     } catch (e) {
@@ -278,10 +274,7 @@ class PinValidationServiceImpl implements PinValidationService {
   }
 
   /// Returns only failed audit log entries, optionally filtered by date range.
-  List<PinAuditLogEntry> getFailedAttempts({
-    DateTime? since,
-    DateTime? until,
-  }) {
+  List<PinAuditLogEntry> getFailedAttempts({DateTime? since, DateTime? until}) {
     return List.unmodifiable(
       _auditLog.where((entry) {
         if (entry.success) return false;
@@ -338,7 +331,8 @@ class PinValidationServiceImpl implements PinValidationService {
         (DateTime.now().millisecondsSinceEpoch / 30000).floor() + offset;
     final data = '$secret$timeStep';
     final hash = sha256.convert(utf8.encode(data));
-    final code = (hash.bytes.last * 100000 +
+    final code =
+        (hash.bytes.last * 100000 +
             hash.bytes.first * 1000 +
             hash.bytes[1] * 10 +
             hash.bytes[2]) %
@@ -395,30 +389,28 @@ class PinAuditLogEntry {
   });
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'userId': userId,
-        'action': action.name,
-        'success': success,
-        'ipAddress': ipAddress,
-        'timestamp': timestamp.toIso8601String(),
-        'failedAttemptCount': failedAttemptCount,
-        'isLockedOut': isLockedOut,
-      };
+    'id': id,
+    'userId': userId,
+    'action': action.name,
+    'success': success,
+    'ipAddress': ipAddress,
+    'timestamp': timestamp.toIso8601String(),
+    'failedAttemptCount': failedAttemptCount,
+    'isLockedOut': isLockedOut,
+  };
 
-  factory PinAuditLogEntry.fromJson(Map<String, dynamic> json) =>
-      PinAuditLogEntry(
-        id: json['id'] as String,
-        userId: json['userId'] as String,
-        action: PinActionType.values.firstWhere(
-          (a) => a.name == json['action'],
-        ),
-        success: json['success'] as bool,
-        ipAddress: json['ipAddress'] as String?,
-        timestamp:
-            DateTime.tryParse(json['timestamp'] as String) ?? DateTime.now(),
-        failedAttemptCount: json['failedAttemptCount'] as int,
-        isLockedOut: json['isLockedOut'] as bool,
-      );
+  factory PinAuditLogEntry.fromJson(
+    Map<String, dynamic> json,
+  ) => PinAuditLogEntry(
+    id: json['id'] as String,
+    userId: json['userId'] as String,
+    action: PinActionType.values.firstWhere((a) => a.name == json['action']),
+    success: json['success'] as bool,
+    ipAddress: json['ipAddress'] as String?,
+    timestamp: DateTime.tryParse(json['timestamp'] as String) ?? DateTime.now(),
+    failedAttemptCount: json['failedAttemptCount'] as int,
+    isLockedOut: json['isLockedOut'] as bool,
+  );
 
   @override
   String toString() =>

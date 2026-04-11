@@ -47,12 +47,14 @@ class OnlineOrdersState {
   List<OnlineOrder> get completedToday {
     final today = DateTime.now();
     return orders
-        .where((o) =>
-            o.status == OrderStatus.delivered &&
-            o.deliveredAt != null &&
-            o.deliveredAt!.day == today.day &&
-            o.deliveredAt!.month == today.month &&
-            o.deliveredAt!.year == today.year)
+        .where(
+          (o) =>
+              o.status == OrderStatus.delivered &&
+              o.deliveredAt != null &&
+              o.deliveredAt!.day == today.day &&
+              o.deliveredAt!.month == today.month &&
+              o.deliveredAt!.year == today.year,
+        )
         .toList();
   }
 
@@ -85,8 +87,8 @@ class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
   final AppDatabase _db;
 
   OnlineOrdersNotifier(this._storeId)
-      : _db = GetIt.I<AppDatabase>(),
-        super(const OnlineOrdersState()) {
+    : _db = GetIt.I<AppDatabase>(),
+      super(const OnlineOrdersState()) {
     _loadOrders();
   }
 
@@ -110,7 +112,8 @@ class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
 
   /// تحويل بيانات الطلبات من قاعدة البيانات إلى نموذج OnlineOrder
   Future<List<OnlineOrder>> _mapDbOrdersToOnlineOrders(
-      List<OrdersTableData> dbOrders) async {
+    List<OrdersTableData> dbOrders,
+  ) async {
     final result = <OnlineOrder>[];
     for (final dbOrder in dbOrders) {
       final dbItems = await _db.ordersDao.getOrderItems(dbOrder.id);
@@ -118,37 +121,41 @@ class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
           ? await _db.customersDao.getCustomerById(dbOrder.customerId!)
           : null;
 
-      result.add(OnlineOrder(
-        id: dbOrder.id,
-        storeId: dbOrder.storeId,
-        customerId: dbOrder.customerId ?? '',
-        customerName: customer?.name ?? '',
-        customerPhone: customer?.phone ?? '',
-        customerAddress: dbOrder.deliveryAddress,
-        items: dbItems
-            .map((item) => OrderItem(
+      result.add(
+        OnlineOrder(
+          id: dbOrder.id,
+          storeId: dbOrder.storeId,
+          customerId: dbOrder.customerId ?? '',
+          customerName: customer?.name ?? '',
+          customerPhone: customer?.phone ?? '',
+          customerAddress: dbOrder.deliveryAddress,
+          items: dbItems
+              .map(
+                (item) => OrderItem(
                   productId: item.productId,
                   productName: item.productName,
                   quantity: item.quantity.toInt(),
                   unitPrice: item.unitPrice,
                   discount: item.discount,
                   notes: item.notes,
-                ))
-            .toList(),
-        subtotal: dbOrder.subtotal,
-        deliveryFee: dbOrder.deliveryFee,
-        discount: dbOrder.discount,
-        total: dbOrder.total,
-        status: _mapDbStatus(dbOrder.status),
-        paymentStatus: _mapDbPaymentStatus(dbOrder.paymentStatus),
-        createdAt: dbOrder.orderDate,
-        acceptedAt: dbOrder.confirmedAt,
-        preparedAt: dbOrder.readyAt,
-        deliveredAt: dbOrder.deliveredAt,
-        driverId: dbOrder.driverId,
-        notes: dbOrder.notes,
-        cancellationReason: dbOrder.cancelReason,
-      ));
+                ),
+              )
+              .toList(),
+          subtotal: dbOrder.subtotal,
+          deliveryFee: dbOrder.deliveryFee,
+          discount: dbOrder.discount,
+          total: dbOrder.total,
+          status: _mapDbStatus(dbOrder.status),
+          paymentStatus: _mapDbPaymentStatus(dbOrder.paymentStatus),
+          createdAt: dbOrder.orderDate,
+          acceptedAt: dbOrder.confirmedAt,
+          preparedAt: dbOrder.readyAt,
+          deliveredAt: dbOrder.deliveredAt,
+          driverId: dbOrder.driverId,
+          notes: dbOrder.notes,
+          cancellationReason: dbOrder.cancelReason,
+        ),
+      );
     }
     return result;
   }
@@ -213,7 +220,10 @@ class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
 
   /// تسليم للسائق
   Future<void> assignDriver(
-      String orderId, String driverId, String driverName) async {
+    String orderId,
+    String driverId,
+    String driverName,
+  ) async {
     final updatedOrders = state.orders.map((order) {
       if (order.id == orderId) {
         return order.copyWith(
@@ -229,8 +239,11 @@ class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
 
     // تحديث قاعدة البيانات وطابور المزامنة
     await _db.ordersDao.assignDriver(orderId, driverId);
-    await _enqueueSyncUpdate(orderId, 'out_for_delivery',
-        extra: {'driver_id': driverId});
+    await _enqueueSyncUpdate(
+      orderId,
+      'out_for_delivery',
+      extra: {'driver_id': driverId},
+    );
   }
 
   /// إتمام التسليم
@@ -253,8 +266,11 @@ class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
     state = state.copyWith(orders: updatedOrders);
 
     await _db.ordersDao.cancelOrder(orderId, reason ?? '');
-    await _enqueueSyncUpdate(orderId, 'cancelled',
-        extra: {'cancel_reason': reason ?? ''});
+    await _enqueueSyncUpdate(
+      orderId,
+      'cancelled',
+      extra: {'cancel_reason': reason ?? ''},
+    );
   }
 
   /// تحديد طلب
@@ -283,10 +299,12 @@ class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
         return order.copyWith(
           status: newStatus,
           acceptedAt: newStatus == OrderStatus.accepted ? DateTime.now() : null,
-          preparedAt:
-              newStatus == OrderStatus.outForDelivery ? DateTime.now() : null,
-          deliveredAt:
-              newStatus == OrderStatus.delivered ? DateTime.now() : null,
+          preparedAt: newStatus == OrderStatus.outForDelivery
+              ? DateTime.now()
+              : null,
+          deliveredAt: newStatus == OrderStatus.delivered
+              ? DateTime.now()
+              : null,
         );
       }
       return order;
@@ -305,13 +323,13 @@ class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
   }
 
   /// إضافة تحديث للطابور المزامنة
-  Future<void> _enqueueSyncUpdate(String orderId, String status,
-      {Map<String, dynamic>? extra}) async {
+  Future<void> _enqueueSyncUpdate(
+    String orderId,
+    String status, {
+    Map<String, dynamic>? extra,
+  }) async {
     try {
-      final payload = <String, dynamic>{
-        'id': orderId,
-        'status': status,
-      };
+      final payload = <String, dynamic>{'id': orderId, 'status': status};
       if (extra != null) payload.addAll(extra);
 
       await _db.syncQueueDao.enqueue(
@@ -330,12 +348,10 @@ class OnlineOrdersNotifier extends StateNotifier<OnlineOrdersState> {
 
 /// مزود الطلبات الأونلاين
 final onlineOrdersProvider =
-    StateNotifierProvider<OnlineOrdersNotifier, OnlineOrdersState>(
-  (ref) {
-    final storeId = ref.watch(currentStoreIdProvider);
-    return OnlineOrdersNotifier(storeId);
-  },
-);
+    StateNotifierProvider<OnlineOrdersNotifier, OnlineOrdersState>((ref) {
+      final storeId = ref.watch(currentStoreIdProvider);
+      return OnlineOrdersNotifier(storeId);
+    });
 
 /// الطلبات المعلقة
 final pendingOrdersProvider = Provider<List<OnlineOrder>>((ref) {

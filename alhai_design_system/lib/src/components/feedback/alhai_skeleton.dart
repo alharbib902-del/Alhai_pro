@@ -22,12 +22,7 @@ class AlhaiSkeleton extends StatelessWidget {
   /// Border radius
   final BorderRadius? borderRadius;
 
-  const AlhaiSkeleton({
-    super.key,
-    this.width,
-    this.height,
-    this.borderRadius,
-  });
+  const AlhaiSkeleton({super.key, this.width, this.height, this.borderRadius});
 
   /// Rectangle skeleton
   const AlhaiSkeleton.rectangle({
@@ -38,10 +33,7 @@ class AlhaiSkeleton extends StatelessWidget {
   });
 
   /// Circle skeleton
-  factory AlhaiSkeleton.circle({
-    Key? key,
-    required double size,
-  }) {
+  factory AlhaiSkeleton.circle({Key? key, required double size}) {
     return _CircleSkeleton(key: key, size: size);
   }
 
@@ -71,11 +63,7 @@ class AlhaiSkeleton extends StatelessWidget {
   }
 
   /// Card skeleton
-  factory AlhaiSkeleton.card({
-    Key? key,
-    double? width,
-    double height = 120,
-  }) {
+  factory AlhaiSkeleton.card({Key? key, double? width, double height = 120}) {
     return _CardSkeleton(key: key, width: width, height: height);
   }
 
@@ -115,10 +103,7 @@ class AlhaiSkeleton extends StatelessWidget {
 class _CircleSkeleton extends AlhaiSkeleton {
   final double size;
 
-  const _CircleSkeleton({
-    super.key,
-    required this.size,
-  });
+  const _CircleSkeleton({super.key, required this.size});
 
   @override
   Widget build(BuildContext context) {
@@ -189,11 +174,7 @@ class _TextSkeleton extends AlhaiSkeleton {
 
 /// Card skeleton
 class _CardSkeleton extends AlhaiSkeleton {
-  const _CardSkeleton({
-    super.key,
-    super.width,
-    super.height,
-  });
+  const _CardSkeleton({super.key, super.width, super.height});
 
   @override
   Widget build(BuildContext context) {
@@ -450,13 +431,11 @@ class _AlhaiShimmerState extends State<AlhaiShimmer>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
-    _animation = Tween<double>(begin: -1.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
+    _animation = Tween<double>(
+      begin: -1.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
     if (widget.enabled) {
       _controller.repeat();
     }
@@ -465,8 +444,9 @@ class _AlhaiShimmerState extends State<AlhaiShimmer>
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final effectiveDuration =
-        context.prefersReducedMotion ? Duration.zero : widget.duration;
+    final effectiveDuration = context.prefersReducedMotion
+        ? Duration.zero
+        : widget.duration;
     if (_controller.duration != effectiveDuration) {
       _controller.duration = effectiveDuration;
       if (widget.enabled) {
@@ -481,8 +461,9 @@ class _AlhaiShimmerState extends State<AlhaiShimmer>
   void didUpdateWidget(AlhaiShimmer oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.duration != oldWidget.duration) {
-      final effectiveDuration =
-          context.prefersReducedMotion ? Duration.zero : widget.duration;
+      final effectiveDuration = context.prefersReducedMotion
+          ? Duration.zero
+          : widget.duration;
       _controller.duration = effectiveDuration;
       if (widget.enabled) {
         _controller
@@ -528,19 +509,17 @@ class _AlhaiShimmerState extends State<AlhaiShimmer>
             final v = _animation.value;
 
             // RTL: reverse gradient direction
-            final begin =
-                isRtl ? Alignment(1.0 + v, 0.0) : Alignment(-1.0 + v, 0.0);
-            final end =
-                isRtl ? Alignment(-1.0 + v, 0.0) : Alignment(1.0 + v, 0.0);
+            final begin = isRtl
+                ? Alignment(1.0 + v, 0.0)
+                : Alignment(-1.0 + v, 0.0);
+            final end = isRtl
+                ? Alignment(-1.0 + v, 0.0)
+                : Alignment(1.0 + v, 0.0);
 
             return LinearGradient(
               begin: begin,
               end: end,
-              colors: [
-                baseColor,
-                highlightColor,
-                baseColor,
-              ],
+              colors: [baseColor, highlightColor, baseColor],
               stops: const [0.0, 0.5, 1.0],
             ).createShader(bounds);
           },

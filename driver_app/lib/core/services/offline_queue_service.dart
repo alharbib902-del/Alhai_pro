@@ -50,28 +50,28 @@ class _QueueItem {
   String get idempotencyKey => '${deliveryId}_$status';
 
   Map<String, dynamic> toJson() => {
-        'delivery_id': deliveryId,
-        'status': status,
-        'notes': notes,
-        'queued_at': queuedAt.toIso8601String(),
-        'item_status': itemStatus,
-        'retry_count': retryCount,
-        'last_attempt': lastAttempt?.toIso8601String(),
-        'last_error': lastError,
-      };
+    'delivery_id': deliveryId,
+    'status': status,
+    'notes': notes,
+    'queued_at': queuedAt.toIso8601String(),
+    'item_status': itemStatus,
+    'retry_count': retryCount,
+    'last_attempt': lastAttempt?.toIso8601String(),
+    'last_error': lastError,
+  };
 
   factory _QueueItem.fromJson(Map<String, dynamic> json) => _QueueItem(
-        deliveryId: json['delivery_id'] as String,
-        status: json['status'] as String,
-        notes: json['notes'] as String?,
-        queuedAt: DateTime.parse(json['queued_at'] as String),
-        itemStatus: (json['item_status'] as String?) ?? 'pending',
-        retryCount: (json['retry_count'] as int?) ?? 0,
-        lastAttempt: json['last_attempt'] != null
-            ? DateTime.tryParse(json['last_attempt'] as String)
-            : null,
-        lastError: json['last_error'] as String?,
-      );
+    deliveryId: json['delivery_id'] as String,
+    status: json['status'] as String,
+    notes: json['notes'] as String?,
+    queuedAt: DateTime.parse(json['queued_at'] as String),
+    itemStatus: (json['item_status'] as String?) ?? 'pending',
+    retryCount: (json['retry_count'] as int?) ?? 0,
+    lastAttempt: json['last_attempt'] != null
+        ? DateTime.tryParse(json['last_attempt'] as String)
+        : null,
+    lastError: json['last_error'] as String?,
+  );
 }
 
 /// Queues delivery status updates when offline and replays them when
@@ -193,9 +193,9 @@ class OfflineQueueService {
     final key = '${deliveryId}_$status';
 
     final existing = items.cast<_QueueItem?>().firstWhere(
-          (i) => i!.idempotencyKey == key,
-          orElse: () => null,
-        );
+      (i) => i!.idempotencyKey == key,
+      orElse: () => null,
+    );
 
     if (existing != null) {
       if (existing.itemStatus == 'syncing') {
@@ -212,12 +212,14 @@ class OfflineQueueService {
       return false;
     }
 
-    items.add(_QueueItem(
-      deliveryId: deliveryId,
-      status: status,
-      notes: notes,
-      queuedAt: DateTime.now(),
-    ));
+    items.add(
+      _QueueItem(
+        deliveryId: deliveryId,
+        status: status,
+        notes: notes,
+        queuedAt: DateTime.now(),
+      ),
+    );
     await _save(items);
     _notify('Queued $status for delivery $deliveryId');
     return true;
@@ -251,9 +253,11 @@ class OfflineQueueService {
   ) async {
     // Only process items that are eligible
     final eligible = items
-        .where((i) =>
-            (i.itemStatus == 'pending' || i.itemStatus == 'failed') &&
-            i.retryCount < _maxRetries)
+        .where(
+          (i) =>
+              (i.itemStatus == 'pending' || i.itemStatus == 'failed') &&
+              i.retryCount < _maxRetries,
+        )
         .toList();
 
     if (eligible.isEmpty) {
@@ -265,9 +269,11 @@ class OfflineQueueService {
 
     // Process in batches of 5 to avoid overwhelming the server
     const batchSize = 5;
-    for (int batchStart = 0;
-        batchStart < eligible.length;
-        batchStart += batchSize) {
+    for (
+      int batchStart = 0;
+      batchStart < eligible.length;
+      batchStart += batchSize
+    ) {
       final batch = eligible.skip(batchStart).take(batchSize).toList();
 
       for (final item in batch) {
@@ -276,7 +282,8 @@ class OfflineQueueService {
           final waitUntil = item.lastAttempt!.add(_backoffFor(item.retryCount));
           if (DateTime.now().isBefore(waitUntil)) {
             _notify(
-                'Backoff active for ${item.deliveryId} (retry ${item.retryCount})');
+              'Backoff active for ${item.deliveryId} (retry ${item.retryCount})',
+            );
             continue;
           }
         }
@@ -326,8 +333,9 @@ class OfflineQueueService {
               break;
             case QueueErrorType.network:
               item.retryCount++;
-              item.itemStatus =
-                  item.retryCount >= _maxRetries ? 'failed' : 'pending';
+              item.itemStatus = item.retryCount >= _maxRetries
+                  ? 'failed'
+                  : 'pending';
               _notify(
                 'Network error for ${item.deliveryId} '
                 '(attempt ${item.retryCount}/$_maxRetries): $e',
@@ -369,8 +377,9 @@ class OfflineQueueService {
   /// Returns the number of items removed.
   Future<int> cleanupStale() async {
     final items = await _load();
-    final cutoff =
-        DateTime.now().subtract(const Duration(days: _staleThresholdDays));
+    final cutoff = DateTime.now().subtract(
+      const Duration(days: _staleThresholdDays),
+    );
     final before = items.length;
     items.removeWhere((i) => i.queuedAt.isBefore(cutoff));
     final removed = before - items.length;

@@ -31,10 +31,13 @@ class ChatMessageBubble extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.xxs,
+      ),
       child: Row(
-        mainAxisAlignment:
-            _isUser ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment: _isUser
+            ? MainAxisAlignment.end
+            : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (!_isUser) _buildAvatar(isDark),
@@ -63,11 +66,7 @@ class ChatMessageBubble extends StatelessWidget {
           ),
         ],
       ),
-      child: const Icon(
-        Icons.smart_toy_rounded,
-        color: Colors.white,
-        size: 20,
-      ),
+      child: const Icon(Icons.smart_toy_rounded, color: Colors.white, size: 20),
     );
   }
 
@@ -90,25 +89,26 @@ class ChatMessageBubble extends StatelessWidget {
 
   /// الفقاعة الرئيسية
   Widget _buildBubble(
-      BuildContext context, bool isDark, AppLocalizations l10n) {
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final bgColor = _isUser
         ? AppColors.primary
         : isDark
-            ? const Color(0xFF1E293B)
-            : Colors.white;
+        ? const Color(0xFF1E293B)
+        : Colors.white;
 
     final textColor = _isUser
         ? Colors.white
         : isDark
-            ? Colors.white
-            : AppColors.textPrimary;
+        ? Colors.white
+        : AppColors.textPrimary;
 
     final maxBubbleWidth = (context.screenWidth * 0.65).clamp(0.0, 600.0);
 
     return Container(
-      constraints: BoxConstraints(
-        maxWidth: maxBubbleWidth,
-      ),
+      constraints: BoxConstraints(maxWidth: maxBubbleWidth),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.only(
@@ -138,14 +138,14 @@ class ChatMessageBubble extends StatelessWidget {
           // محتوى الرسالة
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(
-                14, AlhaiSpacing.sm, 14, AlhaiSpacing.xs),
+              14,
+              AlhaiSpacing.sm,
+              14,
+              AlhaiSpacing.xs,
+            ),
             child: SelectableText(
               message.content,
-              style: TextStyle(
-                color: textColor,
-                fontSize: 14,
-                height: 1.6,
-              ),
+              style: TextStyle(color: textColor, fontSize: 14, height: 1.6),
             ),
           ),
 
@@ -161,7 +161,11 @@ class ChatMessageBubble extends StatelessWidget {
           // الوقت + زر النسخ
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(
-                14, AlhaiSpacing.zero, AlhaiSpacing.xs, AlhaiSpacing.xs),
+              14,
+              AlhaiSpacing.zero,
+              AlhaiSpacing.xs,
+              AlhaiSpacing.xs,
+            ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -171,8 +175,8 @@ class ChatMessageBubble extends StatelessWidget {
                     color: _isUser
                         ? Colors.white.withValues(alpha: 0.7)
                         : isDark
-                            ? Colors.white38
-                            : AppColors.textMuted,
+                        ? Colors.white38
+                        : AppColors.textMuted,
                     fontSize: 11,
                   ),
                 ),
@@ -214,14 +218,19 @@ class ChatMessageBubble extends StatelessWidget {
 
     return Container(
       margin: EdgeInsetsDirectional.fromSTEB(
-          14, AlhaiSpacing.zero, 14, AlhaiSpacing.xs),
+        14,
+        AlhaiSpacing.zero,
+        14,
+        AlhaiSpacing.xs,
+      ),
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.grey50,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : AppColors.border,
         ),
       ),
       child: Column(
@@ -229,34 +238,39 @@ class ChatMessageBubble extends StatelessWidget {
             .where((e) => e.value is num || e.value is String)
             .take(6)
             .map((entry) {
-          final label = _formatDataKey(entry.key, l10n);
-          final value = entry.value is double
-              ? (entry.value as double).toStringAsFixed(2)
-              : entry.value.toString();
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxxs),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: isDark ? Colors.white54 : AppColors.textSecondary,
-                  ),
+              final label = _formatDataKey(entry.key, l10n);
+              final value = entry.value is double
+                  ? (entry.value as double).toStringAsFixed(2)
+                  : entry.value.toString();
+              return Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: AlhaiSpacing.xxxs,
                 ),
-                Text(
-                  value,
-                  style: TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: isDark ? Colors.white : AppColors.textPrimary,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark
+                            ? Colors.white54
+                            : AppColors.textSecondary,
+                      ),
+                    ),
+                    Text(
+                      value,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : AppColors.textPrimary,
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        }).toList(),
+              );
+            })
+            .toList(),
       ),
     );
   }
@@ -265,7 +279,11 @@ class ChatMessageBubble extends StatelessWidget {
   Widget _buildSuggestedActions(bool isDark) {
     return Padding(
       padding: EdgeInsetsDirectional.fromSTEB(
-          14, AlhaiSpacing.zero, 14, AlhaiSpacing.xs),
+        14,
+        AlhaiSpacing.zero,
+        14,
+        AlhaiSpacing.xs,
+      ),
       child: Wrap(
         spacing: 6,
         runSpacing: 6,
@@ -281,7 +299,9 @@ class ChatMessageBubble extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             child: Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.sm, vertical: 6),
+                horizontal: AlhaiSpacing.sm,
+                vertical: 6,
+              ),
               decoration: BoxDecoration(
                 color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
                 borderRadius: BorderRadius.circular(20),
@@ -293,11 +313,7 @@ class ChatMessageBubble extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (action.icon != null) ...[
-                    Icon(
-                      action.icon,
-                      size: 14,
-                      color: AppColors.primary,
-                    ),
+                    Icon(action.icon, size: 14, color: AppColors.primary),
                     const SizedBox(width: AlhaiSpacing.xxs),
                   ],
                   Text(

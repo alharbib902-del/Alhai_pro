@@ -35,8 +35,9 @@ void main() {
     test('insertNotification and getAllNotifications', () async {
       await db.notificationsDao.insertNotification(makeNotification());
 
-      final notifications =
-          await db.notificationsDao.getAllNotifications('store-1');
+      final notifications = await db.notificationsDao.getAllNotifications(
+        'store-1',
+      );
       expect(notifications, hasLength(1));
       expect(notifications.first.title, 'مخزون منخفض');
     });
@@ -48,19 +49,24 @@ void main() {
         );
       }
 
-      final notifications =
-          await db.notificationsDao.getAllNotifications('store-1', limit: 5);
+      final notifications = await db.notificationsDao.getAllNotifications(
+        'store-1',
+        limit: 5,
+      );
       expect(notifications, hasLength(5));
     });
 
     test('getUnreadNotifications returns only unread', () async {
-      await db.notificationsDao
-          .insertNotification(makeNotification(id: 'n-1', isRead: false));
-      await db.notificationsDao
-          .insertNotification(makeNotification(id: 'n-2', isRead: true));
+      await db.notificationsDao.insertNotification(
+        makeNotification(id: 'n-1', isRead: false),
+      );
+      await db.notificationsDao.insertNotification(
+        makeNotification(id: 'n-2', isRead: true),
+      );
 
-      final unread =
-          await db.notificationsDao.getUnreadNotifications('store-1');
+      final unread = await db.notificationsDao.getUnreadNotifications(
+        'store-1',
+      );
       expect(unread, hasLength(1));
       expect(unread.first.id, 'n-1');
     });
@@ -70,8 +76,9 @@ void main() {
 
       await db.notificationsDao.markAsRead('notif-1');
 
-      final unread =
-          await db.notificationsDao.getUnreadNotifications('store-1');
+      final unread = await db.notificationsDao.getUnreadNotifications(
+        'store-1',
+      );
       expect(unread, isEmpty);
     });
 
@@ -82,8 +89,9 @@ void main() {
 
       await db.notificationsDao.markAllAsRead('store-1');
 
-      final unread =
-          await db.notificationsDao.getUnreadNotifications('store-1');
+      final unread = await db.notificationsDao.getUnreadNotifications(
+        'store-1',
+      );
       expect(unread, isEmpty);
     });
 
@@ -96,16 +104,20 @@ void main() {
 
     test('deleteOldNotifications removes old ones', () async {
       await db.notificationsDao.insertNotification(
-          makeNotification(id: 'old', createdAt: DateTime(2024, 1, 1)));
+        makeNotification(id: 'old', createdAt: DateTime(2024, 1, 1)),
+      );
       await db.notificationsDao.insertNotification(
-          makeNotification(id: 'new', createdAt: DateTime(2025, 6, 15)));
+        makeNotification(id: 'new', createdAt: DateTime(2025, 6, 15)),
+      );
 
-      final deleted = await db.notificationsDao
-          .deleteOldNotifications(DateTime(2025, 1, 1));
+      final deleted = await db.notificationsDao.deleteOldNotifications(
+        DateTime(2025, 1, 1),
+      );
       expect(deleted, 1);
 
-      final remaining =
-          await db.notificationsDao.getAllNotifications('store-1');
+      final remaining = await db.notificationsDao.getAllNotifications(
+        'store-1',
+      );
       expect(remaining, hasLength(1));
       expect(remaining.first.id, 'new');
     });

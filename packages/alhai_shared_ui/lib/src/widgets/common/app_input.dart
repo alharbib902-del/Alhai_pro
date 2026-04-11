@@ -207,9 +207,7 @@ class AppTextField extends StatefulWidget {
         padding: const EdgeInsetsDirectional.only(start: AppSpacing.md),
         child: Text(
           currency,
-          style: AppTypography.bodyMedium.copyWith(
-            color: AppColors.textMuted,
-          ),
+          style: AppTypography.bodyMedium.copyWith(color: AppColors.textMuted),
         ),
       ),
     );
@@ -292,9 +290,7 @@ class _AppTextFieldState extends State<AppTextField> {
           focusNode: _focusNode,
           autofocus: widget.autofocus,
           onTap: widget.onTap,
-          style: AppTypography.inputText.copyWith(
-            color: AppColors.textPrimary,
-          ),
+          style: AppTypography.inputText.copyWith(color: AppColors.textPrimary),
           decoration: InputDecoration(
             hintText: widget.hint,
             hintStyle: AppTypography.inputHint.copyWith(
@@ -621,8 +617,9 @@ class _QuantityButton extends StatelessWidget {
           child: Icon(
             icon,
             size: size * 0.5,
-            color:
-                onPressed != null ? AppColors.textPrimary : AppColors.grey300,
+            color: onPressed != null
+                ? AppColors.textPrimary
+                : AppColors.grey300,
           ),
         ),
       ),

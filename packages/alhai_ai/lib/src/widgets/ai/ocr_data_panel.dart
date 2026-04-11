@@ -50,18 +50,24 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
   }
 
   void _initControllers() {
-    _nameController =
-        TextEditingController(text: widget.extraction?.productName ?? '');
-    _barcodeController =
-        TextEditingController(text: widget.extraction?.barcode ?? '');
+    _nameController = TextEditingController(
+      text: widget.extraction?.productName ?? '',
+    );
+    _barcodeController = TextEditingController(
+      text: widget.extraction?.barcode ?? '',
+    );
     _priceController = TextEditingController(
-        text: widget.extraction?.price?.toStringAsFixed(2) ?? '');
-    _expiryController =
-        TextEditingController(text: widget.extraction?.expiryDate ?? '');
-    _brandController =
-        TextEditingController(text: widget.extraction?.brand ?? '');
-    _weightController =
-        TextEditingController(text: widget.extraction?.weight ?? '');
+      text: widget.extraction?.price?.toStringAsFixed(2) ?? '',
+    );
+    _expiryController = TextEditingController(
+      text: widget.extraction?.expiryDate ?? '',
+    );
+    _brandController = TextEditingController(
+      text: widget.extraction?.brand ?? '',
+    );
+    _weightController = TextEditingController(
+      text: widget.extraction?.weight ?? '',
+    );
   }
 
   @override
@@ -84,9 +90,10 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-            color: isDark
-                ? Colors.white.withValues(alpha: 0.1)
-                : AppColors.border),
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : AppColors.border,
+        ),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDark ? 0.2 : 0.05),
@@ -111,8 +118,11 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                     ),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.document_scanner_rounded,
-                      color: Colors.white, size: 18),
+                  child: const Icon(
+                    Icons.document_scanner_rounded,
+                    color: Colors.white,
+                    size: 18,
+                  ),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
@@ -143,8 +153,9 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                 if (widget.extraction != null)
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.xs,
-                        vertical: AlhaiSpacing.xxs),
+                      horizontal: AlhaiSpacing.xs,
+                      vertical: AlhaiSpacing.xxs,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.success.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(6),
@@ -152,8 +163,11 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.check_circle_rounded,
-                            size: 14, color: AppColors.success),
+                        Icon(
+                          Icons.check_circle_rounded,
+                          size: 14,
+                          color: AppColors.success,
+                        ),
                         SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           'تم الاستخراج',
@@ -184,11 +198,13 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.document_scanner_rounded,
-                        size: 48,
-                        color: isDark
-                            ? Colors.white.withValues(alpha: 0.2)
-                            : AppColors.textMuted),
+                    Icon(
+                      Icons.document_scanner_rounded,
+                      size: 48,
+                      color: isDark
+                          ? Colors.white.withValues(alpha: 0.2)
+                          : AppColors.textMuted,
+                    ),
                     const SizedBox(height: AlhaiSpacing.sm),
                     Text(
                       'التقط صورة لاستخراج البيانات',
@@ -208,10 +224,12 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                         backgroundColor: const Color(0xFF3B82F6),
                         foregroundColor: Colors.white,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         padding: const EdgeInsets.symmetric(
-                            horizontal: AlhaiSpacing.mdl,
-                            vertical: AlhaiSpacing.sm),
+                          horizontal: AlhaiSpacing.mdl,
+                          vertical: AlhaiSpacing.sm,
+                        ),
                       ),
                     ),
                   ],
@@ -252,8 +270,9 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                             controller: _priceController,
                             isDark: isDark,
                             keyboardType: TextInputType.number,
-                            onChanged: (v) => widget.onFieldChanged
-                                ?.call(MapEntry('price', v)),
+                            onChanged: (v) => widget.onFieldChanged?.call(
+                              MapEntry('price', v),
+                            ),
                           ),
                         ),
                         const SizedBox(width: AlhaiSpacing.sm),
@@ -263,8 +282,9 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                             icon: Icons.calendar_today_rounded,
                             controller: _expiryController,
                             isDark: isDark,
-                            onChanged: (v) => widget.onFieldChanged
-                                ?.call(MapEntry('expiry', v)),
+                            onChanged: (v) => widget.onFieldChanged?.call(
+                              MapEntry('expiry', v),
+                            ),
                           ),
                         ),
                       ],
@@ -278,8 +298,9 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                             icon: Icons.branding_watermark_rounded,
                             controller: _brandController,
                             isDark: isDark,
-                            onChanged: (v) => widget.onFieldChanged
-                                ?.call(MapEntry('brand', v)),
+                            onChanged: (v) => widget.onFieldChanged?.call(
+                              MapEntry('brand', v),
+                            ),
                           ),
                         ),
                         const SizedBox(width: AlhaiSpacing.sm),
@@ -289,8 +310,9 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                             icon: Icons.scale_rounded,
                             controller: _weightController,
                             isDark: isDark,
-                            onChanged: (v) => widget.onFieldChanged
-                                ?.call(MapEntry('weight', v)),
+                            onChanged: (v) => widget.onFieldChanged?.call(
+                              MapEntry('weight', v),
+                            ),
                           ),
                         ),
                       ],
@@ -303,8 +325,9 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(AlhaiSpacing.sm),
                       decoration: BoxDecoration(
-                        color:
-                            isDark ? const Color(0xFF0F172A) : AppColors.grey50,
+                        color: isDark
+                            ? const Color(0xFF0F172A)
+                            : AppColors.grey50,
                         borderRadius: BorderRadius.circular(10),
                         border: Border.all(
                           color: isDark
@@ -354,7 +377,8 @@ class _OcrDataPanelState extends State<OcrDataPanel> {
                           backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10)),
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                           padding: const EdgeInsets.symmetric(vertical: 14),
                         ),
                       ),
@@ -394,11 +418,13 @@ class _OcrField extends StatelessWidget {
       children: [
         Row(
           children: [
-            Icon(icon,
-                size: 14,
-                color: isDark
-                    ? Colors.white.withValues(alpha: 0.4)
-                    : AppColors.textMuted),
+            Icon(
+              icon,
+              size: 14,
+              color: isDark
+                  ? Colors.white.withValues(alpha: 0.4)
+                  : AppColors.textMuted,
+            ),
             const SizedBox(width: 6),
             Text(
               label,
@@ -425,7 +451,9 @@ class _OcrField extends StatelessWidget {
             filled: true,
             fillColor: isDark ? const Color(0xFF0F172A) : AppColors.grey50,
             contentPadding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.sm, vertical: 10),
+              horizontal: AlhaiSpacing.sm,
+              vertical: 10,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(8),
               borderSide: BorderSide(

@@ -34,9 +34,7 @@ void main() {
     reportingStatus: ReportingStatus.reported,
   );
 
-  final failureResponse = ZatcaResponse.failure(
-    message: 'Validation failed',
-  );
+  final failureResponse = ZatcaResponse.failure(message: 'Validation failed');
 
   setUpAll(() {
     registerFallbackValue(FakeCertificateInfo());
@@ -315,9 +313,9 @@ void main() {
       });
 
       test('returns error if no certificate found', () async {
-        when(() =>
-                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockCertStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => null);
 
         await queue.enqueue(
           invoiceNumber: 'INV-001',
@@ -340,15 +338,17 @@ void main() {
       });
 
       test('submits simplified invoice via reporting API', () async {
-        when(() =>
-                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => testCertificate);
-        when(() => mockReportingApi.reportInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => successResponse);
+        when(
+          () => mockCertStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => testCertificate);
+        when(
+          () => mockReportingApi.reportInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => successResponse);
 
         await queue.enqueue(
           invoiceNumber: 'INV-001',
@@ -374,15 +374,17 @@ void main() {
       });
 
       test('submits standard invoice via clearance API', () async {
-        when(() =>
-                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => testCertificate);
-        when(() => mockClearanceApi.clearInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => successResponse);
+        when(
+          () => mockCertStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => testCertificate);
+        when(
+          () => mockClearanceApi.clearInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => successResponse);
 
         await queue.enqueue(
           invoiceNumber: 'INV-001',
@@ -400,24 +402,28 @@ void main() {
         );
 
         expect(results.first.success, isTrue);
-        verify(() => mockClearanceApi.clearInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).called(1);
+        verify(
+          () => mockClearanceApi.clearInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).called(1);
       });
 
       test('increments retry on ZATCA rejection', () async {
-        when(() =>
-                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => testCertificate);
-        when(() => mockReportingApi.reportInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => failureResponse);
+        when(
+          () => mockCertStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => testCertificate);
+        when(
+          () => mockReportingApi.reportInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => failureResponse);
 
         await queue.enqueue(
           invoiceNumber: 'INV-001',
@@ -443,15 +449,17 @@ void main() {
       });
 
       test('increments retry on network exception', () async {
-        when(() =>
-                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => testCertificate);
-        when(() => mockReportingApi.reportInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenThrow(Exception('Connection refused'));
+        when(
+          () => mockCertStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => testCertificate);
+        when(
+          () => mockReportingApi.reportInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenThrow(Exception('Connection refused'));
 
         await queue.enqueue(
           invoiceNumber: 'INV-001',
@@ -473,9 +481,9 @@ void main() {
       });
 
       test('skips max-retried invoices during processing', () async {
-        when(() =>
-                mockCertStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => testCertificate);
+        when(
+          () => mockCertStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => testCertificate);
 
         // Add invoice and exhaust retries
         await queue.enqueue(
@@ -498,12 +506,14 @@ void main() {
 
         // No invoices to process
         expect(results, isEmpty);
-        verifyNever(() => mockReportingApi.reportInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            ));
+        verifyNever(
+          () => mockReportingApi.reportInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        );
       });
     });
 

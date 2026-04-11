@@ -35,8 +35,10 @@ void main() {
   // -------------------------------------------------------------------------
   group('initial state', () {
     test('maxAllowedDrift constant is 5 minutes', () {
-      expect(ClockValidationService.maxAllowedDrift,
-          equals(const Duration(minutes: 5)));
+      expect(
+        ClockValidationService.maxAllowedDrift,
+        equals(const Duration(minutes: 5)),
+      );
     });
 
     test('isClockValid defaults to true (optimistic)', () {
@@ -57,21 +59,23 @@ void main() {
   // correctedNow
   // -------------------------------------------------------------------------
   group('correctedNow', () {
-    test('returns a DateTime close to DateTime.now() when offset is zero',
-        () async {
-      // Force offset to zero via a no-op if possible. When offset is zero,
-      // correctedNow should return a time close to DateTime.now().
-      final before = DateTime.now();
-      final corrected = service.correctedNow;
-      final after = DateTime.now();
+    test(
+      'returns a DateTime close to DateTime.now() when offset is zero',
+      () async {
+        // Force offset to zero via a no-op if possible. When offset is zero,
+        // correctedNow should return a time close to DateTime.now().
+        final before = DateTime.now();
+        final corrected = service.correctedNow;
+        final after = DateTime.now();
 
-      // correctedNow = now - offset. We can't control offset here,
-      // but we can check it is a DateTime and is within a few minutes.
-      expect(corrected, isA<DateTime>());
-      final diffFromNow = before.difference(corrected).abs();
-      expect(diffFromNow, lessThan(const Duration(minutes: 10)));
-      expect(after.isAfter(before) || after.isAtSameMomentAs(before), isTrue);
-    });
+        // correctedNow = now - offset. We can't control offset here,
+        // but we can check it is a DateTime and is within a few minutes.
+        expect(corrected, isA<DateTime>());
+        final diffFromNow = before.difference(corrected).abs();
+        expect(diffFromNow, lessThan(const Duration(minutes: 10)));
+        expect(after.isAfter(before) || after.isAtSameMomentAs(before), isTrue);
+      },
+    );
 
     test('subtracts the clock offset from now', () {
       // Mathematical property: correctedNow and DateTime.now() should differ

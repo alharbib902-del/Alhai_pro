@@ -31,10 +31,14 @@ class SupabaseConfig {
   /// Validate that required environment variables are set.
   /// Call early in app startup (e.g. main()) to fail fast.
   static void assertConfigured() {
-    assert(url.isNotEmpty,
-        'SUPABASE_URL not set. Use --dart-define=SUPABASE_URL=...');
-    assert(anonKey.isNotEmpty,
-        'SUPABASE_ANON_KEY not set. Use --dart-define=SUPABASE_ANON_KEY=...');
+    assert(
+      url.isNotEmpty,
+      'SUPABASE_URL not set. Use --dart-define=SUPABASE_URL=...',
+    );
+    assert(
+      anonKey.isNotEmpty,
+      'SUPABASE_ANON_KEY not set. Use --dart-define=SUPABASE_ANON_KEY=...',
+    );
   }
 
   /// Whether to enable Supabase debug logging

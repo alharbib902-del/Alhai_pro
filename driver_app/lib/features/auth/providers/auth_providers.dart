@@ -5,12 +5,7 @@ import '../../../core/providers/app_providers.dart';
 import '../data/driver_auth_datasource.dart';
 
 /// Auth state for the driver app.
-enum DriverAuthState {
-  loading,
-  unauthenticated,
-  needsProfile,
-  authenticated,
-}
+enum DriverAuthState { loading, unauthenticated, needsProfile, authenticated }
 
 /// Provides the current auth state.
 final driverAuthStateProvider = Provider<DriverAuthState>((ref) {
@@ -36,12 +31,14 @@ final sendOtpProvider = FutureProvider.family<void, String>((ref, phone) async {
 
 /// Verify OTP and login.
 final verifyOtpProvider =
-    FutureProvider.family<void, ({String phone, String otp})>(
-        (ref, params) async {
-  final datasource = GetIt.instance<DriverAuthDatasource>();
-  final result = await datasource.verifyOtp(params.phone, params.otp);
-  ref.read(currentDriverProvider.notifier).state = result.user;
-});
+    FutureProvider.family<void, ({String phone, String otp})>((
+      ref,
+      params,
+    ) async {
+      final datasource = GetIt.instance<DriverAuthDatasource>();
+      final result = await datasource.verifyOtp(params.phone, params.otp);
+      ref.read(currentDriverProvider.notifier).state = result.user;
+    });
 
 /// Load current driver profile from server.
 final loadDriverProfileProvider = FutureProvider<void>((ref) async {

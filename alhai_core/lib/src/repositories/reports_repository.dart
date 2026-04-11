@@ -61,7 +61,7 @@ class MonthlyComparison {
 
   double get revenueChange => previousMonthRevenue > 0
       ? ((currentMonthRevenue - previousMonthRevenue) / previousMonthRevenue) *
-          100
+            100
       : 0;
 
   double get profitChange => previousMonthProfit > 0

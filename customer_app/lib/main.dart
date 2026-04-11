@@ -14,13 +14,18 @@ import 'core/supabase/supabase_client.dart';
 import 'di/injection.dart';
 
 void main() {
-  runZonedGuarded(() async {
-    await initSentry(appRunner: () async {
-      await _appMain();
-    });
-  }, (error, stack) {
-    reportError(error, stackTrace: stack, hint: 'runZonedGuarded');
-  });
+  runZonedGuarded(
+    () async {
+      await initSentry(
+        appRunner: () async {
+          await _appMain();
+        },
+      );
+    },
+    (error, stack) {
+      reportError(error, stackTrace: stack, hint: 'runZonedGuarded');
+    },
+  );
 }
 
 Future<void> _appMain() async {
@@ -69,11 +74,7 @@ Future<void> _appMain() async {
 
   addBreadcrumb(message: 'App initialized', category: 'lifecycle');
 
-  runApp(
-    const ProviderScope(
-      child: CustomerApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: CustomerApp()));
 }
 
 class CustomerApp extends StatelessWidget {
@@ -90,10 +91,7 @@ class CustomerApp extends StatelessWidget {
       routerConfig: AppRouter.router,
       // RTL + localization support
       locale: const Locale('ar'),
-      supportedLocales: const [
-        Locale('ar'),
-        Locale('en'),
-      ],
+      supportedLocales: const [Locale('ar'), Locale('en')],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,

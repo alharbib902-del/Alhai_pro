@@ -21,16 +21,24 @@ class PurchasesDaoManager {
       $$StoresTableTableTableManager(_db.attachedDatabase, _db.storesTable);
   $$SuppliersTableTableTableManager get suppliersTable =>
       $$SuppliersTableTableTableManager(
-          _db.attachedDatabase, _db.suppliersTable);
+        _db.attachedDatabase,
+        _db.suppliersTable,
+      );
   $$PurchasesTableTableTableManager get purchasesTable =>
       $$PurchasesTableTableTableManager(
-          _db.attachedDatabase, _db.purchasesTable);
+        _db.attachedDatabase,
+        _db.purchasesTable,
+      );
   $$CategoriesTableTableTableManager get categoriesTable =>
       $$CategoriesTableTableTableManager(
-          _db.attachedDatabase, _db.categoriesTable);
+        _db.attachedDatabase,
+        _db.categoriesTable,
+      );
   $$ProductsTableTableTableManager get productsTable =>
       $$ProductsTableTableTableManager(_db.attachedDatabase, _db.productsTable);
   $$PurchaseItemsTableTableTableManager get purchaseItemsTable =>
       $$PurchaseItemsTableTableTableManager(
-          _db.attachedDatabase, _db.purchaseItemsTable);
+        _db.attachedDatabase,
+        _db.purchaseItemsTable,
+      );
 }

@@ -27,23 +27,26 @@ void main() {
   tearDown(tearDownTestGetIt);
 
   group('SalesHistoryScreen', () {
-    testWidgets('renders loading indicator while fetching orders',
-        (tester) async {
+    testWidgets('renders loading indicator while fetching orders', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
       suppressOverflowErrors();
 
       // Screen uses salesDao.getSalesPaginated(...)
-      when(() => salesDao.getSalesPaginated(
-            any(),
-            offset: any(named: 'offset'),
-            limit: any(named: 'limit'),
-            startDate: any(named: 'startDate'),
-            endDate: any(named: 'endDate'),
-            status: any(named: 'status'),
-            cashierId: any(named: 'cashierId'),
-          )).thenAnswer((_) async => <SalesTableData>[]);
+      when(
+        () => salesDao.getSalesPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          status: any(named: 'status'),
+          cashierId: any(named: 'cashierId'),
+        ),
+      ).thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const SalesHistoryScreen()));
 
@@ -57,15 +60,17 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => salesDao.getSalesPaginated(
-            any(),
-            offset: any(named: 'offset'),
-            limit: any(named: 'limit'),
-            startDate: any(named: 'startDate'),
-            endDate: any(named: 'endDate'),
-            status: any(named: 'status'),
-            cashierId: any(named: 'cashierId'),
-          )).thenAnswer((_) async => <SalesTableData>[]);
+      when(
+        () => salesDao.getSalesPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          status: any(named: 'status'),
+          cashierId: any(named: 'cashierId'),
+        ),
+      ).thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const SalesHistoryScreen()));
       await tester.pumpAndSettle();
@@ -95,15 +100,17 @@ void main() {
         ),
       ];
 
-      when(() => salesDao.getSalesPaginated(
-            any(),
-            offset: any(named: 'offset'),
-            limit: any(named: 'limit'),
-            startDate: any(named: 'startDate'),
-            endDate: any(named: 'endDate'),
-            status: any(named: 'status'),
-            cashierId: any(named: 'cashierId'),
-          )).thenAnswer((_) async => sales);
+      when(
+        () => salesDao.getSalesPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          status: any(named: 'status'),
+          cashierId: any(named: 'cashierId'),
+        ),
+      ).thenAnswer((_) async => sales);
 
       await tester.pumpWidget(createTestWidget(const SalesHistoryScreen()));
       await tester.pumpAndSettle();
@@ -118,15 +125,17 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => salesDao.getSalesPaginated(
-            any(),
-            offset: any(named: 'offset'),
-            limit: any(named: 'limit'),
-            startDate: any(named: 'startDate'),
-            endDate: any(named: 'endDate'),
-            status: any(named: 'status'),
-            cashierId: any(named: 'cashierId'),
-          )).thenAnswer((_) async => <SalesTableData>[]);
+      when(
+        () => salesDao.getSalesPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          status: any(named: 'status'),
+          cashierId: any(named: 'cashierId'),
+        ),
+      ).thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const SalesHistoryScreen()));
       await tester.pumpAndSettle();
@@ -151,15 +160,17 @@ void main() {
         ),
       ];
 
-      when(() => salesDao.getSalesPaginated(
-            any(),
-            offset: any(named: 'offset'),
-            limit: any(named: 'limit'),
-            startDate: any(named: 'startDate'),
-            endDate: any(named: 'endDate'),
-            status: any(named: 'status'),
-            cashierId: any(named: 'cashierId'),
-          )).thenAnswer((_) async => sales);
+      when(
+        () => salesDao.getSalesPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          status: any(named: 'status'),
+          cashierId: any(named: 'cashierId'),
+        ),
+      ).thenAnswer((_) async => sales);
 
       await tester.pumpWidget(createTestWidget(const SalesHistoryScreen()));
       await tester.pumpAndSettle();
@@ -174,15 +185,17 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => salesDao.getSalesPaginated(
-            any(),
-            offset: any(named: 'offset'),
-            limit: any(named: 'limit'),
-            startDate: any(named: 'startDate'),
-            endDate: any(named: 'endDate'),
-            status: any(named: 'status'),
-            cashierId: any(named: 'cashierId'),
-          )).thenAnswer((_) async => <SalesTableData>[]);
+      when(
+        () => salesDao.getSalesPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+          startDate: any(named: 'startDate'),
+          endDate: any(named: 'endDate'),
+          status: any(named: 'status'),
+          cashierId: any(named: 'cashierId'),
+        ),
+      ).thenAnswer((_) async => <SalesTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const SalesHistoryScreen()));
       await tester.pumpAndSettle();

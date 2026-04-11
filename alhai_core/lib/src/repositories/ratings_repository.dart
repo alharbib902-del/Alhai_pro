@@ -26,18 +26,16 @@ abstract class RatingsRepository {
   });
 
   /// Updates a rating
-  Future<Rating> updateRating(
-    String id, {
-    int? stars,
-    String? comment,
-  });
+  Future<Rating> updateRating(String id, {int? stars, String? comment});
 
   /// Deletes a rating
   Future<void> deleteRating(String id);
 
   /// Gets average rating for an entity
   Future<RatingSummary> getRatingSummary(
-      RatingEntityType entityType, String entityId);
+    RatingEntityType entityType,
+    String entityId,
+  );
 
   /// Gets ratings by customer
   Future<List<Rating>> getCustomerRatings(String customerId);

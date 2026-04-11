@@ -32,9 +32,11 @@ class OrgProductsTable extends Table {
   RealColumn get costPrice => real().nullable()();
 
   // التصنيف
-  TextColumn get categoryId => text()
-      .nullable()
-      .references(CategoriesTable, #id, onDelete: KeyAction.setNull)();
+  TextColumn get categoryId => text().nullable().references(
+    CategoriesTable,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
   TextColumn get unit => text().nullable()();
 
   // صور المنظمة (الافتراضية لكل الفروع)

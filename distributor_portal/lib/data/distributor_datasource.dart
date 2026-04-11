@@ -13,13 +13,7 @@ import 'models.dart';
 // ─── Error Types ──────────────────────────────────────────────────
 
 /// Categorized error types for meaningful error handling.
-enum DatasourceErrorType {
-  network,
-  auth,
-  notFound,
-  validation,
-  unknown,
-}
+enum DatasourceErrorType { network, auth, notFound, validation, unknown }
 
 /// A categorized error from datasource operations.
 class DatasourceError implements Exception {
@@ -251,8 +245,10 @@ class DistributorDatasource {
     if (_cachedStoreIds != null) return _cachedStoreIds!;
 
     try {
-      final stores =
-          await _client.from('stores').select('id').eq('org_id', orgId);
+      final stores = await _client
+          .from('stores')
+          .select('id')
+          .eq('org_id', orgId);
 
       _cachedStoreIds = (stores as List)
           .map((s) => (s as Map<String, dynamic>)['id'] as String)
@@ -305,7 +301,8 @@ class DistributorDatasource {
           .range(offset, offset + limit - 1);
       return (data as List)
           .map(
-              (json) => DistributorOrder.fromJson(json as Map<String, dynamic>))
+            (json) => DistributorOrder.fromJson(json as Map<String, dynamic>),
+          )
           .toList();
     } catch (e) {
       if (e is DatasourceError) rethrow;
@@ -357,8 +354,10 @@ class DistributorDatasource {
           .eq('order_id', orderId);
 
       return (data as List)
-          .map((json) =>
-              DistributorOrderItem.fromJson(json as Map<String, dynamic>))
+          .map(
+            (json) =>
+                DistributorOrderItem.fromJson(json as Map<String, dynamic>),
+          )
           .toList();
     } catch (e) {
       if (e is DatasourceError) rethrow;
@@ -423,15 +422,19 @@ class DistributorDatasource {
       // Use RPC for atomic transaction: order status + item prices
       final pricesJsonb = itemPrices != null && itemPrices.isNotEmpty
           ? Map<String, dynamic>.fromEntries(
-              itemPrices.entries.map((e) => MapEntry(e.key, e.value)))
+              itemPrices.entries.map((e) => MapEntry(e.key, e.value)),
+            )
           : null;
 
-      await _client.rpc('update_order_with_items', params: {
-        'p_order_id': orderId,
-        'p_status': newStatus,
-        'p_notes': notes,
-        'p_item_prices': pricesJsonb,
-      });
+      await _client.rpc(
+        'update_order_with_items',
+        params: {
+          'p_order_id': orderId,
+          'p_status': newStatus,
+          'p_notes': notes,
+          'p_item_prices': pricesJsonb,
+        },
+      );
 
       return true;
     } catch (e) {
@@ -472,16 +475,14 @@ class DistributorDatasource {
           .range(offset, offset + limit - 1);
 
       final results = (data as List)
-          .map((json) =>
-              DistributorProduct.fromJson(json as Map<String, dynamic>))
+          .map(
+            (json) => DistributorProduct.fromJson(json as Map<String, dynamic>),
+          )
           .toList();
 
       // Cache default pagination results
       if (offset == 0 && limit == 50) {
-        _productsCache = _CacheEntry(
-          results,
-          DateTime.now().add(_productsTtl),
-        );
+        _productsCache = _CacheEntry(results, DateTime.now().add(_productsTtl));
       }
 
       return results;
@@ -549,12 +550,13 @@ class DistributorDatasource {
 
       // Use RPC for atomic batch update in a single transaction
       final pricesJsonb = Map<String, dynamic>.fromEntries(
-          prices.entries.map((e) => MapEntry(e.key, e.value)));
+        prices.entries.map((e) => MapEntry(e.key, e.value)),
+      );
 
-      await _client.rpc('batch_update_product_prices', params: {
-        'p_org_id': orgId,
-        'p_prices': pricesJsonb,
-      });
+      await _client.rpc(
+        'batch_update_product_prices',
+        params: {'p_org_id': orgId, 'p_prices': pricesJsonb},
+      );
 
       // Invalidate product cache after mutation
       invalidateProductCaches();
@@ -602,15 +604,17 @@ class DistributorDatasource {
 
       final allOrders = (data as List)
           .map(
-              (json) => DistributorOrder.fromJson(json as Map<String, dynamic>))
+            (json) => DistributorOrder.fromJson(json as Map<String, dynamic>),
+          )
           .toList();
 
       final totalOrders = allOrders.length;
       final pendingOrders = allOrders
           .where((o) => o.status == 'sent' || o.status == 'draft')
           .length;
-      final approvedOrders =
-          allOrders.where((o) => o.status == 'approved').length;
+      final approvedOrders = allOrders
+          .where((o) => o.status == 'approved')
+          .length;
       final totalRevenue = allOrders.fold<double>(0, (sum, o) => sum + o.total);
 
       // Group by month for chart
@@ -636,11 +640,15 @@ class DistributorDatasource {
         'ديسمبر',
       ];
 
-      final monthlySales = monthMap.entries
-          .map((e) => MonthlySales(monthNames[e.key], e.value))
-          .toList()
-        ..sort((a, b) =>
-            monthNames.indexOf(a.month).compareTo(monthNames.indexOf(b.month)));
+      final monthlySales =
+          monthMap.entries
+              .map((e) => MonthlySales(monthNames[e.key], e.value))
+              .toList()
+            ..sort(
+              (a, b) => monthNames
+                  .indexOf(a.month)
+                  .compareTo(monthNames.indexOf(b.month)),
+            );
 
       // Recent 5 orders
       final recentOrders = allOrders.take(5).toList();
@@ -725,7 +733,8 @@ class DistributorDatasource {
 
       final orderList = (orders as List)
           .map(
-              (json) => DistributorOrder.fromJson(json as Map<String, dynamic>))
+            (json) => DistributorOrder.fromJson(json as Map<String, dynamic>),
+          )
           .toList();
 
       final totalSales = orderList.fold<double>(0, (sum, o) => sum + o.total);
@@ -740,8 +749,9 @@ class DistributorDatasource {
         final dayName = dayNames[dayIndex];
         dailyMap[dayName] = (dailyMap[dayName] ?? 0) + order.total;
       }
-      final dailySales =
-          dayNames.map((d) => DailySales(d, dailyMap[d] ?? 0)).toList();
+      final dailySales = dayNames
+          .map((d) => DailySales(d, dailyMap[d] ?? 0))
+          .toList();
 
       // Top products from order_items in this period
       final orderIds = orderList.map((o) => o.id).toList();
@@ -782,18 +792,18 @@ class DistributorDatasource {
         }
       }
 
-      final topProducts = productStats.values
-          .map((e) => TopProduct(e.$1, e.$2, e.$3))
-          .toList()
-        ..sort((a, b) => b.revenue.compareTo(a.revenue));
+      final topProducts =
+          productStats.values.map((e) => TopProduct(e.$1, e.$2, e.$3)).toList()
+            ..sort((a, b) => b.revenue.compareTo(a.revenue));
 
       return ReportData(
         totalSales: totalSales,
         orderCount: orderCount,
         avgOrderValue: avgOrderValue,
         topProduct: topProducts.isNotEmpty ? topProducts.first.name : '-',
-        topProductOrders:
-            topProducts.isNotEmpty ? topProducts.first.orderCount : 0,
+        topProductOrders: topProducts.isNotEmpty
+            ? topProducts.first.orderCount
+            : 0,
         dailySales: dailySales,
         topProducts: topProducts.take(5).toList(),
       );
@@ -889,7 +899,10 @@ class DistributorDatasource {
       // Validate delivery zones length
       if (settings.deliveryZones != null) {
         final zonesError = validateTextLength(
-            settings.deliveryZones!, maxDeliveryZonesLength, 'Delivery zones');
+          settings.deliveryZones!,
+          maxDeliveryZonesLength,
+          'Delivery zones',
+        );
         if (zonesError != null) {
           throw DatasourceError(
             type: DatasourceErrorType.validation,
@@ -968,7 +981,8 @@ class DistributorDatasource {
 
       final results = (data as List)
           .map(
-              (json) => (json as Map<String, dynamic>)['name'] as String? ?? '')
+            (json) => (json as Map<String, dynamic>)['name'] as String? ?? '',
+          )
           .where((name) => name.isNotEmpty)
           .toList();
 

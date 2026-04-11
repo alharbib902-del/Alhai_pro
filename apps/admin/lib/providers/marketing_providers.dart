@@ -21,20 +21,20 @@ const _uuid = Uuid();
 /// جميع الخصومات
 final discountsListProvider =
     FutureProvider.autoDispose<List<DiscountsTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
-  final db = GetIt.I<AppDatabase>();
-  return db.discountsDao.getAllDiscounts(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
+      final db = GetIt.I<AppDatabase>();
+      return db.discountsDao.getAllDiscounts(storeId);
+    });
 
 /// الخصومات النشطة فقط
 final activeDiscountsProvider =
     FutureProvider.autoDispose<List<DiscountsTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
-  final db = GetIt.I<AppDatabase>();
-  return db.discountsDao.getActiveDiscounts(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
+      final db = GetIt.I<AppDatabase>();
+      return db.discountsDao.getActiveDiscounts(storeId);
+    });
 
 /// إضافة خصم جديد مع مزامنة
 Future<void> addDiscount(
@@ -57,24 +57,26 @@ Future<void> addDiscount(
   final id = _uuid.v4();
   final now = DateTime.now();
 
-  await db.discountsDao.insertDiscount(DiscountsTableCompanion(
-    id: Value(id),
-    storeId: Value(storeId),
-    name: Value(name),
-    nameEn: Value(nameEn ?? name),
-    type: Value(type),
-    value: Value(value),
-    minPurchase: Value(minPurchase),
-    maxDiscount: Value(maxDiscount),
-    appliesTo: Value(appliesTo),
-    productIds: Value(productIds),
-    categoryIds: Value(categoryIds),
-    startDate: Value(startDate ?? now),
-    endDate: Value(endDate ?? now.add(const Duration(days: 30))),
-    isActive: const Value(true),
-    createdAt: Value(now),
-    updatedAt: Value(now),
-  ));
+  await db.discountsDao.insertDiscount(
+    DiscountsTableCompanion(
+      id: Value(id),
+      storeId: Value(storeId),
+      name: Value(name),
+      nameEn: Value(nameEn ?? name),
+      type: Value(type),
+      value: Value(value),
+      minPurchase: Value(minPurchase),
+      maxDiscount: Value(maxDiscount),
+      appliesTo: Value(appliesTo),
+      productIds: Value(productIds),
+      categoryIds: Value(categoryIds),
+      startDate: Value(startDate ?? now),
+      endDate: Value(endDate ?? now.add(const Duration(days: 30))),
+      isActive: const Value(true),
+      createdAt: Value(now),
+      updatedAt: Value(now),
+    ),
+  );
 
   try {
     final syncService = ref.read(syncServiceProvider);
@@ -94,8 +96,8 @@ Future<void> addDiscount(
         'product_ids': productIds,
         'category_ids': categoryIds,
         'start_date': (startDate ?? now).toIso8601String(),
-        'end_date':
-            (endDate ?? now.add(const Duration(days: 30))).toIso8601String(),
+        'end_date': (endDate ?? now.add(const Duration(days: 30)))
+            .toIso8601String(),
         'is_active': true,
         'created_at': now.toIso8601String(),
         'updated_at': now.toIso8601String(),
@@ -159,8 +161,9 @@ Future<void> deleteDiscount(WidgetRef ref, String id) async {
 // ============================================================================
 
 /// جميع الكوبونات
-final couponsListProvider =
-    FutureProvider.autoDispose<List<CouponsTableData>>((ref) async {
+final couponsListProvider = FutureProvider.autoDispose<List<CouponsTableData>>((
+  ref,
+) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return [];
   final db = GetIt.I<AppDatabase>();
@@ -185,20 +188,22 @@ Future<void> addCoupon(
   final now = DateTime.now();
   final expires = expiresAt ?? now.add(const Duration(days: 30));
 
-  await db.discountsDao.insertCoupon(CouponsTableCompanion(
-    id: Value(id),
-    storeId: Value(storeId),
-    code: Value(code),
-    discountId: Value(discountId),
-    type: Value(type),
-    value: Value(value),
-    maxUses: Value(maxUses),
-    currentUses: const Value(0),
-    minPurchase: Value(minPurchase),
-    isActive: const Value(true),
-    expiresAt: Value(expires),
-    createdAt: Value(now),
-  ));
+  await db.discountsDao.insertCoupon(
+    CouponsTableCompanion(
+      id: Value(id),
+      storeId: Value(storeId),
+      code: Value(code),
+      discountId: Value(discountId),
+      type: Value(type),
+      value: Value(value),
+      maxUses: Value(maxUses),
+      currentUses: const Value(0),
+      minPurchase: Value(minPurchase),
+      isActive: const Value(true),
+      expiresAt: Value(expires),
+      createdAt: Value(now),
+    ),
+  );
 
   try {
     final syncService = ref.read(syncServiceProvider);
@@ -277,20 +282,20 @@ Future<void> deleteCoupon(WidgetRef ref, String id) async {
 /// جميع العروض الترويجية
 final promotionsListProvider =
     FutureProvider.autoDispose<List<PromotionsTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
-  final db = GetIt.I<AppDatabase>();
-  return db.discountsDao.getAllPromotions(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
+      final db = GetIt.I<AppDatabase>();
+      return db.discountsDao.getAllPromotions(storeId);
+    });
 
 /// العروض النشطة فقط
 final activePromotionsProvider =
     FutureProvider.autoDispose<List<PromotionsTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
-  final db = GetIt.I<AppDatabase>();
-  return db.discountsDao.getActivePromotions(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
+      final db = GetIt.I<AppDatabase>();
+      return db.discountsDao.getActivePromotions(storeId);
+    });
 
 /// إضافة عرض ترويجي جديد مع مزامنة
 Future<void> addPromotion(
@@ -311,20 +316,22 @@ Future<void> addPromotion(
   final start = startDate ?? now;
   final end = endDate ?? now.add(const Duration(days: 30));
 
-  await db.discountsDao.insertPromotion(PromotionsTableCompanion(
-    id: Value(id),
-    storeId: Value(storeId),
-    name: Value(name),
-    nameEn: Value(nameEn ?? name),
-    description: Value(description),
-    type: Value(type),
-    rules: Value(rules),
-    startDate: Value(start),
-    endDate: Value(end),
-    isActive: const Value(true),
-    createdAt: Value(now),
-    updatedAt: Value(now),
-  ));
+  await db.discountsDao.insertPromotion(
+    PromotionsTableCompanion(
+      id: Value(id),
+      storeId: Value(storeId),
+      name: Value(name),
+      nameEn: Value(nameEn ?? name),
+      description: Value(description),
+      type: Value(type),
+      rules: Value(rules),
+      startDate: Value(start),
+      endDate: Value(end),
+      isActive: const Value(true),
+      createdAt: Value(now),
+      updatedAt: Value(now),
+    ),
+  );
 
   try {
     final syncService = ref.read(syncServiceProvider);

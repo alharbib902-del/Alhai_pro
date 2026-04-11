@@ -29,7 +29,8 @@ void main() {
       customerId: 'cust-1',
       storeId: 'store-1',
       status: OrderStatus.completed,
-      items: items ??
+      items:
+          items ??
           [
             const OrderItem(
               productId: 'prod-1',
@@ -151,11 +152,7 @@ void main() {
       });
 
       test('should show subtotal, tax, and total', () {
-        final order = createTestOrder(
-          subtotal: 200.0,
-          tax: 30.0,
-          total: 230.0,
-        );
+        final order = createTestOrder(subtotal: 200.0, tax: 30.0, total: 230.0);
         final store = createTestStore();
 
         final receipt = receiptService.generateReceiptText(
@@ -383,10 +380,7 @@ void main() {
 
       test('should include store info in HTML', () {
         final order = createTestOrder();
-        final store = createTestStore(
-          name: 'متجر الهاي',
-          address: 'الرياض',
-        );
+        final store = createTestStore(name: 'متجر الهاي', address: 'الرياض');
 
         final html = receiptService.generateReceiptHtml(
           order: order,

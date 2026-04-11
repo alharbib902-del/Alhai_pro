@@ -15,20 +15,20 @@ abstract final class AlhaiTheme {
   // ============================================
 
   static ThemeData get light => _buildTheme(
-        colorScheme: AlhaiColorScheme.light,
-        statusColors: AlhaiStatusColors.light,
-        brightness: Brightness.light,
-      );
+    colorScheme: AlhaiColorScheme.light,
+    statusColors: AlhaiStatusColors.light,
+    brightness: Brightness.light,
+  );
 
   // ============================================
   // Dark Theme
   // ============================================
 
   static ThemeData get dark => _buildTheme(
-        colorScheme: AlhaiColorScheme.dark,
-        statusColors: AlhaiStatusColors.dark,
-        brightness: Brightness.dark,
-      );
+    colorScheme: AlhaiColorScheme.dark,
+    statusColors: AlhaiStatusColors.dark,
+    brightness: Brightness.dark,
+  );
 
   // ============================================
   // Theme Builder
@@ -81,8 +81,11 @@ abstract final class AlhaiTheme {
       scrollbarTheme: ScrollbarThemeData(
         thickness: const WidgetStatePropertyAll(6),
         radius: const Radius.circular(999),
-        thumbColor: WidgetStatePropertyAll(colorScheme.onSurface
-            .withValues(alpha: brightness == Brightness.dark ? 0.45 : 0.35)),
+        thumbColor: WidgetStatePropertyAll(
+          colorScheme.onSurface.withValues(
+            alpha: brightness == Brightness.dark ? 0.45 : 0.35,
+          ),
+        ),
       ),
 
       // pageTransitionsTheme: يُفرض في كل تطبيق حسب احتياجه
@@ -190,7 +193,9 @@ abstract final class AlhaiTheme {
       iconButtonTheme: IconButtonThemeData(
         style: IconButton.styleFrom(
           minimumSize: const Size(
-              AlhaiSpacing.minTouchTarget, AlhaiSpacing.minTouchTarget),
+            AlhaiSpacing.minTouchTarget,
+            AlhaiSpacing.minTouchTarget,
+          ),
         ),
       ),
 
@@ -235,9 +240,7 @@ abstract final class AlhaiTheme {
         helperStyle: textTheme.bodySmall?.copyWith(
           color: colorScheme.onSurfaceVariant,
         ),
-        errorStyle: textTheme.bodySmall?.copyWith(
-          color: colorScheme.error,
-        ),
+        errorStyle: textTheme.bodySmall?.copyWith(color: colorScheme.error),
         errorMaxLines: 3,
         helperMaxLines: 2,
       ),
@@ -269,9 +272,7 @@ abstract final class AlhaiTheme {
         indicatorColor: colorScheme.primaryContainer,
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.selected)) {
-            return textTheme.labelMedium?.copyWith(
-              color: colorScheme.primary,
-            );
+            return textTheme.labelMedium?.copyWith(color: colorScheme.primary);
           }
           return textTheme.labelMedium?.copyWith(
             color: colorScheme.onSurfaceVariant,
@@ -326,9 +327,7 @@ abstract final class AlhaiTheme {
 
       // List Tile
       listTileTheme: ListTileThemeData(
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
         minVerticalPadding: AlhaiSpacing.sm,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(AlhaiRadius.sm),
@@ -353,9 +352,7 @@ abstract final class AlhaiTheme {
 
       // Checkbox
       checkboxTheme: CheckboxThemeData(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(4),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
       ),
 
       // Radio

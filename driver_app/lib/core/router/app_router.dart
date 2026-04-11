@@ -40,10 +40,8 @@ final driverRouterProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/login',
         name: 'login',
-        pageBuilder: (context, state) => _fadeTransitionPage(
-          key: state.pageKey,
-          child: const LoginScreen(),
-        ),
+        pageBuilder: (context, state) =>
+            _fadeTransitionPage(key: state.pageKey, child: const LoginScreen()),
       ),
       GoRoute(
         path: '/profile-setup',
@@ -131,9 +129,7 @@ final driverRouterProvider = Provider<GoRouter>((ref) {
         name: 'navigation',
         pageBuilder: (context, state) => _slideTransitionPage(
           key: state.pageKey,
-          child: NavigationScreen(
-            deliveryId: state.pathParameters['id'] ?? '',
-          ),
+          child: NavigationScreen(deliveryId: state.pathParameters['id'] ?? ''),
         ),
       ),
       GoRoute(
@@ -151,9 +147,7 @@ final driverRouterProvider = Provider<GoRouter>((ref) {
         name: 'chat',
         pageBuilder: (context, state) => _slideTransitionPage(
           key: state.pageKey,
-          child: ChatScreen(
-            orderId: state.pathParameters['orderId'] ?? '',
-          ),
+          child: ChatScreen(orderId: state.pathParameters['orderId'] ?? ''),
         ),
       ),
       GoRoute(

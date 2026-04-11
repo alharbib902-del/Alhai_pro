@@ -24,8 +24,8 @@ import '../../providers/cashier_mode_provider.dart';
 /// ```
 final accessibilityTextScaleProvider =
     StateNotifierProvider<AccessibilityTextScaleNotifier, double>(
-  (ref) => AccessibilityTextScaleNotifier(),
-);
+      (ref) => AccessibilityTextScaleNotifier(),
+    );
 
 /// مدير حجم النص للوصول
 class AccessibilityTextScaleNotifier extends StateNotifier<double> {
@@ -113,9 +113,9 @@ class AccessibilityScaleWrapper extends ConsumerWidget {
     if (textScale == 1.0) return child;
 
     return MediaQuery(
-      data: MediaQuery.of(context).copyWith(
-        textScaler: TextScaler.linear(textScale),
-      ),
+      data: MediaQuery.of(
+        context,
+      ).copyWith(textScaler: TextScaler.linear(textScale)),
       child: child,
     );
   }
@@ -232,7 +232,9 @@ class CashierModeBadge extends ConsumerWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+        horizontal: AlhaiSpacing.xs,
+        vertical: AlhaiSpacing.xxs,
+      ),
       decoration: BoxDecoration(
         color: AlhaiColors.warning.withValues(alpha: 0.15),
         borderRadius: BorderRadius.circular(8),

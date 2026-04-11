@@ -159,10 +159,7 @@ void main() {
 
     group('JSON serialization', () {
       test('round-trips through JSON', () {
-        final original = createItem(
-          status: SyncStatus.failed,
-          attempts: 2,
-        );
+        final original = createItem(status: SyncStatus.failed, attempts: 2);
 
         final json = original.toJson();
         final restored = SyncQueueItem.fromJson(json);
@@ -245,12 +242,18 @@ void main() {
     test('has all expected values', () {
       expect(ConflictResolution.values.length, 4);
       expect(
-          ConflictResolution.values, contains(ConflictResolution.acceptLocal));
+        ConflictResolution.values,
+        contains(ConflictResolution.acceptLocal),
+      );
       expect(
-          ConflictResolution.values, contains(ConflictResolution.acceptServer));
+        ConflictResolution.values,
+        contains(ConflictResolution.acceptServer),
+      );
       expect(ConflictResolution.values, contains(ConflictResolution.merge));
-      expect(ConflictResolution.values,
-          contains(ConflictResolution.createAdjustment));
+      expect(
+        ConflictResolution.values,
+        contains(ConflictResolution.createAdjustment),
+      );
     });
   });
 

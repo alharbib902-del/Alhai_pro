@@ -27,16 +27,16 @@ enum AppFlavor {
   bool get isProd => this == AppFlavor.prod;
 
   String get label => switch (this) {
-        AppFlavor.dev => 'DEV',
-        AppFlavor.staging => 'STG',
-        AppFlavor.prod => '',
-      };
+    AppFlavor.dev => 'DEV',
+    AppFlavor.staging => 'STG',
+    AppFlavor.prod => '',
+  };
 
   String get appNameSuffix => switch (this) {
-        AppFlavor.dev => ' (Dev)',
-        AppFlavor.staging => ' (Staging)',
-        AppFlavor.prod => '',
-      };
+    AppFlavor.dev => ' (Dev)',
+    AppFlavor.staging => ' (Staging)',
+    AppFlavor.prod => '',
+  };
 }
 
 /// Centralized environment configuration that reads from --dart-define
@@ -47,8 +47,9 @@ class EnvConfig {
 
   /// Supabase
   static const String supabaseUrl = String.fromEnvironment('SUPABASE_URL');
-  static const String supabaseAnonKey =
-      String.fromEnvironment('SUPABASE_ANON_KEY');
+  static const String supabaseAnonKey = String.fromEnvironment(
+    'SUPABASE_ANON_KEY',
+  );
 
   /// AI Server
   static const String aiServerUrl = String.fromEnvironment('AI_SERVER_URL');

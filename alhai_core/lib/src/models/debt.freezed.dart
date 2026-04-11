@@ -12,7 +12,8 @@ part of 'debt.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 Debt _$DebtFromJson(Map<String, dynamic> json) {
   return _Debt.fromJson(json);
@@ -48,20 +49,21 @@ abstract class $DebtCopyWith<$Res> {
   factory $DebtCopyWith(Debt value, $Res Function(Debt) then) =
       _$DebtCopyWithImpl<$Res, Debt>;
   @useResult
-  $Res call(
-      {String id,
-      String storeId,
-      DebtType type,
-      String partyId,
-      String partyName,
-      String? partyPhone,
-      double originalAmount,
-      double remainingAmount,
-      String? orderId,
-      String? notes,
-      DateTime? dueDate,
-      DateTime createdAt,
-      DateTime? updatedAt});
+  $Res call({
+    String id,
+    String storeId,
+    DebtType type,
+    String partyId,
+    String partyName,
+    String? partyPhone,
+    double originalAmount,
+    double remainingAmount,
+    String? orderId,
+    String? notes,
+    DateTime? dueDate,
+    DateTime createdAt,
+    DateTime? updatedAt,
+  });
 }
 
 /// @nodoc
@@ -93,84 +95,89 @@ class _$DebtCopyWithImpl<$Res, $Val extends Debt>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as DebtType,
-      partyId: null == partyId
-          ? _value.partyId
-          : partyId // ignore: cast_nullable_to_non_nullable
-              as String,
-      partyName: null == partyName
-          ? _value.partyName
-          : partyName // ignore: cast_nullable_to_non_nullable
-              as String,
-      partyPhone: freezed == partyPhone
-          ? _value.partyPhone
-          : partyPhone // ignore: cast_nullable_to_non_nullable
-              as String?,
-      originalAmount: null == originalAmount
-          ? _value.originalAmount
-          : originalAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      remainingAmount: null == remainingAmount
-          ? _value.remainingAmount
-          : remainingAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      orderId: freezed == orderId
-          ? _value.orderId
-          : orderId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      dueDate: freezed == dueDate
-          ? _value.dueDate
-          : dueDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            storeId: null == storeId
+                ? _value.storeId
+                : storeId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as DebtType,
+            partyId: null == partyId
+                ? _value.partyId
+                : partyId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            partyName: null == partyName
+                ? _value.partyName
+                : partyName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            partyPhone: freezed == partyPhone
+                ? _value.partyPhone
+                : partyPhone // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            originalAmount: null == originalAmount
+                ? _value.originalAmount
+                : originalAmount // ignore: cast_nullable_to_non_nullable
+                      as double,
+            remainingAmount: null == remainingAmount
+                ? _value.remainingAmount
+                : remainingAmount // ignore: cast_nullable_to_non_nullable
+                      as double,
+            orderId: freezed == orderId
+                ? _value.orderId
+                : orderId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            notes: freezed == notes
+                ? _value.notes
+                : notes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            dueDate: freezed == dueDate
+                ? _value.dueDate
+                : dueDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            updatedAt: freezed == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$DebtImplCopyWith<$Res> implements $DebtCopyWith<$Res> {
   factory _$$DebtImplCopyWith(
-          _$DebtImpl value, $Res Function(_$DebtImpl) then) =
-      __$$DebtImplCopyWithImpl<$Res>;
+    _$DebtImpl value,
+    $Res Function(_$DebtImpl) then,
+  ) = __$$DebtImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String storeId,
-      DebtType type,
-      String partyId,
-      String partyName,
-      String? partyPhone,
-      double originalAmount,
-      double remainingAmount,
-      String? orderId,
-      String? notes,
-      DateTime? dueDate,
-      DateTime createdAt,
-      DateTime? updatedAt});
+  $Res call({
+    String id,
+    String storeId,
+    DebtType type,
+    String partyId,
+    String partyName,
+    String? partyPhone,
+    double originalAmount,
+    double remainingAmount,
+    String? orderId,
+    String? notes,
+    DateTime? dueDate,
+    DateTime createdAt,
+    DateTime? updatedAt,
+  });
 }
 
 /// @nodoc
@@ -178,7 +185,7 @@ class __$$DebtImplCopyWithImpl<$Res>
     extends _$DebtCopyWithImpl<$Res, _$DebtImpl>
     implements _$$DebtImplCopyWith<$Res> {
   __$$DebtImplCopyWithImpl(_$DebtImpl _value, $Res Function(_$DebtImpl) _then)
-      : super(_value, _then);
+    : super(_value, _then);
 
   /// Create a copy of Debt
   /// with the given fields replaced by the non-null parameter values.
@@ -199,81 +206,83 @@ class __$$DebtImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(_$DebtImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as DebtType,
-      partyId: null == partyId
-          ? _value.partyId
-          : partyId // ignore: cast_nullable_to_non_nullable
-              as String,
-      partyName: null == partyName
-          ? _value.partyName
-          : partyName // ignore: cast_nullable_to_non_nullable
-              as String,
-      partyPhone: freezed == partyPhone
-          ? _value.partyPhone
-          : partyPhone // ignore: cast_nullable_to_non_nullable
-              as String?,
-      originalAmount: null == originalAmount
-          ? _value.originalAmount
-          : originalAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      remainingAmount: null == remainingAmount
-          ? _value.remainingAmount
-          : remainingAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      orderId: freezed == orderId
-          ? _value.orderId
-          : orderId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      dueDate: freezed == dueDate
-          ? _value.dueDate
-          : dueDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$DebtImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        storeId: null == storeId
+            ? _value.storeId
+            : storeId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as DebtType,
+        partyId: null == partyId
+            ? _value.partyId
+            : partyId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        partyName: null == partyName
+            ? _value.partyName
+            : partyName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        partyPhone: freezed == partyPhone
+            ? _value.partyPhone
+            : partyPhone // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        originalAmount: null == originalAmount
+            ? _value.originalAmount
+            : originalAmount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        remainingAmount: null == remainingAmount
+            ? _value.remainingAmount
+            : remainingAmount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        orderId: freezed == orderId
+            ? _value.orderId
+            : orderId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        notes: freezed == notes
+            ? _value.notes
+            : notes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        dueDate: freezed == dueDate
+            ? _value.dueDate
+            : dueDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        updatedAt: freezed == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$DebtImpl extends _Debt {
-  const _$DebtImpl(
-      {required this.id,
-      required this.storeId,
-      required this.type,
-      required this.partyId,
-      required this.partyName,
-      this.partyPhone,
-      required this.originalAmount,
-      required this.remainingAmount,
-      this.orderId,
-      this.notes,
-      this.dueDate,
-      required this.createdAt,
-      this.updatedAt})
-      : super._();
+  const _$DebtImpl({
+    required this.id,
+    required this.storeId,
+    required this.type,
+    required this.partyId,
+    required this.partyName,
+    this.partyPhone,
+    required this.originalAmount,
+    required this.remainingAmount,
+    this.orderId,
+    this.notes,
+    this.dueDate,
+    required this.createdAt,
+    this.updatedAt,
+  }) : super._();
 
   factory _$DebtImpl.fromJson(Map<String, dynamic> json) =>
       _$$DebtImplFromJson(json);
@@ -339,20 +348,21 @@ class _$DebtImpl extends _Debt {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      storeId,
-      type,
-      partyId,
-      partyName,
-      partyPhone,
-      originalAmount,
-      remainingAmount,
-      orderId,
-      notes,
-      dueDate,
-      createdAt,
-      updatedAt);
+    runtimeType,
+    id,
+    storeId,
+    type,
+    partyId,
+    partyName,
+    partyPhone,
+    originalAmount,
+    remainingAmount,
+    orderId,
+    notes,
+    dueDate,
+    createdAt,
+    updatedAt,
+  );
 
   /// Create a copy of Debt
   /// with the given fields replaced by the non-null parameter values.
@@ -364,27 +374,26 @@ class _$DebtImpl extends _Debt {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$DebtImplToJson(
-      this,
-    );
+    return _$$DebtImplToJson(this);
   }
 }
 
 abstract class _Debt extends Debt {
-  const factory _Debt(
-      {required final String id,
-      required final String storeId,
-      required final DebtType type,
-      required final String partyId,
-      required final String partyName,
-      final String? partyPhone,
-      required final double originalAmount,
-      required final double remainingAmount,
-      final String? orderId,
-      final String? notes,
-      final DateTime? dueDate,
-      required final DateTime createdAt,
-      final DateTime? updatedAt}) = _$DebtImpl;
+  const factory _Debt({
+    required final String id,
+    required final String storeId,
+    required final DebtType type,
+    required final String partyId,
+    required final String partyName,
+    final String? partyPhone,
+    required final double originalAmount,
+    required final double remainingAmount,
+    final String? orderId,
+    final String? notes,
+    final DateTime? dueDate,
+    required final DateTime createdAt,
+    final DateTime? updatedAt,
+  }) = _$DebtImpl;
   const _Debt._() : super._();
 
   factory _Debt.fromJson(Map<String, dynamic> json) = _$DebtImpl.fromJson;
@@ -450,16 +459,18 @@ mixin _$DebtPayment {
 /// @nodoc
 abstract class $DebtPaymentCopyWith<$Res> {
   factory $DebtPaymentCopyWith(
-          DebtPayment value, $Res Function(DebtPayment) then) =
-      _$DebtPaymentCopyWithImpl<$Res, DebtPayment>;
+    DebtPayment value,
+    $Res Function(DebtPayment) then,
+  ) = _$DebtPaymentCopyWithImpl<$Res, DebtPayment>;
   @useResult
-  $Res call(
-      {String id,
-      String debtId,
-      double amount,
-      String? notes,
-      String? paymentMethod,
-      DateTime createdAt});
+  $Res call({
+    String id,
+    String debtId,
+    double amount,
+    String? notes,
+    String? paymentMethod,
+    DateTime createdAt,
+  });
 }
 
 /// @nodoc
@@ -484,32 +495,35 @@ class _$DebtPaymentCopyWithImpl<$Res, $Val extends DebtPayment>
     Object? paymentMethod = freezed,
     Object? createdAt = null,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      debtId: null == debtId
-          ? _value.debtId
-          : debtId // ignore: cast_nullable_to_non_nullable
-              as String,
-      amount: null == amount
-          ? _value.amount
-          : amount // ignore: cast_nullable_to_non_nullable
-              as double,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      paymentMethod: freezed == paymentMethod
-          ? _value.paymentMethod
-          : paymentMethod // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            debtId: null == debtId
+                ? _value.debtId
+                : debtId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            amount: null == amount
+                ? _value.amount
+                : amount // ignore: cast_nullable_to_non_nullable
+                      as double,
+            notes: freezed == notes
+                ? _value.notes
+                : notes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            paymentMethod: freezed == paymentMethod
+                ? _value.paymentMethod
+                : paymentMethod // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -517,17 +531,19 @@ class _$DebtPaymentCopyWithImpl<$Res, $Val extends DebtPayment>
 abstract class _$$DebtPaymentImplCopyWith<$Res>
     implements $DebtPaymentCopyWith<$Res> {
   factory _$$DebtPaymentImplCopyWith(
-          _$DebtPaymentImpl value, $Res Function(_$DebtPaymentImpl) then) =
-      __$$DebtPaymentImplCopyWithImpl<$Res>;
+    _$DebtPaymentImpl value,
+    $Res Function(_$DebtPaymentImpl) then,
+  ) = __$$DebtPaymentImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String debtId,
-      double amount,
-      String? notes,
-      String? paymentMethod,
-      DateTime createdAt});
+  $Res call({
+    String id,
+    String debtId,
+    double amount,
+    String? notes,
+    String? paymentMethod,
+    DateTime createdAt,
+  });
 }
 
 /// @nodoc
@@ -535,8 +551,9 @@ class __$$DebtPaymentImplCopyWithImpl<$Res>
     extends _$DebtPaymentCopyWithImpl<$Res, _$DebtPaymentImpl>
     implements _$$DebtPaymentImplCopyWith<$Res> {
   __$$DebtPaymentImplCopyWithImpl(
-      _$DebtPaymentImpl _value, $Res Function(_$DebtPaymentImpl) _then)
-      : super(_value, _then);
+    _$DebtPaymentImpl _value,
+    $Res Function(_$DebtPaymentImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of DebtPayment
   /// with the given fields replaced by the non-null parameter values.
@@ -550,45 +567,48 @@ class __$$DebtPaymentImplCopyWithImpl<$Res>
     Object? paymentMethod = freezed,
     Object? createdAt = null,
   }) {
-    return _then(_$DebtPaymentImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      debtId: null == debtId
-          ? _value.debtId
-          : debtId // ignore: cast_nullable_to_non_nullable
-              as String,
-      amount: null == amount
-          ? _value.amount
-          : amount // ignore: cast_nullable_to_non_nullable
-              as double,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      paymentMethod: freezed == paymentMethod
-          ? _value.paymentMethod
-          : paymentMethod // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$DebtPaymentImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        debtId: null == debtId
+            ? _value.debtId
+            : debtId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        amount: null == amount
+            ? _value.amount
+            : amount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        notes: freezed == notes
+            ? _value.notes
+            : notes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        paymentMethod: freezed == paymentMethod
+            ? _value.paymentMethod
+            : paymentMethod // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$DebtPaymentImpl implements _DebtPayment {
-  const _$DebtPaymentImpl(
-      {required this.id,
-      required this.debtId,
-      required this.amount,
-      this.notes,
-      this.paymentMethod,
-      required this.createdAt});
+  const _$DebtPaymentImpl({
+    required this.id,
+    required this.debtId,
+    required this.amount,
+    this.notes,
+    this.paymentMethod,
+    required this.createdAt,
+  });
 
   factory _$DebtPaymentImpl.fromJson(Map<String, dynamic> json) =>
       _$$DebtPaymentImplFromJson(json);
@@ -629,7 +649,14 @@ class _$DebtPaymentImpl implements _DebtPayment {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, id, debtId, amount, notes, paymentMethod, createdAt);
+    runtimeType,
+    id,
+    debtId,
+    amount,
+    notes,
+    paymentMethod,
+    createdAt,
+  );
 
   /// Create a copy of DebtPayment
   /// with the given fields replaced by the non-null parameter values.
@@ -641,20 +668,19 @@ class _$DebtPaymentImpl implements _DebtPayment {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$DebtPaymentImplToJson(
-      this,
-    );
+    return _$$DebtPaymentImplToJson(this);
   }
 }
 
 abstract class _DebtPayment implements DebtPayment {
-  const factory _DebtPayment(
-      {required final String id,
-      required final String debtId,
-      required final double amount,
-      final String? notes,
-      final String? paymentMethod,
-      required final DateTime createdAt}) = _$DebtPaymentImpl;
+  const factory _DebtPayment({
+    required final String id,
+    required final String debtId,
+    required final double amount,
+    final String? notes,
+    final String? paymentMethod,
+    required final DateTime createdAt,
+  }) = _$DebtPaymentImpl;
 
   factory _DebtPayment.fromJson(Map<String, dynamic> json) =
       _$DebtPaymentImpl.fromJson;

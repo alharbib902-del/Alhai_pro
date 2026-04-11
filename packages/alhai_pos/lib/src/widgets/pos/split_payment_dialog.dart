@@ -183,8 +183,9 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
                 style: const TextStyle(color: Colors.white70),
               ),
               Text(
-                AppLocalizations.of(context)
-                    .priceSar(widget.totalAmount.toStringAsFixed(2)),
+                AppLocalizations.of(
+                  context,
+                ).priceSar(widget.totalAmount.toStringAsFixed(2)),
                 style: AppTypography.titleLarge.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -201,8 +202,9 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
                 style: const TextStyle(color: Colors.white70),
               ),
               Text(
-                AppLocalizations.of(context)
-                    .priceSar(_totalPaid.toStringAsFixed(2)),
+                AppLocalizations.of(
+                  context,
+                ).priceSar(_totalPaid.toStringAsFixed(2)),
                 style: const TextStyle(color: Colors.white),
               ),
             ],
@@ -223,8 +225,9 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
               Text(
                 _isComplete
                     ? '✓'
-                    : AppLocalizations.of(context)
-                        .priceSar(_remaining.toStringAsFixed(2)),
+                    : AppLocalizations.of(
+                        context,
+                      ).priceSar(_remaining.toStringAsFixed(2)),
                 style: AppTypography.titleMedium.copyWith(
                   color: Colors.white,
                   fontWeight: FontWeight.bold,
@@ -243,9 +246,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
       children: [
         Text(
           AppLocalizations.of(context).paymentMethodTitle,
-          style: AppTypography.titleSmall.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTypography.titleSmall.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: AppSizes.md),
         Row(
@@ -253,8 +254,9 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
             final isSelected = _selectedMethod == method;
             return Expanded(
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AlhaiSpacing.xxs,
+                ),
                 child: _PaymentMethodCard(
                   method: method,
                   isSelected: isSelected,
@@ -277,9 +279,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
       children: [
         Text(
           AppLocalizations.of(context).amount,
-          style: AppTypography.titleSmall.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTypography.titleSmall.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: AppSizes.sm),
         TextField(
@@ -319,8 +319,9 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
       runSpacing: AppSizes.sm,
       children: quickAmounts.map((amount) {
         return ActionChip(
-          label: Text(AppLocalizations.of(context)
-              .amountSar(amount.toStringAsFixed(0))),
+          label: Text(
+            AppLocalizations.of(context).amountSar(amount.toStringAsFixed(0)),
+          ),
           onPressed: () {
             _amountController.text = amount.toStringAsFixed(2);
           },
@@ -348,9 +349,7 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
       children: [
         Text(
           l10n.payments,
-          style: AppTypography.titleSmall.copyWith(
-            fontWeight: FontWeight.w600,
-          ),
+          style: AppTypography.titleSmall.copyWith(fontWeight: FontWeight.w600),
         ),
         const SizedBox(height: AppSizes.sm),
         ...List.generate(_splits.length, (index) {
@@ -358,24 +357,25 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
           return Card(
             margin: const EdgeInsets.only(bottom: AppSizes.sm),
             child: ListTile(
-              leading: Icon(
-                split.method.icon,
-                color: split.method.color,
-              ),
+              leading: Icon(split.method.icon, color: split.method.color),
               title: Text(split.method.localizedLabel(l10n)),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                    AppLocalizations.of(context)
-                        .priceSar(split.amount.toStringAsFixed(2)),
+                    AppLocalizations.of(
+                      context,
+                    ).priceSar(split.amount.toStringAsFixed(2)),
                     style: AppTypography.titleSmall.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close,
-                        color: AppColors.error, size: 20),
+                    icon: const Icon(
+                      Icons.close,
+                      color: AppColors.error,
+                      size: 20,
+                    ),
                     onPressed: () => _removeSplit(index),
                     tooltip: AppLocalizations.of(context).delete,
                   ),
@@ -414,7 +414,8 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
     if (amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(AppLocalizations.of(context).enterValidAmountSplit)),
+          content: Text(AppLocalizations.of(context).enterValidAmountSplit),
+        ),
       );
       return;
     }
@@ -422,17 +423,15 @@ class _SplitPaymentDialogState extends State<SplitPaymentDialog> {
     if (amount > _remaining) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(AppLocalizations.of(context).amountExceedsSplit)),
+          content: Text(AppLocalizations.of(context).amountExceedsSplit),
+        ),
       );
       return;
     }
 
     HapticFeedback.mediumImpact();
     setState(() {
-      _splits.add(PaymentSplit(
-        method: _selectedMethod,
-        amount: amount,
-      ));
+      _splits.add(PaymentSplit(method: _selectedMethod, amount: amount));
       _amountController.text = _remaining > amount
           ? (_remaining - amount).toStringAsFixed(2)
           : '0.00';
@@ -503,10 +502,12 @@ class _PaymentMethodCard extends StatelessWidget {
                   Text(
                     method.localizedLabel(AppLocalizations.of(context)),
                     style: AppTypography.labelSmall.copyWith(
-                      color:
-                          isSelected ? method.color : AppColors.textSecondary,
-                      fontWeight:
-                          isSelected ? FontWeight.bold : FontWeight.normal,
+                      color: isSelected
+                          ? method.color
+                          : AppColors.textSecondary,
+                      fontWeight: isSelected
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                     ),
                     textAlign: TextAlign.center,
                   ),
@@ -521,12 +522,7 @@ class _PaymentMethodCard extends StatelessWidget {
 }
 
 /// طرق الدفع
-enum PaymentMethod {
-  cash,
-  card,
-  credit,
-  transfer,
-}
+enum PaymentMethod { cash, card, credit, transfer }
 
 extension PaymentMethodExtension on PaymentMethod {
   String get label => _fallbackLabel;
@@ -589,8 +585,5 @@ class PaymentSplit {
   final PaymentMethod method;
   final double amount;
 
-  PaymentSplit({
-    required this.method,
-    required this.amount,
-  });
+  PaymentSplit({required this.method, required this.amount});
 }

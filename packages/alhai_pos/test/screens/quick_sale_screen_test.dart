@@ -34,9 +34,7 @@ class MockSyncManager extends Mock implements SyncManager {}
 // Helpers
 // ---------------------------------------------------------------------------
 
-Widget _buildTestWidget({
-  List<Override> overrides = const [],
-}) {
+Widget _buildTestWidget({List<Override> overrides = const []}) {
   final mockSyncManager = MockSyncManager();
 
   return ProviderScope(
@@ -79,10 +77,12 @@ void main() {
     when(() => mockDb.categoriesDao).thenReturn(mockCategoriesDao);
     when(() => mockDb.syncQueueDao).thenReturn(mockSyncQueueDao);
 
-    when(() => mockProductsDao.getAllProducts(any()))
-        .thenAnswer((_) async => []);
-    when(() => mockCategoriesDao.getAllCategories(any()))
-        .thenAnswer((_) async => []);
+    when(
+      () => mockProductsDao.getAllProducts(any()),
+    ).thenAnswer((_) async => []);
+    when(
+      () => mockCategoriesDao.getAllCategories(any()),
+    ).thenAnswer((_) async => []);
 
     final getIt = GetIt.instance;
     if (getIt.isRegistered<AppDatabase>()) {

@@ -61,7 +61,10 @@ class RefundReceiptScreen extends ConsumerWidget {
               return Center(child: Text(l10n.refundNotFound));
             }
             return _buildReceiptContent(
-                context, detail.returnData, detail.items);
+              context,
+              detail.returnData,
+              detail.items,
+            );
           },
         ),
       ),
@@ -96,20 +99,26 @@ class RefundReceiptScreen extends ConsumerWidget {
                   color: AppColors.success.withValues(alpha: 0.15),
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.check_circle,
-                    size: 48, color: AppColors.success),
+                child: const Icon(
+                  Icons.check_circle,
+                  size: 48,
+                  color: AppColors.success,
+                ),
               ),
               const SizedBox(height: AlhaiSpacing.md),
               Text(
                 l10n.refundSuccessful,
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: AlhaiSpacing.xs),
               Text(
                 l10n.refundNumberLabel(returnData.returnNumber),
                 style: TextStyle(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant),
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
               ),
               const SizedBox(height: AlhaiSpacing.xl),
 
@@ -119,51 +128,67 @@ class RefundReceiptScreen extends ConsumerWidget {
                   padding: const EdgeInsets.all(AlhaiSpacing.mdl),
                   child: Column(
                     children: [
-                      Text(l10n.refundReceipt,
-                          style: const TextStyle(
-                              fontSize: 18, fontWeight: FontWeight.bold)),
+                      Text(
+                        l10n.refundReceipt,
+                        style: const TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                       const Divider(height: 24),
                       _ReceiptRow(
-                          label: l10n.originalInvoiceNumber,
-                          value: returnData.saleId),
+                        label: l10n.originalInvoiceNumber,
+                        value: returnData.saleId,
+                      ),
                       _ReceiptRow(
-                          label: l10n.refundDate,
-                          value: _formatDate(returnData.createdAt)),
+                        label: l10n.refundDate,
+                        value: _formatDate(returnData.createdAt),
+                      ),
                       if (returnData.createdBy != null &&
                           returnData.createdBy!.isNotEmpty)
                         _ReceiptRow(
-                            label: l10n.cashierLabel,
-                            value: returnData.createdBy!),
+                          label: l10n.cashierLabel,
+                          value: returnData.createdBy!,
+                        ),
                       if (returnData.refundMethod.isNotEmpty)
                         _ReceiptRow(
-                            label: l10n.refundMethodField,
-                            value: _getRefundMethodLabel(
-                                context, returnData.refundMethod)),
+                          label: l10n.refundMethodField,
+                          value: _getRefundMethodLabel(
+                            context,
+                            returnData.refundMethod,
+                          ),
+                        ),
                       const Divider(height: 24),
-                      Text(l10n.returnedProducts,
-                          style: const TextStyle(fontWeight: FontWeight.bold)),
+                      Text(
+                        l10n.returnedProducts,
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
                       const SizedBox(height: AlhaiSpacing.xs),
 
                       // Items list
-                      ...items.map((item) => _ProductRow(
-                            name: item.productName,
-                            qty: item.qty.toInt(),
-                            price: item.unitPrice,
-                          )),
+                      ...items.map(
+                        (item) => _ProductRow(
+                          name: item.productName,
+                          qty: item.qty.toInt(),
+                          price: item.unitPrice,
+                        ),
+                      ),
 
                       const Divider(height: 24),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(l10n.totalRefund,
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold)),
+                          Text(
+                            l10n.totalRefund,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
                           Text(
                             '${totalRefund.toStringAsFixed(2)} ${l10n.sar}',
                             style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: Theme.of(context).colorScheme.error,
-                                fontSize: 18),
+                              fontWeight: FontWeight.bold,
+                              color: Theme.of(context).colorScheme.error,
+                              fontSize: 18,
+                            ),
                           ),
                         ],
                       ),
@@ -173,11 +198,14 @@ class RefundReceiptScreen extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(l10n.reasonLabel,
-                                style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant)),
+                            Text(
+                              l10n.reasonLabel,
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
                             Text(_getReasonLabel(context, returnData.reason!)),
                           ],
                         ),
@@ -187,14 +215,20 @@ class RefundReceiptScreen extends ConsumerWidget {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(l10n.notesLabel,
-                                style: TextStyle(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant)),
+                            Text(
+                              l10n.notesLabel,
+                              style: TextStyle(
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                              ),
+                            ),
                             Flexible(
-                                child: Text(returnData.notes!,
-                                    textAlign: TextAlign.end)),
+                              child: Text(
+                                returnData.notes!,
+                                textAlign: TextAlign.end,
+                              ),
+                            ),
                           ],
                         ),
                       ],
@@ -215,18 +249,22 @@ class RefundReceiptScreen extends ConsumerWidget {
                     icon: const Icon(Icons.print),
                     label: Text(l10n.printAction),
                     style: OutlinedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: AlhaiSpacing.lg,
-                            vertical: AlhaiSpacing.sm)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AlhaiSpacing.lg,
+                        vertical: AlhaiSpacing.sm,
+                      ),
+                    ),
                   ),
                   FilledButton.icon(
                     onPressed: () => context.go('/returns'),
                     icon: const Icon(Icons.home),
                     label: Text(l10n.homeAction),
                     style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: AlhaiSpacing.lg,
-                            vertical: AlhaiSpacing.sm)),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AlhaiSpacing.lg,
+                        vertical: AlhaiSpacing.sm,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -244,8 +282,9 @@ class RefundReceiptScreen extends ConsumerWidget {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(AppLocalizations.of(context).printError(e.toString())),
+            content: Text(
+              AppLocalizations.of(context).printError(e.toString()),
+            ),
             backgroundColor: AppColors.error,
           ),
         );
@@ -304,14 +343,20 @@ class _ReceiptRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontSize: 13)),
+          Text(
+            label,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+              fontSize: 13,
+            ),
+          ),
           Flexible(
-              child: Text(value,
-                  style: const TextStyle(fontSize: 13),
-                  textAlign: TextAlign.end)),
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 13),
+              textAlign: TextAlign.end,
+            ),
+          ),
         ],
       ),
     );
@@ -322,8 +367,11 @@ class _ProductRow extends StatelessWidget {
   final String name;
   final int qty;
   final double price;
-  const _ProductRow(
-      {required this.name, required this.qty, required this.price});
+  const _ProductRow({
+    required this.name,
+    required this.qty,
+    required this.price,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -332,9 +380,12 @@ class _ProductRow extends StatelessWidget {
       child: Row(
         children: [
           Expanded(child: Text(name)),
-          Text('$qty × ${price.toStringAsFixed(2)}',
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant)),
+          Text(
+            '$qty × ${price.toStringAsFixed(2)}',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );

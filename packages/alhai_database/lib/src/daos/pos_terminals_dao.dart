@@ -11,8 +11,9 @@ class PosTerminalsDao extends DatabaseAccessor<AppDatabase>
   PosTerminalsDao(super.db);
 
   Future<PosTerminalsTableData?> getTerminal(String id) {
-    return (select(posTerminalsTable)..where((t) => t.id.equals(id)))
-        .getSingleOrNull();
+    return (select(
+      posTerminalsTable,
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
   }
 
   Future<List<PosTerminalsTableData>> getStoreTerminals(String storeId) {
@@ -30,21 +31,22 @@ class PosTerminalsDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<List<PosTerminalsTableData>> getActiveTerminals(String storeId) {
-    return (select(posTerminalsTable)
-          ..where((t) => t.storeId.equals(storeId) & t.isActive.equals(true)))
-        .get();
+    return (select(
+      posTerminalsTable,
+    )..where((t) => t.storeId.equals(storeId) & t.isActive.equals(true))).get();
   }
 
-  Future<int> upsertTerminal(PosTerminalsTableCompanion terminal) =>
-      into(posTerminalsTable)
-          .insert(terminal, mode: InsertMode.insertOrReplace);
+  Future<int> upsertTerminal(PosTerminalsTableCompanion terminal) => into(
+    posTerminalsTable,
+  ).insert(terminal, mode: InsertMode.insertOrReplace);
 
   Future<int> deleteTerminal(String id) =>
       (delete(posTerminalsTable)..where((t) => t.id.equals(id))).go();
 
   Future<int> updateHeartbeat(String id) {
     return (update(posTerminalsTable)..where((t) => t.id.equals(id))).write(
-        PosTerminalsTableCompanion(lastHeartbeatAt: Value(DateTime.now())));
+      PosTerminalsTableCompanion(lastHeartbeatAt: Value(DateTime.now())),
+    );
   }
 
   Future<int> updateCurrentShift(String terminalId, String? shiftId) {
@@ -58,7 +60,8 @@ class PosTerminalsDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<int> markAsSynced(String id) {
-    return (update(posTerminalsTable)..where((t) => t.id.equals(id)))
-        .write(PosTerminalsTableCompanion(syncedAt: Value(DateTime.now())));
+    return (update(posTerminalsTable)..where((t) => t.id.equals(id))).write(
+      PosTerminalsTableCompanion(syncedAt: Value(DateTime.now())),
+    );
   }
 }

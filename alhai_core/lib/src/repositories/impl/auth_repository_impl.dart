@@ -20,8 +20,8 @@ class AuthRepositoryImpl implements AuthRepository {
   AuthRepositoryImpl({
     required AuthRemoteDataSource remote,
     required AuthLocalDataSource local,
-  })  : _remote = remote,
-        _local = local;
+  }) : _remote = remote,
+       _local = local;
 
   @override
   Future<void> sendOtp(String phone) async {
@@ -42,11 +42,13 @@ class AuthRepositoryImpl implements AuthRepository {
       final authResult = response.toDomain();
 
       // Store tokens locally
-      await _local.saveTokens(AuthTokensEntity.fromDateTime(
-        accessToken: authResult.tokens.accessToken,
-        refreshToken: authResult.tokens.refreshToken,
-        expiresAt: authResult.tokens.expiresAt,
-      ));
+      await _local.saveTokens(
+        AuthTokensEntity.fromDateTime(
+          accessToken: authResult.tokens.accessToken,
+          refreshToken: authResult.tokens.refreshToken,
+          expiresAt: authResult.tokens.expiresAt,
+        ),
+      );
 
       // Store user locally using UserEntity
       await _local.saveUser(UserEntity.fromDomain(authResult.user));
@@ -76,11 +78,13 @@ class AuthRepositoryImpl implements AuthRepository {
       final tokens = response.toDomain();
 
       // Store new tokens
-      await _local.saveTokens(AuthTokensEntity.fromDateTime(
-        accessToken: tokens.accessToken,
-        refreshToken: tokens.refreshToken,
-        expiresAt: tokens.expiresAt,
-      ));
+      await _local.saveTokens(
+        AuthTokensEntity.fromDateTime(
+          accessToken: tokens.accessToken,
+          refreshToken: tokens.refreshToken,
+          expiresAt: tokens.expiresAt,
+        ),
+      );
 
       return tokens;
     } on DioException catch (e) {

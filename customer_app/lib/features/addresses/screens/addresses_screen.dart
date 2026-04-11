@@ -79,8 +79,10 @@ class AddressesScreen extends ConsumerWidget {
                     color: theme.colorScheme.error,
                     borderRadius: AlhaiRadius.borderMd,
                   ),
-                  child: Icon(Icons.delete_outline,
-                      color: theme.colorScheme.onError),
+                  child: Icon(
+                    Icons.delete_outline,
+                    color: theme.colorScheme.onError,
+                  ),
                 ),
                 confirmDismiss: (_) async => true,
                 onDismissed: (_) async {
@@ -96,8 +98,9 @@ class AddressesScreen extends ConsumerWidget {
                       address.isDefault
                           ? Icons.location_on
                           : Icons.location_on_outlined,
-                      color:
-                          address.isDefault ? theme.colorScheme.primary : null,
+                      color: address.isDefault
+                          ? theme.colorScheme.primary
+                          : null,
                     ),
                     title: Row(
                       children: [
@@ -237,13 +240,15 @@ class AddressesScreen extends ConsumerWidget {
                 }
 
                 final ds = locator<AddressesDatasource>();
-                await ds.createAddress(CreateAddressParams(
-                  label: labelCtrl.text,
-                  fullAddress: addressCtrl.text,
-                  city: cityCtrl.text,
-                  lat: lat,
-                  lng: lng,
-                ));
+                await ds.createAddress(
+                  CreateAddressParams(
+                    label: labelCtrl.text,
+                    fullAddress: addressCtrl.text,
+                    city: cityCtrl.text,
+                    lat: lat,
+                    lng: lng,
+                  ),
+                );
 
                 ref.invalidate(addressesListProvider);
                 if (context.mounted) Navigator.pop(context);

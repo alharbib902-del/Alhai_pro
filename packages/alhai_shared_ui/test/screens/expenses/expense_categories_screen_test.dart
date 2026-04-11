@@ -120,10 +120,12 @@ void main() {
 
       final completer = Completer<List<ExpenseCategoriesTableData>>();
 
-      await tester.pumpWidget(_buildTestWidget(
-        categoriesValue: const AsyncValue.loading(),
-        loadingCompleter: completer,
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          categoriesValue: const AsyncValue.loading(),
+          loadingCompleter: completer,
+        ),
+      );
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -136,9 +138,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        categoriesValue: const AsyncValue.data([]),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(categoriesValue: const AsyncValue.data([])),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byType(AppEmptyState), findsOneWidget);

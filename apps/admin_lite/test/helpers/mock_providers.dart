@@ -22,20 +22,26 @@ List<Override> defaultProviderOverrides({
 }) {
   final mockSyncService = MockSyncService();
 
-  when(() => mockSyncService.enqueueCreate(
-        tableName: any(named: 'tableName'),
-        recordId: any(named: 'recordId'),
-        data: any(named: 'data'),
-      )).thenAnswer((_) async => 'mock-sync-id');
-  when(() => mockSyncService.enqueueUpdate(
-        tableName: any(named: 'tableName'),
-        recordId: any(named: 'recordId'),
-        changes: any(named: 'changes'),
-      )).thenAnswer((_) async => 'mock-sync-id');
-  when(() => mockSyncService.enqueueDelete(
-        tableName: any(named: 'tableName'),
-        recordId: any(named: 'recordId'),
-      )).thenAnswer((_) async => 'mock-sync-id');
+  when(
+    () => mockSyncService.enqueueCreate(
+      tableName: any(named: 'tableName'),
+      recordId: any(named: 'recordId'),
+      data: any(named: 'data'),
+    ),
+  ).thenAnswer((_) async => 'mock-sync-id');
+  when(
+    () => mockSyncService.enqueueUpdate(
+      tableName: any(named: 'tableName'),
+      recordId: any(named: 'recordId'),
+      changes: any(named: 'changes'),
+    ),
+  ).thenAnswer((_) async => 'mock-sync-id');
+  when(
+    () => mockSyncService.enqueueDelete(
+      tableName: any(named: 'tableName'),
+      recordId: any(named: 'recordId'),
+    ),
+  ).thenAnswer((_) async => 'mock-sync-id');
 
   return [
     currentStoreIdProvider.overrideWith((ref) => storeId),

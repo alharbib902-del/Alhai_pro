@@ -18,7 +18,9 @@ import 'package:drift/drift.dart';
 @TableIndex(name: 'idx_wa_msg_type', columns: {#messageType})
 @TableIndex(name: 'idx_wa_msg_created_at', columns: {#createdAt})
 @TableIndex(
-    name: 'idx_wa_msg_reference', columns: {#referenceType, #referenceId})
+  name: 'idx_wa_msg_reference',
+  columns: {#referenceType, #referenceId},
+)
 @TableIndex(name: 'idx_wa_msg_batch', columns: {#batchId})
 @TableIndex(name: 'idx_wa_msg_external', columns: {#externalMsgId})
 class WhatsAppMessagesTable extends Table {

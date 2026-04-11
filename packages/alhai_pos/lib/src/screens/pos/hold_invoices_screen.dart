@@ -41,7 +41,9 @@ class HoldInvoicesScreen extends ConsumerWidget {
                         const SizedBox(width: AlhaiSpacing.xs),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: AlhaiSpacing.xs, vertical: 2),
+                            horizontal: AlhaiSpacing.xs,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.warning.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(12),
@@ -68,7 +70,11 @@ class HoldInvoicesScreen extends ConsumerWidget {
             data: (invoices) => invoices.isNotEmpty
                 ? TextButton.icon(
                     onPressed: () => _showClearAllDialog(
-                        context, ref, l10n, invoices.length),
+                      context,
+                      ref,
+                      l10n,
+                      invoices.length,
+                    ),
                     icon: const Icon(Icons.delete_sweep, size: 20),
                     label: Text(l10n.clearAll),
                     style: TextButton.styleFrom(
@@ -112,24 +118,31 @@ class HoldInvoicesScreen extends ConsumerWidget {
                             background: Container(
                               alignment: AlignmentDirectional.centerEnd,
                               padding: const EdgeInsetsDirectional.only(
-                                  end: AlhaiSpacing.lg),
-                              margin:
-                                  const EdgeInsets.only(bottom: AppSizes.md),
+                                end: AlhaiSpacing.lg,
+                              ),
+                              margin: const EdgeInsets.only(
+                                bottom: AppSizes.md,
+                              ),
                               decoration: BoxDecoration(
                                 color: AppColors.error,
-                                borderRadius:
-                                    BorderRadius.circular(AppSizes.radiusLg),
+                                borderRadius: BorderRadius.circular(
+                                  AppSizes.radiusLg,
+                                ),
                               ),
-                              child: const Icon(Icons.delete_outline,
-                                  color: AppColors.textOnPrimary, size: 28),
+                              child: const Icon(
+                                Icons.delete_outline,
+                                color: AppColors.textOnPrimary,
+                                size: 28,
+                              ),
                             ),
                             confirmDismiss: (_) async {
                               return await showDialog<bool>(
                                     context: context,
                                     builder: (ctx) => AlertDialog(
                                       title: Text(l10n.deleteInvoiceTitle),
-                                      content:
-                                          Text(l10n.deleteHeldInvoiceConfirm),
+                                      content: Text(
+                                        l10n.deleteHeldInvoiceConfirm,
+                                      ),
                                       actions: [
                                         TextButton(
                                           onPressed: () =>
@@ -191,22 +204,28 @@ class HoldInvoicesScreen extends ConsumerWidget {
                           background: Container(
                             alignment: AlignmentDirectional.centerEnd,
                             padding: const EdgeInsetsDirectional.only(
-                                end: AlhaiSpacing.lg),
+                              end: AlhaiSpacing.lg,
+                            ),
                             decoration: BoxDecoration(
                               color: AppColors.error,
-                              borderRadius:
-                                  BorderRadius.circular(AppSizes.radiusLg),
+                              borderRadius: BorderRadius.circular(
+                                AppSizes.radiusLg,
+                              ),
                             ),
-                            child: const Icon(Icons.delete_outline,
-                                color: AppColors.textOnPrimary, size: 28),
+                            child: const Icon(
+                              Icons.delete_outline,
+                              color: AppColors.textOnPrimary,
+                              size: 28,
+                            ),
                           ),
                           confirmDismiss: (_) async {
                             return await showDialog<bool>(
                                   context: context,
                                   builder: (ctx) => AlertDialog(
                                     title: Text(l10n.deleteInvoiceTitle),
-                                    content:
-                                        Text(l10n.deleteHeldInvoiceConfirm),
+                                    content: Text(
+                                      l10n.deleteHeldInvoiceConfirm,
+                                    ),
                                     actions: [
                                       TextButton(
                                         onPressed: () =>
@@ -256,8 +275,12 @@ class HoldInvoicesScreen extends ConsumerWidget {
     );
   }
 
-  void _resumeInvoice(BuildContext context, WidgetRef ref, HeldInvoice invoice,
-      AppLocalizations l10n) async {
+  void _resumeInvoice(
+    BuildContext context,
+    WidgetRef ref,
+    HeldInvoice invoice,
+    AppLocalizations l10n,
+  ) async {
     HapticFeedback.mediumImpact();
 
     // استعادة الفاتورة من قاعدة البيانات إلى السلة
@@ -269,8 +292,11 @@ class HoldInvoicesScreen extends ConsumerWidget {
       SnackBar(
         content: Row(
           children: [
-            const Icon(Icons.play_arrow_rounded,
-                color: AppColors.textOnPrimary, size: 20),
+            const Icon(
+              Icons.play_arrow_rounded,
+              color: AppColors.textOnPrimary,
+              size: 20,
+            ),
             const SizedBox(width: AlhaiSpacing.xs),
             Text(l10n.resumedInvoice(invoice.description)),
           ],
@@ -282,8 +308,12 @@ class HoldInvoicesScreen extends ConsumerWidget {
     Navigator.pop(context, true); // true = تم استعادة الفاتورة
   }
 
-  void _deleteInvoice(BuildContext context, WidgetRef ref, HeldInvoice invoice,
-      AppLocalizations l10n) {
+  void _deleteInvoice(
+    BuildContext context,
+    WidgetRef ref,
+    HeldInvoice invoice,
+    AppLocalizations l10n,
+  ) {
     showDialog(
       context: context,
       builder: (dialogCtx) => AlertDialog(
@@ -320,7 +350,11 @@ class HoldInvoicesScreen extends ConsumerWidget {
   }
 
   void _showClearAllDialog(
-      BuildContext context, WidgetRef ref, AppLocalizations l10n, int count) {
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+    int count,
+  ) {
     showDialog(
       context: context,
       builder: (dialogCtx) => AlertDialog(
@@ -438,7 +472,8 @@ class _HoldInvoiceCard extends StatelessWidget {
                     children: [
                       Text(
                         l10n.debtAmountWithCurrency(
-                            cart.total.toStringAsFixed(2)),
+                          cart.total.toStringAsFixed(2),
+                        ),
                         style: AppTypography.titleMedium.copyWith(
                           color: AppColors.primary,
                           fontWeight: FontWeight.bold,
@@ -461,57 +496,63 @@ class _HoldInvoiceCard extends StatelessWidget {
               // Invoice items (first 3 only)
               if (cart.items.isNotEmpty) ...[
                 const Divider(height: AppSizes.xl),
-                ...cart.items.take(3).map((item) => Padding(
-                      padding: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 6,
-                            height: 6,
-                            decoration: BoxDecoration(
-                              color: isDark
-                                  ? AppColors.grey600
-                                  : AppColors.grey400,
-                              shape: BoxShape.circle,
+                ...cart.items
+                    .take(3)
+                    .map(
+                      (item) => Padding(
+                        padding: const EdgeInsets.only(
+                          bottom: AlhaiSpacing.xxs,
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              width: 6,
+                              height: 6,
+                              decoration: BoxDecoration(
+                                color: isDark
+                                    ? AppColors.grey600
+                                    : AppColors.grey400,
+                                shape: BoxShape.circle,
+                              ),
                             ),
-                          ),
-                          const SizedBox(width: AlhaiSpacing.xs),
-                          Expanded(
-                            child: Text(
-                              item.product.name,
+                            const SizedBox(width: AlhaiSpacing.xs),
+                            Expanded(
+                              child: Text(
+                                item.product.name,
+                                style: TextStyle(
+                                  fontSize: 13,
+                                  color: isDark
+                                      ? AppColors.textSecondaryDark
+                                      : AppColors.textSecondary,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                            Text(
+                              '\u00d7${item.quantity}',
                               style: TextStyle(
-                                fontSize: 13,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: isDark
+                                    ? AppColors.textMutedDark
+                                    : AppColors.textMuted,
+                              ),
+                            ),
+                            const SizedBox(width: AlhaiSpacing.xs),
+                            Text(
+                              item.total.toStringAsFixed(2),
+                              style: TextStyle(
+                                fontSize: 12,
                                 color: isDark
                                     ? AppColors.textSecondaryDark
                                     : AppColors.textSecondary,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
                             ),
-                          ),
-                          Text(
-                            '\u00d7${item.quantity}',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: isDark
-                                  ? AppColors.textMutedDark
-                                  : AppColors.textMuted,
-                            ),
-                          ),
-                          const SizedBox(width: AlhaiSpacing.xs),
-                          Text(
-                            item.total.toStringAsFixed(2),
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: isDark
-                                  ? AppColors.textSecondaryDark
-                                  : AppColors.textSecondary,
-                            ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    )),
+                    ),
                 if (cart.items.length > 3)
                   Padding(
                     padding: const EdgeInsets.only(top: AlhaiSpacing.xxs),
@@ -569,11 +610,13 @@ class _HoldInvoiceCard extends StatelessWidget {
                 const SizedBox(height: AppSizes.sm),
                 Row(
                   children: [
-                    Icon(Icons.person_outline,
-                        size: 16,
-                        color: isDark
-                            ? AppColors.textMutedDark
-                            : AppColors.textMuted),
+                    Icon(
+                      Icons.person_outline,
+                      size: 16,
+                      color: isDark
+                          ? AppColors.textMutedDark
+                          : AppColors.textMuted,
+                    ),
                     const SizedBox(width: AlhaiSpacing.xxs),
                     Text(
                       cart.customerName!,

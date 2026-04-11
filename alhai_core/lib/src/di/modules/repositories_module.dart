@@ -53,11 +53,7 @@ abstract class RepositoriesModule {
   AuthRepository authRepository(
     AuthRemoteDataSource remoteDataSource,
     AuthLocalDataSource localDataSource,
-  ) =>
-      AuthRepositoryImpl(
-        remote: remoteDataSource,
-        local: localDataSource,
-      );
+  ) => AuthRepositoryImpl(remote: remoteDataSource, local: localDataSource);
 
   // ============================================
   // Products & Categories
@@ -67,15 +63,13 @@ abstract class RepositoriesModule {
   @lazySingleton
   ProductsRepository productsRepository(
     ProductsRemoteDataSource remoteDataSource,
-  ) =>
-      ProductsRepositoryImpl(remote: remoteDataSource);
+  ) => ProductsRepositoryImpl(remote: remoteDataSource);
 
   /// CategoriesRepository implementation
   @lazySingleton
   CategoriesRepository categoriesRepository(
     CategoriesRemoteDataSource remoteDataSource,
-  ) =>
-      CategoriesRepositoryImpl(remote: remoteDataSource);
+  ) => CategoriesRepositoryImpl(remote: remoteDataSource);
 
   // ============================================
   // Orders & Delivery
@@ -83,24 +77,20 @@ abstract class RepositoriesModule {
 
   /// OrdersRepository implementation
   @lazySingleton
-  OrdersRepository ordersRepository(
-    OrdersRemoteDataSource remoteDataSource,
-  ) =>
+  OrdersRepository ordersRepository(OrdersRemoteDataSource remoteDataSource) =>
       OrdersRepositoryImpl(remote: remoteDataSource);
 
   /// DeliveryRepository implementation
   @lazySingleton
   DeliveryRepository deliveryRepository(
     DeliveryRemoteDataSource remoteDataSource,
-  ) =>
-      DeliveryRepositoryImpl(remote: remoteDataSource);
+  ) => DeliveryRepositoryImpl(remote: remoteDataSource);
 
   /// AddressesRepository implementation
   @lazySingleton
   AddressesRepository addressesRepository(
     AddressesRemoteDataSource remoteDataSource,
-  ) =>
-      AddressesRepositoryImpl(remote: remoteDataSource);
+  ) => AddressesRepositoryImpl(remote: remoteDataSource);
 
   // ============================================
   // Stores
@@ -108,9 +98,7 @@ abstract class RepositoriesModule {
 
   /// StoresRepository implementation
   @lazySingleton
-  StoresRepository storesRepository(
-    StoresRemoteDataSource remoteDataSource,
-  ) =>
+  StoresRepository storesRepository(StoresRemoteDataSource remoteDataSource) =>
       StoresRepositoryImpl(remote: remoteDataSource);
 
   // ============================================
@@ -121,22 +109,19 @@ abstract class RepositoriesModule {
   @lazySingleton
   InventoryRepository inventoryRepository(
     InventoryRemoteDataSource remoteDataSource,
-  ) =>
-      InventoryRepositoryImpl(remote: remoteDataSource);
+  ) => InventoryRepositoryImpl(remote: remoteDataSource);
 
   /// SuppliersRepository implementation
   @lazySingleton
   SuppliersRepository suppliersRepository(
     SuppliersRemoteDataSource remoteDataSource,
-  ) =>
-      SuppliersRepositoryImpl(remote: remoteDataSource);
+  ) => SuppliersRepositoryImpl(remote: remoteDataSource);
 
   /// PurchasesRepository implementation
   @lazySingleton
   PurchasesRepository purchasesRepository(
     PurchasesRemoteDataSource remoteDataSource,
-  ) =>
-      PurchasesRepositoryImpl(remote: remoteDataSource);
+  ) => PurchasesRepositoryImpl(remote: remoteDataSource);
 
   // ============================================
   // Financial
@@ -144,9 +129,7 @@ abstract class RepositoriesModule {
 
   /// DebtsRepository implementation
   @lazySingleton
-  DebtsRepository debtsRepository(
-    DebtsRemoteDataSource remoteDataSource,
-  ) =>
+  DebtsRepository debtsRepository(DebtsRemoteDataSource remoteDataSource) =>
       DebtsRepositoryImpl(remote: remoteDataSource);
 
   // ============================================
@@ -157,13 +140,11 @@ abstract class RepositoriesModule {
   @lazySingleton
   ReportsRepository reportsRepository(
     ReportsRemoteDataSource remoteDataSource,
-  ) =>
-      ReportsRepositoryImpl(remote: remoteDataSource);
+  ) => ReportsRepositoryImpl(remote: remoteDataSource);
 
   /// AnalyticsRepository implementation
   @lazySingleton
   AnalyticsRepository analyticsRepository(
     AnalyticsRemoteDataSource remoteDataSource,
-  ) =>
-      AnalyticsRepositoryImpl(remote: remoteDataSource);
+  ) => AnalyticsRepositoryImpl(remote: remoteDataSource);
 }

@@ -158,8 +158,9 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
         searchQuery: state.searchQuery,
       );
 
-      final newProducts =
-          refresh ? result.items : [...state.products, ...result.items];
+      final newProducts = refresh
+          ? result.items
+          : [...state.products, ...result.items];
 
       state = state.copyWith(
         products: newProducts,
@@ -168,10 +169,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
         hasMore: result.hasMore,
       );
     } catch (e) {
-      state = state.copyWith(
-        isLoading: false,
-        error: e.toString(),
-      );
+      state = state.copyWith(isLoading: false, error: e.toString());
     }
   }
 
@@ -220,9 +218,9 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
 /// مزود حالة المنتجات
 final productsStateProvider =
     StateNotifierProvider<ProductsNotifier, ProductsState>((ref) {
-  final productsRepository = ref.watch(productsRepositoryProvider);
-  return ProductsNotifier(productsRepository);
-});
+      final productsRepository = ref.watch(productsRepositoryProvider);
+      return ProductsNotifier(productsRepository);
+    });
 
 /// مزود قائمة المنتجات (اختصار)
 /// يستخدم .select() لتجنب إعادة البناء عند تغيير حقول أخرى (isLoading, error, etc.)
@@ -231,8 +229,10 @@ final productsListProvider = Provider<List<Product>>((ref) {
 });
 
 /// مزود منتج واحد بالـ ID - محسّن باستخدام Map للبحث السريع
-final productByIdProvider =
-    Provider.autoDispose.family<Product?, String>((ref, id) {
+final productByIdProvider = Provider.autoDispose.family<Product?, String>((
+  ref,
+  id,
+) {
   final productsMap = ref.watch(productsMapProvider);
   return productsMap[id];
 });
@@ -250,8 +250,9 @@ final productsMapProvider = Provider<Map<String, Product>>((ref) {
 /// rather than on every mutation of the full products list (L58 fix).
 final lowStockProductsProvider = Provider<List<Product>>((ref) {
   final products = ref.watch(
-    productsStateProvider
-        .select((state) => state.products.where((p) => p.isLowStock).toList()),
+    productsStateProvider.select(
+      (state) => state.products.where((p) => p.isLowStock).toList(),
+    ),
   );
   return products;
 });
@@ -261,7 +262,8 @@ final lowStockProductsProvider = Provider<List<Product>>((ref) {
 final outOfStockProductsProvider = Provider<List<Product>>((ref) {
   final products = ref.watch(
     productsStateProvider.select(
-        (state) => state.products.where((p) => p.isOutOfStock).toList()),
+      (state) => state.products.where((p) => p.isOutOfStock).toList(),
+    ),
   );
   return products;
 });
@@ -271,8 +273,9 @@ final outOfStockProductsProvider = Provider<List<Product>>((ref) {
 // ============================================================================
 
 /// مزود التصنيفات - مع Cache (keepAlive) لتجنب إعادة الجلب
-final categoriesProvider =
-    FutureProvider.autoDispose<List<Category>>((ref) async {
+final categoriesProvider = FutureProvider.autoDispose<List<Category>>((
+  ref,
+) async {
   // الإبقاء على البيانات في الذاكرة لمدة 5 دقائق
   final link = ref.keepAlive();
 
@@ -298,8 +301,10 @@ final categoriesMapProvider = Provider<Map<String, Category>>((ref) {
 });
 
 /// مزود تصنيف واحد بالـ ID - محسّن
-final categoryByIdProvider =
-    Provider.autoDispose.family<Category?, String>((ref, id) {
+final categoryByIdProvider = Provider.autoDispose.family<Category?, String>((
+  ref,
+  id,
+) {
   final categoriesMap = ref.watch(categoriesMapProvider);
   return categoriesMap[id];
 });
@@ -309,23 +314,23 @@ final categoryByIdProvider =
 // ============================================================================
 
 /// مزود البحث بالباركود - يستخدم من BarcodeListener
-final barcodeProductProvider =
-    FutureProvider.autoDispose.family<Product?, String>((ref, barcode) async {
-  if (barcode.isEmpty) return null;
-  final repository = ref.watch(productsRepositoryProvider);
-  return repository.getByBarcode(barcode);
-});
+final barcodeProductProvider = FutureProvider.autoDispose
+    .family<Product?, String>((ref, barcode) async {
+      if (barcode.isEmpty) return null;
+      final repository = ref.watch(productsRepositoryProvider);
+      return repository.getByBarcode(barcode);
+    });
 
 /// مزود اقتراحات البحث (autocomplete)
 /// يعطي اقتراحات أثناء الكتابة
-final searchSuggestionsProvider =
-    FutureProvider.autoDispose.family<List<String>, String>((ref, query) async {
-  if (query.length < 2) return [];
+final searchSuggestionsProvider = FutureProvider.autoDispose
+    .family<List<String>, String>((ref, query) async {
+      if (query.length < 2) return [];
 
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
 
-  // FTS سيكون متاحاً في المستقبل من خلال ProductsRepository
-  // حالياً نعيد قائمة فارغة
-  return [];
-});
+      // FTS سيكون متاحاً في المستقبل من خلال ProductsRepository
+      // حالياً نعيد قائمة فارغة
+      return [];
+    });

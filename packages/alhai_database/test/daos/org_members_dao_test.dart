@@ -41,15 +41,19 @@ void main() {
         ),
       );
 
-      final member =
-          await db.orgMembersDao.getMemberByUserId('org-1', 'user-1');
+      final member = await db.orgMembersDao.getMemberByUserId(
+        'org-1',
+        'user-1',
+      );
       expect(member, isNotNull);
       expect(member!.id, 'om-1');
     });
 
     test('getMemberByUserId returns null when not found', () async {
-      final member =
-          await db.orgMembersDao.getMemberByUserId('org-1', 'non-existent');
+      final member = await db.orgMembersDao.getMemberByUserId(
+        'org-1',
+        'non-existent',
+      );
       expect(member, isNull);
     });
 

@@ -101,50 +101,50 @@ class AlhaiDropdown<T> extends FormField<T> {
     super.validator,
     super.autovalidateMode,
     super.restorationId,
-  })  : externalValue = value,
-        compareFn = compareFn ?? ((a, b) => a == b),
-        searchMatcher = searchMatcher ?? _defaultSearchMatcher,
-        effectiveEnabled = _computeEffectiveEnabled(
-          enabled: enabled,
-          loading: loading,
-          itemCount: items.length,
-        ),
-        super(
-          initialValue: value,
-          enabled: _computeEffectiveEnabled(
-            enabled: enabled,
-            loading: loading,
-            itemCount: items.length,
-          ),
-          builder: (FormFieldState<T> field) {
-            final state = field as _AlhaiDropdownState<T>;
-            final widget = state.widget as AlhaiDropdown<T>;
+  }) : externalValue = value,
+       compareFn = compareFn ?? ((a, b) => a == b),
+       searchMatcher = searchMatcher ?? _defaultSearchMatcher,
+       effectiveEnabled = _computeEffectiveEnabled(
+         enabled: enabled,
+         loading: loading,
+         itemCount: items.length,
+       ),
+       super(
+         initialValue: value,
+         enabled: _computeEffectiveEnabled(
+           enabled: enabled,
+           loading: loading,
+           itemCount: items.length,
+         ),
+         builder: (FormFieldState<T> field) {
+           final state = field as _AlhaiDropdownState<T>;
+           final widget = state.widget as AlhaiDropdown<T>;
 
-            return _AlhaiDropdownField<T>(
-              items: widget.items,
-              itemLabelBuilder: widget.itemLabelBuilder,
-              itemLeadingBuilder: widget.itemLeadingBuilder,
-              compareFn: widget.compareFn,
-              searchMatcher: widget.searchMatcher,
-              value: state.value,
-              onChanged: (newValue) {
-                state.didChange(newValue);
-                widget.onChanged?.call(newValue);
-              },
-              label: widget.label,
-              hint: widget.hint,
-              helperText: widget.helperText,
-              errorText: state.errorText,
-              sheetTitle: widget.sheetTitle,
-              emptyState: widget.emptyState,
-              enabled: widget.effectiveEnabled,
-              loading: widget.loading,
-              searchable: widget.searchable,
-              prefix: widget.prefix,
-              suffix: widget.suffix,
-            );
-          },
-        );
+           return _AlhaiDropdownField<T>(
+             items: widget.items,
+             itemLabelBuilder: widget.itemLabelBuilder,
+             itemLeadingBuilder: widget.itemLeadingBuilder,
+             compareFn: widget.compareFn,
+             searchMatcher: widget.searchMatcher,
+             value: state.value,
+             onChanged: (newValue) {
+               state.didChange(newValue);
+               widget.onChanged?.call(newValue);
+             },
+             label: widget.label,
+             hint: widget.hint,
+             helperText: widget.helperText,
+             errorText: state.errorText,
+             sheetTitle: widget.sheetTitle,
+             emptyState: widget.emptyState,
+             enabled: widget.effectiveEnabled,
+             loading: widget.loading,
+             searchable: widget.searchable,
+             prefix: widget.prefix,
+             suffix: widget.suffix,
+           );
+         },
+       );
 
   static bool _defaultSearchMatcher(String label, String query) {
     return label.toLowerCase().contains(query.toLowerCase());
@@ -244,8 +244,9 @@ class _AlhaiDropdownField<T> extends StatelessWidget {
             Text(
               label!,
               style: theme.textTheme.bodyMedium?.copyWith(
-                color:
-                    hasError ? colorScheme.error : colorScheme.onSurfaceVariant,
+                color: hasError
+                    ? colorScheme.error
+                    : colorScheme.onSurfaceVariant,
               ),
             ),
             const SizedBox(height: AlhaiSpacing.xs),
@@ -336,8 +337,9 @@ class _AlhaiDropdownField<T> extends StatelessWidget {
             child: Text(
               errorText ?? helperText ?? '',
               style: theme.textTheme.bodySmall?.copyWith(
-                color:
-                    hasError ? colorScheme.error : colorScheme.onSurfaceVariant,
+                color: hasError
+                    ? colorScheme.error
+                    : colorScheme.onSurfaceVariant,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -437,8 +439,10 @@ class _DropdownSheetContentState<T> extends State<_DropdownSheetContent<T>> {
         _filteredItems = widget.items;
       } else {
         _filteredItems = widget.items
-            .where((item) =>
-                widget.searchMatcher(widget.itemLabelBuilder(item), query))
+            .where(
+              (item) =>
+                  widget.searchMatcher(widget.itemLabelBuilder(item), query),
+            )
             .toList();
       }
     });
@@ -516,7 +520,8 @@ class _DropdownSheetContentState<T> extends State<_DropdownSheetContent<T>> {
               itemBuilder: (context, index) {
                 final item = _filteredItems[index];
                 final currentValue = widget.value;
-                final isSelected = currentValue != null &&
+                final isSelected =
+                    currentValue != null &&
                     widget.compareFn(item, currentValue);
                 final leading = widget.itemLeadingBuilder?.call(item);
 

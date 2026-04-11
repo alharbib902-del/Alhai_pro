@@ -51,26 +51,17 @@ void main() {
       });
 
       test('throws ArgumentError for unknown code', () {
-        expect(
-          () => InvoiceTypeCode.fromCode('999'),
-          throwsArgumentError,
-        );
+        expect(() => InvoiceTypeCode.fromCode('999'), throwsArgumentError);
       });
 
       test('throws ArgumentError for empty string', () {
-        expect(
-          () => InvoiceTypeCode.fromCode(''),
-          throwsArgumentError,
-        );
+        expect(() => InvoiceTypeCode.fromCode(''), throwsArgumentError);
       });
 
       test('is case-sensitive (numeric codes)', () {
         // '388' is numeric so casing doesn't really matter, but ensure
         // any alphanumeric lookalike is rejected.
-        expect(
-          () => InvoiceTypeCode.fromCode('38A'),
-          throwsArgumentError,
-        );
+        expect(() => InvoiceTypeCode.fromCode('38A'), throwsArgumentError);
       });
     });
 

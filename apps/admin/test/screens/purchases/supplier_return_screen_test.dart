@@ -29,8 +29,9 @@ void main() {
   group('SupplierReturnScreen', () {
     testWidgets('shows loading indicator initially', (tester) async {
       final completer = Completer<List<dynamic>>();
-      when(() => mockSuppliersDao.getAllSuppliers(any()))
-          .thenAnswer((_) => completer.future.then((v) => v.cast()));
+      when(
+        () => mockSuppliersDao.getAllSuppliers(any()),
+      ).thenAnswer((_) => completer.future.then((v) => v.cast()));
 
       await tester.pumpWidget(createTestWidget(const SupplierReturnScreen()));
       await tester.pump();
@@ -39,8 +40,9 @@ void main() {
     });
 
     testWidgets('renders the supplier return screen', (tester) async {
-      when(() => mockSuppliersDao.getAllSuppliers(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSuppliersDao.getAllSuppliers(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createTestWidget(const SupplierReturnScreen()));
       await tester.pumpAndSettle();
@@ -53,8 +55,9 @@ void main() {
         createTestSupplier(id: 'sup-1', name: 'مورد 1'),
         createTestSupplier(id: 'sup-2', name: 'مورد 2'),
       ];
-      when(() => mockSuppliersDao.getAllSuppliers(any()))
-          .thenAnswer((_) async => suppliers);
+      when(
+        () => mockSuppliersDao.getAllSuppliers(any()),
+      ).thenAnswer((_) async => suppliers);
 
       await tester.pumpWidget(createTestWidget(const SupplierReturnScreen()));
       await tester.pumpAndSettle();
@@ -63,8 +66,9 @@ void main() {
     });
 
     testWidgets('shows return reason options', (tester) async {
-      when(() => mockSuppliersDao.getAllSuppliers(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSuppliersDao.getAllSuppliers(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createTestWidget(const SupplierReturnScreen()));
       await tester.pumpAndSettle();

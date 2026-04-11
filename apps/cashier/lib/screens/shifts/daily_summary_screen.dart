@@ -54,8 +54,9 @@ class DailySummaryScreen extends ConsumerWidget {
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: ref.watch(unreadNotificationsCountProvider),
           userName: user?.name ?? l10n.cashCustomer,
@@ -63,12 +64,22 @@ class DailySummaryScreen extends ConsumerWidget {
           onUserTap: () {},
         ),
         Expanded(
-          child: ref.watch(todayShiftsProvider).when(
+          child: ref
+              .watch(todayShiftsProvider)
+              .when(
                 data: (shifts) => SingleChildScrollView(
                   padding: EdgeInsets.all(
-                      isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                  child: _buildContent(context, ref, shifts, isWideScreen,
-                      isMediumScreen, isDark, l10n),
+                    isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                  ),
+                  child: _buildContent(
+                    context,
+                    ref,
+                    shifts,
+                    isWideScreen,
+                    isMediumScreen,
+                    isDark,
+                    l10n,
+                  ),
                 ),
                 loading: () => const AppLoadingState(),
                 error: (e, _) => AppErrorState.general(
@@ -120,31 +131,37 @@ class DailySummaryScreen extends ConsumerWidget {
           Row(
             children: [
               Expanded(
-                  child: _buildStatCard(
-                      l10n.totalSales,
-                      CurrencyFormatter.formatCompact(totalSales),
-                      '$totalSalesCount ${l10n.invoices}',
-                      Icons.trending_up_rounded,
-                      AppColors.success,
-                      isDark)),
+                child: _buildStatCard(
+                  l10n.totalSales,
+                  CurrencyFormatter.formatCompact(totalSales),
+                  '$totalSalesCount ${l10n.invoices}',
+                  Icons.trending_up_rounded,
+                  AppColors.success,
+                  isDark,
+                ),
+              ),
               const SizedBox(width: AlhaiSpacing.md),
               Expanded(
-                  child: _buildStatCard(
-                      l10n.returns,
-                      CurrencyFormatter.formatCompact(totalRefunds),
-                      '$totalRefundsCount ${l10n.returns}',
-                      Icons.assignment_return_rounded,
-                      AppColors.error,
-                      isDark)),
+                child: _buildStatCard(
+                  l10n.returns,
+                  CurrencyFormatter.formatCompact(totalRefunds),
+                  '$totalRefundsCount ${l10n.returns}',
+                  Icons.assignment_return_rounded,
+                  AppColors.error,
+                  isDark,
+                ),
+              ),
               const SizedBox(width: AlhaiSpacing.md),
               Expanded(
-                  child: _buildStatCard(
-                      l10n.netRevenue,
-                      CurrencyFormatter.formatCompact(netRevenue),
-                      l10n.afterRefunds,
-                      Icons.account_balance_wallet_rounded,
-                      AppColors.primary,
-                      isDark)),
+                child: _buildStatCard(
+                  l10n.netRevenue,
+                  CurrencyFormatter.formatCompact(netRevenue),
+                  l10n.afterRefunds,
+                  Icons.account_balance_wallet_rounded,
+                  AppColors.primary,
+                  isDark,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.lg),
@@ -153,13 +170,22 @@ class DailySummaryScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Expanded(
-                  flex: 3,
-                  child: _buildShiftsTable(context, shifts, isDark, l10n)),
+                flex: 3,
+                child: _buildShiftsTable(context, shifts, isDark, l10n),
+              ),
               const SizedBox(width: AlhaiSpacing.lg),
               Expanded(
-                  flex: 2,
-                  child: _buildSummaryCard(totalOpeningCash, totalSales,
-                      totalRefunds, netRevenue, shifts.length, isDark, l10n)),
+                flex: 2,
+                child: _buildSummaryCard(
+                  totalOpeningCash,
+                  totalSales,
+                  totalRefunds,
+                  netRevenue,
+                  shifts.length,
+                  isDark,
+                  l10n,
+                ),
+              ),
             ],
           ),
         ],
@@ -171,45 +197,63 @@ class DailySummaryScreen extends ConsumerWidget {
       children: [
         // Stats
         _buildStatCard(
-            l10n.totalSales,
-            CurrencyFormatter.formatCompact(totalSales),
-            '$totalSalesCount ${l10n.invoices}',
-            Icons.trending_up_rounded,
-            AppColors.success,
-            isDark),
+          l10n.totalSales,
+          CurrencyFormatter.formatCompact(totalSales),
+          '$totalSalesCount ${l10n.invoices}',
+          Icons.trending_up_rounded,
+          AppColors.success,
+          isDark,
+        ),
         SizedBox(height: isMediumScreen ? AlhaiSpacing.md : AlhaiSpacing.sm),
         Row(
           children: [
             Expanded(
-                child: _buildStatCard(
-                    l10n.returns,
-                    CurrencyFormatter.formatCompact(totalRefunds),
-                    '$totalRefundsCount',
-                    Icons.assignment_return_rounded,
-                    AppColors.error,
-                    isDark)),
+              child: _buildStatCard(
+                l10n.returns,
+                CurrencyFormatter.formatCompact(totalRefunds),
+                '$totalRefundsCount',
+                Icons.assignment_return_rounded,
+                AppColors.error,
+                isDark,
+              ),
+            ),
             SizedBox(width: isMediumScreen ? AlhaiSpacing.md : AlhaiSpacing.sm),
             Expanded(
-                child: _buildStatCard(
-                    l10n.netRevenue,
-                    CurrencyFormatter.formatCompact(netRevenue),
-                    l10n.afterRefunds,
-                    Icons.account_balance_wallet_rounded,
-                    AppColors.primary,
-                    isDark)),
+              child: _buildStatCard(
+                l10n.netRevenue,
+                CurrencyFormatter.formatCompact(netRevenue),
+                l10n.afterRefunds,
+                Icons.account_balance_wallet_rounded,
+                AppColors.primary,
+                isDark,
+              ),
+            ),
           ],
         ),
         SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-        _buildSummaryCard(totalOpeningCash, totalSales, totalRefunds,
-            netRevenue, shifts.length, isDark, l10n),
+        _buildSummaryCard(
+          totalOpeningCash,
+          totalSales,
+          totalRefunds,
+          netRevenue,
+          shifts.length,
+          isDark,
+          l10n,
+        ),
         SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildShiftsTable(context, shifts, isDark, l10n),
       ],
     );
   }
 
-  Widget _buildStatCard(String label, String value, String subtitle,
-      IconData icon, Color color, bool isDark) {
+  Widget _buildStatCard(
+    String label,
+    String value,
+    String subtitle,
+    IconData icon,
+    Color color,
+    bool isDark,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -234,21 +278,31 @@ class DailySummaryScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(label,
-                    style: TextStyle(
-                        fontSize: 13,
-                        color: AppColors.getTextSecondary(isDark))),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 13,
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
+                ),
                 const SizedBox(height: AlhaiSpacing.xxs),
-                Text(value,
-                    style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w800,
-                        color: color)),
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w800,
+                    color: color,
+                  ),
+                ),
                 if (subtitle.isNotEmpty) ...[
                   const SizedBox(height: AlhaiSpacing.xxxs),
-                  Text(subtitle,
-                      style: TextStyle(
-                          fontSize: 11, color: AppColors.getTextMuted(isDark))),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: AppColors.getTextMuted(isDark),
+                    ),
+                  ),
                 ],
               ],
             ),
@@ -285,55 +339,69 @@ class DailySummaryScreen extends ConsumerWidget {
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.summarize_rounded,
-                    color: AppColors.info, size: 20),
+                child: const Icon(
+                  Icons.summarize_rounded,
+                  color: AppColors.info,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text(l10n.dailySummary,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.getTextPrimary(isDark))),
+              Text(
+                l10n.dailySummary,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           _SummaryLine(
-              label: l10n.shiftsCount,
-              value: '$shiftCount',
-              color: AppColors.info,
-              isDark: isDark),
+            label: l10n.shiftsCount,
+            value: '$shiftCount',
+            color: AppColors.info,
+            isDark: isDark,
+          ),
           _SummaryLine(
-              label: l10n.openingBalance,
-              value: CurrencyFormatter.formatCompact(openingCash),
-              color: AppColors.info,
-              isDark: isDark),
+            label: l10n.openingBalance,
+            value: CurrencyFormatter.formatCompact(openingCash),
+            color: AppColors.info,
+            isDark: isDark,
+          ),
           _SummaryLine(
-              label: l10n.totalSales,
-              value: '+${CurrencyFormatter.formatCompact(totalSales)}',
-              color: AppColors.success,
-              isDark: isDark),
+            label: l10n.totalSales,
+            value: '+${CurrencyFormatter.formatCompact(totalSales)}',
+            color: AppColors.success,
+            isDark: isDark,
+          ),
           _SummaryLine(
-              label: l10n.returns,
-              value: '-${CurrencyFormatter.formatCompact(totalRefunds)}',
-              color: AppColors.error,
-              isDark: isDark),
+            label: l10n.returns,
+            value: '-${CurrencyFormatter.formatCompact(totalRefunds)}',
+            color: AppColors.error,
+            isDark: isDark,
+          ),
           Divider(height: 24, color: AppColors.getBorder(isDark)),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(l10n.netRevenue,
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        color: AppColors.getTextPrimary(isDark))),
+                Text(
+                  l10n.netRevenue,
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
+                ),
                 Text(
                   CurrencyFormatter.formatCompact(netRevenue),
                   style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 18,
-                      color: AppColors.primary),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 18,
+                    color: AppColors.primary,
+                  ),
                 ),
               ],
             ),
@@ -343,8 +411,12 @@ class DailySummaryScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildShiftsTable(BuildContext context, List<ShiftsTableData> shifts,
-      bool isDark, AppLocalizations l10n) {
+  Widget _buildShiftsTable(
+    BuildContext context,
+    List<ShiftsTableData> shifts,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     if (shifts.isEmpty) {
       return Container(
         padding: const EdgeInsets.all(AlhaiSpacing.xxxl),
@@ -356,13 +428,19 @@ class DailySummaryScreen extends ConsumerWidget {
         child: Center(
           child: Column(
             children: [
-              Icon(Icons.timer_off_rounded,
-                  size: 48,
-                  color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
+              Icon(
+                Icons.timer_off_rounded,
+                size: 48,
+                color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4),
+              ),
               const SizedBox(height: AlhaiSpacing.sm),
-              Text(l10n.noShiftsToday,
-                  style: TextStyle(
-                      fontSize: 15, color: AppColors.getTextMuted(isDark))),
+              Text(
+                l10n.noShiftsToday,
+                style: TextStyle(
+                  fontSize: 15,
+                  color: AppColors.getTextMuted(isDark),
+                ),
+              ),
             ],
           ),
         ),
@@ -383,45 +461,62 @@ class DailySummaryScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(AlhaiSpacing.mdl),
             child: Row(
               children: [
-                Icon(Icons.schedule_rounded,
-                    size: 20, color: AppColors.getTextSecondary(isDark)),
+                Icon(
+                  Icons.schedule_rounded,
+                  size: 20,
+                  color: AppColors.getTextSecondary(isDark),
+                ),
                 const SizedBox(width: 10),
-                Text(l10n.todayShifts,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.getTextPrimary(isDark))),
+                Text(
+                  l10n.todayShifts,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
+                ),
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: AlhaiSpacing.xxs),
+                    horizontal: 10,
+                    vertical: AlhaiSpacing.xxs,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.primary.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(999),
                   ),
-                  child: Text('${shifts.length}',
-                      style: const TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.primary)),
+                  child: Text(
+                    '${shifts.length}',
+                    style: const TextStyle(
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.primary,
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
           const Divider(height: 1),
           // Shift items
-          ...shifts
-              .map((shift) => _buildShiftItem(context, shift, isDark, l10n)),
+          ...shifts.map(
+            (shift) => _buildShiftItem(context, shift, isDark, l10n),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildShiftItem(BuildContext context, ShiftsTableData shift,
-      bool isDark, AppLocalizations l10n) {
+  Widget _buildShiftItem(
+    BuildContext context,
+    ShiftsTableData shift,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final isOpen = shift.status == 'open';
-    final statusColor =
-        isOpen ? AppColors.success : Theme.of(context).colorScheme.outline;
+    final statusColor = isOpen
+        ? AppColors.success
+        : Theme.of(context).colorScheme.outline;
 
     final openTime =
         '${shift.openedAt.hour.toString().padLeft(2, '0')}:${shift.openedAt.minute.toString().padLeft(2, '0')}';
@@ -431,11 +526,14 @@ class DailySummaryScreen extends ConsumerWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.mdl, vertical: 14),
+        horizontal: AlhaiSpacing.mdl,
+        vertical: 14,
+      ),
       decoration: BoxDecoration(
         border: Border(
           bottom: BorderSide(
-              color: AppColors.getBorder(isDark).withValues(alpha: 0.5)),
+            color: AppColors.getBorder(isDark).withValues(alpha: 0.5),
+          ),
         ),
       ),
       child: Row(
@@ -444,8 +542,10 @@ class DailySummaryScreen extends ConsumerWidget {
           Container(
             width: 10,
             height: 10,
-            decoration:
-                BoxDecoration(color: statusColor, shape: BoxShape.circle),
+            decoration: BoxDecoration(
+              color: statusColor,
+              shape: BoxShape.circle,
+            ),
           ),
           const SizedBox(width: 14),
           // Info
@@ -453,16 +553,22 @@ class DailySummaryScreen extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(shift.cashierName,
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: AppColors.getTextPrimary(isDark))),
+                Text(
+                  shift.cashierName,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
+                ),
                 const SizedBox(height: AlhaiSpacing.xxs),
-                Text('$openTime - $closeTime',
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: AppColors.getTextSecondary(isDark))),
+                Text(
+                  '$openTime - $closeTime',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: AppColors.getTextSecondary(isDark),
+                  ),
+                ),
               ],
             ),
           ),
@@ -470,15 +576,22 @@ class DailySummaryScreen extends ConsumerWidget {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(CurrencyFormatter.formatCompact(shift.totalSalesAmount),
-                  style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w700,
-                      color: AppColors.getTextPrimary(isDark))),
+              Text(
+                CurrencyFormatter.formatCompact(shift.totalSalesAmount),
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
               const SizedBox(height: AlhaiSpacing.xxxs),
-              Text('${shift.totalSales} ${l10n.invoices}',
-                  style: TextStyle(
-                      fontSize: 11, color: AppColors.getTextMuted(isDark))),
+              Text(
+                '${shift.totalSales} ${l10n.invoices}',
+                style: TextStyle(
+                  fontSize: 11,
+                  color: AppColors.getTextMuted(isDark),
+                ),
+              ),
             ],
           ),
         ],
@@ -493,11 +606,12 @@ class _SummaryLine extends StatelessWidget {
   final Color color;
   final bool isDark;
 
-  const _SummaryLine(
-      {required this.label,
-      required this.value,
-      required this.color,
-      required this.isDark});
+  const _SummaryLine({
+    required this.label,
+    required this.value,
+    required this.color,
+    required this.isDark,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -512,11 +626,15 @@ class _SummaryLine extends StatelessWidget {
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: Text(label,
-                style: TextStyle(color: AppColors.getTextSecondary(isDark))),
+            child: Text(
+              label,
+              style: TextStyle(color: AppColors.getTextSecondary(isDark)),
+            ),
           ),
-          Text(value,
-              style: TextStyle(color: color, fontWeight: FontWeight.w600)),
+          Text(
+            value,
+            style: TextStyle(color: color, fontWeight: FontWeight.w600),
+          ),
         ],
       ),
     );

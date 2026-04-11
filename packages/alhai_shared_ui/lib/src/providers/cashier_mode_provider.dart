@@ -87,8 +87,8 @@ class CashierModeNotifier extends StateNotifier<CashierModeState> {
 /// مزود وضع الكاشير
 final cashierModeProvider =
     StateNotifierProvider<CashierModeNotifier, CashierModeState>(
-  (ref) => CashierModeNotifier(),
-);
+      (ref) => CashierModeNotifier(),
+    );
 
 /// مزود هل وضع الكاشير مفعل
 final isCashierModeEnabled = Provider<bool>((ref) {

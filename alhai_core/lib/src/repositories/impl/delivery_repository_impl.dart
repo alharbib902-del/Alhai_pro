@@ -11,9 +11,8 @@ import '../delivery_repository.dart';
 class DeliveryRepositoryImpl implements DeliveryRepository {
   final DeliveryRemoteDataSource _remote;
 
-  DeliveryRepositoryImpl({
-    required DeliveryRemoteDataSource remote,
-  }) : _remote = remote;
+  DeliveryRepositoryImpl({required DeliveryRemoteDataSource remote})
+    : _remote = remote;
 
   @override
   Future<List<Delivery>> getMyDeliveries() async {
@@ -62,11 +61,7 @@ class DeliveryRepositoryImpl implements DeliveryRepository {
     required double lng,
   }) async {
     try {
-      await _remote.updateLocation(
-        deliveryId: deliveryId,
-        lat: lat,
-        lng: lng,
-      );
+      await _remote.updateLocation(deliveryId: deliveryId, lat: lat, lng: lng);
     } on DioException catch (e) {
       throw ErrorMapper.fromDioError(e);
     }

@@ -60,7 +60,10 @@ class CustomerAccountTab extends StatelessWidget {
   }
 
   Widget _buildLedgerList(
-      BuildContext context, bool isDark, AppLocalizations l10n) {
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
@@ -76,8 +79,11 @@ class CustomerAccountTab extends StatelessWidget {
             padding: const EdgeInsets.all(AlhaiSpacing.md),
             child: Row(
               children: [
-                const Icon(Icons.receipt_long_outlined,
-                    size: 20, color: AppColors.primary),
+                const Icon(
+                  Icons.receipt_long_outlined,
+                  size: 20,
+                  color: AppColors.primary,
+                ),
                 SizedBox(width: AlhaiSpacing.xs),
                 Text(
                   l10n.finance,
@@ -95,8 +101,10 @@ class CustomerAccountTab extends StatelessWidget {
                       '${AppRoutes.customerLedgerPath(id)}?name=${Uri.encodeComponent(customerName)}',
                     );
                   },
-                  child:
-                      Text(l10n.viewAll, style: const TextStyle(fontSize: 12)),
+                  child: Text(
+                    l10n.viewAll,
+                    style: const TextStyle(fontSize: 12),
+                  ),
                 ),
               ],
             ),
@@ -134,15 +142,12 @@ class CustomerAccountTab extends StatelessWidget {
                         height: 40,
                         decoration: BoxDecoration(
                           color: typeColor.withValues(alpha: 0.12),
-                          borderRadius:
-                              BorderRadius.circular(AppSizes.radiusMd),
+                          borderRadius: BorderRadius.circular(
+                            AppSizes.radiusMd,
+                          ),
                         ),
                         alignment: Alignment.center,
-                        child: Icon(
-                          typeIcon,
-                          size: 20,
-                          color: typeColor,
-                        ),
+                        child: Icon(typeIcon, size: 20, color: typeColor),
                       ),
                       SizedBox(width: AlhaiSpacing.sm),
                       // Details
@@ -203,8 +208,9 @@ class CustomerAccountTab extends StatelessWidget {
   }
 
   Widget _buildBalanceSummaryCard(bool isDark, AppLocalizations l10n) {
-    final usedPercent =
-        creditLimit > 0 ? (balance / creditLimit * 100).clamp(0, 100) : 0.0;
+    final usedPercent = creditLimit > 0
+        ? (balance / creditLimit * 100).clamp(0, 100)
+        : 0.0;
     return Container(
       decoration: BoxDecoration(
         gradient: const LinearGradient(
@@ -234,8 +240,11 @@ class CustomerAccountTab extends StatelessWidget {
               borderRadius: BorderRadius.circular(AppSizes.radiusLg),
             ),
             alignment: Alignment.center,
-            child: const Icon(Icons.account_balance_wallet_rounded,
-                size: 24, color: Colors.white),
+            child: const Icon(
+              Icons.account_balance_wallet_rounded,
+              size: 24,
+              color: Colors.white,
+            ),
           ),
           SizedBox(height: AlhaiSpacing.md),
           const Text(
@@ -262,10 +271,7 @@ class CustomerAccountTab extends StatelessWidget {
             children: [
               Text(
                 l10n.credit,
-                style: const TextStyle(
-                  fontSize: 12,
-                  color: Colors.white70,
-                ),
+                style: const TextStyle(fontSize: 12, color: Colors.white70),
               ),
               Text(
                 '${usedPercent.toStringAsFixed(0)}%',
@@ -291,10 +297,7 @@ class CustomerAccountTab extends StatelessWidget {
           SizedBox(height: AlhaiSpacing.xs),
           Text(
             '${balance.toStringAsFixed(0)} / ${creditLimit.toStringAsFixed(0)} ${l10n.sar}',
-            style: const TextStyle(
-              fontSize: 12,
-              color: Colors.white70,
-            ),
+            style: const TextStyle(fontSize: 12, color: Colors.white70),
           ),
           SizedBox(height: AlhaiSpacing.mdl),
           // Top-up button

@@ -27,11 +27,13 @@ void main() {
     setupTestGetIt(mockDb: db);
 
     // Default stubs
-    when(() => productsDao.searchProducts(any(), any()))
-        .thenAnswer((_) async => []);
+    when(
+      () => productsDao.searchProducts(any(), any()),
+    ).thenAnswer((_) async => []);
     when(() => inventoryDao.insertMovement(any())).thenAnswer((_) async => 1);
-    when(() => productsDao.updateStock(any(), any()))
-        .thenAnswer((_) async => 1);
+    when(
+      () => productsDao.updateStock(any(), any()),
+    ).thenAnswer((_) async => 1);
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -75,9 +77,11 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(
-          find.text(
-              '\u0627\u0644\u0643\u0645\u064a\u0629 \u0627\u0644\u0645\u0631\u0627\u062f \u0633\u062d\u0628\u0647\u0627'),
-          findsOneWidget);
+        find.text(
+          '\u0627\u0644\u0643\u0645\u064a\u0629 \u0627\u0644\u0645\u0631\u0627\u062f \u0633\u062d\u0628\u0647\u0627',
+        ),
+        findsOneWidget,
+      );
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -99,8 +103,9 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('save button is disabled without product and quantity',
-        (tester) async {
+    testWidgets('save button is disabled without product and quantity', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
@@ -127,8 +132,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      when(() => productsDao.searchProducts(any(), any()))
-          .thenAnswer((_) async => [createTestProduct(name: 'Water')]);
+      when(
+        () => productsDao.searchProducts(any(), any()),
+      ).thenAnswer((_) async => [createTestProduct(name: 'Water')]);
 
       await tester.pumpWidget(createTestWidget(const RemoveInventoryScreen()));
       await tester.pumpAndSettle();
@@ -138,8 +144,9 @@ void main() {
       await tester.enterText(textFields.first, 'Water');
       await tester.pumpAndSettle();
 
-      verify(() => productsDao.searchProducts('Water', 'test-store-1'))
-          .called(1);
+      verify(
+        () => productsDao.searchProducts('Water', 'test-store-1'),
+      ).called(1);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

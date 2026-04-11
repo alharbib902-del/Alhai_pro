@@ -72,12 +72,14 @@ void main() {
       // Use a Completer that never completes to keep the provider in loading state
       final completer = Completer<LiteStatsData>();
 
-      await tester.pumpWidget(createTestWidget(
-        const LiteDashboardScreen(),
-        overrides: [
-          liteStatsProvider.overrideWith((ref) => completer.future),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const LiteDashboardScreen(),
+          overrides: [
+            liteStatsProvider.overrideWith((ref) => completer.future),
+          ],
+        ),
+      );
       await tester.pump();
 
       expect(find.byType(LiteDashboardScreen), findsOneWidget);
@@ -101,10 +103,12 @@ void main() {
         salesChangePercent: 15.5,
       );
 
-      await tester.pumpWidget(buildScreen(
-        statsValue: AsyncValue.data(stats),
-        activityValue: const AsyncValue.data([]),
-      ));
+      await tester.pumpWidget(
+        buildScreen(
+          statsValue: AsyncValue.data(stats),
+          activityValue: const AsyncValue.data([]),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Stat values should be visible
@@ -124,10 +128,12 @@ void main() {
 
       final stats = createTestLiteStats(salesChangePercent: 15.5);
 
-      await tester.pumpWidget(buildScreen(
-        statsValue: AsyncValue.data(stats),
-        activityValue: const AsyncValue.data([]),
-      ));
+      await tester.pumpWidget(
+        buildScreen(
+          statsValue: AsyncValue.data(stats),
+          activityValue: const AsyncValue.data([]),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Should show the percentage
@@ -146,10 +152,12 @@ void main() {
 
       final stats = createTestLiteStats();
 
-      await tester.pumpWidget(buildScreen(
-        statsValue: AsyncValue.data(stats),
-        activityValue: const AsyncValue.data([]),
-      ));
+      await tester.pumpWidget(
+        buildScreen(
+          statsValue: AsyncValue.data(stats),
+          activityValue: const AsyncValue.data([]),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Empty state icon for no activities
@@ -164,10 +172,14 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(buildScreen(
-        statsValue:
-            AsyncValue.error(Exception('Network error'), StackTrace.current),
-      ));
+      await tester.pumpWidget(
+        buildScreen(
+          statsValue: AsyncValue.error(
+            Exception('Network error'),
+            StackTrace.current,
+          ),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Error icon and retry button
@@ -185,15 +197,23 @@ void main() {
 
       final activities = [
         createTestActivity(
-            id: 'a1', action: 'saleCreate', description: 'Sale completed'),
+          id: 'a1',
+          action: 'saleCreate',
+          description: 'Sale completed',
+        ),
         createTestActivity(
-            id: 'a2', action: 'login', description: 'User logged in'),
+          id: 'a2',
+          action: 'login',
+          description: 'User logged in',
+        ),
       ];
 
-      await tester.pumpWidget(buildScreen(
-        statsValue: AsyncValue.data(createTestLiteStats()),
-        activityValue: AsyncValue.data(activities),
-      ));
+      await tester.pumpWidget(
+        buildScreen(
+          statsValue: AsyncValue.data(createTestLiteStats()),
+          activityValue: AsyncValue.data(activities),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Sale completed'), findsOneWidget);
@@ -208,10 +228,12 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(buildScreen(
-        statsValue: AsyncValue.data(createTestLiteStats()),
-        activityValue: const AsyncValue.data([]),
-      ));
+      await tester.pumpWidget(
+        buildScreen(
+          statsValue: AsyncValue.data(createTestLiteStats()),
+          activityValue: const AsyncValue.data([]),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Quick action icons should be visible
@@ -229,10 +251,12 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(buildScreen(
-        statsValue: AsyncValue.data(createTestLiteStats()),
-        activityValue: const AsyncValue.data([]),
-      ));
+      await tester.pumpWidget(
+        buildScreen(
+          statsValue: AsyncValue.data(createTestLiteStats()),
+          activityValue: const AsyncValue.data([]),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(RefreshIndicator), findsOneWidget);

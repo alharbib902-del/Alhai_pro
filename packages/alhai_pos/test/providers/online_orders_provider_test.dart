@@ -19,23 +19,29 @@ void main() {
     final mockSyncQueueDao = _MockSyncQueueDao();
     when(() => mockDb.ordersDao).thenReturn(mockOrdersDao);
     when(() => mockDb.syncQueueDao).thenReturn(mockSyncQueueDao);
-    when(() => mockOrdersDao.getPendingOrders(any()))
-        .thenAnswer((_) async => <OrdersTableData>[]);
-    when(() => mockOrdersDao.updateOrderStatus(any(), any()))
-        .thenAnswer((_) async => 1);
-    when(() => mockOrdersDao.assignDriver(any(), any()))
-        .thenAnswer((_) async => 1);
-    when(() => mockOrdersDao.cancelOrder(any(), any()))
-        .thenAnswer((_) async => 1);
-    when(() => mockSyncQueueDao.enqueue(
-          id: any(named: 'id'),
-          tableName: any(named: 'tableName'),
-          recordId: any(named: 'recordId'),
-          operation: any(named: 'operation'),
-          payload: any(named: 'payload'),
-          idempotencyKey: any(named: 'idempotencyKey'),
-          priority: any(named: 'priority'),
-        )).thenAnswer((_) async => 1);
+    when(
+      () => mockOrdersDao.getPendingOrders(any()),
+    ).thenAnswer((_) async => <OrdersTableData>[]);
+    when(
+      () => mockOrdersDao.updateOrderStatus(any(), any()),
+    ).thenAnswer((_) async => 1);
+    when(
+      () => mockOrdersDao.assignDriver(any(), any()),
+    ).thenAnswer((_) async => 1);
+    when(
+      () => mockOrdersDao.cancelOrder(any(), any()),
+    ).thenAnswer((_) async => 1);
+    when(
+      () => mockSyncQueueDao.enqueue(
+        id: any(named: 'id'),
+        tableName: any(named: 'tableName'),
+        recordId: any(named: 'recordId'),
+        operation: any(named: 'operation'),
+        payload: any(named: 'payload'),
+        idempotencyKey: any(named: 'idempotencyKey'),
+        priority: any(named: 'priority'),
+      ),
+    ).thenAnswer((_) async => 1);
 
     final getIt = GetIt.instance;
     if (!getIt.isRegistered<AppDatabase>()) {
@@ -136,10 +142,12 @@ void main() {
     setUp(() {
       notifier = OnlineOrdersNotifier(null);
       // Seed with some orders for testing
-      notifier
-          .addOrder(_createOrder(id: 'SEED-001', status: OrderStatus.pending));
-      notifier
-          .addOrder(_createOrder(id: 'SEED-002', status: OrderStatus.pending));
+      notifier.addOrder(
+        _createOrder(id: 'SEED-001', status: OrderStatus.pending),
+      );
+      notifier.addOrder(
+        _createOrder(id: 'SEED-002', status: OrderStatus.pending),
+      );
     });
 
     test('initializes and can hold orders', () {
@@ -248,39 +256,42 @@ void main() {
       expect(notifier.state.error, isNull);
     });
 
-    test('full order lifecycle: pending -> accepted -> preparing -> delivered',
-        () {
-      final order = _createOrder(id: 'lifecycle-1');
-      notifier.addOrder(order);
+    test(
+      'full order lifecycle: pending -> accepted -> preparing -> delivered',
+      () {
+        final order = _createOrder(id: 'lifecycle-1');
+        notifier.addOrder(order);
 
-      // 1. Accept
-      notifier.acceptOrder('lifecycle-1');
-      expect(
-        notifier.state.orders.firstWhere((o) => o.id == 'lifecycle-1').status,
-        equals(OrderStatus.accepted),
-      );
+        // 1. Accept
+        notifier.acceptOrder('lifecycle-1');
+        expect(
+          notifier.state.orders.firstWhere((o) => o.id == 'lifecycle-1').status,
+          equals(OrderStatus.accepted),
+        );
 
-      // 2. Start preparing
-      notifier.startPreparing('lifecycle-1');
-      expect(
-        notifier.state.orders.firstWhere((o) => o.id == 'lifecycle-1').status,
-        equals(OrderStatus.preparing),
-      );
+        // 2. Start preparing
+        notifier.startPreparing('lifecycle-1');
+        expect(
+          notifier.state.orders.firstWhere((o) => o.id == 'lifecycle-1').status,
+          equals(OrderStatus.preparing),
+        );
 
-      // 3. Assign driver
-      notifier.assignDriver('lifecycle-1', 'drv-1', 'Ali');
-      expect(
-        notifier.state.orders.firstWhere((o) => o.id == 'lifecycle-1').status,
-        equals(OrderStatus.outForDelivery),
-      );
+        // 3. Assign driver
+        notifier.assignDriver('lifecycle-1', 'drv-1', 'Ali');
+        expect(
+          notifier.state.orders.firstWhere((o) => o.id == 'lifecycle-1').status,
+          equals(OrderStatus.outForDelivery),
+        );
 
-      // 4. Mark delivered
-      notifier.markDelivered('lifecycle-1');
-      final finalOrder =
-          notifier.state.orders.firstWhere((o) => o.id == 'lifecycle-1');
-      expect(finalOrder.status, equals(OrderStatus.delivered));
-      expect(finalOrder.isCompleted, isTrue);
-    });
+        // 4. Mark delivered
+        notifier.markDelivered('lifecycle-1');
+        final finalOrder = notifier.state.orders.firstWhere(
+          (o) => o.id == 'lifecycle-1',
+        );
+        expect(finalOrder.status, equals(OrderStatus.delivered));
+        expect(finalOrder.isCompleted, isTrue);
+      },
+    );
   });
 }
 

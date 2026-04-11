@@ -38,10 +38,12 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
   }
 
   Future<void> _initMarkerIcons() async {
-    _pickupIcon =
-        BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue);
-    _deliveryIcon =
-        BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
+    _pickupIcon = BitmapDescriptor.defaultMarkerWithHue(
+      BitmapDescriptor.hueBlue,
+    );
+    _deliveryIcon = BitmapDescriptor.defaultMarkerWithHue(
+      BitmapDescriptor.hueRed,
+    );
     // Trigger a rebuild now that the icons are ready.
     if (mounted) setState(() {});
   }
@@ -53,7 +55,8 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
     required double? deliveryLat,
     required double? deliveryLng,
   }) {
-    final sameAsCached = _cachedDeliveryId == widget.deliveryId &&
+    final sameAsCached =
+        _cachedDeliveryId == widget.deliveryId &&
         _cachedPickupLat == pickupLat &&
         _cachedPickupLng == pickupLng &&
         _cachedDeliveryLat == deliveryLat &&
@@ -65,21 +68,25 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
     final markers = <Marker>{};
 
     if (pickupLat != null && pickupLng != null) {
-      markers.add(Marker(
-        markerId: const MarkerId('pickup'),
-        position: LatLng(pickupLat, pickupLng),
-        icon: _pickupIcon ?? BitmapDescriptor.defaultMarker,
-        infoWindow: const InfoWindow(title: 'المتجر'),
-      ));
+      markers.add(
+        Marker(
+          markerId: const MarkerId('pickup'),
+          position: LatLng(pickupLat, pickupLng),
+          icon: _pickupIcon ?? BitmapDescriptor.defaultMarker,
+          infoWindow: const InfoWindow(title: 'المتجر'),
+        ),
+      );
     }
 
     if (deliveryLat != null && deliveryLng != null) {
-      markers.add(Marker(
-        markerId: const MarkerId('delivery'),
-        position: LatLng(deliveryLat, deliveryLng),
-        icon: _deliveryIcon ?? BitmapDescriptor.defaultMarker,
-        infoWindow: const InfoWindow(title: 'العميل'),
-      ));
+      markers.add(
+        Marker(
+          markerId: const MarkerId('delivery'),
+          position: LatLng(deliveryLat, deliveryLng),
+          icon: _deliveryIcon ?? BitmapDescriptor.defaultMarker,
+          infoWindow: const InfoWindow(title: 'العميل'),
+        ),
+      );
     }
 
     _cachedDeliveryId = widget.deliveryId;
@@ -122,7 +129,7 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
         final bool isHeadingToCustomer = [
           'picked_up',
           'heading_to_customer',
-          'arrived_at_customer'
+          'arrived_at_customer',
         ].contains(status);
 
         final destLat = isHeadingToCustomer ? deliveryLat : pickupLat;
@@ -219,16 +226,19 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
                         width: 40,
                         height: 4,
                         decoration: BoxDecoration(
-                          color:
-                              theme.colorScheme.outline.withValues(alpha: 0.3),
+                          color: theme.colorScheme.outline.withValues(
+                            alpha: 0.3,
+                          ),
                           borderRadius: BorderRadius.circular(2),
                         ),
                       ),
                       const SizedBox(height: AlhaiSpacing.md),
                       Row(
                         children: [
-                          Icon(Icons.location_on,
-                              color: theme.colorScheme.primary),
+                          Icon(
+                            Icons.location_on,
+                            color: theme.colorScheme.primary,
+                          ),
                           const SizedBox(width: AlhaiSpacing.xs),
                           Expanded(
                             child: Column(
@@ -267,8 +277,9 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
                           style: FilledButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 14),
                             shape: RoundedRectangleBorder(
-                              borderRadius:
-                                  BorderRadius.circular(AlhaiRadius.button),
+                              borderRadius: BorderRadius.circular(
+                                AlhaiRadius.button,
+                              ),
                             ),
                           ),
                         ),
@@ -320,7 +331,8 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
       await launchUrl(uri);
     } else {
       final webUri = Uri.parse(
-          'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=driving');
+        'https://www.google.com/maps/dir/?api=1&destination=$lat,$lng&travelmode=driving',
+      );
       await launchUrl(webUri, mode: LaunchMode.externalApplication);
     }
   }

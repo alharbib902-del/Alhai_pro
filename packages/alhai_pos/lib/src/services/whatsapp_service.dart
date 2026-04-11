@@ -33,9 +33,9 @@ class WhatsAppService {
     required WhatsAppMessagesDao messagesDao,
     required PhoneValidationService phoneValidator,
     String storeId = 'default',
-  })  : _messagesDao = messagesDao,
-        _phoneValidator = phoneValidator,
-        _storeId = storeId;
+  }) : _messagesDao = messagesDao,
+       _phoneValidator = phoneValidator,
+       _storeId = storeId;
 
   // ═══════════════════════════════════════════════════════
   // إرسال رسالة عامة
@@ -77,7 +77,8 @@ class WhatsAppService {
     required double amount,
     required String storeName,
   }) {
-    final message = '''
+    final message =
+        '''
 مرحباً $customerName 👋
 
 نود تذكيركم بوجود رصيد مستحق بقيمة ${amount.toStringAsFixed(2)} $_currency
@@ -110,7 +111,8 @@ $storeName''';
     required double total,
     required String storeName,
   }) {
-    final message = '''
+    final message =
+        '''
 شكراً لتسوقكم من $storeName 🛒
 
 رقم الفاتورة: $receiptNumber
@@ -213,10 +215,10 @@ class WhatsAppTemplates {
   static const String welcome = 'welcome';
 
   static Map<String, String> get templates => {
-        debtReminder: 'تذكير بالدين المستحق',
-        receipt: 'إيصال الفاتورة',
-        promotion: 'عرض ترويجي',
-        orderUpdate: 'تحديث الطلب',
-        welcome: 'رسالة ترحيب',
-      };
+    debtReminder: 'تذكير بالدين المستحق',
+    receipt: 'إيصال الفاتورة',
+    promotion: 'عرض ترويجي',
+    orderUpdate: 'تحديث الطلب',
+    welcome: 'رسالة ترحيب',
+  };
 }

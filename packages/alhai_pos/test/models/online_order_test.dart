@@ -104,9 +104,17 @@ void main() {
         customerAddress: 'Riyadh',
         items: const [
           OrderItem(
-              productId: 'p1', productName: 'A', quantity: 2, unitPrice: 10.0),
+            productId: 'p1',
+            productName: 'A',
+            quantity: 2,
+            unitPrice: 10.0,
+          ),
           OrderItem(
-              productId: 'p2', productName: 'B', quantity: 3, unitPrice: 5.0),
+            productId: 'p2',
+            productName: 'B',
+            quantity: 3,
+            unitPrice: 5.0,
+          ),
         ],
         subtotal: 35.0,
         deliveryFee: 5.0,
@@ -140,8 +148,9 @@ void main() {
     });
 
     test('isPaid returns false for non-paid status', () {
-      final codOrder =
-          order.copyWith(paymentStatus: PaymentStatus.cashOnDelivery);
+      final codOrder = order.copyWith(
+        paymentStatus: PaymentStatus.cashOnDelivery,
+      );
       expect(codOrder.isPaid, isFalse);
     });
 

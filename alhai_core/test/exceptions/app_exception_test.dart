@@ -69,8 +69,10 @@ void main() {
         expect(exception.message, equals('Validation failed'));
         expect(exception.fieldErrors, isNotNull);
         expect(exception.fieldErrors!['name'], contains('Name is required'));
-        expect(exception.fieldErrors!['price'],
-            contains('Price must be positive'));
+        expect(
+          exception.fieldErrors!['price'],
+          contains('Price must be positive'),
+        );
       });
 
       test('should allow null field errors', () {
@@ -93,10 +95,7 @@ void main() {
 
       test('should handle various 5xx codes', () {
         for (final code in [500, 502, 503, 504]) {
-          final exception = ServerException(
-            'Error $code',
-            statusCode: code,
-          );
+          final exception = ServerException('Error $code', statusCode: code);
           expect(exception.statusCode, equals(code));
         }
       });
@@ -181,18 +180,20 @@ void main() {
         expect(result.code, equals('TIMEOUT'));
       });
 
-      test('should map connectionError to NetworkException with NO_INTERNET',
-          () {
-        final dioError = DioException(
-          type: DioExceptionType.connectionError,
-          requestOptions: RequestOptions(path: '/test'),
-        );
+      test(
+        'should map connectionError to NetworkException with NO_INTERNET',
+        () {
+          final dioError = DioException(
+            type: DioExceptionType.connectionError,
+            requestOptions: RequestOptions(path: '/test'),
+          );
 
-        final result = ErrorMapper.fromDioError(dioError);
+          final result = ErrorMapper.fromDioError(dioError);
 
-        expect(result, isA<NetworkException>());
-        expect(result.code, equals('NO_INTERNET'));
-      });
+          expect(result, isA<NetworkException>());
+          expect(result.code, equals('NO_INTERNET'));
+        },
+      );
 
       test('should map cancel to NetworkException with CANCELLED', () {
         final dioError = DioException(
@@ -514,10 +515,7 @@ void main() {
           type: DioExceptionType.badResponse,
           response: Response(
             statusCode: 400,
-            data: {
-              'message': 'Error',
-              'code': 'CUSTOM_CODE',
-            },
+            data: {'message': 'Error', 'code': 'CUSTOM_CODE'},
             requestOptions: RequestOptions(path: '/test'),
           ),
           requestOptions: RequestOptions(path: '/test'),
@@ -535,9 +533,7 @@ void main() {
             statusCode: 400,
             data: {
               'message': 'Validation failed',
-              'errors': {
-                'email': 'Email is required',
-              },
+              'errors': {'email': 'Email is required'},
             },
             requestOptions: RequestOptions(path: '/test'),
           ),

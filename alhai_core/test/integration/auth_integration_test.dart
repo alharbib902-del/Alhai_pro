@@ -31,10 +31,7 @@ void main() {
   setUp(() {
     mockRemote = MockAuthRemoteDataSource();
     mockLocal = MockAuthLocalDataSource();
-    authRepository = AuthRepositoryImpl(
-      remote: mockRemote,
-      local: mockLocal,
-    );
+    authRepository = AuthRepositoryImpl(remote: mockRemote, local: mockLocal);
   });
 
   group('Auth Integration Tests', () {
@@ -45,10 +42,7 @@ void main() {
         when(() => mockRemote.sendOtp(phone)).thenAnswer((_) async {});
 
         // Act & Assert - no exception means success
-        await expectLater(
-          authRepository.sendOtp(phone),
-          completes,
-        );
+        await expectLater(authRepository.sendOtp(phone), completes);
         verify(() => mockRemote.sendOtp(phone)).called(1);
       });
 
@@ -90,8 +84,9 @@ void main() {
           },
         });
 
-        when(() => mockRemote.verifyOtp(phone, otp))
-            .thenAnswer((_) async => authResponse);
+        when(
+          () => mockRemote.verifyOtp(phone, otp),
+        ).thenAnswer((_) async => authResponse);
         when(() => mockLocal.saveTokens(any())).thenAnswer((_) async {});
         when(() => mockLocal.saveUser(any())).thenAnswer((_) async {});
 
@@ -111,10 +106,7 @@ void main() {
         when(() => mockLocal.clearUser()).thenAnswer((_) async {});
 
         // Act & Assert
-        await expectLater(
-          authRepository.logout(),
-          completes,
-        );
+        await expectLater(authRepository.logout(), completes);
         verify(() => mockLocal.clearTokens()).called(1);
         verify(() => mockLocal.clearUser()).called(1);
       });
@@ -123,8 +115,9 @@ void main() {
     group('Check Auth Status', () {
       test('should return true when authenticated', () async {
         // Arrange
-        when(() => mockLocal.getTokens())
-            .thenAnswer((_) async => FakeAuthTokensEntity());
+        when(
+          () => mockLocal.getTokens(),
+        ).thenAnswer((_) async => FakeAuthTokensEntity());
 
         // Act
         final result = await authRepository.isAuthenticated();
@@ -139,22 +132,23 @@ void main() {
 /// Fake entity for testing
 class FakeAuthTokensEntity extends AuthTokensEntity {
   FakeAuthTokensEntity()
-      : super(
-          accessToken: 'test-token',
-          refreshToken: 'test-refresh',
-          expiresAt:
-              DateTime.now().add(const Duration(hours: 1)).toIso8601String(),
-        );
+    : super(
+        accessToken: 'test-token',
+        refreshToken: 'test-refresh',
+        expiresAt: DateTime.now()
+            .add(const Duration(hours: 1))
+            .toIso8601String(),
+      );
 }
 
 /// Fake user entity for testing
 class FakeUserEntity extends UserEntity {
   FakeUserEntity()
-      : super(
-          id: 'test-user-id',
-          phone: '+966512345678',
-          name: 'Test User',
-          role: 'customer',
-          createdAt: DateTime.now().toIso8601String(),
-        );
+    : super(
+        id: 'test-user-id',
+        phone: '+966512345678',
+        name: 'Test User',
+        role: 'customer',
+        createdAt: DateTime.now().toIso8601String(),
+      );
 }

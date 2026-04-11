@@ -35,10 +35,7 @@ class _LiteStockAlertsScreenState extends ConsumerState<LiteStockAlertsScreen> {
     final dataAsync = ref.watch(liteStockAlertsProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.lowStock),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(l10n.lowStock), centerTitle: true),
       body: Column(
         children: [
           _buildFilterTabs(isDark, l10n),
@@ -48,13 +45,15 @@ class _LiteStockAlertsScreenState extends ConsumerState<LiteStockAlertsScreen> {
                 final filtered = _filterProducts(products);
                 if (filtered.isEmpty) {
                   return Center(
-                      child: Text(l10n.noResults,
-                          style: TextStyle(
-                              color: isDark
-                                  ? Colors.white54
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant)));
+                    child: Text(
+                      l10n.noResults,
+                      style: TextStyle(
+                        color: isDark
+                            ? Colors.white54
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  );
                 }
                 final isWide = size.width > 900;
                 if (isWide) {
@@ -69,10 +68,10 @@ class _LiteStockAlertsScreenState extends ConsumerState<LiteStockAlertsScreen> {
                   children: [
                     Text(l10n.errorOccurred),
                     TextButton.icon(
-                        onPressed: () =>
-                            ref.invalidate(liteStockAlertsProvider),
-                        icon: const Icon(Icons.refresh_rounded),
-                        label: Text(l10n.tryAgain)),
+                      onPressed: () => ref.invalidate(liteStockAlertsProvider),
+                      icon: const Icon(Icons.refresh_rounded),
+                      label: Text(l10n.tryAgain),
+                    ),
                   ],
                 ),
               ),
@@ -101,16 +100,20 @@ class _LiteStockAlertsScreenState extends ConsumerState<LiteStockAlertsScreen> {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.xs,
+      ),
       decoration: BoxDecoration(
         color: isDark
             ? Colors.white.withValues(alpha: 0.03)
             : Theme.of(context).colorScheme.surfaceContainerLowest,
         border: Border(
-            bottom: BorderSide(
-                color: isDark
-                    ? Colors.white12
-                    : Theme.of(context).colorScheme.outlineVariant)),
+          bottom: BorderSide(
+            color: isDark
+                ? Colors.white12
+                : Theme.of(context).colorScheme.outlineVariant,
+          ),
+        ),
       ),
       child: SingleChildScrollView(
         scrollDirection: Axis.horizontal,
@@ -129,19 +132,21 @@ class _LiteStockAlertsScreenState extends ConsumerState<LiteStockAlertsScreen> {
                   color: isSelected
                       ? AlhaiColors.primary
                       : (isDark
-                          ? Colors.white70
-                          : Theme.of(context).colorScheme.onSurface),
+                            ? Colors.white70
+                            : Theme.of(context).colorScheme.onSurface),
                   fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   fontSize: 13,
                 ),
                 side: BorderSide(
-                    color: isSelected
-                        ? AlhaiColors.primary
-                        : (isDark
+                  color: isSelected
+                      ? AlhaiColors.primary
+                      : (isDark
                             ? Colors.white24
-                            : Theme.of(context).colorScheme.outlineVariant)),
+                            : Theme.of(context).colorScheme.outlineVariant),
+                ),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20)),
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
             );
           }).toList(),
@@ -150,8 +155,12 @@ class _LiteStockAlertsScreenState extends ConsumerState<LiteStockAlertsScreen> {
     );
   }
 
-  Widget _buildCardList(List<ProductsTableData> products, bool isDark,
-      bool isMobile, AppLocalizations l10n) {
+  Widget _buildCardList(
+    List<ProductsTableData> products,
+    bool isDark,
+    bool isMobile,
+    AppLocalizations l10n,
+  ) {
     return RefreshIndicator(
       onRefresh: () async => ref.invalidate(liteStockAlertsProvider),
       child: ListView.builder(
@@ -165,7 +174,10 @@ class _LiteStockAlertsScreenState extends ConsumerState<LiteStockAlertsScreen> {
   }
 
   Widget _buildDataTable(
-      List<ProductsTableData> products, bool isDark, AppLocalizations l10n) {
+    List<ProductsTableData> products,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg),
       child: SizedBox(
@@ -183,31 +195,42 @@ class _LiteStockAlertsScreenState extends ConsumerState<LiteStockAlertsScreen> {
           rows: products.map((product) {
             final stock = product.stockQty.toInt();
             final isOutOfStock = stock <= 0;
-            final color =
-                isOutOfStock ? AlhaiColors.error : AlhaiColors.warning;
+            final color = isOutOfStock
+                ? AlhaiColors.error
+                : AlhaiColors.warning;
             final statusText = isOutOfStock ? l10n.outOfStock : l10n.lowStock;
 
             return DataRow(
               key: ValueKey(product.id),
               cells: [
                 DataCell(Text(product.name)),
-                DataCell(Text(
-                  '$stock',
-                  style: TextStyle(fontWeight: FontWeight.bold, color: color),
-                )),
+                DataCell(
+                  Text(
+                    '$stock',
+                    style: TextStyle(fontWeight: FontWeight.bold, color: color),
+                  ),
+                ),
                 DataCell(Text('${product.minQty.toInt()}')),
-                DataCell(Container(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
-                  decoration: BoxDecoration(
+                DataCell(
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AlhaiSpacing.xs,
+                      vertical: AlhaiSpacing.xxxs,
+                    ),
+                    decoration: BoxDecoration(
                       color: color.withValues(alpha: 0.12),
-                      borderRadius: BorderRadius.circular(8)),
-                  child: Text(statusText,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      statusText,
                       style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: color)),
-                )),
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: color,
+                      ),
+                    ),
+                  ),
+                ),
               ],
             );
           }).toList(),
@@ -217,7 +240,10 @@ class _LiteStockAlertsScreenState extends ConsumerState<LiteStockAlertsScreen> {
   }
 
   Widget _buildAlertTile(
-      BuildContext context, ProductsTableData product, bool isDark) {
+    BuildContext context,
+    ProductsTableData product,
+    bool isDark,
+  ) {
     final l10n = AppLocalizations.of(context);
     final stock = product.stockQty.toInt();
     final isOutOfStock = stock <= 0;
@@ -234,9 +260,10 @@ class _LiteStockAlertsScreenState extends ConsumerState<LiteStockAlertsScreen> {
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-            color: isDark
-                ? Colors.white12
-                : Theme.of(context).colorScheme.outlineVariant),
+          color: isDark
+              ? Colors.white12
+              : Theme.of(context).colorScheme.outlineVariant,
+        ),
       ),
       child: Row(
         children: [
@@ -244,8 +271,9 @@ class _LiteStockAlertsScreenState extends ConsumerState<LiteStockAlertsScreen> {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(10)),
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(10),
+            ),
             child: Icon(icon, color: color, size: 20),
           ),
           const SizedBox(width: AlhaiSpacing.sm),
@@ -253,30 +281,44 @@ class _LiteStockAlertsScreenState extends ConsumerState<LiteStockAlertsScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(product.name,
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: isDark ? Colors.white : Colors.black87)),
+                Text(
+                  product.name,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: isDark ? Colors.white : Colors.black87,
+                  ),
+                ),
                 const SizedBox(height: AlhaiSpacing.xxxs),
-                Text(desc,
-                    style: TextStyle(
-                        fontSize: 12,
-                        color: isDark
-                            ? Colors.white38
-                            : Theme.of(context).colorScheme.onSurfaceVariant)),
+                Text(
+                  desc,
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: isDark
+                        ? Colors.white38
+                        : Theme.of(context).colorScheme.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
           ),
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+              horizontal: AlhaiSpacing.xs,
+              vertical: AlhaiSpacing.xxxs,
+            ),
             decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(8)),
-            child: Text('$stock',
-                style: TextStyle(
-                    fontSize: 12, fontWeight: FontWeight.bold, color: color)),
+              color: color.withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(8),
+            ),
+            child: Text(
+              '$stock',
+              style: TextStyle(
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+                color: color,
+              ),
+            ),
           ),
         ],
       ),

@@ -10,9 +10,8 @@ import '../categories_repository.dart';
 class CategoriesRepositoryImpl implements CategoriesRepository {
   final CategoriesRemoteDataSource _remote;
 
-  CategoriesRepositoryImpl({
-    required CategoriesRemoteDataSource remote,
-  }) : _remote = remote;
+  CategoriesRepositoryImpl({required CategoriesRemoteDataSource remote})
+    : _remote = remote;
 
   @override
   Future<List<Category>> getCategories(String storeId) async {

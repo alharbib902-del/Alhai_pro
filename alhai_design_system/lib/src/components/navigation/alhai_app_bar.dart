@@ -254,17 +254,21 @@ class _AlhaiAppBarState extends State<AlhaiAppBar> {
 
     // Add search toggle if search is enabled
     if (widget.enableSearch && widget.onSearch != null) {
-      final searchTooltip = widget.searchTooltip ??
+      final searchTooltip =
+          widget.searchTooltip ??
           MaterialLocalizations.of(context).searchFieldLabel;
-      final closeTooltip = widget.closeSearchTooltip ??
+      final closeTooltip =
+          widget.closeSearchTooltip ??
           MaterialLocalizations.of(context).closeButtonLabel;
 
       effectiveActions.insert(
         0,
         IconButton(
-          icon: Icon(_isSearching
-              ? (widget.closeIcon ?? Icons.close)
-              : (widget.searchIcon ?? Icons.search)),
+          icon: Icon(
+            _isSearching
+                ? (widget.closeIcon ?? Icons.close)
+                : (widget.searchIcon ?? Icons.search),
+          ),
           onPressed: _toggleSearch,
           tooltip: _isSearching ? closeTooltip : searchTooltip,
         ),
@@ -287,10 +291,7 @@ class _AlhaiAppBarState extends State<AlhaiAppBar> {
 
   Widget _buildTitleContent(ThemeData theme, TextDirection textDirection) {
     if (widget.subtitle == null) {
-      return Text(
-        widget.title,
-        style: theme.textTheme.titleLarge,
-      );
+      return Text(widget.title, style: theme.textTheme.titleLarge);
     }
 
     return Column(

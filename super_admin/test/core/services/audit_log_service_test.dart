@@ -11,10 +11,7 @@ void main() {
 
   setUp(() {
     mock = MockSupabaseClient();
-    service = AuditLogService(
-      mock.client,
-      resolveActor: () => actor,
-    );
+    service = AuditLogService(mock.client, resolveActor: () => actor);
     // Insert terminates when awaited — just provide an empty response.
     mock.setResponse('audit_log', <dynamic>[]);
   });
@@ -81,26 +78,25 @@ void main() {
       expect(row.containsKey('actor_email'), isFalse);
     });
 
-    test('swallows backend errors so the parent mutation is unaffected',
-        () async {
-      mock.setError('audit_log', Exception('network down'));
+    test(
+      'swallows backend errors so the parent mutation is unaffected',
+      () async {
+        mock.setError('audit_log', Exception('network down'));
 
-      // Must not throw.
-      await service.log(
-        action: 'subscription.update',
-        targetType: 'subscription',
-        targetId: 'sub-9',
-      );
+        // Must not throw.
+        await service.log(
+          action: 'subscription.update',
+          targetType: 'subscription',
+          targetId: 'sub-9',
+        );
 
-      // The insert was still attempted.
-      expect(mock.queryLog['audit_log'], isNotNull);
-    });
+        // The insert was still attempted.
+        expect(mock.queryLog['audit_log'], isNotNull);
+      },
+    );
 
     test('does not insert when there is no current actor', () async {
-      final svc = AuditLogService(
-        mock.client,
-        resolveActor: () => null,
-      );
+      final svc = AuditLogService(mock.client, resolveActor: () => null);
 
       await svc.log(
         action: 'store.delete',
@@ -108,8 +104,11 @@ void main() {
         targetId: 'store-99',
       );
 
-      expect(mock.queryLog['audit_log'], isNull,
-          reason: 'with no actor, we should not attempt the insert');
+      expect(
+        mock.queryLog['audit_log'],
+        isNull,
+        reason: 'with no actor, we should not attempt the insert',
+      );
     });
   });
 }

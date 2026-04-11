@@ -50,10 +50,7 @@ void main() {
     });
 
     test('copyWith with no args should return equivalent state', () {
-      const original = ThemeState(
-        themeMode: ThemeMode.dark,
-        isLoading: false,
-      );
+      const original = ThemeState(themeMode: ThemeMode.dark, isLoading: false);
       final copied = original.copyWith();
       expect(copied.themeMode, original.themeMode);
       expect(copied.isLoading, original.isLoading);

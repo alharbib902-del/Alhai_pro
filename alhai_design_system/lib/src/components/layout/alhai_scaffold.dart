@@ -131,10 +131,7 @@ class AlhaiScaffold extends StatelessWidget {
       avoidKeyboard: avoidKeyboard,
       paddingOverride: paddingOverride,
       backgroundColor: backgroundColor,
-      body: _ScrollableBody(
-        children: children,
-        physics: physics,
-      ),
+      body: _ScrollableBody(children: children, physics: physics),
     );
   }
 
@@ -149,12 +146,14 @@ class AlhaiScaffold extends StatelessWidget {
         : EdgeInsets.zero;
 
     // إضافة keyboard inset
-    final keyboardBottom =
-        avoidKeyboard ? context.safeKeyboardInsets.bottom : 0.0;
+    final keyboardBottom = avoidKeyboard
+        ? context.safeKeyboardInsets.bottom
+        : 0.0;
 
     // دمج padding في Padding واحد
-    final effectivePadding =
-        basePadding.add(EdgeInsets.only(bottom: keyboardBottom));
+    final effectivePadding = basePadding.add(
+      EdgeInsets.only(bottom: keyboardBottom),
+    );
 
     // Build body with merged padding
     final effectiveBody = Padding(padding: effectivePadding, child: body);
@@ -182,10 +181,7 @@ class _ScrollableBody extends StatelessWidget {
   final List<Widget> children;
   final ScrollPhysics? physics;
 
-  const _ScrollableBody({
-    required this.children,
-    this.physics,
-  });
+  const _ScrollableBody({required this.children, this.physics});
 
   @override
   Widget build(BuildContext context) {

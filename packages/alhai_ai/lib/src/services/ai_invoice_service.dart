@@ -119,7 +119,8 @@ class AiInvoiceResult {
           : null,
       totalAmount: (json['total_amount'] ?? 0).toDouble(),
       taxAmount: (json['tax_amount'] ?? 0).toDouble(),
-      items: (json['items'] as List?)
+      items:
+          (json['items'] as List?)
               ?.map((e) => AiInvoiceItem.fromJson(e))
               .toList() ??
           [],

@@ -21,12 +21,14 @@ import 'customers_table.dart';
 @TableIndex(name: 'idx_sales_synced_at', columns: {#syncedAt})
 @TableIndex(name: 'idx_sales_store_created', columns: {#storeId, #createdAt})
 @TableIndex(
-    name: 'idx_sales_store_status_created',
-    columns: {#storeId, #status, #createdAt})
+  name: 'idx_sales_store_status_created',
+  columns: {#storeId, #status, #createdAt},
+)
 @TableIndex(
-    name: 'idx_sales_store_receipt_unique',
-    columns: {#storeId, #receiptNo},
-    unique: true)
+  name: 'idx_sales_store_receipt_unique',
+  columns: {#storeId, #receiptNo},
+  unique: true,
+)
 class SalesTable extends Table {
   @override
   String get tableName => 'sales';
@@ -40,14 +42,18 @@ class SalesTable extends Table {
   TextColumn get cashierId =>
       text().references(UsersTable, #id, onDelete: KeyAction.restrict)();
   TextColumn get terminalId => text().nullable()();
-  TextColumn get shiftId => text()
-      .nullable()
-      .references(ShiftsTable, #id, onDelete: KeyAction.setNull)();
+  TextColumn get shiftId => text().nullable().references(
+    ShiftsTable,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
 
   // العميل (اختياري)
-  TextColumn get customerId => text()
-      .nullable()
-      .references(CustomersTable, #id, onDelete: KeyAction.setNull)();
+  TextColumn get customerId => text().nullable().references(
+    CustomersTable,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
   TextColumn get customerName => text().nullable()();
   TextColumn get customerPhone => text().nullable()();
 
@@ -75,7 +81,8 @@ class SalesTable extends Table {
 
   // الحالة
   TextColumn get status => text().withDefault(
-      const Constant('completed'))(); // completed, voided, refunded
+    const Constant('completed'),
+  )(); // completed, voided, refunded
 
   // التواريخ
   DateTimeColumn get createdAt => dateTime()();

@@ -8,10 +8,8 @@ class UndoableAction {
   final DateTime createdAt;
   Timer? _expiryTimer;
 
-  UndoableAction({
-    required this.description,
-    required this.undoCallback,
-  }) : createdAt = DateTime.now();
+  UndoableAction({required this.description, required this.undoCallback})
+    : createdAt = DateTime.now();
 
   void startExpiry(Duration duration, VoidCallback onExpired) {
     _expiryTimer = Timer(duration, onExpired);
@@ -61,7 +59,8 @@ class UndoService {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                        '\u062a\u0645 \u0627\u0644\u062a\u0631\u0627\u062c\u0639 \u0639\u0646: $description'),
+                      '\u062a\u0645 \u0627\u0644\u062a\u0631\u0627\u062c\u0639 \u0639\u0646: $description',
+                    ),
                     backgroundColor: Theme.of(context).colorScheme.primary,
                     duration: const Duration(seconds: 2),
                   ),
@@ -72,7 +71,8 @@ class UndoService {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(
-                        '\u0641\u0634\u0644 \u0627\u0644\u062a\u0631\u0627\u062c\u0639: $e'),
+                      '\u0641\u0634\u0644 \u0627\u0644\u062a\u0631\u0627\u062c\u0639: $e',
+                    ),
                     backgroundColor: Theme.of(context).colorScheme.error,
                   ),
                 );

@@ -73,9 +73,7 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
         border: widget.isBottomSheet
             ? null
             : BorderDirectional(
-                start: BorderSide(
-                  color: colorScheme.outlineVariant,
-                ),
+                start: BorderSide(color: colorScheme.outlineVariant),
               ),
       ),
       child: Column(
@@ -94,10 +92,7 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
             ),
 
           // Divider
-          Divider(
-            height: 1,
-            color: colorScheme.outlineVariant,
-          ),
+          Divider(height: 1, color: colorScheme.outlineVariant),
 
           // Cart items with AnimatedList
           Expanded(
@@ -106,7 +101,9 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                 : AnimatedList(
                     key: _listKey,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+                      horizontal: AlhaiSpacing.sm,
+                      vertical: AlhaiSpacing.xs,
+                    ),
                     initialItemCount: items.length,
                     itemBuilder: (context, index, animation) {
                       if (index >= items.length) return const SizedBox.shrink();
@@ -126,7 +123,9 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
           if (items.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
+                horizontal: AlhaiSpacing.md,
+                vertical: AlhaiSpacing.xxs,
+              ),
               child: Row(
                 children: [
                   // زر تطبيق خصم
@@ -134,8 +133,11 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                     child: TextButton.icon(
                       onPressed: () =>
                           _showDiscountDialog(context, ref, subtotal),
-                      icon: const Icon(Icons.percent_rounded,
-                          size: 16, color: AppColors.success),
+                      icon: const Icon(
+                        Icons.percent_rounded,
+                        size: 16,
+                        color: AppColors.success,
+                      ),
                       label: Text(
                         l10n.discount,
                         style: const TextStyle(
@@ -178,52 +180,66 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                               ),
                               FilledButton(
                                 onPressed: () async {
-                                  final code =
-                                      codeController.text.trim().toUpperCase();
+                                  final code = codeController.text
+                                      .trim()
+                                      .toUpperCase();
                                   if (code.isEmpty) return;
                                   Navigator.pop(ctx);
                                   final db = ref.read(appDatabaseProvider);
                                   final storeId =
                                       ref.read(currentStoreIdProvider) ??
-                                          kDefaultStoreId;
+                                      kDefaultStoreId;
                                   try {
                                     final coupon = await db.discountsDao
                                         .getCouponByCode(code, storeId);
                                     if (!context.mounted) return;
                                     if (coupon == null || !coupon.isActive) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content: Text(l10n.invalidCoupon),
-                                              backgroundColor:
-                                                  AppColors.error));
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(l10n.invalidCoupon),
+                                          backgroundColor: AppColors.error,
+                                        ),
+                                      );
                                       return;
                                     }
                                     if (coupon.expiresAt != null &&
-                                        coupon.expiresAt!
-                                            .isBefore(DateTime.now())) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content: Text(l10n.couponExpired),
-                                              backgroundColor:
-                                                  AppColors.error));
+                                        coupon.expiresAt!.isBefore(
+                                          DateTime.now(),
+                                        )) {
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(l10n.couponExpired),
+                                          backgroundColor: AppColors.error,
+                                        ),
+                                      );
                                       return;
                                     }
-                                    final currentSubtotal =
-                                        ref.read(cartStateProvider).subtotal;
+                                    final currentSubtotal = ref
+                                        .read(cartStateProvider)
+                                        .subtotal;
                                     if (coupon.minPurchase > 0 &&
                                         currentSubtotal < coupon.minPurchase) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(SnackBar(
-                                              content: Text(
-                                                  l10n.minimumPurchaseRequired(
-                                                      AppNumberFormatter.currency(
-                                                          coupon.minPurchase,
-                                                          locale: Localizations
-                                                                  .localeOf(
-                                                                      context)
-                                                              .toString()))),
-                                              backgroundColor:
-                                                  AppColors.warning));
+                                      ScaffoldMessenger.of(
+                                        context,
+                                      ).showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            l10n.minimumPurchaseRequired(
+                                              AppNumberFormatter.currency(
+                                                coupon.minPurchase,
+                                                locale: Localizations.localeOf(
+                                                  context,
+                                                ).toString(),
+                                              ),
+                                            ),
+                                          ),
+                                          backgroundColor: AppColors.warning,
+                                        ),
+                                      );
                                       return;
                                     }
                                     final discount = coupon.type == 'percentage'
@@ -233,21 +249,26 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                                         .read(cartStateProvider.notifier)
                                         .setDiscount(discount);
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            content: Text(
-                                                l10n.couponDiscountApplied(
-                                                    CurrencyFormatter
-                                                        .formatWithContext(
-                                                            context,
-                                                            discount))),
-                                            backgroundColor:
-                                                AppColors.success));
+                                      SnackBar(
+                                        content: Text(
+                                          l10n.couponDiscountApplied(
+                                            CurrencyFormatter.formatWithContext(
+                                              context,
+                                              discount,
+                                            ),
+                                          ),
+                                        ),
+                                        backgroundColor: AppColors.success,
+                                      ),
+                                    );
                                   } catch (_) {
                                     if (!context.mounted) return;
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                        SnackBar(
-                                            content: Text(l10n.couponInvalid),
-                                            backgroundColor: AppColors.error));
+                                      SnackBar(
+                                        content: Text(l10n.couponInvalid),
+                                        backgroundColor: AppColors.error,
+                                      ),
+                                    );
                                   }
                                 },
                                 child: Text(l10n.apply),
@@ -256,8 +277,10 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                           ),
                         );
                       },
-                      icon: const Text('\uD83C\uDFF7\uFE0F',
-                          style: TextStyle(fontSize: 14)),
+                      icon: const Text(
+                        '\uD83C\uDFF7\uFE0F',
+                        style: TextStyle(fontSize: 14),
+                      ),
                       label: Text(
                         l10n.haveCoupon,
                         style: const TextStyle(
@@ -283,9 +306,9 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                           initialNote: cartState.notes,
                         );
                         if (result != null) {
-                          ref.read(cartStateProvider.notifier).setNotes(
-                                result.isEmpty ? null : result,
-                              );
+                          ref
+                              .read(cartStateProvider.notifier)
+                              .setNotes(result.isEmpty ? null : result);
                         }
                       },
                       icon: Icon(
@@ -293,7 +316,8 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                             ? Icons.note_rounded
                             : Icons.note_add_outlined,
                         size: 16,
-                        color: cartState.notes != null &&
+                        color:
+                            cartState.notes != null &&
                                 cartState.notes!.isNotEmpty
                             ? AppColors.warning
                             : AppColors.info,
@@ -301,7 +325,8 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                       label: Text(
                         l10n.noteLabel,
                         style: TextStyle(
-                          color: cartState.notes != null &&
+                          color:
+                              cartState.notes != null &&
                                   cartState.notes!.isNotEmpty
                               ? AppColors.warning
                               : AppColors.info,
@@ -324,11 +349,15 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
           if (cartState.notes != null && cartState.notes!.isNotEmpty)
             Padding(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
+                horizontal: AlhaiSpacing.md,
+                vertical: AlhaiSpacing.xxs,
+              ),
               child: Container(
                 width: double.infinity,
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+                  horizontal: AlhaiSpacing.sm,
+                  vertical: AlhaiSpacing.xs,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -338,8 +367,11 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.note_rounded,
-                        size: 16, color: AppColors.warning),
+                    const Icon(
+                      Icons.note_rounded,
+                      size: 16,
+                      color: AppColors.warning,
+                    ),
                     const SizedBox(width: AlhaiSpacing.xs),
                     Expanded(
                       child: Text(
@@ -357,8 +389,11 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                     InkWell(
                       onTap: () =>
                           ref.read(cartStateProvider.notifier).setNotes(null),
-                      child: const Icon(Icons.close,
-                          size: 16, color: AppColors.warning),
+                      child: const Icon(
+                        Icons.close,
+                        size: 16,
+                        color: AppColors.warning,
+                      ),
                     ),
                   ],
                 ),
@@ -366,8 +401,17 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
             ),
 
           // Totals + action buttons
-          _buildCartFooter(context, ref, cartState, subtotal, tax, total,
-              isDark, l10n, items.isNotEmpty),
+          _buildCartFooter(
+            context,
+            ref,
+            cartState,
+            subtotal,
+            tax,
+            total,
+            isDark,
+            l10n,
+            items.isNotEmpty,
+          ),
         ],
       ),
     );
@@ -427,11 +471,10 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
     return SizeTransition(
       sizeFactor: animation,
       child: SlideTransition(
-        position: Tween<Offset>(
-          begin: const Offset(-1, 0),
-          end: Offset.zero,
-        ).animate(
-            CurvedAnimation(parent: animation, curve: Curves.easeOutCubic)),
+        position: Tween<Offset>(begin: const Offset(-1, 0), end: Offset.zero)
+            .animate(
+              CurvedAnimation(parent: animation, curve: Curves.easeOutCubic),
+            ),
         child: Dismissible(
           key: ValueKey(item.product.id),
           direction: DismissDirection.endToStart,
@@ -442,8 +485,10 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
               color: Theme.of(context).colorScheme.error,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: const Icon(Icons.delete_outline,
-                color: AppColors.textOnPrimary),
+            child: const Icon(
+              Icons.delete_outline,
+              color: AppColors.textOnPrimary,
+            ),
           ),
           confirmDismiss: (_) async {
             final confirmed = await showDialog<bool>(
@@ -484,27 +529,32 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
     );
   }
 
-  Widget _buildCartHeader(BuildContext context, WidgetRef ref,
-      CartState cartState, bool isDark, AppLocalizations l10n) {
+  Widget _buildCartHeader(
+    BuildContext context,
+    WidgetRef ref,
+    CartState cartState,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerLow,
-        border: Border(
-          bottom: BorderSide(
-            color: colorScheme.outlineVariant,
-          ),
-        ),
+        border: Border(bottom: BorderSide(color: colorScheme.outlineVariant)),
       ),
       child: Row(
         children: [
-          Icon(Icons.shopping_cart_rounded,
-              size: 20,
-              color: isDark
-                  ? AppColors.textSecondaryDark
-                  : AppColors.textSecondary),
+          Icon(
+            Icons.shopping_cart_rounded,
+            size: 20,
+            color: isDark
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondary,
+          ),
           const SizedBox(width: AlhaiSpacing.xs),
           Flexible(
             child: Text(
@@ -513,8 +563,9 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
               style: TextStyle(
                 fontSize: 15,
                 fontWeight: FontWeight.w600,
-                color:
-                    isDark ? AppColors.textPrimaryDark : AppColors.textPrimary,
+                color: isDark
+                    ? AppColors.textPrimaryDark
+                    : AppColors.textPrimary,
               ),
             ),
           ),
@@ -558,8 +609,11 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                 borderRadius: BorderRadius.circular(8),
                 child: Padding(
                   padding: const EdgeInsets.all(6),
-                  child: Icon(Icons.delete_outline_rounded,
-                      size: 20, color: AppColors.error.withValues(alpha: 0.7)),
+                  child: Icon(
+                    Icons.delete_outline_rounded,
+                    size: 20,
+                    color: AppColors.error.withValues(alpha: 0.7),
+                  ),
                 ),
               ),
             ),
@@ -569,8 +623,13 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
     );
   }
 
-  Widget _buildCustomerInput(BuildContext context, WidgetRef ref,
-      CartState cartState, bool isDark, AppLocalizations l10n) {
+  Widget _buildCustomerInput(
+    BuildContext context,
+    WidgetRef ref,
+    CartState cartState,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
     return Padding(
       padding: const EdgeInsets.all(AlhaiSpacing.sm),
@@ -579,29 +638,33 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
           Expanded(
             child: GestureDetector(
               onTap: () async {
-                final result = await CustomerSearchDialog.show(context,
-                    storeId: ref.read(currentStoreIdProvider) ?? '');
+                final result = await CustomerSearchDialog.show(
+                  context,
+                  storeId: ref.read(currentStoreIdProvider) ?? '',
+                );
                 if (result != null) {
-                  ref.read(cartStateProvider.notifier).setCustomer(
-                        result.id,
-                        customerName: result.name,
-                      );
+                  ref
+                      .read(cartStateProvider.notifier)
+                      .setCustomer(result.id, customerName: result.name);
                 }
               },
               child: Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.sm, vertical: 10),
+                  horizontal: AlhaiSpacing.sm,
+                  vertical: 10,
+                ),
                 decoration: BoxDecoration(
                   color: colorScheme.surfaceContainerLowest,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(
-                    color: colorScheme.outlineVariant,
-                  ),
+                  border: Border.all(color: colorScheme.outlineVariant),
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.person_outline_rounded,
-                        size: 18, color: colorScheme.onSurfaceVariant),
+                    Icon(
+                      Icons.person_outline_rounded,
+                      size: 18,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                     const SizedBox(width: AlhaiSpacing.xs),
                     Expanded(
                       child: Text(
@@ -657,8 +720,9 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                   ),
                   actions: [
                     TextButton(
-                        onPressed: () => Navigator.pop(ctx),
-                        child: Text(l10n.cancel)),
+                      onPressed: () => Navigator.pop(ctx),
+                      child: Text(l10n.cancel),
+                    ),
                     FilledButton(
                       onPressed: () async {
                         final name = nameCtrl.text.trim();
@@ -669,7 +733,8 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                             ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
                         if (storeId.isEmpty) {
                           throw StateError(
-                              'DEFAULT_STORE_ID is not configured. Pass --dart-define=DEFAULT_STORE_ID at build time.');
+                            'DEFAULT_STORE_ID is not configured. Pass --dart-define=DEFAULT_STORE_ID at build time.',
+                          );
                         }
                         try {
                           final customerId =
@@ -693,12 +758,14 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                                 'acc_${DateTime.now().millisecondsSinceEpoch}';
                             String? orgId;
                             try {
-                              final store =
-                                  await db.storesDao.getStoreById(storeId);
+                              final store = await db.storesDao.getStoreById(
+                                storeId,
+                              );
                               orgId = store?.orgId;
                             } catch (e) {
                               debugPrint(
-                                  '[PosCartPanel] orgId fetch failed: $e');
+                                '[PosCartPanel] orgId fetch failed: $e',
+                              );
                             }
                             await db.accountsDao.insertAccount(
                               AccountsTableCompanion.insert(
@@ -715,18 +782,21 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                             );
                           } catch (e) {
                             debugPrint(
-                                'Error creating account for customer: $e');
+                              'Error creating account for customer: $e',
+                            );
                           }
                           // مزامنة العميل الجديد مع Supabase
                           try {
                             String? orgId;
                             try {
-                              final store =
-                                  await db.storesDao.getStoreById(storeId);
+                              final store = await db.storesDao.getStoreById(
+                                storeId,
+                              );
                               orgId = store?.orgId;
                             } catch (e) {
                               debugPrint(
-                                  '[PosCartPanel] orgId fetch failed: $e');
+                                '[PosCartPanel] orgId fetch failed: $e',
+                              );
                             }
                             final syncService = ref.read(syncServiceProvider);
                             await syncService.enqueueCreate(
@@ -751,15 +821,21 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                               .read(cartStateProvider.notifier)
                               .setCustomer(customerId, customerName: name);
                           if (!context.mounted) return;
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
                               content: Text(l10n.customerAddedSuccess(name)),
-                              backgroundColor: AppColors.success));
+                              backgroundColor: AppColors.success,
+                            ),
+                          );
                         } catch (e) {
                           debugPrint('Error adding customer: $e');
                           if (context.mounted) {
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
                                 content: Text(l10n.customerAddFailed),
-                                backgroundColor: AppColors.error));
+                                backgroundColor: AppColors.error,
+                              ),
+                            );
                           }
                         }
                       },
@@ -773,15 +849,18 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
               foregroundColor: AppColors.primary,
               side: const BorderSide(color: AppColors.primary),
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.sm, vertical: 10),
+                horizontal: AlhaiSpacing.sm,
+                vertical: 10,
+              ),
               minimumSize: const Size(0, 40),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
             ),
-            child: Text('+${l10n.newCustomer}',
-                style:
-                    const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+            child: Text(
+              '+${l10n.newCustomer}',
+              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
+            ),
           ),
         ],
       ),
@@ -789,7 +868,10 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
   }
 
   Widget _buildEmptyCart(
-      BuildContext context, bool isDark, AppLocalizations l10n) {
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
     return Center(
       child: SingleChildScrollView(
@@ -827,23 +909,22 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
   }
 
   Widget _buildCartFooter(
-      BuildContext context,
-      WidgetRef ref,
-      CartState cartState,
-      double subtotal,
-      double tax,
-      double total,
-      bool isDark,
-      AppLocalizations l10n,
-      bool hasItems) {
+    BuildContext context,
+    WidgetRef ref,
+    CartState cartState,
+    double subtotal,
+    double tax,
+    double total,
+    bool isDark,
+    AppLocalizations l10n,
+    bool hasItems,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: colorScheme.surfaceContainerLow,
-        border: Border(
-          top: BorderSide(color: colorScheme.outlineVariant),
-        ),
+        border: Border(top: BorderSide(color: colorScheme.outlineVariant)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -874,10 +955,7 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
             ),
           ],
 
-          Divider(
-            height: 20,
-            color: colorScheme.outlineVariant,
-          ),
+          Divider(height: 20, color: colorScheme.outlineVariant),
 
           // Grand total
           Row(
@@ -966,7 +1044,9 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                               const SizedBox(width: AlhaiSpacing.xs),
                               Container(
                                 padding: const EdgeInsets.symmetric(
-                                    horizontal: 10, vertical: 3),
+                                  horizontal: 10,
+                                  vertical: 3,
+                                ),
                                 decoration: BoxDecoration(
                                   color: Colors.white.withValues(alpha: 0.2),
                                   borderRadius: BorderRadius.circular(20),
@@ -997,7 +1077,10 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
 
   /// حوار إدخال خصم مع حماية PIN للخصومات > 20%
   void _showDiscountDialog(
-      BuildContext context, WidgetRef ref, double subtotal) {
+    BuildContext context,
+    WidgetRef ref,
+    double subtotal,
+  ) {
     final discountController = TextEditingController();
     final l10n = AppLocalizations.of(context);
 
@@ -1007,12 +1090,19 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
         return AlertDialog(
           title: Row(
             children: [
-              const Icon(Icons.percent_rounded,
-                  color: AppColors.success, size: 22),
+              const Icon(
+                Icons.percent_rounded,
+                color: AppColors.success,
+                size: 22,
+              ),
               const SizedBox(width: AlhaiSpacing.xs),
               Expanded(
-                  child: Text(l10n.discount,
-                      overflow: TextOverflow.ellipsis, maxLines: 1)),
+                child: Text(
+                  l10n.discount,
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
+              ),
             ],
           ),
           content: Column(
@@ -1130,7 +1220,8 @@ class PosTotalRow extends StatelessWidget {
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w500,
-            color: valueColor ??
+            color:
+                valueColor ??
                 (isDark ? AppColors.textPrimaryDark : AppColors.textPrimary),
           ),
         ),
@@ -1171,19 +1262,28 @@ class PosCartItemTile extends ConsumerWidget {
                     memCacheHeight: 112,
                     placeholder: (_, __) => Container(
                       color: colorScheme.surfaceContainerLow,
-                      child: Icon(Icons.image,
-                          size: 20, color: colorScheme.onSurfaceVariant),
+                      child: Icon(
+                        Icons.image,
+                        size: 20,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     errorWidget: (_, __, ___) => Container(
                       color: colorScheme.surfaceContainerLow,
-                      child: Icon(Icons.image,
-                          size: 20, color: colorScheme.onSurfaceVariant),
+                      child: Icon(
+                        Icons.image,
+                        size: 20,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                   )
                 : Container(
                     color: colorScheme.surfaceContainerLow,
-                    child: Icon(Icons.image,
-                        size: 20, color: colorScheme.onSurfaceVariant),
+                    child: Icon(
+                      Icons.image,
+                      size: 20,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
                   ),
           ),
         ),
@@ -1282,15 +1382,19 @@ class PosCartItemTile extends ConsumerWidget {
             onTap: () {
               int qty = item.quantity;
               final priceCtrl = TextEditingController(
-                text:
-                    (item.customPrice ?? item.product.price).toStringAsFixed(2),
+                text: (item.customPrice ?? item.product.price).toStringAsFixed(
+                  2,
+                ),
               );
               showDialog<void>(
                 context: context,
                 builder: (ctx) => StatefulBuilder(
                   builder: (ctx, setDialogState) => AlertDialog(
-                    title: Text(item.product.name,
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
+                    title: Text(
+                      item.product.name,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                     content: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -1298,11 +1402,15 @@ class PosCartItemTile extends ConsumerWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Flexible(
-                                child: Text(l10n.quantityColon,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.w500),
-                                    overflow: TextOverflow.ellipsis,
-                                    maxLines: 1)),
+                              child: Text(
+                                l10n.quantityColon,
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ),
                             Row(
                               children: [
                                 IconButton(
@@ -1311,10 +1419,13 @@ class PosCartItemTile extends ConsumerWidget {
                                       ? () => setDialogState(() => qty--)
                                       : null,
                                 ),
-                                Text('$qty',
-                                    style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold)),
+                                Text(
+                                  '$qty',
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
                                 IconButton(
                                   icon: const Icon(Icons.add_circle_outline),
                                   onPressed: () => setDialogState(() => qty++),
@@ -1327,7 +1438,8 @@ class PosCartItemTile extends ConsumerWidget {
                         TextField(
                           controller: priceCtrl,
                           keyboardType: const TextInputType.numberWithOptions(
-                              decimal: true),
+                            decimal: true,
+                          ),
                           textDirection: TextDirection.ltr,
                           decoration: InputDecoration(
                             labelText: l10n.price,
@@ -1339,16 +1451,18 @@ class PosCartItemTile extends ConsumerWidget {
                     ),
                     actions: [
                       TextButton(
-                          onPressed: () => Navigator.pop(ctx),
-                          child: Text(l10n.cancel)),
+                        onPressed: () => Navigator.pop(ctx),
+                        child: Text(l10n.cancel),
+                      ),
                       FilledButton(
                         onPressed: () {
                           Navigator.pop(ctx);
                           ref
                               .read(cartStateProvider.notifier)
                               .updateQuantity(item.product.id, qty);
-                          final newPrice =
-                              double.tryParse(priceCtrl.text.trim());
+                          final newPrice = double.tryParse(
+                            priceCtrl.text.trim(),
+                          );
                           if (newPrice != null &&
                               newPrice > 0 &&
                               newPrice != item.product.price) {
@@ -1400,10 +1514,9 @@ class PosCartItemTile extends ConsumerWidget {
                 child: Icon(
                   Icons.delete_outline_rounded,
                   size: 18,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .error
-                      .withValues(alpha: 0.7),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.error.withValues(alpha: 0.7),
                 ),
               ),
             ),
@@ -1441,10 +1554,7 @@ class PosQtyButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         side: isPrimary
             ? BorderSide.none
-            : BorderSide(
-                color: colorScheme.outlineVariant,
-                width: 0.5,
-              ),
+            : BorderSide(color: colorScheme.outlineVariant, width: 0.5),
       ),
       child: InkWell(
         onTap: onTap,
@@ -1458,8 +1568,8 @@ class PosQtyButton extends StatelessWidget {
             color: isPrimary
                 ? colorScheme.onPrimary
                 : isDark
-                    ? AppColors.textSecondaryDark
-                    : AppColors.textSecondary,
+                ? AppColors.textSecondaryDark
+                : AppColors.textSecondary,
           ),
         ),
       ),
@@ -1514,8 +1624,11 @@ class PosDraftButton extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (heldCount > 0) ...[
-                  const Icon(Icons.pause_circle_outline,
-                      size: 16, color: AppColors.warning),
+                  const Icon(
+                    Icons.pause_circle_outline,
+                    size: 16,
+                    color: AppColors.warning,
+                  ),
                   const SizedBox(width: AlhaiSpacing.xxs),
                 ],
                 Flexible(
@@ -1527,8 +1640,8 @@ class PosDraftButton extends ConsumerWidget {
                       color: heldCount > 0
                           ? AppColors.warning
                           : isDark
-                              ? AppColors.textSecondaryDark
-                              : AppColors.textSecondary,
+                          ? AppColors.textSecondaryDark
+                          : AppColors.textSecondary,
                     ),
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,

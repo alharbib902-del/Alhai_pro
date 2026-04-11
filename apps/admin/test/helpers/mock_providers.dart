@@ -48,55 +48,70 @@ List<Override> defaultProviderOverrides({
   final mockSyncService = MockSyncService();
 
   // Stub enqueue methods so sync calls don't throw during tests
-  when(() => mockSyncService.enqueueCreate(
-        tableName: any(named: 'tableName'),
-        recordId: any(named: 'recordId'),
-        data: any(named: 'data'),
-        priority: any(named: 'priority'),
-      )).thenAnswer((_) async => 'mock-sync-id');
+  when(
+    () => mockSyncService.enqueueCreate(
+      tableName: any(named: 'tableName'),
+      recordId: any(named: 'recordId'),
+      data: any(named: 'data'),
+      priority: any(named: 'priority'),
+    ),
+  ).thenAnswer((_) async => 'mock-sync-id');
 
-  when(() => mockSyncService.enqueueUpdate(
-        tableName: any(named: 'tableName'),
-        recordId: any(named: 'recordId'),
-        changes: any(named: 'changes'),
-        priority: any(named: 'priority'),
-      )).thenAnswer((_) async => 'mock-sync-id');
+  when(
+    () => mockSyncService.enqueueUpdate(
+      tableName: any(named: 'tableName'),
+      recordId: any(named: 'recordId'),
+      changes: any(named: 'changes'),
+      priority: any(named: 'priority'),
+    ),
+  ).thenAnswer((_) async => 'mock-sync-id');
 
-  when(() => mockSyncService.enqueueDelete(
-        tableName: any(named: 'tableName'),
-        recordId: any(named: 'recordId'),
-        priority: any(named: 'priority'),
-      )).thenAnswer((_) async => 'mock-sync-id');
+  when(
+    () => mockSyncService.enqueueDelete(
+      tableName: any(named: 'tableName'),
+      recordId: any(named: 'recordId'),
+      priority: any(named: 'priority'),
+    ),
+  ).thenAnswer((_) async => 'mock-sync-id');
 
   when(() => mockSyncService.getPendingCount()).thenAnswer((_) async => 0);
 
-  when(() => mockSyncService.watchPendingCount())
-      .thenAnswer((_) => Stream.value(0));
+  when(
+    () => mockSyncService.watchPendingCount(),
+  ).thenAnswer((_) => Stream.value(0));
 
-  when(() => mockSyncService.watchPendingItems())
-      .thenAnswer((_) => Stream.value([]));
+  when(
+    () => mockSyncService.watchPendingItems(),
+  ).thenAnswer((_) => Stream.value([]));
 
-  when(() => mockSyncService.watchConflictItems())
-      .thenAnswer((_) => Stream.value([]));
+  when(
+    () => mockSyncService.watchConflictItems(),
+  ).thenAnswer((_) => Stream.value([]));
 
-  when(() => mockSyncService.watchConflictCount())
-      .thenAnswer((_) => Stream.value(0));
+  when(
+    () => mockSyncService.watchConflictCount(),
+  ).thenAnswer((_) => Stream.value(0));
 
   // SyncManager.initialize() and syncPending() call these methods:
-  when(() => mockSyncService.getPendingItems())
-      .thenAnswer((_) async => <SyncQueueTableData>[]);
+  when(
+    () => mockSyncService.getPendingItems(),
+  ).thenAnswer((_) async => <SyncQueueTableData>[]);
 
-  when(() => mockSyncService.getConflictItems())
-      .thenAnswer((_) async => <SyncQueueTableData>[]);
+  when(
+    () => mockSyncService.getConflictItems(),
+  ).thenAnswer((_) async => <SyncQueueTableData>[]);
 
-  when(() => mockSyncService.getStuckSyncingItems())
-      .thenAnswer((_) async => <SyncQueueTableData>[]);
+  when(
+    () => mockSyncService.getStuckSyncingItems(),
+  ).thenAnswer((_) async => <SyncQueueTableData>[]);
 
   when(() => mockSyncService.resetStuckItems()).thenAnswer((_) async => 0);
 
-  when(() => mockSyncService.recoverStuckSyncingItems(
-        stuckThreshold: any(named: 'stuckThreshold'),
-      )).thenAnswer((_) async => 0);
+  when(
+    () => mockSyncService.recoverStuckSyncingItems(
+      stuckThreshold: any(named: 'stuckThreshold'),
+    ),
+  ).thenAnswer((_) async => 0);
 
   when(() => mockSyncService.retryItem(any())).thenAnswer((_) async {});
 
@@ -104,22 +119,27 @@ List<Override> defaultProviderOverrides({
 
   when(() => mockSyncService.markAsSynced(any())).thenAnswer((_) async {});
 
-  when(() => mockSyncService.markAsFailed(any(), any()))
-      .thenAnswer((_) async {});
+  when(
+    () => mockSyncService.markAsFailed(any(), any()),
+  ).thenAnswer((_) async {});
 
-  when(() => mockSyncService.cleanup(olderThan: any(named: 'olderThan')))
-      .thenAnswer((_) async => 0);
+  when(
+    () => mockSyncService.cleanup(olderThan: any(named: 'olderThan')),
+  ).thenAnswer((_) async => 0);
 
-  when(() => mockSyncService.getDeadLetterItems())
-      .thenAnswer((_) async => <SyncQueueTableData>[]);
+  when(
+    () => mockSyncService.getDeadLetterItems(),
+  ).thenAnswer((_) async => <SyncQueueTableData>[]);
 
   when(() => mockSyncService.getDeadLetterCount()).thenAnswer((_) async => 0);
 
-  when(() => mockSyncService.watchDeadLetterCount())
-      .thenAnswer((_) => Stream.value(0));
+  when(
+    () => mockSyncService.watchDeadLetterCount(),
+  ).thenAnswer((_) => Stream.value(0));
 
-  when(() => mockSyncService.watchPendingCountWithOldest())
-      .thenAnswer((_) => Stream.value((count: 0, oldestAt: null)));
+  when(
+    () => mockSyncService.watchPendingCountWithOldest(),
+  ).thenAnswer((_) => Stream.value((count: 0, oldestAt: null)));
 
   // Create a test admin user
   final testUser = User(
@@ -140,8 +160,9 @@ List<Override> defaultProviderOverrides({
   final mockConnectivity = MockConnectivityService();
   when(() => mockConnectivity.isOnline).thenReturn(false);
   when(() => mockConnectivity.isOffline).thenReturn(true);
-  when(() => mockConnectivity.onConnectivityChanged)
-      .thenAnswer((_) => const Stream<bool>.empty());
+  when(
+    () => mockConnectivity.onConnectivityChanged,
+  ).thenAnswer((_) => const Stream<bool>.empty());
   when(() => mockConnectivity.dispose()).thenReturn(null);
 
   // Create a mock SyncManager that doesn't start any timers
@@ -149,8 +170,9 @@ List<Override> defaultProviderOverrides({
   when(() => mockSyncManager.initialize()).thenAnswer((_) async {});
   when(() => mockSyncManager.dispose()).thenReturn(null);
   when(() => mockSyncManager.isSyncing).thenReturn(false);
-  when(() => mockSyncManager.statusStream)
-      .thenAnswer((_) => const Stream.empty());
+  when(
+    () => mockSyncManager.statusStream,
+  ).thenAnswer((_) => const Stream.empty());
 
   return [
     currentStoreIdProvider.overrideWith((ref) => storeId),

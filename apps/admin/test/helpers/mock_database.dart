@@ -188,8 +188,9 @@ MockAppDatabase setupMockDatabase({
   when(() => db.inventoryDao).thenReturn(inventoryDao ?? MockInventoryDao());
   when(() => db.accountsDao).thenReturn(accountsDao ?? MockAccountsDao());
   when(() => db.syncQueueDao).thenReturn(syncQueueDao ?? MockSyncQueueDao());
-  when(() => db.transactionsDao)
-      .thenReturn(transactionsDao ?? MockTransactionsDao());
+  when(
+    () => db.transactionsDao,
+  ).thenReturn(transactionsDao ?? MockTransactionsDao());
   when(() => db.ordersDao).thenReturn(ordersDao ?? MockOrdersDao());
   when(() => db.auditLogDao).thenReturn(auditLogDao ?? MockAuditLogDao());
   when(() => db.categoriesDao).thenReturn(categoriesDao ?? MockCategoriesDao());
@@ -207,27 +208,34 @@ MockAppDatabase setupMockDatabase({
   // Medium-priority DAOs
   when(() => db.purchasesDao).thenReturn(purchasesDao ?? MockPurchasesDao());
   when(() => db.discountsDao).thenReturn(discountsDao ?? MockDiscountsDao());
-  when(() => db.notificationsDao)
-      .thenReturn(notificationsDao ?? MockNotificationsDao());
+  when(
+    () => db.notificationsDao,
+  ).thenReturn(notificationsDao ?? MockNotificationsDao());
 
   // WhatsApp DAOs
-  when(() => db.whatsAppMessagesDao)
-      .thenReturn(whatsAppMessagesDao ?? MockWhatsAppMessagesDao());
-  when(() => db.whatsAppTemplatesDao)
-      .thenReturn(whatsAppTemplatesDao ?? MockWhatsAppTemplatesDao());
+  when(
+    () => db.whatsAppMessagesDao,
+  ).thenReturn(whatsAppMessagesDao ?? MockWhatsAppMessagesDao());
+  when(
+    () => db.whatsAppTemplatesDao,
+  ).thenReturn(whatsAppTemplatesDao ?? MockWhatsAppTemplatesDao());
 
   // Multi-tenant DAOs
-  when(() => db.organizationsDao)
-      .thenReturn(organizationsDao ?? MockOrganizationsDao());
+  when(
+    () => db.organizationsDao,
+  ).thenReturn(organizationsDao ?? MockOrganizationsDao());
   when(() => db.orgMembersDao).thenReturn(orgMembersDao ?? MockOrgMembersDao());
-  when(() => db.posTerminalsDao)
-      .thenReturn(posTerminalsDao ?? MockPosTerminalsDao());
+  when(
+    () => db.posTerminalsDao,
+  ).thenReturn(posTerminalsDao ?? MockPosTerminalsDao());
 
   // Sync DAOs
-  when(() => db.syncMetadataDao)
-      .thenReturn(syncMetadataDao ?? MockSyncMetadataDao());
-  when(() => db.stockDeltasDao)
-      .thenReturn(stockDeltasDao ?? MockStockDeltasDao());
+  when(
+    () => db.syncMetadataDao,
+  ).thenReturn(syncMetadataDao ?? MockSyncMetadataDao());
+  when(
+    () => db.stockDeltasDao,
+  ).thenReturn(stockDeltasDao ?? MockStockDeltasDao());
 
   return db;
 }

@@ -159,20 +159,14 @@ void main() {
 
     group('SmsResult', () {
       test('should hold success data', () {
-        const result = SmsResult(
-          success: true,
-          messageId: 'msg-123',
-        );
+        const result = SmsResult(success: true, messageId: 'msg-123');
         expect(result.success, isTrue);
         expect(result.messageId, equals('msg-123'));
         expect(result.error, isNull);
       });
 
       test('should hold error data', () {
-        const result = SmsResult(
-          success: false,
-          error: 'Failed to send',
-        );
+        const result = SmsResult(success: false, error: 'Failed to send');
         expect(result.success, isFalse);
         expect(result.error, equals('Failed to send'));
       });

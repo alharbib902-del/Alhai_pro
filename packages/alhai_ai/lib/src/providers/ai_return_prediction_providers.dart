@@ -13,8 +13,9 @@ import 'package:alhai_auth/alhai_auth.dart';
 // ============================================================================
 
 /// مزود خدمة التنبؤ بالمرتجعات
-final aiReturnPredictionServiceProvider =
-    Provider<AiReturnPredictionService>((ref) {
+final aiReturnPredictionServiceProvider = Provider<AiReturnPredictionService>((
+  ref,
+) {
   return AiReturnPredictionService();
 });
 
@@ -23,15 +24,17 @@ final aiReturnPredictionServiceProvider =
 // ============================================================================
 
 /// مزود احتمالات الإرجاع
-final returnProbabilitiesProvider =
-    FutureProvider<List<ReturnProbability>>((ref) async {
+final returnProbabilitiesProvider = FutureProvider<List<ReturnProbability>>((
+  ref,
+) async {
   final service = ref.watch(aiReturnPredictionServiceProvider);
   return service.getReturnProbabilities(ref.read(currentStoreIdProvider)!);
 });
 
 /// مزود الإجراءات الوقائية
-final preventiveActionsProvider =
-    FutureProvider<List<PreventiveAction>>((ref) async {
+final preventiveActionsProvider = FutureProvider<List<PreventiveAction>>((
+  ref,
+) async {
   final service = ref.watch(aiReturnPredictionServiceProvider);
   return service.getPreventiveActions(ref.read(currentStoreIdProvider)!);
 });
@@ -64,19 +67,23 @@ final atRiskAmountProvider = FutureProvider<double>((ref) async {
 final highRiskCountProvider = FutureProvider<int>((ref) async {
   final probabilities = await ref.watch(returnProbabilitiesProvider.future);
   return probabilities
-      .where((p) =>
-          p.riskLevel == ReturnRiskLevel.high ||
-          p.riskLevel == ReturnRiskLevel.veryHigh)
+      .where(
+        (p) =>
+            p.riskLevel == ReturnRiskLevel.high ||
+            p.riskLevel == ReturnRiskLevel.veryHigh,
+      )
       .length;
 });
 
 /// مزود فلتر مستوى الخطر المحدد
-final selectedRiskFilterProvider =
-    StateProvider<ReturnRiskLevel?>((ref) => null);
+final selectedRiskFilterProvider = StateProvider<ReturnRiskLevel?>(
+  (ref) => null,
+);
 
 /// مزود القائمة المفلترة
-final filteredProbabilitiesProvider =
-    FutureProvider<List<ReturnProbability>>((ref) async {
+final filteredProbabilitiesProvider = FutureProvider<List<ReturnProbability>>((
+  ref,
+) async {
   final probabilities = await ref.watch(returnProbabilitiesProvider.future);
   final filter = ref.watch(selectedRiskFilterProvider);
   if (filter == null) return probabilities;
@@ -88,8 +95,9 @@ final filteredProbabilitiesProvider =
 // ============================================================================
 
 /// مزود بيانات التنبؤ بالمرتجعات من خادم AI
-final returnsApiProvider =
-    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+final returnsApiProvider = FutureProvider.autoDispose<Map<String, dynamic>>((
+  ref,
+) async {
   final api = ref.read(aiApiServiceProvider);
   final storeId = ref.read(currentStoreIdProvider)!;
   return api.predictReturns(orgId: 'default', storeId: storeId);

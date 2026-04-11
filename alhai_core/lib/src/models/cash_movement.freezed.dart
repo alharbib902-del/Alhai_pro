@@ -12,7 +12,8 @@ part of 'cash_movement.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 CashMovement _$CashMovementFromJson(Map<String, dynamic> json) {
   return _CashMovement.fromJson(json);
@@ -45,21 +46,23 @@ mixin _$CashMovement {
 /// @nodoc
 abstract class $CashMovementCopyWith<$Res> {
   factory $CashMovementCopyWith(
-          CashMovement value, $Res Function(CashMovement) then) =
-      _$CashMovementCopyWithImpl<$Res, CashMovement>;
+    CashMovement value,
+    $Res Function(CashMovement) then,
+  ) = _$CashMovementCopyWithImpl<$Res, CashMovement>;
   @useResult
-  $Res call(
-      {String id,
-      String shiftId,
-      String storeId,
-      String cashierId,
-      CashMovementType type,
-      double amount,
-      CashMovementReason reason,
-      String? notes,
-      String? supervisorId,
-      String? supervisorPin,
-      DateTime createdAt});
+  $Res call({
+    String id,
+    String shiftId,
+    String storeId,
+    String cashierId,
+    CashMovementType type,
+    double amount,
+    CashMovementReason reason,
+    String? notes,
+    String? supervisorId,
+    String? supervisorPin,
+    DateTime createdAt,
+  });
 }
 
 /// @nodoc
@@ -89,52 +92,55 @@ class _$CashMovementCopyWithImpl<$Res, $Val extends CashMovement>
     Object? supervisorPin = freezed,
     Object? createdAt = null,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      shiftId: null == shiftId
-          ? _value.shiftId
-          : shiftId // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      cashierId: null == cashierId
-          ? _value.cashierId
-          : cashierId // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as CashMovementType,
-      amount: null == amount
-          ? _value.amount
-          : amount // ignore: cast_nullable_to_non_nullable
-              as double,
-      reason: null == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as CashMovementReason,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      supervisorId: freezed == supervisorId
-          ? _value.supervisorId
-          : supervisorId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      supervisorPin: freezed == supervisorPin
-          ? _value.supervisorPin
-          : supervisorPin // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            shiftId: null == shiftId
+                ? _value.shiftId
+                : shiftId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            storeId: null == storeId
+                ? _value.storeId
+                : storeId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            cashierId: null == cashierId
+                ? _value.cashierId
+                : cashierId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            type: null == type
+                ? _value.type
+                : type // ignore: cast_nullable_to_non_nullable
+                      as CashMovementType,
+            amount: null == amount
+                ? _value.amount
+                : amount // ignore: cast_nullable_to_non_nullable
+                      as double,
+            reason: null == reason
+                ? _value.reason
+                : reason // ignore: cast_nullable_to_non_nullable
+                      as CashMovementReason,
+            notes: freezed == notes
+                ? _value.notes
+                : notes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            supervisorId: freezed == supervisorId
+                ? _value.supervisorId
+                : supervisorId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            supervisorPin: freezed == supervisorPin
+                ? _value.supervisorPin
+                : supervisorPin // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -142,22 +148,24 @@ class _$CashMovementCopyWithImpl<$Res, $Val extends CashMovement>
 abstract class _$$CashMovementImplCopyWith<$Res>
     implements $CashMovementCopyWith<$Res> {
   factory _$$CashMovementImplCopyWith(
-          _$CashMovementImpl value, $Res Function(_$CashMovementImpl) then) =
-      __$$CashMovementImplCopyWithImpl<$Res>;
+    _$CashMovementImpl value,
+    $Res Function(_$CashMovementImpl) then,
+  ) = __$$CashMovementImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String shiftId,
-      String storeId,
-      String cashierId,
-      CashMovementType type,
-      double amount,
-      CashMovementReason reason,
-      String? notes,
-      String? supervisorId,
-      String? supervisorPin,
-      DateTime createdAt});
+  $Res call({
+    String id,
+    String shiftId,
+    String storeId,
+    String cashierId,
+    CashMovementType type,
+    double amount,
+    CashMovementReason reason,
+    String? notes,
+    String? supervisorId,
+    String? supervisorPin,
+    DateTime createdAt,
+  });
 }
 
 /// @nodoc
@@ -165,8 +173,9 @@ class __$$CashMovementImplCopyWithImpl<$Res>
     extends _$CashMovementCopyWithImpl<$Res, _$CashMovementImpl>
     implements _$$CashMovementImplCopyWith<$Res> {
   __$$CashMovementImplCopyWithImpl(
-      _$CashMovementImpl _value, $Res Function(_$CashMovementImpl) _then)
-      : super(_value, _then);
+    _$CashMovementImpl _value,
+    $Res Function(_$CashMovementImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of CashMovement
   /// with the given fields replaced by the non-null parameter values.
@@ -185,71 +194,73 @@ class __$$CashMovementImplCopyWithImpl<$Res>
     Object? supervisorPin = freezed,
     Object? createdAt = null,
   }) {
-    return _then(_$CashMovementImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      shiftId: null == shiftId
-          ? _value.shiftId
-          : shiftId // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      cashierId: null == cashierId
-          ? _value.cashierId
-          : cashierId // ignore: cast_nullable_to_non_nullable
-              as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as CashMovementType,
-      amount: null == amount
-          ? _value.amount
-          : amount // ignore: cast_nullable_to_non_nullable
-              as double,
-      reason: null == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as CashMovementReason,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      supervisorId: freezed == supervisorId
-          ? _value.supervisorId
-          : supervisorId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      supervisorPin: freezed == supervisorPin
-          ? _value.supervisorPin
-          : supervisorPin // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$CashMovementImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        shiftId: null == shiftId
+            ? _value.shiftId
+            : shiftId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        storeId: null == storeId
+            ? _value.storeId
+            : storeId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        cashierId: null == cashierId
+            ? _value.cashierId
+            : cashierId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        type: null == type
+            ? _value.type
+            : type // ignore: cast_nullable_to_non_nullable
+                  as CashMovementType,
+        amount: null == amount
+            ? _value.amount
+            : amount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        reason: null == reason
+            ? _value.reason
+            : reason // ignore: cast_nullable_to_non_nullable
+                  as CashMovementReason,
+        notes: freezed == notes
+            ? _value.notes
+            : notes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        supervisorId: freezed == supervisorId
+            ? _value.supervisorId
+            : supervisorId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        supervisorPin: freezed == supervisorPin
+            ? _value.supervisorPin
+            : supervisorPin // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$CashMovementImpl extends _CashMovement {
-  const _$CashMovementImpl(
-      {required this.id,
-      required this.shiftId,
-      required this.storeId,
-      required this.cashierId,
-      required this.type,
-      required this.amount,
-      required this.reason,
-      this.notes,
-      this.supervisorId,
-      this.supervisorPin,
-      required this.createdAt})
-      : super._();
+  const _$CashMovementImpl({
+    required this.id,
+    required this.shiftId,
+    required this.storeId,
+    required this.cashierId,
+    required this.type,
+    required this.amount,
+    required this.reason,
+    this.notes,
+    this.supervisorId,
+    this.supervisorPin,
+    required this.createdAt,
+  }) : super._();
 
   factory _$CashMovementImpl.fromJson(Map<String, dynamic> json) =>
       _$$CashMovementImplFromJson(json);
@@ -306,8 +317,20 @@ class _$CashMovementImpl extends _CashMovement {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, id, shiftId, storeId, cashierId,
-      type, amount, reason, notes, supervisorId, supervisorPin, createdAt);
+  int get hashCode => Object.hash(
+    runtimeType,
+    id,
+    shiftId,
+    storeId,
+    cashierId,
+    type,
+    amount,
+    reason,
+    notes,
+    supervisorId,
+    supervisorPin,
+    createdAt,
+  );
 
   /// Create a copy of CashMovement
   /// with the given fields replaced by the non-null parameter values.
@@ -319,25 +342,24 @@ class _$CashMovementImpl extends _CashMovement {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CashMovementImplToJson(
-      this,
-    );
+    return _$$CashMovementImplToJson(this);
   }
 }
 
 abstract class _CashMovement extends CashMovement {
-  const factory _CashMovement(
-      {required final String id,
-      required final String shiftId,
-      required final String storeId,
-      required final String cashierId,
-      required final CashMovementType type,
-      required final double amount,
-      required final CashMovementReason reason,
-      final String? notes,
-      final String? supervisorId,
-      final String? supervisorPin,
-      required final DateTime createdAt}) = _$CashMovementImpl;
+  const factory _CashMovement({
+    required final String id,
+    required final String shiftId,
+    required final String storeId,
+    required final String cashierId,
+    required final CashMovementType type,
+    required final double amount,
+    required final CashMovementReason reason,
+    final String? notes,
+    final String? supervisorId,
+    final String? supervisorPin,
+    required final DateTime createdAt,
+  }) = _$CashMovementImpl;
   const _CashMovement._() : super._();
 
   factory _CashMovement.fromJson(Map<String, dynamic> json) =

@@ -8,8 +8,10 @@ class VatCalculator {
   /// حساب مبلغ الضريبة من المبلغ قبل الضريبة
   ///
   /// مثال: calculateVat(100) = 15.0
-  static double calculateVat(double amountBeforeVat,
-      {double rate = defaultRate}) {
+  static double calculateVat(
+    double amountBeforeVat, {
+    double rate = defaultRate,
+  }) {
     return amountBeforeVat * rate;
   }
 
@@ -35,8 +37,11 @@ class VatCalculator {
   }
 
   /// حساب تفاصيل الفاتورة الكاملة
-  static VatBreakdown breakdown(double subtotal,
-      {double discount = 0, double rate = defaultRate}) {
+  static VatBreakdown breakdown(
+    double subtotal, {
+    double discount = 0,
+    double rate = defaultRate,
+  }) {
     final taxableAmount = subtotal - discount;
     final vatAmount = taxableAmount * rate;
     final total = taxableAmount + vatAmount;

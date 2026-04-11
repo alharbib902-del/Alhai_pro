@@ -58,9 +58,11 @@ void main() {
 
       // Arabic l10n: saleNotFound
       expect(
-          find.text(
-              '\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0627\u0644\u0628\u064a\u0639'),
-          findsOneWidget);
+        find.text(
+          '\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u0639\u062b\u0648\u0631 \u0639\u0644\u0649 \u0627\u0644\u0628\u064a\u0639',
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('displays order details when loaded', (tester) async {
@@ -84,10 +86,12 @@ void main() {
         ),
       ];
 
-      when(() => salesDao.getSaleById('sale-123'))
-          .thenAnswer((_) async => sale);
-      when(() => saleItemsDao.getItemsBySaleId('sale-123'))
-          .thenAnswer((_) async => items);
+      when(
+        () => salesDao.getSaleById('sale-123'),
+      ).thenAnswer((_) async => sale);
+      when(
+        () => saleItemsDao.getItemsBySaleId('sale-123'),
+      ).thenAnswer((_) async => items);
 
       await tester.pumpWidget(
         createTestWidget(const SaleDetailScreen(saleId: 'sale-123')),
@@ -108,14 +112,16 @@ void main() {
       final items = [
         createTestSaleItem(id: 'item-1', saleId: 'sale-1'),
         createTestSaleItem(
-            id: 'item-2',
-            saleId: 'sale-1',
-            productName: '\u0645\u0646\u062a\u062c 2'),
+          id: 'item-2',
+          saleId: 'sale-1',
+          productName: '\u0645\u0646\u062a\u062c 2',
+        ),
       ];
 
       when(() => salesDao.getSaleById('sale-1')).thenAnswer((_) async => sale);
-      when(() => saleItemsDao.getItemsBySaleId('sale-1'))
-          .thenAnswer((_) async => items);
+      when(
+        () => saleItemsDao.getItemsBySaleId('sale-1'),
+      ).thenAnswer((_) async => items);
 
       await tester.pumpWidget(
         createTestWidget(const SaleDetailScreen(saleId: 'sale-1')),
@@ -135,8 +141,9 @@ void main() {
       final sale = createTestSale(id: 'sale-1', total: 100.0);
 
       when(() => salesDao.getSaleById('sale-1')).thenAnswer((_) async => sale);
-      when(() => saleItemsDao.getItemsBySaleId('sale-1'))
-          .thenAnswer((_) async => <SaleItemsTableData>[]);
+      when(
+        () => saleItemsDao.getItemsBySaleId('sale-1'),
+      ).thenAnswer((_) async => <SaleItemsTableData>[]);
 
       await tester.pumpWidget(
         createTestWidget(const SaleDetailScreen(saleId: 'sale-1')),

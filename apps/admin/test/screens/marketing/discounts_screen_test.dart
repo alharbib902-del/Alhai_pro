@@ -29,8 +29,9 @@ void main() {
   group('DiscountsScreen', () {
     testWidgets('shows loading indicator initially', (tester) async {
       final completer = Completer<List<dynamic>>();
-      when(() => mockDiscountsDao.getAllDiscounts(any()))
-          .thenAnswer((_) => completer.future.then((v) => v.cast()));
+      when(
+        () => mockDiscountsDao.getAllDiscounts(any()),
+      ).thenAnswer((_) => completer.future.then((v) => v.cast()));
 
       await tester.pumpWidget(createTestWidget(const DiscountsScreen()));
       await tester.pump();
@@ -39,8 +40,9 @@ void main() {
     });
 
     testWidgets('shows empty state when no discounts', (tester) async {
-      when(() => mockDiscountsDao.getAllDiscounts(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockDiscountsDao.getAllDiscounts(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(createTestWidget(const DiscountsScreen()));
       await tester.pumpAndSettle();
@@ -49,14 +51,16 @@ void main() {
       expect(find.byType(DiscountsScreen), findsOneWidget);
     });
 
-    testWidgets('displays discounts list when data is available',
-        (tester) async {
+    testWidgets('displays discounts list when data is available', (
+      tester,
+    ) async {
       final discounts = [
         createTestDiscount(id: 'd-1', name: 'خصم تجريبي', isActive: true),
         createTestDiscount(id: 'd-2', name: 'خصم ثاني', isActive: false),
       ];
-      when(() => mockDiscountsDao.getAllDiscounts(any()))
-          .thenAnswer((_) async => discounts);
+      when(
+        () => mockDiscountsDao.getAllDiscounts(any()),
+      ).thenAnswer((_) async => discounts);
 
       await tester.pumpWidget(createTestWidget(const DiscountsScreen()));
       await tester.pumpAndSettle();
@@ -71,8 +75,9 @@ void main() {
         createTestDiscount(id: 'd-2', isActive: true),
         createTestDiscount(id: 'd-3', isActive: false),
       ];
-      when(() => mockDiscountsDao.getAllDiscounts(any()))
-          .thenAnswer((_) async => discounts);
+      when(
+        () => mockDiscountsDao.getAllDiscounts(any()),
+      ).thenAnswer((_) async => discounts);
 
       await tester.pumpWidget(createTestWidget(const DiscountsScreen()));
       await tester.pumpAndSettle();
@@ -86,11 +91,10 @@ void main() {
     });
 
     testWidgets('contains switch widgets for active toggle', (tester) async {
-      final discounts = [
-        createTestDiscount(id: 'd-1', isActive: true),
-      ];
-      when(() => mockDiscountsDao.getAllDiscounts(any()))
-          .thenAnswer((_) async => discounts);
+      final discounts = [createTestDiscount(id: 'd-1', isActive: true)];
+      when(
+        () => mockDiscountsDao.getAllDiscounts(any()),
+      ).thenAnswer((_) async => discounts);
 
       await tester.pumpWidget(createTestWidget(const DiscountsScreen()));
       await tester.pumpAndSettle();
@@ -99,11 +103,10 @@ void main() {
     });
 
     testWidgets('contains delete icon button', (tester) async {
-      final discounts = [
-        createTestDiscount(id: 'd-1'),
-      ];
-      when(() => mockDiscountsDao.getAllDiscounts(any()))
-          .thenAnswer((_) async => discounts);
+      final discounts = [createTestDiscount(id: 'd-1')];
+      when(
+        () => mockDiscountsDao.getAllDiscounts(any()),
+      ).thenAnswer((_) async => discounts);
 
       await tester.pumpWidget(createTestWidget(const DiscountsScreen()));
       await tester.pumpAndSettle();

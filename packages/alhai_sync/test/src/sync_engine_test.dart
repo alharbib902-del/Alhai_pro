@@ -48,8 +48,9 @@ void main() {
     mockStatusTracker = MockSyncStatusTracker();
     mockSyncQueueDao = MockSyncQueueDao();
 
-    when(() => mockConnectivity.onConnectivityChanged)
-        .thenAnswer((_) => const Stream.empty());
+    when(
+      () => mockConnectivity.onConnectivityChanged,
+    ).thenAnswer((_) => const Stream.empty());
     when(() => mockConnectivity.isOnline).thenReturn(false);
     when(() => mockConnectivity.isOffline).thenReturn(true);
 
@@ -106,10 +107,12 @@ void main() {
 
         // Set up all strategies to return successfully but with a delay
         final pullCompleter = Completer<List<PullResult>>();
-        when(() => mockPull.pullAll(
-              orgId: any(named: 'orgId'),
-              storeId: any(named: 'storeId'),
-            )).thenAnswer((_) => pullCompleter.future);
+        when(
+          () => mockPull.pullAll(
+            orgId: any(named: 'orgId'),
+            storeId: any(named: 'storeId'),
+          ),
+        ).thenAnswer((_) => pullCompleter.future);
         when(() => mockStatusTracker.refreshAll()).thenAnswer((_) async {});
 
         // Initialize while offline (no auto sync)
@@ -141,59 +144,79 @@ void main() {
         // Clean up the first sync
         pullCompleter.complete([]);
         // We need to let the first sync finish to avoid zone errors
-        when(() => mockPush.pushPending()).thenAnswer((_) async =>
-            PushResult(successCount: 0, failedCount: 0, errors: []));
-        when(() => mockBidirectional.syncAll(
-              orgId: any(named: 'orgId'),
-              storeId: any(named: 'storeId'),
-            )).thenAnswer((_) async => []);
-        when(() => mockStockDelta.sync(
-              orgId: any(named: 'orgId'),
-              storeId: any(named: 'storeId'),
-              deviceId: any(named: 'deviceId'),
-            )).thenAnswer((_) async => StockDeltaResult(
-              deltasSent: 0,
-              productsUpdated: 0,
-              errors: [],
-              oversoldProducts: [],
-            ));
+        when(() => mockPush.pushPending()).thenAnswer(
+          (_) async => PushResult(successCount: 0, failedCount: 0, errors: []),
+        );
+        when(
+          () => mockBidirectional.syncAll(
+            orgId: any(named: 'orgId'),
+            storeId: any(named: 'storeId'),
+          ),
+        ).thenAnswer((_) async => []);
+        when(
+          () => mockStockDelta.sync(
+            orgId: any(named: 'orgId'),
+            storeId: any(named: 'storeId'),
+            deviceId: any(named: 'deviceId'),
+          ),
+        ).thenAnswer(
+          (_) async => StockDeltaResult(
+            deltasSent: 0,
+            productsUpdated: 0,
+            errors: [],
+            oversoldProducts: [],
+          ),
+        );
         await firstSync;
       });
 
       test('executes all phases successfully', () async {
-        when(() => mockPull.pullAll(
-              orgId: any(named: 'orgId'),
-              storeId: any(named: 'storeId'),
-            )).thenAnswer((_) async => [
-              PullResult(tableName: 'products', recordsPulled: 5, errors: []),
-            ]);
+        when(
+          () => mockPull.pullAll(
+            orgId: any(named: 'orgId'),
+            storeId: any(named: 'storeId'),
+          ),
+        ).thenAnswer(
+          (_) async => [
+            PullResult(tableName: 'products', recordsPulled: 5, errors: []),
+          ],
+        );
 
-        when(() => mockPush.pushPending()).thenAnswer((_) async =>
-            PushResult(successCount: 3, failedCount: 0, errors: []));
+        when(() => mockPush.pushPending()).thenAnswer(
+          (_) async => PushResult(successCount: 3, failedCount: 0, errors: []),
+        );
 
-        when(() => mockBidirectional.syncAll(
-              orgId: any(named: 'orgId'),
-              storeId: any(named: 'storeId'),
-            )).thenAnswer((_) async => [
-              BidirectionalResult(
-                tableName: 'customers',
-                pushed: 1,
-                pulled: 2,
-                conflicts: 0,
-                errors: [],
-              ),
-            ]);
-
-        when(() => mockStockDelta.sync(
-              orgId: any(named: 'orgId'),
-              storeId: any(named: 'storeId'),
-              deviceId: any(named: 'deviceId'),
-            )).thenAnswer((_) async => StockDeltaResult(
-              deltasSent: 2,
-              productsUpdated: 2,
+        when(
+          () => mockBidirectional.syncAll(
+            orgId: any(named: 'orgId'),
+            storeId: any(named: 'storeId'),
+          ),
+        ).thenAnswer(
+          (_) async => [
+            BidirectionalResult(
+              tableName: 'customers',
+              pushed: 1,
+              pulled: 2,
+              conflicts: 0,
               errors: [],
-              oversoldProducts: [],
-            ));
+            ),
+          ],
+        );
+
+        when(
+          () => mockStockDelta.sync(
+            orgId: any(named: 'orgId'),
+            storeId: any(named: 'storeId'),
+            deviceId: any(named: 'deviceId'),
+          ),
+        ).thenAnswer(
+          (_) async => StockDeltaResult(
+            deltasSent: 2,
+            productsUpdated: 2,
+            errors: [],
+            oversoldProducts: [],
+          ),
+        );
 
         when(() => mockStatusTracker.refreshAll()).thenAnswer((_) async {});
 
@@ -214,20 +237,20 @@ void main() {
         expect(result.errors, isEmpty);
         expect(result.totalSynced, greaterThan(0));
 
-        verify(() => mockPull.pullAll(
-              orgId: 'org-1',
-              storeId: 'store-1',
-            )).called(1);
+        verify(
+          () => mockPull.pullAll(orgId: 'org-1', storeId: 'store-1'),
+        ).called(1);
         verify(() => mockPush.pushPending()).called(1);
-        verify(() => mockBidirectional.syncAll(
-              orgId: 'org-1',
-              storeId: 'store-1',
-            )).called(1);
-        verify(() => mockStockDelta.sync(
-              orgId: 'org-1',
-              storeId: 'store-1',
-              deviceId: 'device-1',
-            )).called(1);
+        verify(
+          () => mockBidirectional.syncAll(orgId: 'org-1', storeId: 'store-1'),
+        ).called(1);
+        verify(
+          () => mockStockDelta.sync(
+            orgId: 'org-1',
+            storeId: 'store-1',
+            deviceId: 'device-1',
+          ),
+        ).called(1);
         verify(() => mockStatusTracker.refreshAll()).called(1);
       });
 
@@ -235,42 +258,60 @@ void main() {
         when(() => mockConnectivity.isOnline).thenReturn(true);
         when(() => mockConnectivity.isOffline).thenReturn(false);
 
-        when(() => mockPull.pullAll(
-              orgId: any(named: 'orgId'),
-              storeId: any(named: 'storeId'),
-            )).thenAnswer((_) async => [
-              PullResult(
-                  tableName: 'products',
-                  recordsPulled: 0,
-                  errors: ['Pull error']),
-            ]);
+        when(
+          () => mockPull.pullAll(
+            orgId: any(named: 'orgId'),
+            storeId: any(named: 'storeId'),
+          ),
+        ).thenAnswer(
+          (_) async => [
+            PullResult(
+              tableName: 'products',
+              recordsPulled: 0,
+              errors: ['Pull error'],
+            ),
+          ],
+        );
 
-        when(() => mockPush.pushPending()).thenAnswer((_) async => PushResult(
-            successCount: 0, failedCount: 1, errors: ['Push error']));
+        when(() => mockPush.pushPending()).thenAnswer(
+          (_) async => PushResult(
+            successCount: 0,
+            failedCount: 1,
+            errors: ['Push error'],
+          ),
+        );
 
-        when(() => mockBidirectional.syncAll(
-              orgId: any(named: 'orgId'),
-              storeId: any(named: 'storeId'),
-            )).thenAnswer((_) async => [
-              BidirectionalResult(
-                tableName: 'customers',
-                pushed: 0,
-                pulled: 0,
-                conflicts: 0,
-                errors: ['Bi error'],
-              ),
-            ]);
+        when(
+          () => mockBidirectional.syncAll(
+            orgId: any(named: 'orgId'),
+            storeId: any(named: 'storeId'),
+          ),
+        ).thenAnswer(
+          (_) async => [
+            BidirectionalResult(
+              tableName: 'customers',
+              pushed: 0,
+              pulled: 0,
+              conflicts: 0,
+              errors: ['Bi error'],
+            ),
+          ],
+        );
 
-        when(() => mockStockDelta.sync(
-              orgId: any(named: 'orgId'),
-              storeId: any(named: 'storeId'),
-              deviceId: any(named: 'deviceId'),
-            )).thenAnswer((_) async => StockDeltaResult(
-              deltasSent: 0,
-              productsUpdated: 0,
-              errors: ['Delta error'],
-              oversoldProducts: [],
-            ));
+        when(
+          () => mockStockDelta.sync(
+            orgId: any(named: 'orgId'),
+            storeId: any(named: 'storeId'),
+            deviceId: any(named: 'deviceId'),
+          ),
+        ).thenAnswer(
+          (_) async => StockDeltaResult(
+            deltasSent: 0,
+            productsUpdated: 0,
+            errors: ['Delta error'],
+            oversoldProducts: [],
+          ),
+        );
 
         when(() => mockStatusTracker.refreshAll()).thenAnswer((_) async {});
 
@@ -294,26 +335,35 @@ void main() {
         when(() => mockConnectivity.isOnline).thenReturn(true);
         when(() => mockConnectivity.isOffline).thenReturn(false);
 
-        when(() => mockPull.pullAll(
-              orgId: any(named: 'orgId'),
-              storeId: any(named: 'storeId'),
-            )).thenAnswer((_) async => []);
-        when(() => mockPush.pushPending()).thenAnswer((_) async =>
-            PushResult(successCount: 0, failedCount: 0, errors: []));
-        when(() => mockBidirectional.syncAll(
-              orgId: any(named: 'orgId'),
-              storeId: any(named: 'storeId'),
-            )).thenAnswer((_) async => []);
-        when(() => mockStockDelta.sync(
-              orgId: any(named: 'orgId'),
-              storeId: any(named: 'storeId'),
-              deviceId: any(named: 'deviceId'),
-            )).thenAnswer((_) async => StockDeltaResult(
-              deltasSent: 0,
-              productsUpdated: 0,
-              errors: [],
-              oversoldProducts: [],
-            ));
+        when(
+          () => mockPull.pullAll(
+            orgId: any(named: 'orgId'),
+            storeId: any(named: 'storeId'),
+          ),
+        ).thenAnswer((_) async => []);
+        when(() => mockPush.pushPending()).thenAnswer(
+          (_) async => PushResult(successCount: 0, failedCount: 0, errors: []),
+        );
+        when(
+          () => mockBidirectional.syncAll(
+            orgId: any(named: 'orgId'),
+            storeId: any(named: 'storeId'),
+          ),
+        ).thenAnswer((_) async => []);
+        when(
+          () => mockStockDelta.sync(
+            orgId: any(named: 'orgId'),
+            storeId: any(named: 'storeId'),
+            deviceId: any(named: 'deviceId'),
+          ),
+        ).thenAnswer(
+          (_) async => StockDeltaResult(
+            deltasSent: 0,
+            productsUpdated: 0,
+            errors: [],
+            oversoldProducts: [],
+          ),
+        );
         when(() => mockStatusTracker.refreshAll()).thenAnswer((_) async {});
 
         await engine.initialize(
@@ -334,10 +384,12 @@ void main() {
         when(() => mockConnectivity.isOnline).thenReturn(true);
         when(() => mockConnectivity.isOffline).thenReturn(false);
 
-        when(() => mockPull.pullAll(
-              orgId: any(named: 'orgId'),
-              storeId: any(named: 'storeId'),
-            )).thenThrow(Exception('Critical error'));
+        when(
+          () => mockPull.pullAll(
+            orgId: any(named: 'orgId'),
+            storeId: any(named: 'storeId'),
+          ),
+        ).thenThrow(Exception('Critical error'));
 
         when(() => mockStatusTracker.refreshAll()).thenAnswer((_) async {});
 
@@ -366,26 +418,35 @@ void main() {
         when(() => mockConnectivity.isOnline).thenReturn(true);
         when(() => mockConnectivity.isOffline).thenReturn(false);
 
-        when(() => mockPull.pullAll(
-              orgId: any(named: 'orgId'),
-              storeId: any(named: 'storeId'),
-            )).thenAnswer((_) async => []);
-        when(() => mockPush.pushPending()).thenAnswer((_) async =>
-            PushResult(successCount: 0, failedCount: 0, errors: []));
-        when(() => mockBidirectional.syncAll(
-              orgId: any(named: 'orgId'),
-              storeId: any(named: 'storeId'),
-            )).thenAnswer((_) async => []);
-        when(() => mockStockDelta.sync(
-              orgId: any(named: 'orgId'),
-              storeId: any(named: 'storeId'),
-              deviceId: any(named: 'deviceId'),
-            )).thenAnswer((_) async => StockDeltaResult(
-              deltasSent: 0,
-              productsUpdated: 0,
-              errors: [],
-              oversoldProducts: [],
-            ));
+        when(
+          () => mockPull.pullAll(
+            orgId: any(named: 'orgId'),
+            storeId: any(named: 'storeId'),
+          ),
+        ).thenAnswer((_) async => []);
+        when(() => mockPush.pushPending()).thenAnswer(
+          (_) async => PushResult(successCount: 0, failedCount: 0, errors: []),
+        );
+        when(
+          () => mockBidirectional.syncAll(
+            orgId: any(named: 'orgId'),
+            storeId: any(named: 'storeId'),
+          ),
+        ).thenAnswer((_) async => []);
+        when(
+          () => mockStockDelta.sync(
+            orgId: any(named: 'orgId'),
+            storeId: any(named: 'storeId'),
+            deviceId: any(named: 'deviceId'),
+          ),
+        ).thenAnswer(
+          (_) async => StockDeltaResult(
+            deltasSent: 0,
+            productsUpdated: 0,
+            errors: [],
+            oversoldProducts: [],
+          ),
+        );
         when(() => mockStatusTracker.refreshAll()).thenAnswer((_) async {});
 
         await engine.initialize(

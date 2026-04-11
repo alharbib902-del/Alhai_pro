@@ -142,8 +142,9 @@ final ordersRemoteDataSourceProvider = Provider<OrdersRemoteDataSource>((ref) {
 });
 
 /// Products remote - override in ProviderScope when Impl is created
-final productsRemoteDataSourceProvider =
-    Provider<ProductsRemoteDataSource>((ref) {
+final productsRemoteDataSourceProvider = Provider<ProductsRemoteDataSource>((
+  ref,
+) {
   throw UnimplementedError(
     'productsRemoteDataSourceProvider: ProductsRemoteDataSourceImpl not yet created. '
     'Override this provider in ProviderScope.',
@@ -151,8 +152,9 @@ final productsRemoteDataSourceProvider =
 });
 
 /// Categories remote - override in ProviderScope when Impl is created
-final categoriesRemoteDataSourceProvider =
-    Provider<CategoriesRemoteDataSource>((ref) {
+final categoriesRemoteDataSourceProvider = Provider<CategoriesRemoteDataSource>((
+  ref,
+) {
   throw UnimplementedError(
     'categoriesRemoteDataSourceProvider: CategoriesRemoteDataSourceImpl not yet created. '
     'Override this provider in ProviderScope.',
@@ -160,8 +162,9 @@ final categoriesRemoteDataSourceProvider =
 });
 
 /// Delivery remote - override in ProviderScope when Impl is created
-final deliveryRemoteDataSourceProvider =
-    Provider<DeliveryRemoteDataSource>((ref) {
+final deliveryRemoteDataSourceProvider = Provider<DeliveryRemoteDataSource>((
+  ref,
+) {
   throw UnimplementedError(
     'deliveryRemoteDataSourceProvider: DeliveryRemoteDataSourceImpl not yet created. '
     'Override this provider in ProviderScope.',
@@ -169,8 +172,9 @@ final deliveryRemoteDataSourceProvider =
 });
 
 /// Addresses remote - override in ProviderScope when Impl is created
-final addressesRemoteDataSourceProvider =
-    Provider<AddressesRemoteDataSource>((ref) {
+final addressesRemoteDataSourceProvider = Provider<AddressesRemoteDataSource>((
+  ref,
+) {
   throw UnimplementedError(
     'addressesRemoteDataSourceProvider: AddressesRemoteDataSourceImpl not yet created. '
     'Override this provider in ProviderScope.',
@@ -186,8 +190,9 @@ final storesRemoteDataSourceProvider = Provider<StoresRemoteDataSource>((ref) {
 });
 
 /// Inventory remote - override in ProviderScope when Impl is created
-final inventoryRemoteDataSourceProvider =
-    Provider<InventoryRemoteDataSource>((ref) {
+final inventoryRemoteDataSourceProvider = Provider<InventoryRemoteDataSource>((
+  ref,
+) {
   throw UnimplementedError(
     'inventoryRemoteDataSourceProvider: InventoryRemoteDataSourceImpl not yet created. '
     'Override this provider in ProviderScope.',
@@ -195,8 +200,9 @@ final inventoryRemoteDataSourceProvider =
 });
 
 /// Suppliers remote - override in ProviderScope when Impl is created
-final suppliersRemoteDataSourceProvider =
-    Provider<SuppliersRemoteDataSource>((ref) {
+final suppliersRemoteDataSourceProvider = Provider<SuppliersRemoteDataSource>((
+  ref,
+) {
   throw UnimplementedError(
     'suppliersRemoteDataSourceProvider: SuppliersRemoteDataSourceImpl not yet created. '
     'Override this provider in ProviderScope.',
@@ -204,8 +210,9 @@ final suppliersRemoteDataSourceProvider =
 });
 
 /// Purchases remote - override in ProviderScope when Impl is created
-final purchasesRemoteDataSourceProvider =
-    Provider<PurchasesRemoteDataSource>((ref) {
+final purchasesRemoteDataSourceProvider = Provider<PurchasesRemoteDataSource>((
+  ref,
+) {
   throw UnimplementedError(
     'purchasesRemoteDataSourceProvider: PurchasesRemoteDataSourceImpl not yet created. '
     'Override this provider in ProviderScope.',
@@ -221,8 +228,9 @@ final debtsRemoteDataSourceProvider = Provider<DebtsRemoteDataSource>((ref) {
 });
 
 /// Reports remote - override in ProviderScope when Impl is created
-final reportsRemoteDataSourceProvider =
-    Provider<ReportsRemoteDataSource>((ref) {
+final reportsRemoteDataSourceProvider = Provider<ReportsRemoteDataSource>((
+  ref,
+) {
   throw UnimplementedError(
     'reportsRemoteDataSourceProvider: ReportsRemoteDataSourceImpl not yet created. '
     'Override this provider in ProviderScope.',
@@ -230,8 +238,9 @@ final reportsRemoteDataSourceProvider =
 });
 
 /// Analytics remote - override in ProviderScope when Impl is created
-final analyticsRemoteDataSourceProvider =
-    Provider<AnalyticsRemoteDataSource>((ref) {
+final analyticsRemoteDataSourceProvider = Provider<AnalyticsRemoteDataSource>((
+  ref,
+) {
   throw UnimplementedError(
     'analyticsRemoteDataSourceProvider: AnalyticsRemoteDataSourceImpl not yet created. '
     'Override this provider in ProviderScope.',
@@ -265,9 +274,7 @@ final categoriesRepositoryProvider = Provider<CategoriesRepository>((ref) {
 });
 
 final ordersRepositoryProvider = Provider<OrdersRepository>((ref) {
-  return OrdersRepositoryImpl(
-    remote: ref.read(ordersRemoteDataSourceProvider),
-  );
+  return OrdersRepositoryImpl(remote: ref.read(ordersRemoteDataSourceProvider));
 });
 
 final deliveryRepositoryProvider = Provider<DeliveryRepository>((ref) {
@@ -283,9 +290,7 @@ final addressesRepositoryProvider = Provider<AddressesRepository>((ref) {
 });
 
 final storesRepositoryProvider = Provider<StoresRepository>((ref) {
-  return StoresRepositoryImpl(
-    remote: ref.read(storesRemoteDataSourceProvider),
-  );
+  return StoresRepositoryImpl(remote: ref.read(storesRemoteDataSourceProvider));
 });
 
 final inventoryRepositoryProvider = Provider<InventoryRepository>((ref) {
@@ -307,9 +312,7 @@ final purchasesRepositoryProvider = Provider<PurchasesRepository>((ref) {
 });
 
 final debtsRepositoryProvider = Provider<DebtsRepository>((ref) {
-  return DebtsRepositoryImpl(
-    remote: ref.read(debtsRemoteDataSourceProvider),
-  );
+  return DebtsRepositoryImpl(remote: ref.read(debtsRemoteDataSourceProvider));
 });
 
 final reportsRepositoryProvider = Provider<ReportsRepository>((ref) {

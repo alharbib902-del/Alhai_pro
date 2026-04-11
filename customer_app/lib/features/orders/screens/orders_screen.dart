@@ -29,17 +29,18 @@ class OrdersScreen extends ConsumerWidget {
           top: false,
           child: TabBarView(
             children: const [
-              _OrdersList(statuses: [
-                OrderStatus.created,
-                OrderStatus.confirmed,
-                OrderStatus.preparing,
-                OrderStatus.ready,
-                OrderStatus.outForDelivery,
-              ]),
-              _OrdersList(statuses: [
-                OrderStatus.delivered,
-                OrderStatus.completed,
-              ]),
+              _OrdersList(
+                statuses: [
+                  OrderStatus.created,
+                  OrderStatus.confirmed,
+                  OrderStatus.preparing,
+                  OrderStatus.ready,
+                  OrderStatus.outForDelivery,
+                ],
+              ),
+              _OrdersList(
+                statuses: [OrderStatus.delivered, OrderStatus.completed],
+              ),
               _OrdersList(statuses: [OrderStatus.cancelled]),
             ],
           ),
@@ -80,8 +81,9 @@ class _OrdersList extends ConsumerWidget {
         ),
       ),
       data: (paginated) {
-        final orders =
-            paginated.items.where((o) => statuses.contains(o.status)).toList();
+        final orders = paginated.items
+            .where((o) => statuses.contains(o.status))
+            .toList();
 
         if (orders.isEmpty) {
           return Center(
@@ -94,62 +96,62 @@ class _OrdersList extends ConsumerWidget {
         }
 
         Widget buildOrderCard(dynamic order) => Card(
-              child: InkWell(
-                onTap: () => context.push('/orders/${order.id}'),
-                borderRadius: BorderRadius.circular(12),
-                child: Padding(
-                  padding: const EdgeInsets.all(AlhaiSpacing.md),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+          child: InkWell(
+            onTap: () => context.push('/orders/${order.id}'),
+            borderRadius: BorderRadius.circular(12),
+            child: Padding(
+              padding: const EdgeInsets.all(AlhaiSpacing.md),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Flexible(
-                            child: Text(
-                              order.displayNumber,
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          _StatusChip(status: order.status),
-                        ],
-                      ),
-                      const SizedBox(height: AlhaiSpacing.xs),
-                      if (order.storeName != null)
-                        Text(
-                          order.storeName!,
+                      Flexible(
+                        child: Text(
+                          order.displayNumber,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.bodyMedium,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                      const SizedBox(height: AlhaiSpacing.xxs),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            '${order.itemCount} منتجات',
-                            style: theme.textTheme.bodySmall?.copyWith(
-                              color: theme.colorScheme.outline,
-                            ),
-                          ),
-                          Text(
-                            '${order.total.toStringAsFixed(2)} ر.س',
-                            style: theme.textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: theme.colorScheme.primary,
-                            ),
-                          ),
-                        ],
+                      ),
+                      _StatusChip(status: order.status),
+                    ],
+                  ),
+                  const SizedBox(height: AlhaiSpacing.xs),
+                  if (order.storeName != null)
+                    Text(
+                      order.storeName!,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                  const SizedBox(height: AlhaiSpacing.xxs),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        '${order.itemCount} منتجات',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.outline,
+                        ),
+                      ),
+                      Text(
+                        '${order.total.toStringAsFixed(2)} ر.س',
+                        style: theme.textTheme.titleSmall?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.primary,
+                        ),
                       ),
                     ],
                   ),
-                ),
+                ],
               ),
-            );
+            ),
+          ),
+        );
 
         final isTablet = ResponsiveHelper.isTablet(context);
 
@@ -161,8 +163,9 @@ class _OrdersList extends ConsumerWidget {
               ? GridView.builder(
                   padding: const EdgeInsets.all(AlhaiSpacing.lg),
                   gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount:
-                        ResponsiveHelper.isLargeTablet(context) ? 3 : 2,
+                    crossAxisCount: ResponsiveHelper.isLargeTablet(context)
+                        ? 3
+                        : 2,
                     crossAxisSpacing: AlhaiSpacing.sm,
                     mainAxisSpacing: AlhaiSpacing.sm,
                     childAspectRatio: 2.0,
@@ -215,7 +218,9 @@ class _StatusChip extends StatelessWidget {
 
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: 10, vertical: AlhaiSpacing.xxs),
+        horizontal: 10,
+        vertical: AlhaiSpacing.xxs,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(12),

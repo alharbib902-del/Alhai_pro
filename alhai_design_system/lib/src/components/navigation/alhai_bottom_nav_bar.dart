@@ -64,8 +64,10 @@ class AlhaiBottomNavBar extends StatelessWidget {
     this.onTap,
     this.enabled = true,
     this.backgroundColor,
-  }) : assert(items.length >= 2 && items.length <= 5,
-            'AlhaiBottomNavBar requires 2-5 items');
+  }) : assert(
+         items.length >= 2 && items.length <= 5,
+         'AlhaiBottomNavBar requires 2-5 items',
+       );
 
   @override
   Widget build(BuildContext context) {
@@ -125,12 +127,15 @@ class _NavItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveIcon =
-        isSelected ? (item.activeIcon ?? item.icon) : item.icon;
-    final iconColor =
-        isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant;
-    final labelColor =
-        isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant;
+    final effectiveIcon = isSelected
+        ? (item.activeIcon ?? item.icon)
+        : item.icon;
+    final iconColor = isSelected
+        ? colorScheme.primary
+        : colorScheme.onSurfaceVariant;
+    final labelColor = isSelected
+        ? colorScheme.primary
+        : colorScheme.onSurfaceVariant;
 
     return Semantics(
       label: item.label,
@@ -144,9 +149,7 @@ class _NavItem extends StatelessWidget {
           splashColor: colorScheme.primary.withValues(alpha: 0.12),
           highlightColor: colorScheme.primary.withValues(alpha: 0.08),
           child: Padding(
-            padding: const EdgeInsets.symmetric(
-              vertical: AlhaiSpacing.xs,
-            ),
+            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               mainAxisAlignment: MainAxisAlignment.center,
@@ -186,8 +189,9 @@ class _NavItem extends StatelessWidget {
         vertical: AlhaiSpacing.xxs,
       ),
       decoration: BoxDecoration(
-        color:
-            isSelected ? colorScheme.primaryContainer : AlhaiColors.transparent,
+        color: isSelected
+            ? colorScheme.primaryContainer
+            : AlhaiColors.transparent,
         borderRadius: BorderRadius.circular(AlhaiRadius.full),
       ),
       child: Icon(
@@ -224,10 +228,7 @@ class _Badge extends StatelessWidget {
   final String? content;
   final ColorScheme colorScheme;
 
-  const _Badge({
-    required this.content,
-    required this.colorScheme,
-  });
+  const _Badge({required this.content, required this.colorScheme});
 
   @override
   Widget build(BuildContext context) {
@@ -249,9 +250,7 @@ class _Badge extends StatelessWidget {
         minWidth: AlhaiSpacing.md,
         minHeight: AlhaiSpacing.md,
       ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: AlhaiSpacing.xxs,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
       decoration: BoxDecoration(
         color: colorScheme.error,
         borderRadius: BorderRadius.circular(AlhaiRadius.full),

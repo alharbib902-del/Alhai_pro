@@ -4,11 +4,7 @@ part 'promotion.freezed.dart';
 part 'promotion.g.dart';
 
 /// Promotion type enum (v2.4.0)
-enum PromoType {
-  percentage,
-  fixedAmount,
-  buyXGetY,
-}
+enum PromoType { percentage, fixedAmount, buyXGetY }
 
 /// Extension for PromoType
 extension PromoTypeExt on PromoType {

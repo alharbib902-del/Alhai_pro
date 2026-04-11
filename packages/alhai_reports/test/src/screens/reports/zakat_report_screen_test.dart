@@ -19,27 +19,21 @@ void main() {
 
   group('ZakatReportScreen', () {
     testWidgets('renders without error', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const ZakatReportScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const ZakatReportScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(ZakatReportScreen), findsOneWidget);
     });
 
     testWidgets('shows Scaffold', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const ZakatReportScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const ZakatReportScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(Scaffold), findsWidgets);
     });
 
     testWidgets('shows content after loading', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const ZakatReportScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const ZakatReportScreen()));
       await tester.pump();
 
       expect(find.byType(ZakatReportScreen), findsOneWidget);

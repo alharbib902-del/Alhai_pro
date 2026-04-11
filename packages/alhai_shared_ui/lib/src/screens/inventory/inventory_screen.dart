@@ -103,8 +103,13 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
             // Header
             _buildHeader(context, products, l10n),
             // Stats Cards
-            _buildStatsRow(totalProducts, lowStockCount, outOfStockCount,
-                totalValue, l10n),
+            _buildStatsRow(
+              totalProducts,
+              lowStockCount,
+              outOfStockCount,
+              totalValue,
+              l10n,
+            ),
             // Content
             Expanded(
               child: Row(
@@ -112,11 +117,18 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   // Filters Sidebar (Desktop only)
                   if (isDesktop && _showFilters)
                     _buildFiltersSidebar(
-                        totalProducts, lowStockCount, outOfStockCount, l10n),
+                      totalProducts,
+                      lowStockCount,
+                      outOfStockCount,
+                      l10n,
+                    ),
                   // Inventory List
                   Expanded(
                     child: _buildInventoryContent(
-                        productsState, filteredProducts, l10n),
+                      productsState,
+                      filteredProducts,
+                      l10n,
+                    ),
                   ),
                 ],
               ),
@@ -128,7 +140,10 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
   }
 
   Widget _buildHeader(
-      BuildContext context, List<dynamic> products, AppLocalizations l10n) {
+    BuildContext context,
+    List<dynamic> products,
+    AppLocalizations l10n,
+  ) {
     final isDesktop = context.screenWidth >= AppSizes.breakpointTablet;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -136,8 +151,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
       padding: const EdgeInsets.all(AppSizes.md),
       decoration: BoxDecoration(
         color: colorScheme.surface,
-        border:
-            Border(bottom: BorderSide(color: Theme.of(context).dividerColor)),
+        border: Border(
+          bottom: BorderSide(color: Theme.of(context).dividerColor),
+        ),
       ),
       child: Column(
         children: [
@@ -154,8 +170,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                           padding: const EdgeInsets.all(AppSizes.sm),
                           decoration: BoxDecoration(
                             color: AppColors.primary.withValues(alpha: 0.1),
-                            borderRadius:
-                                BorderRadius.circular(AppSizes.radiusMd),
+                            borderRadius: BorderRadius.circular(
+                              AppSizes.radiusMd,
+                            ),
                           ),
                           child: const Icon(
                             Icons.inventory_rounded,
@@ -166,12 +183,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                         const SizedBox(width: AppSizes.sm),
                         Text(
                           l10n.inventory,
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
-                              ?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(width: AppSizes.sm),
                         AppCountBadge(
@@ -184,8 +197,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     Text(
                       l10n.inventoryManagement,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -193,8 +206,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               // Actions
               if (isDesktop) ...[
                 AppIconButton(
-                  icon:
-                      _showFilters ? Icons.filter_list_off : Icons.filter_list,
+                  icon: _showFilters
+                      ? Icons.filter_list_off
+                      : Icons.filter_list,
                   onPressed: () => setState(() => _showFilters = !_showFilters),
                   tooltip: _showFilters ? l10n.hideFilters : l10n.showFilters,
                 ),
@@ -204,10 +218,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   onPressed: () {
                     final storeId = ref.read(currentStoreIdProvider);
                     if (storeId != null) {
-                      ref.read(productsStateProvider.notifier).loadProducts(
-                            storeId: storeId,
-                            refresh: true,
-                          );
+                      ref
+                          .read(productsStateProvider.notifier)
+                          .loadProducts(storeId: storeId, refresh: true);
                     }
                   },
                   tooltip: l10n.refresh,
@@ -269,8 +282,11 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.sort_rounded,
-                          size: 18, color: colorScheme.onSurfaceVariant),
+                      Icon(
+                        Icons.sort_rounded,
+                        size: 18,
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                       const SizedBox(width: AppSizes.xs),
                       DropdownButton<String>(
                         value: _sortBy,
@@ -278,11 +294,17 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                         isDense: true,
                         items: [
                           DropdownMenuItem(
-                              value: 'name', child: Text(l10n.productName)),
+                            value: 'name',
+                            child: Text(l10n.productName),
+                          ),
                           DropdownMenuItem(
-                              value: 'stock', child: Text(l10n.quantity)),
+                            value: 'stock',
+                            child: Text(l10n.quantity),
+                          ),
                           DropdownMenuItem(
-                              value: 'recent', child: Text(l10n.newest)),
+                            value: 'recent',
+                            child: Text(l10n.newest),
+                          ),
                         ],
                         onChanged: (value) {
                           if (value != null) setState(() => _sortBy = value);
@@ -298,8 +320,10 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                         onPressed: () =>
                             setState(() => _sortAscending = !_sortAscending),
                         padding: EdgeInsets.zero,
-                        constraints:
-                            const BoxConstraints(minWidth: 32, minHeight: 32),
+                        constraints: const BoxConstraints(
+                          minWidth: 32,
+                          minHeight: 32,
+                        ),
                       ),
                     ],
                   ),
@@ -319,7 +343,10 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   _buildFilterChip(l10n.lowStock, 'low', AppColors.stockLow),
                   _buildFilterChip(l10n.outOfStock, 'out', AppColors.stockOut),
                   _buildFilterChip(
-                      l10n.available, 'available', AppColors.stockAvailable),
+                    l10n.available,
+                    'available',
+                    AppColors.stockAvailable,
+                  ),
                 ],
               ),
             ),
@@ -329,8 +356,13 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     );
   }
 
-  Widget _buildStatsRow(int total, int lowStock, int outOfStock,
-      double totalValue, AppLocalizations l10n) {
+  Widget _buildStatsRow(
+    int total,
+    int lowStock,
+    int outOfStock,
+    double totalValue,
+    AppLocalizations l10n,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AppSizes.md),
       child: Row(
@@ -378,7 +410,11 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
   }
 
   Widget _buildFiltersSidebar(
-      int total, int lowStock, int outOfStock, AppLocalizations l10n) {
+    int total,
+    int lowStock,
+    int outOfStock,
+    AppLocalizations l10n,
+  ) {
     final availableCount = total - lowStock - outOfStock;
     final colorScheme = Theme.of(context).colorScheme;
 
@@ -387,7 +423,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
       decoration: BoxDecoration(
         color: colorScheme.surface,
         border: BorderDirectional(
-            start: BorderSide(color: Theme.of(context).dividerColor)),
+          start: BorderSide(color: Theme.of(context).dividerColor),
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -403,15 +440,16 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     padding: const EdgeInsets.all(AppSizes.md),
                     child: Row(
                       children: [
-                        const Icon(Icons.filter_alt_rounded,
-                            size: 18, color: AppColors.textSecondary),
+                        const Icon(
+                          Icons.filter_alt_rounded,
+                          size: 18,
+                          color: AppColors.textSecondary,
+                        ),
                         const SizedBox(width: AppSizes.xs),
                         Text(
                           l10n.stockStatus,
-                          style:
-                              Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -453,15 +491,16 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     padding: const EdgeInsets.all(AppSizes.md),
                     child: Row(
                       children: [
-                        const Icon(Icons.flash_on_rounded,
-                            size: 18, color: AppColors.textSecondary),
+                        const Icon(
+                          Icons.flash_on_rounded,
+                          size: 18,
+                          color: AppColors.textSecondary,
+                        ),
                         const SizedBox(width: AppSizes.xs),
                         Text(
                           l10n.quickActions,
-                          style:
-                              Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                          style: Theme.of(context).textTheme.titleSmall
+                              ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -548,17 +587,21 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 child: Text(
                   label,
                   style: TextStyle(
-                    color:
-                        isSelected ? AppColors.primary : AppColors.textPrimary,
-                    fontWeight:
-                        isSelected ? FontWeight.w600 : FontWeight.normal,
+                    color: isSelected
+                        ? AppColors.primary
+                        : AppColors.textPrimary,
+                    fontWeight: isSelected
+                        ? FontWeight.w600
+                        : FontWeight.normal,
                   ),
                 ),
               ),
               if (count != null)
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AppSizes.xs, vertical: AlhaiSpacing.xxxs),
+                    horizontal: AppSizes.xs,
+                    vertical: AlhaiSpacing.xxxs,
+                  ),
                   decoration: BoxDecoration(
                     color: isSelected
                         ? AppColors.primary.withValues(alpha: 0.2)
@@ -579,8 +622,11 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               if (isSelected)
                 const Padding(
                   padding: EdgeInsetsDirectional.only(end: AppSizes.xs),
-                  child: Icon(Icons.check_rounded,
-                      size: 18, color: AppColors.primary),
+                  child: Icon(
+                    Icons.check_rounded,
+                    size: 18,
+                    color: AppColors.primary,
+                  ),
                 ),
             ],
           ),
@@ -609,12 +655,18 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               Icon(icon, size: 18, color: color),
               const SizedBox(width: AppSizes.sm),
               Expanded(
-                child: Text(label,
-                    style: TextStyle(
-                        color: Theme.of(context).colorScheme.onSurface)),
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
               ),
-              const AdaptiveIcon(Icons.chevron_left_rounded,
-                  size: 18, color: AppColors.textSecondary),
+              const AdaptiveIcon(
+                Icons.chevron_left_rounded,
+                size: 18,
+                color: AppColors.textSecondary,
+              ),
             ],
           ),
         ),
@@ -635,14 +687,16 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
         selectedColor: (color ?? AppColors.primary).withValues(alpha: 0.15),
         checkmarkColor: color ?? AppColors.primary,
         labelStyle: TextStyle(
-          color:
-              isSelected ? (color ?? AppColors.primary) : colorScheme.onSurface,
+          color: isSelected
+              ? (color ?? AppColors.primary)
+              : colorScheme.onSurface,
           fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
         ),
         side: BorderSide(
-            color: isSelected
-                ? (color ?? AppColors.primary)
-                : Theme.of(context).dividerColor),
+          color: isSelected
+              ? (color ?? AppColors.primary)
+              : Theme.of(context).dividerColor,
+        ),
       ),
     );
   }
@@ -676,9 +730,11 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     // Apply search
     if (currentSearch.isNotEmpty) {
       result = result
-          .where((p) =>
-              p.name.toLowerCase().contains(currentSearch) ||
-              (p.barcode?.toLowerCase().contains(currentSearch) ?? false))
+          .where(
+            (p) =>
+                p.name.toLowerCase().contains(currentSearch) ||
+                (p.barcode?.toLowerCase().contains(currentSearch) ?? false),
+          )
           .toList();
     }
 
@@ -709,7 +765,10 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
   }
 
   Widget _buildInventoryContent(
-      ProductsState state, List<dynamic> filtered, AppLocalizations l10n) {
+    ProductsState state,
+    List<dynamic> filtered,
+    AppLocalizations l10n,
+  ) {
     // Loading state
     if (state.isLoading && state.products.isEmpty) {
       return ListView.builder(
@@ -729,10 +788,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
         onRetry: () {
           final storeId = ref.read(currentStoreIdProvider);
           if (storeId != null) {
-            ref.read(productsStateProvider.notifier).loadProducts(
-                  storeId: storeId,
-                  refresh: true,
-                );
+            ref
+                .read(productsStateProvider.notifier)
+                .loadProducts(storeId: storeId, refresh: true);
           }
         },
       );
@@ -770,10 +828,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
       onRefresh: () async {
         final storeId = ref.read(currentStoreIdProvider);
         if (storeId != null) {
-          ref.read(productsStateProvider.notifier).loadProducts(
-                storeId: storeId,
-                refresh: true,
-              );
+          ref
+              .read(productsStateProvider.notifier)
+              .loadProducts(storeId: storeId, refresh: true);
         }
       },
       color: AppColors.primary,
@@ -790,7 +847,11 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
               product: product,
               isSelected: _selectedIds.contains(product.id),
               onTap: () => _showAdjustDialog(
-                  product.id, product.name, product.stockQty, l10n),
+                product.id,
+                product.name,
+                product.stockQty,
+                l10n,
+              ),
               onSelect: (selected) {
                 setState(() {
                   if (selected) {
@@ -821,10 +882,9 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     if (event.logicalKey == LogicalKeyboardKey.f5) {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId != null) {
-        ref.read(productsStateProvider.notifier).loadProducts(
-              storeId: storeId,
-              refresh: true,
-            );
+        ref
+            .read(productsStateProvider.notifier)
+            .loadProducts(storeId: storeId, refresh: true);
       }
       return;
     }
@@ -836,8 +896,12 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
     }
   }
 
-  void _showAdjustDialog(String productId, String productName, int currentQty,
-      AppLocalizations l10n) {
+  void _showAdjustDialog(
+    String productId,
+    String productName,
+    int currentQty,
+    AppLocalizations l10n,
+  ) {
     final controller = TextEditingController(text: currentQty.toString());
     String reason = 'count';
 
@@ -866,8 +930,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                   Text(
                     productName,
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -892,8 +956,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                     Text(
                       '${l10n.currentQuantity}: ',
                       style: TextStyle(
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant),
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     Text(
                       '$currentQty',
@@ -903,8 +967,8 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                         color: currentQty > 10
                             ? AppColors.stockAvailable
                             : currentQty > 0
-                                ? AppColors.stockLow
-                                : AppColors.stockOut,
+                            ? AppColors.stockLow
+                            : AppColors.stockOut,
                       ),
                     ),
                   ],
@@ -917,8 +981,10 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 autofocus: true,
                 keyboardType: TextInputType.number,
                 textAlign: TextAlign.center,
-                style:
-                    const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
                 decoration: InputDecoration(
                   labelText: l10n.newQuantity,
                   border: OutlineInputBorder(
@@ -981,11 +1047,15 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 items: [
                   DropdownMenuItem(value: 'count', child: Text(l10n.stockTake)),
                   DropdownMenuItem(
-                      value: 'receive', child: Text(l10n.receiveGoods)),
+                    value: 'receive',
+                    child: Text(l10n.receiveGoods),
+                  ),
                   DropdownMenuItem(value: 'damage', child: Text(l10n.damaged)),
                   DropdownMenuItem(value: 'return', child: Text(l10n.returned)),
                   DropdownMenuItem(
-                      value: 'correction', child: Text(l10n.correction)),
+                    value: 'correction',
+                    child: Text(l10n.correction),
+                  ),
                   DropdownMenuItem(value: 'other', child: Text(l10n.other)),
                 ],
                 onChanged: (v) => reason = v ?? 'count',
@@ -1009,8 +1079,10 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 SnackBar(
                   content: Row(
                     children: [
-                      const Icon(Icons.check_circle_rounded,
-                          color: Colors.white),
+                      const Icon(
+                        Icons.check_circle_rounded,
+                        color: Colors.white,
+                      ),
                       const SizedBox(width: AppSizes.sm),
                       Text('${l10n.stockUpdatedTo} $productName: $newQty'),
                     ],
@@ -1080,8 +1152,10 @@ class _InventoryScreenState extends ConsumerState<InventoryScreen> {
                 color: AppColors.primary.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(AppSizes.radiusMd),
               ),
-              child:
-                  const Icon(Icons.calculate_rounded, color: AppColors.primary),
+              child: const Icon(
+                Icons.calculate_rounded,
+                color: AppColors.primary,
+              ),
             ),
             const SizedBox(width: AppSizes.sm),
             Text(l10n.stockTake),
@@ -1148,7 +1222,9 @@ class _StatCard extends StatelessWidget {
                 Text(
                   label,
                   style: TextStyle(
-                      fontSize: 12, color: colorScheme.onSurfaceVariant),
+                    fontSize: 12,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
                 ),
                 Text(
                   value,
@@ -1164,12 +1240,12 @@ class _StatCard extends StatelessWidget {
           if (isAlert)
             Container(
               padding: const EdgeInsets.all(AlhaiSpacing.xxs),
-              decoration: BoxDecoration(
-                color: color,
-                shape: BoxShape.circle,
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+              child: Icon(
+                Icons.priority_high_rounded,
+                size: 12,
+                color: colorScheme.surface,
               ),
-              child: Icon(Icons.priority_high_rounded,
-                  size: 12, color: colorScheme.surface),
             ),
         ],
       ),
@@ -1205,8 +1281,8 @@ class _InventoryCardState extends State<_InventoryCard> {
     final stockColor = isOutOfStock
         ? AppColors.stockOut
         : isLowStock
-            ? AppColors.stockLow
-            : AppColors.stockAvailable;
+        ? AppColors.stockLow
+        : AppColors.stockAvailable;
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
 
@@ -1224,10 +1300,10 @@ class _InventoryCardState extends State<_InventoryCard> {
             color: widget.isSelected
                 ? AppColors.primary
                 : _isHovered
-                    ? AppColors.primary.withValues(alpha: 0.5)
-                    : isOutOfStock || isLowStock
-                        ? stockColor.withValues(alpha: 0.3)
-                        : Theme.of(context).dividerColor,
+                ? AppColors.primary.withValues(alpha: 0.5)
+                : isOutOfStock || isLowStock
+                ? stockColor.withValues(alpha: 0.3)
+                : Theme.of(context).dividerColor,
             width: widget.isSelected ? 2 : 1,
           ),
           boxShadow: _isHovered ? AppSizes.shadowMd : AppSizes.shadowSm,
@@ -1259,8 +1335,8 @@ class _InventoryCardState extends State<_InventoryCard> {
                     isOutOfStock
                         ? Icons.error_rounded
                         : isLowStock
-                            ? Icons.warning_rounded
-                            : Icons.check_circle_rounded,
+                        ? Icons.warning_rounded
+                        : Icons.check_circle_rounded,
                     color: stockColor,
                     size: 24,
                   ),
@@ -1274,8 +1350,8 @@ class _InventoryCardState extends State<_InventoryCard> {
                       Text(
                         widget.product.name,
                         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              fontWeight: FontWeight.w600,
-                            ),
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                       const SizedBox(height: AppSizes.xxs),
                       Row(
@@ -1314,8 +1390,8 @@ class _InventoryCardState extends State<_InventoryCard> {
                       label: isOutOfStock
                           ? l10n.outOfStock
                           : isLowStock
-                              ? l10n.lowStock
-                              : l10n.available,
+                          ? l10n.lowStock
+                          : l10n.available,
                       color: stockColor,
                       variant: AppBadgeVariant.soft,
                     ),
@@ -1329,8 +1405,10 @@ class _InventoryCardState extends State<_InventoryCard> {
                     onPressed: widget.onTap,
                     tooltip: l10n.edit,
                   ),
-                const AdaptiveIcon(Icons.chevron_left_rounded,
-                    color: AppColors.textSecondary),
+                const AdaptiveIcon(
+                  Icons.chevron_left_rounded,
+                  color: AppColors.textSecondary,
+                ),
               ],
             ),
           ),

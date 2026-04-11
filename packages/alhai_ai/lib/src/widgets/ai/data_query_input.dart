@@ -55,8 +55,9 @@ class _DataQueryInputState extends State<DataQueryInput> {
         _filteredSuggestions = widget.suggestions;
         _showSuggestions = _focusNode.hasFocus;
       } else {
-        _filteredSuggestions =
-            widget.suggestions.where((s) => s.contains(text)).toList();
+        _filteredSuggestions = widget.suggestions
+            .where((s) => s.contains(text))
+            .toList();
         _showSuggestions = _filteredSuggestions.isNotEmpty;
       }
     });
@@ -87,8 +88,8 @@ class _DataQueryInputState extends State<DataQueryInput> {
               color: _focusNode.hasFocus
                   ? AppColors.primary
                   : (isDark
-                      ? Colors.white.withValues(alpha: 0.1)
-                      : AppColors.border),
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : AppColors.border),
               width: _focusNode.hasFocus ? 2 : 1,
             ),
             boxShadow: [
@@ -147,8 +148,9 @@ class _DataQueryInputState extends State<DataQueryInput> {
                       fontSize: 13,
                     ),
                     border: InputBorder.none,
-                    contentPadding:
-                        const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                    contentPadding: const EdgeInsets.symmetric(
+                      vertical: AlhaiSpacing.md,
+                    ),
                   ),
                 ),
               ),
@@ -167,8 +169,9 @@ class _DataQueryInputState extends State<DataQueryInput> {
 
               // زر التنفيذ
               Padding(
-                padding:
-                    const EdgeInsetsDirectional.only(start: AlhaiSpacing.xs),
+                padding: const EdgeInsetsDirectional.only(
+                  start: AlhaiSpacing.xs,
+                ),
                 child: widget.isLoading
                     ? const Padding(
                         padding: EdgeInsets.all(AlhaiSpacing.sm),
@@ -244,8 +247,9 @@ class _DataQueryInputState extends State<DataQueryInput> {
                         children: [
                           Icon(
                             Icons.search,
-                            color:
-                                isDark ? Colors.white38 : AppColors.textMuted,
+                            color: isDark
+                                ? Colors.white38
+                                : AppColors.textMuted,
                             size: 16,
                           ),
                           const SizedBox(width: 10),

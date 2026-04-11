@@ -20,8 +20,9 @@ void main() {
     discountsDao = MockDiscountsDao();
 
     // ActiveOffersScreen uses _db.discountsDao.getActiveDiscounts(storeId).
-    when(() => discountsDao.getActiveDiscounts(any()))
-        .thenAnswer((_) async => []);
+    when(
+      () => discountsDao.getActiveDiscounts(any()),
+    ).thenAnswer((_) async => []);
 
     final db = setupMockDatabase(discountsDao: discountsDao);
     setupTestGetIt(mockDb: db);
@@ -35,9 +36,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const ActiveOffersScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const ActiveOffersScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(ActiveOffersScreen), findsOneWidget);
@@ -53,12 +52,11 @@ void main() {
 
       // Use Completer to hold the future without pending timers
       final completer = Completer<List<DiscountsTableData>>();
-      when(() => discountsDao.getActiveDiscounts(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => discountsDao.getActiveDiscounts(any()),
+      ).thenAnswer((_) => completer.future);
 
-      await tester.pumpWidget(
-        createTestWidget(const ActiveOffersScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const ActiveOffersScreen()));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -77,10 +75,7 @@ void main() {
       suppressOverflowErrors();
 
       await tester.pumpWidget(
-        createTestWidget(
-          const ActiveOffersScreen(),
-          theme: ThemeData.dark(),
-        ),
+        createTestWidget(const ActiveOffersScreen(), theme: ThemeData.dark()),
       );
       await tester.pumpAndSettle();
 
@@ -95,9 +90,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const ActiveOffersScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const ActiveOffersScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(ActiveOffersScreen), findsOneWidget);
@@ -111,17 +104,17 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const ActiveOffersScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const ActiveOffersScreen()));
       await tester.pumpAndSettle();
 
       // Active offers screen uses custom InkWell chips for offer types
       // Verify known filter chip labels are present
       expect(
-          find.text(
-              '\u062e\u0635\u0645 \u0646\u0633\u0628\u0629 \u0645\u0626\u0648\u064a\u0629'),
-          findsOneWidget);
+        find.text(
+          '\u062e\u0635\u0645 \u0646\u0633\u0628\u0629 \u0645\u0626\u0648\u064a\u0629',
+        ),
+        findsOneWidget,
+      );
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

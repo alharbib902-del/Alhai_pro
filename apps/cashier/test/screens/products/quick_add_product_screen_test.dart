@@ -30,8 +30,9 @@ void main() {
     setupTestGetIt(mockDb: db);
 
     // Default stubs
-    when(() => categoriesDao.getAllCategories(any()))
-        .thenAnswer((_) async => []);
+    when(
+      () => categoriesDao.getAllCategories(any()),
+    ).thenAnswer((_) async => []);
     when(() => productsDao.insertProduct(any())).thenAnswer((_) async => 1);
   });
 
@@ -52,16 +53,18 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('shows loading indicator while loading categories',
-        (tester) async {
+    testWidgets('shows loading indicator while loading categories', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
       // Use Completer to hold the future without pending timers
       final completer = Completer<List<CategoriesTableData>>();
-      when(() => categoriesDao.getAllCategories(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => categoriesDao.getAllCategories(any()),
+      ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(createTestWidget(const QuickAddProductScreen()));
       await tester.pump();
@@ -129,8 +132,9 @@ void main() {
       suppressOverflowErrors();
 
       final categories = createTestCategoryList(3);
-      when(() => categoriesDao.getAllCategories(any()))
-          .thenAnswer((_) async => categories);
+      when(
+        () => categoriesDao.getAllCategories(any()),
+      ).thenAnswer((_) async => categories);
 
       await tester.pumpWidget(createTestWidget(const QuickAddProductScreen()));
       await tester.pumpAndSettle();

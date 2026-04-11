@@ -29,13 +29,13 @@ class SADashboardKPIs {
   }
 
   Map<String, dynamic> toJson() => {
-        'active_stores': activeStores,
-        'active_subscriptions': activeSubscriptions,
-        'trial_subscriptions': trialSubscriptions,
-        'new_signups': newSignups,
-        'mrr': mrr,
-        'arr': arr,
-      };
+    'active_stores': activeStores,
+    'active_subscriptions': activeSubscriptions,
+    'trial_subscriptions': trialSubscriptions,
+    'new_signups': newSignups,
+    'mrr': mrr,
+    'arr': arr,
+  };
 }
 
 /// Monthly revenue data point.
@@ -43,10 +43,7 @@ class SARevenueData {
   final String month;
   final double revenue;
 
-  const SARevenueData({
-    required this.month,
-    this.revenue = 0,
-  });
+  const SARevenueData({required this.month, this.revenue = 0});
 
   factory SARevenueData.fromJson(Map<String, dynamic> json) {
     return SARevenueData(
@@ -55,10 +52,7 @@ class SARevenueData {
     );
   }
 
-  Map<String, dynamic> toJson() => {
-        'month': month,
-        'revenue': revenue,
-      };
+  Map<String, dynamic> toJson() => {'month': month, 'revenue': revenue};
 }
 
 /// Revenue breakdown by plan.
@@ -85,11 +79,11 @@ class SARevenueByPlan {
   }
 
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'slug': slug,
-        'subscribers': subscribers,
-        'revenue': revenue,
-      };
+    'name': name,
+    'slug': slug,
+    'subscribers': subscribers,
+    'revenue': revenue,
+  };
 }
 
 /// Top store by revenue.
@@ -113,10 +107,10 @@ class SATopStoreRevenue {
   }
 
   Map<String, dynamic> toJson() => {
-        'store_id': storeId,
-        'store_name': storeName,
-        'revenue': revenue,
-      };
+    'store_id': storeId,
+    'store_name': storeName,
+    'revenue': revenue,
+  };
 }
 
 /// Top store by transactions.
@@ -146,12 +140,12 @@ class SATopStoreTransactions {
   }
 
   Map<String, dynamic> toJson() => {
-        'store_id': storeId,
-        'store_name': storeName,
-        'transactions': transactions,
-        'avg_per_day': avgPerDay,
-        'products': products,
-      };
+    'store_id': storeId,
+    'store_name': storeName,
+    'transactions': transactions,
+    'avg_per_day': avgPerDay,
+    'products': products,
+  };
 }
 
 /// Active users per store.
@@ -175,10 +169,10 @@ class SAActiveUsersPerStore {
   }
 
   Map<String, dynamic> toJson() => {
-        'store_id': storeId,
-        'store_name': storeName,
-        'active_users': activeUsers,
-      };
+    'store_id': storeId,
+    'store_name': storeName,
+    'active_users': activeUsers,
+  };
 }
 
 /// System health info.
@@ -206,11 +200,11 @@ class SASystemHealth {
   }
 
   Map<String, dynamic> toJson() => {
-        'status': status,
-        'db_response_ms': dbResponseMs,
-        'error': error,
-        'timestamp': timestamp,
-      };
+    'status': status,
+    'db_response_ms': dbResponseMs,
+    'error': error,
+    'timestamp': timestamp,
+  };
 
   bool get isHealthy => status == 'healthy';
 }
@@ -257,15 +251,15 @@ class SAPlatformSettings {
   }
 
   Map<String, dynamic> toJson() => {
-        'zatca_enabled': zatcaEnabled,
-        'zatca_environment': zatcaEnvironment,
-        'vat_rate': vatRate,
-        'default_language': defaultLanguage,
-        'default_currency': defaultCurrency,
-        'trial_period_days': trialPeriodDays,
-        'moyasar_enabled': moyasarEnabled,
-        'hyperpay_enabled': hyperpayEnabled,
-        'tabby_enabled': tabbyEnabled,
-        'tamara_enabled': tamaraEnabled,
-      };
+    'zatca_enabled': zatcaEnabled,
+    'zatca_environment': zatcaEnvironment,
+    'vat_rate': vatRate,
+    'default_language': defaultLanguage,
+    'default_currency': defaultCurrency,
+    'trial_period_days': trialPeriodDays,
+    'moyasar_enabled': moyasarEnabled,
+    'hyperpay_enabled': hyperpayEnabled,
+    'tabby_enabled': tabbyEnabled,
+    'tamara_enabled': tamaraEnabled,
+  };
 }

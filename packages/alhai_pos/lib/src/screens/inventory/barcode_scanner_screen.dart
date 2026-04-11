@@ -38,8 +38,9 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
         title: Text(l10n.barcodeScanner),
         actions: [
           IconButton(
-              icon: const Icon(Icons.history),
-              onPressed: () => _showHistory(l10n)),
+            icon: const Icon(Icons.history),
+            onPressed: () => _showHistory(l10n),
+          ),
         ],
       ),
       body: SafeArea(
@@ -51,8 +52,8 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
             final padding = isMobile
                 ? 12.0
                 : isDesktop
-                    ? 24.0
-                    : 16.0;
+                ? 24.0
+                : 16.0;
 
             return Column(
               children: [
@@ -60,31 +61,43 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                 Container(
                   margin: EdgeInsets.all(padding),
                   padding: EdgeInsets.all(
-                      isDesktop ? AlhaiSpacing.xl : AlhaiSpacing.lg),
+                    isDesktop ? AlhaiSpacing.xl : AlhaiSpacing.lg,
+                  ),
                   decoration: BoxDecoration(
-                    gradient: LinearGradient(colors: [
-                      colorScheme.primary,
-                      colorScheme.primary.withValues(alpha: 0.7)
-                    ]),
+                    gradient: LinearGradient(
+                      colors: [
+                        colorScheme.primary,
+                        colorScheme.primary.withValues(alpha: 0.7),
+                      ],
+                    ),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Column(
                     children: [
-                      Icon(_isScanning ? Icons.qr_code_scanner : Icons.qr_code,
-                          size: 80, color: colorScheme.surface),
+                      Icon(
+                        _isScanning ? Icons.qr_code_scanner : Icons.qr_code,
+                        size: 80,
+                        color: colorScheme.surface,
+                      ),
                       const SizedBox(height: AlhaiSpacing.md),
-                      Text(_isScanning ? l10n.scanning : l10n.pressToStart,
-                          style: TextStyle(
-                              color: colorScheme.surface, fontSize: 18)),
+                      Text(
+                        _isScanning ? l10n.scanning : l10n.pressToStart,
+                        style: TextStyle(
+                          color: colorScheme.surface,
+                          fontSize: 18,
+                        ),
+                      ),
                       const SizedBox(height: AlhaiSpacing.md),
                       FilledButton.icon(
                         onPressed: _toggleScanning,
                         icon: Icon(_isScanning ? Icons.stop : Icons.play_arrow),
-                        label:
-                            Text(_isScanning ? l10n.stop : l10n.startScanning),
+                        label: Text(
+                          _isScanning ? l10n.stop : l10n.startScanning,
+                        ),
                         style: FilledButton.styleFrom(
-                            backgroundColor: colorScheme.surface,
-                            foregroundColor: colorScheme.primary),
+                          backgroundColor: colorScheme.surface,
+                          foregroundColor: colorScheme.primary,
+                        ),
                       ),
                     ],
                   ),
@@ -92,8 +105,10 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
 
                 // الإدخال اليدوي
                 Padding(
-                  padding:
-                      EdgeInsetsDirectional.only(start: padding, end: padding),
+                  padding: EdgeInsetsDirectional.only(
+                    start: padding,
+                    end: padding,
+                  ),
                   child: Row(
                     children: [
                       Expanded(
@@ -101,8 +116,9 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                           controller: _barcodeController,
                           keyboardType: TextInputType.number,
                           decoration: InputDecoration(
-                              labelText: l10n.enterBarcodeManually,
-                              prefixIcon: const Icon(Icons.keyboard)),
+                            labelText: l10n.enterBarcodeManually,
+                            prefixIcon: const Icon(Icons.keyboard),
+                          ),
                           onSubmitted: (_) => _manualSearch(l10n),
                         ),
                       ),
@@ -113,10 +129,14 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                                 width: 18,
                                 height: 18,
                                 child: CircularProgressIndicator(
-                                    strokeWidth: 2, color: colorScheme.surface))
+                                  strokeWidth: 2,
+                                  color: colorScheme.surface,
+                                ),
+                              )
                             : const Icon(Icons.search),
-                        onPressed:
-                            _isSearching ? null : () => _manualSearch(l10n),
+                        onPressed: _isSearching
+                            ? null
+                            : () => _manualSearch(l10n),
                       ),
                     ],
                   ),
@@ -131,56 +151,74 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(Icons.qr_code_2,
-                                  size: 64,
-                                  color: colorScheme.onSurfaceVariant),
+                              Icon(
+                                Icons.qr_code_2,
+                                size: 64,
+                                color: colorScheme.onSurfaceVariant,
+                              ),
                               const SizedBox(height: AlhaiSpacing.md),
-                              Text(l10n.noScannedProducts,
-                                  style: TextStyle(
-                                      color: colorScheme.onSurfaceVariant)),
+                              Text(
+                                l10n.noScannedProducts,
+                                style: TextStyle(
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
                               const SizedBox(height: AlhaiSpacing.xs),
-                              Text(l10n.enterBarcodeToSearch,
-                                  style: TextStyle(
-                                      fontSize: 11,
-                                      color: colorScheme.onSurfaceVariant)),
+                              Text(
+                                l10n.enterBarcodeToSearch,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                              ),
                             ],
                           ),
                         )
                       : isDesktop
-                          // Desktop/wide: 2-column grid for scanned products
-                          ? GridView.builder(
-                              padding: EdgeInsetsDirectional.only(
-                                  start: padding, end: padding),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                      // Desktop/wide: 2-column grid for scanned products
+                      ? GridView.builder(
+                          padding: EdgeInsetsDirectional.only(
+                            start: padding,
+                            end: padding,
+                          ),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
                                 crossAxisSpacing: 8,
                                 mainAxisSpacing: 8,
                                 childAspectRatio: 3.5,
                               ),
-                              itemCount: _scannedProducts.length,
-                              itemBuilder: (context, index) {
-                                final product = _scannedProducts[
-                                    _scannedProducts.length - 1 - index];
-                                return _ScannedProductCard(
-                                    product: product,
-                                    l10n: l10n,
-                                    colorScheme: colorScheme);
-                              },
-                            )
-                          : ListView.builder(
-                              padding: EdgeInsetsDirectional.only(
-                                  start: padding, end: padding),
-                              itemCount: _scannedProducts.length,
-                              itemBuilder: (context, index) {
-                                final product = _scannedProducts[
-                                    _scannedProducts.length - 1 - index];
-                                return _ScannedProductCard(
-                                    product: product,
-                                    l10n: l10n,
-                                    colorScheme: colorScheme);
-                              },
-                            ),
+                          itemCount: _scannedProducts.length,
+                          itemBuilder: (context, index) {
+                            final product =
+                                _scannedProducts[_scannedProducts.length -
+                                    1 -
+                                    index];
+                            return _ScannedProductCard(
+                              product: product,
+                              l10n: l10n,
+                              colorScheme: colorScheme,
+                            );
+                          },
+                        )
+                      : ListView.builder(
+                          padding: EdgeInsetsDirectional.only(
+                            start: padding,
+                            end: padding,
+                          ),
+                          itemCount: _scannedProducts.length,
+                          itemBuilder: (context, index) {
+                            final product =
+                                _scannedProducts[_scannedProducts.length -
+                                    1 -
+                                    index];
+                            return _ScannedProductCard(
+                              product: product,
+                              l10n: l10n,
+                              colorScheme: colorScheme,
+                            );
+                          },
+                        ),
                 ),
 
                 // شريط الإجراءات
@@ -188,25 +226,29 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
                   Container(
                     padding: EdgeInsets.all(padding),
                     decoration: BoxDecoration(
-                        color: colorScheme.surfaceContainerHighest,
-                        border: Border(
-                            top:
-                                BorderSide(color: colorScheme.outlineVariant))),
+                      color: colorScheme.surfaceContainerHighest,
+                      border: Border(
+                        top: BorderSide(color: colorScheme.outlineVariant),
+                      ),
+                    ),
                     child: Row(
                       children: [
-                        Text('${_scannedProducts.length} ${l10n.product}',
-                            style:
-                                const TextStyle(fontWeight: FontWeight.bold)),
+                        Text(
+                          '${_scannedProducts.length} ${l10n.product}',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
                         const Spacer(),
                         OutlinedButton(
-                            onPressed: () =>
-                                setState(() => _scannedProducts.clear()),
-                            child: Text(l10n.clearAll)),
+                          onPressed: () =>
+                              setState(() => _scannedProducts.clear()),
+                          child: Text(l10n.clearAll),
+                        ),
                         const SizedBox(width: AlhaiSpacing.xs),
                         FilledButton.icon(
-                            onPressed: () => _addToCart(l10n),
-                            icon: const Icon(Icons.add_shopping_cart),
-                            label: Text(l10n.addToCart)),
+                          onPressed: () => _addToCart(l10n),
+                          icon: const Icon(Icons.add_shopping_cart),
+                          label: Text(l10n.addToCart),
+                        ),
                       ],
                     ),
                   ),
@@ -223,9 +265,9 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
     setState(() => _isScanning = !_isScanning);
     if (_isScanning) {
       // في بيئة حقيقية سيتم استخدام كاميرا الجهاز
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.useManualInputToSearch)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.useManualInputToSearch)));
       setState(() => _isScanning = false);
     }
   }
@@ -241,9 +283,9 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
   Future<void> _handleBarcode(String barcode, AppLocalizations l10n) async {
     final storeId = ref.read(currentStoreIdProvider);
     if (storeId == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.storeNotSelected)),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.storeNotSelected)));
       return;
     }
 
@@ -251,17 +293,23 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
 
     try {
       final db = GetIt.I<AppDatabase>();
-      final product =
-          await db.productsDao.getProductByBarcode(barcode, storeId);
+      final product = await db.productsDao.getProductByBarcode(
+        barcode,
+        storeId,
+      );
 
       if (product != null) {
-        setState(() => _scannedProducts.add(_ScannedProduct(
+        setState(
+          () => _scannedProducts.add(
+            _ScannedProduct(
               id: product.id,
               barcode: product.barcode ?? barcode,
               name: product.name,
               price: product.price,
               stock: product.stockQty,
-            )));
+            ),
+          ),
+        );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text('${l10n.found}: ${product.name}')),
@@ -282,35 +330,45 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
         icon: Icon(Icons.error_outline, color: AlhaiColors.warning, size: 48),
         title: Text(l10n.productNotFound),
         content: Text(
-            '${l10n.productNotFoundForBarcode}\n${l10n.barcode}: $barcode'),
+          '${l10n.productNotFoundForBarcode}\n${l10n.barcode}: $barcode',
+        ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(context), child: Text(l10n.close)),
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.close),
+          ),
           FilledButton(
-              onPressed: () {
-                Navigator.pop(context);
-                _addNewProduct(barcode, l10n);
-              },
-              child: Text(l10n.addNewProduct)),
+            onPressed: () {
+              Navigator.pop(context);
+              _addNewProduct(barcode, l10n);
+            },
+            child: Text(l10n.addNewProduct),
+          ),
         ],
       ),
     );
   }
 
   void _addNewProduct(String barcode, AppLocalizations l10n) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(l10n.willOpenAddProductScreen)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.willOpenAddProductScreen)));
   }
 
   void _showHistory(AppLocalizations l10n) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(l10n.scanHistory)));
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.scanHistory)));
   }
 
   void _addToCart(AppLocalizations l10n) {
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
         content: Text(
-            '${l10n.addedToCart} ${_scannedProducts.length} ${l10n.products}')));
+          '${l10n.addedToCart} ${_scannedProducts.length} ${l10n.products}',
+        ),
+      ),
+    );
   }
 }
 
@@ -319,12 +377,13 @@ class _ScannedProduct {
   final String barcode, name;
   final double price;
   final double stock;
-  _ScannedProduct(
-      {required this.id,
-      required this.barcode,
-      required this.name,
-      required this.price,
-      required this.stock});
+  _ScannedProduct({
+    required this.id,
+    required this.barcode,
+    required this.name,
+    required this.price,
+    required this.stock,
+  });
 }
 
 /// Extracted card widget for scanned products (used by both list and grid).
@@ -346,26 +405,36 @@ class _ScannedProductCard extends StatelessWidget {
         leading: Container(
           padding: const EdgeInsets.all(AlhaiSpacing.xs),
           decoration: BoxDecoration(
-              color: colorScheme.primaryContainer,
-              borderRadius: BorderRadius.circular(8)),
+            color: colorScheme.primaryContainer,
+            borderRadius: BorderRadius.circular(8),
+          ),
           child: Icon(Icons.inventory_2, color: colorScheme.primary),
         ),
         title: Text(product.name),
-        subtitle: Text('${l10n.barcode}: ${product.barcode}',
-            style: const TextStyle(fontFamily: 'monospace', fontSize: 11)),
+        subtitle: Text(
+          '${l10n.barcode}: ${product.barcode}',
+          style: const TextStyle(fontFamily: 'monospace', fontSize: 11),
+        ),
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
-            Text('${product.price.toStringAsFixed(2)} ${l10n.sar}',
-                style: const TextStyle(
-                    fontWeight: FontWeight.bold, color: AlhaiColors.success)),
-            Text('${l10n.stock}: ${product.stock}',
-                style: TextStyle(
-                    fontSize: 11,
-                    color: product.stock < 10
-                        ? colorScheme.error
-                        : colorScheme.onSurfaceVariant)),
+            Text(
+              '${product.price.toStringAsFixed(2)} ${l10n.sar}',
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                color: AlhaiColors.success,
+              ),
+            ),
+            Text(
+              '${l10n.stock}: ${product.stock}',
+              style: TextStyle(
+                fontSize: 11,
+                color: product.stock < 10
+                    ? colorScheme.error
+                    : colorScheme.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       ),

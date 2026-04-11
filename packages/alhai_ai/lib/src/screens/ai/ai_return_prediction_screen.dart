@@ -53,8 +53,9 @@ class _AiReturnPredictionScreenState
       children: [
         AppHeader(
           title: l10n.aiReturnPredictionTitle,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.defaultUserName,
@@ -66,16 +67,19 @@ class _AiReturnPredictionScreenState
           child: TabBar(
             controller: _tabController,
             labelColor: AppColors.primary,
-            unselectedLabelColor:
-                isDark ? Colors.white60 : AppColors.textSecondary,
+            unselectedLabelColor: isDark
+                ? Colors.white60
+                : AppColors.textSecondary,
             indicatorColor: AppColors.primary,
             tabs: [
               Tab(
-                  icon: const Icon(Icons.warning_amber_rounded),
-                  text: l10n.riskAnalysisTab),
+                icon: const Icon(Icons.warning_amber_rounded),
+                text: l10n.riskAnalysisTab,
+              ),
               Tab(
-                  icon: const Icon(Icons.shield_outlined),
-                  text: l10n.preventiveActionsTab),
+                icon: const Icon(Icons.shield_outlined),
+                text: l10n.preventiveActionsTab,
+              ),
             ],
           ),
         ),
@@ -107,18 +111,26 @@ class _AiReturnPredictionScreenState
     return probabilities.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(
-          child: Text(
-              AppLocalizations.of(context).errorOccurredDetail(e.toString()))),
+        child: Text(
+          AppLocalizations.of(context).errorOccurredDetail(e.toString()),
+        ),
+      ),
       data: (probs) {
         return SingleChildScrollView(
-          padding:
-              EdgeInsets.all(isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+          padding: EdgeInsets.all(
+            isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // بطاقات الملخص
               _buildSummaryCards(
-                  isDark, isWideScreen, avgRate, atRisk, highRiskCount),
+                isDark,
+                isWideScreen,
+                avgRate,
+                atRisk,
+                highRiskCount,
+              ),
               const SizedBox(height: AlhaiSpacing.lg),
 
               // رسم بياني للاتجاه
@@ -135,8 +147,9 @@ class _AiReturnPredictionScreenState
 
               // قائمة العمليات
               Text(
-                AppLocalizations.of(context)
-                    .operationsAtRiskCount(probs.length),
+                AppLocalizations.of(
+                  context,
+                ).operationsAtRiskCount(probs.length),
                 style: TextStyle(
                   color: isDark ? Colors.white : AppColors.textPrimary,
                   fontSize: 18,
@@ -144,10 +157,12 @@ class _AiReturnPredictionScreenState
                 ),
               ),
               const SizedBox(height: AlhaiSpacing.sm),
-              ...probs.map((p) => Padding(
-                    padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
-                    child: ReturnRiskCard(probability: p),
-                  )),
+              ...probs.map(
+                (p) => Padding(
+                  padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+                  child: ReturnRiskCard(probability: p),
+                ),
+              ),
             ],
           ),
         );
@@ -202,22 +217,26 @@ class _AiReturnPredictionScreenState
     if (isWideScreen) {
       return Row(
         children: cards
-            .map((c) => Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 6),
-                    child: _buildSummaryCard(isDark, c),
-                  ),
-                ))
+            .map(
+              (c) => Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: _buildSummaryCard(isDark, c),
+                ),
+              ),
+            )
             .toList(),
       );
     }
 
     return Column(
       children: cards
-          .map((c) => Padding(
-                padding: const EdgeInsets.only(bottom: 10),
-                child: _buildSummaryCard(isDark, c),
-              ))
+          .map(
+            (c) => Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: _buildSummaryCard(isDark, c),
+            ),
+          )
           .toList(),
     );
   }
@@ -229,8 +248,9 @@ class _AiReturnPredictionScreenState
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.06)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -298,8 +318,9 @@ class _AiReturnPredictionScreenState
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.06)
+              : AppColors.border,
         ),
       ),
       child: Column(
@@ -324,10 +345,7 @@ class _AiReturnPredictionScreenState
             height: 180,
             child: CustomPaint(
               size: const Size(double.infinity, 180),
-              painter: _TrendChartPainter(
-                trends: trends,
-                isDark: isDark,
-              ),
+              painter: _TrendChartPainter(trends: trends, isDark: isDark),
             ),
           ),
           const SizedBox(height: AlhaiSpacing.sm),
@@ -338,13 +356,13 @@ class _AiReturnPredictionScreenState
               final trendIcon = t.trend == TrendDirection.up
                   ? Icons.arrow_upward
                   : t.trend == TrendDirection.down
-                      ? Icons.arrow_downward
-                      : Icons.remove;
+                  ? Icons.arrow_downward
+                  : Icons.remove;
               final trendColor = t.trend == TrendDirection.up
                   ? AppColors.error
                   : t.trend == TrendDirection.down
-                      ? AppColors.success
-                      : AppColors.warning;
+                  ? AppColors.success
+                  : AppColors.warning;
               return Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 6),
                 child: Column(
@@ -385,10 +403,14 @@ class _AiReturnPredictionScreenState
     final filters = [
       _FilterOption(label: l10n.riskFilterAll, value: null),
       _FilterOption(
-          label: l10n.riskFilterVeryHigh, value: ReturnRiskLevel.veryHigh),
+        label: l10n.riskFilterVeryHigh,
+        value: ReturnRiskLevel.veryHigh,
+      ),
       _FilterOption(label: l10n.riskFilterHigh, value: ReturnRiskLevel.high),
       _FilterOption(
-          label: l10n.riskFilterMedium, value: ReturnRiskLevel.medium),
+        label: l10n.riskFilterMedium,
+        value: ReturnRiskLevel.medium,
+      ),
       _FilterOption(label: l10n.riskFilterLow, value: ReturnRiskLevel.low),
     ];
 
@@ -422,8 +444,8 @@ class _AiReturnPredictionScreenState
                 color: isSelected
                     ? chipColor
                     : (isDark
-                        ? Colors.white.withValues(alpha: 0.15)
-                        : AppColors.border),
+                          ? Colors.white.withValues(alpha: 0.15)
+                          : AppColors.border),
               ),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(20),
@@ -445,8 +467,10 @@ class _AiReturnPredictionScreenState
     return actions.when(
       loading: () => const Center(child: CircularProgressIndicator()),
       error: (e, _) => Center(
-          child: Text(
-              AppLocalizations.of(context).errorOccurredDetail(e.toString()))),
+        child: Text(
+          AppLocalizations.of(context).errorOccurredDetail(e.toString()),
+        ),
+      ),
       data: (actionsList) {
         final totalSavings = actionsList.fold<double>(
           0,
@@ -454,8 +478,9 @@ class _AiReturnPredictionScreenState
         );
 
         return SingleChildScrollView(
-          padding:
-              EdgeInsets.all(isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+          padding: EdgeInsets.all(
+            isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -509,8 +534,9 @@ class _AiReturnPredictionScreenState
                           ),
                           const SizedBox(height: AlhaiSpacing.xxs),
                           Text(
-                            AppLocalizations.of(context)
-                                .amountSar(totalSavings.toStringAsFixed(2)),
+                            AppLocalizations.of(
+                              context,
+                            ).amountSar(totalSavings.toStringAsFixed(2)),
                             style: const TextStyle(
                               color: Colors.white,
                               fontSize: 28,
@@ -518,8 +544,9 @@ class _AiReturnPredictionScreenState
                             ),
                           ),
                           Text(
-                            AppLocalizations.of(context)
-                                .fromPreventiveActions(actionsList.length),
+                            AppLocalizations.of(
+                              context,
+                            ).fromPreventiveActions(actionsList.length),
                             style: TextStyle(
                               color: Colors.white.withValues(alpha: 0.7),
                               fontSize: 12,
@@ -530,7 +557,9 @@ class _AiReturnPredictionScreenState
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.sm, vertical: 6),
+                        horizontal: AlhaiSpacing.sm,
+                        vertical: 6,
+                      ),
                       decoration: BoxDecoration(
                         color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(20),
@@ -538,8 +567,11 @@ class _AiReturnPredictionScreenState
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          const Icon(Icons.auto_awesome,
-                              color: Colors.white, size: 16),
+                          const Icon(
+                            Icons.auto_awesome,
+                            color: Colors.white,
+                            size: 16,
+                          ),
                           const SizedBox(width: AlhaiSpacing.xxs),
                           Text(
                             'AI',
@@ -579,37 +611,45 @@ class _AiReturnPredictionScreenState
               const SizedBox(height: AlhaiSpacing.md),
 
               // قائمة الإجراءات
-              ...actionsList.map((action) => Padding(
-                    padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
-                    child: PreventiveActionCard(
-                      action: action,
-                      onApply: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(AppLocalizations.of(context)
-                                .actionApplied(action.title)),
-                            backgroundColor: AppColors.success,
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+              ...actionsList.map(
+                (action) => Padding(
+                  padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+                  child: PreventiveActionCard(
+                    action: action,
+                    onApply: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            AppLocalizations.of(
+                              context,
+                            ).actionApplied(action.title),
                           ),
-                        );
-                      },
-                      onDismiss: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(AppLocalizations.of(context)
-                                .actionDismissed(action.title)),
-                            behavior: SnackBarBehavior.floating,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
+                          backgroundColor: AppColors.success,
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
                           ),
-                        );
-                      },
-                    ),
-                  )),
+                        ),
+                      );
+                    },
+                    onDismiss: () {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            AppLocalizations.of(
+                              context,
+                            ).actionDismissed(action.title),
+                          ),
+                          behavior: SnackBarBehavior.floating,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ),
             ],
           ),
         );
@@ -735,19 +775,15 @@ class _TrendChartPainter extends CustomPainter {
       final trendColor = trends[i].trend == TrendDirection.up
           ? const Color(0xFFEF4444)
           : trends[i].trend == TrendDirection.down
-              ? const Color(0xFF22C55E)
-              : const Color(0xFFF59E0B);
+          ? const Color(0xFF22C55E)
+          : const Color(0xFFF59E0B);
 
       canvas.drawCircle(
         points[i],
         5,
         Paint()..color = isDark ? const Color(0xFF1E293B) : Colors.white,
       );
-      canvas.drawCircle(
-        points[i],
-        4,
-        Paint()..color = trendColor,
-      );
+      canvas.drawCircle(points[i], 4, Paint()..color = trendColor);
     }
   }
 

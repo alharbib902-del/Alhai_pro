@@ -91,7 +91,8 @@ class ReceiptPrinterService {
       } catch (printError) {
         if (kIsWeb) {
           debugPrint(
-              'layoutPdf failed on web, falling back to sharePdf: $printError');
+            'layoutPdf failed on web, falling back to sharePdf: $printError',
+          );
           await Printing.sharePdf(
             bytes: pdfBytes,
             filename: 'receipt_${sale.receiptNo}.pdf',

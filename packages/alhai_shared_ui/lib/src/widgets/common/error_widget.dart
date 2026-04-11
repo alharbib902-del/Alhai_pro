@@ -26,19 +26,19 @@ class AppErrorWidget extends StatelessWidget {
 
   /// خطأ شبكة
   const AppErrorWidget.network({super.key, this.onRetry, this.message})
-      : icon = Icons.cloud_off,
-        _errorType = _ErrorType.network;
+    : icon = Icons.cloud_off,
+      _errorType = _ErrorType.network;
 
   /// خطأ تحميل
   const AppErrorWidget.loading({super.key, String? details, this.onRetry})
-      : message = details,
-        icon = Icons.sync_problem,
-        _errorType = _ErrorType.loading;
+    : message = details,
+      icon = Icons.sync_problem,
+      _errorType = _ErrorType.loading;
 
   /// خطأ عام
   const AppErrorWidget.generic({super.key, this.message, this.onRetry})
-      : icon = Icons.warning_amber,
-        _errorType = _ErrorType.generic;
+    : icon = Icons.warning_amber,
+      _errorType = _ErrorType.generic;
 
   String _resolveMessage(AppLocalizations l10n) {
     if (message != null) return message!;
@@ -72,8 +72,8 @@ class AppErrorWidget extends StatelessWidget {
             Text(
               _resolveMessage(l10n),
               style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface,
-                  ),
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
               textAlign: TextAlign.center,
             ),
             if (onRetry != null) ...[
@@ -101,17 +101,15 @@ class ErrorMessage extends StatelessWidget {
   /// حدث الإغلاق
   final VoidCallback? onDismiss;
 
-  const ErrorMessage({
-    super.key,
-    required this.message,
-    this.onDismiss,
-  });
+  const ErrorMessage({super.key, required this.message, this.onDismiss});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.sm,
+      ),
       margin: const EdgeInsets.all(AlhaiSpacing.xs),
       decoration: BoxDecoration(
         color: AlhaiColors.error.withValues(alpha: 0.08),
@@ -120,8 +118,11 @@ class ErrorMessage extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(Icons.error_outline,
-              color: AlhaiColors.error.withValues(alpha: 0.7), size: 20),
+          Icon(
+            Icons.error_outline,
+            color: AlhaiColors.error.withValues(alpha: 0.7),
+            size: 20,
+          ),
           SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Text(

@@ -116,7 +116,7 @@ class AiPromotionDesignerService {
           'تمور سكري 1 كجم',
           'لبن رايب 2 لتر',
           'عصير فيمتو',
-          'قمر الدين'
+          'قمر الدين',
         ],
         discountAmount: 25,
         startDate: now,
@@ -255,13 +255,16 @@ class AiPromotionDesignerService {
       cumRevenue += rev;
       cumCost += cost;
 
-      forecasts.add(RoiForecast(
-        day: day,
-        projectedRevenue: cumRevenue,
-        projectedCost: cumCost,
-        cumulativeRoi:
-            cumCost > 0 ? ((cumRevenue - cumCost) / cumCost * 100) : 0,
-      ));
+      forecasts.add(
+        RoiForecast(
+          day: day,
+          projectedRevenue: cumRevenue,
+          projectedCost: cumCost,
+          cumulativeRoi: cumCost > 0
+              ? ((cumRevenue - cumCost) / cumCost * 100)
+              : 0,
+        ),
+      );
     }
 
     return forecasts;

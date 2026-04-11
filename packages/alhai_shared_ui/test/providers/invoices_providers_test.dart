@@ -75,9 +75,9 @@ void main() {
 
   group('invoicesListProvider', () {
     test('returns empty list when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(invoicesListProvider.future);
@@ -85,12 +85,13 @@ void main() {
     });
 
     test('returns invoices from dao', () async {
-      when(() => mockSalesDao.getAllSales('store-1'))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSalesDao.getAllSales('store-1'),
+      ).thenAnswer((_) async => []);
 
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(invoicesListProvider.future);
@@ -100,9 +101,9 @@ void main() {
 
   group('invoicesStatsProvider', () {
     test('returns default stats when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(invoicesStatsProvider.future);

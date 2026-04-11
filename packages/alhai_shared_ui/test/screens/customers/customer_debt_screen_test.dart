@@ -97,8 +97,9 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       final completer = Completer<List<AccountsTableData>>();
-      when(() => mockAccountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => mockAccountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pump();
@@ -113,8 +114,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockAccountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockAccountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -127,8 +129,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockAccountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockAccountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -141,8 +144,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockAccountsDao.getReceivableAccounts(any()))
-          .thenThrow(Exception('Database error'));
+      when(
+        () => mockAccountsDao.getReceivableAccounts(any()),
+      ).thenThrow(Exception('Database error'));
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -154,8 +158,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockAccountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockAccountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));

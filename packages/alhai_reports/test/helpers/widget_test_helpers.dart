@@ -77,7 +77,8 @@ Widget buildTestableWidget(
   MockExpensesDao expensesDao,
   MockUsersDao usersDao,
   MockAccountsDao accountsDao,
-}) setupMockGetIt() {
+})
+setupMockGetIt() {
   final mockDb = MockAppDatabase();
   final mockSalesDao = MockSalesDao();
   final mockSaleItemsDao = MockSaleItemsDao();
@@ -94,33 +95,42 @@ Widget buildTestableWidget(
   when(() => mockDb.accountsDao).thenReturn(mockAccountsDao);
 
   // Default stubs returning empty data
-  when(() => mockSalesDao.getSalesByDate(any(), any()))
-      .thenAnswer((_) async => <SalesTableData>[]);
+  when(
+    () => mockSalesDao.getSalesByDate(any(), any()),
+  ).thenAnswer((_) async => <SalesTableData>[]);
 
-  when(() => mockSalesDao.getSalesStats(
-        any(),
-        startDate: any(named: 'startDate'),
-        endDate: any(named: 'endDate'),
-        cashierId: any(named: 'cashierId'),
-      )).thenAnswer((_) async => const SalesStats(
-        count: 0,
-        total: 0,
-        average: 0,
-        maxSale: 0,
-        minSale: 0,
-      ));
+  when(
+    () => mockSalesDao.getSalesStats(
+      any(),
+      startDate: any(named: 'startDate'),
+      endDate: any(named: 'endDate'),
+      cashierId: any(named: 'cashierId'),
+    ),
+  ).thenAnswer(
+    (_) async => const SalesStats(
+      count: 0,
+      total: 0,
+      average: 0,
+      maxSale: 0,
+      minSale: 0,
+    ),
+  );
 
-  when(() => mockProductsDao.getAllProducts(any()))
-      .thenAnswer((_) async => <ProductsTableData>[]);
+  when(
+    () => mockProductsDao.getAllProducts(any()),
+  ).thenAnswer((_) async => <ProductsTableData>[]);
 
-  when(() => mockExpensesDao.getExpensesByDateRange(any(), any(), any()))
-      .thenAnswer((_) async => <ExpensesTableData>[]);
+  when(
+    () => mockExpensesDao.getExpensesByDateRange(any(), any(), any()),
+  ).thenAnswer((_) async => <ExpensesTableData>[]);
 
-  when(() => mockUsersDao.getAllUsers(any()))
-      .thenAnswer((_) async => <UsersTableData>[]);
+  when(
+    () => mockUsersDao.getAllUsers(any()),
+  ).thenAnswer((_) async => <UsersTableData>[]);
 
-  when(() => mockAccountsDao.getReceivableAccounts(any()))
-      .thenAnswer((_) async => <AccountsTableData>[]);
+  when(
+    () => mockAccountsDao.getReceivableAccounts(any()),
+  ).thenAnswer((_) async => <AccountsTableData>[]);
 
   // Register in GetIt
   final getIt = GetIt.instance;

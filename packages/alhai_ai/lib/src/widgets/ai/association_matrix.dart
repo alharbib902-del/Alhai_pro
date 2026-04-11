@@ -31,8 +31,9 @@ class AssociationMatrix extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -48,8 +49,11 @@ class AssociationMatrix extends StatelessWidget {
           // Header
           Row(
             children: [
-              const Icon(Icons.grid_on_rounded,
-                  color: AppColors.primary, size: 20),
+              const Icon(
+                Icons.grid_on_rounded,
+                color: AppColors.primary,
+                size: 20,
+              ),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 'خريطة الارتباطات', // Association Heatmap
@@ -153,12 +157,14 @@ class _AssociationRowState extends State<_AssociationRow> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.sm, vertical: 10),
+            horizontal: AlhaiSpacing.sm,
+            vertical: 10,
+          ),
           decoration: BoxDecoration(
             color: _isHovered
                 ? (widget.isDark
-                    ? Colors.white.withValues(alpha: 0.05)
-                    : AppColors.grey50)
+                      ? Colors.white.withValues(alpha: 0.05)
+                      : AppColors.grey50)
                 : Colors.transparent,
             borderRadius: BorderRadius.circular(10),
           ),
@@ -241,7 +247,9 @@ class _AssociationRowState extends State<_AssociationRow> {
               // Frequency badge
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                  horizontal: AlhaiSpacing.xs,
+                  vertical: AlhaiSpacing.xxs,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),

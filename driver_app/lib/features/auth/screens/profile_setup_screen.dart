@@ -156,8 +156,9 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                   FilledButton(
                     onPressed: _isLoading ? null : _saveProfile,
                     style: FilledButton.styleFrom(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AlhaiSpacing.md,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -168,8 +169,10 @@ class _ProfileSetupScreenState extends ConsumerState<ProfileSetupScreen> {
                             width: 20,
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
-                        : const Text('ابدأ العمل',
-                            style: TextStyle(fontSize: 16)),
+                        : const Text(
+                            'ابدأ العمل',
+                            style: TextStyle(fontSize: 16),
+                          ),
                   ),
                 ],
               ),

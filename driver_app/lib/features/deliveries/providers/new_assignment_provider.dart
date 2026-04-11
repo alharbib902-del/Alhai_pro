@@ -5,13 +5,15 @@ import '../data/delivery_datasource.dart';
 
 /// Tracks new delivery assignments from Realtime stream.
 /// Filters for status == 'assigned' and provides the latest one.
-final newAssignmentProvider =
-    StreamProvider<Map<String, dynamic>?>((ref) async* {
+final newAssignmentProvider = StreamProvider<Map<String, dynamic>?>((
+  ref,
+) async* {
   final ds = GetIt.instance<DeliveryDatasource>();
 
   await for (final deliveries in ds.streamNewAssignments()) {
-    final assigned =
-        deliveries.where((d) => d['status'] == 'assigned').toList();
+    final assigned = deliveries
+        .where((d) => d['status'] == 'assigned')
+        .toList();
 
     if (assigned.isNotEmpty) {
       yield assigned.first;

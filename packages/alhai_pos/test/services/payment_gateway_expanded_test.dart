@@ -59,32 +59,35 @@ void main() {
     });
 
     group('processPayment error handling', () {
-      test('should catch gateway exceptions and return failed result',
-          () async {
-        // Arrange - register a gateway that throws
-        // Note: PaymentService.isMethodAvailable only allows cash right now
-        // so we test the error handling path by using a mock gateway for cash
-        final mockGateway = MockPaymentGateway();
-        when(() => mockGateway.name).thenReturn('Mock');
-        when(() => mockGateway.isAvailable()).thenAnswer((_) async => true);
-        when(() => mockGateway.processPayment(any()))
-            .thenThrow(Exception('Network failure'));
+      test(
+        'should catch gateway exceptions and return failed result',
+        () async {
+          // Arrange - register a gateway that throws
+          // Note: PaymentService.isMethodAvailable only allows cash right now
+          // so we test the error handling path by using a mock gateway for cash
+          final mockGateway = MockPaymentGateway();
+          when(() => mockGateway.name).thenReturn('Mock');
+          when(() => mockGateway.isAvailable()).thenAnswer((_) async => true);
+          when(
+            () => mockGateway.processPayment(any()),
+          ).thenThrow(Exception('Network failure'));
 
-        service.registerGateway(PaymentMethod.cash, mockGateway);
+          service.registerGateway(PaymentMethod.cash, mockGateway);
 
-        final request = PaymentRequest(
-          orderId: 'order-1',
-          amount: 100.0,
-          method: PaymentMethod.cash,
-        );
+          final request = PaymentRequest(
+            orderId: 'order-1',
+            amount: 100.0,
+            method: PaymentMethod.cash,
+          );
 
-        // Act
-        final result = await service.processPayment(request);
+          // Act
+          final result = await service.processPayment(request);
 
-        // Assert
-        expect(result.success, isFalse);
-        expect(result.errorType, equals(PaymentErrorType.unknown));
-      });
+          // Assert
+          expect(result.success, isFalse);
+          expect(result.errorType, equals(PaymentErrorType.unknown));
+        },
+      );
 
       test('should return failure when gateway is unavailable', () async {
         final mockGateway = MockPaymentGateway();
@@ -153,10 +156,7 @@ void main() {
       test('availableMethods should reflect registered gateways', () {
         expect(service.availableMethods.length, equals(1));
 
-        final stcGateway = StcPayGateway(
-          merchantId: 'test',
-          apiKey: 'key',
-        );
+        final stcGateway = StcPayGateway(merchantId: 'test', apiKey: 'key');
         service.registerGateway(PaymentMethod.stcPay, stcGateway);
 
         expect(service.availableMethods.length, equals(2));
@@ -218,19 +218,19 @@ void main() {
       final after = DateTime.now();
 
       expect(
-          result.timestamp.isAfter(before) ||
-              result.timestamp.isAtSameMomentAs(before),
-          isTrue);
+        result.timestamp.isAfter(before) ||
+            result.timestamp.isAtSameMomentAs(before),
+        isTrue,
+      );
       expect(
-          result.timestamp.isBefore(after) ||
-              result.timestamp.isAtSameMomentAs(after),
-          isTrue);
+        result.timestamp.isBefore(after) ||
+            result.timestamp.isAtSameMomentAs(after),
+        isTrue,
+      );
     });
 
     test('failed factory should set timestamp', () {
-      final result = PaymentResult.failed(
-        errorType: PaymentErrorType.network,
-      );
+      final result = PaymentResult.failed(errorType: PaymentErrorType.network);
 
       expect(result.timestamp, isNotNull);
     });
@@ -245,13 +245,18 @@ void main() {
       expect(result.errorMessage, isNull);
     });
 
-    test('all PaymentErrorType values should have non-empty Arabic messages',
-        () {
-      for (final errorType in PaymentErrorType.values) {
-        expect(errorType.arabicMessage, isNotEmpty,
-            reason: '${errorType.name} should have an Arabic message');
-      }
-    });
+    test(
+      'all PaymentErrorType values should have non-empty Arabic messages',
+      () {
+        for (final errorType in PaymentErrorType.values) {
+          expect(
+            errorType.arabicMessage,
+            isNotEmpty,
+            reason: '${errorType.name} should have an Arabic message',
+          );
+        }
+      },
+    );
   });
 
   group('CashPaymentGateway - Expanded', () {

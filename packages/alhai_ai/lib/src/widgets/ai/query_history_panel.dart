@@ -33,8 +33,9 @@ class QueryHistoryPanel extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.06)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -49,8 +50,12 @@ class QueryHistoryPanel extends StatelessWidget {
         children: [
           // العنوان
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.md,
-                AlhaiSpacing.md, AlhaiSpacing.md, AlhaiSpacing.xs),
+            padding: EdgeInsetsDirectional.fromSTEB(
+              AlhaiSpacing.md,
+              AlhaiSpacing.md,
+              AlhaiSpacing.md,
+              AlhaiSpacing.xs,
+            ),
             child: Row(
               children: [
                 const Icon(Icons.history, color: AppColors.primary, size: 20),
@@ -74,10 +79,7 @@ class QueryHistoryPanel extends StatelessWidget {
                     ),
                     label: const Text(
                       'مسح الكل',
-                      style: TextStyle(
-                        color: AppColors.error,
-                        fontSize: 12,
-                      ),
+                      style: TextStyle(color: AppColors.error, fontSize: 12),
                     ),
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 8),
@@ -86,11 +88,7 @@ class QueryHistoryPanel extends StatelessWidget {
                 if (onClose != null)
                   IconButton(
                     onPressed: onClose,
-                    icon: Icon(
-                      Icons.close,
-                      color: subtextColor,
-                      size: 18,
-                    ),
+                    icon: Icon(Icons.close, color: subtextColor, size: 18),
                   ),
               ],
             ),
@@ -114,10 +112,7 @@ class QueryHistoryPanel extends StatelessWidget {
                     const SizedBox(height: AlhaiSpacing.sm),
                     Text(
                       'لا يوجد استعلامات سابقة',
-                      style: TextStyle(
-                        color: subtextColor,
-                        fontSize: 14,
-                      ),
+                      style: TextStyle(color: subtextColor, fontSize: 14),
                     ),
                     const SizedBox(height: AlhaiSpacing.xxs),
                     Text(
@@ -145,7 +140,12 @@ class QueryHistoryPanel extends StatelessWidget {
                 itemBuilder: (context, index) {
                   final item = history[index];
                   return _buildHistoryItem(
-                      context, item, isDark, textColor, subtextColor);
+                    context,
+                    item,
+                    isDark,
+                    textColor,
+                    subtextColor,
+                  );
                 },
               ),
             ),
@@ -171,7 +171,9 @@ class QueryHistoryPanel extends StatelessWidget {
         onTap: () => onRerun(item.query.query),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+            horizontal: AlhaiSpacing.md,
+            vertical: AlhaiSpacing.sm,
+          ),
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -207,10 +209,7 @@ class QueryHistoryPanel extends StatelessWidget {
                       children: [
                         Text(
                           item.title,
-                          style: TextStyle(
-                            color: subtextColor,
-                            fontSize: 11,
-                          ),
+                          style: TextStyle(color: subtextColor, fontSize: 11),
                         ),
                         Text(
                           '  |  ',
@@ -224,8 +223,9 @@ class QueryHistoryPanel extends StatelessWidget {
                         Text(
                           timeAgo,
                           style: TextStyle(
-                            color:
-                                isDark ? Colors.white38 : AppColors.textMuted,
+                            color: isDark
+                                ? Colors.white38
+                                : AppColors.textMuted,
                             fontSize: 11,
                           ),
                         ),

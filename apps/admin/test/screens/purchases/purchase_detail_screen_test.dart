@@ -30,22 +30,26 @@ void main() {
   group('PurchaseDetailScreen', () {
     testWidgets('shows loading indicator initially', (tester) async {
       final completer = Completer<PurchasesTableData?>();
-      when(() => mockPurchasesDao.getPurchaseById(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => mockPurchasesDao.getPurchaseById(any()),
+      ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(
-          createTestWidget(const PurchaseDetailScreen(purchaseId: 'pur-1')));
+        createTestWidget(const PurchaseDetailScreen(purchaseId: 'pur-1')),
+      );
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
 
     testWidgets('shows error state when purchase not found', (tester) async {
-      when(() => mockPurchasesDao.getPurchaseById('nonexistent'))
-          .thenAnswer((_) async => null);
+      when(
+        () => mockPurchasesDao.getPurchaseById('nonexistent'),
+      ).thenAnswer((_) async => null);
 
-      await tester.pumpWidget(createTestWidget(
-          const PurchaseDetailScreen(purchaseId: 'nonexistent')));
+      await tester.pumpWidget(
+        createTestWidget(const PurchaseDetailScreen(purchaseId: 'nonexistent')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.error_outline), findsOneWidget);
@@ -58,30 +62,33 @@ void main() {
         status: 'draft',
         total: 1150.0,
       );
-      when(() => mockPurchasesDao.getPurchaseById('pur-1'))
-          .thenAnswer((_) async => purchase);
-      when(() => mockPurchasesDao.getPurchaseItems('pur-1'))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockPurchasesDao.getPurchaseById('pur-1'),
+      ).thenAnswer((_) async => purchase);
+      when(
+        () => mockPurchasesDao.getPurchaseItems('pur-1'),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(
-          createTestWidget(const PurchaseDetailScreen(purchaseId: 'pur-1')));
+        createTestWidget(const PurchaseDetailScreen(purchaseId: 'pur-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('PUR-TEST-001'), findsWidgets);
     });
 
     testWidgets('shows timeline for draft status', (tester) async {
-      final purchase = createTestPurchase(
-        id: 'pur-1',
-        status: 'draft',
-      );
-      when(() => mockPurchasesDao.getPurchaseById('pur-1'))
-          .thenAnswer((_) async => purchase);
-      when(() => mockPurchasesDao.getPurchaseItems('pur-1'))
-          .thenAnswer((_) async => []);
+      final purchase = createTestPurchase(id: 'pur-1', status: 'draft');
+      when(
+        () => mockPurchasesDao.getPurchaseById('pur-1'),
+      ).thenAnswer((_) async => purchase);
+      when(
+        () => mockPurchasesDao.getPurchaseItems('pur-1'),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(
-          createTestWidget(const PurchaseDetailScreen(purchaseId: 'pur-1')));
+        createTestWidget(const PurchaseDetailScreen(purchaseId: 'pur-1')),
+      );
       await tester.pumpAndSettle();
 
       // Timeline should show status flow
@@ -89,34 +96,34 @@ void main() {
     });
 
     testWidgets('shows send to distributor button for draft', (tester) async {
-      final purchase = createTestPurchase(
-        id: 'pur-1',
-        status: 'draft',
-      );
-      when(() => mockPurchasesDao.getPurchaseById('pur-1'))
-          .thenAnswer((_) async => purchase);
-      when(() => mockPurchasesDao.getPurchaseItems('pur-1'))
-          .thenAnswer((_) async => []);
+      final purchase = createTestPurchase(id: 'pur-1', status: 'draft');
+      when(
+        () => mockPurchasesDao.getPurchaseById('pur-1'),
+      ).thenAnswer((_) async => purchase);
+      when(
+        () => mockPurchasesDao.getPurchaseItems('pur-1'),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(
-          createTestWidget(const PurchaseDetailScreen(purchaseId: 'pur-1')));
+        createTestWidget(const PurchaseDetailScreen(purchaseId: 'pur-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.send_rounded), findsOneWidget);
     });
 
     testWidgets('shows received message for received status', (tester) async {
-      final purchase = createTestPurchase(
-        id: 'pur-1',
-        status: 'received',
-      );
-      when(() => mockPurchasesDao.getPurchaseById('pur-1'))
-          .thenAnswer((_) async => purchase);
-      when(() => mockPurchasesDao.getPurchaseItems('pur-1'))
-          .thenAnswer((_) async => []);
+      final purchase = createTestPurchase(id: 'pur-1', status: 'received');
+      when(
+        () => mockPurchasesDao.getPurchaseById('pur-1'),
+      ).thenAnswer((_) async => purchase);
+      when(
+        () => mockPurchasesDao.getPurchaseItems('pur-1'),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(
-          createTestWidget(const PurchaseDetailScreen(purchaseId: 'pur-1')));
+        createTestWidget(const PurchaseDetailScreen(purchaseId: 'pur-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.check_circle_rounded), findsWidgets);

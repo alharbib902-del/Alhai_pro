@@ -45,8 +45,9 @@ void main() {
 
     test('getAllStores returns all stores', () async {
       await db.storesDao.insertStore(makeStore());
-      await db.storesDao
-          .insertStore(makeStore(id: 'store-2', name: 'متجر جدة'));
+      await db.storesDao.insertStore(
+        makeStore(id: 'store-2', name: 'متجر جدة'),
+      );
 
       final stores = await db.storesDao.getAllStores();
       expect(stores, hasLength(2));
@@ -54,11 +55,9 @@ void main() {
 
     test('getActiveStores excludes inactive', () async {
       await db.storesDao.insertStore(makeStore(isActive: true));
-      await db.storesDao.insertStore(makeStore(
-        id: 'store-2',
-        name: 'متجر مغلق',
-        isActive: false,
-      ));
+      await db.storesDao.insertStore(
+        makeStore(id: 'store-2', name: 'متجر مغلق', isActive: false),
+      );
 
       final active = await db.storesDao.getActiveStores();
       expect(active, hasLength(1));

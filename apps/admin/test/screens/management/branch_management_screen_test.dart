@@ -33,8 +33,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
 
       final completer = Completer<List<StoresTableData>>();
-      when(() => mockStoresDao.getAllStores())
-          .thenAnswer((_) => completer.future);
+      when(
+        () => mockStoresDao.getAllStores(),
+      ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(createTestWidget(const BranchManagementScreen()));
       await tester.pump();

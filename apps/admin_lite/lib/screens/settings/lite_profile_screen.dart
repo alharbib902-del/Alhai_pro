@@ -26,10 +26,7 @@ class LiteProfileScreen extends ConsumerWidget {
     final user = ref.watch(currentUserProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.profileTitle),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(l10n.profileTitle), centerTitle: true),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(
           horizontal: isMobile ? AlhaiSpacing.md : AlhaiSpacing.xl,
@@ -44,7 +41,10 @@ class LiteProfileScreen extends ConsumerWidget {
             // Store info
             _buildSection(context, isDark, l10n.settings, Icons.store, [
               _InfoTile(
-                  Icons.badge, user?.role.name ?? 'Admin', l10n.profileTitle),
+                Icons.badge,
+                user?.role.name ?? 'Admin',
+                l10n.profileTitle,
+              ),
               if (user?.phone != null)
                 _InfoTile(Icons.phone, user!.phone, l10n.profileTitle),
               if (user?.email != null)
@@ -54,12 +54,21 @@ class LiteProfileScreen extends ConsumerWidget {
 
             // Quick settings
             _buildSection(context, isDark, l10n.quickActions, Icons.settings, [
-              _ActionTile(Icons.notifications_outlined, l10n.notifications,
-                  () => context.go('/lite/settings/notification-prefs')),
-              _ActionTile(Icons.language, l10n.language,
-                  () => context.go(AppRoutes.settingsLanguage)),
-              _ActionTile(Icons.palette_outlined, l10n.theme,
-                  () => context.go(AppRoutes.settingsTheme)),
+              _ActionTile(
+                Icons.notifications_outlined,
+                l10n.notifications,
+                () => context.go('/lite/settings/notification-prefs'),
+              ),
+              _ActionTile(
+                Icons.language,
+                l10n.language,
+                () => context.go(AppRoutes.settingsLanguage),
+              ),
+              _ActionTile(
+                Icons.palette_outlined,
+                l10n.theme,
+                () => context.go(AppRoutes.settingsTheme),
+              ),
             ]),
 
             const SizedBox(height: AlhaiSpacing.lg),
@@ -70,7 +79,11 @@ class LiteProfileScreen extends ConsumerWidget {
   }
 
   Widget _buildProfileHeader(
-      BuildContext context, bool isDark, AppLocalizations l10n, dynamic user) {
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+    dynamic user,
+  ) {
     final name = user?.name ?? '?';
     final email = user?.email ?? '';
     final initial = name.isNotEmpty ? name[0].toUpperCase() : '?';
@@ -126,7 +139,9 @@ class LiteProfileScreen extends ConsumerWidget {
           const SizedBox(height: AlhaiSpacing.xs),
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: 12, vertical: AlhaiSpacing.xxs),
+              horizontal: 12,
+              vertical: AlhaiSpacing.xxs,
+            ),
             decoration: BoxDecoration(
               color: AlhaiColors.primary.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(12),
@@ -145,8 +160,13 @@ class LiteProfileScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildSection(BuildContext context, bool isDark, String title,
-      IconData icon, List<Widget> children) {
+  Widget _buildSection(
+    BuildContext context,
+    bool isDark,
+    String title,
+    IconData icon,
+    List<Widget> children,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
@@ -161,8 +181,12 @@ class LiteProfileScreen extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.md,
-                AlhaiSpacing.md, AlhaiSpacing.md, AlhaiSpacing.xs),
+            padding: const EdgeInsetsDirectional.fromSTEB(
+              AlhaiSpacing.md,
+              AlhaiSpacing.md,
+              AlhaiSpacing.md,
+              AlhaiSpacing.xs,
+            ),
             child: Row(
               children: [
                 Icon(icon, size: 18, color: AlhaiColors.primary),
@@ -198,8 +222,10 @@ class _InfoTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding:
-          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AlhaiSpacing.md,
+        vertical: 10,
+      ),
       child: Row(
         children: [
           Container(
@@ -243,7 +269,9 @@ class _ActionTile extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.md, vertical: 14),
+          horizontal: AlhaiSpacing.md,
+          vertical: 14,
+        ),
         child: Row(
           children: [
             Container(

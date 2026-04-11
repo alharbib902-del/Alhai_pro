@@ -144,10 +144,7 @@ class AlhaiCartItem extends StatelessWidget {
                 const SizedBox(height: AlhaiSpacing.xxs),
 
                 // Price
-                AlhaiPriceText.compact(
-                  amount: priceAmount,
-                  currency: currency,
-                ),
+                AlhaiPriceText.compact(amount: priceAmount, currency: currency),
 
                 const SizedBox(height: AlhaiSpacing.sm),
 

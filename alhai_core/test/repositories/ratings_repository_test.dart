@@ -53,13 +53,7 @@ void main() {
         entityId: 'store-1',
         averageRating: 4.5,
         totalRatings: 100,
-        distribution: {
-          5: 50,
-          4: 30,
-          3: 10,
-          2: 5,
-          1: 5,
-        },
+        distribution: {5: 50, 4: 30, 3: 10, 2: 5, 1: 5},
       );
 
       expect(summary.averageRating, equals(4.5));

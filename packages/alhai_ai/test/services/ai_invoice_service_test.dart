@@ -167,10 +167,7 @@ void main() {
     });
 
     test('fromJson handles null fields', () {
-      final json = <String, dynamic>{
-        'total_amount': 500,
-        'tax_amount': 75,
-      };
+      final json = <String, dynamic>{'total_amount': 500, 'tax_amount': 75};
 
       final result = AiInvoiceResult.fromJson(json);
 

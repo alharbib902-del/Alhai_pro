@@ -45,10 +45,7 @@ void main() {
   setUp(() {
     returnsDao = MockReturnsDao();
     auditLogDao = MockAuditLogDao();
-    db = setupMockDatabase(
-      returnsDao: returnsDao,
-      auditLogDao: auditLogDao,
-    );
+    db = setupMockDatabase(returnsDao: returnsDao, auditLogDao: auditLogDao);
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -85,9 +82,9 @@ void main() {
   group('pendingRefundsProvider', () {
     test('returns empty list when storeId is null', () async {
       setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(pendingRefundsProvider.future);
@@ -102,13 +99,14 @@ void main() {
         createTestReturn(id: 'r3', status: 'rejected'),
       ];
 
-      when(() => returnsDao.getAllReturns(any()))
-          .thenAnswer((_) async => returns);
+      when(
+        () => returnsDao.getAllReturns(any()),
+      ).thenAnswer((_) async => returns);
 
       setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        ...defaultProviderOverrides(storeId: 'test-store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [...defaultProviderOverrides(storeId: 'test-store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(pendingRefundsProvider.future);
@@ -122,14 +120,17 @@ void main() {
         createTestReturn(id: 'r4', status: 'pending'),
       ];
 
-      when(() => returnsDao.getReturnsByStatus(any(), any()))
-          .thenAnswer((_) async => pendingReturns);
+      when(
+        () => returnsDao.getReturnsByStatus(any(), any()),
+      ).thenAnswer((_) async => pendingReturns);
 
       setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        ...defaultProviderOverrides(storeId: 'test-store-1'),
-        approvalFilterProvider.overrideWith((ref) => ApprovalFilter.pending),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          ...defaultProviderOverrides(storeId: 'test-store-1'),
+          approvalFilterProvider.overrideWith((ref) => ApprovalFilter.pending),
+        ],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(pendingRefundsProvider.future);
@@ -144,14 +145,17 @@ void main() {
         createTestReturn(id: 'r3', status: 'completed'),
       ];
 
-      when(() => returnsDao.getReturnsByStatuses(any(), any()))
-          .thenAnswer((_) async => approvedReturns);
+      when(
+        () => returnsDao.getReturnsByStatuses(any(), any()),
+      ).thenAnswer((_) async => approvedReturns);
 
       setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        ...defaultProviderOverrides(storeId: 'test-store-1'),
-        approvalFilterProvider.overrideWith((ref) => ApprovalFilter.approved),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          ...defaultProviderOverrides(storeId: 'test-store-1'),
+          approvalFilterProvider.overrideWith((ref) => ApprovalFilter.approved),
+        ],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(pendingRefundsProvider.future);
@@ -161,18 +165,19 @@ void main() {
     });
 
     test('filters to rejected when filter is rejected', () async {
-      final rejectedReturns = [
-        createTestReturn(id: 'r2', status: 'rejected'),
-      ];
+      final rejectedReturns = [createTestReturn(id: 'r2', status: 'rejected')];
 
-      when(() => returnsDao.getReturnsByStatus(any(), any()))
-          .thenAnswer((_) async => rejectedReturns);
+      when(
+        () => returnsDao.getReturnsByStatus(any(), any()),
+      ).thenAnswer((_) async => rejectedReturns);
 
       setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        ...defaultProviderOverrides(storeId: 'test-store-1'),
-        approvalFilterProvider.overrideWith((ref) => ApprovalFilter.rejected),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          ...defaultProviderOverrides(storeId: 'test-store-1'),
+          approvalFilterProvider.overrideWith((ref) => ApprovalFilter.rejected),
+        ],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(pendingRefundsProvider.future);
@@ -189,9 +194,9 @@ void main() {
   group('pendingApprovalsCountProvider', () {
     test('returns 0 when storeId is null', () async {
       setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(pendingApprovalsCountProvider.future);
@@ -201,18 +206,17 @@ void main() {
 
     test('returns count from database query', () async {
       final selectable = MockSelectable();
-      when(() => db.customSelect(
-            any(),
-            variables: any(named: 'variables'),
-          )).thenReturn(selectable);
-      when(() => selectable.getSingle()).thenAnswer(
-        (_) async => FakeQueryRow({'count': 5}),
-      );
+      when(
+        () => db.customSelect(any(), variables: any(named: 'variables')),
+      ).thenReturn(selectable);
+      when(
+        () => selectable.getSingle(),
+      ).thenAnswer((_) async => FakeQueryRow({'count': 5}));
 
       setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        ...defaultProviderOverrides(storeId: 'test-store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [...defaultProviderOverrides(storeId: 'test-store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(pendingApprovalsCountProvider.future);
@@ -222,16 +226,15 @@ void main() {
 
     test('returns 0 when database query throws', () async {
       final selectable = MockSelectable();
-      when(() => db.customSelect(
-            any(),
-            variables: any(named: 'variables'),
-          )).thenReturn(selectable);
+      when(
+        () => db.customSelect(any(), variables: any(named: 'variables')),
+      ).thenReturn(selectable);
       when(() => selectable.getSingle()).thenThrow(Exception('DB error'));
 
       setupTestGetIt(mockDb: db);
-      final container = ProviderContainer(overrides: [
-        ...defaultProviderOverrides(storeId: 'test-store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [...defaultProviderOverrides(storeId: 'test-store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(pendingApprovalsCountProvider.future);
@@ -247,15 +250,17 @@ void main() {
   group('approveRefund', () {
     test('returns true on success', () async {
       when(() => db.customStatement(any(), any())).thenAnswer((_) async {});
-      when(() => auditLogDao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: any(named: 'action'),
-            entityType: any(named: 'entityType'),
-            entityId: any(named: 'entityId'),
-            description: any(named: 'description'),
-          )).thenAnswer((_) async => 1);
+      when(
+        () => auditLogDao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: any(named: 'action'),
+          entityType: any(named: 'entityType'),
+          entityId: any(named: 'entityId'),
+          description: any(named: 'description'),
+        ),
+      ).thenAnswer((_) async => 1);
 
       setupTestGetIt(mockDb: db);
 
@@ -274,8 +279,9 @@ void main() {
       final freshAuditLogDao = MockAuditLogDao();
       final freshDb = setupMockDatabase(auditLogDao: freshAuditLogDao);
 
-      when(() => freshDb.customStatement(any(), any()))
-          .thenThrow(Exception('DB error'));
+      when(
+        () => freshDb.customStatement(any(), any()),
+      ).thenThrow(Exception('DB error'));
 
       setupTestGetIt(mockDb: freshDb);
 
@@ -293,15 +299,17 @@ void main() {
   group('rejectRefund', () {
     test('returns true on success', () async {
       when(() => db.customStatement(any(), any())).thenAnswer((_) async {});
-      when(() => auditLogDao.log(
-            storeId: any(named: 'storeId'),
-            userId: any(named: 'userId'),
-            userName: any(named: 'userName'),
-            action: any(named: 'action'),
-            entityType: any(named: 'entityType'),
-            entityId: any(named: 'entityId'),
-            description: any(named: 'description'),
-          )).thenAnswer((_) async => 1);
+      when(
+        () => auditLogDao.log(
+          storeId: any(named: 'storeId'),
+          userId: any(named: 'userId'),
+          userName: any(named: 'userName'),
+          action: any(named: 'action'),
+          entityType: any(named: 'entityType'),
+          entityId: any(named: 'entityId'),
+          description: any(named: 'description'),
+        ),
+      ).thenAnswer((_) async => 1);
 
       setupTestGetIt(mockDb: db);
 
@@ -321,8 +329,9 @@ void main() {
       final freshAuditLogDao = MockAuditLogDao();
       final freshDb = setupMockDatabase(auditLogDao: freshAuditLogDao);
 
-      when(() => freshDb.customStatement(any(), any()))
-          .thenThrow(Exception('DB error'));
+      when(
+        () => freshDb.customStatement(any(), any()),
+      ).thenThrow(Exception('DB error'));
 
       setupTestGetIt(mockDb: freshDb);
 

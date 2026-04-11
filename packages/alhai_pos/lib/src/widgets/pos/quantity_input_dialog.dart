@@ -14,10 +14,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 class QuantityInputDialog extends StatefulWidget {
   final Product product;
 
-  const QuantityInputDialog({
-    super.key,
-    required this.product,
-  });
+  const QuantityInputDialog({super.key, required this.product});
 
   /// عرض النافذة وإرجاع الكمية المحددة (أو null إذا تم الإلغاء)
   static Future<int?> show(BuildContext context, Product product) {
@@ -98,8 +95,9 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                       ),
                       const SizedBox(height: AlhaiSpacing.xxs),
                       Text(
-                        AppLocalizations.of(context)
-                            .priceSar(product.price.toStringAsFixed(2)),
+                        AppLocalizations.of(
+                          context,
+                        ).priceSar(product.price.toStringAsFixed(2)),
                         style: const TextStyle(
                           fontSize: 16,
                           color: AppColors.primary,
@@ -110,13 +108,14 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                         Padding(
                           padding: const EdgeInsets.only(top: AlhaiSpacing.xxs),
                           child: Text(
-                            AppLocalizations.of(context)
-                                .availableStock(product.stockQty.toString()),
+                            AppLocalizations.of(
+                              context,
+                            ).availableStock(product.stockQty.toString()),
                             style: TextStyle(
                               fontSize: 12,
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurfaceVariant,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurfaceVariant,
                             ),
                           ),
                         ),
@@ -143,8 +142,9 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                 // زر -
                 _QuantityButton(
                   icon: Icons.remove,
-                  onTap:
-                      _quantity > 1 ? () => _setQuantity(_quantity - 1) : null,
+                  onTap: _quantity > 1
+                      ? () => _setQuantity(_quantity - 1)
+                      : null,
                   isDark: isDark,
                 ),
                 const SizedBox(width: AlhaiSpacing.md),
@@ -181,8 +181,9 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                           width: 2,
                         ),
                       ),
-                      contentPadding:
-                          const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
+                      contentPadding: const EdgeInsets.symmetric(
+                        vertical: AlhaiSpacing.xs,
+                      ),
                     ),
                     inputFormatters: [
                       FilteringTextInputFormatter.digitsOnly,
@@ -222,12 +223,14 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
               alignment: WrapAlignment.center,
               children: [1, 5, 10, 25, 50]
                   .where((q) => q <= maxQty)
-                  .map((qty) => _QuickAmountChip(
-                        quantity: qty,
-                        isSelected: _quantity == qty,
-                        onTap: () => _setQuantity(qty),
-                        isDark: isDark,
-                      ))
+                  .map(
+                    (qty) => _QuickAmountChip(
+                      quantity: qty,
+                      isSelected: _quantity == qty,
+                      onTap: () => _setQuantity(qty),
+                      isDark: isDark,
+                    ),
+                  )
                   .toList(),
             ),
 
@@ -236,7 +239,9 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
             // الإجمالي
             Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+                horizontal: AlhaiSpacing.md,
+                vertical: AlhaiSpacing.sm,
+              ),
               decoration: BoxDecoration(
                 color: isDark
                     ? AppColors.primary.withValues(alpha: 0.15)
@@ -254,8 +259,9 @@ class _QuantityInputDialogState extends State<QuantityInputDialog> {
                     ),
                   ),
                   Text(
-                    AppLocalizations.of(context).priceSar(
-                        (product.price * _quantity).toStringAsFixed(2)),
+                    AppLocalizations.of(
+                      context,
+                    ).priceSar((product.price * _quantity).toStringAsFixed(2)),
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -324,12 +330,11 @@ class _QuantityButton extends StatelessWidget {
       child: Material(
         color: enabled
             ? (isPrimary
-                ? AppColors.primary
-                : (Theme.of(context).colorScheme.surfaceContainerHighest))
-            : (Theme.of(context)
-                .colorScheme
-                .surfaceContainerHighest
-                .withValues(alpha: 0.5)),
+                  ? AppColors.primary
+                  : (Theme.of(context).colorScheme.surfaceContainerHighest))
+            : (Theme.of(
+                context,
+              ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5)),
         shape: const CircleBorder(),
         child: InkWell(
           onTap: onTap,
@@ -341,8 +346,8 @@ class _QuantityButton extends StatelessWidget {
               icon,
               color: enabled
                   ? (isPrimary
-                      ? Colors.white
-                      : (isDark ? Colors.white70 : AppColors.textPrimary))
+                        ? Colors.white
+                        : (isDark ? Colors.white70 : AppColors.textPrimary))
                   : (isDark ? Colors.white24 : AppColors.grey300),
               size: 24,
             ),
@@ -379,7 +384,9 @@ class _QuickAmountChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(20),
         child: Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+            horizontal: AlhaiSpacing.md,
+            vertical: AlhaiSpacing.xs,
+          ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(20),
             border: Border.all(

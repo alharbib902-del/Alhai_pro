@@ -140,8 +140,10 @@ void main() {
       });
 
       test('should accept decimal when allowDecimal is true', () {
-        final result =
-            PriceValidator.validateQuantity('1.5', allowDecimal: true);
+        final result = PriceValidator.validateQuantity(
+          '1.5',
+          allowDecimal: true,
+        );
         expect(result.isValid, isTrue);
       });
 

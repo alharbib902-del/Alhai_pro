@@ -12,7 +12,8 @@ part of 'activity_log.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 ActivityLog _$ActivityLogFromJson(Map<String, dynamic> json) {
   return _ActivityLog.fromJson(json);
@@ -43,19 +44,21 @@ mixin _$ActivityLog {
 /// @nodoc
 abstract class $ActivityLogCopyWith<$Res> {
   factory $ActivityLogCopyWith(
-          ActivityLog value, $Res Function(ActivityLog) then) =
-      _$ActivityLogCopyWithImpl<$Res, ActivityLog>;
+    ActivityLog value,
+    $Res Function(ActivityLog) then,
+  ) = _$ActivityLogCopyWithImpl<$Res, ActivityLog>;
   @useResult
-  $Res call(
-      {String id,
-      String? storeId,
-      String? userId,
-      String action,
-      String? entityType,
-      String? entityId,
-      Map<String, dynamic>? details,
-      String? ipAddress,
-      DateTime createdAt});
+  $Res call({
+    String id,
+    String? storeId,
+    String? userId,
+    String action,
+    String? entityType,
+    String? entityId,
+    Map<String, dynamic>? details,
+    String? ipAddress,
+    DateTime createdAt,
+  });
 }
 
 /// @nodoc
@@ -83,44 +86,47 @@ class _$ActivityLogCopyWithImpl<$Res, $Val extends ActivityLog>
     Object? ipAddress = freezed,
     Object? createdAt = null,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: freezed == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userId: freezed == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      action: null == action
-          ? _value.action
-          : action // ignore: cast_nullable_to_non_nullable
-              as String,
-      entityType: freezed == entityType
-          ? _value.entityType
-          : entityType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      entityId: freezed == entityId
-          ? _value.entityId
-          : entityId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      details: freezed == details
-          ? _value.details
-          : details // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
-      ipAddress: freezed == ipAddress
-          ? _value.ipAddress
-          : ipAddress // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            storeId: freezed == storeId
+                ? _value.storeId
+                : storeId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            userId: freezed == userId
+                ? _value.userId
+                : userId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            action: null == action
+                ? _value.action
+                : action // ignore: cast_nullable_to_non_nullable
+                      as String,
+            entityType: freezed == entityType
+                ? _value.entityType
+                : entityType // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            entityId: freezed == entityId
+                ? _value.entityId
+                : entityId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            details: freezed == details
+                ? _value.details
+                : details // ignore: cast_nullable_to_non_nullable
+                      as Map<String, dynamic>?,
+            ipAddress: freezed == ipAddress
+                ? _value.ipAddress
+                : ipAddress // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -128,20 +134,22 @@ class _$ActivityLogCopyWithImpl<$Res, $Val extends ActivityLog>
 abstract class _$$ActivityLogImplCopyWith<$Res>
     implements $ActivityLogCopyWith<$Res> {
   factory _$$ActivityLogImplCopyWith(
-          _$ActivityLogImpl value, $Res Function(_$ActivityLogImpl) then) =
-      __$$ActivityLogImplCopyWithImpl<$Res>;
+    _$ActivityLogImpl value,
+    $Res Function(_$ActivityLogImpl) then,
+  ) = __$$ActivityLogImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String? storeId,
-      String? userId,
-      String action,
-      String? entityType,
-      String? entityId,
-      Map<String, dynamic>? details,
-      String? ipAddress,
-      DateTime createdAt});
+  $Res call({
+    String id,
+    String? storeId,
+    String? userId,
+    String action,
+    String? entityType,
+    String? entityId,
+    Map<String, dynamic>? details,
+    String? ipAddress,
+    DateTime createdAt,
+  });
 }
 
 /// @nodoc
@@ -149,8 +157,9 @@ class __$$ActivityLogImplCopyWithImpl<$Res>
     extends _$ActivityLogCopyWithImpl<$Res, _$ActivityLogImpl>
     implements _$$ActivityLogImplCopyWith<$Res> {
   __$$ActivityLogImplCopyWithImpl(
-      _$ActivityLogImpl _value, $Res Function(_$ActivityLogImpl) _then)
-      : super(_value, _then);
+    _$ActivityLogImpl _value,
+    $Res Function(_$ActivityLogImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of ActivityLog
   /// with the given fields replaced by the non-null parameter values.
@@ -167,62 +176,64 @@ class __$$ActivityLogImplCopyWithImpl<$Res>
     Object? ipAddress = freezed,
     Object? createdAt = null,
   }) {
-    return _then(_$ActivityLogImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: freezed == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      userId: freezed == userId
-          ? _value.userId
-          : userId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      action: null == action
-          ? _value.action
-          : action // ignore: cast_nullable_to_non_nullable
-              as String,
-      entityType: freezed == entityType
-          ? _value.entityType
-          : entityType // ignore: cast_nullable_to_non_nullable
-              as String?,
-      entityId: freezed == entityId
-          ? _value.entityId
-          : entityId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      details: freezed == details
-          ? _value._details
-          : details // ignore: cast_nullable_to_non_nullable
-              as Map<String, dynamic>?,
-      ipAddress: freezed == ipAddress
-          ? _value.ipAddress
-          : ipAddress // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-    ));
+    return _then(
+      _$ActivityLogImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        storeId: freezed == storeId
+            ? _value.storeId
+            : storeId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        userId: freezed == userId
+            ? _value.userId
+            : userId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        action: null == action
+            ? _value.action
+            : action // ignore: cast_nullable_to_non_nullable
+                  as String,
+        entityType: freezed == entityType
+            ? _value.entityType
+            : entityType // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        entityId: freezed == entityId
+            ? _value.entityId
+            : entityId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        details: freezed == details
+            ? _value._details
+            : details // ignore: cast_nullable_to_non_nullable
+                  as Map<String, dynamic>?,
+        ipAddress: freezed == ipAddress
+            ? _value.ipAddress
+            : ipAddress // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$ActivityLogImpl extends _ActivityLog {
-  const _$ActivityLogImpl(
-      {required this.id,
-      this.storeId,
-      this.userId,
-      required this.action,
-      this.entityType,
-      this.entityId,
-      final Map<String, dynamic>? details,
-      this.ipAddress,
-      required this.createdAt})
-      : _details = details,
-        super._();
+  const _$ActivityLogImpl({
+    required this.id,
+    this.storeId,
+    this.userId,
+    required this.action,
+    this.entityType,
+    this.entityId,
+    final Map<String, dynamic>? details,
+    this.ipAddress,
+    required this.createdAt,
+  }) : _details = details,
+       super._();
 
   factory _$ActivityLogImpl.fromJson(Map<String, dynamic> json) =>
       _$$ActivityLogImplFromJson(json);
@@ -282,16 +293,17 @@ class _$ActivityLogImpl extends _ActivityLog {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      storeId,
-      userId,
-      action,
-      entityType,
-      entityId,
-      const DeepCollectionEquality().hash(_details),
-      ipAddress,
-      createdAt);
+    runtimeType,
+    id,
+    storeId,
+    userId,
+    action,
+    entityType,
+    entityId,
+    const DeepCollectionEquality().hash(_details),
+    ipAddress,
+    createdAt,
+  );
 
   /// Create a copy of ActivityLog
   /// with the given fields replaced by the non-null parameter values.
@@ -303,23 +315,22 @@ class _$ActivityLogImpl extends _ActivityLog {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ActivityLogImplToJson(
-      this,
-    );
+    return _$$ActivityLogImplToJson(this);
   }
 }
 
 abstract class _ActivityLog extends ActivityLog {
-  const factory _ActivityLog(
-      {required final String id,
-      final String? storeId,
-      final String? userId,
-      required final String action,
-      final String? entityType,
-      final String? entityId,
-      final Map<String, dynamic>? details,
-      final String? ipAddress,
-      required final DateTime createdAt}) = _$ActivityLogImpl;
+  const factory _ActivityLog({
+    required final String id,
+    final String? storeId,
+    final String? userId,
+    required final String action,
+    final String? entityType,
+    final String? entityId,
+    final Map<String, dynamic>? details,
+    final String? ipAddress,
+    required final DateTime createdAt,
+  }) = _$ActivityLogImpl;
   const _ActivityLog._() : super._();
 
   factory _ActivityLog.fromJson(Map<String, dynamic> json) =

@@ -14,9 +14,7 @@ class AppConfig {
   static const int sendTimeout = AppLimits.networkTimeoutSeconds;
 
   /// Configure app settings
-  static void configure({
-    required String baseUrl,
-  }) {
+  static void configure({required String baseUrl}) {
     apiBaseUrl = baseUrl;
   }
 }

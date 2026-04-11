@@ -29,9 +29,9 @@ void main() {
   // ============================================================================
   group('discountsListProvider', () {
     test('returns empty list when storeId is null', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(discountsListProvider.future);
@@ -44,12 +44,15 @@ void main() {
         createTestDiscount(id: 'd-1', name: 'خصم 1'),
         createTestDiscount(id: 'd-2', name: 'خصم 2'),
       ];
-      when(() => mockDiscountsDao.getAllDiscounts('test-store-1'))
-          .thenAnswer((_) async => discounts);
+      when(
+        () => mockDiscountsDao.getAllDiscounts('test-store-1'),
+      ).thenAnswer((_) async => discounts);
 
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'test-store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          currentStoreIdProvider.overrideWith((ref) => 'test-store-1'),
+        ],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(discountsListProvider.future);
@@ -64,9 +67,9 @@ void main() {
   // ============================================================================
   group('activeDiscountsProvider', () {
     test('returns empty list when storeId is null', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(activeDiscountsProvider.future);
@@ -78,12 +81,15 @@ void main() {
       final activeDiscounts = [
         createTestDiscount(id: 'd-active', isActive: true),
       ];
-      when(() => mockDiscountsDao.getActiveDiscounts('test-store-1'))
-          .thenAnswer((_) async => activeDiscounts);
+      when(
+        () => mockDiscountsDao.getActiveDiscounts('test-store-1'),
+      ).thenAnswer((_) async => activeDiscounts);
 
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'test-store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          currentStoreIdProvider.overrideWith((ref) => 'test-store-1'),
+        ],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(activeDiscountsProvider.future);
@@ -98,9 +104,9 @@ void main() {
   // ============================================================================
   group('couponsListProvider', () {
     test('returns empty list when storeId is null', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(couponsListProvider.future);
@@ -113,12 +119,15 @@ void main() {
         createTestCoupon(id: 'c-1', code: 'SAVE10'),
         createTestCoupon(id: 'c-2', code: 'SAVE20'),
       ];
-      when(() => mockDiscountsDao.getAllCoupons('test-store-1'))
-          .thenAnswer((_) async => coupons);
+      when(
+        () => mockDiscountsDao.getAllCoupons('test-store-1'),
+      ).thenAnswer((_) async => coupons);
 
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'test-store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [
+          currentStoreIdProvider.overrideWith((ref) => 'test-store-1'),
+        ],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(couponsListProvider.future);
@@ -133,9 +142,9 @@ void main() {
   // ============================================================================
   group('promotionsListProvider', () {
     test('returns empty list when storeId is null', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(promotionsListProvider.future);
@@ -149,9 +158,9 @@ void main() {
   // ============================================================================
   group('activePromotionsProvider', () {
     test('returns empty list when storeId is null', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(activePromotionsProvider.future);

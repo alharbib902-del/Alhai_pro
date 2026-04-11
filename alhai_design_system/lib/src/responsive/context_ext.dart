@@ -83,9 +83,9 @@ extension AlhaiContextExtensions on BuildContext {
 
   /// Standard page padding preset
   EdgeInsets get pagePadding => const EdgeInsets.symmetric(
-        horizontal: AlhaiSpacing.pagePaddingHorizontal,
-        vertical: AlhaiSpacing.pagePaddingVertical,
-      );
+    horizontal: AlhaiSpacing.pagePaddingHorizontal,
+    vertical: AlhaiSpacing.pagePaddingVertical,
+  );
 
   // ============================================
   // Theme Helpers
@@ -118,11 +118,7 @@ extension AlhaiContextExtensions on BuildContext {
   // ============================================
 
   /// Select a value based on screen size
-  T responsive<T>({
-    required T mobile,
-    T? tablet,
-    T? desktop,
-  }) {
+  T responsive<T>({required T mobile, T? tablet, T? desktop}) {
     if (isDesktop && desktop != null) return desktop;
     if (isTablet && tablet != null) return tablet;
     return mobile;

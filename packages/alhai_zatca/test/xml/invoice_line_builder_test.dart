@@ -567,8 +567,9 @@ void main() {
       final el = builder.buildLine(line, 'SAR');
 
       // All the required direct children per ZATCA/UBL spec
-      final directLocalNames =
-          el.childElements.map((e) => e.name.local).toList();
+      final directLocalNames = el.childElements
+          .map((e) => e.name.local)
+          .toList();
 
       expect(
         directLocalNames,

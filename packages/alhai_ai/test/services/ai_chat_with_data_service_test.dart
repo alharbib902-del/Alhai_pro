@@ -131,20 +131,21 @@ void main() {
     test('returned list is unmodifiable', () {
       final history = service.getQueryHistory();
       expect(
-          () => history.add(
-                QueryResult(
-                  query: DataQuery(
-                    id: 'test',
-                    query: 'test',
-                    timestamp: DateTime.now(),
-                    resultType: QueryResultType.number,
-                  ),
-                  resultType: QueryResultType.number,
-                  title: 'test',
-                  executionTimeMs: 0,
-                ),
-              ),
-          throwsUnsupportedError);
+        () => history.add(
+          QueryResult(
+            query: DataQuery(
+              id: 'test',
+              query: 'test',
+              timestamp: DateTime.now(),
+              resultType: QueryResultType.number,
+            ),
+            resultType: QueryResultType.number,
+            title: 'test',
+            executionTimeMs: 0,
+          ),
+        ),
+        throwsUnsupportedError,
+      );
     });
   });
 

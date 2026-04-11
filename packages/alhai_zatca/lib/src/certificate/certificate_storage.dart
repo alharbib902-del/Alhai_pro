@@ -55,9 +55,10 @@ abstract class CertificateStorage {
 class InMemoryCertificateStorage implements CertificateStorage {
   InMemoryCertificateStorage() {
     assert(
-        kDebugMode,
-        'InMemoryCertificateStorage must not be used in production. '
-        'Use a secure CertificateStorage implementation instead.');
+      kDebugMode,
+      'InMemoryCertificateStorage must not be used in production. '
+      'Use a secure CertificateStorage implementation instead.',
+    );
   }
 
   final Map<String, CertificateInfo> _certificates = {};

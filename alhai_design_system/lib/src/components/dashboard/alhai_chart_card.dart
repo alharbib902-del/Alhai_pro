@@ -67,9 +67,7 @@ class AlhaiChartCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (actions != null) ...[
-                  Row(children: actions!),
-                ],
+                if (actions != null) ...[Row(children: actions!)],
               ],
             ),
             const SizedBox(height: AlhaiSpacing.mdl),
@@ -79,10 +77,7 @@ class AlhaiChartCard extends StatelessWidget {
                     height: height ?? 200,
                     child: const Center(child: CircularProgressIndicator()),
                   )
-                : SizedBox(
-                    height: height ?? 200,
-                    child: chart,
-                  ),
+                : SizedBox(height: height ?? 200, child: chart),
             // Legend
             if (legend != null) ...[
               const SizedBox(height: AlhaiSpacing.md),
@@ -124,10 +119,7 @@ class AlhaiLegendItem extends StatelessWidget {
           ),
         ),
         const SizedBox(width: AlhaiSpacing.xs),
-        Text(
-          label,
-          style: theme.textTheme.bodySmall,
-        ),
+        Text(label, style: theme.textTheme.bodySmall),
         if (value != null) ...[
           const SizedBox(width: AlhaiSpacing.xxs),
           Text(

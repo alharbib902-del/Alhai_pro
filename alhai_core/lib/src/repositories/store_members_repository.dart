@@ -32,7 +32,9 @@ abstract class StoreMembersRepository {
 
   /// Updates member permissions
   Future<StoreMember> updatePermissions(
-      String memberId, List<String> permissions);
+    String memberId,
+    List<String> permissions,
+  );
 
   /// Deactivates a member
   Future<void> deactivateMember(String memberId);
@@ -91,16 +93,16 @@ class StorePermissions {
   static const String manageSettings = 'manage_settings';
 
   static List<String> get all => [
-        viewDashboard,
-        manageProducts,
-        manageOrders,
-        manageInventory,
-        manageCustomers,
-        viewReports,
-        manageRefunds,
-        manageDiscounts,
-        manageCashDrawer,
-        manageMembers,
-        manageSettings,
-      ];
+    viewDashboard,
+    manageProducts,
+    manageOrders,
+    manageInventory,
+    manageCustomers,
+    viewReports,
+    manageRefunds,
+    manageDiscounts,
+    manageCashDrawer,
+    manageMembers,
+    manageSettings,
+  ];
 }

@@ -16,7 +16,9 @@ import 'products_table.dart';
 @TableIndex(name: 'idx_inventory_created_at', columns: {#createdAt})
 @TableIndex(name: 'idx_inventory_type', columns: {#type})
 @TableIndex(
-    name: 'idx_inventory_reference', columns: {#referenceType, #referenceId})
+  name: 'idx_inventory_reference',
+  columns: {#referenceType, #referenceId},
+)
 @TableIndex(name: 'idx_inventory_synced_at', columns: {#syncedAt})
 class InventoryMovementsTable extends Table {
   @override

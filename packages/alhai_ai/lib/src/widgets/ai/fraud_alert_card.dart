@@ -113,8 +113,8 @@ class FraudAlertCard extends StatelessWidget {
               color: isSelected
                   ? severityColor
                   : (isDark
-                      ? Colors.white.withValues(alpha: 0.1)
-                      : AppColors.border),
+                        ? Colors.white.withValues(alpha: 0.1)
+                        : AppColors.border),
               width: isSelected ? 2 : 1,
             ),
             boxShadow: [
@@ -164,8 +164,9 @@ class FraudAlertCard extends StatelessWidget {
                         Text(
                           _getPatternLabel(),
                           style: TextStyle(
-                            color:
-                                isDark ? Colors.white : AppColors.textPrimary,
+                            color: isDark
+                                ? Colors.white
+                                : AppColors.textPrimary,
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                           ),
@@ -186,12 +187,15 @@ class FraudAlertCard extends StatelessWidget {
                   // Severity badge
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: AlhaiSpacing.xxs),
+                      horizontal: 10,
+                      vertical: AlhaiSpacing.xxs,
+                    ),
                     decoration: BoxDecoration(
                       color: severityColor.withValues(alpha: 0.1),
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(
-                          color: severityColor.withValues(alpha: 0.3)),
+                        color: severityColor.withValues(alpha: 0.3),
+                      ),
                     ),
                     child: Text(
                       _getSeverityLabel(l10n),
@@ -261,7 +265,9 @@ class FraudAlertCard extends StatelessWidget {
                   // Confidence
                   Container(
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.xs, vertical: 3),
+                      horizontal: AlhaiSpacing.xs,
+                      vertical: 3,
+                    ),
                     decoration: BoxDecoration(
                       color: isDark
                           ? Colors.white.withValues(alpha: 0.05)
@@ -287,18 +293,24 @@ class FraudAlertCard extends StatelessWidget {
                       style: TextButton.styleFrom(
                         foregroundColor: AppColors.primary,
                         padding: const EdgeInsets.symmetric(
-                            horizontal: AlhaiSpacing.sm,
-                            vertical: AlhaiSpacing.xxs),
+                          horizontal: AlhaiSpacing.sm,
+                          vertical: AlhaiSpacing.xxs,
+                        ),
                         textStyle: const TextStyle(
-                            fontSize: 12, fontWeight: FontWeight.w600),
+                          fontSize: 12,
+                          fontWeight: FontWeight.w600,
+                        ),
                       ),
                     )
                   else if (alert.isReviewed)
                     const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.check_circle_rounded,
-                            size: 16, color: AppColors.success),
+                        Icon(
+                          Icons.check_circle_rounded,
+                          size: 16,
+                          color: AppColors.success,
+                        ),
                         SizedBox(width: AlhaiSpacing.xxs),
                         Text(
                           'تمت المراجعة', // Reviewed

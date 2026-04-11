@@ -106,11 +106,11 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.error,
+            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
+            child: Text(
+              l10n.distributorLogout,
+              style: const TextStyle(color: AppColors.textOnPrimary),
             ),
-            child: Text(l10n.distributorLogout,
-                style: const TextStyle(color: AppColors.textOnPrimary)),
           ),
         ],
       ),
@@ -125,7 +125,10 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
   }
 
   Widget _buildSidebarContent(
-      String selectedId, bool isDark, AppLocalizations? l10n) {
+    String selectedId,
+    bool isDark,
+    AppLocalizations? l10n,
+  ) {
     final user = ref.watch(currentUserProvider);
 
     return Column(
@@ -133,7 +136,9 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
         // Brand header
         Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.lg),
+            horizontal: AlhaiSpacing.mdl,
+            vertical: AlhaiSpacing.lg,
+          ),
           child: Row(
             children: [
               Container(
@@ -303,7 +308,10 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
 
   /// Build a collapsed icon-only sidebar for tablet viewports.
   Widget _buildCollapsedSidebar(
-      String selectedId, bool isDark, AppLocalizations? l10n) {
+    String selectedId,
+    bool isDark,
+    AppLocalizations? l10n,
+  ) {
     return Column(
       children: [
         // Brand icon

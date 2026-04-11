@@ -46,7 +46,9 @@ class AlhaiDataTable<T> extends StatelessWidget {
             if (showHeader)
               Container(
                 padding: const EdgeInsets.symmetric(
-                    vertical: AlhaiSpacing.sm, horizontal: AlhaiSpacing.md),
+                  vertical: AlhaiSpacing.sm,
+                  horizontal: AlhaiSpacing.md,
+                ),
                 decoration: BoxDecoration(
                   color: colorScheme.surfaceContainerHighest,
                   borderRadius: BorderRadius.circular(8),
@@ -69,7 +71,9 @@ class AlhaiDataTable<T> extends StatelessWidget {
             // Body
             if (isLoading)
               ...List.generate(
-                  loadingRowCount, (_) => _buildSkeletonRow(context))
+                loadingRowCount,
+                (_) => _buildSkeletonRow(context),
+              )
             else if (data.isEmpty)
               Padding(
                 padding: const EdgeInsets.all(AlhaiSpacing.xl),
@@ -107,11 +111,14 @@ class AlhaiDataTable<T> extends StatelessWidget {
       borderRadius: BorderRadius.circular(8),
       child: Container(
         padding: const EdgeInsets.symmetric(
-            vertical: AlhaiSpacing.sm, horizontal: AlhaiSpacing.md),
+          vertical: AlhaiSpacing.sm,
+          horizontal: AlhaiSpacing.md,
+        ),
         decoration: BoxDecoration(
           border: Border(
             bottom: BorderSide(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+            ),
           ),
         ),
         child: Row(
@@ -128,7 +135,9 @@ class AlhaiDataTable<T> extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(
-          vertical: AlhaiSpacing.sm, horizontal: AlhaiSpacing.md),
+        vertical: AlhaiSpacing.sm,
+        horizontal: AlhaiSpacing.md,
+      ),
       child: Row(
         children: columns.map((_) {
           return Expanded(
@@ -168,7 +177,8 @@ class AlhaiTableCell extends StatelessWidget {
 
     return Text(
       text,
-      style: style ??
+      style:
+          style ??
           theme.textTheme.bodyMedium?.copyWith(
             fontWeight: isBold ? FontWeight.bold : FontWeight.normal,
             color: color,

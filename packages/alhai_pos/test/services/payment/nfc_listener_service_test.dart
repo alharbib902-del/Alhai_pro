@@ -13,10 +13,7 @@ class FakePaymentGateway implements PaymentGateway {
   Duration processDelay;
   int processCallCount = 0;
 
-  FakePaymentGateway({
-    this.nextResult,
-    this.processDelay = Duration.zero,
-  });
+  FakePaymentGateway({this.nextResult, this.processDelay = Duration.zero});
 
   @override
   String get name => 'Fake Gateway';
@@ -79,8 +76,10 @@ void main() {
     });
 
     test('defaultConfig يطابق القيم الافتراضية', () {
-      expect(NfcConfiguration.defaultConfig.timeoutDuration,
-          equals(const Duration(seconds: 30)));
+      expect(
+        NfcConfiguration.defaultConfig.timeoutDuration,
+        equals(const Duration(seconds: 30)),
+      );
       expect(NfcConfiguration.defaultConfig.isEnabled, isTrue);
     });
 
@@ -201,8 +200,10 @@ void main() {
 
       expect(service.isListening, isFalse);
       expect(service.configuration.isEnabled, isTrue);
-      expect(service.configuration.timeoutDuration,
-          equals(const Duration(seconds: 30)));
+      expect(
+        service.configuration.timeoutDuration,
+        equals(const Duration(seconds: 30)),
+      );
       expect(service.behavior, equals(MockNfcBehavior.success));
 
       service.dispose();
@@ -219,8 +220,10 @@ void main() {
         configuration: config,
       );
 
-      expect(service.configuration.timeoutDuration,
-          equals(const Duration(seconds: 10)));
+      expect(
+        service.configuration.timeoutDuration,
+        equals(const Duration(seconds: 10)),
+      );
       expect(service.configuration.isEnabled, isFalse);
 
       service.dispose();
@@ -234,8 +237,10 @@ void main() {
         isEnabled: true,
       );
 
-      expect(service.configuration.timeoutDuration,
-          equals(const Duration(seconds: 45)));
+      expect(
+        service.configuration.timeoutDuration,
+        equals(const Duration(seconds: 45)),
+      );
 
       service.dispose();
     });
@@ -266,30 +271,32 @@ void main() {
       service.dispose();
     });
 
-    test('ترتيب الأحداث: detected → reading → processing → completed',
-        () async {
-      final events = <NfcListenerEvent>[];
-      final sub = service.events.listen(events.add);
+    test(
+      'ترتيب الأحداث: detected → reading → processing → completed',
+      () async {
+        final events = <NfcListenerEvent>[];
+        final sub = service.events.listen(events.add);
 
-      await service.startListening(100.0);
+        await service.startListening(100.0);
 
-      // ننتظر لإكمال المحاكاة
-      await Future<void>.delayed(const Duration(milliseconds: 500));
+        // ننتظر لإكمال المحاكاة
+        await Future<void>.delayed(const Duration(milliseconds: 500));
 
-      await sub.cancel();
+        await sub.cancel();
 
-      // التحقق من الترتيب
-      expect(events.length, greaterThanOrEqualTo(4));
+        // التحقق من الترتيب
+        expect(events.length, greaterThanOrEqualTo(4));
 
-      expect(events[0], isA<NfcCardDetected>());
-      expect(events[1], isA<NfcReading>());
-      expect(events[2], isA<NfcProcessing>());
-      expect(events[3], isA<NfcCompleted>());
+        expect(events[0], isA<NfcCardDetected>());
+        expect(events[1], isA<NfcReading>());
+        expect(events[2], isA<NfcProcessing>());
+        expect(events[3], isA<NfcCompleted>());
 
-      // التحقق من نتيجة النجاح
-      final completed = events[3] as NfcCompleted;
-      expect(completed.result.success, isTrue);
-    });
+        // التحقق من نتيجة النجاح
+        final completed = events[3] as NfcCompleted;
+        expect(completed.result.success, isTrue);
+      },
+    );
 
     test('isListening يتغير أثناء التدفق', () async {
       expect(service.isListening, isFalse);

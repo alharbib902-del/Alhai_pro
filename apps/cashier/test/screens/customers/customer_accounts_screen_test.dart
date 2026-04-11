@@ -60,8 +60,9 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => <AccountsTableData>[]);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => <AccountsTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const CustomerAccountsScreen()));
 
@@ -74,14 +75,17 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => <AccountsTableData>[]);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => <AccountsTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const CustomerAccountsScreen()));
       await tester.pumpAndSettle();
 
       expect(
-          find.byIcon(Icons.account_balance_wallet_outlined), findsOneWidget);
+        find.byIcon(Icons.account_balance_wallet_outlined),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows search bar', (tester) async {
@@ -90,8 +94,9 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => <AccountsTableData>[]);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => <AccountsTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const CustomerAccountsScreen()));
       await tester.pumpAndSettle();
@@ -119,8 +124,9 @@ void main() {
         ),
       ];
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => accounts);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => accounts);
 
       await tester.pumpWidget(createTestWidget(const CustomerAccountsScreen()));
       await tester.pumpAndSettle();
@@ -135,19 +141,20 @@ void main() {
 
       suppressOverflowErrors();
 
-      final accounts = [
-        _createTestAccount(id: 'acc-1', balance: 500.0),
-      ];
+      final accounts = [_createTestAccount(id: 'acc-1', balance: 500.0)];
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => accounts);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => accounts);
 
       await tester.pumpWidget(createTestWidget(const CustomerAccountsScreen()));
       await tester.pumpAndSettle();
 
       // Summary stats should show "Customers" text
-      expect(find.text('\u0627\u0644\u0639\u0645\u0644\u0627\u0621'),
-          findsOneWidget);
+      expect(
+        find.text('\u0627\u0644\u0639\u0645\u0644\u0627\u0621'),
+        findsOneWidget,
+      );
       expect(find.text('\u0645\u062a\u0623\u062e\u0631\u0629'), findsWidgets);
     });
 
@@ -157,8 +164,9 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => <AccountsTableData>[]);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => <AccountsTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const CustomerAccountsScreen()));
       await tester.pumpAndSettle();

@@ -35,10 +35,7 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
 
   @override
   Future<OrderResponse> createOrder(CreateOrderRequest request) async {
-    final response = await _dio.post(
-      '/orders',
-      data: request.toJson(),
-    );
+    final response = await _dio.post('/orders', data: request.toJson());
     return OrderResponse.fromJson(response.data as Map<String, dynamic>);
   }
 
@@ -55,18 +52,12 @@ class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
     int limit = AppLimits.defaultPageSize,
   }) async {
     // Build query parameters, only include status if not null
-    final queryParams = <String, dynamic>{
-      'page': page,
-      'limit': limit,
-    };
+    final queryParams = <String, dynamic>{'page': page, 'limit': limit};
     if (status != null) {
       queryParams['status'] = status;
     }
 
-    final response = await _dio.get(
-      '/orders',
-      queryParameters: queryParams,
-    );
+    final response = await _dio.get('/orders', queryParameters: queryParams);
 
     final data = response.data;
     if (data is List) {

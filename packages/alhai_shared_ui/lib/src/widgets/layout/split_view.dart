@@ -135,14 +135,10 @@ class _SplitViewState extends State<SplitView>
             return Row(
               children: [
                 // Primary Content
-                Expanded(
-                  child: widget.primaryContent,
-                ),
+                Expanded(child: widget.primaryContent),
 
                 // Divider (Resizable handle)
-                if (_animation.value > 0) ...[
-                  _buildDivider(),
-                ],
+                if (_animation.value > 0) ...[_buildDivider()],
 
                 // Secondary Content
                 if (_animation.value > 0)
@@ -183,8 +179,9 @@ class _SplitViewState extends State<SplitView>
                 GestureDetector(
                   onTap: () => widget.onSecondaryVisibilityChanged?.call(false),
                   child: Container(
-                    color: AppColors.overlay
-                        .withValues(alpha: 0.5 * _animation.value),
+                    color: AppColors.overlay.withValues(
+                      alpha: 0.5 * _animation.value,
+                    ),
                   ),
                 ),
 
@@ -218,10 +215,7 @@ class _SplitViewState extends State<SplitView>
 
   Widget _buildDivider() {
     if (!widget.resizable) {
-      return Container(
-        width: widget.dividerWidth,
-        color: AppColors.border,
-      );
+      return Container(width: widget.dividerWidth, color: AppColors.border);
     }
 
     return MouseRegion(
@@ -258,10 +252,7 @@ class _SplitViewState extends State<SplitView>
 }
 
 /// اتجاه التقسيم
-enum SplitViewDirection {
-  horizontal,
-  vertical,
-}
+enum SplitViewDirection { horizontal, vertical }
 
 /// Panel Header للـ Split View
 class SplitPanelHeader extends StatelessWidget {
@@ -285,22 +276,13 @@ class SplitPanelHeader extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
       decoration: const BoxDecoration(
         color: AppColors.surface,
-        border: Border(
-          bottom: BorderSide(
-            color: AppColors.border,
-            width: 1,
-          ),
-        ),
+        border: Border(bottom: BorderSide(color: AppColors.border, width: 1)),
       ),
       child: Row(
         children: [
           // Icon
           if (icon != null) ...[
-            Icon(
-              icon,
-              size: AppIconSize.md,
-              color: AppColors.primary,
-            ),
+            Icon(icon, size: AppIconSize.md, color: AppColors.primary),
             const SizedBox(width: AppSpacing.sm),
           ],
 
@@ -308,9 +290,9 @@ class SplitPanelHeader extends StatelessWidget {
           Expanded(
             child: Text(
               title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w600,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
 

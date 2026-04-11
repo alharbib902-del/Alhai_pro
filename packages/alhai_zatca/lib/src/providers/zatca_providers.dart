@@ -24,8 +24,9 @@ final csidOnboardingServiceProvider = Provider<CsidOnboardingService>((ref) {
 });
 
 /// Provider for certificate renewal
-final certificateRenewalServiceProvider =
-    Provider<CertificateRenewalService>((ref) {
+final certificateRenewalServiceProvider = Provider<CertificateRenewalService>((
+  ref,
+) {
   return GetIt.instance<CertificateRenewalService>();
 });
 
@@ -60,41 +61,45 @@ final zatcaPendingCountProvider = FutureProvider<int>((ref) async {
 /// Provider for certificate status of a specific store
 final certificateStatusProvider =
     FutureProvider.family<CertificateStatus, String>((ref, storeId) async {
-  final renewal = ref.watch(certificateRenewalServiceProvider);
-  return renewal.getStatus(storeId: storeId);
-});
+      final renewal = ref.watch(certificateRenewalServiceProvider);
+      return renewal.getStatus(storeId: storeId);
+    });
 
 /// Provider for detailed renewal info for a specific store
 final certificateRenewalInfoProvider =
     FutureProvider.family<RenewalInfo, String>((ref, storeId) async {
-  final renewal = ref.watch(certificateRenewalServiceProvider);
-  return renewal.getRenewalInfo(storeId: storeId);
-});
+      final renewal = ref.watch(certificateRenewalServiceProvider);
+      return renewal.getRenewalInfo(storeId: storeId);
+    });
 
 /// Provider for certificate health check result
 final certificateCheckProvider =
     FutureProvider.family<CertificateCheckResult, String>((ref, storeId) async {
-  final renewal = ref.watch(certificateRenewalServiceProvider);
-  return renewal.checkCertificate(storeId: storeId);
-});
+      final renewal = ref.watch(certificateRenewalServiceProvider);
+      return renewal.checkCertificate(storeId: storeId);
+    });
 
 /// Provider for the actual certificate info (without private key)
-final certificateInfoProvider =
-    FutureProvider.family<CertificateInfo?, String>((ref, storeId) async {
-  final storage = ref.watch(certificateStorageProvider);
-  return storage.getCertificateMetadata(storeId: storeId);
-});
+final certificateInfoProvider = FutureProvider.family<CertificateInfo?, String>(
+  (ref, storeId) async {
+    final storage = ref.watch(certificateStorageProvider);
+    return storage.getCertificateMetadata(storeId: storeId);
+  },
+);
 
 /// Provider for whether a valid production certificate exists
-final hasValidCertificateProvider =
-    FutureProvider.family<bool, String>((ref, storeId) async {
+final hasValidCertificateProvider = FutureProvider.family<bool, String>((
+  ref,
+  storeId,
+) async {
   final onboarding = ref.watch(csidOnboardingServiceProvider);
   return onboarding.hasValidProductionCertificate(storeId: storeId);
 });
 
 /// Provider for failed queue items
-final zatcaFailedQueueProvider =
-    FutureProvider<List<QueuedInvoice>>((ref) async {
+final zatcaFailedQueueProvider = FutureProvider<List<QueuedInvoice>>((
+  ref,
+) async {
   final queue = ref.watch(zatcaOfflineQueueProvider);
   return queue.getFailedInvoices();
 });
@@ -104,24 +109,29 @@ final zatcaFailedQueueProvider =
 /// Provider to validate an invoice without submitting
 final invoiceValidationProvider =
     Provider.family<ComplianceResult, ZatcaInvoice>((ref, invoice) {
-  final checker = ref.watch(zatcaComplianceCheckerProvider);
-  return checker.check(invoice);
-});
+      final checker = ref.watch(zatcaComplianceCheckerProvider);
+      return checker.check(invoice);
+    });
 
 /// Provider to process an invoice (call .processInvoice)
-final processInvoiceProvider = FutureProvider.family<ZatcaInvoice,
-    ({ZatcaInvoice invoice, String storeId})>((ref, params) async {
-  final service = ref.watch(zatcaInvoiceServiceProvider);
-  return service.processInvoice(
-    invoice: params.invoice,
-    storeId: params.storeId,
-  );
-});
+final processInvoiceProvider =
+    FutureProvider.family<
+      ZatcaInvoice,
+      ({ZatcaInvoice invoice, String storeId})
+    >((ref, params) async {
+      final service = ref.watch(zatcaInvoiceServiceProvider);
+      return service.processInvoice(
+        invoice: params.invoice,
+        storeId: params.storeId,
+      );
+    });
 
 /// Provider to retry the offline queue
 final retryQueueProvider =
-    FutureProvider.family<List<QueueProcessResult>, String>(
-        (ref, storeId) async {
-  final service = ref.watch(zatcaInvoiceServiceProvider);
-  return service.retryQueue(storeId: storeId);
-});
+    FutureProvider.family<List<QueueProcessResult>, String>((
+      ref,
+      storeId,
+    ) async {
+      final service = ref.watch(zatcaInvoiceServiceProvider);
+      return service.retryQueue(storeId: storeId);
+    });

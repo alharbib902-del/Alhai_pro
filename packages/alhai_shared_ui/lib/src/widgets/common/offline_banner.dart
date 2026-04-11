@@ -22,7 +22,9 @@ class OfflineBanner extends ConsumerWidget {
         return Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+            horizontal: AlhaiSpacing.md,
+            vertical: AlhaiSpacing.xs,
+          ),
           color: AlhaiColors.warningDark,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -177,8 +179,11 @@ class DeadLetterBanner extends ConsumerWidget {
           color: Colors.amber.shade700,
           child: Row(
             children: [
-              const Icon(Icons.warning_amber_rounded,
-                  color: Colors.white, size: 18),
+              const Icon(
+                Icons.warning_amber_rounded,
+                color: Colors.white,
+                size: 18,
+              ),
               const SizedBox(width: AlhaiSpacing.xs),
               Expanded(
                 child: Text(
@@ -205,8 +210,9 @@ class DeadLetterBanner extends ConsumerWidget {
                   ),
                 ),
                 style: TextButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.xs,
+                  ),
                   minimumSize: Size.zero,
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),

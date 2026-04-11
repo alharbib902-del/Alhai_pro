@@ -125,8 +125,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
         message: _error == 'invoiceNotSpecified'
             ? l10n.invoiceNotSpecified
             : _error == 'invoiceNotFound'
-                ? l10n.invoiceNotFound
-                : _error,
+            ? l10n.invoiceNotFound
+            : _error,
         onRetry: () {
           setState(() {
             _isLoading = true;
@@ -147,7 +147,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
       child: Container(
         constraints: BoxConstraints(maxWidth: maxWidth),
         margin: EdgeInsets.all(
-            screenWidth > 600 ? AlhaiSpacing.xl : AlhaiSpacing.md),
+          screenWidth > 600 ? AlhaiSpacing.xl : AlhaiSpacing.md,
+        ),
         child: Column(
           children: [
             // Success icon
@@ -166,9 +167,9 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
             const SizedBox(height: AlhaiSpacing.md),
             Text(
               l10n.paymentSuccessful,
-              style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
             ),
 
             // Pending sync indicator for offline sales
@@ -176,18 +177,24 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
               const SizedBox(height: AlhaiSpacing.sm),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                  horizontal: AlhaiSpacing.md,
+                  vertical: AlhaiSpacing.xs,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.warningSurface,
                   borderRadius: BorderRadius.circular(20),
                   border: Border.all(
-                      color: AppColors.warning.withValues(alpha: 0.5)),
+                    color: AppColors.warning.withValues(alpha: 0.5),
+                  ),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Icon(Icons.cloud_upload_outlined,
-                        size: 18, color: AppColors.warning),
+                    Icon(
+                      Icons.cloud_upload_outlined,
+                      size: 18,
+                      color: AppColors.warning,
+                    ),
                     const SizedBox(width: AlhaiSpacing.xs),
                     Text(
                       l10n.pendingSync,
@@ -229,8 +236,11 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                           Padding(
                             padding: const EdgeInsets.only(top: 6),
                             child: Chip(
-                              avatar: const Icon(Icons.sync,
-                                  size: 16, color: AppColors.warning),
+                              avatar: const Icon(
+                                Icons.sync,
+                                size: 16,
+                                color: AppColors.warning,
+                              ),
                               label: Text(
                                 l10n.notSynced,
                                 style: TextStyle(
@@ -240,8 +250,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                               ),
                               backgroundColor: AppColors.warningSurface,
                               side: BorderSide(
-                                  color:
-                                      AppColors.warning.withValues(alpha: 0.3)),
+                                color: AppColors.warning.withValues(alpha: 0.3),
+                              ),
                               padding: EdgeInsets.zero,
                               visualDensity: VisualDensity.compact,
                             ),
@@ -274,102 +284,118 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                             children: [
                               Expanded(
                                 flex: 3,
-                                child: Text(l10n.itemColumnHeader,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: isDark
-                                          ? AppColors.textSecondaryDark
-                                          : AppColors.textSecondary,
-                                    )),
+                                child: Text(
+                                  l10n.itemColumnHeader,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: isDark
+                                        ? AppColors.textSecondaryDark
+                                        : AppColors.textSecondary,
+                                  ),
+                                ),
                               ),
                               SizedBox(
                                 width: 40,
-                                child: Text(l10n.quantityLabel,
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: isDark
-                                          ? AppColors.textSecondaryDark
-                                          : AppColors.textSecondary,
-                                    )),
+                                child: Text(
+                                  l10n.quantityLabel,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: isDark
+                                        ? AppColors.textSecondaryDark
+                                        : AppColors.textSecondary,
+                                  ),
+                                ),
                               ),
                               SizedBox(
                                 width: 60,
-                                child: Text(l10n.totalLabel,
-                                    textAlign: TextAlign.start,
-                                    style: TextStyle(
-                                      fontSize: 12,
-                                      fontWeight: FontWeight.bold,
-                                      color: isDark
-                                          ? AppColors.textSecondaryDark
-                                          : AppColors.textSecondary,
-                                    )),
+                                child: Text(
+                                  l10n.totalLabel,
+                                  textAlign: TextAlign.start,
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.bold,
+                                    color: isDark
+                                        ? AppColors.textSecondaryDark
+                                        : AppColors.textSecondary,
+                                  ),
+                                ),
                               ),
                             ],
                           ),
                           const SizedBox(height: AlhaiSpacing.xxs),
-                          ..._items.map((item) => Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 3),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: Text(
-                                        item.productName,
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: const TextStyle(fontSize: 13),
+                          ..._items.map(
+                            (item) => Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 3),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    flex: 3,
+                                    child: Text(
+                                      item.productName,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: const TextStyle(fontSize: 13),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 40,
+                                    child: Text(
+                                      '${item.qty}',
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(fontSize: 13),
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    width: 60,
+                                    child: Text(
+                                      CurrencyFormatter.formatNumberWithContext(
+                                        context,
+                                        item.total,
+                                      ),
+                                      textAlign: TextAlign.start,
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: 40,
-                                      child: Text(
-                                        '${item.qty}',
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(fontSize: 13),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 60,
-                                      child: Text(
-                                        CurrencyFormatter
-                                            .formatNumberWithContext(
-                                                context, item.total),
-                                        textAlign: TextAlign.start,
-                                        style: const TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              )),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
                           const Divider(height: 20),
                         ],
 
                         // Totals
-                        _totalRow(l10n.subtotalLabel,
-                            _fmtCurrency(context, sale.subtotal), isDark),
+                        _totalRow(
+                          l10n.subtotalLabel,
+                          _fmtCurrency(context, sale.subtotal),
+                          isDark,
+                        ),
                         const SizedBox(height: AlhaiSpacing.xxs),
-                        _totalRow(l10n.vatLabel,
-                            _fmtCurrency(context, sale.tax), isDark),
+                        _totalRow(
+                          l10n.vatLabel,
+                          _fmtCurrency(context, sale.tax),
+                          isDark,
+                        ),
                         if (sale.discount > 0) ...[
                           const SizedBox(height: AlhaiSpacing.xxs),
                           _totalRow(
-                              l10n.discountLabel(''),
-                              '-${_fmtCurrency(context, sale.discount)}',
-                              isDark,
-                              color: AppColors.success),
+                            l10n.discountLabel(''),
+                            '-${_fmtCurrency(context, sale.discount)}',
+                            isDark,
+                            color: AppColors.success,
+                          ),
                         ],
                         const SizedBox(height: AlhaiSpacing.xs),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              vertical: AlhaiSpacing.xs,
-                              horizontal: AlhaiSpacing.sm),
+                            vertical: AlhaiSpacing.xs,
+                            horizontal: AlhaiSpacing.sm,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.primary.withValues(alpha: 0.08),
                             borderRadius: BorderRadius.circular(8),
@@ -398,8 +424,11 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                         const SizedBox(height: AlhaiSpacing.xs),
 
                         // Payment method
-                        _totalRow(l10n.paymentMethodField,
-                            _getPaymentMethodLabel(sale.paymentMethod), isDark),
+                        _totalRow(
+                          l10n.paymentMethodField,
+                          _getPaymentMethodLabel(sale.paymentMethod),
+                          isDark,
+                        ),
                         const Divider(height: 24),
 
                         // QR Code - ZATCA
@@ -470,17 +499,21 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                   const SizedBox(width: AlhaiSpacing.xs),
                   Expanded(
                     child: OutlinedButton.icon(
-                      onPressed:
-                          _isSendingWhatsApp ? null : _sendWhatsAppReceipt,
+                      onPressed: _isSendingWhatsApp
+                          ? null
+                          : _sendWhatsAppReceipt,
                       icon: _isSendingWhatsApp
                           ? const SizedBox(
                               width: 18,
                               height: 18,
-                              child: CircularProgressIndicator(strokeWidth: 2))
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
                           : const Icon(Icons.chat, color: AppColors.success),
-                      label: Text(_whatsAppSent
-                          ? l10n.whatsappSentLabel
-                          : l10n.whatsappLabel),
+                      label: Text(
+                        _whatsAppSent
+                            ? l10n.whatsappSentLabel
+                            : l10n.whatsappLabel,
+                      ),
                       style: OutlinedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         side: const BorderSide(color: AppColors.success),
@@ -526,7 +559,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
           label,
           style: TextStyle(
             fontSize: 13,
-            color: color ??
+            color:
+                color ??
                 (isDark
                     ? AppColors.textSecondaryDark
                     : AppColors.textSecondary),
@@ -576,11 +610,13 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
         receiptNo: _sale!.receiptNo,
         date: _sale!.createdAt,
         items: _items
-            .map((i) => ReceiptLineItem(
-                  name: i.productName,
-                  quantity: i.qty.toInt(),
-                  total: i.total,
-                ))
+            .map(
+              (i) => ReceiptLineItem(
+                name: i.productName,
+                quantity: i.qty.toInt(),
+                total: i.total,
+              ),
+            )
             .toList(),
         subtotal: _sale!.subtotal,
         tax: _sale!.tax,
@@ -638,15 +674,19 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
       await ReceiptPrinterService.printReceipt(context, widget.saleId!);
     } catch (e) {
       // إضافة الفاتورة لقائمة الطباعة عند فشل الطباعة
-      ref.read(printQueueProvider.notifier).addJob(PrintJob(
-            id: 'PJ-${DateTime.now().millisecondsSinceEpoch}',
-            saleId: widget.saleId!,
-            receiptNo: _sale?.receiptNo ?? '',
-            type: 'receipt',
-            status: 'failed',
-            errorMessage: e.toString(),
-            createdAt: DateTime.now(),
-          ));
+      ref
+          .read(printQueueProvider.notifier)
+          .addJob(
+            PrintJob(
+              id: 'PJ-${DateTime.now().millisecondsSinceEpoch}',
+              saleId: widget.saleId!,
+              receiptNo: _sale?.receiptNo ?? '',
+              type: 'receipt',
+              status: 'failed',
+              errorMessage: e.toString(),
+              createdAt: DateTime.now(),
+            ),
+          );
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

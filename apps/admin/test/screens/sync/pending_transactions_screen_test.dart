@@ -24,8 +24,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const PendingTransactionsScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const PendingTransactionsScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(PendingTransactionsScreen), findsOneWidget);
@@ -39,8 +40,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const PendingTransactionsScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const PendingTransactionsScreen()),
+      );
       await tester.pumpAndSettle();
 
       // Empty state shows cloud_done icon
@@ -55,8 +57,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const PendingTransactionsScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const PendingTransactionsScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.refresh), findsWidgets);

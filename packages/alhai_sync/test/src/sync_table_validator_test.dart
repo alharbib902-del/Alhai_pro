@@ -64,10 +64,7 @@ void main() {
     });
 
     test('throws for empty string', () {
-      expect(
-        () => validateTableName(''),
-        throwsA(isA<ArgumentError>()),
-      );
+      expect(() => validateTableName(''), throwsA(isA<ArgumentError>()));
     });
 
     test('is case-sensitive (SQL table names are lowercase)', () {
@@ -75,10 +72,7 @@ void main() {
         () => validateTableName('Products'),
         throwsA(isA<ArgumentError>()),
       );
-      expect(
-        () => validateTableName('SALES'),
-        throwsA(isA<ArgumentError>()),
-      );
+      expect(() => validateTableName('SALES'), throwsA(isA<ArgumentError>()));
     });
   });
 }

@@ -11,25 +11,29 @@ void main() {
     // sale_items reference products and sales via FK
     final now = DateTime(2025, 1, 1);
     for (var i = 1; i <= 3; i++) {
-      await db.productsDao.insertProduct(ProductsTableCompanion.insert(
-        id: 'prod-$i',
-        storeId: 'store-1',
-        name: 'P$i',
-        price: 10.0,
-        createdAt: now,
-      ));
+      await db.productsDao.insertProduct(
+        ProductsTableCompanion.insert(
+          id: 'prod-$i',
+          storeId: 'store-1',
+          name: 'P$i',
+          price: 10.0,
+          createdAt: now,
+        ),
+      );
     }
     for (final id in ['sale-1', 'sale-2']) {
-      await db.salesDao.insertSale(SalesTableCompanion.insert(
-        id: id,
-        storeId: 'store-1',
-        receiptNo: 'R-$id',
-        cashierId: 'cashier-1',
-        subtotal: 100.0,
-        total: 100.0,
-        paymentMethod: 'cash',
-        createdAt: now,
-      ));
+      await db.salesDao.insertSale(
+        SalesTableCompanion.insert(
+          id: id,
+          storeId: 'store-1',
+          receiptNo: 'R-$id',
+          cashierId: 'cashier-1',
+          subtotal: 100.0,
+          total: 100.0,
+          paymentMethod: 'cash',
+          createdAt: now,
+        ),
+      );
     }
   });
 
@@ -62,15 +66,17 @@ void main() {
   group('SaleItemsDao', () {
     test('insertItem and getItemsBySaleId', () async {
       await db.saleItemsDao.insertItem(makeItem());
-      await db.saleItemsDao.insertItem(makeItem(
-        id: 'item-2',
-        productId: 'prod-2',
-        productName: 'عصير برتقال',
-        qty: 1,
-        unitPrice: 3.0,
-        subtotal: 3.0,
-        total: 3.0,
-      ));
+      await db.saleItemsDao.insertItem(
+        makeItem(
+          id: 'item-2',
+          productId: 'prod-2',
+          productName: 'عصير برتقال',
+          qty: 1,
+          unitPrice: 3.0,
+          subtotal: 3.0,
+          total: 3.0,
+        ),
+      );
 
       final items = await db.saleItemsDao.getItemsBySaleId('sale-1');
       expect(items, hasLength(2));
@@ -98,10 +104,12 @@ void main() {
 
     test('deleteItemsBySaleId removes all items for a sale', () async {
       await db.saleItemsDao.insertItem(makeItem(id: 'item-1'));
-      await db.saleItemsDao
-          .insertItem(makeItem(id: 'item-2', productId: 'prod-2'));
       await db.saleItemsDao.insertItem(
-          makeItem(id: 'item-3', saleId: 'sale-2', productId: 'prod-3'));
+        makeItem(id: 'item-2', productId: 'prod-2'),
+      );
+      await db.saleItemsDao.insertItem(
+        makeItem(id: 'item-3', saleId: 'sale-2', productId: 'prod-3'),
+      );
 
       final deleted = await db.saleItemsDao.deleteItemsBySaleId('sale-1');
       expect(deleted, 2);
@@ -114,19 +122,25 @@ void main() {
     test('getProductSalesCount sums quantities', () async {
       // sale-1 and sale-2 are created in setUp
 
-      await db.saleItemsDao
-          .insertItem(makeItem(id: 'item-1', qty: 3, productId: 'prod-1'));
-      await db.saleItemsDao.insertItem(makeItem(
-          id: 'item-2', saleId: 'sale-2', qty: 5, productId: 'prod-1'));
+      await db.saleItemsDao.insertItem(
+        makeItem(id: 'item-1', qty: 3, productId: 'prod-1'),
+      );
+      await db.saleItemsDao.insertItem(
+        makeItem(id: 'item-2', saleId: 'sale-2', qty: 5, productId: 'prod-1'),
+      );
 
-      final count =
-          await db.saleItemsDao.getProductSalesCount('prod-1', 'store-1');
+      final count = await db.saleItemsDao.getProductSalesCount(
+        'prod-1',
+        'store-1',
+      );
       expect(count, 8);
     });
 
     test('getProductSalesCount returns 0 for no sales', () async {
-      final count =
-          await db.saleItemsDao.getProductSalesCount('prod-unknown', 'store-1');
+      final count = await db.saleItemsDao.getProductSalesCount(
+        'prod-unknown',
+        'store-1',
+      );
       expect(count, 0);
     });
   });

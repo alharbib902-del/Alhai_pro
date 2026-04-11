@@ -399,18 +399,9 @@ void main() {
         AlhaiMotion.durationShort,
         greaterThan(AlhaiMotion.durationExtraShort),
       );
-      expect(
-        AlhaiMotion.durationFast,
-        greaterThan(AlhaiMotion.durationShort),
-      );
-      expect(
-        AlhaiMotion.durationMedium,
-        greaterThan(AlhaiMotion.durationFast),
-      );
-      expect(
-        AlhaiMotion.durationLong,
-        greaterThan(AlhaiMotion.durationMedium),
-      );
+      expect(AlhaiMotion.durationFast, greaterThan(AlhaiMotion.durationShort));
+      expect(AlhaiMotion.durationMedium, greaterThan(AlhaiMotion.durationFast));
+      expect(AlhaiMotion.durationLong, greaterThan(AlhaiMotion.durationMedium));
       expect(
         AlhaiMotion.durationExtraLong,
         greaterThan(AlhaiMotion.durationLong),

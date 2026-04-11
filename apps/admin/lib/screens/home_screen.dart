@@ -43,10 +43,10 @@ class AdminHomeScreen extends ConsumerWidget {
                   builder: (context, constraints) {
                     final crossAxisCount =
                         constraints.maxWidth >= AlhaiBreakpoints.desktop
-                            ? 4
-                            : constraints.maxWidth >= AlhaiBreakpoints.tablet
-                                ? 2
-                                : 1;
+                        ? 4
+                        : constraints.maxWidth >= AlhaiBreakpoints.tablet
+                        ? 2
+                        : 1;
                     return GridView.count(
                       crossAxisCount: crossAxisCount,
                       shrinkWrap: true,
@@ -68,7 +68,10 @@ class AdminHomeScreen extends ConsumerWidget {
                   children: List.generate(
                     4,
                     (_) => const SkeletonLoader(
-                        width: 120, height: 38, borderRadius: 12),
+                      width: 120,
+                      height: 38,
+                      borderRadius: 12,
+                    ),
                   ),
                 ),
                 const SizedBox(height: AlhaiSpacing.lg),
@@ -76,7 +79,9 @@ class AdminHomeScreen extends ConsumerWidget {
                 const SkeletonLoader(width: 140, height: 16),
                 const SizedBox(height: AlhaiSpacing.md),
                 ...List.generate(
-                    5, (_) => const SkeletonListItem(hasTrailing: true)),
+                  5,
+                  (_) => const SkeletonListItem(hasTrailing: true),
+                ),
               ],
             ),
           ),
@@ -85,8 +90,11 @@ class AdminHomeScreen extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 ExcludeSemantics(
-                  child: Icon(Icons.error_outline,
-                      size: 48, color: AppColors.error),
+                  child: Icon(
+                    Icons.error_outline,
+                    size: 48,
+                    color: AppColors.error,
+                  ),
                 ),
                 const SizedBox(height: AlhaiSpacing.md),
                 Text(
@@ -105,7 +113,8 @@ class AdminHomeScreen extends ConsumerWidget {
           ),
           data: (data) {
             final screenWidth = MediaQuery.of(context).size.width;
-            final isTablet = screenWidth >= AlhaiBreakpoints.tablet &&
+            final isTablet =
+                screenWidth >= AlhaiBreakpoints.tablet &&
                 screenWidth < AlhaiBreakpoints.desktop;
 
             return RefreshIndicator(
@@ -119,30 +128,30 @@ class AdminHomeScreen extends ConsumerWidget {
                     // Welcome header
                     Text(
                       l10n.home,
-                      style:
-                          Theme.of(context).textTheme.headlineMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: colorScheme.onSurface,
-                              ),
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: colorScheme.onSurface,
+                          ),
                     ),
                     const SizedBox(height: AlhaiSpacing.xxs),
                     Text(
                       l10n.dashboardTitle,
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: colorScheme.onSurfaceVariant,
-                          ),
+                        color: colorScheme.onSurfaceVariant,
+                      ),
                     ),
                     const SizedBox(height: AlhaiSpacing.lg),
 
                     // Stat cards grid
                     LayoutBuilder(
                       builder: (context, constraints) {
-                        final crossAxisCount = constraints.maxWidth >=
-                                AlhaiBreakpoints.desktop
+                        final crossAxisCount =
+                            constraints.maxWidth >= AlhaiBreakpoints.desktop
                             ? 4
                             : constraints.maxWidth >= AlhaiBreakpoints.tablet
-                                ? 2
-                                : 1;
+                            ? 2
+                            : 1;
                         return GridView.count(
                           crossAxisCount: crossAxisCount,
                           shrinkWrap: true,
@@ -164,8 +173,9 @@ class AdminHomeScreen extends ConsumerWidget {
                               icon: Icons.receipt_long_rounded,
                               label: l10n.orders,
                               value: AppNumberFormatter.integer(
-                                  data.todayOrders,
-                                  locale: locale),
+                                data.todayOrders,
+                                locale: locale,
+                              ),
                               changePercent: data.ordersChangePercent,
                               color: AppColors.info,
                               isDark: isDark,
@@ -174,8 +184,9 @@ class AdminHomeScreen extends ConsumerWidget {
                               icon: Icons.warning_amber_rounded,
                               label: l10n.lowStockLabel,
                               value: AppNumberFormatter.integer(
-                                  data.lowStockCount,
-                                  locale: locale),
+                                data.lowStockCount,
+                                locale: locale,
+                              ),
                               color: AppColors.warning,
                               isDark: isDark,
                             ),
@@ -183,8 +194,9 @@ class AdminHomeScreen extends ConsumerWidget {
                               icon: Icons.people_outline_rounded,
                               label: l10n.newCustomers,
                               value: AppNumberFormatter.integer(
-                                  data.newCustomersToday,
-                                  locale: locale),
+                                data.newCustomersToday,
+                                locale: locale,
+                              ),
                               color: AppColors.success,
                               isDark: isDark,
                             ),
@@ -198,9 +210,9 @@ class AdminHomeScreen extends ConsumerWidget {
                     Text(
                       l10n.quickActions,
                       style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: colorScheme.onSurface,
-                          ),
+                        fontWeight: FontWeight.bold,
+                        color: colorScheme.onSurface,
+                      ),
                     ),
                     const SizedBox(height: AlhaiSpacing.md),
                     Wrap(
@@ -255,11 +267,11 @@ class AdminHomeScreen extends ConsumerWidget {
                     else if (data.recentSales.isNotEmpty) ...[
                       Text(
                         l10n.recentTransactions,
-                        style:
-                            Theme.of(context).textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                  color: colorScheme.onSurface,
-                                ),
+                        style: Theme.of(context).textTheme.titleMedium
+                            ?.copyWith(
+                              fontWeight: FontWeight.bold,
+                              color: colorScheme.onSurface,
+                            ),
                       ),
                       const SizedBox(height: AlhaiSpacing.md),
                       ...data.recentSales.take(5).map((sale) {
@@ -272,28 +284,35 @@ class AdminHomeScreen extends ConsumerWidget {
                           label:
                               '${l10n.recentTransactions}: $receiptLabel, $totalLabel',
                           child: Container(
-                            margin:
-                                const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+                            margin: const EdgeInsets.only(
+                              bottom: AlhaiSpacing.xs,
+                            ),
                             padding: const EdgeInsets.all(AlhaiSpacing.md),
                             decoration: BoxDecoration(
                               color: AppColors.getSurface(isDark),
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
-                                  color: AppColors.getBorder(isDark)),
+                                color: AppColors.getBorder(isDark),
+                              ),
                             ),
                             child: Row(
                               children: [
                                 Container(
-                                  padding:
-                                      const EdgeInsets.all(AlhaiSpacing.xs),
+                                  padding: const EdgeInsets.all(
+                                    AlhaiSpacing.xs,
+                                  ),
                                   decoration: BoxDecoration(
-                                    color: AppColors.primary
-                                        .withValues(alpha: 0.1),
+                                    color: AppColors.primary.withValues(
+                                      alpha: 0.1,
+                                    ),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: const ExcludeSemantics(
-                                    child: Icon(Icons.receipt_rounded,
-                                        color: AppColors.primary, size: 18),
+                                    child: Icon(
+                                      Icons.receipt_rounded,
+                                      color: AppColors.primary,
+                                      size: 18,
+                                    ),
                                   ),
                                 ),
                                 const SizedBox(width: AlhaiSpacing.sm),
@@ -354,9 +373,9 @@ class _RecentSalesColumn extends StatelessWidget {
         Text(
           title,
           style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         const SizedBox(height: AlhaiSpacing.md),
         ...sales.map((sale) {
@@ -384,8 +403,11 @@ class _RecentSalesColumn extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: const ExcludeSemantics(
-                      child: Icon(Icons.receipt_rounded,
-                          color: AppColors.primary, size: 18),
+                      child: Icon(
+                        Icons.receipt_rounded,
+                        color: AppColors.primary,
+                        size: 18,
+                      ),
                     ),
                   ),
                   const SizedBox(width: AlhaiSpacing.sm),
@@ -541,7 +563,9 @@ class _QuickAction extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           child: Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+              horizontal: AlhaiSpacing.md,
+              vertical: AlhaiSpacing.sm,
+            ),
             decoration: BoxDecoration(
               color: AppColors.getSurface(isDark),
               borderRadius: BorderRadius.circular(12),

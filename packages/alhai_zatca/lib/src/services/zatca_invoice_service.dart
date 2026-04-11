@@ -52,16 +52,16 @@ class ZatcaInvoiceService {
     required ZatcaOfflineQueue offlineQueue,
     required ZatcaComplianceChecker complianceChecker,
     CertificateRenewalService? renewalService,
-  })  : _xmlBuilder = xmlBuilder,
-        _signer = signer,
-        _qrService = qrService,
-        _chainService = chainService,
-        _reportingApi = reportingApi,
-        _clearanceApi = clearanceApi,
-        _certStorage = certStorage,
-        _offlineQueue = offlineQueue,
-        _complianceChecker = complianceChecker,
-        _renewalService = renewalService;
+  }) : _xmlBuilder = xmlBuilder,
+       _signer = signer,
+       _qrService = qrService,
+       _chainService = chainService,
+       _reportingApi = reportingApi,
+       _clearanceApi = clearanceApi,
+       _certStorage = certStorage,
+       _offlineQueue = offlineQueue,
+       _complianceChecker = complianceChecker,
+       _renewalService = renewalService;
 
   /// Process a ZATCA invoice end-to-end
   ///
@@ -92,15 +92,17 @@ class ZatcaInvoiceService {
           complianceResult.blockingErrors.isNotEmpty) {
         return result.copyWith(
           reportingStatus: ReportingStatus.failed,
-          errors:
-              complianceResult.blockingErrors.map((e) => e.toString()).toList(),
+          errors: complianceResult.blockingErrors
+              .map((e) => e.toString())
+              .toList(),
           warnings: complianceResult.warnings.map((e) => e.toString()).toList(),
         );
       }
 
       // Carry forward warnings (non-blocking)
-      final warningMessages =
-          complianceResult.warnings.map((e) => e.toString()).toList();
+      final warningMessages = complianceResult.warnings
+          .map((e) => e.toString())
+          .toList();
 
       // ── Step 2: Get certificate ───────────────────────────
       final certificate = await _certStorage.getCertificate(storeId: storeId);
@@ -109,7 +111,7 @@ class ZatcaInvoiceService {
           reportingStatus: ReportingStatus.failed,
           errors: [
             'No ZATCA certificate found for store $storeId. '
-                'Complete onboarding first.'
+                'Complete onboarding first.',
           ],
           warnings: warningMessages,
         );
@@ -146,16 +148,11 @@ class ZatcaInvoiceService {
       );
 
       // ── Step 4: Build UBL XML ─────────────────────────────
-      final invoiceWithPih = result.copyWith(
-        previousInvoiceHash: previousHash,
-      );
+      final invoiceWithPih = result.copyWith(previousInvoiceHash: previousHash);
       final xml = _xmlBuilder.build(invoiceWithPih);
 
       // ── Step 5: Sign XML ──────────────────────────────────
-      final signedXml = _signer.sign(
-        invoiceXml: xml,
-        certificate: certificate,
-      );
+      final signedXml = _signer.sign(invoiceXml: xml, certificate: certificate);
 
       // ── Step 6: Compute invoice hash ──────────────────────
       final invoiceHash = _signer.computeInvoiceHash(signedXml);
@@ -307,10 +304,7 @@ class ZatcaInvoiceService {
       ],
       errors: response.isSuccess
           ? invoice.errors
-          : [
-              ...invoice.errors,
-              ...response.errors.map((e) => e.toString()),
-            ],
+          : [...invoice.errors, ...response.errors.map((e) => e.toString())],
     );
   }
 
@@ -345,9 +339,7 @@ class ZatcaInvoiceService {
   /// Retry all queued invoices
   ///
   /// Processes the offline queue and returns results.
-  Future<List<QueueProcessResult>> retryQueue({
-    required String storeId,
-  }) async {
+  Future<List<QueueProcessResult>> retryQueue({required String storeId}) async {
     return _offlineQueue.processQueue(
       reportingApi: _reportingApi,
       clearanceApi: _clearanceApi,
@@ -372,8 +364,10 @@ class ZatcaInvoiceService {
   String _extractSignatureValue(String signedXml) {
     // Look for <ds:SignatureValue> or <SignatureValue>
     final patterns = [
-      RegExp(r'<ds:SignatureValue[^>]*>(.*?)</ds:SignatureValue>',
-          dotAll: true),
+      RegExp(
+        r'<ds:SignatureValue[^>]*>(.*?)</ds:SignatureValue>',
+        dotAll: true,
+      ),
       RegExp(r'<SignatureValue[^>]*>(.*?)</SignatureValue>', dotAll: true),
     ];
 

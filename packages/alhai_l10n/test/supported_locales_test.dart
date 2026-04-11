@@ -13,31 +13,19 @@ void main() {
       });
 
       test('contains Arabic locale', () {
-        expect(
-          SupportedLocales.all.any((l) => l.languageCode == 'ar'),
-          isTrue,
-        );
+        expect(SupportedLocales.all.any((l) => l.languageCode == 'ar'), isTrue);
       });
 
       test('contains English locale', () {
-        expect(
-          SupportedLocales.all.any((l) => l.languageCode == 'en'),
-          isTrue,
-        );
+        expect(SupportedLocales.all.any((l) => l.languageCode == 'en'), isTrue);
       });
 
       test('contains Urdu locale', () {
-        expect(
-          SupportedLocales.all.any((l) => l.languageCode == 'ur'),
-          isTrue,
-        );
+        expect(SupportedLocales.all.any((l) => l.languageCode == 'ur'), isTrue);
       });
 
       test('contains Hindi locale', () {
-        expect(
-          SupportedLocales.all.any((l) => l.languageCode == 'hi'),
-          isTrue,
-        );
+        expect(SupportedLocales.all.any((l) => l.languageCode == 'hi'), isTrue);
       });
 
       test('contains Filipino locale', () {
@@ -48,17 +36,11 @@ void main() {
       });
 
       test('contains Bengali locale', () {
-        expect(
-          SupportedLocales.all.any((l) => l.languageCode == 'bn'),
-          isTrue,
-        );
+        expect(SupportedLocales.all.any((l) => l.languageCode == 'bn'), isTrue);
       });
 
       test('contains Indonesian locale', () {
-        expect(
-          SupportedLocales.all.any((l) => l.languageCode == 'id'),
-          isTrue,
-        );
+        expect(SupportedLocales.all.any((l) => l.languageCode == 'id'), isTrue);
       });
 
       test('first locale is Arabic (default)', () {
@@ -182,17 +164,11 @@ void main() {
 
     group('getFlag', () {
       test('returns Saudi flag for Arabic', () {
-        expect(
-          SupportedLocales.getFlag(const Locale('ar')),
-          isNotEmpty,
-        );
+        expect(SupportedLocales.getFlag(const Locale('ar')), isNotEmpty);
       });
 
       test('returns globe for unknown locale', () {
-        expect(
-          SupportedLocales.getFlag(const Locale('de')),
-          isNotEmpty,
-        );
+        expect(SupportedLocales.getFlag(const Locale('de')), isNotEmpty);
       });
 
       test('returns different flags for different locales', () {

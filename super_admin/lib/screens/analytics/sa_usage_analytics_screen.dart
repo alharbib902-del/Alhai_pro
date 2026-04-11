@@ -104,7 +104,8 @@ class SAUsageAnalyticsScreen extends ConsumerWidget {
     final avgTx = avgTxAsync.valueOrNull;
     final totalUsers = totalUsersAsync.valueOrNull;
 
-    final isLoading = kpisAsync.isLoading ||
+    final isLoading =
+        kpisAsync.isLoading ||
         avgTxAsync.isLoading ||
         totalUsersAsync.isLoading;
 
@@ -258,12 +259,15 @@ class _ActiveUsersChart extends StatelessWidget {
       );
     }
 
-    final blueColor =
-        isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB);
-    final deepPurpleColor =
-        isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED);
-    final tealColor =
-        isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488);
+    final blueColor = isDark
+        ? const Color(0xFF60A5FA)
+        : const Color(0xFF2563EB);
+    final deepPurpleColor = isDark
+        ? const Color(0xFFA78BFA)
+        : const Color(0xFF7C3AED);
+    final tealColor = isDark
+        ? const Color(0xFF2DD4BF)
+        : const Color(0xFF0D9488);
     final colors = [
       blueColor,
       deepPurpleColor,
@@ -340,8 +344,9 @@ class _ActiveUsersChart extends StatelessWidget {
                       }
                       final name = storeData[idx].storeName;
                       // Truncate long names
-                      final label =
-                          name.length > 8 ? name.substring(0, 8) : name;
+                      final label = name.length > 8
+                          ? name.substring(0, 8)
+                          : name;
                       return Padding(
                         padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
                         child: Text(
@@ -354,18 +359,21 @@ class _ActiveUsersChart extends StatelessWidget {
                     },
                   ),
                 ),
-                topTitles:
-                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles:
-                    const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                topTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
+                rightTitles: const AxisTitles(
+                  sideTitles: SideTitles(showTitles: false),
+                ),
               ),
               borderData: FlBorderData(show: false),
               gridData: FlGridData(
                 show: true,
                 drawVerticalLine: false,
                 getDrawingHorizontalLine: (value) => FlLine(
-                  color:
-                      theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+                  color: theme.colorScheme.outlineVariant.withValues(
+                    alpha: 0.3,
+                  ),
                   strokeWidth: 1,
                 ),
               ),
@@ -415,29 +423,22 @@ class _TransactionsTable extends StatelessWidget {
         columns: [
           const DataColumn(label: Text('#')),
           DataColumn(label: Text(l10n.storeName)),
-          DataColumn(
-            label: Text(l10n.storeTransactions),
-            numeric: true,
-          ),
-          DataColumn(
-            label: Text(l10n.avgTransactionsPerDay),
-            numeric: true,
-          ),
-          DataColumn(
-            label: Text(l10n.storeProducts),
-            numeric: true,
-          ),
+          DataColumn(label: Text(l10n.storeTransactions), numeric: true),
+          DataColumn(label: Text(l10n.avgTransactionsPerDay), numeric: true),
+          DataColumn(label: Text(l10n.storeProducts), numeric: true),
         ],
         rows: List.generate(stores.length, (i) {
           final store = stores[i];
 
-          return DataRow(cells: [
-            DataCell(Text('${i + 1}')),
-            DataCell(Text(store.storeName)),
-            DataCell(Text(_fmtInt(store.transactions))),
-            DataCell(Text('${store.avgPerDay}')),
-            DataCell(Text(_fmtInt(store.products))),
-          ]);
+          return DataRow(
+            cells: [
+              DataCell(Text('${i + 1}')),
+              DataCell(Text(store.storeName)),
+              DataCell(Text(_fmtInt(store.transactions))),
+              DataCell(Text('${store.avgPerDay}')),
+              DataCell(Text(_fmtInt(store.products))),
+            ],
+          );
         }),
       ),
     );

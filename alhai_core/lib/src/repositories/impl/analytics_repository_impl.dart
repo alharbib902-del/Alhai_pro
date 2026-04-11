@@ -9,9 +9,8 @@ import '../analytics_repository.dart';
 class AnalyticsRepositoryImpl implements AnalyticsRepository {
   final AnalyticsRemoteDataSource _remote;
 
-  AnalyticsRepositoryImpl({
-    required AnalyticsRemoteDataSource remote,
-  }) : _remote = remote;
+  AnalyticsRepositoryImpl({required AnalyticsRemoteDataSource remote})
+    : _remote = remote;
 
   @override
   Future<List<SlowMovingProduct>> getSlowMovingProducts(
@@ -120,8 +119,10 @@ class AnalyticsRepositoryImpl implements AnalyticsRepository {
     int limit = 20,
   }) async {
     try {
-      final responses =
-          await _remote.getCustomerPatterns(storeId, limit: limit);
+      final responses = await _remote.getCustomerPatterns(
+        storeId,
+        limit: limit,
+      );
       return responses.map((r) => r.toDomain()).toList();
     } on DioException catch (e) {
       throw ErrorMapper.fromDioError(e);

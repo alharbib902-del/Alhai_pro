@@ -5,43 +5,61 @@ void main() {
   group('PhoneValidationService', () {
     group('formatPhone (static)', () {
       test('should convert 05x to 9665x format', () {
-        expect(PhoneValidationService.formatPhone('0512345678'),
-            equals('966512345678'));
+        expect(
+          PhoneValidationService.formatPhone('0512345678'),
+          equals('966512345678'),
+        );
       });
 
       test('should convert 5x to 9665x format', () {
-        expect(PhoneValidationService.formatPhone('512345678'),
-            equals('966512345678'));
+        expect(
+          PhoneValidationService.formatPhone('512345678'),
+          equals('966512345678'),
+        );
       });
 
       test('should keep 966x format unchanged', () {
-        expect(PhoneValidationService.formatPhone('966512345678'),
-            equals('966512345678'));
+        expect(
+          PhoneValidationService.formatPhone('966512345678'),
+          equals('966512345678'),
+        );
       });
 
       test('should strip + prefix', () {
-        expect(PhoneValidationService.formatPhone('+966512345678'),
-            equals('966512345678'));
+        expect(
+          PhoneValidationService.formatPhone('+966512345678'),
+          equals('966512345678'),
+        );
       });
 
       test('should strip 00 prefix', () {
-        expect(PhoneValidationService.formatPhone('00966512345678'),
-            equals('966512345678'));
+        expect(
+          PhoneValidationService.formatPhone('00966512345678'),
+          equals('966512345678'),
+        );
       });
 
       test('should remove spaces and special chars', () {
-        expect(PhoneValidationService.formatPhone('05 1234 5678'),
-            equals('966512345678'));
-        expect(PhoneValidationService.formatPhone('(05)12345678'),
-            equals('966512345678'));
-        expect(PhoneValidationService.formatPhone('05-1234-5678'),
-            equals('966512345678'));
+        expect(
+          PhoneValidationService.formatPhone('05 1234 5678'),
+          equals('966512345678'),
+        );
+        expect(
+          PhoneValidationService.formatPhone('(05)12345678'),
+          equals('966512345678'),
+        );
+        expect(
+          PhoneValidationService.formatPhone('05-1234-5678'),
+          equals('966512345678'),
+        );
       });
 
       test('should return cleaned number for non-Saudi formats', () {
         // Non-Saudi numbers should be returned after cleanup
-        expect(PhoneValidationService.formatPhone('123456789012345'),
-            equals('123456789012345'));
+        expect(
+          PhoneValidationService.formatPhone('123456789012345'),
+          equals('123456789012345'),
+        );
       });
     });
 

@@ -34,16 +34,19 @@ class _PendingTransactionsScreenState
       children: [
         AppHeader(
           title: l10n.pendingTransactionsTitle,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 0,
           userName: l10n.defaultUserName,
           userRole: l10n.branchManager,
           actions: [
             IconButton(
-              icon: Icon(Icons.refresh,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+              icon: Icon(
+                Icons.refresh,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               onPressed: () => ref.invalidate(pendingSyncItemsProvider),
             ),
           ],
@@ -55,8 +58,11 @@ class _PendingTransactionsScreenState
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error_outline,
-                      size: 64, color: AppColors.error),
+                  const Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: AppColors.error,
+                  ),
                   const SizedBox(height: AlhaiSpacing.md),
                   Text(
                     error.toString(),
@@ -81,9 +87,11 @@ class _PendingTransactionsScreenState
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.cloud_done,
-                          size: 64,
-                          color: isDark ? Colors.white24 : AppColors.success),
+                      Icon(
+                        Icons.cloud_done,
+                        size: 64,
+                        color: isDark ? Colors.white24 : AppColors.success,
+                      ),
                       const SizedBox(height: AlhaiSpacing.md),
                       Text(
                         l10n.allOperationsSynced,
@@ -96,8 +104,9 @@ class _PendingTransactionsScreenState
                       Text(
                         l10n.noPendingOperations,
                         style: TextStyle(
-                          color:
-                              isDark ? Colors.white38 : AppColors.textTertiary,
+                          color: isDark
+                              ? Colors.white38
+                              : AppColors.textTertiary,
                         ),
                       ),
                     ],
@@ -108,7 +117,12 @@ class _PendingTransactionsScreenState
               return SingleChildScrollView(
                 padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
                 child: _buildContent(
-                    pendingItems, isWideScreen, isMediumScreen, isDark, l10n),
+                  pendingItems,
+                  isWideScreen,
+                  isMediumScreen,
+                  isDark,
+                  l10n,
+                ),
               );
             },
           ),
@@ -173,7 +187,10 @@ class _PendingTransactionsScreenState
                         width: 16,
                         height: 16,
                         child: CircularProgressIndicator(
-                            strokeWidth: 2, color: Colors.white))
+                          strokeWidth: 2,
+                          color: Colors.white,
+                        ),
+                      )
                     : const Icon(Icons.sync, size: 18),
                 label: Text(_isSyncing ? l10n.syncing : l10n.syncAll),
               ),
@@ -193,16 +210,17 @@ class _PendingTransactionsScreenState
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Theme.of(context).dividerColor,
-              ),
+              border: Border.all(color: Theme.of(context).dividerColor),
             ),
             child: ListTile(
               contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xxs),
+                horizontal: AlhaiSpacing.md,
+                vertical: AlhaiSpacing.xxs,
+              ),
               leading: CircleAvatar(
-                backgroundColor:
-                    _getOperationColor(item.operation).withValues(alpha: 0.1),
+                backgroundColor: _getOperationColor(
+                  item.operation,
+                ).withValues(alpha: 0.1),
                 child: Icon(
                   _getOperationIcon(item.operation),
                   color: _getOperationColor(item.operation),
@@ -230,15 +248,18 @@ class _PendingTransactionsScreenState
                         _formatDate(item.createdAt),
                         style: TextStyle(
                           fontSize: 11,
-                          color:
-                              isDark ? Colors.white38 : AppColors.textTertiary,
+                          color: isDark
+                              ? Colors.white38
+                              : AppColors.textTertiary,
                         ),
                       ),
                       if (item.retryCount > 0) ...[
                         const SizedBox(width: AlhaiSpacing.xs),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: AppColors.error.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(4),
@@ -261,7 +282,9 @@ class _PendingTransactionsScreenState
                       child: Text(
                         item.lastError!,
                         style: const TextStyle(
-                            fontSize: 11, color: AppColors.error),
+                          fontSize: 11,
+                          color: AppColors.error,
+                        ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -277,8 +300,10 @@ class _PendingTransactionsScreenState
                     onPressed: () => _retryItem(item),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.delete_outline,
-                        color: AppColors.error),
+                    icon: const Icon(
+                      Icons.delete_outline,
+                      color: AppColors.error,
+                    ),
                     tooltip: l10n.delete,
                     onPressed: () => _deleteItem(item),
                   ),
@@ -358,7 +383,8 @@ class _PendingTransactionsScreenState
         messenger.showSnackBar(
           SnackBar(
             content: Text(
-                '${l10n.syncFailed}: ${result.failedCount} ${l10n.syncFailed}'),
+              '${l10n.syncFailed}: ${result.failedCount} ${l10n.syncFailed}',
+            ),
             backgroundColor: AppColors.error,
           ),
         );
@@ -387,9 +413,7 @@ class _PendingTransactionsScreenState
       final syncService = ref.read(syncServiceProvider);
       await syncService.retryItem(item.id);
       if (!mounted) return;
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.operationSynced)),
-      );
+      messenger.showSnackBar(SnackBar(content: Text(l10n.operationSynced)));
       final manager = ref.read(syncManagerProvider);
       manager.syncPending();
     } catch (e) {
@@ -410,8 +434,9 @@ class _PendingTransactionsScreenState
         content: Text(l10n.deleteOperationConfirm),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(l10n.cancel)),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.cancel),
+          ),
           FilledButton(
             onPressed: () async {
               Navigator.pop(dialogContext);
@@ -421,7 +446,9 @@ class _PendingTransactionsScreenState
               } catch (e) {
                 messenger.showSnackBar(
                   SnackBar(
-                      content: Text('$e'), backgroundColor: AppColors.error),
+                    content: Text('$e'),
+                    backgroundColor: AppColors.error,
+                  ),
                 );
               }
             },

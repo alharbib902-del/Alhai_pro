@@ -12,7 +12,8 @@ part of 'auth_result.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 AuthResult _$AuthResultFromJson(Map<String, dynamic> json) {
   return _AuthResult.fromJson(json);
@@ -36,8 +37,9 @@ mixin _$AuthResult {
 /// @nodoc
 abstract class $AuthResultCopyWith<$Res> {
   factory $AuthResultCopyWith(
-          AuthResult value, $Res Function(AuthResult) then) =
-      _$AuthResultCopyWithImpl<$Res, AuthResult>;
+    AuthResult value,
+    $Res Function(AuthResult) then,
+  ) = _$AuthResultCopyWithImpl<$Res, AuthResult>;
   @useResult
   $Res call({User user, AuthTokens tokens});
 
@@ -59,20 +61,20 @@ class _$AuthResultCopyWithImpl<$Res, $Val extends AuthResult>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? user = null,
-    Object? tokens = null,
-  }) {
-    return _then(_value.copyWith(
-      user: null == user
-          ? _value.user
-          : user // ignore: cast_nullable_to_non_nullable
-              as User,
-      tokens: null == tokens
-          ? _value.tokens
-          : tokens // ignore: cast_nullable_to_non_nullable
-              as AuthTokens,
-    ) as $Val);
+  $Res call({Object? user = null, Object? tokens = null}) {
+    return _then(
+      _value.copyWith(
+            user: null == user
+                ? _value.user
+                : user // ignore: cast_nullable_to_non_nullable
+                      as User,
+            tokens: null == tokens
+                ? _value.tokens
+                : tokens // ignore: cast_nullable_to_non_nullable
+                      as AuthTokens,
+          )
+          as $Val,
+    );
   }
 
   /// Create a copy of AuthResult
@@ -100,8 +102,9 @@ class _$AuthResultCopyWithImpl<$Res, $Val extends AuthResult>
 abstract class _$$AuthResultImplCopyWith<$Res>
     implements $AuthResultCopyWith<$Res> {
   factory _$$AuthResultImplCopyWith(
-          _$AuthResultImpl value, $Res Function(_$AuthResultImpl) then) =
-      __$$AuthResultImplCopyWithImpl<$Res>;
+    _$AuthResultImpl value,
+    $Res Function(_$AuthResultImpl) then,
+  ) = __$$AuthResultImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({User user, AuthTokens tokens});
@@ -117,27 +120,27 @@ class __$$AuthResultImplCopyWithImpl<$Res>
     extends _$AuthResultCopyWithImpl<$Res, _$AuthResultImpl>
     implements _$$AuthResultImplCopyWith<$Res> {
   __$$AuthResultImplCopyWithImpl(
-      _$AuthResultImpl _value, $Res Function(_$AuthResultImpl) _then)
-      : super(_value, _then);
+    _$AuthResultImpl _value,
+    $Res Function(_$AuthResultImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of AuthResult
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({
-    Object? user = null,
-    Object? tokens = null,
-  }) {
-    return _then(_$AuthResultImpl(
-      user: null == user
-          ? _value.user
-          : user // ignore: cast_nullable_to_non_nullable
-              as User,
-      tokens: null == tokens
-          ? _value.tokens
-          : tokens // ignore: cast_nullable_to_non_nullable
-              as AuthTokens,
-    ));
+  $Res call({Object? user = null, Object? tokens = null}) {
+    return _then(
+      _$AuthResultImpl(
+        user: null == user
+            ? _value.user
+            : user // ignore: cast_nullable_to_non_nullable
+                  as User,
+        tokens: null == tokens
+            ? _value.tokens
+            : tokens // ignore: cast_nullable_to_non_nullable
+                  as AuthTokens,
+      ),
+    );
   }
 }
 
@@ -182,16 +185,15 @@ class _$AuthResultImpl implements _AuthResult {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AuthResultImplToJson(
-      this,
-    );
+    return _$$AuthResultImplToJson(this);
   }
 }
 
 abstract class _AuthResult implements AuthResult {
-  const factory _AuthResult(
-      {required final User user,
-      required final AuthTokens tokens}) = _$AuthResultImpl;
+  const factory _AuthResult({
+    required final User user,
+    required final AuthTokens tokens,
+  }) = _$AuthResultImpl;
 
   factory _AuthResult.fromJson(Map<String, dynamic> json) =
       _$AuthResultImpl.fromJson;

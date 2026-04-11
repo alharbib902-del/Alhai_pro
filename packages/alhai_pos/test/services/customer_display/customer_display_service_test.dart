@@ -69,7 +69,9 @@ void main() {
 
       expect(fakeChannel.sentStates, hasLength(1));
       expect(
-          fakeChannel.sentStates.last.phase, equals(CustomerDisplayPhase.idle));
+        fakeChannel.sentStates.last.phase,
+        equals(CustomerDisplayPhase.idle),
+      );
       expect(fakeChannel.sentStates.last.storeName, equals('متجر الاختبار'));
     });
 
@@ -153,7 +155,9 @@ void main() {
 
       expect(fakeChannel.sentStates, hasLength(1));
       expect(
-          fakeChannel.sentStates.last.phase, equals(CustomerDisplayPhase.idle));
+        fakeChannel.sentStates.last.phase,
+        equals(CustomerDisplayPhase.idle),
+      );
       expect(fakeChannel.sentStates.last.storeName, equals('متجر الاختبار'));
     });
 
@@ -187,10 +191,7 @@ void main() {
     });
 
     test('showPhoneEntry يرسل حالة phoneEntry', () {
-      service.showPhoneEntry(
-        items: const [],
-        total: 50.0,
-      );
+      service.showPhoneEntry(items: const [], total: 50.0);
 
       final sent = fakeChannel.sentStates.last;
       expect(sent.phase, equals(CustomerDisplayPhase.phoneEntry));
@@ -198,10 +199,7 @@ void main() {
     });
 
     test('showPayment يرسل حالة payment', () {
-      service.showPayment(
-        total: 100.0,
-        paymentMethodName: 'مدى',
-      );
+      service.showPayment(total: 100.0, paymentMethodName: 'مدى');
 
       final sent = fakeChannel.sentStates.last;
       expect(sent.phase, equals(CustomerDisplayPhase.payment));
@@ -244,10 +242,7 @@ void main() {
     });
 
     test('showSuccess يرسل حالة success', () {
-      service.showSuccess(
-        total: 200.0,
-        message: 'تم الدفع',
-      );
+      service.showSuccess(total: 200.0, message: 'تم الدفع');
 
       final sent = fakeChannel.sentStates.last;
       expect(sent.phase, equals(CustomerDisplayPhase.success));
@@ -277,7 +272,9 @@ void main() {
 
       expect(fakeChannel.sentStates, hasLength(1));
       expect(
-          fakeChannel.sentStates.last.phase, equals(CustomerDisplayPhase.idle));
+        fakeChannel.sentStates.last.phase,
+        equals(CustomerDisplayPhase.idle),
+      );
     });
   });
 
@@ -334,10 +331,14 @@ void main() {
       await Future<void>.delayed(Duration.zero);
 
       // يجب أن نستقبل على الأقل cart و success
-      expect(states.where((s) => s.phase == CustomerDisplayPhase.cart),
-          isNotEmpty);
-      expect(states.where((s) => s.phase == CustomerDisplayPhase.success),
-          isNotEmpty);
+      expect(
+        states.where((s) => s.phase == CustomerDisplayPhase.cart),
+        isNotEmpty,
+      );
+      expect(
+        states.where((s) => s.phase == CustomerDisplayPhase.success),
+        isNotEmpty,
+      );
 
       await sub.cancel();
     });

@@ -131,15 +131,23 @@ void main() {
 
   group('getPriceSuggestions', () {
     test('returns suggestions for active products', () async {
-      when(() => mockProductsDao.getAllProducts(any()))
-          .thenAnswer((_) async => [
-                createFakeProduct(
-                    id: 'p1', price: 100, costPrice: 90, isActive: true),
-                createFakeProduct(
-                    id: 'p2', price: 50, costPrice: 10, isActive: true),
-                createFakeProduct(
-                    id: 'p3', price: 30, costPrice: 15, isActive: false),
-              ]);
+      when(() => mockProductsDao.getAllProducts(any())).thenAnswer(
+        (_) async => [
+          createFakeProduct(
+            id: 'p1',
+            price: 100,
+            costPrice: 90,
+            isActive: true,
+          ),
+          createFakeProduct(id: 'p2', price: 50, costPrice: 10, isActive: true),
+          createFakeProduct(
+            id: 'p3',
+            price: 30,
+            costPrice: 15,
+            isActive: false,
+          ),
+        ],
+      );
 
       final suggestions = await service.getPriceSuggestions('store-1');
 
@@ -149,8 +157,9 @@ void main() {
     });
 
     test('returns empty list when no active products', () async {
-      when(() => mockProductsDao.getAllProducts(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockProductsDao.getAllProducts(any()),
+      ).thenAnswer((_) async => []);
 
       final suggestions = await service.getPriceSuggestions('store-1');
 
@@ -159,55 +168,57 @@ void main() {
 
     test('suggests increase for very low margin products', () async {
       // Product with 10% margin (cost=90, price=100)
-      when(() => mockProductsDao.getAllProducts(any()))
-          .thenAnswer((_) async => [
-                createFakeProduct(
-                  id: 'p1',
-                  price: 100,
-                  costPrice: 90,
-                  isActive: true,
-                ),
-              ]);
+      when(() => mockProductsDao.getAllProducts(any())).thenAnswer(
+        (_) async => [
+          createFakeProduct(
+            id: 'p1',
+            price: 100,
+            costPrice: 90,
+            isActive: true,
+          ),
+        ],
+      );
 
       final suggestions = await service.getPriceSuggestions('store-1');
 
       // Low margin product should get a suggestion to increase
       if (suggestions.isNotEmpty) {
-        expect(suggestions.first.suggestedPrice,
-            greaterThan(suggestions.first.currentPrice));
+        expect(
+          suggestions.first.suggestedPrice,
+          greaterThan(suggestions.first.currentPrice),
+        );
       }
     });
 
     test('suggests decrease for very high margin products', () async {
       // Product with 80% margin (cost=20, price=100)
-      when(() => mockProductsDao.getAllProducts(any()))
-          .thenAnswer((_) async => [
-                createFakeProduct(
-                  id: 'p1',
-                  price: 100,
-                  costPrice: 20,
-                  isActive: true,
-                ),
-              ]);
+      when(() => mockProductsDao.getAllProducts(any())).thenAnswer(
+        (_) async => [
+          createFakeProduct(
+            id: 'p1',
+            price: 100,
+            costPrice: 20,
+            isActive: true,
+          ),
+        ],
+      );
 
       final suggestions = await service.getPriceSuggestions('store-1');
 
       if (suggestions.isNotEmpty) {
-        expect(suggestions.first.suggestedPrice,
-            lessThan(suggestions.first.currentPrice));
+        expect(
+          suggestions.first.suggestedPrice,
+          lessThan(suggestions.first.currentPrice),
+        );
       }
     });
 
     test('skips products with zero price', () async {
-      when(() => mockProductsDao.getAllProducts(any()))
-          .thenAnswer((_) async => [
-                createFakeProduct(
-                  id: 'p1',
-                  price: 0,
-                  costPrice: 0,
-                  isActive: true,
-                ),
-              ]);
+      when(() => mockProductsDao.getAllProducts(any())).thenAnswer(
+        (_) async => [
+          createFakeProduct(id: 'p1', price: 0, costPrice: 0, isActive: true),
+        ],
+      );
 
       final suggestions = await service.getPriceSuggestions('store-1');
 
@@ -217,8 +228,9 @@ void main() {
 
   group('calculateImpact', () {
     test('returns zero impact when product not found', () async {
-      when(() => mockProductsDao.getProductById(any()))
-          .thenAnswer((_) async => null);
+      when(
+        () => mockProductsDao.getProductById(any()),
+      ).thenAnswer((_) async => null);
 
       final impact = await service.calculateImpact('p1', 100.0);
 
@@ -228,13 +240,10 @@ void main() {
     });
 
     test('calculates impact for valid product', () async {
-      when(() => mockProductsDao.getProductById(any()))
-          .thenAnswer((_) async => createFakeProduct(
-                id: 'p1',
-                price: 100,
-                costPrice: 60,
-                minQty: 5,
-              ));
+      when(() => mockProductsDao.getProductById(any())).thenAnswer(
+        (_) async =>
+            createFakeProduct(id: 'p1', price: 100, costPrice: 60, minQty: 5),
+      );
 
       final impact = await service.calculateImpact('p1', 110.0);
 
@@ -245,8 +254,9 @@ void main() {
 
   group('getElasticity', () {
     test('returns default when product not found', () async {
-      when(() => mockProductsDao.getProductById(any()))
-          .thenAnswer((_) async => null);
+      when(
+        () => mockProductsDao.getProductById(any()),
+      ).thenAnswer((_) async => null);
 
       final elasticity = await service.getElasticity('p1');
 
@@ -255,13 +265,10 @@ void main() {
     });
 
     test('returns inelastic for cheap essential products', () async {
-      when(() => mockProductsDao.getProductById(any()))
-          .thenAnswer((_) async => createFakeProduct(
-                id: 'p1',
-                name: 'Bread',
-                price: 5,
-                costPrice: 3,
-              ));
+      when(() => mockProductsDao.getProductById(any())).thenAnswer(
+        (_) async =>
+            createFakeProduct(id: 'p1', name: 'Bread', price: 5, costPrice: 3),
+      );
 
       final elasticity = await service.getElasticity('p1');
 
@@ -270,13 +277,14 @@ void main() {
     });
 
     test('returns elastic for expensive products', () async {
-      when(() => mockProductsDao.getProductById(any()))
-          .thenAnswer((_) async => createFakeProduct(
-                id: 'p1',
-                name: 'Luxury Item',
-                price: 200,
-                costPrice: 100,
-              ));
+      when(() => mockProductsDao.getProductById(any())).thenAnswer(
+        (_) async => createFakeProduct(
+          id: 'p1',
+          name: 'Luxury Item',
+          price: 200,
+          costPrice: 100,
+        ),
+      );
 
       final elasticity = await service.getElasticity('p1');
 
@@ -287,16 +295,17 @@ void main() {
 
   group('getBulkPricingOptions', () {
     test('returns options for inelastic products', () async {
-      when(() => mockProductsDao.getAllProducts(any()))
-          .thenAnswer((_) async => [
-                createFakeProduct(
-                  id: 'p1',
-                  name: 'Rice',
-                  price: 5,
-                  costPrice: 3,
-                  isActive: true,
-                ),
-              ]);
+      when(() => mockProductsDao.getAllProducts(any())).thenAnswer(
+        (_) async => [
+          createFakeProduct(
+            id: 'p1',
+            name: 'Rice',
+            price: 5,
+            costPrice: 3,
+            isActive: true,
+          ),
+        ],
+      );
 
       final options = await service.getBulkPricingOptions('store-1');
 
@@ -309,17 +318,20 @@ void main() {
     });
 
     test('returns sorted by safe increase percent', () async {
-      when(() => mockProductsDao.getAllProducts(any())).thenAnswer((_) async =>
-          [
-            createFakeProduct(id: 'p1', price: 5, costPrice: 3, isActive: true),
-            createFakeProduct(id: 'p2', price: 8, costPrice: 5, isActive: true),
-          ]);
+      when(() => mockProductsDao.getAllProducts(any())).thenAnswer(
+        (_) async => [
+          createFakeProduct(id: 'p1', price: 5, costPrice: 3, isActive: true),
+          createFakeProduct(id: 'p2', price: 8, costPrice: 5, isActive: true),
+        ],
+      );
 
       final options = await service.getBulkPricingOptions('store-1');
 
       if (options.length > 1) {
-        expect(options.first.safeIncreasePercent,
-            greaterThanOrEqualTo(options.last.safeIncreasePercent));
+        expect(
+          options.first.safeIncreasePercent,
+          greaterThanOrEqualTo(options.last.safeIncreasePercent),
+        );
       }
     });
   });

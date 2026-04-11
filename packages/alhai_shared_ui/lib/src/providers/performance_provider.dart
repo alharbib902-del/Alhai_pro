@@ -60,10 +60,8 @@ class PerformanceStats {
   final List<SalePerformance> sales;
   final DateTime sessionStart;
 
-  PerformanceStats({
-    this.sales = const [],
-    DateTime? sessionStart,
-  }) : sessionStart = sessionStart ?? DateTime.now();
+  PerformanceStats({this.sales = const [], DateTime? sessionStart})
+    : sessionStart = sessionStart ?? DateTime.now();
 
   /// عدد العمليات المكتملة
   int get completedSales => sales.where((s) => s.isCompleted).length;
@@ -131,8 +129,9 @@ class PerformanceNotifier extends StateNotifier<PerformanceStats> {
     // Trim old entries to prevent unbounded memory growth
     var updatedSales = [...state.sales, sale];
     if (updatedSales.length > _maxSalesHistory) {
-      updatedSales =
-          updatedSales.sublist(updatedSales.length - _maxSalesHistory);
+      updatedSales = updatedSales.sublist(
+        updatedSales.length - _maxSalesHistory,
+      );
     }
 
     state = state.copyWith(sales: updatedSales);
@@ -140,10 +139,7 @@ class PerformanceNotifier extends StateNotifier<PerformanceStats> {
   }
 
   /// إنهاء عملية البيع الحالية
-  void completeSale({
-    required int itemCount,
-    required double totalAmount,
-  }) {
+  void completeSale({required int itemCount, required double totalAmount}) {
     if (_currentSaleId == null) return;
 
     final updatedSales = state.sales.map((sale) {
@@ -167,10 +163,7 @@ class PerformanceNotifier extends StateNotifier<PerformanceStats> {
 
     final updatedSales = state.sales.map((sale) {
       if (sale.saleId == _currentSaleId) {
-        return sale.copyWith(
-          hasError: true,
-          errorMessage: errorMessage,
-        );
+        return sale.copyWith(hasError: true, errorMessage: errorMessage);
       }
       return sale;
     }).toList();
@@ -182,8 +175,9 @@ class PerformanceNotifier extends StateNotifier<PerformanceStats> {
   void cancelSale() {
     if (_currentSaleId == null) return;
 
-    final updatedSales =
-        state.sales.where((s) => s.saleId != _currentSaleId).toList();
+    final updatedSales = state.sales
+        .where((s) => s.saleId != _currentSaleId)
+        .toList();
     state = state.copyWith(sales: updatedSales);
     _currentSaleId = null;
   }
@@ -201,8 +195,8 @@ class PerformanceNotifier extends StateNotifier<PerformanceStats> {
 /// مزودات الأداء
 final performanceProvider =
     StateNotifierProvider<PerformanceNotifier, PerformanceStats>(
-  (ref) => PerformanceNotifier(),
-);
+      (ref) => PerformanceNotifier(),
+    );
 
 /// متوسط وقت البيع
 final avgSaleTimeProvider = Provider<double>((ref) {

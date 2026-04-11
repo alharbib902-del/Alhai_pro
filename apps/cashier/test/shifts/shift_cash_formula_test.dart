@@ -171,8 +171,10 @@ void main() {
 
       // Expected is 500 + 800 = 1300, NOT 500 + 800 + 2000
       expect(expected, closeTo(1300.0, 0.001));
-      expect(expected,
-          isNot(closeTo(openingCash + cashSalesOnly + cardSales, 0.001)));
+      expect(
+        expected,
+        isNot(closeTo(openingCash + cashSalesOnly + cardSales, 0.001)),
+      );
     });
   });
 
@@ -199,8 +201,10 @@ void main() {
 
       // Expected is 500 + 600 = 1100, NOT 500 + 600 + 1500
       expect(expected, closeTo(1100.0, 0.001));
-      expect(expected,
-          isNot(closeTo(openingCash + cashSalesOnly + creditSales, 0.001)));
+      expect(
+        expected,
+        isNot(closeTo(openingCash + cashSalesOnly + creditSales, 0.001)),
+      );
     });
   });
 
@@ -250,39 +254,27 @@ void main() {
   // ──────────────────────────────────────────────────────────────────────────
   group('variance = actual - expected', () {
     test('exact match: variance = 0', () {
-      final variance = calculateVariance(
-        actualCash: 1650,
-        expectedCash: 1650,
-      );
+      final variance = calculateVariance(actualCash: 1650, expectedCash: 1650);
 
       expect(variance, closeTo(0.0, 0.001));
     });
 
     test('surplus: actual > expected (positive variance)', () {
-      final variance = calculateVariance(
-        actualCash: 1700,
-        expectedCash: 1650,
-      );
+      final variance = calculateVariance(actualCash: 1700, expectedCash: 1650);
 
       expect(variance, closeTo(50.0, 0.001));
       expect(variance, greaterThan(0));
     });
 
     test('deficit: actual < expected (negative variance)', () {
-      final variance = calculateVariance(
-        actualCash: 1600,
-        expectedCash: 1650,
-      );
+      final variance = calculateVariance(actualCash: 1600, expectedCash: 1650);
 
       expect(variance, closeTo(-50.0, 0.001));
       expect(variance, lessThan(0));
     });
 
     test('large deficit', () {
-      final variance = calculateVariance(
-        actualCash: 500,
-        expectedCash: 2000,
-      );
+      final variance = calculateVariance(actualCash: 500, expectedCash: 2000);
 
       expect(variance, closeTo(-1500.0, 0.001));
     });

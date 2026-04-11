@@ -11,16 +11,13 @@ class OrdersDatasource {
   Future<Order> createOrder(CreateOrderParams params) async {
     // 1. Reserve stock for all items at once (atomic)
     final itemsJson = params.items
-        .map((item) => {
-              'product_id': item.productId,
-              'qty': item.qty,
-            })
+        .map((item) => {'product_id': item.productId, 'qty': item.qty})
         .toList();
 
-    final stockResult = await _client.rpc('reserve_online_stock', params: {
-      'p_store_id': params.storeId,
-      'p_items': itemsJson,
-    });
+    final stockResult = await _client.rpc(
+      'reserve_online_stock',
+      params: {'p_store_id': params.storeId, 'p_items': itemsJson},
+    );
 
     // Check if any items failed
     if (stockResult is Map && stockResult['success'] == false) {
@@ -75,9 +72,10 @@ class OrdersDatasource {
     } catch (e) {
       // Attempt to release reserved stock and clean up the order
       try {
-        await _client.rpc('release_reserved_stock', params: {
-          'p_order_id': orderId,
-        });
+        await _client.rpc(
+          'release_reserved_stock',
+          params: {'p_order_id': orderId},
+        );
       } catch (_) {
         // Best-effort stock release
       }
@@ -97,13 +95,15 @@ class OrdersDatasource {
         .timeout(AppConstants.networkTimeout);
 
     final items = ((data['order_items'] as List?) ?? [])
-        .map((row) => OrderItem(
-              productId: (row['product_id'] as String?) ?? '',
-              name: (row['product_name'] as String?) ?? '',
-              unitPrice: (row['unit_price'] as num).toDouble(),
-              qty: (row['qty'] as num).toInt(),
-              lineTotal: (row['total_price'] as num).toDouble(),
-            ))
+        .map(
+          (row) => OrderItem(
+            productId: (row['product_id'] as String?) ?? '',
+            name: (row['product_name'] as String?) ?? '',
+            unitPrice: (row['unit_price'] as num).toDouble(),
+            qty: (row['qty'] as num).toInt(),
+            lineTotal: (row['total_price'] as num).toDouble(),
+          ),
+        )
         .toList();
 
     return _orderFromRow(data, items);
@@ -134,13 +134,15 @@ class OrdersDatasource {
 
     final orders = (data as List).map((row) {
       final items = ((row['order_items'] as List?) ?? [])
-          .map((r) => OrderItem(
-                productId: (r['product_id'] as String?) ?? '',
-                name: (r['product_name'] as String?) ?? '',
-                unitPrice: (r['unit_price'] as num).toDouble(),
-                qty: (r['qty'] as num).toInt(),
-                lineTotal: (r['total_price'] as num).toDouble(),
-              ))
+          .map(
+            (r) => OrderItem(
+              productId: (r['product_id'] as String?) ?? '',
+              name: (r['product_name'] as String?) ?? '',
+              unitPrice: (r['unit_price'] as num).toDouble(),
+              qty: (r['qty'] as num).toInt(),
+              lineTotal: (r['total_price'] as num).toDouble(),
+            ),
+          )
           .toList();
 
       return _orderFromRow(row as Map<String, dynamic>, items);
@@ -157,16 +159,17 @@ class OrdersDatasource {
 
   Future<void> cancelOrder(String id, {String? reason}) async {
     // 1. Release reserved stock
-    await _client.rpc('release_reserved_stock', params: {
-      'p_order_id': id,
-    });
+    await _client.rpc('release_reserved_stock', params: {'p_order_id': id});
 
     // 2. Update order status
-    await _client.from('orders').update({
-      'status': 'cancelled',
-      'cancellation_reason': reason,
-      'cancelled_at': DateTime.now().toUtc().toIso8601String(),
-    }).eq('id', id);
+    await _client
+        .from('orders')
+        .update({
+          'status': 'cancelled',
+          'cancellation_reason': reason,
+          'cancelled_at': DateTime.now().toUtc().toIso8601String(),
+        })
+        .eq('id', id);
   }
 
   Order _orderFromRow(Map<String, dynamic> row, List<OrderItem> items) {

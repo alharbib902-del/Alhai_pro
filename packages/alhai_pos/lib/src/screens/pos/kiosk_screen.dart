@@ -51,36 +51,44 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
         return;
       }
 
-      final cats = await db.customSelect(
-        'SELECT DISTINCT category FROM products WHERE store_id = ? AND is_active = 1 AND category IS NOT NULL',
-        variables: [Variable.withString(storeId)],
-      ).get();
+      final cats = await db
+          .customSelect(
+            'SELECT DISTINCT category FROM products WHERE store_id = ? AND is_active = 1 AND category IS NOT NULL',
+            variables: [Variable.withString(storeId)],
+          )
+          .get();
 
-      final prods = await db.customSelect(
-        '''SELECT id, name, price, description, category, image_url, current_stock
+      final prods = await db
+          .customSelect(
+            '''SELECT id, name, price, description, category, image_url, current_stock
            FROM products WHERE store_id = ? AND is_active = 1 AND current_stock > 0
            ORDER BY category, name LIMIT 100''',
-        variables: [Variable.withString(storeId)],
-      ).get();
+            variables: [Variable.withString(storeId)],
+          )
+          .get();
 
       if (mounted) {
         setState(() {
           _categories = [
             const _KioskCategory(id: 'all', name: ''),
-            ...cats.map((r) => _KioskCategory(
-                  id: r.data['category'] as String,
-                  name: r.data['category'] as String,
-                )),
+            ...cats.map(
+              (r) => _KioskCategory(
+                id: r.data['category'] as String,
+                name: r.data['category'] as String,
+              ),
+            ),
           ];
           _products = prods
-              .map((r) => _KioskProduct(
-                    id: r.data['id'] as String,
-                    name: r.data['name'] as String,
-                    price: _toDouble(r.data['price']),
-                    description: r.data['description'] as String? ?? '',
-                    category: r.data['category'] as String? ?? '',
-                    imageUrl: r.data['image_url'] as String? ?? '',
-                  ))
+              .map(
+                (r) => _KioskProduct(
+                  id: r.data['id'] as String,
+                  name: r.data['name'] as String,
+                  price: _toDouble(r.data['price']),
+                  description: r.data['description'] as String? ?? '',
+                  category: r.data['category'] as String? ?? '',
+                  imageUrl: r.data['image_url'] as String? ?? '',
+                ),
+              )
               .toList();
           _isLoading = false;
         });
@@ -107,12 +115,14 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
         final idx = _cart.indexOf(existing.first);
         _cart[idx] = _cart[idx].copyWith(qty: _cart[idx].qty + 1);
       } else {
-        _cart.add(_CartItem(
-          productId: product.id,
-          name: product.name,
-          price: product.price,
-          qty: 1,
-        ));
+        _cart.add(
+          _CartItem(
+            productId: product.id,
+            name: product.name,
+            price: product.price,
+            qty: 1,
+          ),
+        );
       }
     });
   }
@@ -140,45 +150,58 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ..._cart.map((i) => Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                          child: Text(i.name,
-                              overflow: TextOverflow.ellipsis, maxLines: 1)),
-                      const SizedBox(width: AlhaiSpacing.xs),
-                      Text(l10n.qtyTimesPrice(
-                          i.qty, i.price.toStringAsFixed(0))),
-                    ],
-                  ),
-                )),
+            ..._cart.map(
+              (i) => Padding(
+                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        i.name,
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                      ),
+                    ),
+                    const SizedBox(width: AlhaiSpacing.xs),
+                    Text(l10n.qtyTimesPrice(i.qty, i.price.toStringAsFixed(0))),
+                  ],
+                ),
+              ),
+            ),
             const Divider(),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Flexible(
-                    child: Text(l10n.totalAmountLabel,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                        overflow: TextOverflow.ellipsis,
-                        maxLines: 1)),
+                  child: Text(
+                    l10n.totalAmountLabel,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
                 const SizedBox(width: AlhaiSpacing.xs),
-                Text(l10n.amountWithSar(_subtotal.toStringAsFixed(2)),
-                    style: const TextStyle(
-                        fontWeight: FontWeight.bold, color: AppColors.primary)),
+                Text(
+                  l10n.amountWithSar(_subtotal.toStringAsFixed(2)),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
+                ),
               ],
             ),
           ],
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx, false),
-              child: Text(l10n.edit)),
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.edit),
+          ),
           FilledButton(
-              onPressed: () => Navigator.pop(ctx, true),
-              child: Text(l10n.confirmOrder)),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.confirmOrder),
+          ),
         ],
       ),
     );
@@ -191,14 +214,18 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
       final now = DateTime.now();
 
       // Save as an order in held_invoices (kiosk orders)
-      final itemsJson = jsonEncode(_cart
-          .map((i) => {
+      final itemsJson = jsonEncode(
+        _cart
+            .map(
+              (i) => {
                 'productId': i.productId,
                 'name': i.name,
                 'qty': i.qty,
-                'price': i.price
-              })
-          .toList());
+                'price': i.price,
+              },
+            )
+            .toList(),
+      );
       await db.customStatement(
         '''INSERT INTO held_invoices (id, store_id, cashier_id, items, subtotal, discount, total, notes, created_at)
            VALUES (?, ?, 'kiosk', ?, ?, 0, ?, ?, ?)''',
@@ -209,7 +236,7 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
           _subtotal,
           _subtotal,
           l10n.kioskOrderNote,
-          now.toIso8601String()
+          now.toIso8601String(),
         ],
       );
 
@@ -228,8 +255,9 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(l10n.errorOccurred),
-              backgroundColor: Theme.of(context).colorScheme.error),
+            content: Text(l10n.errorOccurred),
+            backgroundColor: Theme.of(context).colorScheme.error,
+          ),
         );
       }
     }
@@ -276,28 +304,36 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
                   color: AlhaiColors.success,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.check_rounded,
-                    color: AppColors.textOnPrimary, size: 64),
+                child: const Icon(
+                  Icons.check_rounded,
+                  color: AppColors.textOnPrimary,
+                  size: 64,
+                ),
               ),
               const SizedBox(height: AlhaiSpacing.lg),
               Text(
                 l10n.orderReceived,
                 style: const TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: AlhaiColors.success),
+                  fontSize: 32,
+                  fontWeight: FontWeight.bold,
+                  color: AlhaiColors.success,
+                ),
               ),
               const SizedBox(height: AlhaiSpacing.sm),
               Text(
                 l10n.orderBeingPrepared,
-                style:
-                    TextStyle(fontSize: 18, color: Theme.of(context).hintColor),
+                style: TextStyle(
+                  fontSize: 18,
+                  color: Theme.of(context).hintColor,
+                ),
               ),
               const SizedBox(height: AlhaiSpacing.xl),
               const CircularProgressIndicator(color: AlhaiColors.success),
               const SizedBox(height: AlhaiSpacing.md),
-              Text(l10n.redirectingToHome,
-                  style: TextStyle(color: Theme.of(context).hintColor)),
+              Text(
+                l10n.redirectingToHome,
+                style: TextStyle(color: Theme.of(context).hintColor),
+              ),
             ],
           ),
         ),
@@ -310,18 +346,24 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
     return Container(
       color: AppColors.primary,
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.lg, vertical: AlhaiSpacing.md),
+        horizontal: AlhaiSpacing.lg,
+        vertical: AlhaiSpacing.md,
+      ),
       child: Row(
         children: [
-          const Icon(Icons.store_rounded,
-              color: AppColors.textOnPrimary, size: 28),
+          const Icon(
+            Icons.store_rounded,
+            color: AppColors.textOnPrimary,
+            size: 28,
+          ),
           const SizedBox(width: AlhaiSpacing.sm),
           Text(
             l10n.orderNow,
             style: const TextStyle(
-                color: AppColors.textOnPrimary,
-                fontSize: 22,
-                fontWeight: FontWeight.bold),
+              color: AppColors.textOnPrimary,
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const Spacer(),
           if (_cart.isNotEmpty)
@@ -343,13 +385,16 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
                   child: Container(
                     padding: const EdgeInsets.all(AlhaiSpacing.xxs),
                     decoration: const BoxDecoration(
-                        color: AlhaiColors.error, shape: BoxShape.circle),
+                      color: AlhaiColors.error,
+                      shape: BoxShape.circle,
+                    ),
                     child: Text(
                       '${_cart.length}',
                       style: const TextStyle(
-                          color: AppColors.textOnPrimary,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold),
+                        color: AppColors.textOnPrimary,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ),
@@ -368,7 +413,9 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         padding: const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+          horizontal: AlhaiSpacing.sm,
+          vertical: AlhaiSpacing.xs,
+        ),
         itemCount: _categories.length,
         separatorBuilder: (_, __) => const SizedBox(width: AlhaiSpacing.xs),
         itemBuilder: (ctx, i) {
@@ -379,7 +426,9 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
             child: AnimatedContainer(
               duration: AlhaiDurations.standard,
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.md, vertical: 6),
+                horizontal: AlhaiSpacing.md,
+                vertical: 6,
+              ),
               decoration: BoxDecoration(
                 color: isSelected
                     ? AppColors.primary
@@ -407,14 +456,24 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
     final prods = _filteredProducts;
     if (prods.isEmpty) {
       return Center(
-        child: Column(mainAxisSize: MainAxisSize.min, children: [
-          Icon(Icons.inventory_2_outlined,
-              size: 64, color: Theme.of(context).hintColor),
-          const SizedBox(height: AlhaiSpacing.sm),
-          Text(l10n.noProducts,
-              style:
-                  TextStyle(color: Theme.of(context).hintColor, fontSize: 16)),
-        ]),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.inventory_2_outlined,
+              size: 64,
+              color: Theme.of(context).hintColor,
+            ),
+            const SizedBox(height: AlhaiSpacing.sm),
+            Text(
+              l10n.noProducts,
+              style: TextStyle(
+                color: Theme.of(context).hintColor,
+                fontSize: 16,
+              ),
+            ),
+          ],
+        ),
       );
     }
 
@@ -434,8 +493,9 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
           onTap: () => _addToCart(p),
           child: Card(
             elevation: 2,
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
@@ -443,11 +503,15 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
                   child: Container(
                     decoration: BoxDecoration(
                       color: AppColors.primary.withValues(alpha: 0.08),
-                      borderRadius:
-                          const BorderRadius.vertical(top: Radius.circular(16)),
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(16),
+                      ),
                     ),
-                    child: const Icon(Icons.fastfood_rounded,
-                        size: 56, color: AppColors.primary),
+                    child: const Icon(
+                      Icons.fastfood_rounded,
+                      size: 56,
+                      color: AppColors.primary,
+                    ),
                   ),
                 ),
                 Padding(
@@ -455,11 +519,15 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(p.name,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 13),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis),
+                      Text(
+                        p.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 13,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
                       const SizedBox(height: AlhaiSpacing.xxs),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -467,26 +535,35 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
                           Text(
                             l10n.amountWithSar(p.price.toStringAsFixed(0)),
                             style: const TextStyle(
-                                color: AppColors.primary,
-                                fontWeight: FontWeight.bold),
+                              color: AppColors.primary,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           if (inCart != null)
                             Container(
                               padding: const EdgeInsets.symmetric(
-                                  horizontal: AlhaiSpacing.xs, vertical: 2),
+                                horizontal: AlhaiSpacing.xs,
+                                vertical: 2,
+                              ),
                               decoration: BoxDecoration(
                                 color: AlhaiColors.success,
                                 borderRadius: BorderRadius.circular(12),
                               ),
-                              child: Text('${inCart.qty}',
-                                  style: const TextStyle(
-                                      color: AppColors.textOnPrimary,
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 12)),
+                              child: Text(
+                                '${inCart.qty}',
+                                style: const TextStyle(
+                                  color: AppColors.textOnPrimary,
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 12,
+                                ),
+                              ),
                             )
                           else
-                            const Icon(Icons.add_circle_outline,
-                                color: AppColors.primary, size: 20),
+                            const Icon(
+                              Icons.add_circle_outline,
+                              color: AppColors.primary,
+                              size: 20,
+                            ),
                         ],
                       ),
                     ],
@@ -511,11 +588,15 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
               const Icon(Icons.shopping_cart_rounded, color: AppColors.primary),
               const SizedBox(width: AlhaiSpacing.xs),
               Expanded(
-                child: Text(l10n.orderCartWithCount(_cart.length),
-                    style: const TextStyle(
-                        fontSize: 16, fontWeight: FontWeight.bold),
-                    overflow: TextOverflow.ellipsis,
-                    maxLines: 1),
+                child: Text(
+                  l10n.orderCartWithCount(_cart.length),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  overflow: TextOverflow.ellipsis,
+                  maxLines: 1,
+                ),
               ),
             ],
           ),
@@ -523,11 +604,15 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
         Expanded(
           child: _cart.isEmpty
               ? Center(
-                  child: Text(l10n.cartEmpty,
-                      style: TextStyle(color: Theme.of(context).hintColor)))
+                  child: Text(
+                    l10n.cartEmpty,
+                    style: TextStyle(color: Theme.of(context).hintColor),
+                  ),
+                )
               : ListView.separated(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.md,
+                  ),
                   itemCount: _cart.length,
                   separatorBuilder: (_, __) => const Divider(height: 1),
                   itemBuilder: (ctx, i) {
@@ -535,28 +620,38 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
                     return ListTile(
                       title: Text(item.name),
                       subtitle: Text(
-                          l10n.pricePerUnit(item.price.toStringAsFixed(2))),
+                        l10n.pricePerUnit(item.price.toStringAsFixed(2)),
+                      ),
                       trailing: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
                             onPressed: () => _updateQty(item.productId, -1),
-                            icon: const Icon(Icons.remove_circle_outline,
-                                color: AlhaiColors.error),
+                            icon: const Icon(
+                              Icons.remove_circle_outline,
+                              color: AlhaiColors.error,
+                            ),
                           ),
-                          Text('${item.qty}',
-                              style: const TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold)),
+                          Text(
+                            '${item.qty}',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           IconButton(
                             onPressed: () => _updateQty(item.productId, 1),
-                            icon: const Icon(Icons.add_circle_outline,
-                                color: AlhaiColors.success),
+                            icon: const Icon(
+                              Icons.add_circle_outline,
+                              color: AlhaiColors.success,
+                            ),
                           ),
                           Text(
                             l10n.amountWithSar(item.total.toStringAsFixed(2)),
                             style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.primary),
+                              fontWeight: FontWeight.bold,
+                              color: AppColors.primary,
+                            ),
                           ),
                         ],
                       ),
@@ -580,15 +675,20 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(l10n.itemCount(_cart.length),
-                    style: TextStyle(
-                        color: Theme.of(context).hintColor, fontSize: 12)),
+                Text(
+                  l10n.itemCount(_cart.length),
+                  style: TextStyle(
+                    color: Theme.of(context).hintColor,
+                    fontSize: 12,
+                  ),
+                ),
                 Text(
                   l10n.amountWithSar(_subtotal.toStringAsFixed(2)),
                   style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary),
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
                 ),
               ],
             ),
@@ -602,7 +702,8 @@ class _KioskScreenState extends ConsumerState<KioskScreen> {
               style: FilledButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ),
@@ -653,9 +754,9 @@ class _CartItem {
   double get total => price * qty;
 
   _CartItem copyWith({int? qty}) => _CartItem(
-        productId: productId,
-        name: name,
-        price: price,
-        qty: qty ?? this.qty,
-      );
+    productId: productId,
+    name: name,
+    price: price,
+    qty: qty ?? this.qty,
+  );
 }

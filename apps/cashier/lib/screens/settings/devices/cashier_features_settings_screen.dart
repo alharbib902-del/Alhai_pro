@@ -53,9 +53,9 @@ class _CashierFeaturesSettingsScreenState
     setState(() => _isLoading = true);
     try {
       final storeId = ref.read(currentStoreIdProvider)!;
-      final settings = await (_db.select(_db.settingsTable)
-            ..where((s) => s.storeId.equals(storeId)))
-          .get();
+      final settings = await (_db.select(
+        _db.settingsTable,
+      )..where((s) => s.storeId.equals(storeId))).get();
 
       final settingsMap = <String, String>{};
       for (final s in settings) {
@@ -88,7 +88,9 @@ class _CashierFeaturesSettingsScreenState
     final storeId = ref.read(currentStoreIdProvider);
     if (storeId == null) return;
 
-    await _db.into(_db.settingsTable).insertOnConflictUpdate(
+    await _db
+        .into(_db.settingsTable)
+        .insertOnConflictUpdate(
           SettingsTableCompanion.insert(
             id: '${storeId}_$key',
             storeId: storeId,
@@ -159,7 +161,8 @@ class _CashierFeaturesSettingsScreenState
               ? const AppLoadingState()
               : SingleChildScrollView(
                   padding: EdgeInsets.all(
-                      isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+                    isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                  ),
                   child: _buildContent(isWideScreen, isDark),
                 ),
         ),
@@ -206,9 +209,7 @@ class _CashierFeaturesSettingsScreenState
                   onPressed: () {
                     if (kIsWeb) {
                       // Open in a new browser window for second monitor
-                      openCustomerDisplayWindow(
-                        '/#/customer-display',
-                      );
+                      openCustomerDisplayWindow('/#/customer-display');
                     } else {
                       // On non-web, navigate within the app
                       context.push('/customer-display');
@@ -225,9 +226,12 @@ class _CashierFeaturesSettingsScreenState
                     backgroundColor: AppColors.info,
                     foregroundColor: AppColors.textOnPrimary,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                      horizontal: AlhaiSpacing.md,
+                      vertical: AlhaiSpacing.xs,
+                    ),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
               ),
@@ -297,39 +301,42 @@ class _CashierFeaturesSettingsScreenState
             if (_enableNfcPayment) ...[
               const Divider(height: 1),
               // حالة أجهزة NFC
-              Consumer(builder: (context, ref, _) {
-                final capability = ref.watch(nfcCapabilityProvider);
-                return capability.when(
-                  data: (cap) => ListTile(
-                    leading: Icon(
-                      cap.isReady ? Icons.check_circle : Icons.warning,
-                      color:
-                          cap.isReady ? AppColors.success : AppColors.warning,
+              Consumer(
+                builder: (context, ref, _) {
+                  final capability = ref.watch(nfcCapabilityProvider);
+                  return capability.when(
+                    data: (cap) => ListTile(
+                      leading: Icon(
+                        cap.isReady ? Icons.check_circle : Icons.warning,
+                        color: cap.isReady
+                            ? AppColors.success
+                            : AppColors.warning,
+                      ),
+                      title: Text(
+                        cap.isReady ? 'NFC جاهز للاستخدام' : 'NFC غير متاح',
+                      ),
+                      subtitle: cap.unavailableReason != null
+                          ? Text(cap.unavailableReason!)
+                          : null,
+                      dense: true,
                     ),
-                    title: Text(
-                      cap.isReady ? 'NFC جاهز للاستخدام' : 'NFC غير متاح',
+                    loading: () => const ListTile(
+                      leading: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                      title: Text('جاري فحص NFC...'),
+                      dense: true,
                     ),
-                    subtitle: cap.unavailableReason != null
-                        ? Text(cap.unavailableReason!)
-                        : null,
-                    dense: true,
-                  ),
-                  loading: () => const ListTile(
-                    leading: SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(strokeWidth: 2),
+                    error: (_, __) => const ListTile(
+                      leading: Icon(Icons.error, color: Colors.red),
+                      title: Text('فشل فحص NFC'),
+                      dense: true,
                     ),
-                    title: Text('جاري فحص NFC...'),
-                    dense: true,
-                  ),
-                  error: (_, __) => const ListTile(
-                    leading: Icon(Icons.error, color: Colors.red),
-                    title: Text('فشل فحص NFC'),
-                    dense: true,
-                  ),
-                );
-              }),
+                  );
+                },
+              ),
               const Divider(height: 1),
               Padding(
                 padding: const EdgeInsets.symmetric(
@@ -356,8 +363,9 @@ class _CashierFeaturesSettingsScreenState
                             vertical: AlhaiSpacing.xxs,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.warning
-                                .withValues(alpha: isDark ? 0.2 : 0.1),
+                            color: AppColors.warning.withValues(
+                              alpha: isDark ? 0.2 : 0.1,
+                            ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(

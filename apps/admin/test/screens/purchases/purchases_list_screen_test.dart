@@ -31,37 +31,53 @@ void main() {
   /// Stub the paginated methods used by paginatedPurchasesProvider.
   void stubPurchasesMethods({List<PurchasesTableData>? data}) {
     final items = data ?? <PurchasesTableData>[];
-    when(() => mockPurchasesDao.getPurchasesPaginated(
-          any(),
-          offset: any(named: 'offset'),
-          limit: any(named: 'limit'),
-        )).thenAnswer((_) async => items);
-    when(() => mockPurchasesDao.getPurchasesByStatusPaginated(
-          any(),
-          any(),
-          offset: any(named: 'offset'),
-          limit: any(named: 'limit'),
-        )).thenAnswer((_) async => items);
-    when(() => mockPurchasesDao.getPurchasesCount(any(),
-        status: any(named: 'status'))).thenAnswer((_) async => items.length);
+    when(
+      () => mockPurchasesDao.getPurchasesPaginated(
+        any(),
+        offset: any(named: 'offset'),
+        limit: any(named: 'limit'),
+      ),
+    ).thenAnswer((_) async => items);
+    when(
+      () => mockPurchasesDao.getPurchasesByStatusPaginated(
+        any(),
+        any(),
+        offset: any(named: 'offset'),
+        limit: any(named: 'limit'),
+      ),
+    ).thenAnswer((_) async => items);
+    when(
+      () => mockPurchasesDao.getPurchasesCount(
+        any(),
+        status: any(named: 'status'),
+      ),
+    ).thenAnswer((_) async => items.length);
   }
 
   group('PurchasesListScreen', () {
     testWidgets('shows loading indicator initially', (tester) async {
       final completer1 = Completer<List<PurchasesTableData>>();
-      when(() => mockPurchasesDao.getPurchasesPaginated(
-            any(),
-            offset: any(named: 'offset'),
-            limit: any(named: 'limit'),
-          )).thenAnswer((_) => completer1.future);
-      when(() => mockPurchasesDao.getPurchasesCount(any(),
-          status: any(named: 'status'))).thenAnswer((_) async => 0);
-      when(() => mockPurchasesDao.getPurchasesByStatusPaginated(
-            any(),
-            any(),
-            offset: any(named: 'offset'),
-            limit: any(named: 'limit'),
-          )).thenAnswer((_) => Completer<List<PurchasesTableData>>().future);
+      when(
+        () => mockPurchasesDao.getPurchasesPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+        ),
+      ).thenAnswer((_) => completer1.future);
+      when(
+        () => mockPurchasesDao.getPurchasesCount(
+          any(),
+          status: any(named: 'status'),
+        ),
+      ).thenAnswer((_) async => 0);
+      when(
+        () => mockPurchasesDao.getPurchasesByStatusPaginated(
+          any(),
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+        ),
+      ).thenAnswer((_) => Completer<List<PurchasesTableData>>().future);
 
       await tester.pumpWidget(createTestWidget(const PurchasesListScreen()));
       await tester.pump();
@@ -91,7 +107,11 @@ void main() {
     testWidgets('displays purchases when data is available', (tester) async {
       final purchases = [
         createTestPurchase(
-            id: 'p-1', purchaseNumber: 'PUR-001', status: 'draft', total: 500),
+          id: 'p-1',
+          purchaseNumber: 'PUR-001',
+          status: 'draft',
+          total: 500,
+        ),
       ];
       stubPurchasesMethods(data: purchases);
 
@@ -102,9 +122,7 @@ void main() {
     });
 
     testWidgets('shows FAB for new purchase order', (tester) async {
-      final purchases = [
-        createTestPurchase(id: 'p-1'),
-      ];
+      final purchases = [createTestPurchase(id: 'p-1')];
       stubPurchasesMethods(data: purchases);
 
       await tester.pumpWidget(createTestWidget(const PurchasesListScreen()));

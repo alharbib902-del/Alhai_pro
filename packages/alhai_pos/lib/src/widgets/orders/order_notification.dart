@@ -47,15 +47,9 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
     _slideAnimation = Tween<Offset>(
       begin: const Offset(1, 0),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: AlhaiMotion.scaleUp,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: AlhaiMotion.scaleUp));
 
-    _fadeAnimation = Tween<double>(
-      begin: 0,
-      end: 1,
-    ).animate(_controller);
+    _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(_controller);
 
     _controller.forward();
 
@@ -135,8 +129,9 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            AppLocalizations.of(context)
-                                .newOrderNotification(widget.order.id),
+                            AppLocalizations.of(
+                              context,
+                            ).newOrderNotification(widget.order.id),
                             style: theme.textTheme.titleSmall?.copyWith(
                               fontWeight: FontWeight.bold,
                             ),
@@ -154,8 +149,10 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                       icon: const Icon(Icons.close, size: 20),
                       onPressed: _dismiss,
                       padding: EdgeInsets.zero,
-                      constraints:
-                          const BoxConstraints(minWidth: 48, minHeight: 48),
+                      constraints: const BoxConstraints(
+                        minWidth: 48,
+                        minHeight: 48,
+                      ),
                       tooltip: l10n.close,
                     ),
                   ],
@@ -190,8 +187,9 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.xs,
-                          vertical: AlhaiSpacing.xxs),
+                        horizontal: AlhaiSpacing.xs,
+                        vertical: AlhaiSpacing.xxs,
+                      ),
                       decoration: BoxDecoration(
                         color: widget.order.isPaid
                             ? AppColors.success.withValues(alpha: 0.2)
@@ -217,8 +215,9 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
                       ),
                     ),
                     Text(
-                      AppLocalizations.of(context)
-                          .priceSar(widget.order.total.toStringAsFixed(2)),
+                      AppLocalizations.of(
+                        context,
+                      ).priceSar(widget.order.total.toStringAsFixed(2)),
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                         color: theme.colorScheme.primary,
@@ -292,10 +291,7 @@ class _OrderNotificationPopupState extends State<OrderNotificationPopup>
 class OrdersBadge extends ConsumerWidget {
   final VoidCallback? onTap;
 
-  const OrdersBadge({
-    super.key,
-    this.onTap,
-  });
+  const OrdersBadge({super.key, this.onTap});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -328,10 +324,7 @@ class _AnimatedBadge extends StatefulWidget {
   final int count;
   final bool isNew;
 
-  const _AnimatedBadge({
-    required this.count,
-    required this.isNew,
-  });
+  const _AnimatedBadge({required this.count, required this.isNew});
 
   @override
   State<_AnimatedBadge> createState() => _AnimatedBadgeState();
@@ -353,10 +346,7 @@ class _AnimatedBadgeState extends State<_AnimatedBadge>
     _scaleAnimation = Tween<double>(
       begin: 1.0,
       end: 1.2,
-    ).animate(CurvedAnimation(
-      parent: _controller,
-      curve: AlhaiMotion.spring,
-    ));
+    ).animate(CurvedAnimation(parent: _controller, curve: AlhaiMotion.spring));
 
     if (widget.isNew) {
       _controller.repeat(reverse: true);

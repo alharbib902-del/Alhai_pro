@@ -79,10 +79,8 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
                   tween: Tween(begin: 0.0, end: 1.0),
                   duration: const Duration(milliseconds: 500),
                   curve: Curves.elasticOut,
-                  builder: (context, value, child) => Transform.scale(
-                    scale: value,
-                    child: child,
-                  ),
+                  builder: (context, value, child) =>
+                      Transform.scale(scale: value, child: child),
                   child: Icon(
                     Icons.check_circle_rounded,
                     size: 72,
@@ -93,8 +91,8 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
                 Text(
                   'تم تسليم الطلب بنجاح!',
                   style: Theme.of(dialogCtx).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -157,9 +155,11 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
 
       // Mark as delivered
       await ref.read(
-        updateDeliveryStatusProvider(
-          (id: widget.deliveryId, status: 'delivered', notes: null),
-        ).future,
+        updateDeliveryStatusProvider((
+          id: widget.deliveryId,
+          status: 'delivered',
+          notes: null,
+        )).future,
       );
 
       if (mounted) {
@@ -172,9 +172,9 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('حدث خطأ. حاول مرة أخرى')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('حدث خطأ. حاول مرة أخرى')));
       }
     } finally {
       if (mounted) setState(() => _isLoading = false);
@@ -186,10 +186,7 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('إثبات التسليم'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('إثبات التسليم'), centerTitle: true),
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
@@ -214,13 +211,15 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
                       decoration: BoxDecoration(
                         color: theme.colorScheme.surfaceContainerHighest,
                         borderRadius: BorderRadius.circular(AlhaiRadius.md),
-                        border:
-                            Border.all(color: theme.colorScheme.outlineVariant),
+                        border: Border.all(
+                          color: theme.colorScheme.outlineVariant,
+                        ),
                       ),
                       child: _photoBytes != null
                           ? ClipRRect(
-                              borderRadius:
-                                  BorderRadius.circular(AlhaiRadius.md),
+                              borderRadius: BorderRadius.circular(
+                                AlhaiRadius.md,
+                              ),
                               // cacheWidth/cacheHeight prevent decoding the full
                               // resolution image just to display a thumbnail.
                               // gaplessPlayback avoids a white flash when the
@@ -244,7 +243,8 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
                                 Text(
                                   'اضغط لالتقاط صورة',
                                   style: TextStyle(
-                                      color: theme.colorScheme.outline),
+                                    color: theme.colorScheme.outline,
+                                  ),
                                 ),
                               ],
                             ),
@@ -265,8 +265,9 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
                     decoration: BoxDecoration(
                       color: theme.colorScheme.surface,
                       borderRadius: BorderRadius.circular(AlhaiRadius.md),
-                      border:
-                          Border.all(color: theme.colorScheme.outlineVariant),
+                      border: Border.all(
+                        color: theme.colorScheme.outlineVariant,
+                      ),
                     ),
                     child: Stack(
                       children: [
@@ -358,8 +359,9 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
                       style: const TextStyle(fontSize: 16),
                     ),
                     style: FilledButton.styleFrom(
-                      padding:
-                          const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: AlhaiSpacing.md,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(AlhaiRadius.button),
                       ),

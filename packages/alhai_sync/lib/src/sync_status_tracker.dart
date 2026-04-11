@@ -78,9 +78,9 @@ class SyncStatusTracker {
     required AppDatabase db,
     required SyncMetadataDao metadataDao,
     required StockDeltasDao deltasDao,
-  })  : _metadataDao = metadataDao,
-        _syncQueueDao = db.syncQueueDao,
-        _deltasDao = deltasDao;
+  }) : _metadataDao = metadataDao,
+       _syncQueueDao = db.syncQueueDao,
+       _deltasDao = deltasDao;
 
   /// Stream لحالة المزامنة الشاملة
   Stream<SyncOverview> get overviewStream => _overviewController.stream;
@@ -117,20 +117,24 @@ class SyncStatusTracker {
 
       // بناء حالة كل جدول
       final tableStatuses = metadataList
-          .map((m) => TableSyncStatus(
-                tableName: m.tableName_,
-                lastPullAt: m.lastPullAt,
-                lastPushAt: m.lastPushAt,
-                pendingCount: m.pendingCount,
-                failedCount: m.failedCount,
-                isInitialSynced: m.isInitialSynced,
-                lastError: m.lastError,
-              ))
+          .map(
+            (m) => TableSyncStatus(
+              tableName: m.tableName_,
+              lastPullAt: m.lastPullAt,
+              lastPushAt: m.lastPushAt,
+              pendingCount: m.pendingCount,
+              failedCount: m.failedCount,
+              isInitialSynced: m.isInitialSynced,
+              lastError: m.lastError,
+            ),
+          )
           .toList();
 
       // حساب الإجمالي
-      final totalFailed =
-          tableStatuses.fold(0, (sum, t) => sum + t.failedCount);
+      final totalFailed = tableStatuses.fold(
+        0,
+        (sum, t) => sum + t.failedCount,
+      );
 
       // تحديد صحة المزامنة
       final health = _calculateHealth(

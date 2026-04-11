@@ -39,8 +39,9 @@ void main() {
     setupTestGetIt(mockDb: db);
 
     // Default stubs
-    when(() => productsDao.getProductById(any()))
-        .thenAnswer((_) async => testProduct);
+    when(
+      () => productsDao.getProductById(any()),
+    ).thenAnswer((_) async => testProduct);
     when(() => productsDao.updateProduct(any())).thenAnswer((_) async => true);
   });
 
@@ -53,7 +54,8 @@ void main() {
       suppressOverflowErrors();
 
       await tester.pumpWidget(
-          createTestWidget(const EditPriceScreen(productId: 'prod-1')));
+        createTestWidget(const EditPriceScreen(productId: 'prod-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(EditPriceScreen), findsOneWidget);
@@ -70,11 +72,13 @@ void main() {
 
       // Use Completer to hold the future without pending timers
       final completer = Completer<ProductsTableData?>();
-      when(() => productsDao.getProductById(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => productsDao.getProductById(any()),
+      ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(
-          createTestWidget(const EditPriceScreen(productId: 'prod-1')));
+        createTestWidget(const EditPriceScreen(productId: 'prod-1')),
+      );
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -92,11 +96,13 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      when(() => productsDao.getProductById(any()))
-          .thenAnswer((_) async => null);
+      when(
+        () => productsDao.getProductById(any()),
+      ).thenAnswer((_) async => null);
 
       await tester.pumpWidget(
-          createTestWidget(const EditPriceScreen(productId: 'nonexistent')));
+        createTestWidget(const EditPriceScreen(productId: 'nonexistent')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.search_off_rounded), findsOneWidget);
@@ -111,7 +117,8 @@ void main() {
       suppressOverflowErrors();
 
       await tester.pumpWidget(
-          createTestWidget(const EditPriceScreen(productId: 'prod-1')));
+        createTestWidget(const EditPriceScreen(productId: 'prod-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Price Comparison'), findsOneWidget);
@@ -127,7 +134,8 @@ void main() {
       suppressOverflowErrors();
 
       await tester.pumpWidget(
-          createTestWidget(const EditPriceScreen(productId: 'prod-1')));
+        createTestWidget(const EditPriceScreen(productId: 'prod-1')),
+      );
       await tester.pumpAndSettle();
 
       // The price input should be pre-filled with the current price
@@ -147,7 +155,8 @@ void main() {
       suppressOverflowErrors();
 
       await tester.pumpWidget(
-          createTestWidget(const EditPriceScreen(productId: 'prod-1')));
+        createTestWidget(const EditPriceScreen(productId: 'prod-1')),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.history_rounded), findsOneWidget);

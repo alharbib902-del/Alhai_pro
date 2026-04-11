@@ -110,13 +110,21 @@ class _SAUsersListScreenState extends ConsumerState<SAUsersListScreen> {
                       empty: SAEmptyState.users(),
                       columns: [
                         DataColumn2(
-                            label: Text(l10n.userName), size: ColumnSize.L),
+                          label: Text(l10n.userName),
+                          size: ColumnSize.L,
+                        ),
                         DataColumn2(
-                            label: Text(l10n.userEmail), size: ColumnSize.L),
+                          label: Text(l10n.userEmail),
+                          size: ColumnSize.L,
+                        ),
                         DataColumn2(
-                            label: Text(l10n.userRole), fixedWidth: 130),
+                          label: Text(l10n.userRole),
+                          fixedWidth: 130,
+                        ),
                         DataColumn2(
-                            label: Text(l10n.userLastActive), fixedWidth: 150),
+                          label: Text(l10n.userLastActive),
+                          fixedWidth: 150,
+                        ),
                         const DataColumn2(label: SizedBox(), fixedWidth: 56),
                       ],
                       source: _UsersDataSource(
@@ -174,42 +182,45 @@ class _UsersDataSource extends DataTableSource {
     final lastActive = user.lastActiveFormatted;
     final userId = user.id;
 
-    final onlineColor =
-        isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A);
+    final onlineColor = isDark
+        ? const Color(0xFF4ADE80)
+        : const Color(0xFF16A34A);
 
     return DataRow2(
       cells: [
-        DataCell(Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            CircleAvatar(
-              radius: 16,
-              backgroundColor: colorScheme.primaryContainer,
-              child: Text(
-                name.isNotEmpty ? name[0] : '?',
-                style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                      color: colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-              ),
-            ),
-            const SizedBox(width: AlhaiSpacing.xs),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(name),
-                if (isOnline)
-                  Text(
-                    'Online',
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      color: onlineColor,
-                    ),
+        DataCell(
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              CircleAvatar(
+                radius: 16,
+                backgroundColor: colorScheme.primaryContainer,
+                child: Text(
+                  name.isNotEmpty ? name[0] : '?',
+                  style: Theme.of(context).textTheme.labelMedium?.copyWith(
+                    color: colorScheme.primary,
+                    fontWeight: FontWeight.bold,
                   ),
-              ],
-            ),
-          ],
-        )),
+                ),
+              ),
+              const SizedBox(width: AlhaiSpacing.xs),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(name),
+                  if (isOnline)
+                    Text(
+                      'Online',
+                      style: theme.textTheme.labelSmall?.copyWith(
+                        color: onlineColor,
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        ),
         DataCell(Text(email)),
         DataCell(_RoleBadge(role: role)),
         DataCell(Text(lastActive)),
@@ -244,9 +255,9 @@ class _RoleBadge extends StatelessWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final (color, label) = switch (role) {
       'super_admin' => (
-          isDark ? const Color(0xFFF87171) : Colors.red,
-          'Super Admin'
-        ),
+        isDark ? const Color(0xFFF87171) : Colors.red,
+        'Super Admin',
+      ),
       'support' => (isDark ? const Color(0xFF60A5FA) : Colors.blue, 'Support'),
       'viewer' => (colorScheme.outline, 'Viewer'),
       _ => (colorScheme.outline, role),
@@ -265,9 +276,9 @@ class _RoleBadge extends StatelessWidget {
       child: Text(
         label,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.w600,
-            ),
+          color: color,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
   }

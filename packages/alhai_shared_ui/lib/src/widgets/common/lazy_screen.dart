@@ -107,10 +107,7 @@ class _LazyScreenState extends State<LazyScreen> {
           if (widget.errorBuilder != null) {
             return widget.errorBuilder!(snapshot.error!, _retry);
           }
-          return _DefaultErrorScreen(
-            error: snapshot.error!,
-            onRetry: _retry,
-          );
+          return _DefaultErrorScreen(error: snapshot.error!, onRetry: _retry);
         }
 
         // حالة النجاح
@@ -172,10 +169,7 @@ class _DefaultErrorScreen extends StatelessWidget {
   final Object error;
   final VoidCallback onRetry;
 
-  const _DefaultErrorScreen({
-    required this.error,
-    required this.onRetry,
-  });
+  const _DefaultErrorScreen({required this.error, required this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -308,10 +302,8 @@ class LazyRouteHelper {
     Future<Widget> Function() screenBuilder, {
     Widget? loadingWidget,
   }) {
-    return (context, state) => LazyScreen(
-          screenBuilder: screenBuilder,
-          loadingWidget: loadingWidget,
-        );
+    return (context, state) =>
+        LazyScreen(screenBuilder: screenBuilder, loadingWidget: loadingWidget);
   }
 }
 
@@ -360,8 +352,11 @@ class PosLoadingScreen extends StatelessWidget {
                     // Products Grid
                     Expanded(
                       child: ShimmerGrid(
-                        crossAxisCount: getResponsiveGridColumns(context,
-                            mobile: 2, desktop: 4),
+                        crossAxisCount: getResponsiveGridColumns(
+                          context,
+                          mobile: 2,
+                          desktop: 4,
+                        ),
                         itemCount: 9,
                       ),
                     ),
@@ -375,9 +370,7 @@ class PosLoadingScreen extends StatelessWidget {
               padding: const EdgeInsets.all(AlhaiSpacing.md),
               decoration: BoxDecoration(
                 border: BorderDirectional(
-                  end: BorderSide(
-                    color: Theme.of(context).dividerColor,
-                  ),
+                  end: BorderSide(color: Theme.of(context).dividerColor),
                 ),
               ),
               child: Column(
@@ -422,7 +415,8 @@ class ReportsLoadingScreen extends StatelessWidget {
                   (_) => Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.xs),
+                        horizontal: AlhaiSpacing.xs,
+                      ),
                       child: ShimmerPlaceholder.card(height: 100),
                     ),
                   ),
@@ -433,9 +427,7 @@ class ReportsLoadingScreen extends StatelessWidget {
               ShimmerPlaceholder.card(height: 200),
               SizedBox(height: AlhaiSpacing.lg),
               // Table
-              const Expanded(
-                child: ShimmerList(itemCount: 5, itemHeight: 48),
-              ),
+              const Expanded(child: ShimmerList(itemCount: 5, itemHeight: 48)),
             ],
           ),
         ),
@@ -488,9 +480,7 @@ class ProductsLoadingScreen extends StatelessWidget {
               ),
               SizedBox(height: AlhaiSpacing.md),
               // Products List
-              const Expanded(
-                child: ShimmerList(itemCount: 8, itemHeight: 80),
-              ),
+              const Expanded(child: ShimmerList(itemCount: 8, itemHeight: 80)),
             ],
           ),
         ),
@@ -522,7 +512,8 @@ class InventoryLoadingScreen extends StatelessWidget {
                   (_) => Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.xxs),
+                        horizontal: AlhaiSpacing.xxs,
+                      ),
                       child: ShimmerPlaceholder.card(height: 80),
                     ),
                   ),
@@ -533,9 +524,7 @@ class InventoryLoadingScreen extends StatelessWidget {
               ShimmerPlaceholder.card(height: 48),
               SizedBox(height: AlhaiSpacing.md),
               // Inventory List
-              const Expanded(
-                child: ShimmerList(itemCount: 6, itemHeight: 72),
-              ),
+              const Expanded(child: ShimmerList(itemCount: 6, itemHeight: 72)),
             ],
           ),
         ),
@@ -588,9 +577,7 @@ class CustomersLoadingScreen extends StatelessWidget {
               ),
               SizedBox(height: AlhaiSpacing.md),
               // Customers List
-              const Expanded(
-                child: ShimmerList(itemCount: 8, itemHeight: 72),
-              ),
+              const Expanded(child: ShimmerList(itemCount: 8, itemHeight: 72)),
             ],
           ),
         ),
@@ -615,9 +602,7 @@ class SuppliersLoadingScreen extends StatelessWidget {
               ShimmerPlaceholder.card(height: 48),
               SizedBox(height: AlhaiSpacing.md),
               // Suppliers List
-              const Expanded(
-                child: ShimmerList(itemCount: 6, itemHeight: 100),
-              ),
+              const Expanded(child: ShimmerList(itemCount: 6, itemHeight: 100)),
             ],
           ),
         ),

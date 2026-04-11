@@ -72,10 +72,7 @@ class ReceiptPdfGenerator {
     await _loadFonts();
 
     final pdf = pw.Document(
-      theme: pw.ThemeData.withFont(
-        base: _regularFont,
-        bold: _boldFont,
-      ),
+      theme: pw.ThemeData.withFont(base: _regularFont, bold: _boldFont),
     );
     final pageWidth = paperWidth * PdfPageFormat.mm;
 
@@ -93,10 +90,7 @@ class ReceiptPdfGenerator {
     pdf.addPage(
       pw.Page(
         pageFormat: PdfPageFormat(pageWidth, double.infinity, marginAll: 8),
-        theme: pw.ThemeData.withFont(
-          base: _regularFont,
-          bold: _boldFont,
-        ),
+        theme: pw.ThemeData.withFont(base: _regularFont, bold: _boldFont),
         textDirection: pw.TextDirection.rtl,
         build: (context) {
           return pw.Column(
@@ -172,8 +166,11 @@ class ReceiptPdfGenerator {
               _centeredText('شكراً لزيارتكم!', 11),
               _centeredText('نتطلع لخدمتكم مجدداً', 9),
               pw.SizedBox(height: 8),
-              _centeredText('Powered by Alhai POS', 7,
-                  color: PdfColors.grey600),
+              _centeredText(
+                'Powered by Alhai POS',
+                7,
+                color: PdfColors.grey600,
+              ),
               pw.SizedBox(height: 4),
             ],
           );
@@ -214,34 +211,38 @@ class ReceiptPdfGenerator {
         children: [
           pw.Expanded(
             flex: 4,
-            child: pw.Text('الصنف',
-                style:
-                    pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
-                textDirection: pw.TextDirection.rtl),
+            child: pw.Text(
+              'الصنف',
+              style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
+              textDirection: pw.TextDirection.rtl,
+            ),
           ),
           pw.SizedBox(
             width: 30,
-            child: pw.Text('الكمية',
-                style:
-                    pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
-                textAlign: pw.TextAlign.center,
-                textDirection: pw.TextDirection.rtl),
+            child: pw.Text(
+              'الكمية',
+              style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
+              textAlign: pw.TextAlign.center,
+              textDirection: pw.TextDirection.rtl,
+            ),
           ),
           pw.SizedBox(
             width: 40,
-            child: pw.Text('السعر',
-                style:
-                    pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
-                textAlign: pw.TextAlign.center,
-                textDirection: pw.TextDirection.rtl),
+            child: pw.Text(
+              'السعر',
+              style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
+              textAlign: pw.TextAlign.center,
+              textDirection: pw.TextDirection.rtl,
+            ),
           ),
           pw.SizedBox(
             width: 45,
-            child: pw.Text('المجموع',
-                style:
-                    pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
-                textAlign: pw.TextAlign.left,
-                textDirection: pw.TextDirection.rtl),
+            child: pw.Text(
+              'المجموع',
+              style: pw.TextStyle(fontSize: 9, fontWeight: pw.FontWeight.bold),
+              textAlign: pw.TextAlign.left,
+              textDirection: pw.TextDirection.rtl,
+            ),
           ),
         ],
       ),
@@ -298,8 +299,11 @@ class ReceiptPdfGenerator {
       children: [
         _totalRow('المجموع الفرعي', sale.subtotal.toStringAsFixed(2)),
         if (sale.discount > 0)
-          _totalRow('الخصم', '-${sale.discount.toStringAsFixed(2)}',
-              color: PdfColors.green700),
+          _totalRow(
+            'الخصم',
+            '-${sale.discount.toStringAsFixed(2)}',
+            color: PdfColors.green700,
+          ),
         _totalRow('ضريبة القيمة المضافة 15%', sale.tax.toStringAsFixed(2)),
         pw.SizedBox(height: 4),
         // خط مزدوج
@@ -316,14 +320,18 @@ class ReceiptPdfGenerator {
             children: [
               pw.Text(
                 'الإجمالي',
-                style:
-                    pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold),
+                style: pw.TextStyle(
+                  fontSize: 13,
+                  fontWeight: pw.FontWeight.bold,
+                ),
                 textDirection: pw.TextDirection.rtl,
               ),
               pw.Text(
                 '${sale.total.toStringAsFixed(2)} $_currency',
-                style:
-                    pw.TextStyle(fontSize: 13, fontWeight: pw.FontWeight.bold),
+                style: pw.TextStyle(
+                  fontSize: 13,
+                  fontWeight: pw.FontWeight.bold,
+                ),
                 textDirection: pw.TextDirection.rtl,
               ),
             ],
@@ -341,11 +349,15 @@ class ReceiptPdfGenerator {
       children: [
         _infoRow('طريقة الدفع', methodLabel),
         if (sale.amountReceived != null && sale.amountReceived! > 0)
-          _infoRow('المبلغ المدفوع',
-              '${sale.amountReceived!.toStringAsFixed(2)} $_currency'),
+          _infoRow(
+            'المبلغ المدفوع',
+            '${sale.amountReceived!.toStringAsFixed(2)} $_currency',
+          ),
         if (sale.changeAmount != null && sale.changeAmount! > 0)
           _infoRow(
-              'الباقي', '${sale.changeAmount!.toStringAsFixed(2)} $_currency'),
+            'الباقي',
+            '${sale.changeAmount!.toStringAsFixed(2)} $_currency',
+          ),
       ],
     );
   }
@@ -369,8 +381,11 @@ class ReceiptPdfGenerator {
 
   // ─── HELPERS ──────────────────────────────────────
 
-  static pw.Widget _centeredText(String text, double size,
-      {PdfColor color = PdfColors.black}) {
+  static pw.Widget _centeredText(
+    String text,
+    double size, {
+    PdfColor color = PdfColors.black,
+  }) {
     return pw.Text(
       text,
       style: pw.TextStyle(fontSize: size, color: color),
@@ -409,8 +424,11 @@ class ReceiptPdfGenerator {
     );
   }
 
-  static pw.Widget _totalRow(String label, String value,
-      {PdfColor color = PdfColors.black}) {
+  static pw.Widget _totalRow(
+    String label,
+    String value, {
+    PdfColor color = PdfColors.black,
+  }) {
     return pw.Padding(
       padding: const pw.EdgeInsets.symmetric(vertical: 1),
       child: pw.Row(
@@ -424,7 +442,10 @@ class ReceiptPdfGenerator {
           pw.Text(
             '$value $_currency',
             style: pw.TextStyle(
-                fontSize: 10, fontWeight: pw.FontWeight.bold, color: color),
+              fontSize: 10,
+              fontWeight: pw.FontWeight.bold,
+              color: color,
+            ),
             textDirection: pw.TextDirection.rtl,
           ),
         ],

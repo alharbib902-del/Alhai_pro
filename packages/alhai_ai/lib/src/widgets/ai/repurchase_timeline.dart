@@ -30,8 +30,9 @@ class RepurchaseTimeline extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -47,8 +48,11 @@ class RepurchaseTimeline extends StatelessWidget {
           // Header
           Row(
             children: [
-              const Icon(Icons.event_repeat_rounded,
-                  color: AppColors.primary, size: 20),
+              const Icon(
+                Icons.event_repeat_rounded,
+                color: AppColors.primary,
+                size: 20,
+              ),
               const SizedBox(width: AlhaiSpacing.xs),
               Text(
                 'تذكيرات إعادة الشراء', // Repurchase Reminders
@@ -61,7 +65,9 @@ class RepurchaseTimeline extends StatelessWidget {
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.xs, vertical: 3),
+                  horizontal: AlhaiSpacing.xs,
+                  vertical: 3,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.error.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
@@ -129,7 +135,7 @@ class _RepurchaseTimelineItem extends StatelessWidget {
       'سبتمبر',
       'أكتوبر',
       'نوفمبر',
-      'ديسمبر'
+      'ديسمبر',
     ];
     return '${date.day} ${months[date.month - 1]}';
   }
@@ -187,15 +193,15 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                   color: reminder.isOverdue
                       ? AppColors.error.withValues(alpha: 0.05)
                       : (isDark
-                          ? Colors.white.withValues(alpha: 0.03)
-                          : AppColors.grey50),
+                            ? Colors.white.withValues(alpha: 0.03)
+                            : AppColors.grey50),
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
                     color: reminder.isOverdue
                         ? AppColors.error.withValues(alpha: 0.15)
                         : (isDark
-                            ? Colors.white.withValues(alpha: 0.05)
-                            : AppColors.grey200),
+                              ? Colors.white.withValues(alpha: 0.05)
+                              : AppColors.grey200),
                   ),
                 ),
                 child: Column(
@@ -232,7 +238,9 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                         // Status badge
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: AlhaiSpacing.xs, vertical: 3),
+                            horizontal: AlhaiSpacing.xs,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
                             color: reminder.isOverdue
                                 ? AppColors.error.withValues(alpha: 0.1)
@@ -308,7 +316,8 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                           onPressed: onWhatsApp,
                           icon: const Icon(Icons.message_rounded, size: 14),
                           label: const Text(
-                              'إرسال تذكير واتساب'), // Send WhatsApp Reminder
+                            'إرسال تذكير واتساب',
+                          ), // Send WhatsApp Reminder
                           style: OutlinedButton.styleFrom(
                             foregroundColor: const Color(0xFF25D366),
                             side: const BorderSide(color: Color(0xFF25D366)),
@@ -317,7 +326,9 @@ class _RepurchaseTimelineItem extends StatelessWidget {
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 6),
                             textStyle: const TextStyle(
-                                fontSize: 11, fontWeight: FontWeight.w600),
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),

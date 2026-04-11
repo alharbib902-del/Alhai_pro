@@ -21,29 +21,36 @@ class CategoriesDao extends DatabaseAccessor<AppDatabase>
 
   /// الحصول على تصنيف بالمعرف
   Future<CategoriesTableData?> getCategoryById(String id) {
-    return (select(categoriesTable)..where((c) => c.id.equals(id)))
-        .getSingleOrNull();
+    return (select(
+      categoriesTable,
+    )..where((c) => c.id.equals(id))).getSingleOrNull();
   }
 
   /// الحصول على التصنيفات الرئيسية (بدون parent)
   Future<List<CategoriesTableData>> getRootCategories(String storeId) {
     return (select(categoriesTable)
-          ..where((c) =>
-              c.storeId.equals(storeId) &
-              c.parentId.isNull() &
-              c.isActive.equals(true))
+          ..where(
+            (c) =>
+                c.storeId.equals(storeId) &
+                c.parentId.isNull() &
+                c.isActive.equals(true),
+          )
           ..orderBy([(c) => OrderingTerm.asc(c.sortOrder)]))
         .get();
   }
 
   /// الحصول على التصنيفات الفرعية
   Future<List<CategoriesTableData>> getSubCategories(
-      String parentId, String storeId) {
+    String parentId,
+    String storeId,
+  ) {
     return (select(categoriesTable)
-          ..where((c) =>
-              c.storeId.equals(storeId) &
-              c.parentId.equals(parentId) &
-              c.isActive.equals(true))
+          ..where(
+            (c) =>
+                c.storeId.equals(storeId) &
+                c.parentId.equals(parentId) &
+                c.isActive.equals(true),
+          )
           ..orderBy([(c) => OrderingTerm.asc(c.sortOrder)]))
         .get();
   }
@@ -77,8 +84,9 @@ class CategoriesDao extends DatabaseAccessor<AppDatabase>
 
   /// حذف جميع التصنيفات للمتجر
   Future<int> deleteAllCategories(String storeId) {
-    return (delete(categoriesTable)..where((c) => c.storeId.equals(storeId)))
-        .go();
+    return (delete(
+      categoriesTable,
+    )..where((c) => c.storeId.equals(storeId))).go();
   }
 
   /// التحقق من أن تعيين parentId لن يُنشئ حلقة
@@ -126,10 +134,12 @@ class CategoriesDao extends DatabaseAccessor<AppDatabase>
     ).get();
 
     return result
-        .map((row) => CategoryWithProductCount(
-              category: categoriesTable.map(row.data),
-              productCount: row.data['product_count'] as int? ?? 0,
-            ))
+        .map(
+          (row) => CategoryWithProductCount(
+            category: categoriesTable.map(row.data),
+            productCount: row.data['product_count'] as int? ?? 0,
+          ),
+        )
         .toList();
   }
 

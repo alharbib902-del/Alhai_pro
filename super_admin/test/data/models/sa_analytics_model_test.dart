@@ -93,10 +93,7 @@ void main() {
   group('SARevenueData', () {
     test('fromJson parses complete data', () {
       // Arrange
-      final json = {
-        'month': '2024-06',
-        'revenue': 25000.75,
-      };
+      final json = {'month': '2024-06', 'revenue': 25000.75};
 
       // Act
       final data = SARevenueData.fromJson(json);

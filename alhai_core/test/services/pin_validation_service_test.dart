@@ -108,9 +108,7 @@ void main() {
       });
 
       test('returns false when no lock time set', () {
-        final result = PinValidationResult.failure(
-          errorMessage: 'Failed',
-        );
+        final result = PinValidationResult.failure(errorMessage: 'Failed');
 
         expect(result.isLocked, isFalse);
       });

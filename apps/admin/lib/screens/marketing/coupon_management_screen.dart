@@ -24,8 +24,9 @@ class CouponManagementScreen extends ConsumerWidget {
       children: [
         AppHeader(
           title: l10n.manageCoupons,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.cashCustomer,
@@ -83,11 +84,14 @@ class _CouponsContent extends ConsumerWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(l10n.couponsTitle,
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: textColor)),
+            Text(
+              l10n.couponsTitle,
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: textColor,
+              ),
+            ),
             FilledButton.icon(
               onPressed: () => _showAddCouponDialog(context, ref),
               icon: const Icon(Icons.add, size: 18),
@@ -100,31 +104,37 @@ class _CouponsContent extends ConsumerWidget {
         Row(
           children: [
             Expanded(
-                child: _buildStatCard(
-                    Icons.confirmation_number,
-                    l10n.couponsTitle,
-                    '${coupons.length}',
-                    AppColors.info,
-                    isDark,
-                    context)),
+              child: _buildStatCard(
+                Icons.confirmation_number,
+                l10n.couponsTitle,
+                '${coupons.length}',
+                AppColors.info,
+                isDark,
+                context,
+              ),
+            ),
             SizedBox(width: isMediumScreen ? 16 : 12),
             Expanded(
-                child: _buildStatCard(
-                    Icons.check_circle,
-                    l10n.active,
-                    '${coupons.where((c) => c.isActive).length}',
-                    AppColors.success,
-                    isDark,
-                    context)),
+              child: _buildStatCard(
+                Icons.check_circle,
+                l10n.active,
+                '${coupons.where((c) => c.isActive).length}',
+                AppColors.success,
+                isDark,
+                context,
+              ),
+            ),
             SizedBox(width: isMediumScreen ? 16 : 12),
             Expanded(
-                child: _buildStatCard(
-                    Icons.analytics,
-                    l10n.usages,
-                    '${coupons.fold(0, (sum, c) => sum + c.currentUses)}',
-                    AppColors.secondary,
-                    isDark,
-                    context)),
+              child: _buildStatCard(
+                Icons.analytics,
+                l10n.usages,
+                '${coupons.fold(0, (sum, c) => sum + c.currentUses)}',
+                AppColors.secondary,
+                isDark,
+                context,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: AlhaiSpacing.mdl),
@@ -145,37 +155,50 @@ class _CouponsContent extends ConsumerWidget {
               ),
               child: ListTile(
                 contentPadding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                  horizontal: AlhaiSpacing.md,
+                  vertical: AlhaiSpacing.xs,
+                ),
                 leading: Container(
                   padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
                     color: _getTypeColor(coupon.type).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(_getTypeIcon(coupon.type),
-                      color: _getTypeColor(coupon.type)),
+                  child: Icon(
+                    _getTypeIcon(coupon.type),
+                    color: _getTypeColor(coupon.type),
+                  ),
                 ),
                 title: Row(
                   children: [
-                    Text(coupon.code,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontFamily: 'monospace',
-                            color: textColor)),
+                    Text(
+                      coupon.code,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontFamily: 'monospace',
+                        color: textColor,
+                      ),
+                    ),
                     const SizedBox(width: AlhaiSpacing.xs),
                     if (!coupon.isActive || isExpired)
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 6, vertical: 2),
+                          horizontal: 6,
+                          vertical: 2,
+                        ),
                         decoration: BoxDecoration(
-                            color: AppColors.textSecondary,
-                            borderRadius: BorderRadius.circular(4)),
-                        child: Text(isExpired ? l10n.expired : l10n.deactivated,
-                            style: TextStyle(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onInverseSurface,
-                                fontSize: 10)),
+                          color: AppColors.textSecondary,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          isExpired ? l10n.expired : l10n.deactivated,
+                          style: TextStyle(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onInverseSurface,
+                            fontSize: 10,
+                          ),
+                        ),
                       ),
                   ],
                 ),
@@ -194,15 +217,17 @@ class _CouponsContent extends ConsumerWidget {
                               builder: (ctx) => AlertDialog(
                                 title: Text(l10n.confirm),
                                 content: Text(
-                                    '${l10n.deactivate} "${coupon.code}"?'),
+                                  '${l10n.deactivate} "${coupon.code}"?',
+                                ),
                                 actions: [
                                   TextButton(
-                                      onPressed: () =>
-                                          Navigator.pop(ctx, false),
-                                      child: Text(l10n.cancel)),
+                                    onPressed: () => Navigator.pop(ctx, false),
+                                    child: Text(l10n.cancel),
+                                  ),
                                   FilledButton(
-                                      onPressed: () => Navigator.pop(ctx, true),
-                                      child: Text(l10n.confirm)),
+                                    onPressed: () => Navigator.pop(ctx, true),
+                                    child: Text(l10n.confirm),
+                                  ),
                                 ],
                               ),
                             ).then((confirmed) {
@@ -224,8 +249,14 @@ class _CouponsContent extends ConsumerWidget {
     );
   }
 
-  Widget _buildStatCard(IconData icon, String label, String value, Color color,
-      bool isDark, BuildContext context) {
+  Widget _buildStatCard(
+    IconData icon,
+    String label,
+    String value,
+    Color color,
+    bool isDark,
+    BuildContext context,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
@@ -237,13 +268,21 @@ class _CouponsContent extends ConsumerWidget {
         children: [
           Icon(icon, color: color, size: 24),
           const SizedBox(height: AlhaiSpacing.xs),
-          Text(value,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, color: color, fontSize: 20)),
-          Text(label,
-              style: TextStyle(
-                  fontSize: 11,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant)),
+          Text(
+            value,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: color,
+              fontSize: 20,
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );
@@ -289,7 +328,10 @@ class _CouponsContent extends ConsumerWidget {
   }
 
   Future<void> _toggleActive(
-      WidgetRef ref, CouponsTableData coupon, bool value) async {
+    WidgetRef ref,
+    CouponsTableData coupon,
+    bool value,
+  ) async {
     try {
       final updated = CouponsTableData(
         id: coupon.id,
@@ -338,25 +380,31 @@ class _CouponsContent extends ConsumerWidget {
                 TextField(
                   controller: codeController,
                   decoration: InputDecoration(
-                      labelText: l10n.couponCode,
-                      prefixIcon: const Icon(Icons.confirmation_number)),
+                    labelText: l10n.couponCode,
+                    prefixIcon: const Icon(Icons.confirmation_number),
+                  ),
                   textCapitalization: TextCapitalization.characters,
                 ),
                 const SizedBox(height: AlhaiSpacing.sm),
                 DropdownButtonFormField<String>(
                   initialValue: type,
                   decoration: InputDecoration(
-                      labelText: l10n.couponTypeLabel,
-                      prefixIcon: const Icon(Icons.category)),
+                    labelText: l10n.couponTypeLabel,
+                    prefixIcon: const Icon(Icons.category),
+                  ),
                   items: [
                     DropdownMenuItem(
-                        value: 'percentage',
-                        child: Text(l10n.percentageDiscountOption)),
+                      value: 'percentage',
+                      child: Text(l10n.percentageDiscountOption),
+                    ),
                     DropdownMenuItem(
-                        value: 'fixed', child: Text(l10n.fixedDiscountOption)),
+                      value: 'fixed',
+                      child: Text(l10n.fixedDiscountOption),
+                    ),
                     DropdownMenuItem(
-                        value: 'freeDelivery',
-                        child: Text(l10n.freeDeliveryOption)),
+                      value: 'freeDelivery',
+                      child: Text(l10n.freeDeliveryOption),
+                    ),
                   ],
                   onChanged: (v) => setDialogState(() => type = v!),
                 ),
@@ -369,9 +417,11 @@ class _CouponsContent extends ConsumerWidget {
                       labelText: type == 'percentage'
                           ? l10n.percentageField
                           : l10n.theAmount,
-                      prefixIcon: Icon(type == 'percentage'
-                          ? Icons.percent
-                          : Icons.attach_money),
+                      prefixIcon: Icon(
+                        type == 'percentage'
+                            ? Icons.percent
+                            : Icons.attach_money,
+                      ),
                     ),
                   ),
                 ],
@@ -380,16 +430,19 @@ class _CouponsContent extends ConsumerWidget {
           ),
           actions: [
             TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(l10n.cancel)),
+              onPressed: () => Navigator.pop(context),
+              child: Text(l10n.cancel),
+            ),
             FilledButton(
               onPressed: () async {
                 if (codeController.text.isNotEmpty) {
                   try {
-                    await addCoupon(ref,
-                        code: codeController.text.toUpperCase(),
-                        type: type,
-                        value: double.tryParse(valueController.text) ?? 0);
+                    await addCoupon(
+                      ref,
+                      code: codeController.text.toUpperCase(),
+                      type: type,
+                      value: double.tryParse(valueController.text) ?? 0,
+                    );
                   } catch (e) {
                     debugPrint('Error adding coupon: $e');
                   }
@@ -416,31 +469,38 @@ class _CouponsContent extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(c.code,
-                style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    fontFamily: 'monospace',
-                    color: Theme.of(context).colorScheme.onSurface)),
+            Text(
+              c.code,
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                fontFamily: 'monospace',
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
             const SizedBox(height: AlhaiSpacing.md),
             _DetailRow(
-                label: l10n.couponTypeLabel,
-                value: _getTypeLabel(c, l10n),
-                isDark: isDarkTheme),
+              label: l10n.couponTypeLabel,
+              value: _getTypeLabel(c, l10n),
+              isDark: isDarkTheme,
+            ),
             _DetailRow(
-                label: l10n.minimumOrder,
-                value: '${c.minPurchase.toInt()} ${l10n.currency}',
-                isDark: isDarkTheme),
+              label: l10n.minimumOrder,
+              value: '${c.minPurchase.toInt()} ${l10n.currency}',
+              isDark: isDarkTheme,
+            ),
             _DetailRow(
-                label: l10n.usages,
-                value: '${c.currentUses}/${c.maxUses}',
-                isDark: isDarkTheme),
+              label: l10n.usages,
+              value: '${c.currentUses}/${c.maxUses}',
+              isDark: isDarkTheme,
+            ),
             _DetailRow(
-                label: l10n.expiryDate,
-                value: c.expiresAt != null
-                    ? '${c.expiresAt!.day}/${c.expiresAt!.month}/${c.expiresAt!.year}'
-                    : '-',
-                isDark: isDarkTheme),
+              label: l10n.expiryDate,
+              value: c.expiresAt != null
+                  ? '${c.expiresAt!.day}/${c.expiresAt!.month}/${c.expiresAt!.year}'
+                  : '-',
+              isDark: isDarkTheme,
+            ),
             const SizedBox(height: AlhaiSpacing.md),
             Row(
               children: [
@@ -451,19 +511,23 @@ class _CouponsContent extends ConsumerWidget {
                       _deleteCoupon(ref, c);
                     },
                     icon: const Icon(Icons.delete, color: AppColors.error),
-                    label: Text(l10n.delete,
-                        style: const TextStyle(color: AppColors.error)),
+                    label: Text(
+                      l10n.delete,
+                      style: const TextStyle(color: AppColors.error),
+                    ),
                   ),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
-                    child: FilledButton.icon(
-                  onPressed: () {},
-                  icon: const Icon(Icons.copy),
-                  label: Text(l10n.copyCode),
-                  style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.primary),
-                )),
+                  child: FilledButton.icon(
+                    onPressed: () {},
+                    icon: const Icon(Icons.copy),
+                    label: Text(l10n.copyCode),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                    ),
+                  ),
+                ),
               ],
             ),
           ],
@@ -477,8 +541,11 @@ class _DetailRow extends StatelessWidget {
   final String label;
   final String value;
   final bool isDark;
-  const _DetailRow(
-      {required this.label, required this.value, this.isDark = false});
+  const _DetailRow({
+    required this.label,
+    required this.value,
+    this.isDark = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -487,13 +554,19 @@ class _DetailRow extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(label,
-              style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant)),
-          Text(value,
-              style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  color: Theme.of(context).colorScheme.onSurface)),
+          Text(
+            label,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontWeight: FontWeight.w500,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
         ],
       ),
     );

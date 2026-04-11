@@ -133,10 +133,7 @@ class _AppScaffoldState extends State<AppScaffold> {
     if (widget.shortcuts != null && widget.shortcuts!.isNotEmpty) {
       scaffold = CallbackShortcuts(
         bindings: widget.shortcuts!,
-        child: Focus(
-          autofocus: true,
-          child: scaffold,
-        ),
+        child: Focus(autofocus: true, child: scaffold),
       );
     }
 
@@ -160,14 +157,16 @@ class _AppScaffoldState extends State<AppScaffold> {
 
   Widget _buildDesktopLayout({bool isTablet = false}) {
     final sidebarItems = widget.items
-        .map((item) => SidebarItem(
-              id: item.id,
-              label: item.label,
-              icon: item.icon,
-              activeIcon: item.activeIcon,
-              badge: item.badge,
-              badgeColor: item.badgeColor,
-            ))
+        .map(
+          (item) => SidebarItem(
+            id: item.id,
+            label: item.label,
+            icon: item.icon,
+            activeIcon: item.activeIcon,
+            badge: item.badge,
+            badgeColor: item.badgeColor,
+          ),
+        )
         .toList();
 
     return Scaffold(
@@ -186,8 +185,8 @@ class _AppScaffoldState extends State<AppScaffold> {
               onToggleCollapse: isTablet
                   ? null
                   : () => setState(() {
-                        _isSidebarCollapsed = !_isSidebarCollapsed;
-                      }),
+                      _isSidebarCollapsed = !_isSidebarCollapsed;
+                    }),
               header: widget.sidebarHeader,
               footer: widget.sidebarFooter,
             ),
@@ -209,9 +208,7 @@ class _AppScaffoldState extends State<AppScaffold> {
                   const StatusBanners(),
 
                   // Page Content
-                  Expanded(
-                    child: widget.body ?? _getCurrentPage(),
-                  ),
+                  Expanded(child: widget.body ?? _getCurrentPage()),
                 ],
               ),
             ),

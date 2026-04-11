@@ -7,25 +7,25 @@ part of 'refund.dart';
 // **************************************************************************
 
 _$RefundImpl _$$RefundImplFromJson(Map<String, dynamic> json) => _$RefundImpl(
-      id: json['id'] as String,
-      originalSaleId: json['originalSaleId'] as String,
-      storeId: json['storeId'] as String,
-      cashierId: json['cashierId'] as String,
-      customerId: json['customerId'] as String?,
-      status: $enumDecode(_$RefundStatusEnumMap, json['status']),
-      reason: $enumDecode(_$RefundReasonEnumMap, json['reason']),
-      method: $enumDecode(_$RefundMethodEnumMap, json['method']),
-      totalAmount: (json['totalAmount'] as num).toDouble(),
-      items: (json['items'] as List<dynamic>)
-          .map((e) => RefundItem.fromJson(e as Map<String, dynamic>))
-          .toList(),
-      notes: json['notes'] as String?,
-      supervisorId: json['supervisorId'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      completedAt: json['completedAt'] == null
-          ? null
-          : DateTime.parse(json['completedAt'] as String),
-    );
+  id: json['id'] as String,
+  originalSaleId: json['originalSaleId'] as String,
+  storeId: json['storeId'] as String,
+  cashierId: json['cashierId'] as String,
+  customerId: json['customerId'] as String?,
+  status: $enumDecode(_$RefundStatusEnumMap, json['status']),
+  reason: $enumDecode(_$RefundReasonEnumMap, json['reason']),
+  method: $enumDecode(_$RefundMethodEnumMap, json['method']),
+  totalAmount: (json['totalAmount'] as num).toDouble(),
+  items: (json['items'] as List<dynamic>)
+      .map((e) => RefundItem.fromJson(e as Map<String, dynamic>))
+      .toList(),
+  notes: json['notes'] as String?,
+  supervisorId: json['supervisorId'] as String?,
+  createdAt: DateTime.parse(json['createdAt'] as String),
+  completedAt: json['completedAt'] == null
+      ? null
+      : DateTime.parse(json['completedAt'] as String),
+);
 
 Map<String, dynamic> _$$RefundImplToJson(_$RefundImpl instance) =>
     <String, dynamic>{

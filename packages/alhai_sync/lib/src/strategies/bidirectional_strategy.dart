@@ -138,11 +138,11 @@ class BidirectionalStrategy {
     required AppDatabase db,
     required SyncMetadataDao metadataDao,
     ConflictResolver conflictResolver = const ConflictResolver(),
-  })  : _client = client,
-        _db = db,
-        _syncQueueDao = db.syncQueueDao,
-        _metadataDao = metadataDao,
-        _conflictResolver = conflictResolver;
+  }) : _client = client,
+       _db = db,
+       _syncQueueDao = db.syncQueueDao,
+       _metadataDao = metadataDao,
+       _conflictResolver = conflictResolver;
 
   /// تنفيذ المزامنة ثنائية الاتجاه لجميع الجداول
   Future<List<BidirectionalResult>> syncAll({
@@ -192,10 +192,16 @@ class BidirectionalStrategy {
 
       // تحديث بيانات المزامنة الوصفية
       final now = DateTime.now().toUtc();
-      await _metadataDao.updateLastPushAt(config.tableName, now,
-          syncCount: pushed);
-      await _metadataDao.updateLastPullAt(config.tableName, now,
-          syncCount: pulled);
+      await _metadataDao.updateLastPushAt(
+        config.tableName,
+        now,
+        syncCount: pushed,
+      );
+      await _metadataDao.updateLastPullAt(
+        config.tableName,
+        now,
+        syncCount: pulled,
+      );
       await _metadataDao.clearError(config.tableName);
     } catch (e) {
       errors.add('Bidirectional ${config.tableName}: $e');
@@ -219,8 +225,9 @@ class BidirectionalStrategy {
     int count = 0;
     final pushedIds = <String>{};
     final pendingItems = await _syncQueueDao.getPendingItems();
-    final tableItems =
-        pendingItems.where((i) => i.tableName_ == tableName).toList();
+    final tableItems = pendingItems
+        .where((i) => i.tableName_ == tableName)
+        .toList();
 
     for (final item in tableItems) {
       try {
@@ -236,10 +243,7 @@ class BidirectionalStrategy {
           case 'UPDATE':
             await _client
                 .from(tableName)
-                .upsert(
-                  mappedPayload,
-                  onConflict: 'id',
-                )
+                .upsert(mappedPayload, onConflict: 'id')
                 .timeout(const Duration(seconds: 30));
             break;
           case 'DELETE':
@@ -263,7 +267,8 @@ class BidirectionalStrategy {
 
         if (kDebugMode) {
           debugPrint(
-              'Bidirectional push DB error for $tableName/${item.recordId}: ${e.code} ${e.message}');
+            'Bidirectional push DB error for $tableName/${item.recordId}: ${e.code} ${e.message}',
+          );
         }
 
         // Duplicate key (23505): auto-resolve by converting to upsert
@@ -272,8 +277,10 @@ class BidirectionalStrategy {
             await _client
                 .from(tableName)
                 .upsert(
-                  _cleanPayload(_jsonConverter.toRemote(tableName, payload),
-                      tableName: tableName),
+                  _cleanPayload(
+                    _jsonConverter.toRemote(tableName, payload),
+                    tableName: tableName,
+                  ),
                   onConflict: 'id',
                 )
                 .timeout(const Duration(seconds: 30));
@@ -282,7 +289,8 @@ class BidirectionalStrategy {
             pushedIds.add(item.recordId);
             if (kDebugMode) {
               debugPrint(
-                  'Bidirectional: duplicate key auto-resolved via UPSERT for $tableName/${item.recordId}');
+                'Bidirectional: duplicate key auto-resolved via UPSERT for $tableName/${item.recordId}',
+              );
             }
             continue;
           } catch (_) {
@@ -291,9 +299,11 @@ class BidirectionalStrategy {
         }
 
         // Version conflict (409) or delete-update (record not found)
-        final isVersionConflict = e.code == '409' ||
+        final isVersionConflict =
+            e.code == '409' ||
             (e.message.contains('conflict') || e.message.contains('409'));
-        final isDeleteUpdate = e.code == 'PGRST116' ||
+        final isDeleteUpdate =
+            e.code == 'PGRST116' ||
             (e.message.contains('not found') || e.message.contains('0 rows'));
 
         if (isVersionConflict || isDeleteUpdate) {
@@ -327,24 +337,22 @@ class BidirectionalStrategy {
               final mappedPayload = mapColumnsToRemote(
                 tableName,
                 _cleanPayload(
-                    _jsonConverter.toRemote(
-                        tableName, resolution.resolvedData!),
-                    tableName: tableName),
+                  _jsonConverter.toRemote(tableName, resolution.resolvedData!),
+                  tableName: tableName,
+                ),
               );
               await _client
                   .from(tableName)
-                  .upsert(
-                    mappedPayload,
-                    onConflict: 'id',
-                  )
+                  .upsert(mappedPayload, onConflict: 'id')
                   .timeout(const Duration(seconds: 30));
               await _syncQueueDao.markAsSynced(item.id);
               count++;
               pushedIds.add(item.recordId);
               if (kDebugMode) {
                 debugPrint(
-                    'Bidirectional: conflict auto-resolved (${resolution.strategy.name}) '
-                    'for $tableName/${item.recordId}');
+                  'Bidirectional: conflict auto-resolved (${resolution.strategy.name}) '
+                  'for $tableName/${item.recordId}',
+                );
               }
               continue;
             } catch (_) {
@@ -368,13 +376,15 @@ class BidirectionalStrategy {
         await _syncQueueDao.markAsFailed(item.id, conflict.toJsonString());
         if (kDebugMode) {
           debugPrint(
-              'Bidirectional push timeout for $tableName/${item.recordId}');
+            'Bidirectional push timeout for $tableName/${item.recordId}',
+          );
         }
       } catch (e) {
         await _syncQueueDao.markAsFailed(item.id, e.toString());
         if (kDebugMode) {
           debugPrint(
-              'Bidirectional push failed for $tableName/${item.recordId}: $e');
+            'Bidirectional push failed for $tableName/${item.recordId}: $e',
+          );
         }
       }
     }
@@ -422,7 +432,8 @@ class BidirectionalStrategy {
         if (recordId != null && justPushedIds.contains(recordId)) {
           if (kDebugMode) {
             debugPrint(
-                'BidirectionalStrategy: skipping just-pushed record $tableName/$recordId');
+              'BidirectionalStrategy: skipping just-pushed record $tableName/$recordId',
+            );
           }
           continue;
         }
@@ -468,10 +479,9 @@ class BidirectionalStrategy {
 
     // التعامل مع الحذف الناعم
     if (serverRecord['deleted_at'] != null) {
-      await _db.customStatement(
-        'DELETE FROM $tableName WHERE id = ?',
-        [recordId],
-      );
+      await _db.customStatement('DELETE FROM $tableName WHERE id = ?', [
+        recordId,
+      ]);
       return _ApplyResult.pulled;
     }
 
@@ -481,16 +491,20 @@ class BidirectionalStrategy {
     // التحقق من وجود سجل محلي
     final List<QueryRow> localRows;
     if (timeCol != null) {
-      localRows = await _db.customSelect(
-        'SELECT synced_at, $timeCol as time_col FROM $tableName WHERE id = ?',
-        variables: [Variable.withString(recordId)],
-      ).get();
+      localRows = await _db
+          .customSelect(
+            'SELECT synced_at, $timeCol as time_col FROM $tableName WHERE id = ?',
+            variables: [Variable.withString(recordId)],
+          )
+          .get();
     } else {
       // جداول بدون أعمدة زمنية: نتحقق فقط من الوجود
-      localRows = await _db.customSelect(
-        'SELECT id FROM $tableName WHERE id = ?',
-        variables: [Variable.withString(recordId)],
-      ).get();
+      localRows = await _db
+          .customSelect(
+            'SELECT id FROM $tableName WHERE id = ?',
+            variables: [Variable.withString(recordId)],
+          )
+          .get();
     }
 
     if (localRows.isEmpty) {
@@ -528,10 +542,12 @@ class BidirectionalStrategy {
     // Fetch the full local record for merge/comparison
     Map<String, dynamic>? localData;
     try {
-      final fullLocalRows = await _db.customSelect(
-        'SELECT * FROM $tableName WHERE id = ?',
-        variables: [Variable.withString(recordId)],
-      ).get();
+      final fullLocalRows = await _db
+          .customSelect(
+            'SELECT * FROM $tableName WHERE id = ?',
+            variables: [Variable.withString(recordId)],
+          )
+          .get();
       if (fullLocalRows.isNotEmpty) {
         localData = fullLocalRows.first.data;
       }
@@ -554,15 +570,19 @@ class BidirectionalStrategy {
     if (resolution.resolved && resolution.resolvedData != null) {
       await _upsertRecord(tableName, resolution.resolvedData!);
       if (kDebugMode) {
-        debugPrint('BidirectionalStrategy: pull conflict auto-resolved '
-            '(${resolution.strategy.name}) for $tableName/$recordId');
+        debugPrint(
+          'BidirectionalStrategy: pull conflict auto-resolved '
+          '(${resolution.strategy.name}) for $tableName/$recordId',
+        );
       }
       return _ApplyResult.pulled;
     }
 
     if (kDebugMode) {
-      debugPrint('BidirectionalStrategy: pull conflict unresolved for '
-          '$tableName/$recordId (${resolution.description})');
+      debugPrint(
+        'BidirectionalStrategy: pull conflict unresolved for '
+        '$tableName/$recordId (${resolution.description})',
+      );
     }
     return _ApplyResult.conflict;
   }
@@ -665,7 +685,9 @@ class BidirectionalStrategy {
 
   /// إدراج/تحديث سجل محلياً
   Future<void> _upsertRecord(
-      String tableName, Map<String, dynamic> record) async {
+    String tableName,
+    Map<String, dynamic> record,
+  ) async {
     final columns = record.keys.toList();
     final placeholders = columns.map((_) => '?').join(', ');
     final updates = columns

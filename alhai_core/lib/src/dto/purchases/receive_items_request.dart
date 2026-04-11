@@ -8,9 +8,7 @@ part 'receive_items_request.g.dart';
 class ReceiveItemsRequest {
   final List<ReceivedItemRequest> items;
 
-  const ReceiveItemsRequest({
-    required this.items,
-  });
+  const ReceiveItemsRequest({required this.items});
 
   factory ReceiveItemsRequest.fromJson(Map<String, dynamic> json) =>
       _$ReceiveItemsRequestFromJson(json);
@@ -21,10 +19,12 @@ class ReceiveItemsRequest {
   factory ReceiveItemsRequest.fromDomain(List<ReceivedItem> items) {
     return ReceiveItemsRequest(
       items: items
-          .map((i) => ReceivedItemRequest(
-                productId: i.productId,
-                quantity: i.quantity,
-              ))
+          .map(
+            (i) => ReceivedItemRequest(
+              productId: i.productId,
+              quantity: i.quantity,
+            ),
+          )
           .toList(),
     );
   }
@@ -36,10 +36,7 @@ class ReceivedItemRequest {
   final String productId;
   final int quantity;
 
-  const ReceivedItemRequest({
-    required this.productId,
-    required this.quantity,
-  });
+  const ReceivedItemRequest({required this.productId, required this.quantity});
 
   factory ReceivedItemRequest.fromJson(Map<String, dynamic> json) =>
       _$ReceivedItemRequestFromJson(json);

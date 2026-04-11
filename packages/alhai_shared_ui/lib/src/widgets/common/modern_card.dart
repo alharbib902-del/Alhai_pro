@@ -237,7 +237,10 @@ class _ModernCardState extends ConsumerState<ModernCard>
   }
 
   Widget _buildGlassCard(
-      BuildContext context, bool isDark, double borderRadius) {
+    BuildContext context,
+    bool isDark,
+    double borderRadius,
+  ) {
     return Container(
       width: widget.width,
       height: widget.height,
@@ -308,7 +311,8 @@ class _ModernCardState extends ConsumerState<ModernCard>
             padding: widget.padding ?? const EdgeInsets.all(AppSizes.lg),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(borderRadius),
-              gradient: widget.gradient ??
+              gradient:
+                  widget.gradient ??
                   LinearGradient(
                     begin: AlignmentDirectional.topStart,
                     end: AlignmentDirectional.bottomEnd,
@@ -334,7 +338,10 @@ class _ModernCardState extends ConsumerState<ModernCard>
   }
 
   Widget _buildElevatedCard(
-      BuildContext context, bool isDark, double borderRadius) {
+    BuildContext context,
+    bool isDark,
+    double borderRadius,
+  ) {
     return Container(
       width: widget.width,
       height: widget.height,
@@ -353,7 +360,8 @@ class _ModernCardState extends ConsumerState<ModernCard>
             padding: widget.padding ?? const EdgeInsets.all(AppSizes.lg),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(borderRadius),
-              color: widget.backgroundColor ??
+              color:
+                  widget.backgroundColor ??
                   Theme.of(context).colorScheme.surface,
               border: widget.hasBorder
                   ? Border.all(
@@ -361,11 +369,13 @@ class _ModernCardState extends ConsumerState<ModernCard>
                       width: widget.borderWidth,
                     )
                   : null,
-              boxShadow: widget.customShadow ??
+              boxShadow:
+                  widget.customShadow ??
                   [
                     BoxShadow(
-                      color:
-                          Colors.black.withValues(alpha: isDark ? 0.3 : 0.08),
+                      color: Colors.black.withValues(
+                        alpha: isDark ? 0.3 : 0.08,
+                      ),
                       blurRadius: _isHovered ? 24 : 16,
                       offset: Offset(0, _isHovered ? 8 : 4),
                     ),
@@ -385,7 +395,10 @@ class _ModernCardState extends ConsumerState<ModernCard>
   }
 
   Widget _buildFlatCard(
-      BuildContext context, bool isDark, double borderRadius) {
+    BuildContext context,
+    bool isDark,
+    double borderRadius,
+  ) {
     return Container(
       width: widget.width,
       height: widget.height,
@@ -407,7 +420,7 @@ class _ModernCardState extends ConsumerState<ModernCard>
               color: _isHovered
                   ? (isDark ? AppColors.grey700 : AppColors.grey100)
                   : (widget.backgroundColor ??
-                      (isDark ? AppColors.grey800 : AppColors.grey50)),
+                        (isDark ? AppColors.grey800 : AppColors.grey50)),
               border: Border.all(
                 color: _isHovered
                     ? AppColors.primary.withValues(alpha: 0.3)
@@ -423,7 +436,10 @@ class _ModernCardState extends ConsumerState<ModernCard>
   }
 
   Widget _buildNormalCard(
-      BuildContext context, bool isDark, double borderRadius) {
+    BuildContext context,
+    bool isDark,
+    double borderRadius,
+  ) {
     return Container(
       width: widget.width,
       height: widget.height,
@@ -442,7 +458,8 @@ class _ModernCardState extends ConsumerState<ModernCard>
             padding: widget.padding ?? const EdgeInsets.all(AppSizes.lg),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(borderRadius),
-              color: widget.backgroundColor ??
+              color:
+                  widget.backgroundColor ??
                   Theme.of(context).colorScheme.surface,
               border: Border.all(
                 color: _isHovered
@@ -489,8 +506,9 @@ class _StatContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    final textColor =
-        hasGradient ? colorScheme.onPrimary : colorScheme.onSurface;
+    final textColor = hasGradient
+        ? colorScheme.onPrimary
+        : colorScheme.onSurface;
     final mutedColor = hasGradient
         ? colorScheme.onPrimary.withValues(alpha: 0.8)
         : colorScheme.onSurfaceVariant;
@@ -522,11 +540,7 @@ class _StatContent extends StatelessWidget {
                       : effectiveIconColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(AppSizes.radiusSm),
                 ),
-                child: Icon(
-                  icon,
-                  size: 20,
-                  color: effectiveIconColor,
-                ),
+                child: Icon(icon, size: 20, color: effectiveIconColor),
               ),
           ],
         ),
@@ -551,11 +565,11 @@ class _StatContent extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: change! >= 0
                       ? (hasGradient
-                          ? colorScheme.onPrimary.withValues(alpha: 0.2)
-                          : AppColors.successSurface)
+                            ? colorScheme.onPrimary.withValues(alpha: 0.2)
+                            : AppColors.successSurface)
                       : (hasGradient
-                          ? colorScheme.onPrimary.withValues(alpha: 0.2)
-                          : AppColors.errorSurface),
+                            ? colorScheme.onPrimary.withValues(alpha: 0.2)
+                            : AppColors.errorSurface),
                   borderRadius: BorderRadius.circular(4),
                 ),
                 child: Row(
@@ -566,11 +580,11 @@ class _StatContent extends StatelessWidget {
                       size: 14,
                       color: change! >= 0
                           ? (hasGradient
-                              ? colorScheme.onPrimary
-                              : AppColors.success)
+                                ? colorScheme.onPrimary
+                                : AppColors.success)
                           : (hasGradient
-                              ? colorScheme.onPrimary
-                              : AppColors.error),
+                                ? colorScheme.onPrimary
+                                : AppColors.error),
                     ),
                     SizedBox(width: AlhaiSpacing.xxxs),
                     Text(
@@ -590,10 +604,7 @@ class _StatContent extends StatelessWidget {
                 const SizedBox(width: AppSizes.xs),
                 Text(
                   changeLabel!,
-                  style: TextStyle(
-                    fontSize: 11,
-                    color: mutedColor,
-                  ),
+                  style: TextStyle(fontSize: 11, color: mutedColor),
                 ),
               ],
             ],

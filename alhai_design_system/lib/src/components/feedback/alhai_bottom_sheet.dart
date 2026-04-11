@@ -106,7 +106,8 @@ class AlhaiBottomSheet extends StatelessWidget {
     final keyboardBottom = context.safeKeyboardInsets.bottom;
 
     // Border radius
-    final borderRadius = borderRadiusOverride ??
+    final borderRadius =
+        borderRadiusOverride ??
         const BorderRadius.vertical(
           top: Radius.circular(AlhaiRadius.bottomSheet),
         );
@@ -130,10 +131,7 @@ class AlhaiBottomSheet extends StatelessWidget {
 
             // Content
             Flexible(
-              child: SingleChildScrollView(
-                padding: basePadding,
-                child: child,
-              ),
+              child: SingleChildScrollView(padding: basePadding, child: child),
             ),
 
             // Actions
@@ -196,12 +194,7 @@ class AlhaiBottomSheet extends StatelessWidget {
         children: [
           // Title
           if (title != null)
-            Expanded(
-              child: Text(
-                title!,
-                style: theme.textTheme.titleMedium,
-              ),
-            )
+            Expanded(child: Text(title!, style: theme.textTheme.titleMedium))
           else
             const Spacer(),
 

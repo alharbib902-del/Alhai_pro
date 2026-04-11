@@ -90,8 +90,9 @@ class _SessionTimeoutWrapperState extends ConsumerState<SessionTimeoutWrapper> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content:
-              Text('Session expired due to inactivity. Please log in again.'),
+          content: Text(
+            'Session expired due to inactivity. Please log in again.',
+          ),
         ),
       );
     });

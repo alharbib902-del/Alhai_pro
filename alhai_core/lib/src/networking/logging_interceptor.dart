@@ -101,10 +101,7 @@ class LoggingInterceptor extends Interceptor {
     logger.addBreadcrumb(
       '${response.statusCode} ${response.requestOptions.path}',
       category: 'http.response',
-      data: {
-        'duration': duration,
-        'statusCode': response.statusCode,
-      },
+      data: {'duration': duration, 'statusCode': response.statusCode},
     );
 
     handler.next(response);

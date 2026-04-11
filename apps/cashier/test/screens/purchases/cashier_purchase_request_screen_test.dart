@@ -22,8 +22,9 @@ void main() {
     //   _db.productsDao.searchProducts(query, storeId) on search
     //   _db.purchasesDao.insertPurchase() and insertPurchaseItems() on submit
     // No DB calls on init - it's a form screen.
-    when(() => productsDao.searchProducts(any(), any()))
-        .thenAnswer((_) async => []);
+    when(
+      () => productsDao.searchProducts(any(), any()),
+    ).thenAnswer((_) async => []);
 
     final db = setupMockDatabase(
       productsDao: productsDao,

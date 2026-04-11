@@ -70,48 +70,53 @@ class WhatsAppMessagesDao extends DatabaseAccessor<AppDatabase>
 
   /// تحديث إلى "جاري الرفع"
   Future<int> markAsUploading(String id) {
-    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id)))
-        .write(WhatsAppMessagesTableCompanion(
-      status: const Value('uploading'),
-      lastAttemptAt: Value(DateTime.now()),
-    ));
+    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id))).write(
+      WhatsAppMessagesTableCompanion(
+        status: const Value('uploading'),
+        lastAttemptAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   /// تحديث إلى "جاري الإرسال"
   Future<int> markAsSending(String id) {
-    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id)))
-        .write(WhatsAppMessagesTableCompanion(
-      status: const Value('sending'),
-      lastAttemptAt: Value(DateTime.now()),
-    ));
+    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id))).write(
+      WhatsAppMessagesTableCompanion(
+        status: const Value('sending'),
+        lastAttemptAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   /// تحديث إلى "تم الإرسال"
   Future<int> markAsSent(String id, String externalMsgId) {
-    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id)))
-        .write(WhatsAppMessagesTableCompanion(
-      status: const Value('sent'),
-      externalMsgId: Value(externalMsgId),
-      sentAt: Value(DateTime.now()),
-    ));
+    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id))).write(
+      WhatsAppMessagesTableCompanion(
+        status: const Value('sent'),
+        externalMsgId: Value(externalMsgId),
+        sentAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   /// تحديث إلى "تم التوصيل"
   Future<int> markAsDelivered(String id) {
-    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id)))
-        .write(WhatsAppMessagesTableCompanion(
-      status: const Value('delivered'),
-      deliveredAt: Value(DateTime.now()),
-    ));
+    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id))).write(
+      WhatsAppMessagesTableCompanion(
+        status: const Value('delivered'),
+        deliveredAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   /// تحديث إلى "تم القراءة"
   Future<int> markAsRead(String id) {
-    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id)))
-        .write(WhatsAppMessagesTableCompanion(
-      status: const Value('read'),
-      readAt: Value(DateTime.now()),
-    ));
+    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id))).write(
+      WhatsAppMessagesTableCompanion(
+        status: const Value('read'),
+        readAt: Value(DateTime.now()),
+      ),
+    );
   }
 
   /// تحديث إلى "فشل"
@@ -134,10 +139,9 @@ class WhatsAppMessagesDao extends DatabaseAccessor<AppDatabase>
 
   /// تحديث رابط الوسائط بعد الرفع
   Future<int> updateMediaUrl(String id, String mediaUrl) {
-    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id)))
-        .write(WhatsAppMessagesTableCompanion(
-      mediaUrl: Value(mediaUrl),
-    ));
+    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id))).write(
+      WhatsAppMessagesTableCompanion(mediaUrl: Value(mediaUrl)),
+    );
   }
 
   // ═══════════════════════════════════════════════════════
@@ -145,12 +149,10 @@ class WhatsAppMessagesDao extends DatabaseAccessor<AppDatabase>
   // ═══════════════════════════════════════════════════════
 
   /// البحث بمعرف الرسالة الخارجي (للـ webhooks)
-  Future<WhatsAppMessagesTableData?> findByExternalMsgId(
-    String externalMsgId,
-  ) {
-    return (select(whatsAppMessagesTable)
-          ..where((q) => q.externalMsgId.equals(externalMsgId)))
-        .getSingleOrNull();
+  Future<WhatsAppMessagesTableData?> findByExternalMsgId(String externalMsgId) {
+    return (select(
+      whatsAppMessagesTable,
+    )..where((q) => q.externalMsgId.equals(externalMsgId))).getSingleOrNull();
   }
 
   /// الحصول على رسائل عميل
@@ -245,20 +247,20 @@ class WhatsAppMessagesDao extends DatabaseAccessor<AppDatabase>
 
   /// إعادة تعيين رسالة فاشلة للمحاولة مرة أخرى
   Future<int> retryMessage(String id) {
-    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id)))
-        .write(const WhatsAppMessagesTableCompanion(
-      status: Value('pending'),
-      retryCount: Value(0),
-      lastError: Value(null),
-    ));
+    return (update(whatsAppMessagesTable)..where((q) => q.id.equals(id))).write(
+      const WhatsAppMessagesTableCompanion(
+        status: Value('pending'),
+        retryCount: Value(0),
+        lastError: Value(null),
+      ),
+    );
   }
 
   /// إلغاء رسائل معلّقة في دفعة
   Future<int> cancelBatch(String batchId) {
-    return (delete(whatsAppMessagesTable)
-          ..where(
-            (q) => q.batchId.equals(batchId) & q.status.equals('pending'),
-          ))
+    return (delete(
+          whatsAppMessagesTable,
+        )..where((q) => q.batchId.equals(batchId) & q.status.equals('pending')))
         .go();
   }
 
@@ -267,21 +269,18 @@ class WhatsAppMessagesDao extends DatabaseAccessor<AppDatabase>
     Duration olderThan = const Duration(days: 30),
   }) {
     final cutoff = DateTime.now().subtract(olderThan);
-    return (delete(whatsAppMessagesTable)
-          ..where(
-            (q) =>
-                q.status.isIn(['sent', 'delivered', 'read']) &
-                q.createdAt.isSmallerThanValue(cutoff),
-          ))
+    return (delete(whatsAppMessagesTable)..where(
+          (q) =>
+              q.status.isIn(['sent', 'delivered', 'read']) &
+              q.createdAt.isSmallerThanValue(cutoff),
+        ))
         .go();
   }
 
   /// تنظيف جميع الرسائل القديمة (مكتملة + فاشلة نهائياً)
   ///
   /// يحذف الرسائل الأقدم من [olderThan] التي لم تعد بحاجة لمعالجة.
-  Future<int> deleteOlderThan({
-    Duration olderThan = const Duration(days: 90),
-  }) {
+  Future<int> deleteOlderThan({Duration olderThan = const Duration(days: 90)}) {
     final cutoff = DateTime.now().subtract(olderThan);
     return customUpdate(
       '''DELETE FROM whatsapp_messages
@@ -318,11 +317,9 @@ class WhatsAppMessagesDao extends DatabaseAccessor<AppDatabase>
 
   /// الحصول على إحصائيات الحالات (لمرة واحدة)
   Future<Map<String, int>> getStatusCounts() async {
-    final result = await customSelect(
-      '''SELECT status, COUNT(*) as count
+    final result = await customSelect('''SELECT status, COUNT(*) as count
          FROM whatsapp_messages
-         GROUP BY status''',
-    ).get();
+         GROUP BY status''').get();
 
     final counts = <String, int>{};
     for (final row in result) {

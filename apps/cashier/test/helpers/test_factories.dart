@@ -368,8 +368,10 @@ ReturnsTableData createTestReturn({
 /// when(() => dao.watchAllByStore('test-store-1'))
 ///     .thenAnswer((_) => Stream.value(products));
 /// ```
-List<ProductsTableData> createTestProductList(int n,
-    {String storeId = 'test-store-1'}) {
+List<ProductsTableData> createTestProductList(
+  int n, {
+  String storeId = 'test-store-1',
+}) {
   return List.generate(n, (i) {
     return createTestProduct(
       id: 'prod-${i + 1}',
@@ -382,8 +384,10 @@ List<ProductsTableData> createTestProductList(int n,
 }
 
 /// Generate a list of [n] test sales with sequential IDs.
-List<SalesTableData> createTestSaleList(int n,
-    {String storeId = 'test-store-1'}) {
+List<SalesTableData> createTestSaleList(
+  int n, {
+  String storeId = 'test-store-1',
+}) {
   return List.generate(n, (i) {
     return createTestSale(
       id: 'sale-${i + 1}',
@@ -395,8 +399,10 @@ List<SalesTableData> createTestSaleList(int n,
 }
 
 /// Generate a list of [n] test categories with sequential IDs.
-List<CategoriesTableData> createTestCategoryList(int n,
-    {String storeId = 'test-store-1'}) {
+List<CategoriesTableData> createTestCategoryList(
+  int n, {
+  String storeId = 'test-store-1',
+}) {
   return List.generate(n, (i) {
     return createTestCategory(
       id: 'cat-${i + 1}',
@@ -408,8 +414,10 @@ List<CategoriesTableData> createTestCategoryList(int n,
 }
 
 /// Generate a list of [n] test customers with sequential IDs.
-List<CustomersTableData> createTestCustomerList(int n,
-    {String storeId = 'test-store-1'}) {
+List<CustomersTableData> createTestCustomerList(
+  int n, {
+  String storeId = 'test-store-1',
+}) {
   return List.generate(n, (i) {
     return createTestCustomer(
       id: 'cust-${i + 1}',

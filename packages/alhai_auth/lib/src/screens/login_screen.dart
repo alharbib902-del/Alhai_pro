@@ -141,8 +141,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             _error = null;
           });
           // حذف القفل من التخزين
-          SharedPreferences.getInstance()
-              .then((prefs) => prefs.remove(_lockoutKey));
+          SharedPreferences.getInstance().then(
+            (prefs) => prefs.remove(_lockoutKey),
+          );
         }
       } else {
         if (mounted) setState(() {}); // تحديث العد التنازلي في UI
@@ -248,7 +249,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       _storeName = result['store_name'] as String?;
       if (kDebugMode) {
         debugPrint(
-            '📧 Email: $_userEmail, Password: ${_userPassword != null ? "✅ found" : "❌ missing"}');
+          '📧 Email: $_userEmail, Password: ${_userPassword != null ? "✅ found" : "❌ missing"}',
+        );
       }
       _currentStep = LoginStep.otp;
       _error = null;
@@ -261,8 +263,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           content: Text('مرحباً ${_userName ?? ''}! أدخل رمز التحقق'),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
     }
@@ -312,14 +315,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       if (_userEmail != null) {
         try {
           debugPrint(
-              '🔐 Supabase sign-in: email=$_userEmail, password=${_userPassword != null ? "from DB" : "dev fallback"}');
+            '🔐 Supabase sign-in: email=$_userEmail, password=${_userPassword != null ? "from DB" : "dev fallback"}',
+          );
           final signInResult = await authNotifier.signInWithEmailPassword(
             email: _userEmail!,
             password: signInPassword,
           );
           supabaseSignedIn = signInResult.success;
           debugPrint(
-              '🔐 Supabase sign-in result: ${supabaseSignedIn ? "✅ SUCCESS" : "❌ FAILED: ${signInResult.error}"}');
+            '🔐 Supabase sign-in result: ${supabaseSignedIn ? "✅ SUCCESS" : "❌ FAILED: ${signInResult.error}"}',
+          );
         } catch (e) {
           debugPrint('⚠️ Supabase sign-in exception: $e');
         }
@@ -470,8 +475,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                                     Text(
                                       l10n.welcomeSubtitle,
                                       style: TextStyle(
-                                        color:
-                                            Colors.white.withValues(alpha: 0.9),
+                                        color: Colors.white.withValues(
+                                          alpha: 0.9,
+                                        ),
                                         fontSize: 16,
                                       ),
                                       textAlign: TextAlign.center,
@@ -502,10 +508,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           ),
         ),
         // الجانب الأيمن - نموذج تسجيل الدخول
-        Expanded(
-          flex: 4,
-          child: _buildLoginForm(),
-        ),
+        Expanded(flex: 4, child: _buildLoginForm()),
       ],
     );
   }
@@ -577,8 +580,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       color: Theme.of(context).colorScheme.surface,
       child: Center(
         child: SingleChildScrollView(
-          padding:
-              EdgeInsets.all(isMobile ? AlhaiSpacing.lg : AlhaiSpacing.xxxl),
+          padding: EdgeInsets.all(
+            isMobile ? AlhaiSpacing.lg : AlhaiSpacing.xxxl,
+          ),
           child: ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 400),
             child: Column(
@@ -590,7 +594,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     const LanguageSelectorButton(
-                        showLabel: true, compact: false),
+                      showLabel: true,
+                      compact: false,
+                    ),
                     IconButton(
                       onPressed: () =>
                           ref.read(themeProvider.notifier).toggleDarkMode(),
@@ -608,7 +614,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ),
 
                 SizedBox(
-                    height: isMobile ? AlhaiSpacing.lg : AlhaiSpacing.xxxl),
+                  height: isMobile ? AlhaiSpacing.lg : AlhaiSpacing.xxxl,
+                ),
 
                 // مؤشر الخطوات + العنوان
                 _buildStepHeader(),
@@ -627,7 +634,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 _buildStepActions(),
 
                 SizedBox(
-                    height: isMobile ? AlhaiSpacing.xl : AlhaiSpacing.xxxl),
+                  height: isMobile ? AlhaiSpacing.xl : AlhaiSpacing.xxxl,
+                ),
 
                 _buildFooter(),
               ],
@@ -652,8 +660,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         subtitle = l10n.enterPhoneToContinue;
       case LoginStep.otp:
         title = 'رمز التحقق';
-        subtitle =
-            _storeName != null ? '🏪 $_storeName' : 'أدخل رمز التحقق للمتابعة';
+        subtitle = _storeName != null
+            ? '🏪 $_storeName'
+            : 'أدخل رمز التحقق للمتابعة';
     }
 
     // مؤشر الخطوات (نقطتين)
@@ -665,8 +674,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             for (int i = 0; i < 2; i++) ...[
               if (i > 0) const SizedBox(width: AlhaiSpacing.xs),
               Container(
-                width:
-                    i == _currentStep.index ? AlhaiSpacing.lg : AlhaiSpacing.xs,
+                width: i == _currentStep.index
+                    ? AlhaiSpacing.lg
+                    : AlhaiSpacing.xs,
                 height: AlhaiSpacing.xs,
                 decoration: BoxDecoration(
                   color: i <= _currentStep.index
@@ -734,7 +744,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         // رقم الجوال (قراءة فقط)
         Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.md, vertical: 14),
+            horizontal: AlhaiSpacing.md,
+            vertical: 14,
+          ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(12),
             color: isDarkMode
@@ -758,17 +770,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   child: Text(
                     _phoneController.text,
                     style: TextStyle(
-                      color:
-                          isDarkMode ? Colors.white70 : AppColors.textSecondary,
+                      color: isDarkMode
+                          ? Colors.white70
+                          : AppColors.textSecondary,
                       fontSize: 16,
                     ),
                   ),
                 ),
               ),
-              Text(
-                _selectedCountry.flag,
-                style: const TextStyle(fontSize: 20),
-              ),
+              Text(_selectedCountry.flag, style: const TextStyle(fontSize: 20)),
             ],
           ),
         ),
@@ -814,14 +824,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.error_outline_rounded,
-                    color: AppColors.error, size: 20),
+                const Icon(
+                  Icons.error_outline_rounded,
+                  color: AppColors.error,
+                  size: 20,
+                ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 Expanded(
                   child: Text(
                     _error!,
-                    style:
-                        const TextStyle(color: AppColors.error, fontSize: 13),
+                    style: const TextStyle(
+                      color: AppColors.error,
+                      fontSize: 13,
+                    ),
                   ),
                 ),
               ],
@@ -837,13 +852,17 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             decoration: BoxDecoration(
               color: AppColors.success.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
-              border:
-                  Border.all(color: AppColors.success.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: AppColors.success.withValues(alpha: 0.3),
+              ),
             ),
             child: const Row(
               children: [
-                Icon(Icons.check_circle_outline_rounded,
-                    color: AppColors.success, size: 20),
+                Icon(
+                  Icons.check_circle_outline_rounded,
+                  color: AppColors.success,
+                  size: 20,
+                ),
                 SizedBox(width: AlhaiSpacing.xs),
                 Expanded(
                   child: Text(
@@ -886,8 +905,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.developer_mode_rounded,
-                    color: AppColors.info, size: 18),
+                const Icon(
+                  Icons.developer_mode_rounded,
+                  color: AppColors.info,
+                  size: 18,
+                ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 Expanded(
                   child: Text(
@@ -896,8 +918,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.copy_rounded,
-                      color: AppColors.info, size: 16),
+                  icon: const Icon(
+                    Icons.copy_rounded,
+                    color: AppColors.info,
+                    size: 16,
+                  ),
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),
                   onPressed: () {
@@ -908,7 +933,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         backgroundColor: AppColors.info,
                         behavior: SnackBarBehavior.floating,
                         shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                         duration: const Duration(seconds: 1),
                       ),
                     );
@@ -934,8 +960,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             backgroundColor: AppColors.primary,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             elevation: 0,
           ),
           child: _isLoading
@@ -943,12 +970,16 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   height: 20,
                   width: 20,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
                 )
               : Text(
                   l10n.next,
                   style: const TextStyle(
-                      fontSize: 16, fontWeight: FontWeight.bold),
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
         );
 
@@ -960,7 +991,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                   height: 20,
                   width: 20,
                   child: CircularProgressIndicator(
-                      strokeWidth: 2, color: Colors.white),
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
                 )
               : const Icon(Icons.verified_user_rounded),
           label: Text(
@@ -968,12 +1001,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           ),
           style: ElevatedButton.styleFrom(
-            backgroundColor:
-                _otpVerified ? AppColors.success : AppColors.primary,
+            backgroundColor: _otpVerified
+                ? AppColors.success
+                : AppColors.primary,
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-            shape:
-                RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
             elevation: 0,
           ),
         );
@@ -994,8 +1029,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.arrow_back_rounded,
-                  size: 16, color: AppColors.primary),
+              const Icon(
+                Icons.arrow_back_rounded,
+                size: 16,
+                color: AppColors.primary,
+              ),
               const SizedBox(width: 6),
               Text(
                 l10n.changeNumber,
@@ -1012,8 +1050,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget _buildFooter() {
     final l10n = AppLocalizations.of(context);
     final isDarkMode = Theme.of(context).brightness == Brightness.dark;
-    final footerTextColor =
-        isDarkMode ? Colors.white70 : AppColors.textSecondary;
+    final footerTextColor = isDarkMode
+        ? Colors.white70
+        : AppColors.textSecondary;
     final footerDotColor = isDarkMode ? Colors.white38 : AppColors.textTertiary;
 
     return Column(
@@ -1023,7 +1062,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             types: [
               FeatureBadgeType.fast,
               FeatureBadgeType.secure,
-              FeatureBadgeType.cloud
+              FeatureBadgeType.cloud,
             ],
             compact: true,
             light: false,
@@ -1038,8 +1077,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           children: [
             TextButton.icon(
               onPressed: () {},
-              icon: Icon(Icons.support_agent_rounded,
-                  size: 16, color: footerTextColor),
+              icon: Icon(
+                Icons.support_agent_rounded,
+                size: 16,
+                color: footerTextColor,
+              ),
               label: Text(
                 l10n.technicalSupport,
                 style: TextStyle(color: footerTextColor, fontSize: 13),
@@ -1048,8 +1090,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             Text('•', style: TextStyle(color: footerDotColor)),
             TextButton.icon(
               onPressed: () {},
-              icon: Icon(Icons.privacy_tip_outlined,
-                  size: 16, color: footerTextColor),
+              icon: Icon(
+                Icons.privacy_tip_outlined,
+                size: 16,
+                color: footerTextColor,
+              ),
               label: Text(
                 l10n.privacyPolicy,
                 style: TextStyle(color: footerTextColor, fontSize: 13),
@@ -1058,8 +1103,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             Text('•', style: TextStyle(color: footerDotColor)),
             TextButton.icon(
               onPressed: () {},
-              icon: Icon(Icons.description_outlined,
-                  size: 16, color: footerTextColor),
+              icon: Icon(
+                Icons.description_outlined,
+                size: 16,
+                color: footerTextColor,
+              ),
               label: Text(
                 l10n.termsAndConditions,
                 style: TextStyle(color: footerTextColor, fontSize: 13),
@@ -1077,8 +1125,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 ? null
                 : Border(
                     top: BorderSide(
-                        color:
-                            Theme.of(context).colorScheme.surfaceContainerLow)),
+                      color: Theme.of(context).colorScheme.surfaceContainerLow,
+                    ),
+                  ),
           ),
           child: Text(
             'جميع الحقوق محفوظة © 2026 نظام الحي الذكي',

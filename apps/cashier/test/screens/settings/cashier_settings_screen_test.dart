@@ -23,9 +23,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const CashierSettingsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const CashierSettingsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(CashierSettingsScreen), findsOneWidget);
@@ -39,9 +37,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const CashierSettingsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const CashierSettingsScreen()));
       await tester.pumpAndSettle();
 
       // Settings screen has a grid of setting tiles (icons)
@@ -75,9 +71,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const CashierSettingsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const CashierSettingsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(CashierSettingsScreen), findsOneWidget);
@@ -91,9 +85,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const CashierSettingsScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const CashierSettingsScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(CashierSettingsScreen), findsOneWidget);

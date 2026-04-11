@@ -29,7 +29,9 @@ abstract class ProductsRemoteDataSource {
 
   /// Updates an existing product
   Future<ProductResponse> updateProduct(
-      String id, UpdateProductRequest request);
+    String id,
+    UpdateProductRequest request,
+  );
 
   /// Deletes a product by ID
   Future<void> deleteProduct(String id);

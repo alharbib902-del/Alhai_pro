@@ -118,8 +118,10 @@ class _DistributorOrderDetailScreenState
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
             style: FilledButton.styleFrom(backgroundColor: confirmColor),
-            child: Text(confirmLabel,
-                style: const TextStyle(color: AppColors.textOnPrimary)),
+            child: Text(
+              confirmLabel,
+              style: const TextStyle(color: AppColors.textOnPrimary),
+            ),
           ),
         ],
       ),
@@ -194,10 +196,12 @@ class _DistributorOrderDetailScreenState
             newStatus == 'rejected'
                 ? l10n.distributorOrderRejected
                 : l10n.distributorOrderAccepted(
-                    NumberFormat('#,##0.00').format(total)),
+                    NumberFormat('#,##0.00').format(total),
+                  ),
           ),
-          backgroundColor:
-              newStatus == 'rejected' ? AppColors.error : AppColors.success,
+          backgroundColor: newStatus == 'rejected'
+              ? AppColors.error
+              : AppColors.success,
           duration: const Duration(seconds: 5),
           action: SnackBarAction(
             label: l10n.undo,
@@ -273,8 +277,10 @@ class _DistributorOrderDetailScreenState
                 order != null
                     ? l10n.distributorPurchaseOrder(order.purchaseNumber)
                     : '',
-                style:
-                    TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  color: cs.onSurface,
+                ),
               ),
               loading: () => const SizedBox.shrink(),
               error: (_, __) => const SizedBox.shrink(),
@@ -293,12 +299,18 @@ class _DistributorOrderDetailScreenState
               if (orderAsync.hasValue && orderAsync.value != null)
                 Container(
                   margin: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+                    horizontal: AlhaiSpacing.sm,
+                    vertical: AlhaiSpacing.xs,
+                  ),
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xxs),
+                    horizontal: AlhaiSpacing.sm,
+                    vertical: AlhaiSpacing.xxs,
+                  ),
                   decoration: BoxDecoration(
-                    color: _getStatusColor(orderAsync.value!.status, isDark)
-                        .withValues(alpha: isDark ? 0.2 : 0.12),
+                    color: _getStatusColor(
+                      orderAsync.value!.status,
+                      isDark,
+                    ).withValues(alpha: isDark ? 0.2 : 0.12),
                     borderRadius: BorderRadius.circular(AlhaiRadius.xl),
                   ),
                   child: Row(
@@ -309,8 +321,10 @@ class _DistributorOrderDetailScreenState
                         height: 8,
                         decoration: BoxDecoration(
                           shape: BoxShape.circle,
-                          color:
-                              _getStatusColor(orderAsync.value!.status, isDark),
+                          color: _getStatusColor(
+                            orderAsync.value!.status,
+                            isDark,
+                          ),
                         ),
                       ),
                       const SizedBox(width: 6),
@@ -319,8 +333,10 @@ class _DistributorOrderDetailScreenState
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color:
-                              _getStatusColor(orderAsync.value!.status, isDark),
+                          color: _getStatusColor(
+                            orderAsync.value!.status,
+                            isDark,
+                          ),
                         ),
                       ),
                     ],
@@ -330,21 +346,15 @@ class _DistributorOrderDetailScreenState
           ),
           body: orderAsync.when(
             loading: () => const TableSkeleton(rows: 6, columns: 4),
-            error: (e, _) => Center(
-              child: Text(l10n.distributorLoadError),
-            ),
+            error: (e, _) => Center(child: Text(l10n.distributorLoadError)),
             data: (order) {
               if (order == null) {
-                return Center(
-                  child: Text(l10n.distributorNoOrders),
-                );
+                return Center(child: Text(l10n.distributorNoOrders));
               }
 
               return itemsAsync.when(
                 loading: () => const TableSkeleton(rows: 4, columns: 4),
-                error: (e, _) => Center(
-                  child: Text(l10n.distributorLoadError),
-                ),
+                error: (e, _) => Center(child: Text(l10n.distributorLoadError)),
                 data: (items) {
                   // Sync controllers: dispose stale ones, prepare for current items
                   _syncControllers(items);
@@ -354,21 +364,24 @@ class _DistributorOrderDetailScreenState
                     padding: EdgeInsets.all(rPadding),
                     child: Center(
                       child: ConstrainedBox(
-                        constraints:
-                            const BoxConstraints(maxWidth: kMaxContentWidth),
+                        constraints: const BoxConstraints(
+                          maxWidth: kMaxContentWidth,
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             // Breadcrumb navigation
                             Padding(
                               padding: const EdgeInsets.only(
-                                  bottom: AlhaiSpacing.md),
+                                bottom: AlhaiSpacing.md,
+                              ),
                               child: Row(
                                 children: [
                                   InkWell(
                                     onTap: () => context.go('/orders'),
-                                    borderRadius:
-                                        BorderRadius.circular(AlhaiRadius.xs),
+                                    borderRadius: BorderRadius.circular(
+                                      AlhaiRadius.xs,
+                                    ),
                                     child: Text(
                                       l10n.distributorOrders,
                                       style: const TextStyle(
@@ -380,7 +393,8 @@ class _DistributorOrderDetailScreenState
                                   ),
                                   Padding(
                                     padding: const EdgeInsets.symmetric(
-                                        horizontal: 8),
+                                      horizontal: 8,
+                                    ),
                                     child: Icon(
                                       Icons.chevron_right,
                                       size: 18,
@@ -402,9 +416,10 @@ class _DistributorOrderDetailScreenState
                             // Order Header
                             _buildOrderHeader(order, isDark, isMedium, l10n),
                             SizedBox(
-                                height: isMedium
-                                    ? AlhaiSpacing.lg
-                                    : AlhaiSpacing.md),
+                              height: isMedium
+                                  ? AlhaiSpacing.lg
+                                  : AlhaiSpacing.md,
+                            ),
 
                             // Items
                             if (isWide)
@@ -412,9 +427,10 @@ class _DistributorOrderDetailScreenState
                             else
                               _buildItemsCards(items, isDark, l10n),
                             SizedBox(
-                                height: isMedium
-                                    ? AlhaiSpacing.lg
-                                    : AlhaiSpacing.md),
+                              height: isMedium
+                                  ? AlhaiSpacing.lg
+                                  : AlhaiSpacing.md,
+                            ),
 
                             // Total & Notes
                             if (isWide)
@@ -422,13 +438,19 @@ class _DistributorOrderDetailScreenState
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Expanded(
-                                      flex: 3,
-                                      child: _buildNotesSection(isDark, l10n)),
+                                    flex: 3,
+                                    child: _buildNotesSection(isDark, l10n),
+                                  ),
                                   const SizedBox(width: AlhaiSpacing.lg),
                                   Expanded(
-                                      flex: 2,
-                                      child: _buildTotalSection(
-                                          order, total, isDark, l10n)),
+                                    flex: 2,
+                                    child: _buildTotalSection(
+                                      order,
+                                      total,
+                                      isDark,
+                                      l10n,
+                                    ),
+                                  ),
                                 ],
                               )
                             else ...[
@@ -442,7 +464,11 @@ class _DistributorOrderDetailScreenState
                             if (order.status == 'sent' ||
                                 order.status == 'pending')
                               _buildActionButtons(
-                                  total, isDark, isMedium, l10n),
+                                total,
+                                isDark,
+                                isMedium,
+                                l10n,
+                              ),
                             const SizedBox(height: AlhaiSpacing.xl),
                           ],
                         ),
@@ -458,10 +484,16 @@ class _DistributorOrderDetailScreenState
     );
   }
 
-  Widget _buildOrderHeader(DistributorOrder order, bool isDark, bool isMedium,
-      AppLocalizations? l10n) {
-    final dateFormatted =
-        DateFormat('yyyy/MM/dd - HH:mm', 'ar').format(order.createdAt);
+  Widget _buildOrderHeader(
+    DistributorOrder order,
+    bool isDark,
+    bool isMedium,
+    AppLocalizations? l10n,
+  ) {
+    final dateFormatted = DateFormat(
+      'yyyy/MM/dd - HH:mm',
+      'ar',
+    ).format(order.createdAt);
 
     return Container(
       padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
@@ -477,13 +509,17 @@ class _DistributorOrderDetailScreenState
               Container(
                 padding: const EdgeInsets.all(AlhaiSpacing.xs),
                 decoration: BoxDecoration(
-                  color:
-                      AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
+                  color: AppColors.primary.withValues(
+                    alpha: isDark ? 0.2 : 0.1,
+                  ),
                   borderRadius: BorderRadius.circular(AlhaiRadius.md),
                 ),
                 child: ExcludeSemantics(
-                  child: const Icon(Icons.store_rounded,
-                      color: AppColors.primary, size: 24),
+                  child: const Icon(
+                    Icons.store_rounded,
+                    color: AppColors.primary,
+                    size: 24,
+                  ),
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
@@ -523,8 +559,11 @@ class _DistributorOrderDetailScreenState
             child: Row(
               children: [
                 ExcludeSemantics(
-                  child: const Icon(Icons.receipt_long_rounded,
-                      color: AppColors.info, size: 20),
+                  child: const Icon(
+                    Icons.receipt_long_rounded,
+                    color: AppColors.info,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 10),
                 Text(
@@ -552,7 +591,10 @@ class _DistributorOrderDetailScreenState
   }
 
   Widget _buildItemsTable(
-      List<DistributorOrderItem> items, bool isDark, AppLocalizations? l10n) {
+    List<DistributorOrderItem> items,
+    bool isDark,
+    AppLocalizations? l10n,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
@@ -569,13 +611,17 @@ class _DistributorOrderDetailScreenState
                 Container(
                   padding: const EdgeInsets.all(AlhaiSpacing.xs),
                   decoration: BoxDecoration(
-                    color: AppColors.secondary
-                        .withValues(alpha: isDark ? 0.2 : 0.1),
+                    color: AppColors.secondary.withValues(
+                      alpha: isDark ? 0.2 : 0.1,
+                    ),
                     borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                   ),
                   child: ExcludeSemantics(
-                    child: const Icon(Icons.list_alt_rounded,
-                        color: AppColors.secondary, size: 20),
+                    child: const Icon(
+                      Icons.list_alt_rounded,
+                      color: AppColors.secondary,
+                      size: 20,
+                    ),
                   ),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
@@ -589,11 +635,14 @@ class _DistributorOrderDetailScreenState
                 ),
                 const Spacer(),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                    color:
-                        AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
+                    color: AppColors.primary.withValues(
+                      alpha: isDark ? 0.2 : 0.1,
+                    ),
                     borderRadius: BorderRadius.circular(AlhaiRadius.sm),
                   ),
                   child: Text(
@@ -613,16 +662,24 @@ class _DistributorOrderDetailScreenState
           // Header
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
+              horizontal: AlhaiSpacing.mdl,
+              vertical: AlhaiSpacing.sm,
+            ),
             color: AppColors.getSurfaceVariant(isDark),
             child: Row(
               children: [
                 _colHeader(l10n?.products ?? 'Product', 3, isDark),
                 _colHeader(l10n?.quantity ?? 'Qty', 1, isDark),
                 _colHeader(
-                    l10n?.distributorSuggestedPrice ?? 'Suggested', 2, isDark),
+                  l10n?.distributorSuggestedPrice ?? 'Suggested',
+                  2,
+                  isDark,
+                ),
                 _colHeader(
-                    l10n?.distributorYourPrice ?? 'Your Price', 2, isDark),
+                  l10n?.distributorYourPrice ?? 'Your Price',
+                  2,
+                  isDark,
+                ),
                 _colHeader(l10n?.total ?? 'Total', 2, isDark),
               ],
             ),
@@ -636,13 +693,16 @@ class _DistributorOrderDetailScreenState
 
             return Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.mdl, vertical: AlhaiSpacing.sm),
+                horizontal: AlhaiSpacing.mdl,
+                vertical: AlhaiSpacing.sm,
+              ),
               decoration: BoxDecoration(
                 border: index < items.length - 1
                     ? Border(
                         bottom: BorderSide(
-                          color: AppColors.getBorder(isDark)
-                              .withValues(alpha: 0.5),
+                          color: AppColors.getBorder(
+                            isDark,
+                          ).withValues(alpha: 0.5),
                         ),
                       )
                     : null,
@@ -687,7 +747,8 @@ class _DistributorOrderDetailScreenState
                     flex: 2,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.sm),
+                        horizontal: AlhaiSpacing.sm,
+                      ),
                       child: TextField(
                         controller: controller,
                         keyboardType: TextInputType.number,
@@ -700,10 +761,13 @@ class _DistributorOrderDetailScreenState
                         ),
                         decoration: InputDecoration(
                           hintText: '0.00',
-                          hintStyle:
-                              TextStyle(color: AppColors.getTextMuted(isDark)),
+                          hintStyle: TextStyle(
+                            color: AppColors.getTextMuted(isDark),
+                          ),
                           contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 10),
+                            horizontal: 10,
+                            vertical: 10,
+                          ),
                           suffixText: l10n?.distributorRiyal ?? 'SAR',
                           suffixStyle: TextStyle(
                             fontSize: 11,
@@ -712,22 +776,29 @@ class _DistributorOrderDetailScreenState
                           filled: true,
                           fillColor: AppColors.getSurfaceVariant(isDark),
                           border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(AlhaiRadius.sm + 2),
-                            borderSide:
-                                BorderSide(color: AppColors.getBorder(isDark)),
+                            borderRadius: BorderRadius.circular(
+                              AlhaiRadius.sm + 2,
+                            ),
+                            borderSide: BorderSide(
+                              color: AppColors.getBorder(isDark),
+                            ),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(AlhaiRadius.sm + 2),
-                            borderSide:
-                                BorderSide(color: AppColors.getBorder(isDark)),
+                            borderRadius: BorderRadius.circular(
+                              AlhaiRadius.sm + 2,
+                            ),
+                            borderSide: BorderSide(
+                              color: AppColors.getBorder(isDark),
+                            ),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(AlhaiRadius.sm + 2),
+                            borderRadius: BorderRadius.circular(
+                              AlhaiRadius.sm + 2,
+                            ),
                             borderSide: const BorderSide(
-                                color: AppColors.primary, width: 2),
+                              color: AppColors.primary,
+                              width: 2,
+                            ),
                           ),
                         ),
                       ),
@@ -774,7 +845,10 @@ class _DistributorOrderDetailScreenState
   }
 
   Widget _buildItemsCards(
-      List<DistributorOrderItem> items, bool isDark, AppLocalizations? l10n) {
+    List<DistributorOrderItem> items,
+    bool isDark,
+    AppLocalizations? l10n,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -829,14 +903,19 @@ class _DistributorOrderDetailScreenState
                 const SizedBox(height: AlhaiSpacing.sm),
                 Row(
                   children: [
-                    _infoChip(l10n?.quantity ?? 'Qty', '${item.quantity}',
-                        AppColors.info, isDark),
+                    _infoChip(
+                      l10n?.quantity ?? 'Qty',
+                      '${item.quantity}',
+                      AppColors.info,
+                      isDark,
+                    ),
                     const SizedBox(width: 10),
                     _infoChip(
-                        l10n?.distributorSuggestedPrice ?? 'Suggested',
-                        '${NumberFormat('#,##0').format(item.suggestedPrice)} ${l10n?.distributorSar ?? 'SAR'}',
-                        AppColors.secondary,
-                        isDark),
+                      l10n?.distributorSuggestedPrice ?? 'Suggested',
+                      '${NumberFormat('#,##0').format(item.suggestedPrice)} ${l10n?.distributorSar ?? 'SAR'}',
+                      AppColors.secondary,
+                      isDark,
+                    ),
                   ],
                 ),
                 const SizedBox(height: AlhaiSpacing.sm),
@@ -854,8 +933,9 @@ class _DistributorOrderDetailScreenState
                           filled: true,
                           fillColor: AppColors.getSurfaceVariant(isDark),
                           border: OutlineInputBorder(
-                            borderRadius:
-                                BorderRadius.circular(AlhaiRadius.sm + 2),
+                            borderRadius: BorderRadius.circular(
+                              AlhaiRadius.sm + 2,
+                            ),
                           ),
                         ),
                       ),
@@ -864,11 +944,14 @@ class _DistributorOrderDetailScreenState
                       const SizedBox(width: AlhaiSpacing.sm),
                       Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 12, vertical: 10),
+                          horizontal: 12,
+                          vertical: 10,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.primary.withValues(alpha: 0.08),
-                          borderRadius:
-                              BorderRadius.circular(AlhaiRadius.sm + 2),
+                          borderRadius: BorderRadius.circular(
+                            AlhaiRadius.sm + 2,
+                          ),
                         ),
                         child: Text(
                           '${NumberFormat('#,##0.00').format(rowTotal)} ${l10n?.distributorSar ?? 'SAR'}',
@@ -892,8 +975,10 @@ class _DistributorOrderDetailScreenState
 
   Widget _infoChip(String label, String value, Color color, bool isDark) {
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs, vertical: 6),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AlhaiSpacing.xs,
+        vertical: 6,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: isDark ? 0.12 : 0.06),
         borderRadius: BorderRadius.circular(AlhaiRadius.sm),
@@ -901,19 +986,32 @@ class _DistributorOrderDetailScreenState
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text('$label: ',
-              style: TextStyle(
-                  fontSize: 12, color: AppColors.getTextSecondary(isDark))),
-          Text(value,
-              style: TextStyle(
-                  fontSize: 13, fontWeight: FontWeight.w600, color: color)),
+          Text(
+            '$label: ',
+            style: TextStyle(
+              fontSize: 12,
+              color: AppColors.getTextSecondary(isDark),
+            ),
+          ),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildTotalSection(DistributorOrder order, double total, bool isDark,
-      AppLocalizations? l10n) {
+  Widget _buildTotalSection(
+    DistributorOrder order,
+    double total,
+    bool isDark,
+    AppLocalizations? l10n,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -946,8 +1044,11 @@ class _DistributorOrderDetailScreenState
                   borderRadius: BorderRadius.circular(AlhaiRadius.sm + 2),
                 ),
                 child: ExcludeSemantics(
-                  child: const Icon(Icons.calculate_rounded,
-                      color: AppColors.primary, size: 20),
+                  child: const Icon(
+                    Icons.calculate_rounded,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
@@ -980,8 +1081,10 @@ class _DistributorOrderDetailScreenState
                 final percent = (diff / order.total * 100);
                 final isLower = diff < 0;
                 return Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
                     color: (isLower ? AppColors.success : AppColors.warning)
                         .withValues(alpha: 0.1),
@@ -990,11 +1093,13 @@ class _DistributorOrderDetailScreenState
                   child: Text(
                     isLower
                         ? (l10n?.distributorLowerThanProposed(
-                                percent.abs().toStringAsFixed(1)) ??
-                            '${percent.abs().toStringAsFixed(1)}% lower')
+                                percent.abs().toStringAsFixed(1),
+                              ) ??
+                              '${percent.abs().toStringAsFixed(1)}% lower')
                         : (l10n?.distributorHigherThanProposed(
-                                percent.toStringAsFixed(1)) ??
-                            '+${percent.toStringAsFixed(1)}% higher'),
+                                percent.toStringAsFixed(1),
+                              ) ??
+                              '+${percent.toStringAsFixed(1)}% higher'),
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
@@ -1050,8 +1155,10 @@ class _DistributorOrderDetailScreenState
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AlhaiRadius.md),
-                borderSide:
-                    const BorderSide(color: AppColors.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
               ),
               contentPadding: const EdgeInsets.all(AlhaiSpacing.md),
             ),
@@ -1062,7 +1169,11 @@ class _DistributorOrderDetailScreenState
   }
 
   Widget _buildActionButtons(
-      double total, bool isDark, bool isMedium, AppLocalizations? l10n) {
+    double total,
+    bool isDark,
+    bool isMedium,
+    AppLocalizations? l10n,
+  ) {
     return Row(
       children: [
         Expanded(
@@ -1080,15 +1191,20 @@ class _DistributorOrderDetailScreenState
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
                   : const Icon(Icons.close_rounded, size: 20),
-              label: Text(l10n?.distributorRejectOrder ?? 'Reject',
-                  style: const TextStyle(
-                      fontSize: 15, fontWeight: FontWeight.w600)),
+              label: Text(
+                l10n?.distributorRejectOrder ?? 'Reject',
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: AppColors.error,
                 side: const BorderSide(color: AppColors.error),
                 padding: EdgeInsets.symmetric(vertical: isMedium ? 16 : 14),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AlhaiRadius.md)),
+                  borderRadius: BorderRadius.circular(AlhaiRadius.md),
+                ),
               ),
             ),
           ),
@@ -1108,18 +1224,25 @@ class _DistributorOrderDetailScreenState
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(
-                          strokeWidth: 2, color: AppColors.textOnPrimary),
+                        strokeWidth: 2,
+                        color: AppColors.textOnPrimary,
+                      ),
                     )
                   : const Icon(Icons.check_circle_rounded, size: 20),
-              label: Text(l10n?.distributorAcceptSendQuote ?? 'Accept & Send',
-                  style: const TextStyle(
-                      fontSize: 15, fontWeight: FontWeight.w600)),
+              label: Text(
+                l10n?.distributorAcceptSendQuote ?? 'Accept & Send',
+                style: const TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.success,
                 foregroundColor: AppColors.textOnPrimary,
                 padding: EdgeInsets.symmetric(vertical: isMedium ? 16 : 14),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(AlhaiRadius.md)),
+                  borderRadius: BorderRadius.circular(AlhaiRadius.md),
+                ),
               ),
             ),
           ),

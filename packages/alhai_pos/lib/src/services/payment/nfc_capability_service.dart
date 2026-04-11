@@ -24,26 +24,25 @@ class NfcCapability {
   bool get isReady => isSupported && isEnabled;
 
   const NfcCapability.notSupported()
-      : isSupported = false,
-        isEnabled = false,
-        unavailableReason = 'الجهاز لا يدعم NFC';
+    : isSupported = false,
+      isEnabled = false,
+      unavailableReason = 'الجهاز لا يدعم NFC';
 
   const NfcCapability.disabled()
-      : isSupported = true,
-        isEnabled = false,
-        unavailableReason = 'NFC معطّل في إعدادات الجهاز';
+    : isSupported = true,
+      isEnabled = false,
+      unavailableReason = 'NFC معطّل في إعدادات الجهاز';
 
   const NfcCapability.ready()
-      : isSupported = true,
-        isEnabled = true,
-        unavailableReason = null;
+    : isSupported = true,
+      isEnabled = true,
+      unavailableReason = null;
 
   /// للويب: NFC Web API support check
   const NfcCapability.webNotSupported()
-      : isSupported = false,
-        isEnabled = false,
-        unavailableReason =
-            'المتصفح لا يدعم NFC — يتطلب جهاز Android مع Chrome';
+    : isSupported = false,
+      isEnabled = false,
+      unavailableReason = 'المتصفح لا يدعم NFC — يتطلب جهاز Android مع Chrome';
 }
 
 /// خدمة فحص قدرة NFC
@@ -86,7 +85,8 @@ class NativeNfcCapabilityService implements NfcCapabilityService {
     // For now, return simulated result based on platform
     if (kDebugMode) {
       debugPrint(
-          '[NFC] Capability check: simulated (native SDK not integrated)');
+        '[NFC] Capability check: simulated (native SDK not integrated)',
+      );
       return const NfcCapability.ready(); // Simulate available in debug
     }
     return const NfcCapability.notSupported();

@@ -72,9 +72,7 @@ void main() {
     });
 
     test('isStandard should return true for B2B subType', () {
-      final b2bInvoice = invoice.copyWith(
-        subType: InvoiceSubType.standardB2B,
-      );
+      final b2bInvoice = invoice.copyWith(subType: InvoiceSubType.standardB2B);
       expect(b2bInvoice.isStandard, isTrue);
       expect(b2bInvoice.isSimplified, isFalse);
     });

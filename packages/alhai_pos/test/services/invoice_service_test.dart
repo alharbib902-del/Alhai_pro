@@ -21,8 +21,10 @@ class FakeInvoicesTableCompanion extends Fake
 
 class TestMockAppDatabase extends MockAppDatabase {
   @override
-  Future<T> transaction<T>(Future<T> Function() action,
-      {bool requireNew = false}) async {
+  Future<T> transaction<T>(
+    Future<T> Function() action, {
+    bool requireNew = false,
+  }) async {
     return await action();
   }
 }
@@ -88,19 +90,25 @@ void main() {
 
     group('createFromSale', () {
       setUp(() {
-        when(() => mockInvoicesDao.getLastSequence(any(), any(), any()))
-            .thenAnswer((_) async => 0);
-        when(() => mockInvoicesDao.upsertInvoice(any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockInvoicesDao.getById(any()))
-            .thenAnswer((_) async => testInvoiceData);
-        when(() => mockInvoicesDao.updatePdfUrl(any(), any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockUploadService.archiveInvoicePdf(
-              storeId: any(named: 'storeId'),
-              invoiceNumber: any(named: 'invoiceNumber'),
-              pdfBytes: any(named: 'pdfBytes'),
-            )).thenAnswer((_) async => 'https://storage/pdf/inv-001.pdf');
+        when(
+          () => mockInvoicesDao.getLastSequence(any(), any(), any()),
+        ).thenAnswer((_) async => 0);
+        when(
+          () => mockInvoicesDao.upsertInvoice(any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockInvoicesDao.getById(any()),
+        ).thenAnswer((_) async => testInvoiceData);
+        when(
+          () => mockInvoicesDao.updatePdfUrl(any(), any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockUploadService.archiveInvoicePdf(
+            storeId: any(named: 'storeId'),
+            invoiceNumber: any(named: 'invoiceNumber'),
+            pdfBytes: any(named: 'pdfBytes'),
+          ),
+        ).thenAnswer((_) async => 'https://storage/pdf/inv-001.pdf');
       });
 
       test('creates simplified tax invoice from sale', () async {
@@ -114,8 +122,9 @@ void main() {
       });
 
       test('generates correct sequential invoice number format', () async {
-        when(() => mockInvoicesDao.getLastSequence('store-1', 'INV', any()))
-            .thenAnswer((_) async => 42);
+        when(
+          () => mockInvoicesDao.getLastSequence('store-1', 'INV', any()),
+        ).thenAnswer((_) async => 42);
 
         InvoicesTableCompanion? capturedCompanion;
         when(() => mockInvoicesDao.upsertInvoice(any())).thenAnswer((inv) {
@@ -124,10 +133,7 @@ void main() {
           return Future.value(1);
         });
 
-        await invoiceService.createFromSale(
-          sale: testSale,
-          items: testItems,
-        );
+        await invoiceService.createFromSale(sale: testSale, items: testItems);
 
         expect(capturedCompanion, isNotNull);
         final invoiceNumber = capturedCompanion!.invoiceNumber.value;
@@ -135,8 +141,9 @@ void main() {
       });
 
       test('returns null on database error', () async {
-        when(() => mockInvoicesDao.getLastSequence(any(), any(), any()))
-            .thenThrow(Exception('Database error'));
+        when(
+          () => mockInvoicesDao.getLastSequence(any(), any(), any()),
+        ).thenThrow(Exception('Database error'));
 
         final result = await invoiceService.createFromSale(
           sale: testSale,
@@ -156,10 +163,7 @@ void main() {
           return Future.value(1);
         });
 
-        await invoiceService.createFromSale(
-          sale: paidSale,
-          items: testItems,
-        );
+        await invoiceService.createFromSale(sale: paidSale, items: testItems);
 
         expect(capturedCompanion, isNotNull);
         expect(capturedCompanion!.status.value, 'paid');
@@ -175,10 +179,7 @@ void main() {
           return Future.value(1);
         });
 
-        await invoiceService.createFromSale(
-          sale: unpaidSale,
-          items: testItems,
-        );
+        await invoiceService.createFromSale(sale: unpaidSale, items: testItems);
 
         expect(capturedCompanion, isNotNull);
         expect(capturedCompanion!.status.value, 'issued');
@@ -189,12 +190,15 @@ void main() {
 
     group('createCreditNote', () {
       setUp(() {
-        when(() => mockInvoicesDao.getLastSequence(any(), any(), any()))
-            .thenAnswer((_) async => 0);
-        when(() => mockInvoicesDao.upsertInvoice(any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockInvoicesDao.getById(any()))
-            .thenAnswer((_) async => testInvoiceData);
+        when(
+          () => mockInvoicesDao.getLastSequence(any(), any(), any()),
+        ).thenAnswer((_) async => 0);
+        when(
+          () => mockInvoicesDao.upsertInvoice(any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockInvoicesDao.getById(any()),
+        ).thenAnswer((_) async => testInvoiceData);
       });
 
       test('creates a credit note with correct type', () async {
@@ -221,8 +225,9 @@ void main() {
       });
 
       test('generates CN- prefixed invoice number', () async {
-        when(() => mockInvoicesDao.getLastSequence('store-1', 'CN', any()))
-            .thenAnswer((_) async => 5);
+        when(
+          () => mockInvoicesDao.getLastSequence('store-1', 'CN', any()),
+        ).thenAnswer((_) async => 5);
 
         InvoicesTableCompanion? capturedCompanion;
         when(() => mockInvoicesDao.upsertInvoice(any())).thenAnswer((inv) {
@@ -266,8 +271,9 @@ void main() {
       });
 
       test('returns null on error', () async {
-        when(() => mockInvoicesDao.getLastSequence(any(), any(), any()))
-            .thenThrow(Exception('DB error'));
+        when(
+          () => mockInvoicesDao.getLastSequence(any(), any(), any()),
+        ).thenThrow(Exception('DB error'));
 
         final result = await invoiceService.createCreditNote(
           storeId: 'store-1',
@@ -285,12 +291,15 @@ void main() {
 
     group('createDebitNote', () {
       setUp(() {
-        when(() => mockInvoicesDao.getLastSequence(any(), any(), any()))
-            .thenAnswer((_) async => 0);
-        when(() => mockInvoicesDao.upsertInvoice(any()))
-            .thenAnswer((_) async => 1);
-        when(() => mockInvoicesDao.getById(any()))
-            .thenAnswer((_) async => testInvoiceData);
+        when(
+          () => mockInvoicesDao.getLastSequence(any(), any(), any()),
+        ).thenAnswer((_) async => 0);
+        when(
+          () => mockInvoicesDao.upsertInvoice(any()),
+        ).thenAnswer((_) async => 1);
+        when(
+          () => mockInvoicesDao.getById(any()),
+        ).thenAnswer((_) async => testInvoiceData);
       });
 
       test('creates a debit note with correct type', () async {
@@ -315,8 +324,9 @@ void main() {
       });
 
       test('generates DN- prefixed invoice number', () async {
-        when(() => mockInvoicesDao.getLastSequence('store-1', 'DN', any()))
-            .thenAnswer((_) async => 10);
+        when(
+          () => mockInvoicesDao.getLastSequence('store-1', 'DN', any()),
+        ).thenAnswer((_) async => 10);
 
         InvoicesTableCompanion? capturedCompanion;
         when(() => mockInvoicesDao.upsertInvoice(any())).thenAnswer((inv) {
@@ -358,8 +368,9 @@ void main() {
       });
 
       test('returns null on error', () async {
-        when(() => mockInvoicesDao.getLastSequence(any(), any(), any()))
-            .thenThrow(Exception('Connection lost'));
+        when(
+          () => mockInvoicesDao.getLastSequence(any(), any(), any()),
+        ).thenThrow(Exception('Connection lost'));
 
         final result = await invoiceService.createDebitNote(
           storeId: 'store-1',

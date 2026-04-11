@@ -8,9 +8,7 @@ class LoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Center(
-      child: CircularProgressIndicator(),
-    );
+    return const Center(child: CircularProgressIndicator());
   }
 }
 
@@ -22,11 +20,7 @@ class ShimmerList extends StatelessWidget {
   /// ارتفاع كل عنصر
   final double itemHeight;
 
-  const ShimmerList({
-    super.key,
-    this.itemCount = 5,
-    this.itemHeight = 80,
-  });
+  const ShimmerList({super.key, this.itemCount = 5, this.itemHeight = 80});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +38,9 @@ class ShimmerList extends StatelessWidget {
         itemCount: itemCount,
         itemBuilder: (_, __) => Padding(
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+            horizontal: AlhaiSpacing.md,
+            vertical: AlhaiSpacing.xs,
+          ),
           child: Container(
             height: itemHeight,
             decoration: BoxDecoration(

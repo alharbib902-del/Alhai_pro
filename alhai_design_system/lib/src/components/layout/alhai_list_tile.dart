@@ -147,7 +147,8 @@ class AlhaiListTile extends StatelessWidget {
         : AlhaiSpacing.sm;
 
     // Padding
-    final effectivePadding = paddingOverride ??
+    final effectivePadding =
+        paddingOverride ??
         EdgeInsetsDirectional.symmetric(
           horizontal: AlhaiSpacing.md,
           vertical: verticalPadding,

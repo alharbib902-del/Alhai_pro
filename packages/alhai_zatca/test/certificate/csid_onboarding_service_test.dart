@@ -90,31 +90,39 @@ void main() {
 
     group('requestComplianceCsid', () {
       test('generates CSR and returns compliance certificate', () async {
-        when(() => mockCsrGenerator.generateCsr(
-              commonName: any(named: 'commonName'),
-              organizationUnit: any(named: 'organizationUnit'),
-              organizationName: any(named: 'organizationName'),
-              country: any(named: 'country'),
-              serialNumber: any(named: 'serialNumber'),
-              invoiceType: any(named: 'invoiceType'),
-              branchLocation: any(named: 'branchLocation'),
-              industryBusinessCategory: any(named: 'industryBusinessCategory'),
-            )).thenAnswer((_) async => testCsrResult);
+        when(
+          () => mockCsrGenerator.generateCsr(
+            commonName: any(named: 'commonName'),
+            organizationUnit: any(named: 'organizationUnit'),
+            organizationName: any(named: 'organizationName'),
+            country: any(named: 'country'),
+            serialNumber: any(named: 'serialNumber'),
+            invoiceType: any(named: 'invoiceType'),
+            branchLocation: any(named: 'branchLocation'),
+            industryBusinessCategory: any(named: 'industryBusinessCategory'),
+          ),
+        ).thenAnswer((_) async => testCsrResult);
 
-        when(() => mockComplianceApi.requestComplianceCsid(
-              csrBase64: any(named: 'csrBase64'),
-              otp: any(named: 'otp'),
-            )).thenAnswer((_) async => const ComplianceCsidResponse(
-              isSuccess: true,
-              binarySecurityToken: 'compliance-cert-pem',
-              csid: 'compliance-csid-123',
-              secret: 'compliance-secret',
-            ));
+        when(
+          () => mockComplianceApi.requestComplianceCsid(
+            csrBase64: any(named: 'csrBase64'),
+            otp: any(named: 'otp'),
+          ),
+        ).thenAnswer(
+          (_) async => const ComplianceCsidResponse(
+            isSuccess: true,
+            binarySecurityToken: 'compliance-cert-pem',
+            csid: 'compliance-csid-123',
+            secret: 'compliance-secret',
+          ),
+        );
 
-        when(() => mockStorage.saveCertificate(
-              storeId: any(named: 'storeId'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async {});
+        when(
+          () => mockStorage.saveCertificate(
+            storeId: any(named: 'storeId'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async {});
 
         final result = await service.requestComplianceCsid(
           otp: '123456',
@@ -125,42 +133,52 @@ void main() {
         expect(result.isProduction, isFalse);
 
         // Should save the compliance cert temporarily
-        verify(() => mockStorage.saveCertificate(
-              storeId: '_compliance_temp',
-              certificate: any(named: 'certificate'),
-            )).called(1);
+        verify(
+          () => mockStorage.saveCertificate(
+            storeId: '_compliance_temp',
+            certificate: any(named: 'certificate'),
+          ),
+        ).called(1);
       });
 
       test('throws OnboardingException when ZATCA rejects CSR', () async {
-        when(() => mockCsrGenerator.generateCsr(
-              commonName: any(named: 'commonName'),
-              organizationUnit: any(named: 'organizationUnit'),
-              organizationName: any(named: 'organizationName'),
-              country: any(named: 'country'),
-              serialNumber: any(named: 'serialNumber'),
-              invoiceType: any(named: 'invoiceType'),
-              branchLocation: any(named: 'branchLocation'),
-              industryBusinessCategory: any(named: 'industryBusinessCategory'),
-            )).thenAnswer((_) async => testCsrResult);
+        when(
+          () => mockCsrGenerator.generateCsr(
+            commonName: any(named: 'commonName'),
+            organizationUnit: any(named: 'organizationUnit'),
+            organizationName: any(named: 'organizationName'),
+            country: any(named: 'country'),
+            serialNumber: any(named: 'serialNumber'),
+            invoiceType: any(named: 'invoiceType'),
+            branchLocation: any(named: 'branchLocation'),
+            industryBusinessCategory: any(named: 'industryBusinessCategory'),
+          ),
+        ).thenAnswer((_) async => testCsrResult);
 
-        when(() => mockComplianceApi.requestComplianceCsid(
-              csrBase64: any(named: 'csrBase64'),
-              otp: any(named: 'otp'),
-            )).thenAnswer((_) async => const ComplianceCsidResponse(
-              isSuccess: false,
-              errorMessage: 'Invalid OTP',
-            ));
+        when(
+          () => mockComplianceApi.requestComplianceCsid(
+            csrBase64: any(named: 'csrBase64'),
+            otp: any(named: 'otp'),
+          ),
+        ).thenAnswer(
+          (_) async => const ComplianceCsidResponse(
+            isSuccess: false,
+            errorMessage: 'Invalid OTP',
+          ),
+        );
 
         expect(
           () => service.requestComplianceCsid(
             otp: 'wrong-otp',
             config: testConfig,
           ),
-          throwsA(isA<OnboardingException>().having(
-            (e) => e.step,
-            'step',
-            OnboardingStep.complianceCsid,
-          )),
+          throwsA(
+            isA<OnboardingException>().having(
+              (e) => e.step,
+              'step',
+              OnboardingStep.complianceCsid,
+            ),
+          ),
         );
       });
     });
@@ -169,15 +187,19 @@ void main() {
 
     group('requestProductionCsid', () {
       test('exchanges compliance cert for production cert', () async {
-        when(() => mockComplianceApi.requestProductionCsid(
-              complianceCsid: any(named: 'complianceCsid'),
-              complianceCertificate: any(named: 'complianceCertificate'),
-            )).thenAnswer((_) async => const ProductionCsidResponse(
-              isSuccess: true,
-              binarySecurityToken: 'production-cert-pem',
-              csid: 'production-csid-456',
-              secret: 'production-secret',
-            ));
+        when(
+          () => mockComplianceApi.requestProductionCsid(
+            complianceCsid: any(named: 'complianceCsid'),
+            complianceCertificate: any(named: 'complianceCertificate'),
+          ),
+        ).thenAnswer(
+          (_) async => const ProductionCsidResponse(
+            isSuccess: true,
+            binarySecurityToken: 'production-cert-pem',
+            csid: 'production-csid-456',
+            secret: 'production-secret',
+          ),
+        );
 
         final result = await service.requestProductionCsid(
           complianceCertificate: complianceCert,
@@ -187,35 +209,44 @@ void main() {
         expect(result.csid, 'production-csid-456');
       });
 
-      test('throws OnboardingException when production CSID request fails',
-          () async {
-        when(() => mockComplianceApi.requestProductionCsid(
+      test(
+        'throws OnboardingException when production CSID request fails',
+        () async {
+          when(
+            () => mockComplianceApi.requestProductionCsid(
               complianceCsid: any(named: 'complianceCsid'),
               complianceCertificate: any(named: 'complianceCertificate'),
-            )).thenAnswer((_) async => const ProductionCsidResponse(
+            ),
+          ).thenAnswer(
+            (_) async => const ProductionCsidResponse(
               isSuccess: false,
               errorMessage: 'Compliance checks not completed',
-            ));
+            ),
+          );
 
-        expect(
-          () => service.requestProductionCsid(
-            complianceCertificate: complianceCert,
-          ),
-          throwsA(isA<OnboardingException>().having(
-            (e) => e.step,
-            'step',
-            OnboardingStep.productionCsid,
-          )),
-        );
-      });
+          expect(
+            () => service.requestProductionCsid(
+              complianceCertificate: complianceCert,
+            ),
+            throwsA(
+              isA<OnboardingException>().having(
+                (e) => e.step,
+                'step',
+                OnboardingStep.productionCsid,
+              ),
+            ),
+          );
+        },
+      );
     });
 
     // ── hasValidProductionCertificate ────────────────────
 
     group('hasValidProductionCertificate', () {
       test('returns true when valid production cert exists', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => productionCert);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => productionCert);
 
         final result = await service.hasValidProductionCertificate(
           storeId: 'store-1',
@@ -225,8 +256,9 @@ void main() {
       });
 
       test('returns false when no certificate exists', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => null);
 
         final result = await service.hasValidProductionCertificate(
           storeId: 'store-1',
@@ -236,8 +268,9 @@ void main() {
       });
 
       test('returns false when certificate is not production', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => complianceCert);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => complianceCert);
 
         final result = await service.hasValidProductionCertificate(
           storeId: 'store-1',
@@ -255,8 +288,9 @@ void main() {
           isProduction: true,
           validTo: DateTime(2020, 1, 1),
         );
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => expired);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => expired);
 
         final result = await service.hasValidProductionCertificate(
           storeId: 'store-1',

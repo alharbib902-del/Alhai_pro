@@ -5,10 +5,7 @@ part of 'app_header.dart';
 class AppBreadcrumb extends StatelessWidget {
   final List<AppBreadcrumbItem> items;
 
-  const AppBreadcrumb({
-    super.key,
-    required this.items,
-  });
+  const AppBreadcrumb({super.key, required this.items});
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +19,7 @@ class AppBreadcrumb extends StatelessWidget {
               size: 18,
             ),
           ],
-          _BreadcrumbItemWidget(
-            item: items[i],
-            isLast: i == items.length - 1,
-          ),
+          _BreadcrumbItemWidget(item: items[i], isLast: i == items.length - 1),
         ],
       ],
     );
@@ -38,21 +32,14 @@ class AppBreadcrumbItem {
   final IconData? icon;
   final VoidCallback? onTap;
 
-  const AppBreadcrumbItem({
-    required this.title,
-    this.icon,
-    this.onTap,
-  });
+  const AppBreadcrumbItem({required this.title, this.icon, this.onTap});
 }
 
 class _BreadcrumbItemWidget extends StatefulWidget {
   final AppBreadcrumbItem item;
   final bool isLast;
 
-  const _BreadcrumbItemWidget({
-    required this.item,
-    required this.isLast,
-  });
+  const _BreadcrumbItemWidget({required this.item, required this.isLast});
 
   @override
   State<_BreadcrumbItemWidget> createState() => _BreadcrumbItemWidgetState();
@@ -99,8 +86,9 @@ class _BreadcrumbItemWidgetState extends State<_BreadcrumbItemWidget> {
                       ? AppColors.textPrimary
                       : AppColors.textSecondary,
                   fontSize: 14,
-                  fontWeight:
-                      widget.isLast ? FontWeight.w600 : FontWeight.normal,
+                  fontWeight: widget.isLast
+                      ? FontWeight.w600
+                      : FontWeight.normal,
                 ),
               ),
             ],
@@ -169,10 +157,7 @@ class DateTimeDisplay extends StatelessWidget {
         ],
         Text(
           '$day\u060C $date${showTime ? ' - $time' : ''}',
-          style: const TextStyle(
-            color: AppColors.textSecondary,
-            fontSize: 13,
-          ),
+          style: const TextStyle(color: AppColors.textSecondary, fontSize: 13),
         ),
       ],
     );

@@ -31,8 +31,10 @@ void main() {
           payload: {'id': 'p-1', 'name': 'Test'},
         );
 
-        verify(() => queryBuilder.upsert(any(),
-            onConflict: any(named: 'onConflict'))).called(1);
+        verify(
+          () =>
+              queryBuilder.upsert(any(), onConflict: any(named: 'onConflict')),
+        ).called(1);
       });
 
       test('performs upsert for UPDATE operation', () async {
@@ -46,8 +48,10 @@ void main() {
           payload: {'id': 'p-1', 'name': 'Updated'},
         );
 
-        verify(() => queryBuilder.upsert(any(),
-            onConflict: any(named: 'onConflict'))).called(1);
+        verify(
+          () =>
+              queryBuilder.upsert(any(), onConflict: any(named: 'onConflict')),
+        ).called(1);
       });
 
       test('performs delete for DELETE operation', () async {
@@ -102,10 +106,12 @@ void main() {
           },
         );
 
-        final captured = verify(() => queryBuilder.upsert(
-              captureAny(),
-              onConflict: any(named: 'onConflict'),
-            )).captured;
+        final captured = verify(
+          () => queryBuilder.upsert(
+            captureAny(),
+            onConflict: any(named: 'onConflict'),
+          ),
+        ).captured;
 
         final sentPayload = captured.first as Map<String, dynamic>;
         expect(sentPayload.containsKey('synced_at'), isFalse);
@@ -119,17 +125,15 @@ void main() {
         await service.syncOperation(
           tableName: 'products',
           operation: 'CREATE',
-          payload: {
-            'id': 'p-1',
-            'productName': 'Test',
-            'stockQty': 10,
-          },
+          payload: {'id': 'p-1', 'productName': 'Test', 'stockQty': 10},
         );
 
-        final captured = verify(() => queryBuilder.upsert(
-              captureAny(),
-              onConflict: any(named: 'onConflict'),
-            )).captured;
+        final captured = verify(
+          () => queryBuilder.upsert(
+            captureAny(),
+            onConflict: any(named: 'onConflict'),
+          ),
+        ).captured;
 
         final sentPayload = captured.first as Map<String, dynamic>;
         expect(sentPayload.containsKey('product_name'), isTrue);
@@ -148,8 +152,10 @@ void main() {
           payload: {'id': 'p-1'},
         );
 
-        verify(() => queryBuilder.upsert(any(),
-            onConflict: any(named: 'onConflict'))).called(1);
+        verify(
+          () =>
+              queryBuilder.upsert(any(), onConflict: any(named: 'onConflict')),
+        ).called(1);
       });
     });
 
@@ -188,21 +194,30 @@ void main() {
         when(() => mockClient.from(any())).thenAnswer((_) => queryBuilder);
 
         var callCount = 0;
-        when(() => queryBuilder.upsert(any(),
-            onConflict: any(named: 'onConflict'))).thenAnswer((_) {
+        when(
+          () =>
+              queryBuilder.upsert(any(), onConflict: any(named: 'onConflict')),
+        ).thenAnswer((_) {
           callCount++;
           if (callCount == 2) {
             throw Exception('Network error');
           }
           final upsertBuilder = MockPostgrestFilterBuilderDynamic();
-          when(() => upsertBuilder.then<dynamic>(any(),
-              onError: any(named: 'onError'))).thenAnswer((invocation) {
+          when(
+            () => upsertBuilder.then<dynamic>(
+              any(),
+              onError: any(named: 'onError'),
+            ),
+          ).thenAnswer((invocation) {
             final onValue = invocation.positionalArguments[0] as Function;
             return Future.value(onValue(null));
           });
-          when(() => upsertBuilder.timeout(any(),
-                  onTimeout: any(named: 'onTimeout')))
-              .thenAnswer((_) => Future<dynamic>.value(null));
+          when(
+            () => upsertBuilder.timeout(
+              any(),
+              onTimeout: any(named: 'onTimeout'),
+            ),
+          ).thenAnswer((_) => Future<dynamic>.value(null));
           return upsertBuilder;
         });
 
@@ -244,12 +259,15 @@ void main() {
         final filterBuilder = MockPostgrestFilterBuilder();
         when(() => mockClient.from('products')).thenAnswer((_) => queryBuilder);
         when(() => queryBuilder.select(any())).thenAnswer((_) => filterBuilder);
-        when(() => filterBuilder.eq(any(), any()))
-            .thenAnswer((_) => filterBuilder);
+        when(
+          () => filterBuilder.eq(any(), any()),
+        ).thenAnswer((_) => filterBuilder);
         setupMaybeSingle(filterBuilder, data: {'id': 'p-1', 'name': 'Test'});
 
-        final result =
-            await service.fetchById(tableName: 'products', id: 'p-1');
+        final result = await service.fetchById(
+          tableName: 'products',
+          id: 'p-1',
+        );
 
         expect(result, isNotNull);
         expect(result!['id'], 'p-1');
@@ -260,12 +278,15 @@ void main() {
         final filterBuilder = MockPostgrestFilterBuilder();
         when(() => mockClient.from('products')).thenAnswer((_) => queryBuilder);
         when(() => queryBuilder.select(any())).thenAnswer((_) => filterBuilder);
-        when(() => filterBuilder.eq(any(), any()))
-            .thenAnswer((_) => filterBuilder);
+        when(
+          () => filterBuilder.eq(any(), any()),
+        ).thenAnswer((_) => filterBuilder);
         setupMaybeSingle(filterBuilder, data: null);
 
-        final result =
-            await service.fetchById(tableName: 'products', id: 'nonexistent');
+        final result = await service.fetchById(
+          tableName: 'products',
+          id: 'nonexistent',
+        );
 
         expect(result, isNull);
       });
@@ -275,14 +296,18 @@ void main() {
         final filterBuilder = MockPostgrestFilterBuilder();
         when(() => mockClient.from('products')).thenAnswer((_) => queryBuilder);
         when(() => queryBuilder.select(any())).thenAnswer((_) => filterBuilder);
-        when(() => filterBuilder.eq(any(), any()))
-            .thenAnswer((_) => filterBuilder);
+        when(
+          () => filterBuilder.eq(any(), any()),
+        ).thenAnswer((_) => filterBuilder);
         // Mock maybeSingle to throw synchronously
-        when(() => filterBuilder.maybeSingle())
-            .thenThrow(Exception('Network error'));
+        when(
+          () => filterBuilder.maybeSingle(),
+        ).thenThrow(Exception('Network error'));
 
-        final result =
-            await service.fetchById(tableName: 'products', id: 'p-1');
+        final result = await service.fetchById(
+          tableName: 'products',
+          id: 'p-1',
+        );
 
         expect(result, isNull);
       });

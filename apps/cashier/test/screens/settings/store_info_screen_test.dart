@@ -35,9 +35,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const StoreInfoScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const StoreInfoScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(StoreInfoScreen), findsOneWidget);
@@ -52,12 +50,11 @@ void main() {
       suppressOverflowErrors();
 
       final completer = Completer<StoresTableData?>();
-      when(() => storesDao.getStoreById(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => storesDao.getStoreById(any()),
+      ).thenAnswer((_) => completer.future);
 
-      await tester.pumpWidget(
-        createTestWidget(const StoreInfoScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const StoreInfoScreen()));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -74,10 +71,7 @@ void main() {
       suppressOverflowErrors();
 
       await tester.pumpWidget(
-        createTestWidget(
-          const StoreInfoScreen(),
-          theme: ThemeData.dark(),
-        ),
+        createTestWidget(const StoreInfoScreen(), theme: ThemeData.dark()),
       );
       await tester.pumpAndSettle();
 
@@ -92,9 +86,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const StoreInfoScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const StoreInfoScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(StoreInfoScreen), findsOneWidget);
@@ -108,9 +100,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const StoreInfoScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const StoreInfoScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(StoreInfoScreen), findsOneWidget);

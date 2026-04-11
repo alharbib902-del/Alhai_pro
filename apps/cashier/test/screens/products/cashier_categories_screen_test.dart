@@ -30,10 +30,12 @@ void main() {
     setupTestGetIt(mockDb: db);
 
     // Default stubs
-    when(() => categoriesDao.getAllCategories(any()))
-        .thenAnswer((_) async => []);
-    when(() => productsDao.getProductsByCategory(any(), any()))
-        .thenAnswer((_) async => []);
+    when(
+      () => categoriesDao.getAllCategories(any()),
+    ).thenAnswer((_) async => []);
+    when(
+      () => productsDao.getProductsByCategory(any(), any()),
+    ).thenAnswer((_) async => []);
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -44,8 +46,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const CashierCategoriesScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const CashierCategoriesScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(CashierCategoriesScreen), findsOneWidget);
@@ -61,11 +64,13 @@ void main() {
 
       // Use Completer to hold the future without pending timers
       final completer = Completer<List<CategoriesTableData>>();
-      when(() => categoriesDao.getAllCategories(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => categoriesDao.getAllCategories(any()),
+      ).thenAnswer((_) => completer.future);
 
-      await tester
-          .pumpWidget(createTestWidget(const CashierCategoriesScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const CashierCategoriesScreen()),
+      );
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -84,11 +89,13 @@ void main() {
       suppressOverflowErrors();
 
       final categories = createTestCategoryList(4);
-      when(() => categoriesDao.getAllCategories(any()))
-          .thenAnswer((_) async => categories);
+      when(
+        () => categoriesDao.getAllCategories(any()),
+      ).thenAnswer((_) async => categories);
 
-      await tester
-          .pumpWidget(createTestWidget(const CashierCategoriesScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const CashierCategoriesScreen()),
+      );
       await tester.pumpAndSettle();
 
       // Verify category names are displayed
@@ -107,8 +114,9 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester
-          .pumpWidget(createTestWidget(const CashierCategoriesScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const CashierCategoriesScreen()),
+      );
       await tester.pumpAndSettle();
 
       // Search field should be present
@@ -123,11 +131,13 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      when(() => categoriesDao.getAllCategories(any()))
-          .thenAnswer((_) async => []);
+      when(
+        () => categoriesDao.getAllCategories(any()),
+      ).thenAnswer((_) async => []);
 
-      await tester
-          .pumpWidget(createTestWidget(const CashierCategoriesScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const CashierCategoriesScreen()),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.category_outlined), findsOneWidget);
@@ -146,13 +156,16 @@ void main() {
         createTestProduct(id: 'p1', name: 'Cola', categoryId: 'cat-1'),
       ];
 
-      when(() => categoriesDao.getAllCategories(any()))
-          .thenAnswer((_) async => categories);
-      when(() => productsDao.getProductsByCategory('cat-1', any()))
-          .thenAnswer((_) async => products);
+      when(
+        () => categoriesDao.getAllCategories(any()),
+      ).thenAnswer((_) async => categories);
+      when(
+        () => productsDao.getProductsByCategory('cat-1', any()),
+      ).thenAnswer((_) async => products);
 
-      await tester
-          .pumpWidget(createTestWidget(const CashierCategoriesScreen()));
+      await tester.pumpWidget(
+        createTestWidget(const CashierCategoriesScreen()),
+      );
       await tester.pumpAndSettle();
 
       // Tap the category card
@@ -162,8 +175,9 @@ void main() {
       // Products for the category should be loaded.
       // Called once during _loadCategories() to count products,
       // and once more in _loadCategoryProducts() when tapped.
-      verify(() => productsDao.getProductsByCategory('cat-1', 'test-store-1'))
-          .called(2);
+      verify(
+        () => productsDao.getProductsByCategory('cat-1', 'test-store-1'),
+      ).called(2);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

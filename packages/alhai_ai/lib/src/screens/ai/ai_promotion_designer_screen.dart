@@ -53,8 +53,9 @@ class _AiPromotionDesignerScreenState
       children: [
         AppHeader(
           title: l10n.aiPromotionDesigner,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: l10n.defaultUserName,
@@ -65,16 +66,19 @@ class _AiPromotionDesignerScreenState
           child: TabBar(
             controller: _tabController,
             labelColor: AppColors.primary,
-            unselectedLabelColor:
-                isDark ? Colors.white60 : AppColors.textSecondary,
+            unselectedLabelColor: isDark
+                ? Colors.white60
+                : AppColors.textSecondary,
             indicatorColor: AppColors.primary,
             tabs: [
               Tab(
-                  icon: const Icon(Icons.auto_awesome),
-                  text: l10n.aiSuggestedPromotions),
+                icon: const Icon(Icons.auto_awesome),
+                text: l10n.aiSuggestedPromotions,
+              ),
               Tab(
-                  icon: const Icon(Icons.trending_up),
-                  text: l10n.aiRoiAnalysis),
+                icon: const Icon(Icons.trending_up),
+                text: l10n.aiRoiAnalysis,
+              ),
               Tab(icon: const Icon(Icons.science), text: l10n.aiAbTest),
             ],
           ),
@@ -111,14 +115,19 @@ class _AiPromotionDesignerScreenState
       },
       data: (promos) {
         return SingleChildScrollView(
-          padding:
-              EdgeInsets.all(isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+          padding: EdgeInsets.all(
+            isWideScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+          ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // بطاقة AI Header
               _buildAiHeader(
-                  isDark, totalRevenue, avgConfidence, promos.length),
+                isDark,
+                totalRevenue,
+                avgConfidence,
+                promos.length,
+              ),
               const SizedBox(height: AlhaiSpacing.mdl),
 
               // فلتر الأنواع
@@ -137,8 +146,12 @@ class _AiPromotionDesignerScreenState
     );
   }
 
-  Widget _buildAiHeader(bool isDark, AsyncValue<double> totalRevenue,
-      AsyncValue<double> avgConfidence, int count) {
+  Widget _buildAiHeader(
+    bool isDark,
+    AsyncValue<double> totalRevenue,
+    AsyncValue<double> avgConfidence,
+    int count,
+  ) {
     final l10n = AppLocalizations.of(context);
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -168,8 +181,11 @@ class _AiPromotionDesignerScreenState
                   color: Colors.white.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.auto_awesome,
-                    color: Colors.white, size: 24),
+                child: const Icon(
+                  Icons.auto_awesome,
+                  color: Colors.white,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
@@ -229,7 +245,9 @@ class _AiPromotionDesignerScreenState
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.sm, vertical: 10),
+          horizontal: AlhaiSpacing.sm,
+          vertical: 10,
+        ),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.15),
           borderRadius: BorderRadius.circular(10),
@@ -271,20 +289,30 @@ class _AiPromotionDesignerScreenState
       child: Row(
         children: [
           _buildFilterChip(
-              isDark, AppLocalizations.of(context).all, null, selected == null),
-          ...types.map((type) => _buildFilterChip(
-                isDark,
-                AiPromotionDesignerService.getPromotionTypeLabel(type),
-                type,
-                selected == type,
-              )),
+            isDark,
+            AppLocalizations.of(context).all,
+            null,
+            selected == null,
+          ),
+          ...types.map(
+            (type) => _buildFilterChip(
+              isDark,
+              AiPromotionDesignerService.getPromotionTypeLabel(type),
+              type,
+              selected == type,
+            ),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildFilterChip(
-      bool isDark, String label, PromotionType? type, bool isSelected) {
+    bool isDark,
+    String label,
+    PromotionType? type,
+    bool isSelected,
+  ) {
     final color = type != null
         ? Color(AiPromotionDesignerService.getPromotionTypeColorValue(type))
         : AppColors.primary;
@@ -310,8 +338,8 @@ class _AiPromotionDesignerScreenState
           color: isSelected
               ? color
               : (isDark
-                  ? Colors.white.withValues(alpha: 0.12)
-                  : AppColors.border),
+                    ? Colors.white.withValues(alpha: 0.12)
+                    : AppColors.border),
         ),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       ),
@@ -337,11 +365,13 @@ class _AiPromotionDesignerScreenState
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                      AppLocalizations.of(context).aiPromotionApplied(p.title)),
+                    AppLocalizations.of(context).aiPromotionApplied(p.title),
+                  ),
                   backgroundColor: AppColors.success,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               );
             },
@@ -368,11 +398,13 @@ class _AiPromotionDesignerScreenState
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                      AppLocalizations.of(context).aiPromotionApplied(p.title)),
+                    AppLocalizations.of(context).aiPromotionApplied(p.title),
+                  ),
                   backgroundColor: AppColors.success,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10)),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
                 ),
               );
             },
@@ -442,17 +474,15 @@ class _AiPromotionDesignerScreenState
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
     final typeColor = Color(
-        AiPromotionDesignerService.getPromotionTypeColorValue(promo.type));
+      AiPromotionDesignerService.getPromotionTypeColorValue(promo.type),
+    );
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: typeColor.withValues(alpha: 0.3),
-          width: 1.5,
-        ),
+        border: Border.all(color: typeColor.withValues(alpha: 0.3), width: 1.5),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -460,8 +490,10 @@ class _AiPromotionDesignerScreenState
           Row(
             children: [
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: typeColor.withValues(alpha: 0.12),
                   borderRadius: BorderRadius.circular(8),
@@ -477,15 +509,18 @@ class _AiPromotionDesignerScreenState
               ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   l10n.aiConfidencePercent(
-                      (promo.confidence * 100).toStringAsFixed(0)),
+                    (promo.confidence * 100).toStringAsFixed(0),
+                  ),
                   style: const TextStyle(
                     color: AppColors.success,
                     fontSize: 12,
@@ -507,36 +542,39 @@ class _AiPromotionDesignerScreenState
           const SizedBox(height: AlhaiSpacing.xs),
           Text(
             promo.description,
-            style: TextStyle(
-              color: subtextColor,
-              fontSize: 13,
-              height: 1.5,
-            ),
+            style: TextStyle(color: subtextColor, fontSize: 13, height: 1.5),
           ),
           const SizedBox(height: AlhaiSpacing.md),
           Row(
             children: [
               _buildDetailStat(
-                  l10n.aiRevenueLabel,
-                  '${promo.projectedRevenue.toStringAsFixed(0)} ر.س',
-                  AppColors.success,
-                  isDark),
+                l10n.aiRevenueLabel,
+                '${promo.projectedRevenue.toStringAsFixed(0)} ر.س',
+                AppColors.success,
+                isDark,
+              ),
               const SizedBox(width: AlhaiSpacing.sm),
               _buildDetailStat(
-                  l10n.aiCostLabel,
-                  '${promo.projectedCost.toStringAsFixed(0)} ر.س',
-                  AppColors.error,
-                  isDark),
+                l10n.aiCostLabel,
+                '${promo.projectedCost.toStringAsFixed(0)} ر.س',
+                AppColors.error,
+                isDark,
+              ),
               const SizedBox(width: AlhaiSpacing.sm),
-              _buildDetailStat('ROI', '${promo.roi.toStringAsFixed(0)}%',
-                  const Color(0xFF8B5CF6), isDark),
+              _buildDetailStat(
+                'ROI',
+                '${promo.roi.toStringAsFixed(0)}%',
+                const Color(0xFF8B5CF6),
+                isDark,
+              ),
               if (promo.discountAmount > 0) ...[
                 const SizedBox(width: AlhaiSpacing.sm),
                 _buildDetailStat(
-                    l10n.aiDiscountLabel,
-                    '${promo.discountAmount.toStringAsFixed(0)}%',
-                    typeColor,
-                    isDark),
+                  l10n.aiDiscountLabel,
+                  '${promo.discountAmount.toStringAsFixed(0)}%',
+                  typeColor,
+                  isDark,
+                ),
               ],
             ],
           ),
@@ -546,7 +584,11 @@ class _AiPromotionDesignerScreenState
   }
 
   Widget _buildDetailStat(
-      String label, String value, Color color, bool isDark) {
+    String label,
+    String value,
+    Color color,
+    bool isDark,
+  ) {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
@@ -611,8 +653,11 @@ class _AiPromotionDesignerScreenState
             ),
             child: Row(
               children: [
-                const Icon(Icons.info_outline,
-                    color: Color(0xFF8B5CF6), size: 20),
+                const Icon(
+                  Icons.info_outline,
+                  color: Color(0xFF8B5CF6),
+                  size: 20,
+                ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: Text(
@@ -659,7 +704,8 @@ class _AiPromotionDesignerScreenState
                     backgroundColor: const Color(0xFF8B5CF6),
                     behavior: SnackBarBehavior.floating,
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 );
               },

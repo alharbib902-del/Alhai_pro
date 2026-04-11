@@ -23,18 +23,22 @@ void main() {
   group('initSentry', () {
     test('runs the app runner when Sentry is not configured', () async {
       var ran = false;
-      await initSentry(appRunner: () async {
-        ran = true;
-      });
+      await initSentry(
+        appRunner: () async {
+          ran = true;
+        },
+      );
       expect(ran, isTrue);
     });
 
     test('propagates errors thrown by the app runner', () async {
       Object? error;
       try {
-        await initSentry(appRunner: () async {
-          throw StateError('boom');
-        });
+        await initSentry(
+          appRunner: () async {
+            throw StateError('boom');
+          },
+        );
       } catch (e) {
         error = e;
       }
@@ -42,46 +46,31 @@ void main() {
     });
 
     test('runs a synchronous no-op runner without error', () async {
-      await expectLater(
-        initSentry(appRunner: () async {}),
-        completes,
-      );
+      await expectLater(initSentry(appRunner: () async {}), completes);
     });
   });
 
   group('reportError', () {
     test('does not throw when DSN is not configured', () async {
-      await expectLater(
-        reportError(Exception('test')),
-        completes,
-      );
+      await expectLater(reportError(Exception('test')), completes);
     });
 
     test('accepts a stack trace', () async {
       await expectLater(
-        reportError(
-          Exception('test'),
-          stackTrace: StackTrace.current,
-        ),
+        reportError(Exception('test'), stackTrace: StackTrace.current),
         completes,
       );
     });
 
     test('accepts a hint message', () async {
       await expectLater(
-        reportError(
-          Exception('test'),
-          hint: 'optional context',
-        ),
+        reportError(Exception('test'), hint: 'optional context'),
         completes,
       );
     });
 
     test('handles null stack trace and null hint', () async {
-      await expectLater(
-        reportError(Exception('null case')),
-        completes,
-      );
+      await expectLater(reportError(Exception('null case')), completes);
     });
 
     test('handles arbitrary error types', () async {
@@ -100,10 +89,7 @@ void main() {
     });
 
     test('uses default category "app" when omitted', () {
-      expect(
-        () => addBreadcrumb(message: 'default category'),
-        returnsNormally,
-      );
+      expect(() => addBreadcrumb(message: 'default category'), returnsNormally);
     });
 
     test('accepts a custom category', () {
@@ -125,10 +111,7 @@ void main() {
     });
 
     test('handles empty message safely', () {
-      expect(
-        () => addBreadcrumb(message: ''),
-        returnsNormally,
-      );
+      expect(() => addBreadcrumb(message: ''), returnsNormally);
     });
   });
 }

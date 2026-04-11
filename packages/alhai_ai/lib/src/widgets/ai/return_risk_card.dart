@@ -12,17 +12,14 @@ class ReturnRiskCard extends StatelessWidget {
   final ReturnProbability probability;
   final VoidCallback? onTap;
 
-  const ReturnRiskCard({
-    super.key,
-    required this.probability,
-    this.onTap,
-  });
+  const ReturnRiskCard({super.key, required this.probability, this.onTap});
 
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final riskColor = Color(
-        AiReturnPredictionService.getRiskColorValue(probability.riskLevel));
+      AiReturnPredictionService.getRiskColorValue(probability.riskLevel),
+    );
     final textColor = isDark ? Colors.white : AppColors.textPrimary;
     final subtextColor = isDark ? Colors.white70 : AppColors.textSecondary;
 
@@ -90,25 +87,25 @@ class ReturnRiskCard extends StatelessWidget {
                         ),
                         Text(
                           probability.transactionId,
-                          style: TextStyle(
-                            color: subtextColor,
-                            fontSize: 12,
-                          ),
+                          style: TextStyle(color: subtextColor, fontSize: 12),
                         ),
                       ],
                     ),
                   ),
                   // شارة مستوى الخطر
                   Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
                     decoration: BoxDecoration(
                       color: riskColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       AiReturnPredictionService.getRiskLabel(
-                          probability.riskLevel),
+                        probability.riskLevel,
+                      ),
                       style: TextStyle(
                         color: riskColor,
                         fontSize: 12,
@@ -204,8 +201,9 @@ class ReturnRiskCard extends StatelessWidget {
                   children: probability.factors.map((factor) {
                     return Container(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.xs,
-                          vertical: AlhaiSpacing.xxs),
+                        horizontal: AlhaiSpacing.xs,
+                        vertical: AlhaiSpacing.xxs,
+                      ),
                       decoration: BoxDecoration(
                         color: isDark
                             ? riskColor.withValues(alpha: 0.1)

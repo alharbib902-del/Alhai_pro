@@ -60,7 +60,8 @@ class ConnectivityService {
 
     if (kDebugMode) {
       debugPrint(
-          'ConnectivityService: الحالة الأولية: ${_isOnline ? "متصل" : "غير متصل"}');
+        'ConnectivityService: الحالة الأولية: ${_isOnline ? "متصل" : "غير متصل"}',
+      );
     }
 
     // Listen for changes
@@ -114,9 +115,7 @@ class ConnectivityService {
       _controller.add(_isOnline);
 
       if (kDebugMode) {
-        debugPrint(
-          'ConnectivityService: ${_isOnline ? "متصل" : "غير متصل"}',
-        );
+        debugPrint('ConnectivityService: ${_isOnline ? "متصل" : "غير متصل"}');
       }
 
       if (_isOnline) {
@@ -130,18 +129,24 @@ class ConnectivityService {
   void _onBackOnline() {
     if (kDebugMode) {
       debugPrint(
-          'ConnectivityService: عاد الاتصال -- بدء مزامنة قائمة الانتظار');
+        'ConnectivityService: عاد الاتصال -- بدء مزامنة قائمة الانتظار',
+      );
     }
 
     // Fire-and-forget: flush the offline queue
-    OfflineQueueService.instance.flush().then((count) {
-      if (kDebugMode && count > 0) {
-        debugPrint('ConnectivityService: تمت مزامنة $count عملية');
-      }
-    }).catchError((Object error) {
-      if (kDebugMode) {
-        debugPrint('ConnectivityService: فشل مزامنة قائمة الانتظار: $error');
-      }
-    });
+    OfflineQueueService.instance
+        .flush()
+        .then((count) {
+          if (kDebugMode && count > 0) {
+            debugPrint('ConnectivityService: تمت مزامنة $count عملية');
+          }
+        })
+        .catchError((Object error) {
+          if (kDebugMode) {
+            debugPrint(
+              'ConnectivityService: فشل مزامنة قائمة الانتظار: $error',
+            );
+          }
+        });
   }
 }

@@ -13,9 +13,10 @@ import 'stores_table.dart';
 /// كل فاتورة مرتبطة بـ sale (عملية بيع) أو مستقلة
 @TableIndex(name: 'idx_invoices_store_id', columns: {#storeId})
 @TableIndex(
-    name: 'idx_invoices_number',
-    columns: {#storeId, #invoiceNumber},
-    unique: true)
+  name: 'idx_invoices_number',
+  columns: {#storeId, #invoiceNumber},
+  unique: true,
+)
 @TableIndex(name: 'idx_invoices_type', columns: {#storeId, #invoiceType})
 @TableIndex(name: 'idx_invoices_status', columns: {#status})
 @TableIndex(name: 'idx_invoices_created_at', columns: {#createdAt})

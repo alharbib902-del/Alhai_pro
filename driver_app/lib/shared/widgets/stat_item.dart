@@ -28,15 +28,18 @@ class StatItem extends StatelessWidget {
         if (icon != null) const SizedBox(height: AlhaiSpacing.xs),
         Text(
           value,
-          style: valueStyle ??
-              theme.textTheme.titleMedium
-                  ?.copyWith(fontWeight: FontWeight.bold),
+          style:
+              valueStyle ??
+              theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
         ),
         const SizedBox(height: AlhaiSpacing.xxs),
         Text(
           label,
-          style: theme.textTheme.bodySmall
-              ?.copyWith(color: theme.colorScheme.onSurfaceVariant),
+          style: theme.textTheme.bodySmall?.copyWith(
+            color: theme.colorScheme.onSurfaceVariant,
+          ),
         ),
       ],
     );

@@ -44,15 +44,9 @@ class ThemeState {
   final ThemeMode themeMode;
   final bool isLoading;
 
-  const ThemeState({
-    this.themeMode = ThemeMode.system,
-    this.isLoading = true,
-  });
+  const ThemeState({this.themeMode = ThemeMode.system, this.isLoading = true});
 
-  ThemeState copyWith({
-    ThemeMode? themeMode,
-    bool? isLoading,
-  }) {
+  ThemeState copyWith({ThemeMode? themeMode, bool? isLoading}) {
     return ThemeState(
       themeMode: themeMode ?? this.themeMode,
       isLoading: isLoading ?? this.isLoading,
@@ -76,10 +70,12 @@ class ThemeState {
 // ignore: deprecated_member_use_from_same_package
 class ThemeNotifier extends StateNotifier<ThemeState> {
   ThemeNotifier([ThemeMode? initialMode])
-      : super(ThemeState(
+    : super(
+        ThemeState(
           themeMode: initialMode ?? ThemeMode.system,
           isLoading: initialMode == null,
-        )) {
+        ),
+      ) {
     if (initialMode == null) _loadTheme();
   }
 

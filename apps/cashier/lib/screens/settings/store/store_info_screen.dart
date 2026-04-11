@@ -109,14 +109,22 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context,
-                      message: _error!, onRetry: _loadStoreData)
-                  : SingleChildScrollView(
-                      padding: EdgeInsets.all(
-                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: _buildContent(
-                          isWideScreen, isMediumScreen, isDark, l10n),
-                    ),
+              ? AppErrorState.general(
+                  context,
+                  message: _error!,
+                  onRetry: _loadStoreData,
+                )
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(
+                    isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                  ),
+                  child: _buildContent(
+                    isWideScreen,
+                    isMediumScreen,
+                    isDark,
+                    l10n,
+                  ),
+                ),
         ),
       ],
     );
@@ -132,15 +140,9 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            flex: 2,
-            child: _buildStoreCard(isDark, l10n),
-          ),
+          Expanded(flex: 2, child: _buildStoreCard(isDark, l10n)),
           const SizedBox(width: AlhaiSpacing.lg),
-          Expanded(
-            flex: 3,
-            child: _buildDetailsCard(isDark, l10n),
-          ),
+          Expanded(flex: 3, child: _buildDetailsCard(isDark, l10n)),
         ],
       );
     }
@@ -185,9 +187,8 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
                     child: CachedNetworkImage(
                       imageUrl: _storeLogo,
                       fit: BoxFit.cover,
-                      placeholder: (_, __) => const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+                      placeholder: (_, __) =>
+                          const Center(child: CircularProgressIndicator()),
                       errorWidget: (_, __, ___) => const Icon(
                         Icons.store_rounded,
                         size: 44,
@@ -224,7 +225,9 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
           const SizedBox(height: AlhaiSpacing.md),
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+              horizontal: AlhaiSpacing.md,
+              vertical: AlhaiSpacing.xs,
+            ),
             decoration: BoxDecoration(
               color: AppColors.primary.withValues(alpha: isDark ? 0.15 : 0.08),
               borderRadius: BorderRadius.circular(20),
@@ -334,10 +337,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
   }
 
   Widget _divider(bool isDark) {
-    return Divider(
-      color: AppColors.getBorder(isDark),
-      height: 1,
-    );
+    return Divider(color: AppColors.getBorder(isDark), height: 1);
   }
 }
 
@@ -361,11 +361,7 @@ class _InfoRow extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 14),
       child: Row(
         children: [
-          Icon(
-            icon,
-            size: 20,
-            color: AppColors.getTextMuted(isDark),
-          ),
+          Icon(icon, size: 20, color: AppColors.getTextMuted(isDark)),
           const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             flex: 2,

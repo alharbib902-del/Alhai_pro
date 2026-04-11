@@ -38,9 +38,7 @@ class MockSyncManager extends Mock implements SyncManager {}
 // Helpers
 // ---------------------------------------------------------------------------
 
-Widget _buildTestWidget({
-  List<Override> overrides = const [],
-}) {
+Widget _buildTestWidget({List<Override> overrides = const []}) {
   final mockSyncManager = MockSyncManager();
 
   return ProviderScope(
@@ -149,11 +147,13 @@ void main() {
 
       final productsNotifier = MockProductsNotifier();
 
-      await tester.pumpWidget(_buildTestWidget(
-        overrides: [
-          productsStateProvider.overrideWith((ref) => productsNotifier),
-        ],
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          overrides: [
+            productsStateProvider.overrideWith((ref) => productsNotifier),
+          ],
+        ),
+      );
       await tester.pump(const Duration(seconds: 1));
       await tester.pump(const Duration(seconds: 1));
       tester.takeException();

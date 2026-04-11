@@ -122,8 +122,9 @@ void main() {
       await db.close();
     });
 
-    testWidgets('queue items survive a fresh SyncService instance',
-        (tester) async {
+    testWidgets('queue items survive a fresh SyncService instance', (
+      tester,
+    ) async {
       final sync1 = SyncService(db.syncQueueDao);
       await sync1.enqueueUpdate(
         tableName: 'products',
@@ -168,8 +169,9 @@ void main() {
       await db.close();
     });
 
-    testWidgets('admin update transitions pending -> syncing -> synced',
-        (tester) async {
+    testWidgets('admin update transitions pending -> syncing -> synced', (
+      tester,
+    ) async {
       await sync.enqueueUpdate(
         tableName: 'products',
         recordId: 'p-tx-1',
@@ -220,8 +222,9 @@ void main() {
       await db.close();
     });
 
-    testWidgets('duplicate update enqueue coalesces into single item',
-        (tester) async {
+    testWidgets('duplicate update enqueue coalesces into single item', (
+      tester,
+    ) async {
       await sync.enqueueUpdate(
         tableName: 'products',
         recordId: 'p-dup',

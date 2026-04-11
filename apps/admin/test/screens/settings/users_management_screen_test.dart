@@ -74,8 +74,9 @@ void main() {
       suppressOverflowErrors();
 
       final completer = Completer<List<dynamic>>();
-      when(() => usersDao.getAllUsers(any()))
-          .thenAnswer((_) => completer.future.then((v) => v.cast()));
+      when(
+        () => usersDao.getAllUsers(any()),
+      ).thenAnswer((_) => completer.future.then((v) => v.cast()));
 
       await tester.pumpWidget(createTestWidget(const UsersManagementScreen()));
       await tester.pump();

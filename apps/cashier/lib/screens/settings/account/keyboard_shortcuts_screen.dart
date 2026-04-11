@@ -59,7 +59,8 @@ class _KeyboardShortcutsScreenState
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(
-                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+            ),
             child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
           ),
         ),
@@ -88,8 +89,11 @@ class _KeyboardShortcutsScreenState
           ),
           child: Row(
             children: [
-              const Icon(Icons.keyboard_rounded,
-                  color: AppColors.info, size: 22),
+              const Icon(
+                Icons.keyboard_rounded,
+                color: AppColors.info,
+                size: 22,
+              ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Text(
@@ -148,10 +152,12 @@ class _KeyboardShortcutsScreenState
         children: [
           _filterChip('all', l10n.all, isDark),
           const SizedBox(width: AlhaiSpacing.xs),
-          ...categories.map((cat) => Padding(
-                padding: const EdgeInsetsDirectional.only(end: 8),
-                child: _filterChip(cat.id, cat.name, isDark),
-              )),
+          ...categories.map(
+            (cat) => Padding(
+              padding: const EdgeInsetsDirectional.only(end: 8),
+              child: _filterChip(cat.id, cat.name, isDark),
+            ),
+          ),
         ],
       ),
     );
@@ -163,7 +169,9 @@ class _KeyboardShortcutsScreenState
       onTap: () => setState(() => _selectedCategory = id),
       child: Container(
         padding: const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+          horizontal: AlhaiSpacing.md,
+          vertical: AlhaiSpacing.xs,
+        ),
         decoration: BoxDecoration(
           color: isSelected
               ? AppColors.primary.withValues(alpha: 0.1)
@@ -234,11 +242,7 @@ class _KeyboardShortcutsScreenState
                     color: category.color.withValues(alpha: 0.15),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(
-                    category.icon,
-                    color: category.color,
-                    size: 20,
-                  ),
+                  child: Icon(category.icon, color: category.color, size: 20),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Text(
@@ -252,7 +256,9 @@ class _KeyboardShortcutsScreenState
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: AlhaiSpacing.xxs),
+                    horizontal: 10,
+                    vertical: AlhaiSpacing.xxs,
+                  ),
                   decoration: BoxDecoration(
                     color: category.color.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
@@ -283,7 +289,9 @@ class _KeyboardShortcutsScreenState
                   ),
                 Padding(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+                    horizontal: AlhaiSpacing.md,
+                    vertical: AlhaiSpacing.sm,
+                  ),
                   child: Row(
                     children: [
                       Expanded(
@@ -295,10 +303,7 @@ class _KeyboardShortcutsScreenState
                           ),
                         ),
                       ),
-                      _KeyBadge(
-                        keys: shortcut.keys,
-                        isDark: isDark,
-                      ),
+                      _KeyBadge(keys: shortcut.keys, isDark: isDark),
                     ],
                   ),
                 ),
@@ -366,10 +371,7 @@ class _KeyBadge extends StatelessWidget {
   final String keys;
   final bool isDark;
 
-  const _KeyBadge({
-    required this.keys,
-    required this.isDark,
-  });
+  const _KeyBadge({required this.keys, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
@@ -441,8 +443,5 @@ class _ShortcutEntry {
   final String action;
   final String keys;
 
-  const _ShortcutEntry({
-    required this.action,
-    required this.keys,
-  });
+  const _ShortcutEntry({required this.action, required this.keys});
 }

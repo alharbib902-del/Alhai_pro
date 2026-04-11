@@ -120,44 +120,46 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
 
     if (_isLoading) {
       return SafeArea(
-          child: Column(
+        child: Column(
+          children: [
+            AppHeader(
+              title: l10n.barcodeSettings,
+              onMenuTap: isWideScreen
+                  ? null
+                  : () => Scaffold.of(context).openDrawer(),
+              onNotificationsTap: () => context.push('/notifications'),
+              notificationsCount: 3,
+              userName: l10n.defaultUserName,
+              userRole: l10n.branchManager,
+            ),
+            const Expanded(child: Center(child: CircularProgressIndicator())),
+          ],
+        ),
+      );
+    }
+
+    return SafeArea(
+      child: Column(
         children: [
           AppHeader(
             title: l10n.barcodeSettings,
-            onMenuTap:
-                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
             userRole: l10n.branchManager,
           ),
-          const Expanded(
-            child: Center(child: CircularProgressIndicator()),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+              child: _buildContent(isDark, l10n),
+            ),
           ),
         ],
-      ));
-    }
-
-    return SafeArea(
-        child: Column(
-      children: [
-        AppHeader(
-          title: l10n.barcodeSettings,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
-          onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
-          userName: l10n.defaultUserName,
-          userRole: l10n.branchManager,
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-            child: _buildContent(isDark, l10n),
-          ),
-        ),
-      ],
-    ));
+      ),
+    );
   }
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
@@ -168,119 +170,163 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
         const SizedBox(height: AlhaiSpacing.mdl),
 
         // Scanner activation
-        _buildSettingsGroup(l10n.enableScanner, Icons.qr_code_scanner_rounded,
-            const Color(0xFFF59E0B), isDark, [
-          SwitchListTile(
-            title: Text(l10n.barcodeScanner,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            subtitle: Text(l10n.barcodeScannerDesc),
-            secondary: const Icon(Icons.qr_code_scanner),
-            value: _enableBarcodeScanner,
-            onChanged: (v) {
-              setState(() => _enableBarcodeScanner = v);
-              _saveAllSettings();
-            },
-          ),
-          if (_enableBarcodeScanner) ...[
-            const Divider(indent: 16, endIndent: 16),
+        _buildSettingsGroup(
+          l10n.enableScanner,
+          Icons.qr_code_scanner_rounded,
+          const Color(0xFFF59E0B),
+          isDark,
+          [
             SwitchListTile(
-              title: Text(l10n.deviceCamera,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface)),
-              secondary: const Icon(Icons.camera_alt),
-              value: _enableCameraScanner,
+              title: Text(
+                l10n.barcodeScanner,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              subtitle: Text(l10n.barcodeScannerDesc),
+              secondary: const Icon(Icons.qr_code_scanner),
+              value: _enableBarcodeScanner,
               onChanged: (v) {
-                setState(() => _enableCameraScanner = v);
+                setState(() => _enableBarcodeScanner = v);
                 _saveAllSettings();
               },
             ),
-            SwitchListTile(
-              title: Text(l10n.bluetoothScanner,
+            if (_enableBarcodeScanner) ...[
+              const Divider(indent: 16, endIndent: 16),
+              SwitchListTile(
+                title: Text(
+                  l10n.deviceCamera,
                   style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface)),
-              subtitle: Text(l10n.externalScannerConnected),
-              secondary: const Icon(Icons.bluetooth),
-              value: _enableBluetoothScanner,
-              onChanged: (v) {
-                setState(() => _enableBluetoothScanner = v);
-                _saveAllSettings();
-              },
-            ),
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                secondary: const Icon(Icons.camera_alt),
+                value: _enableCameraScanner,
+                onChanged: (v) {
+                  setState(() => _enableCameraScanner = v);
+                  _saveAllSettings();
+                },
+              ),
+              SwitchListTile(
+                title: Text(
+                  l10n.bluetoothScanner,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                subtitle: Text(l10n.externalScannerConnected),
+                secondary: const Icon(Icons.bluetooth),
+                value: _enableBluetoothScanner,
+                onChanged: (v) {
+                  setState(() => _enableBluetoothScanner = v);
+                  _saveAllSettings();
+                },
+              ),
+            ],
+            const SizedBox(height: AlhaiSpacing.xs),
           ],
-          const SizedBox(height: AlhaiSpacing.xs),
-        ]),
+        ),
 
         // Feedback settings
-        _buildSettingsGroup(l10n.alerts, Icons.notifications_active_rounded,
-            AppColors.info, isDark, [
-          SwitchListTile(
-            title: Text(l10n.beepOnScan,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            secondary: const Icon(Icons.volume_up),
-            value: _beepOnScan,
-            onChanged: (v) {
-              setState(() => _beepOnScan = v);
-              _saveAllSettings();
-            },
-          ),
-          SwitchListTile(
-            title: Text(l10n.vibrateOnScan,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            secondary: const Icon(Icons.vibration),
-            value: _vibrateOnScan,
-            onChanged: (v) {
-              setState(() => _vibrateOnScan = v);
-              _saveAllSettings();
-            },
-          ),
-          const SizedBox(height: AlhaiSpacing.xs),
-        ]),
+        _buildSettingsGroup(
+          l10n.alerts,
+          Icons.notifications_active_rounded,
+          AppColors.info,
+          isDark,
+          [
+            SwitchListTile(
+              title: Text(
+                l10n.beepOnScan,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              secondary: const Icon(Icons.volume_up),
+              value: _beepOnScan,
+              onChanged: (v) {
+                setState(() => _beepOnScan = v);
+                _saveAllSettings();
+              },
+            ),
+            SwitchListTile(
+              title: Text(
+                l10n.vibrateOnScan,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              secondary: const Icon(Icons.vibration),
+              value: _vibrateOnScan,
+              onChanged: (v) {
+                setState(() => _vibrateOnScan = v);
+                _saveAllSettings();
+              },
+            ),
+            const SizedBox(height: AlhaiSpacing.xs),
+          ],
+        ),
 
         // Behavior settings
         _buildSettingsGroup(
-            l10n.behavior, Icons.tune_rounded, AppColors.success, isDark, [
-          SwitchListTile(
-            title: Text(l10n.autoAddToCart,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            subtitle: Text(l10n.autoAddToCartDesc),
-            secondary: const Icon(Icons.add_shopping_cart),
-            value: _autoAddToCart,
-            onChanged: (v) {
-              setState(() => _autoAddToCart = v);
-              _saveAllSettings();
-            },
-          ),
-          const Divider(indent: 16, endIndent: 16),
-          ListTile(
-            leading: const Icon(Icons.format_list_numbered),
-            title: Text(l10n.barcodeFormats,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            subtitle: Text(_getBarcodeFormatName(l10n)),
-            trailing: const AdaptiveIcon(Icons.chevron_right),
-            onTap: _showBarcodeFormatPicker,
-          ),
-          const SizedBox(height: AlhaiSpacing.xs),
-        ]),
+          l10n.behavior,
+          Icons.tune_rounded,
+          AppColors.success,
+          isDark,
+          [
+            SwitchListTile(
+              title: Text(
+                l10n.autoAddToCart,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              subtitle: Text(l10n.autoAddToCartDesc),
+              secondary: const Icon(Icons.add_shopping_cart),
+              value: _autoAddToCart,
+              onChanged: (v) {
+                setState(() => _autoAddToCart = v);
+                _saveAllSettings();
+              },
+            ),
+            const Divider(indent: 16, endIndent: 16),
+            ListTile(
+              leading: const Icon(Icons.format_list_numbered),
+              title: Text(
+                l10n.barcodeFormats,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              subtitle: Text(_getBarcodeFormatName(l10n)),
+              trailing: const AdaptiveIcon(Icons.chevron_right),
+              onTap: _showBarcodeFormatPicker,
+            ),
+            const SizedBox(height: AlhaiSpacing.xs),
+          ],
+        ),
 
         // Test scanner
         _buildSettingsGroup(
-            l10n.testing, Icons.bug_report_rounded, AppColors.primary, isDark, [
-          ListTile(
-            leading: const Icon(Icons.bug_report, color: AppColors.primary),
-            title: Text(l10n.testScanner,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            subtitle: Text(l10n.testScanBarcode),
-            trailing: const AdaptiveIcon(Icons.chevron_right),
-            onTap: _testScanner,
-          ),
-          const SizedBox(height: AlhaiSpacing.xs),
-        ]),
+          l10n.testing,
+          Icons.bug_report_rounded,
+          AppColors.primary,
+          isDark,
+          [
+            ListTile(
+              leading: const Icon(Icons.bug_report, color: AppColors.primary),
+              title: Text(
+                l10n.testScanner,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              subtitle: Text(l10n.testScanBarcode),
+              trailing: const AdaptiveIcon(Icons.chevron_right),
+              onTap: _testScanner,
+            ),
+            const SizedBox(height: AlhaiSpacing.xs),
+          ],
+        ),
       ],
     );
   }
@@ -305,45 +351,61 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
             color: const Color(0xFFF59E0B).withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(Icons.qr_code_scanner_rounded,
-              color: Color(0xFFF59E0B), size: 24),
+          child: const Icon(
+            Icons.qr_code_scanner_rounded,
+            color: Color(0xFFF59E0B),
+            size: 24,
+          ),
         ),
         const SizedBox(width: AlhaiSpacing.sm),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.barcodeSettings,
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface)),
-            Text(l10n.barcodeSettingsSubtitle,
-                style: TextStyle(
-                    fontSize: 13,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(
+              l10n.barcodeSettings,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            Text(
+              l10n.barcodeSettingsSubtitle,
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildSettingsGroup(String title, IconData icon, Color color,
-      bool isDark, List<Widget> children) {
+  Widget _buildSettingsGroup(
+    String title,
+    IconData icon,
+    Color color,
+    bool isDark,
+    List<Widget> children,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            padding: const EdgeInsetsDirectional.fromSTEB(
+              AlhaiSpacing.mdl,
+              AlhaiSpacing.md,
+              AlhaiSpacing.mdl,
+              AlhaiSpacing.xs,
+            ),
             child: Row(
               children: [
                 Container(
@@ -355,11 +417,14 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
                   child: Icon(icon, color: color, size: 20),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
-                Text(title,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface)),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
               ],
             ),
           ),
@@ -400,10 +465,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              RadioListTile<String>(
-                title: Text(l10n.allFormats),
-                value: 'all',
-              ),
+              RadioListTile<String>(title: Text(l10n.allFormats), value: 'all'),
               RadioListTile<String>(
                 title: const Text('EAN-8, EAN-13'),
                 value: 'ean',
@@ -412,10 +474,7 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
                 title: const Text('UPC-A, UPC-E'),
                 value: 'upc',
               ),
-              RadioListTile<String>(
-                title: Text(l10n.qrCodeOnly),
-                value: 'qr',
-              ),
+              RadioListTile<String>(title: Text(l10n.qrCodeOnly), value: 'qr'),
             ],
           ),
         ),
@@ -437,13 +496,19 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
         ),
         child: Column(
           children: [
-            Icon(Icons.qr_code_scanner,
-                size: 64, color: isDark ? Colors.white70 : AppColors.primary),
+            Icon(
+              Icons.qr_code_scanner,
+              size: 64,
+              color: isDark ? Colors.white70 : AppColors.primary,
+            ),
             const SizedBox(height: AlhaiSpacing.md),
-            Text(l10n.pointCameraAtBarcode,
-                style: TextStyle(
-                    fontSize: 18,
-                    color: Theme.of(context).colorScheme.onSurface)),
+            Text(
+              l10n.pointCameraAtBarcode,
+              style: TextStyle(
+                fontSize: 18,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
             const SizedBox(height: AlhaiSpacing.lg),
             Expanded(
               child: Container(
@@ -452,10 +517,12 @@ class _BarcodeSettingsScreenState extends ConsumerState<BarcodeSettingsScreen> {
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Center(
-                  child: Text(l10n.scanArea,
-                      style: TextStyle(
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant)),
+                  child: Text(
+                    l10n.scanArea,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ),
               ),
             ),

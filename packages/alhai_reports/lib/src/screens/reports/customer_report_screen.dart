@@ -61,24 +61,32 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
 
       _totalCustomers = accounts.length;
       _activeCustomers = accounts
-          .where((a) =>
-              a.lastTransactionAt != null &&
-              a.lastTransactionAt!.isAfter(thirtyDaysAgo))
+          .where(
+            (a) =>
+                a.lastTransactionAt != null &&
+                a.lastTransactionAt!.isAfter(thirtyDaysAgo),
+          )
           .length;
-      _newCustomers =
-          accounts.where((a) => a.createdAt.isAfter(thirtyDaysAgo)).length;
+      _newCustomers = accounts
+          .where((a) => a.createdAt.isAfter(thirtyDaysAgo))
+          .length;
 
       // Try to get sales stats for revenue
       try {
-        final salesStats = await db.salesDao
-            .getSalesStats(storeId, startDate: thirtyDaysAgo, endDate: now);
+        final salesStats = await db.salesDao.getSalesStats(
+          storeId,
+          startDate: thirtyDaysAgo,
+          endDate: now,
+        );
         _totalRevenue = salesStats.total;
-        _avgOrderValue =
-            _totalCustomers > 0 ? _totalRevenue / _totalCustomers : 0;
+        _avgOrderValue = _totalCustomers > 0
+            ? _totalRevenue / _totalCustomers
+            : 0;
       } catch (_) {
         _totalRevenue = accounts.fold(0.0, (sum, a) => sum + a.balance);
-        _avgOrderValue =
-            _totalCustomers > 0 ? _totalRevenue / _totalCustomers : 0;
+        _avgOrderValue = _totalCustomers > 0
+            ? _totalRevenue / _totalCustomers
+            : 0;
       }
 
       // Map accounts to CustomerData, sorted by balance descending
@@ -157,51 +165,54 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _error != null
-              ? Center(
-                  child: Padding(
-                    padding: const EdgeInsets.all(AlhaiSpacing.xl),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const Icon(Icons.error_outline_rounded,
-                            size: 64, color: AppColors.textMuted),
-                        const SizedBox(height: AlhaiSpacing.md),
-                        Text(
-                          AppLocalizations.of(context)
-                              .errorLoadingCustomerReport,
-                          style: AppTypography.bodyLarge
-                              .copyWith(color: AppColors.textMuted),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: AlhaiSpacing.md),
-                        FilledButton.icon(
-                          onPressed: _loadCustomerData,
-                          icon: const Icon(Icons.refresh_rounded),
-                          label: Text(AppLocalizations.of(context).retry),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
-              : Column(
+          ? Center(
+              child: Padding(
+                padding: const EdgeInsets.all(AlhaiSpacing.xl),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    // شريط الفترة الزمنية
-                    _buildDateRangeBanner(),
-
-                    // محتوى التقرير
-                    Expanded(
-                      child: TabBarView(
-                        controller: _tabController,
-                        children: [
-                          _buildOverviewTab(),
-                          _buildTopCustomersTab(),
-                          _buildGrowthTab(),
-                          _buildLoyaltyTab(),
-                        ],
+                    const Icon(
+                      Icons.error_outline_rounded,
+                      size: 64,
+                      color: AppColors.textMuted,
+                    ),
+                    const SizedBox(height: AlhaiSpacing.md),
+                    Text(
+                      AppLocalizations.of(context).errorLoadingCustomerReport,
+                      style: AppTypography.bodyLarge.copyWith(
+                        color: AppColors.textMuted,
                       ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: AlhaiSpacing.md),
+                    FilledButton.icon(
+                      onPressed: _loadCustomerData,
+                      icon: const Icon(Icons.refresh_rounded),
+                      label: Text(AppLocalizations.of(context).retry),
                     ),
                   ],
                 ),
+              ),
+            )
+          : Column(
+              children: [
+                // شريط الفترة الزمنية
+                _buildDateRangeBanner(),
+
+                // محتوى التقرير
+                Expanded(
+                  child: TabBarView(
+                    controller: _tabController,
+                    children: [
+                      _buildOverviewTab(),
+                      _buildTopCustomersTab(),
+                      _buildGrowthTab(),
+                      _buildLoyaltyTab(),
+                    ],
+                  ),
+                ),
+              ],
+            ),
     );
   }
 
@@ -224,9 +235,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
           const SizedBox(width: AppSizes.sm),
           Text(
             '(${AppLocalizations.of(context).daysCountLabel(_dateRange.duration.inDays)})',
-            style: AppTypography.bodySmall.copyWith(
-              color: AppColors.textMuted,
-            ),
+            style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
           ),
         ],
       ),
@@ -372,14 +381,14 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
       {
         'name': l10n.diamondTier,
         'count': diamond,
-        'color': const Color(0xFF9C27B0)
+        'color': const Color(0xFF9C27B0),
       },
       {'name': l10n.goldTier, 'count': gold, 'color': AppColors.warning},
       {'name': l10n.silverTier, 'count': silver, 'color': AppColors.grey500},
       {
         'name': l10n.bronzeTier,
         'count': bronze,
-        'color': const Color(0xFF795548)
+        'color': const Color(0xFF795548),
       },
     ];
 
@@ -420,8 +429,9 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                             height: 24,
                             decoration: BoxDecoration(
                               color: theme.colorScheme.surfaceContainerHighest,
-                              borderRadius:
-                                  BorderRadius.circular(AppSizes.radiusSm),
+                              borderRadius: BorderRadius.circular(
+                                AppSizes.radiusSm,
+                              ),
                             ),
                           ),
                           FractionallySizedBox(
@@ -430,8 +440,9 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                               height: 24,
                               decoration: BoxDecoration(
                                 color: tier['color'] as Color,
-                                borderRadius:
-                                    BorderRadius.circular(AppSizes.radiusSm),
+                                borderRadius: BorderRadius.circular(
+                                  AppSizes.radiusSm,
+                                ),
                               ),
                               alignment: AlignmentDirectional.centerEnd,
                               padding: const EdgeInsets.symmetric(
@@ -534,12 +545,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
             child: Icon(icon, color: color, size: 18),
           ),
           const SizedBox(width: AppSizes.md),
-          Expanded(
-            child: Text(
-              label,
-              style: AppTypography.bodyMedium,
-            ),
-          ),
+          Expanded(child: Text(label, style: AppTypography.bodyMedium)),
           Text(
             value,
             style: AppTypography.titleSmall.copyWith(
@@ -615,10 +621,10 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                   decoration: BoxDecoration(
                     color: rank <= 3
                         ? (rank == 1
-                            ? AppColors.warning
-                            : rank == 2
-                                ? AppColors.grey400
-                                : const Color(0xFF795548))
+                              ? AppColors.warning
+                              : rank == 2
+                              ? AppColors.grey400
+                              : const Color(0xFF795548))
                         : Theme.of(context).colorScheme.surfaceContainerHighest,
                     shape: BoxShape.circle,
                   ),
@@ -637,8 +643,9 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
 
                 // الصورة والاسم
                 CircleAvatar(
-                  backgroundColor:
-                      _getTierColor(customer.tier).withValues(alpha: 0.1),
+                  backgroundColor: _getTierColor(
+                    customer.tier,
+                  ).withValues(alpha: 0.1),
                   child: Text(
                     customer.name[0],
                     style: TextStyle(
@@ -670,8 +677,9 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                             ),
                             decoration: BoxDecoration(
                               color: _getTierColor(customer.tier),
-                              borderRadius:
-                                  BorderRadius.circular(AppSizes.radiusSm),
+                              borderRadius: BorderRadius.circular(
+                                AppSizes.radiusSm,
+                              ),
                             ),
                             child: Text(
                               _getTierName(context, customer.tier),
@@ -705,8 +713,9 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                       ),
                     ),
                     Text(
-                      AppLocalizations.of(context)
-                          .ordersCount(customer.totalOrders),
+                      AppLocalizations.of(
+                        context,
+                      ).ordersCount(customer.totalOrders),
                       style: AppTypography.bodySmall.copyWith(
                         color: AppColors.textMuted,
                       ),
@@ -744,15 +753,11 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
       children: [
         Text(
           value,
-          style: AppTypography.titleSmall.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: AppTypography.titleSmall.copyWith(fontWeight: FontWeight.bold),
         ),
         Text(
           label,
-          style: AppTypography.labelSmall.copyWith(
-            color: AppColors.textMuted,
-          ),
+          style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
         ),
       ],
     );
@@ -764,18 +769,14 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
       padding: const EdgeInsets.all(AppSizes.lg),
       children: [
         // نمو العملاء الجدد
-        _buildGrowthCard(
-          l10n.newCustomerGrowth,
-          [
-            {'month': l10n.januaryMonth, 'value': 45},
-            {'month': l10n.februaryMonth, 'value': 52},
-            {'month': l10n.marchMonth, 'value': 48},
-            {'month': l10n.aprilMonth, 'value': 65},
-            {'month': l10n.mayMonth, 'value': 72},
-            {'month': l10n.juneMonth, 'value': 85},
-          ],
-          AppColors.primary,
-        ),
+        _buildGrowthCard(l10n.newCustomerGrowth, [
+          {'month': l10n.januaryMonth, 'value': 45},
+          {'month': l10n.februaryMonth, 'value': 52},
+          {'month': l10n.marchMonth, 'value': 48},
+          {'month': l10n.aprilMonth, 'value': 65},
+          {'month': l10n.mayMonth, 'value': 72},
+          {'month': l10n.juneMonth, 'value': 85},
+        ], AppColors.primary),
         const SizedBox(height: AppSizes.lg),
 
         // معدل الاحتفاظ
@@ -793,8 +794,9 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
     List<Map<String, dynamic>> data,
     Color color,
   ) {
-    final maxValue =
-        data.map((d) => d['value'] as int).reduce((a, b) => a > b ? a : b);
+    final maxValue = data
+        .map((d) => d['value'] as int)
+        .reduce((a, b) => a > b ? a : b);
 
     return Card(
       child: Padding(
@@ -818,7 +820,8 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
                   return Expanded(
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: AlhaiSpacing.xxs),
+                        horizontal: AlhaiSpacing.xxs,
+                      ),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.end,
                         children: [
@@ -907,8 +910,11 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
             const SizedBox(height: AppSizes.md),
             Row(
               children: [
-                const Icon(Icons.info_outline,
-                    size: 16, color: AppColors.textMuted),
+                const Icon(
+                  Icons.info_outline,
+                  size: 16,
+                  color: AppColors.textMuted,
+                ),
                 const SizedBox(width: AppSizes.sm),
                 Expanded(
                   child: Text(
@@ -953,9 +959,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
         const SizedBox(height: AppSizes.sm),
         Text(
           period,
-          style: AppTypography.bodySmall.copyWith(
-            color: AppColors.textMuted,
-          ),
+          style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
         ),
       ],
     );
@@ -989,9 +993,10 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
               children: [
                 TableRow(
                   decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .surfaceContainerHighest),
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.surfaceContainerHighest,
+                  ),
                   children: [
                     _buildTableCell(l10n.cohortGroup, isHeader: true),
                     _buildTableCell(l10n.month1, isHeader: true),
@@ -1183,11 +1188,19 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
             ),
             const SizedBox(height: AppSizes.lg),
             _buildPointsRow(
-                l10n.diamondTier, 35000, 28, const Color(0xFF9C27B0)),
+              l10n.diamondTier,
+              35000,
+              28,
+              const Color(0xFF9C27B0),
+            ),
             _buildPointsRow(l10n.goldTier, 45000, 35, AppColors.warning),
             _buildPointsRow(l10n.silverTier, 28000, 22, AppColors.grey500),
             _buildPointsRow(
-                l10n.bronzeTier, 17600, 15, const Color(0xFF795548)),
+              l10n.bronzeTier,
+              17600,
+              15,
+              const Color(0xFF795548),
+            ),
           ],
         ),
       ),
@@ -1202,10 +1215,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
           Container(
             width: 12,
             height: 12,
-            decoration: BoxDecoration(
-              color: color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
           ),
           const SizedBox(width: AppSizes.sm),
           SizedBox(
@@ -1253,11 +1263,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
               '65%',
               Icons.local_offer,
             ),
-            _buildRedemptionRow(
-              l10n.freeProducts,
-              '25%',
-              Icons.card_giftcard,
-            ),
+            _buildRedemptionRow(l10n.freeProducts, '25%', Icons.card_giftcard),
             _buildRedemptionRow(
               l10n.couponsLabel,
               '10%',
@@ -1282,9 +1288,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
       title: Text(label),
       trailing: Text(
         percentage,
-        style: AppTypography.titleMedium.copyWith(
-          fontWeight: FontWeight.bold,
-        ),
+        style: AppTypography.titleMedium.copyWith(fontWeight: FontWeight.bold),
       ),
     );
   }
@@ -1357,9 +1361,7 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
 
   void _exportReport() {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context).exportingReportMsg),
-      ),
+      SnackBar(content: Text(AppLocalizations.of(context).exportingReportMsg)),
     );
   }
 }

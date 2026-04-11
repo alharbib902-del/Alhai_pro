@@ -148,12 +148,9 @@ void main() {
       expect(ex.userMessage, contains('5'));
       expect(ex.userMessage, contains('10'));
       expect(
-          ex.details,
-          equals({
-            'productName': 'Milk',
-            'available': 5,
-            'requested': 10,
-          }));
+        ex.details,
+        equals({'productName': 'Milk', 'available': 5, 'requested': 10}),
+      );
     });
   });
 
@@ -166,12 +163,7 @@ void main() {
     test('insufficientRole factory', () {
       final ex = PermissionException.insufficientRole('admin', 'cashier');
       expect(ex.code, equals('INSUFFICIENT_ROLE'));
-      expect(
-          ex.details,
-          equals({
-            'required': 'admin',
-            'current': 'cashier',
-          }));
+      expect(ex.details, equals({'required': 'admin', 'current': 'cashier'}));
     });
   });
 

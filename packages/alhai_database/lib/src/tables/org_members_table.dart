@@ -3,9 +3,10 @@ import 'package:drift/drift.dart';
 @TableIndex(name: 'idx_org_members_org_id', columns: {#orgId})
 @TableIndex(name: 'idx_org_members_user_id', columns: {#userId})
 @TableIndex(
-    name: 'idx_org_members_org_user_unique',
-    columns: {#orgId, #userId},
-    unique: true)
+  name: 'idx_org_members_org_user_unique',
+  columns: {#orgId, #userId},
+  unique: true,
+)
 class OrgMembersTable extends Table {
   @override
   String get tableName => 'org_members';
@@ -29,9 +30,10 @@ class OrgMembersTable extends Table {
 @TableIndex(name: 'idx_user_stores_user_id', columns: {#userId})
 @TableIndex(name: 'idx_user_stores_store_id', columns: {#storeId})
 @TableIndex(
-    name: 'idx_user_stores_user_store_unique',
-    columns: {#userId, #storeId},
-    unique: true)
+  name: 'idx_user_stores_user_store_unique',
+  columns: {#userId, #storeId},
+  unique: true,
+)
 class UserStoresTable extends Table {
   @override
   String get tableName => 'user_stores';

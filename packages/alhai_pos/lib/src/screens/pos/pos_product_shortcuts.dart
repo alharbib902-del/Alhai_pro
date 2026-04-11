@@ -73,16 +73,22 @@ class _PosProductCardState extends State<PosProductCard> {
                 children: [
                   // Image area with overlays
                   _buildImageArea(
-                      product, imageHeight, isOutOfStock, isDark, l10n),
+                    product,
+                    imageHeight,
+                    isOutOfStock,
+                    isDark,
+                    l10n,
+                  ),
 
                   // Info area - Row with consistent + button position
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(
-                          AlhaiSpacing.xs,
-                          AlhaiSpacing.xxs,
-                          AlhaiSpacing.xxs,
-                          AlhaiSpacing.xxs),
+                        AlhaiSpacing.xs,
+                        AlhaiSpacing.xxs,
+                        AlhaiSpacing.xxs,
+                        AlhaiSpacing.xxs,
+                      ),
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
@@ -106,7 +112,8 @@ class _PosProductCardState extends State<PosProductCard> {
                           if (!isOutOfStock)
                             Padding(
                               padding: const EdgeInsetsDirectional.only(
-                                  start: AlhaiSpacing.xxs),
+                                start: AlhaiSpacing.xxs,
+                              ),
                               child: Tooltip(
                                 message: l10n.addToCart,
                                 child: Material(
@@ -114,15 +121,18 @@ class _PosProductCardState extends State<PosProductCard> {
                                   shape: const CircleBorder(),
                                   elevation: 2,
                                   child: InkWell(
-                                    onTap: widget.onAddWithQuantity ??
+                                    onTap:
+                                        widget.onAddWithQuantity ??
                                         widget.onAddToCart,
                                     customBorder: const CircleBorder(),
                                     child: SizedBox(
                                       width: 28,
                                       height: 28,
-                                      child: Icon(Icons.add_rounded,
-                                          color: colorScheme.onPrimary,
-                                          size: 16),
+                                      child: Icon(
+                                        Icons.add_rounded,
+                                        color: colorScheme.onPrimary,
+                                        size: 16,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -141,8 +151,13 @@ class _PosProductCardState extends State<PosProductCard> {
     );
   }
 
-  Widget _buildImageArea(Product product, double height, bool isOutOfStock,
-      bool isDark, AppLocalizations l10n) {
+  Widget _buildImageArea(
+    Product product,
+    double height,
+    bool isOutOfStock,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final colorScheme = Theme.of(context).colorScheme;
     Widget imageWidget = Semantics(
       label: product.name,
@@ -158,17 +173,26 @@ class _PosProductCardState extends State<PosProductCard> {
                 memCacheWidth: 200,
                 memCacheHeight: 200,
                 placeholder: (_, __) => Center(
-                  child: Icon(Icons.image_rounded,
-                      color: colorScheme.onSurfaceVariant, size: 32),
+                  child: Icon(
+                    Icons.image_rounded,
+                    color: colorScheme.onSurfaceVariant,
+                    size: 32,
+                  ),
                 ),
                 errorWidget: (_, __, ___) => Center(
-                  child: Icon(Icons.image_not_supported_outlined,
-                      color: colorScheme.onSurfaceVariant, size: 32),
+                  child: Icon(
+                    Icons.image_not_supported_outlined,
+                    color: colorScheme.onSurfaceVariant,
+                    size: 32,
+                  ),
                 ),
               )
             : Center(
-                child: Icon(Icons.image_rounded,
-                    color: colorScheme.onSurfaceVariant, size: 40),
+                child: Icon(
+                  Icons.image_rounded,
+                  color: colorScheme.onSurfaceVariant,
+                  size: 40,
+                ),
               ),
       ),
     );
@@ -226,7 +250,9 @@ class _PosProductCardState extends State<PosProductCard> {
                 angle: -0.3,
                 child: Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: 10, vertical: AlhaiSpacing.xxs),
+                    horizontal: 10,
+                    vertical: AlhaiSpacing.xxs,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.error.withValues(alpha: 0.9),
                     borderRadius: BorderRadius.circular(6),
@@ -258,8 +284,11 @@ class _PosProductCardState extends State<PosProductCard> {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(Icons.warning_amber_rounded,
-                      color: colorScheme.onPrimary, size: 12),
+                  Icon(
+                    Icons.warning_amber_rounded,
+                    color: colorScheme.onPrimary,
+                    size: 12,
+                  ),
                   const SizedBox(width: 3),
                   Text(
                     l10n.lowStock,
@@ -299,16 +328,15 @@ class PosShortcutsBar extends ConsumerWidget {
     final heldCount = ref.watch(dbHeldInvoicesCountProvider);
 
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.lg, vertical: 10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AlhaiSpacing.lg,
+        vertical: 10,
+      ),
       decoration: BoxDecoration(
         color: colorScheme.surface,
         borderRadius: BorderRadius.circular(AppRadius.full),
         boxShadow: AppShadows.lg,
-        border: Border.all(
-          color: colorScheme.outlineVariant,
-          width: 0.5,
-        ),
+        border: Border.all(color: colorScheme.outlineVariant, width: 0.5),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -349,8 +377,10 @@ class PosShortcutsBar extends ConsumerWidget {
                     end: -4,
                     child: Container(
                       padding: const EdgeInsets.all(3),
-                      constraints:
-                          const BoxConstraints(minWidth: 18, minHeight: 18),
+                      constraints: const BoxConstraints(
+                        minWidth: 18,
+                        minHeight: 18,
+                      ),
                       decoration: const BoxDecoration(
                         color: AppColors.warning,
                         shape: BoxShape.circle,
@@ -404,7 +434,9 @@ class PosShortcutButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Padding(
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.xxs, vertical: 2),
+            horizontal: AlhaiSpacing.xxs,
+            vertical: 2,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -459,16 +491,21 @@ class PosFab extends StatelessWidget {
         child: Stack(
           alignment: Alignment.center,
           children: [
-            Icon(Icons.shopping_cart_rounded,
-                color: colorScheme.onPrimary, size: 26),
+            Icon(
+              Icons.shopping_cart_rounded,
+              color: colorScheme.onPrimary,
+              size: 26,
+            ),
             if (itemCount > 0)
               PositionedDirectional(
                 top: 6,
                 end: 6,
                 child: Container(
                   padding: const EdgeInsets.all(2),
-                  constraints:
-                      const BoxConstraints(minWidth: 18, minHeight: 18),
+                  constraints: const BoxConstraints(
+                    minWidth: 18,
+                    minHeight: 18,
+                  ),
                   decoration: const BoxDecoration(
                     color: AppColors.error,
                     shape: BoxShape.circle,

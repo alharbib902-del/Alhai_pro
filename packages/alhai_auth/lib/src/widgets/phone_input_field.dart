@@ -179,8 +179,8 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
               color: hasError
                   ? AppColors.error
                   : _isFocused
-                      ? AppColors.primary
-                      : Theme.of(context).colorScheme.outline,
+                  ? AppColors.primary
+                  : Theme.of(context).colorScheme.outline,
               width: hasError || _isFocused ? 2 : 1,
             ),
             boxShadow: _isFocused
@@ -316,10 +316,7 @@ class _PhoneInputFieldState extends State<PhoneInputField> {
               Expanded(
                 child: Text(
                   widget.errorText!,
-                  style: const TextStyle(
-                    color: AppColors.error,
-                    fontSize: 12,
-                  ),
+                  style: const TextStyle(color: AppColors.error, fontSize: 12),
                 ),
               ),
             ],
@@ -433,10 +430,7 @@ class _CountryPickerSheet extends StatelessWidget {
             final isSelected = country.code == selectedCountry.code;
             return ListTile(
               onTap: () => onSelect(country),
-              leading: Text(
-                country.flag,
-                style: const TextStyle(fontSize: 32),
-              ),
+              leading: Text(country.flag, style: const TextStyle(fontSize: 32)),
               title: Text(
                 _localizedCountryName(context, country),
                 style: TextStyle(
@@ -446,10 +440,7 @@ class _CountryPickerSheet extends StatelessWidget {
               ),
               subtitle: Text(
                 '${country.name} (${country.dialCode})',
-                style: TextStyle(
-                  color: subtitleColor,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: subtitleColor, fontSize: 12),
               ),
               trailing: isSelected
                   ? const Icon(
@@ -515,18 +506,12 @@ class WhatsAppOtpButton extends StatelessWidget {
                       color: Colors.white.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    child: const Icon(
-                      Icons.chat_rounded,
-                      size: 20,
-                    ),
+                    child: const Icon(Icons.chat_rounded, size: 20),
                   ),
                   const SizedBox(width: AlhaiSpacing.sm),
                   const Text(
                     'إرسال رمز التحقق',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),

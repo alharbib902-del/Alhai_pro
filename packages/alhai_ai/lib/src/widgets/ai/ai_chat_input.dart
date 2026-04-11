@@ -59,7 +59,11 @@ class _AiChatInputState extends State<AiChatInput> {
 
     return Container(
       padding: EdgeInsetsDirectional.fromSTEB(
-          AlhaiSpacing.md, AlhaiSpacing.xs, AlhaiSpacing.md, AlhaiSpacing.md),
+        AlhaiSpacing.md,
+        AlhaiSpacing.xs,
+        AlhaiSpacing.md,
+        AlhaiSpacing.md,
+      ),
       decoration: BoxDecoration(
         color: isDark ? const Color(0xFF0F172A) : Colors.white,
         border: Border(
@@ -102,8 +106,9 @@ class _AiChatInputState extends State<AiChatInput> {
       width: 40,
       height: 40,
       decoration: BoxDecoration(
-        color:
-            isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.grey100,
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.05)
+            : AppColors.grey100,
         borderRadius: BorderRadius.circular(12),
       ),
       child: Icon(
@@ -120,8 +125,9 @@ class _AiChatInputState extends State<AiChatInput> {
         color: isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.grey50,
         borderRadius: BorderRadius.circular(24),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.1) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.1)
+              : AppColors.border,
         ),
       ),
       child: TextField(
@@ -159,13 +165,14 @@ class _AiChatInputState extends State<AiChatInput> {
       width: 44,
       height: 44,
       decoration: BoxDecoration(
-        gradient:
-            _hasText && !widget.isProcessing ? AppColors.primaryGradient : null,
+        gradient: _hasText && !widget.isProcessing
+            ? AppColors.primaryGradient
+            : null,
         color: _hasText && !widget.isProcessing
             ? null
             : isDark
-                ? Colors.white.withValues(alpha: 0.08)
-                : AppColors.grey200,
+            ? Colors.white.withValues(alpha: 0.08)
+            : AppColors.grey200,
         borderRadius: BorderRadius.circular(14),
         boxShadow: _hasText && !widget.isProcessing
             ? [
@@ -198,8 +205,8 @@ class _AiChatInputState extends State<AiChatInput> {
                   color: _hasText
                       ? Colors.white
                       : isDark
-                          ? Colors.white24
-                          : AppColors.grey400,
+                      ? Colors.white24
+                      : AppColors.grey400,
                   size: 20,
                 ),
         ),

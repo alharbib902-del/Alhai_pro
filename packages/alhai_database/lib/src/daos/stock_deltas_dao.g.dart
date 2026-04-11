@@ -14,5 +14,7 @@ class StockDeltasDaoManager {
   StockDeltasDaoManager(this._db);
   $$StockDeltasTableTableTableManager get stockDeltasTable =>
       $$StockDeltasTableTableTableManager(
-          _db.attachedDatabase, _db.stockDeltasTable);
+        _db.attachedDatabase,
+        _db.stockDeltasTable,
+      );
 }

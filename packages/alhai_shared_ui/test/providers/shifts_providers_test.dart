@@ -54,9 +54,9 @@ void main() {
 
   group('openShiftProvider', () {
     test('returns null when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(openShiftProvider.future);
@@ -64,12 +64,13 @@ void main() {
     });
 
     test('returns shift from dao', () async {
-      when(() => mockShiftsDao.getAnyOpenShift('store-1'))
-          .thenAnswer((_) async => null);
+      when(
+        () => mockShiftsDao.getAnyOpenShift('store-1'),
+      ).thenAnswer((_) async => null);
 
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(openShiftProvider.future);
@@ -79,9 +80,9 @@ void main() {
 
   group('todayShiftsProvider', () {
     test('returns empty list when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(todayShiftsProvider.future);
@@ -89,12 +90,13 @@ void main() {
     });
 
     test('returns shifts from dao', () async {
-      when(() => mockShiftsDao.getTodayShifts('store-1'))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockShiftsDao.getTodayShifts('store-1'),
+      ).thenAnswer((_) async => []);
 
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(todayShiftsProvider.future);
@@ -104,16 +106,18 @@ void main() {
 
   group('shiftMovementsProvider', () {
     test('returns movements for shift', () async {
-      when(() => mockShiftsDao.getShiftMovements('shift-1'))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockShiftsDao.getShiftMovements('shift-1'),
+      ).thenAnswer((_) async => []);
 
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
-      final result =
-          await container.read(shiftMovementsProvider('shift-1').future);
+      final result = await container.read(
+        shiftMovementsProvider('shift-1').future,
+      );
       expect(result, isEmpty);
     });
   });

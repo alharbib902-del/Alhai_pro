@@ -14,9 +14,7 @@ class SAUsersDatasource {
   /// Fetch platform-level admin/support users.
   /// These are users with role = super_admin, support, or viewer
   /// stored in the users table (or a dedicated platform_users table).
-  Future<List<SAUser>> getPlatformUsers({
-    String? search,
-  }) async {
+  Future<List<SAUser>> getPlatformUsers({String? search}) async {
     var query = _client
         .from('users')
         .select('id, name, phone, email, role, created_at, last_login_at')
@@ -35,8 +33,11 @@ class SAUsersDatasource {
 
   /// Fetch a single user by ID.
   Future<SAUser> getUser(String userId) async {
-    final data =
-        await _client.from('users').select('*').eq('id', userId).single();
+    final data = await _client
+        .from('users')
+        .select('*')
+        .eq('id', userId)
+        .single();
     return SAUser.fromJson(data);
   }
 
@@ -47,15 +48,18 @@ class SAUsersDatasource {
 
   /// Get total platform user count (all roles across all stores).
   Future<int> getTotalUserCount() async {
-    final result =
-        await _client.from('users').select('id').count(CountOption.exact);
+    final result = await _client
+        .from('users')
+        .select('id')
+        .count(CountOption.exact);
     return result.count;
   }
 
   /// Get active user count (users who signed in within last 30 days).
   Future<int> getActiveUserCount() async {
-    final thirtyDaysAgo =
-        DateTime.now().subtract(const Duration(days: 30)).toIso8601String();
+    final thirtyDaysAgo = DateTime.now()
+        .subtract(const Duration(days: 30))
+        .toIso8601String();
     final result = await _client
         .from('users')
         .select('id')
@@ -66,8 +70,9 @@ class SAUsersDatasource {
 
   /// Get new signups in the last 30 days.
   Future<int> getNewSignupsCount() async {
-    final thirtyDaysAgo =
-        DateTime.now().subtract(const Duration(days: 30)).toIso8601String();
+    final thirtyDaysAgo = DateTime.now()
+        .subtract(const Duration(days: 30))
+        .toIso8601String();
     final result = await _client
         .from('users')
         .select('id')

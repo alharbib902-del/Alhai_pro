@@ -17,8 +17,9 @@ import 'package:alhai_auth/alhai_auth.dart';
 // ============================================================================
 
 /// مزود خدمة توقع المبيعات
-final aiSalesForecastingServiceProvider =
-    Provider<AiSalesForecastingService>((ref) {
+final aiSalesForecastingServiceProvider = Provider<AiSalesForecastingService>((
+  ref,
+) {
   return AiSalesForecastingService(GetIt.instance<AppDatabase>());
 });
 
@@ -27,12 +28,14 @@ final aiSalesForecastingServiceProvider =
 // ============================================================================
 
 /// مزود فترة التوقع المختارة
-final selectedForecastPeriodProvider =
-    StateProvider<ForecastPeriod>((ref) => ForecastPeriod.daily);
+final selectedForecastPeriodProvider = StateProvider<ForecastPeriod>(
+  (ref) => ForecastPeriod.daily,
+);
 
 /// مزود نتيجة التوقع
-final forecastResultProvider =
-    FutureProvider.autoDispose<ForecastResult>((ref) async {
+final forecastResultProvider = FutureProvider.autoDispose<ForecastResult>((
+  ref,
+) async {
   final service = ref.read(aiSalesForecastingServiceProvider);
   final storeId = ref.read(currentStoreIdProvider)!;
   final period = ref.watch(selectedForecastPeriodProvider);
@@ -42,10 +45,10 @@ final forecastResultProvider =
 /// مزود الأنماط الموسمية
 final seasonalPatternsProvider =
     FutureProvider.autoDispose<List<SeasonalPattern>>((ref) async {
-  final service = ref.read(aiSalesForecastingServiceProvider);
-  final storeId = ref.read(currentStoreIdProvider)!;
-  return service.detectSeasonalPatterns(storeId);
-});
+      final service = ref.read(aiSalesForecastingServiceProvider);
+      final storeId = ref.read(currentStoreIdProvider)!;
+      return service.detectSeasonalPatterns(storeId);
+    });
 
 // ============================================================================
 // WHAT-IF STATE
@@ -58,8 +61,9 @@ final whatIfDiscountProvider = StateProvider<double>((ref) => 0);
 final whatIfPriceChangeProvider = StateProvider<double>((ref) => 0);
 
 /// مزود نتيجة "ماذا لو"
-final whatIfResultProvider =
-    FutureProvider.autoDispose<WhatIfResult>((ref) async {
+final whatIfResultProvider = FutureProvider.autoDispose<WhatIfResult>((
+  ref,
+) async {
   final service = ref.read(aiSalesForecastingServiceProvider);
   final storeId = ref.read(currentStoreIdProvider)!;
   final discount = ref.watch(whatIfDiscountProvider);
@@ -67,10 +71,7 @@ final whatIfResultProvider =
 
   return service.simulateWhatIf(
     storeId,
-    WhatIfScenario(
-      discountPercent: discount,
-      priceChangePercent: priceChange,
-    ),
+    WhatIfScenario(discountPercent: discount, priceChangePercent: priceChange),
   );
 });
 
@@ -79,8 +80,9 @@ final whatIfResultProvider =
 // ============================================================================
 
 /// مزود بيانات التوقع من خادم AI (مع احتياط محلي)
-final forecastApiProvider =
-    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+final forecastApiProvider = FutureProvider.autoDispose<Map<String, dynamic>>((
+  ref,
+) async {
   final api = ref.read(aiApiServiceProvider);
   final storeId = ref.read(currentStoreIdProvider)!;
   final period = ref.watch(selectedForecastPeriodProvider);

@@ -13,34 +13,40 @@ import 'package:alhai_auth/alhai_auth.dart';
 // ============================================================================
 
 /// مزود نتيجة التعرف
-final recognitionResultProvider = StateNotifierProvider<
-    RecognitionResultNotifier, AsyncValue<RecognitionResult?>>((ref) {
-  return RecognitionResultNotifier();
-});
+final recognitionResultProvider =
+    StateNotifierProvider<
+      RecognitionResultNotifier,
+      AsyncValue<RecognitionResult?>
+    >((ref) {
+      return RecognitionResultNotifier();
+    });
 
 /// مزود بيانات OCR
 final ocrExtractionProvider =
     StateNotifierProvider<OcrExtractionNotifier, OcrExtraction?>((ref) {
-  return OcrExtractionNotifier();
-});
+      return OcrExtractionNotifier();
+    });
 
 /// مزود نتيجة مسح الرف
 final shelfScanProvider =
-    StateNotifierProvider<ShelfScanNotifier, AsyncValue<ShelfScanResult?>>(
-        (ref) {
-  return ShelfScanNotifier();
-});
+    StateNotifierProvider<ShelfScanNotifier, AsyncValue<ShelfScanResult?>>((
+      ref,
+    ) {
+      return ShelfScanNotifier();
+    });
 
 /// مزود وضع المسح
-final scanModeProvider =
-    StateProvider<ScanMode>((ref) => ScanMode.singleProduct);
+final scanModeProvider = StateProvider<ScanMode>(
+  (ref) => ScanMode.singleProduct,
+);
 
 /// مزود حالة الكاميرا
 final cameraActiveProvider = StateProvider<bool>((ref) => false);
 
 /// مزود المنتج المحدد من نتائج التعرف
-final selectedRecognizedProductProvider =
-    StateProvider<RecognizedProduct?>((ref) => null);
+final selectedRecognizedProductProvider = StateProvider<RecognizedProduct?>(
+  (ref) => null,
+);
 
 // ============================================================================
 // NOTIFIERS
@@ -55,8 +61,9 @@ class RecognitionResultNotifier
     state = const AsyncValue.loading();
     // Simulate scanning delay
     await Future.delayed(const Duration(milliseconds: 1500));
-    state =
-        AsyncValue.data(AiProductRecognitionService.getMockRecognitionResult());
+    state = AsyncValue.data(
+      AiProductRecognitionService.getMockRecognitionResult(),
+    );
   }
 
   void acceptProduct(String productId) {
@@ -69,21 +76,25 @@ class RecognitionResultNotifier
   void rejectProduct(String productName) {
     final current = state.valueOrNull;
     if (current == null) return;
-    final updated =
-        current.products.where((p) => p.nameAr != productName).toList();
-    state = AsyncValue.data(RecognitionResult(
-      id: current.id,
-      products: updated,
-      scannedAt: current.scannedAt,
-      sourceType: current.sourceType,
-      totalDetected: current.totalDetected,
-      totalMatched:
-          updated.where((p) => p.status == RecognitionStatus.matched).length,
-      avgConfidence: updated.isEmpty
-          ? 0
-          : updated.map((p) => p.confidence).reduce((a, b) => a + b) /
-              updated.length,
-    ));
+    final updated = current.products
+        .where((p) => p.nameAr != productName)
+        .toList();
+    state = AsyncValue.data(
+      RecognitionResult(
+        id: current.id,
+        products: updated,
+        scannedAt: current.scannedAt,
+        sourceType: current.sourceType,
+        totalDetected: current.totalDetected,
+        totalMatched: updated
+            .where((p) => p.status == RecognitionStatus.matched)
+            .length,
+        avgConfidence: updated.isEmpty
+            ? 0
+            : updated.map((p) => p.confidence).reduce((a, b) => a + b) /
+                  updated.length,
+      ),
+    );
   }
 
   void clear() {
@@ -176,20 +187,22 @@ class ShelfScanNotifier extends StateNotifier<AsyncValue<ShelfScanResult?>> {
 // ============================================================================
 
 /// مزود التعرف على المنتج من خادم AI
-final recognitionApiProvider = Provider<
-    Future<Map<String, dynamic>> Function({
-      String? barcode,
-      String? description,
-      String? imageBase64,
-    })>((ref) {
-  final api = ref.read(aiApiServiceProvider);
-  final storeId = ref.read(currentStoreIdProvider) ?? '';
-  return ({String? barcode, String? description, String? imageBase64}) =>
-      api.recognizeProduct(
-        orgId: 'default',
-        storeId: storeId,
-        barcode: barcode,
-        description: description,
-        imageBase64: imageBase64,
-      );
-});
+final recognitionApiProvider =
+    Provider<
+      Future<Map<String, dynamic>> Function({
+        String? barcode,
+        String? description,
+        String? imageBase64,
+      })
+    >((ref) {
+      final api = ref.read(aiApiServiceProvider);
+      final storeId = ref.read(currentStoreIdProvider) ?? '';
+      return ({String? barcode, String? description, String? imageBase64}) =>
+          api.recognizeProduct(
+            orgId: 'default',
+            storeId: storeId,
+            barcode: barcode,
+            description: description,
+            imageBase64: imageBase64,
+          );
+    });

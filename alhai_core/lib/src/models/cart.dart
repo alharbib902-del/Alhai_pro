@@ -53,10 +53,10 @@ class CartItem with _$CartItem {
 
   /// Convert to OrderItem for checkout
   OrderItem toOrderItem() => OrderItem(
-        productId: productId,
-        name: name,
-        unitPrice: unitPrice,
-        qty: qty,
-        lineTotal: lineTotal,
-      );
+    productId: productId,
+    name: name,
+    unitPrice: unitPrice,
+    qty: qty,
+    lineTotal: lineTotal,
+  );
 }

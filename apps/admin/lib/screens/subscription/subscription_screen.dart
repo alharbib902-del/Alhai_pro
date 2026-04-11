@@ -47,10 +47,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
       }
 
       // Try to get organization ID from settings
-      final orgRow = await (db.select(db.settingsTable)
-            ..where((s) =>
-                s.storeId.equals(storeId) & s.key.equals('organization_id')))
-          .getSingleOrNull();
+      final orgRow =
+          await (db.select(db.settingsTable)..where(
+                (s) =>
+                    s.storeId.equals(storeId) & s.key.equals('organization_id'),
+              ))
+              .getSingleOrNull();
       final orgId = orgRow?.value;
 
       OrganizationsTableData? org;
@@ -102,9 +104,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           userName: l10n.defaultUserName,
           userRole: l10n.branchManager,
         ),
-        Expanded(
-          child: _buildBody(isDark, l10n),
-        ),
+        Expanded(child: _buildBody(isDark, l10n)),
       ],
     );
   }
@@ -119,14 +119,18 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline,
-                size: 64, color: AppColors.error.withValues(alpha: 0.7)),
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: AppColors.error.withValues(alpha: 0.7),
+            ),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
               _error!,
               style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+                fontSize: 16,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AlhaiSpacing.md),
@@ -159,9 +163,10 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           Text(
             'Available Plans',
             style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface),
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
           ),
           const SizedBox(height: AlhaiSpacing.md),
           LayoutBuilder(
@@ -174,7 +179,7 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   'Free',
                   '0',
                   ['10 products', '1 branch', '1 employee', 'Basic reports'],
-                  false
+                  false,
                 ),
                 (
                   'Basic',
@@ -184,9 +189,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                     '3 branches',
                     '5 employees',
                     'Advanced reports',
-                    'Email support'
+                    'Email support',
                   ],
-                  false
+                  false,
                 ),
                 (
                   'Professional',
@@ -197,9 +202,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                     '20 employees',
                     'All reports',
                     'Live support',
-                    'AI features'
+                    'AI features',
                   ],
-                  true
+                  true,
                 ),
                 (
                   'Enterprise',
@@ -210,9 +215,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                     'Unlimited employees',
                     'Advanced API',
                     'Dedicated manager',
-                    'Full customization'
+                    'Full customization',
                   ],
-                  false
+                  false,
                 ),
               ];
               return GridView.builder(
@@ -249,10 +254,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         width: double.infinity,
         padding: const EdgeInsets.all(AlhaiSpacing.lg),
         decoration: BoxDecoration(
-          gradient: LinearGradient(colors: [
-            Theme.of(context).colorScheme.outlineVariant,
-            Theme.of(context).colorScheme.outline
-          ]),
+          gradient: LinearGradient(
+            colors: [
+              Theme.of(context).colorScheme.outlineVariant,
+              Theme.of(context).colorScheme.outline,
+            ],
+          ),
           borderRadius: BorderRadius.circular(16),
         ),
         child: Column(
@@ -260,36 +267,49 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           children: [
             Row(
               children: [
-                const Text('Current Plan',
-                    style: TextStyle(color: Colors.white70, fontSize: 14)),
+                const Text(
+                  'Current Plan',
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
                 const Spacer(),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 4,
+                  ),
                   decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(20)),
-                  child: const Text('No Subscription',
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold)),
+                    color: Colors.white.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Text(
+                    'No Subscription',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 12,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: AlhaiSpacing.md),
-            const Text('No active subscription',
-                style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold)),
+            const Text(
+              'No active subscription',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             const SizedBox(height: AlhaiSpacing.xs),
             const Row(
               children: [
                 Icon(Icons.info_outline, color: Colors.white70, size: 18),
                 SizedBox(width: 6),
-                Text('Choose a plan to get started',
-                    style: TextStyle(color: Colors.white70, fontSize: 14)),
+                Text(
+                  'Choose a plan to get started',
+                  style: TextStyle(color: Colors.white70, fontSize: 14),
+                ),
               ],
             ),
           ],
@@ -329,35 +349,46 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         children: [
           Row(
             children: [
-              const Text('Current Plan',
-                  style: TextStyle(color: Colors.white70, fontSize: 14)),
+              const Text(
+                'Current Plan',
+                style: TextStyle(color: Colors.white70, fontSize: 14),
+              ),
               const Spacer(),
               Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(20)),
+                  color: Colors.white.withValues(alpha: 0.2),
+                  borderRadius: BorderRadius.circular(20),
+                ),
                 child: Text(
                   isActive ? 'Active' : status,
                   style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 12,
-                      fontWeight: FontWeight.bold),
+                    color: Colors.white,
+                    fontSize: 12,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.md),
-          Text(planName,
-              style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold)),
+          Text(
+            planName,
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
           if (price > 0) ...[
             const SizedBox(height: AlhaiSpacing.xxs),
-            Text('${price.toStringAsFixed(0)} $currency / month',
-                style: const TextStyle(color: Colors.white70, fontSize: 14)),
+            Text(
+              '${price.toStringAsFixed(0)} $currency / month',
+              style: const TextStyle(color: Colors.white70, fontSize: 14),
+            ),
           ],
           const SizedBox(height: AlhaiSpacing.xs),
           Row(
@@ -414,9 +445,10 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
         Text(
           'Usage Statistics',
           style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.onSurface),
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
         const SizedBox(height: AlhaiSpacing.sm),
         Row(
@@ -452,8 +484,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     );
   }
 
-  Widget _buildUsageTile(String title, String value, String limit,
-      IconData icon, Color color, bool isDark) {
+  Widget _buildUsageTile(
+    String title,
+    String value,
+    String limit,
+    IconData icon,
+    Color color,
+    bool isDark,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
       decoration: BoxDecoration(
@@ -474,25 +512,34 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                   color: color.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Text(limit,
-                    style: TextStyle(
-                        fontSize: 11,
-                        color: color,
-                        fontWeight: FontWeight.w500)),
+                child: Text(
+                  limit,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: color,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
               ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.sm),
-          Text(value,
-              style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface)),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: 28,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
           const SizedBox(height: AlhaiSpacing.xxs),
-          Text(title,
-              style: TextStyle(
-                  fontSize: 13,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant)),
+          Text(
+            title,
+            style: TextStyle(
+              fontSize: 13,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );
@@ -525,11 +572,14 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('Subscription Features',
-            style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface)),
+        Text(
+          'Subscription Features',
+          style: TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
+        ),
         const SizedBox(height: AlhaiSpacing.sm),
         Container(
           width: double.infinity,
@@ -541,22 +591,29 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           ),
           child: Column(
             children: features
-                .map((f) => Padding(
-                      padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-                      child: Row(
-                        children: [
-                          const Icon(Icons.check_circle,
-                              color: AppColors.success, size: 18),
-                          const SizedBox(width: AlhaiSpacing.xs),
-                          Expanded(
-                              child: Text(f,
-                                  style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .onSurface))),
-                        ],
-                      ),
-                    ))
+                .map(
+                  (f) => Padding(
+                    padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.check_circle,
+                          color: AppColors.success,
+                          size: 18,
+                        ),
+                        const SizedBox(width: AlhaiSpacing.xs),
+                        Expanded(
+                          child: Text(
+                            f,
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.onSurface,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
                 .toList(),
           ),
         ),
@@ -564,8 +621,13 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
     );
   }
 
-  Widget _buildPlanCard(String name, String price, List<String> features,
-      bool isPopular, bool isDark) {
+  Widget _buildPlanCard(
+    String name,
+    String price,
+    List<String> features,
+    bool isPopular,
+    bool isDark,
+  ) {
     final isCurrentPlan =
         _subscription?.plan.toLowerCase() == name.toLowerCase();
 
@@ -578,8 +640,8 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
           color: isPopular
               ? AppColors.primary
               : (isCurrentPlan
-                  ? AppColors.success
-                  : (Theme.of(context).dividerColor)),
+                    ? AppColors.success
+                    : (Theme.of(context).dividerColor)),
           width: isPopular || isCurrentPlan ? 2 : 1,
         ),
       ),
@@ -591,66 +653,90 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
               decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(8)),
-              child: const Text('Most Popular',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold)),
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text(
+                'Most Popular',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             ),
           if (isCurrentPlan)
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
               decoration: BoxDecoration(
-                  color: AppColors.success,
-                  borderRadius: BorderRadius.circular(8)),
-              child: const Text('Current Plan',
-                  style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold)),
-            ),
-          Text(name,
-              style: TextStyle(
-                  fontSize: 18,
+                color: AppColors.success,
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Text(
+                'Current Plan',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 10,
                   fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.onSurface)),
+                ),
+              ),
+            ),
+          Text(
+            name,
+            style: TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+          ),
           const SizedBox(height: AlhaiSpacing.xxs),
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              Text(price,
-                  style: const TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.primary)),
+              Text(
+                price,
+                style: const TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.primary,
+                ),
+              ),
               const SizedBox(width: AlhaiSpacing.xxs),
-              Text('/month',
-                  style: TextStyle(
-                      fontSize: 12,
-                      color: Theme.of(context).colorScheme.onSurfaceVariant)),
+              Text(
+                '/month',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.sm),
-          ...features.map((f) => Padding(
-                padding: const EdgeInsets.only(bottom: 6),
-                child: Row(
-                  children: [
-                    const Icon(Icons.check_circle,
-                        color: AppColors.success, size: 16),
-                    const SizedBox(width: 6),
-                    Expanded(
-                        child: Text(f,
-                            style: TextStyle(
-                                fontSize: 12,
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant))),
-                  ],
-                ),
-              )),
+          ...features.map(
+            (f) => Padding(
+              padding: const EdgeInsets.only(bottom: 6),
+              child: Row(
+                children: [
+                  const Icon(
+                    Icons.check_circle,
+                    color: AppColors.success,
+                    size: 16,
+                  ),
+                  const SizedBox(width: 6),
+                  Expanded(
+                    child: Text(
+                      f,
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
           const Spacer(),
           SizedBox(
             width: double.infinity,
@@ -662,10 +748,12 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                         context: context,
                         builder: (ctx) => AlertDialog(
                           title: Text(
-                              AppLocalizations.of(ctx).upgradeToPlan(name)),
+                            AppLocalizations.of(ctx).upgradeToPlan(name),
+                          ),
                           content: Text(
-                            AppLocalizations.of(ctx)
-                                .upgradePlanPriceBody(price),
+                            AppLocalizations.of(
+                              ctx,
+                            ).upgradePlanPriceBody(price),
                           ),
                           actions: [
                             TextButton(
@@ -678,8 +766,9 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(
-                                      AppLocalizations.of(context)
-                                          .upgradeContactMsg,
+                                      AppLocalizations.of(
+                                        context,
+                                      ).upgradeContactMsg,
                                     ),
                                   ),
                                 );
@@ -694,17 +783,18 @@ class _SubscriptionScreenState extends ConsumerState<SubscriptionScreen> {
                 backgroundColor: isCurrentPlan
                     ? Theme.of(context).colorScheme.outline
                     : (isPopular
-                        ? AppColors.primary
-                        : Theme.of(context)
-                            .colorScheme
-                            .surfaceContainerHighest),
+                          ? AppColors.primary
+                          : Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest),
                 foregroundColor: isCurrentPlan
                     ? Colors.white
                     : (isPopular
-                        ? Colors.white
-                        : (Theme.of(context).colorScheme.onSurface)),
+                          ? Colors.white
+                          : (Theme.of(context).colorScheme.onSurface)),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
               child: Text(isCurrentPlan ? 'Current Plan' : 'Select'),
             ),

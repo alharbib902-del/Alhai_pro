@@ -135,137 +135,145 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        onCreate: (Migrator m) async {
-          await m.createAll();
-          // إنشاء جدول FTS للبحث السريع
-          await ftsService.createFtsTable();
-          // إنشاء جدول سجل الهجرات
-          await _createMigrationHistoryTable();
-          // تسجيل الإنشاء الأولي
+    onCreate: (Migrator m) async {
+      await m.createAll();
+      // إنشاء جدول FTS للبحث السريع
+      await ftsService.createFtsTable();
+      // إنشاء جدول سجل الهجرات
+      await _createMigrationHistoryTable();
+      // تسجيل الإنشاء الأولي
+      await _recordMigrationHistory(
+        version: schemaVersion,
+        durationMs: 0,
+        success: true,
+      );
+    },
+    onUpgrade: (Migrator m, int from, int to) async {
+      final migrationStartTime = DateTime.now();
+
+      // نسخ احتياطي تلقائي قبل أي ترحيل للـ schema
+      try {
+        await backupService.createPreMigrationBackup(from);
+      } catch (e) {
+        // لا نمنع الترحيل إذا فشل النسخ الاحتياطي
+        debugPrint('[Backup] Pre-migration backup failed: $e');
+      }
+
+      // إنشاء جدول سجل الهجرات (إن لم يكن موجوداً)
+      await _createMigrationHistoryTable();
+
+      // فحص سلامة قاعدة البيانات قبل الهجرة
+      final preIntegrityOk = await _checkDatabaseIntegrity();
+      if (!preIntegrityOk) {
+        const errorMsg =
+            'Database integrity check failed BEFORE migration. '
+            'Aborting migration to prevent further corruption.';
+        debugPrint('[Migration] $errorMsg');
+        await _recordMigrationHistory(
+          version: from,
+          durationMs: 0,
+          success: false,
+          errorMessage: errorMsg,
+        );
+        return;
+      }
+
+      debugPrint(
+        '[Migration] Pre-migration integrity check passed. '
+        'Upgrading v$from -> v$to...',
+      );
+
+      // تنفيذ كل هجرة على حدة مع تسجيل النتيجة
+      for (var version = from + 1; version <= to; version++) {
+        final stepStart = DateTime.now();
+        try {
+          debugPrint('[Migration] Migrating v${version - 1} -> v$version...');
+          await _runMigrationStep(m, version);
+          final stepDuration = DateTime.now()
+              .difference(stepStart)
+              .inMilliseconds;
+          debugPrint('[Migration] v$version complete (${stepDuration}ms)');
           await _recordMigrationHistory(
-            version: schemaVersion,
-            durationMs: 0,
+            version: version,
+            durationMs: stepDuration,
             success: true,
           );
-        },
-        onUpgrade: (Migrator m, int from, int to) async {
-          final migrationStartTime = DateTime.now();
+        } catch (e, stackTrace) {
+          final stepDuration = DateTime.now()
+              .difference(stepStart)
+              .inMilliseconds;
+          debugPrint('[Migration] v$version FAILED (${stepDuration}ms): $e');
+          debugPrint('[Migration] Stack trace: $stackTrace');
+          await _recordMigrationHistory(
+            version: version,
+            durationMs: stepDuration,
+            success: false,
+            errorMessage: e.toString(),
+          );
+          // إعادة رمي الخطأ ليتم التراجع عن الهجرة بواسطة Drift
+          rethrow;
+        }
+      }
 
-          // نسخ احتياطي تلقائي قبل أي ترحيل للـ schema
-          try {
-            await backupService.createPreMigrationBackup(from);
-          } catch (e) {
-            // لا نمنع الترحيل إذا فشل النسخ الاحتياطي
-            debugPrint('[Backup] Pre-migration backup failed: $e');
-          }
+      // فحص سلامة قاعدة البيانات بعد الهجرة
+      final postIntegrityOk = await _checkDatabaseIntegrity();
+      if (!postIntegrityOk) {
+        debugPrint(
+          '[Migration] WARNING: Post-migration integrity check failed!',
+        );
+      } else {
+        debugPrint('[Migration] Post-migration integrity check passed.');
+      }
 
-          // إنشاء جدول سجل الهجرات (إن لم يكن موجوداً)
-          await _createMigrationHistoryTable();
+      // التحقق من وجود الجداول المتوقعة
+      final schemaValid = await verifySchema();
+      if (!schemaValid) {
+        debugPrint(
+          '[Migration] WARNING: Schema verification found missing tables!',
+        );
+      } else {
+        debugPrint(
+          '[Migration] Schema verification passed '
+          '- all expected tables present.',
+        );
+      }
 
-          // فحص سلامة قاعدة البيانات قبل الهجرة
-          final preIntegrityOk = await _checkDatabaseIntegrity();
-          if (!preIntegrityOk) {
-            const errorMsg =
-                'Database integrity check failed BEFORE migration. '
-                'Aborting migration to prevent further corruption.';
-            debugPrint('[Migration] $errorMsg');
-            await _recordMigrationHistory(
-              version: from,
-              durationMs: 0,
-              success: false,
-              errorMessage: errorMsg,
-            );
-            return;
-          }
+      // نسخ احتياطي بعد نجاح الترحيل
+      try {
+        await backupService.createPostMigrationBackup(to);
+      } catch (e) {
+        debugPrint('[Backup] Post-migration backup failed: $e');
+      }
 
-          debugPrint('[Migration] Pre-migration integrity check passed. '
-              'Upgrading v$from -> v$to...');
-
-          // تنفيذ كل هجرة على حدة مع تسجيل النتيجة
-          for (var version = from + 1; version <= to; version++) {
-            final stepStart = DateTime.now();
-            try {
-              debugPrint(
-                  '[Migration] Migrating v${version - 1} -> v$version...');
-              await _runMigrationStep(m, version);
-              final stepDuration =
-                  DateTime.now().difference(stepStart).inMilliseconds;
-              debugPrint('[Migration] v$version complete (${stepDuration}ms)');
-              await _recordMigrationHistory(
-                version: version,
-                durationMs: stepDuration,
-                success: true,
-              );
-            } catch (e, stackTrace) {
-              final stepDuration =
-                  DateTime.now().difference(stepStart).inMilliseconds;
-              debugPrint(
-                  '[Migration] v$version FAILED (${stepDuration}ms): $e');
-              debugPrint('[Migration] Stack trace: $stackTrace');
-              await _recordMigrationHistory(
-                version: version,
-                durationMs: stepDuration,
-                success: false,
-                errorMessage: e.toString(),
-              );
-              // إعادة رمي الخطأ ليتم التراجع عن الهجرة بواسطة Drift
-              rethrow;
-            }
-          }
-
-          // فحص سلامة قاعدة البيانات بعد الهجرة
-          final postIntegrityOk = await _checkDatabaseIntegrity();
-          if (!postIntegrityOk) {
-            debugPrint(
-                '[Migration] WARNING: Post-migration integrity check failed!');
-          } else {
-            debugPrint('[Migration] Post-migration integrity check passed.');
-          }
-
-          // التحقق من وجود الجداول المتوقعة
-          final schemaValid = await verifySchema();
-          if (!schemaValid) {
-            debugPrint(
-                '[Migration] WARNING: Schema verification found missing tables!');
-          } else {
-            debugPrint('[Migration] Schema verification passed '
-                '- all expected tables present.');
-          }
-
-          // نسخ احتياطي بعد نجاح الترحيل
-          try {
-            await backupService.createPostMigrationBackup(to);
-          } catch (e) {
-            debugPrint('[Backup] Post-migration backup failed: $e');
-          }
-
-          final totalDuration =
-              DateTime.now().difference(migrationStartTime).inMilliseconds;
-          debugPrint('[Migration] Full migration v$from -> v$to '
-              'completed in ${totalDuration}ms');
-        },
-        beforeOpen: (details) async {
-          // تفعيل المفاتيح الأجنبية (M31 fix)
-          await customStatement('PRAGMA foreign_keys = ON');
-          // تحسينات الأداء
-          await customStatement('PRAGMA cache_size = -8000'); // 8MB cache
-          // Wait 5s instead of failing immediately on database lock (C09)
-          await customStatement('PRAGMA busy_timeout = 5000');
-
-          // تنظيف تلقائي للبيانات القديمة (عند فتح القاعدة)
-          await _autoCleanup();
-
-          // استعادة عناصر المزامنة المعلقة (من تعطل سابق)
-          final resetCount = await syncQueueDao.resetStuckItems();
-          if (resetCount > 0) {
-            debugPrint(
-                '[DB] Reset $resetCount stuck sync items back to pending');
-          }
-
-          // بدء النسخ الاحتياطي الدوري التلقائي (كل ساعتين)
-          backupService.startPeriodicBackup();
-        },
+      final totalDuration = DateTime.now()
+          .difference(migrationStartTime)
+          .inMilliseconds;
+      debugPrint(
+        '[Migration] Full migration v$from -> v$to '
+        'completed in ${totalDuration}ms',
       );
+    },
+    beforeOpen: (details) async {
+      // تفعيل المفاتيح الأجنبية (M31 fix)
+      await customStatement('PRAGMA foreign_keys = ON');
+      // تحسينات الأداء
+      await customStatement('PRAGMA cache_size = -8000'); // 8MB cache
+      // Wait 5s instead of failing immediately on database lock (C09)
+      await customStatement('PRAGMA busy_timeout = 5000');
+
+      // تنظيف تلقائي للبيانات القديمة (عند فتح القاعدة)
+      await _autoCleanup();
+
+      // استعادة عناصر المزامنة المعلقة (من تعطل سابق)
+      final resetCount = await syncQueueDao.resetStuckItems();
+      if (resetCount > 0) {
+        debugPrint('[DB] Reset $resetCount stuck sync items back to pending');
+      }
+
+      // بدء النسخ الاحتياطي الدوري التلقائي (كل ساعتين)
+      backupService.startPeriodicBackup();
+    },
+  );
 
   // ==========================================================================
   // Migration steps - كل خطوة هجرة منفصلة
@@ -360,13 +368,16 @@ class AppDatabase extends _$AppDatabase {
         await customStatement('ALTER TABLE sales ADD COLUMN cash_amount REAL');
         await customStatement('ALTER TABLE sales ADD COLUMN card_amount REAL');
         await customStatement(
-            'ALTER TABLE sales ADD COLUMN credit_amount REAL');
+          'ALTER TABLE sales ADD COLUMN credit_amount REAL',
+        );
       case 17:
         // Migration v16 -> v17: إضافة أعمدة status و company_type للمؤسسات
         await customStatement(
-            "ALTER TABLE organizations ADD COLUMN status TEXT NOT NULL DEFAULT 'trial'");
+          "ALTER TABLE organizations ADD COLUMN status TEXT NOT NULL DEFAULT 'trial'",
+        );
         await customStatement(
-            "ALTER TABLE organizations ADD COLUMN company_type TEXT NOT NULL DEFAULT 'agency'");
+          "ALTER TABLE organizations ADD COLUMN company_type TEXT NOT NULL DEFAULT 'agency'",
+        );
       case 18:
         // Migration v17 -> v18: جعل عمود store_id في جدول users قابل لـ null
         // المستخدمون على مستوى المؤسسة (org-level admins) قد لا ينتمون لمتجر محدد
@@ -399,10 +410,12 @@ class AppDatabase extends _$AppDatabase {
         await customStatement('ALTER TABLE users_new RENAME TO users');
         // إعادة إنشاء الفهارس
         await customStatement(
-            'CREATE INDEX idx_users_store_id ON users (store_id)');
+          'CREATE INDEX idx_users_store_id ON users (store_id)',
+        );
         await customStatement('CREATE INDEX idx_users_phone ON users (phone)');
         await customStatement(
-            'CREATE INDEX idx_users_is_active ON users (is_active)');
+          'CREATE INDEX idx_users_is_active ON users (is_active)',
+        );
       case 19:
         // Migration v18 -> v19: تحويل stock_qty و min_qty من INTEGER إلى REAL
         // لدعم الكميات الكسرية (مثل 2.5 كجم أرز)
@@ -417,18 +430,23 @@ class AppDatabase extends _$AppDatabase {
         // Migration v20 -> v21: Enhance sync metadata + composite index
         // 1. Add conflict tracking columns to sync_metadata
         await customStatement(
-            'ALTER TABLE sync_metadata ADD COLUMN conflict_count INTEGER NOT NULL DEFAULT 0');
+          'ALTER TABLE sync_metadata ADD COLUMN conflict_count INTEGER NOT NULL DEFAULT 0',
+        );
         await customStatement(
-            'ALTER TABLE sync_metadata ADD COLUMN last_conflict_at INTEGER');
+          'ALTER TABLE sync_metadata ADD COLUMN last_conflict_at INTEGER',
+        );
         await customStatement(
-            'ALTER TABLE sync_metadata ADD COLUMN requires_manual_review INTEGER NOT NULL DEFAULT 0');
+          'ALTER TABLE sync_metadata ADD COLUMN requires_manual_review INTEGER NOT NULL DEFAULT 0',
+        );
         // 2. Add composite index for orders (customer + createdAt)
         await customStatement(
-            'CREATE INDEX IF NOT EXISTS idx_orders_customer_created ON orders (customer_id, created_at)');
+          'CREATE INDEX IF NOT EXISTS idx_orders_customer_created ON orders (customer_id, created_at)',
+        );
       case 22:
         // Migration v21 -> v22: Add shift_id column to sales for shift-sale linkage
         await customStatement(
-            'ALTER TABLE sales ADD COLUMN shift_id TEXT REFERENCES shifts(id) ON DELETE SET NULL');
+          'ALTER TABLE sales ADD COLUMN shift_id TEXT REFERENCES shifts(id) ON DELETE SET NULL',
+        );
 
         // Add FK validation triggers for stock_deltas table
         // SQLite cannot ALTER TABLE to add FKs, so we use triggers (same pattern as v20).
@@ -496,7 +514,8 @@ class AppDatabase extends _$AppDatabase {
         // referential integrity without changing the column type, so we skip the rebuild.
         // New installs get the correct nullable column from Drift's createAll().
         debugPrint(
-            '[Migration v22] sales.shift_id + stock_deltas FK triggers created');
+          '[Migration v22] sales.shift_id + stock_deltas FK triggers created',
+        );
       default:
         debugPrint('[Migration] Unknown migration version: $targetVersion');
     }
@@ -543,23 +562,13 @@ class AppDatabase extends _$AppDatabase {
       'daily_summaries',
     ];
     for (final table in tablesForOrgId) {
-      await customStatement(
-        'ALTER TABLE $table ADD COLUMN org_id TEXT',
-      );
+      await customStatement('ALTER TABLE $table ADD COLUMN org_id TEXT');
     }
     // إضافة أعمدة إضافية
-    await customStatement(
-      'ALTER TABLE users ADD COLUMN auth_uid TEXT',
-    );
-    await customStatement(
-      'ALTER TABLE users ADD COLUMN role_id TEXT',
-    );
-    await customStatement(
-      'ALTER TABLE sales ADD COLUMN terminal_id TEXT',
-    );
-    await customStatement(
-      'ALTER TABLE shifts ADD COLUMN terminal_id TEXT',
-    );
+    await customStatement('ALTER TABLE users ADD COLUMN auth_uid TEXT');
+    await customStatement('ALTER TABLE users ADD COLUMN role_id TEXT');
+    await customStatement('ALTER TABLE sales ADD COLUMN terminal_id TEXT');
+    await customStatement('ALTER TABLE shifts ADD COLUMN terminal_id TEXT');
   }
 
   /// Migration v11 -> v12: إضافة عمود deleted_at للحذف الناعم (soft delete)
@@ -582,9 +591,7 @@ class AppDatabase extends _$AppDatabase {
       'stores',
     ];
     for (final table in tablesForDeletedAt) {
-      await customStatement(
-        'ALTER TABLE $table ADD COLUMN deleted_at INTEGER',
-      );
+      await customStatement('ALTER TABLE $table ADD COLUMN deleted_at INTEGER');
     }
   }
 
@@ -617,9 +624,11 @@ class AppDatabase extends _$AppDatabase {
     ''');
     await customStatement('DROP TABLE sale_items_tmp');
     await customStatement(
-        'CREATE INDEX idx_sale_items_sale_id ON sale_items (sale_id)');
+      'CREATE INDEX idx_sale_items_sale_id ON sale_items (sale_id)',
+    );
     await customStatement(
-        'CREATE INDEX idx_sale_items_product_id ON sale_items (product_id)');
+      'CREATE INDEX idx_sale_items_product_id ON sale_items (product_id)',
+    );
 
     // inventory_movements: تغيير qty, previous_qty, new_qty من INTEGER إلى REAL
     await customStatement('''
@@ -650,17 +659,23 @@ class AppDatabase extends _$AppDatabase {
     ''');
     await customStatement('DROP TABLE inventory_movements_tmp');
     await customStatement(
-        'CREATE INDEX idx_inventory_product_id ON inventory_movements (product_id)');
+      'CREATE INDEX idx_inventory_product_id ON inventory_movements (product_id)',
+    );
     await customStatement(
-        'CREATE INDEX idx_inventory_store_id ON inventory_movements (store_id)');
+      'CREATE INDEX idx_inventory_store_id ON inventory_movements (store_id)',
+    );
     await customStatement(
-        'CREATE INDEX idx_inventory_created_at ON inventory_movements (created_at)');
+      'CREATE INDEX idx_inventory_created_at ON inventory_movements (created_at)',
+    );
     await customStatement(
-        'CREATE INDEX idx_inventory_type ON inventory_movements (type)');
+      'CREATE INDEX idx_inventory_type ON inventory_movements (type)',
+    );
     await customStatement(
-        'CREATE INDEX idx_inventory_reference ON inventory_movements (reference_type, reference_id)');
+      'CREATE INDEX idx_inventory_reference ON inventory_movements (reference_type, reference_id)',
+    );
     await customStatement(
-        'CREATE INDEX idx_inventory_synced_at ON inventory_movements (synced_at)');
+      'CREATE INDEX idx_inventory_synced_at ON inventory_movements (synced_at)',
+    );
 
     // purchase_items: تغيير qty, received_qty من INTEGER إلى REAL
     await customStatement('''
@@ -686,9 +701,11 @@ class AppDatabase extends _$AppDatabase {
     ''');
     await customStatement('DROP TABLE purchase_items_tmp');
     await customStatement(
-        'CREATE INDEX idx_purchase_items_purchase_id ON purchase_items (purchase_id)');
+      'CREATE INDEX idx_purchase_items_purchase_id ON purchase_items (purchase_id)',
+    );
     await customStatement(
-        'CREATE INDEX idx_purchase_items_product_id ON purchase_items (product_id)');
+      'CREATE INDEX idx_purchase_items_product_id ON purchase_items (product_id)',
+    );
 
     // return_items: تغيير qty من INTEGER إلى REAL
     await customStatement('''
@@ -713,9 +730,11 @@ class AppDatabase extends _$AppDatabase {
     ''');
     await customStatement('DROP TABLE return_items_tmp');
     await customStatement(
-        'CREATE INDEX idx_return_items_return_id ON return_items (return_id)');
+      'CREATE INDEX idx_return_items_return_id ON return_items (return_id)',
+    );
     await customStatement(
-        'CREATE INDEX idx_return_items_product_id ON return_items (product_id)');
+      'CREATE INDEX idx_return_items_product_id ON return_items (product_id)',
+    );
 
     // stock_deltas: تغيير quantity_change من INTEGER إلى REAL
     await customStatement('''
@@ -742,13 +761,17 @@ class AppDatabase extends _$AppDatabase {
     ''');
     await customStatement('DROP TABLE stock_deltas_tmp');
     await customStatement(
-        'CREATE INDEX idx_stock_deltas_product ON stock_deltas (product_id)');
+      'CREATE INDEX idx_stock_deltas_product ON stock_deltas (product_id)',
+    );
     await customStatement(
-        'CREATE INDEX idx_stock_deltas_sync_status ON stock_deltas (sync_status)');
+      'CREATE INDEX idx_stock_deltas_sync_status ON stock_deltas (sync_status)',
+    );
     await customStatement(
-        'CREATE INDEX idx_stock_deltas_device ON stock_deltas (device_id)');
+      'CREATE INDEX idx_stock_deltas_device ON stock_deltas (device_id)',
+    );
     await customStatement(
-        'CREATE INDEX idx_stock_deltas_product_sync ON stock_deltas (product_id, sync_status)');
+      'CREATE INDEX idx_stock_deltas_product_sync ON stock_deltas (product_id, sync_status)',
+    );
   }
 
   /// Migration v13 -> v14: كتالوج مركزي + طلبات أونلاين + صور هجينة
@@ -758,44 +781,59 @@ class AppDatabase extends _$AppDatabase {
 
     // إضافة أعمدة صور المنظمة للمنتجات
     await customStatement(
-        'ALTER TABLE products ADD COLUMN org_image_thumbnail TEXT');
+      'ALTER TABLE products ADD COLUMN org_image_thumbnail TEXT',
+    );
     await customStatement(
-        'ALTER TABLE products ADD COLUMN org_image_medium TEXT');
+      'ALTER TABLE products ADD COLUMN org_image_medium TEXT',
+    );
     await customStatement(
-        'ALTER TABLE products ADD COLUMN org_image_large TEXT');
+      'ALTER TABLE products ADD COLUMN org_image_large TEXT',
+    );
     await customStatement(
-        'ALTER TABLE products ADD COLUMN org_image_hash TEXT');
+      'ALTER TABLE products ADD COLUMN org_image_hash TEXT',
+    );
     await customStatement(
-        'ALTER TABLE products ADD COLUMN org_product_id TEXT');
+      'ALTER TABLE products ADD COLUMN org_product_id TEXT',
+    );
 
     // إضافة أعمدة الطلب الأونلاين للمنتجات
     await customStatement(
-        'ALTER TABLE products ADD COLUMN online_available INTEGER NOT NULL DEFAULT 0');
+      'ALTER TABLE products ADD COLUMN online_available INTEGER NOT NULL DEFAULT 0',
+    );
     await customStatement(
-        'ALTER TABLE products ADD COLUMN online_max_qty REAL');
+      'ALTER TABLE products ADD COLUMN online_max_qty REAL',
+    );
     await customStatement(
-        'ALTER TABLE products ADD COLUMN online_reserved_qty REAL NOT NULL DEFAULT 0');
+      'ALTER TABLE products ADD COLUMN online_reserved_qty REAL NOT NULL DEFAULT 0',
+    );
     await customStatement('ALTER TABLE products ADD COLUMN min_alert_qty REAL');
     await customStatement(
-        'ALTER TABLE products ADD COLUMN auto_reorder INTEGER NOT NULL DEFAULT 0');
+      'ALTER TABLE products ADD COLUMN auto_reorder INTEGER NOT NULL DEFAULT 0',
+    );
     await customStatement('ALTER TABLE products ADD COLUMN reorder_qty REAL');
     await customStatement('ALTER TABLE products ADD COLUMN turnover_rate REAL');
 
     // إضافة أعمدة تأكيد التسليم للطلبات
     await customStatement(
-        'ALTER TABLE orders ADD COLUMN confirmation_code TEXT');
+      'ALTER TABLE orders ADD COLUMN confirmation_code TEXT',
+    );
     await customStatement(
-        'ALTER TABLE orders ADD COLUMN confirmation_attempts INTEGER NOT NULL DEFAULT 0');
+      'ALTER TABLE orders ADD COLUMN confirmation_attempts INTEGER NOT NULL DEFAULT 0',
+    );
     await customStatement(
-        'ALTER TABLE orders ADD COLUMN auto_reorder_triggered INTEGER NOT NULL DEFAULT 0');
+      'ALTER TABLE orders ADD COLUMN auto_reorder_triggered INTEGER NOT NULL DEFAULT 0',
+    );
 
     // إضافة أعمدة نقل المخزون
     await customStatement(
-        'ALTER TABLE stock_transfers ADD COLUMN received_by TEXT');
+      'ALTER TABLE stock_transfers ADD COLUMN received_by TEXT',
+    );
     await customStatement(
-        "ALTER TABLE stock_transfers ADD COLUMN approval_status TEXT NOT NULL DEFAULT 'pending'");
+      "ALTER TABLE stock_transfers ADD COLUMN approval_status TEXT NOT NULL DEFAULT 'pending'",
+    );
     await customStatement(
-        'ALTER TABLE stock_transfers ADD COLUMN received_at INTEGER');
+      'ALTER TABLE stock_transfers ADD COLUMN received_at INTEGER',
+    );
   }
 
   /// Migration v18 -> v19: تحويل stock_qty و min_qty في products من INTEGER إلى REAL
@@ -850,21 +888,28 @@ class AppDatabase extends _$AppDatabase {
     await customStatement('DROP TABLE products_tmp');
     // إعادة إنشاء الفهارس
     await customStatement(
-        'CREATE INDEX idx_products_store_id ON products (store_id)');
+      'CREATE INDEX idx_products_store_id ON products (store_id)',
+    );
     await customStatement(
-        'CREATE INDEX idx_products_barcode ON products (barcode)');
+      'CREATE INDEX idx_products_barcode ON products (barcode)',
+    );
     await customStatement('CREATE INDEX idx_products_sku ON products (sku)');
     await customStatement(
-        'CREATE INDEX idx_products_category_id ON products (category_id)');
+      'CREATE INDEX idx_products_category_id ON products (category_id)',
+    );
     await customStatement('CREATE INDEX idx_products_name ON products (name)');
     await customStatement(
-        'CREATE INDEX idx_products_synced_at ON products (synced_at)');
+      'CREATE INDEX idx_products_synced_at ON products (synced_at)',
+    );
     await customStatement(
-        'CREATE INDEX idx_products_is_active ON products (is_active)');
+      'CREATE INDEX idx_products_is_active ON products (is_active)',
+    );
     await customStatement(
-        'CREATE INDEX idx_products_store_barcode ON products (store_id, barcode)');
+      'CREATE INDEX idx_products_store_barcode ON products (store_id, barcode)',
+    );
     await customStatement(
-        'CREATE INDEX idx_products_store_category_active ON products (store_id, category_id, is_active)');
+      'CREATE INDEX idx_products_store_category_active ON products (store_id, category_id, is_active)',
+    );
     // إعادة بناء FTS (يعتمد على جدول products)
     try {
       await ftsService.rebuildFtsIndex();

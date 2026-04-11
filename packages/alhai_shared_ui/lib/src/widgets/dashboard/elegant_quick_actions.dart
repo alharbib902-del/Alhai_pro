@@ -93,15 +93,17 @@ class ElegantQuickActions extends StatelessWidget {
                     physics: const NeverScrollableScrollPhysics(),
                     itemCount: actions.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: getResponsiveGridColumns(context,
-                          mobile: 2, desktop: 3),
+                      crossAxisCount: getResponsiveGridColumns(
+                        context,
+                        mobile: 2,
+                        desktop: 3,
+                      ),
                       mainAxisSpacing: 12,
                       crossAxisSpacing: 12,
                       childAspectRatio: 1.3,
                     ),
-                    itemBuilder: (context, index) => _QuickActionButton(
-                      action: actions[index],
-                    ),
+                    itemBuilder: (context, index) =>
+                        _QuickActionButton(action: actions[index]),
                   ),
                 ],
               ),
@@ -146,9 +148,7 @@ class _QuickAction {
 class _QuickActionButton extends StatelessWidget {
   final _QuickAction action;
 
-  const _QuickActionButton({
-    required this.action,
-  });
+  const _QuickActionButton({required this.action});
 
   @override
   Widget build(BuildContext context) {
@@ -174,11 +174,7 @@ class _QuickActionButton extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                action.icon,
-                color: Colors.white,
-                size: 28,
-              ),
+              Icon(action.icon, color: Colors.white, size: 28),
               SizedBox(height: AlhaiSpacing.xs),
               Text(
                 action.label,

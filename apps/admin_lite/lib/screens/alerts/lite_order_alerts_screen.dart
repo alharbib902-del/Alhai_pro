@@ -26,18 +26,16 @@ class LiteOrderAlertsScreen extends ConsumerWidget {
     final dataAsync = ref.watch(liteOrderAlertsProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.orders),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(l10n.orders), centerTitle: true),
       body: dataAsync.when(
         data: (orders) {
           if (orders.isEmpty) return _buildEmptyState(context, isDark, l10n);
           return RefreshIndicator(
             onRefresh: () async => ref.invalidate(liteOrderAlertsProvider),
             child: ListView.builder(
-              padding:
-                  EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+              padding: EdgeInsets.all(
+                isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg,
+              ),
               itemCount: orders.length,
               itemBuilder: (context, index) {
                 return _buildAlertCard(context, orders[index], isDark, l10n);
@@ -52,9 +50,10 @@ class LiteOrderAlertsScreen extends ConsumerWidget {
             children: [
               Text(l10n.errorOccurred),
               TextButton.icon(
-                  onPressed: () => ref.invalidate(liteOrderAlertsProvider),
-                  icon: const Icon(Icons.refresh_rounded),
-                  label: Text(l10n.tryAgain)),
+                onPressed: () => ref.invalidate(liteOrderAlertsProvider),
+                icon: const Icon(Icons.refresh_rounded),
+                label: Text(l10n.tryAgain),
+              ),
             ],
           ),
         ),
@@ -63,23 +62,31 @@ class LiteOrderAlertsScreen extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(
-      BuildContext context, bool isDark, AppLocalizations l10n) {
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.check_circle_outline,
-              size: 64,
-              color: isDark
-                  ? Colors.white24
-                  : Theme.of(context).colorScheme.outlineVariant),
+          Icon(
+            Icons.check_circle_outline,
+            size: 64,
+            color: isDark
+                ? Colors.white24
+                : Theme.of(context).colorScheme.outlineVariant,
+          ),
           const SizedBox(height: AlhaiSpacing.md),
-          Text(l10n.noResults,
-              style: TextStyle(
-                  fontSize: 16,
-                  color: isDark
-                      ? Colors.white54
-                      : Theme.of(context).colorScheme.onSurfaceVariant)),
+          Text(
+            l10n.noResults,
+            style: TextStyle(
+              fontSize: 16,
+              color: isDark
+                  ? Colors.white54
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
+          ),
         ],
       ),
     );
@@ -108,8 +115,12 @@ class LiteOrderAlertsScreen extends ConsumerWidget {
     return '${diff.inDays}d ago';
   }
 
-  Widget _buildAlertCard(BuildContext context, OrderWithCustomer order,
-      bool isDark, AppLocalizations l10n) {
+  Widget _buildAlertCard(
+    BuildContext context,
+    OrderWithCustomer order,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final color = _statusColor(order.status);
     final label = _statusLabel(order.status);
     final icon = order.status == 'created' ? Icons.fiber_new : Icons.schedule;
@@ -121,9 +132,10 @@ class LiteOrderAlertsScreen extends ConsumerWidget {
         color: isDark ? Colors.white.withValues(alpha: 0.06) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-            color: isDark
-                ? Colors.white12
-                : Theme.of(context).colorScheme.outlineVariant),
+          color: isDark
+              ? Colors.white12
+              : Theme.of(context).colorScheme.outlineVariant,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -134,8 +146,9 @@ class LiteOrderAlertsScreen extends ConsumerWidget {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(10)),
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(10),
+                ),
                 child: Icon(icon, color: color, size: 20),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
@@ -144,35 +157,44 @@ class LiteOrderAlertsScreen extends ConsumerWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                        order.status == 'created'
-                            ? 'New Online Order'
-                            : 'Pending Order',
-                        style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w600,
-                            color: isDark ? Colors.white : Colors.black87)),
-                    Text('#${order.orderNumber}',
-                        style: TextStyle(
-                            fontSize: 12,
-                            color: isDark
-                                ? Colors.white38
-                                : Theme.of(context)
-                                    .colorScheme
-                                    .onSurfaceVariant)),
+                      order.status == 'created'
+                          ? 'New Online Order'
+                          : 'Pending Order',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    Text(
+                      '#${order.orderNumber}',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: isDark
+                            ? Colors.white38
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
                   ],
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+                  horizontal: AlhaiSpacing.xs,
+                  vertical: AlhaiSpacing.xxxs,
+                ),
                 decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(8)),
-                child: Text(label,
-                    style: TextStyle(
-                        fontSize: 11,
-                        fontWeight: FontWeight.bold,
-                        color: color)),
+                  color: color.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 11,
+                    fontWeight: FontWeight.bold,
+                    color: color,
+                  ),
+                ),
               ),
             ],
           ),
@@ -182,27 +204,37 @@ class LiteOrderAlertsScreen extends ConsumerWidget {
                 ? 'Customer: ${order.customerName}'
                 : 'Waiting for confirmation',
             style: TextStyle(
-                fontSize: 13,
-                color: isDark
-                    ? Colors.white54
-                    : Theme.of(context).colorScheme.onSurfaceVariant),
+              fontSize: 13,
+              color: isDark
+                  ? Colors.white54
+                  : Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           const SizedBox(height: AlhaiSpacing.xs),
           Row(
             children: [
-              Icon(Icons.access_time,
-                  size: 14, color: isDark ? Colors.white24 : Colors.black38),
+              Icon(
+                Icons.access_time,
+                size: 14,
+                color: isDark ? Colors.white24 : Colors.black38,
+              ),
               const SizedBox(width: AlhaiSpacing.xxs),
-              Text(_timeAgo(order.orderDate),
-                  style: TextStyle(
-                      fontSize: 11,
-                      color: isDark ? Colors.white24 : Colors.black38)),
+              Text(
+                _timeAgo(order.orderDate),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isDark ? Colors.white24 : Colors.black38,
+                ),
+              ),
               const Spacer(),
-              Text('${order.total.toStringAsFixed(0)} SAR',
-                  style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                      color: isDark ? Colors.white : Colors.black87)),
+              Text(
+                '${order.total.toStringAsFixed(0)} SAR',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 14,
+                  color: isDark ? Colors.white : Colors.black87,
+                ),
+              ),
             ],
           ),
         ],

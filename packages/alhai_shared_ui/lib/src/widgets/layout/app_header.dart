@@ -83,8 +83,11 @@ class AppHeader extends ConsumerWidget {
         child: Container(
           height: getResponsiveValue(context, mobile: 56.0, desktop: 72.0),
           padding: EdgeInsets.symmetric(
-            horizontal:
-                getResponsiveValue(context, mobile: 12.0, desktop: 20.0),
+            horizontal: getResponsiveValue(
+              context,
+              mobile: 12.0,
+              desktop: 20.0,
+            ),
           ),
           child: Row(
             children: [
@@ -140,7 +143,8 @@ class AppHeader extends ConsumerWidget {
                         child: Container(
                           constraints: const BoxConstraints(maxWidth: 500),
                           child: _SearchField(
-                            hint: searchHint ??
+                            hint:
+                                searchHint ??
                                 AppLocalizations.of(context).searchPlaceholder,
                             onChanged: onSearchChanged,
                             onTap: onSearchTap,
@@ -179,10 +183,7 @@ class AppHeader extends ConsumerWidget {
 
               // اختيار اللغة
               SizedBox(width: AlhaiSpacing.xxs),
-              const LanguageSelectorButton(
-                showLabel: false,
-                compact: true,
-              ),
+              const LanguageSelectorButton(showLabel: false, compact: true),
 
               // زر الوضع الداكن
               SizedBox(width: AlhaiSpacing.xxs),

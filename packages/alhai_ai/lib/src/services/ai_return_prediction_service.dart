@@ -105,11 +105,7 @@ class PreventiveAction {
 }
 
 /// اتجاه المرتجعات
-enum TrendDirection {
-  up,
-  down,
-  stable,
-}
+enum TrendDirection { up, down, stable }
 
 /// اتجاه المرتجعات عبر فترة زمنية
 class ReturnTrend {
@@ -151,7 +147,7 @@ class AiReturnPredictionService {
         factors: [
           ReturnRiskFactor.previousReturner,
           ReturnRiskFactor.highPriceItem,
-          ReturnRiskFactor.endOfDay
+          ReturnRiskFactor.endOfDay,
         ],
         customerName: 'فهد العتيبي',
         topRiskProduct: 'لحم بقري مبرد - 2 كجم',
@@ -184,7 +180,7 @@ class AiReturnPredictionService {
         riskLevel: ReturnRiskLevel.medium,
         factors: [
           ReturnRiskFactor.endOfDay,
-          ReturnRiskFactor.heavilyDiscounted
+          ReturnRiskFactor.heavilyDiscounted,
         ],
         customerName: 'خالد المالكي',
         topRiskProduct: 'خبز توست أبيض',
@@ -218,7 +214,7 @@ class AiReturnPredictionService {
         factors: [
           ReturnRiskFactor.highPriceItem,
           ReturnRiskFactor.bulkPurchase,
-          ReturnRiskFactor.previousReturner
+          ReturnRiskFactor.previousReturner,
         ],
         customerName: 'ياسر الغامدي',
         topRiskProduct: 'زيت زيتون أصلي - 3 لتر',
@@ -243,7 +239,7 @@ class AiReturnPredictionService {
           ReturnRiskFactor.previousReturner,
           ReturnRiskFactor.highPriceItem,
           ReturnRiskFactor.bulkPurchase,
-          ReturnRiskFactor.heavilyDiscounted
+          ReturnRiskFactor.heavilyDiscounted,
         ],
         customerName: 'سعد القرني',
         topRiskProduct: 'دجاج مجمد - كرتون 10 كجم',
@@ -374,9 +370,11 @@ class AiReturnPredictionService {
   /// حساب إجمالي المبلغ المعرض للخطر
   double calculateAtRiskAmount(List<ReturnProbability> probabilities) {
     return probabilities
-        .where((p) =>
-            p.riskLevel == ReturnRiskLevel.high ||
-            p.riskLevel == ReturnRiskLevel.veryHigh)
+        .where(
+          (p) =>
+              p.riskLevel == ReturnRiskLevel.high ||
+              p.riskLevel == ReturnRiskLevel.veryHigh,
+        )
         .fold<double>(0, (sum, p) => sum + p.amount);
   }
 

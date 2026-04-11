@@ -16,10 +16,7 @@ class EarningsScreen extends ConsumerWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('الأرباح'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('الأرباح'), centerTitle: true),
       body: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 800),
@@ -76,8 +73,10 @@ class EarningsScreen extends ConsumerWidget {
                       },
                       child: ListView.builder(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: AlhaiSpacing.md),
-                        itemCount: headerCount +
+                          horizontal: AlhaiSpacing.md,
+                        ),
+                        itemCount:
+                            headerCount +
                             (hasDeliveries ? deliveries.length : 1),
                         addAutomaticKeepAlives: false,
                         itemBuilder: (context, index) {
@@ -85,36 +84,41 @@ class EarningsScreen extends ConsumerWidget {
                           if (index == 0) {
                             return Padding(
                               padding: const EdgeInsets.only(
-                                  bottom: AlhaiSpacing.sm),
+                                bottom: AlhaiSpacing.sm,
+                              ),
                               child: Card(
                                 elevation: 0,
                                 shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.circular(AlhaiRadius.md),
+                                  borderRadius: BorderRadius.circular(
+                                    AlhaiRadius.md,
+                                  ),
                                 ),
                                 color: theme.colorScheme.primaryContainer,
                                 child: Padding(
-                                  padding:
-                                      const EdgeInsets.all(AlhaiSpacing.lg),
+                                  padding: const EdgeInsets.all(
+                                    AlhaiSpacing.lg,
+                                  ),
                                   child: Column(
                                     children: [
                                       Text(
                                         'إجمالي الأرباح',
                                         style: theme.textTheme.titleMedium
                                             ?.copyWith(
-                                          color: theme
-                                              .colorScheme.onPrimaryContainer,
-                                        ),
+                                              color: theme
+                                                  .colorScheme
+                                                  .onPrimaryContainer,
+                                            ),
                                       ),
                                       const SizedBox(height: AlhaiSpacing.xs),
                                       Text(
                                         '${total.toStringAsFixed(0)} ر.س',
                                         style: theme.textTheme.headlineLarge
                                             ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color: theme
-                                              .colorScheme.onPrimaryContainer,
-                                        ),
+                                              fontWeight: FontWeight.bold,
+                                              color: theme
+                                                  .colorScheme
+                                                  .onPrimaryContainer,
+                                            ),
                                       ),
                                     ],
                                   ),
@@ -127,7 +131,8 @@ class EarningsScreen extends ConsumerWidget {
                           if (index == 1) {
                             return Padding(
                               padding: const EdgeInsets.only(
-                                  bottom: AlhaiSpacing.md),
+                                bottom: AlhaiSpacing.md,
+                              ),
                               child: Row(
                                 children: [
                                   _StatCardTile(
@@ -161,14 +166,16 @@ class EarningsScreen extends ConsumerWidget {
                                   child: Text(
                                     'لا توجد توصيلات في هذه الفترة',
                                     style: TextStyle(
-                                        color: theme.colorScheme.outline),
+                                      color: theme.colorScheme.outline,
+                                    ),
                                   ),
                                 ),
                               );
                             }
                             return Padding(
                               padding: const EdgeInsets.only(
-                                  bottom: AlhaiSpacing.xs),
+                                bottom: AlhaiSpacing.xs,
+                              ),
                               child: Text(
                                 'التوصيلات',
                                 style: theme.textTheme.titleMedium?.copyWith(
@@ -225,11 +232,7 @@ class _StatCardTile extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(AlhaiSpacing.sm),
-            child: StatItem(
-              icon: icon,
-              value: value,
-              label: label,
-            ),
+            child: StatItem(icon: icon, value: value, label: label),
           ),
         ),
       ),
@@ -246,8 +249,9 @@ class _EarningsDeliveryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final fee = (delivery['delivery_fee'] as num?)?.toDouble() ?? 0;
-    final deliveredAt =
-        DateTime.tryParse(delivery['delivered_at'] as String? ?? '');
+    final deliveredAt = DateTime.tryParse(
+      delivery['delivered_at'] as String? ?? '',
+    );
     final order = delivery['orders'] as Map<String, dynamic>?;
     final orderNum = order?['order_number'] ?? '';
     final timeStr = deliveredAt != null
@@ -267,17 +271,15 @@ class _EarningsDeliveryTile extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
         child: ListTile(
           leading: ExcludeSemantics(
-            child: Icon(Icons.check_circle,
-                size: 24, color: theme.colorScheme.primary),
+            child: Icon(
+              Icons.check_circle,
+              size: 24,
+              color: theme.colorScheme.primary,
+            ),
           ),
-          title: Text(
-            orderNum.toString().isNotEmpty ? '#$orderNum' : 'توصيل',
-          ),
+          title: Text(orderNum.toString().isNotEmpty ? '#$orderNum' : 'توصيل'),
           subtitle: deliveredAt != null
-              ? Text(
-                  timeStr,
-                  style: theme.textTheme.bodySmall,
-                )
+              ? Text(timeStr, style: theme.textTheme.bodySmall)
               : null,
           trailing: Text(
             '${fee.toStringAsFixed(0)} ر.س',

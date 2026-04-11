@@ -46,9 +46,9 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
     });
     try {
       final storeId = ref.read(currentStoreIdProvider)!;
-      final settings = await (_db.select(_db.settingsTable)
-            ..where((s) => s.storeId.equals(storeId)))
-          .get();
+      final settings = await (_db.select(
+        _db.settingsTable,
+      )..where((s) => s.storeId.equals(storeId))).get();
       final List<_PaymentDevice> loaded = [];
 
       // Parse stored devices from settings
@@ -58,13 +58,15 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
             !s.key.contains('_port')) {
           final parts = s.value.split('|');
           if (parts.length >= 3) {
-            loaded.add(_PaymentDevice(
-              id: s.key.replaceFirst('payment_device_', ''),
-              name: parts[0],
-              type: parts[1],
-              connectionMethod: parts[2],
-              isConnected: parts.length > 3 && parts[3] == 'true',
-            ));
+            loaded.add(
+              _PaymentDevice(
+                id: s.key.replaceFirst('payment_device_', ''),
+                name: parts[0],
+                type: parts[1],
+                connectionMethod: parts[2],
+                isConnected: parts.length > 3 && parts[3] == 'true',
+              ),
+            );
           }
         }
       }
@@ -107,7 +109,8 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
-            AppLocalizations.of(context).testingConnectionName(device.name)),
+          AppLocalizations.of(context).testingConnectionName(device.name),
+        ),
         backgroundColor: AppColors.info,
         duration: const Duration(seconds: 1),
       ),
@@ -122,7 +125,8 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-              AppLocalizations.of(context).connectionSuccessful(device.name)),
+            AppLocalizations.of(context).connectionSuccessful(device.name),
+          ),
           backgroundColor: AppColors.success,
         ),
       );
@@ -160,9 +164,12 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
                 backgroundColor: AppColors.primary,
                 foregroundColor: AppColors.textOnPrimary,
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+                  horizontal: AlhaiSpacing.md,
+                  vertical: AlhaiSpacing.xs,
+                ),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10)),
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
           ],
@@ -175,17 +182,24 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context,
-                      message: _error!, onRetry: _loadDevices)
-                  : _devices.isEmpty
-                      ? _buildEmptyState(isDark, l10n)
-                      : SingleChildScrollView(
-                          padding: EdgeInsets.all(isMediumScreen
-                              ? AlhaiSpacing.lg
-                              : AlhaiSpacing.md),
-                          child: _buildContent(
-                              isWideScreen, isMediumScreen, isDark, l10n),
-                        ),
+              ? AppErrorState.general(
+                  context,
+                  message: _error!,
+                  onRetry: _loadDevices,
+                )
+              : _devices.isEmpty
+              ? _buildEmptyState(isDark, l10n)
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(
+                    isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                  ),
+                  child: _buildContent(
+                    isWideScreen,
+                    isMediumScreen,
+                    isDark,
+                    l10n,
+                  ),
+                ),
         ),
       ],
     );
@@ -235,9 +249,12 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.textOnPrimary,
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.lg, vertical: 14),
+                horizontal: AlhaiSpacing.lg,
+                vertical: 14,
+              ),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ],
@@ -275,8 +292,9 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
           ...List.generate(
             _devices.length,
             (index) => Padding(
-              padding:
-                  EdgeInsets.only(bottom: index < _devices.length - 1 ? 12 : 0),
+              padding: EdgeInsets.only(
+                bottom: index < _devices.length - 1 ? 12 : 0,
+              ),
               child: _buildDeviceCard(_devices[index], index, isDark, l10n),
             ),
           ),
@@ -304,11 +322,7 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
             AppColors.info,
             isDark,
           ),
-          Container(
-            width: 1,
-            height: 40,
-            color: AppColors.getBorder(isDark),
-          ),
+          Container(width: 1, height: 40, color: AppColors.getBorder(isDark)),
           _summaryItem(
             Icons.check_circle_rounded,
             '$connectedCount',
@@ -316,11 +330,7 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
             AppColors.success,
             isDark,
           ),
-          Container(
-            width: 1,
-            height: 40,
-            color: AppColors.getBorder(isDark),
-          ),
+          Container(width: 1, height: 40, color: AppColors.getBorder(isDark)),
           _summaryItem(
             Icons.cancel_rounded,
             '$disconnectedCount',
@@ -372,8 +382,9 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
     bool isDark,
     AppLocalizations l10n,
   ) {
-    final statusColor =
-        device.isConnected ? AppColors.success : AppColors.error;
+    final statusColor = device.isConnected
+        ? AppColors.success
+        : AppColors.error;
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -388,8 +399,9 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
             width: 48,
             height: 48,
             decoration: BoxDecoration(
-              color: _getDeviceColor(device.type)
-                  .withValues(alpha: isDark ? 0.2 : 0.1),
+              color: _getDeviceColor(
+                device.type,
+              ).withValues(alpha: isDark ? 0.2 : 0.1),
               borderRadius: BorderRadius.circular(12),
             ),
             child: Icon(
@@ -453,9 +465,12 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
               foregroundColor: AppColors.info,
               side: BorderSide(color: AppColors.info.withValues(alpha: 0.5)),
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+                horizontal: AlhaiSpacing.sm,
+                vertical: AlhaiSpacing.xs,
+              ),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8)),
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
           ),
         ],

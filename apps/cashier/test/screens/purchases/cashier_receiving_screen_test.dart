@@ -23,8 +23,9 @@ void main() {
 
     // CashierReceivingScreen uses:
     //   _db.purchasesDao.getPurchasesByStatus(storeId, 'approved')
-    when(() => purchasesDao.getPurchasesByStatus(any(), any()))
-        .thenAnswer((_) async => []);
+    when(
+      () => purchasesDao.getPurchasesByStatus(any(), any()),
+    ).thenAnswer((_) async => []);
 
     final db = setupMockDatabase(
       purchasesDao: purchasesDao,
@@ -41,9 +42,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const CashierReceivingScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const CashierReceivingScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(CashierReceivingScreen), findsOneWidget);
@@ -59,12 +58,11 @@ void main() {
 
       // Use Completer to hold the future without pending timers
       final completer = Completer<List<PurchasesTableData>>();
-      when(() => purchasesDao.getPurchasesByStatus(any(), any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => purchasesDao.getPurchasesByStatus(any(), any()),
+      ).thenAnswer((_) => completer.future);
 
-      await tester.pumpWidget(
-        createTestWidget(const CashierReceivingScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const CashierReceivingScreen()));
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -101,9 +99,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const CashierReceivingScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const CashierReceivingScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(CashierReceivingScreen), findsOneWidget);
@@ -117,13 +113,12 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(
-        createTestWidget(const CashierReceivingScreen()),
-      );
+      await tester.pumpWidget(createTestWidget(const CashierReceivingScreen()));
       await tester.pumpAndSettle();
 
-      verify(() => purchasesDao.getPurchasesByStatus(any(), 'approved'))
-          .called(1);
+      verify(
+        () => purchasesDao.getPurchasesByStatus(any(), 'approved'),
+      ).called(1);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

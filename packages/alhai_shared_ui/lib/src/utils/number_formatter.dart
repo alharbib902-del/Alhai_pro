@@ -6,8 +6,11 @@ class AppNumberFormatter {
 
   /// Format currency amount with locale awareness.
   /// Returns formatted string like "1,234.56" or "1,234" for Arabic.
-  static String currency(double value,
-      {String locale = 'en', int decimals = 2}) {
+  static String currency(
+    double value, {
+    String locale = 'en',
+    int decimals = 2,
+  }) {
     final format = NumberFormat.currency(
       locale: locale,
       symbol: '',
@@ -22,8 +25,11 @@ class AppNumberFormatter {
   }
 
   /// Format percentage.
-  static String percentage(double value,
-      {String locale = 'en', int decimals = 1}) {
+  static String percentage(
+    double value, {
+    String locale = 'en',
+    int decimals = 1,
+  }) {
     return NumberFormat.percentPattern(locale).format(value / 100);
   }
 

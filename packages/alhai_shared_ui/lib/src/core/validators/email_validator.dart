@@ -130,8 +130,9 @@ class EmailValidator {
         return null;
       }
 
-      final result =
-          allowDisposable ? validate(value) : validateNotDisposable(value);
+      final result = allowDisposable
+          ? validate(value)
+          : validateNotDisposable(value);
 
       return result.getError(locale);
     };

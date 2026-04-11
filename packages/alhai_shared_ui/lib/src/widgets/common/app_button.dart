@@ -212,8 +212,8 @@ class _AppButtonState extends State<AppButton> {
             minWidth: widget.fullWidth
                 ? double.infinity
                 : ButtonSize.medium == widget.size
-                    ? 100
-                    : 80,
+                ? 100
+                : 80,
           ),
           child: Material(
             color: Colors.transparent,
@@ -224,12 +224,11 @@ class _AppButtonState extends State<AppButton> {
                 decoration: _getDecoration(effectiveColor, isDisabled),
                 child: Container(
                   height: _getHeight(),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: _getPadding(),
-                  ),
+                  padding: EdgeInsets.symmetric(horizontal: _getPadding()),
                   child: Row(
-                    mainAxisSize:
-                        widget.fullWidth ? MainAxisSize.max : MainAxisSize.min,
+                    mainAxisSize: widget.fullWidth
+                        ? MainAxisSize.max
+                        : MainAxisSize.min,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       // Loading or Icon
@@ -285,15 +284,19 @@ class _AppButtonState extends State<AppButton> {
                             vertical: AppSpacing.xxs,
                           ),
                           decoration: BoxDecoration(
-                            color: _getContentColor(effectiveColor, isDisabled)
-                                .withValues(alpha: 0.15),
+                            color: _getContentColor(
+                              effectiveColor,
+                              isDisabled,
+                            ).withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(AppRadius.xs),
                           ),
                           child: Text(
                             widget.shortcutHint!,
                             style: AppTypography.labelSmall.copyWith(
-                              color:
-                                  _getContentColor(effectiveColor, isDisabled),
+                              color: _getContentColor(
+                                effectiveColor,
+                                isDisabled,
+                              ),
                               fontWeight: FontWeight.w500,
                             ),
                           ),
@@ -318,16 +321,17 @@ class _AppButtonState extends State<AppButton> {
           color: isDisabled
               ? colorScheme.surfaceContainerHigh
               : _isHovered
-                  ? color.withValues(alpha: 0.9)
-                  : color,
+              ? color.withValues(alpha: 0.9)
+              : color,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           boxShadow: isDisabled || !_isHovered ? null : AppShadows.primarySm,
         );
 
       case AppButtonVariant.outlined:
         return BoxDecoration(
-          color:
-              _isHovered ? color.withValues(alpha: 0.05) : Colors.transparent,
+          color: _isHovered
+              ? color.withValues(alpha: 0.05)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(AppRadius.lg),
           border: Border.all(
             color: isDisabled ? colorScheme.outlineVariant : color,
@@ -337,8 +341,9 @@ class _AppButtonState extends State<AppButton> {
 
       case AppButtonVariant.ghost:
         return BoxDecoration(
-          color:
-              _isHovered ? colorScheme.surfaceContainerLow : Colors.transparent,
+          color: _isHovered
+              ? colorScheme.surfaceContainerLow
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(AppRadius.lg),
         );
 
@@ -347,8 +352,8 @@ class _AppButtonState extends State<AppButton> {
           color: isDisabled
               ? colorScheme.surfaceContainerLow
               : _isHovered
-                  ? color.withValues(alpha: 0.15)
-                  : color.withValues(alpha: 0.1),
+              ? color.withValues(alpha: 0.15)
+              : color.withValues(alpha: 0.1),
           borderRadius: BorderRadius.circular(AppRadius.lg),
         );
     }
@@ -486,10 +491,7 @@ class _AppIconButtonState extends State<AppIconButton> {
     );
 
     if (widget.tooltip != null) {
-      button = Tooltip(
-        message: widget.tooltip!,
-        child: button,
-      );
+      button = Tooltip(message: widget.tooltip!, child: button);
     }
 
     return Semantics(
@@ -513,8 +515,9 @@ class _AppIconButtonState extends State<AppIconButton> {
 
       case AppButtonVariant.outlined:
         return BoxDecoration(
-          color:
-              _isHovered ? color.withValues(alpha: 0.05) : Colors.transparent,
+          color: _isHovered
+              ? color.withValues(alpha: 0.05)
+              : Colors.transparent,
           shape: BoxShape.circle,
           border: Border.all(
             color: isDisabled ? colorScheme.outlineVariant : color,
@@ -524,8 +527,9 @@ class _AppIconButtonState extends State<AppIconButton> {
 
       case AppButtonVariant.ghost:
         return BoxDecoration(
-          color:
-              _isHovered ? colorScheme.surfaceContainerLow : Colors.transparent,
+          color: _isHovered
+              ? colorScheme.surfaceContainerLow
+              : Colors.transparent,
           shape: BoxShape.circle,
         );
 
@@ -534,8 +538,8 @@ class _AppIconButtonState extends State<AppIconButton> {
           color: isDisabled
               ? colorScheme.surfaceContainerLow
               : _isHovered
-                  ? color.withValues(alpha: 0.15)
-                  : color.withValues(alpha: 0.1),
+              ? color.withValues(alpha: 0.15)
+              : color.withValues(alpha: 0.1),
           shape: BoxShape.circle,
         );
     }

@@ -37,11 +37,9 @@ class ImageUploadService {
   static const String receiptsBucket = 'receipts';
   static const String invoiceAttachmentsBucket = 'invoice-attachments';
 
-  ImageUploadService({
-    required SupabaseClient client,
-    required AppDatabase db,
-  })  : _client = client,
-        _db = db;
+  ImageUploadService({required SupabaseClient client, required AppDatabase db})
+    : _client = client,
+      _db = db;
 
   /// رفع صورة منتج (لفرع محدد)
   ///
@@ -137,9 +135,10 @@ class ImageUploadService {
 
       // مزامنة الصورة لكل فروع المنظمة عبر RPC
       try {
-        await _client.rpc('sync_org_product_to_stores', params: {
-          'p_org_product_id': orgProductId,
-        });
+        await _client.rpc(
+          'sync_org_product_to_stores',
+          params: {'p_org_product_id': orgProductId},
+        );
       } catch (_) {
         // المزامنة ستتم في الدورة التالية
       }
@@ -190,12 +189,17 @@ class ImageUploadService {
   }) async {
     try {
       final now = DateTime.now();
-      final path = 'store/$storeId/invoices/'
+      final path =
+          'store/$storeId/invoices/'
           '${now.year}/${now.month.toString().padLeft(2, '0')}/'
           '$invoiceNumber.pdf';
 
       await _uploadFile(
-          invoiceAttachmentsBucket, path, pdfBytes, 'application/pdf');
+        invoiceAttachmentsBucket,
+        path,
+        pdfBytes,
+        'application/pdf',
+      );
       return _getPublicUrl(invoiceAttachmentsBucket, path);
     } catch (e) {
       if (kDebugMode) {
@@ -237,7 +241,9 @@ class ImageUploadService {
     Uint8List bytes,
     String contentType,
   ) async {
-    await _client.storage.from(bucket).uploadBinary(
+    await _client.storage
+        .from(bucket)
+        .uploadBinary(
           path,
           bytes,
           fileOptions: FileOptions(

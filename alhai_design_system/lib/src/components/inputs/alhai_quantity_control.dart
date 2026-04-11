@@ -74,9 +74,9 @@ class AlhaiQuantityControl extends StatelessWidget {
     this.decrementSemanticLabel,
     this.incrementSemanticLabel,
     this.hapticsEnabled = true,
-  })  : assert(min >= 0, 'min must be >= 0'),
-        assert(step > 0, 'step must be > 0'),
-        assert(max == null || max >= min, 'max must be >= min');
+  }) : assert(min >= 0, 'min must be >= 0'),
+       assert(step > 0, 'step must be > 0'),
+       assert(max == null || max >= min, 'max must be >= min');
 
   @override
   Widget build(BuildContext context) {
@@ -129,9 +129,7 @@ class AlhaiQuantityControl extends StatelessWidget {
 
           // Quantity display
           Container(
-            constraints: BoxConstraints(
-              minWidth: visualSize,
-            ),
+            constraints: BoxConstraints(minWidth: visualSize),
             padding: const EdgeInsetsDirectional.symmetric(
               horizontal: AlhaiSpacing.sm,
             ),
@@ -177,8 +175,9 @@ class AlhaiQuantityControl extends StatelessWidget {
   }
 
   void _increment(int current) {
-    final newValue =
-        max == null ? current + step : math.min(max!, current + step);
+    final newValue = max == null
+        ? current + step
+        : math.min(max!, current + step);
     if (newValue != current) {
       if (hapticsEnabled) {
         HapticFeedback.lightImpact();

@@ -91,23 +91,20 @@ class AnimatedSliverList extends StatelessWidget {
     final reduceMotion = MediaQuery.of(context).disableAnimations;
 
     return SliverList(
-      delegate: SliverChildBuilderDelegate(
-        (context, index) {
-          final child = itemBuilder(context, index);
+      delegate: SliverChildBuilderDelegate((context, index) {
+        final child = itemBuilder(context, index);
 
-          if (reduceMotion || index >= maxAnimatedItems) {
-            return child;
-          }
+        if (reduceMotion || index >= maxAnimatedItems) {
+          return child;
+        }
 
-          return _StaggeredItem(
-            index: index,
-            duration: itemDuration,
-            delay: staggerDelay * index,
-            child: child,
-          );
-        },
-        childCount: itemCount,
-      ),
+        return _StaggeredItem(
+          index: index,
+          duration: itemDuration,
+          delay: staggerDelay * index,
+          child: child,
+        );
+      }, childCount: itemCount),
     );
   }
 }
@@ -138,21 +135,17 @@ class _StaggeredItemState extends State<_StaggeredItem>
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: widget.duration,
-    );
+    _controller = AnimationController(vsync: this, duration: widget.duration);
 
-    _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
-    );
+    _fadeAnimation = Tween<double>(
+      begin: 0.0,
+      end: 1.0,
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOut));
 
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.1),
       end: Offset.zero,
-    ).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic),
-    );
+    ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic));
 
     Future.delayed(widget.delay, () {
       if (mounted) _controller.forward();
@@ -169,10 +162,7 @@ class _StaggeredItemState extends State<_StaggeredItem>
   Widget build(BuildContext context) {
     return FadeTransition(
       opacity: _fadeAnimation,
-      child: SlideTransition(
-        position: _slideAnimation,
-        child: widget.child,
-      ),
+      child: SlideTransition(position: _slideAnimation, child: widget.child),
     );
   }
 }

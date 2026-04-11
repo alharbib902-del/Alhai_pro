@@ -19,8 +19,9 @@ void main() {
     when(() => mockPersistence.saveCart(any())).thenAnswer((_) async {});
     when(() => mockPersistence.clearCart()).thenAnswer((_) async {});
     when(() => mockPersistence.saveHeldInvoice(any())).thenAnswer((_) async {});
-    when(() => mockPersistence.deleteHeldInvoice(any()))
-        .thenAnswer((_) async {});
+    when(
+      () => mockPersistence.deleteHeldInvoice(any()),
+    ).thenAnswer((_) async {});
     when(() => mockPersistence.loadHeldInvoices()).thenAnswer((_) async => []);
   });
 
@@ -41,8 +42,11 @@ void main() {
     });
 
     test('total with custom price', () {
-      final item =
-          createTestCartItem(price: 10.0, quantity: 3, customPrice: 8.0);
+      final item = createTestCartItem(
+        price: 10.0,
+        quantity: 3,
+        customPrice: 8.0,
+      );
       expect(item.total, equals(24.0));
     });
 
@@ -63,8 +67,11 @@ void main() {
     });
 
     test('toJson and fromJson roundtrip', () {
-      final item =
-          createTestCartItem(price: 15.0, quantity: 2, customPrice: 12.0);
+      final item = createTestCartItem(
+        price: 15.0,
+        quantity: 2,
+        customPrice: 12.0,
+      );
       final json = item.toJson();
       final restored = PosCartItem.fromJson(json);
 
@@ -402,18 +409,24 @@ void main() {
 
     group('business logic calculations', () {
       test('subtotal with multiple items', () {
-        notifier.addProduct(createTestProduct(id: 'p-1', price: 10.0),
-            quantity: 3);
-        notifier.addProduct(createTestProduct(id: 'p-2', price: 20.0),
-            quantity: 2);
+        notifier.addProduct(
+          createTestProduct(id: 'p-1', price: 10.0),
+          quantity: 3,
+        );
+        notifier.addProduct(
+          createTestProduct(id: 'p-2', price: 20.0),
+          quantity: 2,
+        );
 
         // 10*3 + 20*2 = 70
         expect(notifier.state.subtotal, equals(70.0));
       });
 
       test('total with discount', () {
-        notifier.addProduct(createTestProduct(id: 'p-1', price: 100.0),
-            quantity: 1);
+        notifier.addProduct(
+          createTestProduct(id: 'p-1', price: 100.0),
+          quantity: 1,
+        );
         notifier.setDiscount(15.0);
 
         expect(notifier.state.subtotal, equals(100.0));
@@ -489,20 +502,22 @@ void main() {
     late HeldInvoicesNotifier notifier;
 
     setUp(() {
-      when(() => mockPersistence.loadHeldInvoices()).thenAnswer((_) async => [
-            HeldInvoice(
-              id: 'inv-1',
-              cart: const CartState(),
-              name: 'Invoice 1',
-              createdAt: DateTime.now(),
-            ),
-            HeldInvoice(
-              id: 'inv-2',
-              cart: const CartState(),
-              name: 'Invoice 2',
-              createdAt: DateTime.now(),
-            ),
-          ]);
+      when(() => mockPersistence.loadHeldInvoices()).thenAnswer(
+        (_) async => [
+          HeldInvoice(
+            id: 'inv-1',
+            cart: const CartState(),
+            name: 'Invoice 1',
+            createdAt: DateTime.now(),
+          ),
+          HeldInvoice(
+            id: 'inv-2',
+            cart: const CartState(),
+            name: 'Invoice 2',
+            createdAt: DateTime.now(),
+          ),
+        ],
+      );
 
       notifier = HeldInvoicesNotifier(mockPersistence);
     });

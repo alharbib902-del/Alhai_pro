@@ -123,12 +123,7 @@ class SyncConflict with _$SyncConflict {
 }
 
 /// Conflict resolution type
-enum ConflictResolution {
-  acceptLocal,
-  acceptServer,
-  merge,
-  createAdjustment,
-}
+enum ConflictResolution { acceptLocal, acceptServer, merge, createAdjustment }
 
 /// Sync queue service interface (v2.5.0)
 /// Referenced by: US-4.1, US-4.2, US-4.3, US-4.4, US-4.5

@@ -45,8 +45,10 @@ class CustomersDao extends DatabaseAccessor<AppDatabase>
   }
 
   /// عدد العملاء الكلي (للـ pagination)
-  Future<int> getCustomersCount(String storeId,
-      {bool activeOnly = true}) async {
+  Future<int> getCustomersCount(
+    String storeId, {
+    bool activeOnly = true,
+  }) async {
     final countExpression = customersTable.id.count();
 
     var query = selectOnly(customersTable)
@@ -63,10 +65,12 @@ class CustomersDao extends DatabaseAccessor<AppDatabase>
 
   Future<List<CustomersTableData>> getActiveCustomers(String storeId) {
     return (select(customersTable)
-          ..where((c) =>
-              c.storeId.equals(storeId) &
-              c.isActive.equals(true) &
-              c.deletedAt.isNull())
+          ..where(
+            (c) =>
+                c.storeId.equals(storeId) &
+                c.isActive.equals(true) &
+                c.deletedAt.isNull(),
+          )
           ..orderBy([(c) => OrderingTerm.asc(c.name)])
           ..limit(500))
         .get();
@@ -76,12 +80,16 @@ class CustomersDao extends DatabaseAccessor<AppDatabase>
       (select(customersTable)..where((c) => c.id.equals(id))).getSingleOrNull();
 
   Future<List<CustomersTableData>> searchCustomers(
-      String query, String storeId) {
+    String query,
+    String storeId,
+  ) {
     return (select(customersTable)
-          ..where((c) =>
-              c.storeId.equals(storeId) &
-              c.deletedAt.isNull() &
-              (c.name.contains(query) | c.phone.contains(query)))
+          ..where(
+            (c) =>
+                c.storeId.equals(storeId) &
+                c.deletedAt.isNull() &
+                (c.name.contains(query) | c.phone.contains(query)),
+          )
           ..limit(20))
         .get();
   }
@@ -100,8 +108,9 @@ class CustomersDao extends DatabaseAccessor<AppDatabase>
       (delete(customersTable)..where((c) => c.id.equals(id))).go();
 
   Future<int> markAsSynced(String id) {
-    return (update(customersTable)..where((c) => c.id.equals(id)))
-        .write(CustomersTableCompanion(syncedAt: Value(DateTime.now())));
+    return (update(customersTable)..where((c) => c.id.equals(id))).write(
+      CustomersTableCompanion(syncedAt: Value(DateTime.now())),
+    );
   }
 
   Stream<List<CustomersTableData>> watchCustomers(String storeId) {
@@ -113,7 +122,8 @@ class CustomersDao extends DatabaseAccessor<AppDatabase>
 
   // Addresses
   Future<List<CustomerAddressesTableData>> getCustomerAddresses(
-      String customerId) {
+    String customerId,
+  ) {
     return (select(customerAddressesTable)
           ..where((a) => a.customerId.equals(customerId))
           ..orderBy([(a) => OrderingTerm.desc(a.isDefault)]))
@@ -140,7 +150,9 @@ class CustomersDao extends DatabaseAccessor<AppDatabase>
 
   /// عميل مع إحصائيات المشتريات
   Future<CustomerWithStats?> getCustomerWithStats(
-      String customerId, String storeId) async {
+    String customerId,
+    String storeId,
+  ) async {
     final customer = await getCustomerById(customerId);
     if (customer == null) return null;
 
@@ -153,7 +165,7 @@ class CustomersDao extends DatabaseAccessor<AppDatabase>
          WHERE customer_id = ? AND store_id = ? AND status = 'completed' ''',
       variables: [
         Variable.withString(customerId),
-        Variable.withString(storeId)
+        Variable.withString(storeId),
       ],
     ).getSingle();
 
@@ -187,14 +199,16 @@ class CustomersDao extends DatabaseAccessor<AppDatabase>
     ).get();
 
     return result
-        .map((row) => CustomerWithStats(
-              customer: customersTable.map(row.data),
-              totalPurchases: row.data['total_purchases'] as int? ?? 0,
-              totalSpent: _toDouble(row.data['total_spent']),
-              lastPurchaseDate: row.data['last_purchase_date'] != null
-                  ? DateTime.tryParse(row.data['last_purchase_date'].toString())
-                  : null,
-            ))
+        .map(
+          (row) => CustomerWithStats(
+            customer: customersTable.map(row.data),
+            totalPurchases: row.data['total_purchases'] as int? ?? 0,
+            totalSpent: _toDouble(row.data['total_spent']),
+            lastPurchaseDate: row.data['last_purchase_date'] != null
+                ? DateTime.tryParse(row.data['last_purchase_date'].toString())
+                : null,
+          ),
+        )
         .toList();
   }
 
@@ -212,8 +226,10 @@ class CustomerWithAddresses {
   final CustomersTableData customer;
   final List<CustomerAddressesTableData> addresses;
 
-  const CustomerWithAddresses(
-      {required this.customer, required this.addresses});
+  const CustomerWithAddresses({
+    required this.customer,
+    required this.addresses,
+  });
 }
 
 /// عميل مع إحصائيات المشتريات

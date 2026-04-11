@@ -32,13 +32,15 @@ class DistributorOrder {
 
     return DistributorOrder(
       id: json['id'] as String,
-      purchaseNumber: json['purchase_number'] as String? ??
+      purchaseNumber:
+          json['purchase_number'] as String? ??
           'PO-${(json['id'] as String).substring(0, 8)}',
       storeName: storeName,
       storeId: json['store_id'] as String? ?? '',
       total: (json['total'] as num?)?.toDouble() ?? 0,
       status: json['status'] as String? ?? 'draft',
-      createdAt: DateTime.tryParse(json['created_at'] as String? ?? '') ??
+      createdAt:
+          DateTime.tryParse(json['created_at'] as String? ?? '') ??
           DateTime.now(),
       notes: json['notes'] as String?,
     );

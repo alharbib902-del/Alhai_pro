@@ -9,8 +9,9 @@ import 'package:alhai_auth/alhai_auth.dart' show authStateProvider;
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Provider for store info
-final _storeInfoProvider =
-    FutureProvider.autoDispose<StoresTableData?>((ref) async {
+final _storeInfoProvider = FutureProvider.autoDispose<StoresTableData?>((
+  ref,
+) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return null;
   final db = getIt<AppDatabase>();
@@ -37,8 +38,8 @@ class SettingsScreen extends ConsumerWidget {
     final padding = size.width < 600
         ? 12.0
         : isWideScreen
-            ? 24.0
-            : 16.0;
+        ? 24.0
+        : 16.0;
 
     // Get real user data from auth state
     final authState = ref.watch(authStateProvider);
@@ -58,8 +59,9 @@ class SettingsScreen extends ConsumerWidget {
         children: [
           AppHeader(
             title: storeName ?? l10n.settings,
-            onMenuTap:
-                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: syncCount,
             userName: userName,
@@ -74,11 +76,13 @@ class SettingsScreen extends ConsumerWidget {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.error_outline_rounded,
-                          size: 64,
-                          color: isDark
-                              ? Colors.white38
-                              : AppColors.textSecondary),
+                      Icon(
+                        Icons.error_outline_rounded,
+                        size: 64,
+                        color: isDark
+                            ? Colors.white38
+                            : AppColors.textSecondary,
+                      ),
                       const SizedBox(height: AlhaiSpacing.md),
                       Text(
                         '\u062D\u062F\u062B \u062E\u0637\u0623 \u0641\u064A \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0625\u0639\u062F\u0627\u062F\u0627\u062A',
@@ -101,7 +105,12 @@ class SettingsScreen extends ConsumerWidget {
               data: (_) => SingleChildScrollView(
                 padding: EdgeInsets.all(padding),
                 child: _buildContent(
-                    context, isWideScreen, isMediumScreen, isDark, l10n),
+                  context,
+                  isWideScreen,
+                  isMediumScreen,
+                  isDark,
+                  l10n,
+                ),
               ),
             ),
           ),
@@ -110,13 +119,18 @@ class SettingsScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildContent(BuildContext context, bool isWideScreen,
-      bool isMediumScreen, bool isDark, AppLocalizations l10n) {
+  Widget _buildContent(
+    BuildContext context,
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final crossAxisCount = isWideScreen
         ? 4
         : isMediumScreen
-            ? 3
-            : 2;
+        ? 3
+        : 2;
 
     final categories = _getSettingsCategories(context, isDark, l10n);
 
@@ -134,8 +148,11 @@ class SettingsScreen extends ConsumerWidget {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.settings_rounded,
-                    color: AppColors.primary, size: 24),
+                child: const Icon(
+                  Icons.settings_rounded,
+                  color: AppColors.primary,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Column(
@@ -183,7 +200,10 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   Widget _buildSettingCard(
-      BuildContext context, _SettingsCategory cat, bool isDark) {
+    BuildContext context,
+    _SettingsCategory cat,
+    bool isDark,
+  ) {
     final adaptedColor = _adaptAccentColor(cat.color, isDark);
     return Material(
       color: Colors.transparent,
@@ -195,9 +215,7 @@ class SettingsScreen extends ConsumerWidget {
           decoration: BoxDecoration(
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: Theme.of(context).dividerColor,
-            ),
+            border: Border.all(color: Theme.of(context).dividerColor),
           ),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -243,7 +261,10 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   List<_SettingsCategory> _getSettingsCategories(
-      BuildContext context, bool isDark, AppLocalizations l10n) {
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     return [
       _SettingsCategory(
         icon: Icons.store_rounded,

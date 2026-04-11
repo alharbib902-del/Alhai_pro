@@ -10,22 +10,14 @@ import 'package:alhai_design_system/src/components/feedback/alhai_badge.dart';
 void main() {
   group('AlhaiBadge Golden Tests', () {
     testGoldens('Badge types', (tester) async {
-      final builder = GoldenBuilder.grid(
-        columns: 3,
-        widthToHeightRatio: 1,
-      )
+      final builder = GoldenBuilder.grid(columns: 3, widthToHeightRatio: 1)
         ..addScenario(
           'Dot',
-          AlhaiBadge.dot(
-            child: const Icon(Icons.notifications, size: 32),
-          ),
+          AlhaiBadge.dot(child: const Icon(Icons.notifications, size: 32)),
         )
         ..addScenario(
           'Count 5',
-          AlhaiBadge.count(
-            count: 5,
-            child: const Icon(Icons.mail, size: 32),
-          ),
+          AlhaiBadge.count(count: 5, child: const Icon(Icons.mail, size: 32)),
         )
         ..addScenario(
           'Count 99+',
@@ -44,10 +36,7 @@ void main() {
     });
 
     testGoldens('Badge sizes', (tester) async {
-      final builder = GoldenBuilder.grid(
-        columns: 3,
-        widthToHeightRatio: 1,
-      )
+      final builder = GoldenBuilder.grid(columns: 3, widthToHeightRatio: 1)
         ..addScenario(
           'Small',
           AlhaiBadge.count(
@@ -82,10 +71,7 @@ void main() {
     });
 
     testGoldens('Badge custom colors', (tester) async {
-      final builder = GoldenBuilder.grid(
-        columns: 3,
-        widthToHeightRatio: 1,
-      )
+      final builder = GoldenBuilder.grid(columns: 3, widthToHeightRatio: 1)
         ..addScenario(
           'Blue',
           AlhaiBadge.count(
@@ -120,15 +106,15 @@ void main() {
     });
 
     testGoldens('Badge dark theme', (tester) async {
-      final builder = GoldenBuilder.grid(
-        columns: 2,
-        widthToHeightRatio: 1,
-      )
+      final builder = GoldenBuilder.grid(columns: 2, widthToHeightRatio: 1)
         ..addScenario(
           'Dot Dark',
           AlhaiBadge.dot(
-            child:
-                const Icon(Icons.notifications, size: 32, color: Colors.white),
+            child: const Icon(
+              Icons.notifications,
+              size: 32,
+              color: Colors.white,
+            ),
           ),
         )
         ..addScenario(

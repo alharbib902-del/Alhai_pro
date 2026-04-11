@@ -14,13 +14,18 @@ import 'core/supabase/supabase_client.dart';
 import 'di/injection.dart';
 
 void main() {
-  runZonedGuarded(() async {
-    await initSentry(appRunner: () async {
-      await _appMain();
-    });
-  }, (error, stack) {
-    reportError(error, stackTrace: stack, hint: 'runZonedGuarded');
-  });
+  runZonedGuarded(
+    () async {
+      await initSentry(
+        appRunner: () async {
+          await _appMain();
+        },
+      );
+    },
+    (error, stack) {
+      reportError(error, stackTrace: stack, hint: 'runZonedGuarded');
+    },
+  );
 }
 
 Future<void> _appMain() async {
@@ -50,9 +55,7 @@ Future<void> _appMain() async {
 
   // Style the status bar
   SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-    ),
+    const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
 
   // Initialize Supabase
@@ -74,11 +77,7 @@ Future<void> _appMain() async {
 
   addBreadcrumb(message: 'App initialized', category: 'lifecycle');
 
-  runApp(
-    const ProviderScope(
-      child: DriverApp(),
-    ),
-  );
+  runApp(const ProviderScope(child: DriverApp()));
 }
 
 class DriverApp extends ConsumerStatefulWidget {
@@ -126,8 +125,10 @@ class _DriverAppState extends ConsumerState<DriverApp>
       // within the next minute (gives a buffer before requests start failing).
       final expiresAt = session.expiresAt; // Unix epoch seconds
       if (expiresAt != null) {
-        final expiry =
-            DateTime.fromMillisecondsSinceEpoch(expiresAt * 1000, isUtc: true);
+        final expiry = DateTime.fromMillisecondsSinceEpoch(
+          expiresAt * 1000,
+          isUtc: true,
+        );
         final buffer = DateTime.now().toUtc().add(const Duration(minutes: 1));
         if (expiry.isBefore(buffer)) {
           await AppSupabase.client.auth.refreshSession();

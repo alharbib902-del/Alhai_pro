@@ -54,8 +54,9 @@ class _TopProductsReportScreenState
       final storeId = ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
 
       // استعلام المنتجات الأكثر مبيعاً من sale_items مع join على products و sales
-      final results = await db.customSelect(
-        '''SELECT
+      final results = await db
+          .customSelect(
+            '''SELECT
              p.id,
              p.name,
              p.sku,
@@ -76,13 +77,19 @@ class _TopProductsReportScreenState
              AND p.is_active = 1
            GROUP BY p.id
            ORDER BY revenue DESC''',
-        variables: [
-          Variable.withDateTime(_dateRange.start),
-          Variable.withDateTime(DateTime(_dateRange.end.year,
-              _dateRange.end.month, _dateRange.end.day + 1)),
-          Variable.withString(storeId),
-        ],
-      ).get();
+            variables: [
+              Variable.withDateTime(_dateRange.start),
+              Variable.withDateTime(
+                DateTime(
+                  _dateRange.end.year,
+                  _dateRange.end.month,
+                  _dateRange.end.day + 1,
+                ),
+              ),
+              Variable.withString(storeId),
+            ],
+          )
+          .get();
 
       if (results.isEmpty) {
         setState(() => _isLoading = false);
@@ -153,8 +160,9 @@ class _TopProductsReportScreenState
   List<ProductReport> get _filteredProducts {
     var filtered = List<ProductReport>.from(_products);
     if (_selectedCategory != 'all') {
-      filtered =
-          filtered.where((p) => p.category == _selectedCategory).toList();
+      filtered = filtered
+          .where((p) => p.category == _selectedCategory)
+          .toList();
     }
 
     switch (_sortBy) {
@@ -259,7 +267,9 @@ class _TopProductsReportScreenState
                   itemCount: _filteredProducts.length,
                   itemBuilder: (context, index) {
                     return _buildProductCard(
-                        _filteredProducts[index], index + 1);
+                      _filteredProducts[index],
+                      index + 1,
+                    );
                   },
                 ),
         ),
@@ -329,14 +339,8 @@ class _TopProductsReportScreenState
                   value: 'revenue',
                   child: Text(l10n.revenueSort),
                 ),
-                DropdownMenuItem(
-                  value: 'units',
-                  child: Text(l10n.unitsSort),
-                ),
-                DropdownMenuItem(
-                  value: 'profit',
-                  child: Text(l10n.profitSort),
-                ),
+                DropdownMenuItem(value: 'units', child: Text(l10n.unitsSort)),
+                DropdownMenuItem(value: 'profit', child: Text(l10n.profitSort)),
               ],
               onChanged: (value) {
                 if (value != null) {
@@ -369,10 +373,10 @@ class _TopProductsReportScreenState
                   decoration: BoxDecoration(
                     color: rank <= 3
                         ? (rank == 1
-                            ? AppColors.warning
-                            : rank == 2
-                                ? AppColors.grey400
-                                : const Color(0xFF795548))
+                              ? AppColors.warning
+                              : rank == 2
+                              ? AppColors.grey400
+                              : const Color(0xFF795548))
                         : Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(AppSizes.radiusSm),
                   ),
@@ -418,11 +422,12 @@ class _TopProductsReportScreenState
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: Theme.of(context)
-                                    .colorScheme
-                                    .surfaceContainerHighest,
-                                borderRadius:
-                                    BorderRadius.circular(AppSizes.radiusSm),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.surfaceContainerHighest,
+                                borderRadius: BorderRadius.circular(
+                                  AppSizes.radiusSm,
+                                ),
                               ),
                               child: Text(
                                 product.category,
@@ -444,13 +449,13 @@ class _TopProductsReportScreenState
                   product.trend == 'up'
                       ? Icons.trending_up
                       : product.trend == 'down'
-                          ? Icons.trending_down
-                          : Icons.trending_flat,
+                      ? Icons.trending_down
+                      : Icons.trending_flat,
                   color: product.trend == 'up'
                       ? AppColors.success
                       : product.trend == 'down'
-                          ? AppColors.error
-                          : AppColors.warning,
+                      ? AppColors.error
+                      : AppColors.warning,
                 ),
               ],
             ),
@@ -509,9 +514,7 @@ class _TopProductsReportScreenState
         ),
         Text(
           label,
-          style: AppTypography.labelSmall.copyWith(
-            color: AppColors.textMuted,
-          ),
+          style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
         ),
       ],
     );
@@ -522,8 +525,9 @@ class _TopProductsReportScreenState
     // حساب إحصائيات الفئات
     final categoryStats = <String, CategoryStats>{};
     for (final product in _products) {
-      final catName =
-          product.category.isEmpty ? l10n.unclassified : product.category;
+      final catName = product.category.isEmpty
+          ? l10n.unclassified
+          : product.category;
       if (!categoryStats.containsKey(catName)) {
         categoryStats[catName] = CategoryStats(
           name: catName,
@@ -545,8 +549,10 @@ class _TopProductsReportScreenState
     final sortedCategories = categoryStats.values.toList()
       ..sort((a, b) => b.totalRevenue.compareTo(a.totalRevenue));
 
-    final totalRevenue =
-        sortedCategories.fold(0.0, (sum, cat) => sum + cat.totalRevenue);
+    final totalRevenue = sortedCategories.fold(
+      0.0,
+      (sum, cat) => sum + cat.totalRevenue,
+    );
 
     return ListView(
       padding: const EdgeInsets.all(AppSizes.lg),
@@ -584,10 +590,7 @@ class _TopProductsReportScreenState
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                cat.name,
-                                style: AppTypography.bodyMedium,
-                              ),
+                              Text(cat.name, style: AppTypography.bodyMedium),
                               Text(
                                 '${cat.totalRevenue.toStringAsFixed(0)} ${l10n.sar} (${percentage.toStringAsFixed(0)}%)',
                                 style: AppTypography.bodySmall.copyWith(
@@ -599,9 +602,9 @@ class _TopProductsReportScreenState
                           const SizedBox(height: AlhaiSpacing.xxs),
                           LinearProgressIndicator(
                             value: percentage / 100,
-                            backgroundColor: Theme.of(context)
-                                .colorScheme
-                                .surfaceContainerHighest,
+                            backgroundColor: Theme.of(
+                              context,
+                            ).colorScheme.surfaceContainerHighest,
                             valueColor: AlwaysStoppedAnimation(
                               _getCategoryColor(cat.name),
                             ),
@@ -624,12 +627,15 @@ class _TopProductsReportScreenState
 
   Widget _buildCategoryCard(CategoryStats category) {
     final l10n = AppLocalizations.of(context);
-    final categoryProducts = _products
-        .where((p) =>
-            (p.category.isEmpty ? l10n.unclassified : p.category) ==
-            category.name)
-        .toList()
-      ..sort((a, b) => b.revenue.compareTo(a.revenue));
+    final categoryProducts =
+        _products
+            .where(
+              (p) =>
+                  (p.category.isEmpty ? l10n.unclassified : p.category) ==
+                  category.name,
+            )
+            .toList()
+          ..sort((a, b) => b.revenue.compareTo(a.revenue));
 
     return Card(
       margin: const EdgeInsets.only(bottom: AppSizes.md),
@@ -648,29 +654,27 @@ class _TopProductsReportScreenState
         ),
         title: Text(
           category.name,
-          style: AppTypography.titleSmall.copyWith(
-            fontWeight: FontWeight.bold,
-          ),
+          style: AppTypography.titleSmall.copyWith(fontWeight: FontWeight.bold),
         ),
         subtitle: Text(
           '${category.productCount} ${l10n.productUnit} | ${category.totalUnits} ${l10n.unitsSoldUnit} | ${category.totalRevenue.toStringAsFixed(0)} ${l10n.sar}',
-          style: AppTypography.bodySmall.copyWith(
-            color: AppColors.textMuted,
-          ),
+          style: AppTypography.bodySmall.copyWith(color: AppColors.textMuted),
         ),
         children: categoryProducts
             .take(10)
-            .map((p) => ListTile(
-                  title: Text(p.name),
-                  subtitle: Text('${p.unitsSold} ${l10n.unitsSoldUnit}'),
-                  trailing: Text(
-                    '${p.revenue.toStringAsFixed(0)} ${l10n.sar}',
-                    style: AppTypography.titleSmall.copyWith(
-                      color: AppColors.success,
-                      fontWeight: FontWeight.bold,
-                    ),
+            .map(
+              (p) => ListTile(
+                title: Text(p.name),
+                subtitle: Text('${p.unitsSold} ${l10n.unitsSoldUnit}'),
+                trailing: Text(
+                  '${p.revenue.toStringAsFixed(0)} ${l10n.sar}',
+                  style: AppTypography.titleSmall.copyWith(
+                    color: AppColors.success,
+                    fontWeight: FontWeight.bold,
                   ),
-                ))
+                ),
+              ),
+            )
             .toList(),
       ),
     );
@@ -754,12 +758,7 @@ class _TopProductsReportScreenState
     );
   }
 
-  Widget _buildKPICard(
-    String label,
-    String value,
-    IconData icon,
-    Color color,
-  ) {
+  Widget _buildKPICard(String label, String value, IconData icon, Color color) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppSizes.md),
@@ -871,9 +870,7 @@ class _TopProductsReportScreenState
         ),
         Text(
           label,
-          style: AppTypography.labelSmall.copyWith(
-            color: AppColors.textMuted,
-          ),
+          style: AppTypography.labelSmall.copyWith(color: AppColors.textMuted),
           textAlign: TextAlign.center,
         ),
       ],
@@ -883,10 +880,9 @@ class _TopProductsReportScreenState
   Widget _buildSlowMovingProducts() {
     final l10n = AppLocalizations.of(context);
     // المنتجات التي لم تُباع أو مبيعاتها منخفضة جداً
-    final slowMoving = _products
-        .where((p) => p.unitsSold == 0 && p.stockLevel > 0)
-        .toList()
-      ..sort((a, b) => b.stockLevel.compareTo(a.stockLevel));
+    final slowMoving =
+        _products.where((p) => p.unitsSold == 0 && p.stockLevel > 0).toList()
+          ..sort((a, b) => b.stockLevel.compareTo(a.stockLevel));
 
     if (slowMoving.isEmpty) {
       return const SizedBox.shrink();
@@ -911,7 +907,9 @@ class _TopProductsReportScreenState
               ],
             ),
             const SizedBox(height: AppSizes.md),
-            ...slowMoving.take(5).map(
+            ...slowMoving
+                .take(5)
+                .map(
                   (product) => ListTile(
                     title: Text(product.name),
                     subtitle: Text(
@@ -944,10 +942,9 @@ class _TopProductsReportScreenState
   /// منتجات مبيعاتها عالية ولكن مخزونها منخفض - تحتاج إعادة طلب
   Widget _buildLowStockHighSales() {
     final l10n = AppLocalizations.of(context);
-    final needsReorder = _products
-        .where((p) => p.unitsSold > 10 && p.stockLevel < 20)
-        .toList()
-      ..sort((a, b) => a.stockLevel.compareTo(b.stockLevel));
+    final needsReorder =
+        _products.where((p) => p.unitsSold > 10 && p.stockLevel < 20).toList()
+          ..sort((a, b) => a.stockLevel.compareTo(b.stockLevel));
 
     if (needsReorder.isEmpty) {
       return const SizedBox.shrink();
@@ -972,12 +969,16 @@ class _TopProductsReportScreenState
               ],
             ),
             const SizedBox(height: AppSizes.md),
-            ...needsReorder.take(5).map(
+            ...needsReorder
+                .take(5)
+                .map(
                   (product) => ListTile(
                     title: Text(product.name),
                     subtitle: Text(
                       l10n.soldUnitsStock(
-                          product.unitsSold, product.stockLevel.round()),
+                        product.unitsSold,
+                        product.stockLevel.round(),
+                      ),
                     ),
                     trailing: Container(
                       padding: const EdgeInsets.symmetric(
@@ -1064,11 +1065,9 @@ class _TopProductsReportScreenState
 
   void _exportReport() {
     final l10n = AppLocalizations.of(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.exportingReport),
-      ),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(l10n.exportingReport)));
   }
 }
 

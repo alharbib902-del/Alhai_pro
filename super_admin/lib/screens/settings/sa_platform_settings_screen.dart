@@ -83,9 +83,7 @@ class _SAPlatformSettingsScreenState
                             children: [
                               SwitchListTile(
                                 title: Text(l10n.saZatcaEInvoicing),
-                                subtitle: Text(
-                                  l10n.saEnableEInvoicing,
-                                ),
+                                subtitle: Text(l10n.saEnableEInvoicing),
                                 value: _zatcaEnabled,
                                 onChanged: (v) =>
                                     setState(() => _zatcaEnabled = v),
@@ -93,9 +91,11 @@ class _SAPlatformSettingsScreenState
                               const Divider(),
                               ListTile(
                                 title: Text(l10n.saApiEnvironment),
-                                subtitle: Text(_zatcaEnvironment == 'production'
-                                    ? 'Production'
-                                    : 'Sandbox'),
+                                subtitle: Text(
+                                  _zatcaEnvironment == 'production'
+                                      ? 'Production'
+                                      : 'Sandbox',
+                                ),
                                 trailing: DropdownButton<String>(
                                   value: _zatcaEnvironment,
                                   underline: const SizedBox(),
@@ -128,8 +128,9 @@ class _SAPlatformSettingsScreenState
                                       isDense: true,
                                     ),
                                     textAlign: TextAlign.center,
-                                    controller:
-                                        TextEditingController(text: _vatRate),
+                                    controller: TextEditingController(
+                                      text: _vatRate,
+                                    ),
                                     onChanged: (v) => _vatRate = v,
                                   ),
                                 ),
@@ -194,9 +195,13 @@ class _SAPlatformSettingsScreenState
                                   underline: const SizedBox(),
                                   items: const [
                                     DropdownMenuItem(
-                                        value: 'ar', child: Text('Arabic')),
+                                      value: 'ar',
+                                      child: Text('Arabic'),
+                                    ),
                                     DropdownMenuItem(
-                                        value: 'en', child: Text('English')),
+                                      value: 'en',
+                                      child: Text('English'),
+                                    ),
                                   ],
                                   onChanged: (v) {
                                     if (v != null) {
@@ -209,8 +214,9 @@ class _SAPlatformSettingsScreenState
                               ListTile(
                                 title: Text(l10n.saDefaultCurrency),
                                 subtitle: Text('SAR - ${l10n.sar}'),
-                                trailing:
-                                    const Icon(Icons.chevron_right_rounded),
+                                trailing: const Icon(
+                                  Icons.chevron_right_rounded,
+                                ),
                               ),
                               const Divider(),
                               ListTile(

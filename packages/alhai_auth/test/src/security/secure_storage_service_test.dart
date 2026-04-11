@@ -149,10 +149,7 @@ void main() {
           refreshToken: 'rt',
           expiry: DateTime.now().add(const Duration(hours: 1)),
         );
-        await SecureStorageService.saveUserData(
-          userId: 'u1',
-          storeId: 's1',
-        );
+        await SecureStorageService.saveUserData(userId: 'u1', storeId: 's1');
         final dbKey = await SecureStorageService.getDatabaseKey();
 
         await SecureStorageService.clearSession();

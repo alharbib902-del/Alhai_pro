@@ -12,14 +12,19 @@ import 'package:drift/drift.dart';
 @TableIndex(name: 'idx_sync_priority', columns: {#priority})
 @TableIndex(name: 'idx_sync_created_at', columns: {#createdAt})
 @TableIndex(
-    name: 'idx_sync_idempotency', columns: {#idempotencyKey}, unique: true)
+  name: 'idx_sync_idempotency',
+  columns: {#idempotencyKey},
+  unique: true,
+)
 @TableIndex(name: 'idx_sync_status_priority', columns: {#status, #priority})
 @TableIndex(
-    name: 'idx_sync_status_priority_created',
-    columns: {#status, #priority, #createdAt})
+  name: 'idx_sync_status_priority_created',
+  columns: {#status, #priority, #createdAt},
+)
 @TableIndex(
-    name: 'idx_sync_table_record_status',
-    columns: {#tableName_, #recordId, #status})
+  name: 'idx_sync_table_record_status',
+  columns: {#tableName_, #recordId, #status},
+)
 class SyncQueueTable extends Table {
   @override
   String get tableName => 'sync_queue';
@@ -43,7 +48,8 @@ class SyncQueueTable extends Table {
 
   // حالة المزامنة
   TextColumn get status => text().withDefault(
-      const Constant('pending'))(); // pending, syncing, synced, failed
+    const Constant('pending'),
+  )(); // pending, syncing, synced, failed
 
   // إعادة المحاولة
   IntColumn get retryCount => integer().withDefault(const Constant(0))();

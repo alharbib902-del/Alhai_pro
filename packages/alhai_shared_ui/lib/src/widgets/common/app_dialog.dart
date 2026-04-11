@@ -62,7 +62,8 @@ class AppDialog extends StatelessWidget {
       context: context,
       builder: (context) => AppDialog(
         title: title,
-        icon: icon ??
+        icon:
+            icon ??
             (isDangerous ? Icons.warning_amber_rounded : Icons.help_outline),
         iconColor: isDangerous ? AppColors.error : AppColors.primary,
         content: Text(
@@ -79,7 +80,8 @@ class AppDialog extends StatelessWidget {
           AppButton(
             label: effectiveConfirmText,
             onPressed: () => Navigator.of(context).pop(true),
-            color: confirmColor ??
+            color:
+                confirmColor ??
                 (isDangerous ? AppColors.error : AppColors.primary),
             variant: AppButtonVariant.filled,
           ),
@@ -290,8 +292,9 @@ class AppDialog extends StatelessWidget {
                       width: 56,
                       height: 56,
                       decoration: BoxDecoration(
-                        color: (iconColor ?? AppColors.primary)
-                            .withValues(alpha: 0.1),
+                        color: (iconColor ?? AppColors.primary).withValues(
+                          alpha: 0.1,
+                        ),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
@@ -446,7 +449,8 @@ class AppBottomSheet extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.grey300,
                   borderRadius: BorderRadius.circular(
-                      AppBottomSheetSize.handleHeight / 2),
+                    AppBottomSheetSize.handleHeight / 2,
+                  ),
                 ),
               ),
             ),

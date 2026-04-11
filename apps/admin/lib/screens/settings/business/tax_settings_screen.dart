@@ -144,44 +144,46 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
 
     if (_isLoading) {
       return SafeArea(
-          child: Column(
+        child: Column(
+          children: [
+            AppHeader(
+              title: l10n.taxSettings,
+              onMenuTap: isWideScreen
+                  ? null
+                  : () => Scaffold.of(context).openDrawer(),
+              onNotificationsTap: () => context.push('/notifications'),
+              notificationsCount: 3,
+              userName: l10n.defaultUserName,
+              userRole: l10n.branchManager,
+            ),
+            const Expanded(child: Center(child: CircularProgressIndicator())),
+          ],
+        ),
+      );
+    }
+
+    return SafeArea(
+      child: Column(
         children: [
           AppHeader(
             title: l10n.taxSettings,
-            onMenuTap:
-                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+            onMenuTap: isWideScreen
+                ? null
+                : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
             userRole: l10n.branchManager,
           ),
-          const Expanded(
-            child: Center(child: CircularProgressIndicator()),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+              child: _buildContent(isDark, l10n),
+            ),
           ),
         ],
-      ));
-    }
-
-    return SafeArea(
-        child: Column(
-      children: [
-        AppHeader(
-          title: l10n.taxSettings,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
-          onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
-          userName: l10n.defaultUserName,
-          userRole: l10n.branchManager,
-        ),
-        Expanded(
-          child: SingleChildScrollView(
-            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-            child: _buildContent(isDark, l10n),
-          ),
-        ),
-      ],
-    ));
+      ),
+    );
   }
 
   Widget _buildContent(bool isDark, AppLocalizations l10n) {
@@ -190,109 +192,147 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
       children: [
         _buildPageHeader(isDark, l10n),
         const SizedBox(height: AlhaiSpacing.mdl),
-        _buildSettingsGroup(l10n.vatSettings, Icons.percent_rounded,
-            AppColors.success, isDark, [
-          SwitchListTile(
-            title: Text(l10n.enableVat,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            subtitle: Text(l10n.enableVatDesc),
-            value: _enableVat,
-            onChanged: (v) => setState(() => _enableVat = v),
-          ),
-          if (_enableVat) ...[
-            const Divider(indent: 16, endIndent: 16),
-            ListTile(
-              title: Text(l10n.taxRate,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface)),
-              subtitle: Text('${_vatRate.toInt()}%'),
-              trailing: ConstrainedBox(
-                constraints: BoxConstraints(
-                    maxWidth:
-                        MediaQuery.of(context).size.width > 600 ? 200 : 120),
-                child: Slider(
-                  value: _vatRate,
-                  min: 5,
-                  max: 20,
-                  divisions: 3,
-                  label: '${_vatRate.toInt()}%',
-                  onChanged: (v) => setState(() => _vatRate = v),
+        _buildSettingsGroup(
+          l10n.vatSettings,
+          Icons.percent_rounded,
+          AppColors.success,
+          isDark,
+          [
+            SwitchListTile(
+              title: Text(
+                l10n.enableVat,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
                 ),
               ),
+              subtitle: Text(l10n.enableVatDesc),
+              value: _enableVat,
+              onChanged: (v) => setState(() => _enableVat = v),
             ),
-            Padding(
-              padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                  AlhaiSpacing.xs, AlhaiSpacing.mdl, AlhaiSpacing.xs),
-              child: TextField(
-                controller: _taxNumberController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  labelText: l10n.taxNumber,
-                  prefixIcon: const Icon(Icons.numbers),
-                  helperText: l10n.taxNumberHint,
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12)),
+            if (_enableVat) ...[
+              const Divider(indent: 16, endIndent: 16),
+              ListTile(
+                title: Text(
+                  l10n.taxRate,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                subtitle: Text('${_vatRate.toInt()}%'),
+                trailing: ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxWidth: MediaQuery.of(context).size.width > 600
+                        ? 200
+                        : 120,
+                  ),
+                  child: Slider(
+                    value: _vatRate,
+                    min: 5,
+                    max: 20,
+                    divisions: 3,
+                    label: '${_vatRate.toInt()}%',
+                    onChanged: (v) => setState(() => _vatRate = v),
+                  ),
                 ),
               ),
-            ),
-            const Divider(indent: 16, endIndent: 16),
-            SwitchListTile(
-              title: Text(l10n.pricesIncludeTax,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface)),
-              subtitle: Text(l10n.pricesIncludeTaxDesc),
-              value: _priceIncludesTax,
-              onChanged: (v) => setState(() => _priceIncludesTax = v),
-            ),
-            SwitchListTile(
-              title: Text(l10n.showTaxOnReceipt,
-                  style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurface)),
-              subtitle: Text(l10n.showTaxOnReceiptDesc),
-              value: _showTaxOnReceipt,
-              onChanged: (v) => setState(() => _showTaxOnReceipt = v),
-            ),
-          ],
-          const SizedBox(height: AlhaiSpacing.xs),
-        ]),
-        _buildSettingsGroup(l10n.zatcaEInvoicing, Icons.verified_rounded,
-            AppColors.primary, isDark, [
-          SwitchListTile(
-            title: Text(l10n.enableZatca,
-                style:
-                    TextStyle(color: Theme.of(context).colorScheme.onSurface)),
-            subtitle: Text(l10n.enableZatcaDesc),
-            value: _enableZatca,
-            onChanged: (v) => setState(() => _enableZatca = v),
-          ),
-          if (_enableZatca) ...[
-            const Divider(indent: 16, endIndent: 16),
-            RadioGroup<String>(
-              groupValue: _zatcaPhase,
-              onChanged: (v) => setState(() => _zatcaPhase = v!),
-              child: Column(
-                children: [
-                  RadioListTile<String>(
-                    title: Text(l10n.phaseOne,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface)),
-                    subtitle: Text(l10n.phaseOneDesc),
-                    value: 'phase1',
+              Padding(
+                padding: const EdgeInsetsDirectional.fromSTEB(
+                  AlhaiSpacing.mdl,
+                  AlhaiSpacing.xs,
+                  AlhaiSpacing.mdl,
+                  AlhaiSpacing.xs,
+                ),
+                child: TextField(
+                  controller: _taxNumberController,
+                  keyboardType: TextInputType.number,
+                  decoration: InputDecoration(
+                    labelText: l10n.taxNumber,
+                    prefixIcon: const Icon(Icons.numbers),
+                    helperText: l10n.taxNumberHint,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
                   ),
-                  RadioListTile<String>(
-                    title: Text(l10n.phaseTwo,
-                        style: TextStyle(
-                            color: Theme.of(context).colorScheme.onSurface)),
-                    subtitle: Text(l10n.phaseTwoDesc),
-                    value: 'phase2',
-                  ),
-                ],
+                ),
               ),
-            ),
+              const Divider(indent: 16, endIndent: 16),
+              SwitchListTile(
+                title: Text(
+                  l10n.pricesIncludeTax,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                subtitle: Text(l10n.pricesIncludeTaxDesc),
+                value: _priceIncludesTax,
+                onChanged: (v) => setState(() => _priceIncludesTax = v),
+              ),
+              SwitchListTile(
+                title: Text(
+                  l10n.showTaxOnReceipt,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
+                subtitle: Text(l10n.showTaxOnReceiptDesc),
+                value: _showTaxOnReceipt,
+                onChanged: (v) => setState(() => _showTaxOnReceipt = v),
+              ),
+            ],
+            const SizedBox(height: AlhaiSpacing.xs),
           ],
-          const SizedBox(height: AlhaiSpacing.xs),
-        ]),
+        ),
+        _buildSettingsGroup(
+          l10n.zatcaEInvoicing,
+          Icons.verified_rounded,
+          AppColors.primary,
+          isDark,
+          [
+            SwitchListTile(
+              title: Text(
+                l10n.enableZatca,
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+              ),
+              subtitle: Text(l10n.enableZatcaDesc),
+              value: _enableZatca,
+              onChanged: (v) => setState(() => _enableZatca = v),
+            ),
+            if (_enableZatca) ...[
+              const Divider(indent: 16, endIndent: 16),
+              RadioGroup<String>(
+                groupValue: _zatcaPhase,
+                onChanged: (v) => setState(() => _zatcaPhase = v!),
+                child: Column(
+                  children: [
+                    RadioListTile<String>(
+                      title: Text(
+                        l10n.phaseOne,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                      subtitle: Text(l10n.phaseOneDesc),
+                      value: 'phase1',
+                    ),
+                    RadioListTile<String>(
+                      title: Text(
+                        l10n.phaseTwo,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.onSurface,
+                        ),
+                      ),
+                      subtitle: Text(l10n.phaseTwoDesc),
+                      value: 'phase2',
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            const SizedBox(height: AlhaiSpacing.xs),
+          ],
+        ),
         const SizedBox(height: AlhaiSpacing.md),
         SizedBox(
           width: double.infinity,
@@ -303,13 +343,17 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                     width: 18,
                     height: 18,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: Colors.white))
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
                 : const Icon(Icons.save_rounded),
             label: Text(l10n.saveSettings),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),
@@ -337,45 +381,61 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
             color: AppColors.success.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(Icons.percent_rounded,
-              color: AppColors.success, size: 24),
+          child: const Icon(
+            Icons.percent_rounded,
+            color: AppColors.success,
+            size: 24,
+          ),
         ),
         const SizedBox(width: AlhaiSpacing.sm),
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(l10n.taxSettings,
-                style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface)),
-            Text(l10n.taxSettingsSubtitle,
-                style: TextStyle(
-                    fontSize: 13,
-                    color: Theme.of(context).colorScheme.onSurfaceVariant)),
+            Text(
+              l10n.taxSettings,
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Theme.of(context).colorScheme.onSurface,
+              ),
+            ),
+            Text(
+              l10n.taxSettingsSubtitle,
+              style: TextStyle(
+                fontSize: 13,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildSettingsGroup(String title, IconData icon, Color color,
-      bool isDark, List<Widget> children) {
+  Widget _buildSettingsGroup(
+    String title,
+    IconData icon,
+    Color color,
+    bool isDark,
+    List<Widget> children,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsetsDirectional.fromSTEB(AlhaiSpacing.mdl,
-                AlhaiSpacing.md, AlhaiSpacing.mdl, AlhaiSpacing.xs),
+            padding: const EdgeInsetsDirectional.fromSTEB(
+              AlhaiSpacing.mdl,
+              AlhaiSpacing.md,
+              AlhaiSpacing.mdl,
+              AlhaiSpacing.xs,
+            ),
             child: Row(
               children: [
                 Container(
@@ -387,11 +447,14 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                   child: Icon(icon, color: color, size: 20),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
-                Text(title,
-                    style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.onSurface)),
+                Text(
+                  title,
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
+                ),
               ],
             ),
           ),

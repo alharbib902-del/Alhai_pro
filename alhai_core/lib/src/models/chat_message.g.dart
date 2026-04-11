@@ -35,29 +35,29 @@ Map<String, dynamic> _$$ChatMessageImplToJson(_$ChatMessageImpl instance) =>
     };
 
 _$ChatConversationImpl _$$ChatConversationImplFromJson(
-        Map<String, dynamic> json) =>
-    _$ChatConversationImpl(
-      orderId: json['orderId'] as String,
-      orderNumber: json['orderNumber'] as String,
-      driverId: json['driverId'] as String,
-      driverName: json['driverName'] as String,
-      driverPhoto: json['driverPhoto'] as String?,
-      lastMessage: json['lastMessage'] == null
-          ? null
-          : ChatMessage.fromJson(json['lastMessage'] as Map<String, dynamic>),
-      unreadCount: (json['unreadCount'] as num?)?.toInt() ?? 0,
-      lastActivityAt: DateTime.parse(json['lastActivityAt'] as String),
-    );
+  Map<String, dynamic> json,
+) => _$ChatConversationImpl(
+  orderId: json['orderId'] as String,
+  orderNumber: json['orderNumber'] as String,
+  driverId: json['driverId'] as String,
+  driverName: json['driverName'] as String,
+  driverPhoto: json['driverPhoto'] as String?,
+  lastMessage: json['lastMessage'] == null
+      ? null
+      : ChatMessage.fromJson(json['lastMessage'] as Map<String, dynamic>),
+  unreadCount: (json['unreadCount'] as num?)?.toInt() ?? 0,
+  lastActivityAt: DateTime.parse(json['lastActivityAt'] as String),
+);
 
 Map<String, dynamic> _$$ChatConversationImplToJson(
-        _$ChatConversationImpl instance) =>
-    <String, dynamic>{
-      'orderId': instance.orderId,
-      'orderNumber': instance.orderNumber,
-      'driverId': instance.driverId,
-      'driverName': instance.driverName,
-      'driverPhoto': instance.driverPhoto,
-      'lastMessage': instance.lastMessage,
-      'unreadCount': instance.unreadCount,
-      'lastActivityAt': instance.lastActivityAt.toIso8601String(),
-    };
+  _$ChatConversationImpl instance,
+) => <String, dynamic>{
+  'orderId': instance.orderId,
+  'orderNumber': instance.orderNumber,
+  'driverId': instance.driverId,
+  'driverName': instance.driverName,
+  'driverPhoto': instance.driverPhoto,
+  'lastMessage': instance.lastMessage,
+  'unreadCount': instance.unreadCount,
+  'lastActivityAt': instance.lastActivityAt.toIso8601String(),
+};

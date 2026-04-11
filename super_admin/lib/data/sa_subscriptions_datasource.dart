@@ -16,9 +16,7 @@ class SASubscriptionsDatasource {
   /// Fetch all subscriptions with org info.
   /// Schema: subscriptions has org_id, plan (TEXT slug), current_period_start,
   /// current_period_end. No FK to plans table.
-  Future<List<SASubscription>> getSubscriptions({
-    String? statusFilter,
-  }) async {
+  Future<List<SASubscription>> getSubscriptions({String? statusFilter}) async {
     var query = _client.from('subscriptions').select('''
       id, status, plan, org_id, amount, currency, billing_cycle,
       current_period_start, current_period_end, created_at
@@ -198,15 +196,21 @@ class SASubscriptionsDatasource {
   /// Fetch billing invoices from the invoices table.
   Future<List<SABillingInvoice>> getBillingInvoices() async {
     try {
-      final data = await _client.from('invoices').select('''
+      final data = await _client
+          .from('invoices')
+          .select('''
         id, invoice_number, total, status, issued_at, due_at, store_id,
         stores!inner(id, name)
-      ''').order('issued_at', ascending: false).limit(100);
+      ''')
+          .order('issued_at', ascending: false)
+          .limit(100);
       return (data as List)
-          .map((e) => SABillingInvoice.fromJson({
-                ...e as Map<String, dynamic>,
-                'amount': e['total'], // map total -> amount
-              }))
+          .map(
+            (e) => SABillingInvoice.fromJson({
+              ...e as Map<String, dynamic>,
+              'amount': e['total'], // map total -> amount
+            }),
+          )
           .toList();
     } catch (_) {
       // invoices table may not have FK to stores; try without join
@@ -214,14 +218,17 @@ class SASubscriptionsDatasource {
         final data = await _client
             .from('invoices')
             .select(
-                'id, invoice_number, total, status, issued_at, due_at, store_id')
+              'id, invoice_number, total, status, issued_at, due_at, store_id',
+            )
             .order('issued_at', ascending: false)
             .limit(100);
         return (data as List)
-            .map((e) => SABillingInvoice.fromJson({
-                  ...e as Map<String, dynamic>,
-                  'amount': e['total'],
-                }))
+            .map(
+              (e) => SABillingInvoice.fromJson({
+                ...e as Map<String, dynamic>,
+                'amount': e['total'],
+              }),
+            )
             .toList();
       } catch (_) {
         return [];

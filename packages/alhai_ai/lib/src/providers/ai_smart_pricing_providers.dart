@@ -25,30 +25,32 @@ final aiSmartPricingServiceProvider = Provider<AiSmartPricingService>((ref) {
 // ============================================================================
 
 /// مزود فلتر الأسعار
-final priceFilterProvider =
-    StateProvider<PriceFilterType>((ref) => PriceFilterType.all);
+final priceFilterProvider = StateProvider<PriceFilterType>(
+  (ref) => PriceFilterType.all,
+);
 
 /// مزود اقتراحات الأسعار
 final priceSuggestionsProvider =
     FutureProvider.autoDispose<List<PriceSuggestion>>((ref) async {
-  final service = ref.read(aiSmartPricingServiceProvider);
-  final storeId = ref.read(currentStoreIdProvider)!;
-  final filter = ref.watch(priceFilterProvider);
-  final suggestions = await service.getPriceSuggestions(storeId);
+      final service = ref.read(aiSmartPricingServiceProvider);
+      final storeId = ref.read(currentStoreIdProvider)!;
+      final filter = ref.watch(priceFilterProvider);
+      final suggestions = await service.getPriceSuggestions(storeId);
 
-  switch (filter) {
-    case PriceFilterType.all:
-      return suggestions;
-    case PriceFilterType.canIncrease:
-      return suggestions.where((s) => s.isIncrease).toList();
-    case PriceFilterType.shouldDecrease:
-      return suggestions.where((s) => s.isDecrease).toList();
-  }
-});
+      switch (filter) {
+        case PriceFilterType.all:
+          return suggestions;
+        case PriceFilterType.canIncrease:
+          return suggestions.where((s) => s.isIncrease).toList();
+        case PriceFilterType.shouldDecrease:
+          return suggestions.where((s) => s.isDecrease).toList();
+      }
+    });
 
 /// مزود المنتج المحدد لعرض التفاصيل
-final selectedPriceSuggestionProvider =
-    StateProvider<PriceSuggestion?>((ref) => null);
+final selectedPriceSuggestionProvider = StateProvider<PriceSuggestion?>(
+  (ref) => null,
+);
 
 /// مزود سعر الحاسبة (الـ slider)
 final calculatorPriceProvider = StateProvider<double>((ref) {
@@ -57,8 +59,9 @@ final calculatorPriceProvider = StateProvider<double>((ref) {
 });
 
 /// مزود حساب التأثير
-final priceImpactProvider =
-    FutureProvider.autoDispose<PriceImpact?>((ref) async {
+final priceImpactProvider = FutureProvider.autoDispose<PriceImpact?>((
+  ref,
+) async {
   final selected = ref.watch(selectedPriceSuggestionProvider);
   if (selected == null) return null;
 
@@ -69,8 +72,9 @@ final priceImpactProvider =
 });
 
 /// مزود مرونة الطلب
-final demandElasticityProvider =
-    FutureProvider.autoDispose<DemandElasticity?>((ref) async {
+final demandElasticityProvider = FutureProvider.autoDispose<DemandElasticity?>((
+  ref,
+) async {
   final selected = ref.watch(selectedPriceSuggestionProvider);
   if (selected == null) return null;
 
@@ -81,18 +85,19 @@ final demandElasticityProvider =
 /// مزود خيارات التسعير الجماعي
 final bulkPricingOptionsProvider =
     FutureProvider.autoDispose<List<BulkPricingOption>>((ref) async {
-  final service = ref.read(aiSmartPricingServiceProvider);
-  final storeId = ref.read(currentStoreIdProvider)!;
-  return service.getBulkPricingOptions(storeId);
-});
+      final service = ref.read(aiSmartPricingServiceProvider);
+      final storeId = ref.read(currentStoreIdProvider)!;
+      return service.getBulkPricingOptions(storeId);
+    });
 
 // ============================================================================
 // REMOTE API PROVIDER - مزود API البعيد
 // ============================================================================
 
 /// مزود بيانات التسعير من خادم AI
-final pricingApiProvider =
-    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+final pricingApiProvider = FutureProvider.autoDispose<Map<String, dynamic>>((
+  ref,
+) async {
   final api = ref.read(aiApiServiceProvider);
   final storeId = ref.read(currentStoreIdProvider)!;
   return api.getSmartPricing(orgId: 'default', storeId: storeId);

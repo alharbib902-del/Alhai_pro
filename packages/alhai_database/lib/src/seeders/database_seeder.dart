@@ -24,11 +24,13 @@ class DatabaseSeeder {
 
   /// التحقق من أن قاعدة البيانات فارغة (COUNT بدل تحميل كل المنتجات)
   Future<bool> isDatabaseEmpty() async {
-    final result = await _db.customSelect(
-      "SELECT EXISTS(SELECT 1 FROM products WHERE store_id = ? LIMIT 1) AS has_data",
-      variables: [Variable.withString(defaultStoreId)],
-      readsFrom: {},
-    ).getSingle();
+    final result = await _db
+        .customSelect(
+          "SELECT EXISTS(SELECT 1 FROM products WHERE store_id = ? LIMIT 1) AS has_data",
+          variables: [Variable.withString(defaultStoreId)],
+          readsFrom: {},
+        )
+        .getSingle();
     return result.read<int>('has_data') == 0;
   }
 
@@ -45,8 +47,9 @@ class DatabaseSeeder {
     required String productsCsv,
   }) async {
     // التحقق من وجود بيانات
-    final existingProducts =
-        await _db.productsDao.getAllProducts(defaultStoreId);
+    final existingProducts = await _db.productsDao.getAllProducts(
+      defaultStoreId,
+    );
     if (existingProducts.isNotEmpty) {
       debugPrint('📦 البيانات موجودة مسبقاً - تخطي Seeding');
       return;
@@ -73,18 +76,20 @@ class DatabaseSeeder {
       }
     } catch (_) {}
 
-    await _db.storesDao.insertStore(StoresTableCompanion.insert(
-      id: defaultStoreId,
-      name: 'سوبرماركت الحي',
-      createdAt: DateTime.now(),
-      currency: const Value('SAR'),
-      timezone: const Value('Asia/Riyadh'),
-      isActive: const Value(true),
-      address: const Value('الرياض، حي النزهة'),
-      phone: const Value('0500000001'),
-      city: const Value('الرياض'),
-      nameEn: const Value('Al-Hai Supermarket'),
-    ));
+    await _db.storesDao.insertStore(
+      StoresTableCompanion.insert(
+        id: defaultStoreId,
+        name: 'سوبرماركت الحي',
+        createdAt: DateTime.now(),
+        currency: const Value('SAR'),
+        timezone: const Value('Asia/Riyadh'),
+        isActive: const Value(true),
+        address: const Value('الرياض، حي النزهة'),
+        phone: const Value('0500000001'),
+        city: const Value('الرياض'),
+        nameEn: const Value('Al-Hai Supermarket'),
+      ),
+    );
     debugPrint('   ✓ تم إنشاء المتجر');
   }
 
@@ -115,15 +120,17 @@ class DatabaseSeeder {
       final sortOrder = int.tryParse(row[4].toString()) ?? 0;
       final isActive = row[5].toString().toLowerCase() == 'true';
 
-      categories.add(CategoriesTableCompanion.insert(
-        id: id,
-        storeId: storeId,
-        name: name,
-        nameEn: Value(nameEn),
-        sortOrder: Value(sortOrder),
-        isActive: Value(isActive),
-        createdAt: now,
-      ));
+      categories.add(
+        CategoriesTableCompanion.insert(
+          id: id,
+          storeId: storeId,
+          name: name,
+          nameEn: Value(nameEn),
+          sortOrder: Value(sortOrder),
+          isActive: Value(isActive),
+          createdAt: now,
+        ),
+      );
       count++;
     }
 
@@ -152,8 +159,9 @@ class DatabaseSeeder {
     const batchSize = 500;
 
     for (int i = 0; i < dataRows.length; i += batchSize) {
-      final end =
-          (i + batchSize > dataRows.length) ? dataRows.length : i + batchSize;
+      final end = (i + batchSize > dataRows.length)
+          ? dataRows.length
+          : i + batchSize;
       final chunk = dataRows.sublist(i, end);
 
       final products = <ProductsTableCompanion>[];
@@ -174,21 +182,23 @@ class DatabaseSeeder {
         final isActive = row[7].toString().toLowerCase() == 'true';
         final imageUrl = row.length > 8 ? row[8].toString().trim() : '';
 
-        products.add(ProductsTableCompanion.insert(
-          id: id,
-          storeId: storeId,
-          name: name,
-          barcode: Value(barcode.isNotEmpty ? barcode : null),
-          price: price,
-          stockQty: Value(stockQty),
-          categoryId: Value(categoryId.isNotEmpty ? categoryId : null),
-          isActive: Value(isActive),
-          imageThumbnail: Value(imageUrl.isNotEmpty ? imageUrl : null),
-          imageMedium: Value(imageUrl.isNotEmpty ? imageUrl : null),
-          imageLarge: Value(imageUrl.isNotEmpty ? imageUrl : null),
-          trackInventory: const Value(true),
-          createdAt: now,
-        ));
+        products.add(
+          ProductsTableCompanion.insert(
+            id: id,
+            storeId: storeId,
+            name: name,
+            barcode: Value(barcode.isNotEmpty ? barcode : null),
+            price: price,
+            stockQty: Value(stockQty),
+            categoryId: Value(categoryId.isNotEmpty ? categoryId : null),
+            isActive: Value(isActive),
+            imageThumbnail: Value(imageUrl.isNotEmpty ? imageUrl : null),
+            imageMedium: Value(imageUrl.isNotEmpty ? imageUrl : null),
+            imageLarge: Value(imageUrl.isNotEmpty ? imageUrl : null),
+            trackInventory: const Value(true),
+            createdAt: now,
+          ),
+        );
         count++;
       }
 
@@ -209,8 +219,9 @@ class DatabaseSeeder {
   /// تشغيل جميع الـ Seeders بالبيانات التجريبية
   Future<void> seedAll() async {
     if (kReleaseMode) return;
-    final existingProducts =
-        await _db.productsDao.getAllProducts(defaultStoreId);
+    final existingProducts = await _db.productsDao.getAllProducts(
+      defaultStoreId,
+    );
     if (existingProducts.isNotEmpty) {
       debugPrint('📦 البيانات موجودة مسبقاً - تخطي Seeding');
       return;
@@ -243,10 +254,7 @@ class DatabaseSeeder {
   }) async {
     await clearAll();
     if (categoriesCsv != null && productsCsv != null) {
-      await seedFromCsv(
-        categoriesCsv: categoriesCsv,
-        productsCsv: productsCsv,
-      );
+      await seedFromCsv(categoriesCsv: categoriesCsv, productsCsv: productsCsv);
     } else {
       await seedAll();
     }
@@ -262,61 +270,61 @@ class DatabaseSeeder {
       'name': 'أحمد محمد العلي',
       'phone': '0501234567',
       'balance': 350.00,
-      'limit': 1000.00
+      'limit': 1000.00,
     },
     {
       'name': 'فاطمة عبدالله',
       'phone': '0551234567',
       'balance': 0.00,
-      'limit': 500.00
+      'limit': 500.00,
     },
     {
       'name': 'محمد سعد الدوسري',
       'phone': '0561234567',
       'balance': 1250.00,
-      'limit': 2000.00
+      'limit': 2000.00,
     },
     {
       'name': 'نورة أحمد',
       'phone': '0541234567',
       'balance': 75.50,
-      'limit': 300.00
+      'limit': 300.00,
     },
     {
       'name': 'عبدالرحمن خالد',
       'phone': '0591234567',
       'balance': 0.00,
-      'limit': 1500.00
+      'limit': 1500.00,
     },
     {
       'name': 'سارة محمد',
       'phone': '0531234567',
       'balance': 450.00,
-      'limit': 800.00
+      'limit': 800.00,
     },
     {
       'name': 'يوسف علي الغامدي',
       'phone': '0571234567',
       'balance': 2100.00,
-      'limit': 3000.00
+      'limit': 3000.00,
     },
     {
       'name': 'هند عبدالعزيز',
       'phone': '0521234567',
       'balance': 180.00,
-      'limit': 500.00
+      'limit': 500.00,
     },
     {
       'name': 'خالد إبراهيم',
       'phone': '0581234567',
       'balance': 0.00,
-      'limit': 1000.00
+      'limit': 1000.00,
     },
     {
       'name': 'ريم سعود',
       'phone': '0511234567',
       'balance': 620.00,
-      'limit': 1000.00
+      'limit': 1000.00,
     },
   ];
 
@@ -334,28 +342,32 @@ class DatabaseSeeder {
       final accountId = 'acc_${_uuid.v4().substring(0, 8)}';
 
       // سجل العميل
-      customers.add(CustomersTableCompanion.insert(
-        id: customerId,
-        storeId: defaultStoreId,
-        name: acc['name'],
-        phone: Value(acc['phone']),
-        isActive: const Value(true),
-        createdAt: now,
-      ));
+      customers.add(
+        CustomersTableCompanion.insert(
+          id: customerId,
+          storeId: defaultStoreId,
+          name: acc['name'],
+          phone: Value(acc['phone']),
+          isActive: const Value(true),
+          createdAt: now,
+        ),
+      );
 
       // سجل الحساب المرتبط
-      accounts.add(AccountsTableCompanion.insert(
-        id: accountId,
-        storeId: defaultStoreId,
-        type: 'receivable',
-        customerId: Value(customerId),
-        name: acc['name'],
-        phone: Value(acc['phone']),
-        balance: Value(acc['balance'].toDouble()),
-        creditLimit: Value(acc['limit'].toDouble()),
-        isActive: const Value(true),
-        createdAt: now,
-      ));
+      accounts.add(
+        AccountsTableCompanion.insert(
+          id: accountId,
+          storeId: defaultStoreId,
+          type: 'receivable',
+          customerId: Value(customerId),
+          name: acc['name'],
+          phone: Value(acc['phone']),
+          balance: Value(acc['balance'].toDouble()),
+          creditLimit: Value(acc['limit'].toDouble()),
+          isActive: const Value(true),
+          createdAt: now,
+        ),
+      );
     }
 
     // إدخال العملاء أولاً (لتحقيق شرط Foreign Key)

@@ -68,7 +68,8 @@ class SunmiPrintService implements ThermalPrintService {
     } on MissingPluginException {
       if (kDebugMode) {
         debugPrint(
-            'Sunmi: platform channel not available (not a Sunmi device)');
+          'Sunmi: platform channel not available (not a Sunmi device)',
+        );
       }
     }
 
@@ -166,7 +167,10 @@ class SunmiPrintService implements ThermalPrintService {
         final qtyPrice =
             '${_formatQty(item.quantity)} × ${_formatMoney(item.unitPrice)}';
         await _sunmiPrintThreeCol(
-            item.name, qtyPrice, _formatMoney(item.total));
+          item.name,
+          qtyPrice,
+          _formatMoney(item.total),
+        );
       }
       await _sunmiPrintDivider();
 
@@ -176,7 +180,9 @@ class SunmiPrintService implements ThermalPrintService {
         await _sunmiPrintRow('الخصم:', '- ${_formatMoney(receipt.discount)}');
       }
       await _sunmiPrintRow(
-          'ضريبة القيمة المضافة (15%):', _formatMoney(receipt.tax));
+        'ضريبة القيمة المضافة (15%):',
+        _formatMoney(receipt.tax),
+      );
 
       await _sunmiSetBold(true);
       await _sunmiSetFontSize(26);
@@ -187,10 +193,14 @@ class SunmiPrintService implements ThermalPrintService {
 
       // ─── Payment Info ──────────────────────────────
       await _sunmiPrintRow(
-          'طريقة الدفع:', _translatePaymentMethod(receipt.paymentMethod));
+        'طريقة الدفع:',
+        _translatePaymentMethod(receipt.paymentMethod),
+      );
       if (receipt.amountReceived != null && receipt.amountReceived! > 0) {
         await _sunmiPrintRow(
-            'المبلغ المدفوع:', _formatMoney(receipt.amountReceived!));
+          'المبلغ المدفوع:',
+          _formatMoney(receipt.amountReceived!),
+        );
       }
       if (receipt.changeAmount != null && receipt.changeAmount! > 0) {
         await _sunmiPrintRow('الباقي:', _formatMoney(receipt.changeAmount!));
@@ -276,7 +286,9 @@ class SunmiPrintService implements ThermalPrintService {
       await _sunmiPrintText('Al-HAI POS System\n');
       await _sunmiPrintDivider();
       await _sunmiPrintRow(
-          'حجم الورق:', _paperSize == PaperSize.mm58 ? '58mm' : '80mm');
+        'حجم الورق:',
+        _paperSize == PaperSize.mm58 ? '58mm' : '80mm',
+      );
       await _sunmiPrintRow('التاريخ:', _formatDate(DateTime.now()));
       await _sunmiPrintRow('الوقت:', _formatTime(DateTime.now()));
       await _sunmiPrintDivider();

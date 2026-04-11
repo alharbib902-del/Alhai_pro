@@ -12,7 +12,8 @@ part of 'purchase_order.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 PurchaseOrder _$PurchaseOrderFromJson(Map<String, dynamic> json) {
   return _PurchaseOrder.fromJson(json);
@@ -51,27 +52,29 @@ mixin _$PurchaseOrder {
 /// @nodoc
 abstract class $PurchaseOrderCopyWith<$Res> {
   factory $PurchaseOrderCopyWith(
-          PurchaseOrder value, $Res Function(PurchaseOrder) then) =
-      _$PurchaseOrderCopyWithImpl<$Res, PurchaseOrder>;
+    PurchaseOrder value,
+    $Res Function(PurchaseOrder) then,
+  ) = _$PurchaseOrderCopyWithImpl<$Res, PurchaseOrder>;
   @useResult
-  $Res call(
-      {String id,
-      String? orderNumber,
-      String storeId,
-      String supplierId,
-      String? supplierName,
-      PurchaseOrderStatus status,
-      List<PurchaseOrderItem> items,
-      double subtotal,
-      double discount,
-      double tax,
-      double total,
-      double paidAmount,
-      String? notes,
-      DateTime? expectedDate,
-      DateTime? receivedDate,
-      DateTime createdAt,
-      DateTime? updatedAt});
+  $Res call({
+    String id,
+    String? orderNumber,
+    String storeId,
+    String supplierId,
+    String? supplierName,
+    PurchaseOrderStatus status,
+    List<PurchaseOrderItem> items,
+    double subtotal,
+    double discount,
+    double tax,
+    double total,
+    double paidAmount,
+    String? notes,
+    DateTime? expectedDate,
+    DateTime? receivedDate,
+    DateTime createdAt,
+    DateTime? updatedAt,
+  });
 }
 
 /// @nodoc
@@ -107,76 +110,79 @@ class _$PurchaseOrderCopyWithImpl<$Res, $Val extends PurchaseOrder>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      orderNumber: freezed == orderNumber
-          ? _value.orderNumber
-          : orderNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      supplierId: null == supplierId
-          ? _value.supplierId
-          : supplierId // ignore: cast_nullable_to_non_nullable
-              as String,
-      supplierName: freezed == supplierName
-          ? _value.supplierName
-          : supplierName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as PurchaseOrderStatus,
-      items: null == items
-          ? _value.items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<PurchaseOrderItem>,
-      subtotal: null == subtotal
-          ? _value.subtotal
-          : subtotal // ignore: cast_nullable_to_non_nullable
-              as double,
-      discount: null == discount
-          ? _value.discount
-          : discount // ignore: cast_nullable_to_non_nullable
-              as double,
-      tax: null == tax
-          ? _value.tax
-          : tax // ignore: cast_nullable_to_non_nullable
-              as double,
-      total: null == total
-          ? _value.total
-          : total // ignore: cast_nullable_to_non_nullable
-              as double,
-      paidAmount: null == paidAmount
-          ? _value.paidAmount
-          : paidAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      expectedDate: freezed == expectedDate
-          ? _value.expectedDate
-          : expectedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      receivedDate: freezed == receivedDate
-          ? _value.receivedDate
-          : receivedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            orderNumber: freezed == orderNumber
+                ? _value.orderNumber
+                : orderNumber // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            storeId: null == storeId
+                ? _value.storeId
+                : storeId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            supplierId: null == supplierId
+                ? _value.supplierId
+                : supplierId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            supplierName: freezed == supplierName
+                ? _value.supplierName
+                : supplierName // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as PurchaseOrderStatus,
+            items: null == items
+                ? _value.items
+                : items // ignore: cast_nullable_to_non_nullable
+                      as List<PurchaseOrderItem>,
+            subtotal: null == subtotal
+                ? _value.subtotal
+                : subtotal // ignore: cast_nullable_to_non_nullable
+                      as double,
+            discount: null == discount
+                ? _value.discount
+                : discount // ignore: cast_nullable_to_non_nullable
+                      as double,
+            tax: null == tax
+                ? _value.tax
+                : tax // ignore: cast_nullable_to_non_nullable
+                      as double,
+            total: null == total
+                ? _value.total
+                : total // ignore: cast_nullable_to_non_nullable
+                      as double,
+            paidAmount: null == paidAmount
+                ? _value.paidAmount
+                : paidAmount // ignore: cast_nullable_to_non_nullable
+                      as double,
+            notes: freezed == notes
+                ? _value.notes
+                : notes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            expectedDate: freezed == expectedDate
+                ? _value.expectedDate
+                : expectedDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            receivedDate: freezed == receivedDate
+                ? _value.receivedDate
+                : receivedDate // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            updatedAt: freezed == updatedAt
+                ? _value.updatedAt
+                : updatedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -184,28 +190,30 @@ class _$PurchaseOrderCopyWithImpl<$Res, $Val extends PurchaseOrder>
 abstract class _$$PurchaseOrderImplCopyWith<$Res>
     implements $PurchaseOrderCopyWith<$Res> {
   factory _$$PurchaseOrderImplCopyWith(
-          _$PurchaseOrderImpl value, $Res Function(_$PurchaseOrderImpl) then) =
-      __$$PurchaseOrderImplCopyWithImpl<$Res>;
+    _$PurchaseOrderImpl value,
+    $Res Function(_$PurchaseOrderImpl) then,
+  ) = __$$PurchaseOrderImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String? orderNumber,
-      String storeId,
-      String supplierId,
-      String? supplierName,
-      PurchaseOrderStatus status,
-      List<PurchaseOrderItem> items,
-      double subtotal,
-      double discount,
-      double tax,
-      double total,
-      double paidAmount,
-      String? notes,
-      DateTime? expectedDate,
-      DateTime? receivedDate,
-      DateTime createdAt,
-      DateTime? updatedAt});
+  $Res call({
+    String id,
+    String? orderNumber,
+    String storeId,
+    String supplierId,
+    String? supplierName,
+    PurchaseOrderStatus status,
+    List<PurchaseOrderItem> items,
+    double subtotal,
+    double discount,
+    double tax,
+    double total,
+    double paidAmount,
+    String? notes,
+    DateTime? expectedDate,
+    DateTime? receivedDate,
+    DateTime createdAt,
+    DateTime? updatedAt,
+  });
 }
 
 /// @nodoc
@@ -213,8 +221,9 @@ class __$$PurchaseOrderImplCopyWithImpl<$Res>
     extends _$PurchaseOrderCopyWithImpl<$Res, _$PurchaseOrderImpl>
     implements _$$PurchaseOrderImplCopyWith<$Res> {
   __$$PurchaseOrderImplCopyWithImpl(
-      _$PurchaseOrderImpl _value, $Res Function(_$PurchaseOrderImpl) _then)
-      : super(_value, _then);
+    _$PurchaseOrderImpl _value,
+    $Res Function(_$PurchaseOrderImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of PurchaseOrder
   /// with the given fields replaced by the non-null parameter values.
@@ -239,102 +248,104 @@ class __$$PurchaseOrderImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(_$PurchaseOrderImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      orderNumber: freezed == orderNumber
-          ? _value.orderNumber
-          : orderNumber // ignore: cast_nullable_to_non_nullable
-              as String?,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      supplierId: null == supplierId
-          ? _value.supplierId
-          : supplierId // ignore: cast_nullable_to_non_nullable
-              as String,
-      supplierName: freezed == supplierName
-          ? _value.supplierName
-          : supplierName // ignore: cast_nullable_to_non_nullable
-              as String?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as PurchaseOrderStatus,
-      items: null == items
-          ? _value._items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<PurchaseOrderItem>,
-      subtotal: null == subtotal
-          ? _value.subtotal
-          : subtotal // ignore: cast_nullable_to_non_nullable
-              as double,
-      discount: null == discount
-          ? _value.discount
-          : discount // ignore: cast_nullable_to_non_nullable
-              as double,
-      tax: null == tax
-          ? _value.tax
-          : tax // ignore: cast_nullable_to_non_nullable
-              as double,
-      total: null == total
-          ? _value.total
-          : total // ignore: cast_nullable_to_non_nullable
-              as double,
-      paidAmount: null == paidAmount
-          ? _value.paidAmount
-          : paidAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      expectedDate: freezed == expectedDate
-          ? _value.expectedDate
-          : expectedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      receivedDate: freezed == receivedDate
-          ? _value.receivedDate
-          : receivedDate // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      updatedAt: freezed == updatedAt
-          ? _value.updatedAt
-          : updatedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$PurchaseOrderImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        orderNumber: freezed == orderNumber
+            ? _value.orderNumber
+            : orderNumber // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        storeId: null == storeId
+            ? _value.storeId
+            : storeId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        supplierId: null == supplierId
+            ? _value.supplierId
+            : supplierId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        supplierName: freezed == supplierName
+            ? _value.supplierName
+            : supplierName // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as PurchaseOrderStatus,
+        items: null == items
+            ? _value._items
+            : items // ignore: cast_nullable_to_non_nullable
+                  as List<PurchaseOrderItem>,
+        subtotal: null == subtotal
+            ? _value.subtotal
+            : subtotal // ignore: cast_nullable_to_non_nullable
+                  as double,
+        discount: null == discount
+            ? _value.discount
+            : discount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        tax: null == tax
+            ? _value.tax
+            : tax // ignore: cast_nullable_to_non_nullable
+                  as double,
+        total: null == total
+            ? _value.total
+            : total // ignore: cast_nullable_to_non_nullable
+                  as double,
+        paidAmount: null == paidAmount
+            ? _value.paidAmount
+            : paidAmount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        notes: freezed == notes
+            ? _value.notes
+            : notes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        expectedDate: freezed == expectedDate
+            ? _value.expectedDate
+            : expectedDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        receivedDate: freezed == receivedDate
+            ? _value.receivedDate
+            : receivedDate // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        updatedAt: freezed == updatedAt
+            ? _value.updatedAt
+            : updatedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$PurchaseOrderImpl extends _PurchaseOrder {
-  const _$PurchaseOrderImpl(
-      {required this.id,
-      this.orderNumber,
-      required this.storeId,
-      required this.supplierId,
-      this.supplierName,
-      required this.status,
-      required final List<PurchaseOrderItem> items,
-      required this.subtotal,
-      this.discount = 0,
-      this.tax = 0,
-      required this.total,
-      this.paidAmount = 0,
-      this.notes,
-      this.expectedDate,
-      this.receivedDate,
-      required this.createdAt,
-      this.updatedAt})
-      : _items = items,
-        super._();
+  const _$PurchaseOrderImpl({
+    required this.id,
+    this.orderNumber,
+    required this.storeId,
+    required this.supplierId,
+    this.supplierName,
+    required this.status,
+    required final List<PurchaseOrderItem> items,
+    required this.subtotal,
+    this.discount = 0,
+    this.tax = 0,
+    required this.total,
+    this.paidAmount = 0,
+    this.notes,
+    this.expectedDate,
+    this.receivedDate,
+    required this.createdAt,
+    this.updatedAt,
+  }) : _items = items,
+       super._();
 
   factory _$PurchaseOrderImpl.fromJson(Map<String, dynamic> json) =>
       _$$PurchaseOrderImplFromJson(json);
@@ -425,24 +436,25 @@ class _$PurchaseOrderImpl extends _PurchaseOrder {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      orderNumber,
-      storeId,
-      supplierId,
-      supplierName,
-      status,
-      const DeepCollectionEquality().hash(_items),
-      subtotal,
-      discount,
-      tax,
-      total,
-      paidAmount,
-      notes,
-      expectedDate,
-      receivedDate,
-      createdAt,
-      updatedAt);
+    runtimeType,
+    id,
+    orderNumber,
+    storeId,
+    supplierId,
+    supplierName,
+    status,
+    const DeepCollectionEquality().hash(_items),
+    subtotal,
+    discount,
+    tax,
+    total,
+    paidAmount,
+    notes,
+    expectedDate,
+    receivedDate,
+    createdAt,
+    updatedAt,
+  );
 
   /// Create a copy of PurchaseOrder
   /// with the given fields replaced by the non-null parameter values.
@@ -454,31 +466,30 @@ class _$PurchaseOrderImpl extends _PurchaseOrder {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PurchaseOrderImplToJson(
-      this,
-    );
+    return _$$PurchaseOrderImplToJson(this);
   }
 }
 
 abstract class _PurchaseOrder extends PurchaseOrder {
-  const factory _PurchaseOrder(
-      {required final String id,
-      final String? orderNumber,
-      required final String storeId,
-      required final String supplierId,
-      final String? supplierName,
-      required final PurchaseOrderStatus status,
-      required final List<PurchaseOrderItem> items,
-      required final double subtotal,
-      final double discount,
-      final double tax,
-      required final double total,
-      final double paidAmount,
-      final String? notes,
-      final DateTime? expectedDate,
-      final DateTime? receivedDate,
-      required final DateTime createdAt,
-      final DateTime? updatedAt}) = _$PurchaseOrderImpl;
+  const factory _PurchaseOrder({
+    required final String id,
+    final String? orderNumber,
+    required final String storeId,
+    required final String supplierId,
+    final String? supplierName,
+    required final PurchaseOrderStatus status,
+    required final List<PurchaseOrderItem> items,
+    required final double subtotal,
+    final double discount,
+    final double tax,
+    required final double total,
+    final double paidAmount,
+    final String? notes,
+    final DateTime? expectedDate,
+    final DateTime? receivedDate,
+    required final DateTime createdAt,
+    final DateTime? updatedAt,
+  }) = _$PurchaseOrderImpl;
   const _PurchaseOrder._() : super._();
 
   factory _PurchaseOrder.fromJson(Map<String, dynamic> json) =
@@ -553,16 +564,18 @@ mixin _$PurchaseOrderItem {
 /// @nodoc
 abstract class $PurchaseOrderItemCopyWith<$Res> {
   factory $PurchaseOrderItemCopyWith(
-          PurchaseOrderItem value, $Res Function(PurchaseOrderItem) then) =
-      _$PurchaseOrderItemCopyWithImpl<$Res, PurchaseOrderItem>;
+    PurchaseOrderItem value,
+    $Res Function(PurchaseOrderItem) then,
+  ) = _$PurchaseOrderItemCopyWithImpl<$Res, PurchaseOrderItem>;
   @useResult
-  $Res call(
-      {String productId,
-      String name,
-      int orderedQty,
-      int receivedQty,
-      double unitCost,
-      double lineTotal});
+  $Res call({
+    String productId,
+    String name,
+    int orderedQty,
+    int receivedQty,
+    double unitCost,
+    double lineTotal,
+  });
 }
 
 /// @nodoc
@@ -587,59 +600,65 @@ class _$PurchaseOrderItemCopyWithImpl<$Res, $Val extends PurchaseOrderItem>
     Object? unitCost = null,
     Object? lineTotal = null,
   }) {
-    return _then(_value.copyWith(
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      orderedQty: null == orderedQty
-          ? _value.orderedQty
-          : orderedQty // ignore: cast_nullable_to_non_nullable
-              as int,
-      receivedQty: null == receivedQty
-          ? _value.receivedQty
-          : receivedQty // ignore: cast_nullable_to_non_nullable
-              as int,
-      unitCost: null == unitCost
-          ? _value.unitCost
-          : unitCost // ignore: cast_nullable_to_non_nullable
-              as double,
-      lineTotal: null == lineTotal
-          ? _value.lineTotal
-          : lineTotal // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            productId: null == productId
+                ? _value.productId
+                : productId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            orderedQty: null == orderedQty
+                ? _value.orderedQty
+                : orderedQty // ignore: cast_nullable_to_non_nullable
+                      as int,
+            receivedQty: null == receivedQty
+                ? _value.receivedQty
+                : receivedQty // ignore: cast_nullable_to_non_nullable
+                      as int,
+            unitCost: null == unitCost
+                ? _value.unitCost
+                : unitCost // ignore: cast_nullable_to_non_nullable
+                      as double,
+            lineTotal: null == lineTotal
+                ? _value.lineTotal
+                : lineTotal // ignore: cast_nullable_to_non_nullable
+                      as double,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$PurchaseOrderItemImplCopyWith<$Res>
     implements $PurchaseOrderItemCopyWith<$Res> {
-  factory _$$PurchaseOrderItemImplCopyWith(_$PurchaseOrderItemImpl value,
-          $Res Function(_$PurchaseOrderItemImpl) then) =
-      __$$PurchaseOrderItemImplCopyWithImpl<$Res>;
+  factory _$$PurchaseOrderItemImplCopyWith(
+    _$PurchaseOrderItemImpl value,
+    $Res Function(_$PurchaseOrderItemImpl) then,
+  ) = __$$PurchaseOrderItemImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String productId,
-      String name,
-      int orderedQty,
-      int receivedQty,
-      double unitCost,
-      double lineTotal});
+  $Res call({
+    String productId,
+    String name,
+    int orderedQty,
+    int receivedQty,
+    double unitCost,
+    double lineTotal,
+  });
 }
 
 /// @nodoc
 class __$$PurchaseOrderItemImplCopyWithImpl<$Res>
     extends _$PurchaseOrderItemCopyWithImpl<$Res, _$PurchaseOrderItemImpl>
     implements _$$PurchaseOrderItemImplCopyWith<$Res> {
-  __$$PurchaseOrderItemImplCopyWithImpl(_$PurchaseOrderItemImpl _value,
-      $Res Function(_$PurchaseOrderItemImpl) _then)
-      : super(_value, _then);
+  __$$PurchaseOrderItemImplCopyWithImpl(
+    _$PurchaseOrderItemImpl _value,
+    $Res Function(_$PurchaseOrderItemImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of PurchaseOrderItem
   /// with the given fields replaced by the non-null parameter values.
@@ -653,46 +672,48 @@ class __$$PurchaseOrderItemImplCopyWithImpl<$Res>
     Object? unitCost = null,
     Object? lineTotal = null,
   }) {
-    return _then(_$PurchaseOrderItemImpl(
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      orderedQty: null == orderedQty
-          ? _value.orderedQty
-          : orderedQty // ignore: cast_nullable_to_non_nullable
-              as int,
-      receivedQty: null == receivedQty
-          ? _value.receivedQty
-          : receivedQty // ignore: cast_nullable_to_non_nullable
-              as int,
-      unitCost: null == unitCost
-          ? _value.unitCost
-          : unitCost // ignore: cast_nullable_to_non_nullable
-              as double,
-      lineTotal: null == lineTotal
-          ? _value.lineTotal
-          : lineTotal // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
+    return _then(
+      _$PurchaseOrderItemImpl(
+        productId: null == productId
+            ? _value.productId
+            : productId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        orderedQty: null == orderedQty
+            ? _value.orderedQty
+            : orderedQty // ignore: cast_nullable_to_non_nullable
+                  as int,
+        receivedQty: null == receivedQty
+            ? _value.receivedQty
+            : receivedQty // ignore: cast_nullable_to_non_nullable
+                  as int,
+        unitCost: null == unitCost
+            ? _value.unitCost
+            : unitCost // ignore: cast_nullable_to_non_nullable
+                  as double,
+        lineTotal: null == lineTotal
+            ? _value.lineTotal
+            : lineTotal // ignore: cast_nullable_to_non_nullable
+                  as double,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$PurchaseOrderItemImpl extends _PurchaseOrderItem {
-  const _$PurchaseOrderItemImpl(
-      {required this.productId,
-      required this.name,
-      required this.orderedQty,
-      this.receivedQty = 0,
-      required this.unitCost,
-      required this.lineTotal})
-      : super._();
+  const _$PurchaseOrderItemImpl({
+    required this.productId,
+    required this.name,
+    required this.orderedQty,
+    this.receivedQty = 0,
+    required this.unitCost,
+    required this.lineTotal,
+  }) : super._();
 
   factory _$PurchaseOrderItemImpl.fromJson(Map<String, dynamic> json) =>
       _$$PurchaseOrderItemImplFromJson(json);
@@ -736,8 +757,15 @@ class _$PurchaseOrderItemImpl extends _PurchaseOrderItem {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, productId, name, orderedQty,
-      receivedQty, unitCost, lineTotal);
+  int get hashCode => Object.hash(
+    runtimeType,
+    productId,
+    name,
+    orderedQty,
+    receivedQty,
+    unitCost,
+    lineTotal,
+  );
 
   /// Create a copy of PurchaseOrderItem
   /// with the given fields replaced by the non-null parameter values.
@@ -746,24 +774,25 @@ class _$PurchaseOrderItemImpl extends _PurchaseOrderItem {
   @pragma('vm:prefer-inline')
   _$$PurchaseOrderItemImplCopyWith<_$PurchaseOrderItemImpl> get copyWith =>
       __$$PurchaseOrderItemImplCopyWithImpl<_$PurchaseOrderItemImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PurchaseOrderItemImplToJson(
-      this,
-    );
+    return _$$PurchaseOrderItemImplToJson(this);
   }
 }
 
 abstract class _PurchaseOrderItem extends PurchaseOrderItem {
-  const factory _PurchaseOrderItem(
-      {required final String productId,
-      required final String name,
-      required final int orderedQty,
-      final int receivedQty,
-      required final double unitCost,
-      required final double lineTotal}) = _$PurchaseOrderItemImpl;
+  const factory _PurchaseOrderItem({
+    required final String productId,
+    required final String name,
+    required final int orderedQty,
+    final int receivedQty,
+    required final double unitCost,
+    required final double lineTotal,
+  }) = _$PurchaseOrderItemImpl;
   const _PurchaseOrderItem._() : super._();
 
   factory _PurchaseOrderItem.fromJson(Map<String, dynamic> json) =

@@ -53,12 +53,14 @@ class SecureHttpClient {
     Map<String, String>? headers,
     String? certificateFingerprint,
   }) {
-    final dio = Dio(BaseOptions(
-      baseUrl: baseUrl,
-      connectTimeout: connectTimeout,
-      receiveTimeout: receiveTimeout,
-      headers: headers,
-    ));
+    final dio = Dio(
+      BaseOptions(
+        baseUrl: baseUrl,
+        connectTimeout: connectTimeout,
+        receiveTimeout: receiveTimeout,
+        headers: headers,
+      ),
+    );
 
     // إضافة Certificate Pinning (للـ native platforms فقط)
     //
@@ -97,7 +99,8 @@ class SecureHttpClient {
         final certFingerprint = _getCertificateFingerprint(cert);
 
         // المقارنة مع الـ fingerprint المتوقع
-        final isValid = certFingerprint.toLowerCase() ==
+        final isValid =
+            certFingerprint.toLowerCase() ==
             fingerprint.toLowerCase().replaceAll(':', '');
 
         if (!isValid) {
@@ -152,9 +155,7 @@ class SecureHttpClient {
             // انتظار قبل إعادة المحاولة (exponential backoff)
             final retryCount = _getRetryCount(error);
             final delayMs = 1000 * (1 << retryCount); // 1s, 2s, 4s
-            await Future.delayed(
-              Duration(milliseconds: delayMs),
-            );
+            await Future.delayed(Duration(milliseconds: delayMs));
 
             // إعادة المحاولة
             final options = error.requestOptions;
@@ -188,8 +189,10 @@ class SecureHttpClient {
   static Interceptor _createLoggingInterceptor() {
     return InterceptorsWrapper(
       onRequest: (options, handler) {
-        AppLogger.debug('REQUEST: ${options.method} ${options.uri}',
-            tag: 'HTTP');
+        AppLogger.debug(
+          'REQUEST: ${options.method} ${options.uri}',
+          tag: 'HTTP',
+        );
         return handler.next(options);
       },
       onResponse: (response, handler) {
@@ -238,7 +241,9 @@ class _CacheInterceptor extends Interceptor {
 
   @override
   void onResponse(
-      Response<dynamic> response, ResponseInterceptorHandler handler) {
+    Response<dynamic> response,
+    ResponseInterceptorHandler handler,
+  ) {
     if (response.requestOptions.method != 'GET') return handler.next(response);
     final key = response.requestOptions.uri.toString();
     final etag = response.headers.value('etag');
@@ -264,11 +269,13 @@ class _CacheInterceptor extends Interceptor {
       final key = err.requestOptions.uri.toString();
       final entry = _cache[key];
       if (entry != null) {
-        return handler.resolve(Response<dynamic>(
-          requestOptions: err.requestOptions,
-          data: entry.data,
-          statusCode: entry.statusCode,
-        ));
+        return handler.resolve(
+          Response<dynamic>(
+            requestOptions: err.requestOptions,
+            data: entry.data,
+            statusCode: entry.statusCode,
+          ),
+        );
       }
     }
     handler.next(err);
@@ -282,12 +289,7 @@ class _CacheEntry {
   final dynamic data;
   final int statusCode;
 
-  _CacheEntry({
-    this.etag,
-    this.lastModified,
-    this.data,
-    this.statusCode = 200,
-  });
+  _CacheEntry({this.etag, this.lastModified, this.data, this.statusCode = 200});
 }
 
 /// Extension لإنشاء Dio clients للـ APIs المختلفة

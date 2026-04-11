@@ -57,11 +57,11 @@ class AlhaiDivider extends StatelessWidget {
     this.indent = 0,
     this.endIndent = 0,
     this.color,
-  })  : _isVertical = false,
-        _height = null,
-        _label = null,
-        _labelPosition = null,
-        _textStyle = null;
+  }) : _isVertical = false,
+       _height = null,
+       _label = null,
+       _labelPosition = null,
+       _textStyle = null;
 
   /// Horizontal divider with full control
   const AlhaiDivider.horizontal({
@@ -70,11 +70,11 @@ class AlhaiDivider extends StatelessWidget {
     this.indent = 0,
     this.endIndent = 0,
     this.color,
-  })  : _isVertical = false,
-        _height = null,
-        _label = null,
-        _labelPosition = null,
-        _textStyle = null;
+  }) : _isVertical = false,
+       _height = null,
+       _label = null,
+       _labelPosition = null,
+       _textStyle = null;
 
   /// Vertical divider
   const AlhaiDivider.vertical({
@@ -84,11 +84,11 @@ class AlhaiDivider extends StatelessWidget {
     this.indent = 0,
     this.endIndent = 0,
     this.color,
-  })  : _isVertical = true,
-        _height = height,
-        _label = null,
-        _labelPosition = null,
-        _textStyle = null;
+  }) : _isVertical = true,
+       _height = height,
+       _label = null,
+       _labelPosition = null,
+       _textStyle = null;
 
   /// Divider with label (e.g., "or")
   const AlhaiDivider.withLabel({
@@ -100,11 +100,11 @@ class AlhaiDivider extends StatelessWidget {
     this.indent = 0,
     this.endIndent = 0,
     this.color,
-  })  : _isVertical = false,
-        _height = null,
-        _label = label,
-        _labelPosition = position,
-        _textStyle = textStyle;
+  }) : _isVertical = false,
+       _height = null,
+       _label = label,
+       _labelPosition = position,
+       _textStyle = textStyle;
 
   @override
   Widget build(BuildContext context) {
@@ -127,14 +127,8 @@ class AlhaiDivider extends StatelessWidget {
 
   Widget _buildHorizontal(Color effectiveColor) {
     return Padding(
-      padding: EdgeInsetsDirectional.only(
-        start: indent,
-        end: endIndent,
-      ),
-      child: Container(
-        height: thickness,
-        color: effectiveColor,
-      ),
+      padding: EdgeInsetsDirectional.only(start: indent, end: endIndent),
+      child: Container(height: thickness, color: effectiveColor),
     );
   }
 
@@ -142,10 +136,7 @@ class AlhaiDivider extends StatelessWidget {
     return SizedBox(
       height: _height,
       child: Padding(
-        padding: EdgeInsets.only(
-          top: indent,
-          bottom: endIndent,
-        ),
+        padding: EdgeInsets.only(top: indent, bottom: endIndent),
         child: Center(
           child: Container(
             width: thickness,
@@ -161,7 +152,8 @@ class AlhaiDivider extends StatelessWidget {
     final theme = Theme.of(context);
     final textDirection = Directionality.of(context);
 
-    final effectiveTextStyle = _textStyle ??
+    final effectiveTextStyle =
+        _textStyle ??
         theme.textTheme.labelMedium?.copyWith(
           color: theme.colorScheme.onSurfaceVariant,
         );
@@ -172,11 +164,11 @@ class AlhaiDivider extends StatelessWidget {
     // RTL-aware: determine which visual side to hide
     final hideLeftLine =
         (!isRtl && position == AlhaiDividerLabelPosition.start) ||
-            (isRtl && position == AlhaiDividerLabelPosition.end);
+        (isRtl && position == AlhaiDividerLabelPosition.end);
 
     final hideRightLine =
         (!isRtl && position == AlhaiDividerLabelPosition.end) ||
-            (isRtl && position == AlhaiDividerLabelPosition.start);
+        (isRtl && position == AlhaiDividerLabelPosition.start);
 
     Widget line() => Container(height: thickness, color: effectiveColor);
 

@@ -43,9 +43,7 @@ Widget buildCustomerTestApp({
       ),
       GoRoute(
         path: '/auth/otp',
-        builder: (_, state) => _StubScreen(
-          label: 'OTP ${state.extra ?? ""}',
-        ),
+        builder: (_, state) => _StubScreen(label: 'OTP ${state.extra ?? ""}'),
       ),
 
       // Main app routes (using stubs since real screens have deep DI deps)
@@ -59,9 +57,8 @@ Widget buildCustomerTestApp({
       ),
       GoRoute(
         path: '/products/:id',
-        builder: (_, state) => _StubScreen(
-          label: 'Product ${state.pathParameters["id"]}',
-        ),
+        builder: (_, state) =>
+            _StubScreen(label: 'Product ${state.pathParameters["id"]}'),
       ),
       GoRoute(
         path: '/search',
@@ -81,15 +78,13 @@ Widget buildCustomerTestApp({
       ),
       GoRoute(
         path: '/orders/:id',
-        builder: (_, state) => _StubScreen(
-          label: 'Order ${state.pathParameters["id"]}',
-        ),
+        builder: (_, state) =>
+            _StubScreen(label: 'Order ${state.pathParameters["id"]}'),
       ),
       GoRoute(
         path: '/orders/:id/track',
-        builder: (_, state) => _StubScreen(
-          label: 'Track ${state.pathParameters["id"]}',
-        ),
+        builder: (_, state) =>
+            _StubScreen(label: 'Track ${state.pathParameters["id"]}'),
       ),
       GoRoute(
         path: '/profile',
@@ -111,9 +106,7 @@ Widget buildCustomerTestApp({
   );
 
   return ProviderScope(
-    overrides: [
-      ...overrides,
-    ],
+    overrides: [...overrides],
     child: MaterialApp.router(
       debugShowCheckedModeBanner: false,
       routerConfig: router,
@@ -121,10 +114,7 @@ Widget buildCustomerTestApp({
       darkTheme: AlhaiTheme.dark,
       themeMode: ThemeMode.light,
       locale: const Locale('ar'),
-      supportedLocales: const [
-        Locale('ar'),
-        Locale('en'),
-      ],
+      supportedLocales: const [Locale('ar'), Locale('en')],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -147,12 +137,7 @@ class _StubScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text(
-          label,
-          key: Key('stub_$label'),
-        ),
-      ),
+      body: Center(child: Text(label, key: Key('stub_$label'))),
     );
   }
 }

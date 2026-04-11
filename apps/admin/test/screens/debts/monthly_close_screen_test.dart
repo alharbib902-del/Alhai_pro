@@ -25,8 +25,9 @@ void main() {
     );
     setupTestGetIt(mockDb: db);
 
-    when(() => accountsDao.getReceivableAccounts(any()))
-        .thenAnswer((_) async => []);
+    when(
+      () => accountsDao.getReceivableAccounts(any()),
+    ).thenAnswer((_) async => []);
   });
 
   tearDown(() => tearDownTestGetIt());

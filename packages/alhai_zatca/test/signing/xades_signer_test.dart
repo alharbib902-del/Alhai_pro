@@ -21,7 +21,8 @@ void main() {
 
     // Minimal UBL invoice XML with a UBLExtensions placeholder so the
     // signer has a valid target to embed the signature block into.
-    const invoiceXml = '<?xml version="1.0" encoding="UTF-8"?>'
+    const invoiceXml =
+        '<?xml version="1.0" encoding="UTF-8"?>'
         '<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"'
         ' xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2"'
         ' xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"'
@@ -150,10 +151,7 @@ void main() {
           invoiceXml: invoiceXml,
           certificate: testCertificate,
         );
-        expect(
-          signed,
-          contains('http://www.w3.org/2006/12/xml-c14n11'),
-        );
+        expect(signed, contains('http://www.w3.org/2006/12/xml-c14n11'));
       });
 
       test('signed XML uses ECDSA-SHA256 signature method', () {
@@ -174,8 +172,9 @@ void main() {
         );
         // Should have 2 ds:Reference elements: one for the invoice body,
         // and one for the SignedProperties (#xadesSignedProperties)
-        final referenceMatches =
-            RegExp(r'<ds:Reference').allMatches(signed).length;
+        final referenceMatches = RegExp(
+          r'<ds:Reference',
+        ).allMatches(signed).length;
         expect(referenceMatches, 2);
         expect(signed, contains('#xadesSignedProperties'));
       });
@@ -195,8 +194,9 @@ void main() {
           certificate: testCertificate,
         );
 
-        final match = RegExp(r'<ds:SignatureValue>([^<]+)</ds:SignatureValue>')
-            .firstMatch(signed);
+        final match = RegExp(
+          r'<ds:SignatureValue>([^<]+)</ds:SignatureValue>',
+        ).firstMatch(signed);
         expect(match, isNotNull);
 
         final sigValue = match!.group(1)!;
@@ -205,22 +205,24 @@ void main() {
         expect(() => base64Decode(sigValue), returnsNormally);
       });
 
-      test('signing the same invoice twice produces deterministic signature',
-          () {
-        // DET-ECDSA (RFC 6979) is deterministic for same key + message
-        final fixedTime = DateTime.utc(2026, 4, 10, 12, 0, 0);
-        final signed1 = signer.sign(
-          invoiceXml: invoiceXml,
-          certificate: testCertificate,
-          signingTime: fixedTime,
-        );
-        final signed2 = signer.sign(
-          invoiceXml: invoiceXml,
-          certificate: testCertificate,
-          signingTime: fixedTime,
-        );
-        expect(signed1, signed2);
-      });
+      test(
+        'signing the same invoice twice produces deterministic signature',
+        () {
+          // DET-ECDSA (RFC 6979) is deterministic for same key + message
+          final fixedTime = DateTime.utc(2026, 4, 10, 12, 0, 0);
+          final signed1 = signer.sign(
+            invoiceXml: invoiceXml,
+            certificate: testCertificate,
+            signingTime: fixedTime,
+          );
+          final signed2 = signer.sign(
+            invoiceXml: invoiceXml,
+            certificate: testCertificate,
+            signingTime: fixedTime,
+          );
+          expect(signed1, signed2);
+        },
+      );
 
       test('different signing times produce different signatures', () {
         final time1 = DateTime.utc(2026, 4, 10, 12, 0, 0);
@@ -267,7 +269,8 @@ void main() {
       });
 
       test('produces different hashes for different invoices', () {
-        const otherInvoice = '<?xml version="1.0" encoding="UTF-8"?>'
+        const otherInvoice =
+            '<?xml version="1.0" encoding="UTF-8"?>'
             '<Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"'
             ' xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">'
             '<cbc:ID>INV-DIFFERENT-999</cbc:ID>'
@@ -357,9 +360,11 @@ String _buildTestCertificatePem({
 
   // Version [0] EXPLICIT v3 (2)
   final versionBytes = ASN1Integer(BigInt.from(2)).encodedBytes;
-  tbsCert.add(ASN1Object.fromBytes(
-    Uint8List.fromList([0xA0, versionBytes.length, ...versionBytes]),
-  ));
+  tbsCert.add(
+    ASN1Object.fromBytes(
+      Uint8List.fromList([0xA0, versionBytes.length, ...versionBytes]),
+    ),
+  );
 
   // Serial
   tbsCert.add(ASN1Integer(serialNumber));

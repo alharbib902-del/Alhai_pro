@@ -195,11 +195,9 @@ void main() {
     test('returns a single store by ID', () async {
       // Arrange
       mock.setResponse(
-          'stores',
-          SAStoreFactory.json(
-            id: 's42',
-            name: 'My Store',
-          ));
+        'stores',
+        SAStoreFactory.json(id: 's42', name: 'My Store'),
+      );
 
       // Act
       final store = await ds.getStore('s42');
@@ -711,10 +709,7 @@ void main() {
       mock.setError('stores', Exception('Network error'));
 
       // Act & Assert
-      expect(
-        () => ds.getStores(),
-        throwsA(isA<Exception>()),
-      );
+      expect(() => ds.getStores(), throwsA(isA<Exception>()));
     });
 
     test('getStore propagates errors', () async {
@@ -722,35 +717,28 @@ void main() {
       mock.setError('stores', Exception('Not found'));
 
       // Act & Assert
-      expect(
-        () => ds.getStore('s1'),
-        throwsA(isA<Exception>()),
-      );
+      expect(() => ds.getStore('s1'), throwsA(isA<Exception>()));
     });
 
-    test('getStoreUsageStats propagates errors from any parallel query',
-        () async {
-      // Arrange -- make sales fail, products/users succeed
-      mock.setError('sales', Exception('Table not found'));
-      mock.setCount('products', 0);
-      mock.setCount('users', 0);
+    test(
+      'getStoreUsageStats propagates errors from any parallel query',
+      () async {
+        // Arrange -- make sales fail, products/users succeed
+        mock.setError('sales', Exception('Table not found'));
+        mock.setCount('products', 0);
+        mock.setCount('users', 0);
 
-      // Act & Assert
-      expect(
-        () => ds.getStoreUsageStats('s1'),
-        throwsA(isA<Exception>()),
-      );
-    });
+        // Act & Assert
+        expect(() => ds.getStoreUsageStats('s1'), throwsA(isA<Exception>()));
+      },
+    );
 
     test('softDeleteStore propagates errors', () async {
       // Arrange
       mock.setError('stores', Exception('Permission denied'));
 
       // Act & Assert
-      expect(
-        () => ds.softDeleteStore('s1'),
-        throwsA(isA<Exception>()),
-      );
+      expect(() => ds.softDeleteStore('s1'), throwsA(isA<Exception>()));
     });
   });
 }

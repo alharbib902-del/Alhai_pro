@@ -89,11 +89,10 @@ class RecentTransactionsList extends StatelessWidget {
     return Container(
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
-        borderRadius:
-            BorderRadius.circular(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
+        borderRadius: BorderRadius.circular(
+          isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg,
         ),
+        border: Border.all(color: Theme.of(context).dividerColor),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withValues(alpha: isDarkMode ? 0.2 : 0.04),
@@ -165,10 +164,9 @@ class RecentTransactionsList extends StatelessWidget {
           children: [
             Icon(
               Icons.receipt_long_rounded,
-              color: Theme.of(context)
-                  .colorScheme
-                  .onSurfaceVariant
-                  .withValues(alpha: 0.5),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurfaceVariant.withValues(alpha: 0.5),
               size: 48,
             ),
             SizedBox(height: AlhaiSpacing.sm),
@@ -259,9 +257,7 @@ class _TableHeader extends StatelessWidget {
       ),
       decoration: BoxDecoration(
         border: Border(
-          bottom: BorderSide(
-            color: Theme.of(context).dividerColor,
-          ),
+          bottom: BorderSide(color: Theme.of(context).dividerColor),
         ),
       ),
       child: Row(
@@ -273,23 +269,14 @@ class _TableHeader extends StatelessWidget {
           ),
 
           // العميل
-          Expanded(
-            flex: 3,
-            child: Text(l10n.customer, style: headerStyle),
-          ),
+          Expanded(flex: 3, child: Text(l10n.customer, style: headerStyle)),
 
           // الوقت - مخفي على الموبايل
           if (!isMobile)
-            Expanded(
-              flex: 2,
-              child: Text(l10n.time, style: headerStyle),
-            ),
+            Expanded(flex: 2, child: Text(l10n.time, style: headerStyle)),
 
           // الحالة
-          Expanded(
-            flex: 2,
-            child: Text(l10n.status, style: headerStyle),
-          ),
+          Expanded(flex: 2, child: Text(l10n.status, style: headerStyle)),
 
           // المبلغ
           Expanded(
@@ -364,17 +351,14 @@ class _TransactionRowState extends State<_TransactionRow> {
         ),
         decoration: BoxDecoration(
           color: _isHovered
-              ? (Theme.of(context)
-                  .colorScheme
-                  .surfaceContainerHighest
-                  .withValues(alpha: 0.5))
+              ? (Theme.of(
+                  context,
+                ).colorScheme.surfaceContainerHighest.withValues(alpha: 0.5))
               : Colors.transparent,
           border: widget.isLast
               ? null
               : Border(
-                  bottom: BorderSide(
-                    color: Theme.of(context).dividerColor,
-                  ),
+                  bottom: BorderSide(color: Theme.of(context).dividerColor),
                 ),
         ),
         child: Row(
@@ -386,29 +370,16 @@ class _TransactionRowState extends State<_TransactionRow> {
             ),
 
             // العميل
-            Expanded(
-              flex: 3,
-              child: _buildCustomerCell(tx, isDark, isMobile),
-            ),
+            Expanded(flex: 3, child: _buildCustomerCell(tx, isDark, isMobile)),
 
             // الوقت - مخفي على الموبايل
-            if (!isMobile)
-              Expanded(
-                flex: 2,
-                child: _buildTimeCell(tx, isDark),
-              ),
+            if (!isMobile) Expanded(flex: 2, child: _buildTimeCell(tx, isDark)),
 
             // الحالة
-            Expanded(
-              flex: 2,
-              child: _buildStatusBadge(tx, isDark),
-            ),
+            Expanded(flex: 2, child: _buildStatusBadge(tx, isDark)),
 
             // المبلغ
-            Expanded(
-              flex: 2,
-              child: _buildAmountCell(tx, isDark),
-            ),
+            Expanded(flex: 2, child: _buildAmountCell(tx, isDark)),
 
             // إجراء
             SizedBox(
@@ -439,7 +410,8 @@ class _TransactionRowState extends State<_TransactionRow> {
 
   /// خلية العميل (أفاتار + اسم)
   Widget _buildCustomerCell(Transaction tx, bool isDark, bool isMobile) {
-    final isGuest = tx.customerName.isEmpty ||
+    final isGuest =
+        tx.customerName.isEmpty ||
         tx.customerName.toLowerCase() == 'guest' ||
         tx.customerName == 'عميل زائر';
 
@@ -468,8 +440,9 @@ class _TransactionRowState extends State<_TransactionRow> {
           height: isMobile ? 28 : AlhaiSpacing.xl,
           decoration: BoxDecoration(
             color: avatarColor.withValues(alpha: 0.15),
-            borderRadius:
-                BorderRadius.circular(isMobile ? AlhaiSpacing.xs : 10),
+            borderRadius: BorderRadius.circular(
+              isMobile ? AlhaiSpacing.xs : 10,
+            ),
           ),
           alignment: Alignment.center,
           child: Text(
@@ -522,7 +495,9 @@ class _TransactionRowState extends State<_TransactionRow> {
       alignment: AlignmentDirectional.centerStart,
       child: Container(
         padding: const EdgeInsets.symmetric(
-            horizontal: 10, vertical: AlhaiSpacing.xxs),
+          horizontal: 10,
+          vertical: AlhaiSpacing.xxs,
+        ),
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(20),
@@ -542,7 +517,8 @@ class _TransactionRowState extends State<_TransactionRow> {
 
   /// خلية المبلغ
   Widget _buildAmountCell(Transaction tx, bool isDark) {
-    final isNegative = tx.type == TransactionType.refund ||
+    final isNegative =
+        tx.type == TransactionType.refund ||
         tx.type == TransactionType.cancelled;
     final displayAmount = widget.formatAmount(context, tx.amount);
     final text = isNegative ? '-$displayAmount' : displayAmount;

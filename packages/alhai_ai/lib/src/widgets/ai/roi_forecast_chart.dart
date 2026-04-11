@@ -65,8 +65,9 @@ class RoiForecastChart extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.06) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.06)
+              : AppColors.border,
         ),
       ),
       child: Column(
@@ -88,7 +89,9 @@ class RoiForecastChart extends StatelessWidget {
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: AlhaiSpacing.xxs),
+                  horizontal: 10,
+                  vertical: AlhaiSpacing.xxs,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -140,10 +143,7 @@ class RoiForecastChart extends StatelessWidget {
             height: 200,
             child: CustomPaint(
               size: const Size(double.infinity, 200),
-              painter: _RoiChartPainter(
-                forecasts: forecasts,
-                isDark: isDark,
-              ),
+              painter: _RoiChartPainter(forecasts: forecasts, isDark: isDark),
             ),
           ),
 
@@ -170,10 +170,7 @@ class RoiForecastChart extends StatelessWidget {
         Container(
           width: 8,
           height: 8,
-          decoration: BoxDecoration(
-            color: color,
-            shape: BoxShape.circle,
-          ),
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
         ),
         const SizedBox(width: 6),
         Column(
@@ -266,16 +263,14 @@ class _RoiChartPainter extends CustomPainter {
 
     for (int i = 0; i <= 4; i++) {
       final y = paddingTop + (chartHeight * i / 4);
-      canvas.drawLine(
-        Offset(paddingLeft, y),
-        Offset(size.width, y),
-        gridPaint,
-      );
+      canvas.drawLine(Offset(paddingLeft, y), Offset(size.width, y), gridPaint);
 
       final roiValue = maxRoi - (roiRange * i / 4);
       final tp = TextPainter(
         text: TextSpan(
-            text: '${roiValue.toStringAsFixed(0)}%', style: labelStyle),
+          text: '${roiValue.toStringAsFixed(0)}%',
+          style: labelStyle,
+        ),
         textDirection: TextDirection.rtl,
       )..layout();
       tp.paint(canvas, Offset(0, y - tp.height / 2));
@@ -356,11 +351,7 @@ class _RoiChartPainter extends CustomPainter {
         6,
         Paint()..color = isDark ? const Color(0xFF1E293B) : Colors.white,
       );
-      canvas.drawCircle(
-        last,
-        4,
-        Paint()..color = const Color(0xFF10B981),
-      );
+      canvas.drawCircle(last, 4, Paint()..color = const Color(0xFF10B981));
     }
 
     // تسميات المحور السيني
@@ -369,7 +360,7 @@ class _RoiChartPainter extends CustomPainter {
       forecasts.length ~/ 4,
       forecasts.length ~/ 2,
       (forecasts.length * 3) ~/ 4,
-      forecasts.length - 1
+      forecasts.length - 1,
     ];
     for (final idx in daysToShow) {
       if (idx >= 0 && idx < forecasts.length) {
@@ -379,7 +370,9 @@ class _RoiChartPainter extends CustomPainter {
           textDirection: TextDirection.rtl,
         )..layout();
         tp.paint(
-            canvas, Offset(x - tp.width / 2, size.height - paddingBottom + 6));
+          canvas,
+          Offset(x - tp.width / 2, size.height - paddingBottom + 6),
+        );
       }
     }
   }

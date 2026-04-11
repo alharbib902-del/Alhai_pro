@@ -47,10 +47,7 @@ SalesStats createTestSalesStats({
 }
 
 /// Create a test SalesReport
-SalesReport createTestSalesReport({
-  DateRange? period,
-  SalesStats? stats,
-}) {
+SalesReport createTestSalesReport({DateRange? period, SalesStats? stats}) {
   return SalesReport(
     period: period ?? DateRange(DateTime(2026, 1, 1), DateTime(2026, 1, 2)),
     stats: stats ?? createTestSalesStats(),

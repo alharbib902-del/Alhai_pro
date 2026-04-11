@@ -110,8 +110,9 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
           borderRadius: BorderRadius.circular(24),
           boxShadow: [
             BoxShadow(
-              color:
-                  Theme.of(context).colorScheme.shadow.withValues(alpha: 0.15),
+              color: Theme.of(
+                context,
+              ).colorScheme.shadow.withValues(alpha: 0.15),
               blurRadius: 20,
               offset: const Offset(0, 10),
             ),
@@ -138,8 +139,11 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
             color: Colors.green.shade100,
             shape: BoxShape.circle,
           ),
-          child:
-              Icon(Icons.lock_outline, size: 40, color: Colors.green.shade700),
+          child: Icon(
+            Icons.lock_outline,
+            size: 40,
+            color: Colors.green.shade700,
+          ),
         ),
         const SizedBox(height: AlhaiSpacing.lg),
         Text(
@@ -153,8 +157,9 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
         const SizedBox(height: AlhaiSpacing.xs),
         Text(
           _isSettingUp ? l10n.reenterPinToConfirm : l10n.enterFourDigitPin,
-          style:
-              TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
         ),
         const SizedBox(height: AlhaiSpacing.xl),
         _buildPinDots(
@@ -174,13 +179,15 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
         if (_isDialogMode) ...[
           const SizedBox(height: AlhaiSpacing.md),
           TextButton(
-            onPressed:
-                _isLoading ? null : () => Navigator.of(context).pop(false),
+            onPressed: _isLoading
+                ? null
+                : () => Navigator.of(context).pop(false),
             child: Text(
               l10n.cancel,
               style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontSize: 16),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 16,
+              ),
             ),
           ),
         ],
@@ -191,10 +198,7 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
   Widget _buildSetupScreen() {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.managerPinSetup),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(l10n.managerPinSetup), centerTitle: true),
       body: SafeArea(
         top: false,
         child: LayoutBuilder(
@@ -229,8 +233,11 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
             color: Colors.blue.shade100,
             shape: BoxShape.circle,
           ),
-          child: Icon(Icons.admin_panel_settings,
-              size: 40, color: Colors.blue.shade700),
+          child: Icon(
+            Icons.admin_panel_settings,
+            size: 40,
+            color: Colors.blue.shade700,
+          ),
         ),
         const SizedBox(height: AlhaiSpacing.lg),
         Text(
@@ -244,8 +251,9 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
         const SizedBox(height: AlhaiSpacing.xs),
         Text(
           widget.action ?? l10n.operationRequiresApproval,
-          style:
-              TextStyle(color: Theme.of(context).colorScheme.onSurfaceVariant),
+          style: TextStyle(
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           textAlign: TextAlign.center,
         ),
         const SizedBox(height: AlhaiSpacing.xl),
@@ -263,13 +271,15 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
         if (_isDialogMode) ...[
           const SizedBox(height: AlhaiSpacing.md),
           TextButton(
-            onPressed:
-                _isLoading ? null : () => Navigator.of(context).pop(false),
+            onPressed: _isLoading
+                ? null
+                : () => Navigator.of(context).pop(false),
             child: Text(
               l10n.cancel,
               style: TextStyle(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  fontSize: 16),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontSize: 16,
+              ),
             ),
           ),
         ],
@@ -280,10 +290,7 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
   Widget _buildVerifyScreen() {
     final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.managerPinSetup),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(l10n.managerPinSetup), centerTitle: true),
       body: SafeArea(
         top: false,
         child: LayoutBuilder(
@@ -323,15 +330,18 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
               color: _error != null
                   ? Colors.red
                   : (index < currentPin.length
-                      ? color
-                      : Theme.of(context).colorScheme.outlineVariant),
+                        ? color
+                        : Theme.of(context).colorScheme.outlineVariant),
               width: 2,
             ),
           ),
           child: Center(
             child: index < currentPin.length
-                ? Icon(Icons.circle,
-                    size: 16, color: Theme.of(context).colorScheme.onPrimary)
+                ? Icon(
+                    Icons.circle,
+                    size: 16,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  )
                 : null,
           ),
         );
@@ -386,8 +396,10 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
                 setState(() {
                   if (isSetup) {
                     if (_isSettingUp && _confirmPin.isNotEmpty) {
-                      _confirmPin =
-                          _confirmPin.substring(0, _confirmPin.length - 1);
+                      _confirmPin = _confirmPin.substring(
+                        0,
+                        _confirmPin.length - 1,
+                      );
                     } else if (!_isSettingUp && _setupPin.isNotEmpty) {
                       _setupPin = _setupPin.substring(0, _setupPin.length - 1);
                     }
@@ -539,8 +551,9 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
               final remaining = result.lockedUntil!.difference(DateTime.now());
               _error = l10n.accountLockedWaitMinutes(remaining.inMinutes);
             } else if (result.remainingAttempts != null) {
-              _error =
-                  l10n.wrongPinAttemptsRemaining(result.remainingAttempts!);
+              _error = l10n.wrongPinAttemptsRemaining(
+                result.remainingAttempts!,
+              );
             } else {
               _error = 'رمز PIN غير صحيح أو المستخدم ليس مديراً';
             }
@@ -551,7 +564,8 @@ class _ManagerApprovalScreenState extends ConsumerState<ManagerApprovalScreen> {
 
       // التحقق من أن المستخدم مدير أو مالك
       final role = manager.role.toLowerCase();
-      final isManager = role == 'manager' ||
+      final isManager =
+          role == 'manager' ||
           role == 'admin' ||
           role == 'owner' ||
           role == 'superadmin' ||
@@ -636,8 +650,10 @@ class _KeypadButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         child: Center(
           child: icon != null
-              ? Icon(icon,
-                  color: textColor ?? Theme.of(context).colorScheme.onSurface)
+              ? Icon(
+                  icon,
+                  color: textColor ?? Theme.of(context).colorScheme.onSurface,
+                )
               : Text(
                   label ?? '',
                   style: TextStyle(

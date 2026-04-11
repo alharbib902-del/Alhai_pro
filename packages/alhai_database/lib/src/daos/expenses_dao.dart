@@ -20,12 +20,17 @@ class ExpensesDao extends DatabaseAccessor<AppDatabase>
   }
 
   Future<List<ExpensesTableData>> getExpensesByDateRange(
-      String storeId, DateTime startDate, DateTime endDate) {
+    String storeId,
+    DateTime startDate,
+    DateTime endDate,
+  ) {
     return (select(expensesTable)
-          ..where((e) =>
-              e.storeId.equals(storeId) &
-              e.expenseDate.isBiggerOrEqualValue(startDate) &
-              e.expenseDate.isSmallerThanValue(endDate))
+          ..where(
+            (e) =>
+                e.storeId.equals(storeId) &
+                e.expenseDate.isBiggerOrEqualValue(startDate) &
+                e.expenseDate.isSmallerThanValue(endDate),
+          )
           ..orderBy([(e) => OrderingTerm.desc(e.expenseDate)])
           ..limit(1000))
         .get();
@@ -36,12 +41,13 @@ class ExpensesDao extends DatabaseAccessor<AppDatabase>
     final startOfDay = DateTime(today.year, today.month, today.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
     final result = await customSelect(
-        'SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE store_id = ? AND expense_date >= ? AND expense_date < ?',
-        variables: [
-          Variable.withString(storeId),
-          Variable.withDateTime(startOfDay),
-          Variable.withDateTime(endOfDay)
-        ]).getSingle();
+      'SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE store_id = ? AND expense_date >= ? AND expense_date < ?',
+      variables: [
+        Variable.withString(storeId),
+        Variable.withDateTime(startOfDay),
+        Variable.withDateTime(endOfDay),
+      ],
+    ).getSingle();
     return result.data['total'] as double? ?? 0.0;
   }
 
@@ -53,8 +59,9 @@ class ExpensesDao extends DatabaseAccessor<AppDatabase>
       (delete(expensesTable)..where((e) => e.id.equals(id))).go();
 
   Future<int> markAsSynced(String id) {
-    return (update(expensesTable)..where((e) => e.id.equals(id)))
-        .write(ExpensesTableCompanion(syncedAt: Value(DateTime.now())));
+    return (update(expensesTable)..where((e) => e.id.equals(id))).write(
+      ExpensesTableCompanion(syncedAt: Value(DateTime.now())),
+    );
   }
 
   Stream<List<ExpensesTableData>> watchExpenses(String storeId) {

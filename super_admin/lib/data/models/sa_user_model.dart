@@ -39,16 +39,16 @@ class SAUser {
   }
 
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'name': name,
-        'phone': phone,
-        'email': email,
-        'role': role,
-        'created_at': createdAt,
-        'last_login_at': lastLoginAt,
-        'is_active': isActive,
-        'store_id': storeId,
-      };
+    'id': id,
+    'name': name,
+    'phone': phone,
+    'email': email,
+    'role': role,
+    'created_at': createdAt,
+    'last_login_at': lastLoginAt,
+    'is_active': isActive,
+    'store_id': storeId,
+  };
 
   /// Check if user is currently online (last sign-in within 5 minutes).
   bool get isOnline {

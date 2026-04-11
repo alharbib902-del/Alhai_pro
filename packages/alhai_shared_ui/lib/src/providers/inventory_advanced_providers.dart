@@ -23,16 +23,18 @@ const _uuid = Uuid();
 /// مزود قائمة التحويلات - يجلب تحويلات الفرع الحالي
 final stockTransfersListProvider =
     FutureProvider.autoDispose<List<StockTransfersTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
 
-  final db = GetIt.I<AppDatabase>();
-  return (db.select(db.stockTransfersTable)
-        ..where(
-            (t) => t.fromStoreId.equals(storeId) | t.toStoreId.equals(storeId))
-        ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
-      .get();
-});
+      final db = GetIt.I<AppDatabase>();
+      return (db.select(db.stockTransfersTable)
+            ..where(
+              (t) =>
+                  t.fromStoreId.equals(storeId) | t.toStoreId.equals(storeId),
+            )
+            ..orderBy([(t) => OrderingTerm.desc(t.createdAt)]))
+          .get();
+    });
 
 /// إنشاء تحويل مخزون جديد
 Future<String?> createStockTransfer(
@@ -51,7 +53,9 @@ Future<String?> createStockTransfer(
         'TR-${now.year}${now.month.toString().padLeft(2, '0')}${now.day.toString().padLeft(2, '0')}-${now.millisecondsSinceEpoch.toString().substring(8)}';
     final itemsJson = jsonEncode(items);
 
-    await db.into(db.stockTransfersTable).insert(
+    await db
+        .into(db.stockTransfersTable)
+        .insert(
           StockTransfersTableCompanion.insert(
             id: id,
             transferNumber: transferNumber,
@@ -109,8 +113,9 @@ Future<bool> updateTransferStatus(
       completedAt: newStatus == 'completed' ? Value(now) : const Value.absent(),
     );
 
-    await (db.update(db.stockTransfersTable)..where((t) => t.id.equals(id)))
-        .write(companion);
+    await (db.update(
+      db.stockTransfersTable,
+    )..where((t) => t.id.equals(id))).write(companion);
 
     // إضافة للمزامنة
     try {
@@ -143,9 +148,9 @@ Future<bool> completeTransfer(WidgetRef ref, String id) async {
     final now = DateTime.now();
 
     // جلب بيانات التحويل
-    final transfer = await (db.select(db.stockTransfersTable)
-          ..where((t) => t.id.equals(id)))
-        .getSingleOrNull();
+    final transfer = await (db.select(
+      db.stockTransfersTable,
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
     if (transfer == null) return false;
 
     final items = jsonDecode(transfer.items) as List<dynamic>;
@@ -159,24 +164,30 @@ Future<bool> completeTransfer(WidgetRef ref, String id) async {
 
       // البحث عن المنتج في الفرع المصدر بالـ SKU أو ID
       if (productId != null) {
-        final sourceProduct = await (db.select(db.productsTable)
-              ..where((p) =>
-                  p.id.equals(productId) &
-                  p.storeId.equals(transfer.fromStoreId)))
-            .getSingleOrNull();
+        final sourceProduct =
+            await (db.select(db.productsTable)..where(
+                  (p) =>
+                      p.id.equals(productId) &
+                      p.storeId.equals(transfer.fromStoreId),
+                ))
+                .getSingleOrNull();
         if (sourceProduct != null) {
-          final newQty =
-              (sourceProduct.stockQty - qty).clamp(0.0, double.infinity);
+          final newQty = (sourceProduct.stockQty - qty).clamp(
+            0.0,
+            double.infinity,
+          );
           await db.productsDao.updateStock(sourceProduct.id, newQty);
         }
       }
 
       // البحث عن المنتج في الفرع الهدف بالـ SKU
       if (sku != null && sku.isNotEmpty) {
-        final destProduct = await (db.select(db.productsTable)
-              ..where((p) =>
-                  p.sku.equals(sku) & p.storeId.equals(transfer.toStoreId)))
-            .getSingleOrNull();
+        final destProduct =
+            await (db.select(db.productsTable)..where(
+                  (p) =>
+                      p.sku.equals(sku) & p.storeId.equals(transfer.toStoreId),
+                ))
+                .getSingleOrNull();
         if (destProduct != null) {
           final newQty = destProduct.stockQty + qty;
           await db.productsDao.updateStock(destProduct.id, newQty);
@@ -185,11 +196,14 @@ Future<bool> completeTransfer(WidgetRef ref, String id) async {
     }
 
     // تحديث حالة التحويل إلى مكتمل
-    await (db.update(db.stockTransfersTable)..where((t) => t.id.equals(id)))
-        .write(StockTransfersTableCompanion(
-      status: const Value('completed'),
-      completedAt: Value(now),
-    ));
+    await (db.update(
+      db.stockTransfersTable,
+    )..where((t) => t.id.equals(id))).write(
+      StockTransfersTableCompanion(
+        status: const Value('completed'),
+        completedAt: Value(now),
+      ),
+    );
 
     // إضافة للمزامنة
     try {
@@ -197,10 +211,7 @@ Future<bool> completeTransfer(WidgetRef ref, String id) async {
       await syncService.enqueueUpdate(
         tableName: 'stock_transfers',
         recordId: id,
-        changes: {
-          'status': 'completed',
-          'completed_at': now.toIso8601String(),
-        },
+        changes: {'status': 'completed', 'completed_at': now.toIso8601String()},
       );
     } catch (e) {
       if (kDebugMode) debugPrint('SyncQueue error: $e');
@@ -221,21 +232,18 @@ Future<bool> completeTransfer(WidgetRef ref, String id) async {
 /// مزود قائمة عمليات الجرد
 final stockTakesListProvider =
     FutureProvider.autoDispose<List<StockTakesTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
 
-  final db = GetIt.I<AppDatabase>();
-  return (db.select(db.stockTakesTable)
-        ..where((t) => t.storeId.equals(storeId))
-        ..orderBy([(t) => OrderingTerm.desc(t.startedAt)]))
-      .get();
-});
+      final db = GetIt.I<AppDatabase>();
+      return (db.select(db.stockTakesTable)
+            ..where((t) => t.storeId.equals(storeId))
+            ..orderBy([(t) => OrderingTerm.desc(t.startedAt)]))
+          .get();
+    });
 
 /// إنشاء عملية جرد جديدة - تحميل جميع المنتجات كعناصر
-Future<String?> createStockTake(
-  WidgetRef ref,
-  String name,
-) async {
+Future<String?> createStockTake(WidgetRef ref, String name) async {
   try {
     final storeId = ref.read(currentStoreIdProvider);
     if (storeId == null) return null;
@@ -247,17 +255,21 @@ Future<String?> createStockTake(
     // تحميل جميع المنتجات لتضمينها في الجرد
     final products = await db.productsDao.getAllProducts(storeId);
     final itemsList = products
-        .map((p) => {
-              'productId': p.id,
-              'name': p.name,
-              'sku': p.sku ?? '',
-              'expectedQty': p.stockQty,
-              'countedQty': null,
-            })
+        .map(
+          (p) => {
+            'productId': p.id,
+            'name': p.name,
+            'sku': p.sku ?? '',
+            'expectedQty': p.stockQty,
+            'countedQty': null,
+          },
+        )
         .toList();
     final itemsJson = jsonEncode(itemsList);
 
-    await db.into(db.stockTakesTable).insert(
+    await db
+        .into(db.stockTakesTable)
+        .insert(
           StockTakesTableCompanion.insert(
             id: id,
             storeId: storeId,
@@ -308,11 +320,12 @@ Future<bool> updateStockTakeItems(
   try {
     final db = GetIt.I<AppDatabase>();
 
-    await (db.update(db.stockTakesTable)..where((t) => t.id.equals(id)))
-        .write(StockTakesTableCompanion(
-      items: Value(itemsJson),
-      countedItems: Value(countedItems),
-    ));
+    await (db.update(db.stockTakesTable)..where((t) => t.id.equals(id))).write(
+      StockTakesTableCompanion(
+        items: Value(itemsJson),
+        countedItems: Value(countedItems),
+      ),
+    );
 
     // إضافة للمزامنة
     try {
@@ -320,10 +333,7 @@ Future<bool> updateStockTakeItems(
       await syncService.enqueueUpdate(
         tableName: 'stock_takes',
         recordId: id,
-        changes: {
-          'items': itemsJson,
-          'counted_items': countedItems,
-        },
+        changes: {'items': itemsJson, 'counted_items': countedItems},
       );
     } catch (e) {
       if (kDebugMode) debugPrint('SyncQueue error: $e');
@@ -344,9 +354,9 @@ Future<bool> completeStockTake(WidgetRef ref, String id) async {
     final now = DateTime.now();
 
     // جلب بيانات الجرد
-    final stockTake = await (db.select(db.stockTakesTable)
-          ..where((t) => t.id.equals(id)))
-        .getSingleOrNull();
+    final stockTake = await (db.select(
+      db.stockTakesTable,
+    )..where((t) => t.id.equals(id))).getSingleOrNull();
     if (stockTake == null) return false;
 
     final items = jsonDecode(stockTake.items) as List<dynamic>;
@@ -374,12 +384,13 @@ Future<bool> completeStockTake(WidgetRef ref, String id) async {
     }
 
     // تحديث حالة الجرد إلى مكتمل
-    await (db.update(db.stockTakesTable)..where((t) => t.id.equals(id)))
-        .write(StockTakesTableCompanion(
-      status: const Value('completed'),
-      varianceItems: Value(varianceCount),
-      completedAt: Value(now),
-    ));
+    await (db.update(db.stockTakesTable)..where((t) => t.id.equals(id))).write(
+      StockTakesTableCompanion(
+        status: const Value('completed'),
+        varianceItems: Value(varianceCount),
+        completedAt: Value(now),
+      ),
+    );
 
     // إضافة للمزامنة
     try {
@@ -414,65 +425,70 @@ class ExpiryItemData {
   final ProductExpiryTableData expiry;
   final String productName;
 
-  const ExpiryItemData({
-    required this.expiry,
-    required this.productName,
-  });
+  const ExpiryItemData({required this.expiry, required this.productName});
 }
 
 /// مزود تتبع الصلاحية - جميع المنتجات خلال 90 يوم
-final expiryTrackingProvider =
-    FutureProvider.autoDispose<List<ExpiryItemData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
+final expiryTrackingProvider = FutureProvider.autoDispose<List<ExpiryItemData>>(
+  (ref) async {
+    final storeId = ref.watch(currentStoreIdProvider);
+    if (storeId == null) return [];
 
-  final db = GetIt.I<AppDatabase>();
-  final cutoff = DateTime.now().add(const Duration(days: 90));
+    final db = GetIt.I<AppDatabase>();
+    final cutoff = DateTime.now().add(const Duration(days: 90));
 
-  final records = await (db.select(db.productExpiryTable)
-        ..where((e) =>
-            e.storeId.equals(storeId) &
-            e.expiryDate.isSmallerOrEqualValue(cutoff))
-        ..orderBy([(e) => OrderingTerm.asc(e.expiryDate)]))
-      .get();
+    final records =
+        await (db.select(db.productExpiryTable)
+              ..where(
+                (e) =>
+                    e.storeId.equals(storeId) &
+                    e.expiryDate.isSmallerOrEqualValue(cutoff),
+              )
+              ..orderBy([(e) => OrderingTerm.asc(e.expiryDate)]))
+            .get();
 
-  // جلب أسماء المنتجات
-  final productIds = records.map((e) => e.productId).toSet().toList();
-  final Map<String, String> productNames = {};
-  for (final pid in productIds) {
-    try {
-      final product = await (db.select(db.productsTable)
-            ..where((p) => p.id.equals(pid)))
-          .getSingleOrNull();
-      if (product != null) {
-        productNames[pid] = product.name;
+    // جلب أسماء المنتجات
+    final productIds = records.map((e) => e.productId).toSet().toList();
+    final Map<String, String> productNames = {};
+    for (final pid in productIds) {
+      try {
+        final product = await (db.select(
+          db.productsTable,
+        )..where((p) => p.id.equals(pid))).getSingleOrNull();
+        if (product != null) {
+          productNames[pid] = product.name;
+        }
+      } catch (e) {
+        debugPrint('Error fetching product $pid: $e');
       }
-    } catch (e) {
-      debugPrint('Error fetching product $pid: $e');
     }
-  }
 
-  return records
-      .map((e) => ExpiryItemData(
+    return records
+        .map(
+          (e) => ExpiryItemData(
             expiry: e,
             productName: productNames[e.productId] ?? 'منتج غير معروف',
-          ))
-      .toList();
-});
+          ),
+        )
+        .toList();
+  },
+);
 
 /// مزود المنتجات التي تنتهي خلال عدد أيام محدد
 final expiringSoonProvider = FutureProvider.autoDispose
     .family<List<ExpiryItemData>, int>((ref, days) async {
-  final allItems = await ref.watch(expiryTrackingProvider.future);
-  final now = DateTime.now();
-  final cutoff = now.add(Duration(days: days));
+      final allItems = await ref.watch(expiryTrackingProvider.future);
+      final now = DateTime.now();
+      final cutoff = now.add(Duration(days: days));
 
-  return allItems
-      .where((item) =>
-          item.expiry.expiryDate.isBefore(cutoff) &&
-          item.expiry.expiryDate.isAfter(now))
-      .toList();
-});
+      return allItems
+          .where(
+            (item) =>
+                item.expiry.expiryDate.isBefore(cutoff) &&
+                item.expiry.expiryDate.isAfter(now),
+          )
+          .toList();
+    });
 
 /// إضافة سجل صلاحية جديد
 Future<String?> addExpiryRecord(
@@ -491,7 +507,9 @@ Future<String?> addExpiryRecord(
     final id = _uuid.v4();
     final now = DateTime.now();
 
-    await db.into(db.productExpiryTable).insert(
+    await db
+        .into(db.productExpiryTable)
+        .insert(
           ProductExpiryTableCompanion.insert(
             id: id,
             productId: productId,
@@ -538,8 +556,9 @@ Future<bool> deleteExpiryRecord(WidgetRef ref, String id) async {
   try {
     final db = GetIt.I<AppDatabase>();
 
-    await (db.delete(db.productExpiryTable)..where((e) => e.id.equals(id)))
-        .go();
+    await (db.delete(
+      db.productExpiryTable,
+    )..where((e) => e.id.equals(id))).go();
 
     // إضافة للمزامنة
     try {

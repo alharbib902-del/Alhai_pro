@@ -25,37 +25,51 @@ class LiteEmployeePerformanceScreen extends ConsumerWidget {
     final dataAsync = ref.watch(liteEmployeePerformanceProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.employees),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(l10n.employees), centerTitle: true),
       body: dataAsync.when(
         data: (employees) {
           if (employees.isEmpty) {
             return Center(
-              child: Text(l10n.noResults,
-                  style: TextStyle(
-                      color: isDark
-                          ? Colors.white54
-                          : Theme.of(context).colorScheme.onSurfaceVariant)),
+              child: Text(
+                l10n.noResults,
+                style: TextStyle(
+                  color: isDark
+                      ? Colors.white54
+                      : Theme.of(context).colorScheme.onSurfaceVariant,
+                ),
+              ),
             );
           }
           final activeCount = employees.length;
           return SingleChildScrollView(
-            padding:
-                EdgeInsets.all(isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg),
+            padding: EdgeInsets.all(
+              isMobile ? AlhaiSpacing.md : AlhaiSpacing.lg,
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildOverviewCards(context, isDark, isMobile, l10n,
-                    employees.length, activeCount),
+                _buildOverviewCards(
+                  context,
+                  isDark,
+                  isMobile,
+                  l10n,
+                  employees.length,
+                  activeCount,
+                ),
                 const SizedBox(height: AlhaiSpacing.lg),
                 _buildSectionTitle(
-                    l10n.performanceOverview, Icons.leaderboard, isDark),
+                  l10n.performanceOverview,
+                  Icons.leaderboard,
+                  isDark,
+                ),
                 const SizedBox(height: AlhaiSpacing.sm),
                 ...employees.asMap().entries.map((entry) {
                   return _buildEmployeeTile(
-                      context, entry.value, entry.key, isDark);
+                    context,
+                    entry.value,
+                    entry.key,
+                    isDark,
+                  );
                 }),
                 const SizedBox(height: AlhaiSpacing.lg),
               ],
@@ -81,13 +95,27 @@ class LiteEmployeePerformanceScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildOverviewCards(BuildContext context, bool isDark, bool isMobile,
-      AppLocalizations l10n, int total, int active) {
+  Widget _buildOverviewCards(
+    BuildContext context,
+    bool isDark,
+    bool isMobile,
+    AppLocalizations l10n,
+    int total,
+    int active,
+  ) {
     final items = [
       _OverviewItem(
-          l10n.employees, '$total', Icons.people, AlhaiColors.primary),
+        l10n.employees,
+        '$total',
+        Icons.people,
+        AlhaiColors.primary,
+      ),
       _OverviewItem(
-          l10n.active, '$active', Icons.check_circle, AlhaiColors.success),
+        l10n.active,
+        '$active',
+        Icons.check_circle,
+        AlhaiColors.success,
+      ),
     ];
 
     return Row(
@@ -161,8 +189,12 @@ class LiteEmployeePerformanceScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildEmployeeTile(BuildContext context, EmployeePerformanceData emp,
-      int index, bool isDark) {
+  Widget _buildEmployeeTile(
+    BuildContext context,
+    EmployeePerformanceData emp,
+    int index,
+    bool isDark,
+  ) {
     final rank = index + 1;
     final rankColor = rank <= 3 ? AlhaiColors.warning : Colors.transparent;
 

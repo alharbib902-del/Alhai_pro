@@ -12,9 +12,8 @@ import '../suppliers_repository.dart';
 class SuppliersRepositoryImpl implements SuppliersRepository {
   final SuppliersRemoteDataSource _remote;
 
-  SuppliersRepositoryImpl({
-    required SuppliersRemoteDataSource remote,
-  }) : _remote = remote;
+  SuppliersRepositoryImpl({required SuppliersRemoteDataSource remote})
+    : _remote = remote;
 
   @override
   Future<Paginated<Supplier>> getSuppliers(
@@ -68,7 +67,9 @@ class SuppliersRepositoryImpl implements SuppliersRepository {
 
   @override
   Future<Supplier> updateSupplier(
-      String id, UpdateSupplierParams params) async {
+    String id,
+    UpdateSupplierParams params,
+  ) async {
     try {
       final request = UpdateSupplierRequest.fromDomain(params);
       final response = await _remote.updateSupplier(id, request);

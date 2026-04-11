@@ -76,13 +76,15 @@ void main() {
       // Use a Completer that never completes to keep the provider in loading state
       final completer = Completer<List<ReturnsTableData>>();
 
-      await tester.pumpWidget(createTestWidget(
-        const ApprovalCenterScreen(),
-        overrides: [
-          pendingRefundsProvider.overrideWith((ref) => completer.future),
-          pendingApprovalsCountProvider.overrideWith((ref) async => 0),
-        ],
-      ));
+      await tester.pumpWidget(
+        createTestWidget(
+          const ApprovalCenterScreen(),
+          overrides: [
+            pendingRefundsProvider.overrideWith((ref) => completer.future),
+            pendingApprovalsCountProvider.overrideWith((ref) async => 0),
+          ],
+        ),
+      );
       await tester.pump();
 
       expect(find.byType(ApprovalCenterScreen), findsOneWidget);
@@ -97,10 +99,12 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(buildScreen(
-        refundsValue: const AsyncValue.data([]),
-        countValue: const AsyncValue.data(0),
-      ));
+      await tester.pumpWidget(
+        buildScreen(
+          refundsValue: const AsyncValue.data([]),
+          countValue: const AsyncValue.data(0),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Filter chips should be present
@@ -115,10 +119,12 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(buildScreen(
-        refundsValue: const AsyncValue.data([]),
-        countValue: const AsyncValue.data(0),
-      ));
+      await tester.pumpWidget(
+        buildScreen(
+          refundsValue: const AsyncValue.data([]),
+          countValue: const AsyncValue.data(0),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Empty state icon
@@ -150,10 +156,12 @@ void main() {
         ),
       ];
 
-      await tester.pumpWidget(buildScreen(
-        refundsValue: AsyncValue.data(refunds),
-        countValue: const AsyncValue.data(1),
-      ));
+      await tester.pumpWidget(
+        buildScreen(
+          refundsValue: AsyncValue.data(refunds),
+          countValue: const AsyncValue.data(1),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Return numbers should be visible
@@ -167,24 +175,23 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('pending refund card shows approve and reject buttons',
-        (tester) async {
+    testWidgets('pending refund card shows approve and reject buttons', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
       final refunds = [
-        createTestReturn(
-          id: 'r1',
-          returnNumber: 'RET-001',
-          status: 'pending',
-        ),
+        createTestReturn(id: 'r1', returnNumber: 'RET-001', status: 'pending'),
       ];
 
-      await tester.pumpWidget(buildScreen(
-        refundsValue: AsyncValue.data(refunds),
-        countValue: const AsyncValue.data(1),
-      ));
+      await tester.pumpWidget(
+        buildScreen(
+          refundsValue: AsyncValue.data(refunds),
+          countValue: const AsyncValue.data(1),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Approve and reject buttons via icons
@@ -195,24 +202,23 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('approved refund card does not show action buttons',
-        (tester) async {
+    testWidgets('approved refund card does not show action buttons', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
       final refunds = [
-        createTestReturn(
-          id: 'r1',
-          returnNumber: 'RET-001',
-          status: 'approved',
-        ),
+        createTestReturn(id: 'r1', returnNumber: 'RET-001', status: 'approved'),
       ];
 
-      await tester.pumpWidget(buildScreen(
-        refundsValue: AsyncValue.data(refunds),
-        countValue: const AsyncValue.data(0),
-      ));
+      await tester.pumpWidget(
+        buildScreen(
+          refundsValue: AsyncValue.data(refunds),
+          countValue: const AsyncValue.data(0),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Should not show approve/reject action buttons
@@ -228,11 +234,15 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(buildScreen(
-        refundsValue:
-            AsyncValue.error(Exception('Load error'), StackTrace.current),
-        countValue: const AsyncValue.data(0),
-      ));
+      await tester.pumpWidget(
+        buildScreen(
+          refundsValue: AsyncValue.error(
+            Exception('Load error'),
+            StackTrace.current,
+          ),
+          countValue: const AsyncValue.data(0),
+        ),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.error_outline), findsOneWidget);
@@ -247,10 +257,12 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      await tester.pumpWidget(buildScreen(
-        refundsValue: const AsyncValue.data([]),
-        countValue: const AsyncValue.data(7),
-      ));
+      await tester.pumpWidget(
+        buildScreen(
+          refundsValue: const AsyncValue.data([]),
+          countValue: const AsyncValue.data(7),
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Badge showing count

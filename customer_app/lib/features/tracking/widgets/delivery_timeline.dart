@@ -83,7 +83,7 @@ class DeliveryTimeline extends StatelessWidget {
       [
         DeliveryStatus.accepted,
         DeliveryStatus.headingToPickup,
-        DeliveryStatus.arrivedAtPickup
+        DeliveryStatus.arrivedAtPickup,
       ],
       [DeliveryStatus.pickedUp],
       [DeliveryStatus.headingToCustomer, DeliveryStatus.arrivedAtCustomer],

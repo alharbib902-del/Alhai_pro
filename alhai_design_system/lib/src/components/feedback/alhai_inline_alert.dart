@@ -331,11 +331,7 @@ class AlhaiInlineAlert extends StatelessWidget {
         break;
     }
 
-    return Icon(
-      iconData,
-      size: AlhaiSpacing.lg,
-      color: colors.icon,
-    );
+    return Icon(iconData, size: AlhaiSpacing.lg, color: colors.icon);
   }
 }
 

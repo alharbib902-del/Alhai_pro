@@ -34,8 +34,9 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
       children: [
         AppHeader(
           title: l10n.language,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
@@ -44,7 +45,8 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
         Expanded(
           child: SingleChildScrollView(
             padding: EdgeInsets.all(
-                isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
+              isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+            ),
             child: _buildContent(isWideScreen, isMediumScreen, isDark, l10n),
           ),
         ),
@@ -52,8 +54,12 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
     );
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen, bool isDark,
-      AppLocalizations l10n) {
+  Widget _buildContent(
+    bool isWideScreen,
+    bool isMediumScreen,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final localeState = ref.watch(localeProvider);
     final currentLocale = localeState.locale;
 
@@ -68,9 +74,7 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
                 ? AppColors.info.withValues(alpha: 0.15)
                 : AppColors.info.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: AppColors.info.withValues(alpha: 0.3),
-            ),
+            border: Border.all(color: AppColors.info.withValues(alpha: 0.3)),
           ),
           child: Row(
             children: [
@@ -114,7 +118,8 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                          '\u062A\u0645 \u062A\u063A\u064A\u064A\u0631 \u0627\u0644\u0644\u063A\u0629 \u0625\u0644\u0649 $nativeName'),
+                        '\u062A\u0645 \u062A\u063A\u064A\u064A\u0631 \u0627\u0644\u0644\u063A\u0629 \u0625\u0644\u0649 $nativeName',
+                      ),
                       backgroundColor: AppColors.success,
                       behavior: SnackBarBehavior.floating,
                       duration: const Duration(seconds: 2),
@@ -136,9 +141,7 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,7 +196,9 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
             SizedBox(width: AlhaiSpacing.xs),
             Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: 6, vertical: AlhaiSpacing.xxxs),
+                horizontal: 6,
+                vertical: AlhaiSpacing.xxxs,
+              ),
               decoration: BoxDecoration(
                 color: AppColors.info.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(4),
@@ -282,7 +287,8 @@ class LanguagePickerDialog extends ConsumerWidget {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
                       content: Text(
-                          '\u062A\u0645 \u062A\u063A\u064A\u064A\u0631 \u0627\u0644\u0644\u063A\u0629 \u0625\u0644\u0649 $nativeName'),
+                        '\u062A\u0645 \u062A\u063A\u064A\u064A\u0631 \u0627\u0644\u0644\u063A\u0629 \u0625\u0644\u0649 $nativeName',
+                      ),
                       backgroundColor: AppColors.success,
                       behavior: SnackBarBehavior.floating,
                     ),

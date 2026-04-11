@@ -11,12 +11,14 @@ void main() {
     // loyalty references customers via FK
     final now = DateTime(2025, 1, 1);
     for (var i = 0; i <= 4; i++) {
-      await db.customersDao.insertCustomer(CustomersTableCompanion.insert(
-        id: 'cust-$i',
-        storeId: 'store-1',
-        name: 'Cust $i',
-        createdAt: now,
-      ));
+      await db.customersDao.insertCustomer(
+        CustomersTableCompanion.insert(
+          id: 'cust-$i',
+          storeId: 'store-1',
+          name: 'Cust $i',
+          createdAt: now,
+        ),
+      );
     }
   });
 
@@ -49,8 +51,10 @@ void main() {
     test('createLoyalty and getCustomerLoyalty', () async {
       await db.loyaltyDao.createLoyalty(makeLoyalty());
 
-      final loyalty =
-          await db.loyaltyDao.getCustomerLoyalty('cust-1', 'store-1');
+      final loyalty = await db.loyaltyDao.getCustomerLoyalty(
+        'cust-1',
+        'store-1',
+      );
       expect(loyalty, isNotNull);
       expect(loyalty!.currentPoints, 100);
       expect(loyalty.totalEarned, 200);
@@ -66,15 +70,16 @@ void main() {
     });
 
     test('addPoints increases points and totalEarned', () async {
-      await db.loyaltyDao.createLoyalty(makeLoyalty(
-        currentPoints: 100,
-        totalEarned: 200,
-      ));
+      await db.loyaltyDao.createLoyalty(
+        makeLoyalty(currentPoints: 100, totalEarned: 200),
+      );
 
       await db.loyaltyDao.addPoints('cust-1', 'store-1', 50);
 
-      final loyalty =
-          await db.loyaltyDao.getCustomerLoyalty('cust-1', 'store-1');
+      final loyalty = await db.loyaltyDao.getCustomerLoyalty(
+        'cust-1',
+        'store-1',
+      );
       expect(loyalty!.currentPoints, 150);
       expect(loyalty.totalEarned, 250);
     });
@@ -85,8 +90,10 @@ void main() {
       final result = await db.loyaltyDao.redeemPoints('cust-1', 'store-1', 50);
       expect(result, true);
 
-      final loyalty =
-          await db.loyaltyDao.getCustomerLoyalty('cust-1', 'store-1');
+      final loyalty = await db.loyaltyDao.getCustomerLoyalty(
+        'cust-1',
+        'store-1',
+      );
       expect(loyalty!.currentPoints, 150);
     });
 
@@ -99,11 +106,9 @@ void main() {
 
     test('getAllLoyaltyAccounts returns all for store', () async {
       await db.loyaltyDao.createLoyalty(makeLoyalty());
-      await db.loyaltyDao.createLoyalty(makeLoyalty(
-        id: 'lp-2',
-        customerId: 'cust-2',
-        currentPoints: 500,
-      ));
+      await db.loyaltyDao.createLoyalty(
+        makeLoyalty(id: 'lp-2', customerId: 'cust-2', currentPoints: 500),
+      );
 
       final accounts = await db.loyaltyDao.getAllLoyaltyAccounts('store-1');
       expect(accounts, hasLength(2));
@@ -113,11 +118,9 @@ void main() {
 
     test('getTopCustomers returns limited results', () async {
       for (var i = 0; i < 5; i++) {
-        await db.loyaltyDao.createLoyalty(makeLoyalty(
-          id: 'lp-$i',
-          customerId: 'cust-$i',
-          totalEarned: i * 100,
-        ));
+        await db.loyaltyDao.createLoyalty(
+          makeLoyalty(id: 'lp-$i', customerId: 'cust-$i', totalEarned: i * 100),
+        );
       }
 
       final top = await db.loyaltyDao.getTopCustomers('store-1', limit: 3);
@@ -125,16 +128,12 @@ void main() {
     });
 
     test('getCustomersByTier filters correctly', () async {
-      await db.loyaltyDao.createLoyalty(makeLoyalty(
-        id: 'lp-1',
-        customerId: 'cust-1',
-        tierLevel: 'gold',
-      ));
-      await db.loyaltyDao.createLoyalty(makeLoyalty(
-        id: 'lp-2',
-        customerId: 'cust-2',
-        tierLevel: 'bronze',
-      ));
+      await db.loyaltyDao.createLoyalty(
+        makeLoyalty(id: 'lp-1', customerId: 'cust-1', tierLevel: 'gold'),
+      );
+      await db.loyaltyDao.createLoyalty(
+        makeLoyalty(id: 'lp-2', customerId: 'cust-2', tierLevel: 'bronze'),
+      );
 
       final gold = await db.loyaltyDao.getCustomersByTier('store-1', 'gold');
       expect(gold, hasLength(1));
@@ -160,8 +159,10 @@ void main() {
         ),
       );
 
-      final txns =
-          await db.loyaltyDao.getCustomerTransactions('cust-1', 'store-1');
+      final txns = await db.loyaltyDao.getCustomerTransactions(
+        'cust-1',
+        'store-1',
+      );
       expect(txns, hasLength(1));
       expect(txns.first.transactionType, 'earn');
       expect(txns.first.points, 50);

@@ -92,18 +92,16 @@ class _QuickActionButtonState extends State<QuickActionButton>
       child: AnimatedBuilder(
         animation: _scaleAnimation,
         builder: (context, child) {
-          return Transform.scale(
-            scale: _scaleAnimation.value,
-            child: child,
-          );
+          return Transform.scale(scale: _scaleAnimation.value, child: child);
         },
         child: Container(
           padding: EdgeInsets.all(widget.compact ? 16 : 20),
           decoration: BoxDecoration(
             color: action.isPrimary ? action.color : Colors.white,
             borderRadius: BorderRadius.circular(16),
-            border:
-                action.isPrimary ? null : Border.all(color: AppColors.border),
+            border: action.isPrimary
+                ? null
+                : Border.all(color: AppColors.border),
             boxShadow: [
               BoxShadow(
                 color: action.isPrimary
@@ -147,10 +145,7 @@ class _QuickActionButtonState extends State<QuickActionButton>
                         decoration: BoxDecoration(
                           color: AppColors.error,
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(
-                            color: Colors.white,
-                            width: 2,
-                          ),
+                          border: Border.all(color: Colors.white, width: 2),
                         ),
                         child: Text(
                           action.badge!,
@@ -171,8 +166,9 @@ class _QuickActionButtonState extends State<QuickActionButton>
               Text(
                 action.title,
                 style: TextStyle(
-                  color:
-                      action.isPrimary ? Colors.white : AppColors.textPrimary,
+                  color: action.isPrimary
+                      ? Colors.white
+                      : AppColors.textPrimary,
                   fontSize: widget.compact ? 12 : 14,
                   fontWeight: FontWeight.w600,
                 ),
@@ -215,10 +211,8 @@ class QuickActionGrid extends StatelessWidget {
         childAspectRatio: 1.0,
       ),
       itemCount: actions.length,
-      itemBuilder: (context, index) => QuickActionButton(
-        action: actions[index],
-        compact: compact,
-      ),
+      itemBuilder: (context, index) =>
+          QuickActionButton(action: actions[index], compact: compact),
     );
   }
 }
@@ -243,10 +237,7 @@ class QuickActionRow extends StatelessWidget {
         for (int i = 0; i < actions.length; i++) ...[
           if (i > 0) SizedBox(width: spacing),
           Expanded(
-            child: QuickActionButton(
-              action: actions[i],
-              compact: compact,
-            ),
+            child: QuickActionButton(action: actions[i], compact: compact),
           ),
         ],
       ],
@@ -256,8 +247,10 @@ class QuickActionRow extends StatelessWidget {
 
 /// الإجراءات السريعة الافتراضية
 class DefaultQuickActions {
-  static QuickAction newSale(
-      {required BuildContext context, VoidCallback? onTap}) {
+  static QuickAction newSale({
+    required BuildContext context,
+    VoidCallback? onTap,
+  }) {
     final l10n = AppLocalizations.of(context);
     return QuickAction(
       id: 'new_sale',
@@ -269,8 +262,10 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction addProduct(
-      {required BuildContext context, VoidCallback? onTap}) {
+  static QuickAction addProduct({
+    required BuildContext context,
+    VoidCallback? onTap,
+  }) {
     final l10n = AppLocalizations.of(context);
     return QuickAction(
       id: 'add_product',
@@ -281,8 +276,10 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction refund(
-      {required BuildContext context, VoidCallback? onTap}) {
+  static QuickAction refund({
+    required BuildContext context,
+    VoidCallback? onTap,
+  }) {
     final l10n = AppLocalizations.of(context);
     return QuickAction(
       id: 'refund',
@@ -293,8 +290,10 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction dailyReport(
-      {required BuildContext context, VoidCallback? onTap}) {
+  static QuickAction dailyReport({
+    required BuildContext context,
+    VoidCallback? onTap,
+  }) {
     final l10n = AppLocalizations.of(context);
     return QuickAction(
       id: 'daily_report',
@@ -305,8 +304,11 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction inventory(
-      {required BuildContext context, VoidCallback? onTap, String? badge}) {
+  static QuickAction inventory({
+    required BuildContext context,
+    VoidCallback? onTap,
+    String? badge,
+  }) {
     final l10n = AppLocalizations.of(context);
     return QuickAction(
       id: 'inventory',
@@ -318,8 +320,10 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction customers(
-      {required BuildContext context, VoidCallback? onTap}) {
+  static QuickAction customers({
+    required BuildContext context,
+    VoidCallback? onTap,
+  }) {
     final l10n = AppLocalizations.of(context);
     return QuickAction(
       id: 'customers',
@@ -330,8 +334,10 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction settings(
-      {required BuildContext context, VoidCallback? onTap}) {
+  static QuickAction settings({
+    required BuildContext context,
+    VoidCallback? onTap,
+  }) {
     final l10n = AppLocalizations.of(context);
     return QuickAction(
       id: 'settings',
@@ -342,8 +348,10 @@ class DefaultQuickActions {
     );
   }
 
-  static QuickAction closeDay(
-      {required BuildContext context, VoidCallback? onTap}) {
+  static QuickAction closeDay({
+    required BuildContext context,
+    VoidCallback? onTap,
+  }) {
     final l10n = AppLocalizations.of(context);
     return QuickAction(
       id: 'close_day',
@@ -355,11 +363,11 @@ class DefaultQuickActions {
   }
 
   static List<QuickAction> defaultActions(BuildContext context) => [
-        newSale(context: context),
-        addProduct(context: context),
-        refund(context: context),
-        dailyReport(context: context),
-      ];
+    newSale(context: context),
+    addProduct(context: context),
+    refund(context: context),
+    dailyReport(context: context),
+  ];
 }
 
 /// قسم الإجراءات السريعة مع العنوان
@@ -422,10 +430,7 @@ class QuickActionsSection extends StatelessWidget {
         SizedBox(height: AlhaiSpacing.md),
 
         // الشبكة
-        QuickActionGrid(
-          actions: actions,
-          crossAxisCount: crossAxisCount,
-        ),
+        QuickActionGrid(actions: actions, crossAxisCount: crossAxisCount),
       ],
     );
   }

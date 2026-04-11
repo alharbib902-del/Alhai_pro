@@ -26,13 +26,18 @@ final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeState>((ref) {
 });
 
 void main() {
-  runZonedGuarded(() async {
-    await initSentry(appRunner: () async {
-      await _appMain();
-    });
-  }, (error, stack) {
-    reportError(error, stackTrace: stack, hint: 'runZonedGuarded');
-  });
+  runZonedGuarded(
+    () async {
+      await initSentry(
+        appRunner: () async {
+          await _appMain();
+        },
+      );
+    },
+    (error, stack) {
+      reportError(error, stackTrace: stack, hint: 'runZonedGuarded');
+    },
+  );
 }
 
 Future<void> _appMain() async {
@@ -115,8 +120,9 @@ Future<void> _appMain() async {
     ProviderScope(
       overrides: [
         themeProvider.overrideWith((ref) => ThemeNotifier(initialThemeMode)),
-        adminOnboardingSeenProvider
-            .overrideWith((ref) => hasSeenOnboardingFlag),
+        adminOnboardingSeenProvider.overrideWith(
+          (ref) => hasSeenOnboardingFlag,
+        ),
       ],
       child: const AdminApp(),
     ),
@@ -140,7 +146,8 @@ Future<String> _getOrCreateDbKey() async {
     //   3. Using WebCrypto API with non-extractable keys
     if (kDebugMode) {
       debugPrint(
-          'WARNING: DB encryption key stored in localStorage (insecure on web)');
+        'WARNING: DB encryption key stored in localStorage (insecure on web)',
+      );
     }
     final prefs = await SharedPreferences.getInstance();
     var key = prefs.getString('secure_storage_$keyName');
@@ -156,7 +163,8 @@ Future<String> _getOrCreateDbKey() async {
     const storage = FlutterSecureStorage(
       aOptions: AndroidOptions(encryptedSharedPreferences: true),
       iOptions: IOSOptions(
-          accessibility: KeychainAccessibility.first_unlock_this_device),
+        accessibility: KeychainAccessibility.first_unlock_this_device,
+      ),
     );
     var key = await storage.read(key: keyName);
     if (key == null) {

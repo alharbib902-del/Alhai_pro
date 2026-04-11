@@ -51,55 +51,70 @@ List<Override> defaultProviderOverrides({
   final mockSyncService = MockSyncService();
 
   // Make sync queue methods return silently by default
-  when(() => mockSyncService.enqueueCreate(
-        tableName: any(named: 'tableName'),
-        recordId: any(named: 'recordId'),
-        data: any(named: 'data'),
-        priority: any(named: 'priority'),
-      )).thenAnswer((_) async => 'mock-sync-id');
+  when(
+    () => mockSyncService.enqueueCreate(
+      tableName: any(named: 'tableName'),
+      recordId: any(named: 'recordId'),
+      data: any(named: 'data'),
+      priority: any(named: 'priority'),
+    ),
+  ).thenAnswer((_) async => 'mock-sync-id');
 
-  when(() => mockSyncService.enqueueUpdate(
-        tableName: any(named: 'tableName'),
-        recordId: any(named: 'recordId'),
-        changes: any(named: 'changes'),
-        priority: any(named: 'priority'),
-      )).thenAnswer((_) async => 'mock-sync-id');
+  when(
+    () => mockSyncService.enqueueUpdate(
+      tableName: any(named: 'tableName'),
+      recordId: any(named: 'recordId'),
+      changes: any(named: 'changes'),
+      priority: any(named: 'priority'),
+    ),
+  ).thenAnswer((_) async => 'mock-sync-id');
 
-  when(() => mockSyncService.enqueueDelete(
-        tableName: any(named: 'tableName'),
-        recordId: any(named: 'recordId'),
-        priority: any(named: 'priority'),
-      )).thenAnswer((_) async => 'mock-sync-id');
+  when(
+    () => mockSyncService.enqueueDelete(
+      tableName: any(named: 'tableName'),
+      recordId: any(named: 'recordId'),
+      priority: any(named: 'priority'),
+    ),
+  ).thenAnswer((_) async => 'mock-sync-id');
 
   when(() => mockSyncService.getPendingCount()).thenAnswer((_) async => 0);
 
-  when(() => mockSyncService.watchPendingCount())
-      .thenAnswer((_) => Stream.value(0));
+  when(
+    () => mockSyncService.watchPendingCount(),
+  ).thenAnswer((_) => Stream.value(0));
 
-  when(() => mockSyncService.watchPendingItems())
-      .thenAnswer((_) => Stream.value([]));
+  when(
+    () => mockSyncService.watchPendingItems(),
+  ).thenAnswer((_) => Stream.value([]));
 
-  when(() => mockSyncService.watchConflictItems())
-      .thenAnswer((_) => Stream.value([]));
+  when(
+    () => mockSyncService.watchConflictItems(),
+  ).thenAnswer((_) => Stream.value([]));
 
-  when(() => mockSyncService.watchConflictCount())
-      .thenAnswer((_) => Stream.value(0));
+  when(
+    () => mockSyncService.watchConflictCount(),
+  ).thenAnswer((_) => Stream.value(0));
 
   // SyncManager.initialize() and syncPending() call these methods:
-  when(() => mockSyncService.getPendingItems())
-      .thenAnswer((_) async => <SyncQueueTableData>[]);
+  when(
+    () => mockSyncService.getPendingItems(),
+  ).thenAnswer((_) async => <SyncQueueTableData>[]);
 
-  when(() => mockSyncService.getConflictItems())
-      .thenAnswer((_) async => <SyncQueueTableData>[]);
+  when(
+    () => mockSyncService.getConflictItems(),
+  ).thenAnswer((_) async => <SyncQueueTableData>[]);
 
-  when(() => mockSyncService.getStuckSyncingItems())
-      .thenAnswer((_) async => <SyncQueueTableData>[]);
+  when(
+    () => mockSyncService.getStuckSyncingItems(),
+  ).thenAnswer((_) async => <SyncQueueTableData>[]);
 
   when(() => mockSyncService.resetStuckItems()).thenAnswer((_) async => 0);
 
-  when(() => mockSyncService.recoverStuckSyncingItems(
-        stuckThreshold: any(named: 'stuckThreshold'),
-      )).thenAnswer((_) async => 0);
+  when(
+    () => mockSyncService.recoverStuckSyncingItems(
+      stuckThreshold: any(named: 'stuckThreshold'),
+    ),
+  ).thenAnswer((_) async => 0);
 
   when(() => mockSyncService.retryItem(any())).thenAnswer((_) async {});
 
@@ -107,22 +122,27 @@ List<Override> defaultProviderOverrides({
 
   when(() => mockSyncService.markAsSynced(any())).thenAnswer((_) async {});
 
-  when(() => mockSyncService.markAsFailed(any(), any()))
-      .thenAnswer((_) async {});
+  when(
+    () => mockSyncService.markAsFailed(any(), any()),
+  ).thenAnswer((_) async {});
 
-  when(() => mockSyncService.cleanup(olderThan: any(named: 'olderThan')))
-      .thenAnswer((_) async => 0);
+  when(
+    () => mockSyncService.cleanup(olderThan: any(named: 'olderThan')),
+  ).thenAnswer((_) async => 0);
 
-  when(() => mockSyncService.getDeadLetterItems())
-      .thenAnswer((_) async => <SyncQueueTableData>[]);
+  when(
+    () => mockSyncService.getDeadLetterItems(),
+  ).thenAnswer((_) async => <SyncQueueTableData>[]);
 
   when(() => mockSyncService.getDeadLetterCount()).thenAnswer((_) async => 0);
 
-  when(() => mockSyncService.watchDeadLetterCount())
-      .thenAnswer((_) => Stream.value(0));
+  when(
+    () => mockSyncService.watchDeadLetterCount(),
+  ).thenAnswer((_) => Stream.value(0));
 
-  when(() => mockSyncService.watchPendingCountWithOldest())
-      .thenAnswer((_) => Stream.value((count: 0, oldestAt: null)));
+  when(
+    () => mockSyncService.watchPendingCountWithOldest(),
+  ).thenAnswer((_) => Stream.value((count: 0, oldestAt: null)));
 
   // Create a test user for auth providers
   final testUser = User(
@@ -155,54 +175,69 @@ MockSyncService createMockSyncService() {
   registerFallbackValue(SyncPriority.normal);
   final mockSyncService = MockSyncService();
 
-  when(() => mockSyncService.enqueueCreate(
-        tableName: any(named: 'tableName'),
-        recordId: any(named: 'recordId'),
-        data: any(named: 'data'),
-        priority: any(named: 'priority'),
-      )).thenAnswer((_) async => 'mock-sync-id');
+  when(
+    () => mockSyncService.enqueueCreate(
+      tableName: any(named: 'tableName'),
+      recordId: any(named: 'recordId'),
+      data: any(named: 'data'),
+      priority: any(named: 'priority'),
+    ),
+  ).thenAnswer((_) async => 'mock-sync-id');
 
-  when(() => mockSyncService.enqueueUpdate(
-        tableName: any(named: 'tableName'),
-        recordId: any(named: 'recordId'),
-        changes: any(named: 'changes'),
-        priority: any(named: 'priority'),
-      )).thenAnswer((_) async => 'mock-sync-id');
+  when(
+    () => mockSyncService.enqueueUpdate(
+      tableName: any(named: 'tableName'),
+      recordId: any(named: 'recordId'),
+      changes: any(named: 'changes'),
+      priority: any(named: 'priority'),
+    ),
+  ).thenAnswer((_) async => 'mock-sync-id');
 
-  when(() => mockSyncService.enqueueDelete(
-        tableName: any(named: 'tableName'),
-        recordId: any(named: 'recordId'),
-        priority: any(named: 'priority'),
-      )).thenAnswer((_) async => 'mock-sync-id');
+  when(
+    () => mockSyncService.enqueueDelete(
+      tableName: any(named: 'tableName'),
+      recordId: any(named: 'recordId'),
+      priority: any(named: 'priority'),
+    ),
+  ).thenAnswer((_) async => 'mock-sync-id');
 
   when(() => mockSyncService.getPendingCount()).thenAnswer((_) async => 0);
 
-  when(() => mockSyncService.watchPendingCount())
-      .thenAnswer((_) => Stream.value(0));
+  when(
+    () => mockSyncService.watchPendingCount(),
+  ).thenAnswer((_) => Stream.value(0));
 
-  when(() => mockSyncService.watchPendingItems())
-      .thenAnswer((_) => Stream.value([]));
+  when(
+    () => mockSyncService.watchPendingItems(),
+  ).thenAnswer((_) => Stream.value([]));
 
-  when(() => mockSyncService.watchConflictItems())
-      .thenAnswer((_) => Stream.value([]));
+  when(
+    () => mockSyncService.watchConflictItems(),
+  ).thenAnswer((_) => Stream.value([]));
 
-  when(() => mockSyncService.watchConflictCount())
-      .thenAnswer((_) => Stream.value(0));
+  when(
+    () => mockSyncService.watchConflictCount(),
+  ).thenAnswer((_) => Stream.value(0));
 
-  when(() => mockSyncService.getPendingItems())
-      .thenAnswer((_) async => <SyncQueueTableData>[]);
+  when(
+    () => mockSyncService.getPendingItems(),
+  ).thenAnswer((_) async => <SyncQueueTableData>[]);
 
-  when(() => mockSyncService.getConflictItems())
-      .thenAnswer((_) async => <SyncQueueTableData>[]);
+  when(
+    () => mockSyncService.getConflictItems(),
+  ).thenAnswer((_) async => <SyncQueueTableData>[]);
 
-  when(() => mockSyncService.getStuckSyncingItems())
-      .thenAnswer((_) async => <SyncQueueTableData>[]);
+  when(
+    () => mockSyncService.getStuckSyncingItems(),
+  ).thenAnswer((_) async => <SyncQueueTableData>[]);
 
   when(() => mockSyncService.resetStuckItems()).thenAnswer((_) async => 0);
 
-  when(() => mockSyncService.recoverStuckSyncingItems(
-        stuckThreshold: any(named: 'stuckThreshold'),
-      )).thenAnswer((_) async => 0);
+  when(
+    () => mockSyncService.recoverStuckSyncingItems(
+      stuckThreshold: any(named: 'stuckThreshold'),
+    ),
+  ).thenAnswer((_) async => 0);
 
   when(() => mockSyncService.retryItem(any())).thenAnswer((_) async {});
 
@@ -210,22 +245,27 @@ MockSyncService createMockSyncService() {
 
   when(() => mockSyncService.markAsSynced(any())).thenAnswer((_) async {});
 
-  when(() => mockSyncService.markAsFailed(any(), any()))
-      .thenAnswer((_) async {});
+  when(
+    () => mockSyncService.markAsFailed(any(), any()),
+  ).thenAnswer((_) async {});
 
-  when(() => mockSyncService.cleanup(olderThan: any(named: 'olderThan')))
-      .thenAnswer((_) async => 0);
+  when(
+    () => mockSyncService.cleanup(olderThan: any(named: 'olderThan')),
+  ).thenAnswer((_) async => 0);
 
-  when(() => mockSyncService.getDeadLetterItems())
-      .thenAnswer((_) async => <SyncQueueTableData>[]);
+  when(
+    () => mockSyncService.getDeadLetterItems(),
+  ).thenAnswer((_) async => <SyncQueueTableData>[]);
 
   when(() => mockSyncService.getDeadLetterCount()).thenAnswer((_) async => 0);
 
-  when(() => mockSyncService.watchDeadLetterCount())
-      .thenAnswer((_) => Stream.value(0));
+  when(
+    () => mockSyncService.watchDeadLetterCount(),
+  ).thenAnswer((_) => Stream.value(0));
 
-  when(() => mockSyncService.watchPendingCountWithOldest())
-      .thenAnswer((_) => Stream.value((count: 0, oldestAt: null)));
+  when(
+    () => mockSyncService.watchPendingCountWithOldest(),
+  ).thenAnswer((_) => Stream.value((count: 0, oldestAt: null)));
 
   return mockSyncService;
 }

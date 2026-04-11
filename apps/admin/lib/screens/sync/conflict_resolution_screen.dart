@@ -36,16 +36,19 @@ class _ConflictResolutionScreenState
       children: [
         AppHeader(
           title: l10n.conflictResolutionTitle,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 0,
           userName: l10n.defaultUserName,
           userRole: l10n.branchManager,
           actions: [
             IconButton(
-              icon: Icon(Icons.refresh,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+              icon: Icon(
+                Icons.refresh,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               onPressed: () => ref.invalidate(conflictSyncItemsProvider),
             ),
           ],
@@ -57,8 +60,11 @@ class _ConflictResolutionScreenState
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.error_outline,
-                      size: 64, color: AppColors.error),
+                  const Icon(
+                    Icons.error_outline,
+                    size: 64,
+                    color: AppColors.error,
+                  ),
                   const SizedBox(height: AlhaiSpacing.md),
                   Text(
                     error.toString(),
@@ -83,10 +89,13 @@ class _ConflictResolutionScreenState
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.check_circle,
-                          size: 64,
-                          color: AppColors.success
-                              .withValues(alpha: isDark ? 0.5 : 1.0)),
+                      Icon(
+                        Icons.check_circle,
+                        size: 64,
+                        color: AppColors.success.withValues(
+                          alpha: isDark ? 0.5 : 1.0,
+                        ),
+                      ),
                       const SizedBox(height: AlhaiSpacing.md),
                       Text(
                         l10n.noConflicts,
@@ -103,7 +112,12 @@ class _ConflictResolutionScreenState
               return SingleChildScrollView(
                 padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
                 child: _buildContent(
-                    conflicts, isWideScreen, isMediumScreen, isDark, l10n),
+                  conflicts,
+                  isWideScreen,
+                  isMediumScreen,
+                  isDark,
+                  l10n,
+                ),
               );
             },
           ),
@@ -217,7 +231,9 @@ class _ConflictResolutionScreenState
   // ===========================================================================
 
   Future<void> _resolveConflict(
-      SyncQueueTableData conflict, String choice) async {
+    SyncQueueTableData conflict,
+    String choice,
+  ) async {
     setState(() => _isResolving = true);
     final messenger = ScaffoldMessenger.of(context);
     final l10n = AppLocalizations.of(context);
@@ -229,9 +245,11 @@ class _ConflictResolutionScreenState
       if (!mounted) return;
       messenger.showSnackBar(
         SnackBar(
-          content: Text(choice == 'local'
-              ? l10n.conflictResolvedLocal
-              : l10n.conflictResolvedServer),
+          content: Text(
+            choice == 'local'
+                ? l10n.conflictResolvedLocal
+                : l10n.conflictResolvedServer,
+          ),
           backgroundColor: AppColors.success,
         ),
       );
@@ -253,9 +271,7 @@ class _ConflictResolutionScreenState
       final syncService = ref.read(syncServiceProvider);
       await syncService.retryItem(conflict.id);
       if (!mounted) return;
-      messenger.showSnackBar(
-        SnackBar(content: Text(l10n.operationSynced)),
-      );
+      messenger.showSnackBar(SnackBar(content: Text(l10n.operationSynced)));
       final manager = ref.read(syncManagerProvider);
       manager.syncPending();
     } catch (e) {
@@ -276,8 +292,9 @@ class _ConflictResolutionScreenState
         content: Text(l10n.deleteOperationConfirm),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(l10n.cancel)),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.cancel),
+          ),
           FilledButton(
             onPressed: () async {
               Navigator.pop(dialogContext);
@@ -287,7 +304,9 @@ class _ConflictResolutionScreenState
               } catch (e) {
                 messenger.showSnackBar(
                   SnackBar(
-                      content: Text('$e'), backgroundColor: AppColors.error),
+                    content: Text('$e'),
+                    backgroundColor: AppColors.error,
+                  ),
                 );
               }
             },
@@ -301,8 +320,9 @@ class _ConflictResolutionScreenState
 
   void _resolveAll(List<SyncQueueTableData> conflicts, String choice) {
     final l10n = AppLocalizations.of(context);
-    final choiceLabel =
-        choice == 'local' ? l10n.useLocalValues : l10n.useServerValues;
+    final choiceLabel = choice == 'local'
+        ? l10n.useLocalValues
+        : l10n.useServerValues;
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -310,8 +330,9 @@ class _ConflictResolutionScreenState
         content: Text(l10n.applyToAllConflicts(choiceLabel)),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(l10n.cancel)),
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.cancel),
+          ),
           FilledButton(
             onPressed: () async {
               Navigator.pop(dialogContext);
@@ -333,7 +354,9 @@ class _ConflictResolutionScreenState
                 if (!mounted) return;
                 messenger.showSnackBar(
                   SnackBar(
-                      content: Text('$e'), backgroundColor: AppColors.error),
+                    content: Text('$e'),
+                    backgroundColor: AppColors.error,
+                  ),
                 );
               } finally {
                 if (mounted) setState(() => _isResolving = false);
@@ -382,9 +405,7 @@ class _ConflictCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Theme.of(context).dividerColor,
-        ),
+        border: Border.all(color: Theme.of(context).dividerColor),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -421,7 +442,9 @@ class _ConflictCard extends StatelessWidget {
               if (item.retryCount > 0)
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                    horizontal: AlhaiSpacing.xs,
+                    vertical: AlhaiSpacing.xxs,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(6),
@@ -528,8 +551,9 @@ class _ConflictCard extends StatelessWidget {
       final entries = data.entries.take(3).map((e) {
         final value = e.value;
         final valueStr = value is String ? value : value.toString();
-        final displayValue =
-            valueStr.length > 30 ? '${valueStr.substring(0, 30)}...' : valueStr;
+        final displayValue = valueStr.length > 30
+            ? '${valueStr.substring(0, 30)}...'
+            : valueStr;
         return '${e.key}: $displayValue';
       });
       return entries.join(', ');

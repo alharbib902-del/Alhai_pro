@@ -60,8 +60,9 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => <AccountsTableData>[]);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => <AccountsTableData>[]);
 
       await tester.pumpWidget(createTestWidget(const NewTransactionScreen()));
 
@@ -78,8 +79,9 @@ void main() {
         _createTestAccount(id: 'acc-1', name: '\u0639\u0645\u064a\u0644 1'),
       ];
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => accounts);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => accounts);
 
       await tester.pumpWidget(createTestWidget(const NewTransactionScreen()));
       await tester.pumpAndSettle();
@@ -90,15 +92,17 @@ void main() {
       expect(find.byIcon(Icons.search_rounded), findsOneWidget);
     });
 
-    testWidgets('shows type selector with debt and payment options',
-        (tester) async {
+    testWidgets('shows type selector with debt and payment options', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
       suppressOverflowErrors();
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => [_createTestAccount()]);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => [_createTestAccount()]);
 
       await tester.pumpWidget(createTestWidget(const NewTransactionScreen()));
       await tester.pumpAndSettle();
@@ -116,8 +120,9 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => [_createTestAccount()]);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => [_createTestAccount()]);
 
       await tester.pumpWidget(createTestWidget(const NewTransactionScreen()));
       await tester.pumpAndSettle();
@@ -132,8 +137,9 @@ void main() {
 
       suppressOverflowErrors();
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => [_createTestAccount()]);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => [_createTestAccount()]);
 
       await tester.pumpWidget(createTestWidget(const NewTransactionScreen()));
       await tester.pumpAndSettle();
@@ -142,15 +148,17 @@ void main() {
       expect(find.byIcon(Icons.note_alt_rounded), findsOneWidget);
     });
 
-    testWidgets('submit button is disabled when no account or amount',
-        (tester) async {
+    testWidgets('submit button is disabled when no account or amount', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
       suppressOverflowErrors();
 
-      when(() => accountsDao.getReceivableAccounts(any()))
-          .thenAnswer((_) async => [_createTestAccount()]);
+      when(
+        () => accountsDao.getReceivableAccounts(any()),
+      ).thenAnswer((_) async => [_createTestAccount()]);
 
       await tester.pumpWidget(createTestWidget(const NewTransactionScreen()));
       await tester.pumpAndSettle();

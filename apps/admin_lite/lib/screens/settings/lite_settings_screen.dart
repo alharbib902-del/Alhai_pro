@@ -51,10 +51,7 @@ class LiteSettingsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.settings),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: Text(l10n.settings), centerTitle: true),
       body: ListView(
         padding: EdgeInsets.symmetric(
           horizontal: isMobile ? AlhaiSpacing.md : AlhaiSpacing.xl,
@@ -65,9 +62,10 @@ class LiteSettingsScreen extends ConsumerWidget {
           // APPEARANCE SECTION
           // =================================================================
           _SectionHeader(
-              title: l10n.appearance,
-              icon: Icons.palette_outlined,
-              isDark: isDark),
+            title: l10n.appearance,
+            icon: Icons.palette_outlined,
+            isDark: isDark,
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           _SettingsCard(
             isDark: isDark,
@@ -96,9 +94,10 @@ class LiteSettingsScreen extends ConsumerWidget {
           // NOTIFICATIONS SECTION
           // =================================================================
           _SectionHeader(
-              title: l10n.notifications,
-              icon: Icons.notifications_outlined,
-              isDark: isDark),
+            title: l10n.notifications,
+            icon: Icons.notifications_outlined,
+            isDark: isDark,
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           _SettingsCard(
             isDark: isDark,
@@ -151,7 +150,10 @@ class LiteSettingsScreen extends ConsumerWidget {
           // ALERT THRESHOLDS SECTION
           // =================================================================
           _SectionHeader(
-              title: l10n.alerts, icon: Icons.tune_rounded, isDark: isDark),
+            title: l10n.alerts,
+            icon: Icons.tune_rounded,
+            isDark: isDark,
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           _SettingsCard(
             isDark: isDark,
@@ -201,9 +203,10 @@ class LiteSettingsScreen extends ConsumerWidget {
           // SECURITY SECTION
           // =================================================================
           _SectionHeader(
-              title: l10n.security,
-              icon: Icons.shield_outlined,
-              isDark: isDark),
+            title: l10n.security,
+            icon: Icons.shield_outlined,
+            isDark: isDark,
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           _SettingsCard(
             isDark: isDark,
@@ -240,7 +243,10 @@ class LiteSettingsScreen extends ConsumerWidget {
           // APP INFO SECTION
           // =================================================================
           _SectionHeader(
-              title: l10n.about, icon: Icons.info_outline, isDark: isDark),
+            title: l10n.about,
+            icon: Icons.info_outline,
+            isDark: isDark,
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           _SettingsCard(
             isDark: isDark,
@@ -456,7 +462,9 @@ class _SettingsTile extends StatelessWidget {
       borderRadius: BorderRadius.circular(16),
       child: Padding(
         padding: const EdgeInsets.symmetric(
-            horizontal: AlhaiSpacing.md, vertical: 14),
+          horizontal: AlhaiSpacing.md,
+          vertical: 14,
+        ),
         child: Row(
           children: [
             Container(
@@ -531,8 +539,10 @@ class _ToggleTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AlhaiSpacing.md,
+        vertical: 10,
+      ),
       child: Row(
         children: [
           Container(
@@ -608,8 +618,10 @@ class _ThresholdTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding:
-          const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md, vertical: 10),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AlhaiSpacing.md,
+        vertical: 10,
+      ),
       child: Row(
         children: [
           Container(
@@ -647,16 +659,19 @@ class _ThresholdTile extends StatelessWidget {
                   tooltip: 'Decrease',
                   onPressed: onDecrease,
                   icon: const Icon(Icons.remove, size: 16),
-                  constraints:
-                      const BoxConstraints(minWidth: 36, minHeight: 36),
+                  constraints: const BoxConstraints(
+                    minWidth: 36,
+                    minHeight: 36,
+                  ),
                   padding: EdgeInsets.zero,
                   color: isDark
                       ? Colors.white54
                       : Theme.of(context).colorScheme.onSurfaceVariant,
                 ),
                 Padding(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xxs),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AlhaiSpacing.xxs,
+                  ),
                   child: Text(
                     '$value $unit',
                     style: TextStyle(
@@ -670,8 +685,10 @@ class _ThresholdTile extends StatelessWidget {
                   tooltip: 'Increase',
                   onPressed: onIncrease,
                   icon: const Icon(Icons.add, size: 16),
-                  constraints:
-                      const BoxConstraints(minWidth: 36, minHeight: 36),
+                  constraints: const BoxConstraints(
+                    minWidth: 36,
+                    minHeight: 36,
+                  ),
                   padding: EdgeInsets.zero,
                   color: isDark
                       ? Colors.white54

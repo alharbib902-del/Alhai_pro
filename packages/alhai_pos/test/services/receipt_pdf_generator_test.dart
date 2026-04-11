@@ -67,23 +67,25 @@ void main() {
       expect(identical(store1, store2), isTrue);
     });
 
-    test('custom StoreInfo instances with different values are not identical',
-        () {
-      const store1 = StoreInfo(
-        name: 'Store A',
-        address: 'Address A',
-        phone: '0501111111',
-        vatNumber: '100000000000001',
-      );
-      const store2 = StoreInfo(
-        name: 'Store B',
-        address: 'Address B',
-        phone: '0502222222',
-        vatNumber: '200000000000002',
-      );
+    test(
+      'custom StoreInfo instances with different values are not identical',
+      () {
+        const store1 = StoreInfo(
+          name: 'Store A',
+          address: 'Address A',
+          phone: '0501111111',
+          vatNumber: '100000000000001',
+        );
+        const store2 = StoreInfo(
+          name: 'Store B',
+          address: 'Address B',
+          phone: '0502222222',
+          vatNumber: '200000000000002',
+        );
 
-      expect(identical(store1, store2), isFalse);
-    });
+        expect(identical(store1, store2), isFalse);
+      },
+    );
   });
 
   group('StoreInfo fields', () {

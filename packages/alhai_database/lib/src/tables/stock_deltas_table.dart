@@ -23,7 +23,9 @@ import 'stores_table.dart';
 @TableIndex(name: 'idx_stock_deltas_sync_status', columns: {#syncStatus})
 @TableIndex(name: 'idx_stock_deltas_device', columns: {#deviceId})
 @TableIndex(
-    name: 'idx_stock_deltas_product_sync', columns: {#productId, #syncStatus})
+  name: 'idx_stock_deltas_product_sync',
+  columns: {#productId, #syncStatus},
+)
 class StockDeltasTable extends Table {
   @override
   String get tableName => 'stock_deltas';
@@ -32,9 +34,11 @@ class StockDeltasTable extends Table {
   TextColumn get id => text()();
 
   /// معرف المنتج (FK -> products.id, SET NULL on delete)
-  TextColumn get productId => text()
-      .nullable()
-      .references(ProductsTable, #id, onDelete: KeyAction.setNull)();
+  TextColumn get productId => text().nullable().references(
+    ProductsTable,
+    #id,
+    onDelete: KeyAction.setNull,
+  )();
 
   /// معرف المتجر (FK -> stores.id, RESTRICT on delete)
   TextColumn get storeId =>
@@ -57,8 +61,9 @@ class StockDeltasTable extends Table {
   TextColumn get referenceId => text().nullable()();
 
   /// حالة المزامنة
-  TextColumn get syncStatus => text()
-      .withDefault(const Constant('pending'))(); // pending, synced, failed
+  TextColumn get syncStatus => text().withDefault(
+    const Constant('pending'),
+  )(); // pending, synced, failed
 
   /// وقت إنشاء التغيير
   DateTimeColumn get createdAt => dateTime()();

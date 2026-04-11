@@ -61,10 +61,7 @@ class LanguageSelectorButton extends ConsumerWidget {
               const SizedBox(width: 6),
               Text(
                 SupportedLocales.getNativeName(currentLocale),
-                style: TextStyle(
-                  color: textColor,
-                  fontSize: compact ? 12 : 13,
-                ),
+                style: TextStyle(color: textColor, fontSize: compact ? 12 : 13),
               ),
             ],
             SizedBox(width: AlhaiSpacing.xxs),
@@ -97,10 +94,7 @@ class LanguageSelectorButton extends ConsumerWidget {
 class LanguagePickerSheet extends ConsumerWidget {
   final ValueChanged<Locale> onSelect;
 
-  const LanguagePickerSheet({
-    super.key,
-    required this.onSelect,
-  });
+  const LanguagePickerSheet({super.key, required this.onSelect});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -205,16 +199,10 @@ class _LanguageOption extends StatelessWidget {
       ),
       subtitle: Text(
         _getLanguageDescription(locale),
-        style: TextStyle(
-          color: subtitleColor,
-          fontSize: 12,
-        ),
+        style: TextStyle(color: subtitleColor, fontSize: 12),
       ),
       trailing: isSelected
-          ? const Icon(
-              Icons.check_circle_rounded,
-              color: AppColors.primary,
-            )
+          ? const Icon(Icons.check_circle_rounded, color: AppColors.primary)
           : null,
     );
   }
@@ -253,9 +241,7 @@ class LanguageSettingsScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.language),
-      ),
+      appBar: AppBar(title: Text(l10n.language)),
       body: ListView(
         padding: const EdgeInsets.all(AlhaiSpacing.md),
         children: [
@@ -268,10 +254,7 @@ class LanguageSettingsScreen extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.info_outline_rounded,
-                  color: AppColors.info,
-                ),
+                const Icon(Icons.info_outline_rounded, color: AppColors.info),
                 SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Text(
@@ -372,8 +355,9 @@ class _LanguageCard extends StatelessWidget {
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurface,
                         fontSize: 16,
-                        fontWeight:
-                            isSelected ? FontWeight.bold : FontWeight.w500,
+                        fontWeight: isSelected
+                            ? FontWeight.bold
+                            : FontWeight.w500,
                       ),
                     ),
                     SizedBox(height: AlhaiSpacing.xxs),
@@ -403,8 +387,9 @@ class _LanguageCard extends StatelessWidget {
                         Text(
                           locale.countryCode ?? '',
                           style: TextStyle(
-                            color:
-                                Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                             fontSize: 12,
                           ),
                         ),

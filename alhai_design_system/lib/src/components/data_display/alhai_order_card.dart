@@ -143,10 +143,7 @@ class AlhaiOrderRow extends StatelessWidget {
                     ),
                   ),
                   // Price
-                  AlhaiPriceText(
-                    amount: totalAmount,
-                    currency: currency,
-                  ),
+                  AlhaiPriceText(amount: totalAmount, currency: currency),
                   const SizedBox(width: AlhaiSpacing.xs),
                   // Arrow (RTL-aware)
                   Icon(
@@ -324,10 +321,7 @@ class AlhaiOrderCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: AlhaiSpacing.xs),
-                AlhaiOrderStatusBadge(
-                  status: status,
-                  label: statusLabel,
-                ),
+                AlhaiOrderStatusBadge(status: status, label: statusLabel),
               ],
             ),
           ),
@@ -337,7 +331,10 @@ class AlhaiOrderCard extends StatelessWidget {
   }
 
   Widget _buildCustomerSection(
-      ThemeData theme, ColorScheme colorScheme, bool isDisabled) {
+    ThemeData theme,
+    ColorScheme colorScheme,
+    bool isDisabled,
+  ) {
     return Container(
       padding: const EdgeInsetsDirectional.symmetric(
         horizontal: AlhaiSpacing.md,
@@ -412,10 +409,7 @@ class AlhaiOrderCard extends StatelessWidget {
                 if (onMap != null)
                   IconButton(
                     onPressed: isDisabled ? null : onMap,
-                    icon: Icon(
-                      Icons.map_outlined,
-                      color: colorScheme.primary,
-                    ),
+                    icon: Icon(Icons.map_outlined, color: colorScheme.primary),
                     iconSize: 20,
                     visualDensity: VisualDensity.compact,
                     tooltip: 'الخريطة',
@@ -544,26 +538,30 @@ class AlhaiOrderCard extends StatelessWidget {
       children: [
         Text(
           label,
-          style: (isSubtle
-                  ? theme.textTheme.bodySmall
-                  : theme.textTheme.titleMedium)
-              ?.copyWith(
-            color:
-                isSubtle ? colorScheme.onSurfaceVariant : colorScheme.onSurface,
-            fontWeight: isSubtle ? FontWeight.normal : FontWeight.bold,
-          ),
+          style:
+              (isSubtle
+                      ? theme.textTheme.bodySmall
+                      : theme.textTheme.titleMedium)
+                  ?.copyWith(
+                    color: isSubtle
+                        ? colorScheme.onSurfaceVariant
+                        : colorScheme.onSurface,
+                    fontWeight: isSubtle ? FontWeight.normal : FontWeight.bold,
+                  ),
         ),
         const Spacer(),
         Text(
           '$amount $currency',
-          style: (isSubtle
-                  ? theme.textTheme.bodySmall
-                  : theme.textTheme.titleMedium)
-              ?.copyWith(
-            color:
-                isSubtle ? colorScheme.onSurfaceVariant : colorScheme.primary,
-            fontWeight: isSubtle ? FontWeight.normal : FontWeight.bold,
-          ),
+          style:
+              (isSubtle
+                      ? theme.textTheme.bodySmall
+                      : theme.textTheme.titleMedium)
+                  ?.copyWith(
+                    color: isSubtle
+                        ? colorScheme.onSurfaceVariant
+                        : colorScheme.primary,
+                    fontWeight: isSubtle ? FontWeight.normal : FontWeight.bold,
+                  ),
         ),
       ],
     );

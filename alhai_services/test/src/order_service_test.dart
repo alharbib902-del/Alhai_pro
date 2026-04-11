@@ -84,8 +84,7 @@ class FakeOrderPaymentsRepository implements OrderPaymentsRepository {
     required DateTime startDate,
     required DateTime endDate,
     PaymentMethod? method,
-  }) async =>
-      [];
+  }) async => [];
 }
 
 void main() {
@@ -178,37 +177,21 @@ void main() {
       });
 
       test('removeFromCart should remove specific product', () {
-        orderService.addToCart(
-          productId: 'prod-1',
-          name: 'A',
-          unitPrice: 10.0,
-        );
-        orderService.addToCart(
-          productId: 'prod-2',
-          name: 'B',
-          unitPrice: 20.0,
-        );
+        orderService.addToCart(productId: 'prod-1', name: 'A', unitPrice: 10.0);
+        orderService.addToCart(productId: 'prod-2', name: 'B', unitPrice: 20.0);
         orderService.removeFromCart('prod-1');
         expect(orderService.cartItemCount, equals(1));
         expect(orderService.cartTotal, equals(20.0));
       });
 
       test('clearCart should empty the cart', () {
-        orderService.addToCart(
-          productId: 'prod-1',
-          name: 'A',
-          unitPrice: 10.0,
-        );
+        orderService.addToCart(productId: 'prod-1', name: 'A', unitPrice: 10.0);
         orderService.clearCart();
         expect(orderService.cartItemCount, equals(0));
       });
 
       test('cartItems should return unmodifiable list', () {
-        orderService.addToCart(
-          productId: 'prod-1',
-          name: 'A',
-          unitPrice: 10.0,
-        );
+        orderService.addToCart(productId: 'prod-1', name: 'A', unitPrice: 10.0);
         expect(
           () => orderService.cartItems.add({}),
           throwsA(isA<UnsupportedError>()),
@@ -225,20 +208,22 @@ void main() {
           qty: 2,
         );
 
-        final order = await orderService.createOrder(CreateOrderParams(
-          clientOrderId: 'client-1',
-          storeId: 'store-1',
-          items: [
-            const OrderItem(
-              productId: 'prod-1',
-              name: 'A',
-              unitPrice: 10.0,
-              qty: 2,
-              lineTotal: 20.0,
-            ),
-          ],
-          paymentMethod: PaymentMethod.cash,
-        ));
+        final order = await orderService.createOrder(
+          CreateOrderParams(
+            clientOrderId: 'client-1',
+            storeId: 'store-1',
+            items: [
+              const OrderItem(
+                productId: 'prod-1',
+                name: 'A',
+                unitPrice: 10.0,
+                qty: 2,
+                lineTotal: 20.0,
+              ),
+            ],
+            paymentMethod: PaymentMethod.cash,
+          ),
+        );
 
         expect(order.id, isNotEmpty);
         expect(orderService.cartItemCount, equals(0));

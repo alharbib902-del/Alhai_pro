@@ -27,8 +27,7 @@ class Paginated<T> with _$Paginated<T> {
   factory Paginated.fromJson(
     Map<String, dynamic> json,
     T Function(Object?) fromJsonT,
-  ) =>
-      _$PaginatedFromJson(json, fromJsonT);
+  ) => _$PaginatedFromJson(json, fromJsonT);
 }
 
 /// Extension for Paginated helpers

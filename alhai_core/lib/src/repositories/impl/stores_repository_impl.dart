@@ -9,9 +9,8 @@ import '../stores_repository.dart';
 class StoresRepositoryImpl implements StoresRepository {
   final StoresRemoteDataSource _remote;
 
-  StoresRepositoryImpl({
-    required StoresRemoteDataSource remote,
-  }) : _remote = remote;
+  StoresRepositoryImpl({required StoresRemoteDataSource remote})
+    : _remote = remote;
 
   @override
   Future<Store> getStore(String id) async {

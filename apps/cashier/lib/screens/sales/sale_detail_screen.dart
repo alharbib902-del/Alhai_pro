@@ -95,19 +95,21 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
             child: _isLoading
                 ? const AppLoadingState()
                 : _error != null
-                    ? AppErrorState.general(context,
-                        message: _error!, onRetry: _loadSaleData)
-                    : _order == null
-                        ? _buildNotFound(isDark, l10n)
-                        : SingleChildScrollView(
-                            padding: EdgeInsets.all(isMediumScreen
-                                ? AlhaiSpacing.lg
-                                : AlhaiSpacing.md),
-                            child: isWideScreen
-                                ? _buildWideLayout(isDark, l10n)
-                                : _buildNarrowLayout(
-                                    isDark, l10n, isMediumScreen),
-                          ),
+                ? AppErrorState.general(
+                    context,
+                    message: _error!,
+                    onRetry: _loadSaleData,
+                  )
+                : _order == null
+                ? _buildNotFound(isDark, l10n)
+                : SingleChildScrollView(
+                    padding: EdgeInsets.all(
+                      isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                    ),
+                    child: isWideScreen
+                        ? _buildWideLayout(isDark, l10n)
+                        : _buildNarrowLayout(isDark, l10n, isMediumScreen),
+                  ),
           ),
         ],
       ),
@@ -117,7 +119,9 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
   Widget _buildTopBar(bool isDark, AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+        horizontal: AlhaiSpacing.md,
+        vertical: AlhaiSpacing.sm,
+      ),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         border: Border(
@@ -130,13 +134,16 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
           children: [
             IconButton(
               onPressed: () => context.pop(),
-              icon: Icon(Icons.arrow_back_rounded,
-                  color: AppColors.getTextPrimary(isDark)),
+              icon: Icon(
+                Icons.arrow_back_rounded,
+                color: AppColors.getTextPrimary(isDark),
+              ),
               tooltip: l10n.back,
               style: IconButton.styleFrom(
                 backgroundColor: AppColors.getSurfaceVariant(isDark),
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12)),
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
             const SizedBox(width: AlhaiSpacing.sm),
@@ -164,8 +171,10 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
             ),
             IconButton(
               onPressed: _loadSaleData,
-              icon: Icon(Icons.refresh_rounded,
-                  color: AppColors.getTextSecondary(isDark)),
+              icon: Icon(
+                Icons.refresh_rounded,
+                color: AppColors.getTextSecondary(isDark),
+              ),
               tooltip: l10n.refresh,
             ),
           ],
@@ -179,15 +188,20 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.receipt_long_outlined,
-              size: 64,
-              color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4)),
+          Icon(
+            Icons.receipt_long_outlined,
+            size: 64,
+            color: AppColors.getTextMuted(isDark).withValues(alpha: 0.4),
+          ),
           const SizedBox(height: AlhaiSpacing.md),
-          Text(l10n.saleNotFound,
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                  color: AppColors.getTextMuted(isDark))),
+          Text(
+            l10n.saleNotFound,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: AppColors.getTextMuted(isDark),
+            ),
+          ),
         ],
       ),
     );
@@ -225,7 +239,10 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
   }
 
   Widget _buildNarrowLayout(
-      bool isDark, AppLocalizations l10n, bool isMediumScreen) {
+    bool isDark,
+    AppLocalizations l10n,
+    bool isMediumScreen,
+  ) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -268,8 +285,11 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.info_outline_rounded,
-                    color: AppColors.info, size: 20),
+                child: const Icon(
+                  Icons.info_outline_rounded,
+                  color: AppColors.info,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -283,7 +303,9 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: AlhaiSpacing.xxs),
+                  horizontal: 10,
+                  vertical: AlhaiSpacing.xxs,
+                ),
                 decoration: BoxDecoration(
                   color: _getStatusColor(order.status).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(999),
@@ -301,16 +323,20 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.md),
           _buildInfoRow(
-              l10n.invoiceNumber,
-              '#${order.id.length > 8 ? order.id.substring(0, 8) : order.id}',
-              isDark),
+            l10n.invoiceNumber,
+            '#${order.id.length > 8 ? order.id.substring(0, 8) : order.id}',
+            isDark,
+          ),
           Divider(height: 20, color: AppColors.getBorder(isDark)),
           _buildInfoRow(l10n.date, date, isDark),
           Divider(height: 20, color: AppColors.getBorder(isDark)),
           _buildInfoRow(l10n.time, time, isDark),
           Divider(height: 20, color: AppColors.getBorder(isDark)),
           _buildInfoRow(
-              l10n.customerName, order.customerId ?? l10n.cashCustomer, isDark),
+            l10n.customerName,
+            order.customerId ?? l10n.cashCustomer,
+            isDark,
+          ),
           Divider(height: 20, color: AppColors.getBorder(isDark)),
           _buildInfoRow(l10n.paymentMethod, order.paymentMethod, isDark),
         ],
@@ -326,7 +352,9 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
           Text(
             '$label:',
             style: TextStyle(
-                fontSize: 13, color: AppColors.getTextSecondary(isDark)),
+              fontSize: 13,
+              color: AppColors.getTextSecondary(isDark),
+            ),
           ),
           const Spacer(),
           Text(
@@ -361,8 +389,11 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.shopping_bag_rounded,
-                    color: AppColors.primary, size: 20),
+                child: const Icon(
+                  Icons.shopping_bag_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -376,7 +407,9 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: 10, vertical: AlhaiSpacing.xxs),
+                  horizontal: 10,
+                  vertical: AlhaiSpacing.xxs,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(999),
@@ -400,7 +433,9 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                 child: Text(
                   l10n.noItems,
                   style: TextStyle(
-                      color: AppColors.getTextMuted(isDark), fontSize: 14),
+                    color: AppColors.getTextMuted(isDark),
+                    fontSize: 14,
+                  ),
                 ),
               ),
             )
@@ -412,9 +447,9 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                 children: [
                   if (index > 0)
                     Divider(
-                        height: 16,
-                        color:
-                            AppColors.getBorder(isDark).withValues(alpha: 0.5)),
+                      height: 16,
+                      color: AppColors.getBorder(isDark).withValues(alpha: 0.5),
+                    ),
                   _buildItemRow(item, isDark, l10n),
                 ],
               );
@@ -425,7 +460,10 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
   }
 
   Widget _buildItemRow(
-      SaleItemsTableData item, bool isDark, AppLocalizations l10n) {
+    SaleItemsTableData item,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final total = item.qty * item.unitPrice;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -488,7 +526,9 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
   Widget _buildTotalsCard(bool isDark, AppLocalizations l10n) {
     final order = _order!;
     final subtotal = _items.fold<double>(
-        0, (sum, item) => sum + (item.qty * item.unitPrice));
+      0,
+      (sum, item) => sum + (item.qty * item.unitPrice),
+    );
     final tax = order.tax;
     final discount = order.discount;
 
@@ -510,8 +550,11 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                   color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.receipt_rounded,
-                    color: AppColors.success, size: 20),
+                child: const Icon(
+                  Icons.receipt_rounded,
+                  color: AppColors.success,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -527,12 +570,20 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
           const SizedBox(height: AlhaiSpacing.md),
           _buildTotalRow(l10n.subtotal, subtotal, isDark),
           const SizedBox(height: AlhaiSpacing.xs),
-          _buildTotalRow(l10n.tax, tax, isDark,
-              color: AppColors.getTextSecondary(isDark)),
+          _buildTotalRow(
+            l10n.tax,
+            tax,
+            isDark,
+            color: AppColors.getTextSecondary(isDark),
+          ),
           if (discount > 0) ...[
             const SizedBox(height: AlhaiSpacing.xs),
-            _buildTotalRow(l10n.discount, -discount, isDark,
-                color: AppColors.error),
+            _buildTotalRow(
+              l10n.discount,
+              -discount,
+              isDark,
+              color: AppColors.error,
+            ),
           ],
           Divider(height: 24, color: AppColors.getBorder(isDark)),
           Row(
@@ -561,15 +612,21 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
     );
   }
 
-  Widget _buildTotalRow(String label, double value, bool isDark,
-      {Color? color}) {
+  Widget _buildTotalRow(
+    String label,
+    double value,
+    bool isDark, {
+    Color? color,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(
           label,
           style: TextStyle(
-              fontSize: 13, color: AppColors.getTextSecondary(isDark)),
+            fontSize: 13,
+            color: AppColors.getTextSecondary(isDark),
+          ),
         ),
         Text(
           '${value.toStringAsFixed(2)} ${AppLocalizations.of(context).sar}',
@@ -621,18 +678,22 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                     width: 20,
                     height: 20,
                     child: CircularProgressIndicator(
-                        strokeWidth: 2, color: AppColors.textOnPrimary),
+                      strokeWidth: 2,
+                      color: AppColors.textOnPrimary,
+                    ),
                   )
                 : const Icon(Icons.print_rounded, size: 20),
-            label: Text(l10n.reprintReceipt,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            label: Text(
+              l10n.reprintReceipt,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.textOnPrimary,
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),
@@ -642,15 +703,17 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
           child: OutlinedButton.icon(
             onPressed: () => _requestRefund(l10n),
             icon: const Icon(Icons.assignment_return_rounded, size: 20),
-            label: Text(l10n.refund,
-                style:
-                    const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            label: Text(
+              l10n.refund,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
             style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.error,
               side: const BorderSide(color: AppColors.error),
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12)),
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
         ),

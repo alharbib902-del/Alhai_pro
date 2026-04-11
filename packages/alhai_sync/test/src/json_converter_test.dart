@@ -44,10 +44,14 @@ void main() {
     group('getJsonbFields', () {
       test('returns correct fields for known tables', () {
         expect(converter.getJsonbFields('roles'), {'permissions'});
-        expect(
-            converter.getJsonbFields('audit_log'), {'old_value', 'new_value'});
-        expect(converter.getJsonbFields('discounts'),
-            {'product_ids', 'category_ids'});
+        expect(converter.getJsonbFields('audit_log'), {
+          'old_value',
+          'new_value',
+        });
+        expect(converter.getJsonbFields('discounts'), {
+          'product_ids',
+          'category_ids',
+        });
       });
 
       test('returns empty set for unknown tables', () {
@@ -96,10 +100,7 @@ void main() {
       });
 
       test('leaves non-JSON string JSONB fields unchanged', () {
-        final payload = {
-          'id': 'role-1',
-          'permissions': 'not-json-string',
-        };
+        final payload = {'id': 'role-1', 'permissions': 'not-json-string'};
 
         final result = converter.toRemote('roles', payload);
 
@@ -108,10 +109,7 @@ void main() {
       });
 
       test('handles empty JSON string in JSONB field', () {
-        final payload = {
-          'id': 'role-1',
-          'permissions': '',
-        };
+        final payload = {'id': 'role-1', 'permissions': ''};
 
         final result = converter.toRemote('roles', payload);
 
@@ -163,10 +161,7 @@ void main() {
       });
 
       test('leaves non-JSONB fields unchanged', () {
-        final payload = {
-          'id': 'product-1',
-          'name': 'Test Product',
-        };
+        final payload = {'id': 'product-1', 'name': 'Test Product'};
 
         final result = converter.toLocal('products', payload);
 
@@ -174,10 +169,7 @@ void main() {
       });
 
       test('leaves null JSONB fields as null', () {
-        final payload = {
-          'id': 'role-1',
-          'permissions': null,
-        };
+        final payload = {'id': 'role-1', 'permissions': null};
 
         final result = converter.toLocal('roles', payload);
 
@@ -185,10 +177,7 @@ void main() {
       });
 
       test('leaves string JSONB fields as strings', () {
-        final payload = {
-          'id': 'role-1',
-          'permissions': '["read"]',
-        };
+        final payload = {'id': 'role-1', 'permissions': '["read"]'};
 
         final result = converter.toLocal('roles', payload);
 
@@ -226,14 +215,8 @@ void main() {
     group('batchToRemote', () {
       test('converts a list of records', () {
         final records = [
-          {
-            'id': 'role-1',
-            'permissions': '["read"]',
-          },
-          {
-            'id': 'role-2',
-            'permissions': '["write"]',
-          },
+          {'id': 'role-1', 'permissions': '["read"]'},
+          {'id': 'role-2', 'permissions': '["write"]'},
         ];
 
         final result = converter.batchToRemote('roles', records);

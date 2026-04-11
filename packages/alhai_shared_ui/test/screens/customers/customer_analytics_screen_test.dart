@@ -36,9 +36,7 @@ void _setLargeViewport(WidgetTester tester) {
 
 Widget _buildTestWidget() {
   return ProviderScope(
-    overrides: [
-      currentStoreIdProvider.overrideWith((ref) => 'test-store-id'),
-    ],
+    overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store-id')],
     child: MaterialApp(
       locale: const Locale('en'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
@@ -93,8 +91,9 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       final completer = Completer<List<CustomersTableData>>();
-      when(() => mockCustomersDao.getAllCustomers(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => mockCustomersDao.getAllCustomers(any()),
+      ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pump();
@@ -110,8 +109,9 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       final completer = Completer<List<CustomersTableData>>();
-      when(() => mockCustomersDao.getAllCustomers(any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => mockCustomersDao.getAllCustomers(any()),
+      ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pump();
@@ -127,8 +127,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      when(() => mockCustomersDao.getAllCustomers(any()))
-          .thenThrow(Exception('Database error'));
+      when(
+        () => mockCustomersDao.getAllCustomers(any()),
+      ).thenThrow(Exception('Database error'));
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));

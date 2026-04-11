@@ -51,11 +51,14 @@ class StockDeltasDao extends DatabaseAccessor<AppDatabase>
   }
 
   /// الحصول على التغييرات غير المزامنة لمتجر معين
-  Future<List<StockDeltasTableData>> getPendingDeltasForStore(String storeId,
-      {int limit = 100}) {
+  Future<List<StockDeltasTableData>> getPendingDeltasForStore(
+    String storeId, {
+    int limit = 100,
+  }) {
     return (select(stockDeltasTable)
           ..where(
-              (t) => t.syncStatus.equals('pending') & t.storeId.equals(storeId))
+            (t) => t.syncStatus.equals('pending') & t.storeId.equals(storeId),
+          )
           ..orderBy([(t) => OrderingTerm.asc(t.createdAt)])
           ..limit(limit))
         .get();
@@ -92,10 +95,7 @@ class StockDeltasDao extends DatabaseAccessor<AppDatabase>
     final placeholders = ids.map((_) => '?').join(',');
     await customUpdate(
       'UPDATE stock_deltas SET sync_status = ? WHERE id IN ($placeholders)',
-      variables: [
-        const Variable('failed'),
-        ...ids.map(Variable.withString),
-      ],
+      variables: [const Variable('failed'), ...ids.map(Variable.withString)],
       updates: {stockDeltasTable},
       updateKind: UpdateKind.update,
     );
@@ -113,16 +113,18 @@ class StockDeltasDao extends DatabaseAccessor<AppDatabase>
   /// حذف التغييرات المزامنة القديمة
   Future<int> cleanupSynced({Duration olderThan = const Duration(days: 7)}) {
     final cutoff = DateTime.now().toUtc().subtract(olderThan);
-    return (delete(stockDeltasTable)
-          ..where((t) =>
+    return (delete(stockDeltasTable)..where(
+          (t) =>
               t.syncStatus.equals('synced') &
-              t.syncedAt.isSmallerThanValue(cutoff)))
+              t.syncedAt.isSmallerThanValue(cutoff),
+        ))
         .go();
   }
 
   /// الحصول على ملخص التغييرات لكل منتج (للعرض في الواجهة)
   Future<List<Map<String, dynamic>>> getDeltaSummaryByProduct(
-      String storeId) async {
+    String storeId,
+  ) async {
     final results = await customSelect(
       '''SELECT product_id,
               SUM(quantity_change) as total_change,

@@ -21,7 +21,9 @@ abstract class SuppliersRemoteDataSource {
 
   /// Updates an existing supplier
   Future<SupplierResponse> updateSupplier(
-      String id, UpdateSupplierRequest request);
+    String id,
+    UpdateSupplierRequest request,
+  );
 
   /// Deletes a supplier
   Future<void> deleteSupplier(String id);

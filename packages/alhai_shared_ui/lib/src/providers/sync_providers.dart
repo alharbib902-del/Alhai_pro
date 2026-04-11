@@ -48,7 +48,8 @@ final syncApiServiceProvider = Provider<SyncApiService?>((ref) {
     // SupabaseClient not registered - offline mode, sync unavailable
     if (kDebugMode) {
       debugPrint(
-          'SyncApiService unavailable: SupabaseClient not registered. $e');
+        'SyncApiService unavailable: SupabaseClient not registered. $e',
+      );
     }
     return null;
   }
@@ -62,7 +63,8 @@ final orgSyncServiceProvider = Provider<OrgSyncService?>((ref) {
   } catch (e) {
     if (kDebugMode) {
       debugPrint(
-          'OrgSyncService unavailable: SupabaseClient not registered. $e');
+        'OrgSyncService unavailable: SupabaseClient not registered. $e',
+      );
     }
     return null;
   }
@@ -168,7 +170,8 @@ final syncExistingCustomersProvider = FutureProvider<int>((ref) async {
 
     if (count > 0 && kDebugMode) {
       debugPrint(
-          '[SyncCustomers] ✅ Enqueued $count existing customers for sync');
+        '[SyncCustomers] ✅ Enqueued $count existing customers for sync',
+      );
     }
     return count;
   } catch (e) {
@@ -295,10 +298,7 @@ final realtimeActivationProvider = FutureProvider<void>((ref) async {
   }
 
   // بدء الاستماع
-  await listener.start(
-    orgId: orgId,
-    storeId: storeId,
-  );
+  await listener.start(orgId: orgId, storeId: storeId);
 
   if (kDebugMode) {
     debugPrint('[RealtimeActivation] Started for store=$storeId, org=$orgId');
@@ -363,7 +363,8 @@ final globalSyncActivationProvider = FutureProvider<void>((ref) async {
 
       if (kDebugMode) {
         debugPrint(
-            '[GlobalSync] Running InitialSync for store=$storeId, org=$orgId');
+          '[GlobalSync] Running InitialSync for store=$storeId, org=$orgId',
+        );
       }
 
       final result = await initialSync.execute(orgId: orgId, storeId: storeId);
@@ -410,9 +411,9 @@ final pendingSyncCountProvider = StreamProvider<int>((ref) {
 /// يُستخدم لعرض بانر التحذير عند وجود عناصر معلقة لأكثر من 5 دقائق
 final unsyncedSalesInfoProvider =
     StreamProvider<({int count, DateTime? oldestAt})>((ref) {
-  final syncService = ref.watch(syncServiceProvider);
-  return syncService.watchPendingCountWithOldest();
-});
+      final syncService = ref.watch(syncServiceProvider);
+      return syncService.watchPendingCountWithOldest();
+    });
 
 /// مزود حالة المزامنة (القديم - للتوافق)
 final syncStatusProvider = StreamProvider<SyncStatus>((ref) {
@@ -427,15 +428,17 @@ final syncNowProvider = FutureProvider.autoDispose<SyncResult>((ref) async {
 });
 
 /// مزود قائمة العناصر المعلقة (Stream)
-final pendingSyncItemsProvider =
-    StreamProvider<List<SyncQueueTableData>>((ref) {
+final pendingSyncItemsProvider = StreamProvider<List<SyncQueueTableData>>((
+  ref,
+) {
   final syncService = ref.watch(syncServiceProvider);
   return syncService.watchPendingItems();
 });
 
 /// مزود قائمة العناصر المتعارضة (Stream)
-final conflictSyncItemsProvider =
-    StreamProvider<List<SyncQueueTableData>>((ref) {
+final conflictSyncItemsProvider = StreamProvider<List<SyncQueueTableData>>((
+  ref,
+) {
   final syncService = ref.watch(syncServiceProvider);
   return syncService.watchConflictItems();
 });

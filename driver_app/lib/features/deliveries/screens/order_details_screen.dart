@@ -39,8 +39,9 @@ class OrderDetailsScreen extends ConsumerWidget {
 
         return Scaffold(
           appBar: AppBar(
-            title:
-                Text(orderNumber.isNotEmpty ? '#$orderNumber' : 'تفاصيل الطلب'),
+            title: Text(
+              orderNumber.isNotEmpty ? '#$orderNumber' : 'تفاصيل الطلب',
+            ),
             actions: [
               // Navigate button
               if (_isActiveStatus(status))
@@ -82,11 +83,11 @@ class OrderDetailsScreen extends ConsumerWidget {
                                   if (fee != null)
                                     Text(
                                       '${(fee as num).toStringAsFixed(0)} ر.س',
-                                      style:
-                                          theme.textTheme.titleLarge?.copyWith(
-                                        fontWeight: FontWeight.bold,
-                                        color: theme.colorScheme.primary,
-                                      ),
+                                      style: theme.textTheme.titleLarge
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.bold,
+                                            color: theme.colorScheme.primary,
+                                          ),
                                     ),
                                 ],
                               ),

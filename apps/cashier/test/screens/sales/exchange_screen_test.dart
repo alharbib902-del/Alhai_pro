@@ -61,8 +61,9 @@ void main() {
       expect(find.byType(TextField), findsNWidgets(2));
     });
 
-    testWidgets('shows difference and submit button in bottom bar',
-        (tester) async {
+    testWidgets('shows difference and submit button in bottom bar', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
@@ -74,9 +75,11 @@ void main() {
       expect(find.text('Difference'), findsOneWidget);
       // Arabic l10n: submitExchange
       expect(
-          find.text(
-              '\u062a\u0623\u0643\u064a\u062f \u0627\u0644\u0627\u0633\u062a\u0628\u062f\u0627\u0644'),
-          findsOneWidget);
+        find.text(
+          '\u062a\u0623\u0643\u064a\u062f \u0627\u0644\u0627\u0633\u062a\u0628\u062f\u0627\u0644',
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('submit button is disabled when no items', (tester) async {

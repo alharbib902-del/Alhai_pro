@@ -15,7 +15,8 @@ QueryExecutor openNativeConnection({String? dbName, String? encryptionKey}) {
   return LazyDatabase(() async {
     final dbFolder = await getApplicationDocumentsDirectory();
     final file = File(
-        p.join(dbFolder.path, 'alhai_pos', dbName ?? 'pos_database.sqlite'));
+      p.join(dbFolder.path, 'alhai_pos', dbName ?? 'pos_database.sqlite'),
+    );
 
     if (!file.parent.existsSync()) {
       file.parent.createSync(recursive: true);
@@ -31,7 +32,8 @@ QueryExecutor openNativeConnection({String? dbName, String? encryptionKey}) {
           if (encryptionKey.length < 32 ||
               !hexPattern.hasMatch(encryptionKey)) {
             throw ArgumentError(
-                'Encryption key must be at least 32 hex characters');
+              'Encryption key must be at least 32 hex characters',
+            );
           }
           db.execute("PRAGMA key = '$encryptionKey'");
         }

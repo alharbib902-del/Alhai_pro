@@ -24,9 +24,9 @@ void main() {
   // ============================================================================
   group('storeSettingsProvider', () {
     test('returns empty map when storeId is null', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(storeSettingsProvider.future);
@@ -41,13 +41,14 @@ void main() {
   // ============================================================================
   group('settingsByPrefixProvider', () {
     test('returns empty map when storeId is null', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
-      final result =
-          await container.read(settingsByPrefixProvider('pos_').future);
+      final result = await container.read(
+        settingsByPrefixProvider('pos_').future,
+      );
 
       expect(result, isEmpty);
       expect(result, isA<Map<String, String>>());
@@ -59,13 +60,14 @@ void main() {
   // ============================================================================
   group('singleSettingProvider', () {
     test('returns null when storeId is null', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
-      final result =
-          await container.read(singleSettingProvider('some_key').future);
+      final result = await container.read(
+        singleSettingProvider('some_key').future,
+      );
 
       expect(result, isNull);
     });

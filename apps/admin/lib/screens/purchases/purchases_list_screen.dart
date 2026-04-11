@@ -42,7 +42,8 @@ class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
 
   /// Filter purchases by search query (supplier name, purchase number, amount)
   List<PurchasesTableData> _filterPurchases(
-      List<PurchasesTableData> purchases) {
+    List<PurchasesTableData> purchases,
+  ) {
     if (_searchQuery.isEmpty) return purchases;
     final query = _searchQuery.toLowerCase();
     return purchases.where((p) {
@@ -128,7 +129,9 @@ class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
         // Search bar
         Padding(
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+            horizontal: AlhaiSpacing.md,
+            vertical: AlhaiSpacing.sm,
+          ),
           child: TextField(
             controller: _searchController,
             onChanged: (value) {
@@ -154,7 +157,9 @@ class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
                   ? Colors.white.withValues(alpha: 0.05)
                   : AppColors.border.withValues(alpha: 0.15),
               contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+                horizontal: AlhaiSpacing.md,
+                vertical: AlhaiSpacing.sm,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: Theme.of(context).dividerColor),
@@ -165,8 +170,10 @@ class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: AppColors.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
               ),
             ),
           ),
@@ -178,16 +185,14 @@ class _PurchasesListScreenState extends ConsumerState<PurchasesListScreen>
             controller: _tabController,
             isScrollable: true,
             labelColor: AppColors.primary,
-            unselectedLabelColor:
-                Theme.of(context).colorScheme.onSurfaceVariant,
+            unselectedLabelColor: Theme.of(
+              context,
+            ).colorScheme.onSurfaceVariant,
             indicatorColor: AppColors.primary,
             tabs: _tabs.map((t) => Tab(text: _tabLabel(t))).toList(),
           ),
         ),
-        Divider(
-          height: 1,
-          color: Theme.of(context).dividerColor,
-        ),
+        Divider(height: 1, color: Theme.of(context).dividerColor),
         // Tab content
         Expanded(
           child: TabBarView(
@@ -221,7 +226,7 @@ class _AllPurchasesTab extends ConsumerStatefulWidget {
   final bool isWide;
   final bool isDark;
   final List<PurchasesTableData> Function(List<PurchasesTableData>)
-      filterPurchases;
+  filterPurchases;
 
   const _AllPurchasesTab({
     required this.isWide,
@@ -289,7 +294,7 @@ class _FilteredPurchasesTab extends ConsumerStatefulWidget {
   final bool isWide;
   final bool isDark;
   final List<PurchasesTableData> Function(List<PurchasesTableData>)
-      filterPurchases;
+  filterPurchases;
 
   const _FilteredPurchasesTab({
     required this.status,
@@ -308,8 +313,10 @@ class _FilteredPurchasesTabState extends ConsumerState<_FilteredPurchasesTab> {
 
   @override
   Widget build(BuildContext context) {
-    final params =
-        PurchasesPageParams(page: _currentPage, status: widget.status);
+    final params = PurchasesPageParams(
+      page: _currentPage,
+      status: widget.status,
+    );
     final asyncData = ref.watch(paginatedPurchasesProvider(params));
     return asyncData.when(
       loading: () => const Padding(
@@ -389,8 +396,10 @@ class _PurchasesContent extends StatelessWidget {
   }
 
   Widget _buildDataTable(BuildContext context) {
-    final dateFormat =
-        DateFormat('yyyy/MM/dd', Localizations.localeOf(context).languageCode);
+    final dateFormat = DateFormat(
+      'yyyy/MM/dd',
+      Localizations.localeOf(context).languageCode,
+    );
     return SingleChildScrollView(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsets.all(AlhaiSpacing.lg),
@@ -399,9 +408,7 @@ class _PurchasesContent extends StatelessWidget {
         decoration: BoxDecoration(
           color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(
-            color: Theme.of(context).dividerColor,
-          ),
+          border: Border.all(color: Theme.of(context).dividerColor),
         ),
         // M123: wrap DataTable with horizontal scroll for mobile overflow
         child: SingleChildScrollView(
@@ -412,11 +419,14 @@ class _PurchasesContent extends StatelessWidget {
             ),
             columns: [
               DataColumn(
-                  label: Text(AppLocalizations.of(context).orderNumberColumn)),
+                label: Text(AppLocalizations.of(context).orderNumberColumn),
+              ),
               DataColumn(
-                  label: Text(AppLocalizations.of(context).supplierInfoLabel)),
+                label: Text(AppLocalizations.of(context).supplierInfoLabel),
+              ),
               DataColumn(
-                  label: Text(AppLocalizations.of(context).statusColumn)),
+                label: Text(AppLocalizations.of(context).statusColumn),
+              ),
               DataColumn(label: Text(AppLocalizations.of(context).totalLabel)),
               DataColumn(label: Text(AppLocalizations.of(context).dateLabel)),
             ],
@@ -425,49 +435,53 @@ class _PurchasesContent extends StatelessWidget {
                 onSelectChanged: (_) =>
                     context.go(AppRoutes.purchaseDetailPath(p.id)),
                 cells: [
-                  DataCell(Text(
-                    p.purchaseNumber,
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      color: Theme.of(context).colorScheme.onSurface,
+                  DataCell(
+                    Text(
+                      p.purchaseNumber,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        color: Theme.of(context).colorScheme.onSurface,
+                      ),
                     ),
-                  )),
-                  DataCell(Text(
-                    p.supplierName ?? '-',
-                    style: TextStyle(
-                      color: isDark
-                          ? Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.8)
-                          : AppColors.textSecondary,
+                  ),
+                  DataCell(
+                    Text(
+                      p.supplierName ?? '-',
+                      style: TextStyle(
+                        color: isDark
+                            ? Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.8)
+                            : AppColors.textSecondary,
+                      ),
                     ),
-                  )),
-                  DataCell(_StatusBadge(
-                    status: p.status,
-                    isDark: isDark,
-                  )),
-                  DataCell(Text(
-                    AppLocalizations.of(context)
-                        .amountSar(p.total.toStringAsFixed(2)),
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      color: isDark
-                          ? AppColors.primaryLight
-                          : AppColors.primaryDark,
+                  ),
+                  DataCell(_StatusBadge(status: p.status, isDark: isDark)),
+                  DataCell(
+                    Text(
+                      AppLocalizations.of(
+                        context,
+                      ).amountSar(p.total.toStringAsFixed(2)),
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: isDark
+                            ? AppColors.primaryLight
+                            : AppColors.primaryDark,
+                      ),
                     ),
-                  )),
-                  DataCell(Text(
-                    dateFormat.format(p.createdAt),
-                    style: TextStyle(
-                      color: isDark
-                          ? Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.6)
-                          : AppColors.textTertiary,
+                  ),
+                  DataCell(
+                    Text(
+                      dateFormat.format(p.createdAt),
+                      style: TextStyle(
+                        color: isDark
+                            ? Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.6)
+                            : AppColors.textTertiary,
+                      ),
                     ),
-                  )),
+                  ),
                 ],
               );
             }).toList(),
@@ -478,8 +492,10 @@ class _PurchasesContent extends StatelessWidget {
   }
 
   Widget _buildCardList(BuildContext context) {
-    final dateFormat =
-        DateFormat('yyyy/MM/dd', Localizations.localeOf(context).languageCode);
+    final dateFormat = DateFormat(
+      'yyyy/MM/dd',
+      Localizations.localeOf(context).languageCode,
+    );
     return ListView.separated(
       physics: const AlwaysScrollableScrollPhysics(),
       padding: const EdgeInsetsDirectional.fromSTEB(16, 16, 16, 80),
@@ -494,9 +510,7 @@ class _PurchasesContent extends StatelessWidget {
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                color: Theme.of(context).dividerColor,
-              ),
+              border: Border.all(color: Theme.of(context).dividerColor),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -515,10 +529,7 @@ class _PurchasesContent extends StatelessWidget {
                         ),
                       ),
                     ),
-                    _StatusBadge(
-                      status: p.status,
-                      isDark: isDark,
-                    ),
+                    _StatusBadge(status: p.status, isDark: isDark),
                   ],
                 ),
                 const SizedBox(height: AlhaiSpacing.xs),
@@ -538,10 +549,9 @@ class _PurchasesContent extends StatelessWidget {
                         p.supplierName ?? '-',
                         style: TextStyle(
                           color: isDark
-                              ? Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withValues(alpha: 0.7)
+                              ? Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withValues(alpha: 0.7)
                               : AppColors.textSecondary,
                         ),
                       ),
@@ -554,8 +564,9 @@ class _PurchasesContent extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      AppLocalizations.of(context)
-                          .amountSar(p.total.toStringAsFixed(2)),
+                      AppLocalizations.of(
+                        context,
+                      ).amountSar(p.total.toStringAsFixed(2)),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -621,8 +632,11 @@ class _StatusBadge extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(_statusIcon(status),
-              size: 14, color: isDark ? color.withValues(alpha: 0.9) : color),
+          Icon(
+            _statusIcon(status),
+            size: 14,
+            color: isDark ? color.withValues(alpha: 0.9) : color,
+          ),
           const SizedBox(width: 4),
           Text(
             label,
@@ -660,8 +674,9 @@ class _PaginationControls extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           IconButton(
-            onPressed:
-                currentPage > 1 ? () => onPageChanged(currentPage - 1) : null,
+            onPressed: currentPage > 1
+                ? () => onPageChanged(currentPage - 1)
+                : null,
             icon: const Icon(Icons.chevron_left_rounded),
             tooltip: AppLocalizations.of(context).previous,
           ),
@@ -720,8 +735,11 @@ class _ErrorView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             const ExcludeSemantics(
-              child:
-                  Icon(Icons.error_outline, size: 48, color: AppColors.error),
+              child: Icon(
+                Icons.error_outline,
+                size: 48,
+                color: AppColors.error,
+              ),
             ),
             const SizedBox(height: AlhaiSpacing.md),
             Text(

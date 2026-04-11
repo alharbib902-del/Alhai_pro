@@ -63,11 +63,13 @@ void main() {
     group('getSlowMovingProducts', () {
       test('returns list of SlowMovingProduct', () async {
         // Arrange
-        when(() => mockRemote.getSlowMovingProducts(
-              any(),
-              daysThreshold: any(named: 'daysThreshold'),
-              limit: any(named: 'limit'),
-            )).thenAnswer((_) async => [testSlowMovingResponse]);
+        when(
+          () => mockRemote.getSlowMovingProducts(
+            any(),
+            daysThreshold: any(named: 'daysThreshold'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenAnswer((_) async => [testSlowMovingResponse]);
 
         // Act
         final result = await repository.getSlowMovingProducts('store-1');
@@ -80,14 +82,18 @@ void main() {
 
       test('throws NetworkException on connection error', () async {
         // Arrange
-        when(() => mockRemote.getSlowMovingProducts(
-              any(),
-              daysThreshold: any(named: 'daysThreshold'),
-              limit: any(named: 'limit'),
-            )).thenThrow(DioException(
-          type: DioExceptionType.connectionError,
-          requestOptions: RequestOptions(path: '/analytics'),
-        ));
+        when(
+          () => mockRemote.getSlowMovingProducts(
+            any(),
+            daysThreshold: any(named: 'daysThreshold'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenThrow(
+          DioException(
+            type: DioExceptionType.connectionError,
+            requestOptions: RequestOptions(path: '/analytics'),
+          ),
+        );
 
         // Act & Assert
         expect(
@@ -100,10 +106,9 @@ void main() {
     group('getSalesForecast', () {
       test('returns list of SalesForecast', () async {
         // Arrange
-        when(() => mockRemote.getSalesForecast(
-              any(),
-              days: any(named: 'days'),
-            )).thenAnswer((_) async => [testForecastResponse]);
+        when(
+          () => mockRemote.getSalesForecast(any(), days: any(named: 'days')),
+        ).thenAnswer((_) async => [testForecastResponse]);
 
         // Act
         final result = await repository.getSalesForecast('store-1', days: 7);
@@ -118,11 +123,13 @@ void main() {
     group('getSmartAlerts', () {
       test('returns list of SmartAlert', () async {
         // Arrange
-        when(() => mockRemote.getSmartAlerts(
-              any(),
-              unreadOnly: any(named: 'unreadOnly'),
-              limit: any(named: 'limit'),
-            )).thenAnswer((_) async => [testAlertResponse]);
+        when(
+          () => mockRemote.getSmartAlerts(
+            any(),
+            unreadOnly: any(named: 'unreadOnly'),
+            limit: any(named: 'limit'),
+          ),
+        ).thenAnswer((_) async => [testAlertResponse]);
 
         // Act
         final result = await repository.getSmartAlerts('store-1');
@@ -149,10 +156,12 @@ void main() {
     group('getReorderSuggestions', () {
       test('returns list of ReorderSuggestion', () async {
         // Arrange
-        when(() => mockRemote.getReorderSuggestions(
-              any(),
-              daysAhead: any(named: 'daysAhead'),
-            )).thenAnswer((_) async => [testReorderResponse]);
+        when(
+          () => mockRemote.getReorderSuggestions(
+            any(),
+            daysAhead: any(named: 'daysAhead'),
+          ),
+        ).thenAnswer((_) async => [testReorderResponse]);
 
         // Act
         final result = await repository.getReorderSuggestions('store-1');

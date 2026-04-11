@@ -8,9 +8,7 @@ void main() {
   group('selectedPromotionProvider', () {
     test('initial value is null', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -21,9 +19,7 @@ void main() {
   group('promotionTypeFilterProvider', () {
     test('initial value is null (show all)', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -32,9 +28,7 @@ void main() {
 
     test('can be updated', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -50,9 +44,7 @@ void main() {
   group('abTestDurationProvider', () {
     test('initial value is 7 days', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -61,9 +53,7 @@ void main() {
 
     test('can be updated', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -75,9 +65,7 @@ void main() {
   group('abTestControlPercentProvider', () {
     test('initial value is 20', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -86,9 +74,7 @@ void main() {
 
     test('can be updated', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -100,9 +86,7 @@ void main() {
   group('abTestPromotionAProvider', () {
     test('initial value is null', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -113,9 +97,7 @@ void main() {
   group('abTestPromotionBProvider', () {
     test('initial value is null', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 

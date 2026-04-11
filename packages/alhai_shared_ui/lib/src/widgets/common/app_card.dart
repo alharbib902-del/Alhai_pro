@@ -92,8 +92,9 @@ class _AppCardState extends State<AppCard> {
         onEnter: (_) => setState(() => _isHovered = true),
         onExit: (_) => setState(() => _isHovered = false),
         child: AnimatedContainer(
-          duration:
-              context.prefersReducedMotion ? Duration.zero : AppDurations.fast,
+          duration: context.prefersReducedMotion
+              ? Duration.zero
+              : AppDurations.fast,
           decoration: BoxDecoration(
             color: effectiveBackgroundColor,
             borderRadius: BorderRadius.circular(
@@ -103,7 +104,8 @@ class _AppCardState extends State<AppCard> {
               color: effectiveBorderColor,
               width: widget.isSelected ? 2 : 1,
             ),
-            boxShadow: widget.boxShadow ??
+            boxShadow:
+                widget.boxShadow ??
                 (widget.elevation > 0 || _isHovered
                     ? AppShadows.md
                     : AppShadows.sm),
@@ -119,7 +121,8 @@ class _AppCardState extends State<AppCard> {
               child: Stack(
                 children: [
                   Padding(
-                    padding: widget.padding ??
+                    padding:
+                        widget.padding ??
                         const EdgeInsets.all(AppCardSize.paddingMd),
                     child: widget.child,
                   ),
@@ -360,9 +363,8 @@ class ProductCard extends StatelessWidget {
                       child: CachedNetworkImage(
                         imageUrl: imageUrl!,
                         fit: BoxFit.cover,
-                        placeholder: (_, __) => const Center(
-                          child: CircularProgressIndicator(),
-                        ),
+                        placeholder: (_, __) =>
+                            const Center(child: CircularProgressIndicator()),
                         errorWidget: (_, __, ___) => _buildFallbackImage(),
                       ),
                     )
@@ -452,8 +454,9 @@ class ProductCard extends StatelessWidget {
               child: SizedBox(
                 width: double.infinity,
                 child: ElevatedButton.icon(
-                  onPressed:
-                      quantity != null && quantity! > 0 ? onAddToCart : null,
+                  onPressed: quantity != null && quantity! > 0
+                      ? onAddToCart
+                      : null,
                   icon: const Icon(Icons.add_shopping_cart, size: 18),
                   label: Text(l10n.add),
                   style: ElevatedButton.styleFrom(
@@ -510,7 +513,7 @@ class ProductCard extends StatelessWidget {
     }
     return (
       label: '${l10n.inStock} ($quantity)',
-      color: AppColors.stockAvailable
+      color: AppColors.stockAvailable,
     );
   }
 }
@@ -563,8 +566,9 @@ class CustomerCard extends StatelessWidget {
           // Avatar
           CircleAvatar(
             radius: 24,
-            backgroundColor:
-                isSelected ? AppColors.primary : AppColors.primarySurface,
+            backgroundColor: isSelected
+                ? AppColors.primary
+                : AppColors.primarySurface,
             child: Text(
               displayInitials,
               style: AppTypography.titleMedium.copyWith(
@@ -609,17 +613,15 @@ class CustomerCard extends StatelessWidget {
                   balance! > 0
                       ? l10n.owes
                       : balance! < 0
-                          ? l10n.due
-                          : l10n.balanced,
+                      ? l10n.due
+                      : l10n.balanced,
                   style: AppTypography.labelSmall.copyWith(
                     color: AppColors.textMuted,
                   ),
                 ),
                 Text(
                   '${balance!.abs().toStringAsFixed(2)} $currency',
-                  style: AppTypography.priceSmall.copyWith(
-                    color: balanceColor,
-                  ),
+                  style: AppTypography.priceSmall.copyWith(color: balanceColor),
                 ),
               ],
             ),

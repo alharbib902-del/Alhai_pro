@@ -53,7 +53,9 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
   Future<void> _upsertSetting(String key, String value) async {
     final storeId = ref.read(currentStoreIdProvider)!;
     final id = 'setting_${storeId}_$key';
-    await _db.into(_db.settingsTable).insertOnConflictUpdate(
+    await _db
+        .into(_db.settingsTable)
+        .insertOnConflictUpdate(
           SettingsTableCompanion.insert(
             id: id,
             storeId: storeId,
@@ -78,9 +80,9 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
         }
       }
       // Load from settings table
-      final settings = await (_db.select(_db.settingsTable)
-            ..where((s) => s.storeId.equals(storeId)))
-          .get();
+      final settings = await (_db.select(
+        _db.settingsTable,
+      )..where((s) => s.storeId.equals(storeId))).get();
       for (final s in settings) {
         if (s.key == 'tax_rate') {
           _taxRateController.text = s.value.isNotEmpty ? s.value : '15';
@@ -119,8 +121,9 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content:
-                Text(AppLocalizations.of(context).errorSavingSettings('$e')),
+            content: Text(
+              AppLocalizations.of(context).errorSavingSettings('$e'),
+            ),
             backgroundColor: AppColors.error,
           ),
         );
@@ -161,14 +164,22 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context,
-                      message: _error!, onRetry: _loadSettings)
-                  : SingleChildScrollView(
-                      padding: EdgeInsets.all(
-                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: _buildContent(
-                          isWideScreen, isMediumScreen, isDark, l10n),
-                    ),
+              ? AppErrorState.general(
+                  context,
+                  message: _error!,
+                  onRetry: _loadSettings,
+                )
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(
+                    isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                  ),
+                  child: _buildContent(
+                    isWideScreen,
+                    isMediumScreen,
+                    isDark,
+                    l10n,
+                  ),
+                ),
         ),
       ],
     );
@@ -240,8 +251,11 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.percent_rounded,
-                    color: AppColors.info, size: 20),
+                child: const Icon(
+                  Icons.percent_rounded,
+                  color: AppColors.info,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -286,8 +300,10 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: AppColors.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
               ),
               filled: true,
               fillColor: AppColors.getSurfaceVariant(isDark),
@@ -325,8 +341,11 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.numbers_rounded,
-                    color: AppColors.primary, size: 20),
+                child: const Icon(
+                  Icons.numbers_rounded,
+                  color: AppColors.primary,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -349,11 +368,11 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
             ),
             decoration: InputDecoration(
               hintText: l10n.taxNumberHint,
-              hintStyle: TextStyle(
+              hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
+              prefixIcon: Icon(
+                Icons.verified_rounded,
                 color: AppColors.getTextMuted(isDark),
               ),
-              prefixIcon: Icon(Icons.verified_rounded,
-                  color: AppColors.getTextMuted(isDark)),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: AppColors.getBorder(isDark)),
@@ -399,8 +418,11 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                   color: AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.settings_rounded,
-                    color: AppColors.warning, size: 20),
+                child: const Icon(
+                  Icons.settings_rounded,
+                  color: AppColors.warning,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
@@ -429,8 +451,9 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
             subtitle: l10n.pricesIncludeTax,
             value: _taxInclusive,
             isDark: isDark,
-            onChanged:
-                _taxEnabled ? (v) => setState(() => _taxInclusive = v) : null,
+            onChanged: _taxEnabled
+                ? (v) => setState(() => _taxInclusive = v)
+                : null,
           ),
         ],
       ),
@@ -447,7 +470,9 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: AppColors.textOnPrimary),
+                  strokeWidth: 2,
+                  color: AppColors.textOnPrimary,
+                ),
               )
             : const Icon(Icons.save_rounded, size: 20),
         label: Text(
@@ -458,8 +483,9 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           backgroundColor: AppColors.primary,
           foregroundColor: AppColors.textOnPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
     );

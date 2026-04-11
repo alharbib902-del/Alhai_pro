@@ -15,8 +15,9 @@ void main() {
 
   setUp(() {
     mockDiscountsDao = MockDiscountsDao();
-    when(() => mockDiscountsDao.getAllCoupons(any()))
-        .thenAnswer((_) async => []);
+    when(
+      () => mockDiscountsDao.getAllCoupons(any()),
+    ).thenAnswer((_) async => []);
     final mockDb = setupMockDatabase(discountsDao: mockDiscountsDao);
     setupTestGetIt(mockDb: mockDb);
   });
@@ -59,8 +60,9 @@ void main() {
       expect(find.byType(FilterChip), findsNWidgets(4));
     });
 
-    testWidgets('has floating action button for issuing gift card',
-        (tester) async {
+    testWidgets('has floating action button for issuing gift card', (
+      tester,
+    ) async {
       await tester.pumpWidget(createTestWidget(const GiftCardsScreen()));
       await tester.pumpAndSettle();
 

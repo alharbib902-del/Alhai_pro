@@ -40,19 +40,19 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
       {
         'id': 'damaged',
         'label': l10n.damagedProduct,
-        'icon': Icons.broken_image
+        'icon': Icons.broken_image,
       },
       {'id': 'wrong', 'label': l10n.wrongOrder, 'icon': Icons.error_outline},
       {
         'id': 'changed_mind',
         'label': l10n.customerChangedMind,
-        'icon': Icons.sentiment_dissatisfied
+        'icon': Icons.sentiment_dissatisfied,
       },
       {'id': 'expired', 'label': l10n.expiredProduct, 'icon': Icons.schedule},
       {
         'id': 'quality',
         'label': l10n.unsatisfactoryQuality,
-        'icon': Icons.thumb_down
+        'icon': Icons.thumb_down,
       },
       {'id': 'other', 'label': l10n.otherReason, 'icon': Icons.more_horiz},
     ];
@@ -70,8 +70,9 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
 
     if (pendingRefund == null) {
       return Scaffold(
-        appBar:
-            AppBar(title: Text(AppLocalizations.of(context).refundReasonTitle)),
+        appBar: AppBar(
+          title: Text(AppLocalizations.of(context).refundReasonTitle),
+        ),
         body: AppEmptyState(
           icon: Icons.receipt_long_outlined,
           title: AppLocalizations.of(context).noRefundData,
@@ -92,8 +93,8 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
             final padding = isMobile
                 ? 12.0
                 : isDesktop
-                    ? 24.0
-                    : 16.0;
+                ? 24.0
+                : 16.0;
 
             return Column(
               children: [
@@ -105,7 +106,8 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                     color: AppColors.warning.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                        color: AppColors.warning.withValues(alpha: 0.3)),
+                      color: AppColors.warning.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Row(
                     children: [
@@ -116,20 +118,24 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              AppLocalizations.of(context)
-                                  .invoiceFieldLabel(pendingRefund.receiptNo),
-                              style:
-                                  const TextStyle(fontWeight: FontWeight.bold),
+                              AppLocalizations.of(
+                                context,
+                              ).invoiceFieldLabel(pendingRefund.receiptNo),
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                             Text(
                               AppLocalizations.of(context).productsCountAmount(
-                                  pendingRefund.items.length,
-                                  pendingRefund.amount.toStringAsFixed(2)),
+                                pendingRefund.items.length,
+                                pendingRefund.amount.toStringAsFixed(2),
+                              ),
                               style: TextStyle(
-                                  color: Theme.of(context)
-                                      .colorScheme
-                                      .onSurfaceVariant,
-                                  fontSize: 13),
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurfaceVariant,
+                                fontSize: 13,
+                              ),
                             ),
                           ],
                         ),
@@ -145,7 +151,9 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                       Text(
                         AppLocalizations.of(context).selectRefundReason,
                         style: const TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                       const SizedBox(height: AlhaiSpacing.md),
 
@@ -155,8 +163,9 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                         final isSelected = _selectedReason == reason['id'];
 
                         return Card(
-                          margin:
-                              const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+                          margin: const EdgeInsets.only(
+                            bottom: AlhaiSpacing.xs,
+                          ),
                           color: isSelected
                               ? AppColors.info.withValues(alpha: 0.1)
                               : null,
@@ -171,20 +180,21 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                           ),
                           child: ListTile(
                             onTap: () => setState(
-                                () => _selectedReason = reason['id'] as String),
+                              () => _selectedReason = reason['id'] as String,
+                            ),
                             leading: CircleAvatar(
                               backgroundColor: isSelected
                                   ? AppColors.info
-                                  : Theme.of(context)
-                                      .colorScheme
-                                      .surfaceContainerHighest,
+                                  : Theme.of(
+                                      context,
+                                    ).colorScheme.surfaceContainerHighest,
                               child: Icon(
                                 reason['icon'] as IconData,
                                 color: isSelected
                                     ? Theme.of(context).colorScheme.surface
-                                    : Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant,
+                                    : Theme.of(
+                                        context,
+                                      ).colorScheme.onSurfaceVariant,
                               ),
                             ),
                             title: Text(
@@ -196,12 +206,16 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                               ),
                             ),
                             trailing: isSelected
-                                ? const Icon(Icons.check_circle,
-                                    color: AppColors.info)
-                                : Icon(Icons.radio_button_unchecked,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurfaceVariant),
+                                ? const Icon(
+                                    Icons.check_circle,
+                                    color: AppColors.info,
+                                  )
+                                : Icon(
+                                    Icons.radio_button_unchecked,
+                                    color: Theme.of(
+                                      context,
+                                    ).colorScheme.onSurfaceVariant,
+                                  ),
                           ),
                         );
                       }),
@@ -220,7 +234,8 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                         decoration: InputDecoration(
                           hintText: AppLocalizations.of(context).addNotesHint,
                           border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                       ),
                     ],
@@ -234,12 +249,12 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                     color: Theme.of(context).scaffoldBackgroundColor,
                     boxShadow: [
                       BoxShadow(
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.12),
-                          blurRadius: 8,
-                          offset: const Offset(0, -2))
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.12),
+                        blurRadius: 8,
+                        offset: const Offset(0, -2),
+                      ),
                     ],
                   ),
                   child: SizedBox(
@@ -253,17 +268,22 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
                               width: 16,
                               height: 16,
                               child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: Theme.of(context).colorScheme.surface),
+                                strokeWidth: 2,
+                                color: Theme.of(context).colorScheme.surface,
+                              ),
                             )
                           : const AdaptiveIcon(Icons.arrow_forward),
-                      label: Text(_isProcessing
-                          ? AppLocalizations.of(context).processingAction
-                          : AppLocalizations.of(context)
-                              .nextSupervisorApproval),
+                      label: Text(
+                        _isProcessing
+                            ? AppLocalizations.of(context).processingAction
+                            : AppLocalizations.of(
+                                context,
+                              ).nextSupervisorApproval,
+                      ),
                       style: FilledButton.styleFrom(
                         padding: const EdgeInsets.symmetric(
-                            vertical: AlhaiSpacing.md),
+                          vertical: AlhaiSpacing.md,
+                        ),
                       ),
                     ),
                   ),
@@ -304,19 +324,22 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
       // Wrap ALL DB writes in a single transaction to prevent partial data on crash
       await db.transaction(() async {
         // Insert return header
-        await db.returnsDao.insertReturn(ReturnsTableCompanion(
-          id: Value(returnId),
-          returnNumber: Value(returnNumber),
-          saleId: Value(pendingRefund.saleId),
-          storeId: Value(storeId),
-          reason: Value(_selectedReason!),
-          notes: Value(
-              _notesController.text.isEmpty ? null : _notesController.text),
-          totalRefund: Value(pendingRefund.amount),
-          status: const Value('completed'),
-          createdBy: Value(userId),
-          createdAt: Value(now),
-        ));
+        await db.returnsDao.insertReturn(
+          ReturnsTableCompanion(
+            id: Value(returnId),
+            returnNumber: Value(returnNumber),
+            saleId: Value(pendingRefund.saleId),
+            storeId: Value(storeId),
+            reason: Value(_selectedReason!),
+            notes: Value(
+              _notesController.text.isEmpty ? null : _notesController.text,
+            ),
+            totalRefund: Value(pendingRefund.amount),
+            status: const Value('completed'),
+            createdBy: Value(userId),
+            createdAt: Value(now),
+          ),
+        );
 
         // Insert return items (refundAmount includes 15% VAT)
         final returnItems = pendingRefund.items.map((item) {
@@ -353,21 +376,22 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
           await db.productsDao.updateStock(item.productId, newQty);
 
           // تسجيل حركة المخزون بالكميات الفعلية
-          await db.inventoryDao
-              .insertMovement(InventoryMovementsTableCompanion.insert(
-            id: 'INV-RTN-${_uuid.v4()}',
-            productId: item.productId,
-            storeId: storeId,
-            type: 'return',
-            qty: item.qty,
-            previousQty: previousQty,
-            newQty: newQty,
-            referenceType: const Value('return'),
-            referenceId: Value(returnId),
-            userId: Value(userId),
-            reason: Value('return: $_selectedReason'),
-            createdAt: now,
-          ));
+          await db.inventoryDao.insertMovement(
+            InventoryMovementsTableCompanion.insert(
+              id: 'INV-RTN-${_uuid.v4()}',
+              productId: item.productId,
+              storeId: storeId,
+              type: 'return',
+              qty: item.qty,
+              previousQty: previousQty,
+              newQty: newQty,
+              referenceType: const Value('return'),
+              referenceId: Value(returnId),
+              userId: Value(userId),
+              reason: Value('return: $_selectedReason'),
+              createdAt: now,
+            ),
+          );
 
           // تسجيل دلتا المخزون (موجب لاستعادة المخزون)
           await db.stockDeltasDao.addDelta(
@@ -399,7 +423,8 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-                AppLocalizations.of(context).refundCreationError(e.toString())),
+              AppLocalizations.of(context).refundCreationError(e.toString()),
+            ),
             backgroundColor: AppColors.error,
           ),
         );

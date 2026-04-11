@@ -12,7 +12,8 @@ part of 'order_item_response.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 OrderItemResponse _$OrderItemResponseFromJson(Map<String, dynamic> json) {
   return _OrderItemResponse.fromJson(json);
@@ -42,15 +43,17 @@ mixin _$OrderItemResponse {
 /// @nodoc
 abstract class $OrderItemResponseCopyWith<$Res> {
   factory $OrderItemResponseCopyWith(
-          OrderItemResponse value, $Res Function(OrderItemResponse) then) =
-      _$OrderItemResponseCopyWithImpl<$Res, OrderItemResponse>;
+    OrderItemResponse value,
+    $Res Function(OrderItemResponse) then,
+  ) = _$OrderItemResponseCopyWithImpl<$Res, OrderItemResponse>;
   @useResult
-  $Res call(
-      {@JsonKey(name: 'product_id') String productId,
-      String name,
-      @JsonKey(name: 'unit_price') double unitPrice,
-      int qty,
-      @JsonKey(name: 'line_total') double lineTotal});
+  $Res call({
+    @JsonKey(name: 'product_id') String productId,
+    String name,
+    @JsonKey(name: 'unit_price') double unitPrice,
+    int qty,
+    @JsonKey(name: 'line_total') double lineTotal,
+  });
 }
 
 /// @nodoc
@@ -74,54 +77,60 @@ class _$OrderItemResponseCopyWithImpl<$Res, $Val extends OrderItemResponse>
     Object? qty = null,
     Object? lineTotal = null,
   }) {
-    return _then(_value.copyWith(
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      unitPrice: null == unitPrice
-          ? _value.unitPrice
-          : unitPrice // ignore: cast_nullable_to_non_nullable
-              as double,
-      qty: null == qty
-          ? _value.qty
-          : qty // ignore: cast_nullable_to_non_nullable
-              as int,
-      lineTotal: null == lineTotal
-          ? _value.lineTotal
-          : lineTotal // ignore: cast_nullable_to_non_nullable
-              as double,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            productId: null == productId
+                ? _value.productId
+                : productId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            name: null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                      as String,
+            unitPrice: null == unitPrice
+                ? _value.unitPrice
+                : unitPrice // ignore: cast_nullable_to_non_nullable
+                      as double,
+            qty: null == qty
+                ? _value.qty
+                : qty // ignore: cast_nullable_to_non_nullable
+                      as int,
+            lineTotal: null == lineTotal
+                ? _value.lineTotal
+                : lineTotal // ignore: cast_nullable_to_non_nullable
+                      as double,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$OrderItemResponseImplCopyWith<$Res>
     implements $OrderItemResponseCopyWith<$Res> {
-  factory _$$OrderItemResponseImplCopyWith(_$OrderItemResponseImpl value,
-          $Res Function(_$OrderItemResponseImpl) then) =
-      __$$OrderItemResponseImplCopyWithImpl<$Res>;
+  factory _$$OrderItemResponseImplCopyWith(
+    _$OrderItemResponseImpl value,
+    $Res Function(_$OrderItemResponseImpl) then,
+  ) = __$$OrderItemResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {@JsonKey(name: 'product_id') String productId,
-      String name,
-      @JsonKey(name: 'unit_price') double unitPrice,
-      int qty,
-      @JsonKey(name: 'line_total') double lineTotal});
+  $Res call({
+    @JsonKey(name: 'product_id') String productId,
+    String name,
+    @JsonKey(name: 'unit_price') double unitPrice,
+    int qty,
+    @JsonKey(name: 'line_total') double lineTotal,
+  });
 }
 
 /// @nodoc
 class __$$OrderItemResponseImplCopyWithImpl<$Res>
     extends _$OrderItemResponseCopyWithImpl<$Res, _$OrderItemResponseImpl>
     implements _$$OrderItemResponseImplCopyWith<$Res> {
-  __$$OrderItemResponseImplCopyWithImpl(_$OrderItemResponseImpl _value,
-      $Res Function(_$OrderItemResponseImpl) _then)
-      : super(_value, _then);
+  __$$OrderItemResponseImplCopyWithImpl(
+    _$OrderItemResponseImpl _value,
+    $Res Function(_$OrderItemResponseImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of OrderItemResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -134,41 +143,43 @@ class __$$OrderItemResponseImplCopyWithImpl<$Res>
     Object? qty = null,
     Object? lineTotal = null,
   }) {
-    return _then(_$OrderItemResponseImpl(
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      name: null == name
-          ? _value.name
-          : name // ignore: cast_nullable_to_non_nullable
-              as String,
-      unitPrice: null == unitPrice
-          ? _value.unitPrice
-          : unitPrice // ignore: cast_nullable_to_non_nullable
-              as double,
-      qty: null == qty
-          ? _value.qty
-          : qty // ignore: cast_nullable_to_non_nullable
-              as int,
-      lineTotal: null == lineTotal
-          ? _value.lineTotal
-          : lineTotal // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
+    return _then(
+      _$OrderItemResponseImpl(
+        productId: null == productId
+            ? _value.productId
+            : productId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        name: null == name
+            ? _value.name
+            : name // ignore: cast_nullable_to_non_nullable
+                  as String,
+        unitPrice: null == unitPrice
+            ? _value.unitPrice
+            : unitPrice // ignore: cast_nullable_to_non_nullable
+                  as double,
+        qty: null == qty
+            ? _value.qty
+            : qty // ignore: cast_nullable_to_non_nullable
+                  as int,
+        lineTotal: null == lineTotal
+            ? _value.lineTotal
+            : lineTotal // ignore: cast_nullable_to_non_nullable
+                  as double,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$OrderItemResponseImpl extends _OrderItemResponse {
-  const _$OrderItemResponseImpl(
-      {@JsonKey(name: 'product_id') required this.productId,
-      required this.name,
-      @JsonKey(name: 'unit_price') required this.unitPrice,
-      required this.qty,
-      @JsonKey(name: 'line_total') required this.lineTotal})
-      : super._();
+  const _$OrderItemResponseImpl({
+    @JsonKey(name: 'product_id') required this.productId,
+    required this.name,
+    @JsonKey(name: 'unit_price') required this.unitPrice,
+    required this.qty,
+    @JsonKey(name: 'line_total') required this.lineTotal,
+  }) : super._();
 
   factory _$OrderItemResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$OrderItemResponseImplFromJson(json);
@@ -219,24 +230,24 @@ class _$OrderItemResponseImpl extends _OrderItemResponse {
   @pragma('vm:prefer-inline')
   _$$OrderItemResponseImplCopyWith<_$OrderItemResponseImpl> get copyWith =>
       __$$OrderItemResponseImplCopyWithImpl<_$OrderItemResponseImpl>(
-          this, _$identity);
+        this,
+        _$identity,
+      );
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$OrderItemResponseImplToJson(
-      this,
-    );
+    return _$$OrderItemResponseImplToJson(this);
   }
 }
 
 abstract class _OrderItemResponse extends OrderItemResponse {
-  const factory _OrderItemResponse(
-          {@JsonKey(name: 'product_id') required final String productId,
-          required final String name,
-          @JsonKey(name: 'unit_price') required final double unitPrice,
-          required final int qty,
-          @JsonKey(name: 'line_total') required final double lineTotal}) =
-      _$OrderItemResponseImpl;
+  const factory _OrderItemResponse({
+    @JsonKey(name: 'product_id') required final String productId,
+    required final String name,
+    @JsonKey(name: 'unit_price') required final double unitPrice,
+    required final int qty,
+    @JsonKey(name: 'line_total') required final double lineTotal,
+  }) = _$OrderItemResponseImpl;
   const _OrderItemResponse._() : super._();
 
   factory _OrderItemResponse.fromJson(Map<String, dynamic> json) =

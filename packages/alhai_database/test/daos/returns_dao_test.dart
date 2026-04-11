@@ -11,25 +11,29 @@ void main() {
     final now = DateTime(2025, 1, 1);
     // returns reference sales and products via FK
     for (var i = 1; i <= 2; i++) {
-      await db.productsDao.insertProduct(ProductsTableCompanion.insert(
-        id: 'prod-$i',
-        storeId: 'store-1',
-        name: 'P$i',
-        price: 10.0,
-        createdAt: now,
-      ));
+      await db.productsDao.insertProduct(
+        ProductsTableCompanion.insert(
+          id: 'prod-$i',
+          storeId: 'store-1',
+          name: 'P$i',
+          price: 10.0,
+          createdAt: now,
+        ),
+      );
     }
     for (final id in ['sale-1', 'sale-2', 'sale-other']) {
-      await db.salesDao.insertSale(SalesTableCompanion.insert(
-        id: id,
-        storeId: 'store-1',
-        receiptNo: 'R-$id',
-        cashierId: 'cashier-1',
-        subtotal: 100.0,
-        total: 100.0,
-        paymentMethod: 'cash',
-        createdAt: now,
-      ));
+      await db.salesDao.insertSale(
+        SalesTableCompanion.insert(
+          id: id,
+          storeId: 'store-1',
+          receiptNo: 'R-$id',
+          cashierId: 'cashier-1',
+          subtotal: 100.0,
+          total: 100.0,
+          paymentMethod: 'cash',
+          createdAt: now,
+        ),
+      );
     }
   });
 
@@ -76,11 +80,9 @@ void main() {
 
     test('getAllReturns returns all for store', () async {
       await db.returnsDao.insertReturn(makeReturn());
-      await db.returnsDao.insertReturn(makeReturn(
-        id: 'ret-2',
-        returnNumber: 'RET-002',
-        saleId: 'sale-2',
-      ));
+      await db.returnsDao.insertReturn(
+        makeReturn(id: 'ret-2', returnNumber: 'RET-002', saleId: 'sale-2'),
+      );
 
       final returns = await db.returnsDao.getAllReturns('store-1');
       expect(returns, hasLength(2));
@@ -88,29 +90,34 @@ void main() {
 
     test('getReturnsBySaleId finds returns for a sale', () async {
       await db.returnsDao.insertReturn(makeReturn());
-      await db.returnsDao.insertReturn(makeReturn(
-        id: 'ret-other',
-        returnNumber: 'RET-OTHER',
-        saleId: 'sale-other',
-      ));
+      await db.returnsDao.insertReturn(
+        makeReturn(
+          id: 'ret-other',
+          returnNumber: 'RET-OTHER',
+          saleId: 'sale-other',
+        ),
+      );
 
-      final returns =
-          await db.returnsDao.getReturnsBySaleId('sale-1', 'store-1');
+      final returns = await db.returnsDao.getReturnsBySaleId(
+        'sale-1',
+        'store-1',
+      );
       expect(returns, hasLength(1));
       expect(returns.first.id, 'ret-1');
     });
 
     test('getReturnsByDateRange filters by date', () async {
-      await db.returnsDao.insertReturn(makeReturn(
-        id: 'ret-jun',
-        createdAt: DateTime(2025, 6, 15),
-      ));
-      await db.returnsDao.insertReturn(makeReturn(
-        id: 'ret-jul',
-        returnNumber: 'RET-JUL',
-        saleId: 'sale-2',
-        createdAt: DateTime(2025, 7, 15),
-      ));
+      await db.returnsDao.insertReturn(
+        makeReturn(id: 'ret-jun', createdAt: DateTime(2025, 6, 15)),
+      );
+      await db.returnsDao.insertReturn(
+        makeReturn(
+          id: 'ret-jul',
+          returnNumber: 'RET-JUL',
+          saleId: 'sale-2',
+          createdAt: DateTime(2025, 7, 15),
+        ),
+      );
 
       final results = await db.returnsDao.getReturnsByDateRange(
         'store-1',

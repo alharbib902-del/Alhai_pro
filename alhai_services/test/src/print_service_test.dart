@@ -188,14 +188,22 @@ void main() {
       });
 
       test('PrinterConnectionType should have all values', () {
-        expect(PrinterConnectionType.values,
-            contains(PrinterConnectionType.bluetooth));
         expect(
-            PrinterConnectionType.values, contains(PrinterConnectionType.usb));
-        expect(PrinterConnectionType.values,
-            contains(PrinterConnectionType.network));
-        expect(PrinterConnectionType.values,
-            contains(PrinterConnectionType.sunmi));
+          PrinterConnectionType.values,
+          contains(PrinterConnectionType.bluetooth),
+        );
+        expect(
+          PrinterConnectionType.values,
+          contains(PrinterConnectionType.usb),
+        );
+        expect(
+          PrinterConnectionType.values,
+          contains(PrinterConnectionType.network),
+        );
+        expect(
+          PrinterConnectionType.values,
+          contains(PrinterConnectionType.sunmi),
+        );
       });
     });
   });

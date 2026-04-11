@@ -58,32 +58,38 @@ class _WhatsAppManagementScreenState
       final storeId = ref.read(currentStoreIdProvider) ?? '';
 
       // Load messages
-      final msgs = await db.customSelect(
-        '''SELECT id, recipient_phone, message_type, status, created_at, sent_at, error_message
+      final msgs = await db
+          .customSelect(
+            '''SELECT id, recipient_phone, message_type, status, created_at, sent_at, error_message
            FROM whatsapp_messages WHERE store_id = ? ORDER BY created_at DESC LIMIT 50''',
-        variables: [Variable.withString(storeId)],
-      ).get();
+            variables: [Variable.withString(storeId)],
+          )
+          .get();
 
       // Load templates
-      final tmplRows = await db.customSelect(
-        'SELECT id, name, content, variables, is_active FROM whatsapp_templates WHERE store_id = ?',
-        variables: [Variable.withString(storeId)],
-      ).get();
+      final tmplRows = await db
+          .customSelect(
+            'SELECT id, name, content, variables, is_active FROM whatsapp_templates WHERE store_id = ?',
+            variables: [Variable.withString(storeId)],
+          )
+          .get();
 
       if (mounted) {
         setState(() {
           _messages = msgs
-              .map((r) => _WaMessage(
-                    id: r.data['id'] as String,
-                    phone: r.data['recipient_phone'] as String,
-                    type: r.data['message_type'] as String,
-                    status: r.data['status'] as String,
-                    createdAt: _parseDate(r.data['created_at']),
-                    sentAt: r.data['sent_at'] != null
-                        ? _parseDateNullable(r.data['sent_at'])
-                        : null,
-                    error: r.data['error_message'] as String? ?? '',
-                  ))
+              .map(
+                (r) => _WaMessage(
+                  id: r.data['id'] as String,
+                  phone: r.data['recipient_phone'] as String,
+                  type: r.data['message_type'] as String,
+                  status: r.data['status'] as String,
+                  createdAt: _parseDate(r.data['created_at']),
+                  sentAt: r.data['sent_at'] != null
+                      ? _parseDateNullable(r.data['sent_at'])
+                      : null,
+                  error: r.data['error_message'] as String? ?? '',
+                ),
+              )
               .toList();
 
           _pendingCount = _messages.where((m) => m.status == 'pending').length;
@@ -94,12 +100,14 @@ class _WhatsAppManagementScreenState
             _templates = _defaultTemplates();
           } else {
             _templates = tmplRows
-                .map((r) => _WaTemplate(
-                      id: r.data['id'] as String,
-                      name: r.data['name'] as String,
-                      content: r.data['content'] as String,
-                      isActive: (r.data['is_active'] as int?) == 1,
-                    ))
+                .map(
+                  (r) => _WaTemplate(
+                    id: r.data['id'] as String,
+                    name: r.data['name'] as String,
+                    content: r.data['content'] as String,
+                    isActive: (r.data['is_active'] as int?) == 1,
+                  ),
+                )
                 .toList();
           }
           _isLoading = false;
@@ -111,27 +119,27 @@ class _WhatsAppManagementScreenState
   }
 
   List<_WaTemplate> _defaultTemplates() => [
-        _WaTemplate(
-          id: '1',
-          name: 'فاتورة البيع',
-          content:
-              'شكراً لتسوّقك من {store_name}!\nرقم الفاتورة: {invoice_no}\nالإجمالي: {total} ر.س',
-          isActive: true,
-        ),
-        _WaTemplate(
-          id: '2',
-          name: 'تذكير الدين',
-          content:
-              'عزيزي {customer_name}،\nلديك رصيد مستحق بقيمة {amount} ر.س.\nيرجى التواصل معنا.',
-          isActive: true,
-        ),
-        _WaTemplate(
-          id: '3',
-          name: 'ترحيب بالعميل الجديد',
-          content: 'أهلاً وسهلاً بك في {store_name}!\nنسعد بخدمتك دائماً.',
-          isActive: false,
-        ),
-      ];
+    _WaTemplate(
+      id: '1',
+      name: 'فاتورة البيع',
+      content:
+          'شكراً لتسوّقك من {store_name}!\nرقم الفاتورة: {invoice_no}\nالإجمالي: {total} ر.س',
+      isActive: true,
+    ),
+    _WaTemplate(
+      id: '2',
+      name: 'تذكير الدين',
+      content:
+          'عزيزي {customer_name}،\nلديك رصيد مستحق بقيمة {amount} ر.س.\nيرجى التواصل معنا.',
+      isActive: true,
+    ),
+    _WaTemplate(
+      id: '3',
+      name: 'ترحيب بالعميل الجديد',
+      content: 'أهلاً وسهلاً بك في {store_name}!\nنسعد بخدمتك دائماً.',
+      isActive: false,
+    ),
+  ];
 
   DateTime _parseDate(dynamic v) {
     if (v is DateTime) return v;
@@ -155,8 +163,9 @@ class _WhatsAppManagementScreenState
     });
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-          content: Text(AppLocalizations.of(context).requeuedMessage),
-          backgroundColor: AppColors.info),
+        content: Text(AppLocalizations.of(context).requeuedMessage),
+        backgroundColor: AppColors.info,
+      ),
     );
   }
 
@@ -177,9 +186,11 @@ class _WhatsAppManagementScreenState
     showDialog(
       context: context,
       builder: (ctx) => AlertDialog(
-        title: Text(isEdit
-            ? AppLocalizations.of(context).editTemplate
-            : AppLocalizations.of(context).newTemplate),
+        title: Text(
+          isEdit
+              ? AppLocalizations.of(context).editTemplate
+              : AppLocalizations.of(context).newTemplate,
+        ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -197,7 +208,10 @@ class _WhatsAppManagementScreenState
                 labelText: AppLocalizations.of(context).messageText,
                 border: const OutlineInputBorder(),
                 helperText: AppLocalizations.of(context).templateVariablesHint(
-                    '{customer_name}', '{store_name}', '{total}'),
+                  '{customer_name}',
+                  '{store_name}',
+                  '{total}',
+                ),
               ),
               maxLines: 4,
             ),
@@ -205,8 +219,9 @@ class _WhatsAppManagementScreenState
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(AppLocalizations.of(context).cancel)),
+            onPressed: () => Navigator.pop(ctx),
+            child: Text(AppLocalizations.of(context).cancel),
+          ),
           FilledButton(
             onPressed: () {
               final name = nameCtrl.text.trim();
@@ -214,7 +229,8 @@ class _WhatsAppManagementScreenState
               if (name.isEmpty || content.isEmpty) return;
 
               final tmpl = _WaTemplate(
-                id: existing?.id ??
+                id:
+                    existing?.id ??
                     DateTime.now().millisecondsSinceEpoch.toString(),
                 name: name,
                 content: content,
@@ -253,31 +269,43 @@ class _WhatsAppManagementScreenState
           controller: _tabController,
           tabs: [
             Tab(
-              child: Row(mainAxisSize: MainAxisSize.min, children: [
-                const Icon(Icons.queue_rounded, size: 16),
-                const SizedBox(width: AlhaiSpacing.xxs),
-                Text(AppLocalizations.of(context).messageQueue),
-                if (_pendingCount > 0) ...[
-                  const SizedBox(width: 6),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                    decoration: BoxDecoration(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const Icon(Icons.queue_rounded, size: 16),
+                  const SizedBox(width: AlhaiSpacing.xxs),
+                  Text(AppLocalizations.of(context).messageQueue),
+                  if (_pendingCount > 0) ...[
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 6,
+                        vertical: 2,
+                      ),
+                      decoration: BoxDecoration(
                         color: AppColors.warning,
-                        borderRadius: BorderRadius.circular(10)),
-                    child: Text('$_pendingCount',
-                        style:
-                            const TextStyle(fontSize: 10, color: Colors.white)),
-                  ),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Text(
+                        '$_pendingCount',
+                        style: const TextStyle(
+                          fontSize: 10,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
                 ],
-              ]),
+              ),
             ),
             Tab(
-                icon: const Icon(Icons.message_outlined, size: 16),
-                text: AppLocalizations.of(context).templates),
+              icon: const Icon(Icons.message_outlined, size: 16),
+              text: AppLocalizations.of(context).templates,
+            ),
             Tab(
-                icon: const Icon(Icons.settings_outlined, size: 16),
-                text: AppLocalizations.of(context).settings),
+              icon: const Icon(Icons.settings_outlined, size: 16),
+              text: AppLocalizations.of(context).settings,
+            ),
           ],
         ),
       ),
@@ -307,22 +335,28 @@ class _WhatsAppManagementScreenState
           child: Row(
             children: [
               Expanded(
-                  child: _StatCard(
-                      label: AppLocalizations.of(context).pendingStatus,
-                      count: _pendingCount,
-                      color: AppColors.warning)),
+                child: _StatCard(
+                  label: AppLocalizations.of(context).pendingStatus,
+                  count: _pendingCount,
+                  color: AppColors.warning,
+                ),
+              ),
               const SizedBox(width: AlhaiSpacing.xs),
               Expanded(
-                  child: _StatCard(
-                      label: AppLocalizations.of(context).sentStatus,
-                      count: _sentCount,
-                      color: AppColors.success)),
+                child: _StatCard(
+                  label: AppLocalizations.of(context).sentStatus,
+                  count: _sentCount,
+                  color: AppColors.success,
+                ),
+              ),
               const SizedBox(width: AlhaiSpacing.xs),
               Expanded(
-                  child: _StatCard(
-                      label: AppLocalizations.of(context).failedStatus,
-                      count: _failedCount,
-                      color: AppColors.error)),
+                child: _StatCard(
+                  label: AppLocalizations.of(context).failedStatus,
+                  count: _failedCount,
+                  color: AppColors.error,
+                ),
+              ),
             ],
           ),
         ),
@@ -335,7 +369,9 @@ class _WhatsAppManagementScreenState
             children: [
               _filterChip('all', AppLocalizations.of(context).all),
               _filterChip(
-                  'pending', AppLocalizations.of(context).pendingStatus),
+                'pending',
+                AppLocalizations.of(context).pendingStatus,
+              ),
               _filterChip('sent', AppLocalizations.of(context).sentStatus),
               _filterChip('failed', AppLocalizations.of(context).failedStatus),
             ],
@@ -358,33 +394,42 @@ class _WhatsAppManagementScreenState
                     return Card(
                       child: ListTile(
                         leading: Icon(icon, color: color),
-                        title: Text(msg.phone,
-                            style:
-                                const TextStyle(fontWeight: FontWeight.w500)),
+                        title: Text(
+                          msg.phone,
+                          style: const TextStyle(fontWeight: FontWeight.w500),
+                        ),
                         subtitle: Text(
                           '${msg.type} • ${_formatDate(msg.createdAt)}',
                           style: const TextStyle(fontSize: 11),
                         ),
-                        trailing: msg.status == 'failed' ||
-                                msg.status == 'pending'
+                        trailing:
+                            msg.status == 'failed' || msg.status == 'pending'
                             ? Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   if (msg.status == 'failed')
                                     IconButton(
-                                      icon: Icon(Icons.refresh_rounded,
-                                          size: 18, color: AppColors.info),
+                                      icon: Icon(
+                                        Icons.refresh_rounded,
+                                        size: 18,
+                                        color: AppColors.info,
+                                      ),
                                       onPressed: () => _retryMessage(msg.id),
-                                      tooltip: AppLocalizations.of(context)
-                                          .retrySend,
+                                      tooltip: AppLocalizations.of(
+                                        context,
+                                      ).retrySend,
                                     ),
                                   if (msg.status == 'pending')
                                     IconButton(
-                                      icon: Icon(Icons.cancel_outlined,
-                                          size: 18, color: AppColors.error),
+                                      icon: Icon(
+                                        Icons.cancel_outlined,
+                                        size: 18,
+                                        color: AppColors.error,
+                                      ),
                                       onPressed: () => _cancelMessage(msg.id),
-                                      tooltip:
-                                          AppLocalizations.of(context).cancel,
+                                      tooltip: AppLocalizations.of(
+                                        context,
+                                      ).cancel,
                                     ),
                                 ],
                               )
@@ -432,9 +477,12 @@ class _WhatsAppManagementScreenState
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                  AppLocalizations.of(context).templateCount(_templates.length),
-                  style: TextStyle(
-                      color: Theme.of(context).hintColor, fontSize: 12)),
+                AppLocalizations.of(context).templateCount(_templates.length),
+                style: TextStyle(
+                  color: Theme.of(context).hintColor,
+                  fontSize: 12,
+                ),
+              ),
               FilledButton.icon(
                 onPressed: () => _showTemplateEditor(),
                 icon: const Icon(Icons.add_rounded, size: 16),
@@ -459,8 +507,10 @@ class _WhatsAppManagementScreenState
                         ? AppColors.success
                         : Theme.of(context).colorScheme.outline,
                   ),
-                  title: Text(t.name,
-                      style: const TextStyle(fontWeight: FontWeight.w600)),
+                  title: Text(
+                    t.name,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
                   subtitle: Text(
                     t.isActive
                         ? AppLocalizations.of(context).activeStatus
@@ -479,7 +529,8 @@ class _WhatsAppManagementScreenState
                         value: t.isActive,
                         onChanged: (v) {
                           setState(
-                              () => _templates[i] = t.copyWith(isActive: v));
+                            () => _templates[i] = t.copyWith(isActive: v),
+                          );
                         },
                       ),
                     ],
@@ -487,10 +538,11 @@ class _WhatsAppManagementScreenState
                   children: [
                     Padding(
                       padding: const EdgeInsetsDirectional.fromSTEB(
-                          AlhaiSpacing.md,
-                          AlhaiSpacing.zero,
-                          AlhaiSpacing.md,
-                          AlhaiSpacing.xs),
+                        AlhaiSpacing.md,
+                        AlhaiSpacing.zero,
+                        AlhaiSpacing.md,
+                        AlhaiSpacing.xs,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -498,13 +550,15 @@ class _WhatsAppManagementScreenState
                             width: double.infinity,
                             padding: const EdgeInsets.all(AlhaiSpacing.sm),
                             decoration: BoxDecoration(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .surfaceContainerHighest,
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.surfaceContainerHighest,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Text(t.content,
-                                style: const TextStyle(fontSize: 13)),
+                            child: Text(
+                              t.content,
+                              style: const TextStyle(fontSize: 13),
+                            ),
                           ),
                           const SizedBox(height: AlhaiSpacing.xs),
                           Row(
@@ -518,14 +572,18 @@ class _WhatsAppManagementScreenState
                               ),
                               TextButton.icon(
                                 style: TextButton.styleFrom(
-                                    foregroundColor: AppColors.error),
+                                  foregroundColor: AppColors.error,
+                                ),
                                 onPressed: () {
                                   setState(() => _templates.removeAt(i));
                                 },
-                                icon:
-                                    const Icon(Icons.delete_outline, size: 16),
-                                label:
-                                    Text(AppLocalizations.of(context).delete),
+                                icon: const Icon(
+                                  Icons.delete_outline,
+                                  size: 16,
+                                ),
+                                label: Text(
+                                  AppLocalizations.of(context).delete,
+                                ),
                               ),
                             ],
                           ),
@@ -555,9 +613,13 @@ class _WhatsAppManagementScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(AppLocalizations.of(context).apiSettings,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 15)),
+                  Text(
+                    AppLocalizations.of(context).apiSettings,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
                   const SizedBox(height: AlhaiSpacing.sm),
                   TextField(
                     controller: _apiKeyController,
@@ -583,9 +645,11 @@ class _WhatsAppManagementScreenState
                     onPressed: () {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(
-                            content: Text(
-                                AppLocalizations.of(context).testingConnection),
-                            backgroundColor: AppColors.info),
+                          content: Text(
+                            AppLocalizations.of(context).testingConnection,
+                          ),
+                          backgroundColor: AppColors.info,
+                        ),
                       );
                     },
                     icon: const Icon(Icons.wifi_tethering_rounded, size: 18),
@@ -603,14 +667,19 @@ class _WhatsAppManagementScreenState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(AppLocalizations.of(context).sendSettings,
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 15)),
+                  Text(
+                    AppLocalizations.of(context).sendSettings,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
                   SwitchListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(AppLocalizations.of(context).autoSend),
-                    subtitle:
-                        Text(AppLocalizations.of(context).autoSendDescription),
+                    subtitle: Text(
+                      AppLocalizations.of(context).autoSendDescription,
+                    ),
                     value: _autoSend,
                     onChanged: (v) => setState(() => _autoSend = v),
                   ),
@@ -618,8 +687,9 @@ class _WhatsAppManagementScreenState
                   ListTile(
                     contentPadding: EdgeInsets.zero,
                     title: Text(AppLocalizations.of(context).dailyMessageLimit),
-                    subtitle: Text(AppLocalizations.of(context)
-                        .messagesPerDay(_dailyLimit)),
+                    subtitle: Text(
+                      AppLocalizations.of(context).messagesPerDay(_dailyLimit),
+                    ),
                     trailing: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -631,9 +701,13 @@ class _WhatsAppManagementScreenState
                           },
                           icon: const Icon(Icons.remove_circle_outline),
                         ),
-                        Text('$_dailyLimit',
-                            style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        Text(
+                          '$_dailyLimit',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                         IconButton(
                           onPressed: () {
                             if (_dailyLimit < 500) {
@@ -656,8 +730,9 @@ class _WhatsAppManagementScreenState
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
-                      content: Text(AppLocalizations.of(context).settingsSaved),
-                      backgroundColor: AppColors.success),
+                    content: Text(AppLocalizations.of(context).settingsSaved),
+                    backgroundColor: AppColors.success,
+                  ),
                 );
               },
               icon: const Icon(Icons.save_outlined),
@@ -679,8 +754,11 @@ class _StatCard extends StatelessWidget {
   final String label;
   final int count;
   final Color color;
-  const _StatCard(
-      {required this.label, required this.count, required this.color});
+  const _StatCard({
+    required this.label,
+    required this.count,
+    required this.color,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -693,12 +771,18 @@ class _StatCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Text('$count',
-              style: TextStyle(
-                  fontSize: 22, fontWeight: FontWeight.bold, color: color)),
-          Text(label,
-              style:
-                  TextStyle(fontSize: 12, color: Theme.of(context).hintColor)),
+          Text(
+            '$count',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.bold,
+              color: color,
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyle(fontSize: 12, color: Theme.of(context).hintColor),
+          ),
         ],
       ),
     );
@@ -727,14 +811,14 @@ class _WaMessage {
   });
 
   _WaMessage copyWith({String? status}) => _WaMessage(
-        id: id,
-        phone: phone,
-        type: type,
-        status: status ?? this.status,
-        createdAt: createdAt,
-        sentAt: sentAt,
-        error: error,
-      );
+    id: id,
+    phone: phone,
+    type: type,
+    status: status ?? this.status,
+    createdAt: createdAt,
+    sentAt: sentAt,
+    error: error,
+  );
 }
 
 class _WaTemplate {
@@ -751,9 +835,9 @@ class _WaTemplate {
   });
 
   _WaTemplate copyWith({bool? isActive}) => _WaTemplate(
-        id: id,
-        name: name,
-        content: content,
-        isActive: isActive ?? this.isActive,
-      );
+    id: id,
+    name: name,
+    content: content,
+    isActive: isActive ?? this.isActive,
+  );
 }

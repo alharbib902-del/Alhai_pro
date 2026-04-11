@@ -22,12 +22,7 @@ import 'print_service.dart';
 import 'receipt_data.dart';
 
 /// Status of a print job in the queue
-enum PrintJobStatus {
-  pending,
-  printing,
-  failed,
-  success,
-}
+enum PrintJobStatus { pending, printing, failed, success }
 
 /// A single print job in the queue
 class PrintJob {
@@ -51,16 +46,16 @@ class PrintJob {
 
   /// Convert to JSON-serializable map for persistence
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'receiptNumber': receipt.receiptNumber,
-        'status': status.name,
-        'attempts': attempts,
-        'createdAt': createdAt.toIso8601String(),
-        'lastAttemptAt': lastAttemptAt?.toIso8601String(),
-        'lastError': lastError,
-        // Store receipt data for reprint
-        'receipt': _receiptToJson(receipt),
-      };
+    'id': id,
+    'receiptNumber': receipt.receiptNumber,
+    'status': status.name,
+    'attempts': attempts,
+    'createdAt': createdAt.toIso8601String(),
+    'lastAttemptAt': lastAttemptAt?.toIso8601String(),
+    'lastError': lastError,
+    // Store receipt data for reprint
+    'receipt': _receiptToJson(receipt),
+  };
 
   /// Reconstruct from stored JSON
   factory PrintJob.fromJson(Map<String, dynamic> json) {
@@ -73,7 +68,8 @@ class PrintJob {
         orElse: () => PrintJobStatus.failed,
       ),
       attempts: json['attempts'] as int? ?? 0,
-      createdAt: DateTime.tryParse(json['createdAt'] as String? ?? '') ??
+      createdAt:
+          DateTime.tryParse(json['createdAt'] as String? ?? '') ??
           DateTime.now(),
       lastAttemptAt: json['lastAttemptAt'] != null
           ? DateTime.tryParse(json['lastAttemptAt'] as String)
@@ -112,9 +108,13 @@ class PrintQueueService {
   Stream<PrintJob> get jobStatusStream => _statusController.stream;
 
   /// Current jobs in the queue (pending + printing)
-  List<PrintJob> get pendingJobs => List.unmodifiable(_queue.where((j) =>
-      j.status == PrintJobStatus.pending ||
-      j.status == PrintJobStatus.printing));
+  List<PrintJob> get pendingJobs => List.unmodifiable(
+    _queue.where(
+      (j) =>
+          j.status == PrintJobStatus.pending ||
+          j.status == PrintJobStatus.printing,
+    ),
+  );
 
   /// Failed jobs available for manual reprint
   List<PrintJob> get failedJobs => List.unmodifiable(_failedJobs);
@@ -123,9 +123,11 @@ class PrintQueueService {
   int get totalJobs => _queue.length + _failedJobs.length;
 
   /// Whether any jobs are currently pending or printing
-  bool get hasActiveJobs => _queue.any((j) =>
-      j.status == PrintJobStatus.pending ||
-      j.status == PrintJobStatus.printing);
+  bool get hasActiveJobs => _queue.any(
+    (j) =>
+        j.status == PrintJobStatus.pending ||
+        j.status == PrintJobStatus.printing,
+  );
 
   PrintQueueService(this._printService);
 
@@ -150,7 +152,8 @@ class PrintQueueService {
 
     if (kDebugMode) {
       debugPrint(
-          'PrintQueue: enqueued job ${job.id} (queue: ${_queue.length})');
+        'PrintQueue: enqueued job ${job.id} (queue: ${_queue.length})',
+      );
     }
 
     // Start processing if not already running
@@ -265,7 +268,8 @@ class PrintQueueService {
     if (_printService.status != PrinterStatus.connected) {
       if (kDebugMode) {
         debugPrint(
-            'PrintQueue: printer not connected, job ${job.id} stays pending');
+          'PrintQueue: printer not connected, job ${job.id} stays pending',
+        );
       }
       // Move to failed immediately - the caller should reconnect and retry
       job
@@ -285,7 +289,8 @@ class PrintQueueService {
 
     if (kDebugMode) {
       debugPrint(
-          'PrintQueue: printing job ${job.id} (attempt ${job.attempts}/$maxRetries)');
+        'PrintQueue: printing job ${job.id} (attempt ${job.attempts}/$maxRetries)',
+      );
     }
 
     final result = await _printService.printReceipt(job.receipt);
@@ -368,8 +373,9 @@ class PrintQueueService {
       if (_failedJobs.isEmpty) {
         await prefs.remove(_failedJobsKey);
       } else {
-        final jsonStr =
-            json.encode(_failedJobs.map((j) => j.toJson()).toList());
+        final jsonStr = json.encode(
+          _failedJobs.map((j) => j.toJson()).toList(),
+        );
         await prefs.setString(_failedJobsKey, jsonStr);
       }
     } catch (e) {
@@ -381,67 +387,68 @@ class PrintQueueService {
 // ─── Receipt Serialization Helpers ─────────────────────────
 
 Map<String, dynamic> _receiptToJson(ReceiptData r) => {
-      'receiptNumber': r.receiptNumber,
-      'dateTime': r.dateTime.toIso8601String(),
-      'cashierName': r.cashierName,
-      'customerName': r.customerName,
-      'customerId': r.customerId,
-      'items': r.items
-          .map((i) => {
-                'name': i.name,
-                'quantity': i.quantity,
-                'unitPrice': i.unitPrice,
-                'total': i.total,
-                'barcode': i.barcode,
-              })
-          .toList(),
-      'subtotal': r.subtotal,
-      'discount': r.discount,
-      'tax': r.tax,
-      'total': r.total,
-      'paymentMethod': r.paymentMethod,
-      'amountReceived': r.amountReceived,
-      'changeAmount': r.changeAmount,
-      'storeName': r.store.name,
-      'storeAddress': r.store.address,
-      'storePhone': r.store.phone,
-      'storeVat': r.store.vatNumber,
-      'storeCr': r.store.crNumber,
-      'zatcaQrData': r.zatcaQrData,
-      'note': r.note,
-    };
+  'receiptNumber': r.receiptNumber,
+  'dateTime': r.dateTime.toIso8601String(),
+  'cashierName': r.cashierName,
+  'customerName': r.customerName,
+  'customerId': r.customerId,
+  'items': r.items
+      .map(
+        (i) => {
+          'name': i.name,
+          'quantity': i.quantity,
+          'unitPrice': i.unitPrice,
+          'total': i.total,
+          'barcode': i.barcode,
+        },
+      )
+      .toList(),
+  'subtotal': r.subtotal,
+  'discount': r.discount,
+  'tax': r.tax,
+  'total': r.total,
+  'paymentMethod': r.paymentMethod,
+  'amountReceived': r.amountReceived,
+  'changeAmount': r.changeAmount,
+  'storeName': r.store.name,
+  'storeAddress': r.store.address,
+  'storePhone': r.store.phone,
+  'storeVat': r.store.vatNumber,
+  'storeCr': r.store.crNumber,
+  'zatcaQrData': r.zatcaQrData,
+  'note': r.note,
+};
 
 ReceiptData _receiptFromJson(Map<String, dynamic> j) => ReceiptData(
-      receiptNumber: j['receiptNumber'] as String? ?? '',
-      dateTime:
-          DateTime.tryParse(j['dateTime'] as String? ?? '') ?? DateTime.now(),
-      cashierName: j['cashierName'] as String? ?? 'كاشير',
-      customerName: j['customerName'] as String?,
-      customerId: j['customerId'] as String?,
-      items: (j['items'] as List<dynamic>? ?? []).map((item) {
-        final m = item as Map<String, dynamic>;
-        return ReceiptItem(
-          name: m['name'] as String? ?? '',
-          quantity: (m['quantity'] as num?)?.toDouble() ?? 0,
-          unitPrice: (m['unitPrice'] as num?)?.toDouble() ?? 0,
-          total: (m['total'] as num?)?.toDouble() ?? 0,
-          barcode: m['barcode'] as String?,
-        );
-      }).toList(),
-      subtotal: (j['subtotal'] as num?)?.toDouble() ?? 0,
-      discount: (j['discount'] as num?)?.toDouble() ?? 0,
-      tax: (j['tax'] as num?)?.toDouble() ?? 0,
-      total: (j['total'] as num?)?.toDouble() ?? 0,
-      paymentMethod: j['paymentMethod'] as String? ?? 'cash',
-      amountReceived: (j['amountReceived'] as num?)?.toDouble(),
-      changeAmount: (j['changeAmount'] as num?)?.toDouble(),
-      store: ReceiptStoreInfo(
-        name: j['storeName'] as String? ?? 'Al-HAI Store',
-        address: j['storeAddress'] as String? ?? '',
-        phone: j['storePhone'] as String? ?? '',
-        vatNumber: j['storeVat'] as String? ?? '',
-        crNumber: j['storeCr'] as String?,
-      ),
-      zatcaQrData: j['zatcaQrData'] as String?,
-      note: j['note'] as String?,
+  receiptNumber: j['receiptNumber'] as String? ?? '',
+  dateTime: DateTime.tryParse(j['dateTime'] as String? ?? '') ?? DateTime.now(),
+  cashierName: j['cashierName'] as String? ?? 'كاشير',
+  customerName: j['customerName'] as String?,
+  customerId: j['customerId'] as String?,
+  items: (j['items'] as List<dynamic>? ?? []).map((item) {
+    final m = item as Map<String, dynamic>;
+    return ReceiptItem(
+      name: m['name'] as String? ?? '',
+      quantity: (m['quantity'] as num?)?.toDouble() ?? 0,
+      unitPrice: (m['unitPrice'] as num?)?.toDouble() ?? 0,
+      total: (m['total'] as num?)?.toDouble() ?? 0,
+      barcode: m['barcode'] as String?,
     );
+  }).toList(),
+  subtotal: (j['subtotal'] as num?)?.toDouble() ?? 0,
+  discount: (j['discount'] as num?)?.toDouble() ?? 0,
+  tax: (j['tax'] as num?)?.toDouble() ?? 0,
+  total: (j['total'] as num?)?.toDouble() ?? 0,
+  paymentMethod: j['paymentMethod'] as String? ?? 'cash',
+  amountReceived: (j['amountReceived'] as num?)?.toDouble(),
+  changeAmount: (j['changeAmount'] as num?)?.toDouble(),
+  store: ReceiptStoreInfo(
+    name: j['storeName'] as String? ?? 'Al-HAI Store',
+    address: j['storeAddress'] as String? ?? '',
+    phone: j['storePhone'] as String? ?? '',
+    vatNumber: j['storeVat'] as String? ?? '',
+    crNumber: j['storeCr'] as String?,
+  ),
+  zatcaQrData: j['zatcaQrData'] as String?,
+  note: j['note'] as String?,
+);

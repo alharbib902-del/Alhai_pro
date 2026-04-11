@@ -111,8 +111,10 @@ void main() {
         ),
       );
 
-      final coupon =
-          await db.discountsDao.getCouponByCode('EXPIRED', 'store-1');
+      final coupon = await db.discountsDao.getCouponByCode(
+        'EXPIRED',
+        'store-1',
+      );
       expect(coupon, isNull);
     });
 

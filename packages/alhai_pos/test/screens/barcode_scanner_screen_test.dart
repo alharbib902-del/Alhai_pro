@@ -26,9 +26,7 @@ class MockProductsDao extends Mock implements ProductsDao {}
 // Helpers
 // ---------------------------------------------------------------------------
 
-Widget _buildTestWidget({
-  List<Override> overrides = const [],
-}) {
+Widget _buildTestWidget({List<Override> overrides = const []}) {
   return ProviderScope(
     overrides: [
       currentStoreIdProvider.overrideWith((ref) => 'test-store-id'),

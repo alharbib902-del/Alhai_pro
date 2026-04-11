@@ -16,8 +16,10 @@ class ErrorMapper {
         return const NetworkException('Request timeout', code: 'TIMEOUT');
 
       case DioExceptionType.connectionError:
-        return const NetworkException('No internet connection',
-            code: 'NO_INTERNET');
+        return const NetworkException(
+          'No internet connection',
+          code: 'NO_INTERNET',
+        );
 
       case DioExceptionType.badResponse:
         return _handleBadResponse(error.response);
@@ -26,8 +28,10 @@ class ErrorMapper {
         return const NetworkException('Request cancelled', code: 'CANCELLED');
 
       case DioExceptionType.badCertificate:
-        return const NetworkException('Bad certificate',
-            code: 'BAD_CERTIFICATE');
+        return const NetworkException(
+          'Bad certificate',
+          code: 'BAD_CERTIFICATE',
+        );
 
       case DioExceptionType.unknown:
         // Check if response exists (sometimes happens)
@@ -41,8 +45,10 @@ class ErrorMapper {
   /// Handles HTTP error responses (4xx, 5xx)
   static AppException _handleBadResponse(Response<dynamic>? response) {
     if (response == null) {
-      return const ServerException('No response from server',
-          code: 'NO_RESPONSE');
+      return const ServerException(
+        'No response from server',
+        code: 'NO_RESPONSE',
+      );
     }
 
     final statusCode = response.statusCode;
@@ -75,10 +81,7 @@ class ErrorMapper {
         );
 
       case 404:
-        return NotFoundException(
-          message,
-          code: code ?? 'NOT_FOUND',
-        );
+        return NotFoundException(message, code: code ?? 'NOT_FOUND');
 
       case 422:
         return ValidationException(
@@ -129,8 +132,9 @@ class ErrorMapper {
       // message could be Map with ar/en (localized)
       if (messageField is Map<String, dynamic>) {
         // Prefer 'ar' then 'en' then first available
-        final firstValue =
-            messageField.values.isNotEmpty ? messageField.values.first : null;
+        final firstValue = messageField.values.isNotEmpty
+            ? messageField.values.first
+            : null;
         return messageField['ar'] as String? ??
             messageField['en'] as String? ??
             firstValue?.toString();
@@ -183,9 +187,11 @@ class ErrorMapper {
           result[key] = [value];
         } else if (value is Map<String, dynamic>) {
           // Nested map (ar/en localization)
-          final firstValue =
-              value.values.isNotEmpty ? value.values.first : null;
-          final msg = value['ar'] as String? ??
+          final firstValue = value.values.isNotEmpty
+              ? value.values.first
+              : null;
+          final msg =
+              value['ar'] as String? ??
               value['en'] as String? ??
               firstValue?.toString();
           if (msg != null) result[key] = [msg];

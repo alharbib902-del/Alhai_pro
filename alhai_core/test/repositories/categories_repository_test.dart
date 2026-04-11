@@ -43,8 +43,9 @@ void main() {
     group('getCategories', () {
       test('returns list of categories on success', () async {
         // Arrange
-        when(() => mockRemote.getCategories(any()))
-            .thenAnswer((_) async => [testCategoryResponse]);
+        when(
+          () => mockRemote.getCategories(any()),
+        ).thenAnswer((_) async => [testCategoryResponse]);
 
         // Act
         final result = await repository.getCategories('store-1');
@@ -58,10 +59,12 @@ void main() {
 
       test('throws NetworkException on connection error', () async {
         // Arrange
-        when(() => mockRemote.getCategories(any())).thenThrow(DioException(
-          type: DioExceptionType.connectionError,
-          requestOptions: RequestOptions(path: '/categories'),
-        ));
+        when(() => mockRemote.getCategories(any())).thenThrow(
+          DioException(
+            type: DioExceptionType.connectionError,
+            requestOptions: RequestOptions(path: '/categories'),
+          ),
+        );
 
         // Act & Assert
         expect(
@@ -74,8 +77,9 @@ void main() {
     group('getCategory', () {
       test('returns single category on success', () async {
         // Arrange
-        when(() => mockRemote.getCategory(any()))
-            .thenAnswer((_) async => testCategoryResponse);
+        when(
+          () => mockRemote.getCategory(any()),
+        ).thenAnswer((_) async => testCategoryResponse);
 
         // Act
         final result = await repository.getCategory('cat-1');
@@ -88,14 +92,16 @@ void main() {
 
       test('throws NotFoundException on 404', () async {
         // Arrange
-        when(() => mockRemote.getCategory(any())).thenThrow(DioException(
-          type: DioExceptionType.badResponse,
-          response: Response(
-            statusCode: 404,
+        when(() => mockRemote.getCategory(any())).thenThrow(
+          DioException(
+            type: DioExceptionType.badResponse,
+            response: Response(
+              statusCode: 404,
+              requestOptions: RequestOptions(path: '/categories/invalid'),
+            ),
             requestOptions: RequestOptions(path: '/categories/invalid'),
           ),
-          requestOptions: RequestOptions(path: '/categories/invalid'),
-        ));
+        );
 
         // Act & Assert
         expect(
@@ -109,7 +115,8 @@ void main() {
       test('filters only root categories (parentId == null)', () async {
         // Arrange
         when(() => mockRemote.getCategories(any())).thenAnswer(
-            (_) async => [testCategoryResponse, testChildCategoryResponse]);
+          (_) async => [testCategoryResponse, testChildCategoryResponse],
+        );
 
         // Act
         final result = await repository.getRootCategories('store-1');
@@ -124,7 +131,8 @@ void main() {
       test('filters categories by parentId', () async {
         // Arrange
         when(() => mockRemote.getCategories(any())).thenAnswer(
-            (_) async => [testCategoryResponse, testChildCategoryResponse]);
+          (_) async => [testCategoryResponse, testChildCategoryResponse],
+        );
 
         // Act
         final result = await repository.getChildCategories('cat-1');

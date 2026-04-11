@@ -11,13 +11,15 @@ void main() {
     // stock_deltas reference products via FK
     final now = DateTime(2025, 1, 1);
     for (var i = 1; i <= 2; i++) {
-      await db.productsDao.insertProduct(ProductsTableCompanion.insert(
-        id: 'prod-$i',
-        storeId: 'store-1',
-        name: 'P$i',
-        price: 10.0,
-        createdAt: now,
-      ));
+      await db.productsDao.insertProduct(
+        ProductsTableCompanion.insert(
+          id: 'prod-$i',
+          storeId: 'store-1',
+          name: 'P$i',
+          price: 10.0,
+          createdAt: now,
+        ),
+      );
     }
   });
 
@@ -88,8 +90,9 @@ void main() {
         operationType: 'sale',
       );
 
-      final store1Pending =
-          await db.stockDeltasDao.getPendingDeltasForStore('store-1');
+      final store1Pending = await db.stockDeltasDao.getPendingDeltasForStore(
+        'store-1',
+      );
       expect(store1Pending, hasLength(1));
       expect(store1Pending.first.storeId, 'store-1');
     });
@@ -193,8 +196,9 @@ void main() {
         operationType: 'purchase',
       );
 
-      final summary =
-          await db.stockDeltasDao.getDeltaSummaryByProduct('store-1');
+      final summary = await db.stockDeltasDao.getDeltaSummaryByProduct(
+        'store-1',
+      );
       expect(summary, hasLength(2));
     });
 

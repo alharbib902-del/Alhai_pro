@@ -12,7 +12,8 @@ part of 'refund.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 Refund _$RefundFromJson(Map<String, dynamic> json) {
   return _Refund.fromJson(json);
@@ -49,21 +50,22 @@ abstract class $RefundCopyWith<$Res> {
   factory $RefundCopyWith(Refund value, $Res Function(Refund) then) =
       _$RefundCopyWithImpl<$Res, Refund>;
   @useResult
-  $Res call(
-      {String id,
-      String originalSaleId,
-      String storeId,
-      String cashierId,
-      String? customerId,
-      RefundStatus status,
-      RefundReason reason,
-      RefundMethod method,
-      double totalAmount,
-      List<RefundItem> items,
-      String? notes,
-      String? supervisorId,
-      DateTime createdAt,
-      DateTime? completedAt});
+  $Res call({
+    String id,
+    String originalSaleId,
+    String storeId,
+    String cashierId,
+    String? customerId,
+    RefundStatus status,
+    RefundReason reason,
+    RefundMethod method,
+    double totalAmount,
+    List<RefundItem> items,
+    String? notes,
+    String? supervisorId,
+    DateTime createdAt,
+    DateTime? completedAt,
+  });
 }
 
 /// @nodoc
@@ -96,89 +98,94 @@ class _$RefundCopyWithImpl<$Res, $Val extends Refund>
     Object? createdAt = null,
     Object? completedAt = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      originalSaleId: null == originalSaleId
-          ? _value.originalSaleId
-          : originalSaleId // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      cashierId: null == cashierId
-          ? _value.cashierId
-          : cashierId // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerId: freezed == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as RefundStatus,
-      reason: null == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as RefundReason,
-      method: null == method
-          ? _value.method
-          : method // ignore: cast_nullable_to_non_nullable
-              as RefundMethod,
-      totalAmount: null == totalAmount
-          ? _value.totalAmount
-          : totalAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      items: null == items
-          ? _value.items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<RefundItem>,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      supervisorId: freezed == supervisorId
-          ? _value.supervisorId
-          : supervisorId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      completedAt: freezed == completedAt
-          ? _value.completedAt
-          : completedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            originalSaleId: null == originalSaleId
+                ? _value.originalSaleId
+                : originalSaleId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            storeId: null == storeId
+                ? _value.storeId
+                : storeId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            cashierId: null == cashierId
+                ? _value.cashierId
+                : cashierId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            customerId: freezed == customerId
+                ? _value.customerId
+                : customerId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as RefundStatus,
+            reason: null == reason
+                ? _value.reason
+                : reason // ignore: cast_nullable_to_non_nullable
+                      as RefundReason,
+            method: null == method
+                ? _value.method
+                : method // ignore: cast_nullable_to_non_nullable
+                      as RefundMethod,
+            totalAmount: null == totalAmount
+                ? _value.totalAmount
+                : totalAmount // ignore: cast_nullable_to_non_nullable
+                      as double,
+            items: null == items
+                ? _value.items
+                : items // ignore: cast_nullable_to_non_nullable
+                      as List<RefundItem>,
+            notes: freezed == notes
+                ? _value.notes
+                : notes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            supervisorId: freezed == supervisorId
+                ? _value.supervisorId
+                : supervisorId // ignore: cast_nullable_to_non_nullable
+                      as String?,
+            createdAt: null == createdAt
+                ? _value.createdAt
+                : createdAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            completedAt: freezed == completedAt
+                ? _value.completedAt
+                : completedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$RefundImplCopyWith<$Res> implements $RefundCopyWith<$Res> {
   factory _$$RefundImplCopyWith(
-          _$RefundImpl value, $Res Function(_$RefundImpl) then) =
-      __$$RefundImplCopyWithImpl<$Res>;
+    _$RefundImpl value,
+    $Res Function(_$RefundImpl) then,
+  ) = __$$RefundImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String originalSaleId,
-      String storeId,
-      String cashierId,
-      String? customerId,
-      RefundStatus status,
-      RefundReason reason,
-      RefundMethod method,
-      double totalAmount,
-      List<RefundItem> items,
-      String? notes,
-      String? supervisorId,
-      DateTime createdAt,
-      DateTime? completedAt});
+  $Res call({
+    String id,
+    String originalSaleId,
+    String storeId,
+    String cashierId,
+    String? customerId,
+    RefundStatus status,
+    RefundReason reason,
+    RefundMethod method,
+    double totalAmount,
+    List<RefundItem> items,
+    String? notes,
+    String? supervisorId,
+    DateTime createdAt,
+    DateTime? completedAt,
+  });
 }
 
 /// @nodoc
@@ -186,8 +193,9 @@ class __$$RefundImplCopyWithImpl<$Res>
     extends _$RefundCopyWithImpl<$Res, _$RefundImpl>
     implements _$$RefundImplCopyWith<$Res> {
   __$$RefundImplCopyWithImpl(
-      _$RefundImpl _value, $Res Function(_$RefundImpl) _then)
-      : super(_value, _then);
+    _$RefundImpl _value,
+    $Res Function(_$RefundImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of Refund
   /// with the given fields replaced by the non-null parameter values.
@@ -209,87 +217,89 @@ class __$$RefundImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? completedAt = freezed,
   }) {
-    return _then(_$RefundImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      originalSaleId: null == originalSaleId
-          ? _value.originalSaleId
-          : originalSaleId // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      cashierId: null == cashierId
-          ? _value.cashierId
-          : cashierId // ignore: cast_nullable_to_non_nullable
-              as String,
-      customerId: freezed == customerId
-          ? _value.customerId
-          : customerId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as RefundStatus,
-      reason: null == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as RefundReason,
-      method: null == method
-          ? _value.method
-          : method // ignore: cast_nullable_to_non_nullable
-              as RefundMethod,
-      totalAmount: null == totalAmount
-          ? _value.totalAmount
-          : totalAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      items: null == items
-          ? _value._items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<RefundItem>,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-      supervisorId: freezed == supervisorId
-          ? _value.supervisorId
-          : supervisorId // ignore: cast_nullable_to_non_nullable
-              as String?,
-      createdAt: null == createdAt
-          ? _value.createdAt
-          : createdAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      completedAt: freezed == completedAt
-          ? _value.completedAt
-          : completedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-    ));
+    return _then(
+      _$RefundImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        originalSaleId: null == originalSaleId
+            ? _value.originalSaleId
+            : originalSaleId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        storeId: null == storeId
+            ? _value.storeId
+            : storeId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        cashierId: null == cashierId
+            ? _value.cashierId
+            : cashierId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        customerId: freezed == customerId
+            ? _value.customerId
+            : customerId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as RefundStatus,
+        reason: null == reason
+            ? _value.reason
+            : reason // ignore: cast_nullable_to_non_nullable
+                  as RefundReason,
+        method: null == method
+            ? _value.method
+            : method // ignore: cast_nullable_to_non_nullable
+                  as RefundMethod,
+        totalAmount: null == totalAmount
+            ? _value.totalAmount
+            : totalAmount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        items: null == items
+            ? _value._items
+            : items // ignore: cast_nullable_to_non_nullable
+                  as List<RefundItem>,
+        notes: freezed == notes
+            ? _value.notes
+            : notes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        supervisorId: freezed == supervisorId
+            ? _value.supervisorId
+            : supervisorId // ignore: cast_nullable_to_non_nullable
+                  as String?,
+        createdAt: null == createdAt
+            ? _value.createdAt
+            : createdAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        completedAt: freezed == completedAt
+            ? _value.completedAt
+            : completedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$RefundImpl extends _Refund {
-  const _$RefundImpl(
-      {required this.id,
-      required this.originalSaleId,
-      required this.storeId,
-      required this.cashierId,
-      this.customerId,
-      required this.status,
-      required this.reason,
-      required this.method,
-      required this.totalAmount,
-      required final List<RefundItem> items,
-      this.notes,
-      this.supervisorId,
-      required this.createdAt,
-      this.completedAt})
-      : _items = items,
-        super._();
+  const _$RefundImpl({
+    required this.id,
+    required this.originalSaleId,
+    required this.storeId,
+    required this.cashierId,
+    this.customerId,
+    required this.status,
+    required this.reason,
+    required this.method,
+    required this.totalAmount,
+    required final List<RefundItem> items,
+    this.notes,
+    this.supervisorId,
+    required this.createdAt,
+    this.completedAt,
+  }) : _items = items,
+       super._();
 
   factory _$RefundImpl.fromJson(Map<String, dynamic> json) =>
       _$$RefundImplFromJson(json);
@@ -365,21 +375,22 @@ class _$RefundImpl extends _Refund {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      originalSaleId,
-      storeId,
-      cashierId,
-      customerId,
-      status,
-      reason,
-      method,
-      totalAmount,
-      const DeepCollectionEquality().hash(_items),
-      notes,
-      supervisorId,
-      createdAt,
-      completedAt);
+    runtimeType,
+    id,
+    originalSaleId,
+    storeId,
+    cashierId,
+    customerId,
+    status,
+    reason,
+    method,
+    totalAmount,
+    const DeepCollectionEquality().hash(_items),
+    notes,
+    supervisorId,
+    createdAt,
+    completedAt,
+  );
 
   /// Create a copy of Refund
   /// with the given fields replaced by the non-null parameter values.
@@ -391,28 +402,27 @@ class _$RefundImpl extends _Refund {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$RefundImplToJson(
-      this,
-    );
+    return _$$RefundImplToJson(this);
   }
 }
 
 abstract class _Refund extends Refund {
-  const factory _Refund(
-      {required final String id,
-      required final String originalSaleId,
-      required final String storeId,
-      required final String cashierId,
-      final String? customerId,
-      required final RefundStatus status,
-      required final RefundReason reason,
-      required final RefundMethod method,
-      required final double totalAmount,
-      required final List<RefundItem> items,
-      final String? notes,
-      final String? supervisorId,
-      required final DateTime createdAt,
-      final DateTime? completedAt}) = _$RefundImpl;
+  const factory _Refund({
+    required final String id,
+    required final String originalSaleId,
+    required final String storeId,
+    required final String cashierId,
+    final String? customerId,
+    required final RefundStatus status,
+    required final RefundReason reason,
+    required final RefundMethod method,
+    required final double totalAmount,
+    required final List<RefundItem> items,
+    final String? notes,
+    final String? supervisorId,
+    required final DateTime createdAt,
+    final DateTime? completedAt,
+  }) = _$RefundImpl;
   const _Refund._() : super._();
 
   factory _Refund.fromJson(Map<String, dynamic> json) = _$RefundImpl.fromJson;
@@ -480,16 +490,18 @@ mixin _$RefundItem {
 /// @nodoc
 abstract class $RefundItemCopyWith<$Res> {
   factory $RefundItemCopyWith(
-          RefundItem value, $Res Function(RefundItem) then) =
-      _$RefundItemCopyWithImpl<$Res, RefundItem>;
+    RefundItem value,
+    $Res Function(RefundItem) then,
+  ) = _$RefundItemCopyWithImpl<$Res, RefundItem>;
   @useResult
-  $Res call(
-      {String productId,
-      String productName,
-      int quantity,
-      double unitPrice,
-      double totalAmount,
-      String? reason});
+  $Res call({
+    String productId,
+    String productName,
+    int quantity,
+    double unitPrice,
+    double totalAmount,
+    String? reason,
+  });
 }
 
 /// @nodoc
@@ -514,32 +526,35 @@ class _$RefundItemCopyWithImpl<$Res, $Val extends RefundItem>
     Object? totalAmount = null,
     Object? reason = freezed,
   }) {
-    return _then(_value.copyWith(
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      productName: null == productName
-          ? _value.productName
-          : productName // ignore: cast_nullable_to_non_nullable
-              as String,
-      quantity: null == quantity
-          ? _value.quantity
-          : quantity // ignore: cast_nullable_to_non_nullable
-              as int,
-      unitPrice: null == unitPrice
-          ? _value.unitPrice
-          : unitPrice // ignore: cast_nullable_to_non_nullable
-              as double,
-      totalAmount: null == totalAmount
-          ? _value.totalAmount
-          : totalAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      reason: freezed == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            productId: null == productId
+                ? _value.productId
+                : productId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            productName: null == productName
+                ? _value.productName
+                : productName // ignore: cast_nullable_to_non_nullable
+                      as String,
+            quantity: null == quantity
+                ? _value.quantity
+                : quantity // ignore: cast_nullable_to_non_nullable
+                      as int,
+            unitPrice: null == unitPrice
+                ? _value.unitPrice
+                : unitPrice // ignore: cast_nullable_to_non_nullable
+                      as double,
+            totalAmount: null == totalAmount
+                ? _value.totalAmount
+                : totalAmount // ignore: cast_nullable_to_non_nullable
+                      as double,
+            reason: freezed == reason
+                ? _value.reason
+                : reason // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
@@ -547,17 +562,19 @@ class _$RefundItemCopyWithImpl<$Res, $Val extends RefundItem>
 abstract class _$$RefundItemImplCopyWith<$Res>
     implements $RefundItemCopyWith<$Res> {
   factory _$$RefundItemImplCopyWith(
-          _$RefundItemImpl value, $Res Function(_$RefundItemImpl) then) =
-      __$$RefundItemImplCopyWithImpl<$Res>;
+    _$RefundItemImpl value,
+    $Res Function(_$RefundItemImpl) then,
+  ) = __$$RefundItemImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String productId,
-      String productName,
-      int quantity,
-      double unitPrice,
-      double totalAmount,
-      String? reason});
+  $Res call({
+    String productId,
+    String productName,
+    int quantity,
+    double unitPrice,
+    double totalAmount,
+    String? reason,
+  });
 }
 
 /// @nodoc
@@ -565,8 +582,9 @@ class __$$RefundItemImplCopyWithImpl<$Res>
     extends _$RefundItemCopyWithImpl<$Res, _$RefundItemImpl>
     implements _$$RefundItemImplCopyWith<$Res> {
   __$$RefundItemImplCopyWithImpl(
-      _$RefundItemImpl _value, $Res Function(_$RefundItemImpl) _then)
-      : super(_value, _then);
+    _$RefundItemImpl _value,
+    $Res Function(_$RefundItemImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of RefundItem
   /// with the given fields replaced by the non-null parameter values.
@@ -580,46 +598,48 @@ class __$$RefundItemImplCopyWithImpl<$Res>
     Object? totalAmount = null,
     Object? reason = freezed,
   }) {
-    return _then(_$RefundItemImpl(
-      productId: null == productId
-          ? _value.productId
-          : productId // ignore: cast_nullable_to_non_nullable
-              as String,
-      productName: null == productName
-          ? _value.productName
-          : productName // ignore: cast_nullable_to_non_nullable
-              as String,
-      quantity: null == quantity
-          ? _value.quantity
-          : quantity // ignore: cast_nullable_to_non_nullable
-              as int,
-      unitPrice: null == unitPrice
-          ? _value.unitPrice
-          : unitPrice // ignore: cast_nullable_to_non_nullable
-              as double,
-      totalAmount: null == totalAmount
-          ? _value.totalAmount
-          : totalAmount // ignore: cast_nullable_to_non_nullable
-              as double,
-      reason: freezed == reason
-          ? _value.reason
-          : reason // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$RefundItemImpl(
+        productId: null == productId
+            ? _value.productId
+            : productId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        productName: null == productName
+            ? _value.productName
+            : productName // ignore: cast_nullable_to_non_nullable
+                  as String,
+        quantity: null == quantity
+            ? _value.quantity
+            : quantity // ignore: cast_nullable_to_non_nullable
+                  as int,
+        unitPrice: null == unitPrice
+            ? _value.unitPrice
+            : unitPrice // ignore: cast_nullable_to_non_nullable
+                  as double,
+        totalAmount: null == totalAmount
+            ? _value.totalAmount
+            : totalAmount // ignore: cast_nullable_to_non_nullable
+                  as double,
+        reason: freezed == reason
+            ? _value.reason
+            : reason // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$RefundItemImpl extends _RefundItem {
-  const _$RefundItemImpl(
-      {required this.productId,
-      required this.productName,
-      required this.quantity,
-      required this.unitPrice,
-      required this.totalAmount,
-      this.reason})
-      : super._();
+  const _$RefundItemImpl({
+    required this.productId,
+    required this.productName,
+    required this.quantity,
+    required this.unitPrice,
+    required this.totalAmount,
+    this.reason,
+  }) : super._();
 
   factory _$RefundItemImpl.fromJson(Map<String, dynamic> json) =>
       _$$RefundItemImplFromJson(json);
@@ -662,8 +682,15 @@ class _$RefundItemImpl extends _RefundItem {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(runtimeType, productId, productName, quantity,
-      unitPrice, totalAmount, reason);
+  int get hashCode => Object.hash(
+    runtimeType,
+    productId,
+    productName,
+    quantity,
+    unitPrice,
+    totalAmount,
+    reason,
+  );
 
   /// Create a copy of RefundItem
   /// with the given fields replaced by the non-null parameter values.
@@ -675,20 +702,19 @@ class _$RefundItemImpl extends _RefundItem {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$RefundItemImplToJson(
-      this,
-    );
+    return _$$RefundItemImplToJson(this);
   }
 }
 
 abstract class _RefundItem extends RefundItem {
-  const factory _RefundItem(
-      {required final String productId,
-      required final String productName,
-      required final int quantity,
-      required final double unitPrice,
-      required final double totalAmount,
-      final String? reason}) = _$RefundItemImpl;
+  const factory _RefundItem({
+    required final String productId,
+    required final String productName,
+    required final int quantity,
+    required final double unitPrice,
+    required final double totalAmount,
+    final String? reason,
+  }) = _$RefundItemImpl;
   const _RefundItem._() : super._();
 
   factory _RefundItem.fromJson(Map<String, dynamic> json) =

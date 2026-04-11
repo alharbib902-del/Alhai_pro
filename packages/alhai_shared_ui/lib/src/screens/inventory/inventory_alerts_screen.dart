@@ -50,18 +50,20 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
       final db = GetIt.I<AppDatabase>();
       final lowStock = await db.productsDao.getLowStockProducts(storeId);
       final alerts = lowStock
-          .map((p) => _AlertItem(
-                id: p.id,
-                productName: p.name,
-                barcode: p.barcode ?? '',
-                type: 'low_stock',
-                currentStock: p.stockQty,
-                threshold: p.minQty,
-                priority: p.stockQty <= 0
-                    ? 'critical'
-                    : (p.stockQty <= p.minQty ~/ 2 ? 'high' : 'medium'),
-                createdAt: p.updatedAt ?? p.createdAt,
-              ))
+          .map(
+            (p) => _AlertItem(
+              id: p.id,
+              productName: p.name,
+              barcode: p.barcode ?? '',
+              type: 'low_stock',
+              currentStock: p.stockQty,
+              threshold: p.minQty,
+              priority: p.stockQty <= 0
+                  ? 'critical'
+                  : (p.stockQty <= p.minQty ~/ 2 ? 'high' : 'medium'),
+              createdAt: p.updatedAt ?? p.createdAt,
+            ),
+          )
           .toList();
       if (mounted) {
         setState(() {
@@ -211,8 +213,11 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.check_circle,
-                size: 64, color: AlhaiColors.success),
+            const Icon(
+              Icons.check_circle,
+              size: 64,
+              color: AlhaiColors.success,
+            ),
             SizedBox(height: AlhaiSpacing.md),
             Text(l10n.noAlerts, style: const TextStyle(fontSize: 18)),
           ],
@@ -224,8 +229,9 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
     final sortedAlerts = List<_AlertItem>.from(alerts)
       ..sort((a, b) {
         final priorityOrder = {'critical': 0, 'high': 1, 'medium': 2, 'low': 3};
-        return (priorityOrder[a.priority] ?? 3)
-            .compareTo(priorityOrder[b.priority] ?? 3);
+        return (priorityOrder[a.priority] ?? 3).compareTo(
+          priorityOrder[b.priority] ?? 3,
+        );
       });
 
     return ListView.builder(
@@ -269,8 +275,9 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
                     Container(
                       padding: const EdgeInsets.all(AlhaiSpacing.sm),
                       decoration: BoxDecoration(
-                        color:
-                            _getAlertColor(alert.type).withValues(alpha: 0.1),
+                        color: _getAlertColor(
+                          alert.type,
+                        ).withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Icon(
@@ -289,15 +296,17 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
                                 child: Text(
                                   alert.productName,
                                   style: const TextStyle(
-                                      fontWeight: FontWeight.bold),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                               if (alert.priority == 'high' ||
                                   alert.priority == 'critical')
                                 Container(
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 6,
-                                      vertical: AlhaiSpacing.xxxs),
+                                    horizontal: 6,
+                                    vertical: AlhaiSpacing.xxxs,
+                                  ),
                                   decoration: BoxDecoration(
                                     color: colorScheme.error,
                                     borderRadius: BorderRadius.circular(4),
@@ -307,8 +316,9 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
                                         ? l10n.criticalPriority
                                         : l10n.highPriority,
                                     style: TextStyle(
-                                        color: colorScheme.surface,
-                                        fontSize: 10),
+                                      color: colorScheme.surface,
+                                      fontSize: 10,
+                                    ),
                                   ),
                                 ),
                             ],
@@ -317,22 +327,26 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
                           Text(
                             _getAlertMessage(alert),
                             style: TextStyle(
-                                fontSize: 13,
-                                color: colorScheme.onSurfaceVariant),
+                              fontSize: 13,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                           ),
                           SizedBox(height: AlhaiSpacing.xxs),
                           Text(
                             _formatTimeAgo(alert.createdAt),
                             style: TextStyle(
-                                fontSize: 11,
-                                color: colorScheme.onSurfaceVariant),
+                              fontSize: 11,
+                              color: colorScheme.onSurfaceVariant,
+                            ),
                           ),
                         ],
                       ),
                     ),
                     IconButton(
-                      icon:
-                          Icon(Icons.shopping_cart, color: colorScheme.primary),
+                      icon: Icon(
+                        Icons.shopping_cart,
+                        color: colorScheme.primary,
+                      ),
                       tooltip: l10n.createPurchaseOrder,
                       onPressed: () => _createPurchaseOrder(alert),
                     ),
@@ -372,7 +386,9 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
     final l10n = AppLocalizations.of(context);
     if (alert.type == 'low_stock') {
       return l10n.stockAlertMessage(
-          alert.currentStock.toInt(), alert.threshold.toInt());
+        alert.currentStock.toInt(),
+        alert.threshold.toInt(),
+      );
     } else {
       return l10n.expiryAlertLabel;
     }
@@ -409,19 +425,25 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
                     color: _getAlertColor(alert.type).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Icon(_getAlertIcon(alert.type),
-                      size: 32, color: _getAlertColor(alert.type)),
+                  child: Icon(
+                    _getAlertIcon(alert.type),
+                    size: 32,
+                    color: _getAlertColor(alert.type),
+                  ),
                 ),
                 SizedBox(width: AlhaiSpacing.md),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(alert.productName,
-                          style: Theme.of(context).textTheme.titleLarge),
-                      Text(alert.barcode,
-                          style:
-                              TextStyle(color: colorScheme.onSurfaceVariant)),
+                      Text(
+                        alert.productName,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      Text(
+                        alert.barcode,
+                        style: TextStyle(color: colorScheme.onSurfaceVariant),
+                      ),
                     ],
                   ),
                 ),
@@ -429,9 +451,13 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
             ),
             SizedBox(height: AlhaiSpacing.lg),
             _DetailRow(
-                label: l10n.currentQuantity, value: '${alert.currentStock}'),
+              label: l10n.currentQuantity,
+              value: '${alert.currentStock}',
+            ),
             _DetailRow(
-                label: l10n.minimumThreshold, value: '${alert.threshold}'),
+              label: l10n.minimumThreshold,
+              value: '${alert.threshold}',
+            ),
             SizedBox(height: AlhaiSpacing.lg),
             Row(
               children: [
@@ -475,9 +501,13 @@ class _InventoryAlertsScreenState extends ConsumerState<InventoryAlertsScreen>
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(l10n.alertSettings,
-                  style: const TextStyle(
-                      fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(
+                l10n.alertSettings,
+                style: const TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               SizedBox(height: AlhaiSpacing.md),
               SwitchListTile(
                 title: Text(l10n.lowStockNotifications),
@@ -637,12 +667,18 @@ class _SummaryCard extends StatelessWidget {
         children: [
           Icon(icon, color: color),
           SizedBox(height: AlhaiSpacing.xxs),
-          Text(value,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, color: color, fontSize: 24)),
-          Text(label,
-              style:
-                  TextStyle(fontSize: 11, color: color.withValues(alpha: 0.8))),
+          Text(
+            value,
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: color,
+              fontSize: 24,
+            ),
+          ),
+          Text(
+            label,
+            style: TextStyle(fontSize: 11, color: color.withValues(alpha: 0.8)),
+          ),
         ],
       ),
     );

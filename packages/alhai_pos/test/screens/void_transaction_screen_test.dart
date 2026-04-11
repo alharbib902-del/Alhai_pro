@@ -34,9 +34,7 @@ class MockSyncManager extends Mock implements SyncManager {}
 // Helpers
 // ---------------------------------------------------------------------------
 
-Widget _buildTestWidget({
-  List<Override> overrides = const [],
-}) {
+Widget _buildTestWidget({List<Override> overrides = const []}) {
   final mockSyncManager = MockSyncManager();
 
   return ProviderScope(

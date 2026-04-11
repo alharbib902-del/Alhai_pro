@@ -42,11 +42,7 @@ void main() {
 
     group('expiry', () {
       test('should return value before expiry', () {
-        cacheService.set(
-          'key',
-          'value',
-          expiry: const Duration(hours: 1),
-        );
+        cacheService.set('key', 'value', expiry: const Duration(hours: 1));
         expect(cacheService.get<String>('key'), equals('value'));
       });
 

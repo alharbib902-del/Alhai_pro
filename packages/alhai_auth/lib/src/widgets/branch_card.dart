@@ -65,10 +65,7 @@ class _BranchTypeIcon extends StatelessWidget {
   final BranchType type;
   final double size;
 
-  const _BranchTypeIcon({
-    required this.type,
-    this.size = 24,
-  });
+  const _BranchTypeIcon({required this.type, this.size = 24});
 
   IconData get _icon {
     switch (type) {
@@ -108,11 +105,7 @@ class _BranchTypeIcon extends StatelessWidget {
         color: _defaultColor.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(size * 0.4),
       ),
-      child: Icon(
-        _icon,
-        size: size,
-        color: _defaultColor,
-      ),
+      child: Icon(_icon, size: size, color: _defaultColor),
     );
   }
 }
@@ -161,9 +154,7 @@ class BranchStatusBadge extends StatelessWidget {
       decoration: BoxDecoration(
         color: _color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: _color.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: _color.withValues(alpha: 0.3)),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -171,10 +162,7 @@ class BranchStatusBadge extends StatelessWidget {
           Container(
             width: AlhaiSpacing.xs,
             height: AlhaiSpacing.xs,
-            decoration: BoxDecoration(
-              color: _color,
-              shape: BoxShape.circle,
-            ),
+            decoration: BoxDecoration(color: _color, shape: BoxShape.circle),
           ),
           const SizedBox(width: 6),
           Text(
@@ -213,16 +201,18 @@ class BranchCard extends StatelessWidget {
     final l10n = AppLocalizations.of(context);
     return AnimatedContainer(
       duration: const Duration(milliseconds: 200),
-      margin:
-          EdgeInsets.only(bottom: compact ? AlhaiSpacing.xs : AlhaiSpacing.sm),
+      margin: EdgeInsets.only(
+        bottom: compact ? AlhaiSpacing.xs : AlhaiSpacing.sm,
+      ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(16),
           child: Container(
-            padding:
-                EdgeInsets.all(compact ? AlhaiSpacing.sm : AlhaiSpacing.md),
+            padding: EdgeInsets.all(
+              compact ? AlhaiSpacing.sm : AlhaiSpacing.md,
+            ),
             decoration: BoxDecoration(
               color: isSelected
                   ? AppColors.primary.withValues(alpha: 0.05)
@@ -243,10 +233,7 @@ class BranchCard extends StatelessWidget {
             child: Row(
               children: [
                 // أيقونة نوع الفرع
-                _BranchTypeIcon(
-                  type: branch.type,
-                  size: compact ? 20 : 24,
-                ),
+                _BranchTypeIcon(type: branch.type, size: compact ? 20 : 24),
 
                 SizedBox(width: compact ? AlhaiSpacing.sm : AlhaiSpacing.md),
 
@@ -323,10 +310,7 @@ class BranchCard extends StatelessWidget {
                       // الحالة
                       if (showStatus && !compact) ...[
                         const SizedBox(height: AlhaiSpacing.xs),
-                        BranchStatusBadge(
-                          status: branch.status,
-                          compact: true,
-                        ),
+                        BranchStatusBadge(status: branch.status, compact: true),
                       ],
                     ],
                   ),
@@ -336,15 +320,13 @@ class BranchCard extends StatelessWidget {
 
                 // الحالة (في الوضع المختصر) أو السهم
                 if (showStatus && compact)
-                  BranchStatusBadge(
-                    status: branch.status,
-                    compact: true,
-                  )
+                  BranchStatusBadge(status: branch.status, compact: true)
                 else
                   Icon(
                     Icons.chevron_left_rounded,
-                    color:
-                        isSelected ? AppColors.primary : AppColors.textTertiary,
+                    color: isSelected
+                        ? AppColors.primary
+                        : AppColors.textTertiary,
                     size: 24,
                   ),
               ],
@@ -425,15 +407,10 @@ class BranchSearchField extends StatelessWidget {
       child: TextField(
         controller: controller,
         onChanged: onChanged,
-        style: const TextStyle(
-          color: AppColors.textPrimary,
-          fontSize: 15,
-        ),
+        style: const TextStyle(color: AppColors.textPrimary, fontSize: 15),
         decoration: InputDecoration(
           hintText: hintText ?? 'ابحث عن فرع...',
-          hintStyle: const TextStyle(
-            color: AppColors.textTertiary,
-          ),
+          hintStyle: const TextStyle(color: AppColors.textTertiary),
           prefixIcon: const Icon(
             Icons.search_rounded,
             color: AppColors.textTertiary,
@@ -453,10 +430,7 @@ class BranchSearchField extends StatelessWidget {
 class AddBranchButton extends StatelessWidget {
   final VoidCallback? onPressed;
 
-  const AddBranchButton({
-    super.key,
-    this.onPressed,
-  });
+  const AddBranchButton({super.key, this.onPressed});
 
   @override
   Widget build(BuildContext context) {

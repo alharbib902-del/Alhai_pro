@@ -102,8 +102,9 @@ class _TransferInventoryScreenState
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(AppLocalizations.of(context).errorOccurred),
-              backgroundColor: AppColors.error),
+            content: Text(AppLocalizations.of(context).errorOccurred),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     }
@@ -125,8 +126,9 @@ class _TransferInventoryScreenState
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
-          onMenuTap:
-              isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
+          onMenuTap: isWideScreen
+              ? null
+              : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
           notificationsCount: 3,
           userName: user?.name ?? l10n.cashCustomer,
@@ -137,14 +139,22 @@ class _TransferInventoryScreenState
           child: _isLoading
               ? const AppLoadingState()
               : _error != null
-                  ? AppErrorState.general(context,
-                      message: _error!, onRetry: _loadStores)
-                  : SingleChildScrollView(
-                      padding: EdgeInsets.all(
-                          isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-                      child: _buildContent(
-                          isWideScreen, isMediumScreen, colorScheme, l10n),
-                    ),
+              ? AppErrorState.general(
+                  context,
+                  message: _error!,
+                  onRetry: _loadStores,
+                )
+              : SingleChildScrollView(
+                  padding: EdgeInsets.all(
+                    isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                  ),
+                  child: _buildContent(
+                    isWideScreen,
+                    isMediumScreen,
+                    colorScheme,
+                    l10n,
+                  ),
+                ),
         ),
       ],
     );
@@ -155,8 +165,12 @@ class _TransferInventoryScreenState
     return '${now.day}/${now.month}/${now.year} \u2022 ${l10n.mainBranch}';
   }
 
-  Widget _buildContent(bool isWideScreen, bool isMediumScreen,
-      ColorScheme colorScheme, AppLocalizations l10n) {
+  Widget _buildContent(
+    bool isWideScreen,
+    bool isMediumScreen,
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+  ) {
     if (isWideScreen) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -170,11 +184,11 @@ class _TransferInventoryScreenState
                 _buildProductSearchCard(colorScheme, l10n),
                 if (_searchResults.isNotEmpty && _selectedProduct == null) ...[
                   const SizedBox(height: AlhaiSpacing.md),
-                  _buildSearchResults(colorScheme, l10n)
+                  _buildSearchResults(colorScheme, l10n),
                 ],
                 if (_selectedProduct != null) ...[
                   const SizedBox(height: AlhaiSpacing.md),
-                  _buildSelectedCard(colorScheme, l10n)
+                  _buildSelectedCard(colorScheme, l10n),
                 ],
               ],
             ),
@@ -204,11 +218,11 @@ class _TransferInventoryScreenState
         _buildProductSearchCard(colorScheme, l10n),
         if (_searchResults.isNotEmpty && _selectedProduct == null) ...[
           const SizedBox(height: AlhaiSpacing.sm),
-          _buildSearchResults(colorScheme, l10n)
+          _buildSearchResults(colorScheme, l10n),
         ],
         if (_selectedProduct != null) ...[
           const SizedBox(height: AlhaiSpacing.sm),
-          _buildSelectedCard(colorScheme, l10n)
+          _buildSelectedCard(colorScheme, l10n),
         ],
         SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildQuantityCard(colorScheme, l10n),
@@ -221,7 +235,9 @@ class _TransferInventoryScreenState
   }
 
   Widget _buildStoreSelectionCard(
-      ColorScheme colorScheme, AppLocalizations l10n) {
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -240,24 +256,33 @@ class _TransferInventoryScreenState
                   color: AppColors.info.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(10),
                 ),
-                child: const Icon(Icons.swap_horiz_rounded,
-                    color: AppColors.info, size: 20),
+                child: const Icon(
+                  Icons.swap_horiz_rounded,
+                  color: AppColors.info,
+                  size: 20,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              Text(l10n.transferDetails,
-                  style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: colorScheme.onSurface)),
+              Text(
+                l10n.transferDetails,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: colorScheme.onSurface,
+                ),
+              ),
             ],
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           // From store (read-only)
-          Text(l10n.fromStore,
-              style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurfaceVariant)),
+          Text(
+            l10n.fromStore,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           Container(
             width: double.infinity,
@@ -269,38 +294,52 @@ class _TransferInventoryScreenState
             ),
             child: Row(
               children: [
-                const Icon(Icons.store_rounded,
-                    size: 20, color: AppColors.primary),
+                const Icon(
+                  Icons.store_rounded,
+                  size: 20,
+                  color: AppColors.primary,
+                ),
                 const SizedBox(width: 10),
-                Text(l10n.mainBranch,
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurface)),
+                Text(
+                  l10n.mainBranch,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
                 const Spacer(),
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+                    horizontal: AlhaiSpacing.xs,
+                    vertical: AlhaiSpacing.xxxs,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.info.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(999),
                   ),
-                  child: Text(l10n.currentLabel,
-                      style: const TextStyle(
-                          fontSize: 10,
-                          fontWeight: FontWeight.w600,
-                          color: AppColors.info)),
+                  child: Text(
+                    l10n.currentLabel,
+                    style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.info,
+                    ),
+                  ),
                 ),
               ],
             ),
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           // To store dropdown
-          Text(l10n.toStore,
-              style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurfaceVariant)),
+          Text(
+            l10n.toStore,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurfaceVariant,
+            ),
+          ),
           const SizedBox(height: AlhaiSpacing.xs),
           DropdownButtonFormField<String>(
             initialValue: _toStoreId,
@@ -309,8 +348,10 @@ class _TransferInventoryScreenState
             decoration: InputDecoration(
               hintText: l10n.selectStore,
               hintStyle: TextStyle(color: colorScheme.outline),
-              prefixIcon: Icon(Icons.store_mall_directory_rounded,
-                  color: colorScheme.outline),
+              prefixIcon: Icon(
+                Icons.store_mall_directory_rounded,
+                color: colorScheme.outline,
+              ),
               filled: true,
               fillColor: colorScheme.surfaceContainerHighest,
               border: OutlineInputBorder(
@@ -323,11 +364,15 @@ class _TransferInventoryScreenState
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: AppColors.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
               ),
               contentPadding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.md, vertical: 14),
+                horizontal: AlhaiSpacing.md,
+                vertical: 14,
+              ),
             ),
             items: _stores.map((store) {
               return DropdownMenuItem<String>(
@@ -343,7 +388,9 @@ class _TransferInventoryScreenState
   }
 
   Widget _buildProductSearchCard(
-      ColorScheme colorScheme, AppLocalizations l10n) {
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -354,11 +401,14 @@ class _TransferInventoryScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.searchProduct,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurface)),
+          Text(
+            l10n.searchProduct,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurface,
+            ),
+          ),
           const SizedBox(height: AlhaiSpacing.sm),
           Row(
             children: [
@@ -370,8 +420,10 @@ class _TransferInventoryScreenState
                   decoration: InputDecoration(
                     hintText: l10n.searchByNameOrBarcode,
                     hintStyle: TextStyle(color: colorScheme.outline),
-                    prefixIcon:
-                        Icon(Icons.search_rounded, color: colorScheme.outline),
+                    prefixIcon: Icon(
+                      Icons.search_rounded,
+                      color: colorScheme.outline,
+                    ),
                     filled: true,
                     fillColor: colorScheme.surfaceContainerHighest,
                     border: OutlineInputBorder(
@@ -384,24 +436,31 @@ class _TransferInventoryScreenState
                     ),
                     focusedBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(12),
-                      borderSide:
-                          const BorderSide(color: AppColors.primary, width: 2),
+                      borderSide: const BorderSide(
+                        color: AppColors.primary,
+                        width: 2,
+                      ),
                     ),
                     contentPadding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.md, vertical: 14),
+                      horizontal: AlhaiSpacing.md,
+                      vertical: 14,
+                    ),
                   ),
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               IconButton(
                 onPressed: () {},
-                icon: const Icon(Icons.qr_code_scanner_rounded,
-                    color: AppColors.info),
+                icon: const Icon(
+                  Icons.qr_code_scanner_rounded,
+                  color: AppColors.info,
+                ),
                 tooltip: l10n.scanLabel,
                 style: IconButton.styleFrom(
                   backgroundColor: AppColors.info.withValues(alpha: 0.1),
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             ],
@@ -429,24 +488,35 @@ class _TransferInventoryScreenState
             }),
             child: Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.sm),
+                horizontal: AlhaiSpacing.md,
+                vertical: AlhaiSpacing.sm,
+              ),
               decoration: BoxDecoration(
                 border: Border(
-                    bottom: BorderSide(
-                        color:
-                            colorScheme.outlineVariant.withValues(alpha: 0.5))),
+                  bottom: BorderSide(
+                    color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+                  ),
+                ),
               ),
               child: Row(
                 children: [
                   Expanded(
-                      child: Text(product.name,
-                          style: TextStyle(
-                              fontSize: 14, color: colorScheme.onSurface))),
-                  Text('${product.stockQty}',
+                    child: Text(
+                      product.name,
                       style: TextStyle(
-                          fontSize: 13,
-                          fontWeight: FontWeight.w600,
-                          color: colorScheme.onSurfaceVariant)),
+                        fontSize: 14,
+                        color: colorScheme.onSurface,
+                      ),
+                    ),
+                  ),
+                  Text(
+                    '${product.stockQty}',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurfaceVariant,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -462,28 +532,38 @@ class _TransferInventoryScreenState
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
         color: AppColors.info.withValues(
-            alpha:
-                Theme.of(context).brightness == Brightness.dark ? 0.1 : 0.05),
+          alpha: Theme.of(context).brightness == Brightness.dark ? 0.1 : 0.05,
+        ),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(color: AppColors.info.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          const Icon(Icons.check_circle_rounded,
-              color: AppColors.info, size: 22),
+          const Icon(
+            Icons.check_circle_rounded,
+            color: AppColors.info,
+            size: 22,
+          ),
           const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(product.name,
-                    style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w600,
-                        color: colorScheme.onSurface)),
-                Text('${l10n.available}: ${product.stockQty}',
-                    style: TextStyle(
-                        fontSize: 12, color: colorScheme.onSurfaceVariant)),
+                Text(
+                  product.name,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: colorScheme.onSurface,
+                  ),
+                ),
+                Text(
+                  '${l10n.available}: ${product.stockQty}',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: colorScheme.onSurfaceVariant,
+                  ),
+                ),
               ],
             ),
           ),
@@ -492,8 +572,11 @@ class _TransferInventoryScreenState
               _selectedProduct = null;
               _searchController.clear();
             }),
-            icon: Icon(Icons.close_rounded,
-                size: 18, color: colorScheme.onSurfaceVariant),
+            icon: Icon(
+              Icons.close_rounded,
+              size: 18,
+              color: colorScheme.onSurfaceVariant,
+            ),
             tooltip: l10n.clearField,
           ),
         ],
@@ -512,27 +595,32 @@ class _TransferInventoryScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.quantity,
-              style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: colorScheme.onSurface)),
+          Text(
+            l10n.quantity,
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
+            ),
+          ),
           const SizedBox(height: AlhaiSpacing.md),
           TextField(
             controller: _quantityController,
             keyboardType: TextInputType.number,
             style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: colorScheme.onSurface),
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: colorScheme.onSurface,
+            ),
             textAlign: TextAlign.center,
             onChanged: (_) => setState(() {}),
             decoration: InputDecoration(
               hintText: '0',
               hintStyle: TextStyle(
-                  color: colorScheme.outline,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold),
+                color: colorScheme.outline,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: colorScheme.outlineVariant),
@@ -543,8 +631,10 @@ class _TransferInventoryScreenState
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: AppColors.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
               ),
               filled: true,
               fillColor: colorScheme.surfaceContainerHighest,
@@ -566,11 +656,14 @@ class _TransferInventoryScreenState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(l10n.noteLabel,
-              style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w600,
-                  color: colorScheme.onSurface)),
+          Text(
+            l10n.noteLabel,
+            style: TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
+              color: colorScheme.onSurface,
+            ),
+          ),
           const SizedBox(height: AlhaiSpacing.sm),
           TextField(
             controller: _noteController,
@@ -591,8 +684,10 @@ class _TransferInventoryScreenState
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
-                borderSide:
-                    const BorderSide(color: AppColors.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
               ),
               contentPadding: const EdgeInsets.all(AlhaiSpacing.md),
             ),
@@ -603,7 +698,8 @@ class _TransferInventoryScreenState
   }
 
   Widget _buildSubmitButton(ColorScheme colorScheme, AppLocalizations l10n) {
-    final isValid = _selectedProduct != null &&
+    final isValid =
+        _selectedProduct != null &&
         _toStoreId != null &&
         (int.tryParse(_quantityController.text) ?? 0) > 0;
 
@@ -616,16 +712,22 @@ class _TransferInventoryScreenState
                 width: 20,
                 height: 20,
                 child: CircularProgressIndicator(
-                    strokeWidth: 2, color: colorScheme.onPrimary))
+                  strokeWidth: 2,
+                  color: colorScheme.onPrimary,
+                ),
+              )
             : const Icon(Icons.send_rounded, size: 20),
-        label: Text(l10n.submitTransfer,
-            style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+        label: Text(
+          l10n.submitTransfer,
+          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
         style: FilledButton.styleFrom(
           backgroundColor: AppColors.primary,
           foregroundColor: colorScheme.onPrimary,
           padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
       ),
     );
@@ -656,7 +758,8 @@ class _TransferInventoryScreenState
             newQty: newStock.toDouble(),
             reason: Value('transfer_to_$_toStoreId'),
             notes: Value(
-                _noteController.text.isNotEmpty ? _noteController.text : null),
+              _noteController.text.isNotEmpty ? _noteController.text : null,
+            ),
             createdAt: DateTime.now(),
           ),
         );
@@ -680,8 +783,9 @@ class _TransferInventoryScreenState
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(l10n.transferCompletedSuccess),
-            backgroundColor: AppColors.success),
+          content: Text(l10n.transferCompletedSuccess),
+          backgroundColor: AppColors.success,
+        ),
       );
 
       setState(() {
@@ -696,8 +800,9 @@ class _TransferInventoryScreenState
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-            content: Text(l10n.errorWithDetails('$e')),
-            backgroundColor: AppColors.error),
+          content: Text(l10n.errorWithDetails('$e')),
+          backgroundColor: AppColors.error,
+        ),
       );
     } finally {
       if (mounted) setState(() => _isSaving = false);

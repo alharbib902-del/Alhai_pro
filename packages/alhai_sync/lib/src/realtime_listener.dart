@@ -109,11 +109,9 @@ class RealtimeListener {
   /// هل المستمع نشط؟
   bool _isActive = false;
 
-  RealtimeListener({
-    required SupabaseClient client,
-    required AppDatabase db,
-  })  : _client = client,
-        _db = db;
+  RealtimeListener({required SupabaseClient client, required AppDatabase db})
+    : _client = client,
+      _db = db;
 
   /// Stream لأحداث Realtime
   Stream<RealtimeEvent> get events => _eventController.stream;
@@ -230,33 +228,36 @@ class RealtimeListener {
 
     channel
         .onPostgresChanges(
-      event: PostgresChangeEvent.all,
-      schema: 'public',
-      table: tableName,
-      filter: _orgId != null
-          ? PostgresChangeFilter(
-              type: PostgresChangeFilterType.eq,
-              column: 'store_id',
-              value: _storeId!,
-            )
-          : null,
-      callback: (payload) {
-        _handleChange(tableName, payload);
-      },
-    )
+          event: PostgresChangeEvent.all,
+          schema: 'public',
+          table: tableName,
+          filter: _orgId != null
+              ? PostgresChangeFilter(
+                  type: PostgresChangeFilterType.eq,
+                  column: 'store_id',
+                  value: _storeId!,
+                )
+              : null,
+          callback: (payload) {
+            _handleChange(tableName, payload);
+          },
+        )
         .subscribe((status, [error]) {
-      if (kDebugMode) {
-        debugPrint(
-            'Realtime $tableName: $status${error != null ? ' ($error)' : ''}');
-      }
-    });
+          if (kDebugMode) {
+            debugPrint(
+              'Realtime $tableName: $status${error != null ? ' ($error)' : ''}',
+            );
+          }
+        });
 
     _channels[tableName] = channel;
   }
 
   /// معالجة تغيير من Realtime
   Future<void> _handleChange(
-      String tableName, PostgresChangePayload payload) async {
+    String tableName,
+    PostgresChangePayload payload,
+  ) async {
     try {
       final eventType = _mapEventType(payload.eventType);
       if (eventType == null) return;
@@ -284,11 +285,13 @@ class RealtimeListener {
             // M36: إعادة تسمية أعمدة Supabase لتتوافق مع مخطط Drift المحلي
             final mappedRecord = mapColumnsToLocal(tableName, localRecord);
             await _upsertLocally(tableName, mappedRecord);
-            _emitEvent(RealtimeEvent(
-              tableName: tableName,
-              type: eventType,
-              newRecord: mappedRecord,
-            ));
+            _emitEvent(
+              RealtimeEvent(
+                tableName: tableName,
+                type: eventType,
+                newRecord: mappedRecord,
+              ),
+            );
           }
           break;
 
@@ -298,11 +301,13 @@ class RealtimeListener {
             final recordId = oldRecord['id'] as String?;
             if (recordId != null) {
               await _softDeleteLocally(tableName, recordId);
-              _emitEvent(RealtimeEvent(
-                tableName: tableName,
-                type: eventType,
-                oldRecord: oldRecord,
-              ));
+              _emitEvent(
+                RealtimeEvent(
+                  tableName: tableName,
+                  type: eventType,
+                  oldRecord: oldRecord,
+                ),
+              );
             }
           }
           break;
@@ -351,27 +356,32 @@ class RealtimeListener {
   /// للجداول ثنائية الاتجاه: يتحقق أولاً من وجود تغييرات محلية معلقة
   /// في sync_queue. إذا وُجدت، يتجاهل تحديث Realtime لحماية البيانات المحلية.
   Future<void> _upsertLocally(
-      String tableName, Map<String, dynamic> record) async {
+    String tableName,
+    Map<String, dynamic> record,
+  ) async {
     validateTableName(tableName);
 
     // للجداول ثنائية الاتجاه: تحقق من وجود تغييرات محلية معلقة
     if (_bidirectionalTables.contains(tableName)) {
       final recordId = record['id'] as String?;
       if (recordId != null) {
-        final pending = await _db.customSelect(
-          "SELECT COUNT(*) as cnt FROM sync_queue "
-          "WHERE table_name = ? AND record_id = ? "
-          "AND status IN ('pending', 'syncing')",
-          variables: [
-            Variable.withString(tableName),
-            Variable.withString(recordId),
-          ],
-        ).getSingle();
+        final pending = await _db
+            .customSelect(
+              "SELECT COUNT(*) as cnt FROM sync_queue "
+              "WHERE table_name = ? AND record_id = ? "
+              "AND status IN ('pending', 'syncing')",
+              variables: [
+                Variable.withString(tableName),
+                Variable.withString(recordId),
+              ],
+            )
+            .getSingle();
         final count = pending.data['cnt'] as int? ?? 0;
         if (count > 0) {
           if (kDebugMode) {
             debugPrint(
-                '[Realtime] Skipping upsert for $tableName/$recordId - pending local changes');
+              '[Realtime] Skipping upsert for $tableName/$recordId - pending local changes',
+            );
           }
           return;
         }
@@ -397,10 +407,9 @@ class RealtimeListener {
   Future<void> _softDeleteLocally(String tableName, String recordId) async {
     validateTableName(tableName);
     // نحذف السجل محلياً (الحذف الناعم يكون على السيرفر)
-    await _db.customStatement(
-      'DELETE FROM $tableName WHERE id = ?',
-      [recordId],
-    );
+    await _db.customStatement('DELETE FROM $tableName WHERE id = ?', [
+      recordId,
+    ]);
   }
 
   /// تحويل نوع الحدث

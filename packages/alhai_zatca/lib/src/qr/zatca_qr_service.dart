@@ -16,11 +16,9 @@ class ZatcaQrService {
   final ZatcaTlvEncoder _encoder;
   final CertificateParser _certParser;
 
-  ZatcaQrService({
-    ZatcaTlvEncoder? encoder,
-    CertificateParser? certParser,
-  })  : _encoder = encoder ?? ZatcaTlvEncoder(),
-        _certParser = certParser ?? CertificateParser();
+  ZatcaQrService({ZatcaTlvEncoder? encoder, CertificateParser? certParser})
+    : _encoder = encoder ?? ZatcaTlvEncoder(),
+      _certParser = certParser ?? CertificateParser();
 
   /// Generate the enhanced Phase 2 QR code data for an invoice
   ///
@@ -48,8 +46,9 @@ class ZatcaQrService {
     // entire certificate DER.
     String? certSignatureBase64;
     if (invoice.isStandard) {
-      final sigBytes =
-          _certParser.extractSignatureBytes(certificate.certificatePem);
+      final sigBytes = _certParser.extractSignatureBytes(
+        certificate.certificatePem,
+      );
       certSignatureBase64 = base64Encode(sigBytes);
     }
 
@@ -70,9 +69,7 @@ class ZatcaQrService {
   ///
   /// Used as fallback or for simplified invoices where only
   /// the basic seller/amount info is needed.
-  String generateSimplifiedQr({
-    required ZatcaInvoice invoice,
-  }) {
+  String generateSimplifiedQr({required ZatcaInvoice invoice}) {
     return _encoder.encodeSimplified(
       sellerName: invoice.seller.name,
       vatNumber: invoice.seller.vatNumber,

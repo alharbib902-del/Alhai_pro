@@ -261,7 +261,7 @@ class AiCompetitorAnalysisService {
         'id': 'p7',
         'name': 'معجون أسنان كولجيت',
         'cat': 'عناية شخصية',
-        'our': 12.0
+        'our': 12.0,
       },
       {'id': 'p8', 'name': 'دجاج مبرد 1 كجم', 'cat': 'لحوم', 'our': 15.0},
       {'id': 'p9', 'name': 'بيض 30 حبة', 'cat': 'بيض', 'our': 18.0},
@@ -426,11 +426,14 @@ class AiCompetitorAnalysisService {
   /// ملخص التحليل
   static CompetitorAnalysisSummary getSummary() {
     final comparisons = getPriceComparisons();
-    final cheaper =
-        comparisons.where((c) => c.priceDifferencePercent < -3).length;
-    final expensive =
-        comparisons.where((c) => c.priceDifferencePercent > 3).length;
-    final avgDiff = comparisons
+    final cheaper = comparisons
+        .where((c) => c.priceDifferencePercent < -3)
+        .length;
+    final expensive = comparisons
+        .where((c) => c.priceDifferencePercent > 3)
+        .length;
+    final avgDiff =
+        comparisons
             .map((c) => c.priceDifferencePercent)
             .reduce((a, b) => a + b) /
         comparisons.length;

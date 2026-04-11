@@ -39,8 +39,9 @@ void main() {
     testWidgets('shows loading indicator initially', (tester) async {
       // Use a completer so the future never resolves during the test
       final completer = Completer<List<SalesTableData>>();
-      when(() => mockSalesDao.getSalesByDate(any(), any()))
-          .thenAnswer((_) => completer.future);
+      when(
+        () => mockSalesDao.getSalesByDate(any(), any()),
+      ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(
         buildTestableWidget(const DailySalesReportScreen()),
@@ -116,8 +117,9 @@ void main() {
       await tester.pumpAndSettle();
 
       // getSalesByDate should have been called multiple times (initial + after nav)
-      verify(() => mockSalesDao.getSalesByDate(any(), any()))
-          .called(greaterThanOrEqualTo(2));
+      verify(
+        () => mockSalesDao.getSalesByDate(any(), any()),
+      ).called(greaterThanOrEqualTo(2));
     });
   });
 }

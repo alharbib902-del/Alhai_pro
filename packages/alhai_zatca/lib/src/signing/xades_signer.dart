@@ -27,10 +27,10 @@ class XadesSigner {
     EcdsaSigner? ecdsaSigner,
     XmlCanonicalizer? canonicalizer,
     CertificateParser? certParser,
-  })  : _hasher = hasher ?? InvoiceHasher(),
-        _ecdsaSigner = ecdsaSigner ?? EcdsaSigner(),
-        _canonicalizer = canonicalizer ?? XmlCanonicalizer(),
-        _certParser = certParser ?? CertificateParser();
+  }) : _hasher = hasher ?? InvoiceHasher(),
+       _ecdsaSigner = ecdsaSigner ?? EcdsaSigner(),
+       _canonicalizer = canonicalizer ?? XmlCanonicalizer(),
+       _certParser = certParser ?? CertificateParser();
 
   /// Sign a UBL invoice XML string with XAdES-BES enveloped signature
   ///
@@ -52,8 +52,9 @@ class XadesSigner {
 
     // Parse certificate to get issuer, serial, etc.
     final certInfo = _certParser.parseCertificate(certificate.certificatePem);
-    final certDigest =
-        _certParser.computeCertificateDigest(certificate.certificatePem);
+    final certDigest = _certParser.computeCertificateDigest(
+      certificate.certificatePem,
+    );
     final certIssuer = certInfo['issuerName'] as String;
     final certSerialNumber = certInfo['serialNumber'] as String;
 
@@ -69,10 +70,12 @@ class XadesSigner {
     );
 
     // 3. Compute SignedProperties digest
-    final signedPropsCanonical =
-        _canonicalizer.canonicalize(signedPropertiesXml);
-    final signedPropsDigest =
-        base64Encode(sha256.convert(utf8.encode(signedPropsCanonical)).bytes);
+    final signedPropsCanonical = _canonicalizer.canonicalize(
+      signedPropertiesXml,
+    );
+    final signedPropsDigest = base64Encode(
+      sha256.convert(utf8.encode(signedPropsCanonical)).bytes,
+    );
 
     // 4. Build SignedInfo XML
     final signedInfoXml = _buildSignedInfo(
@@ -82,8 +85,9 @@ class XadesSigner {
 
     // 5. Canonicalize and sign SignedInfo
     final signedInfoCanonical = _canonicalizer.canonicalize(signedInfoXml);
-    final signedInfoDigestBytes =
-        sha256.convert(utf8.encode(signedInfoCanonical)).bytes;
+    final signedInfoDigestBytes = sha256
+        .convert(utf8.encode(signedInfoCanonical))
+        .bytes;
 
     final signatureValue = _ecdsaSigner.sign(
       digest: Uint8List.fromList(signedInfoDigestBytes),
@@ -194,7 +198,8 @@ class XadesSigner {
   /// placeholder built by [UblInvoiceBuilder]) with one that wraps the
   /// real XAdES signature.
   String _embedSignature(String invoiceXml, String signatureXml) {
-    final sigExtensions = '''<ext:UBLExtensions>'''
+    final sigExtensions =
+        '''<ext:UBLExtensions>'''
         '''<ext:UBLExtension>'''
         '''<ext:ExtensionContent>'''
         '''<sig:UBLDocumentSignatures xmlns:sig="${UblNamespaces.sig}" '''
@@ -213,8 +218,9 @@ class XadesSigner {
     // Replace the entire UBLExtensions block (placeholder from the builder)
     // with the real signature content. This avoids partial-match issues
     // where the builder's XML structure doesn't match a simple text marker.
-    final extensionsPattern =
-        RegExp(r'<ext:UBLExtensions>[\s\S]*?</ext:UBLExtensions>');
+    final extensionsPattern = RegExp(
+      r'<ext:UBLExtensions>[\s\S]*?</ext:UBLExtensions>',
+    );
     final match = extensionsPattern.firstMatch(invoiceXml);
     if (match != null) {
       return invoiceXml.replaceFirst(extensionsPattern, sigExtensions);

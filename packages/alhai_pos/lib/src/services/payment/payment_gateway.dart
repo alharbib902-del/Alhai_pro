@@ -122,15 +122,15 @@ class PaymentRequest {
   });
 
   Map<String, dynamic> toJson() => {
-        'order_id': orderId,
-        'amount': amount,
-        'currency': currency,
-        'method': method.code,
-        'customer_phone': customerPhone,
-        'customer_email': customerEmail,
-        'customer_name': customerName,
-        'metadata': metadata,
-      };
+    'order_id': orderId,
+    'amount': amount,
+    'currency': currency,
+    'method': method.code,
+    'customer_phone': customerPhone,
+    'customer_email': customerEmail,
+    'customer_name': customerName,
+    'metadata': metadata,
+  };
 }
 
 /// نتيجة الدفع
@@ -347,11 +347,11 @@ class MadaPaymentGateway implements PaymentGateway {
 
   @override
   List<PaymentMethod> get supportedMethods => [
-        PaymentMethod.mada,
-        PaymentMethod.visa,
-        PaymentMethod.mastercard,
-        PaymentMethod.applePay,
-      ];
+    PaymentMethod.mada,
+    PaymentMethod.visa,
+    PaymentMethod.mastercard,
+    PaymentMethod.applePay,
+  ];
 
   @override
   PaymentGatewayStatus get configurationStatus {
@@ -520,9 +520,7 @@ class StcPayGateway implements PaymentGateway {
         transactionId: 'STC-${DateTime.now().millisecondsSinceEpoch}',
         authCode: 'STC123',
         referenceNumber: request.orderId,
-        rawResponse: {
-          '_simulated': true,
-        },
+        rawResponse: {'_simulated': true},
       );
     }
 
@@ -755,7 +753,8 @@ class PaymentService {
   /// في وضع التطوير تشمل البوابات المحاكاة.
   List<PaymentMethod> get availableMethods => _gateways.entries
       .where(
-          (e) => e.value.configurationStatus == PaymentGatewayStatus.available)
+        (e) => e.value.configurationStatus == PaymentGatewayStatus.available,
+      )
       .map((e) => e.key)
       .toList();
 
@@ -834,7 +833,9 @@ class PaymentService {
 
   /// استرجاع المبلغ
   Future<RefundResult> refund(
-      RefundRequest request, PaymentMethod method) async {
+    RefundRequest request,
+    PaymentMethod method,
+  ) async {
     final gateway = _gateways[method];
 
     if (gateway == null) {

@@ -77,8 +77,8 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
             color: _isHovered
                 ? _statusColor.withValues(alpha: 0.4)
                 : (isDark
-                    ? Colors.white.withValues(alpha: 0.08)
-                    : AppColors.border),
+                      ? Colors.white.withValues(alpha: 0.08)
+                      : AppColors.border),
             width: _isHovered ? 2 : 1,
           ),
           boxShadow: [
@@ -110,8 +110,11 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.image_rounded,
-                        color: _statusColor.withValues(alpha: 0.5), size: 24),
+                    Icon(
+                      Icons.image_rounded,
+                      color: _statusColor.withValues(alpha: 0.5),
+                      size: 24,
+                    ),
                     const SizedBox(height: AlhaiSpacing.xxxs),
                     Text(
                       '$confidence%',
@@ -139,8 +142,9 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
                             style: TextStyle(
                               fontWeight: FontWeight.w700,
                               fontSize: 14,
-                              color:
-                                  isDark ? Colors.white : AppColors.textPrimary,
+                              color: isDark
+                                  ? Colors.white
+                                  : AppColors.textPrimary,
                             ),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
@@ -148,7 +152,9 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: AlhaiSpacing.xs, vertical: 3),
+                            horizontal: AlhaiSpacing.xs,
+                            vertical: 3,
+                          ),
                           decoration: BoxDecoration(
                             color: _statusColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(6),
@@ -177,11 +183,13 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
                     Row(
                       children: [
                         if (widget.product.barcode != null) ...[
-                          Icon(Icons.qr_code_rounded,
-                              size: 12,
-                              color: isDark
-                                  ? Colors.white.withValues(alpha: 0.4)
-                                  : AppColors.textMuted),
+                          Icon(
+                            Icons.qr_code_rounded,
+                            size: 12,
+                            color: isDark
+                                ? Colors.white.withValues(alpha: 0.4)
+                                : AppColors.textMuted,
+                          ),
                           const SizedBox(width: AlhaiSpacing.xxs),
                           Text(
                             widget.product.barcode!,
@@ -197,7 +205,9 @@ class _RecognitionResultCardState extends State<RecognitionResultCard> {
                         if (widget.product.category != null) ...[
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                horizontal: 6, vertical: AlhaiSpacing.xxxs),
+                              horizontal: 6,
+                              vertical: AlhaiSpacing.xxxs,
+                            ),
                             decoration: BoxDecoration(
                               color: AppColors.info.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(4),

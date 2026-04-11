@@ -92,7 +92,9 @@ void main() {
         // Actual update would require a valid UpdateProductParams which would throw
         expect(
           () => mockRemoteStoreB.updateProduct(
-              productId, FakeUpdateProductRequest()),
+            productId,
+            FakeUpdateProductRequest(),
+          ),
           throwsA(isA<DioException>()),
         );
       });
@@ -135,8 +137,9 @@ void main() {
           'created_at': '2026-01-19T00:00:00Z',
         });
 
-        when(() => mockRemoteStoreA.getProduct(productId))
-            .thenAnswer((_) async => productResponse);
+        when(
+          () => mockRemoteStoreA.getProduct(productId),
+        ).thenAnswer((_) async => productResponse);
 
         // Act
         final product = await storeARepository.getProduct(productId);
@@ -161,8 +164,9 @@ void main() {
           'created_at': '2026-01-19T00:00:00Z',
         });
 
-        when(() => mockRemoteStoreB.getProducts(storeBId, page: 1, limit: 20))
-            .thenAnswer((_) async => [storeBProduct]);
+        when(
+          () => mockRemoteStoreB.getProducts(storeBId, page: 1, limit: 20),
+        ).thenAnswer((_) async => [storeBProduct]);
 
         // Act
         final paginated = await storeBRepository.getProducts(storeBId);

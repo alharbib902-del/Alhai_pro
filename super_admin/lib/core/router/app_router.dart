@@ -66,9 +66,7 @@ class SuperAdminRoutes {
 /// Auth notifier that triggers GoRouter redirect on auth changes
 class _AuthNotifier extends ChangeNotifier {
   _AuthNotifier(Ref ref) {
-    _subs = [
-      ref.listen(authStateProvider, (_, __) => notifyListeners()),
-    ];
+    _subs = [ref.listen(authStateProvider, (_, __) => notifyListeners())];
   }
   late final List<ProviderSubscription> _subs;
 
@@ -146,15 +144,13 @@ final List<RouteBase> _routes = [
       ),
       GoRoute(
         path: SuperAdminRoutes.storeSettings,
-        builder: (c, s) => SAStoreSettingsScreen(
-          storeId: s.pathParameters['id']!,
-        ),
+        builder: (c, s) =>
+            SAStoreSettingsScreen(storeId: s.pathParameters['id']!),
       ),
       GoRoute(
         path: SuperAdminRoutes.storeDetail,
-        builder: (c, s) => SAStoreDetailScreen(
-          storeId: s.pathParameters['id']!,
-        ),
+        builder: (c, s) =>
+            SAStoreDetailScreen(storeId: s.pathParameters['id']!),
       ),
       GoRoute(
         path: SuperAdminRoutes.stores,
@@ -181,9 +177,7 @@ final List<RouteBase> _routes = [
       // Users
       GoRoute(
         path: SuperAdminRoutes.userDetail,
-        builder: (c, s) => SAUserDetailScreen(
-          userId: s.pathParameters['id']!,
-        ),
+        builder: (c, s) => SAUserDetailScreen(userId: s.pathParameters['id']!),
       ),
       GoRoute(
         path: SuperAdminRoutes.users,
@@ -238,9 +232,7 @@ final List<RouteBase> _routes = [
 Widget _errorBuilder(BuildContext context, GoRouterState state) {
   return Scaffold(
     appBar: AppBar(title: const Text('Error')),
-    body: Center(
-      child: Text('Page not found: ${state.uri.path}'),
-    ),
+    body: Center(child: Text('Page not found: ${state.uri.path}')),
   );
 }
 
@@ -299,8 +291,11 @@ class _DeferredWidgetState extends State<DeferredWidget> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline,
-                size: 48, color: Theme.of(context).colorScheme.error),
+            Icon(
+              Icons.error_outline,
+              size: 48,
+              color: Theme.of(context).colorScheme.error,
+            ),
             const SizedBox(height: 16),
             Text(
               '\u0641\u0634\u0644 \u062A\u062D\u0645\u064A\u0644 \u0627\u0644\u0635\u0641\u062D\u0629',
@@ -327,8 +322,9 @@ class _Placeholder extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
-    final amberColor =
-        isDark ? const Color(0xFFFBBF24) : const Color(0xFFD97706);
+    final amberColor = isDark
+        ? const Color(0xFFFBBF24)
+        : const Color(0xFFD97706);
 
     return Scaffold(
       appBar: AppBar(title: Text(title)),
@@ -368,9 +364,7 @@ class _Placeholder extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: amberColor.withValues(alpha: isDark ? 0.15 : 0.1),
                   borderRadius: BorderRadius.circular(20),
-                  border: Border.all(
-                    color: amberColor.withValues(alpha: 0.3),
-                  ),
+                  border: Border.all(color: amberColor.withValues(alpha: 0.3)),
                 ),
                 child: Row(
                   mainAxisSize: MainAxisSize.min,

@@ -77,12 +77,14 @@ Future<void> configureDependencies({String? environment}) async {
     }
     if (kDebugMode) {
       debugPrint(
-          '✅ [DI] SupabaseClient registered in GetIt — sync will be ACTIVE');
+        '✅ [DI] SupabaseClient registered in GetIt — sync will be ACTIVE',
+      );
     }
   } catch (e) {
     if (kDebugMode) {
       debugPrint(
-          '❌ [DI] SupabaseClient NOT registered — sync DISABLED! Error: $e');
+        '❌ [DI] SupabaseClient NOT registered — sync DISABLED! Error: $e',
+      );
     }
   }
 

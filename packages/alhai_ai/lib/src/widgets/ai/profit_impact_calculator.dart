@@ -37,8 +37,9 @@ class ProfitImpactCalculator extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -141,8 +142,8 @@ class ProfitImpactCalculator extends StatelessWidget {
     final maxPrice = suggestion.currentPrice * 1.5; // لا يزيد عن 50% فوق الحالي
     final changePercent = suggestion.currentPrice > 0
         ? ((currentSliderPrice - suggestion.currentPrice) /
-            suggestion.currentPrice *
-            100)
+              suggestion.currentPrice *
+              100)
         : 0.0;
     final isUp = changePercent >= 0;
 
@@ -161,7 +162,9 @@ class ProfitImpactCalculator extends StatelessWidget {
             ),
             Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.sm, vertical: 6),
+                horizontal: AlhaiSpacing.sm,
+                vertical: 6,
+              ),
               decoration: BoxDecoration(
                 gradient: AppColors.primaryGradient,
                 borderRadius: BorderRadius.circular(10),
@@ -207,7 +210,9 @@ class ProfitImpactCalculator extends StatelessWidget {
             ),
             Container(
               padding: const EdgeInsets.symmetric(
-                  horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxxs),
+                horizontal: AlhaiSpacing.xs,
+                vertical: AlhaiSpacing.xxxs,
+              ),
               decoration: BoxDecoration(
                 color: isUp
                     ? AppColors.primary.withValues(alpha: 0.1)
@@ -294,8 +299,9 @@ class ProfitImpactCalculator extends StatelessWidget {
         color: isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.grey50,
         borderRadius: BorderRadius.circular(10),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.05) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.05)
+              : AppColors.border,
         ),
       ),
       child: Column(

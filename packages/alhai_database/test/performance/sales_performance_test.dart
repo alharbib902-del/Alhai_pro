@@ -64,13 +64,15 @@ void main() {
     test('insert 500 sales with items in batch completes under 5s', () async {
       // First, insert some products for sale items to reference
       for (int i = 0; i < 10; i++) {
-        await db.productsDao.insertProduct(ProductsTableCompanion.insert(
-          id: 'prod_$i',
-          storeId: 'store-1',
-          name: 'Product $i',
-          price: 10.0 + i,
-          createdAt: DateTime(2025, 1, 1),
-        ));
+        await db.productsDao.insertProduct(
+          ProductsTableCompanion.insert(
+            id: 'prod_$i',
+            storeId: 'store-1',
+            name: 'Product $i',
+            price: 10.0 + i,
+            createdAt: DateTime(2025, 1, 1),
+          ),
+        );
       }
 
       final sw = Stopwatch()..start();
@@ -79,13 +81,15 @@ void main() {
         final saleId = 'sale_$i';
         final baseDate = DateTime(2025, 6, 1).add(Duration(hours: i));
 
-        await db.salesDao.insertSale(makeSale(
-          id: saleId,
-          receiptNo: 'REC-${i.toString().padLeft(4, '0')}',
-          total: 50.0 + (i % 100),
-          subtotal: 50.0 + (i % 100),
-          createdAt: baseDate,
-        ));
+        await db.salesDao.insertSale(
+          makeSale(
+            id: saleId,
+            receiptNo: 'REC-${i.toString().padLeft(4, '0')}',
+            total: 50.0 + (i % 100),
+            subtotal: 50.0 + (i % 100),
+            createdAt: baseDate,
+          ),
+        );
 
         // Each sale has 2 items
         await db.saleItemsDao.insertItems([
@@ -118,9 +122,13 @@ void main() {
       final salesCount = await db.salesDao.getSalesCount('store-1');
       expect(salesCount, 500);
 
-      expect(sw.elapsedMilliseconds, lessThan(5000),
-          reason: 'Inserting 500 sales with items should complete under 5s '
-              '(actual: ${sw.elapsedMilliseconds}ms)');
+      expect(
+        sw.elapsedMilliseconds,
+        lessThan(5000),
+        reason:
+            'Inserting 500 sales with items should complete under 5s '
+            '(actual: ${sw.elapsedMilliseconds}ms)',
+      );
     });
   });
 
@@ -133,13 +141,15 @@ void main() {
       for (int i = 0; i < 500; i++) {
         final day = (i % 30) + 1;
         final hour = i % 24;
-        await db.salesDao.insertSale(makeSale(
-          id: 'sale_$i',
-          receiptNo: 'REC-${i.toString().padLeft(4, '0')}',
-          total: 50.0 + (i % 200),
-          subtotal: 50.0 + (i % 200),
-          createdAt: DateTime(2025, 6, day, hour, i % 60),
-        ));
+        await db.salesDao.insertSale(
+          makeSale(
+            id: 'sale_$i',
+            receiptNo: 'REC-${i.toString().padLeft(4, '0')}',
+            total: 50.0 + (i % 200),
+            subtotal: 50.0 + (i % 200),
+            createdAt: DateTime(2025, 6, day, hour, i % 60),
+          ),
+        );
       }
     });
 
@@ -147,24 +157,33 @@ void main() {
       await db.close();
     });
 
-    test('getSalesPaginated for 7-day date range completes under 200ms',
-        () async {
-      final sw = Stopwatch()..start();
-      final results = await db.salesDao.getSalesPaginated(
-        'store-1',
-        startDate: DateTime(2025, 6, 10),
-        endDate: DateTime(2025, 6, 17),
-        offset: 0,
-        limit: 500, // large limit to get all in range
-      );
-      sw.stop();
+    test(
+      'getSalesPaginated for 7-day date range completes under 200ms',
+      () async {
+        final sw = Stopwatch()..start();
+        final results = await db.salesDao.getSalesPaginated(
+          'store-1',
+          startDate: DateTime(2025, 6, 10),
+          endDate: DateTime(2025, 6, 17),
+          offset: 0,
+          limit: 500, // large limit to get all in range
+        );
+        sw.stop();
 
-      expect(results, isNotEmpty,
-          reason: 'Date range query should return results');
-      expect(sw.elapsedMilliseconds, lessThan(200),
-          reason: 'Date range query over 500 sales should complete under 200ms '
-              '(actual: ${sw.elapsedMilliseconds}ms)');
-    });
+        expect(
+          results,
+          isNotEmpty,
+          reason: 'Date range query should return results',
+        );
+        expect(
+          sw.elapsedMilliseconds,
+          lessThan(200),
+          reason:
+              'Date range query over 500 sales should complete under 200ms '
+              '(actual: ${sw.elapsedMilliseconds}ms)',
+        );
+      },
+    );
 
     test('getSalesStats for single day completes under 100ms', () async {
       final sw = Stopwatch()..start();
@@ -175,11 +194,18 @@ void main() {
       );
       sw.stop();
 
-      expect(stats.count, greaterThan(0),
-          reason: 'Single day stats should have results');
-      expect(sw.elapsedMilliseconds, lessThan(100),
-          reason: 'Single day stats should complete under 100ms '
-              '(actual: ${sw.elapsedMilliseconds}ms)');
+      expect(
+        stats.count,
+        greaterThan(0),
+        reason: 'Single day stats should have results',
+      );
+      expect(
+        sw.elapsedMilliseconds,
+        lessThan(100),
+        reason:
+            'Single day stats should complete under 100ms '
+            '(actual: ${sw.elapsedMilliseconds}ms)',
+      );
     });
 
     test('getSalesPaginated with date filter completes under 100ms', () async {
@@ -195,10 +221,13 @@ void main() {
 
       expect(results, isNotEmpty);
       expect(results.length, lessThanOrEqualTo(20));
-      expect(sw.elapsedMilliseconds, lessThan(100),
-          reason:
-              'Paginated sales with date filter should complete under 100ms '
-              '(actual: ${sw.elapsedMilliseconds}ms)');
+      expect(
+        sw.elapsedMilliseconds,
+        lessThan(100),
+        reason:
+            'Paginated sales with date filter should complete under 100ms '
+            '(actual: ${sw.elapsedMilliseconds}ms)',
+      );
     });
   });
 
@@ -209,14 +238,18 @@ void main() {
 
       // Seed 500 completed sales for aggregation testing
       for (int i = 0; i < 500; i++) {
-        await db.salesDao.insertSale(makeSale(
-          id: 'sale_$i',
-          receiptNo: 'REC-${i.toString().padLeft(4, '0')}',
-          total: 25.0 + (i % 300),
-          subtotal: 25.0 + (i % 300),
-          paymentMethod: i % 3 == 0 ? 'cash' : (i % 3 == 1 ? 'card' : 'mixed'),
-          createdAt: DateTime(2025, 6, (i % 30) + 1, i % 24),
-        ));
+        await db.salesDao.insertSale(
+          makeSale(
+            id: 'sale_$i',
+            receiptNo: 'REC-${i.toString().padLeft(4, '0')}',
+            total: 25.0 + (i % 300),
+            subtotal: 25.0 + (i % 300),
+            paymentMethod: i % 3 == 0
+                ? 'cash'
+                : (i % 3 == 1 ? 'card' : 'mixed'),
+            createdAt: DateTime(2025, 6, (i % 30) + 1, i % 24),
+          ),
+        );
       }
     });
 
@@ -231,12 +264,19 @@ void main() {
 
       expect(stats.count, 500, reason: 'Should count all 500 sales');
       expect(stats.total, greaterThan(0), reason: 'Total should be positive');
-      expect(stats.average, greaterThan(0),
-          reason: 'Average should be positive');
+      expect(
+        stats.average,
+        greaterThan(0),
+        reason: 'Average should be positive',
+      );
       expect(stats.maxSale, greaterThanOrEqualTo(stats.minSale));
-      expect(sw.elapsedMilliseconds, lessThan(100),
-          reason: 'Sales stats aggregation should complete under 100ms '
-              '(actual: ${sw.elapsedMilliseconds}ms)');
+      expect(
+        sw.elapsedMilliseconds,
+        lessThan(100),
+        reason:
+            'Sales stats aggregation should complete under 100ms '
+            '(actual: ${sw.elapsedMilliseconds}ms)',
+      );
     });
 
     test('getSalesCount completes under 50ms', () async {
@@ -245,26 +285,39 @@ void main() {
       sw.stop();
 
       expect(count, 500);
-      expect(sw.elapsedMilliseconds, lessThan(50),
-          reason: 'Sales count should complete under 50ms '
-              '(actual: ${sw.elapsedMilliseconds}ms)');
-    });
-
-    test('getSalesStats with date range filter completes under 100ms',
-        () async {
-      final sw = Stopwatch()..start();
-      final stats = await db.salesDao.getSalesStats(
-        'store-1',
-        startDate: DateTime(2025, 6, 10),
-        endDate: DateTime(2025, 6, 20),
+      expect(
+        sw.elapsedMilliseconds,
+        lessThan(50),
+        reason:
+            'Sales count should complete under 50ms '
+            '(actual: ${sw.elapsedMilliseconds}ms)',
       );
-      sw.stop();
-
-      expect(stats.count, greaterThan(0),
-          reason: 'Filtered stats should have results');
-      expect(sw.elapsedMilliseconds, lessThan(100),
-          reason: 'Filtered sales stats should complete under 100ms '
-              '(actual: ${sw.elapsedMilliseconds}ms)');
     });
+
+    test(
+      'getSalesStats with date range filter completes under 100ms',
+      () async {
+        final sw = Stopwatch()..start();
+        final stats = await db.salesDao.getSalesStats(
+          'store-1',
+          startDate: DateTime(2025, 6, 10),
+          endDate: DateTime(2025, 6, 20),
+        );
+        sw.stop();
+
+        expect(
+          stats.count,
+          greaterThan(0),
+          reason: 'Filtered stats should have results',
+        );
+        expect(
+          sw.elapsedMilliseconds,
+          lessThan(100),
+          reason:
+              'Filtered sales stats should complete under 100ms '
+              '(actual: ${sw.elapsedMilliseconds}ms)',
+        );
+      },
+    );
   });
 }

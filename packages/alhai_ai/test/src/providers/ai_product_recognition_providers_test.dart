@@ -9,10 +9,7 @@ void main() {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      expect(
-        container.read(scanModeProvider),
-        ScanMode.singleProduct,
-      );
+      expect(container.read(scanModeProvider), ScanMode.singleProduct);
     });
 
     test('can be updated to shelf', () {

@@ -28,8 +28,9 @@ void main() {
     mockSyncService = MockSyncService();
     mockConnectivity = MockConnectivityService();
 
-    when(() => mockConnectivity.onConnectivityChanged)
-        .thenAnswer((_) => const Stream.empty());
+    when(
+      () => mockConnectivity.onConnectivityChanged,
+    ).thenAnswer((_) => const Stream.empty());
     when(() => mockConnectivity.isOnline).thenReturn(false);
     when(() => mockConnectivity.isOffline).thenReturn(true);
 
@@ -46,8 +47,9 @@ void main() {
   group('SyncManager', () {
     group('initialize', () {
       test('subscribes to connectivity changes', () async {
-        when(() => mockConnectivity.onConnectivityChanged)
-            .thenAnswer((_) => const Stream.empty());
+        when(
+          () => mockConnectivity.onConnectivityChanged,
+        ).thenAnswer((_) => const Stream.empty());
         when(() => mockConnectivity.isOnline).thenReturn(false);
 
         await manager.initialize();
@@ -58,8 +60,9 @@ void main() {
       test('syncs pending when online at init', () async {
         when(() => mockConnectivity.isOnline).thenReturn(true);
         when(() => mockConnectivity.isOffline).thenReturn(false);
-        when(() => mockSyncService.getPendingItems())
-            .thenAnswer((_) async => []);
+        when(
+          () => mockSyncService.getPendingItems(),
+        ).thenAnswer((_) async => []);
 
         await manager.initialize();
 
@@ -83,8 +86,9 @@ void main() {
         when(() => mockConnectivity.isOffline).thenReturn(false);
 
         final completer = Completer<List<SyncQueueTableData>>();
-        when(() => mockSyncService.getPendingItems())
-            .thenAnswer((_) => completer.future);
+        when(
+          () => mockSyncService.getPendingItems(),
+        ).thenAnswer((_) => completer.future);
 
         // Start first sync (will be in progress)
         final firstSync = manager.syncPending();
@@ -122,12 +126,15 @@ void main() {
           ),
         ];
 
-        when(() => mockSyncService.getPendingItems())
-            .thenAnswer((_) async => items);
-        when(() => mockSyncService.markAsSyncing(any()))
-            .thenAnswer((_) async {});
-        when(() => mockSyncService.markAsSynced(any()))
-            .thenAnswer((_) async {});
+        when(
+          () => mockSyncService.getPendingItems(),
+        ).thenAnswer((_) async => items);
+        when(
+          () => mockSyncService.markAsSyncing(any()),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockSyncService.markAsSynced(any()),
+        ).thenAnswer((_) async {});
 
         // Use a custom onSync callback
         final syncedItems = <String>[];
@@ -164,12 +171,15 @@ void main() {
           ),
         ];
 
-        when(() => mockSyncService.getPendingItems())
-            .thenAnswer((_) async => items);
-        when(() => mockSyncService.markAsSyncing(any()))
-            .thenAnswer((_) async {});
-        when(() => mockSyncService.markAsFailed(any(), any()))
-            .thenAnswer((_) async {});
+        when(
+          () => mockSyncService.getPendingItems(),
+        ).thenAnswer((_) async => items);
+        when(
+          () => mockSyncService.markAsSyncing(any()),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockSyncService.markAsFailed(any(), any()),
+        ).thenAnswer((_) async {});
 
         final managerWithCallback = SyncManager(
           syncService: mockSyncService,
@@ -193,8 +203,9 @@ void main() {
       test('emits syncing then idle status on success', () async {
         when(() => mockConnectivity.isOnline).thenReturn(true);
         when(() => mockConnectivity.isOffline).thenReturn(false);
-        when(() => mockSyncService.getPendingItems())
-            .thenAnswer((_) async => []);
+        when(
+          () => mockSyncService.getPendingItems(),
+        ).thenAnswer((_) async => []);
 
         final statuses = <SyncStatus>[];
         manager.statusStream.listen(statuses.add);
@@ -205,8 +216,10 @@ void main() {
         await Future<void>.delayed(Duration.zero);
 
         // Should emit syncing, then idle
-        expect(statuses,
-            containsAllInOrder([SyncStatus.syncing, SyncStatus.idle]));
+        expect(
+          statuses,
+          containsAllInOrder([SyncStatus.syncing, SyncStatus.idle]),
+        );
       });
 
       test('emits error status on failure', () async {
@@ -214,18 +227,18 @@ void main() {
         when(() => mockConnectivity.isOffline).thenReturn(false);
 
         final items = [
-          createSyncQueueItem(
-            id: 'q-1',
-            payload: jsonEncode({'id': 'p-1'}),
-          ),
+          createSyncQueueItem(id: 'q-1', payload: jsonEncode({'id': 'p-1'})),
         ];
 
-        when(() => mockSyncService.getPendingItems())
-            .thenAnswer((_) async => items);
-        when(() => mockSyncService.markAsSyncing(any()))
-            .thenAnswer((_) async {});
-        when(() => mockSyncService.markAsFailed(any(), any()))
-            .thenAnswer((_) async {});
+        when(
+          () => mockSyncService.getPendingItems(),
+        ).thenAnswer((_) async => items);
+        when(
+          () => mockSyncService.markAsSyncing(any()),
+        ).thenAnswer((_) async {});
+        when(
+          () => mockSyncService.markAsFailed(any(), any()),
+        ).thenAnswer((_) async {});
 
         final managerWithCallback = SyncManager(
           syncService: mockSyncService,
@@ -249,8 +262,9 @@ void main() {
 
     group('cleanup', () {
       test('delegates to sync service', () async {
-        when(() => mockSyncService.cleanup(olderThan: any(named: 'olderThan')))
-            .thenAnswer((_) async => 7);
+        when(
+          () => mockSyncService.cleanup(olderThan: any(named: 'olderThan')),
+        ).thenAnswer((_) async => 7);
 
         final result = await manager.cleanup();
 
@@ -294,20 +308,12 @@ void main() {
     });
 
     test('hasErrors returns false when failedCount is 0', () {
-      final result = SyncResult(
-        successCount: 2,
-        failedCount: 0,
-        errors: [],
-      );
+      final result = SyncResult(successCount: 2, failedCount: 0, errors: []);
       expect(result.hasErrors, isFalse);
     });
 
     test('totalCount sums success and failed', () {
-      final result = SyncResult(
-        successCount: 3,
-        failedCount: 2,
-        errors: [],
-      );
+      final result = SyncResult(successCount: 3, failedCount: 2, errors: []);
       expect(result.totalCount, 5);
     });
   });

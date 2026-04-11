@@ -17,11 +17,17 @@ class OrganizationsDaoManager {
   OrganizationsDaoManager(this._db);
   $$OrganizationsTableTableTableManager get organizationsTable =>
       $$OrganizationsTableTableTableManager(
-          _db.attachedDatabase, _db.organizationsTable);
+        _db.attachedDatabase,
+        _db.organizationsTable,
+      );
   $$SubscriptionsTableTableTableManager get subscriptionsTable =>
       $$SubscriptionsTableTableTableManager(
-          _db.attachedDatabase, _db.subscriptionsTable);
+        _db.attachedDatabase,
+        _db.subscriptionsTable,
+      );
   $$OrgMembersTableTableTableManager get orgMembersTable =>
       $$OrgMembersTableTableTableManager(
-          _db.attachedDatabase, _db.orgMembersTable);
+        _db.attachedDatabase,
+        _db.orgMembersTable,
+      );
 }

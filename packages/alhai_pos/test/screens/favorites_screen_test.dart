@@ -102,8 +102,9 @@ void main() {
       expect(find.byType(AppBar), findsOneWidget);
     });
 
-    testWidgets('shows empty state with heart icon when no favorites',
-        (tester) async {
+    testWidgets('shows empty state with heart icon when no favorites', (
+      tester,
+    ) async {
       await tester.pumpWidget(_buildTestWidget());
       await tester.pump(const Duration(seconds: 1));
       await tester.pump(const Duration(seconds: 1));
@@ -112,8 +113,9 @@ void main() {
       expect(find.byIcon(Icons.favorite_border), findsOneWidget);
     });
 
-    testWidgets('shows AppEmptyState when favorites list is empty',
-        (tester) async {
+    testWidgets('shows AppEmptyState when favorites list is empty', (
+      tester,
+    ) async {
       await tester.pumpWidget(_buildTestWidget());
       await tester.pump(const Duration(seconds: 1));
       await tester.pump(const Duration(seconds: 1));

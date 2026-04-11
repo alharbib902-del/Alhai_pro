@@ -9,13 +9,15 @@ void main() {
     db = createTestDatabase();
     await seedTestData(db);
     // transactions reference accounts via FK
-    await db.accountsDao.insertAccount(AccountsTableCompanion.insert(
-      id: 'acc-1',
-      storeId: 'store-1',
-      type: 'receivable',
-      name: 'Test Acct',
-      createdAt: DateTime(2025, 1, 1),
-    ));
+    await db.accountsDao.insertAccount(
+      AccountsTableCompanion.insert(
+        id: 'acc-1',
+        storeId: 'store-1',
+        type: 'receivable',
+        name: 'Test Acct',
+        createdAt: DateTime(2025, 1, 1),
+      ),
+    );
   });
 
   tearDown(() async {
@@ -66,8 +68,10 @@ void main() {
         ),
       );
 
-      final payments = await db.transactionsDao
-          .getAccountTransactionsByType('acc-1', 'payment');
+      final payments = await db.transactionsDao.getAccountTransactionsByType(
+        'acc-1',
+        'payment',
+      );
       expect(payments, hasLength(1));
       expect(payments.first.amount, -200.0);
     });
@@ -163,12 +167,16 @@ void main() {
         periodKey: '2025-06',
       );
 
-      final hasInterest =
-          await db.transactionsDao.hasInterestForPeriod('acc-1', '2025-06');
+      final hasInterest = await db.transactionsDao.hasInterestForPeriod(
+        'acc-1',
+        '2025-06',
+      );
       expect(hasInterest, true);
 
-      final noInterest =
-          await db.transactionsDao.hasInterestForPeriod('acc-1', '2025-07');
+      final noInterest = await db.transactionsDao.hasInterestForPeriod(
+        'acc-1',
+        '2025-07',
+      );
       expect(noInterest, false);
     });
 

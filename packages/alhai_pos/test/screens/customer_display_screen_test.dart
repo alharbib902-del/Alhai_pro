@@ -26,9 +26,7 @@ class MockSyncQueueDao extends Mock implements SyncQueueDao {}
 // Helpers
 // ---------------------------------------------------------------------------
 
-Widget _buildTestWidget({
-  List<Override> overrides = const [],
-}) {
+Widget _buildTestWidget({List<Override> overrides = const []}) {
   return ProviderScope(
     overrides: [
       // Provide an idle state stream
@@ -40,9 +38,7 @@ Widget _buildTestWidget({
       ),
       ...overrides,
     ],
-    child: const MaterialApp(
-      home: CustomerDisplayScreen(),
-    ),
+    child: const MaterialApp(home: CustomerDisplayScreen()),
   );
 }
 
@@ -99,8 +95,9 @@ void main() {
       expect(find.byType(CustomerDisplayScreen), findsOneWidget);
     });
 
-    testWidgets('wraps content in IgnorePointer for read-only display',
-        (tester) async {
+    testWidgets('wraps content in IgnorePointer for read-only display', (
+      tester,
+    ) async {
       setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
@@ -136,8 +133,9 @@ void main() {
       expect(find.byType(Scaffold), findsWidgets);
     });
 
-    testWidgets('shows idle view with store icon on initial state',
-        (tester) async {
+    testWidgets('shows idle view with store icon on initial state', (
+      tester,
+    ) async {
       setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 

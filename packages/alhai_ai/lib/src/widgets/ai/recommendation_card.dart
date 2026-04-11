@@ -64,8 +64,9 @@ class RecommendationCard extends StatelessWidget {
         color: isDark ? const Color(0xFF1E293B) : Colors.white,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(
-          color:
-              isDark ? Colors.white.withValues(alpha: 0.08) : AppColors.border,
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.08)
+              : AppColors.border,
         ),
         boxShadow: [
           BoxShadow(
@@ -88,8 +89,11 @@ class RecommendationCard extends StatelessWidget {
                   color: AppColors.primary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: Icon(_getCategoryIcon(),
-                    color: AppColors.primary, size: 24),
+                child: Icon(
+                  _getCategoryIcon(),
+                  color: AppColors.primary,
+                  size: 24,
+                ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
@@ -143,8 +147,11 @@ class RecommendationCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.auto_awesome_rounded,
-                    size: 14, color: AppColors.warning),
+                const Icon(
+                  Icons.auto_awesome_rounded,
+                  size: 14,
+                  color: AppColors.warning,
+                ),
                 const SizedBox(width: 6),
                 Expanded(
                   child: Text(
@@ -170,7 +177,9 @@ class RecommendationCard extends StatelessWidget {
               // Confidence
               Container(
                 padding: const EdgeInsets.symmetric(
-                    horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                  horizontal: AlhaiSpacing.xs,
+                  vertical: AlhaiSpacing.xxs,
+                ),
                 decoration: BoxDecoration(
                   color: confColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
@@ -198,7 +207,9 @@ class RecommendationCard extends StatelessWidget {
               if (product.avgPurchaseInterval > 0)
                 Container(
                   padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.xs, vertical: AlhaiSpacing.xxs),
+                    horizontal: AlhaiSpacing.xs,
+                    vertical: AlhaiSpacing.xxs,
+                  ),
                   decoration: BoxDecoration(
                     color: isDark
                         ? Colors.white.withValues(alpha: 0.05)
@@ -255,7 +266,9 @@ class RecommendationCard extends StatelessWidget {
   Widget _buildCompact(bool isDark, Color confColor) {
     return Container(
       padding: const EdgeInsets.symmetric(
-          horizontal: AlhaiSpacing.sm, vertical: AlhaiSpacing.xs),
+        horizontal: AlhaiSpacing.sm,
+        vertical: AlhaiSpacing.xs,
+      ),
       decoration: BoxDecoration(
         color: isDark ? Colors.white.withValues(alpha: 0.03) : AppColors.grey50,
         borderRadius: BorderRadius.circular(10),
@@ -284,7 +297,9 @@ class RecommendationCard extends StatelessWidget {
           ),
           Container(
             padding: const EdgeInsets.symmetric(
-                horizontal: 6, vertical: AlhaiSpacing.xxxs),
+              horizontal: 6,
+              vertical: AlhaiSpacing.xxxs,
+            ),
             decoration: BoxDecoration(
               color: confColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(6),
@@ -292,7 +307,10 @@ class RecommendationCard extends StatelessWidget {
             child: Text(
               '${(product.confidence * 100).toInt()}%',
               style: TextStyle(
-                  color: confColor, fontSize: 10, fontWeight: FontWeight.bold),
+                color: confColor,
+                fontSize: 10,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],

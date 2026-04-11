@@ -37,7 +37,8 @@ ReceiptData _sampleReceipt({
     cashierName: 'Ahmad',
     customerName: customerName,
     customerId: customerId,
-    items: items ??
+    items:
+        items ??
         [
           const ReceiptItem(
             name: 'Apple',
@@ -189,10 +190,7 @@ void main() {
     });
 
     test('receipt shows discount when > 0', () async {
-      final receipt = _sampleReceipt(
-        subtotal: 200.0,
-        discount: 20.0,
-      );
+      final receipt = _sampleReceipt(subtotal: 200.0, discount: 20.0);
       final bytes = await ReceiptBuilder.build(receipt);
       final text = _bytesToString(bytes);
 
@@ -316,7 +314,9 @@ void main() {
 
       // Store address is Arabic
       expect(
-          text, contains('\u0627\u0644\u0631\u064a\u0627\u0636')); // "الرياض"
+        text,
+        contains('\u0627\u0644\u0631\u064a\u0627\u0636'),
+      ); // "الرياض"
     });
 
     test('receipt contains Arabic thank-you footer', () async {
@@ -325,10 +325,7 @@ void main() {
       final text = _bytesToString(bytes);
 
       // Footer: شكراً لزيارتكم
-      expect(
-        text,
-        contains('\u0634\u0643\u0631\u0627\u064b'),
-      ); // "شكراً"
+      expect(text, contains('\u0634\u0643\u0631\u0627\u064b')); // "شكراً"
     });
 
     test('receipt contains Arabic VAT number label', () async {
@@ -340,7 +337,8 @@ void main() {
       expect(
         text,
         contains(
-            '\u0627\u0644\u0631\u0642\u0645 \u0627\u0644\u0636\u0631\u064a\u0628\u064a'),
+          '\u0627\u0644\u0631\u0642\u0645 \u0627\u0644\u0636\u0631\u064a\u0628\u064a',
+        ),
       );
     });
 
@@ -368,10 +366,7 @@ void main() {
       final text = _bytesToString(bytes);
 
       // "نقدي"
-      expect(
-        text,
-        contains('\u0646\u0642\u062f\u064a'),
-      );
+      expect(text, contains('\u0646\u0642\u062f\u064a'));
     });
 
     test('payment method translated to Arabic for card', () async {
@@ -380,10 +375,7 @@ void main() {
       final text = _bytesToString(bytes);
 
       // "بطاقة ائتمان"
-      expect(
-        text,
-        contains('\u0628\u0637\u0627\u0642\u0629'),
-      ); // "بطاقة"
+      expect(text, contains('\u0628\u0637\u0627\u0642\u0629')); // "بطاقة"
     });
 
     test('payment method for mada', () async {
@@ -392,10 +384,7 @@ void main() {
       final text = _bytesToString(bytes);
 
       // "مدى"
-      expect(
-        text,
-        contains('\u0645\u062f\u0649'),
-      );
+      expect(text, contains('\u0645\u062f\u0649'));
     });
   });
 

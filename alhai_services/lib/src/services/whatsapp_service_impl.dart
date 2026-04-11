@@ -23,13 +23,14 @@ class WhatsAppServiceImpl implements WhatsAppService {
     String? accessToken,
     String? phoneNumberId,
     String? baseUrl,
-  })  : _accessToken = accessToken,
-        _phoneNumberId = phoneNumberId,
-        _baseUrl = baseUrl ?? AppEndpoints.whatsAppGraph;
+  }) : _accessToken = accessToken,
+       _phoneNumberId = phoneNumberId,
+       _baseUrl = baseUrl ?? AppEndpoints.whatsAppGraph;
 
   @override
   Future<WhatsAppReceiptResponse> sendReceipt(
-      WhatsAppReceiptRequest request) async {
+    WhatsAppReceiptRequest request,
+  ) async {
     try {
       // Validate phone number
       if (!isValidWhatsAppNumber(request.phone)) {

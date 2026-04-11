@@ -249,8 +249,9 @@ MockAppDatabase setupMockDatabase({
   when(() => db.inventoryDao).thenReturn(inventoryDao ?? MockInventoryDao());
   when(() => db.accountsDao).thenReturn(accountsDao ?? MockAccountsDao());
   when(() => db.syncQueueDao).thenReturn(syncQueueDao ?? MockSyncQueueDao());
-  when(() => db.transactionsDao)
-      .thenReturn(transactionsDao ?? MockTransactionsDao());
+  when(
+    () => db.transactionsDao,
+  ).thenReturn(transactionsDao ?? MockTransactionsDao());
   when(() => db.ordersDao).thenReturn(ordersDao ?? MockOrdersDao());
   when(() => db.auditLogDao).thenReturn(auditLogDao ?? MockAuditLogDao());
   when(() => db.categoriesDao).thenReturn(categoriesDao ?? MockCategoriesDao());
@@ -259,8 +260,9 @@ MockAppDatabase setupMockDatabase({
   // Business DAOs
   final effectiveStoresDao = storesDao ?? MockStoresDao();
   when(() => db.storesDao).thenReturn(effectiveStoresDao);
-  when(() => effectiveStoresDao.getStoreById(any()))
-      .thenAnswer((_) async => null);
+  when(
+    () => effectiveStoresDao.getStoreById(any()),
+  ).thenAnswer((_) async => null);
   when(() => db.usersDao).thenReturn(usersDao ?? MockUsersDao());
   when(() => db.customersDao).thenReturn(customersDao ?? MockCustomersDao());
   when(() => db.suppliersDao).thenReturn(suppliersDao ?? MockSuppliersDao());
@@ -269,27 +271,34 @@ MockAppDatabase setupMockDatabase({
   when(() => db.expensesDao).thenReturn(expensesDao ?? MockExpensesDao());
   when(() => db.purchasesDao).thenReturn(purchasesDao ?? MockPurchasesDao());
   when(() => db.discountsDao).thenReturn(discountsDao ?? MockDiscountsDao());
-  when(() => db.notificationsDao)
-      .thenReturn(notificationsDao ?? MockNotificationsDao());
+  when(
+    () => db.notificationsDao,
+  ).thenReturn(notificationsDao ?? MockNotificationsDao());
 
   // WhatsApp DAOs
-  when(() => db.whatsAppMessagesDao)
-      .thenReturn(whatsAppMessagesDao ?? MockWhatsAppMessagesDao());
-  when(() => db.whatsAppTemplatesDao)
-      .thenReturn(whatsAppTemplatesDao ?? MockWhatsAppTemplatesDao());
+  when(
+    () => db.whatsAppMessagesDao,
+  ).thenReturn(whatsAppMessagesDao ?? MockWhatsAppMessagesDao());
+  when(
+    () => db.whatsAppTemplatesDao,
+  ).thenReturn(whatsAppTemplatesDao ?? MockWhatsAppTemplatesDao());
 
   // Multi-tenant DAOs
-  when(() => db.organizationsDao)
-      .thenReturn(organizationsDao ?? MockOrganizationsDao());
+  when(
+    () => db.organizationsDao,
+  ).thenReturn(organizationsDao ?? MockOrganizationsDao());
   when(() => db.orgMembersDao).thenReturn(orgMembersDao ?? MockOrgMembersDao());
-  when(() => db.posTerminalsDao)
-      .thenReturn(posTerminalsDao ?? MockPosTerminalsDao());
+  when(
+    () => db.posTerminalsDao,
+  ).thenReturn(posTerminalsDao ?? MockPosTerminalsDao());
 
   // Sync DAOs
-  when(() => db.syncMetadataDao)
-      .thenReturn(syncMetadataDao ?? MockSyncMetadataDao());
-  when(() => db.stockDeltasDao)
-      .thenReturn(stockDeltasDao ?? MockStockDeltasDao());
+  when(
+    () => db.syncMetadataDao,
+  ).thenReturn(syncMetadataDao ?? MockSyncMetadataDao());
+  when(
+    () => db.stockDeltasDao,
+  ).thenReturn(stockDeltasDao ?? MockStockDeltasDao());
 
   // Table accessors (for screens that use direct table queries)
   final mockSettingsTable = MockSettingsTable();
@@ -299,10 +308,12 @@ MockAppDatabase setupMockDatabase({
   // cascade chain: select(table)..where(...) => .get() / .getSingleOrNull()
   final mockSelectSettings = MockSimpleSelectSettings();
   when(() => db.select(mockSettingsTable)).thenReturn(mockSelectSettings);
-  when(() => mockSelectSettings.get())
-      .thenAnswer((_) async => <SettingsTableData>[]);
-  when(() => mockSelectSettings.getSingleOrNull())
-      .thenAnswer((_) async => null);
+  when(
+    () => mockSelectSettings.get(),
+  ).thenAnswer((_) async => <SettingsTableData>[]);
+  when(
+    () => mockSelectSettings.getSingleOrNull(),
+  ).thenAnswer((_) async => null);
 
   // ── Default stubs for commonly called DAO methods ──
   // These prevent 'type Null is not a subtype of Future<...>' errors
@@ -311,39 +322,47 @@ MockAppDatabase setupMockDatabase({
 
   // SalesDao
   final effectiveSalesDao = salesDao ?? db.salesDao;
-  when(() => effectiveSalesDao.getAllSales(any(), limit: any(named: 'limit')))
-      .thenAnswer((_) async => <SalesTableData>[]);
-  when(() => effectiveSalesDao.getSaleById(any()))
-      .thenAnswer((_) async => null);
-  when(() => effectiveSalesDao.getSalesPaginated(
-        any(),
-        offset: any(named: 'offset'),
-        limit: any(named: 'limit'),
-        startDate: any(named: 'startDate'),
-        endDate: any(named: 'endDate'),
-        status: any(named: 'status'),
-        cashierId: any(named: 'cashierId'),
-      )).thenAnswer((_) async => <SalesTableData>[]);
+  when(
+    () => effectiveSalesDao.getAllSales(any(), limit: any(named: 'limit')),
+  ).thenAnswer((_) async => <SalesTableData>[]);
+  when(
+    () => effectiveSalesDao.getSaleById(any()),
+  ).thenAnswer((_) async => null);
+  when(
+    () => effectiveSalesDao.getSalesPaginated(
+      any(),
+      offset: any(named: 'offset'),
+      limit: any(named: 'limit'),
+      startDate: any(named: 'startDate'),
+      endDate: any(named: 'endDate'),
+      status: any(named: 'status'),
+      cashierId: any(named: 'cashierId'),
+    ),
+  ).thenAnswer((_) async => <SalesTableData>[]);
 
   // SaleItemsDao
   final effectiveSaleItemsDao = saleItemsDao ?? db.saleItemsDao;
-  when(() => effectiveSaleItemsDao.getItemsBySaleId(any()))
-      .thenAnswer((_) async => <SaleItemsTableData>[]);
+  when(
+    () => effectiveSaleItemsDao.getItemsBySaleId(any()),
+  ).thenAnswer((_) async => <SaleItemsTableData>[]);
 
   // CustomersDao
   final effectiveCustomersDao = customersDao ?? db.customersDao;
-  when(() => effectiveCustomersDao.getActiveCustomers(any()))
-      .thenAnswer((_) async => <CustomersTableData>[]);
+  when(
+    () => effectiveCustomersDao.getActiveCustomers(any()),
+  ).thenAnswer((_) async => <CustomersTableData>[]);
 
   // SyncQueueDao
   final effectiveSyncQueueDao = syncQueueDao ?? db.syncQueueDao;
-  when(() => effectiveSyncQueueDao.findByIdempotencyKey(any()))
-      .thenAnswer((_) async => null);
+  when(
+    () => effectiveSyncQueueDao.findByIdempotencyKey(any()),
+  ).thenAnswer((_) async => null);
 
   // ShiftsDao
   final effectiveShiftsDao = shiftsDao ?? db.shiftsDao;
-  when(() => effectiveShiftsDao.getOpenShift(any(), any()))
-      .thenAnswer((_) async => null);
+  when(
+    () => effectiveShiftsDao.getOpenShift(any(), any()),
+  ).thenAnswer((_) async => null);
 
   return db;
 }

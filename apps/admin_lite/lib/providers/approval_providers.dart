@@ -21,8 +21,9 @@ import '../core/services/sentry_service.dart' as sentry;
 enum ApprovalFilter { all, pending, approved, rejected }
 
 /// Current filter selection
-final approvalFilterProvider =
-    StateProvider<ApprovalFilter>((ref) => ApprovalFilter.all);
+final approvalFilterProvider = StateProvider<ApprovalFilter>(
+  (ref) => ApprovalFilter.all,
+);
 
 // =============================================================================
 // PENDING REFUNDS PROVIDER
@@ -31,49 +32,57 @@ final approvalFilterProvider =
 /// All refunds for the current store, optionally filtered by status
 final pendingRefundsProvider =
     FutureProvider.autoDispose<List<ReturnsTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
 
-  final db = GetIt.I<AppDatabase>();
-  final filter = ref.watch(approvalFilterProvider);
+      final db = GetIt.I<AppDatabase>();
+      final filter = ref.watch(approvalFilterProvider);
 
-  switch (filter) {
-    case ApprovalFilter.all:
-      return db.returnsDao.getAllReturns(storeId);
-    case ApprovalFilter.pending:
-      return db.returnsDao.getReturnsByStatus(storeId, 'pending');
-    case ApprovalFilter.approved:
-      return db.returnsDao
-          .getReturnsByStatuses(storeId, ['approved', 'completed']);
-    case ApprovalFilter.rejected:
-      return db.returnsDao.getReturnsByStatus(storeId, 'rejected');
-  }
-});
+      switch (filter) {
+        case ApprovalFilter.all:
+          return db.returnsDao.getAllReturns(storeId);
+        case ApprovalFilter.pending:
+          return db.returnsDao.getReturnsByStatus(storeId, 'pending');
+        case ApprovalFilter.approved:
+          return db.returnsDao.getReturnsByStatuses(storeId, [
+            'approved',
+            'completed',
+          ]);
+        case ApprovalFilter.rejected:
+          return db.returnsDao.getReturnsByStatus(storeId, 'rejected');
+      }
+    });
 
 // =============================================================================
 // PENDING APPROVALS COUNT
 // =============================================================================
 
 /// Count of pending approvals (for badges)
-final pendingApprovalsCountProvider =
-    FutureProvider.autoDispose<int>((ref) async {
+final pendingApprovalsCountProvider = FutureProvider.autoDispose<int>((
+  ref,
+) async {
   final storeId = ref.watch(currentStoreIdProvider);
   if (storeId == null) return 0;
 
   final db = GetIt.I<AppDatabase>();
 
   try {
-    final result = await db.customSelect(
-      '''SELECT COUNT(*) as count
+    final result = await db
+        .customSelect(
+          '''SELECT COUNT(*) as count
          FROM returns
          WHERE store_id = ?
          AND status = 'pending' ''',
-      variables: [Variable.withString(storeId)],
-    ).getSingle();
+          variables: [Variable.withString(storeId)],
+        )
+        .getSingle();
     return result.data['count'] as int? ?? 0;
   } catch (e, st) {
-    sentry.reportError(e,
-        stackTrace: st, hint: 'pendingApprovalsCountProvider');
+    sentry.reportError(
+      e,
+      stackTrace: st,
+      hint: 'pendingApprovalsCountProvider',
+    );
     return 0;
   }
 });

@@ -263,8 +263,8 @@ class _AlhaiTextFieldState extends State<AlhaiTextField> {
               color: hasError
                   ? colorScheme.error
                   : _isFocused
-                      ? colorScheme.primary
-                      : colorScheme.onSurfaceVariant,
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
               fontWeight: FontWeight.w500,
             ),
           ),
@@ -302,8 +302,8 @@ class _AlhaiTextFieldState extends State<AlhaiTextField> {
                     color: hasError
                         ? colorScheme.error
                         : _isFocused
-                            ? colorScheme.primary
-                            : colorScheme.onSurfaceVariant,
+                        ? colorScheme.primary
+                        : colorScheme.onSurfaceVariant,
                   )
                 : null,
             suffixIcon: _buildSuffixIcon(colorScheme, hasError),
@@ -345,8 +345,9 @@ class _AlhaiTextFieldState extends State<AlhaiTextField> {
           Text(
             widget.errorText ?? widget.helperText!,
             style: theme.textTheme.bodySmall?.copyWith(
-              color:
-                  hasError ? colorScheme.error : colorScheme.onSurfaceVariant,
+              color: hasError
+                  ? colorScheme.error
+                  : colorScheme.onSurfaceVariant,
             ),
           ),
         ],

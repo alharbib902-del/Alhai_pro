@@ -8,9 +8,7 @@ void main() {
   group('currentQueryResultProvider', () {
     test('initial value is null', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -19,9 +17,7 @@ void main() {
 
     test('can be updated with a query result', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -45,9 +41,7 @@ void main() {
   group('isQueryLoadingProvider', () {
     test('initial value is false', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -56,9 +50,7 @@ void main() {
 
     test('can be updated to true', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -70,9 +62,7 @@ void main() {
   group('queryHistoryProvider', () {
     test('initial value is empty list', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -83,9 +73,7 @@ void main() {
   group('suggestedQueriesProvider', () {
     test('returns non-empty list of suggestions', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -98,9 +86,7 @@ void main() {
   group('queryTextProvider', () {
     test('initial value is empty string', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -109,9 +95,7 @@ void main() {
 
     test('can be updated', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -123,9 +107,7 @@ void main() {
   group('clearHistoryActionProvider', () {
     test('clears history and current result', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 

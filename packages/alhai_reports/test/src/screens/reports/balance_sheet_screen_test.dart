@@ -19,27 +19,21 @@ void main() {
 
   group('BalanceSheetScreen', () {
     testWidgets('renders without error', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const BalanceSheetScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const BalanceSheetScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(BalanceSheetScreen), findsOneWidget);
     });
 
     testWidgets('shows Scaffold', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const BalanceSheetScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const BalanceSheetScreen()));
       await tester.pumpAndSettle();
 
       expect(find.byType(Scaffold), findsWidgets);
     });
 
     testWidgets('shows loading or content after data loads', (tester) async {
-      await tester.pumpWidget(
-        buildTestableWidget(const BalanceSheetScreen()),
-      );
+      await tester.pumpWidget(buildTestableWidget(const BalanceSheetScreen()));
       await tester.pump();
 
       // Should show loading or content
