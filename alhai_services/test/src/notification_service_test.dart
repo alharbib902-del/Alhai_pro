@@ -8,9 +8,11 @@ class FakeNotificationsRepository implements NotificationsRepository {
   final _controller = StreamController<AppNotification>.broadcast();
 
   @override
-  Future<Paginated<AppNotification>> getNotifications(
-          {bool? isRead, int page = 1, int limit = 20}) async =>
-      Paginated(items: [], total: 0, page: page, limit: limit);
+  Future<Paginated<AppNotification>> getNotifications({
+    bool? isRead,
+    int page = 1,
+    int limit = 20,
+  }) async => Paginated(items: [], total: 0, page: page, limit: limit);
 
   @override
   Future<void> markAsRead(String notificationId) async {
@@ -78,8 +80,10 @@ void main() {
     });
 
     test('watchNotifications should return stream', () {
-      expect(notificationService.watchNotifications(),
-          isA<Stream<AppNotification>>());
+      expect(
+        notificationService.watchNotifications(),
+        isA<Stream<AppNotification>>(),
+      );
     });
   });
 }

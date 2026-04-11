@@ -75,101 +75,104 @@ void main() {
     });
 
     test('completedSales counts only completed sales', () {
-      final stats = PerformanceStats(sales: [
-        SalePerformance(
-          saleId: 's1',
-          startTime: DateTime(2026, 1, 1, 10, 0),
-          endTime: DateTime(2026, 1, 1, 10, 2),
-          totalAmount: 100,
-        ),
-        SalePerformance(
-          saleId: 's2',
-          startTime: DateTime(2026, 1, 1, 10, 5),
-        ), // not completed
-      ]);
+      final stats = PerformanceStats(
+        sales: [
+          SalePerformance(
+            saleId: 's1',
+            startTime: DateTime(2026, 1, 1, 10, 0),
+            endTime: DateTime(2026, 1, 1, 10, 2),
+            totalAmount: 100,
+          ),
+          SalePerformance(
+            saleId: 's2',
+            startTime: DateTime(2026, 1, 1, 10, 5),
+          ), // not completed
+        ],
+      );
       expect(stats.completedSales, 1);
     });
 
     test('errorCount counts errors', () {
-      final stats = PerformanceStats(sales: [
-        SalePerformance(
-          saleId: 's1',
-          startTime: DateTime(2026, 1, 1, 10, 0),
-          hasError: true,
-        ),
-        SalePerformance(
-          saleId: 's2',
-          startTime: DateTime(2026, 1, 1, 10, 5),
-        ),
-      ]);
+      final stats = PerformanceStats(
+        sales: [
+          SalePerformance(
+            saleId: 's1',
+            startTime: DateTime(2026, 1, 1, 10, 0),
+            hasError: true,
+          ),
+          SalePerformance(saleId: 's2', startTime: DateTime(2026, 1, 1, 10, 5)),
+        ],
+      );
       expect(stats.errorCount, 1);
     });
 
     test('avgSaleTime calculates average', () {
-      final stats = PerformanceStats(sales: [
-        SalePerformance(
-          saleId: 's1',
-          startTime: DateTime(2026, 1, 1, 10, 0, 0),
-          endTime: DateTime(2026, 1, 1, 10, 0, 60),
-        ),
-        SalePerformance(
-          saleId: 's2',
-          startTime: DateTime(2026, 1, 1, 10, 5, 0),
-          endTime: DateTime(2026, 1, 1, 10, 5, 120),
-        ),
-      ]);
+      final stats = PerformanceStats(
+        sales: [
+          SalePerformance(
+            saleId: 's1',
+            startTime: DateTime(2026, 1, 1, 10, 0, 0),
+            endTime: DateTime(2026, 1, 1, 10, 0, 60),
+          ),
+          SalePerformance(
+            saleId: 's2',
+            startTime: DateTime(2026, 1, 1, 10, 5, 0),
+            endTime: DateTime(2026, 1, 1, 10, 5, 120),
+          ),
+        ],
+      );
       expect(stats.avgSaleTime, 90); // (60 + 120) / 2
     });
 
     test('totalSales sums completed sales', () {
-      final stats = PerformanceStats(sales: [
-        SalePerformance(
-          saleId: 's1',
-          startTime: DateTime(2026, 1, 1, 10, 0),
-          endTime: DateTime(2026, 1, 1, 10, 2),
-          totalAmount: 100,
-        ),
-        SalePerformance(
-          saleId: 's2',
-          startTime: DateTime(2026, 1, 1, 10, 5),
-          endTime: DateTime(2026, 1, 1, 10, 7),
-          totalAmount: 200,
-        ),
-      ]);
+      final stats = PerformanceStats(
+        sales: [
+          SalePerformance(
+            saleId: 's1',
+            startTime: DateTime(2026, 1, 1, 10, 0),
+            endTime: DateTime(2026, 1, 1, 10, 2),
+            totalAmount: 100,
+          ),
+          SalePerformance(
+            saleId: 's2',
+            startTime: DateTime(2026, 1, 1, 10, 5),
+            endTime: DateTime(2026, 1, 1, 10, 7),
+            totalAmount: 200,
+          ),
+        ],
+      );
       expect(stats.totalSales, 300);
     });
 
     test('errorRate calculates percentage', () {
-      final stats = PerformanceStats(sales: [
-        SalePerformance(
-          saleId: 's1',
-          startTime: DateTime(2026, 1, 1, 10, 0),
-          hasError: true,
-        ),
-        SalePerformance(
-          saleId: 's2',
-          startTime: DateTime(2026, 1, 1, 10, 5),
-        ),
-        SalePerformance(
-          saleId: 's3',
-          startTime: DateTime(2026, 1, 1, 10, 10),
-        ),
-        SalePerformance(
-          saleId: 's4',
-          startTime: DateTime(2026, 1, 1, 10, 15),
-        ),
-      ]);
+      final stats = PerformanceStats(
+        sales: [
+          SalePerformance(
+            saleId: 's1',
+            startTime: DateTime(2026, 1, 1, 10, 0),
+            hasError: true,
+          ),
+          SalePerformance(saleId: 's2', startTime: DateTime(2026, 1, 1, 10, 5)),
+          SalePerformance(
+            saleId: 's3',
+            startTime: DateTime(2026, 1, 1, 10, 10),
+          ),
+          SalePerformance(
+            saleId: 's4',
+            startTime: DateTime(2026, 1, 1, 10, 15),
+          ),
+        ],
+      );
       expect(stats.errorRate, 25.0); // 1/4 = 25%
     });
 
     test('copyWith updates sales list', () {
       final stats = PerformanceStats();
-      final updated = stats.copyWith(sales: [
-        SalePerformance(
-          saleId: 's1',
-          startTime: DateTime(2026, 1, 1, 10, 0),
-        ),
-      ]);
+      final updated = stats.copyWith(
+        sales: [
+          SalePerformance(saleId: 's1', startTime: DateTime(2026, 1, 1, 10, 0)),
+        ],
+      );
       expect(updated.sales.length, 1);
     });
   });

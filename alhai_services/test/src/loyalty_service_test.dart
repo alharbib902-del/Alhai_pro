@@ -8,57 +8,64 @@ class FakeLoyaltyRepository implements LoyaltyRepository {
   @override
   Future<LoyaltyAccount> createAccount(String customerId) async =>
       LoyaltyAccount(
-          id: 'l-1',
-          customerId: customerId,
-          currentPoints: 0,
-          totalPointsEarned: 0,
-          totalPointsRedeemed: 0,
-          tier: LoyaltyTier.bronze,
-          createdAt: DateTime.now());
+        id: 'l-1',
+        customerId: customerId,
+        currentPoints: 0,
+        totalPointsEarned: 0,
+        totalPointsRedeemed: 0,
+        tier: LoyaltyTier.bronze,
+        createdAt: DateTime.now(),
+      );
   @override
   Future<LoyaltyTier> getCustomerTier(String customerId) async =>
       LoyaltyTier.bronze;
   @override
-  Future<LoyaltyTransaction> addPoints(
-          {required String customerId,
-          required String orderId,
-          required int points,
-          String? description}) async =>
-      LoyaltyTransaction(
-          id: 'tx-1',
-          customerId: customerId,
-          type: LoyaltyTransactionType.earned,
-          points: points,
-          orderId: orderId,
-          createdAt: DateTime.now());
+  Future<LoyaltyTransaction> addPoints({
+    required String customerId,
+    required String orderId,
+    required int points,
+    String? description,
+  }) async => LoyaltyTransaction(
+    id: 'tx-1',
+    customerId: customerId,
+    type: LoyaltyTransactionType.earned,
+    points: points,
+    orderId: orderId,
+    createdAt: DateTime.now(),
+  );
   @override
-  Future<LoyaltyTransaction> redeemPoints(
-          {required String customerId,
-          required int points,
-          required String orderId,
-          String? description}) async =>
-      LoyaltyTransaction(
-          id: 'tx-2',
-          customerId: customerId,
-          type: LoyaltyTransactionType.redeemed,
-          points: -points,
-          orderId: orderId,
-          createdAt: DateTime.now());
+  Future<LoyaltyTransaction> redeemPoints({
+    required String customerId,
+    required int points,
+    required String orderId,
+    String? description,
+  }) async => LoyaltyTransaction(
+    id: 'tx-2',
+    customerId: customerId,
+    type: LoyaltyTransactionType.redeemed,
+    points: -points,
+    orderId: orderId,
+    createdAt: DateTime.now(),
+  );
   @override
-  Future<Paginated<LoyaltyTransaction>> getPointsHistory(String customerId,
-          {int page = 1, int limit = 20}) async =>
-      Paginated(items: [], total: 0, page: page, limit: limit);
+  Future<Paginated<LoyaltyTransaction>> getPointsHistory(
+    String customerId, {
+    int page = 1,
+    int limit = 20,
+  }) async => Paginated(items: [], total: 0, page: page, limit: limit);
   @override
   Future<List<LoyaltyReward>> getAvailableRewards(String storeId) async => [];
   @override
-  Future<LoyaltyRedemption> redeemReward(
-          {required String customerId, required String rewardId}) async =>
-      LoyaltyRedemption(
-          id: 'red-1',
-          customerId: customerId,
-          rewardId: rewardId,
-          pointsUsed: 100,
-          createdAt: DateTime.now());
+  Future<LoyaltyRedemption> redeemReward({
+    required String customerId,
+    required String rewardId,
+  }) async => LoyaltyRedemption(
+    id: 'red-1',
+    customerId: customerId,
+    rewardId: rewardId,
+    pointsUsed: 100,
+    createdAt: DateTime.now(),
+  );
 }
 
 void main() {
@@ -80,18 +87,26 @@ void main() {
       expect(account.currentPoints, equals(0));
     });
     test('getCustomerTier should return tier', () async {
-      expect(await loyaltyService.getCustomerTier('cust-1'),
-          equals(LoyaltyTier.bronze));
+      expect(
+        await loyaltyService.getCustomerTier('cust-1'),
+        equals(LoyaltyTier.bronze),
+      );
     });
     test('addPoints should create transaction', () async {
       final tx = await loyaltyService.addPoints(
-          customerId: 'cust-1', orderId: 'order-1', points: 50);
+        customerId: 'cust-1',
+        orderId: 'order-1',
+        points: 50,
+      );
       expect(tx.points, equals(50));
       expect(tx.type, equals(LoyaltyTransactionType.earned));
     });
     test('redeemPoints should create negative transaction', () async {
       final tx = await loyaltyService.redeemPoints(
-          customerId: 'cust-1', points: 30, orderId: 'order-2');
+        customerId: 'cust-1',
+        points: 30,
+        orderId: 'order-2',
+      );
       expect(tx.points, equals(-30));
       expect(tx.type, equals(LoyaltyTransactionType.redeemed));
     });
@@ -102,8 +117,10 @@ void main() {
       expect(loyaltyService.calculatePoints(0.0, 1), equals(0));
     });
     test('redeemReward should return redemption', () async {
-      final r =
-          await loyaltyService.redeemReward(customerId: 'c1', rewardId: 'r1');
+      final r = await loyaltyService.redeemReward(
+        customerId: 'c1',
+        rewardId: 'r1',
+      );
       expect(r.rewardId, equals('r1'));
     });
   });

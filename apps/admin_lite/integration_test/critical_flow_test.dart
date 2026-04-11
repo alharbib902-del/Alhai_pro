@@ -48,9 +48,7 @@ class _StubScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text(label)),
-      body: Center(
-        child: Text(label, key: Key('stub_$label')),
-      ),
+      body: Center(child: Text(label, key: Key('stub_$label'))),
     );
   }
 }
@@ -67,17 +65,21 @@ Widget _buildLiteTestApp({
     initialLocation: initialRoute,
     routes: [
       GoRoute(
-          path: '/splash',
-          builder: (_, __) => const _StubScreen(label: 'Splash')),
+        path: '/splash',
+        builder: (_, __) => const _StubScreen(label: 'Splash'),
+      ),
       GoRoute(
-          path: '/login',
-          builder: (_, __) => const _StubScreen(label: 'Login')),
+        path: '/login',
+        builder: (_, __) => const _StubScreen(label: 'Login'),
+      ),
       GoRoute(
         path: '/store-select',
         builder: (_, __) => const _StubScreen(label: 'Store Select'),
       ),
       GoRoute(
-          path: '/home', builder: (_, __) => const _StubScreen(label: 'Home')),
+        path: '/home',
+        builder: (_, __) => const _StubScreen(label: 'Home'),
+      ),
       GoRoute(
         path: '/dashboard',
         builder: (_, __) => const _StubScreen(label: 'Dashboard'),
@@ -182,11 +184,13 @@ void main() {
     });
 
     testWidgets('unauthenticated start lands on login', (tester) async {
-      await tester.pumpWidget(_buildLiteTestApp(
-        initialRoute: '/login',
-        isAuthenticated: false,
-        storeId: null,
-      ));
+      await tester.pumpWidget(
+        _buildLiteTestApp(
+          initialRoute: '/login',
+          isAuthenticated: false,
+          storeId: null,
+        ),
+      );
       await _pumpAndSettle(tester);
 
       expect(find.byKey(const Key('stub_Login')), findsOneWidget);
@@ -235,25 +239,27 @@ void main() {
       expect(find.byKey(const Key('stub_Orders')), findsOneWidget);
     });
 
-    testWidgets('cycles through dashboard -> approvals -> orders -> dashboard',
-        (tester) async {
-      await tester.pumpWidget(_buildLiteTestApp(initialRoute: '/dashboard'));
-      await _pumpAndSettle(tester);
+    testWidgets(
+      'cycles through dashboard -> approvals -> orders -> dashboard',
+      (tester) async {
+        await tester.pumpWidget(_buildLiteTestApp(initialRoute: '/dashboard'));
+        await _pumpAndSettle(tester);
 
-      final router = GoRouter.of(tester.element(find.byType(Scaffold)));
+        final router = GoRouter.of(tester.element(find.byType(Scaffold)));
 
-      router.go('/approvals');
-      await _pumpAndSettle(tester);
-      expect(find.byKey(const Key('stub_Approvals')), findsOneWidget);
+        router.go('/approvals');
+        await _pumpAndSettle(tester);
+        expect(find.byKey(const Key('stub_Approvals')), findsOneWidget);
 
-      router.go('/orders');
-      await _pumpAndSettle(tester);
-      expect(find.byKey(const Key('stub_Orders')), findsOneWidget);
+        router.go('/orders');
+        await _pumpAndSettle(tester);
+        expect(find.byKey(const Key('stub_Orders')), findsOneWidget);
 
-      router.go('/dashboard');
-      await _pumpAndSettle(tester);
-      expect(find.byKey(const Key('stub_Dashboard')), findsOneWidget);
-    });
+        router.go('/dashboard');
+        await _pumpAndSettle(tester);
+        expect(find.byKey(const Key('stub_Dashboard')), findsOneWidget);
+      },
+    );
   });
 
   // ==========================================================================
@@ -265,7 +271,8 @@ void main() {
   group('Admin Lite Critical Flow: Quick Reports', () {
     testWidgets('daily sales report is reachable', (tester) async {
       await tester.pumpWidget(
-          _buildLiteTestApp(initialRoute: '/lite/reports/daily-sales'));
+        _buildLiteTestApp(initialRoute: '/lite/reports/daily-sales'),
+      );
       await _pumpAndSettle(tester);
 
       expect(find.byKey(const Key('stub_Daily Sales')), findsOneWidget);
@@ -273,7 +280,8 @@ void main() {
 
     testWidgets('top products report is reachable', (tester) async {
       await tester.pumpWidget(
-          _buildLiteTestApp(initialRoute: '/lite/reports/top-products'));
+        _buildLiteTestApp(initialRoute: '/lite/reports/top-products'),
+      );
       await _pumpAndSettle(tester);
 
       expect(find.byKey(const Key('stub_Top Products')), findsOneWidget);
@@ -281,15 +289,17 @@ void main() {
 
     testWidgets('low stock report is reachable', (tester) async {
       await tester.pumpWidget(
-          _buildLiteTestApp(initialRoute: '/lite/reports/low-stock'));
+        _buildLiteTestApp(initialRoute: '/lite/reports/low-stock'),
+      );
       await _pumpAndSettle(tester);
 
       expect(find.byKey(const Key('stub_Low Stock')), findsOneWidget);
     });
 
     testWidgets('sales trend screen is reachable', (tester) async {
-      await tester
-          .pumpWidget(_buildLiteTestApp(initialRoute: '/lite/sales-trend'));
+      await tester.pumpWidget(
+        _buildLiteTestApp(initialRoute: '/lite/sales-trend'),
+      );
       await _pumpAndSettle(tester);
 
       expect(find.byKey(const Key('stub_Sales Trend')), findsOneWidget);

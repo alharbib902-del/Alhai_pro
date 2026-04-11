@@ -49,9 +49,9 @@ void main() {
 
   group('ordersListProvider', () {
     test('returns empty list when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(ordersListProvider.future);
@@ -59,12 +59,13 @@ void main() {
     });
 
     test('returns orders from dao', () async {
-      when(() => mockOrdersDao.getOrders('store-1'))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockOrdersDao.getOrders('store-1'),
+      ).thenAnswer((_) async => []);
 
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(ordersListProvider.future);
@@ -74,9 +75,9 @@ void main() {
 
   group('pendingOrdersCountProvider', () {
     test('returns 0 when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(pendingOrdersCountProvider.future);
@@ -84,12 +85,13 @@ void main() {
     });
 
     test('returns count from dao', () async {
-      when(() => mockOrdersDao.getPendingOrdersCount('store-1'))
-          .thenAnswer((_) async => 5);
+      when(
+        () => mockOrdersDao.getPendingOrdersCount('store-1'),
+      ).thenAnswer((_) async => 5);
 
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(pendingOrdersCountProvider.future);
@@ -99,9 +101,9 @@ void main() {
 
   group('todayOrdersTotalProvider', () {
     test('returns 0 when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(todayOrdersTotalProvider.future);
@@ -111,9 +113,9 @@ void main() {
 
   group('ordersStatsProvider', () {
     test('returns empty map when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(ordersStatsProvider.future);

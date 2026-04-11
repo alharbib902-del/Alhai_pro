@@ -60,8 +60,9 @@ void main() {
       await db.close();
     });
 
-    testWidgets('enqueueCreate for a sale produces a pending queue item',
-        (tester) async {
+    testWidgets('enqueueCreate for a sale produces a pending queue item', (
+      tester,
+    ) async {
       // Simulate an offline sale creation
       final itemId = await sync.enqueueCreate(
         tableName: 'sales',
@@ -88,8 +89,9 @@ void main() {
       expect(pending.first.status, equals('pending'));
     });
 
-    testWidgets('multiple enqueues are tracked by getPendingCount',
-        (tester) async {
+    testWidgets('multiple enqueues are tracked by getPendingCount', (
+      tester,
+    ) async {
       await sync.enqueueCreate(
         tableName: 'sales',
         recordId: 'sale-offline-a',
@@ -126,10 +128,7 @@ void main() {
     });
 
     testWidgets('enqueueDelete records a DELETE operation', (tester) async {
-      await sync.enqueueDelete(
-        tableName: 'products',
-        recordId: 'prod-001',
-      );
+      await sync.enqueueDelete(tableName: 'products', recordId: 'prod-001');
 
       final pending = await sync.getPendingItems();
       expect(pending, hasLength(1));
@@ -156,8 +155,9 @@ void main() {
       await db.close();
     });
 
-    testWidgets('queue items survive SyncService re-instantiation',
-        (tester) async {
+    testWidgets('queue items survive SyncService re-instantiation', (
+      tester,
+    ) async {
       final sync1 = SyncService(db.syncQueueDao);
       await sync1.enqueueCreate(
         tableName: 'sales',
@@ -187,10 +187,7 @@ void main() {
       // Bypass the service and hit the DAO directly
       final items = await db.syncQueueDao.getPendingItems();
       expect(items, isNotEmpty);
-      expect(
-        items.any((i) => i.recordId == 'sale-dao-1'),
-        isTrue,
-      );
+      expect(items.any((i) => i.recordId == 'sale-dao-1'), isTrue);
     });
 
     testWidgets('queue count matches number of enqueued items', (tester) async {
@@ -235,8 +232,9 @@ void main() {
       await db.close();
     });
 
-    testWidgets('item can transition pending -> syncing -> synced',
-        (tester) async {
+    testWidgets('item can transition pending -> syncing -> synced', (
+      tester,
+    ) async {
       await sync.enqueueCreate(
         tableName: 'sales',
         recordId: 'sale-reconnect-1',
@@ -258,8 +256,9 @@ void main() {
       expect(pendingAfter, isEmpty);
     });
 
-    testWidgets('failed item stays in queue with retry available',
-        (tester) async {
+    testWidgets('failed item stays in queue with retry available', (
+      tester,
+    ) async {
       await sync.enqueueCreate(
         tableName: 'sales',
         recordId: 'sale-retry-1',
@@ -301,8 +300,9 @@ void main() {
       await db.close();
     });
 
-    testWidgets('duplicate enqueue for same sale coalesces into one item',
-        (tester) async {
+    testWidgets('duplicate enqueue for same sale coalesces into one item', (
+      tester,
+    ) async {
       await sync.enqueueCreate(
         tableName: 'sales',
         recordId: 'sale-dup-1',
@@ -343,8 +343,9 @@ void main() {
       await db.close();
     });
 
-    testWidgets('getPendingItems returns empty list with no queued work',
-        (tester) async {
+    testWidgets('getPendingItems returns empty list with no queued work', (
+      tester,
+    ) async {
       final items = await sync.getPendingItems();
       expect(items, isEmpty);
     });

@@ -151,9 +151,7 @@ void main() {
       });
 
       test('handles missing warningMessages and errorMessages keys', () {
-        final json = {
-          'validationResults': <String, dynamic>{},
-        };
+        final json = {'validationResults': <String, dynamic>{}};
         final response = ZatcaResponse.fromJson(json, 200);
         expect(response.warnings, isEmpty);
         expect(response.errors, isEmpty);

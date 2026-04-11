@@ -11,13 +11,15 @@ class FakeDeliveryRepository implements DeliveryRepository {
   Future<Delivery?> getDeliveryByOrderId(String orderId) async => null;
   @override
   Future<Delivery> updateStatus(
-          String deliveryId, DeliveryStatus status) async =>
-      throw UnimplementedError();
+    String deliveryId,
+    DeliveryStatus status,
+  ) async => throw UnimplementedError();
   @override
-  Future<void> updateLocation(
-      {required String deliveryId,
-      required double lat,
-      required double lng}) async {}
+  Future<void> updateLocation({
+    required String deliveryId,
+    required double lat,
+    required double lng,
+  }) async {}
   @override
   Future<Delivery> acceptDelivery(String deliveryId) async =>
       throw UnimplementedError();
@@ -52,7 +54,10 @@ void main() {
     });
     test('updateLocation should not throw', () async {
       await deliveryService.updateLocation(
-          deliveryId: 'd1', latitude: 24.7, longitude: 46.7);
+        deliveryId: 'd1',
+        latitude: 24.7,
+        longitude: 46.7,
+      );
     });
     test('rejectDelivery should not throw', () async {
       await deliveryService.rejectDelivery('d1', reason: 'Too far');

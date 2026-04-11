@@ -42,11 +42,17 @@ void main() {
 
       test('base URLs are distinct across environments', () {
         expect(
-            ZatcaEndpoints.sandboxBase, isNot(ZatcaEndpoints.productionBase));
-        expect(ZatcaEndpoints.simulationBase,
-            isNot(ZatcaEndpoints.productionBase));
+          ZatcaEndpoints.sandboxBase,
+          isNot(ZatcaEndpoints.productionBase),
+        );
         expect(
-            ZatcaEndpoints.sandboxBase, isNot(ZatcaEndpoints.simulationBase));
+          ZatcaEndpoints.simulationBase,
+          isNot(ZatcaEndpoints.productionBase),
+        );
+        expect(
+          ZatcaEndpoints.sandboxBase,
+          isNot(ZatcaEndpoints.simulationBase),
+        );
       });
     });
 
@@ -159,12 +165,16 @@ void main() {
 
     test('simulation baseUrl maps to simulationBase', () {
       expect(
-          ZatcaEnvironment.simulation.baseUrl, ZatcaEndpoints.simulationBase);
+        ZatcaEnvironment.simulation.baseUrl,
+        ZatcaEndpoints.simulationBase,
+      );
     });
 
     test('production baseUrl maps to productionBase', () {
       expect(
-          ZatcaEnvironment.production.baseUrl, ZatcaEndpoints.productionBase);
+        ZatcaEnvironment.production.baseUrl,
+        ZatcaEndpoints.productionBase,
+      );
     });
 
     test('sandbox isSandbox returns true', () {

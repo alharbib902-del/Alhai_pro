@@ -93,19 +93,24 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                 onChanged: (v) async {
                                   final previousActive = isActive;
                                   setState(() => _isActive = v);
-                                  final ds =
-                                      ref.read(saStoresDatasourceProvider);
-                                  await ds.updateStoreStatus(widget.storeId, v);
-                                  await ref.read(auditLogServiceProvider).log(
-                                    action:
-                                        v ? 'store.activate' : 'store.suspend',
-                                    targetType: 'store',
-                                    targetId: widget.storeId,
-                                    before: {'is_active': previousActive},
-                                    after: {'is_active': v},
+                                  final ds = ref.read(
+                                    saStoresDatasourceProvider,
                                   );
+                                  await ds.updateStoreStatus(widget.storeId, v);
+                                  await ref
+                                      .read(auditLogServiceProvider)
+                                      .log(
+                                        action: v
+                                            ? 'store.activate'
+                                            : 'store.suspend',
+                                        targetType: 'store',
+                                        targetId: widget.storeId,
+                                        before: {'is_active': previousActive},
+                                        after: {'is_active': v},
+                                      );
                                   ref.invalidate(
-                                      saStoreDetailProvider(widget.storeId));
+                                    saStoreDetailProvider(widget.storeId),
+                                  );
                                   ref.invalidate(saStoresListProvider);
                                 },
                               ),
@@ -159,35 +164,47 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                             try {
                                               final previousPlan = planSlug;
                                               final ds = ref.read(
-                                                  saStoresDatasourceProvider);
+                                                saStoresDatasourceProvider,
+                                              );
                                               await ds.updateStorePlan(
-                                                  widget.storeId, currentPlan);
+                                                widget.storeId,
+                                                currentPlan,
+                                              );
                                               await ref
                                                   .read(auditLogServiceProvider)
                                                   .log(
-                                                action:
-                                                    'subscription.plan_change',
-                                                targetType: 'store',
-                                                targetId: widget.storeId,
-                                                before: {'plan': previousPlan},
-                                                after: {'plan': currentPlan},
-                                              );
+                                                    action:
+                                                        'subscription.plan_change',
+                                                    targetType: 'store',
+                                                    targetId: widget.storeId,
+                                                    before: {
+                                                      'plan': previousPlan,
+                                                    },
+                                                    after: {
+                                                      'plan': currentPlan,
+                                                    },
+                                                  );
                                               ref.invalidate(
-                                                  saStoreDetailProvider(
-                                                      widget.storeId));
+                                                saStoreDetailProvider(
+                                                  widget.storeId,
+                                                ),
+                                              );
                                               if (context.mounted) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
                                                   const SnackBar(
-                                                    content:
-                                                        Text('Plan updated'),
+                                                    content: Text(
+                                                      'Plan updated',
+                                                    ),
                                                   ),
                                                 );
                                               }
                                             } catch (e) {
                                               if (context.mounted) {
-                                                ScaffoldMessenger.of(context)
-                                                    .showSnackBar(
+                                                ScaffoldMessenger.of(
+                                                  context,
+                                                ).showSnackBar(
                                                   SnackBar(
                                                     content: Text('Error: $e'),
                                                     backgroundColor:
@@ -206,7 +223,8 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                             width: 20,
                                             height: 20,
                                             child: CircularProgressIndicator(
-                                                strokeWidth: 2),
+                                              strokeWidth: 2,
+                                            ),
                                           )
                                         : Text(l10n.save),
                                   ),
@@ -221,8 +239,9 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                         _SettingsCard(
                           title: l10n.dangerZone,
                           icon: Icons.warning_rounded,
-                          borderColor:
-                              theme.colorScheme.error.withValues(alpha: 0.3),
+                          borderColor: theme.colorScheme.error.withValues(
+                            alpha: 0.3,
+                          ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -247,37 +266,48 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                     ? () async {
                                         final confirmed =
                                             await showDialog<bool>(
-                                          context: context,
-                                          builder: (ctx) => AlertDialog(
-                                            title: Text(l10n.confirm),
-                                            content: Text(
-                                              l10n.saSuspendStoreConfirm,
-                                            ),
-                                            actions: [
-                                              TextButton(
-                                                onPressed: () =>
-                                                    Navigator.pop(ctx, false),
-                                                child: Text(l10n.cancel),
-                                              ),
-                                              FilledButton(
-                                                style: FilledButton.styleFrom(
-                                                  backgroundColor:
-                                                      theme.colorScheme.error,
+                                              context: context,
+                                              builder: (ctx) => AlertDialog(
+                                                title: Text(l10n.confirm),
+                                                content: Text(
+                                                  l10n.saSuspendStoreConfirm,
                                                 ),
-                                                onPressed: () =>
-                                                    Navigator.pop(ctx, true),
-                                                child: Text(l10n.suspendStore),
+                                                actions: [
+                                                  TextButton(
+                                                    onPressed: () =>
+                                                        Navigator.pop(
+                                                          ctx,
+                                                          false,
+                                                        ),
+                                                    child: Text(l10n.cancel),
+                                                  ),
+                                                  FilledButton(
+                                                    style:
+                                                        FilledButton.styleFrom(
+                                                          backgroundColor: theme
+                                                              .colorScheme
+                                                              .error,
+                                                        ),
+                                                    onPressed: () =>
+                                                        Navigator.pop(
+                                                          ctx,
+                                                          true,
+                                                        ),
+                                                    child: Text(
+                                                      l10n.suspendStore,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                            ],
-                                          ),
-                                        );
+                                            );
                                         if (confirmed != true ||
                                             !context.mounted) {
                                           return;
                                         }
 
-                                        final ds = ref
-                                            .read(saStoresDatasourceProvider);
+                                        final ds = ref.read(
+                                          saStoresDatasourceProvider,
+                                        );
                                         final storeSnapshot = <String, dynamic>{
                                           'id': widget.storeId,
                                           'name': store.name,
@@ -288,29 +318,34 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                           description: 'تم تعليق المتجر',
                                           action: () async {
                                             await ds.softDeleteStore(
-                                                widget.storeId);
+                                              widget.storeId,
+                                            );
                                             await ref
                                                 .read(auditLogServiceProvider)
                                                 .log(
-                                              action: 'store.suspend',
-                                              targetType: 'store',
-                                              targetId: widget.storeId,
-                                              before: storeSnapshot,
-                                              after: {
-                                                ...storeSnapshot,
-                                                'is_active': false,
-                                              },
-                                            );
+                                                  action: 'store.suspend',
+                                                  targetType: 'store',
+                                                  targetId: widget.storeId,
+                                                  before: storeSnapshot,
+                                                  after: {
+                                                    ...storeSnapshot,
+                                                    'is_active': false,
+                                                  },
+                                                );
                                             setState(() => _isActive = false);
                                             ref.invalidate(
-                                                saStoreDetailProvider(
-                                                    widget.storeId));
+                                              saStoreDetailProvider(
+                                                widget.storeId,
+                                              ),
+                                            );
                                             ref.invalidate(
-                                                saStoresListProvider);
+                                              saStoresListProvider,
+                                            );
                                           },
                                           undoAction: () async {
-                                            await ds
-                                                .restoreStore(widget.storeId);
+                                            await ds.restoreStore(
+                                              widget.storeId,
+                                            );
                                             await ref
                                                 .read(auditLogServiceProvider)
                                                 .log(
@@ -328,10 +363,13 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                                 );
                                             setState(() => _isActive = true);
                                             ref.invalidate(
-                                                saStoreDetailProvider(
-                                                    widget.storeId));
+                                              saStoreDetailProvider(
+                                                widget.storeId,
+                                              ),
+                                            );
                                             ref.invalidate(
-                                                saStoresListProvider);
+                                              saStoresListProvider,
+                                            );
                                           },
                                         );
                                       }
@@ -339,7 +377,8 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                 style: OutlinedButton.styleFrom(
                                   foregroundColor: theme.colorScheme.error,
                                   side: BorderSide(
-                                      color: theme.colorScheme.error),
+                                    color: theme.colorScheme.error,
+                                  ),
                                 ),
                                 child: Text(l10n.suspendStore),
                               ),

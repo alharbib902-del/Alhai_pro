@@ -38,9 +38,11 @@ void main() {
 
       // Arabic: "Order Details"
       expect(
-          find.text(
-              '\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u0637\u0644\u0628'),
-          findsWidgets);
+        find.text(
+          '\u062a\u0641\u0627\u0635\u064a\u0644 \u0627\u0644\u0637\u0644\u0628',
+        ),
+        findsWidgets,
+      );
     });
 
     testWidgets('accepts deliveryId parameter', (tester) async {

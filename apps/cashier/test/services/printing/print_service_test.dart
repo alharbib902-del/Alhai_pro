@@ -20,13 +20,19 @@ void main() {
   group('PrinterConnectionType', () {
     test('has four known connection types', () {
       expect(PrinterConnectionType.values, hasLength(4));
-      expect(PrinterConnectionType.values,
-          contains(PrinterConnectionType.bluetooth));
-      expect(PrinterConnectionType.values,
-          contains(PrinterConnectionType.network));
+      expect(
+        PrinterConnectionType.values,
+        contains(PrinterConnectionType.bluetooth),
+      );
+      expect(
+        PrinterConnectionType.values,
+        contains(PrinterConnectionType.network),
+      );
       expect(PrinterConnectionType.values, contains(PrinterConnectionType.usb));
       expect(
-          PrinterConnectionType.values, contains(PrinterConnectionType.sunmi));
+        PrinterConnectionType.values,
+        contains(PrinterConnectionType.sunmi),
+      );
     });
 
     test('each has a unique name used for preference serialization', () {

@@ -9,44 +9,48 @@ class FakeDistributorsRepo implements DistributorsRepository {
   @override
   Future<Distributor?> getByUserId(String userId) async => null;
   @override
-  Future<Paginated<Distributor>> getDistributors(
-          {int page = 1,
-          int limit = 20,
-          DistributorStatus? status,
-          DistributorTier? tier,
-          String? search}) async =>
-      Paginated(items: [], total: 0, page: page, limit: limit);
+  Future<Paginated<Distributor>> getDistributors({
+    int page = 1,
+    int limit = 20,
+    DistributorStatus? status,
+    DistributorTier? tier,
+    String? search,
+  }) async => Paginated(items: [], total: 0, page: page, limit: limit);
   @override
-  Future<Distributor> createDistributor(
-          {required String userId,
-          required String companyName,
-          required String commercialRegister,
-          required String vatNumber,
-          String? companyNameEn,
-          String? logoUrl,
-          String? address,
-          String? city,
-          String? phone,
-          String? email,
-          String? website}) async =>
-      Distributor(
-          id: 'dist-1',
-          userId: userId,
-          companyName: companyName,
-          commercialRegister: commercialRegister,
-          vatNumber: vatNumber,
-          createdAt: DateTime.now());
+  Future<Distributor> createDistributor({
+    required String userId,
+    required String companyName,
+    required String commercialRegister,
+    required String vatNumber,
+    String? companyNameEn,
+    String? logoUrl,
+    String? address,
+    String? city,
+    String? phone,
+    String? email,
+    String? website,
+  }) async => Distributor(
+    id: 'dist-1',
+    userId: userId,
+    companyName: companyName,
+    commercialRegister: commercialRegister,
+    vatNumber: vatNumber,
+    createdAt: DateTime.now(),
+  );
   @override
   Future<Distributor> updateDistributor(
-          String id, Map<String, dynamic> data) async =>
-      throw UnimplementedError();
+    String id,
+    Map<String, dynamic> data,
+  ) async => throw UnimplementedError();
   @override
   Future<Distributor> approveDistributor(String id, String approvedBy) async =>
       throw UnimplementedError();
   @override
   Future<Distributor> rejectDistributor(
-          String id, String rejectedBy, String reason) async =>
-      throw UnimplementedError();
+    String id,
+    String rejectedBy,
+    String reason,
+  ) async => throw UnimplementedError();
   @override
   Future<Distributor> suspendDistributor(String id, String reason) async =>
       throw UnimplementedError();
@@ -59,15 +63,16 @@ class FakeDistributorsRepo implements DistributorsRepository {
   @override
   Future<DistributorStats> getStats(String distributorId) async =>
       DistributorStats(
-          distributorId: distributorId,
-          totalProducts: 50,
-          activeProducts: 40,
-          totalOrders: 100,
-          pendingOrders: 5,
-          totalRevenue: 25000.0,
-          monthlyRevenue: 5000.0,
-          connectedStores: 10,
-          avgOrderValue: 250.0);
+        distributorId: distributorId,
+        totalProducts: 50,
+        activeProducts: 40,
+        totalOrders: 100,
+        pendingOrders: 5,
+        totalRevenue: 25000.0,
+        monthlyRevenue: 5000.0,
+        connectedStores: 10,
+        avgOrderValue: 250.0,
+      );
 }
 
 void main() {
@@ -83,7 +88,9 @@ void main() {
 
     test('getDistributorByUserId should return null for unknown', () async {
       expect(
-          await distributorService.getDistributorByUserId('unknown'), isNull);
+        await distributorService.getDistributorByUserId('unknown'),
+        isNull,
+      );
     });
 
     test('applyAsDistributor should create distributor', () async {

@@ -14,12 +14,8 @@ void main() {
   Widget buildTestWidget() {
     return ProviderScope(
       overrides: [
-        saUsersListProvider.overrideWith(
-          (_) async => <SAUser>[],
-        ),
-        saUsersDatasourceProvider.overrideWith(
-          (_) => SAUsersDatasource(null),
-        ),
+        saUsersListProvider.overrideWith((_) async => <SAUser>[]),
+        saUsersDatasourceProvider.overrideWith((_) => SAUsersDatasource(null)),
       ],
       child: MaterialApp(
         title: 'Test',

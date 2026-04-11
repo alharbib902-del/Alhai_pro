@@ -203,10 +203,7 @@ void main() {
           csid: 'old-csid',
           secret: 'old-secret',
         );
-        final updated = info.copyWith(
-          csid: 'new-csid',
-          isProduction: true,
-        );
+        final updated = info.copyWith(csid: 'new-csid', isProduction: true);
         expect(updated.csid, 'new-csid');
         expect(updated.isProduction, isTrue);
         // Unchanged

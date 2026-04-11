@@ -87,10 +87,7 @@ class _AuthNotifier extends ChangeNotifier {
 }
 
 /// Routes that require admin role (not just non-employee).
-const _sensitiveRoutes = {
-  '/settings',
-  '/approvals',
-};
+const _sensitiveRoutes = {'/settings', '/approvals'};
 
 String? _guardRedirect(Ref ref, GoRouterState state) {
   final authState = ref.read(authStateProvider);
@@ -343,15 +340,20 @@ final List<RouteBase> _routes = [
             child: LiteOrderDetailScreen(orderId: id),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1, 0),
-                  end: Offset.zero,
-                ).animate(CurvedAnimation(
-                    parent: animation, curve: Curves.easeOutCubic)),
-                child: child,
-              );
-            },
+                  return SlideTransition(
+                    position:
+                        Tween<Offset>(
+                          begin: const Offset(1, 0),
+                          end: Offset.zero,
+                        ).animate(
+                          CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.easeOutCubic,
+                          ),
+                        ),
+                    child: child,
+                  );
+                },
           );
         },
       ),
@@ -364,15 +366,20 @@ final List<RouteBase> _routes = [
             child: LiteOrderStatusScreen(orderId: id),
             transitionsBuilder:
                 (context, animation, secondaryAnimation, child) {
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1, 0),
-                  end: Offset.zero,
-                ).animate(CurvedAnimation(
-                    parent: animation, curve: Curves.easeOutCubic)),
-                child: child,
-              );
-            },
+                  return SlideTransition(
+                    position:
+                        Tween<Offset>(
+                          begin: const Offset(1, 0),
+                          end: Offset.zero,
+                        ).animate(
+                          CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.easeOutCubic,
+                          ),
+                        ),
+                    child: child,
+                  );
+                },
           );
         },
       ),
@@ -421,11 +428,16 @@ final List<RouteBase> _routes = [
           child: const LiteProfileScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(1, 0),
-                end: Offset.zero,
-              ).animate(CurvedAnimation(
-                  parent: animation, curve: Curves.easeOutCubic)),
+              position:
+                  Tween<Offset>(
+                    begin: const Offset(1, 0),
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOutCubic,
+                    ),
+                  ),
               child: child,
             );
           },
@@ -438,11 +450,16 @@ final List<RouteBase> _routes = [
           child: const LiteNotificationPrefsScreen(),
           transitionsBuilder: (context, animation, secondaryAnimation, child) {
             return SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(1, 0),
-                end: Offset.zero,
-              ).animate(CurvedAnimation(
-                  parent: animation, curve: Curves.easeOutCubic)),
+              position:
+                  Tween<Offset>(
+                    begin: const Offset(1, 0),
+                    end: Offset.zero,
+                  ).animate(
+                    CurvedAnimation(
+                      parent: animation,
+                      curve: Curves.easeOutCubic,
+                    ),
+                  ),
               child: child,
             );
           },

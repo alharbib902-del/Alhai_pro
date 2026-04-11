@@ -41,10 +41,9 @@ void main() {
   // ==========================================================================
   group('Critical Flow: App Launch & Authentication', () {
     testWidgets('app launches and renders MaterialApp.router', (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos',
-        isAuthenticated: true,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       // MaterialApp.router is the root of the test app wrapper
@@ -54,45 +53,49 @@ void main() {
     });
 
     testWidgets('unauthenticated start lands on login stub', (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/login',
-        isAuthenticated: false,
-        storeId: null,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(
+          initialRoute: '/login',
+          isAuthenticated: false,
+          storeId: null,
+        ),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       // The test router maps /login to a stub screen with a known key
       expect(find.byKey(const Key('stub_Login')), findsOneWidget);
     });
 
-    testWidgets(
-      'authenticated-without-store lands on store select',
-      (tester) async {
-        await tester.pumpWidget(buildTestApp(
+    testWidgets('authenticated-without-store lands on store select', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestApp(
           initialRoute: '/store-select',
           isAuthenticated: true,
           storeId: null,
-        ));
-        await pumpAndSettleWithTimeout(tester);
+        ),
+      );
+      await pumpAndSettleWithTimeout(tester);
 
-        expect(find.byKey(const Key('stub_Store Select')), findsOneWidget);
-      },
-    );
+      expect(find.byKey(const Key('stub_Store Select')), findsOneWidget);
+    });
 
-    testWidgets(
-      'authenticated + store selected lands on POS screen',
-      (tester) async {
-        await tester.pumpWidget(buildTestApp(
+    testWidgets('authenticated + store selected lands on POS screen', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestApp(
           initialRoute: '/pos',
           isAuthenticated: true,
           storeId: kTestStoreId,
-        ));
-        await pumpAndSettleWithTimeout(tester);
+        ),
+      );
+      await pumpAndSettleWithTimeout(tester);
 
-        // Real PosScreen from alhai_pos is rendered on /pos
-        expect(find.byType(PosScreen), findsOneWidget);
-      },
-    );
+      // Real PosScreen from alhai_pos is rendered on /pos
+      expect(find.byType(PosScreen), findsOneWidget);
+    });
   });
 
   // ==========================================================================
@@ -105,10 +108,9 @@ void main() {
   // ==========================================================================
   group('Critical Flow: Navigation', () {
     testWidgets('can navigate from POS to inventory and back', (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos',
-        isAuthenticated: true,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
       expect(find.byType(PosScreen), findsOneWidget);
 
@@ -125,10 +127,9 @@ void main() {
     });
 
     testWidgets('can navigate to settings screen', (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos',
-        isAuthenticated: true,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       final router = GoRouter.of(tester.element(find.byType(PosScreen)));
@@ -139,10 +140,9 @@ void main() {
     });
 
     testWidgets('can navigate to sales history screen', (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos',
-        isAuthenticated: true,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       final router = GoRouter.of(tester.element(find.byType(PosScreen)));
@@ -153,10 +153,9 @@ void main() {
     });
 
     testWidgets('can navigate to shifts and notifications', (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos',
-        isAuthenticated: true,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       final router = GoRouter.of(tester.element(find.byType(PosScreen)));
@@ -180,12 +179,12 @@ void main() {
   // products, since the database is not seeded in this test harness.
   // ==========================================================================
   group('Critical Flow: Product Search', () {
-    testWidgets('POS screen exposes a text field for search/barcode input',
-        (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos',
-        isAuthenticated: true,
-      ));
+    testWidgets('POS screen exposes a text field for search/barcode input', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       // POS should expose at least one TextField for search/barcode.
@@ -193,36 +192,34 @@ void main() {
       expect(find.byType(PosScreen), findsOneWidget);
     });
 
-    testWidgets(
-      'entering a barcode into search field keeps POS alive',
-      (tester) async {
-        await tester.pumpWidget(buildTestApp(
-          initialRoute: '/pos',
-          isAuthenticated: true,
-        ));
+    testWidgets('entering a barcode into search field keeps POS alive', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos', isAuthenticated: true),
+      );
+      await pumpAndSettleWithTimeout(tester);
+
+      // Simulate barcode scan: type into the first text field then submit.
+      // BarcodeListener or a search field will receive the input.
+      final textFields = find.byType(TextField);
+      if (textFields.evaluate().isNotEmpty) {
+        await tester.enterText(textFields.first, kTestBarcode);
+        await tester.pump(const Duration(milliseconds: 100));
+        await tester.testTextInput.receiveAction(TextInputAction.done);
         await pumpAndSettleWithTimeout(tester);
+      }
 
-        // Simulate barcode scan: type into the first text field then submit.
-        // BarcodeListener or a search field will receive the input.
-        final textFields = find.byType(TextField);
-        if (textFields.evaluate().isNotEmpty) {
-          await tester.enterText(textFields.first, kTestBarcode);
-          await tester.pump(const Duration(milliseconds: 100));
-          await tester.testTextInput.receiveAction(TextInputAction.done);
-          await pumpAndSettleWithTimeout(tester);
-        }
+      // POS must still be rendered - no exceptions during barcode handling
+      expect(find.byType(PosScreen), findsOneWidget);
+    });
 
-        // POS must still be rendered - no exceptions during barcode handling
-        expect(find.byType(PosScreen), findsOneWidget);
-      },
-    );
-
-    testWidgets('typing a product name into search does not crash POS',
-        (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos',
-        isAuthenticated: true,
-      ));
+    testWidgets('typing a product name into search does not crash POS', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       final textFields = find.byType(TextField);
@@ -252,46 +249,52 @@ void main() {
         ),
       ];
 
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos',
-        isAuthenticated: true,
-        cartItems: cartItems,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(
+          initialRoute: '/pos',
+          isAuthenticated: true,
+          cartItems: cartItems,
+        ),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       expect(find.byType(PosScreen), findsOneWidget);
       expect(find.byType(Scaffold), findsWidgets);
     });
 
-    testWidgets('POS handles multiple cart items without overflow',
-        (tester) async {
+    testWidgets('POS handles multiple cart items without overflow', (
+      tester,
+    ) async {
       final cartItems = [
         PosCartItem(product: testProducts[0], quantity: 2),
         PosCartItem(product: testProducts[1], quantity: 1),
         PosCartItem(product: testProducts[2], quantity: 3),
       ];
 
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos',
-        isAuthenticated: true,
-        cartItems: cartItems,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(
+          initialRoute: '/pos',
+          isAuthenticated: true,
+          cartItems: cartItems,
+        ),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       expect(find.byType(PosScreen), findsOneWidget);
     });
 
-    testWidgets('tapping + and - icons (if present) keeps the screen alive',
-        (tester) async {
-      final cartItems = [
-        PosCartItem(product: testProducts[0], quantity: 2),
-      ];
+    testWidgets('tapping + and - icons (if present) keeps the screen alive', (
+      tester,
+    ) async {
+      final cartItems = [PosCartItem(product: testProducts[0], quantity: 2)];
 
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos',
-        isAuthenticated: true,
-        cartItems: cartItems,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(
+          initialRoute: '/pos',
+          isAuthenticated: true,
+          cartItems: cartItems,
+        ),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       final addIcons = find.byIcon(Icons.add);
@@ -317,12 +320,12 @@ void main() {
   // that a cashier performs for every sale.
   // ==========================================================================
   group('Critical Flow: Complete Sale', () {
-    testWidgets('navigates through POS -> payment -> receipt -> POS',
-        (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos',
-        isAuthenticated: true,
-      ));
+    testWidgets('navigates through POS -> payment -> receipt -> POS', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
       expect(find.byType(PosScreen), findsOneWidget);
 
@@ -345,10 +348,9 @@ void main() {
     });
 
     testWidgets('payment screen accepts a cash amount entry', (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos/payment',
-        isAuthenticated: true,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos/payment', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
       expect(find.byType(PaymentScreen), findsOneWidget);
 
@@ -363,10 +365,9 @@ void main() {
     });
 
     testWidgets('receipt screen renders after navigation', (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos/receipt',
-        isAuthenticated: true,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos/receipt', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       // Receipt screen shows the last completed sale; in test mode with

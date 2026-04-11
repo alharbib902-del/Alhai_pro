@@ -6,54 +6,61 @@ class FakePromotionsRepo implements PromotionsRepository {
   @override
   Future<List<Promotion>> getActivePromotions(String storeId) async => [];
   @override
-  Future<Paginated<Promotion>> getPromotions(String storeId,
-          {bool? activeOnly, int page = 1, int limit = 20}) async =>
-      Paginated(items: [], total: 0, page: page, limit: limit);
+  Future<Paginated<Promotion>> getPromotions(
+    String storeId, {
+    bool? activeOnly,
+    int page = 1,
+    int limit = 20,
+  }) async => Paginated(items: [], total: 0, page: page, limit: limit);
   @override
   Future<Promotion> getPromotion(String id) async => throw UnimplementedError();
   @override
   Future<Promotion?> getByCode(String storeId, String code) async => null;
   @override
-  Future<Promotion> createPromotion(
-          {required String storeId,
-          required String name,
-          String? code,
-          required PromoType type,
-          required double value,
-          double? minOrderAmount,
-          double? maxDiscount,
-          int? usageLimit,
-          required DateTime startDate,
-          required DateTime endDate}) async =>
-      Promotion(
-          id: 'promo-1',
-          storeId: storeId,
-          name: name,
-          code: code,
-          type: type,
-          value: value,
-          startDate: startDate,
-          endDate: endDate,
-          createdAt: DateTime.now());
+  Future<Promotion> createPromotion({
+    required String storeId,
+    required String name,
+    String? code,
+    required PromoType type,
+    required double value,
+    double? minOrderAmount,
+    double? maxDiscount,
+    int? usageLimit,
+    required DateTime startDate,
+    required DateTime endDate,
+  }) async => Promotion(
+    id: 'promo-1',
+    storeId: storeId,
+    name: name,
+    code: code,
+    type: type,
+    value: value,
+    startDate: startDate,
+    endDate: endDate,
+    createdAt: DateTime.now(),
+  );
   @override
-  Future<Promotion> updatePromotion(String id,
-          {String? name,
-          String? code,
-          PromoType? type,
-          double? value,
-          double? minOrderAmount,
-          double? maxDiscount,
-          int? usageLimit,
-          DateTime? startDate,
-          DateTime? endDate,
-          bool? isActive}) async =>
-      throw UnimplementedError();
+  Future<Promotion> updatePromotion(
+    String id, {
+    String? name,
+    String? code,
+    PromoType? type,
+    double? value,
+    double? minOrderAmount,
+    double? maxDiscount,
+    int? usageLimit,
+    DateTime? startDate,
+    DateTime? endDate,
+    bool? isActive,
+  }) async => throw UnimplementedError();
   @override
   Future<void> deletePromotion(String id) async {}
   @override
   Future<Promotion?> validateCode(
-          String storeId, String code, double orderTotal) async =>
-      null;
+    String storeId,
+    String code,
+    double orderTotal,
+  ) async => null;
   @override
   Future<void> incrementUsage(String promotionId) async {}
 }
@@ -89,8 +96,10 @@ void main() {
     });
 
     test('getPromotionByCode should return null for unknown', () async {
-      expect(await promotionService.getPromotionByCode('store-1', 'NOEXIST'),
-          isNull);
+      expect(
+        await promotionService.getPromotionByCode('store-1', 'NOEXIST'),
+        isNull,
+      );
     });
 
     test('deletePromotion should not throw', () async {
@@ -103,7 +112,9 @@ void main() {
 
     test('validatePromoCode should return null for invalid', () async {
       expect(
-          await promotionService.validatePromoCode('s1', 'BAD', 100), isNull);
+        await promotionService.validatePromoCode('s1', 'BAD', 100),
+        isNull,
+      );
     });
   });
 }

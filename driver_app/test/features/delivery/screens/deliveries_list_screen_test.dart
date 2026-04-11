@@ -38,8 +38,9 @@ void main() {
 
       // Arabic: "Deliveries"
       expect(
-          find.text('\u0627\u0644\u062a\u0648\u0635\u064a\u0644\u0627\u062a'),
-          findsOneWidget);
+        find.text('\u0627\u0644\u062a\u0648\u0635\u064a\u0644\u0627\u062a'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows segmented filter buttons', (tester) async {
@@ -59,7 +60,9 @@ void main() {
       await tester.pump();
 
       expect(
-          find.byWidgetPredicate((w) => w is SegmentedButton), findsOneWidget);
+        find.byWidgetPredicate((w) => w is SegmentedButton),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows loading or data state', (tester) async {

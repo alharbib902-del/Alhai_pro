@@ -37,8 +37,10 @@ void main() {
       await tester.pump();
 
       // Arabic: "Earnings"
-      expect(find.text('\u0627\u0644\u0623\u0631\u0628\u0627\u062d'),
-          findsOneWidget);
+      expect(
+        find.text('\u0627\u0644\u0623\u0631\u0628\u0627\u062d'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows period selector with segmented buttons', (tester) async {
@@ -48,8 +50,10 @@ void main() {
       // Arabic: "Today"
       expect(find.text('\u0627\u0644\u064a\u0648\u0645'), findsOneWidget);
       // Arabic: "Week"
-      expect(find.text('\u0627\u0644\u0623\u0633\u0628\u0648\u0639'),
-          findsOneWidget);
+      expect(
+        find.text('\u0627\u0644\u0623\u0633\u0628\u0648\u0639'),
+        findsOneWidget,
+      );
       // Arabic: "Month"
       expect(find.text('\u0627\u0644\u0634\u0647\u0631'), findsOneWidget);
     });
@@ -59,7 +63,9 @@ void main() {
       await tester.pump();
 
       expect(
-          find.byWidgetPredicate((w) => w is SegmentedButton), findsOneWidget);
+        find.byWidgetPredicate((w) => w is SegmentedButton),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows loading or data state', (tester) async {

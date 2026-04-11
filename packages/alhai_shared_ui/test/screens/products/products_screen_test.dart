@@ -28,11 +28,13 @@ class _MockProductsNotifier extends StateNotifier<ProductsState>
     with Mock
     implements ProductsNotifier {
   _MockProductsNotifier([ProductsState? initial])
-      : super(initial ?? const ProductsState());
+    : super(initial ?? const ProductsState());
 
   @override
-  Future<void> loadProducts(
-      {required String storeId, bool refresh = false}) async {}
+  Future<void> loadProducts({
+    required String storeId,
+    bool refresh = false,
+  }) async {}
 }
 
 // ---------------------------------------------------------------------------
@@ -44,15 +46,14 @@ void _setLargeViewport(WidgetTester tester) {
   tester.view.devicePixelRatio = 1.0;
 }
 
-Widget _buildTestWidget({
-  ProductsState? productsState,
-}) {
+Widget _buildTestWidget({ProductsState? productsState}) {
   final mockSyncManager = MockSyncManager();
   return ProviderScope(
     overrides: [
       currentStoreIdProvider.overrideWith((ref) => 'test-store-id'),
-      productsStateProvider
-          .overrideWith((ref) => _MockProductsNotifier(productsState)),
+      productsStateProvider.overrideWith(
+        (ref) => _MockProductsNotifier(productsState),
+      ),
       isOnlineProvider.overrideWith((ref) => Stream.value(true)),
       pendingSyncCountProvider.overrideWith((ref) => Stream.value(0)),
       syncStatusProvider.overrideWith((ref) => Stream.value(SyncStatus.idle)),
@@ -127,9 +128,11 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        productsState: const ProductsState(products: [], isLoading: false),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          productsState: const ProductsState(products: [], isLoading: false),
+        ),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byType(ProductsScreen), findsOneWidget);

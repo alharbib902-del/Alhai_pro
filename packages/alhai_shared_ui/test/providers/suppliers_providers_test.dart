@@ -49,9 +49,9 @@ void main() {
 
   group('suppliersListProvider', () {
     test('returns empty list when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(suppliersListProvider.future);
@@ -59,12 +59,13 @@ void main() {
     });
 
     test('returns suppliers from dao', () async {
-      when(() => mockSuppliersDao.getAllSuppliers('store-1'))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockSuppliersDao.getAllSuppliers('store-1'),
+      ).thenAnswer((_) async => []);
 
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(suppliersListProvider.future);
@@ -74,9 +75,9 @@ void main() {
 
   group('activeSuppliersProvider', () {
     test('returns empty list when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(activeSuppliersProvider.future);
@@ -95,40 +96,44 @@ void main() {
         rating: 0,
         createdAt: DateTime(2026, 1, 1),
       );
-      when(() => mockSuppliersDao.getSupplierById('sup-1'))
-          .thenAnswer((_) async => supplier);
+      when(
+        () => mockSuppliersDao.getSupplierById('sup-1'),
+      ).thenAnswer((_) async => supplier);
 
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
-      final result =
-          await container.read(supplierDetailProvider('sup-1').future);
+      final result = await container.read(
+        supplierDetailProvider('sup-1').future,
+      );
       expect(result, isNotNull);
       expect(result?.name, 'Test Supplier');
     });
 
     test('returns null when not found', () async {
-      when(() => mockSuppliersDao.getSupplierById('missing'))
-          .thenAnswer((_) async => null);
+      when(
+        () => mockSuppliersDao.getSupplierById('missing'),
+      ).thenAnswer((_) async => null);
 
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
-      final result =
-          await container.read(supplierDetailProvider('missing').future);
+      final result = await container.read(
+        supplierDetailProvider('missing').future,
+      );
       expect(result, isNull);
     });
   });
 
   group('supplierSearchProvider', () {
     test('returns empty list for empty query', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(supplierSearchProvider('').future);

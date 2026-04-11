@@ -9,12 +9,13 @@ import 'package:alhai_services/alhai_services.dart';
 
 class FakeProductsRepoForInventory implements ProductsRepository {
   @override
-  Future<Paginated<Product>> getProducts(String storeId,
-          {int page = 1,
-          int limit = 20,
-          String? categoryId,
-          String? searchQuery}) async =>
-      Paginated(items: [], total: 0, page: page, limit: limit);
+  Future<Paginated<Product>> getProducts(
+    String storeId, {
+    int page = 1,
+    int limit = 20,
+    String? categoryId,
+    String? searchQuery,
+  }) async => Paginated(items: [], total: 0, page: page, limit: limit);
   @override
   Future<Product> getProduct(String id) async => throw UnimplementedError();
   @override
@@ -33,56 +34,77 @@ class FakeInventoryRepoForTest implements InventoryRepository {
   final List<StockAdjustment> _adjustments = [];
 
   @override
-  Future<StockAdjustment> adjustStock(
-      {required String productId,
-      required String storeId,
-      required AdjustmentType type,
-      required double quantity,
-      String? reason,
-      String? referenceId}) async {
+  Future<StockAdjustment> adjustStock({
+    required String productId,
+    required String storeId,
+    required AdjustmentType type,
+    required double quantity,
+    String? reason,
+    String? referenceId,
+  }) async {
     final adj = StockAdjustment(
-        id: 'adj-${_adjustments.length + 1}',
-        productId: productId,
-        storeId: storeId,
-        type: type,
-        quantity: quantity,
-        previousQty: 100,
-        newQty: 100 + quantity,
-        reason: reason,
-        referenceId: referenceId,
-        createdAt: DateTime.now());
+      id: 'adj-${_adjustments.length + 1}',
+      productId: productId,
+      storeId: storeId,
+      type: type,
+      quantity: quantity,
+      previousQty: 100,
+      newQty: 100 + quantity,
+      reason: reason,
+      referenceId: referenceId,
+      createdAt: DateTime.now(),
+    );
     _adjustments.add(adj);
     return adj;
   }
 
   @override
   Future<List<LowStockProduct>> getLowStockProducts(String storeId) async => [
-        LowStockProduct(
-            productId: 'p1', productName: 'Low A', currentQty: 3, minQty: 10),
-        LowStockProduct(
-            productId: 'p2', productName: 'Low B', currentQty: 1, minQty: 5),
-      ];
+    LowStockProduct(
+      productId: 'p1',
+      productName: 'Low A',
+      currentQty: 3,
+      minQty: 10,
+    ),
+    LowStockProduct(
+      productId: 'p2',
+      productName: 'Low B',
+      currentQty: 1,
+      minQty: 5,
+    ),
+  ];
 
   @override
-  Future<List<String>> getOutOfStockProductIds(String storeId) async =>
-      ['p-out-1', 'p-out-2', 'p-out-3'];
+  Future<List<String>> getOutOfStockProductIds(String storeId) async => [
+    'p-out-1',
+    'p-out-2',
+    'p-out-3',
+  ];
 
   @override
-  Future<Paginated<StockAdjustment>> getAdjustments(String productId,
-      {int page = 1, int limit = 20}) async {
-    final filtered =
-        _adjustments.where((a) => a.productId == productId).toList();
+  Future<Paginated<StockAdjustment>> getAdjustments(
+    String productId, {
+    int page = 1,
+    int limit = 20,
+  }) async {
+    final filtered = _adjustments
+        .where((a) => a.productId == productId)
+        .toList();
     return Paginated(
-        items: filtered.take(limit).toList(),
-        total: filtered.length,
-        page: page,
-        limit: limit);
+      items: filtered.take(limit).toList(),
+      total: filtered.length,
+      page: page,
+      limit: limit,
+    );
   }
 
   @override
-  Future<Paginated<StockAdjustment>> getStoreAdjustments(String storeId,
-          {AdjustmentType? type, int page = 1, int limit = 20}) async =>
-      Paginated(items: [], total: 0, page: page, limit: limit);
+  Future<Paginated<StockAdjustment>> getStoreAdjustments(
+    String storeId, {
+    AdjustmentType? type,
+    int page = 1,
+    int limit = 20,
+  }) async => Paginated(items: [], total: 0, page: page, limit: limit);
 }
 
 class FakeCategoriesRepoForInventory implements CategoriesRepository {
@@ -122,14 +144,16 @@ void main() {
       expect(adj.quantity, equals(50));
     });
 
-    test('getLowStockProducts should return below-threshold products',
-        () async {
-      final products = await productService.getLowStockProducts('store-1');
-      expect(products, hasLength(2));
-      for (final p in products) {
-        expect(p.currentQty, lessThan(p.minQty));
-      }
-    });
+    test(
+      'getLowStockProducts should return below-threshold products',
+      () async {
+        final products = await productService.getLowStockProducts('store-1');
+        expect(products, hasLength(2));
+        for (final p in products) {
+          expect(p.currentQty, lessThan(p.minQty));
+        }
+      },
+    );
 
     test('getOutOfStockProductIds should return IDs', () async {
       final ids = await productService.getOutOfStockProductIds('store-1');
@@ -138,15 +162,17 @@ void main() {
 
     test('getProductAdjustments should return for specific product', () async {
       await productService.adjustStock(
-          productId: 'prod-1',
-          storeId: 's1',
-          type: AdjustmentType.received,
-          quantity: 10);
+        productId: 'prod-1',
+        storeId: 's1',
+        type: AdjustmentType.received,
+        quantity: 10,
+      );
       await productService.adjustStock(
-          productId: 'prod-2',
-          storeId: 's1',
-          type: AdjustmentType.received,
-          quantity: 20);
+        productId: 'prod-2',
+        storeId: 's1',
+        type: AdjustmentType.received,
+        quantity: 20,
+      );
       final result = await productService.getProductAdjustments('prod-1');
       expect(result.items, hasLength(1));
     });

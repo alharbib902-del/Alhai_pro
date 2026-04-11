@@ -4,9 +4,12 @@ import 'package:alhai_services/alhai_services.dart';
 
 class FakeSuppliersRepo implements SuppliersRepository {
   @override
-  Future<Paginated<Supplier>> getSuppliers(String storeId,
-          {bool? activeOnly, int page = 1, int limit = 20}) async =>
-      Paginated(items: [], total: 0, page: page, limit: limit);
+  Future<Paginated<Supplier>> getSuppliers(
+    String storeId, {
+    bool? activeOnly,
+    int page = 1,
+    int limit = 20,
+  }) async => Paginated(items: [], total: 0, page: page, limit: limit);
   @override
   Future<Supplier> getSupplier(String id) async => throw UnimplementedError();
   @override
@@ -14,8 +17,9 @@ class FakeSuppliersRepo implements SuppliersRepository {
       throw UnimplementedError();
   @override
   Future<Supplier> updateSupplier(
-          String id, UpdateSupplierParams params) async =>
-      throw UnimplementedError();
+    String id,
+    UpdateSupplierParams params,
+  ) async => throw UnimplementedError();
   @override
   Future<void> deleteSupplier(String id) async {}
   @override
@@ -25,26 +29,29 @@ class FakeSuppliersRepo implements SuppliersRepository {
 class FakePurchasesRepo implements PurchasesRepository {
   @override
   Future<PurchaseOrder> createPurchaseOrder(
-          CreatePurchaseOrderParams params) async =>
-      throw UnimplementedError();
+    CreatePurchaseOrderParams params,
+  ) async => throw UnimplementedError();
   @override
-  Future<Paginated<PurchaseOrder>> getPurchaseOrders(String storeId,
-          {String? supplierId,
-          PurchaseOrderStatus? status,
-          int page = 1,
-          int limit = 20}) async =>
-      Paginated(items: [], total: 0, page: page, limit: limit);
+  Future<Paginated<PurchaseOrder>> getPurchaseOrders(
+    String storeId, {
+    String? supplierId,
+    PurchaseOrderStatus? status,
+    int page = 1,
+    int limit = 20,
+  }) async => Paginated(items: [], total: 0, page: page, limit: limit);
   @override
   Future<PurchaseOrder> getPurchaseOrder(String id) async =>
       throw UnimplementedError();
   @override
   Future<PurchaseOrder> updatePurchaseOrder(
-          String id, UpdatePurchaseOrderParams params) async =>
-      throw UnimplementedError();
+    String id,
+    UpdatePurchaseOrderParams params,
+  ) async => throw UnimplementedError();
   @override
   Future<PurchaseOrder> receiveItems(
-          String purchaseId, List<ReceivedItem> items) async =>
-      throw UnimplementedError();
+    String purchaseId,
+    List<ReceivedItem> items,
+  ) async => throw UnimplementedError();
   @override
   Future<void> cancelPurchaseOrder(String id, {String? reason}) async {}
   @override
@@ -67,8 +74,9 @@ void main() {
       expect(result, isA<Paginated<Supplier>>());
     });
     test('getSuppliersWithBalance should return list', () async {
-      final suppliers =
-          await supplierService.getSuppliersWithBalance('store-1');
+      final suppliers = await supplierService.getSuppliersWithBalance(
+        'store-1',
+      );
       expect(suppliers, isA<List<Supplier>>());
     });
     test('deleteSupplier should not throw', () async {

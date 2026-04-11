@@ -60,8 +60,10 @@ void main() {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      expect(container.read(printerStatusProvider),
-          equals(PrinterStatus.disconnected));
+      expect(
+        container.read(printerStatusProvider),
+        equals(PrinterStatus.disconnected),
+      );
     });
   });
 

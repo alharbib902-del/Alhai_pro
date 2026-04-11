@@ -95,10 +95,14 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       when(() => mockOrdersDao.getOrders(any())).thenAnswer((_) async => []);
-      when(() => mockOrdersDao.getOrdersPaginated(any(),
+      when(
+        () => mockOrdersDao.getOrdersPaginated(
+          any(),
           limit: any(named: 'limit'),
           offset: any(named: 'offset'),
-          status: any(named: 'status'))).thenAnswer((_) async => []);
+          status: any(named: 'status'),
+        ),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));
@@ -111,10 +115,14 @@ void main() {
       addTearDown(() => tester.view.resetPhysicalSize());
 
       when(() => mockOrdersDao.getOrders(any())).thenAnswer((_) async => []);
-      when(() => mockOrdersDao.getOrdersPaginated(any(),
+      when(
+        () => mockOrdersDao.getOrdersPaginated(
+          any(),
           limit: any(named: 'limit'),
           offset: any(named: 'offset'),
-          status: any(named: 'status'))).thenAnswer((_) async => []);
+          status: any(named: 'status'),
+        ),
+      ).thenAnswer((_) async => []);
 
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle(const Duration(seconds: 2));

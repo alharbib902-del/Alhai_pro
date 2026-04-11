@@ -108,9 +108,9 @@ void main() {
 
     testWidgets('calls onKeyPressed when digit tapped', (tester) async {
       String? pressedKey;
-      await tester.pumpWidget(buildNumpad(
-        onKeyPressed: (key) => pressedKey = key,
-      ));
+      await tester.pumpWidget(
+        buildNumpad(onKeyPressed: (key) => pressedKey = key),
+      );
       await tester.pump();
 
       await tester.tap(find.text('5'));
@@ -119,9 +119,9 @@ void main() {
 
     testWidgets('calls onBackspace when backspace tapped', (tester) async {
       bool backspacePressed = false;
-      await tester.pumpWidget(buildNumpad(
-        onBackspace: () => backspacePressed = true,
-      ));
+      await tester.pumpWidget(
+        buildNumpad(onBackspace: () => backspacePressed = true),
+      );
       await tester.pump();
 
       await tester.tap(find.byIcon(Icons.backspace_outlined));
@@ -130,10 +130,12 @@ void main() {
 
     testWidgets('calls onBiometric when fingerprint tapped', (tester) async {
       bool biometricPressed = false;
-      await tester.pumpWidget(buildNumpad(
-        showBiometric: true,
-        onBiometric: () => biometricPressed = true,
-      ));
+      await tester.pumpWidget(
+        buildNumpad(
+          showBiometric: true,
+          onBiometric: () => biometricPressed = true,
+        ),
+      );
       await tester.pump();
 
       await tester.tap(find.byIcon(Icons.fingerprint_rounded));
@@ -142,9 +144,9 @@ void main() {
 
     testWidgets('all keys work in sequence', (tester) async {
       final pressedKeys = <String>[];
-      await tester.pumpWidget(buildNumpad(
-        onKeyPressed: (key) => pressedKeys.add(key),
-      ));
+      await tester.pumpWidget(
+        buildNumpad(onKeyPressed: (key) => pressedKeys.add(key)),
+      );
       await tester.pump();
 
       await tester.tap(find.text('1'));
@@ -164,25 +166,27 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      await tester.pumpWidget(MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        locale: const Locale('ar'),
-        home: Scaffold(
-          body: Builder(
-            builder: (context) => ElevatedButton(
-              onPressed: () {
-                ManagerApprovalDialog.show(
-                  context: context,
-                  action: 'Delete product',
-                  onVerify: (_) async => true,
-                );
-              },
-              child: const Text('Show Dialog'),
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('ar'),
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => ElevatedButton(
+                onPressed: () {
+                  ManagerApprovalDialog.show(
+                    context: context,
+                    action: 'Delete product',
+                    onVerify: (_) async => true,
+                  );
+                },
+                child: const Text('Show Dialog'),
+              ),
             ),
           ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('Show Dialog'));
@@ -196,28 +200,22 @@ void main() {
 
   group('PinInputField', () {
     testWidgets('renders correct number of fields', (tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: PinInputField(
-            length: 4,
-            autofocus: false,
-          ),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: PinInputField(length: 4, autofocus: false)),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(TextField), findsNWidgets(4));
     });
 
     testWidgets('renders 6 fields when length is 6', (tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: PinInputField(
-            length: 6,
-            autofocus: false,
-          ),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: PinInputField(length: 6, autofocus: false)),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(TextField), findsNWidgets(6));
@@ -225,15 +223,17 @@ void main() {
 
     testWidgets('calls onCompleted when all digits entered', (tester) async {
       String? completedPin;
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: PinInputField(
-            length: 4,
-            autofocus: false,
-            onCompleted: (pin) => completedPin = pin,
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: PinInputField(
+              length: 4,
+              autofocus: false,
+              onCompleted: (pin) => completedPin = pin,
+            ),
           ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       final fields = find.byType(TextField);

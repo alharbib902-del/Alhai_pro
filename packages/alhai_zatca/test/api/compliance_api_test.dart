@@ -69,18 +69,22 @@ void main() {
 
     group('requestComplianceCsid', () {
       test('returns success response with csid and secret on 200', () async {
-        when(() => mockClient.requestComplianceCsid(
-              csrBase64: any(named: 'csrBase64'),
-              otp: any(named: 'otp'),
-            )).thenAnswer((_) async => _buildResponse(
-              statusCode: 200,
-              data: <String, dynamic>{
-                'binarySecurityToken': 'base64-token',
-                'requestID': 'req-id-123',
-                'secret': 'api-secret-xyz',
-                'tokenType': 'http://docs.oasis-open.org/wss/2004/01/...',
-              },
-            ));
+        when(
+          () => mockClient.requestComplianceCsid(
+            csrBase64: any(named: 'csrBase64'),
+            otp: any(named: 'otp'),
+          ),
+        ).thenAnswer(
+          (_) async => _buildResponse(
+            statusCode: 200,
+            data: <String, dynamic>{
+              'binarySecurityToken': 'base64-token',
+              'requestID': 'req-id-123',
+              'secret': 'api-secret-xyz',
+              'tokenType': 'http://docs.oasis-open.org/wss/2004/01/...',
+            },
+          ),
+        );
 
         final result = await complianceApi.requestComplianceCsid(
           csrBase64: 'csr-base64',
@@ -96,39 +100,47 @@ void main() {
       });
 
       test('delegates csr and otp to client', () async {
-        when(() => mockClient.requestComplianceCsid(
-              csrBase64: any(named: 'csrBase64'),
-              otp: any(named: 'otp'),
-            )).thenAnswer((_) async => _buildResponse(
-              statusCode: 200,
-              data: <String, dynamic>{
-                'binarySecurityToken': 'tok',
-                'requestID': 'id',
-                'secret': 'sec',
-              },
-            ));
+        when(
+          () => mockClient.requestComplianceCsid(
+            csrBase64: any(named: 'csrBase64'),
+            otp: any(named: 'otp'),
+          ),
+        ).thenAnswer(
+          (_) async => _buildResponse(
+            statusCode: 200,
+            data: <String, dynamic>{
+              'binarySecurityToken': 'tok',
+              'requestID': 'id',
+              'secret': 'sec',
+            },
+          ),
+        );
 
         await complianceApi.requestComplianceCsid(
           csrBase64: 'my-csr',
           otp: '987654',
         );
 
-        verify(() => mockClient.requestComplianceCsid(
-              csrBase64: 'my-csr',
-              otp: '987654',
-            )).called(1);
+        verify(
+          () => mockClient.requestComplianceCsid(
+            csrBase64: 'my-csr',
+            otp: '987654',
+          ),
+        ).called(1);
       });
 
       test('returns failure on non-200 status with error message', () async {
-        when(() => mockClient.requestComplianceCsid(
-              csrBase64: any(named: 'csrBase64'),
-              otp: any(named: 'otp'),
-            )).thenAnswer((_) async => _buildResponse(
-              statusCode: 400,
-              data: <String, dynamic>{
-                'message': 'Invalid OTP provided',
-              },
-            ));
+        when(
+          () => mockClient.requestComplianceCsid(
+            csrBase64: any(named: 'csrBase64'),
+            otp: any(named: 'otp'),
+          ),
+        ).thenAnswer(
+          (_) async => _buildResponse(
+            statusCode: 400,
+            data: <String, dynamic>{'message': 'Invalid OTP provided'},
+          ),
+        );
 
         final result = await complianceApi.requestComplianceCsid(
           csrBase64: 'csr',
@@ -140,12 +152,16 @@ void main() {
         expect(result.csid, isNull);
       });
 
-      test('extracts error from errors array when no top-level message',
-          () async {
-        when(() => mockClient.requestComplianceCsid(
+      test(
+        'extracts error from errors array when no top-level message',
+        () async {
+          when(
+            () => mockClient.requestComplianceCsid(
               csrBase64: any(named: 'csrBase64'),
               otp: any(named: 'otp'),
-            )).thenAnswer((_) async => _buildResponse(
+            ),
+          ).thenAnswer(
+            (_) async => _buildResponse(
               statusCode: 400,
               data: <String, dynamic>{
                 'errors': [
@@ -153,45 +169,52 @@ void main() {
                   {'message': 'Invalid CSR signature'},
                 ],
               },
-            ));
+            ),
+          );
 
-        final result = await complianceApi.requestComplianceCsid(
-          csrBase64: 'bad-csr',
-          otp: '123456',
-        );
+          final result = await complianceApi.requestComplianceCsid(
+            csrBase64: 'bad-csr',
+            otp: '123456',
+          );
 
-        expect(result.isSuccess, isFalse);
-        expect(result.errorMessage, contains('CSR validation failed'));
-        expect(result.errorMessage, contains('Invalid CSR signature'));
-      });
+          expect(result.isSuccess, isFalse);
+          expect(result.errorMessage, contains('CSR validation failed'));
+          expect(result.errorMessage, contains('Invalid CSR signature'));
+        },
+      );
 
-      test('returns generic error when response has no message or errors',
-          () async {
-        when(() => mockClient.requestComplianceCsid(
+      test(
+        'returns generic error when response has no message or errors',
+        () async {
+          when(
+            () => mockClient.requestComplianceCsid(
               csrBase64: any(named: 'csrBase64'),
               otp: any(named: 'otp'),
-            )).thenAnswer((_) async => _buildResponse(
-              statusCode: 500,
-              data: <String, dynamic>{},
-            ));
+            ),
+          ).thenAnswer(
+            (_) async =>
+                _buildResponse(statusCode: 500, data: <String, dynamic>{}),
+          );
 
-        final result = await complianceApi.requestComplianceCsid(
-          csrBase64: 'csr',
-          otp: '123456',
-        );
+          final result = await complianceApi.requestComplianceCsid(
+            csrBase64: 'csr',
+            otp: '123456',
+          );
 
-        expect(result.isSuccess, isFalse);
-        expect(result.errorMessage, 'Unknown compliance API error');
-      });
+          expect(result.isSuccess, isFalse);
+          expect(result.errorMessage, 'Unknown compliance API error');
+        },
+      );
 
       test('catches ZatcaApiException and returns failure', () async {
-        when(() => mockClient.requestComplianceCsid(
-              csrBase64: any(named: 'csrBase64'),
-              otp: any(named: 'otp'),
-            )).thenThrow(const ZatcaApiException(
-          message: 'Network timeout',
-          statusCode: 504,
-        ));
+        when(
+          () => mockClient.requestComplianceCsid(
+            csrBase64: any(named: 'csrBase64'),
+            otp: any(named: 'otp'),
+          ),
+        ).thenThrow(
+          const ZatcaApiException(message: 'Network timeout', statusCode: 504),
+        );
 
         final result = await complianceApi.requestComplianceCsid(
           csrBase64: 'csr',
@@ -203,10 +226,12 @@ void main() {
       });
 
       test('catches unexpected exception and returns failure', () async {
-        when(() => mockClient.requestComplianceCsid(
-              csrBase64: any(named: 'csrBase64'),
-              otp: any(named: 'otp'),
-            )).thenThrow(Exception('Unexpected error'));
+        when(
+          () => mockClient.requestComplianceCsid(
+            csrBase64: any(named: 'csrBase64'),
+            otp: any(named: 'otp'),
+          ),
+        ).thenThrow(Exception('Unexpected error'));
 
         final result = await complianceApi.requestComplianceCsid(
           csrBase64: 'csr',
@@ -218,14 +243,18 @@ void main() {
       });
 
       test('handles response with null data map gracefully', () async {
-        when(() => mockClient.requestComplianceCsid(
-              csrBase64: any(named: 'csrBase64'),
-              otp: any(named: 'otp'),
-            )).thenAnswer((_) async => Response<dynamic>(
-              requestOptions: RequestOptions(path: ''),
-              statusCode: 500,
-              data: null,
-            ));
+        when(
+          () => mockClient.requestComplianceCsid(
+            csrBase64: any(named: 'csrBase64'),
+            otp: any(named: 'otp'),
+          ),
+        ).thenAnswer(
+          (_) async => Response<dynamic>(
+            requestOptions: RequestOptions(path: ''),
+            statusCode: 500,
+            data: null,
+          ),
+        );
 
         final result = await complianceApi.requestComplianceCsid(
           csrBase64: 'csr',
@@ -241,12 +270,14 @@ void main() {
 
     group('submitComplianceInvoice', () {
       test('delegates to client.checkCompliance and returns success', () async {
-        when(() => mockClient.checkCompliance(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => successInvoiceResponse);
+        when(
+          () => mockClient.checkCompliance(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => successInvoiceResponse);
 
         final result = await complianceApi.submitComplianceInvoice(
           signedXmlBase64: 'xml-base64',
@@ -258,21 +289,25 @@ void main() {
         expect(result.isSuccess, isTrue);
         expect(result.reportingStatus, ReportingStatus.reported);
 
-        verify(() => mockClient.checkCompliance(
-              signedXmlBase64: 'xml-base64',
-              invoiceHash: 'hash-value',
-              uuid: 'uuid-1',
-              certificate: testCertificate,
-            )).called(1);
+        verify(
+          () => mockClient.checkCompliance(
+            signedXmlBase64: 'xml-base64',
+            invoiceHash: 'hash-value',
+            uuid: 'uuid-1',
+            certificate: testCertificate,
+          ),
+        ).called(1);
       });
 
       test('propagates validation errors from ZATCA', () async {
-        when(() => mockClient.checkCompliance(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => rejectedInvoiceResponse);
+        when(
+          () => mockClient.checkCompliance(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => rejectedInvoiceResponse);
 
         final result = await complianceApi.submitComplianceInvoice(
           signedXmlBase64: 'bad-xml',
@@ -300,12 +335,14 @@ void main() {
           ],
         );
 
-        when(() => mockClient.checkCompliance(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => warningResponse);
+        when(
+          () => mockClient.checkCompliance(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => warningResponse);
 
         final result = await complianceApi.submitComplianceInvoice(
           signedXmlBase64: 'xml',
@@ -324,17 +361,21 @@ void main() {
 
     group('requestProductionCsid', () {
       test('returns success with production token on 200', () async {
-        when(() => mockClient.requestProductionCsid(
-              complianceRequestId: any(named: 'complianceRequestId'),
-              complianceCertificate: any(named: 'complianceCertificate'),
-            )).thenAnswer((_) async => _buildResponse(
-              statusCode: 200,
-              data: <String, dynamic>{
-                'binarySecurityToken': 'prod-token-base64',
-                'requestID': 'prod-req-id',
-                'secret': 'prod-secret',
-              },
-            ));
+        when(
+          () => mockClient.requestProductionCsid(
+            complianceRequestId: any(named: 'complianceRequestId'),
+            complianceCertificate: any(named: 'complianceCertificate'),
+          ),
+        ).thenAnswer(
+          (_) async => _buildResponse(
+            statusCode: 200,
+            data: <String, dynamic>{
+              'binarySecurityToken': 'prod-token-base64',
+              'requestID': 'prod-req-id',
+              'secret': 'prod-secret',
+            },
+          ),
+        );
 
         final result = await complianceApi.requestProductionCsid(
           complianceCsid: 'compliance-id-42',
@@ -349,39 +390,49 @@ void main() {
       });
 
       test('passes compliance id and certificate to client', () async {
-        when(() => mockClient.requestProductionCsid(
-              complianceRequestId: any(named: 'complianceRequestId'),
-              complianceCertificate: any(named: 'complianceCertificate'),
-            )).thenAnswer((_) async => _buildResponse(
-              statusCode: 200,
-              data: <String, dynamic>{
-                'binarySecurityToken': 't',
-                'requestID': 'r',
-                'secret': 's',
-              },
-            ));
+        when(
+          () => mockClient.requestProductionCsid(
+            complianceRequestId: any(named: 'complianceRequestId'),
+            complianceCertificate: any(named: 'complianceCertificate'),
+          ),
+        ).thenAnswer(
+          (_) async => _buildResponse(
+            statusCode: 200,
+            data: <String, dynamic>{
+              'binarySecurityToken': 't',
+              'requestID': 'r',
+              'secret': 's',
+            },
+          ),
+        );
 
         await complianceApi.requestProductionCsid(
           complianceCsid: 'my-compliance-id',
           complianceCertificate: testCertificate,
         );
 
-        verify(() => mockClient.requestProductionCsid(
-              complianceRequestId: 'my-compliance-id',
-              complianceCertificate: testCertificate,
-            )).called(1);
+        verify(
+          () => mockClient.requestProductionCsid(
+            complianceRequestId: 'my-compliance-id',
+            complianceCertificate: testCertificate,
+          ),
+        ).called(1);
       });
 
       test('returns failure on non-200 with error message', () async {
-        when(() => mockClient.requestProductionCsid(
-              complianceRequestId: any(named: 'complianceRequestId'),
-              complianceCertificate: any(named: 'complianceCertificate'),
-            )).thenAnswer((_) async => _buildResponse(
-              statusCode: 403,
-              data: <String, dynamic>{
-                'message': 'Compliance checks not complete',
-              },
-            ));
+        when(
+          () => mockClient.requestProductionCsid(
+            complianceRequestId: any(named: 'complianceRequestId'),
+            complianceCertificate: any(named: 'complianceCertificate'),
+          ),
+        ).thenAnswer(
+          (_) async => _buildResponse(
+            statusCode: 403,
+            data: <String, dynamic>{
+              'message': 'Compliance checks not complete',
+            },
+          ),
+        );
 
         final result = await complianceApi.requestProductionCsid(
           complianceCsid: 'incomplete-id',
@@ -393,13 +444,17 @@ void main() {
       });
 
       test('catches ZatcaApiException and returns failure', () async {
-        when(() => mockClient.requestProductionCsid(
-              complianceRequestId: any(named: 'complianceRequestId'),
-              complianceCertificate: any(named: 'complianceCertificate'),
-            )).thenThrow(const ZatcaApiException(
-          message: 'Server unavailable',
-          statusCode: 503,
-        ));
+        when(
+          () => mockClient.requestProductionCsid(
+            complianceRequestId: any(named: 'complianceRequestId'),
+            complianceCertificate: any(named: 'complianceCertificate'),
+          ),
+        ).thenThrow(
+          const ZatcaApiException(
+            message: 'Server unavailable',
+            statusCode: 503,
+          ),
+        );
 
         final result = await complianceApi.requestProductionCsid(
           complianceCsid: 'id',
@@ -411,10 +466,12 @@ void main() {
       });
 
       test('catches generic exception and returns descriptive error', () async {
-        when(() => mockClient.requestProductionCsid(
-              complianceRequestId: any(named: 'complianceRequestId'),
-              complianceCertificate: any(named: 'complianceCertificate'),
-            )).thenThrow(StateError('unexpected state'));
+        when(
+          () => mockClient.requestProductionCsid(
+            complianceRequestId: any(named: 'complianceRequestId'),
+            complianceCertificate: any(named: 'complianceCertificate'),
+          ),
+        ).thenThrow(StateError('unexpected state'));
 
         final result = await complianceApi.requestProductionCsid(
           complianceCsid: 'id',

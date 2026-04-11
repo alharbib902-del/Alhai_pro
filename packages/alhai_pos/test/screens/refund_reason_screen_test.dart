@@ -122,8 +122,9 @@ void main() {
       expect(find.byType(AppBar), findsOneWidget);
     });
 
-    testWidgets('shows reason cards when pending refund exists',
-        (tester) async {
+    testWidgets('shows reason cards when pending refund exists', (
+      tester,
+    ) async {
       final pendingRefund = PendingRefundData(
         saleId: 'sale-1',
         receiptNo: 'POS-001',

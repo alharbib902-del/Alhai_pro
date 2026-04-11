@@ -42,10 +42,7 @@ void main() {
       final router = GoRouter(
         initialLocation: '/',
         routes: [
-          GoRoute(
-            path: '/',
-            builder: (context, state) => const SplashScreen(),
-          ),
+          GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
           // Catch all navigation destinations from SplashScreen
           GoRoute(
             path: '/login',
@@ -67,9 +64,7 @@ void main() {
         overrides: [
           // Override authStateProvider so it never hits GetIt for
           // AuthRepository.
-          authStateProvider.overrideWith(
-            (ref) => AuthNotifier(mockAuthRepo),
-          ),
+          authStateProvider.overrideWith((ref) => AuthNotifier(mockAuthRepo)),
         ],
         child: MaterialApp.router(
           localizationsDelegates: AppLocalizations.localizationsDelegates,

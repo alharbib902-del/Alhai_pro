@@ -8,9 +8,7 @@ void main() {
   group('abcCategoryFilterProvider', () {
     test('initial value is null (show all)', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -19,9 +17,7 @@ void main() {
 
     test('can be updated to category A', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -31,9 +27,7 @@ void main() {
 
     test('can be updated to category B', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 
@@ -43,9 +37,7 @@ void main() {
 
     test('can be cleared back to null', () {
       final container = ProviderContainer(
-        overrides: [
-          currentStoreIdProvider.overrideWith((ref) => 'test-store'),
-        ],
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'test-store')],
       );
       addTearDown(container.dispose);
 

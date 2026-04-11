@@ -106,8 +106,10 @@ class FakeInventoryRepository implements InventoryRepository {
   }
 
   @override
-  Future<List<String>> getOutOfStockProductIds(String storeId) async =>
-      ['prod-out-1', 'prod-out-2'];
+  Future<List<String>> getOutOfStockProductIds(String storeId) async => [
+    'prod-out-1',
+    'prod-out-2',
+  ];
 
   @override
   Future<Paginated<StockAdjustment>> getAdjustments(
@@ -132,12 +134,7 @@ class FakeInventoryRepository implements InventoryRepository {
 class FakeCategoriesRepository implements CategoriesRepository {
   @override
   Future<List<Category>> getCategories(String storeId) async {
-    return [
-      const Category(
-        id: 'cat-1',
-        name: 'Beverages',
-      ),
-    ];
+    return [const Category(id: 'cat-1', name: 'Beverages')];
   }
 
   @override
@@ -208,15 +205,17 @@ void main() {
           ),
         ]);
 
-        final product =
-            await productService.getProductByBarcode('6281234567890');
+        final product = await productService.getProductByBarcode(
+          '6281234567890',
+        );
         expect(product, isNotNull);
         expect(product!.name, equals('Coffee'));
       });
 
       test('should return null for unknown barcode', () async {
-        final product =
-            await productService.getProductByBarcode('0000000000000');
+        final product = await productService.getProductByBarcode(
+          '0000000000000',
+        );
         expect(product, isNull);
       });
     });

@@ -45,9 +45,11 @@ void main() {
 
       // Empty cart should show the empty state text
       expect(
-          find.text(
-              '\u0627\u0644\u0633\u0644\u0629 \u0641\u0627\u0631\u063a\u0629'),
-          findsOneWidget);
+        find.text(
+          '\u0627\u0644\u0633\u0644\u0629 \u0641\u0627\u0631\u063a\u0629',
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows browse stores action in empty state', (tester) async {
@@ -55,20 +57,25 @@ void main() {
       await tester.pump();
 
       expect(
-          find.text(
-              '\u062a\u0635\u0641\u062d \u0627\u0644\u0645\u062a\u0627\u062c\u0631'),
-          findsOneWidget);
+        find.text(
+          '\u062a\u0635\u0641\u062d \u0627\u0644\u0645\u062a\u0627\u062c\u0631',
+        ),
+        findsOneWidget,
+      );
     });
 
-    testWidgets('shows add products description in empty state',
-        (tester) async {
+    testWidgets('shows add products description in empty state', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pump();
 
       expect(
-          find.text(
-              '\u0623\u0636\u0641 \u0645\u0646\u062a\u062c\u0627\u062a \u0645\u0646 \u0627\u0644\u0645\u062a\u062c\u0631'),
-          findsOneWidget);
+        find.text(
+          '\u0623\u0636\u0641 \u0645\u0646\u062a\u062c\u0627\u062a \u0645\u0646 \u0627\u0644\u0645\u062a\u062c\u0631',
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('is a ConsumerWidget', (tester) async {

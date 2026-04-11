@@ -67,7 +67,8 @@ void main() {
 
     testWidgets('hides paste button when field is disabled', (tester) async {
       await tester.pumpWidget(
-          buildTestableWidget(showPasteButton: true, enabled: false));
+        buildTestableWidget(showPasteButton: true, enabled: false),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.content_paste_rounded), findsNothing);
@@ -75,11 +76,13 @@ void main() {
 
     testWidgets('calls onCompleted when all digits entered', (tester) async {
       String? completedValue;
-      await tester.pumpWidget(buildTestableWidget(
-        length: 6,
-        onCompleted: (value) => completedValue = value,
-        autoFocus: false,
-      ));
+      await tester.pumpWidget(
+        buildTestableWidget(
+          length: 6,
+          onCompleted: (value) => completedValue = value,
+          autoFocus: false,
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Enter digits in each field
@@ -95,11 +98,13 @@ void main() {
 
     testWidgets('calls onChanged when a digit is entered', (tester) async {
       String? changedValue;
-      await tester.pumpWidget(buildTestableWidget(
-        length: 6,
-        onChanged: (value) => changedValue = value,
-        autoFocus: false,
-      ));
+      await tester.pumpWidget(
+        buildTestableWidget(
+          length: 6,
+          onChanged: (value) => changedValue = value,
+          autoFocus: false,
+        ),
+      );
       await tester.pumpAndSettle();
 
       final textFields = find.byType(TextField);
@@ -112,10 +117,9 @@ void main() {
 
     testWidgets('clear() empties all fields', (tester) async {
       final key = GlobalKey<OtpInputFieldState>();
-      await tester.pumpWidget(buildTestableWidget(
-        otpKey: key,
-        autoFocus: false,
-      ));
+      await tester.pumpWidget(
+        buildTestableWidget(otpKey: key, autoFocus: false),
+      );
       await tester.pumpAndSettle();
 
       // Enter a digit
@@ -138,11 +142,13 @@ void main() {
     testWidgets('setValue() fills fields programmatically', (tester) async {
       final key = GlobalKey<OtpInputFieldState>();
       String? completedValue;
-      await tester.pumpWidget(buildTestableWidget(
-        otpKey: key,
-        autoFocus: false,
-        onCompleted: (value) => completedValue = value,
-      ));
+      await tester.pumpWidget(
+        buildTestableWidget(
+          otpKey: key,
+          autoFocus: false,
+          onCompleted: (value) => completedValue = value,
+        ),
+      );
       await tester.pumpAndSettle();
 
       key.currentState!.setValue('654321');
@@ -161,34 +167,35 @@ void main() {
 
   group('OtpInputWithLabel', () {
     testWidgets('shows label when provided', (tester) async {
-      await tester.pumpWidget(MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        locale: const Locale('ar'),
-        home: Scaffold(
-          body: OtpInputWithLabel(
-            onCompleted: (_) {},
-            label: 'Enter OTP',
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('ar'),
+          home: Scaffold(
+            body: OtpInputWithLabel(onCompleted: (_) {}, label: 'Enter OTP'),
           ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Enter OTP'), findsOneWidget);
     });
 
     testWidgets('shows error text when provided', (tester) async {
-      await tester.pumpWidget(MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        locale: const Locale('ar'),
-        home: Scaffold(
-          body: OtpInputWithLabel(
-            onCompleted: (_) {},
-            errorText: 'Invalid code',
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('ar'),
+          home: Scaffold(
+            body: OtpInputWithLabel(
+              onCompleted: (_) {},
+              errorText: 'Invalid code',
+            ),
           ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Invalid code'), findsOneWidget);
@@ -196,17 +203,16 @@ void main() {
     });
 
     testWidgets('shows success message when isSuccess', (tester) async {
-      await tester.pumpWidget(MaterialApp(
-        localizationsDelegates: AppLocalizations.localizationsDelegates,
-        supportedLocales: AppLocalizations.supportedLocales,
-        locale: const Locale('ar'),
-        home: Scaffold(
-          body: OtpInputWithLabel(
-            onCompleted: (_) {},
-            isSuccess: true,
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: const Locale('ar'),
+          home: Scaffold(
+            body: OtpInputWithLabel(onCompleted: (_) {}, isSuccess: true),
           ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.check_circle_outline_rounded), findsOneWidget);

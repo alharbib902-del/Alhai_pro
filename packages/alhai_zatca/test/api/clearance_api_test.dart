@@ -87,12 +87,14 @@ void main() {
 
     group('clearInvoice', () {
       test('delegates to client.clearInvoice and returns success', () async {
-        when(() => mockClient.clearInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => clearedResponse);
+        when(
+          () => mockClient.clearInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => clearedResponse);
 
         final result = await clearanceApi.clearInvoice(
           signedXmlBase64: 'base64xml',
@@ -107,12 +109,14 @@ void main() {
       });
 
       test('passes all parameters to client', () async {
-        when(() => mockClient.clearInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => clearedResponse);
+        when(
+          () => mockClient.clearInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => clearedResponse);
 
         await clearanceApi.clearInvoice(
           signedXmlBase64: 'xml-payload',
@@ -121,21 +125,25 @@ void main() {
           certificate: testCertificate,
         );
 
-        verify(() => mockClient.clearInvoice(
-              signedXmlBase64: 'xml-payload',
-              invoiceHash: 'hash-abc',
-              uuid: 'uuid-xyz',
-              certificate: testCertificate,
-            )).called(1);
+        verify(
+          () => mockClient.clearInvoice(
+            signedXmlBase64: 'xml-payload',
+            invoiceHash: 'hash-abc',
+            uuid: 'uuid-xyz',
+            certificate: testCertificate,
+          ),
+        ).called(1);
       });
 
       test('returns rejection response with errors', () async {
-        when(() => mockClient.clearInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => rejectedResponse);
+        when(
+          () => mockClient.clearInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => rejectedResponse);
 
         final result = await clearanceApi.clearInvoice(
           signedXmlBase64: 'bad-xml',
@@ -151,12 +159,14 @@ void main() {
       });
 
       test('propagates warnings on successful clearance', () async {
-        when(() => mockClient.clearInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => clearedWithWarningsResponse);
+        when(
+          () => mockClient.clearInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => clearedWithWarningsResponse);
 
         final result = await clearanceApi.clearInvoice(
           signedXmlBase64: 'xml',
@@ -176,12 +186,14 @@ void main() {
 
     group('clearAndGetStampedXml', () {
       test('returns stampedXmlBase64 on successful clearance', () async {
-        when(() => mockClient.clearInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => clearedResponse);
+        when(
+          () => mockClient.clearInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => clearedResponse);
 
         final result = await clearanceApi.clearAndGetStampedXml(
           signedXmlBase64: 'xml',
@@ -196,12 +208,14 @@ void main() {
       });
 
       test('returns null stampedXmlBase64 on rejection', () async {
-        when(() => mockClient.clearInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => rejectedResponse);
+        when(
+          () => mockClient.clearInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => rejectedResponse);
 
         final result = await clearanceApi.clearAndGetStampedXml(
           signedXmlBase64: 'bad-xml',
@@ -215,45 +229,51 @@ void main() {
         expect(result.errors, isNotEmpty);
       });
 
-      test('isCleared requires both success and non-null stamped XML',
-          () async {
-        // Success response but no stamped XML -- shouldn't happen in practice
-        const successNoXml = ZatcaResponse(
-          isSuccess: true,
-          statusCode: 200,
-          reportingStatus: ReportingStatus.reported,
-        );
+      test(
+        'isCleared requires both success and non-null stamped XML',
+        () async {
+          // Success response but no stamped XML -- shouldn't happen in practice
+          const successNoXml = ZatcaResponse(
+            isSuccess: true,
+            statusCode: 200,
+            reportingStatus: ReportingStatus.reported,
+          );
 
-        when(() => mockClient.clearInvoice(
+          when(
+            () => mockClient.clearInvoice(
               signedXmlBase64: any(named: 'signedXmlBase64'),
               invoiceHash: any(named: 'invoiceHash'),
               uuid: any(named: 'uuid'),
               certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => successNoXml);
+            ),
+          ).thenAnswer((_) async => successNoXml);
 
-        final result = await clearanceApi.clearAndGetStampedXml(
-          signedXmlBase64: 'xml',
-          invoiceHash: 'hash',
-          uuid: 'uuid',
-          certificate: testCertificate,
-        );
+          final result = await clearanceApi.clearAndGetStampedXml(
+            signedXmlBase64: 'xml',
+            invoiceHash: 'hash',
+            uuid: 'uuid',
+            certificate: testCertificate,
+          );
 
-        expect(result.response.isSuccess, isTrue);
-        expect(result.stampedXmlBase64, isNull);
-        expect(result.isCleared, isFalse);
-      });
+          expect(result.response.isSuccess, isTrue);
+          expect(result.stampedXmlBase64, isNull);
+          expect(result.isCleared, isFalse);
+        },
+      );
     });
 
     // ── clearWithRetry ────────────────────────────────────
 
     group('clearWithRetry', () {
       test('succeeds on first attempt without retrying', () async {
-        when(() => mockClient.clearInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => clearedResponse);
+        when(
+          () => mockClient.clearInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => clearedResponse);
 
         final result = await clearanceApi.clearWithRetry(
           signedXmlBase64: 'xml',
@@ -264,21 +284,25 @@ void main() {
         );
 
         expect(result.isCleared, isTrue);
-        verify(() => mockClient.clearInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).called(1);
+        verify(
+          () => mockClient.clearInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).called(1);
       });
 
       test('does NOT retry 400 validation rejections', () async {
-        when(() => mockClient.clearInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => rejectedResponse);
+        when(
+          () => mockClient.clearInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async => rejectedResponse);
 
         final result = await clearanceApi.clearWithRetry(
           signedXmlBase64: 'xml',
@@ -290,89 +314,111 @@ void main() {
 
         expect(result.isCleared, isFalse);
         expect(result.errors, isNotEmpty);
-        verify(() => mockClient.clearInvoice(
-              signedXmlBase64: any(named: 'signedXmlBase64'),
-              invoiceHash: any(named: 'invoiceHash'),
-              uuid: any(named: 'uuid'),
-              certificate: any(named: 'certificate'),
-            )).called(1);
+        verify(
+          () => mockClient.clearInvoice(
+            signedXmlBase64: any(named: 'signedXmlBase64'),
+            invoiceHash: any(named: 'invoiceHash'),
+            uuid: any(named: 'uuid'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).called(1);
       });
 
-      test('retries on server error then succeeds', () async {
-        var callCount = 0;
-        when(() => mockClient.clearInvoice(
+      test(
+        'retries on server error then succeeds',
+        () async {
+          var callCount = 0;
+          when(
+            () => mockClient.clearInvoice(
               signedXmlBase64: any(named: 'signedXmlBase64'),
               invoiceHash: any(named: 'invoiceHash'),
               uuid: any(named: 'uuid'),
               certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async {
-          callCount++;
-          if (callCount == 1) return serverErrorResponse;
-          return clearedResponse;
-        });
+            ),
+          ).thenAnswer((_) async {
+            callCount++;
+            if (callCount == 1) return serverErrorResponse;
+            return clearedResponse;
+          });
 
-        final result = await clearanceApi.clearWithRetry(
-          signedXmlBase64: 'xml',
-          invoiceHash: 'hash',
-          uuid: 'uuid',
-          certificate: testCertificate,
-          maxRetries: 3,
-        );
+          final result = await clearanceApi.clearWithRetry(
+            signedXmlBase64: 'xml',
+            invoiceHash: 'hash',
+            uuid: 'uuid',
+            certificate: testCertificate,
+            maxRetries: 3,
+          );
 
-        expect(result.isCleared, isTrue);
-        expect(callCount, 2);
-      }, timeout: const Timeout(Duration(seconds: 30)));
+          expect(result.isCleared, isTrue);
+          expect(callCount, 2);
+        },
+        timeout: const Timeout(Duration(seconds: 30)),
+      );
 
-      test('retries on thrown exception then succeeds', () async {
-        var callCount = 0;
-        when(() => mockClient.clearInvoice(
+      test(
+        'retries on thrown exception then succeeds',
+        () async {
+          var callCount = 0;
+          when(
+            () => mockClient.clearInvoice(
               signedXmlBase64: any(named: 'signedXmlBase64'),
               invoiceHash: any(named: 'invoiceHash'),
               uuid: any(named: 'uuid'),
               certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async {
-          callCount++;
-          if (callCount == 1) throw Exception('Network down');
-          return clearedResponse;
-        });
+            ),
+          ).thenAnswer((_) async {
+            callCount++;
+            if (callCount == 1) throw Exception('Network down');
+            return clearedResponse;
+          });
 
-        final result = await clearanceApi.clearWithRetry(
-          signedXmlBase64: 'xml',
-          invoiceHash: 'hash',
-          uuid: 'uuid',
-          certificate: testCertificate,
-          maxRetries: 3,
-        );
+          final result = await clearanceApi.clearWithRetry(
+            signedXmlBase64: 'xml',
+            invoiceHash: 'hash',
+            uuid: 'uuid',
+            certificate: testCertificate,
+            maxRetries: 3,
+          );
 
-        expect(result.isCleared, isTrue);
-        expect(callCount, 2);
-      }, timeout: const Timeout(Duration(seconds: 30)));
+          expect(result.isCleared, isTrue);
+          expect(callCount, 2);
+        },
+        timeout: const Timeout(Duration(seconds: 30)),
+      );
 
-      test('gives up after max retries on persistent server errors', () async {
-        when(() => mockClient.clearInvoice(
+      test(
+        'gives up after max retries on persistent server errors',
+        () async {
+          when(
+            () => mockClient.clearInvoice(
               signedXmlBase64: any(named: 'signedXmlBase64'),
               invoiceHash: any(named: 'invoiceHash'),
               uuid: any(named: 'uuid'),
               certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async => serverErrorResponse);
+            ),
+          ).thenAnswer((_) async => serverErrorResponse);
 
-        final result = await clearanceApi.clearWithRetry(
-          signedXmlBase64: 'xml',
-          invoiceHash: 'hash',
-          uuid: 'uuid',
-          certificate: testCertificate,
-          maxRetries: 1,
-        );
+          final result = await clearanceApi.clearWithRetry(
+            signedXmlBase64: 'xml',
+            invoiceHash: 'hash',
+            uuid: 'uuid',
+            certificate: testCertificate,
+            maxRetries: 1,
+          );
 
-        expect(result.isCleared, isFalse);
-        // maxRetries=1 means: initial call + 1 retry = 2 total
-        verify(() => mockClient.clearInvoice(
+          expect(result.isCleared, isFalse);
+          // maxRetries=1 means: initial call + 1 retry = 2 total
+          verify(
+            () => mockClient.clearInvoice(
               signedXmlBase64: any(named: 'signedXmlBase64'),
               invoiceHash: any(named: 'invoiceHash'),
               uuid: any(named: 'uuid'),
               certificate: any(named: 'certificate'),
-            )).called(2);
-      }, timeout: const Timeout(Duration(seconds: 30)));
+            ),
+          ).called(2);
+        },
+        timeout: const Timeout(Duration(seconds: 30)),
+      );
     });
   });
 
@@ -388,9 +434,7 @@ void main() {
     });
 
     test('isCleared is false when stampedXmlBase64 is null', () {
-      const result = ClearanceResult(
-        response: clearedResponse,
-      );
+      const result = ClearanceResult(response: clearedResponse);
       expect(result.isCleared, isFalse);
     });
 
@@ -412,9 +456,7 @@ void main() {
     });
 
     test('exposes errors from response', () {
-      const result = ClearanceResult(
-        response: rejectedResponse,
-      );
+      const result = ClearanceResult(response: rejectedResponse);
       expect(result.errors, hasLength(1));
       expect(result.errors.first.code, 'BR-17');
     });

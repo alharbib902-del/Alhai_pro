@@ -74,7 +74,8 @@ class SAPlansScreen extends ConsumerWidget {
                   final maxUsers = plan.maxUsers ?? 0;
                   final features = plan.features ?? [];
                   final subscribers = subCounts[slug] ?? 0;
-                  final color = planColors[slug] ??
+                  final color =
+                      planColors[slug] ??
                       (isDark
                           ? const Color(0xFF9CA3AF)
                           : const Color(0xFF4B5563));
@@ -83,20 +84,18 @@ class SAPlansScreen extends ConsumerWidget {
                     name: name,
                     monthlyPrice: '$monthlyPrice',
                     yearlyPrice: _fmt(yearlyPrice),
-                    maxBranches:
-                        maxBranches == 0 ? 'Unlimited' : '$maxBranches',
-                    maxProducts:
-                        maxProducts == 0 ? 'Unlimited' : _fmt(maxProducts),
+                    maxBranches: maxBranches == 0
+                        ? 'Unlimited'
+                        : '$maxBranches',
+                    maxProducts: maxProducts == 0
+                        ? 'Unlimited'
+                        : _fmt(maxProducts),
                     maxUsers: maxUsers == 0 ? 'Unlimited' : '$maxUsers',
                     color: color,
                     subscribers: subscribers,
                     isPopular: slug == 'advanced',
                     features: features,
-                    onEdit: () => _showEditPlanDialog(
-                      context,
-                      ref,
-                      plan,
-                    ),
+                    onEdit: () => _showEditPlanDialog(context, ref, plan),
                   );
                 }).toList();
 
@@ -107,7 +106,8 @@ class SAPlansScreen extends ConsumerWidget {
                       return Expanded(
                         child: Padding(
                           padding: const EdgeInsetsDirectional.only(
-                              end: AlhaiSpacing.md),
+                            end: AlhaiSpacing.md,
+                          ),
                           child: card,
                         ),
                       );
@@ -144,17 +144,15 @@ class SAPlansScreen extends ConsumerWidget {
     return n.toString();
   }
 
-  void _showEditPlanDialog(
-    BuildContext context,
-    WidgetRef ref,
-    SAPlan plan,
-  ) {
+  void _showEditPlanDialog(BuildContext context, WidgetRef ref, SAPlan plan) {
     final l10n = AppLocalizations.of(context);
     final nameCtrl = TextEditingController(text: plan.name ?? '');
     final priceCtrl = TextEditingController(
-        text: plan.monthlyPrice?.toStringAsFixed(0) ?? '');
-    final yearlyCtrl =
-        TextEditingController(text: plan.yearlyPrice?.toStringAsFixed(0) ?? '');
+      text: plan.monthlyPrice?.toStringAsFixed(0) ?? '',
+    );
+    final yearlyCtrl = TextEditingController(
+      text: plan.yearlyPrice?.toStringAsFixed(0) ?? '',
+    );
     final branchCtrl = TextEditingController(text: '${plan.maxBranches ?? 0}');
     final productCtrl = TextEditingController(text: '${plan.maxProducts ?? 0}');
     final userCtrl = TextEditingController(text: '${plan.maxUsers ?? 0}');
@@ -240,7 +238,9 @@ class SAPlansScreen extends ConsumerWidget {
               }
               if (updates.isNotEmpty) {
                 await ds.updatePlan(plan.id, updates);
-                await ref.read(auditLogServiceProvider).log(
+                await ref
+                    .read(auditLogServiceProvider)
+                    .log(
                       action: 'plan.update',
                       targetType: 'plan',
                       targetId: plan.id,
@@ -336,20 +336,22 @@ class SAPlansScreen extends ConsumerWidget {
                 maxProducts: maxProducts,
                 maxUsers: maxUsers,
               );
-              await ref.read(auditLogServiceProvider).log(
-                action: 'plan.create',
-                targetType: 'plan',
-                targetId: created.id,
-                after: {
-                  'name': name,
-                  'slug': slug,
-                  'monthly_price': price,
-                  'yearly_price': price * 10,
-                  'max_branches': maxBranches,
-                  'max_products': maxProducts,
-                  'max_users': maxUsers,
-                },
-              );
+              await ref
+                  .read(auditLogServiceProvider)
+                  .log(
+                    action: 'plan.create',
+                    targetType: 'plan',
+                    targetId: created.id,
+                    after: {
+                      'name': name,
+                      'slug': slug,
+                      'monthly_price': price,
+                      'yearly_price': price * 10,
+                      'max_branches': maxBranches,
+                      'max_products': maxProducts,
+                      'max_users': maxUsers,
+                    },
+                  );
               ref.invalidate(saPlansListProvider);
               if (ctx.mounted) Navigator.pop(ctx);
             },
@@ -438,9 +440,9 @@ class _PlanCard extends StatelessWidget {
                     child: Text(
                       'POPULAR',
                       style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                            color: color,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        color: color,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                 ],
@@ -505,19 +507,20 @@ class _PlanCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: AlhaiSpacing.xs),
-              ...features.map((f) => Padding(
-                    padding: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
-                    child: Row(
-                      children: [
-                        Icon(Icons.check_circle_rounded,
-                            size: 16, color: color),
-                        const SizedBox(width: AlhaiSpacing.xs),
-                        Expanded(
-                          child: Text(f, style: theme.textTheme.bodySmall),
-                        ),
-                      ],
-                    ),
-                  )),
+              ...features.map(
+                (f) => Padding(
+                  padding: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
+                  child: Row(
+                    children: [
+                      Icon(Icons.check_circle_rounded, size: 16, color: color),
+                      const SizedBox(width: AlhaiSpacing.xs),
+                      Expanded(
+                        child: Text(f, style: theme.textTheme.bodySmall),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ],
             const SizedBox(height: AlhaiSpacing.md),
             SizedBox(

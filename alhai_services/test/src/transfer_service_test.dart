@@ -9,73 +9,83 @@ class FakeTransfersRepo implements TransfersRepository {
   Future<Transfer> getTransfer(String id) async =>
       _lastCreated ?? (throw UnimplementedError());
   @override
-  Future<Paginated<Transfer>> getStoreTransfers(String storeId,
-          {int page = 1,
-          int limit = 20,
-          TransferStatus? status,
-          TransferDirection? direction}) async =>
-      Paginated(items: [], total: 0, page: page, limit: limit);
+  Future<Paginated<Transfer>> getStoreTransfers(
+    String storeId, {
+    int page = 1,
+    int limit = 20,
+    TransferStatus? status,
+    TransferDirection? direction,
+  }) async => Paginated(items: [], total: 0, page: page, limit: limit);
   @override
-  Future<Transfer> createTransfer(
-      {required String sourceStoreId,
-      required String destinationStoreId,
-      required List<TransferItem> items,
-      String? notes}) async {
+  Future<Transfer> createTransfer({
+    required String sourceStoreId,
+    required String destinationStoreId,
+    required List<TransferItem> items,
+    String? notes,
+  }) async {
     _lastCreated = Transfer(
-        id: 't-1',
-        sourceStoreId: sourceStoreId,
-        destinationStoreId: destinationStoreId,
-        items: items,
-        status: TransferStatus.pending,
-        notes: notes,
-        createdAt: DateTime.now());
+      id: 't-1',
+      sourceStoreId: sourceStoreId,
+      destinationStoreId: destinationStoreId,
+      items: items,
+      status: TransferStatus.pending,
+      notes: notes,
+      createdAt: DateTime.now(),
+    );
     return _lastCreated!;
   }
 
   @override
   Future<Transfer> approveTransfer(String id, String approvedBy) async =>
       Transfer(
-          id: id,
-          sourceStoreId: 's1',
-          destinationStoreId: 's2',
-          items: [],
-          status: TransferStatus.approved,
-          createdAt: DateTime.now());
+        id: id,
+        sourceStoreId: 's1',
+        destinationStoreId: 's2',
+        items: [],
+        status: TransferStatus.approved,
+        createdAt: DateTime.now(),
+      );
   @override
   Future<Transfer> rejectTransfer(
-          String id, String rejectedBy, String reason) async =>
-      Transfer(
-          id: id,
-          sourceStoreId: 's1',
-          destinationStoreId: 's2',
-          items: [],
-          status: TransferStatus.rejected,
-          createdAt: DateTime.now());
+    String id,
+    String rejectedBy,
+    String reason,
+  ) async => Transfer(
+    id: id,
+    sourceStoreId: 's1',
+    destinationStoreId: 's2',
+    items: [],
+    status: TransferStatus.rejected,
+    createdAt: DateTime.now(),
+  );
   @override
   Future<Transfer> shipTransfer(String id) async => Transfer(
-      id: id,
-      sourceStoreId: 's1',
-      destinationStoreId: 's2',
-      items: [],
-      status: TransferStatus.shipped,
-      createdAt: DateTime.now());
+    id: id,
+    sourceStoreId: 's1',
+    destinationStoreId: 's2',
+    items: [],
+    status: TransferStatus.shipped,
+    createdAt: DateTime.now(),
+  );
   @override
   Future<Transfer> completeTransfer(String id, String receivedBy) async =>
       Transfer(
-          id: id,
-          sourceStoreId: 's1',
-          destinationStoreId: 's2',
-          items: [],
-          status: TransferStatus.completed,
-          createdAt: DateTime.now());
+        id: id,
+        sourceStoreId: 's1',
+        destinationStoreId: 's2',
+        items: [],
+        status: TransferStatus.completed,
+        createdAt: DateTime.now(),
+      );
   @override
   Future<Transfer> cancelTransfer(String id, String reason) async => Transfer(
-      id: id,
-      sourceStoreId: 's1',
-      destinationStoreId: 's2',
-      items: [],
-      status: TransferStatus.cancelled,
-      createdAt: DateTime.now());
+    id: id,
+    sourceStoreId: 's1',
+    destinationStoreId: 's2',
+    items: [],
+    status: TransferStatus.cancelled,
+    createdAt: DateTime.now(),
+  );
 }
 
 void main() {
@@ -94,7 +104,7 @@ void main() {
         sourceStoreId: 'store-1',
         destinationStoreId: 'store-2',
         items: [
-          TransferItem(productId: 'p1', productName: 'Coffee', quantity: 50)
+          TransferItem(productId: 'p1', productName: 'Coffee', quantity: 50),
         ],
       );
       expect(t.status, equals(TransferStatus.pending));
@@ -111,8 +121,11 @@ void main() {
     });
 
     test('rejectTransfer should return rejected', () async {
-      final t =
-          await transferService.rejectTransfer('t-1', 'mgr-1', 'Not needed');
+      final t = await transferService.rejectTransfer(
+        't-1',
+        'mgr-1',
+        'Not needed',
+      );
       expect(t.status, equals(TransferStatus.rejected));
     });
 

@@ -75,8 +75,9 @@ void main() {
       expect(pending.first.operation, equals('UPDATE'));
     });
 
-    testWidgets('multiple approval actions all queue independently',
-        (tester) async {
+    testWidgets('multiple approval actions all queue independently', (
+      tester,
+    ) async {
       for (var i = 0; i < 4; i++) {
         await sync.enqueueUpdate(
           tableName: 'orders',

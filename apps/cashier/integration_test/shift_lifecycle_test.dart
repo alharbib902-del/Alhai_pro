@@ -97,10 +97,9 @@ void main() {
   // ==========================================================================
   group('Shift Lifecycle: Open Shift', () {
     testWidgets('shift open route is reachable after auth', (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/shifts/open',
-        isAuthenticated: true,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/shifts/open', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       // The test harness renders a stub for /shifts/open; verify it.
@@ -108,31 +107,29 @@ void main() {
       expect(find.byType(Scaffold), findsWidgets);
     });
 
-    testWidgets(
-      'opening cash amount is applied to shift model correctly',
-      (tester) async {
-        // This test exercises the shift model (not the UI), proving that
-        // the math the real screen performs when a cashier enters an
-        // opening amount is consistent with the rest of the lifecycle.
-        final shift = _FakeShift(
-          id: 'shift-001',
-          cashierId: kTestCashierId,
-          openingCash: 500,
-        );
+    testWidgets('opening cash amount is applied to shift model correctly', (
+      tester,
+    ) async {
+      // This test exercises the shift model (not the UI), proving that
+      // the math the real screen performs when a cashier enters an
+      // opening amount is consistent with the rest of the lifecycle.
+      final shift = _FakeShift(
+        id: 'shift-001',
+        cashierId: kTestCashierId,
+        openingCash: 500,
+      );
 
-        expect(shift.openingCash, 500);
-        expect(shift.expectedCash, 500);
-        expect(shift.variance, -500); // No actual count yet
-        expect(shift.isClosed, false);
-      },
-    );
+      expect(shift.openingCash, 500);
+      expect(shift.expectedCash, 500);
+      expect(shift.variance, -500); // No actual count yet
+      expect(shift.isClosed, false);
+    });
 
     testWidgets('opening shift from POS screen navigates away', (tester) async {
       // Arrange: POS screen mounted (as if cashier just logged in)
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos',
-        isAuthenticated: true,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
       expect(find.byType(PosScreen), findsOneWidget);
 
@@ -210,24 +207,30 @@ void main() {
   // verify the UI survives rapid, repeated transitions.
   // ==========================================================================
   group('Shift Lifecycle: Multiple Sales', () {
-    testWidgets('three sales cycle POS -> payment -> receipt cleanly',
-        (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/pos',
-        isAuthenticated: true,
-      ));
+    testWidgets('three sales cycle POS -> payment -> receipt cleanly', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       // Loop through 3 complete sales - the most common mid-shift path.
       for (var saleNum = 1; saleNum <= 3; saleNum++) {
-        expect(find.byType(PosScreen), findsOneWidget,
-            reason: 'Sale $saleNum: should start at POS');
+        expect(
+          find.byType(PosScreen),
+          findsOneWidget,
+          reason: 'Sale $saleNum: should start at POS',
+        );
 
         final router = GoRouter.of(tester.element(find.byType(PosScreen)));
         router.go('/pos/payment');
         await pumpAndSettleWithTimeout(tester);
-        expect(find.byType(PaymentScreen), findsOneWidget,
-            reason: 'Sale $saleNum: should be at payment');
+        expect(
+          find.byType(PaymentScreen),
+          findsOneWidget,
+          reason: 'Sale $saleNum: should be at payment',
+        );
 
         router.go('/pos/receipt');
         await pumpAndSettleWithTimeout(tester);
@@ -275,35 +278,32 @@ void main() {
   // ==========================================================================
   group('Shift Lifecycle: Mid-shift Summary', () {
     testWidgets('shifts route renders without crashing', (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/shifts',
-        isAuthenticated: true,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/shifts', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       expect(find.byKey(const Key('stub_Shifts')), findsOneWidget);
     });
 
-    testWidgets(
-      'navigating from POS to shifts and back preserves POS state',
-      (tester) async {
-        await tester.pumpWidget(buildTestApp(
-          initialRoute: '/pos',
-          isAuthenticated: true,
-        ));
-        await pumpAndSettleWithTimeout(tester);
-        expect(find.byType(PosScreen), findsOneWidget);
+    testWidgets('navigating from POS to shifts and back preserves POS state', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/pos', isAuthenticated: true),
+      );
+      await pumpAndSettleWithTimeout(tester);
+      expect(find.byType(PosScreen), findsOneWidget);
 
-        final router = GoRouter.of(tester.element(find.byType(PosScreen)));
-        router.go('/shifts');
-        await pumpAndSettleWithTimeout(tester);
-        expect(find.byKey(const Key('stub_Shifts')), findsOneWidget);
+      final router = GoRouter.of(tester.element(find.byType(PosScreen)));
+      router.go('/shifts');
+      await pumpAndSettleWithTimeout(tester);
+      expect(find.byKey(const Key('stub_Shifts')), findsOneWidget);
 
-        router.go('/pos');
-        await pumpAndSettleWithTimeout(tester);
-        expect(find.byType(PosScreen), findsOneWidget);
-      },
-    );
+      router.go('/pos');
+      await pumpAndSettleWithTimeout(tester);
+      expect(find.byType(PosScreen), findsOneWidget);
+    });
   });
 
   // ==========================================================================
@@ -339,10 +339,9 @@ void main() {
     });
 
     testWidgets('shift close route is reachable', (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/shifts/close',
-        isAuthenticated: true,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/shifts/close', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       expect(find.byKey(const Key('stub_Shift Close')), findsOneWidget);
@@ -390,8 +389,9 @@ void main() {
       expect(shift.variance > 0, true, reason: 'Over variance > 0');
     });
 
-    testWidgets('small variance within tolerance is flagged but allowed',
-        (tester) async {
+    testWidgets('small variance within tolerance is flagged but allowed', (
+      tester,
+    ) async {
       final shift = _FakeShift(
         id: 'shift-009',
         cashierId: kTestCashierId,
@@ -418,17 +418,17 @@ void main() {
   // ==========================================================================
   group('Shift Lifecycle: End-of-Shift Report', () {
     testWidgets('reports route is accessible post-close', (tester) async {
-      await tester.pumpWidget(buildTestApp(
-        initialRoute: '/reports',
-        isAuthenticated: true,
-      ));
+      await tester.pumpWidget(
+        buildTestApp(initialRoute: '/reports', isAuthenticated: true),
+      );
       await pumpAndSettleWithTimeout(tester);
 
       expect(find.byKey(const Key('stub_Reports')), findsOneWidget);
     });
 
-    testWidgets('closed shift contains all fields needed for export',
-        (tester) async {
+    testWidgets('closed shift contains all fields needed for export', (
+      tester,
+    ) async {
       // Build a fully-populated closed shift as it would appear on a
       // printable report.
       final shift = _FakeShift(

@@ -57,44 +57,51 @@ void main() {
 
     group('getByStore', () {
       test('returns transfers where store is sender or receiver', () async {
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          id: 'xfer-1',
-          transferNumber: 'TRF-001',
-          fromStoreId: 'store-1',
-          toStoreId: 'store-2',
-        ));
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          id: 'xfer-2',
-          transferNumber: 'TRF-002',
-          fromStoreId: 'store-2',
-          toStoreId: 'store-1',
-        ));
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(
+            id: 'xfer-1',
+            transferNumber: 'TRF-001',
+            fromStoreId: 'store-1',
+            toStoreId: 'store-2',
+          ),
+        );
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(
+            id: 'xfer-2',
+            transferNumber: 'TRF-002',
+            fromStoreId: 'store-2',
+            toStoreId: 'store-1',
+          ),
+        );
         // store-1 is involved in both
         final transfers = await db.stockTransfersDao.getByStore('store-1');
         expect(transfers, hasLength(2));
       });
 
       test('excludes transfers for other stores', () async {
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          fromStoreId: 'store-1',
-          toStoreId: 'store-2',
-        ));
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(fromStoreId: 'store-1', toStoreId: 'store-2'),
+        );
 
         final transfers = await db.stockTransfersDao.getByStore('test-store');
         expect(transfers, isEmpty);
       });
 
       test('orders by createdAt desc', () async {
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          id: 'xfer-old',
-          transferNumber: 'TRF-001',
-          createdAt: DateTime(2026, 1, 1),
-        ));
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          id: 'xfer-new',
-          transferNumber: 'TRF-002',
-          createdAt: DateTime(2026, 1, 20),
-        ));
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(
+            id: 'xfer-old',
+            transferNumber: 'TRF-001',
+            createdAt: DateTime(2026, 1, 1),
+          ),
+        );
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(
+            id: 'xfer-new',
+            transferNumber: 'TRF-002',
+            createdAt: DateTime(2026, 1, 20),
+          ),
+        );
 
         final transfers = await db.stockTransfersDao.getByStore('store-1');
         expect(transfers.first.id, 'xfer-new');
@@ -103,18 +110,22 @@ void main() {
 
     group('getOutgoing', () {
       test('returns only transfers FROM the store', () async {
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          id: 'xfer-out',
-          transferNumber: 'TRF-001',
-          fromStoreId: 'store-1',
-          toStoreId: 'store-2',
-        ));
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          id: 'xfer-in',
-          transferNumber: 'TRF-002',
-          fromStoreId: 'store-2',
-          toStoreId: 'store-1',
-        ));
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(
+            id: 'xfer-out',
+            transferNumber: 'TRF-001',
+            fromStoreId: 'store-1',
+            toStoreId: 'store-2',
+          ),
+        );
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(
+            id: 'xfer-in',
+            transferNumber: 'TRF-002',
+            fromStoreId: 'store-2',
+            toStoreId: 'store-1',
+          ),
+        );
 
         final outgoing = await db.stockTransfersDao.getOutgoing('store-1');
         expect(outgoing, hasLength(1));
@@ -124,18 +135,22 @@ void main() {
 
     group('getIncoming', () {
       test('returns only transfers TO the store', () async {
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          id: 'xfer-out',
-          transferNumber: 'TRF-001',
-          fromStoreId: 'store-1',
-          toStoreId: 'store-2',
-        ));
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          id: 'xfer-in',
-          transferNumber: 'TRF-002',
-          fromStoreId: 'store-2',
-          toStoreId: 'store-1',
-        ));
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(
+            id: 'xfer-out',
+            transferNumber: 'TRF-001',
+            fromStoreId: 'store-1',
+            toStoreId: 'store-2',
+          ),
+        );
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(
+            id: 'xfer-in',
+            transferNumber: 'TRF-002',
+            fromStoreId: 'store-2',
+            toStoreId: 'store-1',
+          ),
+        );
 
         final incoming = await db.stockTransfersDao.getIncoming('store-1');
         expect(incoming, hasLength(1));
@@ -145,23 +160,28 @@ void main() {
 
     group('getPendingIncoming', () {
       test('returns pending incoming transfers', () async {
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          id: 'xfer-1',
-          transferNumber: 'TRF-001',
-          fromStoreId: 'store-2',
-          toStoreId: 'store-1',
-          approvalStatus: 'pending',
-        ));
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          id: 'xfer-2',
-          transferNumber: 'TRF-002',
-          fromStoreId: 'store-2',
-          toStoreId: 'store-1',
-          approvalStatus: 'approved',
-        ));
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(
+            id: 'xfer-1',
+            transferNumber: 'TRF-001',
+            fromStoreId: 'store-2',
+            toStoreId: 'store-1',
+            approvalStatus: 'pending',
+          ),
+        );
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(
+            id: 'xfer-2',
+            transferNumber: 'TRF-002',
+            fromStoreId: 'store-2',
+            toStoreId: 'store-1',
+            approvalStatus: 'approved',
+          ),
+        );
 
-        final pending =
-            await db.stockTransfersDao.getPendingIncoming('store-1');
+        final pending = await db.stockTransfersDao.getPendingIncoming(
+          'store-1',
+        );
         expect(pending, hasLength(1));
         expect(pending.first.id, 'xfer-1');
       });
@@ -249,14 +269,12 @@ void main() {
 
     group('getUnsynced', () {
       test('returns transfers without syncedAt', () async {
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          id: 'xfer-1',
-          transferNumber: 'TRF-001',
-        ));
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          id: 'xfer-2',
-          transferNumber: 'TRF-002',
-        ));
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(id: 'xfer-1', transferNumber: 'TRF-001'),
+        );
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(id: 'xfer-2', transferNumber: 'TRF-002'),
+        );
         await db.stockTransfersDao.markAsSynced('xfer-1');
 
         final unsynced = await db.stockTransfersDao.getUnsynced();
@@ -265,16 +283,20 @@ void main() {
       });
 
       test('orders by createdAt asc', () async {
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          id: 'xfer-new',
-          transferNumber: 'TRF-001',
-          createdAt: DateTime(2026, 1, 20),
-        ));
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          id: 'xfer-old',
-          transferNumber: 'TRF-002',
-          createdAt: DateTime(2026, 1, 1),
-        ));
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(
+            id: 'xfer-new',
+            transferNumber: 'TRF-001',
+            createdAt: DateTime(2026, 1, 20),
+          ),
+        );
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(
+            id: 'xfer-old',
+            transferNumber: 'TRF-002',
+            createdAt: DateTime(2026, 1, 1),
+          ),
+        );
 
         final unsynced = await db.stockTransfersDao.getUnsynced();
         expect(unsynced.first.id, 'xfer-old');
@@ -285,28 +307,33 @@ void main() {
       test('emits initial list', () async {
         await db.stockTransfersDao.upsertTransfer(makeTransfer());
 
-        final transfers =
-            await db.stockTransfersDao.watchByStore('store-1').first;
+        final transfers = await db.stockTransfersDao
+            .watchByStore('store-1')
+            .first;
         expect(transfers, hasLength(1));
       });
     });
 
     group('watchPendingIncomingCount', () {
       test('emits count of pending incoming transfers', () async {
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          id: 'xfer-1',
-          transferNumber: 'TRF-001',
-          fromStoreId: 'store-2',
-          toStoreId: 'store-1',
-          approvalStatus: 'pending',
-        ));
-        await db.stockTransfersDao.upsertTransfer(makeTransfer(
-          id: 'xfer-2',
-          transferNumber: 'TRF-002',
-          fromStoreId: 'store-2',
-          toStoreId: 'store-1',
-          approvalStatus: 'approved',
-        ));
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(
+            id: 'xfer-1',
+            transferNumber: 'TRF-001',
+            fromStoreId: 'store-2',
+            toStoreId: 'store-1',
+            approvalStatus: 'pending',
+          ),
+        );
+        await db.stockTransfersDao.upsertTransfer(
+          makeTransfer(
+            id: 'xfer-2',
+            transferNumber: 'TRF-002',
+            fromStoreId: 'store-2',
+            toStoreId: 'store-1',
+            approvalStatus: 'approved',
+          ),
+        );
 
         final count = await db.stockTransfersDao
             .watchPendingIncomingCount('store-1')

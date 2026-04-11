@@ -31,8 +31,9 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
     final userAsync = ref.watch(saUserDetailProvider(widget.userId));
     final ds = ref.watch(saUsersDatasourceProvider);
 
-    final onlineColor =
-        isDark ? const Color(0xFF4ADE80) : const Color(0xFF16A34A);
+    final onlineColor = isDark
+        ? const Color(0xFF4ADE80)
+        : const Color(0xFF16A34A);
     final offlineColor = colorScheme.outline;
 
     return Scaffold(
@@ -44,8 +45,9 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
           final email = user.email ?? '-';
           final role = user.role ?? 'viewer';
           final createdAt = user.createdAt ?? '';
-          final dateStr =
-              createdAt.length >= 10 ? createdAt.substring(0, 10) : createdAt;
+          final dateStr = createdAt.length >= 10
+              ? createdAt.substring(0, 10)
+              : createdAt;
           final isOnline = user.isOnline;
           final lastActive = user.lastActiveFormatted;
 
@@ -92,8 +94,9 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                         Card(
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(AlhaiRadius.card),
+                            borderRadius: BorderRadius.circular(
+                              AlhaiRadius.card,
+                            ),
                             side: BorderSide(
                               color: colorScheme.outlineVariant,
                               width: AlhaiSpacing.strokeXs,
@@ -110,9 +113,9 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                     name.isNotEmpty ? name[0] : '?',
                                     style: theme.textTheme.headlineMedium
                                         ?.copyWith(
-                                      color: colorScheme.primary,
-                                      fontWeight: FontWeight.bold,
-                                    ),
+                                          color: colorScheme.primary,
+                                          fontWeight: FontWeight.bold,
+                                        ),
                                   ),
                                 ),
                                 const SizedBox(height: AlhaiSpacing.md),
@@ -136,8 +139,9 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                   ),
                                   decoration: BoxDecoration(
                                     color: statusColor.withValues(alpha: 0.1),
-                                    borderRadius:
-                                        BorderRadius.circular(AlhaiRadius.full),
+                                    borderRadius: BorderRadius.circular(
+                                      AlhaiRadius.full,
+                                    ),
                                   ),
                                   child: Row(
                                     mainAxisSize: MainAxisSize.min,
@@ -156,9 +160,7 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                         style: Theme.of(context)
                                             .textTheme
                                             .labelMedium
-                                            ?.copyWith(
-                                              color: statusColor,
-                                            ),
+                                            ?.copyWith(color: statusColor),
                                       ),
                                     ],
                                   ),
@@ -168,10 +170,7 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                   label: l10n.userLastActive,
                                   value: lastActive,
                                 ),
-                                _InfoRow(
-                                  label: l10n.joinDate,
-                                  value: dateStr,
-                                ),
+                                _InfoRow(label: l10n.joinDate, value: dateStr),
                                 _InfoRow(
                                   label: l10n.userRole,
                                   value: _roleLabel(role),
@@ -186,8 +185,9 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                         Card(
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(AlhaiRadius.card),
+                            borderRadius: BorderRadius.circular(
+                              AlhaiRadius.card,
+                            ),
                             side: BorderSide(
                               color: colorScheme.error.withValues(alpha: 0.3),
                               width: AlhaiSpacing.strokeXs,
@@ -200,15 +200,18 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    Icon(Icons.warning_rounded,
-                                        size: 20, color: colorScheme.error),
+                                    Icon(
+                                      Icons.warning_rounded,
+                                      size: 20,
+                                      color: colorScheme.error,
+                                    ),
                                     const SizedBox(width: AlhaiSpacing.xs),
                                     Text(
                                       l10n.dangerZone,
-                                      style:
-                                          theme.textTheme.titleMedium?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                      style: theme.textTheme.titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                     ),
                                   ],
                                 ),
@@ -275,17 +278,18 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                         await ref
                                             .read(auditLogServiceProvider)
                                             .log(
-                                          action: 'user.suspend',
-                                          targetType: 'user',
-                                          targetId: widget.userId,
-                                          before: priorUserSnapshot,
-                                          after: {
-                                            ...priorUserSnapshot,
-                                            'is_active': false,
-                                          },
+                                              action: 'user.suspend',
+                                              targetType: 'user',
+                                              targetId: widget.userId,
+                                              before: priorUserSnapshot,
+                                              after: {
+                                                ...priorUserSnapshot,
+                                                'is_active': false,
+                                              },
+                                            );
+                                        ref.invalidate(
+                                          saUserDetailProvider(widget.userId),
                                         );
-                                        ref.invalidate(saUserDetailProvider(
-                                            widget.userId));
                                         ref.invalidate(saUsersListProvider);
                                       },
                                       undoAction: () async {
@@ -305,8 +309,9 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                                 'source': 'undo',
                                               },
                                             );
-                                        ref.invalidate(saUserDetailProvider(
-                                            widget.userId));
+                                        ref.invalidate(
+                                          saUserDetailProvider(widget.userId),
+                                        );
                                         ref.invalidate(saUsersListProvider);
                                       },
                                     );
@@ -327,8 +332,9 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                         Card(
                           elevation: 0,
                           shape: RoundedRectangleBorder(
-                            borderRadius:
-                                BorderRadius.circular(AlhaiRadius.card),
+                            borderRadius: BorderRadius.circular(
+                              AlhaiRadius.card,
+                            ),
                             side: BorderSide(
                               color: colorScheme.outlineVariant,
                               width: AlhaiSpacing.strokeXs,
@@ -341,15 +347,18 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    Icon(Icons.admin_panel_settings_rounded,
-                                        size: 20, color: colorScheme.primary),
+                                    Icon(
+                                      Icons.admin_panel_settings_rounded,
+                                      size: 20,
+                                      color: colorScheme.primary,
+                                    ),
                                     const SizedBox(width: AlhaiSpacing.xs),
                                     Text(
                                       l10n.roleManagement,
-                                      style:
-                                          theme.textTheme.titleMedium?.copyWith(
-                                        fontWeight: FontWeight.w600,
-                                      ),
+                                      style: theme.textTheme.titleMedium
+                                          ?.copyWith(
+                                            fontWeight: FontWeight.w600,
+                                          ),
                                     ),
                                   ],
                                 ),
@@ -398,10 +407,12 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
                                     FilledButton(
                                       onPressed:
                                           _saving || _selectedRole == role
-                                              ? null
-                                              : () => _saveRole(
-                                                  widget.userId, _selectedRole!,
-                                                  previousRole: role),
+                                          ? null
+                                          : () => _saveRole(
+                                              widget.userId,
+                                              _selectedRole!,
+                                              previousRole: role,
+                                            ),
                                       child: _saving
                                           ? const SizedBox(
                                               width: 16,
@@ -448,13 +459,15 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
     try {
       final ds = ref.read(saUsersDatasourceProvider);
       await ds.updateUserRole(userId, newRole);
-      await ref.read(auditLogServiceProvider).log(
-        action: 'user.role_change',
-        targetType: 'user',
-        targetId: userId,
-        before: {'role': previousRole},
-        after: {'role': newRole},
-      );
+      await ref
+          .read(auditLogServiceProvider)
+          .log(
+            action: 'user.role_change',
+            targetType: 'user',
+            targetId: userId,
+            before: {'role': previousRole},
+            after: {'role': newRole},
+          );
       ref.invalidate(saUserDetailProvider(userId));
       ref.invalidate(saUsersListProvider);
       if (mounted) {
@@ -464,9 +477,9 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $e')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error: $e')));
       }
     } finally {
       if (mounted) setState(() => _saving = false);
@@ -552,10 +565,7 @@ class _RoleOption extends StatelessWidget {
               RadioGroup<String>(
                 groupValue: groupValue,
                 onChanged: onChanged,
-                child: Radio<String>(
-                  value: value,
-                  activeColor: color,
-                ),
+                child: Radio<String>(value: value, activeColor: color),
               ),
               Container(
                 width: 36,

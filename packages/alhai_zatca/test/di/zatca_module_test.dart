@@ -98,8 +98,7 @@ void main() {
       expect(store, isA<InMemoryChainStore>());
     });
 
-    test(
-        'uses InMemoryCertificateStorage by default when no '
+    test('uses InMemoryCertificateStorage by default when no '
         'certificateStorage provided', () {
       ZatcaModule.register(getIt: getIt);
       final storage = getIt<CertificateStorage>();
@@ -114,10 +113,7 @@ void main() {
 
     test('honours custom certificateStorage parameter', () {
       final customStorage = InMemoryCertificateStorage();
-      ZatcaModule.register(
-        getIt: getIt,
-        certificateStorage: customStorage,
-      );
+      ZatcaModule.register(getIt: getIt, certificateStorage: customStorage);
       expect(identical(getIt<CertificateStorage>(), customStorage), isTrue);
     });
 
@@ -161,8 +157,7 @@ void main() {
       expect(client.environment, equals(ZatcaEnvironment.simulation));
     });
 
-    test(
-        'all dependent services can be resolved without throwing '
+    test('all dependent services can be resolved without throwing '
         '(no circular deps)', () {
       ZatcaModule.register(getIt: getIt);
 
@@ -198,17 +193,11 @@ void main() {
       // which compares to a Type as if it were an instance — for un-
       // instantiated lazy singletons this is effectively a no-op, but
       // it must complete without error.
-      expect(
-        () => ZatcaModule.unregister(getIt: getIt),
-        returnsNormally,
-      );
+      expect(() => ZatcaModule.unregister(getIt: getIt), returnsNormally);
     });
 
     test('unregister is safe to call when nothing is registered', () {
-      expect(
-        () => ZatcaModule.unregister(getIt: getIt),
-        returnsNormally,
-      );
+      expect(() => ZatcaModule.unregister(getIt: getIt), returnsNormally);
     });
 
     test('after unregister, can re-register cleanly', () {
@@ -220,20 +209,14 @@ void main() {
       // is guarded by `isRegistered<T>()`.
       ZatcaModule.unregister(getIt: getIt);
 
-      expect(
-        () => ZatcaModule.register(getIt: getIt),
-        returnsNormally,
-      );
+      expect(() => ZatcaModule.register(getIt: getIt), returnsNormally);
       expect(getIt.isRegistered<ZatcaInvoiceService>(), isTrue);
     });
   });
 
   group('ZatcaModule.switchEnvironment', () {
     test('changes the API client environment', () {
-      ZatcaModule.register(
-        getIt: getIt,
-        environment: ZatcaEnvironment.sandbox,
-      );
+      ZatcaModule.register(getIt: getIt, environment: ZatcaEnvironment.sandbox);
       expect(
         getIt<ZatcaApiClient>().environment,
         equals(ZatcaEnvironment.sandbox),
@@ -251,10 +234,7 @@ void main() {
     });
 
     test('keeps non-API services usable after switch', () {
-      ZatcaModule.register(
-        getIt: getIt,
-        environment: ZatcaEnvironment.sandbox,
-      );
+      ZatcaModule.register(getIt: getIt, environment: ZatcaEnvironment.sandbox);
 
       ZatcaModule.switchEnvironment(
         getIt: getIt,
@@ -267,10 +247,7 @@ void main() {
     });
 
     test('switchEnvironment can be called repeatedly', () {
-      ZatcaModule.register(
-        getIt: getIt,
-        environment: ZatcaEnvironment.sandbox,
-      );
+      ZatcaModule.register(getIt: getIt, environment: ZatcaEnvironment.sandbox);
 
       expect(
         () => ZatcaModule.switchEnvironment(
@@ -288,8 +265,10 @@ void main() {
         returnsNormally,
       );
 
-      expect(getIt<ZatcaApiClient>().environment,
-          equals(ZatcaEnvironment.sandbox));
+      expect(
+        getIt<ZatcaApiClient>().environment,
+        equals(ZatcaEnvironment.sandbox),
+      );
     });
   });
 }

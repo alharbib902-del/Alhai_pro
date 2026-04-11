@@ -61,15 +61,17 @@ void main() {
 
     group('buildTaxTotals - structure', () {
       test('returns exactly two TaxTotal elements', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Product',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Product',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 15.0,
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         expect(taxTotals, hasLength(2));
@@ -77,15 +79,17 @@ void main() {
       });
 
       test('first TaxTotal contains only TaxAmount (no TaxSubtotal)', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Product',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Product',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 15.0,
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         final first = taxTotals[0];
@@ -95,15 +99,17 @@ void main() {
       });
 
       test('second TaxTotal contains TaxAmount and TaxSubtotal breakdown', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Product',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Product',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 15.0,
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         final second = taxTotals[1];
@@ -113,15 +119,17 @@ void main() {
       });
 
       test('elements use cac namespace prefix for TaxTotal', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Product',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Product',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 15.0,
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         for (final taxTotal in taxTotals) {
@@ -134,15 +142,17 @@ void main() {
 
     group('buildTaxTotals - standard VAT', () {
       test('calculates 15 VAT on 100 net', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Product',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Product',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 15.0,
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         final firstTaxAmount = findFirst(taxTotals[0], 'TaxAmount');
@@ -151,22 +161,24 @@ void main() {
       });
 
       test('aggregates multiple lines with same VAT rate', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Product 1',
-            quantity: 2,
-            unitPrice: 50.0,
-            vatRate: 15.0,
-          ),
-          const ZatcaInvoiceLine(
-            lineId: '2',
-            itemName: 'Product 2',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Product 1',
+              quantity: 2,
+              unitPrice: 50.0,
+              vatRate: 15.0,
+            ),
+            const ZatcaInvoiceLine(
+              lineId: '2',
+              itemName: 'Product 2',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 15.0,
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         final second = taxTotals[1];
@@ -206,16 +218,18 @@ void main() {
 
     group('buildTaxTotals - zero tax', () {
       test('handles zero-rated items (vatRate=0)', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Zero-rated product',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 0.0,
-            vatCategoryCode: 'Z',
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Zero-rated product',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 0.0,
+              vatCategoryCode: 'Z',
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         final firstTaxAmount = findFirst(taxTotals[0], 'TaxAmount');
@@ -223,16 +237,18 @@ void main() {
       });
 
       test('still produces TaxSubtotal for zero-rated lines', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Zero-rated',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 0.0,
-            vatCategoryCode: 'Z',
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Zero-rated',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 0.0,
+              vatCategoryCode: 'Z',
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         final subtotals = findAll(taxTotals[1], 'TaxSubtotal');
@@ -248,24 +264,26 @@ void main() {
 
     group('buildTaxTotals - multiple categories', () {
       test('produces separate TaxSubtotal per VAT category', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Standard',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-            vatCategoryCode: 'S',
-          ),
-          const ZatcaInvoiceLine(
-            lineId: '2',
-            itemName: 'Zero-rated',
-            quantity: 1,
-            unitPrice: 50.0,
-            vatRate: 0.0,
-            vatCategoryCode: 'Z',
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Standard',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 15.0,
+              vatCategoryCode: 'S',
+            ),
+            const ZatcaInvoiceLine(
+              lineId: '2',
+              itemName: 'Zero-rated',
+              quantity: 1,
+              unitPrice: 50.0,
+              vatRate: 0.0,
+              vatCategoryCode: 'Z',
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         final subtotals = findAll(taxTotals[1], 'TaxSubtotal');
@@ -273,24 +291,26 @@ void main() {
       });
 
       test('total VAT is sum across categories', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Standard',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-            vatCategoryCode: 'S',
-          ),
-          const ZatcaInvoiceLine(
-            lineId: '2',
-            itemName: 'Zero-rated',
-            quantity: 1,
-            unitPrice: 50.0,
-            vatRate: 0.0,
-            vatCategoryCode: 'Z',
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Standard',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 15.0,
+              vatCategoryCode: 'S',
+            ),
+            const ZatcaInvoiceLine(
+              lineId: '2',
+              itemName: 'Zero-rated',
+              quantity: 1,
+              unitPrice: 50.0,
+              vatRate: 0.0,
+              vatCategoryCode: 'Z',
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         // Only the 15% line contributes VAT -> 15
@@ -299,24 +319,26 @@ void main() {
       });
 
       test('separates lines with same category code but different rates', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Std 15',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-            vatCategoryCode: 'S',
-          ),
-          const ZatcaInvoiceLine(
-            lineId: '2',
-            itemName: 'Std 10',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 10.0,
-            vatCategoryCode: 'S',
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Std 15',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 15.0,
+              vatCategoryCode: 'S',
+            ),
+            const ZatcaInvoiceLine(
+              lineId: '2',
+              itemName: 'Std 10',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 10.0,
+              vatCategoryCode: 'S',
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         final subtotals = findAll(taxTotals[1], 'TaxSubtotal');
@@ -329,16 +351,18 @@ void main() {
 
     group('TaxCategory details', () {
       test('includes TaxCategory with ID matching vatCategoryCode', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Product',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-            vatCategoryCode: 'S',
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Product',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 15.0,
+              vatCategoryCode: 'S',
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         final taxCategory = findFirst(taxTotals[1], 'TaxCategory');
@@ -349,15 +373,17 @@ void main() {
       });
 
       test('includes Percent matching the VAT rate', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Product',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Product',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 15.0,
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         final taxCategory = findFirst(taxTotals[1], 'TaxCategory');
@@ -366,15 +392,17 @@ void main() {
       });
 
       test('includes TaxScheme with VAT ID', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Product',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Product',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 15.0,
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         final taxScheme = findFirst(taxTotals[1], 'TaxScheme');
@@ -384,18 +412,20 @@ void main() {
       });
 
       test('includes exemption reason when provided', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Exempt medicine',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 0.0,
-            vatCategoryCode: 'E',
-            vatExemptionReasonCode: 'VATEX-SA-29',
-            vatExemptionReason: 'Pharmaceutical products',
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Exempt medicine',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 0.0,
+              vatCategoryCode: 'E',
+              vatExemptionReasonCode: 'VATEX-SA-29',
+              vatExemptionReason: 'Pharmaceutical products',
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         final taxCategory = findFirst(taxTotals[1], 'TaxCategory');
@@ -407,15 +437,17 @@ void main() {
       });
 
       test('omits exemption reason fields when not provided', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Standard',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Standard',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 15.0,
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         final taxCategory = findFirst(taxTotals[1], 'TaxCategory');
@@ -428,15 +460,17 @@ void main() {
 
     group('ZATCA schema compliance', () {
       test('amounts are always formatted with 2 decimal places', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Product',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Product',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 15.0,
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         for (final taxTotal in taxTotals) {
@@ -445,63 +479,74 @@ void main() {
                 e.name.local == 'TaxableAmount' ||
                 e.name.local == 'Percent') {
               // Must contain a decimal point with exactly 2 fractional digits
-              expect(e.innerText, matches(RegExp(r'^\d+\.\d{2}$')),
-                  reason: 'Value "${e.innerText}" for ${e.name.local} '
-                      'does not match 2-decimal format');
+              expect(
+                e.innerText,
+                matches(RegExp(r'^\d+\.\d{2}$')),
+                reason:
+                    'Value "${e.innerText}" for ${e.name.local} '
+                    'does not match 2-decimal format',
+              );
             }
           }
         }
       });
 
       test('all amount elements carry currencyID', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Product',
-            quantity: 1,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Product',
+              quantity: 1,
+              unitPrice: 100.0,
+              vatRate: 15.0,
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         for (final taxTotal in taxTotals) {
           for (final e in taxTotal.descendants.whereType<XmlElement>()) {
             if (e.name.local == 'TaxAmount' ||
                 e.name.local == 'TaxableAmount') {
-              expect(e.getAttribute('currencyID'), isNotNull,
-                  reason: '${e.name.local} missing currencyID');
+              expect(
+                e.getAttribute('currencyID'),
+                isNotNull,
+                reason: '${e.name.local} missing currencyID',
+              );
             }
           }
         }
       });
 
       test('both TaxTotal elements report the same total VAT amount', () {
-        final invoice = makeInvoice(lines: [
-          const ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Product 1',
-            quantity: 2,
-            unitPrice: 50.0,
-            vatRate: 15.0,
-          ),
-          const ZatcaInvoiceLine(
-            lineId: '2',
-            itemName: 'Product 2',
-            quantity: 1,
-            unitPrice: 200.0,
-            vatRate: 15.0,
-          ),
-        ]);
+        final invoice = makeInvoice(
+          lines: [
+            const ZatcaInvoiceLine(
+              lineId: '1',
+              itemName: 'Product 1',
+              quantity: 2,
+              unitPrice: 50.0,
+              vatRate: 15.0,
+            ),
+            const ZatcaInvoiceLine(
+              lineId: '2',
+              itemName: 'Product 2',
+              quantity: 1,
+              unitPrice: 200.0,
+              vatRate: 15.0,
+            ),
+          ],
+        );
 
         final taxTotals = builder.buildTaxTotals(invoice);
         // Direct children of TaxTotal named TaxAmount (not inside TaxSubtotal)
-        final first = taxTotals[0]
-            .childElements
-            .firstWhere((e) => e.name.local == 'TaxAmount');
-        final second = taxTotals[1]
-            .childElements
-            .firstWhere((e) => e.name.local == 'TaxAmount');
+        final first = taxTotals[0].childElements.firstWhere(
+          (e) => e.name.local == 'TaxAmount',
+        );
+        final second = taxTotals[1].childElements.firstWhere(
+          (e) => e.name.local == 'TaxAmount',
+        );
         expect(first.innerText, second.innerText);
       });
     });

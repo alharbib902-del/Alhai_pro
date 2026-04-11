@@ -24,8 +24,10 @@ void _setLargeViewport(WidgetTester tester) {
   tester.view.devicePixelRatio = 1.0;
 }
 
-Widget _buildTestableWidget(Widget child,
-    {List<Override> overrides = const []}) {
+Widget _buildTestableWidget(
+  Widget child, {
+  List<Override> overrides = const [],
+}) {
   return ProviderScope(
     overrides: [
       currentStoreIdProvider.overrideWith((ref) => 'test-store'),
@@ -107,8 +109,9 @@ void main() {
       expect(find.byIcon(Icons.percent_rounded), findsWidgets);
     });
 
-    testWidgets('shows compare_arrows icon in price comparison tab',
-        (tester) async {
+    testWidgets('shows compare_arrows icon in price comparison tab', (
+      tester,
+    ) async {
       _setLargeViewport(tester);
       await tester.pumpWidget(
         _buildTestableWidget(const AiCompetitorAnalysisScreen()),

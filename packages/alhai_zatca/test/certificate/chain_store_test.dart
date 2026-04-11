@@ -118,10 +118,7 @@ void main() {
     test('seed hash is Base64(SHA-256("0")) per ZATCA spec', () {
       // ZATCA requires the seed to be Base64(SHA-256("0"))
       // This should be consistent with InvoiceHasher.hashString('0')
-      expect(
-        InvoiceChainService.seedHash,
-        InvoiceHasher.hashString('0'),
-      );
+      expect(InvoiceChainService.seedHash, InvoiceHasher.hashString('0'));
       // Sanity: it should be a valid 44-char base64 string
       expect(InvoiceChainService.seedHash.length, 44);
     });

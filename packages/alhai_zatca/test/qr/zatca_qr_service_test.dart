@@ -109,42 +109,47 @@ void main() {
         );
 
         // Default cert parser behavior
-        when(() => mockCertParser.extractPublicKey(any()))
-            .thenReturn(fakePublicKeyBytes);
-        when(() => mockCertParser.extractSignatureBytes(any()))
-            .thenReturn(fakeCertSigBytes);
+        when(
+          () => mockCertParser.extractPublicKey(any()),
+        ).thenReturn(fakePublicKeyBytes);
+        when(
+          () => mockCertParser.extractSignatureBytes(any()),
+        ).thenReturn(fakeCertSigBytes);
 
         // Default encoder returns a fake but valid base64 string
-        when(() => mockEncoder.encode(
-              sellerName: any(named: 'sellerName'),
-              vatNumber: any(named: 'vatNumber'),
-              timestamp: any(named: 'timestamp'),
-              totalWithVat: any(named: 'totalWithVat'),
-              vatAmount: any(named: 'vatAmount'),
-              invoiceHash: any(named: 'invoiceHash'),
-              digitalSignature: any(named: 'digitalSignature'),
-              publicKey: any(named: 'publicKey'),
-              certificateSignature: any(named: 'certificateSignature'),
-            )).thenReturn('ENCODED_BASE64_QR');
+        when(
+          () => mockEncoder.encode(
+            sellerName: any(named: 'sellerName'),
+            vatNumber: any(named: 'vatNumber'),
+            timestamp: any(named: 'timestamp'),
+            totalWithVat: any(named: 'totalWithVat'),
+            vatAmount: any(named: 'vatAmount'),
+            invoiceHash: any(named: 'invoiceHash'),
+            digitalSignature: any(named: 'digitalSignature'),
+            publicKey: any(named: 'publicKey'),
+            certificateSignature: any(named: 'certificateSignature'),
+          ),
+        ).thenReturn('ENCODED_BASE64_QR');
       });
 
       test(
-          'simplified invoice (subType 02*): omits tag 9 certificate signature',
-          () {
-        final invoice = buildInvoice(subType: '0200000');
+        'simplified invoice (subType 02*): omits tag 9 certificate signature',
+        () {
+          final invoice = buildInvoice(subType: '0200000');
 
-        service.generateQrData(
-          invoice: invoice,
-          invoiceHash: fakeHashB64,
-          digitalSignature: fakeSignatureB64,
-          certificate: sampleCertificate,
-        );
+          service.generateQrData(
+            invoice: invoice,
+            invoiceHash: fakeHashB64,
+            digitalSignature: fakeSignatureB64,
+            certificate: sampleCertificate,
+          );
 
-        // extractSignatureBytes should NOT be called for simplified
-        verifyNever(() => mockCertParser.extractSignatureBytes(any()));
+          // extractSignatureBytes should NOT be called for simplified
+          verifyNever(() => mockCertParser.extractSignatureBytes(any()));
 
-        // Encoder should be called with certificateSignature == null
-        verify(() => mockEncoder.encode(
+          // Encoder should be called with certificateSignature == null
+          verify(
+            () => mockEncoder.encode(
               sellerName: any(named: 'sellerName'),
               vatNumber: any(named: 'vatNumber'),
               timestamp: any(named: 'timestamp'),
@@ -154,26 +159,29 @@ void main() {
               digitalSignature: any(named: 'digitalSignature'),
               publicKey: any(named: 'publicKey'),
               certificateSignature: null,
-            )).called(1);
-      });
+            ),
+          ).called(1);
+        },
+      );
 
       test(
-          'standard invoice (subType 01*): includes tag 9 certificate signature',
-          () {
-        final invoice = buildInvoice(subType: '0100000');
+        'standard invoice (subType 01*): includes tag 9 certificate signature',
+        () {
+          final invoice = buildInvoice(subType: '0100000');
 
-        service.generateQrData(
-          invoice: invoice,
-          invoiceHash: fakeHashB64,
-          digitalSignature: fakeSignatureB64,
-          certificate: sampleCertificate,
-        );
+          service.generateQrData(
+            invoice: invoice,
+            invoiceHash: fakeHashB64,
+            digitalSignature: fakeSignatureB64,
+            certificate: sampleCertificate,
+          );
 
-        // extractSignatureBytes SHOULD be called for standard invoices
-        verify(() => mockCertParser.extractSignatureBytes(any())).called(1);
+          // extractSignatureBytes SHOULD be called for standard invoices
+          verify(() => mockCertParser.extractSignatureBytes(any())).called(1);
 
-        // Encoder should be called with certificateSignature non-null
-        final captured = verify(() => mockEncoder.encode(
+          // Encoder should be called with certificateSignature non-null
+          final captured = verify(
+            () => mockEncoder.encode(
               sellerName: any(named: 'sellerName'),
               vatNumber: any(named: 'vatNumber'),
               timestamp: any(named: 'timestamp'),
@@ -183,10 +191,12 @@ void main() {
               digitalSignature: any(named: 'digitalSignature'),
               publicKey: any(named: 'publicKey'),
               certificateSignature: captureAny(named: 'certificateSignature'),
-            )).captured;
-        expect(captured.single, isNotNull);
-        expect(captured.single, isA<String>());
-      });
+            ),
+          ).captured;
+          expect(captured.single, isNotNull);
+          expect(captured.single, isA<String>());
+        },
+      );
 
       test('extracts public key from certificate and passes as base64', () {
         final invoice = buildInvoice();
@@ -198,20 +208,24 @@ void main() {
           certificate: sampleCertificate,
         );
 
-        verify(() => mockCertParser
-            .extractPublicKey(sampleCertificate.certificatePem)).called(1);
+        verify(
+          () =>
+              mockCertParser.extractPublicKey(sampleCertificate.certificatePem),
+        ).called(1);
 
-        final captured = verify(() => mockEncoder.encode(
-              sellerName: any(named: 'sellerName'),
-              vatNumber: any(named: 'vatNumber'),
-              timestamp: any(named: 'timestamp'),
-              totalWithVat: any(named: 'totalWithVat'),
-              vatAmount: any(named: 'vatAmount'),
-              invoiceHash: any(named: 'invoiceHash'),
-              digitalSignature: any(named: 'digitalSignature'),
-              publicKey: captureAny(named: 'publicKey'),
-              certificateSignature: any(named: 'certificateSignature'),
-            )).captured;
+        final captured = verify(
+          () => mockEncoder.encode(
+            sellerName: any(named: 'sellerName'),
+            vatNumber: any(named: 'vatNumber'),
+            timestamp: any(named: 'timestamp'),
+            totalWithVat: any(named: 'totalWithVat'),
+            vatAmount: any(named: 'vatAmount'),
+            invoiceHash: any(named: 'invoiceHash'),
+            digitalSignature: any(named: 'digitalSignature'),
+            publicKey: captureAny(named: 'publicKey'),
+            certificateSignature: any(named: 'certificateSignature'),
+          ),
+        ).captured;
 
         // publicKey passed to encoder must be valid base64
         expect(captured.single, isA<String>());
@@ -236,17 +250,19 @@ void main() {
           certificate: sampleCertificate,
         );
 
-        verify(() => mockEncoder.encode(
-              sellerName: 'My Store',
-              vatNumber: '300075588700003',
-              timestamp: any(named: 'timestamp'),
-              totalWithVat: any(named: 'totalWithVat'),
-              vatAmount: any(named: 'vatAmount'),
-              invoiceHash: any(named: 'invoiceHash'),
-              digitalSignature: any(named: 'digitalSignature'),
-              publicKey: any(named: 'publicKey'),
-              certificateSignature: any(named: 'certificateSignature'),
-            )).called(1);
+        verify(
+          () => mockEncoder.encode(
+            sellerName: 'My Store',
+            vatNumber: '300075588700003',
+            timestamp: any(named: 'timestamp'),
+            totalWithVat: any(named: 'totalWithVat'),
+            vatAmount: any(named: 'vatAmount'),
+            invoiceHash: any(named: 'invoiceHash'),
+            digitalSignature: any(named: 'digitalSignature'),
+            publicKey: any(named: 'publicKey'),
+            certificateSignature: any(named: 'certificateSignature'),
+          ),
+        ).called(1);
       });
 
       test('passes computed total/vat from invoice to encoder', () {
@@ -261,31 +277,35 @@ void main() {
           certificate: sampleCertificate,
         );
 
-        verify(() => mockEncoder.encode(
-              sellerName: any(named: 'sellerName'),
-              vatNumber: any(named: 'vatNumber'),
-              timestamp: any(named: 'timestamp'),
-              totalWithVat: 230.0,
-              vatAmount: 30.0,
-              invoiceHash: any(named: 'invoiceHash'),
-              digitalSignature: any(named: 'digitalSignature'),
-              publicKey: any(named: 'publicKey'),
-              certificateSignature: any(named: 'certificateSignature'),
-            )).called(1);
+        verify(
+          () => mockEncoder.encode(
+            sellerName: any(named: 'sellerName'),
+            vatNumber: any(named: 'vatNumber'),
+            timestamp: any(named: 'timestamp'),
+            totalWithVat: 230.0,
+            vatAmount: 30.0,
+            invoiceHash: any(named: 'invoiceHash'),
+            digitalSignature: any(named: 'digitalSignature'),
+            publicKey: any(named: 'publicKey'),
+            certificateSignature: any(named: 'certificateSignature'),
+          ),
+        ).called(1);
       });
 
       test('returns the encoder output unchanged', () {
-        when(() => mockEncoder.encode(
-              sellerName: any(named: 'sellerName'),
-              vatNumber: any(named: 'vatNumber'),
-              timestamp: any(named: 'timestamp'),
-              totalWithVat: any(named: 'totalWithVat'),
-              vatAmount: any(named: 'vatAmount'),
-              invoiceHash: any(named: 'invoiceHash'),
-              digitalSignature: any(named: 'digitalSignature'),
-              publicKey: any(named: 'publicKey'),
-              certificateSignature: any(named: 'certificateSignature'),
-            )).thenReturn('FAKE_QR_OUTPUT');
+        when(
+          () => mockEncoder.encode(
+            sellerName: any(named: 'sellerName'),
+            vatNumber: any(named: 'vatNumber'),
+            timestamp: any(named: 'timestamp'),
+            totalWithVat: any(named: 'totalWithVat'),
+            vatAmount: any(named: 'vatAmount'),
+            invoiceHash: any(named: 'invoiceHash'),
+            digitalSignature: any(named: 'digitalSignature'),
+            publicKey: any(named: 'publicKey'),
+            certificateSignature: any(named: 'certificateSignature'),
+          ),
+        ).thenReturn('FAKE_QR_OUTPUT');
 
         final invoice = buildInvoice();
         final result = service.generateQrData(
@@ -306,13 +326,15 @@ void main() {
         final mockEncoder = MockZatcaTlvEncoder();
         final service = ZatcaQrService(encoder: mockEncoder);
 
-        when(() => mockEncoder.encodeSimplified(
-              sellerName: any(named: 'sellerName'),
-              vatNumber: any(named: 'vatNumber'),
-              timestamp: any(named: 'timestamp'),
-              totalWithVat: any(named: 'totalWithVat'),
-              vatAmount: any(named: 'vatAmount'),
-            )).thenReturn('SIMPLIFIED_QR');
+        when(
+          () => mockEncoder.encodeSimplified(
+            sellerName: any(named: 'sellerName'),
+            vatNumber: any(named: 'vatNumber'),
+            timestamp: any(named: 'timestamp'),
+            totalWithVat: any(named: 'totalWithVat'),
+            vatAmount: any(named: 'vatAmount'),
+          ),
+        ).thenReturn('SIMPLIFIED_QR');
 
         final invoice = buildInvoice(
           sellerName: 'Quick Mart',
@@ -322,13 +344,15 @@ void main() {
         final result = service.generateSimplifiedQr(invoice: invoice);
 
         expect(result, equals('SIMPLIFIED_QR'));
-        verify(() => mockEncoder.encodeSimplified(
-              sellerName: 'Quick Mart',
-              vatNumber: '310122393500003',
-              timestamp: any(named: 'timestamp'),
-              totalWithVat: 115.0,
-              vatAmount: 15.0,
-            )).called(1);
+        verify(
+          () => mockEncoder.encodeSimplified(
+            sellerName: 'Quick Mart',
+            vatNumber: '310122393500003',
+            timestamp: any(named: 'timestamp'),
+            totalWithVat: 115.0,
+            vatAmount: 15.0,
+          ),
+        ).called(1);
       });
 
       test('end-to-end: produces valid base64 with real encoder', () {
@@ -343,28 +367,29 @@ void main() {
       });
 
       test(
-          'end-to-end: decoding QR yields 5 tags with correct seller/VAT values',
-          () {
-        final service = ZatcaQrService();
-        final encoder = ZatcaTlvEncoder();
+        'end-to-end: decoding QR yields 5 tags with correct seller/VAT values',
+        () {
+          final service = ZatcaQrService();
+          final encoder = ZatcaTlvEncoder();
 
-        final invoice = buildInvoice(
-          sellerName: 'Test Store',
-          vatNumber: '310122393500003',
-        );
+          final invoice = buildInvoice(
+            sellerName: 'Test Store',
+            vatNumber: '310122393500003',
+          );
 
-        final qr = service.generateSimplifiedQr(invoice: invoice);
-        final decoded = encoder.decode(qr);
+          final qr = service.generateSimplifiedQr(invoice: invoice);
+          final decoded = encoder.decode(qr);
 
-        // Tags 1-5 should be present, 6-9 absent
-        expect(decoded.keys.toList()..sort(), equals([1, 2, 3, 4, 5]));
-        expect(decoded.containsKey(6), isFalse);
-        expect(decoded.containsKey(9), isFalse);
+          // Tags 1-5 should be present, 6-9 absent
+          expect(decoded.keys.toList()..sort(), equals([1, 2, 3, 4, 5]));
+          expect(decoded.containsKey(6), isFalse);
+          expect(decoded.containsKey(9), isFalse);
 
-        final strings = encoder.decodeToStrings(qr);
-        expect(strings[1], equals('Test Store'));
-        expect(strings[2], equals('310122393500003'));
-      });
+          final strings = encoder.decodeToStrings(qr);
+          expect(strings[1], equals('Test Store'));
+          expect(strings[2], equals('310122393500003'));
+        },
+      );
 
       test('end-to-end: supports Arabic seller names (UTF-8)', () {
         final service = ZatcaQrService();
@@ -399,17 +424,19 @@ void main() {
         final mockEncoder = MockZatcaTlvEncoder();
         final service = ZatcaQrService(encoder: mockEncoder);
 
-        when(() => mockEncoder.encode(
-              sellerName: any(named: 'sellerName'),
-              vatNumber: any(named: 'vatNumber'),
-              timestamp: any(named: 'timestamp'),
-              totalWithVat: any(named: 'totalWithVat'),
-              vatAmount: any(named: 'vatAmount'),
-              invoiceHash: any(named: 'invoiceHash'),
-              digitalSignature: any(named: 'digitalSignature'),
-              publicKey: any(named: 'publicKey'),
-              certificateSignature: any(named: 'certificateSignature'),
-            )).thenReturn('RAW_QR');
+        when(
+          () => mockEncoder.encode(
+            sellerName: any(named: 'sellerName'),
+            vatNumber: any(named: 'vatNumber'),
+            timestamp: any(named: 'timestamp'),
+            totalWithVat: any(named: 'totalWithVat'),
+            vatAmount: any(named: 'vatAmount'),
+            invoiceHash: any(named: 'invoiceHash'),
+            digitalSignature: any(named: 'digitalSignature'),
+            publicKey: any(named: 'publicKey'),
+            certificateSignature: any(named: 'certificateSignature'),
+          ),
+        ).thenReturn('RAW_QR');
 
         final result = service.generateQrDataFromValues(
           sellerName: 'Direct Store',
@@ -423,34 +450,38 @@ void main() {
         );
 
         expect(result, equals('RAW_QR'));
-        verify(() => mockEncoder.encode(
-              sellerName: 'Direct Store',
-              vatNumber: '310122393500003',
-              timestamp: DateTime(2026, 1, 1),
-              totalWithVat: 500.0,
-              vatAmount: 65.22,
-              invoiceHash: fakeHashB64,
-              digitalSignature: fakeSignatureB64,
-              publicKey: fakePublicKeyB64,
-              certificateSignature: null,
-            )).called(1);
+        verify(
+          () => mockEncoder.encode(
+            sellerName: 'Direct Store',
+            vatNumber: '310122393500003',
+            timestamp: DateTime(2026, 1, 1),
+            totalWithVat: 500.0,
+            vatAmount: 65.22,
+            invoiceHash: fakeHashB64,
+            digitalSignature: fakeSignatureB64,
+            publicKey: fakePublicKeyB64,
+            certificateSignature: null,
+          ),
+        ).called(1);
       });
 
       test('passes certificateSignatureBase64 when provided', () {
         final mockEncoder = MockZatcaTlvEncoder();
         final service = ZatcaQrService(encoder: mockEncoder);
 
-        when(() => mockEncoder.encode(
-              sellerName: any(named: 'sellerName'),
-              vatNumber: any(named: 'vatNumber'),
-              timestamp: any(named: 'timestamp'),
-              totalWithVat: any(named: 'totalWithVat'),
-              vatAmount: any(named: 'vatAmount'),
-              invoiceHash: any(named: 'invoiceHash'),
-              digitalSignature: any(named: 'digitalSignature'),
-              publicKey: any(named: 'publicKey'),
-              certificateSignature: any(named: 'certificateSignature'),
-            )).thenReturn('RAW_QR_WITH_CERT_SIG');
+        when(
+          () => mockEncoder.encode(
+            sellerName: any(named: 'sellerName'),
+            vatNumber: any(named: 'vatNumber'),
+            timestamp: any(named: 'timestamp'),
+            totalWithVat: any(named: 'totalWithVat'),
+            vatAmount: any(named: 'vatAmount'),
+            invoiceHash: any(named: 'invoiceHash'),
+            digitalSignature: any(named: 'digitalSignature'),
+            publicKey: any(named: 'publicKey'),
+            certificateSignature: any(named: 'certificateSignature'),
+          ),
+        ).thenReturn('RAW_QR_WITH_CERT_SIG');
 
         const certSigB64 = 'Y2VydHNpZw==';
         service.generateQrDataFromValues(
@@ -465,17 +496,19 @@ void main() {
           certificateSignatureBase64: certSigB64,
         );
 
-        verify(() => mockEncoder.encode(
-              sellerName: any(named: 'sellerName'),
-              vatNumber: any(named: 'vatNumber'),
-              timestamp: any(named: 'timestamp'),
-              totalWithVat: any(named: 'totalWithVat'),
-              vatAmount: any(named: 'vatAmount'),
-              invoiceHash: any(named: 'invoiceHash'),
-              digitalSignature: any(named: 'digitalSignature'),
-              publicKey: any(named: 'publicKey'),
-              certificateSignature: certSigB64,
-            )).called(1);
+        verify(
+          () => mockEncoder.encode(
+            sellerName: any(named: 'sellerName'),
+            vatNumber: any(named: 'vatNumber'),
+            timestamp: any(named: 'timestamp'),
+            totalWithVat: any(named: 'totalWithVat'),
+            vatAmount: any(named: 'vatAmount'),
+            invoiceHash: any(named: 'invoiceHash'),
+            digitalSignature: any(named: 'digitalSignature'),
+            publicKey: any(named: 'publicKey'),
+            certificateSignature: certSigB64,
+          ),
+        ).called(1);
       });
     });
 
@@ -486,12 +519,15 @@ void main() {
       final encoder = ZatcaTlvEncoder();
 
       test('returns null for a valid Phase 2 QR with tags 1-8', () {
-        final fakeHash =
-            base64Encode(Uint8List.fromList(List.generate(32, (i) => i)));
-        final fakeSig =
-            base64Encode(Uint8List.fromList(List.generate(64, (i) => i)));
-        final fakeKey =
-            base64Encode(Uint8List.fromList(List.generate(33, (i) => i)));
+        final fakeHash = base64Encode(
+          Uint8List.fromList(List.generate(32, (i) => i)),
+        );
+        final fakeSig = base64Encode(
+          Uint8List.fromList(List.generate(64, (i) => i)),
+        );
+        final fakeKey = base64Encode(
+          Uint8List.fromList(List.generate(33, (i) => i)),
+        );
 
         final qr = encoder.encode(
           sellerName: 'Valid Seller',
@@ -508,29 +544,34 @@ void main() {
         expect(error, isNull);
       });
 
-      test('returns error when required tag (6) is missing (simplified QR)',
-          () {
-        // encodeSimplified only produces tags 1-5, missing 6-8
-        final qr = encoder.encodeSimplified(
-          sellerName: 'Test',
-          vatNumber: '310122393500003',
-          timestamp: DateTime(2024, 1, 1),
-          totalWithVat: 100.0,
-          vatAmount: 15.0,
-        );
+      test(
+        'returns error when required tag (6) is missing (simplified QR)',
+        () {
+          // encodeSimplified only produces tags 1-5, missing 6-8
+          final qr = encoder.encodeSimplified(
+            sellerName: 'Test',
+            vatNumber: '310122393500003',
+            timestamp: DateTime(2024, 1, 1),
+            totalWithVat: 100.0,
+            vatAmount: 15.0,
+          );
 
-        final error = service.validateQrData(qr);
-        expect(error, isNotNull);
-        expect(error, contains('Missing required tag'));
-      });
+          final error = service.validateQrData(qr);
+          expect(error, isNotNull);
+          expect(error, contains('Missing required tag'));
+        },
+      );
 
       test('returns error when VAT number has wrong format', () {
-        final fakeHash =
-            base64Encode(Uint8List.fromList(List.generate(32, (i) => i)));
-        final fakeSig =
-            base64Encode(Uint8List.fromList(List.generate(64, (i) => i)));
-        final fakeKey =
-            base64Encode(Uint8List.fromList(List.generate(33, (i) => i)));
+        final fakeHash = base64Encode(
+          Uint8List.fromList(List.generate(32, (i) => i)),
+        );
+        final fakeSig = base64Encode(
+          Uint8List.fromList(List.generate(64, (i) => i)),
+        );
+        final fakeKey = base64Encode(
+          Uint8List.fromList(List.generate(33, (i) => i)),
+        );
 
         // VAT number not starting with 3
         final qr = encoder.encode(

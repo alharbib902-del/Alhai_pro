@@ -19,11 +19,13 @@ class _MockProductsNotifier extends StateNotifier<ProductsState>
     with Mock
     implements ProductsNotifier {
   _MockProductsNotifier([ProductsState? initial])
-      : super(initial ?? const ProductsState());
+    : super(initial ?? const ProductsState());
 
   @override
-  Future<void> loadProducts(
-      {required String storeId, bool refresh = false}) async {}
+  Future<void> loadProducts({
+    required String storeId,
+    bool refresh = false,
+  }) async {}
 }
 
 // ---------------------------------------------------------------------------
@@ -35,14 +37,13 @@ void _setLargeViewport(WidgetTester tester) {
   tester.view.devicePixelRatio = 1.0;
 }
 
-Widget _buildTestWidget({
-  ProductsState? productsState,
-}) {
+Widget _buildTestWidget({ProductsState? productsState}) {
   return ProviderScope(
     overrides: [
       currentStoreIdProvider.overrideWith((ref) => 'test-store-id'),
-      productsStateProvider
-          .overrideWith((ref) => _MockProductsNotifier(productsState)),
+      productsStateProvider.overrideWith(
+        (ref) => _MockProductsNotifier(productsState),
+      ),
     ],
     child: MaterialApp(
       locale: const Locale('en'),
@@ -102,9 +103,11 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        productsState: const ProductsState(products: [], isLoading: false),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          productsState: const ProductsState(products: [], isLoading: false),
+        ),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byType(InventoryScreen), findsOneWidget);

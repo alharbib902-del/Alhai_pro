@@ -59,12 +59,14 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
       if (mounted) {
         setState(() {
           _productsWithImages = products
-              .where((p) =>
-                  p.imageThumbnail != null && p.imageThumbnail!.isNotEmpty)
+              .where(
+                (p) => p.imageThumbnail != null && p.imageThumbnail!.isNotEmpty,
+              )
               .toList();
           _productsWithoutImages = products
               .where(
-                  (p) => p.imageThumbnail == null || p.imageThumbnail!.isEmpty)
+                (p) => p.imageThumbnail == null || p.imageThumbnail!.isEmpty,
+              )
               .toList();
           _isLoading = false;
         });
@@ -124,7 +126,9 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
         // Search and filter row
         Container(
           padding: const EdgeInsets.symmetric(
-              horizontal: AlhaiSpacing.md, vertical: AlhaiSpacing.xs),
+            horizontal: AlhaiSpacing.md,
+            vertical: AlhaiSpacing.xs,
+          ),
           color: Theme.of(context).colorScheme.surface,
           child: Column(
             children: [
@@ -145,10 +149,12 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                 ),
                 onChanged: (value) {
                   _searchDebounce?.cancel();
-                  _searchDebounce =
-                      Timer(const Duration(milliseconds: 300), () {
-                    if (mounted) setState(() => _searchQuery = value);
-                  });
+                  _searchDebounce = Timer(
+                    const Duration(milliseconds: 300),
+                    () {
+                      if (mounted) setState(() => _searchQuery = value);
+                    },
+                  );
                 },
               ),
               const SizedBox(height: AlhaiSpacing.xs),
@@ -162,7 +168,8 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                           value: 'all',
                           icon: const Icon(Icons.grid_view, size: 18),
                           label: Text(
-                              '${l10n.all} (${_productsWithImages.length + _productsWithoutImages.length})'),
+                            '${l10n.all} (${_productsWithImages.length + _productsWithoutImages.length})',
+                          ),
                         ),
                         ButtonSegment(
                           value: 'images',
@@ -189,9 +196,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
             ],
           ),
         ),
-        Expanded(
-          child: _buildBody(isDark, l10n),
-        ),
+        Expanded(child: _buildBody(isDark, l10n)),
       ],
     );
   }
@@ -212,8 +217,11 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
       ),
       child: Row(
         children: [
-          Icon(Icons.storage,
-              size: 20, color: Theme.of(context).colorScheme.onSurfaceVariant),
+          Icon(
+            Icons.storage,
+            size: 20,
+            color: Theme.of(context).colorScheme.onSurfaceVariant,
+          ),
           const SizedBox(width: AlhaiSpacing.xs),
           Expanded(
             child: Column(
@@ -233,8 +241,9 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                   child: LinearProgressIndicator(
                     value: usagePercent,
                     backgroundColor: Theme.of(context).dividerColor,
-                    color:
-                        usagePercent > 0.8 ? Colors.orange : AppColors.primary,
+                    color: usagePercent > 0.8
+                        ? Colors.orange
+                        : AppColors.primary,
                     minHeight: 4,
                   ),
                 ),
@@ -265,14 +274,18 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.error_outline,
-                size: 64, color: AppColors.error.withValues(alpha: 0.7)),
+            Icon(
+              Icons.error_outline,
+              size: 64,
+              color: AppColors.error.withValues(alpha: 0.7),
+            ),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
               _error!,
               style: TextStyle(
-                  fontSize: 16,
-                  color: Theme.of(context).colorScheme.onSurfaceVariant),
+                fontSize: 16,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: AlhaiSpacing.md),
@@ -334,8 +347,9 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
           // Image area
           Expanded(
             child: ClipRRect(
-              borderRadius:
-                  const BorderRadius.vertical(top: Radius.circular(12)),
+              borderRadius: const BorderRadius.vertical(
+                top: Radius.circular(12),
+              ),
               child: hasImage
                   ? Stack(
                       fit: StackFit.expand,
@@ -343,18 +357,19 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                         CachedNetworkImage(
                           imageUrl: product.imageThumbnail!,
                           fit: BoxFit.cover,
-                          placeholder: (_, __) => const Center(
-                            child: CircularProgressIndicator(),
-                          ),
+                          placeholder: (_, __) =>
+                              const Center(child: CircularProgressIndicator()),
                           errorWidget: (_, __, ___) => Container(
-                            color: Theme.of(context)
-                                .dividerColor
-                                .withValues(alpha: 0.3),
-                            child: Icon(Icons.broken_image,
-                                size: 40,
-                                color: isDark
-                                    ? Colors.white24
-                                    : AppColors.textTertiary),
+                            color: Theme.of(
+                              context,
+                            ).dividerColor.withValues(alpha: 0.3),
+                            child: Icon(
+                              Icons.broken_image,
+                              size: 40,
+                              color: isDark
+                                  ? Colors.white24
+                                  : AppColors.textTertiary,
+                            ),
                           ),
                         ),
                         PositionedDirectional(
@@ -363,19 +378,20 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                           child: Tooltip(
                             message: 'إدارة الصور — قريباً',
                             child: Material(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .onSurface
-                                  .withValues(alpha: 0.35),
+                              color: Theme.of(
+                                context,
+                              ).colorScheme.onSurface.withValues(alpha: 0.35),
                               borderRadius: BorderRadius.circular(16),
                               child: Padding(
                                 padding: const EdgeInsets.all(AlhaiSpacing.xxs),
-                                child: Icon(Icons.edit,
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onInverseSurface
-                                        .withValues(alpha: 0.6),
-                                    size: 18),
+                                child: Icon(
+                                  Icons.edit,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onInverseSurface
+                                      .withValues(alpha: 0.6),
+                                  size: 18,
+                                ),
                               ),
                             ),
                           ),
@@ -389,19 +405,22 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          Icon(Icons.add_photo_alternate_outlined,
-                              size: 36,
-                              color: isDark
-                                  ? Colors.white24
-                                  : AppColors.textTertiary),
+                          Icon(
+                            Icons.add_photo_alternate_outlined,
+                            size: 36,
+                            color: isDark
+                                ? Colors.white24
+                                : AppColors.textTertiary,
+                          ),
                           const SizedBox(height: AlhaiSpacing.xxs),
                           Text(
                             'رفع الصور — قريباً',
                             style: TextStyle(
-                                fontSize: 11,
-                                color: isDark
-                                    ? Colors.white38
-                                    : AppColors.textTertiary),
+                              fontSize: 11,
+                              color: isDark
+                                  ? Colors.white38
+                                  : AppColors.textTertiary,
+                            ),
                           ),
                         ],
                       ),
@@ -428,9 +447,10 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                 Text(
                   product.price.toStringAsFixed(2),
                   style: const TextStyle(
-                      fontSize: 11,
-                      color: AppColors.primary,
-                      fontWeight: FontWeight.w500),
+                    fontSize: 11,
+                    color: AppColors.primary,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ],
             ),
@@ -441,7 +461,10 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
   }
 
   void _showUploadDialog(
-      BuildContext context, bool isDark, AppLocalizations l10n) {
+    BuildContext context,
+    bool isDark,
+    AppLocalizations l10n,
+  ) {
     final displayProducts = _productsWithoutImages;
     showDialog(
       context: context,
@@ -465,19 +488,26 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.check_circle_outline,
-                          size: 48, color: Colors.green.shade300),
+                      Icon(
+                        Icons.check_circle_outline,
+                        size: 48,
+                        color: Colors.green.shade300,
+                      ),
                       const SizedBox(height: AlhaiSpacing.sm),
-                      const Text('All products have images',
-                          style: TextStyle(fontWeight: FontWeight.w500)),
+                      const Text(
+                        'All products have images',
+                        style: TextStyle(fontWeight: FontWeight.w500),
+                      ),
                     ],
                   ),
                 )
               : Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('رفع الصور — قريباً',
-                        style: TextStyle(fontWeight: FontWeight.w500)),
+                    const Text(
+                      'رفع الصور — قريباً',
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                    ),
                     const SizedBox(height: AlhaiSpacing.xs),
                     Expanded(
                       child: ListView.builder(
@@ -489,9 +519,10 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                             leading: const Icon(Icons.inventory_2_outlined),
                             title: Text(product.name),
                             subtitle: Text(product.price.toStringAsFixed(2)),
-                            trailing: Icon(Icons.add_photo_alternate,
-                                color:
-                                    AppColors.primary.withValues(alpha: 0.4)),
+                            trailing: Icon(
+                              Icons.add_photo_alternate,
+                              color: AppColors.primary.withValues(alpha: 0.4),
+                            ),
                             onTap: null,
                           );
                         },
@@ -502,7 +533,9 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
         ),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Cancel'),
+          ),
         ],
       ),
     );

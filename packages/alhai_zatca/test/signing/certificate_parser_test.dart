@@ -111,20 +111,15 @@ void main() {
       });
 
       test('throws on empty string', () {
-        expect(
-          () => parser.parseCertificate(''),
-          throwsA(isA<Object>()),
-        );
+        expect(() => parser.parseCertificate(''), throwsA(isA<Object>()));
       });
 
       test('throws on malformed base64 between PEM markers', () {
-        const badPem = '-----BEGIN CERTIFICATE-----\n'
+        const badPem =
+            '-----BEGIN CERTIFICATE-----\n'
             '!!!!!!not-valid-base64!!!!!\n'
             '-----END CERTIFICATE-----';
-        expect(
-          () => parser.parseCertificate(badPem),
-          throwsA(isA<Object>()),
-        );
+        expect(() => parser.parseCertificate(badPem), throwsA(isA<Object>()));
       });
     });
 
@@ -199,9 +194,14 @@ void main() {
         // First byte should not be the padding-bits count (0x00)
         // because extractSignatureBytes strips it
         expect(
-            sigBytes,
-            isNot(predicate<List<int>>((bytes) =>
-                bytes.isNotEmpty && bytes[0] == 0 && bytes.length == 65)));
+          sigBytes,
+          isNot(
+            predicate<List<int>>(
+              (bytes) =>
+                  bytes.isNotEmpty && bytes[0] == 0 && bytes.length == 65,
+            ),
+          ),
+        );
       });
 
       test('is deterministic for the same certificate', () {
@@ -247,7 +247,7 @@ void main() {
             ['2.5.4.6', 'SA'],
             [
               '2.5.4.97',
-              '300000000000003'
+              '300000000000003',
             ], // organizationIdentifier (ZATCA VAT)
             ['2.5.4.3', 'EGS-Unit'],
           ],
@@ -293,9 +293,11 @@ String _buildTestCertificatePem({
 
   // Version [0] EXPLICIT v3 (2)
   final versionBytes = ASN1Integer(BigInt.from(2)).encodedBytes;
-  final versionExplicitBytes = Uint8List.fromList(
-    [0xA0, versionBytes.length, ...versionBytes],
-  );
+  final versionExplicitBytes = Uint8List.fromList([
+    0xA0,
+    versionBytes.length,
+    ...versionBytes,
+  ]);
   final versionWrapper = ASN1Object.fromBytes(versionExplicitBytes);
   tbsCert.add(versionWrapper);
 

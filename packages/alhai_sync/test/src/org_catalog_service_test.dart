@@ -19,13 +19,15 @@ void main() {
 
   setUpAll(() {
     registerSyncFallbackValues();
-    registerFallbackValue(ProductsTableCompanion.insert(
-      id: '',
-      storeId: '',
-      name: '',
-      price: 0,
-      createdAt: DateTime(2026),
-    ));
+    registerFallbackValue(
+      ProductsTableCompanion.insert(
+        id: '',
+        storeId: '',
+        name: '',
+        price: 0,
+        createdAt: DateTime(2026),
+      ),
+    );
   });
 
   setUp(() {
@@ -85,8 +87,9 @@ void main() {
           ],
         );
 
-        when(() => mockProductsDao.upsertProduct(any()))
-            .thenAnswer((_) async => 1);
+        when(
+          () => mockProductsDao.upsertProduct(any()),
+        ).thenAnswer((_) async => 1);
 
         final count = await service.cloneOrgProductsToStore(
           orgId: 'org-1',
@@ -98,8 +101,9 @@ void main() {
       });
 
       test('returns 0 when no org products exist', () async {
-        when(() => mockOrgProductsDao.getByOrgId('org-1'))
-            .thenAnswer((_) async => []);
+        when(
+          () => mockOrgProductsDao.getByOrgId('org-1'),
+        ).thenAnswer((_) async => []);
 
         final count = await service.cloneOrgProductsToStore(
           orgId: 'org-1',
@@ -122,14 +126,15 @@ void main() {
 
       test('returns 0 on RPC failure', () async {
         final rpcBuilder = MockPostgrestFilterBuilderDynamic();
-        when(() => mockClient.rpc(any(), params: any(named: 'params')))
-            .thenAnswer((_) => rpcBuilder);
-        when(() =>
-                rpcBuilder.then<dynamic>(any(), onError: any(named: 'onError')))
-            .thenThrow(Exception('RPC failed'));
-        when(() =>
-                rpcBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')))
-            .thenThrow(Exception('RPC failed'));
+        when(
+          () => mockClient.rpc(any(), params: any(named: 'params')),
+        ).thenAnswer((_) => rpcBuilder);
+        when(
+          () => rpcBuilder.then<dynamic>(any(), onError: any(named: 'onError')),
+        ).thenThrow(Exception('RPC failed'));
+        when(
+          () => rpcBuilder.timeout(any(), onTimeout: any(named: 'onTimeout')),
+        ).thenThrow(Exception('RPC failed'));
 
         final count = await service.syncOrgProductToStores('op-1');
 
@@ -167,10 +172,7 @@ void main() {
       });
 
       test('returns stock minus reserved', () {
-        final product = makeProductData(
-          stockQty: 100,
-          onlineReservedQty: 20,
-        );
+        final product = makeProductData(stockQty: 100, onlineReservedQty: 20);
         expect(OrgCatalogService.getOnlineAvailableQty(product), 80.0);
       });
 
@@ -234,19 +236,17 @@ void main() {
       });
 
       test('falls back to org image when store has none', () {
-        final product = makeProductWithImages(
-          orgImageThumbnail: 'org-thumb',
-        );
+        final product = makeProductWithImages(orgImageThumbnail: 'org-thumb');
         final url = OrgCatalogService.getProductImageUrl(product);
         expect(url, 'org-thumb');
       });
 
       test('returns correct size', () {
-        final product = makeProductWithImages(
-          imageMedium: 'store-medium',
+        final product = makeProductWithImages(imageMedium: 'store-medium');
+        final url = OrgCatalogService.getProductImageUrl(
+          product,
+          size: 'medium',
         );
-        final url =
-            OrgCatalogService.getProductImageUrl(product, size: 'medium');
         expect(url, 'store-medium');
       });
 

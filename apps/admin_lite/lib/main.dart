@@ -22,13 +22,18 @@ import 'screens/onboarding_screen.dart';
 import 'core/services/sentry_service.dart';
 
 void main() {
-  runZonedGuarded(() async {
-    await initSentry(appRunner: () async {
-      await _appMain();
-    });
-  }, (error, stack) {
-    reportError(error, stackTrace: stack, hint: 'runZonedGuarded');
-  });
+  runZonedGuarded(
+    () async {
+      await initSentry(
+        appRunner: () async {
+          await _appMain();
+        },
+      );
+    },
+    (error, stack) {
+      reportError(error, stackTrace: stack, hint: 'runZonedGuarded');
+    },
+  );
 }
 
 Future<void> _appMain() async {
@@ -141,7 +146,8 @@ Future<String> _getOrCreateDbKey() async {
     const storage = FlutterSecureStorage(
       aOptions: AndroidOptions(encryptedSharedPreferences: true),
       iOptions: IOSOptions(
-          accessibility: KeychainAccessibility.first_unlock_this_device),
+        accessibility: KeychainAccessibility.first_unlock_this_device,
+      ),
     );
     var key = await storage.read(key: keyName);
     if (key == null) {

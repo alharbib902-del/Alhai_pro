@@ -34,10 +34,7 @@ void main() {
     group('defaults', () {
       test('should use defaults for missing keys', () {
         configService.setDefaults({'defaultKey': 'defaultValue'});
-        expect(
-          configService.get<String>('defaultKey'),
-          equals('defaultValue'),
-        );
+        expect(configService.get<String>('defaultKey'), equals('defaultValue'));
       });
 
       test('explicit value should override default', () {
@@ -169,8 +166,10 @@ void main() {
         expect(ConfigKeys.sound, equals('config.sound'));
         expect(ConfigKeys.vibration, equals('config.vibration'));
         expect(ConfigKeys.autoPrint, equals('config.auto_print'));
-        expect(ConfigKeys.autoOpenCashDrawer,
-            equals('config.auto_open_cash_drawer'));
+        expect(
+          ConfigKeys.autoOpenCashDrawer,
+          equals('config.auto_open_cash_drawer'),
+        );
         expect(ConfigKeys.fontSize, equals('config.font_size'));
         expect(ConfigKeys.screenTimeout, equals('config.screen_timeout'));
         expect(ConfigKeys.lastStoreId, equals('config.last_store_id'));

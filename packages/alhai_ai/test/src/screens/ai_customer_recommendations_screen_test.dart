@@ -24,8 +24,10 @@ void _setLargeViewport(WidgetTester tester) {
   tester.view.devicePixelRatio = 1.0;
 }
 
-Widget _buildTestableWidget(Widget child,
-    {List<Override> overrides = const []}) {
+Widget _buildTestableWidget(
+  Widget child, {
+  List<Override> overrides = const [],
+}) {
   return ProviderScope(
     overrides: [
       currentStoreIdProvider.overrideWith((ref) => 'test-store'),
@@ -93,17 +95,19 @@ void main() {
       expect(find.byType(AiCustomerRecommendationsScreen), findsOneWidget);
     });
 
-    testWidgets('has three tabs for recommendations, repurchase, and segments',
-        (tester) async {
-      _setLargeViewport(tester);
-      await tester.pumpWidget(
-        _buildTestableWidget(const AiCustomerRecommendationsScreen()),
-      );
-      await tester.pump(const Duration(seconds: 3));
+    testWidgets(
+      'has three tabs for recommendations, repurchase, and segments',
+      (tester) async {
+        _setLargeViewport(tester);
+        await tester.pumpWidget(
+          _buildTestableWidget(const AiCustomerRecommendationsScreen()),
+        );
+        await tester.pump(const Duration(seconds: 3));
 
-      expect(find.byType(TabBar), findsOneWidget);
-      expect(find.byType(Tab), findsNWidgets(3));
-    });
+        expect(find.byType(TabBar), findsOneWidget);
+        expect(find.byType(Tab), findsNWidgets(3));
+      },
+    );
 
     testWidgets('shows filter chips for customer segments', (tester) async {
       _setLargeViewport(tester);

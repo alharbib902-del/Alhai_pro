@@ -161,20 +161,22 @@ void main() {
         expect(actualPoint[0], 0x04);
       });
 
-      test('CSR is signed (signature bit string is present and non-empty)',
-          () async {
-        final result = await generateTestCsr();
-        final csrInfo = _parseCsrInfo(result['csr']!);
+      test(
+        'CSR is signed (signature bit string is present and non-empty)',
+        () async {
+          final result = await generateTestCsr();
+          final csrInfo = _parseCsrInfo(result['csr']!);
 
-        expect(csrInfo.signatureBytes, isNotEmpty);
-        // Source code wraps the signature with an extra 0x00 padding-bits
-        // byte, so strip it if present.
-        final sig = csrInfo.signatureBytes[0] == 0x00
-            ? csrInfo.signatureBytes.sublist(1)
-            : csrInfo.signatureBytes;
-        // ECDSA signature is a DER SEQUENCE (0x30)
-        expect(sig[0], 0x30);
-      });
+          expect(csrInfo.signatureBytes, isNotEmpty);
+          // Source code wraps the signature with an extra 0x00 padding-bits
+          // byte, so strip it if present.
+          final sig = csrInfo.signatureBytes[0] == 0x00
+              ? csrInfo.signatureBytes.sublist(1)
+              : csrInfo.signatureBytes;
+          // ECDSA signature is a DER SEQUENCE (0x30)
+          expect(sig[0], 0x30);
+        },
+      );
 
       test('CSR includes ZATCA certificate template extension', () async {
         final result = await generateTestCsr();
@@ -187,52 +189,58 @@ void main() {
         expect(decoded, contains('ZATCA-Code-Signing'));
       });
 
-      test('CSR includes Subject Alternative Name extension OID (2.5.29.17)',
-          () async {
-        final result = await generateTestCsr();
-        final der = base64Decode(_stripPem(result['csr']!));
+      test(
+        'CSR includes Subject Alternative Name extension OID (2.5.29.17)',
+        () async {
+          final result = await generateTestCsr();
+          final der = base64Decode(_stripPem(result['csr']!));
 
-        // The SAN OID (2.5.29.17) encoded in DER is 06 03 55 1D 11
-        final sanOidBytes = [0x06, 0x03, 0x55, 0x1D, 0x11];
-        expect(
-          _containsSequence(der, sanOidBytes),
-          isTrue,
-          reason: 'SAN OID should be present in CSR extensions',
-        );
-      });
+          // The SAN OID (2.5.29.17) encoded in DER is 06 03 55 1D 11
+          final sanOidBytes = [0x06, 0x03, 0x55, 0x1D, 0x11];
+          expect(
+            _containsSequence(der, sanOidBytes),
+            isTrue,
+            reason: 'SAN OID should be present in CSR extensions',
+          );
+        },
+      );
 
-      test('CSR embeds invoice type, branch location, and industry category',
-          () async {
-        const invoiceType = '1000';
-        const branchLoc = 'Jeddah-Bldg-Z';
-        const industry = 'Grocery';
-        final result = await generateTestCsr(
-          invoiceType: invoiceType,
-          branchLocation: branchLoc,
-          industryBusinessCategory: industry,
-        );
-        final der = base64Decode(_stripPem(result['csr']!));
-        final decoded = String.fromCharCodes(der);
+      test(
+        'CSR embeds invoice type, branch location, and industry category',
+        () async {
+          const invoiceType = '1000';
+          const branchLoc = 'Jeddah-Bldg-Z';
+          const industry = 'Grocery';
+          final result = await generateTestCsr(
+            invoiceType: invoiceType,
+            branchLocation: branchLoc,
+            industryBusinessCategory: industry,
+          );
+          final der = base64Decode(_stripPem(result['csr']!));
+          final decoded = String.fromCharCodes(der);
 
-        expect(decoded, contains(invoiceType));
-        expect(decoded, contains(branchLoc));
-        expect(decoded, contains(industry));
-      });
+          expect(decoded, contains(invoiceType));
+          expect(decoded, contains(branchLoc));
+          expect(decoded, contains(industry));
+        },
+      );
 
-      test('generated private key is usable (parseable DER structure)',
-          () async {
-        final result = await generateTestCsr();
-        final der = base64Decode(_stripPem(result['privateKey']!));
+      test(
+        'generated private key is usable (parseable DER structure)',
+        () async {
+          final result = await generateTestCsr();
+          final der = base64Decode(_stripPem(result['privateKey']!));
 
-        // PKCS#8 PrivateKeyInfo is a SEQUENCE starting with 0x30
-        expect(der[0], 0x30);
-        // Should be at least 32 bytes for the raw EC scalar
-        expect(der.length, greaterThanOrEqualTo(32));
+          // PKCS#8 PrivateKeyInfo is a SEQUENCE starting with 0x30
+          expect(der[0], 0x30);
+          // Should be at least 32 bytes for the raw EC scalar
+          expect(der.length, greaterThanOrEqualTo(32));
 
-        // Verify we can parse it back as ASN.1
-        final parsed = ASN1Parser(Uint8List.fromList(der)).nextObject();
-        expect(parsed, isA<ASN1Sequence>());
-      });
+          // Verify we can parse it back as ASN.1
+          final parsed = ASN1Parser(Uint8List.fromList(der)).nextObject();
+          expect(parsed, isA<ASN1Sequence>());
+        },
+      );
     });
   });
 }
@@ -329,8 +337,9 @@ String _dnToString(ASN1Sequence dn) {
         if (atv is ASN1Sequence && atv.elements.length >= 2) {
           final oid = atv.elements[0];
           final value = atv.elements[1];
-          final oidStr =
-              oid is ASN1ObjectIdentifier ? (oid.identifier ?? '') : '';
+          final oidStr = oid is ASN1ObjectIdentifier
+              ? (oid.identifier ?? '')
+              : '';
           String valueStr = '';
           if (value is ASN1UTF8String) {
             valueStr = value.utf8StringValue;

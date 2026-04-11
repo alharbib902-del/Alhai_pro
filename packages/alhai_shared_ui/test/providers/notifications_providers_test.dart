@@ -49,9 +49,9 @@ void main() {
 
   group('dbNotificationsListProvider', () {
     test('returns empty list when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(dbNotificationsListProvider.future);
@@ -59,12 +59,13 @@ void main() {
     });
 
     test('returns notifications from dao', () async {
-      when(() => mockNotificationsDao.getAllNotifications('store-1'))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockNotificationsDao.getAllNotifications('store-1'),
+      ).thenAnswer((_) async => []);
 
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(dbNotificationsListProvider.future);
@@ -74,9 +75,9 @@ void main() {
 
   group('dbUnreadNotificationsProvider', () {
     test('returns empty list when no store id', () async {
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => null),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => null)],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(dbUnreadNotificationsProvider.future);
@@ -86,12 +87,13 @@ void main() {
 
   group('dbUnreadCountProvider', () {
     test('returns 0 when no notifications', () async {
-      when(() => mockNotificationsDao.getUnreadNotifications('store-1'))
-          .thenAnswer((_) async => []);
+      when(
+        () => mockNotificationsDao.getUnreadNotifications('store-1'),
+      ).thenAnswer((_) async => []);
 
-      final container = ProviderContainer(overrides: [
-        currentStoreIdProvider.overrideWith((ref) => 'store-1'),
-      ]);
+      final container = ProviderContainer(
+        overrides: [currentStoreIdProvider.overrideWith((ref) => 'store-1')],
+      );
       addTearDown(container.dispose);
 
       final result = await container.read(dbUnreadCountProvider.future);

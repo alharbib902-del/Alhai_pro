@@ -7,16 +7,18 @@ class FakeProductsRepoForSearch implements ProductsRepository {
   void seed(List<Product> products) => _products.addAll(products);
 
   @override
-  Future<Paginated<Product>> getProducts(String storeId,
-          {int page = 1,
-          int limit = 20,
-          String? categoryId,
-          String? searchQuery}) async =>
-      Paginated(
-          items: _products.take(limit).toList(),
-          total: _products.length,
-          page: page,
-          limit: limit);
+  Future<Paginated<Product>> getProducts(
+    String storeId, {
+    int page = 1,
+    int limit = 20,
+    String? categoryId,
+    String? searchQuery,
+  }) async => Paginated(
+    items: _products.take(limit).toList(),
+    total: _products.length,
+    page: page,
+    limit: limit,
+  );
   @override
   Future<Product> getProduct(String id) async => throw UnimplementedError();
   @override
@@ -37,9 +39,11 @@ class FakeProductsRepoForSearch implements ProductsRepository {
 
 class FakeOrdersRepoForSearch implements OrdersRepository {
   @override
-  Future<Paginated<Order>> getOrders(
-          {OrderStatus? status, int page = 1, int limit = 20}) async =>
-      Paginated(items: [], total: 0, page: page, limit: limit);
+  Future<Paginated<Order>> getOrders({
+    OrderStatus? status,
+    int page = 1,
+    int limit = 20,
+  }) async => Paginated(items: [], total: 0, page: page, limit: limit);
   @override
   Future<Order> getOrder(String id) async => throw UnimplementedError();
   @override
@@ -54,12 +58,13 @@ class FakeOrdersRepoForSearch implements OrdersRepository {
 
 class FakeDebtsRepoForSearch implements DebtsRepository {
   @override
-  Future<Paginated<Debt>> getDebts(String storeId,
-          {DebtType? type,
-          bool? overdueOnly,
-          int page = 1,
-          int limit = 20}) async =>
-      Paginated(items: [], total: 0, page: page, limit: limit);
+  Future<Paginated<Debt>> getDebts(
+    String storeId, {
+    DebtType? type,
+    bool? overdueOnly,
+    int page = 1,
+    int limit = 20,
+  }) async => Paginated(items: [], total: 0, page: page, limit: limit);
   @override
   Future<Debt> getDebt(String id) async => throw UnimplementedError();
   @override
@@ -84,7 +89,10 @@ void main() {
   setUp(() {
     fakeProductsRepo = FakeProductsRepoForSearch();
     searchService = SearchService(
-        fakeProductsRepo, FakeOrdersRepoForSearch(), FakeDebtsRepoForSearch());
+      fakeProductsRepo,
+      FakeOrdersRepoForSearch(),
+      FakeDebtsRepoForSearch(),
+    );
   });
 
   group('SearchService', () {
@@ -100,16 +108,19 @@ void main() {
     test('searchProducts should find by name', () async {
       fakeProductsRepo.seed([
         Product(
-            id: 'p1',
-            storeId: 's1',
-            name: 'Coffee Arabica',
-            price: 15.0,
-            stockQty: 100,
-            isActive: true,
-            createdAt: DateTime.now()),
+          id: 'p1',
+          storeId: 's1',
+          name: 'Coffee Arabica',
+          price: 15.0,
+          stockQty: 100,
+          isActive: true,
+          createdAt: DateTime.now(),
+        ),
       ]);
-      final results =
-          await searchService.searchProducts('Coffee', storeId: 's1');
+      final results = await searchService.searchProducts(
+        'Coffee',
+        storeId: 's1',
+      );
       expect(results, hasLength(1));
     });
 
@@ -135,8 +146,10 @@ void main() {
     });
 
     test('getSuggestions should return empty for short query', () async {
-      final suggestions =
-          await searchService.getSuggestions('A', storeId: 's1');
+      final suggestions = await searchService.getSuggestions(
+        'A',
+        storeId: 's1',
+      );
       expect(suggestions, isEmpty);
     });
 

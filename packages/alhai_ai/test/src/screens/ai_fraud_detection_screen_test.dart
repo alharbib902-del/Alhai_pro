@@ -24,8 +24,10 @@ void _setLargeViewport(WidgetTester tester) {
   tester.view.devicePixelRatio = 1.0;
 }
 
-Widget _buildTestableWidget(Widget child,
-    {List<Override> overrides = const []}) {
+Widget _buildTestableWidget(
+  Widget child, {
+  List<Override> overrides = const [],
+}) {
   return ProviderScope(
     overrides: [
       currentStoreIdProvider.overrideWith((ref) => 'test-store'),

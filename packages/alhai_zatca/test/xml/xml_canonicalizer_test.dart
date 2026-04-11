@@ -108,16 +108,18 @@ void main() {
         expect(result, contains('&lt;value'));
       });
 
-      test('produces deterministic output for equivalent attribute orderings',
-          () {
-        // Two equivalent XML docs with different attribute orderings should
-        // produce the same canonical form (attributes sorted).
-        const xml1 = '<root b="2" a="1" c="3"></root>';
-        const xml2 = '<root c="3" a="1" b="2"></root>';
-        final result1 = canonicalizer.canonicalize(xml1);
-        final result2 = canonicalizer.canonicalize(xml2);
-        expect(result1, result2);
-      });
+      test(
+        'produces deterministic output for equivalent attribute orderings',
+        () {
+          // Two equivalent XML docs with different attribute orderings should
+          // produce the same canonical form (attributes sorted).
+          const xml1 = '<root b="2" a="1" c="3"></root>';
+          const xml2 = '<root c="3" a="1" b="2"></root>';
+          final result1 = canonicalizer.canonicalize(xml1);
+          final result2 = canonicalizer.canonicalize(xml2);
+          expect(result1, result2);
+        },
+      );
     });
 
     // ── canonicalize - text content ──────────────────────
@@ -153,14 +155,15 @@ void main() {
       });
 
       test(
-          'equivalent XML with different self-closing styles produce same output',
-          () {
-        const xml1 = '<root><empty/></root>';
-        const xml2 = '<root><empty></empty></root>';
-        final result1 = canonicalizer.canonicalize(xml1);
-        final result2 = canonicalizer.canonicalize(xml2);
-        expect(result1, result2);
-      });
+        'equivalent XML with different self-closing styles produce same output',
+        () {
+          const xml1 = '<root><empty/></root>';
+          const xml2 = '<root><empty></empty></root>';
+          final result1 = canonicalizer.canonicalize(xml1);
+          final result2 = canonicalizer.canonicalize(xml2);
+          expect(result1, result2);
+        },
+      );
     });
 
     // ── canonicalizeElement ──────────────────────────────

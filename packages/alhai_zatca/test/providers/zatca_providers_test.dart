@@ -142,10 +142,7 @@ void main() {
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      expect(
-        container.read(certificateRenewalServiceProvider),
-        mockService,
-      );
+      expect(container.read(certificateRenewalServiceProvider), mockService);
     });
   });
 
@@ -228,34 +225,40 @@ void main() {
   group('certificateStatusProvider (family)', () {
     test('passes storeId parameter to renewal service', () async {
       final mockRenewal = MockCertificateRenewalService();
-      when(() => mockRenewal.getStatus(storeId: any(named: 'storeId')))
-          .thenAnswer((_) async => CertificateStatus.valid);
+      when(
+        () => mockRenewal.getStatus(storeId: any(named: 'storeId')),
+      ).thenAnswer((_) async => CertificateStatus.valid);
       GetIt.instance.registerSingleton<CertificateRenewalService>(mockRenewal);
 
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      final status =
-          await container.read(certificateStatusProvider('store-abc').future);
+      final status = await container.read(
+        certificateStatusProvider('store-abc').future,
+      );
       expect(status, equals(CertificateStatus.valid));
       verify(() => mockRenewal.getStatus(storeId: 'store-abc')).called(1);
     });
 
     test('different storeIds produce independent results', () async {
       final mockRenewal = MockCertificateRenewalService();
-      when(() => mockRenewal.getStatus(storeId: 'store-a'))
-          .thenAnswer((_) async => CertificateStatus.valid);
-      when(() => mockRenewal.getStatus(storeId: 'store-b'))
-          .thenAnswer((_) async => CertificateStatus.expired);
+      when(
+        () => mockRenewal.getStatus(storeId: 'store-a'),
+      ).thenAnswer((_) async => CertificateStatus.valid);
+      when(
+        () => mockRenewal.getStatus(storeId: 'store-b'),
+      ).thenAnswer((_) async => CertificateStatus.expired);
       GetIt.instance.registerSingleton<CertificateRenewalService>(mockRenewal);
 
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      final a =
-          await container.read(certificateStatusProvider('store-a').future);
-      final b =
-          await container.read(certificateStatusProvider('store-b').future);
+      final a = await container.read(
+        certificateStatusProvider('store-a').future,
+      );
+      final b = await container.read(
+        certificateStatusProvider('store-b').future,
+      );
 
       expect(a, equals(CertificateStatus.valid));
       expect(b, equals(CertificateStatus.expired));
@@ -265,19 +268,23 @@ void main() {
   group('hasValidCertificateProvider (family)', () {
     test('delegates to CsidOnboardingService with storeId', () async {
       final mockOnboarding = MockCsidOnboardingService();
-      when(() => mockOnboarding.hasValidProductionCertificate(
-          storeId: any(named: 'storeId'))).thenAnswer((_) async => true);
+      when(
+        () => mockOnboarding.hasValidProductionCertificate(
+          storeId: any(named: 'storeId'),
+        ),
+      ).thenAnswer((_) async => true);
       GetIt.instance.registerSingleton<CsidOnboardingService>(mockOnboarding);
 
       final container = ProviderContainer();
       addTearDown(container.dispose);
 
-      final hasValid =
-          await container.read(hasValidCertificateProvider('main').future);
+      final hasValid = await container.read(
+        hasValidCertificateProvider('main').future,
+      );
       expect(hasValid, isTrue);
-      verify(() =>
-              mockOnboarding.hasValidProductionCertificate(storeId: 'main'))
-          .called(1);
+      verify(
+        () => mockOnboarding.hasValidProductionCertificate(storeId: 'main'),
+      ).called(1);
     });
   });
 
@@ -370,16 +377,26 @@ void main() {
         }
       });
 
-      expect(container.read(zatcaInvoiceServiceProvider),
-          isA<ZatcaInvoiceService>());
       expect(
-          container.read(zatcaOfflineQueueProvider), isA<ZatcaOfflineQueue>());
-      expect(container.read(zatcaComplianceCheckerProvider),
-          isA<ZatcaComplianceChecker>());
-      expect(container.read(certificateStorageProvider),
-          isA<CertificateStorage>());
-      expect(container.read(invoiceChainServiceProvider),
-          isA<InvoiceChainService>());
+        container.read(zatcaInvoiceServiceProvider),
+        isA<ZatcaInvoiceService>(),
+      );
+      expect(
+        container.read(zatcaOfflineQueueProvider),
+        isA<ZatcaOfflineQueue>(),
+      );
+      expect(
+        container.read(zatcaComplianceCheckerProvider),
+        isA<ZatcaComplianceChecker>(),
+      );
+      expect(
+        container.read(certificateStorageProvider),
+        isA<CertificateStorage>(),
+      );
+      expect(
+        container.read(invoiceChainServiceProvider),
+        isA<InvoiceChainService>(),
+      );
     });
 
     test('ProviderContainer dispose works cleanly with module', () {

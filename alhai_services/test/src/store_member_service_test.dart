@@ -4,37 +4,42 @@ import 'package:alhai_services/alhai_services.dart';
 
 class FakeStoreMembersRepo implements StoreMembersRepository {
   @override
-  Future<Paginated<StoreMember>> getStoreMembers(String storeId,
-          {int page = 1, int limit = 20, bool? activeOnly}) async =>
-      Paginated(items: [], total: 0, page: page, limit: limit);
+  Future<Paginated<StoreMember>> getStoreMembers(
+    String storeId, {
+    int page = 1,
+    int limit = 20,
+    bool? activeOnly,
+  }) async => Paginated(items: [], total: 0, page: page, limit: limit);
   @override
   Future<StoreMember> getMember(String id) async => throw UnimplementedError();
   @override
   Future<StoreMember?> getMemberByUserId(String userId, String storeId) async =>
       null;
   @override
-  Future<StoreMember> addMember(
-          {required String storeId,
-          required String userId,
-          required UserRole role,
-          String? nickname,
-          List<String>? permissions}) async =>
-      StoreMember(
-          id: 'm-1',
-          storeId: storeId,
-          userId: userId,
-          role: role,
-          permissions: permissions ?? [],
-          isActive: true,
-          joinedAt: DateTime.now(),
-          nickname: nickname);
+  Future<StoreMember> addMember({
+    required String storeId,
+    required String userId,
+    required UserRole role,
+    String? nickname,
+    List<String>? permissions,
+  }) async => StoreMember(
+    id: 'm-1',
+    storeId: storeId,
+    userId: userId,
+    role: role,
+    permissions: permissions ?? [],
+    isActive: true,
+    joinedAt: DateTime.now(),
+    nickname: nickname,
+  );
   @override
   Future<StoreMember> updateRole(String memberId, UserRole role) async =>
       throw UnimplementedError();
   @override
   Future<StoreMember> updatePermissions(
-          String memberId, List<String> permissions) async =>
-      throw UnimplementedError();
+    String memberId,
+    List<String> permissions,
+  ) async => throw UnimplementedError();
   @override
   Future<void> deactivateMember(String memberId) async {}
   @override
@@ -44,8 +49,10 @@ class FakeStoreMembersRepo implements StoreMembersRepository {
   Future<void> removeMember(String memberId) async {}
   @override
   Future<bool> hasPermission(
-          String userId, String storeId, String permission) async =>
-      permission == 'create_order';
+    String userId,
+    String storeId,
+    String permission,
+  ) async => permission == 'create_order';
 }
 
 void main() {
@@ -78,22 +85,32 @@ void main() {
     });
 
     test('getMemberByUserId should return null for unknown', () async {
-      expect(await storeMemberService.getMemberByUserId('unknown', 'store-1'),
-          isNull);
+      expect(
+        await storeMemberService.getMemberByUserId('unknown', 'store-1'),
+        isNull,
+      );
     });
 
     test('hasPermission should return true for granted', () async {
       expect(
-          await storeMemberService.hasPermission(
-              'user-1', 'store-1', 'create_order'),
-          isTrue);
+        await storeMemberService.hasPermission(
+          'user-1',
+          'store-1',
+          'create_order',
+        ),
+        isTrue,
+      );
     });
 
     test('hasPermission should return false for denied', () async {
       expect(
-          await storeMemberService.hasPermission(
-              'user-1', 'store-1', 'manage_admins'),
-          isFalse);
+        await storeMemberService.hasPermission(
+          'user-1',
+          'store-1',
+          'manage_admins',
+        ),
+        isFalse,
+      );
     });
 
     test('deactivateMember should not throw', () async {

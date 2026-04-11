@@ -13,10 +13,7 @@ void main() {
         final mockClient = MockSupabaseClient();
         final mockDb = MockAppDatabase();
 
-        final listener = RealtimeListener(
-          client: mockClient,
-          db: mockDb,
-        );
+        final listener = RealtimeListener(client: mockClient, db: mockDb);
 
         expect(listener.isActive, isFalse);
 
@@ -29,10 +26,7 @@ void main() {
         final mockClient = MockSupabaseClient();
         final mockDb = MockAppDatabase();
 
-        final listener = RealtimeListener(
-          client: mockClient,
-          db: mockDb,
-        );
+        final listener = RealtimeListener(client: mockClient, db: mockDb);
 
         expect(listener.events.isBroadcast, isTrue);
 
@@ -45,10 +39,7 @@ void main() {
         final mockClient = MockSupabaseClient();
         final mockDb = MockAppDatabase();
 
-        final listener = RealtimeListener(
-          client: mockClient,
-          db: mockDb,
-        );
+        final listener = RealtimeListener(client: mockClient, db: mockDb);
 
         await listener.stop();
 
@@ -63,10 +54,7 @@ void main() {
         final mockClient = MockSupabaseClient();
         final mockDb = MockAppDatabase();
 
-        final listener = RealtimeListener(
-          client: mockClient,
-          db: mockDb,
-        );
+        final listener = RealtimeListener(client: mockClient, db: mockDb);
 
         await listener.dispose();
 
@@ -127,10 +115,13 @@ void main() {
       final after = DateTime.now().toUtc();
 
       expect(
-          event.timestamp.isAfter(before.subtract(const Duration(seconds: 1))),
-          isTrue);
-      expect(event.timestamp.isBefore(after.add(const Duration(seconds: 1))),
-          isTrue);
+        event.timestamp.isAfter(before.subtract(const Duration(seconds: 1))),
+        isTrue,
+      );
+      expect(
+        event.timestamp.isBefore(after.add(const Duration(seconds: 1))),
+        isTrue,
+      );
     });
   });
 

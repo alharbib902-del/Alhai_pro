@@ -93,78 +93,91 @@ void main() {
 
     group('needsRenewal', () {
       test('returns true when certificate is missing', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => null);
 
         final needs = await service.needsRenewal(storeId: storeId);
         expect(needs, isTrue);
       });
 
       test('returns true when certificate is expired', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => expiredCert);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => expiredCert);
 
         final needs = await service.needsRenewal(storeId: storeId);
         expect(needs, isTrue);
       });
 
       test('returns true when certificate is near expiry', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => nearExpiryCert);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => nearExpiryCert);
 
         final needs = await service.needsRenewal(storeId: storeId);
         expect(needs, isTrue);
       });
 
-      test('returns false when certificate is valid and not near expiry',
-          () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => validCert);
+      test(
+        'returns false when certificate is valid and not near expiry',
+        () async {
+          when(
+            () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+          ).thenAnswer((_) async => validCert);
 
-        final needs = await service.needsRenewal(storeId: storeId);
-        expect(needs, isFalse);
-      });
+          final needs = await service.needsRenewal(storeId: storeId);
+          expect(needs, isFalse);
+        },
+      );
     });
 
     // ── getStatus ────────────────────────────────────────
 
     group('getStatus', () {
       test('returns missing when no certificate exists', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => null);
 
         final status = await service.getStatus(storeId: storeId);
         expect(status, CertificateStatus.missing);
       });
 
       test('returns expired when certificate has expired', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => expiredCert);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => expiredCert);
 
         final status = await service.getStatus(storeId: storeId);
         expect(status, CertificateStatus.expired);
       });
 
-      test('returns nearExpiry when certificate is close to expiration',
-          () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => nearExpiryCert);
+      test(
+        'returns nearExpiry when certificate is close to expiration',
+        () async {
+          when(
+            () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+          ).thenAnswer((_) async => nearExpiryCert);
 
-        final status = await service.getStatus(storeId: storeId);
-        expect(status, CertificateStatus.nearExpiry);
-      });
+          final status = await service.getStatus(storeId: storeId);
+          expect(status, CertificateStatus.nearExpiry);
+        },
+      );
 
       test('returns valid when certificate is fresh', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => validCert);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => validCert);
 
         final status = await service.getStatus(storeId: storeId);
         expect(status, CertificateStatus.valid);
       });
 
       test('returns valid when certificate has no expiry date', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => noExpiryCert);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => noExpiryCert);
 
         final status = await service.getStatus(storeId: storeId);
         expect(status, CertificateStatus.valid);
@@ -175,8 +188,9 @@ void main() {
 
     group('getRenewalInfo', () {
       test('returns missing info when no certificate exists', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => null);
 
         final info = await service.getRenewalInfo(storeId: storeId);
         expect(info.status, CertificateStatus.missing);
@@ -185,8 +199,9 @@ void main() {
       });
 
       test('returns detailed info for valid cert', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => validCert);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => validCert);
 
         final info = await service.getRenewalInfo(storeId: storeId);
         expect(info.status, CertificateStatus.valid);
@@ -196,8 +211,9 @@ void main() {
       });
 
       test('flags requiresOtp for expired certificate', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => expiredCert);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => expiredCert);
 
         final info = await service.getRenewalInfo(storeId: storeId);
         expect(info.status, CertificateStatus.expired);
@@ -209,8 +225,9 @@ void main() {
 
     group('checkCertificate', () {
       test('reports missing status and needsAction when no cert', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => null);
 
         final result = await service.checkCertificate(storeId: storeId);
         expect(result.status, CertificateStatus.missing);
@@ -220,8 +237,9 @@ void main() {
       });
 
       test('reports expired status with renewal hint', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => expiredCert);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => expiredCert);
 
         final result = await service.checkCertificate(storeId: storeId);
         expect(result.status, CertificateStatus.expired);
@@ -231,8 +249,9 @@ void main() {
       });
 
       test('reports near expiry status with days remaining', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => nearExpiryCert);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => nearExpiryCert);
 
         final result = await service.checkCertificate(storeId: storeId);
         expect(result.status, CertificateStatus.nearExpiry);
@@ -242,8 +261,9 @@ void main() {
       });
 
       test('reports valid status as healthy', () async {
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => validCert);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => validCert);
 
         final result = await service.checkCertificate(storeId: storeId);
         expect(result.status, CertificateStatus.valid);
@@ -257,17 +277,23 @@ void main() {
 
     group('renewCertificate', () {
       test('successful renewal triggers onRenewed callback', () async {
-        when(() => mockOnboardingService.requestComplianceCsid(
-              otp: any(named: 'otp'),
-              config: any(named: 'config'),
-            )).thenAnswer((_) async => validCert);
-        when(() => mockOnboardingService.requestProductionCsid(
-              complianceCertificate: any(named: 'complianceCertificate'),
-            )).thenAnswer((_) async => renewedCert);
-        when(() => mockStorage.saveCertificate(
-              storeId: any(named: 'storeId'),
-              certificate: any(named: 'certificate'),
-            )).thenAnswer((_) async {});
+        when(
+          () => mockOnboardingService.requestComplianceCsid(
+            otp: any(named: 'otp'),
+            config: any(named: 'config'),
+          ),
+        ).thenAnswer((_) async => validCert);
+        when(
+          () => mockOnboardingService.requestProductionCsid(
+            complianceCertificate: any(named: 'complianceCertificate'),
+          ),
+        ).thenAnswer((_) async => renewedCert);
+        when(
+          () => mockStorage.saveCertificate(
+            storeId: any(named: 'storeId'),
+            certificate: any(named: 'certificate'),
+          ),
+        ).thenAnswer((_) async {});
 
         String? capturedStoreId;
         CertificateInfo? capturedCert;
@@ -285,20 +311,26 @@ void main() {
         expect(result, renewedCert);
         expect(capturedStoreId, storeId);
         expect(capturedCert, renewedCert);
-        verify(() => mockStorage.saveCertificate(
-              storeId: storeId,
-              certificate: renewedCert,
-            )).called(1);
+        verify(
+          () => mockStorage.saveCertificate(
+            storeId: storeId,
+            certificate: renewedCert,
+          ),
+        ).called(1);
       });
 
       test('renewal failure propagates exception from onboarding', () async {
-        when(() => mockOnboardingService.requestComplianceCsid(
-              otp: any(named: 'otp'),
-              config: any(named: 'config'),
-            )).thenThrow(const OnboardingException(
-          step: OnboardingStep.complianceCsid,
-          message: 'Invalid OTP',
-        ));
+        when(
+          () => mockOnboardingService.requestComplianceCsid(
+            otp: any(named: 'otp'),
+            config: any(named: 'config'),
+          ),
+        ).thenThrow(
+          const OnboardingException(
+            step: OnboardingStep.complianceCsid,
+            message: 'Invalid OTP',
+          ),
+        );
 
         expect(
           () => service.renewCertificate(
@@ -311,10 +343,12 @@ void main() {
       });
 
       test('does not trigger onRenewed when renewal fails', () async {
-        when(() => mockOnboardingService.requestComplianceCsid(
-              otp: any(named: 'otp'),
-              config: any(named: 'config'),
-            )).thenThrow(Exception('Network error'));
+        when(
+          () => mockOnboardingService.requestComplianceCsid(
+            otp: any(named: 'otp'),
+            config: any(named: 'config'),
+          ),
+        ).thenThrow(Exception('Network error'));
 
         var renewedCalled = false;
         service.onRenewed = (_, __) => renewedCalled = true;
@@ -366,10 +400,12 @@ void main() {
 
     group('startMonitoring', () {
       test('invokes onExpired for expired certificates', () async {
-        when(() => mockStorage.listStoreIds())
-            .thenAnswer((_) async => [storeId]);
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => expiredCert);
+        when(
+          () => mockStorage.listStoreIds(),
+        ).thenAnswer((_) async => [storeId]);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => expiredCert);
 
         String? expiredStoreId;
         service.onExpired = (sid) => expiredStoreId = sid;
@@ -384,10 +420,12 @@ void main() {
       });
 
       test('invokes onNearExpiry with days remaining', () async {
-        when(() => mockStorage.listStoreIds())
-            .thenAnswer((_) async => [storeId]);
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => nearExpiryCert);
+        when(
+          () => mockStorage.listStoreIds(),
+        ).thenAnswer((_) async => [storeId]);
+        when(
+          () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+        ).thenAnswer((_) async => nearExpiryCert);
 
         String? nearExpiryStoreId;
         int? daysRemaining;
@@ -406,35 +444,42 @@ void main() {
         expect(daysRemaining, lessThan(30));
       });
 
-      test('skips temporary compliance certificates (prefixed with _)',
-          () async {
-        when(() => mockStorage.listStoreIds())
-            .thenAnswer((_) async => ['_compliance_temp']);
-        when(() => mockStorage.getCertificate(storeId: any(named: 'storeId')))
-            .thenAnswer((_) async => expiredCert);
+      test(
+        'skips temporary compliance certificates (prefixed with _)',
+        () async {
+          when(
+            () => mockStorage.listStoreIds(),
+          ).thenAnswer((_) async => ['_compliance_temp']);
+          when(
+            () => mockStorage.getCertificate(storeId: any(named: 'storeId')),
+          ).thenAnswer((_) async => expiredCert);
 
-        var onExpiredCalled = false;
-        service.onExpired = (_) => onExpiredCalled = true;
+          var onExpiredCalled = false;
+          service.onExpired = (_) => onExpiredCalled = true;
 
-        service.startMonitoring();
-        await Future<void>.delayed(Duration.zero);
-        await Future<void>.delayed(Duration.zero);
-        service.stopMonitoring();
-
-        expect(onExpiredCalled, isFalse);
-      });
-
-      test('does not throw when listStoreIds fails (silent monitoring)',
-          () async {
-        when(() => mockStorage.listStoreIds())
-            .thenThrow(Exception('Storage corrupted'));
-
-        // Should complete without throwing
-        expect(() {
           service.startMonitoring();
+          await Future<void>.delayed(Duration.zero);
+          await Future<void>.delayed(Duration.zero);
           service.stopMonitoring();
-        }, returnsNormally);
-      });
+
+          expect(onExpiredCalled, isFalse);
+        },
+      );
+
+      test(
+        'does not throw when listStoreIds fails (silent monitoring)',
+        () async {
+          when(
+            () => mockStorage.listStoreIds(),
+          ).thenThrow(Exception('Storage corrupted'));
+
+          // Should complete without throwing
+          expect(() {
+            service.startMonitoring();
+            service.stopMonitoring();
+          }, returnsNormally);
+        },
+      );
 
       test('stopMonitoring cancels the timer', () {
         when(() => mockStorage.listStoreIds()).thenAnswer((_) async => []);

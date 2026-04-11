@@ -38,8 +38,9 @@ void main() {
 
       // Arabic: "Track Order"
       expect(
-          find.text('\u062a\u062a\u0628\u0639 \u0627\u0644\u0637\u0644\u0628'),
-          findsOneWidget);
+        find.text('\u062a\u062a\u0628\u0639 \u0627\u0644\u0637\u0644\u0628'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('has back button in app bar', (tester) async {
@@ -54,11 +55,14 @@ void main() {
       await tester.pump();
 
       // Either shows a loading indicator or the waiting for driver state
-      final hasLoading =
-          find.byType(CircularProgressIndicator).evaluate().isNotEmpty;
+      final hasLoading = find
+          .byType(CircularProgressIndicator)
+          .evaluate()
+          .isNotEmpty;
       final hasWaiting = find
           .text(
-              '\u0641\u064a \u0627\u0646\u062a\u0638\u0627\u0631 \u062a\u0639\u064a\u064a\u0646 \u0633\u0627\u0626\u0642')
+            '\u0641\u064a \u0627\u0646\u062a\u0638\u0627\u0631 \u062a\u0639\u064a\u064a\u0646 \u0633\u0627\u0626\u0642',
+          )
           .evaluate()
           .isNotEmpty;
 

@@ -107,7 +107,15 @@ class AlhaiRadioGroup<T> extends StatelessWidget {
             ],
           );
 
-    return content;
+    return RadioGroup<T>(
+      groupValue: value,
+      onChanged: enabled && onChanged != null
+          ? (T? v) {
+              if (v != null) onChanged!(v);
+            }
+          : null,
+      child: content,
+    );
   }
 }
 
@@ -142,12 +150,7 @@ class _RadioOptionWidget<T> extends StatelessWidget {
 
     final radio = Radio<T>(
       value: option.value,
-      groupValue: groupValue,
-      onChanged: isDisabled
-          ? null
-          : (T? v) {
-              if (v != null) onTap?.call(v);
-            },
+      enabled: !isDisabled,
       activeColor: colorScheme.primary,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       visualDensity: VisualDensity.compact,

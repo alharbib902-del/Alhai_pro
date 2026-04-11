@@ -105,10 +105,16 @@ class _ShowcasePageState extends State<ShowcasePage> {
           ),
         ],
       ),
-      body: ResponsiveBuilder(
-        mobile: (context) => _buildContent(context, columns: 1),
-        tablet: (context) => _buildContent(context, columns: 2),
-        desktop: (context) => _buildContent(context, columns: 3),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+          final columns = AlhaiBreakpoints.isDesktop(width)
+              ? 3
+              : AlhaiBreakpoints.isTablet(width)
+                  ? 2
+                  : 1;
+          return _buildContent(context, columns: columns);
+        },
       ),
     );
   }

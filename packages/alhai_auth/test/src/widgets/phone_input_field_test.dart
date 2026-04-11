@@ -46,8 +46,9 @@ void main() {
     });
 
     testWidgets('renders with UAE country', (tester) async {
-      await tester
-          .pumpWidget(buildTestableWidget(initialCountry: CountryData.uae));
+      await tester.pumpWidget(
+        buildTestableWidget(initialCountry: CountryData.uae),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('+971'), findsOneWidget);
@@ -61,8 +62,9 @@ void main() {
     });
 
     testWidgets('shows error text when provided', (tester) async {
-      await tester
-          .pumpWidget(buildTestableWidget(errorText: 'Invalid phone number'));
+      await tester.pumpWidget(
+        buildTestableWidget(errorText: 'Invalid phone number'),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('Invalid phone number'), findsOneWidget);
@@ -85,9 +87,9 @@ void main() {
 
     testWidgets('calls onChanged when text changes', (tester) async {
       String? changedValue;
-      await tester.pumpWidget(buildTestableWidget(
-        onChanged: (value) => changedValue = value,
-      ));
+      await tester.pumpWidget(
+        buildTestableWidget(onChanged: (value) => changedValue = value),
+      );
       await tester.pumpAndSettle();
 
       final textField = find.byType(TextField);
@@ -176,27 +178,24 @@ void main() {
 
   group('WhatsAppOtpButton', () {
     testWidgets('renders with label', (tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: WhatsAppOtpButton(
-            onPressed: () {},
-          ),
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(body: WhatsAppOtpButton(onPressed: () {})),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(ElevatedButton), findsOneWidget);
     });
 
     testWidgets('shows loading spinner when isLoading', (tester) async {
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: WhatsAppOtpButton(
-            onPressed: () {},
-            isLoading: true,
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: WhatsAppOtpButton(onPressed: () {}, isLoading: true),
           ),
         ),
-      ));
+      );
       // Use pump() instead of pumpAndSettle() because
       // CircularProgressIndicator animates indefinitely.
       await tester.pump();
@@ -206,13 +205,13 @@ void main() {
 
     testWidgets('calls onPressed when tapped', (tester) async {
       bool pressed = false;
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: WhatsAppOtpButton(
-            onPressed: () => pressed = true,
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: WhatsAppOtpButton(onPressed: () => pressed = true),
           ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.byType(ElevatedButton));
@@ -221,14 +220,16 @@ void main() {
 
     testWidgets('disables when enabled is false', (tester) async {
       bool pressed = false;
-      await tester.pumpWidget(MaterialApp(
-        home: Scaffold(
-          body: WhatsAppOtpButton(
-            onPressed: () => pressed = true,
-            enabled: false,
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: WhatsAppOtpButton(
+              onPressed: () => pressed = true,
+              enabled: false,
+            ),
           ),
         ),
-      ));
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.byType(ElevatedButton));

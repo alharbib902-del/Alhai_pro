@@ -76,8 +76,10 @@ Widget _buildTestWidget({
         (ref) =>
             categoriesValue?.when(
               data: (d) => Future.value(d),
-              loading: () => Future.delayed(const Duration(days: 1),
-                  () => <ExpenseCategoriesTableData>[]),
+              loading: () => Future.delayed(
+                const Duration(days: 1),
+                () => <ExpenseCategoriesTableData>[],
+              ),
               error: (e, _) => Future.error(e),
             ) ??
             Future.value(<ExpenseCategoriesTableData>[]),
@@ -146,9 +148,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        expensesValue: const AsyncValue.data([]),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(expensesValue: const AsyncValue.data([])),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byIcon(Icons.receipt_long_rounded), findsWidgets);
@@ -163,9 +165,9 @@ void main() {
         _createTestExpense(id: 'e2', amount: 200, description: 'Water'),
       ];
 
-      await tester.pumpWidget(_buildTestWidget(
-        expensesValue: AsyncValue.data(expenses),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(expensesValue: AsyncValue.data(expenses)),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byType(ExpensesScreen), findsOneWidget);

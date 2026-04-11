@@ -63,12 +63,15 @@ void main() {
 
     group('getByOrgId', () {
       test('returns active products for org sorted by name', () async {
-        await db.orgProductsDao
-            .upsertOrgProduct(makeOrgProduct(id: 'op-b', name: 'Banana'));
-        await db.orgProductsDao
-            .upsertOrgProduct(makeOrgProduct(id: 'op-a', name: 'Apple'));
         await db.orgProductsDao.upsertOrgProduct(
-            makeOrgProduct(id: 'op-c', name: 'Cherry', isActive: false));
+          makeOrgProduct(id: 'op-b', name: 'Banana'),
+        );
+        await db.orgProductsDao.upsertOrgProduct(
+          makeOrgProduct(id: 'op-a', name: 'Apple'),
+        );
+        await db.orgProductsDao.upsertOrgProduct(
+          makeOrgProduct(id: 'op-c', name: 'Cherry', isActive: false),
+        );
 
         final products = await db.orgProductsDao.getByOrgId('org-1');
         expect(products, hasLength(2));
@@ -84,8 +87,9 @@ void main() {
 
     group('getBySku', () {
       test('finds product by SKU', () async {
-        await db.orgProductsDao
-            .upsertOrgProduct(makeOrgProduct(sku: 'SKU-001'));
+        await db.orgProductsDao.upsertOrgProduct(
+          makeOrgProduct(sku: 'SKU-001'),
+        );
 
         final product = await db.orgProductsDao.getBySku('org-1', 'SKU-001');
         expect(product, isNotNull);
@@ -93,8 +97,9 @@ void main() {
       });
 
       test('returns null for wrong org', () async {
-        await db.orgProductsDao
-            .upsertOrgProduct(makeOrgProduct(sku: 'SKU-001'));
+        await db.orgProductsDao.upsertOrgProduct(
+          makeOrgProduct(sku: 'SKU-001'),
+        );
 
         final product = await db.orgProductsDao.getBySku('org-2', 'SKU-001');
         expect(product, isNull);
@@ -103,11 +108,14 @@ void main() {
 
     group('getByBarcode', () {
       test('finds product by barcode', () async {
-        await db.orgProductsDao
-            .upsertOrgProduct(makeOrgProduct(barcode: '1234567890'));
+        await db.orgProductsDao.upsertOrgProduct(
+          makeOrgProduct(barcode: '1234567890'),
+        );
 
-        final product =
-            await db.orgProductsDao.getByBarcode('org-1', '1234567890');
+        final product = await db.orgProductsDao.getByBarcode(
+          'org-1',
+          '1234567890',
+        );
         expect(product, isNotNull);
         expect(product!.id, 'op-1');
       });
@@ -115,12 +123,15 @@ void main() {
 
     group('search', () {
       test('finds products by name', () async {
-        await db.orgProductsDao
-            .upsertOrgProduct(makeOrgProduct(id: 'op-1', name: 'Apple Juice'));
-        await db.orgProductsDao
-            .upsertOrgProduct(makeOrgProduct(id: 'op-2', name: 'Orange Juice'));
-        await db.orgProductsDao
-            .upsertOrgProduct(makeOrgProduct(id: 'op-3', name: 'Milk'));
+        await db.orgProductsDao.upsertOrgProduct(
+          makeOrgProduct(id: 'op-1', name: 'Apple Juice'),
+        );
+        await db.orgProductsDao.upsertOrgProduct(
+          makeOrgProduct(id: 'op-2', name: 'Orange Juice'),
+        );
+        await db.orgProductsDao.upsertOrgProduct(
+          makeOrgProduct(id: 'op-3', name: 'Milk'),
+        );
 
         final results = await db.orgProductsDao.search('org-1', 'Juice');
         expect(results, hasLength(2));
@@ -128,23 +139,20 @@ void main() {
 
       test('finds products by barcode', () async {
         await db.orgProductsDao.upsertOrgProduct(
-            makeOrgProduct(id: 'op-1', name: 'Product', barcode: 'ABC123'));
+          makeOrgProduct(id: 'op-1', name: 'Product', barcode: 'ABC123'),
+        );
 
         final results = await db.orgProductsDao.search('org-1', 'ABC');
         expect(results, hasLength(1));
       });
 
       test('excludes inactive products', () async {
-        await db.orgProductsDao.upsertOrgProduct(makeOrgProduct(
-          id: 'op-1',
-          name: 'Active Product',
-          isActive: true,
-        ));
-        await db.orgProductsDao.upsertOrgProduct(makeOrgProduct(
-          id: 'op-2',
-          name: 'Inactive Product',
-          isActive: false,
-        ));
+        await db.orgProductsDao.upsertOrgProduct(
+          makeOrgProduct(id: 'op-1', name: 'Active Product', isActive: true),
+        );
+        await db.orgProductsDao.upsertOrgProduct(
+          makeOrgProduct(id: 'op-2', name: 'Inactive Product', isActive: false),
+        );
 
         final results = await db.orgProductsDao.search('org-1', 'Product');
         expect(results, hasLength(1));
@@ -165,9 +173,11 @@ void main() {
         );
 
         await db.orgProductsDao.upsertOrgProduct(
-            makeOrgProduct(id: 'op-1', name: 'Cola', categoryId: 'cat-1'));
+          makeOrgProduct(id: 'op-1', name: 'Cola', categoryId: 'cat-1'),
+        );
         await db.orgProductsDao.upsertOrgProduct(
-            makeOrgProduct(id: 'op-2', name: 'Chips', categoryId: null));
+          makeOrgProduct(id: 'op-2', name: 'Chips', categoryId: null),
+        );
 
         final results = await db.orgProductsDao.getByCategory('org-1', 'cat-1');
         expect(results, hasLength(1));
@@ -178,12 +188,15 @@ void main() {
     group('getOnlineProducts', () {
       test('returns only online-available products', () async {
         await db.orgProductsDao.upsertOrgProduct(
-            makeOrgProduct(id: 'op-1', onlineAvailable: true));
-        await db.orgProductsDao.upsertOrgProduct(makeOrgProduct(
-          id: 'op-2',
-          name: 'Offline Only',
-          onlineAvailable: false,
-        ));
+          makeOrgProduct(id: 'op-1', onlineAvailable: true),
+        );
+        await db.orgProductsDao.upsertOrgProduct(
+          makeOrgProduct(
+            id: 'op-2',
+            name: 'Offline Only',
+            onlineAvailable: false,
+          ),
+        );
 
         final online = await db.orgProductsDao.getOnlineProducts('org-1');
         expect(online, hasLength(1));
@@ -200,12 +213,12 @@ void main() {
       });
 
       test('updates existing product on conflict', () async {
-        await db.orgProductsDao.upsertOrgProduct(makeOrgProduct(
-          defaultPrice: 10.0,
-        ));
-        await db.orgProductsDao.upsertOrgProduct(makeOrgProduct(
-          defaultPrice: 20.0,
-        ));
+        await db.orgProductsDao.upsertOrgProduct(
+          makeOrgProduct(defaultPrice: 10.0),
+        );
+        await db.orgProductsDao.upsertOrgProduct(
+          makeOrgProduct(defaultPrice: 20.0),
+        );
 
         final product = await db.orgProductsDao.getById('op-1');
         expect(product!.defaultPrice, 20.0);
@@ -269,12 +282,15 @@ void main() {
 
     group('getCount', () {
       test('returns count of active products for org', () async {
-        await db.orgProductsDao
-            .upsertOrgProduct(makeOrgProduct(id: 'op-1', isActive: true));
-        await db.orgProductsDao
-            .upsertOrgProduct(makeOrgProduct(id: 'op-2', isActive: true));
-        await db.orgProductsDao
-            .upsertOrgProduct(makeOrgProduct(id: 'op-3', isActive: false));
+        await db.orgProductsDao.upsertOrgProduct(
+          makeOrgProduct(id: 'op-1', isActive: true),
+        );
+        await db.orgProductsDao.upsertOrgProduct(
+          makeOrgProduct(id: 'op-2', isActive: true),
+        );
+        await db.orgProductsDao.upsertOrgProduct(
+          makeOrgProduct(id: 'op-3', isActive: false),
+        );
 
         final count = await db.orgProductsDao.getCount('org-1');
         expect(count, 2);

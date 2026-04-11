@@ -90,7 +90,8 @@ class AuditLogService {
       await reportError(
         e,
         stackTrace: st,
-        hint: 'audit_log insert failed action=$action '
+        hint:
+            'audit_log insert failed action=$action '
             'target=$targetType/$targetId',
       );
       // TODO(production): enqueue this entry in a local retry queue so

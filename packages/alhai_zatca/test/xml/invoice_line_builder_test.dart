@@ -229,27 +229,32 @@ void main() {
       expect(taxAmount.innerText, '0.00');
     });
 
-    test('exempt (E) line includes exemption reason in ClassifiedTaxCategory',
-        () {
-      const line = ZatcaInvoiceLine(
-        lineId: '1',
-        itemName: 'Exempt Service',
-        quantity: 1,
-        unitPrice: 100.0,
-        vatRate: 0.0,
-        vatCategoryCode: 'E',
-        vatExemptionReason: 'Financial services',
-        vatExemptionReasonCode: 'VATEX-SA-29',
-      );
+    test(
+      'exempt (E) line includes exemption reason in ClassifiedTaxCategory',
+      () {
+        const line = ZatcaInvoiceLine(
+          lineId: '1',
+          itemName: 'Exempt Service',
+          quantity: 1,
+          unitPrice: 100.0,
+          vatRate: 0.0,
+          vatCategoryCode: 'E',
+          vatExemptionReason: 'Financial services',
+          vatExemptionReasonCode: 'VATEX-SA-29',
+        );
 
-      final el = builder.buildLine(line, 'SAR');
-      final taxCategory = firstElement(el, 'ClassifiedTaxCategory');
-      final reasonEl = firstElement(taxCategory, 'TaxExemptionReason');
-      final reasonCodeEl = firstElement(taxCategory, 'TaxExemptionReasonCode');
+        final el = builder.buildLine(line, 'SAR');
+        final taxCategory = firstElement(el, 'ClassifiedTaxCategory');
+        final reasonEl = firstElement(taxCategory, 'TaxExemptionReason');
+        final reasonCodeEl = firstElement(
+          taxCategory,
+          'TaxExemptionReasonCode',
+        );
 
-      expect(reasonEl.innerText, 'Financial services');
-      expect(reasonCodeEl.innerText, 'VATEX-SA-29');
-    });
+        expect(reasonEl.innerText, 'Financial services');
+        expect(reasonCodeEl.innerText, 'VATEX-SA-29');
+      },
+    );
   });
 
   // ─── Discounts ───────────────────────────────────────────
@@ -562,19 +567,21 @@ void main() {
       final el = builder.buildLine(line, 'SAR');
 
       // All the required direct children per ZATCA/UBL spec
-      final directLocalNames =
-          el.childElements.map((e) => e.name.local).toList();
+      final directLocalNames = el.childElements
+          .map((e) => e.name.local)
+          .toList();
 
       expect(
-          directLocalNames,
-          containsAll(<String>[
-            'ID',
-            'InvoicedQuantity',
-            'LineExtensionAmount',
-            'TaxTotal',
-            'Item',
-            'Price',
-          ]));
+        directLocalNames,
+        containsAll(<String>[
+          'ID',
+          'InvoicedQuantity',
+          'LineExtensionAmount',
+          'TaxTotal',
+          'Item',
+          'Price',
+        ]),
+      );
     });
 
     test('uses cac: namespace prefix for InvoiceLine root', () {

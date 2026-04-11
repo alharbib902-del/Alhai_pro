@@ -33,9 +33,7 @@ class MockReturnsDao extends Mock implements ReturnsDao {}
 // Helpers
 // ---------------------------------------------------------------------------
 
-Widget _buildTestWidget({
-  List<Override> overrides = const [],
-}) {
+Widget _buildTestWidget({List<Override> overrides = const []}) {
   final mockSyncManager = MockSyncManager();
 
   return ProviderScope(

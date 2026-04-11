@@ -12,11 +12,7 @@ import 'package:super_admin/data/models/sa_store_model.dart';
 void main() {
   Widget buildTestWidget() {
     return ProviderScope(
-      overrides: [
-        saStoresListProvider.overrideWith(
-          (_) async => <SAStore>[],
-        ),
-      ],
+      overrides: [saStoresListProvider.overrideWith((_) async => <SAStore>[])],
       child: MaterialApp(
         title: 'Test',
         theme: AlhaiTheme.dark,

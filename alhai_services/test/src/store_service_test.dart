@@ -35,8 +35,9 @@ class FakeStoresRepository implements StoresRepository {
   @override
   Future<Store> updateStore(String id, UpdateStoreParams params) async {
     final idx = _stores.indexWhere((s) => s.id == id);
-    _stores[idx] =
-        _stores[idx].copyWith(name: params.name ?? _stores[idx].name);
+    _stores[idx] = _stores[idx].copyWith(
+      name: params.name ?? _stores[idx].name,
+    );
     return _stores[idx];
   }
 
@@ -88,16 +89,18 @@ void main() {
       });
 
       test('should return current store when set', () async {
-        fakeRepo.setCurrentStore(Store(
-          id: 'store-1',
-          name: 'Current Store',
-          address: 'Riyadh',
-          lat: 24.7,
-          lng: 46.7,
-          isActive: true,
-          ownerId: 'owner-1',
-          createdAt: DateTime.now(),
-        ));
+        fakeRepo.setCurrentStore(
+          Store(
+            id: 'store-1',
+            name: 'Current Store',
+            address: 'Riyadh',
+            lat: 24.7,
+            lng: 46.7,
+            isActive: true,
+            ownerId: 'owner-1',
+            createdAt: DateTime.now(),
+          ),
+        );
 
         final store = await storeService.getCurrentStore();
         expect(store, isNotNull);
@@ -150,10 +153,7 @@ void main() {
           ),
         ]);
 
-        final stores = await storeService.getNearbyStores(
-          lat: 24.7,
-          lng: 46.7,
-        );
+        final stores = await storeService.getNearbyStores(lat: 24.7, lng: 46.7);
         expect(stores, isNotEmpty);
       });
     });

@@ -183,8 +183,9 @@ void main() {
       });
 
       test('returns null for missing certificate', () async {
-        final metadata =
-            await storage.getCertificateMetadata(storeId: 'missing');
+        final metadata = await storage.getCertificateMetadata(
+          storeId: 'missing',
+        );
         expect(metadata, isNull);
       });
     });

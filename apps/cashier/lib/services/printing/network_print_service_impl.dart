@@ -247,7 +247,8 @@ class NetworkPrintService implements ThermalPrintService {
         } on SocketException catch (e2) {
           _status = PrinterStatus.error;
           return PrintResult.fail(
-              'فشلت الطباعة بعد إعادة الاتصال: ${e2.message}');
+            'فشلت الطباعة بعد إعادة الاتصال: ${e2.message}',
+          );
         }
       }
 
@@ -268,7 +269,8 @@ class NetworkPrintService implements ThermalPrintService {
     } catch (e) {
       if (kDebugMode) {
         debugPrint(
-            'TCP close-before-reconnect failed (expected if socket is already broken): $e');
+          'TCP close-before-reconnect failed (expected if socket is already broken): $e',
+        );
       }
     }
     _socket = null;

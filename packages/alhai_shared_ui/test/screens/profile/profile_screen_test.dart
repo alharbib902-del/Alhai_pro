@@ -84,17 +84,21 @@ void main() {
 
     when(() => mockDb.syncQueueDao).thenReturn(mockSyncQueueDao);
     when(() => mockDb.salesDao).thenReturn(mockSalesDao);
-    when(() => mockSalesDao.getSalesStats(any(),
-            cashierId: any(named: 'cashierId')))
-        .thenAnswer((_) async => const SalesStats(
-              count: 10,
-              total: 5000,
-              average: 500,
-              maxSale: 1000,
-              minSale: 100,
-            ));
-    when(() => mockDb.customSelect(any(), variables: any(named: 'variables')))
-        .thenAnswer((_) => MockSelectable());
+    when(
+      () =>
+          mockSalesDao.getSalesStats(any(), cashierId: any(named: 'cashierId')),
+    ).thenAnswer(
+      (_) async => const SalesStats(
+        count: 10,
+        total: 5000,
+        average: 500,
+        maxSale: 1000,
+        minSale: 100,
+      ),
+    );
+    when(
+      () => mockDb.customSelect(any(), variables: any(named: 'variables')),
+    ).thenAnswer((_) => MockSelectable());
 
     final getIt = GetIt.instance;
     if (getIt.isRegistered<AppDatabase>()) {

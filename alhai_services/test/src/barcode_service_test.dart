@@ -37,8 +37,10 @@ void main() {
       });
 
       test('should generate unique barcodes', () {
-        final barcodes =
-            List.generate(100, (_) => barcodeService.generateEan13());
+        final barcodes = List.generate(
+          100,
+          (_) => barcodeService.generateEan13(),
+        );
         expect(barcodes.toSet().length, equals(100));
       });
     });
@@ -128,10 +130,7 @@ void main() {
 
       test('should detect valid EAN-8', () {
         final ean8 = barcodeService.generateEan8();
-        expect(
-          barcodeService.detectFormat(ean8),
-          equals(BarcodeFormat.ean8),
-        );
+        expect(barcodeService.detectFormat(ean8), equals(BarcodeFormat.ean8));
       });
 
       test('should detect UPC-A (12 digits)', () {

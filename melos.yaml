@@ -52,8 +52,8 @@ scripts:
     description: Run tests in all packages and apps
 
   format:
-    run: melos exec -- dart format .
-    description: Format all packages and apps
+    run: melos exec -- dart format --language-version=latest .
+    description: Format all packages and apps (uses latest language version to match CI)
 
   get:
     run: melos bootstrap
@@ -82,8 +82,8 @@ scripts:
     description: Clean all packages and apps
 
   format:check:
-    run: melos exec -- dart format --set-exit-if-changed .
-    description: Check formatting without modifying (CI)
+    run: melos exec -- dart format --language-version=latest --set-exit-if-changed .
+    description: Check formatting without modifying (CI) - uses latest language version for deterministic output
 
   test:coverage:
     run: melos exec -c 4 -- flutter test --coverage

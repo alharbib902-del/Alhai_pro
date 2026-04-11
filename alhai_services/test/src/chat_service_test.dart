@@ -27,7 +27,8 @@ class FakeChatsRepository implements ChatsRepository {
 
   @override
   Future<List<StoreConversation>> getCustomerConversations(
-      String customerId) async {
+    String customerId,
+  ) async {
     return _conversations.where((c) => c.customerId == customerId).toList();
   }
 
@@ -64,8 +65,9 @@ class FakeChatsRepository implements ChatsRepository {
     int page = 1,
     int limit = 50,
   }) async {
-    final filtered =
-        _messages.where((m) => m.conversationId == conversationId).toList();
+    final filtered = _messages
+        .where((m) => m.conversationId == conversationId)
+        .toList();
     return Paginated(
       items: filtered.take(limit).toList(),
       total: filtered.length,

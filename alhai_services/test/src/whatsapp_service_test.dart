@@ -53,8 +53,9 @@ void main() {
       });
 
       test('should handle number starting with 0', () {
-        final formatted = whatsAppService
-            .formatPhoneNumber('05xxxxxxxx'.replaceAll('x', '1'));
+        final formatted = whatsAppService.formatPhoneNumber(
+          '05xxxxxxxx'.replaceAll('x', '1'),
+        );
         expect(formatted, startsWith('966'));
       });
     });
@@ -170,8 +171,9 @@ void main() {
 
     group('getRemainingDailyLimit', () {
       test('should return full limit for new day', () async {
-        final remaining =
-            await whatsAppService.getRemainingDailyLimit('store-1');
+        final remaining = await whatsAppService.getRemainingDailyLimit(
+          'store-1',
+        );
         expect(remaining, equals(1000)); // default limit
       });
 
@@ -186,8 +188,9 @@ void main() {
 
         // Check global limit (not store-specific in this test)
         // The send decrements the global counter
-        final remaining =
-            await whatsAppService.getRemainingDailyLimit('store-1');
+        final remaining = await whatsAppService.getRemainingDailyLimit(
+          'store-1',
+        );
         expect(remaining, equals(1000)); // store-specific, not global
       });
     });

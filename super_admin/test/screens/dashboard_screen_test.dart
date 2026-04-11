@@ -16,9 +16,7 @@ void main() {
         saDashboardKPIsProvider.overrideWith(
           (_) async => const SADashboardKPIs(),
         ),
-        saMonthlyRevenueProvider.overrideWith(
-          (_) async => <SARevenueData>[],
-        ),
+        saMonthlyRevenueProvider.overrideWith((_) async => <SARevenueData>[]),
         saSubscriptionDistributionProvider.overrideWith(
           (_) async => <String, int>{},
         ),

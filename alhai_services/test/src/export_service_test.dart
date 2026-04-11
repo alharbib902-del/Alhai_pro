@@ -17,7 +17,7 @@ void main() {
       test('should export data as formatted JSON', () async {
         final data = [
           {'name': 'A', 'price': 10},
-          {'name': 'B', 'price': 20}
+          {'name': 'B', 'price': 20},
         ];
         final json = await exportService.exportToJson(data);
         final decoded = jsonDecode(json) as List;
@@ -43,12 +43,9 @@ void main() {
       });
 
       test('should include title when provided', () async {
-        final html = await exportService.exportToHtmlTable(
-          [
-            {'Key': 'Value'}
-          ],
-          title: 'Test Report',
-        );
+        final html = await exportService.exportToHtmlTable([
+          {'Key': 'Value'},
+        ], title: 'Test Report');
         expect(html, contains('Test Report'));
       });
 

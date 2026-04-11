@@ -7,38 +7,43 @@ class FakeWholesaleOrdersRepo implements WholesaleOrdersRepository {
   Future<WholesaleOrder> getOrder(String orderId) async =>
       throw UnimplementedError();
   @override
-  Future<Paginated<WholesaleOrder>> getDistributorOrders(String distributorId,
-          {int page = 1,
-          int limit = 20,
-          WholesaleOrderStatus? status,
-          DateTime? startDate,
-          DateTime? endDate}) async =>
-      Paginated(items: [], total: 0, page: page, limit: limit);
+  Future<Paginated<WholesaleOrder>> getDistributorOrders(
+    String distributorId, {
+    int page = 1,
+    int limit = 20,
+    WholesaleOrderStatus? status,
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async => Paginated(items: [], total: 0, page: page, limit: limit);
   @override
-  Future<Paginated<WholesaleOrder>> getStoreOrders(String storeId,
-          {int page = 1, int limit = 20, WholesaleOrderStatus? status}) async =>
-      Paginated(items: [], total: 0, page: page, limit: limit);
+  Future<Paginated<WholesaleOrder>> getStoreOrders(
+    String storeId, {
+    int page = 1,
+    int limit = 20,
+    WholesaleOrderStatus? status,
+  }) async => Paginated(items: [], total: 0, page: page, limit: limit);
   @override
-  Future<WholesaleOrder> createOrder(
-          {required String distributorId,
-          required String storeId,
-          required List<WholesaleOrderItem> items,
-          required WholesalePaymentMethod paymentMethod,
-          String? notes,
-          String? deliveryAddress,
-          DateTime? expectedDeliveryDate}) async =>
-      WholesaleOrder(
-          id: 'wo-1',
-          orderNumber: 'WO-0001',
-          distributorId: distributorId,
-          storeId: storeId,
-          storeName: 'Test Store',
-          items: items,
-          paymentMethod: paymentMethod,
-          status: WholesaleOrderStatus.pending,
-          subtotal: 100.0,
-          total: 100.0,
-          createdAt: DateTime.now());
+  Future<WholesaleOrder> createOrder({
+    required String distributorId,
+    required String storeId,
+    required List<WholesaleOrderItem> items,
+    required WholesalePaymentMethod paymentMethod,
+    String? notes,
+    String? deliveryAddress,
+    DateTime? expectedDeliveryDate,
+  }) async => WholesaleOrder(
+    id: 'wo-1',
+    orderNumber: 'WO-0001',
+    distributorId: distributorId,
+    storeId: storeId,
+    storeName: 'Test Store',
+    items: items,
+    paymentMethod: paymentMethod,
+    status: WholesaleOrderStatus.pending,
+    subtotal: 100.0,
+    total: 100.0,
+    createdAt: DateTime.now(),
+  );
   @override
   Future<WholesaleOrder> confirmOrder(String orderId) async =>
       throw UnimplementedError();
@@ -46,9 +51,10 @@ class FakeWholesaleOrdersRepo implements WholesaleOrdersRepository {
   Future<WholesaleOrder> startProcessing(String orderId) async =>
       throw UnimplementedError();
   @override
-  Future<WholesaleOrder> shipOrder(String orderId,
-          {String? trackingNumber}) async =>
-      throw UnimplementedError();
+  Future<WholesaleOrder> shipOrder(
+    String orderId, {
+    String? trackingNumber,
+  }) async => throw UnimplementedError();
   @override
   Future<WholesaleOrder> deliverOrder(String orderId) async =>
       throw UnimplementedError();
@@ -56,17 +62,20 @@ class FakeWholesaleOrdersRepo implements WholesaleOrdersRepository {
   Future<WholesaleOrder> cancelOrder(String orderId, String reason) async =>
       throw UnimplementedError();
   @override
-  Future<WholesaleOrderSummary> getDistributorSummary(String distributorId,
-          {DateTime? startDate, DateTime? endDate}) async =>
-      WholesaleOrderSummary(
-          distributorId: distributorId,
-          totalOrders: 10,
-          pendingOrders: 2,
-          completedOrders: 7,
-          cancelledOrders: 1,
-          totalRevenue: 5000.0,
-          avgOrderValue: 500.0,
-          byStatus: {});
+  Future<WholesaleOrderSummary> getDistributorSummary(
+    String distributorId, {
+    DateTime? startDate,
+    DateTime? endDate,
+  }) async => WholesaleOrderSummary(
+    distributorId: distributorId,
+    totalOrders: 10,
+    pendingOrders: 2,
+    completedOrders: 7,
+    cancelledOrders: 1,
+    totalRevenue: 5000.0,
+    avgOrderValue: 500.0,
+    byStatus: {},
+  );
 }
 
 void main() {
@@ -86,11 +95,12 @@ void main() {
         storeId: 'store-1',
         items: [
           WholesaleOrderItem(
-              productId: 'p1',
-              productName: 'Beans',
-              quantity: 100,
-              unitPrice: 50.0,
-              totalPrice: 5000.0)
+            productId: 'p1',
+            productName: 'Beans',
+            quantity: 100,
+            unitPrice: 50.0,
+            totalPrice: 5000.0,
+          ),
         ],
         paymentMethod: WholesalePaymentMethod.bankTransfer,
       );

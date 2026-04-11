@@ -53,22 +53,27 @@ void main() {
       test('uploads three image sizes and updates local DB', () async {
         final imageBytes = Uint8List.fromList(List.filled(100, 0xFF));
 
-        when(() => mockFileApi.uploadBinary(
-              any(),
-              any(),
-              fileOptions: any(named: 'fileOptions'),
-            )).thenAnswer((_) async => '');
+        when(
+          () => mockFileApi.uploadBinary(
+            any(),
+            any(),
+            fileOptions: any(named: 'fileOptions'),
+          ),
+        ).thenAnswer((_) async => '');
 
-        when(() => mockFileApi.getPublicUrl(any()))
-            .thenReturn('https://storage.example.com/test.webp');
+        when(
+          () => mockFileApi.getPublicUrl(any()),
+        ).thenReturn('https://storage.example.com/test.webp');
 
-        when(() => mockProductsDao.updateProductImages(
-              any(),
-              imageThumbnail: any(named: 'imageThumbnail'),
-              imageMedium: any(named: 'imageMedium'),
-              imageLarge: any(named: 'imageLarge'),
-              imageHash: any(named: 'imageHash'),
-            )).thenAnswer((_) async => 1);
+        when(
+          () => mockProductsDao.updateProductImages(
+            any(),
+            imageThumbnail: any(named: 'imageThumbnail'),
+            imageMedium: any(named: 'imageMedium'),
+            imageLarge: any(named: 'imageLarge'),
+            imageHash: any(named: 'imageHash'),
+          ),
+        ).thenAnswer((_) async => 1);
 
         final result = await service.uploadProductImage(
           storeId: 'store-1',
@@ -83,29 +88,35 @@ void main() {
         expect(result.imageHash, isNotEmpty);
 
         // Three uploads: thumb, medium, large
-        verify(() => mockFileApi.uploadBinary(
-              any(),
-              any(),
-              fileOptions: any(named: 'fileOptions'),
-            )).called(3);
+        verify(
+          () => mockFileApi.uploadBinary(
+            any(),
+            any(),
+            fileOptions: any(named: 'fileOptions'),
+          ),
+        ).called(3);
 
-        verify(() => mockProductsDao.updateProductImages(
-              'prod-1',
-              imageThumbnail: any(named: 'imageThumbnail'),
-              imageMedium: any(named: 'imageMedium'),
-              imageLarge: any(named: 'imageLarge'),
-              imageHash: any(named: 'imageHash'),
-            )).called(1);
+        verify(
+          () => mockProductsDao.updateProductImages(
+            'prod-1',
+            imageThumbnail: any(named: 'imageThumbnail'),
+            imageMedium: any(named: 'imageMedium'),
+            imageLarge: any(named: 'imageLarge'),
+            imageHash: any(named: 'imageHash'),
+          ),
+        ).called(1);
       });
 
       test('returns null on upload failure', () async {
         final imageBytes = Uint8List.fromList([1, 2, 3]);
 
-        when(() => mockFileApi.uploadBinary(
-              any(),
-              any(),
-              fileOptions: any(named: 'fileOptions'),
-            )).thenThrow(Exception('Storage error'));
+        when(
+          () => mockFileApi.uploadBinary(
+            any(),
+            any(),
+            fileOptions: any(named: 'fileOptions'),
+          ),
+        ).thenThrow(Exception('Storage error'));
 
         final result = await service.uploadProductImage(
           storeId: 'store-1',
@@ -121,22 +132,27 @@ void main() {
       test('uploads and updates org product images', () async {
         final imageBytes = Uint8List.fromList(List.filled(50, 0xAB));
 
-        when(() => mockFileApi.uploadBinary(
-              any(),
-              any(),
-              fileOptions: any(named: 'fileOptions'),
-            )).thenAnswer((_) async => '');
+        when(
+          () => mockFileApi.uploadBinary(
+            any(),
+            any(),
+            fileOptions: any(named: 'fileOptions'),
+          ),
+        ).thenAnswer((_) async => '');
 
-        when(() => mockFileApi.getPublicUrl(any()))
-            .thenReturn('https://storage.example.com/org.webp');
+        when(
+          () => mockFileApi.getPublicUrl(any()),
+        ).thenReturn('https://storage.example.com/org.webp');
 
-        when(() => mockOrgProductsDao.updateOrgProduct(
-              any(),
-              orgImageThumbnail: any(named: 'orgImageThumbnail'),
-              orgImageMedium: any(named: 'orgImageMedium'),
-              orgImageLarge: any(named: 'orgImageLarge'),
-              orgImageHash: any(named: 'orgImageHash'),
-            )).thenAnswer((_) async => 1);
+        when(
+          () => mockOrgProductsDao.updateOrgProduct(
+            any(),
+            orgImageThumbnail: any(named: 'orgImageThumbnail'),
+            orgImageMedium: any(named: 'orgImageMedium'),
+            orgImageLarge: any(named: 'orgImageLarge'),
+            orgImageHash: any(named: 'orgImageHash'),
+          ),
+        ).thenAnswer((_) async => 1);
 
         // RPC call for sync
         setupRpcCall(mockClient, result: 0);
@@ -149,23 +165,27 @@ void main() {
         );
 
         expect(result, isNotNull);
-        verify(() => mockOrgProductsDao.updateOrgProduct(
-              'op-1',
-              orgImageThumbnail: any(named: 'orgImageThumbnail'),
-              orgImageMedium: any(named: 'orgImageMedium'),
-              orgImageLarge: any(named: 'orgImageLarge'),
-              orgImageHash: any(named: 'orgImageHash'),
-            )).called(1);
+        verify(
+          () => mockOrgProductsDao.updateOrgProduct(
+            'op-1',
+            orgImageThumbnail: any(named: 'orgImageThumbnail'),
+            orgImageMedium: any(named: 'orgImageMedium'),
+            orgImageLarge: any(named: 'orgImageLarge'),
+            orgImageHash: any(named: 'orgImageHash'),
+          ),
+        ).called(1);
       });
 
       test('returns null on failure', () async {
         final imageBytes = Uint8List.fromList([1]);
 
-        when(() => mockFileApi.uploadBinary(
-              any(),
-              any(),
-              fileOptions: any(named: 'fileOptions'),
-            )).thenThrow(Exception('Upload failed'));
+        when(
+          () => mockFileApi.uploadBinary(
+            any(),
+            any(),
+            fileOptions: any(named: 'fileOptions'),
+          ),
+        ).thenThrow(Exception('Upload failed'));
 
         final result = await service.uploadOrgProductImage(
           orgId: 'org-1',
@@ -182,14 +202,17 @@ void main() {
       test('uploads logo and returns public URL', () async {
         final imageBytes = Uint8List.fromList(List.filled(20, 0xCC));
 
-        when(() => mockFileApi.uploadBinary(
-              any(),
-              any(),
-              fileOptions: any(named: 'fileOptions'),
-            )).thenAnswer((_) async => '');
+        when(
+          () => mockFileApi.uploadBinary(
+            any(),
+            any(),
+            fileOptions: any(named: 'fileOptions'),
+          ),
+        ).thenAnswer((_) async => '');
 
-        when(() => mockFileApi.getPublicUrl(any()))
-            .thenReturn('https://storage.example.com/logo.webp');
+        when(
+          () => mockFileApi.getPublicUrl(any()),
+        ).thenReturn('https://storage.example.com/logo.webp');
 
         final url = await service.uploadStoreLogo(
           storeId: 'store-1',
@@ -201,11 +224,13 @@ void main() {
       });
 
       test('returns null on failure', () async {
-        when(() => mockFileApi.uploadBinary(
-              any(),
-              any(),
-              fileOptions: any(named: 'fileOptions'),
-            )).thenThrow(Exception('Failed'));
+        when(
+          () => mockFileApi.uploadBinary(
+            any(),
+            any(),
+            fileOptions: any(named: 'fileOptions'),
+          ),
+        ).thenThrow(Exception('Failed'));
 
         final url = await service.uploadStoreLogo(
           storeId: 'store-1',
@@ -220,14 +245,17 @@ void main() {
       test('uploads PDF and returns public URL', () async {
         final pdfBytes = Uint8List.fromList(List.filled(50, 0x25));
 
-        when(() => mockFileApi.uploadBinary(
-              any(),
-              any(),
-              fileOptions: any(named: 'fileOptions'),
-            )).thenAnswer((_) async => '');
+        when(
+          () => mockFileApi.uploadBinary(
+            any(),
+            any(),
+            fileOptions: any(named: 'fileOptions'),
+          ),
+        ).thenAnswer((_) async => '');
 
-        when(() => mockFileApi.getPublicUrl(any()))
-            .thenReturn('https://storage.example.com/invoice.pdf');
+        when(
+          () => mockFileApi.getPublicUrl(any()),
+        ).thenReturn('https://storage.example.com/invoice.pdf');
 
         final url = await service.archiveInvoicePdf(
           storeId: 'store-1',
@@ -240,11 +268,13 @@ void main() {
       });
 
       test('returns null on failure', () async {
-        when(() => mockFileApi.uploadBinary(
-              any(),
-              any(),
-              fileOptions: any(named: 'fileOptions'),
-            )).thenThrow(Exception('Failed'));
+        when(
+          () => mockFileApi.uploadBinary(
+            any(),
+            any(),
+            fileOptions: any(named: 'fileOptions'),
+          ),
+        ).thenThrow(Exception('Failed'));
 
         final url = await service.archiveInvoicePdf(
           storeId: 'store-1',
@@ -258,20 +288,21 @@ void main() {
 
     group('deleteProductImages', () {
       test('lists and removes files', () async {
-        when(() => mockFileApi.list(path: any(named: 'path')))
-            .thenAnswer((_) async => [
-                  FileObject(
-                    name: 'thumb_abc.webp',
-                    id: '1',
-                    owner: null,
-                    updatedAt: '',
-                    createdAt: '',
-                    lastAccessedAt: '',
-                    metadata: {},
-                    bucketId: 'product-images',
-                    buckets: null,
-                  ),
-                ]);
+        when(() => mockFileApi.list(path: any(named: 'path'))).thenAnswer(
+          (_) async => [
+            FileObject(
+              name: 'thumb_abc.webp',
+              id: '1',
+              owner: null,
+              updatedAt: '',
+              createdAt: '',
+              lastAccessedAt: '',
+              metadata: {},
+              bucketId: 'product-images',
+              buckets: null,
+            ),
+          ],
+        );
 
         when(() => mockFileApi.remove(any())).thenAnswer((_) async => []);
 
@@ -284,8 +315,9 @@ void main() {
       });
 
       test('does nothing when no files exist', () async {
-        when(() => mockFileApi.list(path: any(named: 'path')))
-            .thenAnswer((_) async => []);
+        when(
+          () => mockFileApi.list(path: any(named: 'path')),
+        ).thenAnswer((_) async => []);
 
         await service.deleteProductImages(
           storeId: 'store-1',

@@ -89,17 +89,21 @@ Widget _buildAdminTestApp({
     initialLocation: initialRoute,
     routes: [
       GoRoute(
-          path: '/splash',
-          builder: (_, __) => const _StubScreen(label: 'Splash')),
+        path: '/splash',
+        builder: (_, __) => const _StubScreen(label: 'Splash'),
+      ),
       GoRoute(
-          path: '/login',
-          builder: (_, __) => const _StubScreen(label: 'Login')),
+        path: '/login',
+        builder: (_, __) => const _StubScreen(label: 'Login'),
+      ),
       GoRoute(
         path: '/store-select',
         builder: (_, __) => const _StubScreen(label: 'Store Select'),
       ),
       GoRoute(
-          path: '/home', builder: (_, __) => const _StubScreen(label: 'Home')),
+        path: '/home',
+        builder: (_, __) => const _StubScreen(label: 'Home'),
+      ),
       GoRoute(
         path: '/dashboard',
         builder: (_, __) => const _StubScreen(label: 'Dashboard'),
@@ -214,11 +218,13 @@ void main() {
     });
 
     testWidgets('unauthenticated start lands on login stub', (tester) async {
-      await tester.pumpWidget(_buildAdminTestApp(
-        initialRoute: '/login',
-        isAuthenticated: false,
-        storeId: null,
-      ));
+      await tester.pumpWidget(
+        _buildAdminTestApp(
+          initialRoute: '/login',
+          isAuthenticated: false,
+          storeId: null,
+        ),
+      );
       await _pumpAndSettle(tester);
 
       expect(find.byKey(const Key('stub_Login')), findsOneWidget);
@@ -285,8 +291,9 @@ void main() {
       expect(find.byKey(const Key('stub_Inventory')), findsOneWidget);
     });
 
-    testWidgets('can navigate across multiple screens in sequence',
-        (tester) async {
+    testWidgets('can navigate across multiple screens in sequence', (
+      tester,
+    ) async {
       await tester.pumpWidget(_buildAdminTestApp(initialRoute: '/home'));
       await _pumpAndSettle(tester);
 

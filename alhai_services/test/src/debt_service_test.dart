@@ -4,12 +4,13 @@ import 'package:alhai_services/alhai_services.dart';
 
 class FakeDebtsRepository implements DebtsRepository {
   @override
-  Future<Paginated<Debt>> getDebts(String storeId,
-          {DebtType? type,
-          bool? overdueOnly,
-          int page = 1,
-          int limit = 20}) async =>
-      Paginated(items: [], total: 0, page: page, limit: limit);
+  Future<Paginated<Debt>> getDebts(
+    String storeId, {
+    DebtType? type,
+    bool? overdueOnly,
+    int page = 1,
+    int limit = 20,
+  }) async => Paginated(items: [], total: 0, page: page, limit: limit);
   @override
   Future<Debt> getDebt(String id) async => throw UnimplementedError();
   @override
@@ -24,10 +25,11 @@ class FakeDebtsRepository implements DebtsRepository {
   Future<List<DebtPayment>> getPayments(String debtId) async => [];
   @override
   Future<DebtSummary> getDebtSummary(String storeId) async => DebtSummary(
-      totalCustomerDebts: 300.0,
-      totalSupplierDebts: 700.0,
-      overdueCount: 2,
-      overdueAmount: 200.0);
+    totalCustomerDebts: 300.0,
+    totalSupplierDebts: 700.0,
+    overdueCount: 2,
+    overdueAmount: 200.0,
+  );
 }
 
 void main() {

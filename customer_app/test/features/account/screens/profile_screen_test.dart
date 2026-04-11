@@ -45,17 +45,22 @@ void main() {
       await tester.pump();
 
       // Arabic: "My Addresses"
-      expect(find.text('\u0639\u0646\u0627\u0648\u064a\u0646\u064a'),
-          findsOneWidget);
+      expect(
+        find.text('\u0639\u0646\u0627\u0648\u064a\u0646\u064a'),
+        findsOneWidget,
+      );
       // Arabic: "My Orders"
       expect(find.text('\u0637\u0644\u0628\u0627\u062a\u064a'), findsOneWidget);
       // Arabic: "Settings"
       expect(
-          find.text('\u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a'),
-          findsOneWidget);
+        find.text('\u0627\u0644\u0625\u0639\u062f\u0627\u062f\u0627\u062a'),
+        findsOneWidget,
+      );
       // Arabic: "Help"
-      expect(find.text('\u0627\u0644\u0645\u0633\u0627\u0639\u062f\u0629'),
-          findsOneWidget);
+      expect(
+        find.text('\u0627\u0644\u0645\u0633\u0627\u0639\u062f\u0629'),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows logout button', (tester) async {
@@ -64,9 +69,11 @@ void main() {
 
       // Arabic: "Logout"
       expect(
-          find.text(
-              '\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062e\u0631\u0648\u062c'),
-          findsOneWidget);
+        find.text(
+          '\u062a\u0633\u062c\u064a\u0644 \u0627\u0644\u062e\u0631\u0648\u062c',
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows user info card with fallback', (tester) async {

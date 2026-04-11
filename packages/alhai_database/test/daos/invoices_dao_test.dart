@@ -73,8 +73,10 @@ void main() {
       test('finds invoice by number and store', () async {
         await db.invoicesDao.upsertInvoice(makeInvoice());
 
-        final invoice =
-            await db.invoicesDao.getByNumber('store-1', 'INV-2026-00001');
+        final invoice = await db.invoicesDao.getByNumber(
+          'store-1',
+          'INV-2026-00001',
+        );
         expect(invoice, isNotNull);
         expect(invoice!.id, 'inv-1');
       });
@@ -82,24 +84,30 @@ void main() {
       test('returns null for wrong store', () async {
         await db.invoicesDao.upsertInvoice(makeInvoice());
 
-        final invoice =
-            await db.invoicesDao.getByNumber('store-2', 'INV-2026-00001');
+        final invoice = await db.invoicesDao.getByNumber(
+          'store-2',
+          'INV-2026-00001',
+        );
         expect(invoice, isNull);
       });
     });
 
     group('getByStore', () {
       test('returns invoices ordered by date desc', () async {
-        await db.invoicesDao.upsertInvoice(makeInvoice(
-          id: 'inv-1',
-          invoiceNumber: 'INV-001',
-          createdAt: DateTime(2026, 1, 10),
-        ));
-        await db.invoicesDao.upsertInvoice(makeInvoice(
-          id: 'inv-2',
-          invoiceNumber: 'INV-002',
-          createdAt: DateTime(2026, 1, 20),
-        ));
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(
+            id: 'inv-1',
+            invoiceNumber: 'INV-001',
+            createdAt: DateTime(2026, 1, 10),
+          ),
+        );
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(
+            id: 'inv-2',
+            invoiceNumber: 'INV-002',
+            createdAt: DateTime(2026, 1, 20),
+          ),
+        );
 
         final invoices = await db.invoicesDao.getByStore('store-1');
         expect(invoices, hasLength(2));
@@ -108,34 +116,45 @@ void main() {
 
       test('respects limit and offset', () async {
         for (var i = 0; i < 5; i++) {
-          await db.invoicesDao.upsertInvoice(makeInvoice(
-            id: 'inv-$i',
-            invoiceNumber: 'INV-$i',
-            createdAt: DateTime(2026, 1, i + 1),
-          ));
+          await db.invoicesDao.upsertInvoice(
+            makeInvoice(
+              id: 'inv-$i',
+              invoiceNumber: 'INV-$i',
+              createdAt: DateTime(2026, 1, i + 1),
+            ),
+          );
         }
 
-        final page =
-            await db.invoicesDao.getByStore('store-1', limit: 2, offset: 0);
+        final page = await db.invoicesDao.getByStore(
+          'store-1',
+          limit: 2,
+          offset: 0,
+        );
         expect(page, hasLength(2));
       });
     });
 
     group('getByType', () {
       test('filters by invoice type', () async {
-        await db.invoicesDao.upsertInvoice(makeInvoice(
-          id: 'inv-1',
-          invoiceNumber: 'INV-001',
-          invoiceType: 'simplified_tax',
-        ));
-        await db.invoicesDao.upsertInvoice(makeInvoice(
-          id: 'inv-2',
-          invoiceNumber: 'CN-001',
-          invoiceType: 'credit_note',
-        ));
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(
+            id: 'inv-1',
+            invoiceNumber: 'INV-001',
+            invoiceType: 'simplified_tax',
+          ),
+        );
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(
+            id: 'inv-2',
+            invoiceNumber: 'CN-001',
+            invoiceType: 'credit_note',
+          ),
+        );
 
-        final creditNotes =
-            await db.invoicesDao.getByType('store-1', 'credit_note');
+        final creditNotes = await db.invoicesDao.getByType(
+          'store-1',
+          'credit_note',
+        );
         expect(creditNotes, hasLength(1));
         expect(creditNotes.first.id, 'inv-2');
       });
@@ -143,16 +162,12 @@ void main() {
 
     group('getByStatus', () {
       test('filters by status', () async {
-        await db.invoicesDao.upsertInvoice(makeInvoice(
-          id: 'inv-1',
-          invoiceNumber: 'INV-001',
-          status: 'issued',
-        ));
-        await db.invoicesDao.upsertInvoice(makeInvoice(
-          id: 'inv-2',
-          invoiceNumber: 'INV-002',
-          status: 'paid',
-        ));
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(id: 'inv-1', invoiceNumber: 'INV-001', status: 'issued'),
+        );
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(id: 'inv-2', invoiceNumber: 'INV-002', status: 'paid'),
+        );
 
         final issued = await db.invoicesDao.getByStatus('store-1', 'issued');
         expect(issued, hasLength(1));
@@ -177,19 +192,25 @@ void main() {
 
     group('getByCustomer', () {
       test('returns invoices for a customer', () async {
-        await db.invoicesDao.upsertInvoice(makeInvoice(
-          id: 'inv-1',
-          invoiceNumber: 'INV-001',
-          customerId: 'cust-1',
-        ));
-        await db.invoicesDao.upsertInvoice(makeInvoice(
-          id: 'inv-2',
-          invoiceNumber: 'INV-002',
-          customerId: 'cust-2',
-        ));
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(
+            id: 'inv-1',
+            invoiceNumber: 'INV-001',
+            customerId: 'cust-1',
+          ),
+        );
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(
+            id: 'inv-2',
+            invoiceNumber: 'INV-002',
+            customerId: 'cust-2',
+          ),
+        );
 
-        final invoices =
-            await db.invoicesDao.getByCustomer('store-1', 'cust-1');
+        final invoices = await db.invoicesDao.getByCustomer(
+          'store-1',
+          'cust-1',
+        );
         expect(invoices, hasLength(1));
         expect(invoices.first.id, 'inv-1');
       });
@@ -197,24 +218,30 @@ void main() {
 
     group('getUnpaid', () {
       test('returns invoices with amount due > 0', () async {
-        await db.invoicesDao.upsertInvoice(makeInvoice(
-          id: 'inv-paid',
-          invoiceNumber: 'INV-001',
-          amountDue: 0.0,
-          status: 'paid',
-        ));
-        await db.invoicesDao.upsertInvoice(makeInvoice(
-          id: 'inv-unpaid',
-          invoiceNumber: 'INV-002',
-          amountDue: 50.0,
-          status: 'issued',
-        ));
-        await db.invoicesDao.upsertInvoice(makeInvoice(
-          id: 'inv-cancelled',
-          invoiceNumber: 'INV-003',
-          amountDue: 100.0,
-          status: 'cancelled',
-        ));
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(
+            id: 'inv-paid',
+            invoiceNumber: 'INV-001',
+            amountDue: 0.0,
+            status: 'paid',
+          ),
+        );
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(
+            id: 'inv-unpaid',
+            invoiceNumber: 'INV-002',
+            amountDue: 50.0,
+            status: 'issued',
+          ),
+        );
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(
+            id: 'inv-cancelled',
+            invoiceNumber: 'INV-003',
+            amountDue: 100.0,
+            status: 'cancelled',
+          ),
+        );
 
         final unpaid = await db.invoicesDao.getUnpaid('store-1');
         expect(unpaid, hasLength(1));
@@ -246,11 +273,9 @@ void main() {
 
     group('recordPayment', () {
       test('records partial payment', () async {
-        await db.invoicesDao.upsertInvoice(makeInvoice(
-          total: 100.0,
-          amountPaid: 0.0,
-          amountDue: 100.0,
-        ));
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(total: 100.0, amountPaid: 0.0, amountDue: 100.0),
+        );
 
         await db.invoicesDao.recordPayment('inv-1', 60.0);
 
@@ -261,11 +286,9 @@ void main() {
       });
 
       test('records full payment and marks as paid', () async {
-        await db.invoicesDao.upsertInvoice(makeInvoice(
-          total: 100.0,
-          amountPaid: 0.0,
-          amountDue: 100.0,
-        ));
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(total: 100.0, amountPaid: 0.0, amountDue: 100.0),
+        );
 
         await db.invoicesDao.recordPayment('inv-1', 100.0);
 
@@ -295,19 +318,24 @@ void main() {
 
     group('getLastSequence', () {
       test('returns 0 when no invoices exist', () async {
-        final seq =
-            await db.invoicesDao.getLastSequence('store-1', 'INV', 2026);
+        final seq = await db.invoicesDao.getLastSequence(
+          'store-1',
+          'INV',
+          2026,
+        );
         expect(seq, 0);
       });
 
       test('extracts sequence number from invoice number', () async {
-        await db.invoicesDao.upsertInvoice(makeInvoice(
-          id: 'inv-1',
-          invoiceNumber: 'INV-2026-00005',
-        ));
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(id: 'inv-1', invoiceNumber: 'INV-2026-00005'),
+        );
 
-        final seq =
-            await db.invoicesDao.getLastSequence('store-1', 'INV', 2026);
+        final seq = await db.invoicesDao.getLastSequence(
+          'store-1',
+          'INV',
+          2026,
+        );
         expect(seq, 5);
       });
     });
@@ -323,18 +351,22 @@ void main() {
 
     group('watchUnpaidCount', () {
       test('emits count of unpaid invoices', () async {
-        await db.invoicesDao.upsertInvoice(makeInvoice(
-          id: 'inv-1',
-          invoiceNumber: 'INV-001',
-          amountDue: 50.0,
-          status: 'issued',
-        ));
-        await db.invoicesDao.upsertInvoice(makeInvoice(
-          id: 'inv-2',
-          invoiceNumber: 'INV-002',
-          amountDue: 0.0,
-          status: 'paid',
-        ));
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(
+            id: 'inv-1',
+            invoiceNumber: 'INV-001',
+            amountDue: 50.0,
+            status: 'issued',
+          ),
+        );
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(
+            id: 'inv-2',
+            invoiceNumber: 'INV-002',
+            amountDue: 0.0,
+            status: 'paid',
+          ),
+        );
 
         final count = await db.invoicesDao.watchUnpaidCount('store-1').first;
         expect(count, 1);

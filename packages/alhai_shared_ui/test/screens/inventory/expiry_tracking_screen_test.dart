@@ -80,10 +80,12 @@ void main() {
 
       final completer = Completer<List<ExpiryItemData>>();
 
-      await tester.pumpWidget(_buildTestWidget(
-        expiryValue: const AsyncValue.loading(),
-        loadingCompleter: completer,
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          expiryValue: const AsyncValue.loading(),
+          loadingCompleter: completer,
+        ),
+      );
       await tester.pump();
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
@@ -96,9 +98,14 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        expiryValue: AsyncValue.error(Exception('Failed'), StackTrace.current),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          expiryValue: AsyncValue.error(
+            Exception('Failed'),
+            StackTrace.current,
+          ),
+        ),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byIcon(Icons.error_outline), findsOneWidget);
@@ -108,9 +115,9 @@ void main() {
       _setLargeViewport(tester);
       addTearDown(() => tester.view.resetPhysicalSize());
 
-      await tester.pumpWidget(_buildTestWidget(
-        expiryValue: const AsyncValue.data([]),
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(expiryValue: const AsyncValue.data([])),
+      );
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byType(ExpiryTrackingScreen), findsOneWidget);

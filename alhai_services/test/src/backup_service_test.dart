@@ -86,7 +86,7 @@ void main() {
         final createResult = await backupService.createBackup(
           storeId: 'store-1',
           data: {
-            'products': [1, 2, 3]
+            'products': [1, 2, 3],
           },
         );
 

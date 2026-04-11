@@ -40,13 +40,16 @@ void main() {
     group('pullUpdates', () {
       test('pulls all configured tables', () async {
         // Setup: no previous pull, no records returned
-        when(() => mockMetadataDao.getLastPullAt(any()))
-            .thenAnswer((_) async => null);
-        when(() => mockSyncApi.fetchUpdates(
-              tableName: any(named: 'tableName'),
-              storeId: any(named: 'storeId'),
-              since: any(named: 'since'),
-            )).thenAnswer((_) async => []);
+        when(
+          () => mockMetadataDao.getLastPullAt(any()),
+        ).thenAnswer((_) async => null);
+        when(
+          () => mockSyncApi.fetchUpdates(
+            tableName: any(named: 'tableName'),
+            storeId: any(named: 'storeId'),
+            since: any(named: 'since'),
+          ),
+        ).thenAnswer((_) async => []);
 
         final result = await service.pullUpdates(storeId: 'store-1');
 
@@ -56,51 +59,64 @@ void main() {
 
         // Should have queried each pull table
         for (final table in PullSyncService.pullTables) {
-          verify(() => mockSyncApi.fetchUpdates(
-                tableName: table,
-                storeId: 'store-1',
-                since: null,
-              )).called(1);
+          verify(
+            () => mockSyncApi.fetchUpdates(
+              tableName: table,
+              storeId: 'store-1',
+              since: null,
+            ),
+          ).called(1);
         }
       });
 
       test('accumulates records from multiple tables', () async {
-        when(() => mockMetadataDao.getLastPullAt(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockMetadataDao.getLastPullAt(any()),
+        ).thenAnswer((_) async => null);
 
-        when(() => mockSyncApi.fetchUpdates(
-              tableName: 'products',
-              storeId: any(named: 'storeId'),
-              since: any(named: 'since'),
-            )).thenAnswer((_) async => [
-              {'id': 'p-1', 'name': 'Product 1'},
-              {'id': 'p-2', 'name': 'Product 2'},
-            ]);
+        when(
+          () => mockSyncApi.fetchUpdates(
+            tableName: 'products',
+            storeId: any(named: 'storeId'),
+            since: any(named: 'since'),
+          ),
+        ).thenAnswer(
+          (_) async => [
+            {'id': 'p-1', 'name': 'Product 1'},
+            {'id': 'p-2', 'name': 'Product 2'},
+          ],
+        );
 
         // Other tables return empty
-        when(() => mockSyncApi.fetchUpdates(
-              tableName: any(named: 'tableName', that: isNot('products')),
-              storeId: any(named: 'storeId'),
-              since: any(named: 'since'),
-            )).thenAnswer((_) async => []);
+        when(
+          () => mockSyncApi.fetchUpdates(
+            tableName: any(named: 'tableName', that: isNot('products')),
+            storeId: any(named: 'storeId'),
+            since: any(named: 'since'),
+          ),
+        ).thenAnswer((_) async => []);
 
-        when(() => mockSyncQueueDao.getPendingRecordIdsForTable(any()))
-            .thenAnswer((_) async => <String>{});
+        when(
+          () => mockSyncQueueDao.getPendingRecordIdsForTable(any()),
+        ).thenAnswer((_) async => <String>{});
 
         // Mock the DB batch insert
-        when(() => mockDb.customStatement(any(), any()))
-            .thenAnswer((_) async {});
+        when(
+          () => mockDb.customStatement(any(), any()),
+        ).thenAnswer((_) async {});
         when(() => mockDb.batch(any())).thenAnswer((invocation) async {
           // ignore: unused_local_variable
           final fn = invocation.positionalArguments[0] as Function;
           // Don't actually call fn to avoid complex batch mocking
         });
 
-        when(() => mockMetadataDao.updateLastPullAt(
-              any(),
-              any(),
-              syncCount: any(named: 'syncCount'),
-            )).thenAnswer((_) async {});
+        when(
+          () => mockMetadataDao.updateLastPullAt(
+            any(),
+            any(),
+            syncCount: any(named: 'syncCount'),
+          ),
+        ).thenAnswer((_) async {});
 
         final result = await service.pullUpdates(storeId: 'store-1');
 
@@ -109,22 +125,27 @@ void main() {
       });
 
       test('continues on table error and collects errors', () async {
-        when(() => mockMetadataDao.getLastPullAt(any()))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockMetadataDao.getLastPullAt(any()),
+        ).thenAnswer((_) async => null);
 
         // First table fails
-        when(() => mockSyncApi.fetchUpdates(
-              tableName: 'products',
-              storeId: any(named: 'storeId'),
-              since: any(named: 'since'),
-            )).thenThrow(Exception('Network error'));
+        when(
+          () => mockSyncApi.fetchUpdates(
+            tableName: 'products',
+            storeId: any(named: 'storeId'),
+            since: any(named: 'since'),
+          ),
+        ).thenThrow(Exception('Network error'));
 
         // Other tables succeed
-        when(() => mockSyncApi.fetchUpdates(
-              tableName: any(named: 'tableName', that: isNot('products')),
-              storeId: any(named: 'storeId'),
-              since: any(named: 'since'),
-            )).thenAnswer((_) async => []);
+        when(
+          () => mockSyncApi.fetchUpdates(
+            tableName: any(named: 'tableName', that: isNot('products')),
+            storeId: any(named: 'storeId'),
+            since: any(named: 'since'),
+          ),
+        ).thenAnswer((_) async => []);
 
         final result = await service.pullUpdates(storeId: 'store-1');
 
@@ -136,24 +157,30 @@ void main() {
       test('passes lastPullAt as since parameter', () async {
         final lastPull = DateTime(2026, 1, 10);
 
-        when(() => mockMetadataDao.getLastPullAt('products'))
-            .thenAnswer((_) async => lastPull);
-        when(() => mockMetadataDao.getLastPullAt(any(that: isNot('products'))))
-            .thenAnswer((_) async => null);
+        when(
+          () => mockMetadataDao.getLastPullAt('products'),
+        ).thenAnswer((_) async => lastPull);
+        when(
+          () => mockMetadataDao.getLastPullAt(any(that: isNot('products'))),
+        ).thenAnswer((_) async => null);
 
-        when(() => mockSyncApi.fetchUpdates(
-              tableName: any(named: 'tableName'),
-              storeId: any(named: 'storeId'),
-              since: any(named: 'since'),
-            )).thenAnswer((_) async => []);
+        when(
+          () => mockSyncApi.fetchUpdates(
+            tableName: any(named: 'tableName'),
+            storeId: any(named: 'storeId'),
+            since: any(named: 'since'),
+          ),
+        ).thenAnswer((_) async => []);
 
         await service.pullUpdates(storeId: 'store-1');
 
-        verify(() => mockSyncApi.fetchUpdates(
-              tableName: 'products',
-              storeId: 'store-1',
-              since: lastPull,
-            )).called(1);
+        verify(
+          () => mockSyncApi.fetchUpdates(
+            tableName: 'products',
+            storeId: 'store-1',
+            since: lastPull,
+          ),
+        ).called(1);
       });
     });
 
