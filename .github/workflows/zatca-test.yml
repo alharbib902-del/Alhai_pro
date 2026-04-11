@@ -199,4 +199,4 @@ jobs:
       - name: Check ZATCA code formatting
         run: |
           cd packages/alhai_zatca
-          dart format --set-exit-if-changed .
+          dart format --language-version=latest --set-exit-if-changed .
