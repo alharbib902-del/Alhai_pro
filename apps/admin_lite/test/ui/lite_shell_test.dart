@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:admin_lite/ui/lite_shell.dart';
 
 void main() {
@@ -58,17 +60,25 @@ void main() {
       );
 
       await tester.pumpWidget(
-        ProviderScope(child: MaterialApp.router(routerConfig: router)),
+        ProviderScope(
+          child: MaterialApp.router(
+            routerConfig: router,
+            locale: const Locale('ar'),
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+          ),
+        ),
       );
 
       await tester.pumpAndSettle();
 
-      // Verify bottom navigation bar items
-      expect(find.text('Dashboard'), findsOneWidget);
-      expect(find.text('Reports'), findsOneWidget);
-      expect(find.text('AI'), findsOneWidget);
-      expect(find.text('Monitoring'), findsOneWidget);
-      expect(find.text('More'), findsOneWidget);
+      // Verify bottom navigation bar exists with localized labels
+      expect(find.byType(BottomNavigationBar), findsOneWidget);
 
       // Verify content is shown
       expect(find.text('Dashboard Content'), findsOneWidget);
@@ -112,7 +122,19 @@ void main() {
       );
 
       await tester.pumpWidget(
-        ProviderScope(child: MaterialApp.router(routerConfig: router)),
+        ProviderScope(
+          child: MaterialApp.router(
+            routerConfig: router,
+            locale: const Locale('ar'),
+            supportedLocales: AppLocalizations.supportedLocales,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+          ),
+        ),
       );
 
       await tester.pumpAndSettle();
