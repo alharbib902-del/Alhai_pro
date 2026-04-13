@@ -124,7 +124,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     } on SocketException catch (_) {
       if (mounted) {
         setState(
-          () => _error = 'لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى',
+          () =>
+              _error = 'لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى',
         );
       }
     } on TimeoutException catch (_) {
@@ -135,7 +136,8 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
         _startLockout();
         if (mounted) {
           setState(
-            () => _error = 'تم تجاوز عدد المحاولات. انتظر $_lockoutSeconds ثانية',
+            () =>
+                _error = 'تم تجاوز عدد المحاولات. انتظر $_lockoutSeconds ثانية',
           );
         }
       } else {

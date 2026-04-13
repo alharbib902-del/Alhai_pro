@@ -325,7 +325,8 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
           backgroundColor: AppColors.error,
         ),
       );
-      if (kDebugMode) debugPrint('Security: non-admin attempted sensitive user operation');
+      if (kDebugMode)
+        debugPrint('Security: non-admin attempted sensitive user operation');
       return false;
     }
     return true;

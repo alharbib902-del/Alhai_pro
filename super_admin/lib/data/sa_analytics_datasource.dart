@@ -28,7 +28,12 @@ class SAAnalyticsDatasource {
             .toList();
       }
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'getMonthlyRevenue: sa_monthly_revenue RPC failed, using fallback');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint:
+            'getMonthlyRevenue: sa_monthly_revenue RPC failed, using fallback',
+      );
     }
 
     // Fallback: calculate from subscriptions amount
@@ -114,7 +119,12 @@ class SAAnalyticsDatasource {
             .toList();
       }
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'getTopStoresByRevenue: sa_top_stores_by_revenue RPC failed, using fallback');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint:
+            'getTopStoresByRevenue: sa_top_stores_by_revenue RPC failed, using fallback',
+      );
     }
 
     // Fallback: join stores with sales count
@@ -196,7 +206,12 @@ class SAAnalyticsDatasource {
             .toList();
       }
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'getTopStoresByTransactions: sa_top_stores_by_transactions RPC failed, using fallback');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint:
+            'getTopStoresByTransactions: sa_top_stores_by_transactions RPC failed, using fallback',
+      );
     }
 
     // Fallback

@@ -92,7 +92,11 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         });
       }
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'supplier_form: load supplier data failed');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'supplier_form: load supplier data failed',
+      );
       if (mounted) {
         setState(() => _isLoadingData = false);
         final l10n = AppLocalizations.of(context);
@@ -109,7 +113,10 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
       ref.read(unsavedChangesProvider.notifier).state = false;
     } catch (e) {
       // Expected during widget tree teardown — provider may already be disposed.
-      assert(() { debugPrint('dispose: unsavedChangesProvider reset skipped: $e'); return true; }());
+      assert(() {
+        debugPrint('dispose: unsavedChangesProvider reset skipped: $e');
+        return true;
+      }());
     }
     _companyNameController.dispose();
     _contactNameController.dispose();
@@ -917,7 +924,11 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         context.pop();
       }
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'supplier_form: save supplier failed');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'supplier_form: save supplier failed',
+      );
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1016,7 +1027,11 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
         context.pop();
       }
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'supplier_form: delete supplier failed');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'supplier_form: delete supplier failed',
+      );
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(

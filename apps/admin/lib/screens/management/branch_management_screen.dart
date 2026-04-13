@@ -344,10 +344,17 @@ class _BranchManagementScreenState
       await db.storesDao.updateStore(updated);
       await _loadData();
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'branch_management: toggle store active failed');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'branch_management: toggle store active failed',
+      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).errorOccurred), backgroundColor: AppColors.error),
+          SnackBar(
+            content: Text(AppLocalizations.of(context).errorOccurred),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     }
@@ -462,10 +469,19 @@ class _BranchManagementScreenState
                   );
                   await _loadData();
                 } catch (e, st) {
-                  await reportError(e, stackTrace: st, hint: 'branch_management: add branch failed');
+                  await reportError(
+                    e,
+                    stackTrace: st,
+                    hint: 'branch_management: add branch failed',
+                  );
                   if (context.mounted) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(AppLocalizations.of(context).errorOccurred), backgroundColor: AppColors.error),
+                      SnackBar(
+                        content: Text(
+                          AppLocalizations.of(context).errorOccurred,
+                        ),
+                        backgroundColor: AppColors.error,
+                      ),
                     );
                   }
                 }
@@ -675,10 +691,17 @@ class _BranchManagementScreenState
         await db.storesDao.deleteStore(store.id);
         await _loadData();
       } catch (e, st) {
-        await reportError(e, stackTrace: st, hint: 'branch_management: delete store failed');
+        await reportError(
+          e,
+          stackTrace: st,
+          hint: 'branch_management: delete store failed',
+        );
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(AppLocalizations.of(context).errorOccurred), backgroundColor: AppColors.error),
+            SnackBar(
+              content: Text(AppLocalizations.of(context).errorOccurred),
+              backgroundColor: AppColors.error,
+            ),
           );
         }
       }

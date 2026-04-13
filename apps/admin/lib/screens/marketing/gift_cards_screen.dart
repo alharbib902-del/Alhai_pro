@@ -239,7 +239,11 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
                   ),
                 );
               } catch (e, st) {
-                reportError(e, stackTrace: st, hint: 'GiftCardsScreen: persist gift card');
+                reportError(
+                  e,
+                  stackTrace: st,
+                  hint: 'GiftCardsScreen: persist gift card',
+                );
               }
               final newCard = _GiftCard(
                 code: code,

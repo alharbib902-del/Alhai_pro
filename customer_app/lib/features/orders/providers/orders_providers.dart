@@ -49,7 +49,11 @@ final activeOrdersProvider = FutureProvider<List<Order>>((ref) async {
       try {
         return await datasource.getOrders(status: s);
       } catch (e, stack) {
-        reportError(e, stackTrace: stack, hint: 'activeOrdersProvider: status=$s');
+        reportError(
+          e,
+          stackTrace: stack,
+          hint: 'activeOrdersProvider: status=$s',
+        );
         return const Paginated<Order>(
           items: [],
           page: 1,

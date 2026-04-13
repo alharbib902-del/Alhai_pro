@@ -98,7 +98,11 @@ class _SALogsScreenState extends ConsumerState<SALogsScreen> {
         _isLoading = false;
       });
     } catch (e, st) {
-      reportError(e, stackTrace: st, hint: 'SALogsScreen: failed to load activity logs');
+      reportError(
+        e,
+        stackTrace: st,
+        hint: 'SALogsScreen: failed to load activity logs',
+      );
       setState(() {
         _error = 'failed'; // generic flag; UI shows l10n message
         _isLoading = false;

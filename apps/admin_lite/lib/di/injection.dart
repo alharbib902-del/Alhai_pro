@@ -49,7 +49,11 @@ Future<void> configureDependencies({String? environment}) async {
       getIt.registerSingleton<SupabaseClient>(supabase);
     }
   } catch (e, st) {
-    sentry.reportError(e, stackTrace: st, hint: 'injection: Supabase registration');
+    sentry.reportError(
+      e,
+      stackTrace: st,
+      hint: 'injection: Supabase registration',
+    );
     // Supabase not initialized - offline mode only
   }
 

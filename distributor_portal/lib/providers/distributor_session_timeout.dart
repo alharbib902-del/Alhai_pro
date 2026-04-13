@@ -104,11 +104,9 @@ class _SessionTimeoutWrapperState extends ConsumerState<SessionTimeoutWrapper> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final l10n = AppLocalizations.of(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.distributorSessionExpired),
-        ),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.distributorSessionExpired)));
     });
   }
 

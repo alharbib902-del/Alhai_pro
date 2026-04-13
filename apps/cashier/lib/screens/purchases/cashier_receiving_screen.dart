@@ -441,7 +441,9 @@ class _CashierReceivingScreenState
                 children: [
                   // Handle bar
                   Container(
-                    margin: const EdgeInsetsDirectional.only(top: AlhaiSpacing.sm),
+                    margin: const EdgeInsetsDirectional.only(
+                      top: AlhaiSpacing.sm,
+                    ),
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(

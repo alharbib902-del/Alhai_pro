@@ -15,7 +15,9 @@ void main() {
     return ProviderScope(
       overrides: [
         saUsersListProvider.overrideWith((_) async => <SAUser>[]),
-        saUsersDatasourceProvider.overrideWith((_) => SAUsersDatasource.test(null)),
+        saUsersDatasourceProvider.overrideWith(
+          (_) => SAUsersDatasource.test(null),
+        ),
       ],
       child: MaterialApp(
         title: 'Test',

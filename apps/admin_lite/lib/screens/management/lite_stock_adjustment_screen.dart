@@ -92,7 +92,11 @@ class _LiteStockAdjustmentScreenState
         );
       }
     } catch (e, st) {
-      reportError(e, stackTrace: st, hint: 'LiteStockAdjustmentScreen: stock adjustment');
+      reportError(
+        e,
+        stackTrace: st,
+        hint: 'LiteStockAdjustmentScreen: stock adjustment',
+      );
       if (mounted) {
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(

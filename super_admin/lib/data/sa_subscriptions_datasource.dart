@@ -56,13 +56,20 @@ class SASubscriptionsDatasource {
           }
         }
       } catch (e, st) {
-        await reportError(e, stackTrace: st, hint: 'getSubscriptions: batch store name lookup');
+        await reportError(
+          e,
+          stackTrace: st,
+          hint: 'getSubscriptions: batch store name lookup',
+        );
       }
     }
 
     return rows.map((json) {
       final orgId = json['org_id'] as String?;
-      return SASubscription.fromSupabase(json, storeName: orgId != null ? orgToName[orgId] : null);
+      return SASubscription.fromSupabase(
+        json,
+        storeName: orgId != null ? orgToName[orgId] : null,
+      );
     }).toList();
   }
 
@@ -109,7 +116,11 @@ class SASubscriptionsDatasource {
           .map((e) => SAPlan.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'getPlans: sa_plans query failed, using fallback');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'getPlans: sa_plans query failed, using fallback',
+      );
       // sa_plans table may not exist yet; derive from subscriptions
       final data = await _client
           .from('subscriptions')
@@ -203,7 +214,11 @@ class SASubscriptionsDatasource {
     try {
       await _client.from('sa_plans').update(updates).eq('id', planId);
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'updatePlan: sa_plans update failed for planId=$planId');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'updatePlan: sa_plans update failed for planId=$planId',
+      );
     }
   }
 
@@ -231,7 +246,11 @@ class SASubscriptionsDatasource {
           )
           .toList();
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'getBillingInvoices: join query failed, trying without join');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'getBillingInvoices: join query failed, trying without join',
+      );
       // invoices table may not have FK to stores; try without join
       try {
         final data = await _client
@@ -250,7 +269,11 @@ class SASubscriptionsDatasource {
             )
             .toList();
       } catch (e2, st2) {
-        await reportError(e2, stackTrace: st2, hint: 'getBillingInvoices: fallback query also failed');
+        await reportError(
+          e2,
+          stackTrace: st2,
+          hint: 'getBillingInvoices: fallback query also failed',
+        );
         return [];
       }
     }
@@ -276,7 +299,11 @@ class SASubscriptionsDatasource {
 
       return {'paid': paid, 'unpaid': unpaid, 'overdue': overdue};
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'getBillingSummary: invoices summary query failed');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'getBillingSummary: invoices summary query failed',
+      );
       return {'paid': 0, 'unpaid': 0, 'overdue': 0};
     }
   }

@@ -291,45 +291,45 @@ class LiteSettingsScreen extends ConsumerWidget {
                 button: true,
                 label: l10n.logout,
                 child: OutlinedButton.icon(
-                onPressed: () async {
-                  final confirmed = await showDialog<bool>(
-                    context: context,
-                    builder: (ctx) => AlertDialog(
-                      title: Text(l10n.logout),
-                      content: Text(l10n.logoutConfirmMessage),
-                      actions: [
-                        TextButton(
-                          onPressed: () => Navigator.pop(ctx, false),
-                          child: Text(l10n.cancel),
-                        ),
-                        FilledButton(
-                          onPressed: () => Navigator.pop(ctx, true),
-                          style: FilledButton.styleFrom(
-                            backgroundColor: AlhaiColors.error,
+                  onPressed: () async {
+                    final confirmed = await showDialog<bool>(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: Text(l10n.logout),
+                        content: Text(l10n.logoutConfirmMessage),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(ctx, false),
+                            child: Text(l10n.cancel),
                           ),
-                          child: Text(l10n.logout),
-                        ),
-                      ],
+                          FilledButton(
+                            onPressed: () => Navigator.pop(ctx, true),
+                            style: FilledButton.styleFrom(
+                              backgroundColor: AlhaiColors.error,
+                            ),
+                            child: Text(l10n.logout),
+                          ),
+                        ],
+                      ),
+                    );
+                    if (confirmed == true && context.mounted) {
+                      ref.read(authStateProvider.notifier).logout();
+                      context.go(AppRoutes.login);
+                    }
+                  },
+                  icon: const Icon(Icons.logout, color: AlhaiColors.error),
+                  label: Text(
+                    l10n.logout,
+                    style: const TextStyle(color: AlhaiColors.error),
+                  ),
+                  style: OutlinedButton.styleFrom(
+                    side: const BorderSide(color: AlhaiColors.error),
+                    padding: const EdgeInsets.symmetric(vertical: 14),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
                     ),
-                  );
-                  if (confirmed == true && context.mounted) {
-                    ref.read(authStateProvider.notifier).logout();
-                    context.go(AppRoutes.login);
-                  }
-                },
-                icon: const Icon(Icons.logout, color: AlhaiColors.error),
-                label: Text(
-                  l10n.logout,
-                  style: const TextStyle(color: AlhaiColors.error),
-                ),
-                style: OutlinedButton.styleFrom(
-                  side: const BorderSide(color: AlhaiColors.error),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-              ),
               ),
             ),
           ),

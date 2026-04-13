@@ -71,7 +71,11 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
         _loadSalesPerformance();
       }
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'employee_profile: load user failed');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'employee_profile: load user failed',
+      );
       if (mounted) {
         final l10n = AppLocalizations.of(context);
         setState(() {
@@ -156,7 +160,11 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
         });
       }
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'employee_profile: load sales performance failed');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'employee_profile: load sales performance failed',
+      );
       if (mounted) setState(() => _salesLoading = false);
     }
   }
@@ -205,7 +213,11 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
         });
       }
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'employee_profile: load shifts failed');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'employee_profile: load shifts failed',
+      );
       if (mounted) setState(() => _shiftsLoading = false);
     }
   }
@@ -265,7 +277,11 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
         );
       }
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'employee_profile: save role failed');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'employee_profile: save role failed',
+      );
       if (mounted) {
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -317,10 +333,17 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
         );
       }
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'employee_profile: toggle active failed');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'employee_profile: toggle active failed',
+      );
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(AppLocalizations.of(context).errorOccurred), backgroundColor: AppColors.error),
+          SnackBar(
+            content: Text(AppLocalizations.of(context).errorOccurred),
+            backgroundColor: AppColors.error,
+          ),
         );
       }
     }
@@ -356,19 +379,31 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
           controller: _tabController,
           tabs: [
             Tab(
-              icon: Semantics(label: l10n.profileTab, child: const Icon(Icons.person_outline)),
+              icon: Semantics(
+                label: l10n.profileTab,
+                child: const Icon(Icons.person_outline),
+              ),
               text: l10n.profileTab,
             ),
             Tab(
-              icon: Semantics(label: l10n.salesTab, child: const Icon(Icons.bar_chart_outlined)),
+              icon: Semantics(
+                label: l10n.salesTab,
+                child: const Icon(Icons.bar_chart_outlined),
+              ),
               text: l10n.salesTab,
             ),
             Tab(
-              icon: Semantics(label: l10n.shiftsTab, child: const Icon(Icons.schedule_outlined)),
+              icon: Semantics(
+                label: l10n.shiftsTab,
+                child: const Icon(Icons.schedule_outlined),
+              ),
               text: l10n.shiftsTab,
             ),
             Tab(
-              icon: Semantics(label: l10n.permissionsTab2, child: const Icon(Icons.lock_outline)),
+              icon: Semantics(
+                label: l10n.permissionsTab2,
+                child: const Icon(Icons.lock_outline),
+              ),
               text: l10n.permissionsTab2,
             ),
           ],

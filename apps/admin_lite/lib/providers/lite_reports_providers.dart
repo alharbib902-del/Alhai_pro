@@ -23,7 +23,8 @@ class NoStoreSelectedException implements Exception {
   const NoStoreSelectedException(this.providerName);
 
   @override
-  String toString() => 'NoStoreSelectedException: '
+  String toString() =>
+      'NoStoreSelectedException: '
       'No store selected when loading $providerName';
 }
 

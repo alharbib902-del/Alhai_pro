@@ -227,7 +227,8 @@ Future<void> receivePurchase(WidgetRef ref, String id) async {
           },
         );
   } catch (e) {
-    if (kDebugMode) debugPrint('فشل إضافة استلام المشتريات لطابور المزامنة: $e');
+    if (kDebugMode)
+      debugPrint('فشل إضافة استلام المشتريات لطابور المزامنة: $e');
   }
 
   ref.invalidate(purchasesListProvider);
@@ -335,7 +336,8 @@ Future<void> receivePurchaseWithDetails(
           },
         );
   } catch (e) {
-    if (kDebugMode) debugPrint('فشل إضافة استلام المشتريات لطابور المزامنة: $e');
+    if (kDebugMode)
+      debugPrint('فشل إضافة استلام المشتريات لطابور المزامنة: $e');
   }
 
   ref.invalidate(purchasesListProvider);

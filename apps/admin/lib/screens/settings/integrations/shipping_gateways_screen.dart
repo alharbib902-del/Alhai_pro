@@ -64,7 +64,11 @@ class _ShippingGatewaysScreenState
         });
       }
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'shipping_gateways: load settings failed');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'shipping_gateways: load settings failed',
+      );
       if (mounted) setState(() => _isLoading = false);
     }
   }
@@ -84,7 +88,11 @@ class _ShippingGatewaysScreenState
         ref: ref,
       );
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'shipping_gateways: save setting failed for $key');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'shipping_gateways: save setting failed for $key',
+      );
     }
   }
 

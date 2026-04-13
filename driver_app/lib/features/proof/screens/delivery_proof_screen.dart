@@ -353,9 +353,7 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
 
                   // Submit button
                   Semantics(
-                    label: _isLoading
-                        ? 'جاري تأكيد التسليم'
-                        : 'تأكيد التسليم',
+                    label: _isLoading ? 'جاري تأكيد التسليم' : 'تأكيد التسليم',
                     button: true,
                     child: FilledButton.icon(
                       onPressed: _isLoading ? null : _submit,
@@ -375,7 +373,9 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
                           vertical: AlhaiSpacing.md,
                         ),
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(AlhaiRadius.button),
+                          borderRadius: BorderRadius.circular(
+                            AlhaiRadius.button,
+                          ),
                         ),
                       ),
                     ),

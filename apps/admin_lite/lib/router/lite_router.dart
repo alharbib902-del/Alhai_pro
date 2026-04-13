@@ -69,7 +69,8 @@ class LiteRoutes {
   static const String weeklyComparison = '/lite/reports/weekly';
   static const String topProducts = '/lite/reports/top-products';
   static const String lowStock = '/lite/reports/low-stock';
-  static const String employeePerformance = '/lite/reports/employee-performance';
+  static const String employeePerformance =
+      '/lite/reports/employee-performance';
   static const String cashFlow = '/lite/reports/cash-flow';
   static const String notificationsList = '/lite/alerts/notifications';
   static const String stockAlerts = '/lite/alerts/stock';

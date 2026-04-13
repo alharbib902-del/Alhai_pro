@@ -128,7 +128,11 @@ class OfflineQueueService {
             try {
               return _QueueItem.fromJson(e as Map<String, dynamic>);
             } catch (e, st) {
-              reportError(e, stackTrace: st, hint: 'OfflineQueue._load item parse');
+              reportError(
+                e,
+                stackTrace: st,
+                hint: 'OfflineQueue._load item parse',
+              );
               return null;
             }
           })

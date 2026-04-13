@@ -335,7 +335,11 @@ class DeliveryDatasource {
       throw classified;
     } catch (e, st) {
       // Unexpected error treated as network failure: queue and keep patch.
-      reportError(e, stackTrace: st, hint: 'updateStatus($deliveryId, $newStatus) fallback');
+      reportError(
+        e,
+        stackTrace: st,
+        hint: 'updateStatus($deliveryId, $newStatus) fallback',
+      );
       await OfflineQueueService.instance.enqueue(
         deliveryId: deliveryId,
         status: newStatus,

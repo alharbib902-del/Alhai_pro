@@ -629,7 +629,9 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
               final date = entry['date'] as DateTime;
               final price = entry['price'] as double;
               return Container(
-                margin: const EdgeInsetsDirectional.only(bottom: AlhaiSpacing.xs),
+                margin: const EdgeInsetsDirectional.only(
+                  bottom: AlhaiSpacing.xs,
+                ),
                 padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 decoration: BoxDecoration(
                   color: colorScheme.surfaceContainerLow,

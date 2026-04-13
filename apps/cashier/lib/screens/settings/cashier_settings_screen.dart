@@ -335,75 +335,75 @@ class _SettingsTileState extends State<_SettingsTile> {
       label: '${widget.title}: ${widget.subtitle}',
       button: true,
       child: MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
-      child: GestureDetector(
-        onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: AnimationDurations.standard,
-          padding: const EdgeInsets.all(AlhaiSpacing.mdl),
-          decoration: BoxDecoration(
-            color: _isHovered
-                ? widget.color.withValues(alpha: widget.isDark ? 0.15 : 0.06)
-                : AppColors.getSurface(widget.isDark),
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
+        onEnter: (_) => setState(() => _isHovered = true),
+        onExit: (_) => setState(() => _isHovered = false),
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: AnimatedContainer(
+            duration: AnimationDurations.standard,
+            padding: const EdgeInsets.all(AlhaiSpacing.mdl),
+            decoration: BoxDecoration(
               color: _isHovered
-                  ? widget.color.withValues(alpha: 0.4)
-                  : AppColors.getBorder(widget.isDark),
+                  ? widget.color.withValues(alpha: widget.isDark ? 0.15 : 0.06)
+                  : AppColors.getSurface(widget.isDark),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: _isHovered
+                    ? widget.color.withValues(alpha: 0.4)
+                    : AppColors.getBorder(widget.isDark),
+              ),
+              boxShadow: _isHovered
+                  ? [
+                      BoxShadow(
+                        color: widget.color.withValues(alpha: 0.15),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                  : null,
             ),
-            boxShadow: _isHovered
-                ? [
-                    BoxShadow(
-                      color: widget.color.withValues(alpha: 0.15),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  width: 52,
+                  height: 52,
+                  decoration: BoxDecoration(
+                    color: widget.color.withValues(
+                      alpha: widget.isDark ? 0.2 : 0.1,
                     ),
-                  ]
-                : null,
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                width: 52,
-                height: 52,
-                decoration: BoxDecoration(
-                  color: widget.color.withValues(
-                    alpha: widget.isDark ? 0.2 : 0.1,
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  borderRadius: BorderRadius.circular(14),
+                  child: Icon(widget.icon, color: widget.color, size: 26),
                 ),
-                child: Icon(widget.icon, color: widget.color, size: 26),
-              ),
-              const SizedBox(height: 14),
-              Text(
-                widget.title,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.getTextPrimary(widget.isDark),
+                const SizedBox(height: 14),
+                Text(
+                  widget.title,
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.getTextPrimary(widget.isDark),
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: AlhaiSpacing.xxs),
-              Text(
-                widget.subtitle,
-                style: TextStyle(
-                  fontSize: 11,
-                  color: AppColors.getTextMuted(widget.isDark),
+                const SizedBox(height: AlhaiSpacing.xxs),
+                Text(
+                  widget.subtitle,
+                  style: TextStyle(
+                    fontSize: 11,
+                    color: AppColors.getTextMuted(widget.isDark),
+                  ),
+                  textAlign: TextAlign.center,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
                 ),
-                textAlign: TextAlign.center,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
-    ),
     );
   }
 }

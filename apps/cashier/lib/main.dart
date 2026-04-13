@@ -120,17 +120,20 @@ void main() {
         try {
           final client = Supabase.instance.client;
           if (client.auth.currentSession == null) {
-            if (kDebugMode) debugPrint('⏳ Quick check for Supabase session on web...');
+            if (kDebugMode)
+              debugPrint('⏳ Quick check for Supabase session on web...');
             await client.auth.onAuthStateChange
                 .where((data) => data.session != null)
                 .first
                 .timeout(Timeouts.sessionCheck);
             if (kDebugMode) debugPrint('✅ Supabase session recovered');
           } else {
-            if (kDebugMode) debugPrint('✅ Supabase session available immediately');
+            if (kDebugMode)
+              debugPrint('✅ Supabase session available immediately');
           }
         } catch (e) {
-          if (kDebugMode) debugPrint('ℹ️ No Supabase session (normal for local auth): $e');
+          if (kDebugMode)
+            debugPrint('ℹ️ No Supabase session (normal for local auth): $e');
         }
 
         // SESSION-FIX: تشخيص حالة SecureStorage قبل runApp

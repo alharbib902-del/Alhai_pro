@@ -50,7 +50,11 @@ Future<void> configureDependencies({String? environment}) async {
       getIt.registerSingleton<SupabaseClient>(supabase);
     }
   } catch (e, st) {
-    reportError(e, stackTrace: st, hint: 'Admin injection: Supabase registration');
+    reportError(
+      e,
+      stackTrace: st,
+      hint: 'Admin injection: Supabase registration',
+    );
   }
 
   // Disable reassignment after setup

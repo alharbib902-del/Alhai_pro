@@ -115,7 +115,11 @@ class _WhatsAppManagementScreenState
         });
       }
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'whatsapp_management: load data failed');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'whatsapp_management: load data failed',
+      );
       if (mounted) setState(() => _isLoading = false);
     }
   }

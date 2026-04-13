@@ -256,7 +256,9 @@ class _DistributorLoginScreenState
                             _obscurePassword
                                 ? Icons.visibility_outlined
                                 : Icons.visibility_off_outlined,
-                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.onSurfaceVariant,
                           ),
                           onPressed: () => setState(
                             () => _obscurePassword = !_obscurePassword,

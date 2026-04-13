@@ -123,7 +123,11 @@ class AuthDatasource {
       await prefs.clear();
     } catch (e, stack) {
       debugPrint('[AuthDatasource] Error clearing SharedPreferences: $e');
-      reportError(e, stackTrace: stack, hint: 'logout: clear SharedPreferences');
+      reportError(
+        e,
+        stackTrace: stack,
+        hint: 'logout: clear SharedPreferences',
+      );
     }
 
     // Clear secure storage tokens

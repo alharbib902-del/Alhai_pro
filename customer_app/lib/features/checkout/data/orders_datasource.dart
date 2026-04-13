@@ -23,7 +23,8 @@ class OrdersDatasource {
         .timeout(AppConstants.networkTimeout);
 
     // Check if any items failed
-    if (stockResult is Map<String, dynamic> && stockResult['success'] == false) {
+    if (stockResult is Map<String, dynamic> &&
+        stockResult['success'] == false) {
       final failures = stockResult['failures'];
       final count = failures is List ? failures.length : 0;
       throw Exception('بعض المنتجات غير متوفرة: $count منتجات');
@@ -37,7 +38,9 @@ class OrdersDatasource {
 
     // 3. Insert order
     final orderMap = <String, dynamic>{
-      'customer_id': _client.auth.currentUser?.id ?? (throw StateError('User not authenticated')),
+      'customer_id':
+          _client.auth.currentUser?.id ??
+          (throw StateError('User not authenticated')),
       'store_id': params.storeId,
       'status': 'created',
       'subtotal': subtotal,
@@ -64,17 +67,24 @@ class OrdersDatasource {
     // 4. Insert order items
     try {
       for (final item in params.items) {
-        await _client.from('order_items').insert({
-          'order_id': orderId,
-          'product_id': item.productId,
-          'product_name': item.name,
-          'unit_price': item.unitPrice,
-          'qty': item.qty,
-          'total_price': item.lineTotal,
-        }).timeout(AppConstants.networkTimeout);
+        await _client
+            .from('order_items')
+            .insert({
+              'order_id': orderId,
+              'product_id': item.productId,
+              'product_name': item.name,
+              'unit_price': item.unitPrice,
+              'qty': item.qty,
+              'total_price': item.lineTotal,
+            })
+            .timeout(AppConstants.networkTimeout);
       }
     } catch (e, stack) {
-      reportError(e, stackTrace: stack, hint: 'createOrder: insert order_items failed');
+      reportError(
+        e,
+        stackTrace: stack,
+        hint: 'createOrder: insert order_items failed',
+      );
       // Attempt to release reserved stock and clean up the order
       try {
         await _client.rpc(
@@ -82,7 +92,11 @@ class OrdersDatasource {
           params: {'p_order_id': orderId},
         );
       } catch (releaseError, releaseStack) {
-        reportError(releaseError, stackTrace: releaseStack, hint: 'createOrder: stock release failed for order $orderId');
+        reportError(
+          releaseError,
+          stackTrace: releaseStack,
+          hint: 'createOrder: stock release failed for order $orderId',
+        );
       }
       await _client.from('orders').delete().eq('id', orderId);
       rethrow;

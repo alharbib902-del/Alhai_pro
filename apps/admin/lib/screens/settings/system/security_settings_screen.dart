@@ -168,7 +168,11 @@ class _SecuritySettingsScreenState
         }
       }
     } catch (e, st) {
-      reportError(e, stackTrace: st, hint: 'SecuritySettingsScreen: loadSettings');
+      reportError(
+        e,
+        stackTrace: st,
+        hint: 'SecuritySettingsScreen: loadSettings',
+      );
       if (mounted) setState(() => _isLoading = false);
     }
   }

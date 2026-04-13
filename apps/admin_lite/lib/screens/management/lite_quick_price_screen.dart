@@ -388,7 +388,11 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
                       );
                     }
                   } catch (e, st) {
-                    reportError(e, stackTrace: st, hint: 'LiteQuickPriceScreen: price update');
+                    reportError(
+                      e,
+                      stackTrace: st,
+                      hint: 'LiteQuickPriceScreen: price update',
+                    );
                     if (ctx.mounted) Navigator.pop(ctx);
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(

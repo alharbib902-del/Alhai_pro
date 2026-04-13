@@ -429,7 +429,9 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
             final initials = _getInitials(account.name);
 
             return Padding(
-              padding: const EdgeInsetsDirectional.only(bottom: AlhaiSpacing.xs),
+              padding: const EdgeInsetsDirectional.only(
+                bottom: AlhaiSpacing.xs,
+              ),
               child: InkWell(
                 onTap: () => _toggleSelect(account.id),
                 borderRadius: BorderRadius.circular(12),

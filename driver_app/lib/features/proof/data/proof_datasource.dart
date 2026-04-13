@@ -43,9 +43,7 @@ class ProofDatasource {
         );
       }
       if (!_isValidImageType(photoBytes)) {
-        throw ArgumentError(
-          'نوع الصورة غير مدعوم. يُسمح فقط بصور JPEG و PNG',
-        );
+        throw ArgumentError('نوع الصورة غير مدعوم. يُسمح فقط بصور JPEG و PNG');
       }
     }
 

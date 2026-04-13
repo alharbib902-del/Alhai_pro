@@ -87,7 +87,11 @@ class LocationService {
       );
       return _currentPosition;
     } catch (e, st) {
-      reportError(e, stackTrace: st, hint: 'LocationService.getCurrentPosition');
+      reportError(
+        e,
+        stackTrace: st,
+        hint: 'LocationService.getCurrentPosition',
+      );
       return null;
     }
   }

@@ -78,13 +78,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     } on SocketException catch (_) {
       if (mounted) {
         setState(
-          () => _error = 'لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى',
+          () =>
+              _error = 'لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى',
         );
       }
     } on TimeoutException catch (_) {
       if (mounted) setState(() => _error = 'انتهت مهلة الاتصال. حاول مرة أخرى');
     } catch (e) {
-      if (mounted) setState(() => _error = 'فشل إرسال رمز التحقق. حاول مرة أخرى');
+      if (mounted)
+        setState(() => _error = 'فشل إرسال رمز التحقق. حاول مرة أخرى');
     } finally {
       if (mounted) setState(() => _loading = false);
     }

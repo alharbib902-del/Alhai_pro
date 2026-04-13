@@ -40,17 +40,13 @@ class AuditLogService {
   final AuditActor? Function() _resolveActor;
 
   /// Production constructor -- accepts a typed [SupabaseClient].
-  AuditLogService(
-    SupabaseClient client, {
-    AuditActor? Function()? resolveActor,
-  }) : _client = client,
-       _resolveActor = resolveActor ?? (() => _defaultActorFromClient(client));
+  AuditLogService(SupabaseClient client, {AuditActor? Function()? resolveActor})
+    : _client = client,
+      _resolveActor = resolveActor ?? (() => _defaultActorFromClient(client));
 
   /// Test constructor -- accepts a fake client.
-  AuditLogService.test(
-    this._client, {
-    AuditActor? Function()? resolveActor,
-  }) : _resolveActor = resolveActor ?? (() => _defaultActorFromClient(_client));
+  AuditLogService.test(this._client, {AuditActor? Function()? resolveActor})
+    : _resolveActor = resolveActor ?? (() => _defaultActorFromClient(_client));
 
   /// In-memory queue for audit entries that failed to persist.
   /// Retried on the next successful [log] call.
@@ -140,7 +136,11 @@ class AuditLogService {
         await _client.from('audit_log').insert(row);
       } catch (e, st) {
         // Already reported on first failure; just log retry failure.
-        await reportError(e, stackTrace: st, hint: 'audit_log retry flush failed');
+        await reportError(
+          e,
+          stackTrace: st,
+          hint: 'audit_log retry flush failed',
+        );
       }
     }
   }

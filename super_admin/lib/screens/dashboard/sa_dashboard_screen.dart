@@ -186,7 +186,11 @@ class SADashboardScreen extends ConsumerWidget {
                       ),
                     ),
                     error: (e, st) {
-                      reportError(e, stackTrace: st, hint: 'Monthly revenue chart load failed');
+                      reportError(
+                        e,
+                        stackTrace: st,
+                        hint: 'Monthly revenue chart load failed',
+                      );
                       return Text(l10n.errorOccurred);
                     },
                     data: (data) =>
@@ -205,7 +209,11 @@ class SADashboardScreen extends ConsumerWidget {
                       ),
                     ),
                     error: (e, st) {
-                      reportError(e, stackTrace: st, hint: 'Subscription distribution chart load failed');
+                      reportError(
+                        e,
+                        stackTrace: st,
+                        hint: 'Subscription distribution chart load failed',
+                      );
                       return Text(l10n.errorOccurred);
                     },
                     data: (dist) => _SubscriptionDistribution(

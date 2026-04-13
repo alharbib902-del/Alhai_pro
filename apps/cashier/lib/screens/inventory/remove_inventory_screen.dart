@@ -570,7 +570,9 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
             final isSelected = _reason == r['value'];
             final color = r['color'] as Color;
             return Padding(
-              padding: const EdgeInsetsDirectional.only(bottom: AlhaiSpacing.xs),
+              padding: const EdgeInsetsDirectional.only(
+                bottom: AlhaiSpacing.xs,
+              ),
               child: InkWell(
                 onTap: () => setState(() => _reason = r['value'] as String),
                 borderRadius: BorderRadius.circular(12),

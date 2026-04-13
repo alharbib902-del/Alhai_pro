@@ -50,9 +50,9 @@ class ConnectivityService {
 
     // Check initial state (with timeout to avoid blocking app startup)
     try {
-      final result = await _connectivity
-          .checkConnectivity()
-          .timeout(Timeouts.connectivityCheck);
+      final result = await _connectivity.checkConnectivity().timeout(
+        Timeouts.connectivityCheck,
+      );
       _isOnline = result != ConnectivityResult.none;
     } on TimeoutException {
       if (kDebugMode) {
@@ -86,9 +86,9 @@ class ConnectivityService {
   /// Check connectivity on demand (useful for pull-to-refresh).
   Future<bool> checkNow() async {
     try {
-      final result = await _connectivity
-          .checkConnectivity()
-          .timeout(Timeouts.connectivityCheck);
+      final result = await _connectivity.checkConnectivity().timeout(
+        Timeouts.connectivityCheck,
+      );
       final wasOnline = _isOnline;
       _isOnline = result != ConnectivityResult.none;
 
@@ -101,7 +101,8 @@ class ConnectivityService {
 
       return _isOnline;
     } on TimeoutException {
-      if (kDebugMode) debugPrint('ConnectivityService: فحص الاتصال تجاوز المهلة');
+      if (kDebugMode)
+        debugPrint('ConnectivityService: فحص الاتصال تجاوز المهلة');
       return _isOnline;
     } catch (e) {
       if (kDebugMode) debugPrint('ConnectivityService: خطأ في الفحص: $e');

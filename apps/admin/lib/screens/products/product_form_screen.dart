@@ -133,7 +133,10 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       ref.read(unsavedChangesProvider.notifier).state = false;
     } catch (e) {
       // Expected during widget tree teardown — provider may already be disposed.
-      assert(() { debugPrint('dispose: unsavedChangesProvider reset skipped: $e'); return true; }());
+      assert(() {
+        debugPrint('dispose: unsavedChangesProvider reset skipped: $e');
+        return true;
+      }());
     }
     _nameController.dispose();
     _nameEnController.dispose();

@@ -44,7 +44,10 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
       ref.read(unsavedChangesProvider.notifier).state = false;
     } catch (e) {
       // Expected during widget tree teardown — provider may already be disposed.
-      assert(() { debugPrint('dispose: unsavedChangesProvider reset skipped: $e'); return true; }());
+      assert(() {
+        debugPrint('dispose: unsavedChangesProvider reset skipped: $e');
+        return true;
+      }());
     }
     _invoiceNoController.dispose();
     super.dispose();
@@ -647,7 +650,11 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
               );
             }
           } catch (e, st) {
-            await reportError(e, stackTrace: st, hint: 'purchase_form: stock update failed for ${item.productId}');
+            await reportError(
+              e,
+              stackTrace: st,
+              hint: 'purchase_form: stock update failed for ${item.productId}',
+            );
           }
         }
       }
@@ -665,7 +672,11 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
         context.pop();
       }
     } catch (e, st) {
-      await reportError(e, stackTrace: st, hint: 'purchase_form: save purchase failed');
+      await reportError(
+        e,
+        stackTrace: st,
+        hint: 'purchase_form: save purchase failed',
+      );
       if (mounted) {
         setState(() => _isSaving = false);
         ScaffoldMessenger.of(context).showSnackBar(

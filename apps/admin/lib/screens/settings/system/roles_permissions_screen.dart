@@ -157,7 +157,11 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
                 .toList();
           }
         } catch (e, st) {
-          reportError(e, stackTrace: st, hint: 'RolesPermissions: parse permissions for ${r.id}');
+          reportError(
+            e,
+            stackTrace: st,
+            hint: 'RolesPermissions: parse permissions for ${r.id}',
+          );
           permissions = [];
         }
 
@@ -805,7 +809,8 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
           backgroundColor: AppColors.error,
         ),
       );
-      if (kDebugMode) debugPrint('Security: non-admin attempted sensitive role operation');
+      if (kDebugMode)
+        debugPrint('Security: non-admin attempted sensitive role operation');
       return false;
     }
     return true;

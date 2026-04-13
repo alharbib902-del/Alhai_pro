@@ -24,8 +24,13 @@ void configureDependencies() {
     final client = Supabase.instance.client;
     locator.registerSingleton<SupabaseClient>(client);
   } catch (e, st) {
-    reportError(e, stackTrace: st, hint: 'DI: Supabase not initialized - offline mode');
-    if (kDebugMode) debugPrint('Supabase not initialized - running in offline mode');
+    reportError(
+      e,
+      stackTrace: st,
+      hint: 'DI: Supabase not initialized - offline mode',
+    );
+    if (kDebugMode)
+      debugPrint('Supabase not initialized - running in offline mode');
   }
 
   // Datasources

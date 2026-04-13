@@ -30,13 +30,16 @@ class CustomerChatDatasource {
     required String text,
   }) async {
     try {
-      await _client.from('chat_messages').insert({
-        'order_id': orderId,
-        'sender_type': 'customer',
-        'sender_id': _userId,
-        'text': text,
-        'language': 'ar',
-      }).timeout(AppConstants.networkTimeout);
+      await _client
+          .from('chat_messages')
+          .insert({
+            'order_id': orderId,
+            'sender_type': 'customer',
+            'sender_id': _userId,
+            'text': text,
+            'language': 'ar',
+          })
+          .timeout(AppConstants.networkTimeout);
     } catch (e) {
       throw Exception('فشل إرسال الرسالة');
     }

@@ -526,10 +526,19 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                           await db.loyaltyDao.deactivateReward(reward.id);
                           await _loadData();
                         } catch (e, st) {
-                          await reportError(e, stackTrace: st, hint: 'loyalty_program: deactivate reward failed');
+                          await reportError(
+                            e,
+                            stackTrace: st,
+                            hint: 'loyalty_program: deactivate reward failed',
+                          );
                           if (context.mounted) {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(AppLocalizations.of(context).errorOccurred), backgroundColor: AppColors.error),
+                              SnackBar(
+                                content: Text(
+                                  AppLocalizations.of(context).errorOccurred,
+                                ),
+                                backgroundColor: AppColors.error,
+                              ),
                             );
                           }
                         }
@@ -1681,10 +1690,19 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                     );
                     await _loadData();
                   } catch (e, st) {
-                    await reportError(e, stackTrace: st, hint: 'loyalty_program: add reward failed');
+                    await reportError(
+                      e,
+                      stackTrace: st,
+                      hint: 'loyalty_program: add reward failed',
+                    );
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(AppLocalizations.of(context).errorOccurred), backgroundColor: AppColors.error),
+                        SnackBar(
+                          content: Text(
+                            AppLocalizations.of(context).errorOccurred,
+                          ),
+                          backgroundColor: AppColors.error,
+                        ),
                       );
                     }
                   }

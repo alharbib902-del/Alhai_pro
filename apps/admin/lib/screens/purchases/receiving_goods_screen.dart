@@ -741,7 +741,8 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
               );
             }
           } catch (e) {
-            if (kDebugMode) debugPrint('خطأ في تحديث المخزون: ${item.productId}: $e');
+            if (kDebugMode)
+              debugPrint('خطأ في تحديث المخزون: ${item.productId}: $e');
           }
         }
       }

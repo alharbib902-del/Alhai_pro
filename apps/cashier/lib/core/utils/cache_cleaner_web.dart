@@ -12,13 +12,15 @@ Future<void> clearAllWebCache() async {
   try {
     web.window.localStorage.clear();
   } catch (e, st) {
-    if (kDebugMode) debugPrint('[CacheCleaner] localStorage.clear failed: $e\n$st');
+    if (kDebugMode)
+      debugPrint('[CacheCleaner] localStorage.clear failed: $e\n$st');
   }
 
   try {
     web.window.sessionStorage.clear();
   } catch (e, st) {
-    if (kDebugMode) debugPrint('[CacheCleaner] sessionStorage.clear failed: $e\n$st');
+    if (kDebugMode)
+      debugPrint('[CacheCleaner] sessionStorage.clear failed: $e\n$st');
   }
 
   // Clear IndexedDB databases - use known database names
@@ -35,7 +37,8 @@ Future<void> clearAllWebCache() async {
     try {
       web.window.indexedDB.deleteDatabase(name);
     } catch (e, st) {
-      if (kDebugMode) debugPrint('[CacheCleaner] IndexedDB delete "$name" failed: $e\n$st');
+      if (kDebugMode)
+        debugPrint('[CacheCleaner] IndexedDB delete "$name" failed: $e\n$st');
     }
   }
 
@@ -47,7 +50,8 @@ Future<void> clearAllWebCache() async {
       await cacheStorage.delete(name.toDart).toDart;
     }
   } catch (e, st) {
-    if (kDebugMode) debugPrint('[CacheCleaner] CacheStorage clear failed: $e\n$st');
+    if (kDebugMode)
+      debugPrint('[CacheCleaner] CacheStorage clear failed: $e\n$st');
   }
 
   // Unregister Service Workers

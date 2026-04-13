@@ -29,7 +29,11 @@ class StoresDatasource {
           .map(_storeFromRow)
           .toList();
     } catch (e, stack) {
-      reportError(e, stackTrace: stack, hint: 'getNearbyStores: RPC fallback to client-side');
+      reportError(
+        e,
+        stackTrace: stack,
+        hint: 'getNearbyStores: RPC fallback to client-side',
+      );
       // Fallback: client-side filtering if RPC is unavailable
       return _getNearbyStoresClientSide(lat: lat, lng: lng, radiusKm: radiusKm);
     }

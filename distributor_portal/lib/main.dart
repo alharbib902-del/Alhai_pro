@@ -106,18 +106,11 @@ class DistributorPortalApp extends ConsumerWidget {
               child: const Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(
-                    Icons.cloud_off_rounded,
-                    size: 64,
-                    color: Colors.grey,
-                  ),
+                  Icon(Icons.cloud_off_rounded, size: 64, color: Colors.grey),
                   SizedBox(height: 24),
                   Text(
                     'Unable to connect to server',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   SizedBox(height: 12),

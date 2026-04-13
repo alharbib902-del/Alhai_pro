@@ -9,7 +9,11 @@ class CategoriesDatasource {
 
   CategoriesDatasource(this._client);
 
-  Future<List<Category>> getCategories(String storeId, {int limit = 100, int offset = 0}) async {
+  Future<List<Category>> getCategories(
+    String storeId, {
+    int limit = 100,
+    int offset = 0,
+  }) async {
     try {
       final data = await _client
           .from('categories')
@@ -29,7 +33,11 @@ class CategoriesDatasource {
     }
   }
 
-  Future<List<Category>> getRootCategories(String storeId, {int limit = 100, int offset = 0}) async {
+  Future<List<Category>> getRootCategories(
+    String storeId, {
+    int limit = 100,
+    int offset = 0,
+  }) async {
     try {
       final data = await _client
           .from('categories')

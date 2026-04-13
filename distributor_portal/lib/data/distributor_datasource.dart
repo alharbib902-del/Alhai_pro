@@ -354,11 +354,11 @@ class DistributorDatasource {
           .range(offset, offset + limit - 1);
       return (data as List).map((json) {
         final map = json as Map<String, dynamic>;
-        _validateResponseFields(
-          map,
-          ['id', 'status', 'created_at'],
-          'getOrders',
-        );
+        _validateResponseFields(map, [
+          'id',
+          'status',
+          'created_at',
+        ], 'getOrders');
         return DistributorOrder.fromJson(map);
       }).toList();
     } catch (e) {
@@ -384,11 +384,11 @@ class DistributorDatasource {
           .maybeSingle();
 
       if (data == null) return null;
-      _validateResponseFields(
-        data,
-        ['id', 'status', 'created_at'],
-        'getOrderById',
-      );
+      _validateResponseFields(data, [
+        'id',
+        'status',
+        'created_at',
+      ], 'getOrderById');
       return DistributorOrder.fromJson(data);
     } catch (e) {
       if (e is DatasourceError) rethrow;
@@ -417,11 +417,11 @@ class DistributorDatasource {
 
       return (data as List).map((json) {
         final map = json as Map<String, dynamic>;
-        _validateResponseFields(
-          map,
-          ['product_id', 'quantity', 'unit_price'],
-          'getOrderItems',
-        );
+        _validateResponseFields(map, [
+          'product_id',
+          'quantity',
+          'unit_price',
+        ], 'getOrderItems');
         return DistributorOrderItem.fromJson(map);
       }).toList();
     } catch (e) {
