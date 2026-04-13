@@ -37,7 +37,8 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
   Future<void> _loadZones() async {
     setState(() => _isLoading = true);
     try {
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final rows =
           await (_db.select(_db.settingsTable)..where(
                 (s) => s.storeId.equals(storeId) & s.key.equals(_settingsKey),
@@ -108,7 +109,8 @@ class _DeliveryZonesScreenState extends ConsumerState<DeliveryZonesScreen> {
   }
 
   Future<void> _persistZones() async {
-    final storeId = ref.read(currentStoreIdProvider)!;
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
     final id = 'setting_${storeId}_$_settingsKey';
     final jsonStr = jsonEncode(_zones.map((z) => z.toJson()).toList());
     await _db

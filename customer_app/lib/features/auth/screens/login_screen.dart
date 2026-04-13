@@ -57,10 +57,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     if (!_formKey.currentState!.validate()) return;
     if (_isCooldownActive) return;
 
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
+    if (mounted) {
+      setState(() {
+        _loading = true;
+        _error = null;
+      });
+    }
 
     try {
       final phone =
@@ -74,13 +76,15 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         context.push('/auth/otp', extra: phone);
       }
     } on SocketException catch (_) {
-      setState(
-        () => _error = 'لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى',
-      );
+      if (mounted) {
+        setState(
+          () => _error = 'لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى',
+        );
+      }
     } on TimeoutException catch (_) {
-      setState(() => _error = 'انتهت مهلة الاتصال. حاول مرة أخرى');
+      if (mounted) setState(() => _error = 'انتهت مهلة الاتصال. حاول مرة أخرى');
     } catch (e) {
-      setState(() => _error = 'فشل إرسال رمز التحقق. حاول مرة أخرى');
+      if (mounted) setState(() => _error = 'فشل إرسال رمز التحقق. حاول مرة أخرى');
     } finally {
       if (mounted) setState(() => _loading = false);
     }

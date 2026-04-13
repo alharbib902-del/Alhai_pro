@@ -22,7 +22,7 @@ from main import app
 # Helpers
 # ---------------------------------------------------------------------------
 TEST_JWT_SECRET = "test-jwt-secret-for-unit-tests"
-BASE_BODY = {"org_id": "org_test_001", "store_id": "store_test_001"}
+BASE_BODY = {"org_id": "00000000-0000-4000-a000-000000000001", "store_id": "00000000-0000-4000-a000-000000000002"}
 
 
 def _make_token(
@@ -31,12 +31,14 @@ def _make_token(
     role: str = "authenticated",
     exp_offset: int = 3600,
     secret: str = TEST_JWT_SECRET,
+    audience: str = "authenticated",
 ) -> str:
     """Create a signed JWT for testing."""
     payload = {
         "sub": user_id,
         "email": email,
         "role": role,
+        "aud": audience,
         "iat": int(time.time()),
         "exp": int(time.time()) + exp_offset,
     }
@@ -139,6 +141,7 @@ def test_valid_token_with_membership_succeeds(client_with_secret):
             headers=_auth_header(token),
         )
         # Verify the function was called with correct args (no org_id)
+        # store_id from body is a string (UUID format)
         mock_check.assert_called_once_with("user_001", BASE_BODY["store_id"])
     assert response.status_code == 200
     assert "predictions" in response.json()
@@ -214,6 +217,7 @@ def test_token_without_sub_claim_returns_401(client_with_secret):
     payload = {
         "email": "user@alhai.app",
         "role": "authenticated",
+        "aud": "authenticated",
         "iat": int(time.time()),
         "exp": int(time.time()) + 3600,
     }

@@ -188,7 +188,8 @@ class _CustomerGroupsScreenState extends ConsumerState<CustomerGroupsScreen> {
     });
     try {
       final db = GetIt.I<AppDatabase>();
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final group = _groups[groupIndex];
 
       String whereClause;

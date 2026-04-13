@@ -47,7 +47,7 @@ from models.schemas import (
 
 def _seed(org_id: str, store_id: str) -> int:
     """Deterministic seed from org+store for consistent results."""
-    h = hashlib.md5(f"{org_id}:{store_id}".encode()).hexdigest()
+    h = hashlib.sha256(f"{org_id}:{store_id}".encode()).hexdigest()
     return int(h[:8], 16)
 
 

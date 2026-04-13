@@ -25,6 +25,9 @@ final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeState>((ref) {
   return ThemeNotifier();
 });
 
+/// Tracks Supabase initialization failure for UI error state.
+final supabaseInitErrorProvider = StateProvider<String?>((ref) => null);
+
 void main() {
   runZonedGuarded(
     () async {
@@ -59,6 +62,7 @@ Future<void> _appMain() async {
 
   // ── Parallel Phase 1: Firebase + Supabase + DB key ──────────────
   // These are independent and can run concurrently to cut startup time.
+  String? supabaseError;
   await Future.wait([
     // Firebase (graceful fallback if not configured)
     Future<void>(() async {
@@ -85,6 +89,7 @@ Future<void> _appMain() async {
         if (kDebugMode) debugPrint('Supabase initialized successfully');
       } catch (e, stack) {
         reportError(e, stackTrace: stack, hint: 'Supabase init');
+        supabaseError = e.toString();
       }
     }),
     // Database encryption key (independent of Firebase/Supabase)
@@ -123,6 +128,8 @@ Future<void> _appMain() async {
         adminOnboardingSeenProvider.overrideWith(
           (ref) => hasSeenOnboardingFlag,
         ),
+        if (supabaseError != null)
+          supabaseInitErrorProvider.overrideWith((ref) => supabaseError),
       ],
       child: const AdminApp(),
     ),
@@ -188,6 +195,9 @@ class AdminApp extends ConsumerWidget {
     // Watch locale state
     final localeState = ref.watch(localeProvider);
 
+    // Watch Supabase initialization error
+    final supabaseError = ref.watch(supabaseInitErrorProvider);
+
     return MaterialApp.router(
       title: 'Al-HAI Admin',
       debugShowCheckedModeBanner: false,
@@ -208,7 +218,34 @@ class AdminApp extends ConsumerWidget {
       builder: (context, child) {
         return Directionality(
           textDirection: localeState.textDirection,
-          child: child ?? const SizedBox.shrink(),
+          child: Column(
+            children: [
+              // Show persistent error banner if Supabase init failed
+              if (supabaseError != null)
+                MaterialBanner(
+                  content: Text(
+                    AppLocalizations.of(context).errorOccurred,
+                    style: const TextStyle(color: Colors.white),
+                  ),
+                  backgroundColor: Colors.red.shade700,
+                  leading: const Icon(Icons.cloud_off, color: Colors.white),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        // Clear the error to dismiss the banner
+                        ref.read(supabaseInitErrorProvider.notifier).state =
+                            null;
+                      },
+                      child: const Text(
+                        'Dismiss',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              Expanded(child: child ?? const SizedBox.shrink()),
+            ],
+          ),
         );
       },
     );

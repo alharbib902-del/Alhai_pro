@@ -13,6 +13,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSpacing;
 import 'package:alhai_auth/alhai_auth.dart' show authStateProvider, AuthStatus;
+import '../core/constants/timing.dart';
 import 'package:alhai_pos/alhai_pos.dart'
     show cartStateProvider, heldInvoicesProvider;
 import '../widgets/clock_invalid_banner.dart';
@@ -291,7 +292,7 @@ class _CashierShellState extends ConsumerState<CashierShell> {
         if (didPop) return;
         final now = DateTime.now();
         if (_lastBackPress != null &&
-            now.difference(_lastBackPress!) < const Duration(seconds: 2)) {
+            now.difference(_lastBackPress!) < Timeouts.doubleBackExit) {
           SystemNavigator.pop();
         } else {
           _lastBackPress = now;
@@ -299,7 +300,7 @@ class _CashierShellState extends ConsumerState<CashierShell> {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(l10n.pressBackAgainToExit),
-              duration: const Duration(seconds: 2),
+              duration: Timeouts.doubleBackExit,
               behavior: SnackBarBehavior.floating,
             ),
           );

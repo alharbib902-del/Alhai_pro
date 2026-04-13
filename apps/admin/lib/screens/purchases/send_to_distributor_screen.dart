@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -640,7 +641,7 @@ class _SendToDistributorScreenState
               },
             );
       } catch (e) {
-        debugPrint('Sync enqueue error: $e');
+        if (kDebugMode) debugPrint('Sync enqueue error: $e');
       }
 
       // 4. Invalidate providers

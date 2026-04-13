@@ -8,6 +8,7 @@ import 'package:uuid/uuid.dart';
 
 import '../data/chat_datasource.dart';
 import '../providers/chat_providers.dart';
+import '../../../core/services/sentry_service.dart';
 
 // ─── Local message status model ────────────────────────────────────────────
 
@@ -94,7 +95,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
         setState(() => msg.status = _SendStatus.sent);
         _scrollToBottom();
       }
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'ChatScreen._doSend');
       if (mounted) setState(() => msg.status = _SendStatus.failed);
     }
   }

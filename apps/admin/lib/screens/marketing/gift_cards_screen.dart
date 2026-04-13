@@ -50,7 +50,8 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
   Future<void> _loadCards() async {
     setState(() => _isLoading = true);
     try {
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final coupons = await _db.discountsDao.getAllCoupons(storeId);
 
       // Filter to gift-card type coupons (type == 'gift_card')
@@ -219,7 +220,8 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
           ),
           FilledButton.icon(
             onPressed: () async {
-              final storeId = ref.read(currentStoreIdProvider)!;
+              final storeId = ref.read(currentStoreIdProvider);
+              if (storeId == null) return;
               final id = 'gc_${DateTime.now().millisecondsSinceEpoch}';
               try {
                 await _db.discountsDao.insertCoupon(
@@ -236,8 +238,8 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
                     createdAt: DateTime.now(),
                   ),
                 );
-              } catch (_) {
-                // Best-effort persist
+              } catch (e, st) {
+                reportError(e, stackTrace: st, hint: 'GiftCardsScreen: persist gift card');
               }
               final newCard = _GiftCard(
                 code: code,

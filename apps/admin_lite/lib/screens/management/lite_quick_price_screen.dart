@@ -15,6 +15,7 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../core/services/sentry_service.dart';
 import '../../providers/lite_screen_providers.dart';
 
 /// Quick price update screen for Admin Lite
@@ -34,7 +35,7 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
   void _onSearchChanged(String value) {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 300), () {
-      setState(() => _searchQuery = value);
+      if (mounted) setState(() => _searchQuery = value);
     });
   }
 
@@ -386,7 +387,8 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
                         ),
                       );
                     }
-                  } catch (_) {
+                  } catch (e, st) {
+                    reportError(e, stackTrace: st, hint: 'LiteQuickPriceScreen: price update');
                     if (ctx.mounted) Navigator.pop(ctx);
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(

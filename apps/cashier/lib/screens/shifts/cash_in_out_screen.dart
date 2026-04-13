@@ -679,7 +679,8 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
       );
 
       // Audit log
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       auditService.logCashDrawer(
         storeId: storeId,
         userId: user?.id ?? 'unknown',
@@ -709,7 +710,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
       // Clear form
       _amountController.clear();
       _reasonController.clear();
-      setState(() {});
+      if (mounted) setState(() {});
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Save cash in/out');
       if (!mounted) return;

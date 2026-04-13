@@ -56,7 +56,10 @@ class ActivityEntry {
 // LITE STATS PROVIDER
 // =============================================================================
 
-/// Combined stats provider: dashboard data + pending approvals + active shifts
+/// Aggregates dashboard KPIs in parallel: pending approval count, today's
+/// sales total and order count, low-stock product count, active shift count,
+/// and day-over-day sales change percentage. Returns [LiteStatsData] with
+/// all zeroes when no store is selected.
 final liteStatsProvider = FutureProvider.autoDispose<LiteStatsData>((
   ref,
 ) async {
@@ -119,7 +122,9 @@ final liteStatsProvider = FutureProvider.autoDispose<LiteStatsData>((
 // RECENT ACTIVITY PROVIDER
 // =============================================================================
 
-/// Recent activity from audit log (last 20 entries)
+/// Fetches the 20 most recent audit log entries for the current store,
+/// mapped to [ActivityEntry] models. Returns empty list on error or when
+/// no store is selected. Errors are reported to Sentry silently.
 final recentActivityProvider = FutureProvider.autoDispose<List<ActivityEntry>>((
   ref,
 ) async {

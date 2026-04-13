@@ -27,16 +27,20 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     // Check minimum order amount
     final minOrderAmount = ref.read(minOrderAmountProvider);
     if (minOrderAmount > 0 && cart.total < minOrderAmount) {
-      setState(() {
-        _error = 'الحد الأدنى للطلب ${minOrderAmount.toStringAsFixed(2)} ر.س';
-      });
+      if (mounted) {
+        setState(() {
+          _error = 'الحد الأدنى للطلب ${minOrderAmount.toStringAsFixed(2)} ر.س';
+        });
+      }
       return;
     }
 
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
+    if (mounted) {
+      setState(() {
+        _loading = true;
+        _error = null;
+      });
+    }
 
     try {
       final order = await ref.read(placeOrderProvider(cart).future);
@@ -50,7 +54,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         context.go('/orders/${order.id}');
       }
     } catch (e) {
-      setState(() => _error = e.toString());
+      if (mounted) setState(() => _error = e.toString());
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -74,6 +78,7 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
         title: const Text('إتمام الطلب'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'رجوع',
           onPressed: () => context.pop(),
         ),
       ),

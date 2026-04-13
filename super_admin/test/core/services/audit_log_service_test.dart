@@ -11,7 +11,7 @@ void main() {
 
   setUp(() {
     mock = MockSupabaseClient();
-    service = AuditLogService(mock.client, resolveActor: () => actor);
+    service = AuditLogService.test(mock.client, resolveActor: () => actor);
     // Insert terminates when awaited — just provide an empty response.
     mock.setResponse('audit_log', <dynamic>[]);
   });
@@ -60,7 +60,7 @@ void main() {
     });
 
     test('omits actor_email when the actor has none', () async {
-      final svc = AuditLogService(
+      final svc = AuditLogService.test(
         mock.client,
         resolveActor: () => const AuditActor(id: 'actor-2'),
       );
@@ -96,7 +96,7 @@ void main() {
     );
 
     test('does not insert when there is no current actor', () async {
-      final svc = AuditLogService(mock.client, resolveActor: () => null);
+      final svc = AuditLogService.test(mock.client, resolveActor: () => null);
 
       await svc.log(
         action: 'store.delete',

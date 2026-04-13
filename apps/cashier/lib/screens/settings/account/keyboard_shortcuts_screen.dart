@@ -207,7 +207,7 @@ class _KeyboardShortcutsScreenState
     return Column(
       children: filtered.map((category) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: AlhaiSpacing.md),
+          padding: const EdgeInsetsDirectional.only(bottom: AlhaiSpacing.md),
           child: _buildShortcutCard(category, isDark),
         );
       }).toList(),

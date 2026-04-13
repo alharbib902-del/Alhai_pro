@@ -741,7 +741,8 @@ class _TransferInventoryScreenState
     setState(() => _isSaving = true);
 
     try {
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final movementId = const Uuid().v4();
       final currentStock = _selectedProduct!.stockQty;
       final newStock = currentStock - quantity;

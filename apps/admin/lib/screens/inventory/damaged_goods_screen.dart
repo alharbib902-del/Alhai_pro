@@ -242,7 +242,8 @@ class _DamagedGoodsScreenState extends ConsumerState<DamagedGoodsScreen> {
                   Navigator.pop(ctx);
                   try {
                     final db = GetIt.I<AppDatabase>();
-                    final storeId = ref.read(currentStoreIdProvider)!;
+                    final storeId = ref.read(currentStoreIdProvider);
+                    if (storeId == null) return;
                     await db.customStatement(
                       '''INSERT INTO inventory_movements
                        (id, store_id, product_id, type, qty, note, created_at)

@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:signature/signature.dart';
 
+import '../../../core/constants/driver_constants.dart';
 import '../data/proof_datasource.dart';
 import '../../deliveries/providers/delivery_providers.dart';
 import '../../../core/services/location_service.dart';
@@ -157,7 +158,7 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
       await ref.read(
         updateDeliveryStatusProvider((
           id: widget.deliveryId,
-          status: 'delivered',
+          status: DeliveryStatus.delivered,
           notes: null,
         )).future,
       );
@@ -204,50 +205,56 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.xs),
-                  GestureDetector(
-                    onTap: _capturePhoto,
-                    child: Container(
-                      height: MediaQuery.of(context).size.height * 0.25,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.surfaceContainerHighest,
-                        borderRadius: BorderRadius.circular(AlhaiRadius.md),
-                        border: Border.all(
-                          color: theme.colorScheme.outlineVariant,
+                  Semantics(
+                    label: _photoBytes != null
+                        ? 'صورة التسليم ملتقطة. اضغط لإعادة الالتقاط'
+                        : 'اضغط لالتقاط صورة التسليم',
+                    button: true,
+                    child: GestureDetector(
+                      onTap: _capturePhoto,
+                      child: Container(
+                        height: MediaQuery.of(context).size.height * 0.25,
+                        decoration: BoxDecoration(
+                          color: theme.colorScheme.surfaceContainerHighest,
+                          borderRadius: BorderRadius.circular(AlhaiRadius.md),
+                          border: Border.all(
+                            color: theme.colorScheme.outlineVariant,
+                          ),
                         ),
-                      ),
-                      child: _photoBytes != null
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(
-                                AlhaiRadius.md,
-                              ),
-                              // cacheWidth/cacheHeight prevent decoding the full
-                              // resolution image just to display a thumbnail.
-                              // gaplessPlayback avoids a white flash when the
-                              // bytes reference changes (e.g. retake photo).
-                              child: Image.memory(
-                                _photoBytes!,
-                                fit: BoxFit.cover,
-                                cacheWidth: 800,
-                                gaplessPlayback: true,
-                              ),
-                            )
-                          : Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(
-                                  Icons.camera_alt_outlined,
-                                  size: 48,
-                                  color: theme.colorScheme.outline,
+                        child: _photoBytes != null
+                            ? ClipRRect(
+                                borderRadius: BorderRadius.circular(
+                                  AlhaiRadius.md,
                                 ),
-                                const SizedBox(height: AlhaiSpacing.xs),
-                                Text(
-                                  'اضغط لالتقاط صورة',
-                                  style: TextStyle(
+                                // cacheWidth/cacheHeight prevent decoding the full
+                                // resolution image just to display a thumbnail.
+                                // gaplessPlayback avoids a white flash when the
+                                // bytes reference changes (e.g. retake photo).
+                                child: Image.memory(
+                                  _photoBytes!,
+                                  fit: BoxFit.cover,
+                                  cacheWidth: 800,
+                                  gaplessPlayback: true,
+                                ),
+                              )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.camera_alt_outlined,
+                                    size: 48,
                                     color: theme.colorScheme.outline,
                                   ),
-                                ),
-                              ],
-                            ),
+                                  const SizedBox(height: AlhaiSpacing.xs),
+                                  Text(
+                                    'اضغط لالتقاط صورة',
+                                    style: TextStyle(
+                                      color: theme.colorScheme.outline,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.lg),
@@ -345,25 +352,31 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
                   const SizedBox(height: AlhaiSpacing.xl),
 
                   // Submit button
-                  FilledButton.icon(
-                    onPressed: _isLoading ? null : _submit,
-                    icon: _isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.check_circle),
-                    label: Text(
-                      _isLoading ? 'جاري التأكيد...' : 'تأكيد التسليم',
-                      style: const TextStyle(fontSize: 16),
-                    ),
-                    style: FilledButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: AlhaiSpacing.md,
+                  Semantics(
+                    label: _isLoading
+                        ? 'جاري تأكيد التسليم'
+                        : 'تأكيد التسليم',
+                    button: true,
+                    child: FilledButton.icon(
+                      onPressed: _isLoading ? null : _submit,
+                      icon: _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Icon(Icons.check_circle),
+                      label: Text(
+                        _isLoading ? 'جاري التأكيد...' : 'تأكيد التسليم',
+                        style: const TextStyle(fontSize: 16),
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AlhaiRadius.button),
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: AlhaiSpacing.md,
+                        ),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(AlhaiRadius.button),
+                        ),
                       ),
                     ),
                   ),

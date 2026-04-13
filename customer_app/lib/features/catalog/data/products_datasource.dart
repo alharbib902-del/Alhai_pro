@@ -47,8 +47,9 @@ class ProductsDatasource {
           .range(from, to)
           .timeout(AppConstants.networkTimeout);
 
-      final products = (data as List)
-          .map((row) => _productFromRow(row as Map<String, dynamic>))
+      final products = (data as List<dynamic>)
+          .whereType<Map<String, dynamic>>()
+          .map(_productFromRow)
           .toList();
 
       return Paginated(

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -321,7 +322,7 @@ class _OffersContent extends ConsumerWidget {
       );
       await updatePromotion(ref, updated);
     } catch (e) {
-      debugPrint('Error toggling promotion: $e');
+      if (kDebugMode) debugPrint('Error toggling promotion: $e');
     }
   }
 
@@ -332,7 +333,7 @@ class _OffersContent extends ConsumerWidget {
     try {
       await deletePromotion(ref, promotion.id);
     } catch (e) {
-      debugPrint('Error deleting promotion: $e');
+      if (kDebugMode) debugPrint('Error deleting promotion: $e');
     }
   }
 
@@ -397,7 +398,7 @@ class _OffersContent extends ConsumerWidget {
                       type: type,
                     );
                   } catch (e) {
-                    debugPrint('Error adding promotion: $e');
+                    if (kDebugMode) debugPrint('Error adding promotion: $e');
                   }
                 }
                 if (!context.mounted) return;

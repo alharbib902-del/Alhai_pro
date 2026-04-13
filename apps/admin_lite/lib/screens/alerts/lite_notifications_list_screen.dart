@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart' show AppEmptyState;
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:get_it/get_it.dart';
@@ -49,29 +50,7 @@ class LiteNotificationsListScreen extends ConsumerWidget {
       body: dataAsync.when(
         data: (notifications) {
           if (notifications.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.notifications_off_outlined,
-                    size: 64,
-                    color: isDark
-                        ? Colors.white24
-                        : Theme.of(context).colorScheme.outlineVariant,
-                  ),
-                  const SizedBox(height: AlhaiSpacing.md),
-                  Text(
-                    l10n.noResults,
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                      color: isDark
-                          ? Colors.white54
-                          : Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                ],
-              ),
-            );
+            return AppEmptyState.noNotifications(context);
           }
 
           // Group by date

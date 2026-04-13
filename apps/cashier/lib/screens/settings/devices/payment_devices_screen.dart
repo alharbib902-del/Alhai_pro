@@ -45,7 +45,8 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
       _error = null;
     });
     try {
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final settings = await (_db.select(
         _db.settingsTable,
       )..where((s) => s.storeId.equals(storeId))).get();
@@ -292,7 +293,7 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
           ...List.generate(
             _devices.length,
             (index) => Padding(
-              padding: EdgeInsets.only(
+              padding: EdgeInsetsDirectional.only(
                 bottom: index < _devices.length - 1 ? 12 : 0,
               ),
               child: _buildDeviceCard(_devices[index], index, isDark, l10n),

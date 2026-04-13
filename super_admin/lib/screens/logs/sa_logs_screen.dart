@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 
+import '../../core/services/sentry_service.dart';
 import '../../providers/sa_dashboard_providers.dart';
 
 /// Platform activity logs screen.
@@ -96,9 +97,10 @@ class _SALogsScreenState extends ConsumerState<SALogsScreen> {
         _logs = logs;
         _isLoading = false;
       });
-    } catch (e) {
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'SALogsScreen: failed to load activity logs');
       setState(() {
-        _error = e.toString();
+        _error = 'failed'; // generic flag; UI shows l10n message
         _isLoading = false;
       });
     }
@@ -148,7 +150,7 @@ class _SALogsScreenState extends ConsumerState<SALogsScreen> {
                     color: theme.colorScheme.error,
                   ),
                   const SizedBox(height: 16),
-                  Text(_error!, style: theme.textTheme.bodyLarge),
+                  Text(l10n.errorOccurred, style: theme.textTheme.bodyLarge),
                   const SizedBox(height: 16),
                   FilledButton.tonal(
                     onPressed: _loadLogs,

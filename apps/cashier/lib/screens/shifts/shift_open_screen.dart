@@ -541,7 +541,7 @@ class _InfoItem extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(top: AlhaiSpacing.xxs),
+          padding: const EdgeInsetsDirectional.only(top: AlhaiSpacing.xxs),
           child: Container(
             width: 6,
             height: 6,

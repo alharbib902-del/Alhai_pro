@@ -202,7 +202,7 @@ Future<String> createPurchase(
           },
         );
   } catch (e) {
-    debugPrint('فشل إضافة المشتريات لطابور المزامنة: $e');
+    if (kDebugMode) debugPrint('فشل إضافة المشتريات لطابور المزامنة: $e');
   }
 
   ref.invalidate(purchasesListProvider);
@@ -227,7 +227,7 @@ Future<void> receivePurchase(WidgetRef ref, String id) async {
           },
         );
   } catch (e) {
-    debugPrint('فشل إضافة استلام المشتريات لطابور المزامنة: $e');
+    if (kDebugMode) debugPrint('فشل إضافة استلام المشتريات لطابور المزامنة: $e');
   }
 
   ref.invalidate(purchasesListProvider);
@@ -266,7 +266,7 @@ Future<void> sendToDistributor(
           },
         );
   } catch (e) {
-    debugPrint('فشل إضافة إرسال الطلب لطابور المزامنة: $e');
+    if (kDebugMode) debugPrint('فشل إضافة إرسال الطلب لطابور المزامنة: $e');
   }
 
   ref.invalidate(purchasesListProvider);
@@ -335,7 +335,7 @@ Future<void> receivePurchaseWithDetails(
           },
         );
   } catch (e) {
-    debugPrint('فشل إضافة استلام المشتريات لطابور المزامنة: $e');
+    if (kDebugMode) debugPrint('فشل إضافة استلام المشتريات لطابور المزامنة: $e');
   }
 
   ref.invalidate(purchasesListProvider);

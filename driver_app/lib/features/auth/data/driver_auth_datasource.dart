@@ -1,6 +1,8 @@
 import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import 'package:alhai_core/alhai_core.dart';
 
+import '../../../core/services/sentry_service.dart';
+
 /// Auth datasource for driver app.
 /// Handles OTP login and validates that the user has 'delivery' role.
 class DriverAuthDatasource {
@@ -84,7 +86,8 @@ class DriverAuthDatasource {
       if (role != 'delivery') return null;
 
       return _mapUser(data);
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'getCurrentUser');
       return null;
     }
   }

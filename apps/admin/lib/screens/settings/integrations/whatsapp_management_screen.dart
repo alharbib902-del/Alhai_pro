@@ -6,6 +6,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:get_it/get_it.dart';
 import 'package:drift/drift.dart' hide Column;
+import '../../../core/services/sentry_service.dart';
 
 /// شاشة إدارة قائمة انتظار WhatsApp وقوالب الرسائل
 class WhatsAppManagementScreen extends ConsumerStatefulWidget {
@@ -113,7 +114,8 @@ class _WhatsAppManagementScreenState
           _isLoading = false;
         });
       }
-    } catch (e) {
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'whatsapp_management: load data failed');
       if (mounted) setState(() => _isLoading = false);
     }
   }
@@ -155,21 +157,25 @@ class _WhatsAppManagementScreenState
   }
 
   Future<void> _retryMessage(String id) async {
+    if (!mounted) return;
     setState(() {
       final idx = _messages.indexWhere((m) => m.id == id);
       if (idx >= 0) {
         _messages[idx] = _messages[idx].copyWith(status: 'pending');
       }
     });
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(AppLocalizations.of(context).requeuedMessage),
-        backgroundColor: AppColors.info,
-      ),
-    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).requeuedMessage),
+          backgroundColor: AppColors.info,
+        ),
+      );
+    }
   }
 
   Future<void> _cancelMessage(String id) async {
+    if (!mounted) return;
     setState(() {
       final idx = _messages.indexWhere((m) => m.id == id);
       if (idx >= 0) {
@@ -634,6 +640,7 @@ class _WhatsAppManagementScreenState
                   const SizedBox(height: AlhaiSpacing.sm),
                   TextField(
                     controller: _instanceIdController,
+                    obscureText: true,
                     decoration: const InputDecoration(
                       labelText: 'Instance ID',
                       border: OutlineInputBorder(),

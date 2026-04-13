@@ -1,14 +1,13 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../../core/constants/driver_constants.dart';
 import '../data/delivery_datasource.dart';
 
-// ─── Terminal status set (used in multiple places) ───────────────────────────
-
-const _terminalStatuses = {'delivered', 'failed', 'cancelled'};
+// ─── Terminal status check ───────────────────────────────────────────────────
 
 bool _isTerminal(Map<String, dynamic> d) =>
-    _terminalStatuses.contains(d['status']);
+    DeliveryStatus.isTerminal(d['status'] as String? ?? '');
 
 // ─── Sync-time tracking ──────────────────────────────────────────────────────
 

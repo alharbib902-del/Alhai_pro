@@ -54,9 +54,11 @@ Future<bool> _autoPrintReceipt(WidgetRef ref, String saleId) async {
     // Fetch real store data for receipt header and ZATCA QR
     final store = await db.storesDao.getStoreById(sale.storeId);
     if (store == null) {
-      debugPrint(
-        'Cannot auto-print: store not found (storeId=${sale.storeId})',
-      );
+      if (kDebugMode) {
+        debugPrint(
+          'Cannot auto-print: store not found (storeId=${sale.storeId})',
+        );
+      }
       return false;
     }
     final storeName = store.name;

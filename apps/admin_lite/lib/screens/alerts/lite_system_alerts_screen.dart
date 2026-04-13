@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart' show AppRoutes;
 
 import '../../providers/lite_screen_providers.dart';
 
@@ -23,7 +24,7 @@ class LiteSystemAlertsScreen extends ConsumerWidget {
     SystemAlertData alert,
   ) {
     if (alert.title.contains('Sync') || alert.title.contains('Unsynced')) {
-      context.go('/sync-status');
+      context.go(AppRoutes.syncStatus);
     } else {
       ref.invalidate(liteSystemAlertsProvider);
     }

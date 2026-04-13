@@ -25,6 +25,7 @@ import 'di/injection.dart';
 import 'dart:async';
 import 'router/cashier_router.dart';
 import 'screens/onboarding/onboarding_screen.dart';
+import 'core/constants/timing.dart';
 import 'core/services/sentry_service.dart';
 import 'core/services/clock_validation_service.dart';
 import 'services/printing/auto_print_setup.dart';
@@ -78,9 +79,11 @@ void main() {
 
       final supabaseFuture = () async {
         try {
-          debugPrint(
-            '🔧 Supabase config: url=${SupabaseConfig.url.isNotEmpty}, key=${SupabaseConfig.anonKey.isNotEmpty}',
-          );
+          if (kDebugMode) {
+            debugPrint(
+              '🔧 Supabase config: url=${SupabaseConfig.url.isNotEmpty}, key=${SupabaseConfig.anonKey.isNotEmpty}',
+            );
+          }
           if (!SupabaseConfig.isConfigured) {
             throw StateError(
               'Supabase not configured. ${SupabaseConfig.configurationError}',
@@ -91,9 +94,9 @@ void main() {
             anonKey: SupabaseConfig.anonKey,
             debug: SupabaseConfig.enableDebugLogs,
           );
-          debugPrint('✅ Supabase initialized successfully');
+          if (kDebugMode) debugPrint('✅ Supabase initialized successfully');
         } catch (e, stack) {
-          debugPrint('❌ Supabase init FAILED: $e');
+          if (kDebugMode) debugPrint('❌ Supabase init FAILED: $e');
           reportError(e, stackTrace: stack, hint: 'Supabase init');
         }
       }();
@@ -117,25 +120,27 @@ void main() {
         try {
           final client = Supabase.instance.client;
           if (client.auth.currentSession == null) {
-            debugPrint('⏳ Quick check for Supabase session on web...');
+            if (kDebugMode) debugPrint('⏳ Quick check for Supabase session on web...');
             await client.auth.onAuthStateChange
                 .where((data) => data.session != null)
                 .first
-                .timeout(const Duration(milliseconds: 500));
-            debugPrint('✅ Supabase session recovered');
+                .timeout(Timeouts.sessionCheck);
+            if (kDebugMode) debugPrint('✅ Supabase session recovered');
           } else {
-            debugPrint('✅ Supabase session available immediately');
+            if (kDebugMode) debugPrint('✅ Supabase session available immediately');
           }
         } catch (e) {
-          debugPrint('ℹ️ No Supabase session (normal for local auth): $e');
+          if (kDebugMode) debugPrint('ℹ️ No Supabase session (normal for local auth): $e');
         }
 
         // SESSION-FIX: تشخيص حالة SecureStorage قبل runApp
         final isValid = await SecureStorageService.isSessionValid();
         final ssUserId = await SecureStorageService.getUserId();
-        debugPrint(
-          '📋 Pre-runApp SecureStorage: valid=$isValid, userId=${ssUserId ?? "null"}',
-        );
+        if (kDebugMode) {
+          debugPrint(
+            '📋 Pre-runApp SecureStorage: valid=$isValid, userId=${ssUserId ?? "null"}',
+          );
+        }
       }
 
       // DI must run before runApp (Riverpod providers use getIt synchronously)
@@ -193,13 +198,24 @@ void main() {
 }
 
 /// Get or create database encryption key from secure storage.
-/// On web, FlutterSecureStorage has no native keychain, so we fall back
-/// to SharedPreferences (less secure but functional).
+///
+/// **SECURITY WARNING (Web platform):**
+/// On web, FlutterSecureStorage has no native keychain, so the key is stored
+/// in SharedPreferences (localStorage). This is NOT secure against XSS
+/// attacks. Production deployments should consider:
+///   1. Deriving the key from the user's session token (server-side KDF), or
+///   2. Using the WebCrypto API with non-extractable CryptoKey objects, or
+///   3. Storing the key in an HttpOnly cookie managed by a backend proxy.
+///
+/// For native platforms (Android/iOS), FlutterSecureStorage is used which
+/// leverages the OS keychain / EncryptedSharedPreferences.
 Future<String> _getOrCreateDbKey() async {
   const keyName = 'db_encryption_key';
 
   if (kIsWeb) {
-    // Web fallback: use SharedPreferences (no native keychain available)
+    // SECURITY: Web fallback — localStorage is readable by any JS on the
+    // same origin. Acceptable only if CSP blocks inline scripts and no
+    // third-party JS is loaded. See web/index.html CSP meta tag.
     final prefs = await SharedPreferences.getInstance();
     var key = prefs.getString('secure_storage_$keyName');
     if (key == null) {
@@ -304,7 +320,8 @@ _CsvOutput? _parseCsvInBackground(_CsvInput input) {
       categoriesCsv: input.categoriesCsv,
       productsCsv: input.productsCsv,
     );
-  } catch (_) {
+  } catch (e) {
+    if (kDebugMode) debugPrint('CSV parse failed: $e');
     return null;
   }
 }

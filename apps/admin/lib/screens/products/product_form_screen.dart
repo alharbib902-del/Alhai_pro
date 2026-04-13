@@ -126,10 +126,15 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
 
   @override
   void dispose() {
-    // Clear unsaved changes flag when leaving
+    // Clear unsaved changes flag when leaving.
+    // This may throw if the provider is already disposed during widget tree
+    // teardown, which is expected and safe to ignore in dispose().
     try {
       ref.read(unsavedChangesProvider.notifier).state = false;
-    } catch (_) {}
+    } catch (e) {
+      // Expected during widget tree teardown — provider may already be disposed.
+      assert(() { debugPrint('dispose: unsavedChangesProvider reset skipped: $e'); return true; }());
+    }
     _nameController.dispose();
     _nameEnController.dispose();
     _barcodeController.dispose();

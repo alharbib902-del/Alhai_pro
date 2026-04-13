@@ -821,7 +821,8 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
       final account = _selectedAccount!;
       final signedAmount = _isDebt ? amount : -amount;
       final newBalance = account.balance + signedAmount;
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final user = ref.read(currentUserProvider);
       final txnId = const Uuid().v4();
 

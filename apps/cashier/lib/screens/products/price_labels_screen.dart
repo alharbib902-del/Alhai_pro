@@ -532,7 +532,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
             ),
           if (_selectedIds.length > 3)
             Padding(
-              padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
+              padding: const EdgeInsetsDirectional.only(top: AlhaiSpacing.xs),
               child: Text(
                 '+${_selectedIds.length - 3} ${l10n.more}',
                 style: TextStyle(
@@ -558,7 +558,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
         : 100.0;
 
     return Container(
-      margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+      margin: const EdgeInsetsDirectional.only(bottom: AlhaiSpacing.xs),
       height: labelHeight,
       padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(

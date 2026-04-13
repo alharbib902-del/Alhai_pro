@@ -2,7 +2,8 @@
 
 import logging
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Request
+from pydantic import ValidationError
 
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import ForecastRequest, ForecastResponse
@@ -32,7 +33,7 @@ async def forecast_sales(
     try:
         try:
             sales = SupabaseService.get_sales(
-                org_id=request.org_id, store_id=request.store_id
+                org_id=str(request.org_id), store_id=str(request.store_id)
             )
             if sales:
                 result = forecast_from_sales(
@@ -49,14 +50,17 @@ async def forecast_sales(
                 return result
         except InsufficientDataError as e:
             logger.info("sales_forecast insufficient data: %s", e)
+        except ValueError as e:
+            logger.warning("sales_forecast validation error: %s", e)
+            raise HTTPException(status_code=422, detail=str(e))
         except Exception:
             logger.exception(
                 "sales_forecast real aggregation failed; falling back to mock"
             )
 
         result = generate_forecast(
-            org_id=request.org_id,
-            store_id=request.store_id,
+            org_id=str(request.org_id),
+            store_id=str(request.store_id),
             days_ahead=request.days_ahead,
             product_ids=request.product_ids,
             language=request.language,
@@ -69,6 +73,8 @@ async def forecast_sales(
             request.store_id,
         )
         return result
+    except HTTPException:
+        raise
     except Exception:
         logger.exception("خطأ في التنبؤ بالمبيعات")
         raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

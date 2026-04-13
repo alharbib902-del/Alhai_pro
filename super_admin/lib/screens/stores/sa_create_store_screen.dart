@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../core/services/audit_log_service.dart';
+import '../../core/services/sentry_service.dart';
 import '../../providers/sa_providers.dart';
 
 /// Create new store form -- submits to Supabase.
@@ -36,6 +37,40 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
     _ownerPhoneController.dispose();
     _ownerEmailController.dispose();
     super.dispose();
+  }
+
+  /// Validates that a name field is not empty and has a reasonable length.
+  String? _validateName(String? value, AppLocalizations l10n) {
+    if (value == null || value.trim().isEmpty) {
+      return l10n.fieldRequired;
+    }
+    if (value.trim().length < 2) {
+      return l10n.fieldRequired; // too short
+    }
+    if (value.trim().length > 100) {
+      return l10n.fieldRequired; // too long
+    }
+    return null;
+  }
+
+  /// Validates an email address format.
+  String? _validateEmail(String? value) {
+    if (value == null || value.trim().isEmpty) return null; // optional field
+    final emailRegex = RegExp(r'^[\w.+-]+@[\w-]+\.[\w.]+$');
+    if (!emailRegex.hasMatch(value.trim())) {
+      return 'Invalid email format';
+    }
+    return null;
+  }
+
+  /// Validates a phone number format (digits, optional leading +, 7-15 chars).
+  String? _validatePhone(String? value) {
+    if (value == null || value.trim().isEmpty) return null; // optional field
+    final phoneRegex = RegExp(r'^\+?[\d\s\-]{7,15}$');
+    if (!phoneRegex.hasMatch(value.trim())) {
+      return 'Invalid phone number';
+    }
+    return null;
   }
 
   Future<void> _submit() async {
@@ -90,11 +125,12 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
         );
         context.go('/stores');
       }
-    } catch (e) {
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'createStore submit failed');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error: $e'),
+            content: Text(AppLocalizations.of(context).errorOccurred),
             backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
@@ -219,9 +255,7 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
                                     labelText: l10n.storeName,
                                     prefixIcon: const Icon(Icons.store_rounded),
                                   ),
-                                  validator: (v) => (v == null || v.isEmpty)
-                                      ? l10n.storeName
-                                      : null,
+                                  validator: (v) => _validateName(v, l10n),
                                 ),
                                 const SizedBox(height: AlhaiSpacing.md),
                                 DropdownButtonFormField<String>(
@@ -285,9 +319,7 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
                                       Icons.person_rounded,
                                     ),
                                   ),
-                                  validator: (v) => (v == null || v.isEmpty)
-                                      ? l10n.ownerName
-                                      : null,
+                                  validator: (v) => _validateName(v, l10n),
                                 ),
                                 const SizedBox(height: AlhaiSpacing.md),
                                 TextFormField(
@@ -297,6 +329,7 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
                                     prefixIcon: const Icon(Icons.phone_rounded),
                                   ),
                                   keyboardType: TextInputType.phone,
+                                  validator: _validatePhone,
                                 ),
                                 const SizedBox(height: AlhaiSpacing.md),
                                 TextFormField(
@@ -306,6 +339,7 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
                                     prefixIcon: const Icon(Icons.email_rounded),
                                   ),
                                   keyboardType: TextInputType.emailAddress,
+                                  validator: _validateEmail,
                                 ),
                               ],
                             ),

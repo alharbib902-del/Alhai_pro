@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../core/services/sentry_service.dart';
 import 'models/sa_analytics_model.dart';
 
 /// Datasource for platform-wide analytics.
@@ -7,6 +8,7 @@ import 'models/sa_analytics_model.dart';
 class SAAnalyticsDatasource {
   final SupabaseClient _client;
 
+  /// Creates a datasource bound to the given [SupabaseClient].
   SAAnalyticsDatasource(this._client);
 
   // ========================================================================
@@ -25,8 +27,8 @@ class SAAnalyticsDatasource {
             .map((e) => SARevenueData.fromJson(e as Map<String, dynamic>))
             .toList();
       }
-    } catch (_) {
-      // RPC may not exist, use fallback
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'getMonthlyRevenue: sa_monthly_revenue RPC failed, using fallback');
     }
 
     // Fallback: calculate from subscriptions amount
@@ -57,7 +59,10 @@ class SAAnalyticsDatasource {
     return result;
   }
 
-  /// Revenue breakdown by plan slug.
+  /// Revenue breakdown by plan slug for active subscriptions.
+  ///
+  /// Returns one entry per distinct plan with the subscriber count and
+  /// normalized monthly revenue.
   Future<List<SARevenueByPlan>> getRevenueByPlan() async {
     final data = await _client
         .from('subscriptions')
@@ -93,7 +98,10 @@ class SAAnalyticsDatasource {
         .toList();
   }
 
-  /// Top stores by revenue.
+  /// Top stores by total sales revenue, limited to [limit] results.
+  ///
+  /// Tries the `sa_top_stores_by_revenue` RPC first; falls back to manual
+  /// aggregation when the RPC is unavailable.
   Future<List<SATopStoreRevenue>> getTopStoresByRevenue({int limit = 5}) async {
     try {
       final data = await _client.rpc(
@@ -105,8 +113,8 @@ class SAAnalyticsDatasource {
             .map((e) => SATopStoreRevenue.fromJson(e as Map<String, dynamic>))
             .toList();
       }
-    } catch (_) {
-      // RPC not available, fallback
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'getTopStoresByRevenue: sa_top_stores_by_revenue RPC failed, using fallback');
     }
 
     // Fallback: join stores with sales count
@@ -168,7 +176,10 @@ class SAAnalyticsDatasource {
     return result.count / 30.0;
   }
 
-  /// Top stores by transaction count.
+  /// Top stores by transaction count, limited to [limit] results.
+  ///
+  /// Tries the `sa_top_stores_by_transactions` RPC first; falls back to
+  /// per-store count queries when the RPC is unavailable.
   Future<List<SATopStoreTransactions>> getTopStoresByTransactions({
     int limit = 5,
   }) async {
@@ -184,8 +195,8 @@ class SAAnalyticsDatasource {
             )
             .toList();
       }
-    } catch (_) {
-      // RPC not available
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'getTopStoresByTransactions: sa_top_stores_by_transactions RPC failed, using fallback');
     }
 
     // Fallback
@@ -225,7 +236,9 @@ class SAAnalyticsDatasource {
     return result.take(limit).toList();
   }
 
-  /// Get per-store active user counts (for bar chart).
+  /// Active user counts per store (last 30 days), used for bar charts.
+  ///
+  /// Returns at most [limit] stores, sorted by active user count descending.
   Future<List<SAActiveUsersPerStore>> getActiveUsersPerStore({
     int limit = 8,
   }) async {

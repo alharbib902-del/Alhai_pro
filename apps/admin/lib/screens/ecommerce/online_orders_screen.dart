@@ -45,7 +45,8 @@ class _OnlineOrdersScreenState extends ConsumerState<OnlineOrdersScreen> {
   Future<void> _loadOrders() async {
     setState(() => _isLoading = true);
     try {
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final dbOrders = await _db.ordersDao.getOrders(storeId, channel: 'app');
 
       // Map DB rows to UI model. Empty DB results in empty list,

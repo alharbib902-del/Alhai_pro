@@ -5,6 +5,7 @@
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
 library;
 
+import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -106,8 +107,9 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
       // هذا يضمن توفر البيانات حتى لو المستخدم فتح /sales مباشرة
       try {
         await ref.read(globalSyncActivationProvider.future);
-      } catch (_) {
+      } catch (e) {
         // التزامن فشل أو غير متاح - نستمر بالبيانات المحلية
+        if (kDebugMode) debugPrint('Sync activation skipped: $e');
       }
 
       // ── تحميل البيانات من القاعدة المحلية (مع pagination) ──
@@ -202,13 +204,18 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
 
     return Scaffold(
       floatingActionButton: _showScrollToTop
-          ? FloatingActionButton.small(
-              onPressed: () => _scrollController.animateTo(
-                0,
-                duration: const Duration(milliseconds: 300),
-                curve: Curves.easeOut,
+          ? Semantics(
+              label: l10n.back,
+              button: true,
+              child: FloatingActionButton.small(
+                tooltip: l10n.back,
+                onPressed: () => _scrollController.animateTo(
+                  0,
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.easeOut,
+                ),
+                child: const Icon(Icons.arrow_upward),
               ),
-              child: const Icon(Icons.arrow_upward),
             )
           : null,
       body: Column(

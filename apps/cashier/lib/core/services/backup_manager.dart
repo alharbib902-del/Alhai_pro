@@ -8,6 +8,7 @@ import 'dart:convert';
 
 import 'package:alhai_database/alhai_database.dart';
 import 'package:drift/drift.dart';
+import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 
 import 'sentry_service.dart';
 
@@ -314,7 +315,8 @@ class BackupManager {
         tableCount: map['tableCount'] as int? ?? 0,
         totalRows: map['totalRows'] as int? ?? 0,
       );
-    } catch (_) {
+    } catch (e) {
+      if (kDebugMode) debugPrint('Backup validation failed: $e');
       return null;
     }
   }

@@ -1,9 +1,27 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/io_client.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
+
+/// Default timeout durations for Supabase network operations.
+class SupabaseTimeouts {
+  SupabaseTimeouts._();
+
+  /// Timeout for establishing a TCP connection.
+  static const connectionTimeout = Duration(seconds: 15);
+
+  /// Timeout for idle keep-alive connections.
+  static const idleTimeout = Duration(seconds: 60);
+
+  /// Per-request timeout for individual Supabase queries.
+  ///
+  /// Use with `.timeout()` on any Future-based Supabase call when you
+  /// need explicit request-level protection against hung requests.
+  static const requestTimeout = Duration(seconds: 30);
+}
 
 /// Supabase client initialization and access for super_admin.
 class AppSupabase {
@@ -22,16 +40,20 @@ class AppSupabase {
     }
 
     // Use a custom HttpClient with timeouts to avoid hanging requests.
-    // 30s connection timeout, 60s idle timeout.
     final ioClient = HttpClient()
-      ..connectionTimeout = const Duration(seconds: 30)
-      ..idleTimeout = const Duration(seconds: 60);
+      ..connectionTimeout = SupabaseTimeouts.connectionTimeout
+      ..idleTimeout = SupabaseTimeouts.idleTimeout;
 
     await Supabase.initialize(
       url: SupabaseConfig.url,
       anonKey: SupabaseConfig.anonKey,
       debug: SupabaseConfig.enableDebugLogs,
       httpClient: IOClient(ioClient),
+    ).timeout(
+      const Duration(seconds: 20),
+      onTimeout: () => throw TimeoutException(
+        'Supabase initialization timed out after 20 seconds',
+      ),
     );
 
     _initialized = true;

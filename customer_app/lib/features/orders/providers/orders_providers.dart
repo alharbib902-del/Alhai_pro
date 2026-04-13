@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart';
 
+import '../../../core/services/sentry_service.dart';
 import '../../../di/injection.dart';
 import '../../checkout/data/orders_datasource.dart';
 
@@ -47,7 +48,8 @@ final activeOrdersProvider = FutureProvider<List<Order>>((ref) async {
     statuses.map((s) async {
       try {
         return await datasource.getOrders(status: s);
-      } catch (_) {
+      } catch (e, stack) {
+        reportError(e, stackTrace: stack, hint: 'activeOrdersProvider: status=$s');
         return const Paginated<Order>(
           items: [],
           page: 1,

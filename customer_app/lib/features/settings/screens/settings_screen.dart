@@ -69,6 +69,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
         title: const Text('الإعدادات'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'رجوع',
           onPressed: () => context.pop(),
         ),
       ),

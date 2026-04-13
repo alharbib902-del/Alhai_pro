@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_core/alhai_core.dart';
 
+import '../../../core/services/sentry_service.dart';
 import '../providers/orders_providers.dart';
 import '../../../di/injection.dart';
 import '../../checkout/data/orders_datasource.dart';
@@ -32,6 +33,7 @@ class OrderDetailScreen extends ConsumerWidget {
         title: const Text('تفاصيل الطلب'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'رجوع',
           onPressed: () => context.pop(),
         ),
       ),
@@ -250,7 +252,14 @@ class OrderDetailScreen extends ConsumerWidget {
         await datasource.cancelOrder(orderId);
         ref.invalidate(orderDetailProvider(orderId));
         ref.invalidate(ordersListProvider(null));
-      } catch (_) {}
+      } catch (e, stack) {
+        reportError(e, stackTrace: stack, hint: 'cancelOrder');
+        if (context.mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('فشل إلغاء الطلب. حاول مرة أخرى')),
+          );
+        }
+      }
     }
   }
 }

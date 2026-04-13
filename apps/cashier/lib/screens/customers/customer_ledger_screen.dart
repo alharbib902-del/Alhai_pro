@@ -161,6 +161,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton.extended(
+        tooltip: l10n.manualAdjustment,
         onPressed: _isAdjusting
             ? null
             : () => _showAdjustmentDialog(colorScheme, l10n),
@@ -812,7 +813,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
       children: txns
           .map(
             (txn) => Padding(
-              padding: const EdgeInsets.only(bottom: 10),
+              padding: const EdgeInsetsDirectional.only(bottom: 10),
               child: _buildMobileTransactionCard(txn, colorScheme, l10n),
             ),
           )
@@ -1474,7 +1475,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
     final currentBal = _account?.balance ?? 0.0;
     final signedAmount = isDebit ? amount : -amount;
     final newBalance = currentBal + signedAmount;
-    final storeId = ref.read(currentStoreIdProvider)!;
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
 
     try {
       final txnId = const Uuid().v4();

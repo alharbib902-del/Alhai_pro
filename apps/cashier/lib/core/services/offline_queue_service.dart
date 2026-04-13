@@ -201,16 +201,18 @@ class OfflineQueueService {
             try {
               return QueueItem.fromJson(e as Map<String, dynamic>);
             } catch (e) {
-              debugPrint(
-                '[OfflineQueueService] item deserialization failed: $e',
-              );
+              if (kDebugMode) {
+                debugPrint(
+                  '[OfflineQueueService] item deserialization failed: $e',
+                );
+              }
               return null;
             }
           })
           .whereType<QueueItem>()
           .toList();
     } catch (e) {
-      debugPrint('[OfflineQueueService] queue load failed: $e');
+      if (kDebugMode) debugPrint('[OfflineQueueService] queue load failed: $e');
       _cache = [];
     }
 

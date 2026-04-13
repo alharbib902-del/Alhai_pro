@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../core/services/sentry_service.dart';
 import 'models/sa_subscription_model.dart';
 
 /// Datasource for subscription and billing management.
@@ -7,6 +8,7 @@ import 'models/sa_subscription_model.dart';
 class SASubscriptionsDatasource {
   final SupabaseClient _client;
 
+  /// Creates a datasource bound to the given [SupabaseClient].
   SASubscriptionsDatasource(this._client);
 
   // ========================================================================
@@ -14,8 +16,10 @@ class SASubscriptionsDatasource {
   // ========================================================================
 
   /// Fetch all subscriptions with org info.
+  ///
   /// Schema: subscriptions has org_id, plan (TEXT slug), current_period_start,
   /// current_period_end. No FK to plans table.
+  /// Uses a batch lookup for store names to avoid N+1 queries.
   Future<List<SASubscription>> getSubscriptions({String? statusFilter}) async {
     var query = _client.from('subscriptions').select('''
       id, status, plan, org_id, amount, currency, billing_cycle,
@@ -27,26 +31,39 @@ class SASubscriptionsDatasource {
     }
 
     final data = await query.order('created_at', ascending: false);
-    // Enrich with org/store name lookup
-    final subs = <SASubscription>[];
-    for (final row in data as List) {
-      final json = row as Map<String, dynamic>;
-      // Lookup store name via org_id
-      final orgId = json['org_id'] as String?;
-      String? storeName;
-      if (orgId != null) {
-        try {
-          final store = await _client
-              .from('stores')
-              .select('name')
-              .eq('org_id', orgId)
-              .maybeSingle();
-          storeName = store?['name'] as String?;
-        } catch (_) {}
+
+    // Collect distinct org_ids for a single batch lookup (fixes N+1)
+    final rows = (data as List).cast<Map<String, dynamic>>();
+    final orgIds = rows
+        .map((r) => r['org_id'] as String?)
+        .whereType<String>()
+        .toSet()
+        .toList();
+
+    // Batch fetch store names for all org_ids in one query
+    final orgToName = <String, String>{};
+    if (orgIds.isNotEmpty) {
+      try {
+        final stores = await _client
+            .from('stores')
+            .select('org_id, name')
+            .inFilter('org_id', orgIds);
+        for (final store in stores as List) {
+          final oid = store['org_id'] as String?;
+          final name = store['name'] as String?;
+          if (oid != null && name != null) {
+            orgToName[oid] = name;
+          }
+        }
+      } catch (e, st) {
+        await reportError(e, stackTrace: st, hint: 'getSubscriptions: batch store name lookup');
       }
-      subs.add(SASubscription.fromSupabase(json, storeName: storeName));
     }
-    return subs;
+
+    return rows.map((json) {
+      final orgId = json['org_id'] as String?;
+      return SASubscription.fromSupabase(json, storeName: orgId != null ? orgToName[orgId] : null);
+    }).toList();
   }
 
   /// Get subscription counts by status.
@@ -91,7 +108,8 @@ class SASubscriptionsDatasource {
       return (data as List)
           .map((e) => SAPlan.fromJson(e as Map<String, dynamic>))
           .toList();
-    } catch (_) {
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'getPlans: sa_plans query failed, using fallback');
       // sa_plans table may not exist yet; derive from subscriptions
       final data = await _client
           .from('subscriptions')
@@ -184,8 +202,8 @@ class SASubscriptionsDatasource {
   Future<void> updatePlan(String planId, Map<String, dynamic> updates) async {
     try {
       await _client.from('sa_plans').update(updates).eq('id', planId);
-    } catch (_) {
-      // sa_plans table may not exist yet
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'updatePlan: sa_plans update failed for planId=$planId');
     }
   }
 
@@ -212,7 +230,8 @@ class SASubscriptionsDatasource {
             }),
           )
           .toList();
-    } catch (_) {
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'getBillingInvoices: join query failed, trying without join');
       // invoices table may not have FK to stores; try without join
       try {
         final data = await _client
@@ -230,7 +249,8 @@ class SASubscriptionsDatasource {
               }),
             )
             .toList();
-      } catch (_) {
+      } catch (e2, st2) {
+        await reportError(e2, stackTrace: st2, hint: 'getBillingInvoices: fallback query also failed');
         return [];
       }
     }
@@ -255,7 +275,8 @@ class SASubscriptionsDatasource {
       }
 
       return {'paid': paid, 'unpaid': unpaid, 'overdue': overdue};
-    } catch (_) {
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'getBillingSummary: invoices summary query failed');
       return {'paid': 0, 'unpaid': 0, 'overdue': 0};
     }
   }

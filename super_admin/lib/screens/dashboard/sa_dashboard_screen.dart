@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:fl_chart/fl_chart.dart';
+import '../../core/services/sentry_service.dart';
 import '../../providers/sa_providers.dart';
 import '../../data/models/sa_analytics_model.dart';
 import '../../ui/widgets/sa_skeleton.dart';
@@ -47,7 +48,12 @@ class SADashboardScreen extends ConsumerWidget {
     return Scaffold(
       body: kpisAsync.when(
         loading: () => const SADashboardSkeleton(),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, st) {
+          reportError(e, stackTrace: st, hint: 'Dashboard KPIs load failed');
+          return Center(
+            child: Text(AppLocalizations.of(context).errorOccurred),
+          );
+        },
         data: (kpis) {
           final activeStores = kpis.activeStores;
           final activeSubs = kpis.activeSubscriptions;
@@ -179,7 +185,10 @@ class SADashboardScreen extends ConsumerWidget {
                         height: 280,
                       ),
                     ),
-                    error: (e, _) => Text('$e'),
+                    error: (e, st) {
+                      reportError(e, stackTrace: st, hint: 'Monthly revenue chart load failed');
+                      return Text(l10n.errorOccurred);
+                    },
                     data: (data) =>
                         _RevenueChart(theme: theme, monthlyData: data),
                   ),
@@ -195,7 +204,10 @@ class SADashboardScreen extends ConsumerWidget {
                         height: 200,
                       ),
                     ),
-                    error: (e, _) => Text('$e'),
+                    error: (e, st) {
+                      reportError(e, stackTrace: st, hint: 'Subscription distribution chart load failed');
+                      return Text(l10n.errorOccurred);
+                    },
                     data: (dist) => _SubscriptionDistribution(
                       theme: theme,
                       l10n: l10n,

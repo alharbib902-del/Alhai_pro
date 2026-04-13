@@ -2,6 +2,8 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/utils/masking.dart';
+
 /// Card showing customer info with tap-to-call.
 class CustomerInfoCard extends StatelessWidget {
   final String? name;
@@ -93,9 +95,7 @@ class CustomerInfoCard extends StatelessWidget {
     );
   }
 
-  String _maskPhone(String phone) => phone.length > 4
-      ? '${'*' * (phone.length - 4)}${phone.substring(phone.length - 4)}'
-      : phone;
+  String _maskPhone(String phone) => maskPhoneNumber(phone);
 
   Future<void> _launchPhone(String phone) async {
     final uri = Uri.parse('tel:$phone');

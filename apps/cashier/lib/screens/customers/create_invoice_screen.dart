@@ -421,7 +421,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
         ),
         if (_customerResults.isNotEmpty)
           Container(
-            margin: const EdgeInsets.only(top: AlhaiSpacing.xs),
+            margin: const EdgeInsetsDirectional.only(top: AlhaiSpacing.xs),
             decoration: BoxDecoration(
               color: colorScheme.surface,
               borderRadius: BorderRadius.circular(12),
@@ -583,7 +583,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
           ),
           if (_searchResults.isNotEmpty)
             Container(
-              margin: const EdgeInsets.only(top: AlhaiSpacing.xs),
+              margin: const EdgeInsetsDirectional.only(top: AlhaiSpacing.xs),
               decoration: BoxDecoration(
                 color: colorScheme.surface,
                 borderRadius: BorderRadius.circular(12),
@@ -646,7 +646,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
             final item = entry.value;
             final total = item.price * item.qty;
             return Container(
-              margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+              margin: const EdgeInsetsDirectional.only(bottom: AlhaiSpacing.xs),
               padding: const EdgeInsets.all(AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: colorScheme.surfaceContainerHighest,
@@ -977,7 +977,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
       // Audit log (only for finalized invoices)
       if (!isDraft) {
         final user = ref.read(currentUserProvider);
-        final storeId = ref.read(currentStoreIdProvider)!;
+        final storeId = ref.read(currentStoreIdProvider);
+        if (storeId == null) return;
         final total = _items.fold<double>(0, (sum, i) => sum + i.price * i.qty);
         auditService.logSaleCreate(
           storeId: storeId,

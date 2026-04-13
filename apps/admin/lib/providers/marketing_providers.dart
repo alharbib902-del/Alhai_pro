@@ -104,7 +104,7 @@ Future<void> addDiscount(
       },
     );
   } catch (e) {
-    debugPrint('[MarketingProviders] Add discount sync failed: $e');
+    if (kDebugMode) debugPrint('[MarketingProviders] Add discount sync failed: $e');
   }
 
   ref.invalidate(discountsListProvider);
@@ -133,7 +133,7 @@ Future<void> updateDiscount(WidgetRef ref, DiscountsTableData discount) async {
       },
     );
   } catch (e) {
-    debugPrint('[MarketingProviders] Update discount sync failed: $e');
+    if (kDebugMode) debugPrint('[MarketingProviders] Update discount sync failed: $e');
   }
 
   ref.invalidate(discountsListProvider);
@@ -149,7 +149,7 @@ Future<void> deleteDiscount(WidgetRef ref, String id) async {
     final syncService = ref.read(syncServiceProvider);
     await syncService.enqueueDelete(tableName: 'discounts', recordId: id);
   } catch (e) {
-    debugPrint('[MarketingProviders] Delete discount sync failed: $e');
+    if (kDebugMode) debugPrint('[MarketingProviders] Delete discount sync failed: $e');
   }
 
   ref.invalidate(discountsListProvider);
@@ -226,7 +226,7 @@ Future<void> addCoupon(
       },
     );
   } catch (e) {
-    debugPrint('[MarketingProviders] Add coupon sync failed: $e');
+    if (kDebugMode) debugPrint('[MarketingProviders] Add coupon sync failed: $e');
   }
 
   ref.invalidate(couponsListProvider);
@@ -254,7 +254,7 @@ Future<void> updateCoupon(WidgetRef ref, CouponsTableData coupon) async {
       },
     );
   } catch (e) {
-    debugPrint('[MarketingProviders] Update coupon sync failed: $e');
+    if (kDebugMode) debugPrint('[MarketingProviders] Update coupon sync failed: $e');
   }
 
   ref.invalidate(couponsListProvider);
@@ -269,7 +269,7 @@ Future<void> deleteCoupon(WidgetRef ref, String id) async {
     final syncService = ref.read(syncServiceProvider);
     await syncService.enqueueDelete(tableName: 'coupons', recordId: id);
   } catch (e) {
-    debugPrint('[MarketingProviders] Delete coupon sync failed: $e');
+    if (kDebugMode) debugPrint('[MarketingProviders] Delete coupon sync failed: $e');
   }
 
   ref.invalidate(couponsListProvider);
@@ -354,7 +354,7 @@ Future<void> addPromotion(
       },
     );
   } catch (e) {
-    debugPrint('[MarketingProviders] Add promotion sync failed: $e');
+    if (kDebugMode) debugPrint('[MarketingProviders] Add promotion sync failed: $e');
   }
 
   ref.invalidate(promotionsListProvider);
@@ -382,7 +382,7 @@ Future<void> updatePromotion(WidgetRef ref, PromotionsTableData promo) async {
       },
     );
   } catch (e) {
-    debugPrint('[MarketingProviders] Update promotion sync failed: $e');
+    if (kDebugMode) debugPrint('[MarketingProviders] Update promotion sync failed: $e');
   }
 
   ref.invalidate(promotionsListProvider);
@@ -398,7 +398,7 @@ Future<void> deletePromotion(WidgetRef ref, String id) async {
     final syncService = ref.read(syncServiceProvider);
     await syncService.enqueueDelete(tableName: 'promotions', recordId: id);
   } catch (e) {
-    debugPrint('[MarketingProviders] Delete promotion sync failed: $e');
+    if (kDebugMode) debugPrint('[MarketingProviders] Delete promotion sync failed: $e');
   }
 
   ref.invalidate(promotionsListProvider);

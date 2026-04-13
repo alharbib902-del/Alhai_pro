@@ -10,7 +10,10 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+
+import '../router/lite_router.dart' show LiteRoutes;
 
 /// Bottom Navigation shell layout for Admin Lite
 class LiteShell extends StatelessWidget {
@@ -73,10 +76,10 @@ class LiteShell extends StatelessWidget {
         context.go(AppRoutes.aiAssistant);
         break;
       case 3:
-        context.go('/monitoring');
+        context.go(LiteRoutes.monitoring);
         break;
       case 4:
-        context.go('/more');
+        context.go(LiteRoutes.more);
         break;
     }
   }
@@ -84,6 +87,7 @@ class LiteShell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentIndex = _selectedIndex(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: child,
@@ -95,31 +99,36 @@ class LiteShell extends StatelessWidget {
         unselectedItemColor: Theme.of(context).colorScheme.onSurfaceVariant,
         selectedFontSize: 12,
         unselectedFontSize: 11,
-        items: const [
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.dashboard_outlined),
-            activeIcon: Icon(Icons.dashboard),
-            label: 'Dashboard',
+            icon: const Icon(Icons.dashboard_outlined),
+            activeIcon: const Icon(Icons.dashboard),
+            label: l10n.dashboard,
+            tooltip: l10n.dashboard,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.bar_chart_outlined),
-            activeIcon: Icon(Icons.bar_chart),
-            label: 'Reports',
+            icon: const Icon(Icons.bar_chart_outlined),
+            activeIcon: const Icon(Icons.bar_chart),
+            label: l10n.reports,
+            tooltip: l10n.reports,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.auto_awesome_outlined),
-            activeIcon: Icon(Icons.auto_awesome),
-            label: 'AI',
+            icon: const Icon(Icons.auto_awesome_outlined),
+            activeIcon: const Icon(Icons.auto_awesome),
+            label: l10n.aiAssistant,
+            tooltip: l10n.aiAssistant,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.monitor_heart_outlined),
-            activeIcon: Icon(Icons.monitor_heart),
-            label: 'Monitoring',
+            icon: const Icon(Icons.monitor_heart_outlined),
+            activeIcon: const Icon(Icons.monitor_heart),
+            label: l10n.inventory,
+            tooltip: l10n.inventory,
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.more_horiz),
-            activeIcon: Icon(Icons.more_horiz),
-            label: 'More',
+            icon: const Icon(Icons.more_horiz),
+            activeIcon: const Icon(Icons.more_horiz),
+            label: l10n.more,
+            tooltip: l10n.more,
           ),
         ],
       ),

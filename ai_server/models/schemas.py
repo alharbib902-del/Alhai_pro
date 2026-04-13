@@ -3,20 +3,35 @@ Pydantic request/response models for all 15 AI endpoints.
 نماذج الطلب والاستجابة لجميع نقاط النهاية الـ 15
 """
 
-from pydantic import BaseModel, Field
-from datetime import datetime, date
+from datetime import date, datetime
 from enum import Enum
+from uuid import UUID
+
+from pydantic import BaseModel, Field, field_validator
 
 
 # ============================================================================
 # COMMON / مشترك
 # ============================================================================
 
+# Maximum base64 image size: ~7 MB encoded (approx 5 MB decoded)
+MAX_BASE64_LENGTH = 7 * 1024 * 1024
+
+SUPPORTED_LANGUAGES = {"ar", "en", "ur", "hi", "bn", "fil", "id"}
+
+
 class BaseRequest(BaseModel):
     """Base request with required org/store IDs."""
-    org_id: str = Field(..., description="معرّف المنظمة - Organization ID")
-    store_id: str = Field(..., description="معرّف المتجر - Store ID")
-    language: str = Field("ar", description="Language: ar/en/ur/hi/bn/fil/id")
+    org_id: UUID = Field(..., description="معرّف المنظمة - Organization ID (UUID)")
+    store_id: UUID = Field(..., description="معرّف المتجر - Store ID (UUID)")
+    language: str = Field("ar", description="Language: ar/en/ur/hi/bn/fil/id", min_length=2, max_length=3)
+
+    @field_validator("language")
+    @classmethod
+    def validate_language(cls, v: str) -> str:
+        if v not in SUPPORTED_LANGUAGES:
+            raise ValueError(f"Unsupported language '{v}'. Supported: {', '.join(sorted(SUPPORTED_LANGUAGES))}")
+        return v
 
 
 class ConfidenceScore(BaseModel):
@@ -66,8 +81,8 @@ class ForecastResponse(BaseModel):
 class PricingRequest(BaseRequest):
     """طلب التسعير الذكي"""
     product_ids: list[str] | None = Field(None, description="معرّفات المنتجات")
-    category_id: str | None = None
-    strategy: str = Field("optimal", description="استراتيجية: optimal/competitive/margin")
+    category_id: str | None = Field(None, max_length=64)
+    strategy: str = Field("optimal", description="استراتيجية: optimal/competitive/margin", max_length=20)
 
 
 class PricingSuggestion(BaseModel):
@@ -96,9 +111,9 @@ class PricingResponse(BaseModel):
 
 class FraudRequest(BaseRequest):
     """طلب كشف الاحتيال"""
-    sale_id: str | None = Field(None, description="معرّف عملية البيع (اختياري)")
-    date_from: str | None = None
-    date_to: str | None = None
+    sale_id: str | None = Field(None, description="معرّف عملية البيع (اختياري)", max_length=64)
+    date_from: str | None = Field(None, max_length=20)
+    date_to: str | None = Field(None, max_length=20)
 
 
 class FraudAlert(BaseModel):
@@ -134,9 +149,9 @@ class FraudResponse(BaseModel):
 
 class BasketRequest(BaseRequest):
     """طلب تحليل سلة المشتريات"""
-    min_support: float = Field(0.05, description="الحد الأدنى للدعم", ge=0, le=1)
-    min_confidence: float = Field(0.3, description="الحد الأدنى للثقة", ge=0, le=1)
-    top_n: int = Field(20, description="عدد القواعد المطلوبة")
+    min_support: float = Field(0.05, description="الحد الأدنى للدعم", ge=0.01, le=1)
+    min_confidence: float = Field(0.3, description="الحد الأدنى للثقة", ge=0.01, le=1)
+    top_n: int = Field(20, description="عدد القواعد المطلوبة", ge=1, le=100)
 
 
 class AssociationRule(BaseModel):
@@ -170,9 +185,9 @@ class BasketResponse(BaseModel):
 
 class RecommendationRequest(BaseRequest):
     """طلب توصيات العملاء"""
-    customer_id: str | None = Field(None, description="معرّف العميل (اختياري)")
-    top_n: int = Field(10, description="عدد التوصيات")
-    context: str = Field("general", description="السياق: general/upsell/cross_sell/retention")
+    customer_id: str | None = Field(None, description="معرّف العميل (اختياري)", max_length=64)
+    top_n: int = Field(10, description="عدد التوصيات", ge=1, le=100)
+    context: str = Field("general", description="السياق: general/upsell/cross_sell/retention", max_length=20)
 
 
 class ProductRecommendation(BaseModel):
@@ -244,8 +259,8 @@ class InventoryResponse(BaseModel):
 
 class CompetitorRequest(BaseRequest):
     """طلب تحليل المنافسين"""
-    category_id: str | None = None
-    radius_km: float = Field(5.0, description="نطاق البحث بالكيلومتر")
+    category_id: str | None = Field(None, max_length=64)
+    radius_km: float = Field(5.0, description="نطاق البحث بالكيلومتر", ge=0.1, le=100.0)
 
 
 class CompetitorInfo(BaseModel):
@@ -280,10 +295,10 @@ class CompetitorResponse(BaseModel):
 
 class ReportRequest(BaseRequest):
     """طلب التقارير الذكية"""
-    report_type: str = Field("daily_summary", description="نوع التقرير")
-    date_from: str | None = None
-    date_to: str | None = None
-    format: str = Field("json", description="صيغة التقرير: json/summary")
+    report_type: str = Field("daily_summary", description="نوع التقرير", max_length=30)
+    date_from: str | None = Field(None, max_length=20)
+    date_to: str | None = Field(None, max_length=20)
+    format: str = Field("json", description="صيغة التقرير: json/summary", max_length=10)
 
 
 class ReportInsight(BaseModel):
@@ -317,9 +332,9 @@ class ReportResponse(BaseModel):
 
 class StaffRequest(BaseRequest):
     """طلب تحليل أداء الموظفين"""
-    employee_id: str | None = None
-    date_from: str | None = None
-    date_to: str | None = None
+    employee_id: str | None = Field(None, max_length=64)
+    date_from: str | None = Field(None, max_length=20)
+    date_to: str | None = Field(None, max_length=20)
 
 
 class EmployeePerformance(BaseModel):
@@ -356,9 +371,9 @@ class StaffResponse(BaseModel):
 
 class RecognitionRequest(BaseRequest):
     """طلب التعرف على المنتج"""
-    image_base64: str | None = Field(None, description="صورة المنتج بتنسيق Base64")
-    barcode: str | None = Field(None, description="الباركود")
-    description: str | None = Field(None, description="وصف نصي للمنتج")
+    image_base64: str | None = Field(None, description="صورة المنتج بتنسيق Base64", max_length=MAX_BASE64_LENGTH)
+    barcode: str | None = Field(None, description="الباركود", max_length=64)
+    description: str | None = Field(None, description="وصف نصي للمنتج", max_length=500)
 
 
 class RecognizedProduct(BaseModel):
@@ -385,10 +400,10 @@ class RecognitionResponse(BaseModel):
 
 class SentimentRequest(BaseRequest):
     """طلب تحليل المشاعر"""
-    text: str | None = Field(None, description="نص لتحليله")
-    source: str = Field("reviews", description="المصدر: reviews/social/support")
-    date_from: str | None = None
-    date_to: str | None = None
+    text: str | None = Field(None, description="نص لتحليله", max_length=5000)
+    source: str = Field("reviews", description="المصدر: reviews/social/support", max_length=20)
+    date_from: str | None = Field(None, max_length=20)
+    date_to: str | None = Field(None, max_length=20)
 
 
 class SentimentResult(BaseModel):
@@ -459,8 +474,8 @@ class ReturnResponse(BaseModel):
 
 class PromotionRequest(BaseRequest):
     """طلب تصميم العروض"""
-    goal: str = Field("increase_sales", description="الهدف: increase_sales/clear_stock/attract_customers/increase_basket")
-    budget: float | None = None
+    goal: str = Field("increase_sales", description="الهدف: increase_sales/clear_stock/attract_customers/increase_basket", max_length=30)
+    budget: float | None = Field(None, ge=0, le=1_000_000)
     target_products: list[str] | None = None
     duration_days: int = Field(7, ge=1, le=90)
 
@@ -494,8 +509,8 @@ class PromotionResponse(BaseModel):
 
 class ChatRequest(BaseRequest):
     """طلب الدردشة مع البيانات"""
-    message: str = Field(..., description="رسالة المستخدم")
-    conversation_id: str | None = Field(None, description="معرّف المحادثة (لاستمرار السياق)")
+    message: str = Field(..., description="رسالة المستخدم", min_length=1, max_length=2000)
+    conversation_id: str | None = Field(None, description="معرّف المحادثة (لاستمرار السياق)", max_length=64)
 
 
 class ChatDataPoint(BaseModel):
@@ -520,8 +535,8 @@ class ChatResponse(BaseModel):
 
 class AssistantRequest(BaseRequest):
     """طلب المساعد الذكي"""
-    query: str = Field(..., description="استفسار المستخدم")
-    context: str = Field("general", description="السياق: general/sales/inventory/finance/operations")
+    query: str = Field(..., description="استفسار المستخدم", min_length=1, max_length=2000)
+    context: str = Field("general", description="السياق: general/sales/inventory/finance/operations", max_length=20)
     include_actions: bool = Field(True, description="تضمين إجراءات مقترحة")
 
 

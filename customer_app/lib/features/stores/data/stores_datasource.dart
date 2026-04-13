@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/sentry_service.dart';
 
 class StoresDatasource {
   final SupabaseClient _client;
@@ -23,10 +24,12 @@ class StoresDatasource {
           )
           .timeout(AppConstants.networkTimeout);
 
-      return (data as List)
-          .map((row) => _storeFromRow(row as Map<String, dynamic>))
+      return (data as List<dynamic>)
+          .whereType<Map<String, dynamic>>()
+          .map(_storeFromRow)
           .toList();
-    } catch (_) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'getNearbyStores: RPC fallback to client-side');
       // Fallback: client-side filtering if RPC is unavailable
       return _getNearbyStoresClientSide(lat: lat, lng: lng, radiusKm: radiusKm);
     }
@@ -46,8 +49,9 @@ class StoresDatasource {
         .order('created_at', ascending: false)
         .timeout(AppConstants.networkTimeout);
 
-    final stores = (data as List)
-        .map((row) => _storeFromRow(row as Map<String, dynamic>))
+    final stores = (data as List<dynamic>)
+        .whereType<Map<String, dynamic>>()
+        .map(_storeFromRow)
         .where((store) {
           final dist = _distanceKm(lat, lng, store.lat, store.lng);
           return dist <= radiusKm;
@@ -74,15 +78,17 @@ class StoresDatasource {
     return _storeFromRow(data);
   }
 
-  Future<List<Store>> getAllStores() async {
+  Future<List<Store>> getAllStores({int limit = 100, int offset = 0}) async {
     final data = await _client
         .from('stores')
         .select()
         .eq('is_active', true)
         .order('name')
+        .range(offset, offset + limit - 1)
         .timeout(AppConstants.networkTimeout);
-    return (data as List)
-        .map((row) => _storeFromRow(row as Map<String, dynamic>))
+    return (data as List<dynamic>)
+        .whereType<Map<String, dynamic>>()
+        .map(_storeFromRow)
         .toList();
   }
 

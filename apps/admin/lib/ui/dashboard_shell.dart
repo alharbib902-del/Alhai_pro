@@ -326,26 +326,29 @@ class _AdminDashboardShellState extends ConsumerState<AdminDashboardShell> {
       );
     }
 
-    return PopScope(
-      canPop: false,
-      onPopInvokedWithResult: (didPop, _) {
-        if (didPop) return;
-        final now = DateTime.now();
-        if (_lastBackPress != null &&
-            now.difference(_lastBackPress!) < const Duration(seconds: 2)) {
-          SystemNavigator.pop();
-        } else {
-          _lastBackPress = now;
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.pressBackAgainToExit),
-              duration: const Duration(seconds: 2),
-              behavior: SnackBarBehavior.floating,
-            ),
-          );
-        }
-      },
-      child: layout,
+    return Semantics(
+      label: l10n.dashboard,
+      child: PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (didPop, _) {
+          if (didPop) return;
+          final now = DateTime.now();
+          if (_lastBackPress != null &&
+              now.difference(_lastBackPress!) < const Duration(seconds: 2)) {
+            SystemNavigator.pop();
+          } else {
+            _lastBackPress = now;
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(l10n.pressBackAgainToExit),
+                duration: const Duration(seconds: 2),
+                behavior: SnackBarBehavior.floating,
+              ),
+            );
+          }
+        },
+        child: layout,
+      ),
     );
   }
 }

@@ -5,8 +5,10 @@
 library;
 
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart' show DateFormat;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../core/services/sentry_service.dart';
 import '../core/supabase/supabase_client.dart';
 import 'models.dart';
 
@@ -135,6 +137,42 @@ bool isValidPhone(String phone) {
   return RegExp(r'^[\d\s\-\+\(\)]{7,20}$').hasMatch(phone);
 }
 
+// ─── RPC Response Validation ────────────────────────────────────
+
+/// Validate that required fields exist and are non-null in an RPC response map.
+/// Throws [DatasourceError] with type [DatasourceErrorType.validation]
+/// if any required field is missing or null.
+void _validateResponseFields(
+  Map<String, dynamic> data,
+  List<String> requiredFields,
+  String operation,
+) {
+  for (final field in requiredFields) {
+    if (!data.containsKey(field) || data[field] == null) {
+      throw DatasourceError(
+        type: DatasourceErrorType.validation,
+        message: 'Missing required field "$field" in $operation response',
+      );
+    }
+  }
+}
+
+/// Return a user-friendly error message for a [DatasourceError].
+String userFriendlyMessage(DatasourceError error) {
+  switch (error.type) {
+    case DatasourceErrorType.network:
+      return 'Unable to connect. Please check your internet connection and try again.';
+    case DatasourceErrorType.auth:
+      return 'Your session has expired. Please log in again.';
+    case DatasourceErrorType.notFound:
+      return 'The requested data was not found.';
+    case DatasourceErrorType.validation:
+      return 'Invalid data. Please check your input and try again.';
+    case DatasourceErrorType.unknown:
+      return 'An unexpected error occurred. Please try again later.';
+  }
+}
+
 // ─── Cache Entry ────────────────────────────────────────────────
 
 /// Simple in-memory cache entry with TTL-based expiry.
@@ -156,6 +194,9 @@ class _RateLimiter {
   /// Minimum interval between same operations.
   static const Duration _minInterval = Duration(seconds: 2);
 
+  /// Maximum number of tracked operations to prevent unbounded memory growth.
+  static const int _maxEntries = 100;
+
   /// Check if the operation is allowed. Throws if rate limited.
   void check(String operationKey) {
     final now = DateTime.now();
@@ -168,6 +209,18 @@ class _RateLimiter {
       );
     }
     _lastCalls[operationKey] = now;
+    _evictIfNeeded();
+  }
+
+  /// Evict oldest entries if cache exceeds max size.
+  void _evictIfNeeded() {
+    if (_lastCalls.length <= _maxEntries) return;
+    final sorted = _lastCalls.entries.toList()
+      ..sort((a, b) => a.value.compareTo(b.value));
+    final toRemove = sorted.length - _maxEntries;
+    for (var i = 0; i < toRemove; i++) {
+      _lastCalls.remove(sorted[i].key);
+    }
   }
 
   /// Clear rate limit state (e.g. on logout).
@@ -299,11 +352,15 @@ class DistributorDatasource {
       final data = await query
           .order('created_at', ascending: false)
           .range(offset, offset + limit - 1);
-      return (data as List)
-          .map(
-            (json) => DistributorOrder.fromJson(json as Map<String, dynamic>),
-          )
-          .toList();
+      return (data as List).map((json) {
+        final map = json as Map<String, dynamic>;
+        _validateResponseFields(
+          map,
+          ['id', 'status', 'created_at'],
+          'getOrders',
+        );
+        return DistributorOrder.fromJson(map);
+      }).toList();
     } catch (e) {
       if (e is DatasourceError) rethrow;
       final error = _categorizeError(e, 'getOrders');
@@ -327,6 +384,11 @@ class DistributorDatasource {
           .maybeSingle();
 
       if (data == null) return null;
+      _validateResponseFields(
+        data,
+        ['id', 'status', 'created_at'],
+        'getOrderById',
+      );
       return DistributorOrder.fromJson(data);
     } catch (e) {
       if (e is DatasourceError) rethrow;
@@ -353,12 +415,15 @@ class DistributorDatasource {
           .select('*, products(name, barcode)')
           .eq('order_id', orderId);
 
-      return (data as List)
-          .map(
-            (json) =>
-                DistributorOrderItem.fromJson(json as Map<String, dynamic>),
-          )
-          .toList();
+      return (data as List).map((json) {
+        final map = json as Map<String, dynamic>;
+        _validateResponseFields(
+          map,
+          ['product_id', 'quantity', 'unit_price'],
+          'getOrderItems',
+        );
+        return DistributorOrderItem.fromJson(map);
+      }).toList();
     } catch (e) {
       if (e is DatasourceError) rethrow;
       final error = _categorizeError(e, 'getOrderItems');
@@ -474,11 +539,11 @@ class DistributorDatasource {
           .order('name')
           .range(offset, offset + limit - 1);
 
-      final results = (data as List)
-          .map(
-            (json) => DistributorProduct.fromJson(json as Map<String, dynamic>),
-          )
-          .toList();
+      final results = (data as List).map((json) {
+        final map = json as Map<String, dynamic>;
+        _validateResponseFields(map, ['id', 'name'], 'getProducts');
+        return DistributorProduct.fromJson(map);
+      }).toList();
 
       // Cache default pagination results
       if (offset == 0 && limit == 50) {
@@ -624,31 +689,15 @@ class DistributorDatasource {
         monthMap[month] = (monthMap[month] ?? 0) + order.total;
       }
 
-      const monthNames = [
-        '',
-        'يناير',
-        'فبراير',
-        'مارس',
-        'أبريل',
-        'مايو',
-        'يونيو',
-        'يوليو',
-        'أغسطس',
-        'سبتمبر',
-        'أكتوبر',
-        'نوفمبر',
-        'ديسمبر',
-      ];
+      // Use intl DateFormat for locale-aware month names
+      final monthFormatter = DateFormat.MMM('ar');
+      final sortedMonthKeys = monthMap.keys.toList()..sort();
 
-      final monthlySales =
-          monthMap.entries
-              .map((e) => MonthlySales(monthNames[e.key], e.value))
-              .toList()
-            ..sort(
-              (a, b) => monthNames
-                  .indexOf(a.month)
-                  .compareTo(monthNames.indexOf(b.month)),
-            );
+      final monthlySales = sortedMonthKeys.map((monthNum) {
+        final date = DateTime(DateTime.now().year, monthNum);
+        final monthName = monthFormatter.format(date);
+        return MonthlySales(monthName, monthMap[monthNum]!);
+      }).toList();
 
       // Recent 5 orders
       final recentOrders = allOrders.take(5).toList();
@@ -661,13 +710,16 @@ class DistributorDatasource {
         monthlySales: monthlySales,
         recentOrders: recentOrders,
       );
-    } catch (e) {
-      if (e is DatasourceError) {
-        if (kDebugMode) debugPrint('getDashboardKpis: $e');
-      } else {
-        final error = _categorizeError(e, 'getDashboardKpis');
-        if (kDebugMode) debugPrint('$error');
-      }
+    } catch (e, stack) {
+      final error = e is DatasourceError
+          ? e
+          : _categorizeError(e, 'getDashboardKpis');
+      if (kDebugMode) debugPrint('getDashboardKpis: $error');
+      reportError(
+        error.originalError ?? error,
+        stackTrace: stack,
+        hint: 'getDashboardKpis: ${error.message}',
+      );
       return const DashboardKpis(
         totalOrders: 0,
         pendingOrders: 0,
@@ -741,15 +793,20 @@ class DistributorDatasource {
       final orderCount = orderList.length;
       final avgOrderValue = orderCount > 0 ? totalSales / orderCount : 0.0;
 
-      // Daily sales aggregation
+      // Daily sales aggregation using intl for locale-aware day names
+      final dayFormatter = DateFormat.E('ar');
+      // Build ordered day names for the week (Sat-Fri) using intl
+      final orderedDayNames = List.generate(7, (i) {
+        // i=0 -> Saturday (weekday 6), i=1 -> Sunday (weekday 7), etc.
+        final date = DateTime(2024, 1, 6 + i); // 2024-01-06 is Saturday
+        return dayFormatter.format(date);
+      });
       final dailyMap = <String, double>{};
-      const dayNames = ['سبت', 'أحد', 'اثن', 'ثلا', 'أربع', 'خمي', 'جمع'];
       for (final order in orderList) {
-        final dayIndex = (order.createdAt.weekday % 7);
-        final dayName = dayNames[dayIndex];
+        final dayName = dayFormatter.format(order.createdAt);
         dailyMap[dayName] = (dailyMap[dayName] ?? 0) + order.total;
       }
-      final dailySales = dayNames
+      final dailySales = orderedDayNames
           .map((d) => DailySales(d, dailyMap[d] ?? 0))
           .toList();
 
@@ -807,13 +864,16 @@ class DistributorDatasource {
         dailySales: dailySales,
         topProducts: topProducts.take(5).toList(),
       );
-    } catch (e) {
-      if (e is DatasourceError) {
-        if (kDebugMode) debugPrint('getReportData: $e');
-      } else {
-        final error = _categorizeError(e, 'getReportData');
-        if (kDebugMode) debugPrint('$error');
-      }
+    } catch (e, stack) {
+      final error = e is DatasourceError
+          ? e
+          : _categorizeError(e, 'getReportData');
+      if (kDebugMode) debugPrint('getReportData: $error');
+      reportError(
+        error.originalError ?? error,
+        stackTrace: stack,
+        hint: 'getReportData: ${error.message}',
+      );
       return const ReportData(
         totalSales: 0,
         orderCount: 0,
@@ -845,6 +905,7 @@ class DistributorDatasource {
           .maybeSingle();
 
       if (orgData == null) return null;
+      _validateResponseFields(orgData, ['id', 'name'], 'getOrgSettings');
       final settings = OrgSettings.fromJson(orgData);
 
       _orgSettingsCache = _CacheEntry(

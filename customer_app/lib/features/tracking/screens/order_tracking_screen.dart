@@ -38,6 +38,7 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
         title: const Text('تتبع الطلب'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'رجوع',
           onPressed: () => context.pop(),
         ),
       ),

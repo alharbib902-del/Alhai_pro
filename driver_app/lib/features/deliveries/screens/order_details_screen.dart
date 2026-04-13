@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/driver_constants.dart';
 import '../providers/delivery_providers.dart';
 import '../widgets/delivery_status_badge.dart';
 import '../widgets/delivery_action_buttons.dart';
@@ -172,6 +173,6 @@ class OrderDetailsScreen extends ConsumerWidget {
   }
 
   bool _isActiveStatus(String status) {
-    return !['delivered', 'failed', 'cancelled'].contains(status);
+    return DeliveryStatus.isActive(status);
   }
 }

@@ -1,4 +1,5 @@
 import 'package:alhai_zatca/alhai_zatca.dart' show ZatcaTlvEncoder;
+import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 
 /// ZATCA-compliant QR code service for the cashier app
 ///
@@ -55,7 +56,8 @@ class ZatcaQrService {
           tags.containsKey(3) &&
           tags.containsKey(4) &&
           tags.containsKey(5);
-    } catch (_) {
+    } catch (e) {
+      if (kDebugMode) debugPrint('ZATCA QR validation failed: $e');
       return false;
     }
   }

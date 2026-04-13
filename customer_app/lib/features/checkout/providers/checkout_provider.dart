@@ -49,9 +49,14 @@ final placeOrderProvider = FutureProvider.family<Order, Cart>((
     throw Exception('الحد الأدنى للطلب ${minOrder.toStringAsFixed(0)} ر.س');
   }
 
+  final storeId = cart.storeId;
+  if (storeId == null) {
+    throw Exception('لم يتم تحديد المتجر');
+  }
+
   final params = CreateOrderParams(
     clientOrderId: const Uuid().v4(),
-    storeId: cart.storeId!,
+    storeId: storeId,
     items: cart.items.map((item) => item.toOrderItem()).toList(),
     addressId: address.id,
     deliveryAddress: address.fullAddress,

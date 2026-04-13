@@ -192,50 +192,57 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
               final isSelected = item.id == selectedId;
               return Padding(
                 padding: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
-                child: Material(
-                  color: Colors.transparent,
-                  borderRadius: BorderRadius.circular(10),
-                  child: InkWell(
+                child: Semantics(
+                  button: true,
+                  label: item.label(l10n),
+                  selected: isSelected,
+                  child: Material(
+                    color: Colors.transparent,
                     borderRadius: BorderRadius.circular(10),
-                    onTap: () => _onNavItemTapped(item.route),
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: AlhaiSpacing.md,
-                        vertical: AlhaiSpacing.sm,
-                      ),
-                      decoration: BoxDecoration(
-                        color: isSelected
-                            ? AppColors.primary.withValues(alpha: 0.1)
-                            : Colors.transparent,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Row(
-                        children: [
-                          Icon(
-                            item.icon,
-                            size: 22,
-                            color: isSelected
-                                ? AppColors.primary
-                                : AppColors.getTextSecondary(isDark),
-                          ),
-                          const SizedBox(width: AlhaiSpacing.sm),
-                          Expanded(
-                            child: Text(
-                              item.label(l10n),
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: isSelected
-                                    ? FontWeight.w600
-                                    : FontWeight.w400,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(10),
+                      onTap: () => _onNavItemTapped(item.route),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: AlhaiSpacing.md,
+                          vertical: AlhaiSpacing.sm,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? AppColors.primary.withValues(alpha: 0.1)
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Row(
+                          children: [
+                            ExcludeSemantics(
+                              child: Icon(
+                                item.icon,
+                                size: 22,
                                 color: isSelected
                                     ? AppColors.primary
-                                    : AppColors.getTextPrimary(isDark),
+                                    : AppColors.getTextSecondary(isDark),
                               ),
-                              overflow: TextOverflow.ellipsis,
-                              maxLines: 1,
                             ),
-                          ),
-                        ],
+                            const SizedBox(width: AlhaiSpacing.sm),
+                            Expanded(
+                              child: Text(
+                                item.label(l10n),
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.w400,
+                                  color: isSelected
+                                      ? AppColors.primary
+                                      : AppColors.getTextPrimary(isDark),
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                                maxLines: 1,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ),

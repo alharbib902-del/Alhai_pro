@@ -4,10 +4,11 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException
 
-logger = logging.getLogger(__name__)
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import ReturnRequest, ReturnResponse
 from services.ml_service import predict_returns
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -24,11 +25,16 @@ async def predict_returns_endpoint(
     """
     try:
         return predict_returns(
-            org_id=request.org_id,
-            store_id=request.store_id,
+            org_id=str(request.org_id),
+            store_id=str(request.store_id),
             days_ahead=request.days_ahead,
             language=request.language,
         )
+    except ValueError as e:
+        logger.warning("return_prediction validation error: %s", e)
+        raise HTTPException(status_code=422, detail=str(e))
+    except HTTPException:
+        raise
     except Exception:
-        logger.exception("خطأ في التنبؤ بالمرتجعات")
-        raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")
+        logger.exception("خ��أ في التنبؤ بالمرت��عات")
+        raise HTTPException(status_code=500, detail="ح��ث خطأ غير متوقع")

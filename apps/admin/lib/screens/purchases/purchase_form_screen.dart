@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,6 +11,7 @@ import 'package:get_it/get_it.dart';
 import '../../providers/purchases_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import '../../core/providers/unsaved_changes_provider.dart';
+import '../../core/services/sentry_service.dart';
 
 /// Purchase Form Screen - شاشة إضافة فاتورة شراء
 class PurchaseFormScreen extends ConsumerStatefulWidget {
@@ -40,7 +42,10 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
   void dispose() {
     try {
       ref.read(unsavedChangesProvider.notifier).state = false;
-    } catch (_) {}
+    } catch (e) {
+      // Expected during widget tree teardown — provider may already be disposed.
+      assert(() { debugPrint('dispose: unsavedChangesProvider reset skipped: $e'); return true; }());
+    }
     _invoiceNoController.dispose();
     super.dispose();
   }
@@ -641,8 +646,8 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                 purchaseId: purchaseId,
               );
             }
-          } catch (e) {
-            debugPrint('Error updating stock for ${item.productId}: $e');
+          } catch (e, st) {
+            await reportError(e, stackTrace: st, hint: 'purchase_form: stock update failed for ${item.productId}');
           }
         }
       }
@@ -659,7 +664,8 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
         );
         context.pop();
       }
-    } catch (e) {
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'purchase_form: save purchase failed');
       if (mounted) {
         setState(() => _isSaving = false);
         ScaffoldMessenger.of(context).showSnackBar(

@@ -298,7 +298,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
           ),
           if (_isSearching)
             const Padding(
-              padding: EdgeInsets.only(top: AlhaiSpacing.md),
+              padding: EdgeInsetsDirectional.only(top: AlhaiSpacing.md),
               child: Center(child: CircularProgressIndicator()),
             ),
         ],

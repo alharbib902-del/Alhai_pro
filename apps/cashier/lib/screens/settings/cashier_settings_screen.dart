@@ -10,6 +10,7 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import '../../core/constants/timing.dart';
 import '../../core/utils/cache_cleaner.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSpacing;
@@ -262,7 +263,7 @@ class _CashierSettingsScreenState extends ConsumerState<CashierSettingsScreen> {
                 Text(l10n.clearingCacheProgress),
               ],
             ),
-            duration: const Duration(seconds: 3),
+            duration: Timeouts.snackbarDuration,
           ),
         );
       }
@@ -271,7 +272,7 @@ class _CashierSettingsScreenState extends ConsumerState<CashierSettingsScreen> {
       await clearAllWebCache();
 
       // Wait briefly then reload
-      await Future.delayed(const Duration(milliseconds: 500));
+      await Future.delayed(Timeouts.reloadDelay);
       reloadPage();
     } catch (e) {
       if (mounted) {
@@ -330,13 +331,16 @@ class _SettingsTileState extends State<_SettingsTile> {
 
   @override
   Widget build(BuildContext context) {
-    return MouseRegion(
+    return Semantics(
+      label: '${widget.title}: ${widget.subtitle}',
+      button: true,
+      child: MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
+          duration: AnimationDurations.standard,
           padding: const EdgeInsets.all(AlhaiSpacing.mdl),
           decoration: BoxDecoration(
             color: _isHovered
@@ -399,6 +403,7 @@ class _SettingsTileState extends State<_SettingsTile> {
           ),
         ),
       ),
+    ),
     );
   }
 }

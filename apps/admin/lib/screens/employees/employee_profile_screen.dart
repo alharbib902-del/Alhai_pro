@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_database/alhai_database.dart';
@@ -6,6 +7,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:get_it/get_it.dart';
 import 'package:drift/drift.dart' hide Column;
 import 'package:alhai_design_system/alhai_design_system.dart';
+import '../../core/services/sentry_service.dart';
 
 /// شاشة ملف الموظف التفصيلي
 /// تعرض بيانات الموظف، أداء المبيعات، الورديات، والصلاحيات
@@ -68,8 +70,8 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
         // Auto-load sales after user is loaded
         _loadSalesPerformance();
       }
-    } catch (e) {
-      debugPrint('Error loading user: $e');
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'employee_profile: load user failed');
       if (mounted) {
         final l10n = AppLocalizations.of(context);
         setState(() {
@@ -153,7 +155,8 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
           _salesLoading = false;
         });
       }
-    } catch (e) {
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'employee_profile: load sales performance failed');
       if (mounted) setState(() => _salesLoading = false);
     }
   }
@@ -201,7 +204,8 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
           _shiftsLoading = false;
         });
       }
-    } catch (e) {
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'employee_profile: load shifts failed');
       if (mounted) setState(() => _shiftsLoading = false);
     }
   }
@@ -226,9 +230,11 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
   }
 
   Future<void> _saveRole() async {
+    final currentUser = _user;
+    if (currentUser == null) return;
     try {
       final db = GetIt.I<AppDatabase>();
-      final u = _user!;
+      final u = currentUser;
       final updated = UsersTableData(
         id: u.id,
         orgId: u.orgId,
@@ -258,8 +264,8 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
           ),
         );
       }
-    } catch (e) {
-      debugPrint('Error saving role: $e');
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'employee_profile: save role failed');
       if (mounted) {
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -273,9 +279,11 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
   }
 
   Future<void> _toggleActive(bool active) async {
+    final currentUser = _user;
+    if (currentUser == null) return;
     try {
       final db = GetIt.I<AppDatabase>();
-      final u = _user!;
+      final u = currentUser;
       await db.usersDao.updateUser(
         UsersTableData(
           id: u.id,
@@ -308,8 +316,13 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
           ),
         );
       }
-    } catch (e) {
-      // ignore
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'employee_profile: toggle active failed');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context).errorOccurred), backgroundColor: AppColors.error),
+        );
+      }
     }
   }
 
@@ -342,17 +355,20 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
         bottom: TabBar(
           controller: _tabController,
           tabs: [
-            Tab(icon: const Icon(Icons.person_outline), text: l10n.profileTab),
             Tab(
-              icon: const Icon(Icons.bar_chart_outlined),
+              icon: Semantics(label: l10n.profileTab, child: const Icon(Icons.person_outline)),
+              text: l10n.profileTab,
+            ),
+            Tab(
+              icon: Semantics(label: l10n.salesTab, child: const Icon(Icons.bar_chart_outlined)),
               text: l10n.salesTab,
             ),
             Tab(
-              icon: const Icon(Icons.schedule_outlined),
+              icon: Semantics(label: l10n.shiftsTab, child: const Icon(Icons.schedule_outlined)),
               text: l10n.shiftsTab,
             ),
             Tab(
-              icon: const Icon(Icons.lock_outline),
+              icon: Semantics(label: l10n.permissionsTab2, child: const Icon(Icons.lock_outline)),
               text: l10n.permissionsTab2,
             ),
           ],

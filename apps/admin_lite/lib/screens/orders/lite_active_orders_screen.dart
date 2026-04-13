@@ -10,8 +10,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart' show AppEmptyState;
 import 'package:alhai_database/alhai_database.dart';
 
+import '../../router/lite_router.dart' show LiteRoutes;
 import '../../providers/lite_screen_providers.dart';
 
 /// Active orders list for Admin Lite
@@ -56,16 +58,7 @@ class _LiteActiveOrdersScreenState
               data: (orders) {
                 final filtered = _filterOrders(orders);
                 if (filtered.isEmpty) {
-                  return Center(
-                    child: Text(
-                      l10n.noResults,
-                      style: TextStyle(
-                        color: isDark
-                            ? Colors.white54
-                            : Theme.of(context).colorScheme.onSurfaceVariant,
-                      ),
-                    ),
-                  );
+                  return AppEmptyState.noOrders(context);
                 }
                 return RefreshIndicator(
                   onRefresh: () async =>
@@ -214,7 +207,7 @@ class _LiteActiveOrdersScreenState
         '${order.orderDate.hour.toString().padLeft(2, '0')}:${order.orderDate.minute.toString().padLeft(2, '0')}';
 
     return InkWell(
-      onTap: () => context.go('/lite/orders/${order.id}'),
+      onTap: () => context.go(LiteRoutes.orderDetailPath(order.id)),
       borderRadius: BorderRadius.circular(14),
       child: Container(
         margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),

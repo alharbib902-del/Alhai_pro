@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/constants/driver_constants.dart';
 import '../../deliveries/providers/delivery_providers.dart';
 import '../../deliveries/widgets/delivery_status_badge.dart';
 
@@ -127,9 +128,9 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
 
         // Determine destination based on status
         final bool isHeadingToCustomer = [
-          'picked_up',
-          'heading_to_customer',
-          'arrived_at_customer',
+          DeliveryStatus.pickedUp,
+          DeliveryStatus.headingToCustomer,
+          DeliveryStatus.arrivedAtCustomer,
         ].contains(status);
 
         final destLat = isHeadingToCustomer ? deliveryLat : pickupLat;
@@ -268,17 +269,21 @@ class _NavigationScreenState extends ConsumerState<NavigationScreen> {
                       // Open in Google Maps button
                       SizedBox(
                         width: double.infinity,
-                        child: FilledButton.icon(
-                          onPressed: destLat != null && destLng != null
-                              ? () => _openInGoogleMaps(destLat, destLng)
-                              : null,
-                          icon: const Icon(Icons.navigation_rounded),
-                          label: const Text('فتح في خرائط قوقل'),
-                          style: FilledButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                AlhaiRadius.button,
+                        child: Semantics(
+                          label: 'فتح الملاحة في خرائط قوقل',
+                          button: true,
+                          child: FilledButton.icon(
+                            onPressed: destLat != null && destLng != null
+                                ? () => _openInGoogleMaps(destLat, destLng)
+                                : null,
+                            icon: const Icon(Icons.navigation_rounded),
+                            label: const Text('فتح في خرائط قوقل'),
+                            style: FilledButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(
+                                  AlhaiRadius.button,
+                                ),
                               ),
                             ),
                           ),

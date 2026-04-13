@@ -4,10 +4,11 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException
 
-logger = logging.getLogger(__name__)
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import CompetitorRequest, CompetitorResponse
 from services.ml_service import analyze_competitors
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -24,10 +25,15 @@ async def competitor_analysis(
     """
     try:
         return analyze_competitors(
-            org_id=request.org_id,
-            store_id=request.store_id,
+            org_id=str(request.org_id),
+            store_id=str(request.store_id),
             language=request.language,
         )
+    except ValueError as e:
+        logger.warning("competitor validation error: %s", e)
+        raise HTTPException(status_code=422, detail=str(e))
+    except HTTPException:
+        raise
     except Exception:
         logger.exception("خطأ في تحليل المنافسين")
         raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

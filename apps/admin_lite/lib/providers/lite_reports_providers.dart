@@ -14,6 +14,20 @@ import 'package:alhai_auth/alhai_auth.dart';
 import '../core/services/sentry_service.dart' as sentry;
 
 // =============================================================================
+// CUSTOM EXCEPTIONS
+// =============================================================================
+
+/// Thrown when a report provider requires a store but none is selected.
+class NoStoreSelectedException implements Exception {
+  final String providerName;
+  const NoStoreSelectedException(this.providerName);
+
+  @override
+  String toString() => 'NoStoreSelectedException: '
+      'No store selected when loading $providerName';
+}
+
+// =============================================================================
 // REPORTS PROVIDERS
 // =============================================================================
 
@@ -34,12 +48,17 @@ class DailySalesData {
   });
 }
 
-/// Provider: Today's full daily sales report
+/// Fetches today's complete daily sales report including sales stats,
+/// refund totals, payment method breakdown, hourly sales distribution,
+/// and top 5 selling products. All queries run in parallel for performance.
+/// Falls back gracefully on refund query failure.
 final liteDailySalesProvider = FutureProvider.autoDispose<DailySalesData>((
   ref,
 ) async {
   final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) throw Exception('No store selected');
+  if (storeId == null) {
+    throw const NoStoreSelectedException('liteDailySalesProvider');
+  }
 
   final db = GetIt.I<AppDatabase>();
   final now = DateTime.now();
@@ -139,11 +158,15 @@ class DaySalesData {
   });
 }
 
-/// Provider: Weekly comparison (this week vs last week)
+/// Compares this week's sales against last week, using a Saturday-based
+/// week start. Runs 2 summary queries + 14 daily breakdowns in parallel.
+/// Also fetches distinct customer counts per week. Falls back to 0 on error.
 final liteWeeklyComparisonProvider =
     FutureProvider.autoDispose<WeeklyComparisonData>((ref) async {
       final storeId = ref.watch(currentStoreIdProvider);
-      if (storeId == null) throw Exception('No store selected');
+      if (storeId == null) {
+        throw const NoStoreSelectedException('liteWeeklyComparisonProvider');
+      }
 
       final db = GetIt.I<AppDatabase>();
       final now = DateTime.now();
@@ -417,12 +440,16 @@ class CashFlowData {
   });
 }
 
-/// Provider: Cash flow overview
+/// Computes today's cash flow: inflow (sales by payment method), outflow
+/// (refunds + expenses), net cash, and a 7-day weekly trend. Queries run
+/// in parallel where possible. Refund query fails gracefully to zero.
 final liteCashFlowProvider = FutureProvider.autoDispose<CashFlowData>((
   ref,
 ) async {
   final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) throw Exception('No store selected');
+  if (storeId == null) {
+    throw const NoStoreSelectedException('liteCashFlowProvider');
+  }
 
   final db = GetIt.I<AppDatabase>();
   final now = DateTime.now();

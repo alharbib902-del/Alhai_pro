@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -437,7 +438,7 @@ class _DiscountsContent extends ConsumerWidget {
       );
       await updateDiscount(ref, updated);
     } catch (e) {
-      debugPrint('Error toggling discount: $e');
+      if (kDebugMode) debugPrint('Error toggling discount: $e');
     }
   }
 
@@ -448,7 +449,7 @@ class _DiscountsContent extends ConsumerWidget {
     try {
       await deleteDiscount(ref, discount.id);
     } catch (e) {
-      debugPrint('Error deleting discount: $e');
+      if (kDebugMode) debugPrint('Error deleting discount: $e');
     }
   }
 
@@ -534,7 +535,7 @@ class _DiscountsContent extends ConsumerWidget {
                       value: double.tryParse(valueController.text) ?? 0,
                     );
                   } catch (e) {
-                    debugPrint('Error adding discount: $e');
+                    if (kDebugMode) debugPrint('Error adding discount: $e');
                   }
                 }
                 if (!context.mounted) return;

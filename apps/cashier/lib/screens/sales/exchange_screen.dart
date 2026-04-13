@@ -249,7 +249,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
           ),
           if (_returnItems.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(top: AlhaiSpacing.sm),
+              padding: const EdgeInsetsDirectional.only(top: AlhaiSpacing.sm),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -322,7 +322,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
           ),
           if (_newItems.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.only(top: AlhaiSpacing.sm),
+              padding: const EdgeInsetsDirectional.only(top: AlhaiSpacing.sm),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -394,7 +394,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
     bool isReturn,
   ) {
     return Container(
-      margin: const EdgeInsets.only(top: AlhaiSpacing.xs),
+      margin: const EdgeInsetsDirectional.only(top: AlhaiSpacing.xs),
       decoration: BoxDecoration(
         color: AppColors.getSurface(isDark),
         borderRadius: BorderRadius.circular(12),
@@ -461,7 +461,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
   ) {
     final total = item.price * item.qty;
     return Container(
-      margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+      margin: const EdgeInsetsDirectional.only(bottom: AlhaiSpacing.xs),
       padding: const EdgeInsets.all(AlhaiSpacing.sm),
       decoration: BoxDecoration(
         color: AppColors.getSurfaceVariant(isDark),
@@ -666,7 +666,8 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
 
       // Audit log
       final user = ref.read(currentUserProvider);
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       auditService.logExchange(
         storeId: storeId,
         userId: user?.id ?? 'unknown',

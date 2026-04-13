@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -740,7 +741,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
               );
             }
           } catch (e) {
-            debugPrint('خطأ في تحديث المخزون: ${item.productId}: $e');
+            if (kDebugMode) debugPrint('خطأ في تحديث المخزون: ${item.productId}: $e');
           }
         }
       }
@@ -759,7 +760,7 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
               },
             );
       } catch (e) {
-        debugPrint('Sync enqueue error: $e');
+        if (kDebugMode) debugPrint('Sync enqueue error: $e');
       }
 
       ref.invalidate(purchasesListProvider);

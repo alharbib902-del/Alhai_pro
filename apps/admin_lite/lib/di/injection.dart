@@ -9,6 +9,8 @@ import 'package:alhai_core/alhai_core.dart' as core;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_database/alhai_database.dart';
 
+import '../core/services/sentry_service.dart' as sentry;
+
 /// GetIt instance - uses the same instance as alhai_core
 final getIt = core.getIt;
 
@@ -46,7 +48,8 @@ Future<void> configureDependencies({String? environment}) async {
     if (!getIt.isRegistered<SupabaseClient>()) {
       getIt.registerSingleton<SupabaseClient>(supabase);
     }
-  } catch (_) {
+  } catch (e, st) {
+    sentry.reportError(e, stackTrace: st, hint: 'injection: Supabase registration');
     // Supabase not initialized - offline mode only
   }
 

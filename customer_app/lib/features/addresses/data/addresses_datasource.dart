@@ -2,24 +2,31 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/sentry_service.dart';
 
 class AddressesDatasource {
   final SupabaseClient _client;
 
   AddressesDatasource(this._client);
 
-  String get _userId => _client.auth.currentUser!.id;
+  String get _userId {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) throw StateError('User not authenticated');
+    return userId;
+  }
 
-  Future<List<Address>> getAddresses() async {
+  Future<List<Address>> getAddresses({int limit = 50, int offset = 0}) async {
     final data = await _client
         .from('addresses')
         .select()
         .eq('user_id', _userId)
         .order('is_default', ascending: false)
+        .range(offset, offset + limit - 1)
         .timeout(AppConstants.networkTimeout);
 
-    return (data as List)
-        .map((row) => _addressFromRow(row as Map<String, dynamic>))
+    return (data as List<dynamic>)
+        .whereType<Map<String, dynamic>>()
+        .map(_addressFromRow)
         .toList();
   }
 
@@ -34,7 +41,8 @@ class AddressesDatasource {
           .single()
           .timeout(AppConstants.networkTimeout);
       return _addressFromRow(data);
-    } catch (_) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'getDefaultAddress');
       return null;
     }
   }
@@ -45,7 +53,8 @@ class AddressesDatasource {
       await _client
           .from('addresses')
           .update({'is_default': false})
-          .eq('user_id', _userId);
+          .eq('user_id', _userId)
+          .timeout(AppConstants.networkTimeout);
     }
 
     final data = await _client

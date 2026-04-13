@@ -1,6 +1,7 @@
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/material.dart';
 
+import '../../../core/constants/driver_constants.dart';
 import 'delivery_status_badge.dart';
 
 /// Card showing a delivery summary in the list.
@@ -122,25 +123,25 @@ class DeliveryCard extends StatelessWidget {
   static (String, Color) _statusLabel(BuildContext context, String status) {
     final cs = Theme.of(context).colorScheme;
     switch (status) {
-      case 'assigned':
+      case DeliveryStatus.assigned:
         return ('تم التعيين', cs.tertiary);
-      case 'accepted':
+      case DeliveryStatus.accepted:
         return ('تم القبول', cs.primary);
-      case 'heading_to_pickup':
+      case DeliveryStatus.headingToPickup:
         return ('في الطريق للمتجر', cs.secondary);
-      case 'arrived_at_pickup':
+      case DeliveryStatus.arrivedAtPickup:
         return ('وصل للمتجر', cs.tertiary);
-      case 'picked_up':
+      case DeliveryStatus.pickedUp:
         return ('تم الاستلام', cs.primary);
-      case 'heading_to_customer':
+      case DeliveryStatus.headingToCustomer:
         return ('في الطريق للعميل', cs.tertiary);
-      case 'arrived_at_customer':
+      case DeliveryStatus.arrivedAtCustomer:
         return ('وصل للعميل', cs.tertiary);
-      case 'delivered':
+      case DeliveryStatus.delivered:
         return ('تم التوصيل', cs.primary);
-      case 'failed':
+      case DeliveryStatus.failed:
         return ('فشل', cs.error);
-      case 'cancelled':
+      case DeliveryStatus.cancelled:
         return ('ملغي', cs.outline);
       default:
         return (status, cs.outline);

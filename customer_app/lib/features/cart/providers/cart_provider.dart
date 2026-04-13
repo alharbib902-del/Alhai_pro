@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:alhai_core/alhai_core.dart';
 
+import '../../../core/services/sentry_service.dart';
+
 const _cartKey = 'customer_cart';
 
 /// Cart state provider with persistence.
@@ -20,31 +22,42 @@ final cartLoadedProvider = FutureProvider<bool>((ref) async {
 
 class CartNotifier extends StateNotifier<Cart> {
   bool _loaded = false;
+  bool _loading = false;
+  bool _saving = false;
 
   CartNotifier() : super(const Cart()) {
     loadFromDisk();
   }
 
   Future<void> loadFromDisk() async {
-    if (_loaded) return;
+    if (_loaded || _loading) return;
+    _loading = true;
     try {
       final prefs = await SharedPreferences.getInstance();
       final json = prefs.getString(_cartKey);
       if (json != null && mounted) {
         state = Cart.fromJson(jsonDecode(json) as Map<String, dynamic>);
       }
-    } catch (e) {
+    } catch (e, stack) {
       debugPrint('[CartProvider] Error loading cart from disk: $e');
+      reportError(e, stackTrace: stack, hint: 'CartProvider.loadFromDisk');
+    } finally {
+      _loaded = true;
+      _loading = false;
     }
-    _loaded = true;
   }
 
   Future<void> _saveToDisk() async {
+    if (_saving) return;
+    _saving = true;
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_cartKey, jsonEncode(state.toJson()));
-    } catch (e) {
+    } catch (e, stack) {
       debugPrint('[CartProvider] Error saving cart to disk: $e');
+      reportError(e, stackTrace: stack, hint: 'CartProvider._saveToDisk');
+    } finally {
+      _saving = false;
     }
   }
 

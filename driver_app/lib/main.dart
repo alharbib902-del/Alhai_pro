@@ -13,6 +13,29 @@ import 'core/services/sentry_service.dart';
 import 'core/supabase/supabase_client.dart';
 import 'di/injection.dart';
 
+// ─── Required --dart-define variables ──────────────────────────────────────
+//
+// The following environment variables MUST be provided via --dart-define at
+// build time. Without them the app will not connect to backend services or
+// report errors.
+//
+//   SUPABASE_URL          – Supabase project URL (e.g. https://xxx.supabase.co)
+//   SUPABASE_ANON_KEY     – Supabase anonymous/public API key
+//   SENTRY_DSN_DRIVER     – Sentry DSN for crash reporting (optional in debug)
+//
+// Example (debug):
+//   flutter run \
+//     --dart-define=SUPABASE_URL=https://xxx.supabase.co \
+//     --dart-define=SUPABASE_ANON_KEY=eyJ... \
+//     --dart-define=SENTRY_DSN_DRIVER=https://xxx@xxx.ingest.sentry.io/xxx
+//
+// Example (release):
+//   flutter build apk \
+//     --dart-define=SUPABASE_URL=https://xxx.supabase.co \
+//     --dart-define=SUPABASE_ANON_KEY=eyJ... \
+//     --dart-define=SENTRY_DSN_DRIVER=https://xxx@xxx.ingest.sentry.io/xxx
+// ──────────────────────────────────────────────────────────────────────────
+
 void main() {
   runZonedGuarded(
     () async {

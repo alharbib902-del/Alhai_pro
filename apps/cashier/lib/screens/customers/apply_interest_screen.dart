@@ -429,7 +429,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
             final initials = _getInitials(account.name);
 
             return Padding(
-              padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+              padding: const EdgeInsetsDirectional.only(bottom: AlhaiSpacing.xs),
               child: InkWell(
                 onTap: () => _toggleSelect(account.id),
                 borderRadius: BorderRadius.circular(12),
@@ -717,7 +717,8 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
     setState(() => _isApplying = true);
 
     try {
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final user = ref.read(currentUserProvider);
       final now = DateTime.now();
       final periodKey = '${now.year}-${now.month.toString().padLeft(2, '0')}';

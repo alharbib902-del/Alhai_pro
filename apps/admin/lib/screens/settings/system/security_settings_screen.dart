@@ -10,6 +10,7 @@ import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import '../../../providers/settings_db_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import '../../../core/services/sentry_service.dart';
 
 // ============================================================================
 // PIN ATTEMPT TRACKER - Brute-force protection with exponential backoff
@@ -166,7 +167,8 @@ class _SecuritySettingsScreenState
           });
         }
       }
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'SecuritySettingsScreen: loadSettings');
       if (mounted) setState(() => _isLoading = false);
     }
   }

@@ -93,21 +93,25 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   Future<void> _verifyOtp() async {
     final otp = _otpController.text.trim();
     if (otp.length != 6) {
-      setState(() => _error = 'أدخل رمز التحقق المكون من 6 أرقام');
+      if (mounted) setState(() => _error = 'أدخل رمز التحقق المكون من 6 أرقام');
       return;
     }
 
     if (_isLockedOut) {
-      setState(
-        () => _error = 'تم تجاوز عدد المحاولات. انتظر $_lockoutSeconds ثانية',
-      );
+      if (mounted) {
+        setState(
+          () => _error = 'تم تجاوز عدد المحاولات. انتظر $_lockoutSeconds ثانية',
+        );
+      }
       return;
     }
 
-    setState(() {
-      _loading = true;
-      _error = null;
-    });
+    if (mounted) {
+      setState(() {
+        _loading = true;
+        _error = null;
+      });
+    }
 
     try {
       final datasource = locator<AuthDatasource>();
@@ -118,23 +122,29 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
 
       if (mounted) context.go('/home');
     } on SocketException catch (_) {
-      setState(
-        () => _error = 'لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى',
-      );
+      if (mounted) {
+        setState(
+          () => _error = 'لا يوجد اتصال بالإنترنت. تحقق من الشبكة وحاول مرة أخرى',
+        );
+      }
     } on TimeoutException catch (_) {
-      setState(() => _error = 'انتهت مهلة الاتصال. حاول مرة أخرى');
+      if (mounted) setState(() => _error = 'انتهت مهلة الاتصال. حاول مرة أخرى');
     } catch (e) {
       _failedAttempts++;
       if (_failedAttempts >= _maxAttempts) {
         _startLockout();
-        setState(
-          () => _error = 'تم تجاوز عدد المحاولات. انتظر $_lockoutSeconds ثانية',
-        );
+        if (mounted) {
+          setState(
+            () => _error = 'تم تجاوز عدد المحاولات. انتظر $_lockoutSeconds ثانية',
+          );
+        }
       } else {
         final remaining = _maxAttempts - _failedAttempts;
-        setState(
-          () => _error = 'رمز التحقق غير صحيح ($remaining محاولات متبقية)',
-        );
+        if (mounted) {
+          setState(
+            () => _error = 'رمز التحقق غير صحيح ($remaining محاولات متبقية)',
+          );
+        }
       }
     } finally {
       if (mounted) setState(() => _loading = false);
@@ -177,6 +187,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'رجوع',
           onPressed: () => context.pop(),
         ),
       ),

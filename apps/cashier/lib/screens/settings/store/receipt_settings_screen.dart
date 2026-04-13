@@ -60,7 +60,8 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
       _error = null;
     });
     try {
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final settings = await (_db.select(
         _db.settingsTable,
       )..where((s) => s.storeId.equals(storeId))).get();
@@ -91,7 +92,8 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
   }
 
   Future<void> _upsertSetting(String key, String value) async {
-    final storeId = ref.read(currentStoreIdProvider)!;
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
     final id = 'setting_${storeId}_$key';
     await _db
         .into(_db.settingsTable)

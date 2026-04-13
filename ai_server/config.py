@@ -1,7 +1,8 @@
 """Application configuration - إعدادات التطبيق"""
 
-from pydantic_settings import BaseSettings
 from functools import lru_cache
+
+from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
@@ -14,6 +15,7 @@ class Settings(BaseSettings):
 
     # JWT
     jwt_secret: str = ""
+    jwt_audience: str = "authenticated"
 
     # OpenAI
     openai_api_key: str = ""
@@ -23,12 +25,18 @@ class Settings(BaseSettings):
     port: int = 8000
     debug: bool = False
 
-    # CORS
-    allowed_origins: str = "http://localhost:3000,http://localhost:8080,https://basem-alhi-production.up.railway.app,https://alhai-cashier.pages.dev,https://pos.alhai.store"
+    # CORS - configurable via ALLOWED_ORIGINS env var (comma-separated)
+    allowed_origins: str = ""
 
     @property
     def cors_origins(self) -> list[str]:
-        return [o.strip() for o in self.allowed_origins.split(",")]
+        if self.allowed_origins:
+            return [o.strip() for o in self.allowed_origins.split(",") if o.strip()]
+        # Fallback defaults for development only
+        return [
+            "http://localhost:3000",
+            "http://localhost:8080",
+        ]
 
     model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
 

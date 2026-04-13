@@ -441,7 +441,7 @@ class _CashierReceivingScreenState
                 children: [
                   // Handle bar
                   Container(
-                    margin: const EdgeInsets.only(top: AlhaiSpacing.sm),
+                    margin: const EdgeInsetsDirectional.only(top: AlhaiSpacing.sm),
                     width: 40,
                     height: 4,
                     decoration: BoxDecoration(
@@ -659,7 +659,8 @@ class _CashierReceivingScreenState
 
       // Audit log
       final user = ref.read(currentUserProvider);
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final receivedItems = await _db.purchasesDao.getPurchaseItems(
         purchase.id,
       );

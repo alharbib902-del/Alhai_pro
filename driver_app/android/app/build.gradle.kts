@@ -41,10 +41,6 @@ android {
         versionName = flutter.versionName
     }
 
-    // TODO(security): Generate a real upload keystore and create
-    // driver_app/android/key.properties following the template at
-    // driver_app/android/key.properties.example. Until then, release builds
-    // fall back to debug signing and MUST NOT be uploaded to the Play Store.
     signingConfigs {
         if (hasReleaseKeystore) {
             create("release") {
@@ -58,19 +54,20 @@ android {
 
     buildTypes {
         release {
-            // Use the real release signing config when key.properties is present.
-            // Otherwise fall back to debug signing so local `flutter run --release`
-            // still works. CI/Play Store builds MUST provide key.properties.
-            signingConfig = if (hasReleaseKeystore) {
-                signingConfigs.getByName("release")
-            } else {
-                logger.warn(
-                    "\u26A0\uFE0F  driver_app: android/key.properties not found \u2014 " +
-                    "release build will be signed with debug keys. " +
-                    "Do NOT upload this build to the Play Store."
+            // Release builds MUST be signed with a real keystore.
+            // Provide android/key.properties (see key.properties.example).
+            if (!hasReleaseKeystore) {
+                throw GradleException(
+                    "driver_app: android/key.properties not found. " +
+                    "Release builds require a signing key. " +
+                    "See android/key.properties.example for the expected format."
                 )
-                signingConfigs.getByName("debug")
             }
+            signingConfig = signingConfigs.getByName("release")
+        }
+        // Debug builds use the auto-generated debug keystore.
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 }

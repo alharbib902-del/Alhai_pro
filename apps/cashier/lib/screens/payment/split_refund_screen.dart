@@ -670,7 +670,8 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
 
       // Audit log
       final user = ref.read(currentUserProvider);
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       auditService.logRefund(
         storeId: storeId,
         userId: user?.id ?? 'unknown',

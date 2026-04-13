@@ -102,17 +102,19 @@ class _DistributorLoginScreenState
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // Logo
-                  Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary,
-                      borderRadius: BorderRadius.circular(14),
-                    ),
-                    child: const Icon(
-                      Icons.store,
-                      color: AppColors.textOnPrimary,
-                      size: 28,
+                  ExcludeSemantics(
+                    child: Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(14),
+                      ),
+                      child: const Icon(
+                        Icons.store,
+                        color: AppColors.textOnPrimary,
+                        size: 28,
+                      ),
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.mdl),
@@ -186,7 +188,7 @@ class _DistributorLoginScreenState
                         r'^[\w\-\.+]+@([\w\-]+\.)+[\w\-]{2,}$',
                       );
                       if (!emailRegex.hasMatch(value.trim())) {
-                        return 'Please enter a valid email address';
+                        return l10n.distributorInvalidEmail;
                       }
                       return null;
                     },
@@ -231,7 +233,7 @@ class _DistributorLoginScreenState
                         return l10n.distributorPasswordLabel;
                       }
                       if (value.length < 8) {
-                        return 'Password must be at least 8 characters';
+                        return l10n.minLength(8);
                       }
                       return null;
                     },
@@ -244,15 +246,21 @@ class _DistributorLoginScreenState
                         Icons.lock_outline,
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
                       ),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscurePassword
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
-                          color: Theme.of(context).colorScheme.onSurfaceVariant,
-                        ),
-                        onPressed: () => setState(
-                          () => _obscurePassword = !_obscurePassword,
+                      suffixIcon: Semantics(
+                        button: true,
+                        label: _obscurePassword
+                            ? 'Show password'
+                            : 'Hide password',
+                        child: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
+                          ),
+                          onPressed: () => setState(
+                            () => _obscurePassword = !_obscurePassword,
+                          ),
                         ),
                       ),
                       filled: true,
@@ -277,36 +285,40 @@ class _DistributorLoginScreenState
                   const SizedBox(height: AlhaiSpacing.lg),
 
                   // Login button
-                  SizedBox(
-                    width: double.infinity,
-                    child: FilledButton(
-                      onPressed: _isLoading ? null : _login,
-                      style: FilledButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.textOnPrimary,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: AlhaiSpacing.md,
+                  Semantics(
+                    button: true,
+                    label: l10n.distributorLoginButton,
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: FilledButton(
+                        onPressed: _isLoading ? null : _login,
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: AppColors.textOnPrimary,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AlhaiSpacing.md,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                width: 22,
+                                height: 22,
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: AppColors.textOnPrimary,
+                                ),
+                              )
+                            : Text(
+                                l10n.distributorLoginButton,
+                                style: const TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
                       ),
-                      child: _isLoading
-                          ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: AppColors.textOnPrimary,
-                              ),
-                            )
-                          : Text(
-                              l10n.distributorLoginButton,
-                              style: const TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
                     ),
                   ),
                 ],

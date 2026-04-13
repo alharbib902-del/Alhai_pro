@@ -287,7 +287,10 @@ class LiteSettingsScreen extends ConsumerWidget {
           Center(
             child: SizedBox(
               width: isMobile ? double.infinity : 300,
-              child: OutlinedButton.icon(
+              child: Semantics(
+                button: true,
+                label: l10n.logout,
+                child: OutlinedButton.icon(
                 onPressed: () async {
                   final confirmed = await showDialog<bool>(
                     context: context,
@@ -326,6 +329,7 @@ class LiteSettingsScreen extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
+              ),
               ),
             ),
           ),

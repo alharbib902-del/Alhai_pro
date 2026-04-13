@@ -3,6 +3,7 @@
 /// شاشة لإدارة أدوار المستخدمين وصلاحياتهم
 
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +17,7 @@ import 'package:alhai_auth/alhai_auth.dart'
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 import '../../../core/constants/admin_permissions.dart';
+import '../../../core/services/sentry_service.dart';
 
 /// شاشة الأدوار والصلاحيات
 class RolesPermissionsScreen extends ConsumerStatefulWidget {
@@ -154,7 +156,8 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
                 .where((s) => s.isNotEmpty)
                 .toList();
           }
-        } catch (_) {
+        } catch (e, st) {
+          reportError(e, stackTrace: st, hint: 'RolesPermissions: parse permissions for ${r.id}');
           permissions = [];
         }
 
@@ -174,7 +177,8 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
         _roles = mappedRoles;
         _isLoading = false;
       });
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'RolesPermissions: loadRoles');
       setState(() {
         _roles = _defaultRoles;
         _isLoading = false;
@@ -801,7 +805,7 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
           backgroundColor: AppColors.error,
         ),
       );
-      debugPrint('Security: non-admin attempted sensitive role operation');
+      if (kDebugMode) debugPrint('Security: non-admin attempted sensitive role operation');
       return false;
     }
     return true;
@@ -901,7 +905,7 @@ class _RolesPermissionsScreenState extends ConsumerState<RolesPermissionsScreen>
         description: '$action: $entityName',
       );
     } catch (e) {
-      debugPrint('Audit log failed: $e');
+      if (kDebugMode) debugPrint('Audit log failed: $e');
     }
   }
 

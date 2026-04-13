@@ -300,7 +300,7 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
           ),
           if (_isSearching)
             const Padding(
-              padding: EdgeInsets.only(top: AlhaiSpacing.md),
+              padding: EdgeInsetsDirectional.only(top: AlhaiSpacing.md),
               child: Center(child: CircularProgressIndicator()),
             ),
         ],
@@ -570,7 +570,7 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
             final isSelected = _reason == r['value'];
             final color = r['color'] as Color;
             return Padding(
-              padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+              padding: const EdgeInsetsDirectional.only(bottom: AlhaiSpacing.xs),
               child: InkWell(
                 onTap: () => setState(() => _reason = r['value'] as String),
                 borderRadius: BorderRadius.circular(12),
@@ -726,7 +726,8 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
     setState(() => _isSaving = true);
 
     try {
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final movementId = const Uuid().v4();
       final currentStock = _selectedProduct!.stockQty;
       final newStock = currentStock - quantity;

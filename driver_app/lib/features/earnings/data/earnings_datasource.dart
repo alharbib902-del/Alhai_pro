@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/services/local_cache_service.dart';
+import '../../../core/services/sentry_service.dart';
 
 /// Datasource for driver earnings data.
 ///
@@ -41,7 +42,8 @@ class EarningsDatasource {
       // Write-through: persist so the earnings screen works offline.
       await _cache.cacheEarnings('list_$cacheKey', {'rows': result});
       return result;
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'getEarnings fallback');
       final cached = await _cache.getCachedEarnings('list_$cacheKey');
       if (cached != null) {
         return (cached['rows'] as List).cast<Map<String, dynamic>>();
@@ -64,7 +66,8 @@ class EarningsDatasource {
       // Cache the computed summary alongside the raw rows.
       await _cache.cacheEarnings('summary_$cacheKey', summary);
       return summary;
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'getEarningsSummary fallback');
       // getEarnings already tried the cache for raw rows; try the summary.
       final cached = await _cache.getCachedEarnings('summary_$cacheKey');
       if (cached != null) return cached;

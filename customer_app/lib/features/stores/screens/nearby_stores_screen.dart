@@ -19,6 +19,7 @@ class NearbyStoresScreen extends ConsumerWidget {
         title: const Text('المتاجر القريبة'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'رجوع',
           onPressed: () => context.pop(),
         ),
       ),

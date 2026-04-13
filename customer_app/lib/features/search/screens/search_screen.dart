@@ -43,6 +43,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'رجوع',
           onPressed: () => context.pop(),
         ),
         title: TextField(
@@ -58,6 +59,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
           if (_searchController.text.isNotEmpty)
             IconButton(
               icon: const Icon(Icons.clear),
+              tooltip: 'مسح البحث',
               onPressed: () {
                 _searchController.clear();
                 setState(() => _query = '');

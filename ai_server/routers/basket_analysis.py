@@ -32,7 +32,7 @@ async def basket_analysis(
     try:
         try:
             items = SupabaseService.get_sale_items(
-                org_id=request.org_id, store_id=request.store_id
+                org_id=str(request.org_id), store_id=str(request.store_id)
             )
             if items:
                 result = basket_from_items(
@@ -51,14 +51,17 @@ async def basket_analysis(
                 return result
         except InsufficientDataError as e:
             logger.info("basket_analysis insufficient data: %s", e)
+        except ValueError as e:
+            logger.warning("basket_analysis validation error: %s", e)
+            raise HTTPException(status_code=422, detail=str(e))
         except Exception:
             logger.exception(
                 "basket_analysis real aggregation failed; falling back to mock"
             )
 
         result = analyze_basket(
-            org_id=request.org_id,
-            store_id=request.store_id,
+            org_id=str(request.org_id),
+            store_id=str(request.store_id),
             top_n=request.top_n,
             language=request.language,
         )
@@ -70,6 +73,8 @@ async def basket_analysis(
             request.store_id,
         )
         return result
+    except HTTPException:
+        raise
     except Exception:
         logger.exception("خطأ في تحليل السلة")
         raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

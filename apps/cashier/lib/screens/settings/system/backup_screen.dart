@@ -5,6 +5,7 @@
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
 library;
 
+import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -52,7 +53,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
   }
 
   Future<void> _upsertSetting(String key, String value) async {
-    final storeId = ref.read(currentStoreIdProvider)!;
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
     final id = 'setting_${storeId}_$key';
     await _db
         .into(_db.settingsTable)
@@ -73,7 +75,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       _error = null;
     });
     try {
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final settings = await (_db.select(
         _db.settingsTable,
       )..where((s) => s.storeId.equals(storeId))).get();
@@ -96,7 +99,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     } catch (e) {
       // Use default values if settings cannot be loaded. This is an
       // acceptable fallback, but we log it for debug visibility.
-      debugPrint('[Backup] Failed to load settings, using defaults: $e');
+      if (kDebugMode) debugPrint('[Backup] Failed to load settings, using defaults: $e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -106,7 +109,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     setState(() => _isBackingUp = true);
 
     try {
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final bundle = await _backupManager.exportAsJson(storeId);
 
       final now = bundle.createdAt;

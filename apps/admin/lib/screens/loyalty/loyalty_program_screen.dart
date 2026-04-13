@@ -7,6 +7,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import '../../core/services/sentry_service.dart';
 
 // ============================================================================
 // LOYALTY TIER MODEL
@@ -524,7 +525,14 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                           final db = getIt<AppDatabase>();
                           await db.loyaltyDao.deactivateReward(reward.id);
                           await _loadData();
-                        } catch (_) {}
+                        } catch (e, st) {
+                          await reportError(e, stackTrace: st, hint: 'loyalty_program: deactivate reward failed');
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(AppLocalizations.of(context).errorOccurred), backgroundColor: AppColors.error),
+                            );
+                          }
+                        }
                       }
                     },
                   ),
@@ -1672,7 +1680,14 @@ class _LoyaltyProgramScreenState extends ConsumerState<LoyaltyProgramScreen>
                       ),
                     );
                     await _loadData();
-                  } catch (_) {}
+                  } catch (e, st) {
+                    await reportError(e, stackTrace: st, hint: 'loyalty_program: add reward failed');
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(AppLocalizations.of(context).errorOccurred), backgroundColor: AppColors.error),
+                      );
+                    }
+                  }
                 }
                 if (!context.mounted) return;
                 Navigator.pop(context);

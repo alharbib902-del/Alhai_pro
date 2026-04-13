@@ -513,7 +513,7 @@ class _UsersPermissionsScreenState
     return Column(
       children: users.map((user) {
         return Padding(
-          padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+          padding: const EdgeInsetsDirectional.only(bottom: AlhaiSpacing.sm),
           child: _buildUserCard(user, isDark, l10n),
         );
       }).toList(),

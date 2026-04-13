@@ -15,7 +15,11 @@
 // ─── Cache names ─────────────────────────────────────────────────────────────
 const APP_ID        = 'alhai-admin';
 const CACHE_VERSION = 'v1';
-const CACHE_NAME    = `${APP_ID}-${CACHE_VERSION}`;
+// Build timestamp injected at deploy time. Fallback to CACHE_VERSION if not set.
+// To inject: sed -i "s/__BUILD_TIMESTAMP__/$(date +%s)/" service-worker.js
+const BUILD_TIMESTAMP = '__BUILD_TIMESTAMP__';
+const EFFECTIVE_VERSION = BUILD_TIMESTAMP.startsWith('__') ? CACHE_VERSION : `${CACHE_VERSION}-${BUILD_TIMESTAMP}`;
+const CACHE_NAME    = `${APP_ID}-${EFFECTIVE_VERSION}`;
 
 // Separate buckets keep eviction logic clean and prevent cross-contamination.
 const CACHE_STATIC  = `${CACHE_NAME}-static`;

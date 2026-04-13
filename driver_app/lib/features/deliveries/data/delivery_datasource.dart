@@ -2,6 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../core/services/local_cache_service.dart';
 import '../../../core/services/offline_queue_service.dart';
+import '../../../core/services/sentry_service.dart';
 
 /// Column sets used in select queries.
 ///
@@ -69,6 +70,8 @@ class DeliveryDatasource {
   /// Falls back to the local cache when Supabase is unreachable.
   Future<List<Map<String, dynamic>>> getMyDeliveries({
     String? statusFilter,
+    int limit = 50,
+    int offset = 0,
   }) async {
     try {
       var query = _client
@@ -80,7 +83,9 @@ class DeliveryDatasource {
         query = query.eq('status', statusFilter);
       }
 
-      final result = await query.order('created_at', ascending: false);
+      final result = await query
+          .order('created_at', ascending: false)
+          .range(offset, offset + limit - 1);
 
       // Write-through: cache the unfiltered list so all views benefit.
       if (statusFilter == null) {
@@ -98,7 +103,8 @@ class DeliveryDatasource {
         }
       }
       throw _classifyDatasourceError(e, 'getMyDeliveries');
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'getMyDeliveries fallback');
       final cached = await _cache.getCachedDeliveries();
       if (cached != null) {
         return statusFilter == null
@@ -132,7 +138,8 @@ class DeliveryDatasource {
         }
       }
       throw _classifyDatasourceError(e, 'getActiveDeliveries');
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'getActiveDeliveries fallback');
       final cached = await _cache.getCachedDeliveries();
       if (cached != null) {
         return cached
@@ -149,6 +156,7 @@ class DeliveryDatasource {
   /// fetched on the detail screen.
   Future<List<Map<String, dynamic>>> getCompletedDeliveries({
     int limit = 50,
+    int offset = 0,
   }) async {
     try {
       return await _client
@@ -157,7 +165,7 @@ class DeliveryDatasource {
           .eq('driver_id', _driverId)
           .inFilter('status', ['delivered', 'failed', 'cancelled'])
           .order('delivered_at', ascending: false)
-          .limit(limit);
+          .range(offset, offset + limit - 1);
     } on PostgrestException catch (e) {
       if (_isNetworkError(e)) {
         final cached = await _cache.getCachedDeliveries();
@@ -169,7 +177,8 @@ class DeliveryDatasource {
         }
       }
       throw _classifyDatasourceError(e, 'getCompletedDeliveries');
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'getCompletedDeliveries fallback');
       final cached = await _cache.getCachedDeliveries();
       if (cached != null) {
         return cached
@@ -200,7 +209,8 @@ class DeliveryDatasource {
         return _cache.getCachedDeliveryDetail(id);
       }
       throw _classifyDatasourceError(e, 'getDelivery($id)');
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'getDelivery($id) fallback');
       return _cache.getCachedDeliveryDetail(id);
     }
   }
@@ -323,8 +333,9 @@ class DeliveryDatasource {
         await _cache.patchCachedDelivery(deliveryId, {'status': 'unknown'});
       }
       throw classified;
-    } catch (_) {
+    } catch (e, st) {
       // Unexpected error treated as network failure: queue and keep patch.
+      reportError(e, stackTrace: st, hint: 'updateStatus($deliveryId, $newStatus) fallback');
       await OfflineQueueService.instance.enqueue(
         deliveryId: deliveryId,
         status: newStatus,

@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/sentry_service.dart';
 
 class DeliveryDatasource {
   final SupabaseClient _client;
@@ -19,7 +20,8 @@ class DeliveryDatasource {
           .single()
           .timeout(AppConstants.networkTimeout);
       return _deliveryFromRow(data);
-    } catch (_) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'getDeliveryByOrderId');
       return null;
     }
   }
@@ -71,16 +73,19 @@ class DeliveryDatasource {
           .eq('id', driverId)
           .single()
           .timeout(AppConstants.networkTimeout);
-    } catch (_) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'getDriverInfo');
       return null;
     }
   }
 
   Future<void> confirmDelivery(String orderId, String code) async {
-    await _client.rpc(
-      'confirm_delivery',
-      params: {'p_order_id': orderId, 'p_confirmation_code': code},
-    );
+    await _client
+        .rpc(
+          'confirm_delivery',
+          params: {'p_order_id': orderId, 'p_confirmation_code': code},
+        )
+        .timeout(AppConstants.networkTimeout);
   }
 
   Delivery _deliveryFromRow(Map<String, dynamic> row) {

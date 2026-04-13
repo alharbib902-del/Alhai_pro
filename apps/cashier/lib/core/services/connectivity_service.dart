@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
+import '../constants/timing.dart';
 import 'offline_queue_service.dart';
 
 /// Monitors network connectivity and auto-triggers queue processing
@@ -47,10 +48,17 @@ class ConnectivityService {
     if (_initialized) return;
     _initialized = true;
 
-    // Check initial state
+    // Check initial state (with timeout to avoid blocking app startup)
     try {
-      final result = await _connectivity.checkConnectivity();
+      final result = await _connectivity
+          .checkConnectivity()
+          .timeout(Timeouts.connectivityCheck);
       _isOnline = result != ConnectivityResult.none;
+    } on TimeoutException {
+      if (kDebugMode) {
+        debugPrint('ConnectivityService: فحص الاتصال الأولي تجاوز المهلة');
+      }
+      _isOnline = true; // optimistic default on timeout
     } catch (e) {
       if (kDebugMode) {
         debugPrint('ConnectivityService: فشل فحص الاتصال الأولي: $e');
@@ -78,7 +86,9 @@ class ConnectivityService {
   /// Check connectivity on demand (useful for pull-to-refresh).
   Future<bool> checkNow() async {
     try {
-      final result = await _connectivity.checkConnectivity();
+      final result = await _connectivity
+          .checkConnectivity()
+          .timeout(Timeouts.connectivityCheck);
       final wasOnline = _isOnline;
       _isOnline = result != ConnectivityResult.none;
 
@@ -89,6 +99,9 @@ class ConnectivityService {
         }
       }
 
+      return _isOnline;
+    } on TimeoutException {
+      if (kDebugMode) debugPrint('ConnectivityService: فحص الاتصال تجاوز المهلة');
       return _isOnline;
     } catch (e) {
       if (kDebugMode) debugPrint('ConnectivityService: خطأ في الفحص: $e');
@@ -133,9 +146,10 @@ class ConnectivityService {
       );
     }
 
-    // Fire-and-forget: flush the offline queue
+    // Fire-and-forget: flush the offline queue (with 30s timeout)
     OfflineQueueService.instance
         .flush()
+        .timeout(Timeouts.queueFlush)
         .then((count) {
           if (kDebugMode && count > 0) {
             debugPrint('ConnectivityService: تمت مزامنة $count عملية');

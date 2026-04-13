@@ -1,4 +1,4 @@
-"""تحليل الموظفين - Staff Analytics Router"""
+"""تحليل ا��موظفين - Staff Analytics Router"""
 
 import logging
 
@@ -28,10 +28,10 @@ async def staff_analytics(
     try:
         try:
             employees = SupabaseService.get_employees(
-                org_id=request.org_id, store_id=request.store_id
+                org_id=str(request.org_id), store_id=str(request.store_id)
             )
             sales = SupabaseService.get_sales(
-                org_id=request.org_id, store_id=request.store_id
+                org_id=str(request.org_id), store_id=str(request.store_id)
             )
             if employees:
                 result = staff_from_sales_employees(
@@ -49,14 +49,17 @@ async def staff_analytics(
                 return result
         except InsufficientDataError as e:
             logger.info("staff_analytics insufficient data: %s", e)
+        except ValueError as e:
+            logger.warning("staff_analytics validation error: %s", e)
+            raise HTTPException(status_code=422, detail=str(e))
         except Exception:
             logger.exception(
                 "staff_analytics real aggregation failed; falling back to mock"
             )
 
         result = analyze_staff(
-            org_id=request.org_id,
-            store_id=request.store_id,
+            org_id=str(request.org_id),
+            store_id=str(request.store_id),
             language=request.language,
         )
         result.is_mock_data = True
@@ -67,6 +70,8 @@ async def staff_analytics(
             request.store_id,
         )
         return result
+    except HTTPException:
+        raise
     except Exception:
         logger.exception("خطأ في تحليل الموظفين")
-        raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")
+        raise HTTPException(status_code=500, detail="حدث خ��أ غير متوقع")

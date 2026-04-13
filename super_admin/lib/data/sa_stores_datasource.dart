@@ -5,11 +5,18 @@ import 'models/sa_store_model.dart';
 /// Datasource for multi-tenant store management.
 /// Queries: stores, store_members, organizations.
 class SAStoresDatasource {
-  // ignore: strict_raw_type
+  /// Supabase client for all queries.
+  ///
+  /// Accepts [SupabaseClient] in production. Tests may pass a duck-typed
+  /// fake via the [SAStoresDatasource.test] constructor.
   final dynamic _client;
 
-  /// Accepts [SupabaseClient] in production or a fake in tests.
-  SAStoresDatasource(this._client);
+  /// Production constructor -- accepts a typed [SupabaseClient].
+  SAStoresDatasource(SupabaseClient client) : _client = client;
+
+  /// Test constructor -- accepts a fake client that implements the same
+  /// postgrest query-chain surface as [SupabaseClient].
+  SAStoresDatasource.test(this._client);
 
   /// Fetch all stores with owner info.
   Future<List<SAStore>> getStores({

@@ -286,7 +286,7 @@ class _PolicyText extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+      padding: const EdgeInsetsDirectional.only(bottom: AlhaiSpacing.xs),
       child: Text(
         text,
         style: TextStyle(
@@ -319,7 +319,7 @@ class _PolicyBullet extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
+            padding: const EdgeInsetsDirectional.only(top: AlhaiSpacing.xs),
             child: Container(
               width: 6,
               height: 6,
@@ -357,7 +357,7 @@ class _PolicyRight extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     return Padding(
-      padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+      padding: const EdgeInsetsDirectional.only(bottom: AlhaiSpacing.sm),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

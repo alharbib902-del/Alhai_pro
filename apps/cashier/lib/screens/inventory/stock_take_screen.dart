@@ -590,7 +590,8 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
     setState(() => _isSaving = true);
 
     try {
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
 
       final adjustedProducts = <ProductsTableData>[];
 

@@ -122,7 +122,7 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
             backgroundColor: success ? AppColors.success : AppColors.error,
           ),
         );
-        setState(() {}); // Refresh UI
+        if (mounted) setState(() {}); // Refresh UI
       }
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Connect printer');
@@ -635,7 +635,7 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
             final isThisConnected = connectedName == printer.name;
 
             return Container(
-              margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+              margin: const EdgeInsetsDirectional.only(bottom: AlhaiSpacing.xs),
               padding: const EdgeInsets.symmetric(
                 horizontal: AlhaiSpacing.md,
                 vertical: AlhaiSpacing.sm,
@@ -806,7 +806,7 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
                 await ref
                     .read(printServiceProvider.notifier)
                     .setPaperSize(sizes.first);
-                setState(() {});
+                if (mounted) setState(() {});
               },
               style: ButtonStyle(visualDensity: VisualDensity.compact),
             ),

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -351,7 +352,7 @@ class _CouponsContent extends ConsumerWidget {
       );
       await updateCoupon(ref, updated);
     } catch (e) {
-      debugPrint('Error toggling coupon: $e');
+      if (kDebugMode) debugPrint('Error toggling coupon: $e');
     }
   }
 
@@ -359,7 +360,7 @@ class _CouponsContent extends ConsumerWidget {
     try {
       await deleteCoupon(ref, coupon.id);
     } catch (e) {
-      debugPrint('Error deleting coupon: $e');
+      if (kDebugMode) debugPrint('Error deleting coupon: $e');
     }
   }
 
@@ -444,7 +445,7 @@ class _CouponsContent extends ConsumerWidget {
                       value: double.tryParse(valueController.text) ?? 0,
                     );
                   } catch (e) {
-                    debugPrint('Error adding coupon: $e');
+                    if (kDebugMode) debugPrint('Error adding coupon: $e');
                   }
                 }
                 if (!context.mounted) return;

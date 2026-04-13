@@ -49,6 +49,52 @@ import '../screens/settings/lite_profile_screen.dart';
 import '../screens/settings/lite_notification_prefs_screen.dart';
 import '../screens/onboarding_screen.dart';
 
+/// Admin Lite-specific route constants (not in shared AppRoutes).
+class LiteRoutes {
+  LiteRoutes._();
+
+  /// Monitoring hub tab root
+  static const String monitoring = '/monitoring';
+
+  /// Inventory alerts (under monitoring)
+  static const String inventoryAlerts = '/monitoring/inventory-alerts';
+
+  /// More menu tab root
+  static const String more = '/more';
+
+  /// Lite-specific sub-routes
+  static const String salesTrend = '/lite/sales-trend';
+  static const String alertsSummary = '/lite/alerts-summary';
+  static const String dailySales = '/lite/reports/daily-sales';
+  static const String weeklyComparison = '/lite/reports/weekly';
+  static const String topProducts = '/lite/reports/top-products';
+  static const String lowStock = '/lite/reports/low-stock';
+  static const String employeePerformance = '/lite/reports/employee-performance';
+  static const String cashFlow = '/lite/reports/cash-flow';
+  static const String notificationsList = '/lite/alerts/notifications';
+  static const String stockAlerts = '/lite/alerts/stock';
+  static const String orderAlerts = '/lite/alerts/orders';
+  static const String systemAlerts = '/lite/alerts/system';
+  static const String activeOrders = '/lite/orders';
+  static const String orderDetail = '/lite/orders/:id';
+  static const String orderStatus = '/lite/orders/:id/status';
+  static const String deliveryTracking = '/lite/delivery-tracking';
+  static const String orderHistory = '/lite/order-history';
+  static const String quickPrice = '/lite/management/quick-price';
+  static const String stockAdjustment = '/lite/management/stock-adjustment';
+  static const String employeeSchedule = '/lite/management/employee-schedule';
+  static const String pendingApprovals = '/lite/management/pending-approvals';
+  static const String liteProfile = '/lite/profile';
+  static const String notificationPrefs = '/lite/settings/notification-prefs';
+  static const String approvals = '/approvals';
+
+  /// Helper to build order detail path
+  static String orderDetailPath(String id) => '/lite/orders/$id';
+
+  /// Helper to build order status path
+  static String orderStatusPath(String id) => '/lite/orders/$id/status';
+}
+
 /// Route parameter extraction helper
 extension GoRouterStateX on GoRouterState {
   /// Extract path parameter by key (defaults to 'id')
@@ -80,14 +126,19 @@ class _AuthNotifier extends ChangeNotifier {
     for (final s in _subs) {
       try {
         s.close();
-      } catch (_) {}
+      } catch (e) {
+        if (kDebugMode) {
+          debugPrint('_AuthNotifier.dispose: $e');
+        }
+        // Non-critical: subscription may already be closed
+      }
     }
     super.dispose();
   }
 }
 
 /// Routes that require admin role (not just non-employee).
-const _sensitiveRoutes = {'/settings', '/approvals'};
+const _sensitiveRoutes = {AppRoutes.settings, LiteRoutes.approvals};
 
 String? _guardRedirect(Ref ref, GoRouterState state) {
   final authState = ref.read(authStateProvider);
@@ -246,7 +297,7 @@ final List<RouteBase> _routes = [
         builder: (context, state) => const LiteDashboardScreen(),
       ),
       GoRoute(
-        path: '/approvals',
+        path: LiteRoutes.approvals,
         name: 'approvals',
         builder: (context, state) => const ApprovalCenterScreen(),
       ),
@@ -255,12 +306,12 @@ final List<RouteBase> _routes = [
       // DASHBOARD: Sales Trend & Alerts Summary
       // ======================================================================
       GoRoute(
-        path: '/lite/sales-trend',
+        path: LiteRoutes.salesTrend,
         name: 'lite-sales-trend',
         builder: (context, state) => const LiteSalesTrendScreen(),
       ),
       GoRoute(
-        path: '/lite/alerts-summary',
+        path: LiteRoutes.alertsSummary,
         name: 'lite-alerts-summary',
         builder: (context, state) => const LiteAlertsSummaryScreen(),
       ),
@@ -269,32 +320,32 @@ final List<RouteBase> _routes = [
       // QUICK REPORTS (6 screens)
       // ======================================================================
       GoRoute(
-        path: '/lite/reports/daily-sales',
+        path: LiteRoutes.dailySales,
         name: 'lite-daily-sales',
         builder: (context, state) => const LiteDailySalesScreen(),
       ),
       GoRoute(
-        path: '/lite/reports/weekly',
+        path: LiteRoutes.weeklyComparison,
         name: 'lite-weekly-comparison',
         builder: (context, state) => const LiteWeeklyComparisonScreen(),
       ),
       GoRoute(
-        path: '/lite/reports/top-products',
+        path: LiteRoutes.topProducts,
         name: 'lite-top-products',
         builder: (context, state) => const LiteTopProductsScreen(),
       ),
       GoRoute(
-        path: '/lite/reports/low-stock',
+        path: LiteRoutes.lowStock,
         name: 'lite-low-stock',
         builder: (context, state) => const LiteLowStockScreen(),
       ),
       GoRoute(
-        path: '/lite/reports/employee-performance',
+        path: LiteRoutes.employeePerformance,
         name: 'lite-employee-performance',
         builder: (context, state) => const LiteEmployeePerformanceScreen(),
       ),
       GoRoute(
-        path: '/lite/reports/cash-flow',
+        path: LiteRoutes.cashFlow,
         name: 'lite-cash-flow',
         builder: (context, state) => const LiteCashFlowScreen(),
       ),
@@ -303,22 +354,22 @@ final List<RouteBase> _routes = [
       // ALERTS & NOTIFICATIONS (4 screens)
       // ======================================================================
       GoRoute(
-        path: '/lite/alerts/notifications',
+        path: LiteRoutes.notificationsList,
         name: 'lite-notifications-list',
         builder: (context, state) => const LiteNotificationsListScreen(),
       ),
       GoRoute(
-        path: '/lite/alerts/stock',
+        path: LiteRoutes.stockAlerts,
         name: 'lite-stock-alerts',
         builder: (context, state) => const LiteStockAlertsScreen(),
       ),
       GoRoute(
-        path: '/lite/alerts/orders',
+        path: LiteRoutes.orderAlerts,
         name: 'lite-order-alerts',
         builder: (context, state) => const LiteOrderAlertsScreen(),
       ),
       GoRoute(
-        path: '/lite/alerts/system',
+        path: LiteRoutes.systemAlerts,
         name: 'lite-system-alerts',
         builder: (context, state) => const LiteSystemAlertsScreen(),
       ),
@@ -327,12 +378,12 @@ final List<RouteBase> _routes = [
       // ORDER TRACKING (5 screens)
       // ======================================================================
       GoRoute(
-        path: '/lite/orders',
+        path: LiteRoutes.activeOrders,
         name: 'lite-active-orders',
         builder: (context, state) => const LiteActiveOrdersScreen(),
       ),
       GoRoute(
-        path: '/lite/orders/:id',
+        path: LiteRoutes.orderDetail,
         name: 'lite-order-detail',
         pageBuilder: (context, state) {
           final id = state.pathId();
@@ -358,7 +409,7 @@ final List<RouteBase> _routes = [
         },
       ),
       GoRoute(
-        path: '/lite/orders/:id/status',
+        path: LiteRoutes.orderStatus,
         name: 'lite-order-status',
         pageBuilder: (context, state) {
           final id = state.pathId();
@@ -384,12 +435,12 @@ final List<RouteBase> _routes = [
         },
       ),
       GoRoute(
-        path: '/lite/delivery-tracking',
+        path: LiteRoutes.deliveryTracking,
         name: 'lite-delivery-tracking',
         builder: (context, state) => const LiteDeliveryTrackingScreen(),
       ),
       GoRoute(
-        path: '/lite/order-history',
+        path: LiteRoutes.orderHistory,
         name: 'lite-order-history',
         builder: (context, state) => const LiteOrderHistoryScreen(),
       ),
@@ -398,22 +449,22 @@ final List<RouteBase> _routes = [
       // QUICK MANAGEMENT (4 screens)
       // ======================================================================
       GoRoute(
-        path: '/lite/management/quick-price',
+        path: LiteRoutes.quickPrice,
         name: 'lite-quick-price',
         builder: (context, state) => const LiteQuickPriceScreen(),
       ),
       GoRoute(
-        path: '/lite/management/stock-adjustment',
+        path: LiteRoutes.stockAdjustment,
         name: 'lite-stock-adjustment',
         builder: (context, state) => const LiteStockAdjustmentScreen(),
       ),
       GoRoute(
-        path: '/lite/management/employee-schedule',
+        path: LiteRoutes.employeeSchedule,
         name: 'lite-employee-schedule',
         builder: (context, state) => const LiteEmployeeScheduleScreen(),
       ),
       GoRoute(
-        path: '/lite/management/pending-approvals',
+        path: LiteRoutes.pendingApprovals,
         name: 'lite-pending-approvals',
         builder: (context, state) => const LitePendingApprovalsScreen(),
       ),
@@ -422,7 +473,7 @@ final List<RouteBase> _routes = [
       // SETTINGS: Profile & Notification Preferences
       // ======================================================================
       GoRoute(
-        path: '/lite/profile',
+        path: LiteRoutes.liteProfile,
         name: 'lite-profile',
         pageBuilder: (context, state) => CustomTransitionPage(
           child: const LiteProfileScreen(),
@@ -444,7 +495,7 @@ final List<RouteBase> _routes = [
         ),
       ),
       GoRoute(
-        path: '/lite/settings/notification-prefs',
+        path: LiteRoutes.notificationPrefs,
         name: 'lite-notification-prefs',
         pageBuilder: (context, state) => CustomTransitionPage(
           child: const LiteNotificationPrefsScreen(),
@@ -618,12 +669,12 @@ final List<RouteBase> _routes = [
       // TAB 4: MONITORING (inventory alerts, expiry tracking, shifts)
       // ======================================================================
       GoRoute(
-        path: '/monitoring',
+        path: LiteRoutes.monitoring,
         name: 'monitoring',
         builder: (context, state) => const _MonitoringHubScreen(),
       ),
       GoRoute(
-        path: '/monitoring/inventory-alerts',
+        path: LiteRoutes.inventoryAlerts,
         name: 'inventory-alerts',
         builder: (context, state) => const InventoryAlertsScreen(),
       ),
@@ -665,7 +716,7 @@ final List<RouteBase> _routes = [
       // TAB 5: MORE (customers, suppliers, orders, expenses, profile, settings)
       // ======================================================================
       GoRoute(
-        path: '/more',
+        path: LiteRoutes.more,
         name: 'more',
         builder: (context, state) => const _MoreMenuScreen(),
       ),
@@ -767,39 +818,40 @@ class _MonitoringHubScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('Monitoring')),
+      appBar: AppBar(title: Text(l10n.systemMonitoring)),
       body: ListView(
         padding: const EdgeInsets.all(AlhaiSpacing.md),
         children: [
           _MonitoringTile(
             icon: Icons.warning_amber_rounded,
-            title: 'Inventory Alerts',
-            subtitle: 'Low stock & out-of-stock items',
-            onTap: () => context.go('/monitoring/inventory-alerts'),
+            title: l10n.inventoryAlerts,
+            subtitle: l10n.lowStockNotifications,
+            onTap: () => context.go(LiteRoutes.inventoryAlerts),
           ),
           _MonitoringTile(
             icon: Icons.inventory_2_outlined,
-            title: 'Inventory',
-            subtitle: 'Full inventory overview',
+            title: l10n.inventory,
+            subtitle: l10n.inventoryManagement,
             onTap: () => context.go(AppRoutes.inventory),
           ),
           _MonitoringTile(
             icon: Icons.calendar_today,
-            title: 'Expiry Tracking',
-            subtitle: 'Products nearing expiration',
+            title: l10n.expiryTracking,
+            subtitle: l10n.expiryNotifications,
             onTap: () => context.go(AppRoutes.expiryTracking),
           ),
           _MonitoringTile(
             icon: Icons.schedule,
-            title: 'Shifts',
-            subtitle: 'Shift management & summaries',
+            title: l10n.shiftsTitle,
+            subtitle: l10n.shiftOpenCloseReminders,
             onTap: () => context.go(AppRoutes.shifts),
           ),
           _MonitoringTile(
             icon: Icons.category_outlined,
-            title: 'Products',
-            subtitle: 'Browse product catalog',
+            title: l10n.products,
+            subtitle: l10n.productCatalog,
             onTap: () => context.go(AppRoutes.products),
           ),
         ],
@@ -814,64 +866,65 @@ class _MoreMenuScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     return Scaffold(
-      appBar: AppBar(title: const Text('More')),
+      appBar: AppBar(title: Text(l10n.more)),
       body: ListView(
         padding: const EdgeInsets.all(AlhaiSpacing.md),
         children: [
           _MonitoringTile(
             icon: Icons.people_outline,
-            title: 'Customers',
-            subtitle: 'Customer management',
+            title: l10n.customers,
+            subtitle: l10n.customers,
             onTap: () => context.go(AppRoutes.customers),
           ),
           _MonitoringTile(
             icon: Icons.local_shipping_outlined,
-            title: 'Suppliers',
-            subtitle: 'Supplier management',
+            title: l10n.suppliers,
+            subtitle: l10n.suppliers,
             onTap: () => context.go(AppRoutes.suppliers),
           ),
           _MonitoringTile(
             icon: Icons.receipt_long_outlined,
-            title: 'Orders',
-            subtitle: 'Order history',
+            title: l10n.orders,
+            subtitle: l10n.orderHistory,
             onTap: () => context.go(AppRoutes.orders),
           ),
           _MonitoringTile(
             icon: Icons.description_outlined,
-            title: 'Invoices',
-            subtitle: 'Invoice management',
+            title: l10n.invoices,
+            subtitle: l10n.invoices,
             onTap: () => context.go(AppRoutes.invoices),
           ),
           _MonitoringTile(
             icon: Icons.account_balance_wallet_outlined,
-            title: 'Expenses',
-            subtitle: 'Expense tracking',
+            title: l10n.expenses,
+            subtitle: l10n.expenses,
             onTap: () => context.go(AppRoutes.expenses),
           ),
           const Divider(height: AlhaiSpacing.xl),
           _MonitoringTile(
             icon: Icons.person_outline,
-            title: 'Profile',
-            subtitle: 'Your account',
+            title: l10n.profileTitle,
+            subtitle: l10n.profileTitle,
             onTap: () => context.go(AppRoutes.profile),
           ),
           _MonitoringTile(
             icon: Icons.settings_outlined,
-            title: 'Settings',
-            subtitle: 'App preferences',
+            title: l10n.settings,
+            subtitle: l10n.settings,
             onTap: () => context.go(AppRoutes.settings),
           ),
           _MonitoringTile(
             icon: Icons.sync,
-            title: 'Sync Status',
-            subtitle: 'Data synchronization',
+            title: l10n.syncStatusTitle,
+            subtitle: l10n.dataSynchronizationStatus,
             onTap: () => context.go(AppRoutes.syncStatus),
           ),
           _MonitoringTile(
             icon: Icons.notifications_outlined,
-            title: 'Notifications',
-            subtitle: 'Alerts & updates',
+            title: l10n.notifications,
+            subtitle: l10n.notifications,
             onTap: () => context.go(AppRoutes.notificationsCenter),
           ),
         ],

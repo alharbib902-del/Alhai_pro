@@ -277,7 +277,7 @@ Future<double?> showDenominationCounterSheet(
                 // Handle
                 Center(
                   child: Container(
-                    margin: const EdgeInsets.only(
+                    margin: const EdgeInsetsDirectional.only(
                       top: 10,
                       bottom: AlhaiSpacing.xs,
                     ),
@@ -310,6 +310,7 @@ Future<double?> showDenominationCounterSheet(
                       const Spacer(),
                       IconButton(
                         icon: const Icon(Icons.close),
+                        tooltip: AppLocalizations.of(ctx).close,
                         onPressed: () => Navigator.pop(ctx),
                       ),
                     ],

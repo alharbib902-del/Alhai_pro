@@ -51,6 +51,7 @@ class HomeScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
+            tooltip: 'البحث عن منتج',
             onPressed: () => context.push('/search'),
           ),
         ],

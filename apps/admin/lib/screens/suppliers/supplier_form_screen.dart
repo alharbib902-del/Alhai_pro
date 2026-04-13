@@ -10,6 +10,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import '../../core/providers/unsaved_changes_provider.dart';
+import '../../core/services/sentry_service.dart';
 
 /// Admin Supplier Form Screen - Add/Edit supplier
 class SupplierFormScreen extends ConsumerStatefulWidget {
@@ -90,7 +91,8 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
           _isLoadingData = false;
         });
       }
-    } catch (e) {
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'supplier_form: load supplier data failed');
       if (mounted) {
         setState(() => _isLoadingData = false);
         final l10n = AppLocalizations.of(context);
@@ -105,7 +107,10 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
   void dispose() {
     try {
       ref.read(unsavedChangesProvider.notifier).state = false;
-    } catch (_) {}
+    } catch (e) {
+      // Expected during widget tree teardown — provider may already be disposed.
+      assert(() { debugPrint('dispose: unsavedChangesProvider reset skipped: $e'); return true; }());
+    }
     _companyNameController.dispose();
     _contactNameController.dispose();
     _phoneController.dispose();
@@ -911,7 +916,8 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
 
         context.pop();
       }
-    } catch (e) {
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'supplier_form: save supplier failed');
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1009,7 +1015,8 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
 
         context.pop();
       }
-    } catch (e) {
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'supplier_form: delete supplier failed');
       if (mounted) {
         setState(() => _isLoading = false);
         ScaffoldMessenger.of(context).showSnackBar(

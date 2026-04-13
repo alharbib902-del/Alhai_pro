@@ -9,7 +9,7 @@
 /// يحفظ الإعدادات في settings_table عبر قاعدة البيانات.
 library;
 
-import 'package:flutter/foundation.dart' show kIsWeb, debugPrint;
+import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode, debugPrint;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -52,7 +52,8 @@ class _CashierFeaturesSettingsScreenState
   Future<void> _loadSettings() async {
     setState(() => _isLoading = true);
     try {
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final settings = await (_db.select(
         _db.settingsTable,
       )..where((s) => s.storeId.equals(storeId))).get();
@@ -75,9 +76,11 @@ class _CashierFeaturesSettingsScreenState
       }
     } catch (e) {
       // استخدام القيم الافتراضية عند الخطأ — مع تسجيل الخطأ لتسهيل التتبع
-      debugPrint(
-        '[CashierFeaturesSettings] Failed to load settings, using defaults: $e',
-      );
+      if (kDebugMode) {
+        debugPrint(
+          '[CashierFeaturesSettings] Failed to load settings, using defaults: $e',
+        );
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

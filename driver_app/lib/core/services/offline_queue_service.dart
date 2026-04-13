@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:get_it/get_it.dart';
 
 import '../../features/deliveries/data/delivery_datasource.dart';
+import 'sentry_service.dart';
 
 /// Callback invoked on sync events. [message] is a human-readable description;
 /// [isError] is true for failures, false for success.
@@ -126,13 +127,15 @@ class OfflineQueueService {
           .map((e) {
             try {
               return _QueueItem.fromJson(e as Map<String, dynamic>);
-            } catch (_) {
+            } catch (e, st) {
+              reportError(e, stackTrace: st, hint: 'OfflineQueue._load item parse');
               return null;
             }
           })
           .whereType<_QueueItem>()
           .toList();
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'OfflineQueue._load decode');
       _cache = [];
     }
 

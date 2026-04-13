@@ -14,6 +14,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 
+import '../../router/lite_router.dart' show LiteRoutes;
 import '../../providers/lite_dashboard_providers.dart';
 
 /// Lite Dashboard Screen - Admin overview
@@ -131,7 +132,7 @@ class LiteDashboardScreen extends ConsumerWidget {
         value: '${stats.pendingApprovals}',
         icon: Icons.approval_rounded,
         color: AlhaiColors.warning,
-        onTap: () => context.go('/approvals'),
+        onTap: () => context.go(LiteRoutes.approvals),
       ),
       _StatCardData(
         title: l10n.todaySales,
@@ -384,7 +385,7 @@ class LiteDashboardScreen extends ConsumerWidget {
             title: l10n.returns,
             color: AlhaiColors.warning,
             isDark: isDark,
-            onTap: () => context.go('/approvals'),
+            onTap: () => context.go(LiteRoutes.approvals),
           ),
           _QuickActionTile(
             icon: Icons.bar_chart_rounded,

@@ -1,5 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:geolocator/geolocator.dart';
+
+import 'sentry_service.dart';
 
 /// Location Service for Driver App
 ///
@@ -34,15 +35,21 @@ class LocationService {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
-          throw LocationServiceException(
+          throw const LocationServiceException(
             'تم رفض إذن الموقع. يرجى السماح للتطبيق بالوصول إلى موقعك.',
           );
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
-        throw LocationServiceException(
+        // On iOS/Android, once the user denies permanently, the OS will not
+        // show the permission dialog again. The only recourse is to open the
+        // app-level settings screen so the user can toggle the permission
+        // manually.
+        await Geolocator.openAppSettings();
+        throw const LocationServiceException(
           'إذن الموقع مرفوض بشكل دائم. يرجى تفعيله من إعدادات التطبيق.',
+          isDeniedForever: true,
         );
       }
 
@@ -55,10 +62,10 @@ class LocationService {
     } on LocationServiceException {
       _isInitialized = false;
       rethrow;
-    } catch (e) {
+    } catch (e, st) {
       // Handle unexpected initialization errors
       _isInitialized = false;
-      debugPrint('LocationService initialization error: $e');
+      reportError(e, stackTrace: st, hint: 'LocationService.initialize');
     }
   }
 
@@ -79,7 +86,8 @@ class LocationService {
         desiredAccuracy: LocationAccuracy.high,
       );
       return _currentPosition;
-    } catch (e) {
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'LocationService.getCurrentPosition');
       return null;
     }
   }
@@ -105,10 +113,16 @@ class LocationService {
 ///
 /// The [message] is a user-readable Arabic string that callers can display
 /// directly in a SnackBar or dialog.
+///
+/// [isDeniedForever] is `true` when the user has permanently denied the
+/// location permission. In that case, `Geolocator.openAppSettings()` has
+/// already been called, but the caller may want to show a dialog explaining
+/// the situation.
 class LocationServiceException implements Exception {
   final String message;
+  final bool isDeniedForever;
 
-  const LocationServiceException(this.message);
+  const LocationServiceException(this.message, {this.isDeniedForever = false});
 
   @override
   String toString() => message;

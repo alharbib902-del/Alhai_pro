@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/services/sentry_service.dart';
 import '../../../core/supabase/supabase_client.dart';
 import '../providers/auth_providers.dart';
 
@@ -38,8 +39,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     } on TimeoutException {
       // Auth check timed out — send to login
       if (mounted) context.go('/auth/login');
-    } catch (_) {
-      // Any other error — send to login
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'SplashScreen._checkAuth');
       if (mounted) context.go('/auth/login');
     }
   }

@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_core/alhai_core.dart';
 
 import '../../../core/providers/app_providers.dart';
+import '../../../core/services/sentry_service.dart';
 import '../../../core/utils/responsive_helper.dart';
 import '../providers/catalog_providers.dart';
 import '../../cart/providers/cart_provider.dart';
@@ -54,12 +55,12 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
 
   Future<void> _loadMore() async {
     if (_loadingMore || !_hasMore) return;
-    setState(() => _loadingMore = true);
+    if (mounted) setState(() => _loadingMore = true);
 
     final store = ref.read(selectedStoreProvider);
     final selectedCategory = ref.read(selectedCategoryProvider);
     if (store == null) {
-      setState(() => _loadingMore = false);
+      if (mounted) setState(() => _loadingMore = false);
       return;
     }
 
@@ -82,7 +83,8 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
           _loadingMore = false;
         });
       }
-    } catch (_) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'CatalogScreen._loadMore');
       if (mounted) {
         setState(() => _loadingMore = false);
       }
@@ -166,11 +168,13 @@ class _CatalogScreenState extends ConsumerState<CatalogScreen> {
         title: Text(store.name),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'رجوع',
           onPressed: () => context.pop(),
         ),
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
+            tooltip: 'البحث عن منتج',
             onPressed: () => context.push('/search'),
           ),
         ],
@@ -430,16 +434,21 @@ class _ProductCard extends StatelessWidget {
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      SizedBox(
-                        height: 30,
-                        width: 30,
-                        child: IconButton.filled(
-                          onPressed: product.isOutOfStock ? null : onAdd,
-                          icon: const Icon(Icons.add, size: 16),
-                          padding: EdgeInsets.zero,
-                          style: IconButton.styleFrom(
-                            shape: RoundedRectangleBorder(
-                              borderRadius: AlhaiRadius.borderSm,
+                      Semantics(
+                        label: 'إضافة ${product.name} للسلة',
+                        button: true,
+                        child: SizedBox(
+                          height: 30,
+                          width: 30,
+                          child: IconButton.filled(
+                            onPressed: product.isOutOfStock ? null : onAdd,
+                            icon: const Icon(Icons.add, size: 16),
+                            tooltip: 'إضافة للسلة',
+                            padding: EdgeInsets.zero,
+                            style: IconButton.styleFrom(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: AlhaiRadius.borderSm,
+                              ),
                             ),
                           ),
                         ),

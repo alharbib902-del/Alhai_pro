@@ -16,6 +16,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:get_it/get_it.dart';
 
+import '../../core/services/sentry_service.dart';
 import '../../providers/lite_screen_providers.dart';
 
 /// Quick stock adjustment screen for Admin Lite
@@ -36,7 +37,7 @@ class _LiteStockAdjustmentScreenState
   void _onSearchChanged(String value) {
     _debounce?.cancel();
     _debounce = Timer(const Duration(milliseconds: 300), () {
-      setState(() => _searchQuery = value);
+      if (mounted) setState(() => _searchQuery = value);
     });
   }
 
@@ -90,7 +91,8 @@ class _LiteStockAdjustmentScreenState
           ),
         );
       }
-    } catch (_) {
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'LiteStockAdjustmentScreen: stock adjustment');
       if (mounted) {
         final l10n = AppLocalizations.of(context);
         ScaffoldMessenger.of(context).showSnackBar(

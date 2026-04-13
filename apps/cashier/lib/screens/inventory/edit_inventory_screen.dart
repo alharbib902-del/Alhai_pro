@@ -730,7 +730,8 @@ class _EditInventoryScreenState extends ConsumerState<EditInventoryScreen> {
     setState(() => _isSaving = true);
 
     try {
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final currentStock = _product?.stockQty ?? 0;
       final signedAdjustment = _isAdding ? adjustment : -adjustment;
       final newStock = currentStock + signedAdjustment;

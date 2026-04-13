@@ -13,6 +13,8 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 
+import '../../router/lite_router.dart' show LiteRoutes;
+
 /// Profile screen for Admin Lite
 class LiteProfileScreen extends ConsumerWidget {
   const LiteProfileScreen({super.key});
@@ -57,7 +59,7 @@ class LiteProfileScreen extends ConsumerWidget {
               _ActionTile(
                 Icons.notifications_outlined,
                 l10n.notifications,
-                () => context.go('/lite/settings/notification-prefs'),
+                () => context.go(LiteRoutes.notificationPrefs),
               ),
               _ActionTile(
                 Icons.language,

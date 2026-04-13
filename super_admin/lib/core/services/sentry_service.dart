@@ -8,8 +8,22 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 /// flutter build web --dart-define=SENTRY_DSN_SUPER_ADMIN=https://xxx@xxx.ingest.sentry.io/xxx
 const _sentryDsn = String.fromEnvironment('SENTRY_DSN_SUPER_ADMIN');
 
-/// Whether Sentry is configured (DSN provided).
-bool get isSentryConfigured => _sentryDsn.isNotEmpty;
+/// Basic format check: a valid Sentry DSN starts with https:// and contains
+/// `ingest.sentry.io` or `@` (self-hosted). This catches common typos and
+/// empty/placeholder values without pulling in a full URL parser.
+bool _isValidSentryDsn(String dsn) {
+  if (dsn.isEmpty) return false;
+  final uri = Uri.tryParse(dsn);
+  if (uri == null || !uri.hasScheme || !uri.hasAuthority) return false;
+  // Must be an https URL with some path structure
+  if (uri.scheme != 'https') return false;
+  // Must contain the key@host pattern typical of Sentry DSNs
+  if (!dsn.contains('@')) return false;
+  return true;
+}
+
+/// Whether Sentry is configured with a valid DSN.
+bool get isSentryConfigured => _isValidSentryDsn(_sentryDsn);
 
 /// Initialize Sentry and run the app inside its error boundary.
 ///
@@ -17,6 +31,14 @@ bool get isSentryConfigured => _sentryDsn.isNotEmpty;
 /// Falls back to running [appRunner] directly in debug mode or when
 /// no DSN is configured.
 Future<void> initSentry({required Future<void> Function() appRunner}) async {
+  if (_sentryDsn.isNotEmpty && !isSentryConfigured) {
+    if (kDebugMode) {
+      debugPrint(
+        'WARNING: SENTRY_DSN_SUPER_ADMIN is set but appears invalid '
+        '(must be https://<key>@<host>/<project>). Sentry disabled.',
+      );
+    }
+  }
   if (!isSentryConfigured) {
     if (kDebugMode) debugPrint('Sentry DSN not configured — skipping init');
     await appRunner();

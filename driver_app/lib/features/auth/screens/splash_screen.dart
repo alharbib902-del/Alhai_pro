@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/providers/app_providers.dart';
+import '../../../core/services/sentry_service.dart';
 import '../providers/auth_providers.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -34,7 +35,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     // Load driver profile
     try {
       await ref.read(loadDriverProfileProvider.future);
-    } catch (_) {}
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'SplashScreen.loadDriverProfile');
+    }
 
     if (!mounted) return;
 

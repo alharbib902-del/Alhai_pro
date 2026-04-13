@@ -313,7 +313,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
           ),
           if (_isSearching)
             const Padding(
-              padding: EdgeInsets.only(top: AlhaiSpacing.md),
+              padding: EdgeInsetsDirectional.only(top: AlhaiSpacing.md),
               child: Center(child: CircularProgressIndicator()),
             ),
         ],
@@ -731,7 +731,8 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
     setState(() => _isSaving = true);
 
     try {
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final movementId = const Uuid().v4();
       final currentStock = _selectedProduct!.stockQty;
       final newStock = currentStock + quantity;

@@ -6,7 +6,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
 
+import '../core/services/sentry_service.dart';
 import '../core/supabase/supabase_client.dart';
 import 'distributor_auth_providers.dart';
 import 'distributor_datasource_provider.dart';
@@ -83,16 +85,28 @@ class _SessionTimeoutWrapperState extends ConsumerState<SessionTimeoutWrapper> {
   void _onSessionTimeout() {
     if (!mounted) return;
     // Clear datasource cache
-    ref.read(distributorDatasourceProvider).clearCache();
-    AppSupabase.client.auth.signOut();
+    try {
+      ref.read(distributorDatasourceProvider).clearCache();
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'session_timeout: clearCache');
+    }
+    // Sign out with error handling
+    try {
+      AppSupabase.client.auth.signOut();
+      addBreadcrumb(
+        message: 'Session timed out after inactivity',
+        category: 'auth',
+      );
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'session_timeout: signOut');
+    }
     // Navigate to login (use a post-frame callback to avoid issues)
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
+      final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Session expired due to inactivity. Please log in again.',
-          ),
+        SnackBar(
+          content: Text(l10n.distributorSessionExpired),
         ),
       );
     });

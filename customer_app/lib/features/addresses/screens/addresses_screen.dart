@@ -23,13 +23,19 @@ class AddressesScreen extends ConsumerWidget {
         title: const Text('عناويني'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
+          tooltip: 'رجوع',
           onPressed: () => context.pop(),
         ),
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _showAddAddressDialog(context, ref),
-        icon: const Icon(Icons.add),
-        label: const Text('إضافة عنوان'),
+      floatingActionButton: Semantics(
+        label: 'إضافة عنوان جديد',
+        button: true,
+        child: FloatingActionButton.extended(
+          onPressed: () => _showAddAddressDialog(context, ref),
+          icon: const Icon(Icons.add),
+          label: const Text('إضافة عنوان'),
+          tooltip: 'إضافة عنوان جديد',
+        ),
       ),
       body: addressesAsync.when(
         loading: () => AlhaiShimmer(

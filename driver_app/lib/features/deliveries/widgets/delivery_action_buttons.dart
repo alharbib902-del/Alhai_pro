@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/constants/driver_constants.dart';
 import '../providers/delivery_providers.dart';
 
 /// Dynamic action buttons based on current delivery status.
@@ -26,7 +27,19 @@ class DeliveryActionButtons extends ConsumerStatefulWidget {
 class _DeliveryActionButtonsState extends ConsumerState<DeliveryActionButtons> {
   bool _isLoading = false;
 
+  /// Tracks the last time a status update was triggered to prevent double-tap.
+  DateTime? _lastTapTime;
+  static const _debounceInterval = Duration(seconds: 2);
+
   Future<void> _updateStatus(String newStatus, {String? notes}) async {
+    // Debounce: ignore rapid taps within the interval.
+    final now = DateTime.now();
+    if (_lastTapTime != null &&
+        now.difference(_lastTapTime!) < _debounceInterval) {
+      return;
+    }
+    _lastTapTime = now;
+
     HapticFeedback.mediumImpact();
     setState(() => _isLoading = true);
     try {
@@ -114,12 +127,12 @@ class _DeliveryActionButtonsState extends ConsumerState<DeliveryActionButtons> {
 
   List<_ActionItem> _getActions(String status) {
     switch (status) {
-      case 'assigned':
+      case DeliveryStatus.assigned:
         return [
           _ActionItem(
             label: 'قبول الطلب',
             icon: Icons.check_circle_outline,
-            onPressed: () => _updateStatus('accepted'),
+            onPressed: () => _updateStatus(DeliveryStatus.accepted),
           ),
           _ActionItem(
             label: 'رفض الطلب',
@@ -128,47 +141,47 @@ class _DeliveryActionButtonsState extends ConsumerState<DeliveryActionButtons> {
             isDestructive: true,
           ),
         ];
-      case 'accepted':
+      case DeliveryStatus.accepted:
         return [
           _ActionItem(
             label: 'بدأت التوجه للمتجر',
             icon: Icons.directions_car_rounded,
-            onPressed: () => _updateStatus('heading_to_pickup'),
+            onPressed: () => _updateStatus(DeliveryStatus.headingToPickup),
           ),
         ];
-      case 'heading_to_pickup':
+      case DeliveryStatus.headingToPickup:
         return [
           _ActionItem(
             label: 'وصلت المتجر',
             icon: Icons.store_rounded,
-            onPressed: () => _updateStatus('arrived_at_pickup'),
+            onPressed: () => _updateStatus(DeliveryStatus.arrivedAtPickup),
           ),
         ];
-      case 'arrived_at_pickup':
+      case DeliveryStatus.arrivedAtPickup:
         return [
           _ActionItem(
             label: 'استلمت الطلب',
             icon: Icons.inventory_2_rounded,
-            onPressed: () => _updateStatus('picked_up'),
+            onPressed: () => _updateStatus(DeliveryStatus.pickedUp),
           ),
         ];
-      case 'picked_up':
+      case DeliveryStatus.pickedUp:
         return [
           _ActionItem(
             label: 'بدأت التوصيل',
             icon: Icons.local_shipping_rounded,
-            onPressed: () => _updateStatus('heading_to_customer'),
+            onPressed: () => _updateStatus(DeliveryStatus.headingToCustomer),
           ),
         ];
-      case 'heading_to_customer':
+      case DeliveryStatus.headingToCustomer:
         return [
           _ActionItem(
             label: 'وصلت العميل',
             icon: Icons.location_on_rounded,
-            onPressed: () => _updateStatus('arrived_at_customer'),
+            onPressed: () => _updateStatus(DeliveryStatus.arrivedAtCustomer),
           ),
         ];
-      case 'arrived_at_customer':
+      case DeliveryStatus.arrivedAtCustomer:
         return [
           _ActionItem(
             label: 'تأكيد التسليم',
@@ -177,7 +190,7 @@ class _DeliveryActionButtonsState extends ConsumerState<DeliveryActionButtons> {
               if (widget.onProofRequired != null) {
                 widget.onProofRequired!();
               } else {
-                _updateStatus('delivered');
+                _updateStatus(DeliveryStatus.delivered);
               }
             },
           ),
@@ -218,7 +231,7 @@ class _DeliveryActionButtonsState extends ConsumerState<DeliveryActionButtons> {
             FilledButton(
               onPressed: () {
                 Navigator.pop(ctx);
-                _updateStatus('cancelled', notes: controller.text);
+                _updateStatus(DeliveryStatus.cancelled, notes: controller.text);
               },
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(ctx).colorScheme.error,
@@ -256,7 +269,7 @@ class _DeliveryActionButtonsState extends ConsumerState<DeliveryActionButtons> {
             FilledButton(
               onPressed: () {
                 Navigator.pop(ctx);
-                _updateStatus('failed', notes: controller.text);
+                _updateStatus(DeliveryStatus.failed, notes: controller.text);
               },
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(ctx).colorScheme.error,

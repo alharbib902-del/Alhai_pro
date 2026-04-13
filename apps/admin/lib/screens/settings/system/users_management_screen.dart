@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -324,7 +325,7 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
           backgroundColor: AppColors.error,
         ),
       );
-      debugPrint('Security: non-admin attempted sensitive user operation');
+      if (kDebugMode) debugPrint('Security: non-admin attempted sensitive user operation');
       return false;
     }
     return true;
@@ -450,7 +451,7 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
             _logAuditEvent(db, 'user_$action', user.id, user.name);
           }
         } catch (e) {
-          debugPrint('Error updating user status: $e');
+          if (kDebugMode) debugPrint('Error updating user status: $e');
         }
         await _loadUsers();
         break;
@@ -468,7 +469,7 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
           // Audit log: user deletion
           _logAuditEvent(db, 'user_delete', user.id, user.name);
         } catch (e) {
-          debugPrint('Error deleting user: $e');
+          if (kDebugMode) debugPrint('Error deleting user: $e');
         }
         await _loadUsers();
         break;
@@ -495,7 +496,7 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
         description: '$action: $entityName',
       );
     } catch (e) {
-      debugPrint('Audit log failed: $e');
+      if (kDebugMode) debugPrint('Audit log failed: $e');
     }
   }
 
@@ -597,7 +598,7 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
                           },
                         );
                       } catch (e) {
-                        debugPrint('Error adding user: $e');
+                        if (kDebugMode) debugPrint('Error adding user: $e');
                       }
                     }
                     _loadUsers();
@@ -717,7 +718,7 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
                       );
                     }
                   } catch (e) {
-                    debugPrint('Error updating user: $e');
+                    if (kDebugMode) debugPrint('Error updating user: $e');
                   }
                   _loadUsers();
                   if (context.mounted) Navigator.pop(context);

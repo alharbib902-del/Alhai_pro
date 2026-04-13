@@ -9,7 +9,7 @@ class CategoriesDatasource {
 
   CategoriesDatasource(this._client);
 
-  Future<List<Category>> getCategories(String storeId) async {
+  Future<List<Category>> getCategories(String storeId, {int limit = 100, int offset = 0}) async {
     try {
       final data = await _client
           .from('categories')
@@ -17,17 +17,19 @@ class CategoriesDatasource {
           .eq('store_id', storeId)
           .eq('is_active', true)
           .order('sort_order')
+          .range(offset, offset + limit - 1)
           .timeout(AppConstants.networkTimeout);
 
-      return (data as List)
-          .map((row) => _categoryFromRow(row as Map<String, dynamic>))
+      return (data as List<dynamic>)
+          .whereType<Map<String, dynamic>>()
+          .map(_categoryFromRow)
           .toList();
     } on TimeoutException {
       throw Exception('انتهت مهلة الاتصال، حاول مرة أخرى');
     }
   }
 
-  Future<List<Category>> getRootCategories(String storeId) async {
+  Future<List<Category>> getRootCategories(String storeId, {int limit = 100, int offset = 0}) async {
     try {
       final data = await _client
           .from('categories')
@@ -36,10 +38,12 @@ class CategoriesDatasource {
           .eq('is_active', true)
           .isFilter('parent_id', null)
           .order('sort_order')
+          .range(offset, offset + limit - 1)
           .timeout(AppConstants.networkTimeout);
 
-      return (data as List)
-          .map((row) => _categoryFromRow(row as Map<String, dynamic>))
+      return (data as List<dynamic>)
+          .whereType<Map<String, dynamic>>()
+          .map(_categoryFromRow)
           .toList();
     } on TimeoutException {
       throw Exception('انتهت مهلة الاتصال، حاول مرة أخرى');

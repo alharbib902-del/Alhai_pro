@@ -296,12 +296,12 @@ class _CashierPurchaseRequestScreenState
           ),
           if (_isSearching)
             const Padding(
-              padding: EdgeInsets.only(top: AlhaiSpacing.sm),
+              padding: EdgeInsetsDirectional.only(top: AlhaiSpacing.sm),
               child: Center(child: CircularProgressIndicator()),
             ),
           if (_searchResults.isNotEmpty)
             Container(
-              margin: const EdgeInsets.only(top: AlhaiSpacing.sm),
+              margin: const EdgeInsetsDirectional.only(top: AlhaiSpacing.sm),
               decoration: BoxDecoration(
                 color: AppColors.getSurfaceVariant(isDark),
                 borderRadius: BorderRadius.circular(12),
@@ -818,7 +818,8 @@ class _CashierPurchaseRequestScreenState
     setState(() => _isSending = true);
 
     try {
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final purchaseId = _uuid.v4();
       final purchaseNumber = 'PO-${const Uuid().v4().split('-').first}';
       final now = DateTime.now();

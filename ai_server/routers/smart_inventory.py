@@ -28,7 +28,7 @@ async def smart_inventory(
     try:
         try:
             products = SupabaseService.get_products(
-                org_id=request.org_id, store_id=request.store_id
+                org_id=str(request.org_id), store_id=str(request.store_id)
             )
             if products:
                 result = inventory_from_products(products, language=request.language)
@@ -41,14 +41,17 @@ async def smart_inventory(
                 return result
         except InsufficientDataError as e:
             logger.info("smart_inventory insufficient data: %s", e)
+        except ValueError as e:
+            logger.warning("smart_inventory validation error: %s", e)
+            raise HTTPException(status_code=422, detail=str(e))
         except Exception:
             logger.exception(
                 "smart_inventory real aggregation failed; falling back to mock"
             )
 
         result = analyze_inventory(
-            org_id=request.org_id,
-            store_id=request.store_id,
+            org_id=str(request.org_id),
+            store_id=str(request.store_id),
             language=request.language,
         )
         result.is_mock_data = True
@@ -59,6 +62,8 @@ async def smart_inventory(
             request.store_id,
         )
         return result
+    except HTTPException:
+        raise
     except Exception:
         logger.exception("خطأ في تحليل المخزون")
         raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

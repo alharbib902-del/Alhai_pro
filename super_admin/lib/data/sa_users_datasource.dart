@@ -5,11 +5,18 @@ import 'models/sa_user_model.dart';
 /// Datasource for platform user management.
 /// Queries: users (platform-level admins/support), plus store-level users.
 class SAUsersDatasource {
-  // ignore: strict_raw_type
+  /// Supabase client for all queries.
+  ///
+  /// Accepts [SupabaseClient] in production. Tests may pass a duck-typed
+  /// fake via the [SAUsersDatasource.test] constructor.
   final dynamic _client;
 
-  /// Accepts [SupabaseClient] in production or a fake in tests.
-  SAUsersDatasource(this._client);
+  /// Production constructor -- accepts a typed [SupabaseClient].
+  SAUsersDatasource(SupabaseClient client) : _client = client;
+
+  /// Test constructor -- accepts a fake client that implements the same
+  /// postgrest query-chain surface as [SupabaseClient].
+  SAUsersDatasource.test(this._client);
 
   /// Fetch platform-level admin/support users.
   /// These are users with role = super_admin, support, or viewer

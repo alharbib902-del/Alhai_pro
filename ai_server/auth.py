@@ -20,6 +20,9 @@ from pydantic import BaseModel
 from config import Settings, get_settings
 from models.database import get_supabase_client
 
+# Default Supabase JWT audience claim value
+_DEFAULT_JWT_AUDIENCE = "authenticated"
+
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
@@ -68,12 +71,9 @@ def _decode_token(token: str, settings: Settings) -> dict:
             token,
             secret,
             algorithms=_SUPABASE_JWT_ALGORITHMS,
+            audience=settings.jwt_audience if hasattr(settings, "jwt_audience") and settings.jwt_audience else _DEFAULT_JWT_AUDIENCE,
             options={
-                # verify_aud is False because Supabase-issued JWTs do not
-                # include a dedicated audience claim for this service.  Once a
-                # custom audience is configured in Supabase, enable this check
-                # and pass the expected audience via the "audience" parameter.
-                "verify_aud": False,
+                "verify_aud": True,
                 "verify_exp": True,
             },
         )

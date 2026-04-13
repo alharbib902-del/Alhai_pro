@@ -6,6 +6,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import '../../core/services/sentry_service.dart';
 
 /// Branch Management Screen - شاشة إدارة الفروع
 class BranchManagementScreen extends ConsumerStatefulWidget {
@@ -190,15 +191,18 @@ class _BranchManagementScreenState
                     children: [
                       Row(
                         children: [
-                          Container(
-                            padding: const EdgeInsets.all(AlhaiSpacing.sm),
-                            decoration: BoxDecoration(
-                              color: AppColors.info.withValues(alpha: 0.1),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: const Icon(
-                              Icons.store,
-                              color: AppColors.info,
+                          Semantics(
+                            label: l10n.branchesTitle,
+                            child: Container(
+                              padding: const EdgeInsets.all(AlhaiSpacing.sm),
+                              decoration: BoxDecoration(
+                                color: AppColors.info.withValues(alpha: 0.1),
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: const Icon(
+                                Icons.store,
+                                color: AppColors.info,
+                              ),
                             ),
                           ),
                           const SizedBox(width: AlhaiSpacing.md),
@@ -339,8 +343,13 @@ class _BranchManagementScreenState
       );
       await db.storesDao.updateStore(updated);
       await _loadData();
-    } catch (e) {
-      // ignore
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'branch_management: toggle store active failed');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(AppLocalizations.of(context).errorOccurred), backgroundColor: AppColors.error),
+        );
+      }
     }
   }
 
@@ -452,8 +461,13 @@ class _BranchManagementScreenState
                     ),
                   );
                   await _loadData();
-                } catch (e) {
-                  // ignore
+                } catch (e, st) {
+                  await reportError(e, stackTrace: st, hint: 'branch_management: add branch failed');
+                  if (context.mounted) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(AppLocalizations.of(context).errorOccurred), backgroundColor: AppColors.error),
+                    );
+                  }
                 }
               }
               if (ctx.mounted) Navigator.pop(ctx);
@@ -660,8 +674,13 @@ class _BranchManagementScreenState
         final db = GetIt.I<AppDatabase>();
         await db.storesDao.deleteStore(store.id);
         await _loadData();
-      } catch (e) {
-        // ignore
+      } catch (e, st) {
+        await reportError(e, stackTrace: st, hint: 'branch_management: delete store failed');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(AppLocalizations.of(context).errorOccurred), backgroundColor: AppColors.error),
+          );
+        }
       }
     }
   }

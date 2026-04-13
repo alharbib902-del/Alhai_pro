@@ -226,7 +226,8 @@ class _SupplierReturnScreenState extends ConsumerState<SupplierReturnScreen> {
     setState(() => _isSaving = true);
     try {
       final db = GetIt.I<AppDatabase>();
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       final returnId = const Uuid().v4();
       final now = DateTime.now();
 

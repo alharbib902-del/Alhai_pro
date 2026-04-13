@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/driver_constants.dart';
 import '../providers/delivery_providers.dart';
 
 /// Full-screen alert for new delivery assignment.
@@ -18,14 +19,26 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
     with SingleTickerProviderStateMixin {
   bool _isLoading = false;
 
+  /// Tracks the last time an action button was tapped to prevent double-tap.
+  DateTime? _lastTapTime;
+  static const _debounceInterval = Duration(seconds: 2);
+
   Future<void> _accept(String deliveryId) async {
+    // Debounce: ignore rapid taps within the interval.
+    final now = DateTime.now();
+    if (_lastTapTime != null &&
+        now.difference(_lastTapTime!) < _debounceInterval) {
+      return;
+    }
+    _lastTapTime = now;
+
     HapticFeedback.heavyImpact();
     setState(() => _isLoading = true);
     try {
       await ref.read(
         updateDeliveryStatusProvider((
           id: deliveryId,
-          status: 'accepted',
+          status: DeliveryStatus.accepted,
           notes: null,
         )).future,
       );
@@ -41,13 +54,21 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
   }
 
   Future<void> _reject(String deliveryId) async {
+    // Debounce: ignore rapid taps within the interval.
+    final now = DateTime.now();
+    if (_lastTapTime != null &&
+        now.difference(_lastTapTime!) < _debounceInterval) {
+      return;
+    }
+    _lastTapTime = now;
+
     HapticFeedback.heavyImpact();
     setState(() => _isLoading = true);
     try {
       await ref.read(
         updateDeliveryStatusProvider((
           id: deliveryId,
-          status: 'cancelled',
+          status: DeliveryStatus.cancelled,
           notes: 'رفض السائق',
         )).future,
       );
@@ -71,7 +92,7 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
       body: activeDeliveries.when(
         data: (deliveries) {
           final assigned = deliveries
-              .where((d) => d['status'] == 'assigned')
+              .where((d) => d['status'] == DeliveryStatus.assigned)
               .toList();
 
           if (assigned.isEmpty) {
@@ -196,20 +217,24 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
                   else ...[
                     SizedBox(
                       width: double.infinity,
-                      child: FilledButton.icon(
-                        onPressed: () => _accept(deliveryId),
-                        icon: const Icon(Icons.check_circle),
-                        label: const Text(
-                          'قبول الطلب',
-                          style: TextStyle(fontSize: 18),
-                        ),
-                        style: FilledButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: AlhaiSpacing.md,
+                      child: Semantics(
+                        label: 'قبول طلب التوصيل',
+                        button: true,
+                        child: FilledButton.icon(
+                          onPressed: () => _accept(deliveryId),
+                          icon: const Icon(Icons.check_circle),
+                          label: const Text(
+                            'قبول الطلب',
+                            style: TextStyle(fontSize: 18),
                           ),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              AlhaiRadius.button,
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: AlhaiSpacing.md,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                AlhaiRadius.button,
+                              ),
                             ),
                           ),
                         ),
@@ -218,19 +243,23 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
                     const SizedBox(height: AlhaiSpacing.sm),
                     SizedBox(
                       width: double.infinity,
-                      child: OutlinedButton.icon(
-                        onPressed: () => _reject(deliveryId),
-                        icon: const Icon(Icons.cancel_outlined),
-                        label: const Text(
-                          'رفض',
-                          style: TextStyle(fontSize: 16),
-                        ),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: theme.colorScheme.error,
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              AlhaiRadius.button,
+                      child: Semantics(
+                        label: 'رفض طلب التوصيل',
+                        button: true,
+                        child: OutlinedButton.icon(
+                          onPressed: () => _reject(deliveryId),
+                          icon: const Icon(Icons.cancel_outlined),
+                          label: const Text(
+                            'رفض',
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: theme.colorScheme.error,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(
+                                AlhaiRadius.button,
+                              ),
                             ),
                           ),
                         ),

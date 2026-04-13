@@ -468,7 +468,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                 },
                 borderRadius: BorderRadius.circular(10),
                 child: Container(
-                  margin: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
+                  margin: const EdgeInsetsDirectional.only(bottom: AlhaiSpacing.xs),
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     color: AppColors.getSurfaceVariant(isDark),

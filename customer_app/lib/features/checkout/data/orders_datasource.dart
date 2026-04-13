@@ -2,6 +2,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/sentry_service.dart';
 
 class OrdersDatasource {
   final SupabaseClient _client;
@@ -14,15 +15,18 @@ class OrdersDatasource {
         .map((item) => {'product_id': item.productId, 'qty': item.qty})
         .toList();
 
-    final stockResult = await _client.rpc(
-      'reserve_online_stock',
-      params: {'p_store_id': params.storeId, 'p_items': itemsJson},
-    );
+    final stockResult = await _client
+        .rpc(
+          'reserve_online_stock',
+          params: {'p_store_id': params.storeId, 'p_items': itemsJson},
+        )
+        .timeout(AppConstants.networkTimeout);
 
     // Check if any items failed
-    if (stockResult is Map && stockResult['success'] == false) {
-      final failures = stockResult['failures'] as List? ?? [];
-      throw Exception('بعض المنتجات غير متوفرة: ${failures.length} منتجات');
+    if (stockResult is Map<String, dynamic> && stockResult['success'] == false) {
+      final failures = stockResult['failures'];
+      final count = failures is List ? failures.length : 0;
+      throw Exception('بعض المنتجات غير متوفرة: $count منتجات');
     }
 
     // 2. Calculate totals
@@ -33,7 +37,7 @@ class OrdersDatasource {
 
     // 3. Insert order
     final orderMap = <String, dynamic>{
-      'customer_id': _client.auth.currentUser!.id,
+      'customer_id': _client.auth.currentUser?.id ?? (throw StateError('User not authenticated')),
       'store_id': params.storeId,
       'status': 'created',
       'subtotal': subtotal,
@@ -67,17 +71,18 @@ class OrdersDatasource {
           'unit_price': item.unitPrice,
           'qty': item.qty,
           'total_price': item.lineTotal,
-        });
+        }).timeout(AppConstants.networkTimeout);
       }
-    } catch (e) {
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'createOrder: insert order_items failed');
       // Attempt to release reserved stock and clean up the order
       try {
         await _client.rpc(
           'release_reserved_stock',
           params: {'p_order_id': orderId},
         );
-      } catch (_) {
-        // Best-effort stock release
+      } catch (releaseError, releaseStack) {
+        reportError(releaseError, stackTrace: releaseStack, hint: 'createOrder: stock release failed for order $orderId');
       }
       await _client.from('orders').delete().eq('id', orderId);
       rethrow;
@@ -114,7 +119,8 @@ class OrdersDatasource {
     int page = 1,
     int limit = 20,
   }) async {
-    final userId = _client.auth.currentUser!.id;
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) throw StateError('User not authenticated');
     var query = _client
         .from('orders')
         .select('*, order_items(*)')
@@ -132,8 +138,13 @@ class OrdersDatasource {
         .range(from, to)
         .timeout(AppConstants.networkTimeout);
 
-    final orders = (data as List).map((row) {
-      final items = ((row['order_items'] as List?) ?? [])
+    final orders = (data as List<dynamic>).map((row) {
+      if (row is! Map<String, dynamic>) {
+        throw FormatException('Unexpected order row type: ${row.runtimeType}');
+      }
+      final rawItems = row['order_items'];
+      final itemsList = rawItems is List ? rawItems : <dynamic>[];
+      final items = itemsList
           .map(
             (r) => OrderItem(
               productId: (r['product_id'] as String?) ?? '',
@@ -145,7 +156,7 @@ class OrdersDatasource {
           )
           .toList();
 
-      return _orderFromRow(row as Map<String, dynamic>, items);
+      return _orderFromRow(row, items);
     }).toList();
 
     return Paginated(
@@ -159,7 +170,9 @@ class OrdersDatasource {
 
   Future<void> cancelOrder(String id, {String? reason}) async {
     // 1. Release reserved stock
-    await _client.rpc('release_reserved_stock', params: {'p_order_id': id});
+    await _client
+        .rpc('release_reserved_stock', params: {'p_order_id': id})
+        .timeout(AppConstants.networkTimeout);
 
     // 2. Update order status
     await _client
@@ -169,7 +182,8 @@ class OrdersDatasource {
           'cancellation_reason': reason,
           'cancelled_at': DateTime.now().toUtc().toIso8601String(),
         })
-        .eq('id', id);
+        .eq('id', id)
+        .timeout(AppConstants.networkTimeout);
   }
 
   Order _orderFromRow(Map<String, dynamic> row, List<OrderItem> items) {

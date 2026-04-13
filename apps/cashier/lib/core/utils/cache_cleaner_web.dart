@@ -3,6 +3,7 @@
 library;
 
 import 'dart:js_interop';
+import 'package:flutter/foundation.dart';
 import 'package:web/web.dart' as web;
 
 /// Clear all browser storage (IndexedDB, localStorage, sessionStorage, caches)
@@ -10,11 +11,15 @@ Future<void> clearAllWebCache() async {
   // Clear localStorage and sessionStorage
   try {
     web.window.localStorage.clear();
-  } catch (_) {}
+  } catch (e, st) {
+    if (kDebugMode) debugPrint('[CacheCleaner] localStorage.clear failed: $e\n$st');
+  }
 
   try {
     web.window.sessionStorage.clear();
-  } catch (_) {}
+  } catch (e, st) {
+    if (kDebugMode) debugPrint('[CacheCleaner] sessionStorage.clear failed: $e\n$st');
+  }
 
   // Clear IndexedDB databases - use known database names
   // (getDatabaseNames is not available in all Dart/browser versions)
@@ -29,7 +34,9 @@ Future<void> clearAllWebCache() async {
   for (final name in knownDbs) {
     try {
       web.window.indexedDB.deleteDatabase(name);
-    } catch (_) {}
+    } catch (e, st) {
+      if (kDebugMode) debugPrint('[CacheCleaner] IndexedDB delete "$name" failed: $e\n$st');
+    }
   }
 
   // Clear Cache Storage (Service Worker caches)
@@ -39,7 +46,9 @@ Future<void> clearAllWebCache() async {
     for (final name in cacheNames) {
       await cacheStorage.delete(name.toDart).toDart;
     }
-  } catch (_) {}
+  } catch (e, st) {
+    if (kDebugMode) debugPrint('[CacheCleaner] CacheStorage clear failed: $e\n$st');
+  }
 
   // Unregister Service Workers
   try {
@@ -49,7 +58,9 @@ Future<void> clearAllWebCache() async {
     for (final reg in registrations.toDart) {
       await reg.unregister().toDart;
     }
-  } catch (_) {}
+  } catch (e, st) {
+    if (kDebugMode) debugPrint('[CacheCleaner] SW unregister failed: $e\n$st');
+  }
 }
 
 /// Force reload the page

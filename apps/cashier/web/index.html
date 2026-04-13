@@ -21,7 +21,10 @@
   <meta name="description" content="الهاي كاشير - نقطة بيع سريعة وسهلة">
 
   <!-- Security headers (frame-ancestors and X-Frame-Options must be set via HTTP headers, not meta) -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.gstatic.com https://www.gstatic.com/firebasejs/; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com https://www.gstatic.com https://fonts.gstatic.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' blob: data:;">
+  <!-- CSP: unsafe-eval is required by dart2js. unsafe-inline is limited to style-src only
+       (Flutter injects style tags at runtime). script-src uses a sha256 hash for the
+       inline SW registration snippet below. object-src/base-uri are locked down. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-eval' 'sha256-R6jsFBNi/5ypNi0UZnfAXNFLT94gS+iCIdbp4kddZUg=' https://www.gstatic.com https://www.gstatic.com/firebasejs/; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.anthropic.com https://www.gstatic.com https://fonts.gstatic.com; font-src 'self' https://fonts.gstatic.com; frame-src 'self' blob:; object-src 'none'; base-uri 'self';">
   <meta http-equiv="X-Content-Type-Options" content="nosniff">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 

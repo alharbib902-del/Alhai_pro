@@ -31,7 +31,7 @@ async def detect_fraud_endpoint(
     try:
         try:
             sales = SupabaseService.get_sales(
-                org_id=request.org_id, store_id=request.store_id
+                org_id=str(request.org_id), store_id=str(request.store_id)
             )
             if sales:
                 result = fraud_from_sales(sales=sales, language=request.language)
@@ -44,14 +44,17 @@ async def detect_fraud_endpoint(
                 return result
         except InsufficientDataError as e:
             logger.info("fraud_detection insufficient data: %s", e)
+        except ValueError as e:
+            logger.warning("fraud_detection validation error: %s", e)
+            raise HTTPException(status_code=422, detail=str(e))
         except Exception:
             logger.exception(
                 "fraud_detection real aggregation failed; falling back to mock"
             )
 
         result = detect_fraud(
-            org_id=request.org_id,
-            store_id=request.store_id,
+            org_id=str(request.org_id),
+            store_id=str(request.store_id),
             sale_id=request.sale_id,
             language=request.language,
         )
@@ -63,6 +66,8 @@ async def detect_fraud_endpoint(
             request.store_id,
         )
         return result
+    except HTTPException:
+        raise
     except Exception:
         logger.exception("خطأ في كشف الاحتيال")
         raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

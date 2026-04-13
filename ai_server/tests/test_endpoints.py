@@ -31,7 +31,7 @@ app.dependency_overrides[verify_store_access] = _stub_verify_store_access
 
 client = TestClient(app)
 
-BASE_BODY = {"org_id": "org_test_001", "store_id": "store_test_001"}
+BASE_BODY = {"org_id": "00000000-0000-4000-a000-000000000001", "store_id": "00000000-0000-4000-a000-000000000002"}
 
 
 # ============================================================================
@@ -42,7 +42,9 @@ def test_health_check():
     response = client.get("/health")
     assert response.status_code == 200
     data = response.json()
-    assert data["status"] == "healthy"
+    assert data["status"] in ("healthy", "degraded")
+    assert "dependencies" in data
+    assert data["service"] == "alhai-ai-server"
 
 
 # ============================================================================
@@ -305,8 +307,8 @@ def test_deterministic_results():
 
 def test_different_stores_different_results():
     """Different stores should return different results."""
-    r1 = client.post("/ai/forecast", json={"org_id": "org_1", "store_id": "store_1", "days_ahead": 7}).json()
-    r2 = client.post("/ai/forecast", json={"org_id": "org_1", "store_id": "store_2", "days_ahead": 7}).json()
+    r1 = client.post("/ai/forecast", json={"org_id": "00000000-0000-4000-a000-000000000001", "store_id": "00000000-0000-4000-a000-000000000010", "days_ahead": 7}).json()
+    r2 = client.post("/ai/forecast", json={"org_id": "00000000-0000-4000-a000-000000000001", "store_id": "00000000-0000-4000-a000-000000000020", "days_ahead": 7}).json()
     assert r1["predictions"][0]["predicted_revenue"] != r2["predictions"][0]["predicted_revenue"]
 
 

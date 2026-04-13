@@ -29,6 +29,9 @@ void main() {
   );
 }
 
+/// Whether Supabase initialization succeeded.
+bool _supabaseInitialized = false;
+
 Future<void> _appMain() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -49,13 +52,20 @@ Future<void> _appMain() async {
   // Initialize Supabase
   try {
     await AppSupabase.initialize();
+    _supabaseInitialized = true;
   } catch (e, stack) {
     if (kDebugMode) debugPrint('Supabase init failed: $e');
     reportError(e, stackTrace: stack, hint: 'Supabase init');
+    _supabaseInitialized = false;
   }
 
   // Initialize SharedPreferences
-  await SharedPreferences.getInstance();
+  try {
+    await SharedPreferences.getInstance();
+  } catch (e, stack) {
+    if (kDebugMode) debugPrint('SharedPreferences init failed: $e');
+    reportError(e, stackTrace: stack, hint: 'SharedPreferences init');
+  }
 
   // Wire DI
   configureDependencies();
@@ -70,9 +80,61 @@ class DistributorPortalApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final router = ref.watch(distributorRouterProvider);
     final localeState = ref.watch(localeProvider);
     final themeMode = ref.watch(themeModeProvider);
+
+    // Show error fallback if Supabase failed to initialize
+    if (!_supabaseInitialized) {
+      return MaterialApp(
+        title: 'Alhai Distributor Portal',
+        debugShowCheckedModeBanner: false,
+        theme: AlhaiTheme.light,
+        darkTheme: AlhaiTheme.dark,
+        themeMode: themeMode,
+        locale: localeState.locale,
+        supportedLocales: SupportedLocales.all,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        home: Scaffold(
+          body: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(32.0),
+              child: const Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.cloud_off_rounded,
+                    size: 64,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(height: 24),
+                  Text(
+                    'Unable to connect to server',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 12),
+                  Text(
+                    'Please check your internet connection and restart the app.',
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
+
+    final router = ref.watch(distributorRouterProvider);
 
     return MaterialApp.router(
       title: 'Alhai Distributor Portal',

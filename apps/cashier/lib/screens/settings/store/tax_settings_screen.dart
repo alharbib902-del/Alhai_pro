@@ -51,7 +51,8 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
   }
 
   Future<void> _upsertSetting(String key, String value) async {
-    final storeId = ref.read(currentStoreIdProvider)!;
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
     final id = 'setting_${storeId}_$key';
     await _db
         .into(_db.settingsTable)
@@ -72,7 +73,8 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
       _error = null;
     });
     try {
-      final storeId = ref.read(currentStoreIdProvider)!;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
       if (storeId.isNotEmpty) {
         final store = await _db.storesDao.getStoreById(storeId);
         if (store != null && mounted) {

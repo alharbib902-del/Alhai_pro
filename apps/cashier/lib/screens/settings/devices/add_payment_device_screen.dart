@@ -54,7 +54,8 @@ class _AddPaymentDeviceScreenState
   }
 
   Future<void> _upsertSetting(String key, String value) async {
-    final storeId = ref.read(currentStoreIdProvider)!;
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
     final id = 'setting_${storeId}_$key';
     await _db
         .into(_db.settingsTable)
@@ -370,7 +371,7 @@ class _AddPaymentDeviceScreenState
             final method = _connectionMethods[index];
             final isSelected = _connectionMethod == method;
             return Padding(
-              padding: EdgeInsets.only(
+              padding: EdgeInsetsDirectional.only(
                 bottom: index < _connectionMethods.length - 1 ? 8 : 0,
               ),
               child: GestureDetector(
@@ -507,7 +508,7 @@ class _AddPaymentDeviceScreenState
         if (_testPassed)
           Container(
             padding: const EdgeInsets.all(AlhaiSpacing.md),
-            margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
+            margin: const EdgeInsetsDirectional.only(bottom: AlhaiSpacing.md),
             decoration: BoxDecoration(
               color: AppColors.success.withValues(alpha: isDark ? 0.15 : 0.08),
               borderRadius: BorderRadius.circular(12),

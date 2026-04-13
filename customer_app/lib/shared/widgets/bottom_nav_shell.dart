@@ -39,21 +39,25 @@ class AppBottomNavBar extends StatelessWidget {
           icon: Icon(Icons.home_outlined),
           selectedIcon: Icon(Icons.home),
           label: 'الرئيسية',
+          tooltip: 'الصفحة الرئيسية',
         ),
         NavigationDestination(
           icon: Icon(Icons.receipt_long_outlined),
           selectedIcon: Icon(Icons.receipt_long),
           label: 'طلباتي',
+          tooltip: 'عرض طلباتي',
         ),
         NavigationDestination(
           icon: Icon(Icons.shopping_cart_outlined),
           selectedIcon: Icon(Icons.shopping_cart),
           label: 'السلة',
+          tooltip: 'سلة المشتريات',
         ),
         NavigationDestination(
           icon: Icon(Icons.person_outline),
           selectedIcon: Icon(Icons.person),
           label: 'حسابي',
+          tooltip: 'الملف الشخصي والإعدادات',
         ),
       ],
     );

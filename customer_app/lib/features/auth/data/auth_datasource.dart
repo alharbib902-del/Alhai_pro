@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' hide User;
 import 'package:alhai_core/alhai_core.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/services/sentry_service.dart';
 
 class AuthDatasource {
   final SupabaseClient _client;
@@ -90,8 +91,9 @@ class AuthDatasource {
           data['created_at'] as String? ?? DateTime.now().toIso8601String(),
         ),
       );
-    } catch (e) {
+    } catch (e, stack) {
       debugPrint('[AuthDatasource] Error fetching current user: $e');
+      reportError(e, stackTrace: stack, hint: 'getCurrentUser');
       return null;
     }
   }
@@ -119,8 +121,9 @@ class AuthDatasource {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.clear();
-    } catch (e) {
+    } catch (e, stack) {
       debugPrint('[AuthDatasource] Error clearing SharedPreferences: $e');
+      reportError(e, stackTrace: stack, hint: 'logout: clear SharedPreferences');
     }
 
     // Clear secure storage tokens
@@ -129,8 +132,9 @@ class AuthDatasource {
         aOptions: AndroidOptions(encryptedSharedPreferences: true),
       );
       await secureStorage.deleteAll();
-    } catch (e) {
+    } catch (e, stack) {
       debugPrint('[AuthDatasource] Error clearing secure storage: $e');
+      reportError(e, stackTrace: stack, hint: 'logout: clear secure storage');
     }
 
     // Verify session is cleared (assert is stripped in release builds)

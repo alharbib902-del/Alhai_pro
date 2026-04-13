@@ -6,6 +6,7 @@ import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../../providers/settings_db_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import '../../../core/services/sentry_service.dart';
 
 // مفاتيح إعدادات بوابات الشحن
 const String _kShippingAramex = 'shipping_aramex_enabled';
@@ -62,7 +63,8 @@ class _ShippingGatewaysScreenState
           _isLoading = false;
         });
       }
-    } catch (e) {
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'shipping_gateways: load settings failed');
       if (mounted) setState(() => _isLoading = false);
     }
   }
@@ -81,8 +83,8 @@ class _ShippingGatewaysScreenState
         value: value,
         ref: ref,
       );
-    } catch (e) {
-      // الخطأ اختياري
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'shipping_gateways: save setting failed for $key');
     }
   }
 
@@ -394,6 +396,7 @@ class _ShippingGatewaysScreenState
                           children: [
                             TextField(
                               controller: apiKeyController,
+                              obscureText: true,
                               decoration: InputDecoration(
                                 labelText: 'API Key',
                                 hintText: AppLocalizations.of(ctx).enterApiKey,

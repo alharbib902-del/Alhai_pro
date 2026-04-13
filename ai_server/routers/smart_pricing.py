@@ -4,10 +4,11 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException
 
-logger = logging.getLogger(__name__)
 from auth import AuthenticatedUser, verify_store_access
 from models.schemas import PricingRequest, PricingResponse
 from services.ml_service import generate_pricing
+
+logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
@@ -24,12 +25,17 @@ async def smart_pricing(
     """
     try:
         return generate_pricing(
-            org_id=request.org_id,
-            store_id=request.store_id,
+            org_id=str(request.org_id),
+            store_id=str(request.store_id),
             product_ids=request.product_ids,
             strategy=request.strategy,
             language=request.language,
         )
+    except ValueError as e:
+        logger.warning("smart_pricing validation error: %s", e)
+        raise HTTPException(status_code=422, detail=str(e))
+    except HTTPException:
+        raise
     except Exception:
         logger.exception("خطأ في التسعير الذكي")
         raise HTTPException(status_code=500, detail="حدث خطأ غير متوقع")

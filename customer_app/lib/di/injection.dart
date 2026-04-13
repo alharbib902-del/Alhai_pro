@@ -1,5 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import '../core/services/sentry_service.dart';
 
 import '../features/auth/data/auth_datasource.dart';
 import '../features/auth/data/auth_repository_impl.dart';
@@ -26,8 +29,9 @@ void configureDependencies() {
   try {
     final client = Supabase.instance.client;
     locator.registerSingleton<SupabaseClient>(client);
-  } catch (_) {
-    // Supabase not initialized — offline mode
+  } catch (e, stack) {
+    if (kDebugMode) debugPrint('Supabase not initialized: $e');
+    reportError(e, stackTrace: stack, hint: 'DI: Supabase not initialized - offline mode');
   }
 
   // Datasources

@@ -71,7 +71,10 @@ class PendingApprovalItem {
   });
 }
 
-/// Provider: Pending approvals (returns pending + purchases pending)
+/// Fetches all pending approvals: refund requests (from returns table) and
+/// pending purchase orders. Runs both queries in parallel, merges results
+/// into [PendingApprovalItem] list sorted by creation date descending.
+/// Errors are reported to Sentry; returns partial data on failure.
 final litePendingApprovalsProvider =
     FutureProvider.autoDispose<List<PendingApprovalItem>>((ref) async {
       final storeId = ref.watch(currentStoreIdProvider);
