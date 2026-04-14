@@ -140,18 +140,6 @@ class XadesSigner {
         '''</xades:IssuerSerial>'''
         '''</xades:Cert>'''
         '''</xades:SigningCertificate>'''
-        '''<xades:SignaturePolicyIdentifier>'''
-        '''<xades:SignaturePolicyId>'''
-        '''<xades:SigPolicyId>'''
-        '''<xades:Identifier>urn:oid:1.2.250.1.97.1.0.1</xades:Identifier>'''
-        '''<xades:Description>Policy for signing online invoices for tax purposes per ZATCA Phase 2</xades:Description>'''
-        '''</xades:SigPolicyId>'''
-        '''<xades:SigPolicyHash>'''
-        '''<ds:DigestMethod xmlns:ds="${UblNamespaces.ds}" Algorithm="http://www.w3.org/2001/04/xmlenc#sha256"></ds:DigestMethod>'''
-        '''<ds:DigestValue xmlns:ds="${UblNamespaces.ds}">7HQYrNh3yBlEcaPBPHHbQT0CdfqcQbNgZ8gpccgi3Hk=</ds:DigestValue>'''
-        '''</xades:SigPolicyHash>'''
-        '''</xades:SignaturePolicyId>'''
-        '''</xades:SignaturePolicyIdentifier>'''
         '''</xades:SignedSignatureProperties>'''
         '''</xades:SignedProperties>''';
   }
