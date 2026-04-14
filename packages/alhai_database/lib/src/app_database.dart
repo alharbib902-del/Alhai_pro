@@ -1328,7 +1328,7 @@ class AppDatabase extends _$AppDatabase {
       for (final entry in stockDeductions) {
         await customStatement(
           'UPDATE products SET stock_qty = stock_qty - ? WHERE id = ?',
-          [Variable.withReal(entry.value), Variable.withString(entry.key)],
+          [entry.value, entry.key],
         );
       }
 
@@ -1355,7 +1355,7 @@ class AppDatabase extends _$AppDatabase {
       for (final entry in stockAdditions) {
         await customStatement(
           'UPDATE products SET stock_qty = stock_qty + ? WHERE id = ?',
-          [Variable.withReal(entry.value), Variable.withString(entry.key)],
+          [entry.value, entry.key],
         );
       }
 

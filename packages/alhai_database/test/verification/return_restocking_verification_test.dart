@@ -135,22 +135,9 @@ void main() {
     // -----------------------------------------------------------------------
     // 5.4 createReturnTransaction uses transaction (atomic)
     // -----------------------------------------------------------------------
-    // GHOST BUG: createReturnTransaction passes Variable.withReal() to
-    // customStatement(), but customStatement expects raw Dart values (double,
-    // String), not Drift Variable objects.  This causes a runtime crash:
-    //   "Invalid argument: Allowed parameters must be null, bool, int, num,
-    //    String, or List<int>.  Got: Instance of 'Variable<double>'"
-    //
-    // IMPACT: createReturnTransaction is currently UNUSED in production.
-    // The actual flow uses refund_reason_screen.dart which calls
-    // productsDao.updateStock() and inventoryDao.insertMovement() directly.
-    // If createReturnTransaction is ever called, it WILL crash.
-    //
-    // The fix would be to change:
-    //   [Variable.withReal(entry.value), Variable.withString(entry.key)]
-    // to:
-    //   [entry.value, entry.key]
-    test('GHOST BUG: createReturnTransaction crashes with Variable params',
+    // GHOST BUG (FIXED): Variable.withReal/withString in customStatement
+    // was replaced with raw Dart values.  See return_transaction_smoke_test.dart.
+    test('createReturnTransaction completes without error (ghost bug fixed)',
         () async {
       await _insertProduct('prod-txn', 100.0);
 
@@ -167,24 +154,23 @@ void main() {
             ),
           );
 
-      // This WILL throw because of the Variable.withReal bug
-      expect(
-        () => db.createReturnTransaction(
-          returnData: ReturnsTableCompanion.insert(
-            id: 'ret-txn-1',
-            returnNumber: 'RET-TXN-001',
-            saleId: 'sale-txn-1',
-            storeId: 'store-1',
-            totalRefund: 50.0,
-            reason: const Value('defective'),
-            createdAt: DateTime.now(),
-          ),
-          items: const [],
-          stockAdditions: [const MapEntry('prod-txn', 3.0)],
+      await db.createReturnTransaction(
+        returnData: ReturnsTableCompanion.insert(
+          id: 'ret-txn-1',
+          returnNumber: 'RET-TXN-001',
+          saleId: 'sale-txn-1',
+          storeId: 'store-1',
+          totalRefund: 50.0,
+          reason: const Value('defective'),
+          createdAt: DateTime.now(),
         ),
-        throwsA(isA<ArgumentError>()),
-        reason: 'Ghost bug: Variable.withReal in customStatement crashes',
+        items: const [],
+        stockAdditions: [const MapEntry('prod-txn', 3.0)],
       );
+
+      final product = await db.productsDao.getProductById('prod-txn');
+      expect(product!.stockQty, equals(103.0),
+          reason: 'Atomic stock update via SQL: stock_qty = stock_qty + 3');
     });
 
     // -----------------------------------------------------------------------
