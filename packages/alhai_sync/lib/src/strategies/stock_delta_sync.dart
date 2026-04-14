@@ -211,7 +211,11 @@ class StockDeltaSync {
     }
 
     // سحب المخزون الحالي من السيرفر
-    final productIds = pendingDeltas.map((d) => d.productId).toSet().toList();
+    final productIds = pendingDeltas
+        .map((d) => d.productId)
+        .whereType<String>()
+        .toSet()
+        .toList();
     for (final productId in productIds) {
       try {
         final response = await _client
