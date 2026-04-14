@@ -62,3 +62,6 @@ GoogleService-Info.plist
 # Environment
 .env.production
 .env.staging
+
+# Claude Code local settings
+.claude/settings.local.json
