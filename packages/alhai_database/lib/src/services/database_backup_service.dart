@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 
 import '../app_database.dart';
@@ -359,23 +358,47 @@ class DatabaseBackupService {
           await _db.customStatement('DELETE FROM $tableName');
         }
 
+        // Get the whitelist of allowed columns from the Drift schema
+        final allowedColumns = _getAllowedColumns(tableName);
+
         int count = 0;
         for (final row in tableData) {
           try {
             final rowMap = row as Map<String, dynamic>;
             final columns = rowMap.keys.toList();
-            final placeholders = columns.map((_) => '?').join(', ');
-            final values = columns.map((c) {
+
+            // Validate columns against the schema whitelist
+            if (allowedColumns != null) {
+              final invalidColumns =
+                  columns.where((c) => !allowedColumns.contains(c)).toList();
+              if (invalidColumns.isNotEmpty) {
+                debugPrint(
+                  '[Backup] SECURITY: Rejected backup for table $tableName — '
+                  'invalid column names: $invalidColumns',
+                );
+                throw ArgumentError(
+                  'Backup contains invalid column names for table '
+                  '$tableName: $invalidColumns',
+                );
+              }
+            }
+
+            final safeColumns = allowedColumns != null
+                ? columns.where((c) => allowedColumns.contains(c)).toList()
+                : columns;
+
+            final placeholders = safeColumns.map((_) => '?').join(', ');
+            final values = safeColumns.map((c) {
               final v = rowMap[c];
-              if (v == null) return const Variable<String>(null);
-              if (v is int) return Variable.withInt(v);
-              if (v is double) return Variable.withReal(v);
-              if (v is bool) return Variable.withBool(v);
-              return Variable.withString(v.toString());
+              if (v == null) return null;
+              if (v is int) return v;
+              if (v is double) return v;
+              if (v is bool) return v ? 1 : 0;
+              return v.toString();
             }).toList();
 
             await _db.customStatement(
-              'INSERT OR REPLACE INTO $tableName (${columns.join(', ')}) '
+              'INSERT OR REPLACE INTO $tableName (${safeColumns.join(', ')}) '
               'VALUES ($placeholders)',
               values,
             );
@@ -384,6 +407,8 @@ class DatabaseBackupService {
             if (kDebugMode) {
               debugPrint('[Backup] Import error in $tableName: $e');
             }
+            // Re-throw ArgumentError (security violation) — don't swallow it
+            if (e is ArgumentError) rethrow;
           }
         }
 
@@ -721,6 +746,18 @@ class DatabaseBackupService {
     backups.removeWhere((b) => (b as Map<String, dynamic>)['id'] == backupId);
     metadata['backups'] = backups;
     await storage.saveBackupMetadata(metadata);
+  }
+
+  /// Returns the set of allowed column names for a given table from the Drift
+  /// schema.  Returns `null` if the table is not found (caller should reject
+  /// or skip).
+  Set<String>? _getAllowedColumns(String tableName) {
+    for (final table in _db.allTables) {
+      if (table.actualTableName == tableName) {
+        return table.$columns.map((c) => c.name).toSet();
+      }
+    }
+    return null;
   }
 
   /// تدوير النسخ الاحتياطية (حذف القديمة عند تجاوز الحد)
