@@ -49,6 +49,7 @@ export 'src/certificate/certificate_renewal_service.dart';
 export 'src/services/zatca_invoice_service.dart';
 export 'src/services/zatca_offline_queue.dart';
 export 'src/services/zatca_compliance_checker.dart';
+export 'src/services/invoice_xml_validator.dart';
 
 // ─── Dependency Injection ──────────────────────────────────────
 export 'src/di/zatca_module.dart';
