@@ -74,34 +74,12 @@ class InvoiceXmlValidator {
   /// Validate the signed XML (after XAdES signing).
   ///
   /// Includes all checks from [validate] plus signature-specific checks.
+  ///
+  /// Note: SignaturePolicyIdentifier checks were removed on 2026-04-14
+  /// after discovering that ZATCA SDK does not require this element.
+  /// See fix_reports/phase2/FIX_REPORT.md for details.
   XmlValidationResult validateSigned(String signedXml) {
-    final result = validate(signedXml);
-    final errors = List<XmlValidationError>.from(result.errors);
-    final warnings = List<XmlValidationWarning>.from(result.warnings);
-
-    // Don't check signature elements if parsing already failed
-    if (errors.any((e) => e.code == 'PARSE_ERROR')) {
-      return XmlValidationResult(errors: errors, warnings: warnings);
-    }
-
-    // Check SignaturePolicyIdentifier (Fix #2)
-    if (!signedXml.contains('SignaturePolicyIdentifier')) {
-      errors.add(const XmlValidationError(
-        'MISSING_SIGNATURE_POLICY',
-        'XAdES SignaturePolicyIdentifier is required by ZATCA Phase 2',
-      ));
-    }
-
-    // Check policy URN
-    if (signedXml.contains('SignaturePolicyIdentifier') &&
-        !signedXml.contains('urn:oid:1.2.250.1.97.1.0.1')) {
-      errors.add(const XmlValidationError(
-        'WRONG_POLICY_URN',
-        'SignaturePolicyIdentifier must use URN urn:oid:1.2.250.1.97.1.0.1',
-      ));
-    }
-
-    return XmlValidationResult(errors: errors, warnings: warnings);
+    return validate(signedXml);
   }
 
   // ─── Private helpers ──────────────────────────────────────

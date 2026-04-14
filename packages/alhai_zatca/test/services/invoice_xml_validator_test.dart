@@ -162,37 +162,14 @@ void main() {
   });
 
   group('InvoiceXmlValidator.validateSigned', () {
-    test('catches missing SignaturePolicyIdentifier in signed XML', () {
-      // Simulate a signed XML without SignaturePolicyIdentifier
+    test('delegates to validate() for structural checks', () {
       final xml = builder.build(_validInvoice());
-      // This XML is unsigned, so it won't have SignaturePolicyIdentifier
       final result = validator.validateSigned(xml);
 
-      expect(
-        result.errors.any((e) => e.code == 'MISSING_SIGNATURE_POLICY'),
-        isTrue,
-      );
-    });
-
-    test('passes when SignaturePolicyIdentifier present', () {
-      var xml = builder.build(_validInvoice());
-      // Inject SignaturePolicyIdentifier into XML for test
-      xml = xml.replaceFirst(
-        '</Invoice>',
-        '<!-- xades:SignaturePolicyIdentifier urn:oid:1.2.250.1.97.1.0.1 --></Invoice>',
-      );
-      // Replace to inject the right strings
-      xml = xml.replaceFirst(
-        '<!-- xades:SignaturePolicyIdentifier',
-        '<xades:SignaturePolicyIdentifier>urn:oid:1.2.250.1.97.1.0.1</xades:SignaturePolicyIdentifier><!-- ',
-      );
-      // Just check string contains
-      final result = validator.validateSigned(xml);
-
-      expect(
-        result.errors.where((e) => e.code == 'MISSING_SIGNATURE_POLICY'),
-        isEmpty,
-      );
+      // validateSigned should return same result as validate
+      final baseResult = validator.validate(xml);
+      expect(result.errors.length, equals(baseResult.errors.length));
+      expect(result.isValid, equals(baseResult.isValid));
     });
   });
 }
