@@ -1289,7 +1289,7 @@ class AppDatabase extends _$AppDatabase {
     try {
       // حذف sync_queue المكتملة أقدم من 30 يوم
       await syncQueueDao.cleanOldSyncedItems();
-      // حذف audit_log المزامنة أقدم من 90 يوم
+      // حذف audit_log المزامنة أقدم من 6 سنوات (Saudi VAT Art. 66)
       await auditLogDao.cleanupOldLogs();
       // حذف stock_deltas المزامنة أقدم من 7 أيام
       await stockDeltasDao.cleanupSynced();
