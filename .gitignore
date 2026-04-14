@@ -65,3 +65,7 @@ GoogleService-Info.plist
 
 # Claude Code local settings
 .claude/settings.local.json
+
+# Test coverage
+packages/*/coverage/
+coverage/
