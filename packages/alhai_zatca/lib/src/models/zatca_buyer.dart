@@ -34,6 +34,9 @@ class ZatcaBuyer {
   /// Country code (BT-55)
   final String? countryCode;
 
+  /// Administrative region / province (BT-54 CountrySubentity)
+  final String? region;
+
   const ZatcaBuyer({
     this.name,
     this.vatNumber,
@@ -45,6 +48,7 @@ class ZatcaBuyer {
     this.district,
     this.postalCode,
     this.countryCode,
+    this.region,
   });
 
   /// Whether this buyer has enough info for a standard (B2B) invoice
@@ -65,6 +69,7 @@ class ZatcaBuyer {
     String? district,
     String? postalCode,
     String? countryCode,
+    String? region,
   }) {
     return ZatcaBuyer(
       name: name ?? this.name,
@@ -77,6 +82,7 @@ class ZatcaBuyer {
       district: district ?? this.district,
       postalCode: postalCode ?? this.postalCode,
       countryCode: countryCode ?? this.countryCode,
+      region: region ?? this.region,
     );
   }
 
@@ -91,6 +97,7 @@ class ZatcaBuyer {
     if (district != null) 'district': district,
     if (postalCode != null) 'postalCode': postalCode,
     if (countryCode != null) 'countryCode': countryCode,
+    if (region != null) 'region': region,
   };
 
   factory ZatcaBuyer.fromJson(Map<String, dynamic> json) => ZatcaBuyer(
@@ -104,5 +111,6 @@ class ZatcaBuyer {
     district: json['district'] as String?,
     postalCode: json['postalCode'] as String?,
     countryCode: json['countryCode'] as String?,
+    region: json['region'] as String?,
   );
 }
