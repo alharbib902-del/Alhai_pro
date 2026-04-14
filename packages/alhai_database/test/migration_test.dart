@@ -17,8 +17,8 @@ void main() {
       await db.close();
     });
 
-    test('schema version is 22', () {
-      expect(db.schemaVersion, 22);
+    test('schema version is 23', () {
+      expect(db.schemaVersion, 23);
     });
 
     test('schema version is positive', () {

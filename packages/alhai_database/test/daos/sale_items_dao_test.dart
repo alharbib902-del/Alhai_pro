@@ -31,6 +31,7 @@ void main() {
           subtotal: 100.0,
           total: 100.0,
           paymentMethod: 'cash',
+          status: const Value('draft'),
           createdAt: now,
         ),
       );

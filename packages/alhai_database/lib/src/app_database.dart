@@ -563,11 +563,14 @@ class AppDatabase extends _$AppDatabase {
   /// ZATCA append-only triggers — created both in onCreate and migration v23.
   Future<void> _createAppendOnlyTriggers() async {
     // Block financial/identity field changes on completed/paid/refunded sales.
+    // Exception: status change to 'voided' is allowed (legitimate accounting
+    // cancellation — ZATCA permits voiding as a separate transaction type).
     await customStatement('''
       CREATE TRIGGER IF NOT EXISTS trg_sales_append_only
       BEFORE UPDATE ON sales
       FOR EACH ROW
       WHEN OLD.status IN ('completed', 'paid', 'refunded')
+        AND NOT (NEW.status = 'voided' AND OLD.status IN ('completed', 'paid'))
         AND (
           NEW.subtotal    IS NOT OLD.subtotal    OR
           NEW.discount    IS NOT OLD.discount    OR
