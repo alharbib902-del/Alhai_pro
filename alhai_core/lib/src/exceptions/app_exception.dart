@@ -38,6 +38,13 @@ class NotFoundException extends AppException {
   const NotFoundException(super.message, {super.code}) : super(statusCode: 404);
 }
 
+/// Append-only violation (attempt to modify an immutable record like a
+/// completed sale).  Used by ZATCA-compliance guards.
+class AppendOnlyViolationException extends AppException {
+  const AppendOnlyViolationException(super.message, {super.code})
+      : super(statusCode: 409);
+}
+
 /// Unknown/unexpected errors (fallback)
 class UnknownException extends AppException {
   final Object? cause;

@@ -131,7 +131,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 22;
+  int get schemaVersion => 23;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -141,6 +141,9 @@ class AppDatabase extends _$AppDatabase {
       await ftsService.createFtsTable();
       // إنشاء جدول سجل الهجرات
       await _createMigrationHistoryTable();
+      // ZATCA append-only triggers (v23) — createAll() only creates tables,
+      // custom triggers must be applied explicitly.
+      await _createAppendOnlyTriggers();
       // تسجيل الإنشاء الأولي
       await _recordMigrationHistory(
         version: schemaVersion,
@@ -516,9 +519,89 @@ class AppDatabase extends _$AppDatabase {
         debugPrint(
           '[Migration v22] sales.shift_id + stock_deltas FK triggers created',
         );
+      case 23:
+        // Migration v22 -> v23: ZATCA append-only compliance
+        // 1. Add reference_invoice_id for Credit/Debit Notes
+        await customStatement(
+          'ALTER TABLE sales ADD COLUMN reference_invoice_id TEXT',
+        );
+        // 2. Append-only triggers (shared with onCreate)
+        await _createAppendOnlyTriggers();
+        debugPrint(
+          '[Migration v23] ZATCA append-only triggers + '
+          'reference_invoice_id created',
+        );
+
       default:
         debugPrint('[Migration] Unknown migration version: $targetVersion');
     }
+  }
+
+  /// ZATCA append-only triggers — created both in onCreate and migration v23.
+  Future<void> _createAppendOnlyTriggers() async {
+    // Block financial/identity field changes on completed/paid/refunded sales.
+    await customStatement('''
+      CREATE TRIGGER IF NOT EXISTS trg_sales_append_only
+      BEFORE UPDATE ON sales
+      FOR EACH ROW
+      WHEN OLD.status IN ('completed', 'paid', 'refunded')
+        AND (
+          NEW.subtotal    IS NOT OLD.subtotal    OR
+          NEW.discount    IS NOT OLD.discount    OR
+          NEW.tax         IS NOT OLD.tax         OR
+          NEW.total       IS NOT OLD.total       OR
+          NEW.payment_method IS NOT OLD.payment_method OR
+          NEW.is_paid     IS NOT OLD.is_paid     OR
+          NEW.amount_received IS NOT OLD.amount_received OR
+          NEW.change_amount IS NOT OLD.change_amount OR
+          NEW.cash_amount IS NOT OLD.cash_amount OR
+          NEW.card_amount IS NOT OLD.card_amount OR
+          NEW.credit_amount IS NOT OLD.credit_amount OR
+          NEW.customer_id IS NOT OLD.customer_id OR
+          NEW.customer_name IS NOT OLD.customer_name OR
+          NEW.customer_phone IS NOT OLD.customer_phone OR
+          NEW.receipt_no  IS NOT OLD.receipt_no  OR
+          NEW.status      IS NOT OLD.status      OR
+          NEW.notes       IS NOT OLD.notes       OR
+          NEW.channel     IS NOT OLD.channel
+        )
+      BEGIN
+        SELECT RAISE(ABORT,
+          'Sales with status completed/paid/refunded are immutable. Use Credit/Debit Note.');
+      END
+    ''');
+
+    // Prevent DELETE on sale_items of a completed sale.
+    await customStatement('''
+      CREATE TRIGGER IF NOT EXISTS trg_sale_items_no_delete
+      BEFORE DELETE ON sale_items
+      FOR EACH ROW
+      WHEN EXISTS (
+        SELECT 1 FROM sales
+        WHERE id = OLD.sale_id
+          AND status IN ('completed', 'paid', 'refunded')
+      )
+      BEGIN
+        SELECT RAISE(ABORT,
+          'Cannot delete items of a completed/paid/refunded sale.');
+      END
+    ''');
+
+    // Prevent UPDATE on sale_items of a completed sale.
+    await customStatement('''
+      CREATE TRIGGER IF NOT EXISTS trg_sale_items_no_update
+      BEFORE UPDATE ON sale_items
+      FOR EACH ROW
+      WHEN EXISTS (
+        SELECT 1 FROM sales
+        WHERE id = OLD.sale_id
+          AND status IN ('completed', 'paid', 'refunded')
+      )
+      BEGIN
+        SELECT RAISE(ABORT,
+          'Cannot modify items of a completed/paid/refunded sale.');
+      END
+    ''');
   }
 
   /// Migration v9 -> v10: إضافة جداول متعددة المستأجرين + أعمدة org_id

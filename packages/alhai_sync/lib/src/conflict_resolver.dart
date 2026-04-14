@@ -216,6 +216,8 @@ class ConflictResolver {
     // Version conflicts use table-specific rules
     switch (tableName) {
       // POS-originated data: local always wins
+      // (sales/sale_items use localWins but the DAO and DB trigger enforce
+      // append-only immutability for completed/paid/refunded invoices)
       case 'sales':
       case 'sale_items':
       case 'shifts':

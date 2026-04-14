@@ -1,3 +1,4 @@
+import 'package:alhai_core/alhai_core.dart' show AppendOnlyViolationException;
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
@@ -88,9 +89,46 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
     return into(salesTable).insert(sale);
   }
 
+  /// Immutable statuses (ZATCA compliance: completed invoices cannot be
+  /// modified — corrections go through Credit/Debit Notes).
+  static const _immutableStatuses = ['completed', 'paid', 'refunded'];
+
   /// تحديث بيع
-  Future<bool> updateSale(SalesTableData sale) {
+  ///
+  /// Throws [AppendOnlyViolationException] if the sale is in an immutable
+  /// status and the update touches financial or identity fields.
+  Future<bool> updateSale(SalesTableData sale) async {
+    final current = await getSaleById(sale.id);
+    if (current != null &&
+        _immutableStatuses.contains(current.status) &&
+        _hasFinancialChanges(current, sale)) {
+      throw AppendOnlyViolationException(
+        'Cannot modify completed sale ${sale.id}. '
+        'Use Credit/Debit Note instead.',
+        code: 'APPEND_ONLY_VIOLATION',
+      );
+    }
     return update(salesTable).replace(sale);
+  }
+
+  /// Returns true when any financial or identity field differs between
+  /// [old] and [updated].
+  bool _hasFinancialChanges(SalesTableData old, SalesTableData updated) {
+    return old.subtotal != updated.subtotal ||
+        old.discount != updated.discount ||
+        old.tax != updated.tax ||
+        old.total != updated.total ||
+        old.paymentMethod != updated.paymentMethod ||
+        old.isPaid != updated.isPaid ||
+        old.amountReceived != updated.amountReceived ||
+        old.changeAmount != updated.changeAmount ||
+        old.cashAmount != updated.cashAmount ||
+        old.cardAmount != updated.cardAmount ||
+        old.creditAmount != updated.creditAmount ||
+        old.customerId != updated.customerId ||
+        old.receiptNo != updated.receiptNo ||
+        old.status != updated.status ||
+        old.notes != updated.notes;
   }
 
   static const _uuid = Uuid();

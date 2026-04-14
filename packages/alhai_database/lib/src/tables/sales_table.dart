@@ -84,6 +84,9 @@ class SalesTable extends Table {
     const Constant('completed'),
   )(); // completed, voided, refunded
 
+  // Credit/Debit Note: reference to the original invoice being corrected
+  TextColumn get referenceInvoiceId => text().nullable()();
+
   // التواريخ
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime().nullable()();

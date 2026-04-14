@@ -136,6 +136,26 @@ class PushStrategy {
           // تحليل البيانات
           final payload = jsonDecode(item.payload) as Map<String, dynamic>;
 
+          // ZATCA append-only guard: reject UPDATE pushes on completed sales
+          if (_isAppendOnlyViolation(item.tableName_, item.operation, payload)) {
+            await _syncQueueDao.markAsFailed(
+              item.id,
+              'append_only_violation: cannot push UPDATE for '
+              '${item.tableName_} with status ${payload['status']}',
+            );
+            failedCount++;
+            errors.add(
+              '${item.tableName_}/${item.recordId}: append_only_violation',
+            );
+            if (kDebugMode) {
+              debugPrint(
+                'PushStrategy: append_only_violation — '
+                'blocked UPDATE on ${item.tableName_}/${item.recordId}',
+              );
+            }
+            continue;
+          }
+
           // تنفيذ العملية على السيرفر (with idempotency key & adaptive timeout)
           await _executeRemoteOperation(
             tableName: item.tableName_,
@@ -567,6 +587,26 @@ class PushStrategy {
 
   /// هل هذا جدول مقدس (لا يمكن فقدان بياناته)؟
   bool _isSacredTable(String tableName) => _sacredTables.contains(tableName);
+
+  /// ZATCA append-only: block UPDATE pushes on completed/paid/refunded sales.
+  static const _immutableStatuses = {'completed', 'paid', 'refunded'};
+
+  bool _isAppendOnlyViolation(
+    String tableName,
+    String operation,
+    Map<String, dynamic> payload,
+  ) {
+    if (operation.toUpperCase() != 'UPDATE') return false;
+    if (tableName != 'sales' && tableName != 'sale_items') return false;
+    final status = payload['status'] as String?;
+    // For sale_items, the status comes from the parent sale.  In the push
+    // queue payload, sale_items don't carry status themselves, so we only
+    // guard the sales table directly.
+    if (tableName == 'sales' && _immutableStatuses.contains(status)) {
+      return true;
+    }
+    return false;
+  }
 
   /// تنظيف الحقول المحلية قبل الإرسال
   Map<String, dynamic> _cleanPayload(

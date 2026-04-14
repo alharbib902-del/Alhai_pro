@@ -23,9 +23,7 @@ class SalesDaoManager {
       $$ShiftsTableTableTableManager(_db.attachedDatabase, _db.shiftsTable);
   $$CustomersTableTableTableManager get customersTable =>
       $$CustomersTableTableTableManager(
-        _db.attachedDatabase,
-        _db.customersTable,
-      );
+          _db.attachedDatabase, _db.customersTable);
   $$SalesTableTableTableManager get salesTable =>
       $$SalesTableTableTableManager(_db.attachedDatabase, _db.salesTable);
 }

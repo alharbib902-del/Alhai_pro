@@ -29,7 +29,7 @@ class StockDeltasDao extends DatabaseAccessor<AppDatabase>
     return into(stockDeltasTable).insert(
       StockDeltasTableCompanion.insert(
         id: id,
-        productId: productId,
+        productId: Value(productId),
         storeId: storeId,
         orgId: Value(orgId),
         quantityChange: quantityChange,
