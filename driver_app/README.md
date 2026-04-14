@@ -1,73 +1,182 @@
-# 📱 Driver App - Navigation Guide
+# Driver App / تطبيق المناديب
 
-**Version:** 1.0.0  
-**Date:** 2026-01-15  
-**Status:** 📝 Documentation Complete  
+Delivery driver application for Alhai grocery stores. Drivers use it to receive orders, navigate to delivery locations, capture delivery proof (photo + signature + code), track earnings, and communicate with customers via in-app chat with auto-translation.
+
+## Who Uses This / من يستخدمه
+
+Delivery drivers working for Alhai-powered grocery stores on iOS and Android.
+
+---
+
+## Prerequisites / المتطلبات
+
+| Tool | Version |
+|------|---------|
+| Flutter | >= 3.27 |
+| Dart | >= 3.6 |
+| Melos | latest (`dart pub global activate melos`) |
+| Google Maps API Key | Required for navigation / route features |
+
+---
+
+## Local Setup / الإعداد المحلي
+
+```bash
+# 1. Clone the repo and move to the root
+git clone <repo-url> && cd Alhai
+
+# 2. Install Melos globally
+dart pub global activate melos
+
+# 3. Bootstrap the monorepo
+melos bootstrap
+
+# 4. Set environment variables
+#    Required: SUPABASE_URL, SUPABASE_ANON_KEY
+#    Pass via --dart-define or .dart_define.env
+#    For maps: add your Google Maps API key in
+#      android/app/src/main/AndroidManifest.xml
+#      ios/Runner/AppDelegate.swift
+
+# 5. Run on a connected device or emulator
+cd driver_app
+flutter run
+```
+
+---
+
+## Build Commands / اوامر البناء
+
+```bash
+# Development (mobile emulator)
+flutter run
+
+# Production APK
+flutter build apk
+# or via Melos from repo root:
+melos run build:driver:apk
+
+# Production iOS
+flutter build ios
+```
+
+---
+
+## Environment Variables / متغيرات البيئة
+
+Pass these via `--dart-define` or a `.dart_define.env` file:
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `SUPABASE_URL` | Yes | Supabase project URL |
+| `SUPABASE_ANON_KEY` | Yes | Supabase anonymous key |
+| `SENTRY_DSN` | No | Sentry error-tracking DSN |
+
+Google Maps API key and Firebase config are set in platform-specific files.
+
+---
+
+## Project Structure / هيكل المشروع
+
+```
+driver_app/
+  lib/
+    core/           # App-level constants, config
+    di/             # Dependency injection (GetIt + Injectable)
+    features/       # Feature modules (deliveries, earnings, chat, etc.)
+    shared/         # Shared utilities, widgets
+    main.dart       # Entry point
+  test/             # Dart unit / widget tests
+  assets/
+    images/         # App images
+    icons/          # App icons
+```
+
+### Key Dependencies
+
+| Package | Purpose |
+|---------|---------|
+| `alhai_core` | Domain models, Supabase config |
+| `alhai_design_system` | Theme, tokens, shared widgets |
+| `flutter_riverpod` | State management |
+| `go_router` | Navigation / routing |
+| `supabase_flutter` | Backend connectivity, real-time |
+| `google_maps_flutter` | Map display, route visualization |
+| `geolocator` | GPS tracking |
+| `flutter_polyline_points` | Route polyline rendering |
+| `flutter_background_service` | Background location tracking |
+| `camera` | Delivery proof photos |
+| `signature` | Signature capture on delivery |
+| `firebase_messaging` | Push notifications for new orders |
+
+---
+
+## Code Generation / توليد الكود
+
+This app uses Injectable and Riverpod generators:
+
+```bash
+dart run build_runner build --delete-conflicting-outputs
+# or from repo root:
+melos run codegen
+```
+
+---
+
+## Running Tests / تشغيل الاختبارات
+
+```bash
+flutter test
+flutter test --coverage
+```
+
+---
+
+---
+
+# Driver App - Navigation Guide / دليل التنقل
+
 **Platform:** Mobile Only (iOS + Android)
 
 ---
 
-## 🎯 Overview
+## Overview / نظرة عامة
 
-**Driver App** = تطبيق احترافي للمناديب لإدارة التوصيلات والأرباح
+The Driver App is a professional application for delivery drivers to manage deliveries and earnings.
 
-### Quick Facts:
-- **Screens**: 18 شاشة
-- **Languages**: 6 (عربي، English, اردو, हिंदी, Indonesia, বাংলা)
+- **Screens**: 18
+- **Languages**: 6 (Arabic, English, Urdu, Hindi, Indonesian, Bengali)
 - **Integration**: admin_pos, customer_app, alhai_core
 - **Payment Models**: Salary, Commission, Hybrid
 
 ---
 
-## 📚 Documentation Structure
+## Documentation Structure / هيكل التوثيق
 
-### 🎯 Strategic Documents
-- [`DRIVER_VISION.md`](./DRIVER_VISION.md) - Product vision & goals
-- [`PRD_FINAL.md`](./PRD_FINAL.md) - Complete requirements (18 screens)
+### Strategic Documents
+- `DRIVER_VISION.md` - Product vision and goals
+- `PRD_FINAL.md` - Complete requirements (18 screens)
 
-### 🔧 Technical Documents
-- [`DRIVER_SPEC.md`](./DRIVER_SPEC.md) - Technical specifications
-- [`DRIVER_API_CONTRACT.md`](./DRIVER_API_CONTRACT.md) - API documentation
-- [`DRIVER_ARCHITECTURE.md`](./DRIVER_ARCHITECTURE.md) - System architecture
-- [`DRIVER_UX_WIREFRAMES.md`](./DRIVER_UX_WIREFRAMES.md) - UI/UX designs
+### Technical Documents
+- `DRIVER_SPEC.md` - Technical specifications
+- `DRIVER_API_CONTRACT.md` - API documentation
+- `DRIVER_ARCHITECTURE.md` - System architecture
+- `DRIVER_UX_WIREFRAMES.md` - UI/UX designs
 
-### 📋 Supporting Documents (steps/)
-- [`steps/VISION_AND_ANALYSIS.md`](./steps/VISION_AND_ANALYSIS.md) - Initial analysis
-- [`steps/SUMMARY.md`](./steps/SUMMARY.md) - Executive summary
-- [`steps/FINANCIAL_AND_OPERATIONS.md`](./steps/FINANCIAL_AND_OPERATIONS.md) - Operational details
-
-### ✅ Status
-- [`COMPLETE.md`](./COMPLETE.md) - Implementation checklist
+### Supporting Documents (steps/)
+- `steps/VISION_AND_ANALYSIS.md` - Initial analysis
+- `steps/SUMMARY.md` - Executive summary
+- `steps/FINANCIAL_AND_OPERATIONS.md` - Operational details
 
 ---
 
-## 🚀 Quick Start
-
-### For Product Managers:
-1. Read [`DRIVER_VISION.md`](./DRIVER_VISION.md)
-2. Review [`PRD_FINAL.md`](./PRD_FINAL.md)
-3. Check [`COMPLETE.md`](./COMPLETE.md)
-
-### For Developers:
-1. Read [`DRIVER_SPEC.md`](./DRIVER_SPEC.md)
-2. Study [`DRIVER_API_CONTRACT.md`](./DRIVER_API_CONTRACT.md)
-3. Review [`DRIVER_ARCHITECTURE.md`](./DRIVER_ARCHITECTURE.md)
-4. Reference `alhai_core` models
-
-### For Designers:
-1. Review [`DRIVER_UX_WIREFRAMES.md`](./DRIVER_UX_WIREFRAMES.md)
-2. Check [`PRD_FINAL.md`](./PRD_FINAL.md) screens
-3. Study design system in `alhai_design_system`
-
----
-
-## 🔗 Integration Points
+## Integration Points / نقاط التكامل
 
 ### With admin_pos:
 - Owner creates driver accounts
-- Assigns stores & shifts
+- Assigns stores and shifts
 - Sets payment models
-- Views live location & reports
+- Views live location and reports
 
 ### With customer_app:
 - Receives delivery orders
@@ -83,155 +192,57 @@
 
 ---
 
-## 🎯 Key Features
+## Key Features / الميزات الرئيسية
 
-### Must-Have (P0):
-✅ Multi-store support  
-✅ Accept/Reject orders with voice/text reasons  
-✅ GPS tracking & navigation  
-✅ Delivery proof (code + photo + signature)  
-✅ Multi-language (6 languages)  
-✅ In-app chat with auto-translation  
-✅ Commission/Salary system  
-✅ Daily/Weekly reports  
+### P0 (Must-Have):
+- Multi-store support
+- Accept/Reject orders with voice/text reasons
+- GPS tracking and navigation
+- Delivery proof (code + photo + signature)
+- Multi-language (6 languages)
+- In-app chat with auto-translation
+- Commission/Salary system
+- Daily/Weekly reports
 
-### Should-Have (P1):
-⭐ Shift management  
-⭐ AI-powered smart accept  
-⭐ Route optimization  
-⭐ Quick messages  
-⭐ Earnings breakdown  
-
-### Nice-to-Have (P2):
-💡 Gamification & leaderboards  
-💡 Smart incentives (peak hours, weather)  
-💡 Safety features (SOS button)  
-💡 Voice commands  
+### P1 (Should-Have):
+- Shift management
+- AI-powered smart accept
+- Route optimization
+- Quick messages
+- Earnings breakdown
 
 ---
 
-## 📊 Screens Breakdown
+## Screens Breakdown (18) / تقسيم الشاشات
 
-**Total: 18 screens**
-
-### Phase 1: Auth (3)
-1. Language Selection
-2. Login
-3. Profile Setup
-
-### Phase 2: Dashboard (4)
-4. Home Dashboard
-5. Active Deliveries
-6. Shift Schedule
-7. Earnings Summary
-
-### Phase 3: Orders (4)
-8. New Order
-9. Order Details
-10. Navigation/Map
-11. Delivery Proof
-
-### Phase 4: Communication (2)
-12. Chat
-13. Quick Messages
-
-### Phase 5: Reports (3)
-14. Daily Summary
-15. Weekly Report
-16. Monthly Earnings
-
-### Phase 6: Settings (2)
-17. Profile & Preferences
-18. Help & Support
+| Phase | Screens |
+|-------|---------|
+| Auth | Language Selection, Login, Profile Setup |
+| Dashboard | Home Dashboard, Active Deliveries, Shift Schedule, Earnings Summary |
+| Orders | New Order, Order Details, Navigation/Map, Delivery Proof |
+| Communication | Chat, Quick Messages |
+| Reports | Daily Summary, Weekly Report, Monthly Earnings |
+| Settings | Profile and Preferences, Help and Support |
 
 ---
 
-## 💰 Payment Models
+## Multi-Language Support / دعم متعدد اللغات
 
-### 1. Salary-Based:
-- Fixed monthly salary
-- Small bonus per delivery
+1. Arabic
+2. English
+3. Urdu
+4. Hindi
+5. Bahasa Indonesia
+6. Bengali
 
-### 2. Commission-Based:
-- Per-delivery commission
-- Incentive bonuses
-
-### 3. Hybrid (Recommended):
-- Base salary + commission
-- Performance bonuses
+Features: Auto-translation for chat, voice-to-text translation, RTL layout support.
 
 ---
 
-## 🌐 Multi-Language Support
+## Payment Models / نماذج الدفع
 
-### Supported Languages:
-1. 🇸🇦 العربية (Arabic)
-2. 🇬🇧 English
-3. 🇵🇰 اردو (Urdu)
-4. 🇮🇳 हिंदी (Hindi)
-5. 🇮🇩 Bahasa Indonesia
-6. 🇧🇩 বাংলা (Bengali)
-
-### Features:
-- Auto-translation for chat
-- Voice-to-text translation
-- RTL layout support
-- Localized UI
-
----
-
-## 📅 Development Roadmap
-
-### Q1 2026: MVP
-- 12 core screens (P0)
-- iOS + Android
-- Basic features
-
-### Q2 2026: Enhanced
-- 18 screens (P0 + P1)
-- Full translation
-- Advanced features
-
-### Q3 2026: Pro
-- P2 features
-- Gamification
-- Wearables
-
----
-
-## 🔧 Tech Stack
-
-### Mobile:
-- Flutter
-- Dart 3.x
-
-### Backend:
-- Supabase (shared with other apps)
-- PostgreSQL
-- Real-time subscriptions
-
-### Maps & Navigation:
-- Google Maps API
-- Directions API
-
-### Translation:
-- Google Cloud Translation
-- Azure Cognitive Services
-
-### Storage:
-- Cloudflare R2 (photos, signatures)
-
----
-
-## 📞 Support
-
-For questions or clarifications, refer to:
-- Product: [`PRD_FINAL.md`](./PRD_FINAL.md)
-- Technical: [`DRIVER_SPEC.md`](./DRIVER_SPEC.md)
-- APIs: [`DRIVER_API_CONTRACT.md`](./DRIVER_API_CONTRACT.md)
-
----
-
-**📅 Last Updated**: 2026-01-15  
-**✅ Status**: Documentation Complete  
-**🎯 Next**: Development Phase
+| Model | Description |
+|-------|-------------|
+| Salary-Based | Fixed monthly salary + small per-delivery bonus |
+| Commission-Based | Per-delivery commission + incentive bonuses |
+| Hybrid | Base salary + commission + performance bonuses |

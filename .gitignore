@@ -5,7 +5,11 @@
 **/.packages
 **/.pub-cache/
 **/.pub/
-**/pubspec.lock
+# Package lock files (packages only - app locks ARE committed)
+packages/*/pubspec.lock
+alhai_core/pubspec.lock
+alhai_design_system/pubspec.lock
+alhai_services/pubspec.lock
 .idea/
 .vscode/
 *.iml
@@ -45,3 +49,16 @@ supabase/dump_err.txt
 supabase/full_dump.sql
 supabase/openapi_spec.json
 supabase/schema_summary.json
+
+# Android signing
+*.keystore
+*.jks
+key.properties
+
+# Firebase config
+google-services.json
+GoogleService-Info.plist
+
+# Environment
+.env.production
+.env.staging

@@ -1,200 +1,137 @@
-# 👑 Super Admin - Navigation Guide
+# Super Admin / المشرف العام
 
-**Version:** 1.0.0  
-**Date:** 2026-01-15  
-**Status:** 📝 Documentation Complete  
-**Platform:** Web (Desktop Browser)
+Platform-level super admin dashboard for complete control over the entire Alhai ecosystem. Manages all stores, users, subscriptions, commissions, feature flags, system health, and provides advanced analytics with AI insights.
 
----
+## Who Uses This / من يستخدمه
 
-## 🎯 Overview
-
-**Super Admin** = Platform management dashboard for complete control over Alhai ecosystem
-
-### Quick Facts:
-- **Screens**: 45 شاشة
-- **Platform**: Web only (Desktop)
-- **User**: You (Platform owner)
-- **Access**: God mode - see & control everything
+The platform owner and operations team who oversee all Alhai-powered stores. Web-only, designed for desktop browsers.
 
 ---
 
-## 📚 Documentation Structure
+## Prerequisites / المتطلبات
 
-### 🎯 Strategic Documents
-- [`SUPER_ADMIN_VISION.md`](./SUPER_ADMIN_VISION.md) - Complete vision & scenarios
-- [`PRD_FINAL.md`](./PRD_FINAL.md) - Full requirements (45 screens)
-
-### 🔧 Technical Documents
-- [`SUPER_ADMIN_SPEC.md`](./SUPER_ADMIN_SPEC.md) - Technical specs
-- [`SUPER_ADMIN_API_CONTRACT.md`](./SUPER_ADMIN_API_CONTRACT.md) - API docs
-- [`SUPER_ADMIN_ARCHITECTURE.md`](./SUPER_ADMIN_ARCHITECTURE.md) - System architecture
-
-### 📋 Supporting Documents (steps/)
-- [`steps/VISION_AND_ANALYSIS.md`](./steps/VISION_AND_ANALYSIS.md) - Analysis
-- [`steps/SUMMARY.md`](./steps/SUMMARY.md) - Executive summary
-- [`steps/FINANCIAL_AND_OPERATIONS.md`](./steps/FINANCIAL_AND_OPERATIONS.md) - Operations
+| Tool | Version |
+|------|---------|
+| Flutter | >= 3.27 |
+| Dart | >= 3.6 |
+| Melos | latest (`dart pub global activate melos`) |
 
 ---
 
-## 🎯 What You Control
+## Local Setup / الإعداد المحلي
 
-### Platform-Wide:
-```
-✅ 150 stores
-✅ 5,420 users (all types)
-✅ 1,250 orders/day
-✅ 66,358 ر.س/month revenue
-✅ All subscriptions
-✅ All commissions
-✅ System health
-✅ Feature flags
-```
+```bash
+# 1. Clone the repo and move to the root
+git clone <repo-url> && cd Alhai
 
-### Key Capabilities:
-- **God View Dashboard**: See everything real-time
-- **Impersonate**: Login as any user
-- **One-Click Actions**: Suspend, refund, message all
-- **Financial Intelligence**: MRR, ARR, LTV, churn
-- **AI Insights**: Fraud detection, predictions
-- **Complete Audit Trail**: Every action logged
+# 2. Install Melos globally
+dart pub global activate melos
 
----
+# 3. Bootstrap the monorepo
+melos bootstrap
 
-## 📱 Screens Breakdown (45)
+# 4. Set environment variables
+#    Required: SUPABASE_URL, SUPABASE_ANON_KEY
+#    Pass via --dart-define or .dart_define.env
 
-### Core Dashboard (12):
-1. Main Dashboard (God View)
-2. Platform Analytics
-3. Real-time Map
-4. Revenue Dashboard
-5. Subscriptions Management
-6. Stores Directory
-7. Store Details
-8. Users Directory
-9. User Profile
-10. Alerts & Notifications
-11. System Health Monitor
-12. Quick Actions Panel
-
-### Management (10):
-13. Marketers Management
-14. Stores Approval Queue
-15. Subscription Plans Editor
-16. Payment Management
-17. Commission Calculator
-18. Promotions & Discounts
-19. Feature Flags
-20. Content Management
-21. Roles & Permissions
-22. API Keys Management
-
-### Support (8):
-23. Support Tickets Dashboard
-24. Ticket Details
-25. Live Chat
-26. System Logs
-27. Database Monitor
-28. API Usage Dashboard
-29. Security Dashboard
-30. Backup & Recovery
-
-### Analytics (10):
-31. Executive Dashboard
-32. Cohort Analysis
-33. Funnel Analysis
-34. Geographic Analytics
-35. Product Analytics
-36. Driver Performance
-37. Store Comparison
-38. Financial Reports
-39. Custom Reports Builder
-40. Export Center
-
-### Advanced (5):
-41. AI Insights
-42. Automation Rules
-43. Integrations Hub
-44. Experiments Dashboard
-45. Platform Settings
-
----
-
-## 💰 Revenue Overview
-
-### Monthly Revenue: 66,358 ر.س
-```
-Subscriptions:
-├── Basic (49 ر.س): 50 stores = 2,450
-├── Pro (499 ر.س): 80 stores = 39,920
-└── Enterprise (1,999 ر.س): 12 stores = 23,988
-
-Costs: ~23,150 ر.س/month
-Net Profit: 43,208 ر.س/month
-Annual: ~518,496 ر.س
+# 5. Run the app (web only)
+cd super_admin
+flutter run -d chrome
 ```
 
 ---
 
-## 🔗 Integration Points
+## Build Commands / اوامر البناء
 
-### Manages:
-- **admin_pos**: All owner accounts & stores
-- **admin_pos_lite**: All mobile sessions
+This is a web-only app. The build uses `--no-tree-shake-icons` for dynamic icon references across 45 screens.
+
+```bash
+# Development (web)
+flutter run -d chrome
+
+# Production Web
+flutter build web --no-tree-shake-icons
+# or via Melos from repo root:
+melos run build:super-admin:web
+```
+
+---
+
+## Environment Variables / متغيرات البيئة
+
+Pass these via `--dart-define` or a `.dart_define.env` file:
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `SUPABASE_URL` | Yes | Supabase project URL |
+| `SUPABASE_ANON_KEY` | Yes | Supabase anonymous key |
+| `SENTRY_DSN` | No | Sentry error-tracking DSN |
+
+---
+
+## Project Structure / هيكل المشروع
+
+```
+super_admin/
+  lib/
+    core/           # App-level constants, config
+    data/           # Data layer, repositories
+    di/             # Dependency injection (GetIt + Injectable)
+    providers/      # Riverpod providers
+    screens/        # All dashboard screens (45 total)
+    ui/             # Admin-specific UI components
+    main.dart       # Entry point
+  test/             # Dart unit / widget tests
+  assets/
+    images/         # App images
+    icons/          # App icons
+```
+
+### Key Dependencies
+
+| Package | Purpose |
+|---------|---------|
+| `alhai_core` | Domain models, Supabase config |
+| `alhai_design_system` | Theme, tokens, shared widgets |
+| `alhai_auth` | Authentication, secure storage |
+| `alhai_l10n` | Localization |
+| `flutter_riverpod` | State management |
+| `go_router` | Navigation / routing |
+| `supabase_flutter` | Backend connectivity |
+| `fl_chart` | Charts for analytics dashboards |
+| `data_table_2` | Advanced data tables |
+
+Note: This project uses `fl_chart` (MIT license) for all charting. Do not add Syncfusion -- see the license policy comment in `pubspec.yaml`.
+
+---
+
+## Screens Overview (45) / نظرة على الشاشات
+
+| Category | Count | Examples |
+|----------|-------|---------|
+| Core Dashboard | 12 | God View, Platform Analytics, Real-time Map, Revenue Dashboard |
+| Management | 10 | Stores Approval Queue, Subscription Plans, Feature Flags, Roles |
+| Support | 8 | Support Tickets, System Logs, Database Monitor, Security Dashboard |
+| Analytics | 10 | Cohort Analysis, Funnel Analysis, Geographic Analytics, Custom Reports |
+| Advanced | 5 | AI Insights, Automation Rules, Integrations Hub, Experiments |
+
+---
+
+## Integration Points / نقاط التكامل
+
+This dashboard manages all other apps in the ecosystem:
+- **admin**: All owner accounts and stores
+- **admin_lite**: Mobile session monitoring
 - **customer_app**: Platform metrics
 - **driver_app**: Driver performance
 - **cashier**: Cashier activity
-
-### Controls:
-- Subscriptions (all plans)
-- Payments (incoming/outgoing)
-- Commissions (marketers)
-- Feature rollouts
-- System maintenance
+- **distributor_portal**: Distributor approvals, platform fees
 
 ---
 
-## 🚀 Development Timeline
+## Running Tests / تشغيل الاختبارات
 
-**Total**: 12 weeks (3 months)
-
-### Phase 1: Core (4 weeks)
-- Infrastructure & auth
-- Main dashboard
-- Basic management
-
-### Phase 2: Management (4 weeks)
-- Full CRUD operations
-- Payment system
-- Support tools
-
-### Phase 3: Analytics (3 weeks)
-- Advanced reports
-- AI insights
-- Custom dashboards
-
-### Phase 4: Polish (1 week)
-- Performance optimization
-- Security audit
-- Launch
-
----
-
-## 📊 Key Metrics
-
-### Business Health:
-- MRR growth: +15%/month
-- Churn rate: <5%
-- Platform uptime: >99.9%
-
-### Your KPIs:
-- Active stores: 150
-- Monthly revenue: 66K ر.س
-- Net profit margin: 65%
-- Customer LTV: ~12,000 ر.س
-
----
-
-**📅 Last Updated**: 2026-01-15  
-**✅ Status**: Ready to Build  
-**🎯 Next**: Development Phase
+```bash
+flutter test
+flutter test --coverage
+```

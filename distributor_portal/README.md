@@ -1,116 +1,129 @@
-# 🏢 Distributor Portal - Navigation Guide
+# Distributor Portal / بوابة الموزعين
 
-**Version:** 1.0.0  
-**Date:** 2026-01-15  
-**Status:** 📝 Planning Complete  
-**Platform:** Web (Desktop Browser)
+B2B web portal for wholesalers and distributors to sell products to Alhai-powered grocery stores. Distributors manage their product catalogs, wholesale pricing, orders, invoices, and delivery scheduling through a desktop browser interface.
 
----
+## Who Uses This / من يستخدمه
 
-## 🎯 Overview
-
-**Distributor Portal** = B2B platform for wholesalers to sell to grocery stores
-
-### Quick Facts:
-- **Screens**: 25 شاشة
-- **Platform**: Web Desktop
-- **Users**: Distributors/Wholesalers
-- **Purpose**: Manage wholesale business
+Wholesalers and distributors who supply products to grocery stores on the Alhai platform. Web-only, designed for desktop browsers.
 
 ---
 
-## 📚 Key Features
+## Prerequisites / المتطلبات
 
-### Must-Have (P0):
-1. ✅ Distributor registration
-2. ✅ Product catalog management
-3. ✅ Wholesale pricing
-4. ✅ Order management
-5. ✅ Invoice generation
-6. ✅ Payment tracking
-7. ✅ Analytics dashboard
-
-### Should-Have (P1):
-8. ✅ Bulk offers creation
-9. ✅ Store directory
-10. ✅ Inventory tracking
-11. ✅ Delivery scheduling
-
-### Nice-to-Have (P2):
-12. ⭐ AI pricing suggestions
-13. ⭐ Sales forecasting
+| Tool | Version |
+|------|---------|
+| Flutter | >= 3.27 |
+| Dart | >= 3.6 |
+| Melos | latest (`dart pub global activate melos`) |
 
 ---
 
-## 📱 Screens (25)
+## Local Setup / الإعداد المحلي
 
-### Core (8):
-1. Login
-2. Dashboard
-3. Product Catalog
-4. Add Product
-5. Edit Product
-6. Orders List
-7. Order Details
-8. Analytics
+```bash
+# 1. Clone the repo and move to the root
+git clone <repo-url> && cd Alhai
 
-### Management (7):
-9. Create Bulk Offer
-10. Offers List
-11. Stores Directory
-12. Store Details
-13. Inventory
-14. Pricing Tiers
-15. Categories
+# 2. Install Melos globally
+dart pub global activate melos
 
-### Finance (5):
-16. Invoices
-17. Invoice Details
-18. Payments
-19. Payment Details
-20. Financial Reports
+# 3. Bootstrap the monorepo
+melos bootstrap
 
-### Settings (5):
-21. Company Profile
-22. Team Members
-23. Delivery Zones
-24. Notifications
-25. Help & Support
+# 4. Set environment variables
+#    Required: SUPABASE_URL, SUPABASE_ANON_KEY
+#    Pass via --dart-define or .dart_define.env
+
+# 5. Run the app (web only)
+cd distributor_portal
+flutter run -d chrome
+```
 
 ---
 
-## 🔗 Integration
+## Build Commands / اوامر البناء
 
-### With super_admin:
-- Approval process
-- Platform fees
-- Featured listings
+This is a web-only app. The build uses `--no-tree-shake-icons` for dynamic icon references.
 
-### With admin_pos:
-- Receive wholesale orders
-- Update order status
-- Send invoices
+```bash
+# Development (web)
+flutter run -d chrome
 
-### With cashier:
-- Delivery confirmation
-- Split payment processing
+# Production Web
+flutter build web --no-tree-shake-icons
+# or via Melos from repo root:
+melos run build:distributor:web
+```
 
 ---
 
-## 💰 Revenue Model
+## Environment Variables / متغيرات البيئة
 
-### For Platform:
-- 2% transaction fee
-- Featured listings: 500 ر.س/month
-- Premium tier: 1,000 ر.س/month
+Pass these via `--dart-define` or a `.dart_define.env` file:
 
-### For Distributor:
-- Reach 150+ stores
-- Online automation
-- Reduced manual work
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `SUPABASE_URL` | Yes | Supabase project URL |
+| `SUPABASE_ANON_KEY` | Yes | Supabase anonymous key |
+| `SENTRY_DSN` | No | Sentry error-tracking DSN |
 
 ---
 
-**📅 Last Updated**: 2026-01-15  
-**✅ Status**: Ready to Build  
-**🎯 Development**: 6 weeks
+## Project Structure / هيكل المشروع
+
+```
+distributor_portal/
+  lib/
+    core/           # App-level constants, config
+    data/           # Data layer, repositories
+    di/             # Dependency injection (GetIt + Injectable)
+    providers/      # Riverpod providers
+    screens/        # All portal screens (25 total)
+    ui/             # Portal-specific UI components
+    main.dart       # Entry point
+  test/             # Dart unit / widget tests
+  assets/
+    images/         # App images
+    icons/          # App icons
+```
+
+### Key Dependencies
+
+| Package | Purpose |
+|---------|---------|
+| `alhai_core` | Domain models, Supabase config |
+| `alhai_design_system` | Theme, tokens, shared widgets |
+| `alhai_l10n` | Localization |
+| `flutter_riverpod` | State management |
+| `go_router` | Navigation / routing |
+| `supabase_flutter` | Backend connectivity |
+| `fl_chart` | Charts for analytics dashboard |
+| `web` | Web platform interop |
+
+---
+
+## Screens Overview (25) / نظرة على الشاشات
+
+| Category | Screens |
+|----------|---------|
+| Core (8) | Login, Dashboard, Product Catalog, Add/Edit Product, Orders List, Order Details, Analytics |
+| Management (7) | Bulk Offers, Offers List, Stores Directory, Store Details, Inventory, Pricing Tiers, Categories |
+| Finance (5) | Invoices, Invoice Details, Payments, Payment Details, Financial Reports |
+| Settings (5) | Company Profile, Team Members, Delivery Zones, Notifications, Help and Support |
+
+---
+
+## Integration Points / نقاط التكامل
+
+- **super_admin**: Approval process, platform fees, featured listings
+- **admin_pos**: Receive wholesale orders, update order status, send invoices
+- **cashier**: Delivery confirmation, split payment processing
+
+---
+
+## Running Tests / تشغيل الاختبارات
+
+```bash
+flutter test
+flutter test --coverage
+```

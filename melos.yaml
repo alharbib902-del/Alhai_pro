@@ -70,7 +70,7 @@ scripts:
     description: Build Cashier APK
 
   build:admin:web:
-    run: melos exec --scope="admin" -- flutter build web
+    run: melos exec --scope="admin" -- flutter build web --no-tree-shake-icons
     description: Build Admin Web
 
   build:lite:apk:
