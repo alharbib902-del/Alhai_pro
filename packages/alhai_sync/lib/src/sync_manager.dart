@@ -9,6 +9,13 @@ import 'pull_sync_service.dart';
 import 'sync_service.dart';
 import 'org_sync_service.dart';
 
+// Top-level functions for compute() — closures are not supported.
+Map<String, dynamic> _decodeJsonPayload(String raw) =>
+    jsonDecode(raw) as Map<String, dynamic>;
+
+/// Threshold in bytes above which JSON decode is offloaded to an isolate.
+const _isolateThresholdBytes = 50 * 1024; // 50 KB
+
 /// Simple async mutex to prevent concurrent sync operations
 class _SyncMutex {
   Completer<void>? _completer;
@@ -337,6 +344,7 @@ class SyncManager {
     int failedCount = 0;
     final errors = <String>[];
 
+    final cycleSw = Stopwatch()..start();
     try {
       final pendingItems = await _syncService.getPendingItems();
 
@@ -382,7 +390,13 @@ class SyncManager {
         try {
           await _syncService.markAsSyncing(item.id);
 
-          final payload = jsonDecode(item.payload) as Map<String, dynamic>;
+          // Offload JSON decode to isolate for large payloads
+          final Map<String, dynamic> payload;
+          if (item.payload.length > _isolateThresholdBytes) {
+            payload = await compute(_decodeJsonPayload, item.payload);
+          } else {
+            payload = jsonDecode(item.payload) as Map<String, dynamic>;
+          }
 
           // توجيه جداول المؤسسة لخدمة مزامنة المؤسسة
           bool didSync = false;
@@ -528,11 +542,21 @@ class SyncManager {
         }
       }
     } finally {
+      cycleSw.stop();
       _isSyncing = false;
       _syncMutex.release();
       _statusController.add(
         errors.isNotEmpty ? SyncStatus.error : SyncStatus.idle,
       );
+      if (kDebugMode) {
+        final ms = cycleSw.elapsedMilliseconds;
+        debugPrint('[SyncManager] ⏱ Push cycle completed in ${ms}ms');
+        if (ms > 3000) {
+          debugPrint(
+            '[SyncManager] ⚠️ Push cycle exceeded 3s — review sync performance',
+          );
+        }
+      }
     }
 
     return SyncResult(

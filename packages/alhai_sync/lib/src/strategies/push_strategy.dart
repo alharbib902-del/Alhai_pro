@@ -44,6 +44,13 @@ import '../org_sync_service.dart';
 import '../sync_api_service.dart';
 import '../sync_payload_utils.dart';
 
+/// Threshold above which JSON decode is offloaded to a background isolate.
+const _isolateThresholdBytes = 50 * 1024; // 50 KB
+
+/// Top-level function for compute() — closures are not supported.
+Map<String, dynamic> _decodePayload(String raw) =>
+    jsonDecode(raw) as Map<String, dynamic>;
+
 /// استراتيجية الدفع (Push): المحلي ← السيرفر
 /// تُستخدم للبيانات التي تُنشأ محلياً: المبيعات، عناصر المبيعات، الطلبات، حركات النقد، سجل المراجعة
 ///
@@ -133,8 +140,13 @@ class PushStrategy {
           // تعيين كـ "جاري المزامنة"
           await _syncQueueDao.markAsSyncing(item.id);
 
-          // تحليل البيانات
-          final payload = jsonDecode(item.payload) as Map<String, dynamic>;
+          // تحليل البيانات — offload large payloads to isolate
+          final Map<String, dynamic> payload;
+          if (item.payload.length > _isolateThresholdBytes) {
+            payload = await compute(_decodePayload, item.payload);
+          } else {
+            payload = jsonDecode(item.payload) as Map<String, dynamic>;
+          }
 
           // ZATCA append-only guard: reject UPDATE pushes on completed sales
           if (_isAppendOnlyViolation(item.tableName_, item.operation, payload)) {
