@@ -132,6 +132,33 @@ class InventoryDao extends DatabaseAccessor<AppDatabase>
     );
   }
 
+  /// إدراج حركة إرجاع جزئي (استعادة المخزون)
+  Future<int> recordReturnMovement({
+    required String id,
+    required String productId,
+    required String storeId,
+    required double qty,
+    required double previousQty,
+    required String returnId,
+    String? userId,
+  }) {
+    return insertMovement(
+      InventoryMovementsTableCompanion.insert(
+        id: id,
+        productId: productId,
+        storeId: storeId,
+        type: 'return',
+        qty: qty, // positive = restock
+        previousQty: previousQty,
+        newQty: previousQty + qty,
+        referenceType: const Value('return'),
+        referenceId: Value(returnId),
+        userId: Value(userId),
+        createdAt: DateTime.now(),
+      ),
+    );
+  }
+
   /// إدراج حركة تعديل
   Future<int> recordAdjustment({
     required String id,
