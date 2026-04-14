@@ -15,14 +15,10 @@ class DiscountsDaoManager {
   DiscountsDaoManager(this._db);
   $$DiscountsTableTableTableManager get discountsTable =>
       $$DiscountsTableTableTableManager(
-        _db.attachedDatabase,
-        _db.discountsTable,
-      );
+          _db.attachedDatabase, _db.discountsTable);
   $$CouponsTableTableTableManager get couponsTable =>
       $$CouponsTableTableTableManager(_db.attachedDatabase, _db.couponsTable);
   $$PromotionsTableTableTableManager get promotionsTable =>
       $$PromotionsTableTableTableManager(
-        _db.attachedDatabase,
-        _db.promotionsTable,
-      );
+          _db.attachedDatabase, _db.promotionsTable);
 }

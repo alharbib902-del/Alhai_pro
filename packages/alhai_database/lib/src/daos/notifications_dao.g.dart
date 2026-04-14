@@ -14,7 +14,5 @@ class NotificationsDaoManager {
   NotificationsDaoManager(this._db);
   $$NotificationsTableTableTableManager get notificationsTable =>
       $$NotificationsTableTableTableManager(
-        _db.attachedDatabase,
-        _db.notificationsTable,
-      );
+          _db.attachedDatabase, _db.notificationsTable);
 }

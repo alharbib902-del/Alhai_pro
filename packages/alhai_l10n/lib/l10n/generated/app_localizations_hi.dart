@@ -5760,10 +5760,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String aiAssociationFrequency(
-    String productA,
-    String productB,
-    int frequency,
-  ) {
+      String productA, String productB, int frequency) {
     return '$productA + $productB: $frequency बार दोहराया गया';
   }
 
@@ -10050,10 +10047,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String templateVariablesHint(
-    Object customer_name,
-    Object store_name,
-    Object total,
-  ) {
+      Object customer_name, Object store_name, Object total) {
     return 'Use $store_name $customer_name $total as variables';
   }
 
@@ -13113,11 +13107,7 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String confirmInterestMessage(
-    String rate,
-    int count,
-    String amount,
-    String currency,
-  ) {
+      String rate, int count, String amount, String currency) {
     return 'Apply $rate% interest to $count accounts?\nTotal interest: $amount $currency';
   }
 

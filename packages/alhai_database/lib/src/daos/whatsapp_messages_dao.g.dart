@@ -14,7 +14,5 @@ class WhatsAppMessagesDaoManager {
   WhatsAppMessagesDaoManager(this._db);
   $$WhatsAppMessagesTableTableTableManager get whatsAppMessagesTable =>
       $$WhatsAppMessagesTableTableTableManager(
-        _db.attachedDatabase,
-        _db.whatsAppMessagesTable,
-      );
+          _db.attachedDatabase, _db.whatsAppMessagesTable);
 }

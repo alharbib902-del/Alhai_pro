@@ -14,7 +14,5 @@ class StockTransfersDaoManager {
   StockTransfersDaoManager(this._db);
   $$StockTransfersTableTableTableManager get stockTransfersTable =>
       $$StockTransfersTableTableTableManager(
-        _db.attachedDatabase,
-        _db.stockTransfersTable,
-      );
+          _db.attachedDatabase, _db.stockTransfersTable);
 }
