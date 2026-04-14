@@ -1,3 +1,4 @@
+import 'package:alhai_core/alhai_core.dart' show MigrationFailedException;
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 
@@ -152,11 +153,24 @@ class AppDatabase extends _$AppDatabase {
       );
     },
     onUpgrade: (Migrator m, int from, int to) async {
+      // Downgrade guard: reject going backwards
+      if (from > to) {
+        debugPrint(
+          '[Migration] CRITICAL: downgrade attempt v$from -> v$to blocked',
+        );
+        throw UnsupportedError(
+          'Database downgrade from v$from to v$to is not supported. '
+          'This indicates an app rollback on a newer database schema.',
+        );
+      }
+
       final migrationStartTime = DateTime.now();
 
       // نسخ احتياطي تلقائي قبل أي ترحيل للـ schema
+      String? backupId;
       try {
-        await backupService.createPreMigrationBackup(from);
+        final info = await backupService.createPreMigrationBackup(from);
+        backupId = info.id;
       } catch (e) {
         // لا نمنع الترحيل إذا فشل النسخ الاحتياطي
         debugPrint('[Backup] Pre-migration backup failed: $e');
@@ -207,14 +221,23 @@ class AppDatabase extends _$AppDatabase {
               .inMilliseconds;
           debugPrint('[Migration] v$version FAILED (${stepDuration}ms): $e');
           debugPrint('[Migration] Stack trace: $stackTrace');
+          debugPrint(
+            '[Migration] Pre-migration backup available: $backupId',
+          );
           await _recordMigrationHistory(
             version: version,
             durationMs: stepDuration,
             success: false,
             errorMessage: e.toString(),
           );
-          // إعادة رمي الخطأ ليتم التراجع عن الهجرة بواسطة Drift
-          rethrow;
+          // Wrap with MigrationFailedException so callers know about
+          // the backup they can use for recovery.
+          throw MigrationFailedException(
+            fromVersion: from,
+            toVersion: to,
+            backupPath: backupId,
+            originalError: e,
+          );
         }
       }
 

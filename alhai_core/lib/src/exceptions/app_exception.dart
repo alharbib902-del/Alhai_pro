@@ -45,6 +45,25 @@ class AppendOnlyViolationException extends AppException {
       : super(statusCode: 409);
 }
 
+/// Migration failure with backup path for recovery.
+class MigrationFailedException extends AppException {
+  final int fromVersion;
+  final int toVersion;
+  final String? backupPath;
+  final Object? originalError;
+
+  const MigrationFailedException({
+    required this.fromVersion,
+    required this.toVersion,
+    this.backupPath,
+    this.originalError,
+  }) : super(
+         'Database migration from v$fromVersion to v$toVersion failed. '
+         'Backup available at: $backupPath',
+         code: 'MIGRATION_FAILED',
+       );
+}
+
 /// Unknown/unexpected errors (fallback)
 class UnknownException extends AppException {
   final Object? cause;
