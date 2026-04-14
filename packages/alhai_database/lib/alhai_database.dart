@@ -36,6 +36,7 @@ export 'src/constants/retention_policy.dart';
 export 'src/services/database_backup_service.dart';
 export 'src/services/data_validator.dart';
 export 'src/services/db_health_service.dart';
+export 'src/services/storage_monitor.dart';
 
 // Repositories (shared local implementations)
 export 'src/repositories/local_products_repository.dart';
