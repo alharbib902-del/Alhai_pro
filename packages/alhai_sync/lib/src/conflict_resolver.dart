@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:alhai_database/alhai_database.dart';
 
 /// Types of sync conflicts that can occur between local and server data
@@ -589,9 +590,36 @@ class ConflictResolver {
     if (conflict == null) return;
 
     if (strategy == ResolutionStrategy.serverWins) {
-      // Apply server data locally
+      // Apply server data locally — whitelist columns from schema
       final serverData = jsonDecode(conflict.payload) as Map<String, dynamic>;
-      final columns = serverData.keys.toList();
+      final rawColumns = serverData.keys.toList();
+
+      // Build a whitelist from the Drift schema for this table
+      final allowedColumns = _getAllowedColumns(db, conflict.tableName_);
+
+      final List<String> columns;
+      if (allowedColumns != null) {
+        final rejected =
+            rawColumns.where((c) => !allowedColumns.contains(c)).toList();
+        if (rejected.isNotEmpty) {
+          if (kDebugMode) {
+            debugPrint(
+              '[ConflictResolver] SECURITY: rejected columns for '
+              '${conflict.tableName_}: $rejected',
+            );
+          }
+        }
+        columns = rawColumns.where((c) => allowedColumns.contains(c)).toList();
+      } else {
+        columns = rawColumns;
+      }
+
+      if (columns.isEmpty) {
+        // All columns were rejected — nothing to upsert
+        await syncQueueDao.markAsResolved(conflictId);
+        return;
+      }
+
       final placeholders = columns.map((_) => '?').join(', ');
       final updates = columns
           .where((c) => c != 'id')
@@ -608,5 +636,16 @@ class ConflictResolver {
     // localWins = just mark as resolved (local data is already correct)
 
     await syncQueueDao.markAsResolved(conflictId);
+  }
+
+  /// Returns the set of allowed column names for [tableName] from the Drift
+  /// schema, or `null` if the table is not registered.
+  static Set<String>? _getAllowedColumns(AppDatabase db, String tableName) {
+    for (final table in db.allTables) {
+      if (table.actualTableName == tableName) {
+        return table.$columns.map((c) => c.name).toSet();
+      }
+    }
+    return null;
   }
 }
