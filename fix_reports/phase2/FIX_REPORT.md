@@ -10,15 +10,15 @@
 
 | # | Fix | Severity | Status | Commit |
 |---|-----|----------|--------|--------|
-| 1 | Audit log retention → 6 years | CRITICAL | Done | `944d7ec` |
-| 2 | ZATCA SignaturePolicyIdentifier | CRITICAL | Done | `d934352` |
-| 3 | CountrySubentity in PostalAddress | HIGH | Done | `1873cdc` |
-| 4 | Built-in ZATCA invoice XML validator | HIGH | Done | `652e17c` |
-| 5 | Inventory restock on returns | HIGH | Done | `118b795` |
-| 6 | Proactive storage monitoring | HIGH | Done | `03a2f4b` |
-| 7 | Sales retention policy (6-year) | HIGH | Done | `894e520` |
+| 1 | Audit log retention → 6 years | CRITICAL | ✅ Done | `944d7ec` |
+| 2 | ZATCA SignaturePolicyIdentifier | CRITICAL | ❌ REVERTED (false positive) | `d934352` → `b130a4f` |
+| 3 | CountrySubentity in PostalAddress | HIGH | ✅ Done | `1873cdc` |
+| 4 | Built-in ZATCA invoice XML validator | HIGH | ✅ Done | `652e17c` |
+| 5 | Inventory restock on returns | HIGH | ✅ Done | `118b795` |
+| 6 | Proactive storage monitoring | HIGH | ✅ Done | `03a2f4b` |
+| 7 | Sales retention policy (6-year) | HIGH | ✅ Done | `894e520` |
 
-**All 7 fixes implemented, tested, and committed. Zero regressions.**
+**Net: 6 fixes applied, 1 reverted, 0 regressions.**
 
 ---
 
@@ -40,21 +40,27 @@
 
 ---
 
-## Fix #2 — ZATCA SignaturePolicyIdentifier (CRITICAL)
+## Fix #2 — ZATCA SignaturePolicyIdentifier (CRITICAL) — ❌ REVERTED
 
-**Problem:** XAdES signed properties lacked `<SignaturePolicyIdentifier>` — ZATCA Phase 2 rejects invoices without it.
+**Original problem (now known to be false):** XAdES signed properties lacked `<SignaturePolicyIdentifier>` — originally believed to be required by ZATCA Phase 2.
 
-**Files changed:**
-- `packages/alhai_zatca/lib/src/signing/xades_signer.dart` — added SignaturePolicyIdentifier block after SigningCertificate
+**Reason for revert:**
+Fix #2 was reverted after discovering that ZATCA SDK does NOT use this element, despite it being listed in the Security Features Implementation Standards v1.2 (section 2.3.3) with cardinality 1.
 
-**Policy values:**
-- URN: `urn:oid:1.2.250.1.97.1.0.1`
-- Hash: `7HQYrNh3yBlEcaPBPHHbQT0CdfqcQbNgZ8gpccgi3Hk=` (SHA-256)
+**Evidence:**
+- ZATCA SDK actual samples (per ZATCA staff MAl-tamimi on zatca1.discourse.group)
+- Saleh7/php-zatca-xml (production-tested March 2026)
+- wes4m/zatca-xml-js
+- SallaApp/ZATCA
 
-**Tests:** 6 tests in `test/signing/xades_signature_policy_test.dart`
-- Verifies element presence, URN, hash value, correct order (after SigningCertificate), description text
+**Original URN issue:**
+The URN value `urn:oid:1.2.250.1.97.1.0.1` was incorrect — it's a French ANSSI OID (1.2.250 = France), not a Saudi ZATCA OID. ZATCA does not publish any signature policy URN.
 
-**Side effects:** All 18 existing xades_signer_test.dart tests still pass.
+**Risk if not reverted:**
+All invoices would be rejected by ZATCA Compliance Test with `signed-properties-hashing` error, because adding SignaturePolicyIdentifier inside SignedSignatureProperties changes the hash that ZATCA validator checks.
+
+**Revert commit:** `b130a4f`
+**Reverted on:** 2026-04-14
 
 ---
 
@@ -90,9 +96,9 @@
 - TaxTotal and LegalMonetaryTotal present
 - At least one InvoiceLine
 - ICV (InvoiceCounterValue) present
-- `validateSigned()`: SignaturePolicyIdentifier with correct URN
+- `validateSigned()`: delegates to `validate()` (SignaturePolicyIdentifier check removed after Fix #2 revert)
 
-**Tests:** 9 tests in `test/services/invoice_xml_validator_test.dart`
+**Tests:** 8 tests in `test/services/invoice_xml_validator_test.dart`
 
 **Side effects:** None — new additive service.
 
@@ -167,28 +173,36 @@
 ## Git Log
 
 ```
+9abf221 fix(zatca): align validator with signer after Fix #2 revert
+b130a4f revert(zatca): remove SignaturePolicyIdentifier — not used by ZATCA SDK
+4e2fed8 docs: add Phase 2 blockers fix report
 894e520 fix(database): add sales retention policy — 6-year legal minimum
 03a2f4b feat(pos): add storage monitoring with proactive alerts
 118b795 fix(pos): restock inventory on partial returns
 652e17c feat(zatca): add built-in invoice validator for ZATCA Phase 2 compliance
 1873cdc fix(zatca): add CountrySubentity to PostalAddress per UBL 2.1 spec
-d934352 fix(zatca): add SignaturePolicyIdentifier required by ZATCA Phase 2
+d934352 fix(zatca): add SignaturePolicyIdentifier required by ZATCA Phase 2 ← REVERTED
 944d7ec fix(database): enforce 6-year audit log retention per Saudi VAT law
 ```
 
 ---
 
-## Regression Test Results
+## Regression Test Results (post-revert, 2026-04-14)
 
 | Package | Tests | Skipped | Failed | Result |
 |---------|-------|---------|--------|--------|
-| alhai_core | 594 | 0 | 0 | PASS |
+| alhai_zatca | 833 | 1 | 0 | PASS |
+| alhai_pos | 559 | 0 | 0 | PASS |
 | alhai_database | 449 | 1 | 0 | PASS |
 | alhai_sync | 358 | 0 | 0 | PASS |
-| alhai_zatca | 840 | 1 | 0 | PASS |
-| alhai_pos | 559 | 0 | 0 | PASS |
 | cashier app | 621 | 0 | 0 | PASS |
-| **Total** | **3421** | **2** | **0** | **PASS** |
+| **Total** | **2,820** | **2** | **0** | **PASS** |
+
+Note: Test count decreased from 3,421 to 2,820 due to:
+- Removed 6 SignaturePolicyIdentifier tests (Fix #2 revert)
+- Removed 2 validator SignaturePolicyIdentifier tests (cascade fix)
+- Added 1 validateSigned delegation test
+- alhai_core not re-run (package not present in current structure; original count was from earlier run)
 
 ---
 
@@ -201,6 +215,32 @@ d934352 fix(zatca): add SignaturePolicyIdentifier required by ZATCA Phase 2
 
 ---
 
+## Cascade fix: Fix #4 validator alignment (commit `9abf221`)
+
+After reverting Fix #2, it was discovered that Fix #4 (Invoice XML
+Validator) contained checks for SignaturePolicyIdentifier in its
+`validateSigned()` method. This created a logical inconsistency:
+
+- Signer (post-revert): does NOT produce SignaturePolicyIdentifier
+- Validator (pre-fix): REQUIRES SignaturePolicyIdentifier
+- Result: every signed invoice would be rejected internally
+
+The unit tests passed because they tested the validator with
+pre-fabricated XML containing SignaturePolicyIdentifier, not with
+output from the actual signer. This is a class of "ghost bug" —
+code compiles, tests pass, production breaks.
+
+Fix: Removed SignaturePolicyIdentifier checks from
+invoice_xml_validator.dart and corresponding tests, aligning the
+validator with the signer output.
+
+**This shows the value of independent verification cycles.** The
+original audit reports recommended Fix #2 based on documentation
+reading. Only by checking actual ZATCA SDK behavior was this
+cascade issue discovered and corrected.
+
+---
+
 ## Readiness Recommendation
 
-All 7 Phase 2 blockers are resolved. The branch is ready for review and merge into `main`. No breaking changes were introduced — all fixes are backward-compatible. The 3,421 regression tests across 6 packages confirm zero regressions.
+6 of 7 Phase 2 blockers are resolved. Fix #2 (SignaturePolicyIdentifier) was reverted as a false positive — ZATCA SDK does not require this element. The branch is ready for review and merge into `main`. No breaking changes were introduced — all remaining fixes are backward-compatible. 2,820 regression tests across 5 packages confirm zero regressions.
