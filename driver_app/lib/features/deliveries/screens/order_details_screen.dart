@@ -144,6 +144,8 @@ class OrderDetailsScreen extends ConsumerWidget {
                       currentStatus: status,
                       onProofRequired: () =>
                           context.push('/orders/$deliveryId/proof'),
+                      onOtpRequired: () =>
+                          context.push('/orders/$deliveryId/pickup-otp'),
                     ),
                   ],
                 ),

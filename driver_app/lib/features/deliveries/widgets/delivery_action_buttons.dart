@@ -16,12 +16,14 @@ class DeliveryActionButtons extends ConsumerStatefulWidget {
   final String deliveryId;
   final String currentStatus;
   final VoidCallback? onProofRequired;
+  final VoidCallback? onOtpRequired;
 
   const DeliveryActionButtons({
     super.key,
     required this.deliveryId,
     required this.currentStatus,
     this.onProofRequired,
+    this.onOtpRequired,
   });
 
   @override
@@ -221,7 +223,14 @@ class _DeliveryActionButtonsState extends ConsumerState<DeliveryActionButtons> {
           _ActionItem(
             label: 'استلمت الطلب',
             icon: Icons.inventory_2_rounded,
-            onPressed: () => _updateStatus(DeliveryStatus.pickedUp),
+            onPressed: () {
+              if (widget.onOtpRequired != null) {
+                widget.onOtpRequired!();
+              } else {
+                // Fallback: direct status update if OTP not wired.
+                _updateStatus(DeliveryStatus.pickedUp);
+              }
+            },
           ),
         ];
       case DeliveryStatus.pickedUp:
