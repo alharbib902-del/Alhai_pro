@@ -17,6 +17,7 @@ import '../../screens/subscriptions/sa_subscriptions_list_screen.dart';
 import '../../screens/users/sa_users_list_screen.dart';
 import '../../screens/users/sa_user_detail_screen.dart';
 import '../../screens/settings/sa_platform_settings_screen.dart';
+import '../../screens/logs/sa_audit_log_screen.dart';
 import '../../screens/logs/sa_logs_screen.dart';
 import '../../screens/reports/sa_reports_screen.dart';
 
@@ -62,6 +63,7 @@ class SuperAdminRoutes {
 
   // Logs & Reports
   static const logs = '/logs';
+  static const auditLog = '/logs/audit';
   static const reports = '/reports';
 }
 
@@ -230,6 +232,10 @@ final List<RouteBase> _routes = [
       ),
 
       // Logs
+      GoRoute(
+        path: SuperAdminRoutes.auditLog,
+        builder: (c, s) => const SAAuditLogScreen(),
+      ),
       GoRoute(
         path: SuperAdminRoutes.logs,
         builder: (c, s) => const SALogsScreen(),
