@@ -9,6 +9,10 @@ class OrgSettings {
   final String? phone;
   final String? email;
   final String? address;
+  final String? city;
+  final String? country;
+  final String? taxNumber;
+  final String? commercialReg;
   final String? deliveryZones;
   final double? minOrderAmount;
   final double? deliveryFee;
@@ -24,6 +28,10 @@ class OrgSettings {
     this.phone,
     this.email,
     this.address,
+    this.city,
+    this.country,
+    this.taxNumber,
+    this.commercialReg,
     this.deliveryZones,
     this.minOrderAmount,
     this.deliveryFee,
@@ -41,6 +49,10 @@ class OrgSettings {
       phone: json['phone'] as String?,
       email: json['email'] as String?,
       address: json['address'] as String?,
+      city: json['city'] as String?,
+      country: json['country'] as String?,
+      taxNumber: json['tax_number'] as String?,
+      commercialReg: json['commercial_reg'] as String?,
       deliveryZones: json['delivery_zones'] as String?,
       minOrderAmount: (json['min_order_amount'] as num?)?.toDouble(),
       deliveryFee: (json['delivery_fee'] as num?)?.toDouble(),
@@ -57,6 +69,10 @@ class OrgSettings {
     'phone': phone,
     'email': email,
     'address': address,
+    'city': city,
+    'country': country,
+    'tax_number': taxNumber,
+    'commercial_reg': commercialReg,
     'delivery_zones': deliveryZones,
     'min_order_amount': minOrderAmount,
     'delivery_fee': deliveryFee,
@@ -77,6 +93,10 @@ class OrgSettings {
           phone == other.phone &&
           email == other.email &&
           address == other.address &&
+          city == other.city &&
+          country == other.country &&
+          taxNumber == other.taxNumber &&
+          commercialReg == other.commercialReg &&
           deliveryZones == other.deliveryZones &&
           minOrderAmount == other.minOrderAmount &&
           deliveryFee == other.deliveryFee &&
@@ -93,6 +113,10 @@ class OrgSettings {
     phone,
     email,
     address,
+    city,
+    country,
+    taxNumber,
+    commercialReg,
     deliveryZones,
     minOrderAmount,
     deliveryFee,
