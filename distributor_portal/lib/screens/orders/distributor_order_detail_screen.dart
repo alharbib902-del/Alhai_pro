@@ -469,6 +469,11 @@ class _DistributorOrderDetailScreenState
                                 isMedium,
                                 l10n,
                               ),
+
+                            // Invoice action (for approved/received orders)
+                            if (order.status == 'approved' ||
+                                order.status == 'received')
+                              _buildInvoiceAction(order, isDark),
                             const SizedBox(height: AlhaiSpacing.xl),
                           ],
                         ),
@@ -1249,5 +1254,136 @@ class _DistributorOrderDetailScreenState
         ),
       ],
     );
+  }
+
+  // ── Invoice action for approved/received orders ───────────────
+
+  Widget _buildInvoiceAction(DistributorOrder order, bool isDark) {
+    final invoiceAsync = ref.watch(invoiceByOrderProvider(order.id));
+
+    return invoiceAsync.when(
+      loading: () => const Padding(
+        padding: EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+        child: Center(child: CircularProgressIndicator(strokeWidth: 2)),
+      ),
+      error: (_, __) => const SizedBox.shrink(),
+      data: (existingInvoice) {
+        if (existingInvoice != null) {
+          // Invoice exists — show "View Invoice" button
+          return Padding(
+            padding: const EdgeInsets.only(top: AlhaiSpacing.sm),
+            child: FilledButton.icon(
+              onPressed: () =>
+                  context.go('/invoices/${existingInvoice.id}'),
+              icon: const Icon(Icons.receipt_long, size: 20),
+              label: const Text(
+                'عرض الفاتورة',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              style: FilledButton.styleFrom(
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.textOnPrimary,
+                padding: const EdgeInsets.symmetric(vertical: 14),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(AlhaiRadius.md),
+                ),
+              ),
+            ),
+          );
+        }
+
+        // No invoice yet — show "Generate Invoice" button
+        return Padding(
+          padding: const EdgeInsets.only(top: AlhaiSpacing.sm),
+          child: FilledButton.icon(
+            onPressed: _isProcessing
+                ? null
+                : () => _generateInvoice(order),
+            icon: _isProcessing
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.textOnPrimary,
+                    ),
+                  )
+                : const Icon(Icons.receipt, size: 20),
+            label: const Text(
+              'إنشاء فاتورة',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+              ),
+            ),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.info,
+              foregroundColor: AppColors.textOnPrimary,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AlhaiRadius.md),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _generateInvoice(DistributorOrder order) async {
+    setState(() => _isProcessing = true);
+    try {
+      final invoiceService = ref.read(invoiceServiceProvider);
+      final ds = ref.read(distributorDatasourceProvider);
+
+      // Fetch the items for this order
+      final items = await ds.getOrderItems(order.id);
+      final orgSettings = await ds.getOrgSettings();
+      if (orgSettings == null) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('لم يتم العثور على إعدادات المنشأة'),
+            backgroundColor: AppColors.error,
+          ),
+        );
+        return;
+      }
+
+      final invoice = await invoiceService.generateInvoiceFromOrder(
+        order: order,
+        items: items,
+        orgSettings: orgSettings,
+      );
+
+      if (!mounted) return;
+
+      // Invalidate providers so lists refresh
+      ref.invalidate(invoicesProvider(null));
+      ref.invalidate(invoiceByOrderProvider(order.id));
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('تم إنشاء الفاتورة ${invoice.invoiceNumber}'),
+          backgroundColor: AppColors.success,
+        ),
+      );
+
+      // Navigate to the new invoice
+      context.go('/invoices/${invoice.id}');
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('خطأ في إنشاء الفاتورة: $e'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _isProcessing = false);
+    }
   }
 }
