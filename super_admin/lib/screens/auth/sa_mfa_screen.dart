@@ -141,6 +141,36 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
     }
   }
 
+  /// Check whether the user is locked out based on server-side audit_log.
+  ///
+  /// Returns `true` if locked out (5+ failed MFA attempts in 30 minutes).
+  /// Fail-safe: returns `true` (deny) on any error.
+  Future<bool> _checkLockoutFromServer() async {
+    try {
+      final client = ref.read(saSupabaseClientProvider);
+      final user = client.auth.currentUser;
+      if (user == null) return true; // fail-safe: no user → deny
+
+      final thirtyMinAgo = DateTime.now()
+          .subtract(const Duration(minutes: 30))
+          .toUtc()
+          .toIso8601String();
+
+      final response = await client
+          .from('audit_log')
+          .select('id')
+          .eq('target_id', user.id)
+          .eq('action', 'auth.mfa_failed')
+          .gte('created_at', thirtyMinAgo);
+
+      final recentFailures = (response as List).length;
+      return recentFailures >= _maxAttempts;
+    } catch (e) {
+      if (kDebugMode) debugPrint('Lockout check failed: $e');
+      return true; // fail-safe: deny on error
+    }
+  }
+
   /// Verify a TOTP code (works for both first enrollment and subsequent logins).
   Future<void> _verifyCode() async {
     final code = _codeController.text.trim();
@@ -149,7 +179,14 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
       return;
     }
 
-    // Check lockout.
+    // Server-side lockout check (authoritative).
+    final serverLocked = await _checkLockoutFromServer();
+    if (serverLocked) {
+      setState(() => _error = 'Too many failed attempts. Locked for 30 minutes.');
+      return;
+    }
+
+    // In-memory lockout check (fast UI optimization, not authoritative).
     if (_lockoutUntil != null && DateTime.now().isBefore(_lockoutUntil!)) {
       final remaining = _lockoutUntil!.difference(DateTime.now()).inMinutes + 1;
       setState(() => _error = 'Account locked. Try again in $remaining minutes.');
