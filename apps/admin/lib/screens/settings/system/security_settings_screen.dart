@@ -1,3 +1,47 @@
+// ============================================================================
+// DEFERRED: H7 — New Device OTP Verification
+// ============================================================================
+// Status: DEFERRED — requires backend + cross-package changes
+//
+// Problem:
+//   When a user logs in from a new/unrecognized device, the system should
+//   require OTP verification (via WhatsApp or SMS) before granting access.
+//   Currently no device-based OTP challenge exists.
+//
+// Existing infrastructure (already in codebase):
+//   - active_sessions table has device_id column (alhai_database)
+//   - WhatsAppOtpService in alhai_auth (sends OTP via WhatsApp API)
+//   - OtpService in alhai_auth (generates & verifies OTP codes)
+//   - device_info_plus package available for device fingerprinting
+//
+// Implementation plan:
+//   1. Backend (Supabase):
+//      - Add RPC function: is_known_device(user_id, device_id) → bool
+//      - Add RPC function: register_device(user_id, device_id, device_name)
+//      - Add trusted_devices table or flag on active_sessions
+//
+//   2. alhai_auth package:
+//      - Add DeviceVerificationService:
+//        a. Generate device fingerprint (device_info_plus)
+//        b. Check if device is known via RPC
+//        c. If unknown → trigger OTP via WhatsAppOtpService
+//        d. On OTP success → register device as trusted
+//      - Integrate into login flow (after password/PIN success, before
+//        granting session)
+//
+//   3. Admin app (this app):
+//      - Add OTP verification screen (enter 6-digit code)
+//      - Add "Trusted Devices" management in security settings
+//      - Allow revoking trusted devices
+//
+//   4. Testing:
+//      - Unit tests for DeviceVerificationService
+//      - Integration tests for full login → OTP → register flow
+//      - Mock device_info_plus in tests
+//
+// Estimated effort: 2-3 days (backend + auth package + UI)
+// ============================================================================
+
 import 'dart:math';
 
 import 'package:flutter/material.dart';
