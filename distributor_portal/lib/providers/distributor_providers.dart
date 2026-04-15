@@ -11,4 +11,5 @@ export 'distributor_orders_providers.dart';
 export 'distributor_products_providers.dart';
 export 'distributor_reports_providers.dart';
 export 'distributor_session_timeout.dart';
+export 'distributor_invoice_providers.dart';
 export 'distributor_settings_providers.dart';

@@ -7,6 +7,8 @@ import '../../screens/auth/distributor_login_screen.dart';
 import '../../screens/dashboard/distributor_dashboard_screen.dart';
 import '../../screens/orders/distributor_orders_screen.dart';
 import '../../screens/orders/distributor_order_detail_screen.dart';
+import '../../screens/invoices/invoice_list_screen.dart';
+import '../../screens/invoices/invoice_detail_screen.dart';
 import '../../screens/products/distributor_products_screen.dart';
 import '../../screens/pricing/distributor_pricing_screen.dart'
     deferred as pricing;
@@ -69,6 +71,29 @@ final distributorRouterProvider = Provider<GoRouter>((ref) {
               return CustomTransitionPage(
                 key: state.pageKey,
                 child: DistributorOrderDetailScreen(orderId: id),
+                transitionsBuilder: (c, a, sa, child) =>
+                    FadeTransition(opacity: a, child: child),
+              );
+            },
+          ),
+          GoRoute(
+            path: '/invoices',
+            name: 'distributor-invoices',
+            pageBuilder: (context, state) => CustomTransitionPage(
+              key: state.pageKey,
+              child: const InvoiceListScreen(),
+              transitionsBuilder: (c, a, sa, child) =>
+                  FadeTransition(opacity: a, child: child),
+            ),
+          ),
+          GoRoute(
+            path: '/invoices/:id',
+            name: 'distributor-invoice-detail',
+            pageBuilder: (context, state) {
+              final id = state.pathParameters['id'] ?? '';
+              return CustomTransitionPage(
+                key: state.pageKey,
+                child: InvoiceDetailScreen(invoiceId: id),
                 transitionsBuilder: (c, a, sa, child) =>
                     FadeTransition(opacity: a, child: child),
               );

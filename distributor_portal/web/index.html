@@ -37,6 +37,38 @@
   <link rel="icon" type="image/png" href="favicon.png"/>
 
   <title>distributor_portal</title>
+
+  <!-- Print-friendly styles for invoice printing -->
+  <style>
+    @media print {
+      /* Force colors on print */
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      /* A4 page size */
+      @page {
+        size: A4;
+        margin: 10mm;
+      }
+
+      /* Reset margins for print */
+      body {
+        margin: 0;
+        padding: 10mm;
+        background: white !important;
+        color: black !important;
+        font-size: 11pt;
+        line-height: 1.4;
+      }
+
+      /* Prevent page breaks in the middle of sections */
+      .invoice-section {
+        page-break-inside: avoid;
+      }
+    }
+  </style>
   <link rel="manifest" href="manifest.json">
 </head>
 <body>

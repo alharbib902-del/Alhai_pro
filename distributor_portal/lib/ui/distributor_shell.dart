@@ -53,6 +53,12 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
       route: '/orders',
     ),
     _NavItem(
+      id: 'invoices',
+      label: (l10n) => 'الفواتير',
+      icon: Icons.receipt_long_outlined,
+      route: '/invoices',
+    ),
+    _NavItem(
       id: 'products',
       label: (l10n) => l10n?.products ?? 'Products',
       icon: Icons.inventory_2_outlined,
@@ -81,6 +87,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
   String _getSelectedId(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
     if (location.startsWith('/orders')) return 'orders';
+    if (location.startsWith('/invoices')) return 'invoices';
     if (location.startsWith('/products')) return 'products';
     if (location.startsWith('/pricing')) return 'pricing';
     if (location.startsWith('/reports')) return 'reports';
