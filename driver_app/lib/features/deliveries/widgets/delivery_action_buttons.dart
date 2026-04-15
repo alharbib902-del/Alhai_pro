@@ -6,8 +6,10 @@ import 'package:get_it/get_it.dart';
 
 import '../../../core/constants/driver_constants.dart';
 import '../../../core/services/location_service.dart';
+import '../../../core/services/voice_prompt_service.dart';
 import '../data/delivery_datasource.dart';
 import '../providers/delivery_providers.dart';
+import '../providers/driving_mode_provider.dart';
 
 /// Dynamic action buttons based on current delivery status.
 class DeliveryActionButtons extends ConsumerStatefulWidget {
@@ -88,6 +90,10 @@ class _DeliveryActionButtonsState extends ConsumerState<DeliveryActionButtons> {
           notes: notes,
         )).future,
       );
+      // Voice prompt in driving mode
+      if (ref.read(drivingModeProvider)) {
+        VoicePromptService.instance.announceStatus(newStatus);
+      }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
@@ -111,23 +117,34 @@ class _DeliveryActionButtonsState extends ConsumerState<DeliveryActionButtons> {
     final actions = _getActions(widget.currentStatus);
     if (actions.isEmpty) return const SizedBox.shrink();
 
+    final isDriving = ref.watch(drivingModeProvider);
+    final buttonPadding = isDriving ? 28.0 : 14.0;
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // Primary action
-          Semantics(
-            label: actions.first.label,
-            button: true,
-            child: FilledButton.icon(
-              onPressed: actions.first.onPressed,
-              icon: Icon(actions.first.icon),
-              label: Text(actions.first.label),
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(AlhaiRadius.button),
+          SizedBox(
+            height: isDriving ? 80 : null,
+            child: Semantics(
+              label: actions.first.label,
+              button: true,
+              child: FilledButton.icon(
+                onPressed: actions.first.onPressed,
+                icon: Icon(actions.first.icon),
+                label: Text(
+                  actions.first.label,
+                  style: isDriving
+                      ? Theme.of(context).textTheme.headlineSmall
+                      : null,
+                ),
+                style: FilledButton.styleFrom(
+                  padding: EdgeInsets.symmetric(vertical: buttonPadding),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(AlhaiRadius.button),
+                  ),
                 ),
               ),
             ),
@@ -138,20 +155,24 @@ class _DeliveryActionButtonsState extends ConsumerState<DeliveryActionButtons> {
             for (final action in actions.skip(1))
               Padding(
                 padding: const EdgeInsets.only(bottom: AlhaiSpacing.xs),
-                child: Semantics(
-                  label: action.label,
-                  button: true,
-                  child: OutlinedButton.icon(
-                    onPressed: action.onPressed,
-                    icon: Icon(action.icon),
-                    label: Text(action.label),
-                    style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                      foregroundColor: action.isDestructive
-                          ? Theme.of(context).colorScheme.error
-                          : null,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(AlhaiRadius.button),
+                child: SizedBox(
+                  height: isDriving ? 80 : null,
+                  child: Semantics(
+                    label: action.label,
+                    button: true,
+                    child: OutlinedButton.icon(
+                      onPressed: action.onPressed,
+                      icon: Icon(action.icon),
+                      label: Text(action.label),
+                      style: OutlinedButton.styleFrom(
+                        padding: EdgeInsets.symmetric(vertical: buttonPadding),
+                        foregroundColor: action.isDestructive
+                            ? Theme.of(context).colorScheme.error
+                            : null,
+                        shape: RoundedRectangleBorder(
+                          borderRadius:
+                              BorderRadius.circular(AlhaiRadius.button),
+                        ),
                       ),
                     ),
                   ),

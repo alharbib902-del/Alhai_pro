@@ -76,6 +76,9 @@ dependencies:
   # Signature capture
   signature: ^5.4.1
 
+  # Text-to-speech for driving mode voice prompts
+  flutter_tts: ^4.0.2
+
   # Screen wake lock during active delivery
   wakelock_plus: ^1.4.0
 
