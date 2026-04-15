@@ -228,7 +228,14 @@ class _DeliveryActionButtonsState extends ConsumerState<DeliveryActionButtons> {
               if (widget.onProofRequired != null) {
                 widget.onProofRequired!();
               } else {
-                _updateStatus(DeliveryStatus.delivered);
+                // H8: Block delivery completion without proof.
+                // onProofRequired must be provided to navigate to the proof
+                // screen. Refusing the transition prevents proof-less delivery.
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('يجب تقديم إثبات التسليم قبل التأكيد'),
+                  ),
+                );
               }
             },
           ),
