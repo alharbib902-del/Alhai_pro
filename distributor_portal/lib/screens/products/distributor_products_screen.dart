@@ -15,6 +15,7 @@ import 'package:intl/intl.dart' show NumberFormat;
 import '../../data/models.dart';
 import '../../providers/distributor_providers.dart';
 import '../../ui/skeleton_loading.dart';
+import 'create_product_dialog.dart';
 
 class DistributorProductsScreen extends ConsumerStatefulWidget {
   const DistributorProductsScreen({super.key});
@@ -114,13 +115,8 @@ class _DistributorProductsScreenState
             button: true,
             label: l10n.distributorAddProduct,
             child: FilledButton.icon(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.distributorComingSoon),
-                    backgroundColor: AppColors.info,
-                  ),
-                );
+              onPressed: () async {
+                await CreateProductDialog.show(context);
               },
               icon: const Icon(Icons.add_rounded, size: 18),
               label: Text(l10n.distributorAddProduct),
