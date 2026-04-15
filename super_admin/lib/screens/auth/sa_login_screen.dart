@@ -1,8 +1,12 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_core/alhai_core.dart' show UserRole;
 import 'package:alhai_l10n/alhai_l10n.dart';
+
+import '../../core/services/audit_log_service.dart';
+import '../../providers/sa_dashboard_providers.dart' show saSupabaseClientProvider;
 
 /// Super Admin login screen.
 /// Shows phone + OTP flow, then verifies the user has superAdmin role.
@@ -28,9 +32,9 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
 
   Future<void> _login() async {
     final l10n = AppLocalizations.of(context);
-    final phone = _phoneController.text.trim();
+    final email = _phoneController.text.trim();
     final password = _passwordController.text.trim();
-    if (phone.isEmpty || password.isEmpty) {
+    if (email.isEmpty || password.isEmpty) {
       setState(() => _error = l10n.saEnterCredentials);
       return;
     }
@@ -41,15 +45,21 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
     });
 
     try {
-      // Super admin uses email/password auth
+      // Step 1: Supabase email/password auth
       final result = await ref
           .read(authStateProvider.notifier)
           .signInWithEmailPassword(
-            email: phone, // phone field doubles as email for SA
+            email: email,
             password: password,
           );
 
       if (!result.success) {
+        // Audit: failed login (password wrong or user not found)
+        _logLoginAttempt(
+          email: email,
+          success: false,
+          reason: result.error ?? 'auth_failed',
+        );
         if (mounted) {
           setState(() {
             _error = result.error ?? l10n.saSignInFailed;
@@ -59,9 +69,15 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
         return;
       }
 
-      // After sign-in, check role
+      // Step 2: Client-side role check (fast path)
       final authState = ref.read(authStateProvider);
       if (authState.user?.role != UserRole.superAdmin) {
+        _logLoginAttempt(
+          email: email,
+          userId: authState.user?.id,
+          success: false,
+          reason: 'client_role_not_super_admin',
+        );
         await ref.read(authStateProvider.notifier).logout();
         if (mounted) {
           setState(() {
@@ -71,7 +87,36 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
         }
         return;
       }
+
+      // Step 3: Server-side RPC verification — the critical addition.
+      // Even if the client-side role says super_admin, we verify against
+      // the database's is_super_admin() function which checks public.users.
+      final serverVerified = await _verifySuperAdminRpc();
+      if (!serverVerified) {
+        _logLoginAttempt(
+          email: email,
+          userId: authState.user?.id,
+          success: false,
+          reason: 'rpc_is_super_admin_rejected',
+        );
+        await ref.read(authStateProvider.notifier).logout();
+        if (mounted) {
+          setState(() {
+            _error = l10n.saAccessDenied;
+            _isLoading = false;
+          });
+        }
+        return;
+      }
+
+      // Step 4: Login fully verified — audit success
+      _logLoginAttempt(
+        email: email,
+        userId: authState.user?.id,
+        success: true,
+      );
     } catch (e) {
+      _logLoginAttempt(email: email, success: false, reason: e.toString());
       if (mounted) {
         setState(() {
           _error = e.toString();
@@ -82,6 +127,55 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
     }
 
     if (mounted) setState(() => _isLoading = false);
+  }
+
+  /// Calls the database `is_super_admin()` RPC to verify the current
+  /// authenticated user truly has the super_admin role server-side.
+  ///
+  /// Returns `true` only if the RPC confirms the role. Any error
+  /// (network, missing function, etc.) is treated as a rejection to
+  /// fail-safe: if we can't verify, we don't allow access.
+  Future<bool> _verifySuperAdminRpc() async {
+    try {
+      final client = ref.read(saSupabaseClientProvider);
+      final result = await client.rpc('is_super_admin');
+      // The RPC returns a boolean directly.
+      if (result == true) return true;
+      if (kDebugMode) {
+        debugPrint('is_super_admin RPC returned: $result');
+      }
+      return false;
+    } catch (e) {
+      if (kDebugMode) {
+        debugPrint('is_super_admin RPC failed: $e');
+      }
+      // Fail-safe: if we can't verify, deny access.
+      return false;
+    }
+  }
+
+  /// Fire-and-forget audit log entry for login attempts.
+  void _logLoginAttempt({
+    required String email,
+    String? userId,
+    required bool success,
+    String? reason,
+  }) {
+    try {
+      final audit = ref.read(auditLogServiceProvider);
+      audit.log(
+        action: success ? 'auth.login' : 'auth.login_failed',
+        targetType: 'user',
+        targetId: userId ?? email,
+        metadata: {
+          'email': email,
+          if (reason != null) 'reason': reason,
+          'timestamp': DateTime.now().toUtc().toIso8601String(),
+        },
+      );
+    } catch (_) {
+      // Never block login flow due to audit failure.
+    }
   }
 
   @override
