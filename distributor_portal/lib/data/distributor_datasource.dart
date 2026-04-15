@@ -1206,4 +1206,181 @@ class DistributorDatasource {
       throw error;
     }
   }
+
+  // ─── Invoices ─────────────────────────────────────────────────
+
+  /// Generate the next sequential invoice number for this organization.
+  ///
+  /// Format: `INV-{year}-{sequence}` (e.g. INV-2026-0001).
+  /// The unique index on (store_id, invoice_number) protects against races.
+  Future<String> getNextInvoiceNumber() async {
+    try {
+      final orgId = await _requireOrgId('getNextInvoiceNumber');
+      final storeIds = await _getOrgStoreIds(orgId);
+      if (storeIds.isEmpty) {
+        throw const DatasourceError(
+          type: DatasourceErrorType.validation,
+          message: 'No store found for this organization.',
+        );
+      }
+
+      final year = DateTime.now().year;
+      final prefix = 'INV-$year-';
+
+      // Get highest existing invoice number for this year across org stores
+      final data = await _client
+          .from('invoices')
+          .select('invoice_number')
+          .inFilter('store_id', storeIds)
+          .like('invoice_number', '$prefix%')
+          .order('invoice_number', ascending: false)
+          .limit(1);
+
+      int nextSeq = 1;
+      final dataList = data as List;
+      if (dataList.isNotEmpty) {
+        final lastNumber =
+            (dataList[0] as Map<String, dynamic>)['invoice_number'] as String;
+        final seqPart = lastNumber.replaceFirst(prefix, '');
+        nextSeq = (int.tryParse(seqPart) ?? 0) + 1;
+      }
+
+      return '$prefix${nextSeq.toString().padLeft(4, '0')}';
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      final error = _categorizeError(e, 'getNextInvoiceNumber');
+      if (kDebugMode) debugPrint('$error');
+      throw error;
+    }
+  }
+
+  /// Insert a new invoice into the `invoices` table.
+  Future<DistributorInvoice> createInvoice(DistributorInvoice invoice) async {
+    try {
+      _rateLimiter.check('createInvoice');
+
+      final orgId = await _requireOrgId('createInvoice');
+
+      final json = invoice.toInsertJson();
+      json['org_id'] = orgId;
+
+      final response =
+          await _client.from('invoices').insert(json).select().single();
+
+      return DistributorInvoice.fromJson(response);
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      final error = _categorizeError(e, 'createInvoice');
+      if (kDebugMode) debugPrint('$error');
+      throw error;
+    }
+  }
+
+  /// Fetch invoices for this org, optionally filtered by status.
+  Future<List<DistributorInvoice>> getInvoices({
+    String? status,
+    int limit = 50,
+    int offset = 0,
+  }) async {
+    try {
+      final orgId = await _requireOrgId('getInvoices');
+      final storeIds = await _getOrgStoreIds(orgId);
+      if (storeIds.isEmpty) return [];
+
+      var query = _client
+          .from('invoices')
+          .select()
+          .inFilter('store_id', storeIds);
+
+      if (status != null && status.isNotEmpty) {
+        query = query.eq('status', status);
+      }
+
+      final data = await query
+          .order('created_at', ascending: false)
+          .range(offset, offset + limit - 1);
+
+      return (data as List)
+          .map((json) =>
+              DistributorInvoice.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      final error = _categorizeError(e, 'getInvoices');
+      if (kDebugMode) debugPrint('$error');
+      throw error;
+    }
+  }
+
+  /// Fetch a single invoice by its ID.
+  Future<DistributorInvoice?> getInvoiceById(String invoiceId) async {
+    try {
+      await _requireOrgId('getInvoiceById');
+
+      final data = await _client
+          .from('invoices')
+          .select()
+          .eq('id', invoiceId)
+          .maybeSingle();
+
+      if (data == null) return null;
+      return DistributorInvoice.fromJson(data);
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      final error = _categorizeError(e, 'getInvoiceById');
+      if (kDebugMode) debugPrint('$error');
+      throw error;
+    }
+  }
+
+  /// Check if an order already has a linked invoice.
+  Future<DistributorInvoice?> getInvoiceByOrderId(String orderId) async {
+    try {
+      await _requireOrgId('getInvoiceByOrderId');
+
+      final data = await _client
+          .from('invoices')
+          .select()
+          .eq('sale_id', orderId)
+          .maybeSingle();
+
+      if (data == null) return null;
+      return DistributorInvoice.fromJson(data);
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      final error = _categorizeError(e, 'getInvoiceByOrderId');
+      if (kDebugMode) debugPrint('$error');
+      throw error;
+    }
+  }
+
+  /// Update ZATCA fields after processing.
+  Future<bool> updateInvoiceZatca(
+    String invoiceId, {
+    String? zatcaHash,
+    String? zatcaQr,
+    String? zatcaUuid,
+    String? status,
+  }) async {
+    try {
+      _rateLimiter.check('updateInvoiceZatca');
+      await _requireOrgId('updateInvoiceZatca');
+
+      final updates = <String, dynamic>{
+        'updated_at': DateTime.now().toIso8601String(),
+      };
+      if (zatcaHash != null) updates['zatca_hash'] = zatcaHash;
+      if (zatcaQr != null) updates['zatca_qr'] = zatcaQr;
+      if (zatcaUuid != null) updates['zatca_uuid'] = zatcaUuid;
+      if (status != null) updates['status'] = status;
+
+      await _client.from('invoices').update(updates).eq('id', invoiceId);
+      return true;
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      final error = _categorizeError(e, 'updateInvoiceZatca');
+      if (kDebugMode) debugPrint('$error');
+      throw error;
+    }
+  }
 }

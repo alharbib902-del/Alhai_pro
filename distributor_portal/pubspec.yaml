@@ -19,6 +19,8 @@ dependencies:
     path: ../alhai_design_system
   alhai_l10n:
     path: ../packages/alhai_l10n
+  alhai_zatca:
+    path: ../packages/alhai_zatca
 
   flutter_riverpod: ^2.4.9
   get_it: ^7.7.0
