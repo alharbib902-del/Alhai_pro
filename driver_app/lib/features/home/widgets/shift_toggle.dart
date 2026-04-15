@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/services/location_service.dart';
 import '../../shifts/providers/shifts_providers.dart';
 
 class ShiftToggle extends ConsumerWidget {
@@ -44,6 +45,17 @@ class ShiftToggle extends ConsumerWidget {
             HapticFeedback.mediumImpact();
             try {
               await ref.read(toggleShiftProvider.future);
+            } on MockGpsDetectedException {
+              if (context.mounted) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: const Text(
+                      'تم اكتشاف تطبيق محاكاة موقع. يرجى تعطيله للاستمرار.',
+                    ),
+                    backgroundColor: Theme.of(context).colorScheme.error,
+                  ),
+                );
+              }
             } catch (e) {
               if (context.mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(

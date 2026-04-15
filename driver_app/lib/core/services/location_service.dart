@@ -96,6 +96,28 @@ class LocationService {
     }
   }
 
+  /// Gets the current position and validates it is not from a mock provider.
+  ///
+  /// On Android, [Position.isMocked] reliably detects mock location apps.
+  /// On iOS, isMocked is always false — a separate detection strategy
+  /// (e.g., velocity/altitude anomaly detection) would be needed (deferred).
+  ///
+  /// Throws [MockGpsDetectedException] if a mocked position is detected.
+  Future<Position> getVerifiedPosition() async {
+    final position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+    _currentPosition = position;
+
+    // Position.isMocked is only reliable on Android.
+    // iOS always returns false — needs a different approach (deferred).
+    if (position.isMocked) {
+      throw MockGpsDetectedException(position: position);
+    }
+
+    return position;
+  }
+
   /// Calculate distance between two points (in meters)
   double distanceBetween(
     double startLatitude,
@@ -110,6 +132,21 @@ class LocationService {
       endLongitude,
     );
   }
+}
+
+/// Exception thrown when a mock/fake GPS provider is detected.
+///
+/// Carries the offending [position] so callers can log coordinates for audit.
+class MockGpsDetectedException implements Exception {
+  final Position position;
+
+  const MockGpsDetectedException({required this.position});
+
+  String get message =>
+      'تم اكتشاف تطبيق محاكاة موقع. يرجى تعطيله للاستمرار.';
+
+  @override
+  String toString() => message;
 }
 
 /// Exception thrown by [LocationService] when location is unavailable

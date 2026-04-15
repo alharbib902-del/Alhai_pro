@@ -408,6 +408,32 @@ class DeliveryDatasource {
     // Non-Postgrest network errors are silently swallowed for location updates.
   }
 
+  // ─── Audit ─────────────────────────────────────────────────────────────
+
+  /// Log a mock GPS detection event to the audit_log table.
+  ///
+  /// Best-effort: a logging failure must never prevent the fraud-blocking
+  /// logic from executing, so errors are swallowed and reported to Sentry.
+  Future<void> logMockGpsDetected({
+    required double lat,
+    required double lng,
+  }) async {
+    try {
+      await _client.from('audit_log').insert({
+        'user_id': _driverId,
+        'action': 'mock_gps_detected',
+        'details': {
+          'lat': lat,
+          'lng': lng,
+          'is_mocked': true,
+        },
+        'created_at': DateTime.now().toIso8601String(),
+      });
+    } catch (e, st) {
+      reportError(e, stackTrace: st, hint: 'logMockGpsDetected');
+    }
+  }
+
   // ─── Error classification ────────────────────────────────────────────────
 
   DatasourceException _classifyDatasourceError(
