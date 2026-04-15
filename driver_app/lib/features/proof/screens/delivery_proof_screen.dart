@@ -40,6 +40,14 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
   Uint8List? _photoBytes;
   bool _isLoading = false;
 
+  bool get _hasProof =>
+      _photoBytes != null ||
+      (_signatureControllerInitialized && _signatureController.isNotEmpty);
+
+  void _onProofChanged() {
+    if (mounted) setState(() {});
+  }
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -49,6 +57,7 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
         penStrokeWidth: 3,
         penColor: cs.onSurface,
       );
+      _signatureController.addListener(_onProofChanged);
       _signatureControllerInitialized = true;
     }
   }
@@ -125,6 +134,20 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
   }
 
   Future<void> _submit() async {
+    // GH-1 fix: require at least photo or signature as proof
+    if (!_hasProof) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: const Text('يجب إضافة صورة أو توقيع لإثبات التسليم'),
+            backgroundColor: Theme.of(context).colorScheme.error,
+            duration: const Duration(seconds: 4),
+          ),
+        );
+      }
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
@@ -380,10 +403,14 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
 
                   // Submit button
                   Semantics(
-                    label: _isLoading ? 'جاري تأكيد التسليم' : 'تأكيد التسليم',
+                    label: _isLoading
+                        ? 'جاري تأكيد التسليم'
+                        : !_hasProof
+                            ? 'أضف صورة أو توقيع أولاً'
+                            : 'تأكيد التسليم',
                     button: true,
                     child: FilledButton.icon(
-                      onPressed: _isLoading ? null : _submit,
+                      onPressed: _isLoading || !_hasProof ? null : _submit,
                       icon: _isLoading
                           ? const SizedBox(
                               width: 20,
