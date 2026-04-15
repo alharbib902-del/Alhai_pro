@@ -12,6 +12,8 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import '../../../providers/settings_db_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import '../../../core/constants/admin_permissions.dart';
+import '../../../core/widgets/permission_guard.dart';
 
 // مفاتيح إعدادات الضرائب
 const String _kTaxEnabled = 'tax_enabled';
@@ -176,9 +178,12 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
             userRole: l10n.branchManager,
           ),
           Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-              child: _buildContent(isDark, l10n),
+            child: PermissionGuard(
+              permission: AdminPermissions.settingsManage,
+              child: SingleChildScrollView(
+                padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
+                child: _buildContent(isDark, l10n),
+              ),
             ),
           ),
         ],

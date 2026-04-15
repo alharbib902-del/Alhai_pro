@@ -10,6 +10,8 @@ import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_auth/alhai_auth.dart'
     show isAdminProvider, currentUserProvider, PinService;
 import 'package:alhai_design_system/alhai_design_system.dart';
+import '../../../core/constants/admin_permissions.dart';
+import '../../../core/widgets/permission_guard.dart';
 
 /// شاشة إدارة المستخدمين
 class UsersManagementScreen extends ConsumerStatefulWidget {
@@ -81,10 +83,12 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
           userRole: l10n.branchManager,
         ),
         Expanded(
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  padding: EdgeInsets.all(padding),
+          child: PermissionGuard(
+            permission: AdminPermissions.usersManage,
+            child: _isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : SingleChildScrollView(
+                    padding: EdgeInsets.all(padding),
                   child: Center(
                     child: ConstrainedBox(
                       constraints: BoxConstraints(
@@ -99,6 +103,7 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
                     ),
                   ),
                 ),
+          ),
         ),
       ],
     );

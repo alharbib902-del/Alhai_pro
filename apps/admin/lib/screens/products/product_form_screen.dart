@@ -12,6 +12,8 @@ import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import '../../core/providers/unsaved_changes_provider.dart';
 import '../../core/services/sentry_service.dart';
+import '../../core/constants/admin_permissions.dart';
+import '../../core/widgets/permission_guard.dart';
 
 /// Admin Product Form Screen - Add/Edit product
 class ProductFormScreen extends ConsumerStatefulWidget {
@@ -247,17 +249,21 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                     userRole: l10n.branchManager,
                   ),
                   Expanded(
-                    child: _isLoadingProduct
-                        ? const Center(child: CircularProgressIndicator())
-                        : SingleChildScrollView(
-                            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                            child: _buildContent(
-                              isWideScreen,
-                              isMediumScreen,
-                              isDark,
-                              l10n,
+                    child: PermissionGuard(
+                      permission: AdminPermissions.productsManage,
+                      child: _isLoadingProduct
+                          ? const Center(child: CircularProgressIndicator())
+                          : SingleChildScrollView(
+                              padding:
+                                  EdgeInsets.all(isMediumScreen ? 24 : 16),
+                              child: _buildContent(
+                                isWideScreen,
+                                isMediumScreen,
+                                isDark,
+                                l10n,
+                              ),
                             ),
-                          ),
+                    ),
                   ),
                 ],
               ),
