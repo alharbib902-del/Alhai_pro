@@ -116,7 +116,7 @@ class OrdersDatasource {
 
     final data = await _client
         .from('orders')
-        .select('*, order_items(*)')
+        .select('*, order_items(*), stores(name, tax_number)')
         .eq('id', id)
         .eq('customer_id', userId)
         .maybeSingle()
@@ -150,7 +150,7 @@ class OrdersDatasource {
     if (userId == null) throw StateError('User not authenticated');
     var query = _client
         .from('orders')
-        .select('*, order_items(*)')
+        .select('*, order_items(*), stores(name, tax_number)')
         .eq('customer_id', userId);
 
     if (status != null) {
@@ -236,6 +236,11 @@ class OrdersDatasource {
   }
 
   Order _orderFromRow(Map<String, dynamic> row, List<OrderItem> items) {
+    // Extract store data from joined stores table
+    final store = row['stores'] as Map<String, dynamic>?;
+    final storeName = store?['name'] as String?;
+    final storeVatNumber = store?['tax_number'] as String?;
+
     return Order(
       id: row['id'] as String,
       orderNumber: row['order_number'] as String?,
@@ -243,7 +248,8 @@ class OrdersDatasource {
       customerName: row['customer_name'] as String?,
       customerPhone: row['customer_phone'] as String?,
       storeId: row['store_id'] as String? ?? '',
-      storeName: row['store_name'] as String?,
+      storeName: storeName,
+      storeVatNumber: storeVatNumber,
       status: OrderStatus.values.firstWhere(
         (s) => s.name == (row['status'] as String? ?? 'created'),
         orElse: () => OrderStatus.created,

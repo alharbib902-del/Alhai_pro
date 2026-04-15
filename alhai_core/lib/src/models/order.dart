@@ -21,6 +21,7 @@ class Order with _$Order {
     String? customerPhone,
     required String storeId,
     String? storeName,
+    String? storeVatNumber,
     required OrderStatus status,
     required List<OrderItem> items,
     required double subtotal,

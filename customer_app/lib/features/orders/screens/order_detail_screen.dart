@@ -366,25 +366,41 @@ class _ZatcaReceipt extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    // Store name from order (storeName field)
     final storeName = order.storeName ?? 'المتجر';
+    final vatNumber = order.storeVatNumber;
     final vatAmount = order.tax;
     final totalWithVat = order.total;
 
-    // If no tax data, show informational message
+    // If no tax data, hide receipt
     if (vatAmount <= 0) {
       return const SizedBox.shrink();
     }
 
-    // Generate simplified QR (tags 1-5) using TLV encoder
-    // For customer receipts we use a simplified QR with a placeholder VAT number
-    // since store VAT number requires a store settings lookup.
-    // The storeName is used as the seller name.
-    const defaultVatNumber = '300000000000003'; // Placeholder
+    // If store has no VAT registration, show informational message
+    if (vatNumber == null || vatNumber.isEmpty) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
+          child: Column(
+            children: [
+              Icon(Icons.info_outline, color: theme.colorScheme.tertiary),
+              const SizedBox(height: AlhaiSpacing.sm),
+              Text(
+                'هذا المتجر غير مسجّل في هيئة الزكاة والضريبة',
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Generate simplified QR (tags 1-5) using real store data
     final encoder = ZatcaTlvEncoder();
     final qrData = encoder.encodeSimplified(
       sellerName: storeName,
-      vatNumber: defaultVatNumber,
+      vatNumber: vatNumber,
       timestamp: order.createdAt,
       totalWithVat: totalWithVat,
       vatAmount: vatAmount,
