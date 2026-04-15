@@ -10,6 +10,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'core/router/app_router.dart';
 import 'core/services/location_service.dart';
 import 'core/services/sentry_service.dart';
+import 'core/services/wakelock_service.dart';
+import 'features/deliveries/providers/delivery_providers.dart';
 import 'core/supabase/supabase_client.dart';
 import 'di/injection.dart';
 
@@ -120,6 +122,7 @@ class _DriverAppState extends ConsumerState<DriverApp>
 
   @override
   void dispose() {
+    WakelockService.instance.disable();
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -167,6 +170,20 @@ class _DriverAppState extends ConsumerState<DriverApp>
 
   @override
   Widget build(BuildContext context) {
+    // Toggle screen wake lock based on active deliveries.
+    // Screen stays on while the driver has any non-terminal delivery.
+    ref.listen<AsyncValue<List<Map<String, dynamic>>>>(
+      activeDeliveriesStreamProvider,
+      (_, next) {
+        final hasActive = next.valueOrNull?.isNotEmpty ?? false;
+        if (hasActive) {
+          WakelockService.instance.enable();
+        } else {
+          WakelockService.instance.disable();
+        }
+      },
+    );
+
     final router = ref.watch(driverRouterProvider);
 
     return MaterialApp.router(

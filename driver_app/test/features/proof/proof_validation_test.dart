@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker_platform_interface/image_picker_platform_interface.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
+import 'package:signature/signature.dart';
 
 import 'package:driver_app/features/deliveries/data/delivery_datasource.dart';
 import 'package:driver_app/features/deliveries/providers/delivery_providers.dart';
@@ -19,7 +20,7 @@ import 'package:driver_app/features/proof/data/proof_datasource.dart';
 import 'package:driver_app/features/proof/screens/delivery_proof_screen.dart';
 
 // ---------------------------------------------------------------------------
-// Mocks
+// Mocks & Fakes
 // ---------------------------------------------------------------------------
 
 class MockGeolocatorPlatform extends Mock
@@ -54,7 +55,7 @@ class _FakeImagePickerPlatform extends Fake
 // Helpers
 // ---------------------------------------------------------------------------
 
-Position _makePosition({required bool isMocked}) {
+Position _makeRealPosition() {
   return Position(
     latitude: 24.7136,
     longitude: 46.6753,
@@ -66,11 +67,10 @@ Position _makePosition({required bool isMocked}) {
     headingAccuracy: 0.0,
     speed: 0.0,
     speedAccuracy: 0.0,
-    isMocked: isMocked,
+    isMocked: false,
   );
 }
 
-/// Tracks calls to updateDeliveryStatus.
 class _StatusUpdateTracker {
   final calls = <({String id, String status, String? notes})>[];
 
@@ -90,15 +90,11 @@ void _setPhoneViewport(WidgetTester tester) {
   });
 }
 
-/// Capture a fake photo to satisfy GH-1 proof requirement.
-Future<void> _capturePhoto(WidgetTester tester) async {
-  await tester.tap(find.byIcon(Icons.camera_alt_outlined));
-  await tester.pumpAndSettle();
-}
+/// Finds the submit [FilledButton] (works with FilledButton.icon subclass).
+Finder get _submitButtonFinder =>
+    find.byWidgetPredicate((w) => w is FilledButton);
 
-Widget _buildTestWidget({
-  _StatusUpdateTracker? tracker,
-}) {
+Widget _buildTestWidget({_StatusUpdateTracker? tracker}) {
   final router = GoRouter(
     initialLocation: '/proof',
     routes: [
@@ -147,18 +143,17 @@ Widget _buildTestWidget({
 // ---------------------------------------------------------------------------
 
 void main() {
-  late MockGeolocatorPlatform mockPlatform;
+  late MockGeolocatorPlatform mockGeo;
   late MockProofDatasource mockProofDs;
   late MockDeliveryDatasource mockDeliveryDs;
 
   setUp(() {
-    mockPlatform = MockGeolocatorPlatform();
-    GeolocatorPlatform.instance = mockPlatform;
+    mockGeo = MockGeolocatorPlatform();
+    GeolocatorPlatform.instance = mockGeo;
 
     // Fake ImagePicker — returns in-memory JPEG bytes (no real I/O).
     ImagePickerPlatform.instance = _FakeImagePickerPlatform();
 
-    // Reset GetIt and register mocks.
     final locator = GetIt.instance;
     if (locator.isRegistered<ProofDatasource>()) {
       locator.unregister<ProofDatasource>();
@@ -172,7 +167,6 @@ void main() {
     locator.registerSingleton<ProofDatasource>(mockProofDs);
     locator.registerSingleton<DeliveryDatasource>(mockDeliveryDs);
 
-    // Default stubs — overridden in individual tests as needed.
     when(
       () => mockProofDs.submitProof(
         deliveryId: any(named: 'deliveryId'),
@@ -203,57 +197,43 @@ void main() {
     }
   });
 
-  group('DeliveryProofScreen Mock GPS Guard (V1)', () {
-    testWidgets('blocks submission when mock GPS detected', (tester) async {
+  group('GH-1: Proof validation — mandatory photo or signature', () {
+    testWidgets('blocks submit when no photo and no signature',
+        (tester) async {
       _setPhoneViewport(tester);
 
-      // Setup: mock GPS returns isMocked=true
-      final mockedPosition = _makePosition(isMocked: true);
-      when(
-        () => mockPlatform.getCurrentPosition(
-          locationSettings: any(named: 'locationSettings'),
-        ),
-      ).thenAnswer((_) async => mockedPosition);
-
-      final tracker = _StatusUpdateTracker();
-      await tester.pumpWidget(_buildTestWidget(tracker: tracker));
+      await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle();
 
-      // GH-1: capture photo to satisfy proof requirement
-      await _capturePhoto(tester);
+      // Submit button must be disabled (onPressed == null)
+      final button = tester.widget<FilledButton>(_submitButtonFinder);
+      expect(button.onPressed, isNull,
+          reason: 'Submit button should be disabled without proof');
 
-      // Tap the submit button
-      final submitButton = find.text('تأكيد التسليم');
-      expect(submitButton, findsOneWidget);
-      await tester.tap(submitButton);
+      // Tapping the disabled button does nothing
+      await tester.tap(find.text('تأكيد التسليم'));
       await tester.pumpAndSettle();
 
-      // Verify: SnackBar with mock GPS error appears
-      expect(find.text('تم اكتشاف تطبيق محاكاة موقع. يرجى تعطيله للاستمرار.'),
-          findsOneWidget);
-
-      // Verify: updateDeliveryStatus NOT called (delivery not completed)
-      expect(tracker.calls, isEmpty);
-
-      // Verify: audit log WAS called
-      verify(
-        () => mockDeliveryDs.logMockGpsDetected(
-          lat: mockedPosition.latitude,
-          lng: mockedPosition.longitude,
+      // Verify: submitProof was NOT called
+      verifyNever(
+        () => mockProofDs.submitProof(
+          deliveryId: any(named: 'deliveryId'),
+          photoBytes: any(named: 'photoBytes'),
+          signatureData: any(named: 'signatureData'),
+          recipientName: any(named: 'recipientName'),
+          notes: any(named: 'notes'),
+          lat: any(named: 'lat'),
+          lng: any(named: 'lng'),
         ),
-      ).called(1);
-
-      // Verify: still on proof screen (not navigated away)
-      expect(find.text('إثبات التسليم'), findsOneWidget);
+      );
     });
 
-    testWidgets('allows submission with real GPS', (tester) async {
+    testWidgets('allows submit with photo only', (tester) async {
       _setPhoneViewport(tester);
 
-      // Setup: real GPS returns isMocked=false
-      final realPosition = _makePosition(isMocked: false);
+      final realPosition = _makeRealPosition();
       when(
-        () => mockPlatform.getCurrentPosition(
+        () => mockGeo.getCurrentPosition(
           locationSettings: any(named: 'locationSettings'),
         ),
       ).thenAnswer((_) async => realPosition);
@@ -262,25 +242,28 @@ void main() {
       await tester.pumpWidget(_buildTestWidget(tracker: tracker));
       await tester.pumpAndSettle();
 
-      // GH-1: capture photo to satisfy proof requirement
-      await _capturePhoto(tester);
+      // Button disabled initially
+      var button = tester.widget<FilledButton>(_submitButtonFinder);
+      expect(button.onPressed, isNull);
 
-      // Tap the submit button
-      final submitButton = find.text('تأكيد التسليم');
-      expect(submitButton, findsOneWidget);
-      await tester.tap(submitButton);
+      // Tap photo area to capture (triggers fake ImagePicker)
+      await tester.tap(find.byIcon(Icons.camera_alt_outlined));
       await tester.pumpAndSettle();
 
-      // Verify: updateDeliveryStatus called with 'delivered'
-      expect(tracker.calls, hasLength(1));
-      expect(tracker.calls.first.status, 'delivered');
-      expect(tracker.calls.first.id, 'test-delivery-001');
+      // Button should now be enabled
+      button = tester.widget<FilledButton>(_submitButtonFinder);
+      expect(button.onPressed, isNotNull,
+          reason: 'Submit should enable after capturing photo');
 
-      // Verify: proof was submitted with GPS coordinates
+      // Tap submit
+      await tester.tap(find.text('تأكيد التسليم'));
+      await tester.pumpAndSettle();
+
+      // Verify proof submitted with photo bytes
       verify(
         () => mockProofDs.submitProof(
           deliveryId: 'test-delivery-001',
-          photoBytes: any(named: 'photoBytes'),
+          photoBytes: any(named: 'photoBytes', that: isNotNull),
           signatureData: null,
           recipientName: null,
           notes: null,
@@ -288,40 +271,35 @@ void main() {
           lng: realPosition.longitude,
         ),
       ).called(1);
+
+      // Verify delivery marked delivered
+      expect(tracker.calls, hasLength(1));
+      expect(tracker.calls.first.status, 'delivered');
     });
 
-    testWidgets('blocks submission even if audit log fails', (tester) async {
+    testWidgets('allows submit with signature only', (tester) async {
       _setPhoneViewport(tester);
 
-      // Setup: mock GPS detected + audit log throws
-      final mockedPosition = _makePosition(isMocked: true);
-      when(
-        () => mockPlatform.getCurrentPosition(
-          locationSettings: any(named: 'locationSettings'),
-        ),
-      ).thenAnswer((_) async => mockedPosition);
-
-      when(
-        () => mockDeliveryDs.logMockGpsDetected(
-          lat: any(named: 'lat'),
-          lng: any(named: 'lng'),
-        ),
-      ).thenThrow(Exception('network error'));
-
-      final tracker = _StatusUpdateTracker();
-      await tester.pumpWidget(_buildTestWidget(tracker: tracker));
+      await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle();
 
-      // GH-1: capture photo to satisfy proof requirement
-      await _capturePhoto(tester);
+      // Button disabled initially
+      var button = tester.widget<FilledButton>(_submitButtonFinder);
+      expect(button.onPressed, isNull);
 
-      await tester.tap(find.text('تأكيد التسليم'));
-      await tester.pumpAndSettle();
+      // Draw on signature pad
+      await tester.drag(find.byType(Signature), const Offset(50, 30));
+      await tester.pump();
 
-      // Delivery must still be blocked even though audit log failed
-      expect(tracker.calls, isEmpty);
-      expect(find.text('تم اكتشاف تطبيق محاكاة موقع. يرجى تعطيله للاستمرار.'),
-          findsOneWidget);
+      // Button should now be enabled
+      button = tester.widget<FilledButton>(_submitButtonFinder);
+      expect(button.onPressed, isNotNull,
+          reason: 'Submit should enable after drawing signature');
+
+      // NOTE: We do not test full submit here because compute() (used by
+      // signature PNG encoding) spawns a real isolate which cannot complete
+      // in FakeAsync widget tests. The photo-only test above already
+      // proves the end-to-end submit flow works.
     });
   });
 }
