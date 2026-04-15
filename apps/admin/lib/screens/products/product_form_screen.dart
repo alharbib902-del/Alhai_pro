@@ -440,6 +440,13 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     );
   }
 
+  // DEFERRED: Product image upload implementation plan:
+  // 1. Use image_picker (already in pubspec) for gallery/camera selection
+  // 2. Compress with flutter_image_compress (max 5MB, 80% quality)
+  // 3. Upload to Supabase Storage bucket "product-images/{storeId}/{productId}"
+  // 4. Store public URL in product.imageThumbnail/imageMedium/imageLarge
+  // 5. Generate blurhash for imageHash (placeholder during load)
+  // Blocked on: Supabase Storage bucket creation and RLS policies setup
   Widget _buildImageSection(bool isDark, AppLocalizations l10n) {
     return _buildSectionCard(
       isDark: isDark,
@@ -448,22 +455,47 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       color: AppColors.info,
       children: [
         Center(
-          child: Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Theme.of(context).colorScheme.surface
-                  : AppColors.border.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-              border: Border.all(color: Theme.of(context).dividerColor),
-            ),
-            child: Icon(
-              Icons.add_photo_alternate_rounded,
-              size: 48,
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.3)
-                  : AppColors.textTertiary,
+          child: GestureDetector(
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    '\u0631\u0641\u0639 \u0627\u0644\u0635\u0648\u0631 \u0633\u064a\u062a\u0648\u0641\u0631 \u0628\u0639\u062f \u0625\u0639\u062f\u0627\u062f Supabase Storage',
+                  ),
+                  backgroundColor: AppColors.info,
+                ),
+              );
+            },
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Theme.of(context).colorScheme.surface
+                    : AppColors.border.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+                border: Border.all(color: Theme.of(context).dividerColor),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_photo_alternate_rounded,
+                    size: 36,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.3)
+                        : AppColors.textTertiary,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '\u0625\u0636\u0627\u0641\u0629 \u0635\u0648\u0631\u0629',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
