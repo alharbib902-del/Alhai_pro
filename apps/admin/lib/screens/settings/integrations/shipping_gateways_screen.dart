@@ -7,6 +7,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../../providers/settings_db_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import '../../../core/services/sentry_service.dart';
+import 'package:alhai_auth/alhai_auth.dart';
 
 // مفاتيح إعدادات بوابات الشحن
 const String _kShippingAramex = 'shipping_aramex_enabled';
@@ -390,9 +391,28 @@ class _ShippingGatewaysScreenState
               ),
               if (isActive)
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    final storageKey =
+                        'shipping_${nameEn.replaceAll(' ', '_').toLowerCase()}_api_key';
+                    final accountStorageKey =
+                        'shipping_${nameEn.replaceAll(' ', '_').toLowerCase()}_account';
+                    final existingKey =
+                        await SecureStorageService.read(storageKey);
+                    final existingAccount =
+                        await SecureStorageService.read(accountStorageKey);
+
                     final apiKeyController = TextEditingController();
-                    final accountController = TextEditingController();
+                    final accountController = TextEditingController(
+                      text: existingAccount ?? '',
+                    );
+
+                    final maskedHint =
+                        existingKey != null && existingKey.length >= 4
+                            ? '****${existingKey.substring(existingKey.length - 4)}'
+                            : null;
+
+                    if (!context.mounted) return;
+
                     showDialog(
                       context: context,
                       builder: (ctx) => AlertDialog(
@@ -407,7 +427,8 @@ class _ShippingGatewaysScreenState
                               obscureText: true,
                               decoration: InputDecoration(
                                 labelText: 'API Key',
-                                hintText: AppLocalizations.of(ctx).enterApiKey,
+                                hintText: maskedHint ??
+                                    AppLocalizations.of(ctx).enterApiKey,
                               ),
                             ),
                             const SizedBox(height: AlhaiSpacing.sm),
@@ -430,17 +451,31 @@ class _ShippingGatewaysScreenState
                             child: Text(AppLocalizations.of(ctx).cancel),
                           ),
                           ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(ctx);
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    AppLocalizations.of(
-                                      context,
-                                    ).settingsSavedForName(name),
+                            onPressed: () async {
+                              if (apiKeyController.text.isNotEmpty) {
+                                await SecureStorageService.write(
+                                  storageKey,
+                                  apiKeyController.text,
+                                );
+                              }
+                              if (accountController.text.isNotEmpty) {
+                                await SecureStorageService.write(
+                                  accountStorageKey,
+                                  accountController.text,
+                                );
+                              }
+                              if (ctx.mounted) Navigator.pop(ctx);
+                              if (context.mounted) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      AppLocalizations.of(
+                                        context,
+                                      ).settingsSavedForName(name),
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
+                              }
                             },
                             child: Text(AppLocalizations.of(ctx).save),
                           ),
