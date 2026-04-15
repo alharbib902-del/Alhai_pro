@@ -12,6 +12,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
@@ -21,26 +22,65 @@ import 'package:alhai_auth/alhai_auth.dart' hide themeProvider;
 final appVersionProvider = StateProvider<String>((ref) => '');
 
 // =============================================================================
-// LOCAL STATE PROVIDERS
+// PERSISTED NOTIFICATION SETTINGS
 // =============================================================================
 
-/// Toggle: Low stock alerts
-final _lowStockAlertsProvider = StateProvider<bool>((ref) => true);
+class _BoolPrefNotifier extends StateNotifier<bool> {
+  final String key;
+  _BoolPrefNotifier(this.key, bool defaultValue) : super(defaultValue) {
+    _load();
+  }
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    state = prefs.getBool(key) ?? state;
+  }
+  Future<void> set(bool value) async {
+    state = value;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(key, value);
+  }
+}
 
-/// Toggle: Expiry alerts
-final _expiryAlertsProvider = StateProvider<bool>((ref) => true);
+class _IntPrefNotifier extends StateNotifier<int> {
+  final String key;
+  _IntPrefNotifier(this.key, int defaultValue) : super(defaultValue) {
+    _load();
+  }
+  Future<void> _load() async {
+    final prefs = await SharedPreferences.getInstance();
+    state = prefs.getInt(key) ?? state;
+  }
+  Future<void> set(int value) async {
+    state = value;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(key, value);
+  }
+}
 
-/// Toggle: Shift reminders
-final _shiftRemindersProvider = StateProvider<bool>((ref) => true);
-
-/// Toggle: Refund notifications
-final _refundNotificationsProvider = StateProvider<bool>((ref) => true);
-
-/// Low stock threshold value
-final _lowStockThresholdProvider = StateProvider<int>((ref) => 10);
-
-/// Expiry warning days
-final _expiryDaysThresholdProvider = StateProvider<int>((ref) => 7);
+final _lowStockAlertsProvider =
+    StateNotifierProvider<_BoolPrefNotifier, bool>(
+  (ref) => _BoolPrefNotifier('notif_low_stock', true),
+);
+final _expiryAlertsProvider =
+    StateNotifierProvider<_BoolPrefNotifier, bool>(
+  (ref) => _BoolPrefNotifier('notif_expiry', true),
+);
+final _shiftRemindersProvider =
+    StateNotifierProvider<_BoolPrefNotifier, bool>(
+  (ref) => _BoolPrefNotifier('notif_shifts', true),
+);
+final _refundNotificationsProvider =
+    StateNotifierProvider<_BoolPrefNotifier, bool>(
+  (ref) => _BoolPrefNotifier('notif_refunds', true),
+);
+final _lowStockThresholdProvider =
+    StateNotifierProvider<_IntPrefNotifier, int>(
+  (ref) => _IntPrefNotifier('threshold_low_stock', 10),
+);
+final _expiryDaysThresholdProvider =
+    StateNotifierProvider<_IntPrefNotifier, int>(
+  (ref) => _IntPrefNotifier('threshold_expiry_days', 7),
+);
 
 /// Lite Settings Screen
 class LiteSettingsScreen extends ConsumerWidget {
@@ -112,7 +152,7 @@ class LiteSettingsScreen extends ConsumerWidget {
                 isDark: isDark,
                 value: ref.watch(_lowStockAlertsProvider),
                 onChanged: (v) =>
-                    ref.read(_lowStockAlertsProvider.notifier).state = v,
+                    ref.read(_lowStockAlertsProvider.notifier).set(v),
               ),
               _SettingsDivider(isDark: isDark),
               _ToggleTile(
@@ -122,7 +162,7 @@ class LiteSettingsScreen extends ConsumerWidget {
                 isDark: isDark,
                 value: ref.watch(_expiryAlertsProvider),
                 onChanged: (v) =>
-                    ref.read(_expiryAlertsProvider.notifier).state = v,
+                    ref.read(_expiryAlertsProvider.notifier).set(v),
               ),
               _SettingsDivider(isDark: isDark),
               _ToggleTile(
@@ -132,7 +172,7 @@ class LiteSettingsScreen extends ConsumerWidget {
                 isDark: isDark,
                 value: ref.watch(_shiftRemindersProvider),
                 onChanged: (v) =>
-                    ref.read(_shiftRemindersProvider.notifier).state = v,
+                    ref.read(_shiftRemindersProvider.notifier).set(v),
               ),
               _SettingsDivider(isDark: isDark),
               _ToggleTile(
@@ -142,7 +182,7 @@ class LiteSettingsScreen extends ConsumerWidget {
                 isDark: isDark,
                 value: ref.watch(_refundNotificationsProvider),
                 onChanged: (v) =>
-                    ref.read(_refundNotificationsProvider.notifier).state = v,
+                    ref.read(_refundNotificationsProvider.notifier).set(v),
               ),
             ],
           ),
@@ -170,12 +210,12 @@ class LiteSettingsScreen extends ConsumerWidget {
                 onDecrease: () {
                   final v = ref.read(_lowStockThresholdProvider);
                   if (v > 1) {
-                    ref.read(_lowStockThresholdProvider.notifier).state = v - 1;
+                    ref.read(_lowStockThresholdProvider.notifier).set(v - 1);
                   }
                 },
                 onIncrease: () {
                   final v = ref.read(_lowStockThresholdProvider);
-                  ref.read(_lowStockThresholdProvider.notifier).state = v + 1;
+                  ref.read(_lowStockThresholdProvider.notifier).set(v + 1);
                 },
               ),
               _SettingsDivider(isDark: isDark),
@@ -188,13 +228,12 @@ class LiteSettingsScreen extends ConsumerWidget {
                 onDecrease: () {
                   final v = ref.read(_expiryDaysThresholdProvider);
                   if (v > 1) {
-                    ref.read(_expiryDaysThresholdProvider.notifier).state =
-                        v - 1;
+                    ref.read(_expiryDaysThresholdProvider.notifier).set(v - 1);
                   }
                 },
                 onIncrease: () {
                   final v = ref.read(_expiryDaysThresholdProvider);
-                  ref.read(_expiryDaysThresholdProvider.notifier).state = v + 1;
+                  ref.read(_expiryDaysThresholdProvider.notifier).set(v + 1);
                 },
               ),
             ],
