@@ -8,6 +8,7 @@ import '../widgets/active_delivery_card.dart';
 import '../widgets/daily_stats_card.dart';
 import '../widgets/shift_toggle.dart';
 import '../../deliveries/providers/new_assignment_provider.dart';
+import '../../deliveries/widgets/sos_button.dart';
 import '../../../shared/widgets/shimmer_loading.dart';
 
 class HomeScreen extends ConsumerWidget {
@@ -27,12 +28,19 @@ class HomeScreen extends ConsumerWidget {
       }
     });
 
+    // Extract active delivery ID for the SOS button.
+    final activeDeliveryId = stats.valueOrNull?['active_delivery_id'] as String?;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('الرئيسية'),
         centerTitle: true,
         actions: const [ShiftToggle()],
       ),
+      floatingActionButton: activeDeliveryId != null
+          ? SosButton(activeDeliveryId: activeDeliveryId)
+          : null,
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
