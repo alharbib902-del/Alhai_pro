@@ -957,7 +957,9 @@ class _MonitoringTile extends StatelessWidget {
         leading: Icon(icon, color: theme.colorScheme.primary),
         title: Text(title),
         subtitle: Text(subtitle),
-        trailing: const Icon(Icons.chevron_right),
+        trailing: Icon(Directionality.of(context) == TextDirection.rtl
+            ? Icons.chevron_left
+            : Icons.chevron_right),
         onTap: onTap,
       ),
     );

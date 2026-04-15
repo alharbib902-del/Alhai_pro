@@ -711,7 +711,9 @@ class _QuickActionTile extends StatelessWidget {
                 ),
               ),
               Icon(
-                Icons.chevron_right,
+                Directionality.of(context) == TextDirection.rtl
+                    ? Icons.chevron_left
+                    : Icons.chevron_right,
                 size: 18,
                 color: isDark
                     ? Colors.white24

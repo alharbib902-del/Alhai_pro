@@ -63,7 +63,12 @@ class LiteOrderStatusScreen extends ConsumerWidget {
                           ref.invalidate(liteActiveOrdersProvider);
                         }
                       },
-                      icon: const Icon(Icons.arrow_forward, size: 18),
+                      icon: Icon(
+                        Directionality.of(context) == TextDirection.rtl
+                            ? Icons.arrow_back
+                            : Icons.arrow_forward,
+                        size: 18,
+                      ),
                       label: Text(_getNextStepLabel(l10n, currentStep)),
                       style: FilledButton.styleFrom(
                         backgroundColor: AlhaiColors.primary,

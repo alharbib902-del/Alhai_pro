@@ -508,7 +508,9 @@ class _SettingsTile extends StatelessWidget {
             ),
             if (showArrow && onTap != null)
               Icon(
-                Icons.chevron_right,
+                Directionality.of(context) == TextDirection.rtl
+                    ? Icons.chevron_left
+                    : Icons.chevron_right,
                 size: 20,
                 color: isDark ? Colors.white24 : Theme.of(context).dividerColor,
               ),
