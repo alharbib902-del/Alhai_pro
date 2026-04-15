@@ -36,6 +36,12 @@ dependencies:
   # Web platform interop (replaces deprecated dart:html)
   web: ^1.1.0
 
+  # File picker for product image upload
+  file_picker: ^8.1.4
+
+  # UUID generation for product IDs
+  uuid: ^4.5.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

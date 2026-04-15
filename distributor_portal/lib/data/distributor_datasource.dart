@@ -7,6 +7,7 @@ library;
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart' show DateFormat;
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 import '../core/services/sentry_service.dart';
 import '../core/supabase/supabase_client.dart';
@@ -1056,6 +1057,151 @@ class DistributorDatasource {
     } catch (e) {
       if (e is DatasourceError) rethrow;
       final error = _categorizeError(e, 'getCategories');
+      if (kDebugMode) debugPrint('$error');
+      throw error;
+    }
+  }
+
+  /// Fetch categories with their IDs for product creation forms.
+  Future<List<({String id, String name})>> getCategoriesWithIds({
+    int limit = 100,
+  }) async {
+    try {
+      final orgId = await _requireOrgId('getCategoriesWithIds');
+
+      final data = await _client
+          .from('categories')
+          .select('id, name')
+          .eq('org_id', orgId)
+          .order('name')
+          .range(0, limit - 1);
+
+      return (data as List)
+          .map((json) {
+            final map = json as Map<String, dynamic>;
+            return (
+              id: map['id'] as String? ?? '',
+              name: map['name'] as String? ?? '',
+            );
+          })
+          .where((c) => c.id.isNotEmpty && c.name.isNotEmpty)
+          .toList();
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      final error = _categorizeError(e, 'getCategoriesWithIds');
+      if (kDebugMode) debugPrint('$error');
+      throw error;
+    }
+  }
+
+  // ─── Create Product ──────────────────────────────────────────
+
+  /// Storage bucket for product images.
+  static const String _productImagesBucket = 'product-images';
+
+  /// Create a new product with image upload.
+  ///
+  /// Uploads the image to Supabase Storage, then inserts the product row
+  /// into the `products` table. Requires a valid org with at least one store.
+  Future<DistributorProduct> createProduct({
+    required String name,
+    required double price,
+    required String categoryId,
+    required Uint8List imageBytes,
+    required String imageFilename,
+    String? description,
+    String? barcode,
+    String? sku,
+    int? stockQty,
+  }) async {
+    try {
+      _rateLimiter.check('createProduct');
+
+      // Validate price
+      final priceError = validatePrice(price);
+      if (priceError != null) {
+        throw DatasourceError(
+          type: DatasourceErrorType.validation,
+          message: priceError,
+        );
+      }
+
+      // Validate name length
+      if (name.trim().isEmpty || name.trim().length < 3) {
+        throw const DatasourceError(
+          type: DatasourceErrorType.validation,
+          message: 'Product name must be at least 3 characters.',
+        );
+      }
+
+      final orgId = await _requireOrgId('createProduct');
+
+      // Get first store_id for this org (required by schema)
+      final storeIds = await _getOrgStoreIds(orgId);
+      if (storeIds.isEmpty) {
+        throw const DatasourceError(
+          type: DatasourceErrorType.validation,
+          message: 'No store found for this organization.',
+        );
+      }
+      final storeId = storeIds.first;
+
+      // Generate product ID
+      final productId = const Uuid().v4();
+
+      // Upload image to Supabase Storage
+      final ext = imageFilename.split('.').last.toLowerCase();
+      final imagePath = '$storeId/$productId.$ext';
+
+      await _client.storage.from(_productImagesBucket).uploadBinary(
+        imagePath,
+        imageBytes,
+        fileOptions: FileOptions(
+          contentType: 'image/$ext',
+          upsert: false,
+        ),
+      );
+
+      final imageUrl = _client.storage
+          .from(_productImagesBucket)
+          .getPublicUrl(imagePath);
+
+      // Insert product row
+      final response = await _client
+          .from('products')
+          .insert({
+            'id': productId,
+            'store_id': storeId,
+            'org_id': orgId,
+            'name': name.trim(),
+            'price': price,
+            'category_id': categoryId,
+            'image_thumbnail': imageUrl,
+            'description': description?.trim(),
+            'barcode': barcode?.trim(),
+            'sku': sku?.trim(),
+            'stock_qty': stockQty ?? 0,
+            'is_active': true,
+          })
+          .select('*, categories(name)')
+          .single();
+
+      // Invalidate caches after mutation
+      invalidateProductCaches();
+
+      return DistributorProduct.fromJson(response);
+    } on StorageException catch (e) {
+      throw DatasourceError(
+        type: DatasourceErrorType.unknown,
+        message: 'فشل رفع الصورة: ${e.message}',
+        originalError: e,
+      );
+    } catch (e) {
+      if (e is DatasourceError) {
+        if (kDebugMode) debugPrint('createProduct: $e');
+        rethrow;
+      }
+      final error = _categorizeError(e, 'createProduct');
       if (kDebugMode) debugPrint('$error');
       throw error;
     }
