@@ -46,7 +46,7 @@
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-	<string>يحتاج التطبيق للوصول إلى الكاميرا لمسح الباركود</string>
+	<string>يحتاج التطبيق للوصول إلى الكاميرا لتصوير إثبات التسليم</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>يحتاج التطبيق للوصول إلى معرض الصور لإثبات التسليم</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
