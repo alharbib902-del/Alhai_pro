@@ -71,6 +71,12 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
       route: '/pricing',
     ),
     _NavItem(
+      id: 'pricing-tiers',
+      label: (l10n) => 'فئات الأسعار',
+      icon: Icons.layers_outlined,
+      route: '/pricing-tiers',
+    ),
+    _NavItem(
       id: 'reports',
       label: (l10n) => l10n?.reports ?? 'Reports',
       icon: Icons.bar_chart_outlined,
@@ -89,6 +95,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
     if (location.startsWith('/orders')) return 'orders';
     if (location.startsWith('/invoices')) return 'invoices';
     if (location.startsWith('/products')) return 'products';
+    if (location.startsWith('/pricing-tiers')) return 'pricing-tiers';
     if (location.startsWith('/pricing')) return 'pricing';
     if (location.startsWith('/reports')) return 'reports';
     if (location.startsWith('/settings')) return 'settings';

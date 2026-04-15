@@ -1383,4 +1383,278 @@ class DistributorDatasource {
       throw error;
     }
   }
+
+  // ─── Pricing Tiers ──────────────────────────────────────────────
+
+  /// Whether the pricing_tiers table exists. Cached after first check.
+  bool? _pricingTiersAvailable;
+
+  /// Check if pricing_tiers table is available (graceful 42P01 handling).
+  bool _isPricingTableError(Object error) {
+    if (error is PostgrestException) {
+      // 42P01 = undefined_table
+      return error.code == '42P01' ||
+          (error.message.contains('relation') &&
+              error.message.contains('does not exist'));
+    }
+    return false;
+  }
+
+  /// Get all pricing tiers for the current org, sorted by sort_order.
+  Future<List<PricingTier>> getPricingTiers() async {
+    if (_pricingTiersAvailable == false) return [];
+    try {
+      final orgId = await _requireOrgId('getPricingTiers');
+      final data = await _client
+          .from('pricing_tiers')
+          .select()
+          .eq('org_id', orgId)
+          .order('sort_order', ascending: true)
+          .order('created_at', ascending: true);
+
+      _pricingTiersAvailable = true;
+      return (data as List)
+          .map((e) => PricingTier.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      if (_isPricingTableError(e)) {
+        _pricingTiersAvailable = false;
+        return [];
+      }
+      if (e is DatasourceError) rethrow;
+      throw _categorizeError(e, 'getPricingTiers');
+    }
+  }
+
+  /// Create a new pricing tier.
+  Future<PricingTier> createPricingTier({
+    required String name,
+    String? nameAr,
+    required double discountPercent,
+    bool isDefault = false,
+    int sortOrder = 0,
+  }) async {
+    try {
+      _rateLimiter.check('createPricingTier');
+      final orgId = await _requireOrgId('createPricingTier');
+
+      // If setting as default, unset existing default first
+      if (isDefault) {
+        await _client
+            .from('pricing_tiers')
+            .update({'is_default': false})
+            .eq('org_id', orgId)
+            .eq('is_default', true);
+      }
+
+      final data = await _client
+          .from('pricing_tiers')
+          .insert({
+            'org_id': orgId,
+            'name': name,
+            'name_ar': nameAr,
+            'discount_percent': discountPercent,
+            'is_default': isDefault,
+            'sort_order': sortOrder,
+          })
+          .select()
+          .single();
+
+      _pricingTiersAvailable = true;
+      return PricingTier.fromJson(data);
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      throw _categorizeError(e, 'createPricingTier');
+    }
+  }
+
+  /// Update an existing pricing tier.
+  Future<PricingTier> updatePricingTier({
+    required String tierId,
+    String? name,
+    String? nameAr,
+    double? discountPercent,
+    bool? isDefault,
+    int? sortOrder,
+  }) async {
+    try {
+      _rateLimiter.check('updatePricingTier');
+      final orgId = await _requireOrgId('updatePricingTier');
+
+      // If setting as default, unset existing default first
+      if (isDefault == true) {
+        await _client
+            .from('pricing_tiers')
+            .update({'is_default': false})
+            .eq('org_id', orgId)
+            .eq('is_default', true);
+      }
+
+      final updates = <String, dynamic>{
+        'updated_at': DateTime.now().toIso8601String(),
+      };
+      if (name != null) updates['name'] = name;
+      if (nameAr != null) updates['name_ar'] = nameAr;
+      if (discountPercent != null) {
+        updates['discount_percent'] = discountPercent;
+      }
+      if (isDefault != null) updates['is_default'] = isDefault;
+      if (sortOrder != null) updates['sort_order'] = sortOrder;
+
+      final data = await _client
+          .from('pricing_tiers')
+          .update(updates)
+          .eq('id', tierId)
+          .eq('org_id', orgId)
+          .select()
+          .single();
+
+      return PricingTier.fromJson(data);
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      throw _categorizeError(e, 'updatePricingTier');
+    }
+  }
+
+  /// Delete a pricing tier. Also removes any store assignments for it.
+  Future<void> deletePricingTier(String tierId) async {
+    try {
+      _rateLimiter.check('deletePricingTier');
+      final orgId = await _requireOrgId('deletePricingTier');
+
+      // Remove store assignments first
+      await _client
+          .from('distributor_store_tiers')
+          .delete()
+          .eq('tier_id', tierId)
+          .eq('org_id', orgId);
+
+      // Delete the tier
+      await _client
+          .from('pricing_tiers')
+          .delete()
+          .eq('id', tierId)
+          .eq('org_id', orgId);
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      throw _categorizeError(e, 'deletePricingTier');
+    }
+  }
+
+  // ─── Store Tier Assignments ─────────────────────────────────────
+
+  /// Get all store-tier assignments for the current org.
+  Future<List<StoreTierAssignment>> getStoreTierAssignments() async {
+    if (_pricingTiersAvailable == false) return [];
+    try {
+      final orgId = await _requireOrgId('getStoreTierAssignments');
+      final data = await _client
+          .from('distributor_store_tiers')
+          .select('*, stores(name), pricing_tiers(name, discount_percent)')
+          .eq('org_id', orgId);
+
+      _pricingTiersAvailable = true;
+      return (data as List)
+          .map((e) =>
+              StoreTierAssignment.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e) {
+      if (_isPricingTableError(e)) {
+        _pricingTiersAvailable = false;
+        return [];
+      }
+      if (e is DatasourceError) rethrow;
+      throw _categorizeError(e, 'getStoreTierAssignments');
+    }
+  }
+
+  /// Get stores belonging to the org (for assignment UI).
+  Future<List<({String id, String name})>> getOrgStores() async {
+    try {
+      final orgId = await _requireOrgId('getOrgStores');
+      final data = await _client
+          .from('stores')
+          .select('id, name')
+          .eq('org_id', orgId)
+          .order('name', ascending: true);
+
+      return (data as List)
+          .map((e) => (
+                id: (e as Map<String, dynamic>)['id'] as String,
+                name: e['name'] as String? ?? '',
+              ))
+          .toList();
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      throw _categorizeError(e, 'getOrgStores');
+    }
+  }
+
+  /// Assign a store to a pricing tier.
+  Future<void> assignStoreToTier({
+    required String storeId,
+    required String tierId,
+  }) async {
+    try {
+      _rateLimiter.check('assignStoreToTier');
+      final orgId = await _requireOrgId('assignStoreToTier');
+
+      await _client.from('distributor_store_tiers').upsert(
+        {
+          'org_id': orgId,
+          'store_id': storeId,
+          'tier_id': tierId,
+          'assigned_at': DateTime.now().toIso8601String(),
+        },
+        onConflict: 'org_id, store_id',
+      );
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      throw _categorizeError(e, 'assignStoreToTier');
+    }
+  }
+
+  /// Remove a store's tier assignment.
+  Future<void> removeStoreFromTier(String storeId) async {
+    try {
+      _rateLimiter.check('removeStoreFromTier');
+      final orgId = await _requireOrgId('removeStoreFromTier');
+
+      await _client
+          .from('distributor_store_tiers')
+          .delete()
+          .eq('org_id', orgId)
+          .eq('store_id', storeId);
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      throw _categorizeError(e, 'removeStoreFromTier');
+    }
+  }
+
+  /// Get the discount percentage for a store based on its tier assignment.
+  /// Returns 0 if the store has no tier or the feature is not available.
+  Future<double> getStoreDiscountPercent(String storeId) async {
+    if (_pricingTiersAvailable == false) return 0;
+    try {
+      final orgId = await _requireOrgId('getStoreDiscountPercent');
+      final data = await _client
+          .from('distributor_store_tiers')
+          .select('pricing_tiers(discount_percent)')
+          .eq('org_id', orgId)
+          .eq('store_id', storeId)
+          .maybeSingle();
+
+      if (data == null) return 0;
+      _pricingTiersAvailable = true;
+      final tierData = data['pricing_tiers'] as Map<String, dynamic>?;
+      return (tierData?['discount_percent'] as num?)?.toDouble() ?? 0;
+    } catch (e) {
+      if (_isPricingTableError(e)) {
+        _pricingTiersAvailable = false;
+        return 0;
+      }
+      if (kDebugMode) debugPrint('getStoreDiscountPercent: $e');
+      return 0;
+    }
+  }
 }
