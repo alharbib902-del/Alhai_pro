@@ -5,10 +5,13 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_zatca/alhai_zatca.dart'
+    show CertificateStorage, CertificateInfo;
 import '../../../providers/settings_db_providers.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import '../../../core/constants/admin_permissions.dart';
 import '../../../core/widgets/permission_guard.dart';
+import 'package:intl/intl.dart';
 
 // مفاتيح إعدادات ZATCA
 const String _kZatcaEInvoicing = 'zatca_e_invoicing';
@@ -29,6 +32,7 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
   bool _isLoading = true;
   String _taxNumber = '';
   String _branchCode = '';
+  CertificateInfo? _certificate;
 
   @override
   void initState() {
@@ -63,6 +67,19 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
               '';
           _isLoading = false;
         });
+      }
+
+      // Load certificate info (non-blocking)
+      try {
+        final certStorage = getIt<CertificateStorage>();
+        final cert = await certStorage.getCertificateMetadata(
+          storeId: storeId,
+        );
+        if (mounted) {
+          setState(() => _certificate = cert);
+        }
+      } catch (_) {
+        // Certificate storage may not be initialized
       }
     } catch (e) {
       if (mounted) setState(() => _isLoading = false);
@@ -282,66 +299,95 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
           ),
         ], isDark),
 
-        // Certificates
+        // Certificates — show actual status from CertificateStorage
         _buildGroup(l10n.certificates, [
           _tile(
             Icons.security_rounded,
             l10n.csidCertificate,
-            l10n.valid,
+            _certificateStatusText(),
             isDark,
-            trailing: const Icon(
-              Icons.check_circle_rounded,
-              color: AppColors.success,
+            trailing: Icon(
+              _certificate == null
+                  ? Icons.warning_rounded
+                  : _certificate!.isValid
+                      ? (_certificate!.isNearExpiry
+                          ? Icons.warning_rounded
+                          : Icons.check_circle_rounded)
+                      : Icons.error_rounded,
+              color: _certificate == null
+                  ? AppColors.warning
+                  : _certificate!.isValid
+                      ? (_certificate!.isNearExpiry
+                          ? AppColors.warning
+                          : AppColors.success)
+                      : AppColors.error,
             ),
           ),
           _tile(
             Icons.key_rounded,
             l10n.privateKey,
-            l10n.configured,
+            _certificate != null ? l10n.configured : '\u063a\u064a\u0631 \u0645\u064f\u0639\u062f',
             isDark,
-            trailing: const Icon(
-              Icons.check_circle_rounded,
-              color: AppColors.success,
+            trailing: Icon(
+              _certificate != null
+                  ? Icons.check_circle_rounded
+                  : Icons.warning_rounded,
+              color: _certificate != null
+                  ? AppColors.success
+                  : AppColors.warning,
             ),
           ),
         ], isDark),
 
         const SizedBox(height: AlhaiSpacing.xs),
 
-        // زر الإرسال للهيئة
+        // زر الإرسال للهيئة — disabled until CSID is configured
         SizedBox(
           width: double.infinity,
           child: FilledButton.icon(
-            onPressed: () {
-              showDialog(
-                context: context,
-                builder: (ctx) => AlertDialog(
-                  title: Text(AppLocalizations.of(ctx).submitToZatcaAuthority),
-                  content: Text(AppLocalizations.of(ctx).zatcaSubmitBody),
-                  actions: [
-                    TextButton(
-                      onPressed: () => Navigator.pop(ctx),
-                      child: Text(AppLocalizations.of(ctx).cancel),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.pop(ctx);
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              AppLocalizations.of(context).zatcaLinkComingSoon,
-                            ),
+            onPressed: _certificate != null && _certificate!.isValid
+                ? () {
+                    showDialog(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: Text(
+                          AppLocalizations.of(ctx).submitToZatcaAuthority,
+                        ),
+                        content: Text(
+                          AppLocalizations.of(ctx).zatcaSubmitBody,
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(ctx),
+                            child: Text(AppLocalizations.of(ctx).cancel),
                           ),
-                        );
-                      },
-                      child: Text(AppLocalizations.of(ctx).submitBtn),
-                    ),
-                  ],
-                ),
-              );
-            },
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(ctx);
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    '\u0633\u064a\u062a\u0645 \u0627\u0644\u062a\u0641\u0639\u064a\u0644 \u0628\u0639\u062f \u0627\u0644\u062a\u0633\u062c\u064a\u0644 \u0641\u064a ZATCA',
+                                  ),
+                                  backgroundColor: AppColors.info,
+                                ),
+                              );
+                            },
+                            child: Text(AppLocalizations.of(ctx).submitBtn),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                : null,
             icon: const Icon(Icons.send_rounded),
-            label: Text(AppLocalizations.of(context).submitToAuthority),
+            label: Text(
+              _certificate == null
+                  ? '\u0633\u062c\u0651\u0644 \u0634\u0647\u0627\u062f\u0629 CSID \u0623\u0648\u0644\u0627\u064b'
+                  : !_certificate!.isValid
+                      ? '\u0627\u0644\u0634\u0647\u0627\u062f\u0629 \u0645\u0646\u062a\u0647\u064a\u0629 \u2014 \u062c\u062f\u062f\u0647\u0627 \u0644\u0644\u0625\u0631\u0633\u0627\u0644'
+                      : AppLocalizations.of(context).submitToAuthority,
+            ),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
               shape: RoundedRectangleBorder(
@@ -352,6 +398,26 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
         ),
       ],
     );
+  }
+
+  String _certificateStatusText() {
+    if (_certificate == null) {
+      return '\u0644\u0645 \u064a\u062a\u0645 \u0627\u0644\u062a\u0633\u062c\u064a\u0644'; // لم يتم التسجيل
+    }
+    final validTo = _certificate!.validTo;
+    if (validTo == null) {
+      return _certificate!.isValid
+          ? '\u0635\u0627\u0644\u062d\u0629' // صالحة
+          : '\u063a\u064a\u0631 \u0635\u0627\u0644\u062d\u0629'; // غير صالحة
+    }
+    final formatted = DateFormat('dd/MM/yyyy').format(validTo);
+    if (!_certificate!.isValid) {
+      return '\u0645\u0646\u062a\u0647\u064a\u0629 \u0627\u0644\u0635\u0644\u0627\u062d\u064a\u0629!'; // منتهية الصلاحية!
+    }
+    if (_certificate!.isNearExpiry) {
+      return '\u062a\u0646\u062a\u0647\u064a \u062e\u0644\u0627\u0644 ${_certificate!.daysUntilExpiry} \u064a\u0648\u0645 ($formatted)';
+    }
+    return '\u0635\u0627\u0644\u062d\u0629 \u062d\u062a\u0649 $formatted'; // صالحة حتى
   }
 
   Widget _buildGroup(String title, List<Widget> children, bool isDark) {
