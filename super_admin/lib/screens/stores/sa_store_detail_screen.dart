@@ -11,6 +11,30 @@ class SAStoreDetailScreen extends ConsumerWidget {
   final String storeId;
   const SAStoreDetailScreen({super.key, required this.storeId});
 
+  /// Track whether we've logged this store access to avoid duplicates.
+  static final _loggedAccess = <String>{};
+
+  void _logStoreAccess(WidgetRef ref, String storeName) {
+    final key = '$storeId-${DateTime.now().toIso8601String().substring(0, 13)}';
+    if (_loggedAccess.contains(key)) return;
+    _loggedAccess.add(key);
+    // Cap the set to prevent memory leak over very long sessions.
+    if (_loggedAccess.length > 200) {
+      _loggedAccess.clear();
+    }
+    try {
+      ref.read(auditLogServiceProvider).log(
+        action: 'store.accessed',
+        targetType: 'store',
+        targetId: storeId,
+        metadata: {
+          'store_name': storeName,
+          'timestamp': DateTime.now().toUtc().toIso8601String(),
+        },
+      );
+    } catch (_) {}
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -28,6 +52,8 @@ class SAStoreDetailScreen extends ConsumerWidget {
         error: (e, _) => Center(child: Text('Error: $e')),
         data: (store) {
           final name = store.name.isEmpty ? 'Unnamed' : store.name;
+          // Audit: log that super admin accessed this store's data.
+          _logStoreAccess(ref, name);
           final email = store.email ?? '-';
           final phone = store.phone ?? '-';
           final businessType = store.businessType ?? '-';

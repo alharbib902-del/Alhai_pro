@@ -12,6 +12,9 @@ import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import '../../core/providers/unsaved_changes_provider.dart';
 import '../../core/services/sentry_service.dart';
+import '../../core/constants/admin_permissions.dart';
+import '../../core/widgets/permission_guard.dart';
+import 'package:alhai_auth/alhai_auth.dart' show currentUserProvider;
 
 /// Admin Product Form Screen - Add/Edit product
 class ProductFormScreen extends ConsumerStatefulWidget {
@@ -247,17 +250,21 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                     userRole: l10n.branchManager,
                   ),
                   Expanded(
-                    child: _isLoadingProduct
-                        ? const Center(child: CircularProgressIndicator())
-                        : SingleChildScrollView(
-                            padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
-                            child: _buildContent(
-                              isWideScreen,
-                              isMediumScreen,
-                              isDark,
-                              l10n,
+                    child: PermissionGuard(
+                      permission: AdminPermissions.productsManage,
+                      child: _isLoadingProduct
+                          ? const Center(child: CircularProgressIndicator())
+                          : SingleChildScrollView(
+                              padding:
+                                  EdgeInsets.all(isMediumScreen ? 24 : 16),
+                              child: _buildContent(
+                                isWideScreen,
+                                isMediumScreen,
+                                isDark,
+                                l10n,
+                              ),
                             ),
-                          ),
+                    ),
                   ),
                 ],
               ),
@@ -434,6 +441,13 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
     );
   }
 
+  // DEFERRED: Product image upload implementation plan:
+  // 1. Use image_picker (already in pubspec) for gallery/camera selection
+  // 2. Compress with flutter_image_compress (max 5MB, 80% quality)
+  // 3. Upload to Supabase Storage bucket "product-images/{storeId}/{productId}"
+  // 4. Store public URL in product.imageThumbnail/imageMedium/imageLarge
+  // 5. Generate blurhash for imageHash (placeholder during load)
+  // Blocked on: Supabase Storage bucket creation and RLS policies setup
   Widget _buildImageSection(bool isDark, AppLocalizations l10n) {
     return _buildSectionCard(
       isDark: isDark,
@@ -442,22 +456,47 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       color: AppColors.info,
       children: [
         Center(
-          child: Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              color: isDark
-                  ? Theme.of(context).colorScheme.surface
-                  : AppColors.border.withValues(alpha: 0.3),
-              borderRadius: BorderRadius.circular(AppSizes.radiusLg),
-              border: Border.all(color: Theme.of(context).dividerColor),
-            ),
-            child: Icon(
-              Icons.add_photo_alternate_rounded,
-              size: 48,
-              color: isDark
-                  ? Colors.white.withValues(alpha: 0.3)
-                  : AppColors.textTertiary,
+          child: GestureDetector(
+            onTap: () {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    '\u0631\u0641\u0639 \u0627\u0644\u0635\u0648\u0631 \u0633\u064a\u062a\u0648\u0641\u0631 \u0628\u0639\u062f \u0625\u0639\u062f\u0627\u062f Supabase Storage',
+                  ),
+                  backgroundColor: AppColors.info,
+                ),
+              );
+            },
+            child: Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                color: isDark
+                    ? Theme.of(context).colorScheme.surface
+                    : AppColors.border.withValues(alpha: 0.3),
+                borderRadius: BorderRadius.circular(AppSizes.radiusLg),
+                border: Border.all(color: Theme.of(context).dividerColor),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_photo_alternate_rounded,
+                    size: 36,
+                    color: isDark
+                        ? Colors.white.withValues(alpha: 0.3)
+                        : AppColors.textTertiary,
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    '\u0625\u0636\u0627\u0641\u0629 \u0635\u0648\u0631\u0629',
+                    style: TextStyle(
+                      fontSize: 11,
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -883,6 +922,30 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       final stockText = _stockController.text.trim();
       final minStockText = _minStockController.text.trim();
 
+      // Check for duplicate barcode before save
+      if (barcode.isNotEmpty) {
+        final existingProduct =
+            await db.productsDao.getProductByBarcode(barcode, storeId);
+        if (existingProduct != null) {
+          final isSameProduct =
+              widget.isEditing && existingProduct.id == widget.productId;
+          if (!isSameProduct) {
+            if (mounted) {
+              setState(() => _isSaving = false);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    '\u0627\u0644\u0628\u0627\u0631\u0643\u0648\u062f \u0645\u0633\u062a\u062e\u062f\u0645 \u0628\u0627\u0644\u0641\u0639\u0644 \u0644\u0644\u0645\u0646\u062a\u062c: ${existingProduct.name}',
+                  ),
+                  backgroundColor: AppColors.error,
+                ),
+              );
+            }
+            return;
+          }
+        }
+      }
+
       if (widget.isEditing) {
         final existing = await db.productsDao.getProductById(widget.productId!);
         if (existing == null) throw Exception('Product not found');
@@ -903,6 +966,28 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         );
 
         await db.productsDao.updateProduct(updated);
+
+        // Log price change to audit trail if price changed
+        final newPrice = double.tryParse(priceText) ?? 0.0;
+        if (existing.price != newPrice) {
+          try {
+            final currentUser = ref.read(currentUserProvider);
+            db.auditLogDao.log(
+              storeId: storeId,
+              userId: currentUser?.id ?? 'unknown',
+              userName: currentUser?.name ?? 'unknown',
+              action: AuditAction.priceChange,
+              entityType: 'product',
+              entityId: existing.id,
+              oldValue: {'price': existing.price},
+              newValue: {'price': newPrice},
+              description:
+                  'Price changed for "${existing.name}": ${existing.price} \u2192 $newPrice',
+            );
+          } catch (_) {
+            // Audit logging should not block the save
+          }
+        }
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(

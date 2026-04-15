@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 
+import '../../core/router/app_router.dart';
 import '../../core/services/sentry_service.dart';
 import '../../providers/sa_dashboard_providers.dart';
 
@@ -132,6 +134,12 @@ class _SALogsScreenState extends ConsumerState<SALogsScreen> {
             ],
             selected: {_filterLevel},
             onSelectionChanged: (v) => setState(() => _filterLevel = v.first),
+          ),
+          const SizedBox(width: 8),
+          OutlinedButton.icon(
+            onPressed: () => context.go(SuperAdminRoutes.auditLog),
+            icon: const Icon(Icons.shield_rounded, size: 18),
+            label: const Text('Audit Log'),
           ),
           const SizedBox(width: 8),
           IconButton(

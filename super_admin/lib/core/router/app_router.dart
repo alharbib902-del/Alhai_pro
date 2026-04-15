@@ -3,9 +3,14 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_core/alhai_core.dart' show UserRole;
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthException;
+
+import '../../providers/sa_dashboard_providers.dart'
+    show saSupabaseClientProvider;
 
 import '../../ui/super_admin_shell.dart';
 import '../../screens/auth/sa_login_screen.dart';
+import '../../screens/auth/sa_mfa_screen.dart';
 import '../../screens/dashboard/sa_dashboard_screen.dart';
 import '../../screens/stores/sa_stores_list_screen.dart';
 import '../../screens/stores/sa_store_detail_screen.dart';
@@ -16,6 +21,7 @@ import '../../screens/subscriptions/sa_subscriptions_list_screen.dart';
 import '../../screens/users/sa_users_list_screen.dart';
 import '../../screens/users/sa_user_detail_screen.dart';
 import '../../screens/settings/sa_platform_settings_screen.dart';
+import '../../screens/logs/sa_audit_log_screen.dart';
 import '../../screens/logs/sa_logs_screen.dart';
 import '../../screens/reports/sa_reports_screen.dart';
 
@@ -31,6 +37,7 @@ import '../../screens/settings/sa_system_health_screen.dart' deferred as health;
 class SuperAdminRoutes {
   static const splash = '/';
   static const login = '/login';
+  static const mfa = '/mfa';
 
   // Dashboard
   static const dashboard = '/dashboard';
@@ -60,6 +67,7 @@ class SuperAdminRoutes {
 
   // Logs & Reports
   static const logs = '/logs';
+  static const auditLog = '/logs/audit';
   static const reports = '/reports';
 }
 
@@ -84,27 +92,51 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
   final authState = ref.read(authStateProvider);
   final path = state.uri.path;
 
-  const publicPaths = [SuperAdminRoutes.splash, SuperAdminRoutes.login];
-  final isPublic = publicPaths.contains(path);
-
   // Still resolving -> stay on current page
   if (authState.status == AuthStatus.unknown) return null;
 
   // Not authenticated -> login
   if (authState.status == AuthStatus.unauthenticated ||
       authState.status == AuthStatus.sessionExpired) {
-    return isPublic ? null : SuperAdminRoutes.login;
+    if (path == SuperAdminRoutes.login || path == SuperAdminRoutes.splash) {
+      return null;
+    }
+    return SuperAdminRoutes.login;
   }
 
-  // Authenticated: check super_admin role
+  // Authenticated: check super_admin role + MFA AAL2
   if (authState.status == AuthStatus.authenticated) {
-    // Redirect to dashboard if on public page
-    if (isPublic) return SuperAdminRoutes.dashboard;
-
     // Enforce super_admin role for all protected routes
     final role = authState.user?.role;
     if (role != UserRole.superAdmin) {
       return SuperAdminRoutes.login;
+    }
+
+    // F1 fix: enforce AAL2 (MFA completed) before granting access.
+    // getAuthenticatorAssuranceLevel() is synchronous (reads from JWT).
+    bool isAal2 = false;
+    try {
+      final client = ref.read(saSupabaseClientProvider);
+      final aal = client.auth.mfa.getAuthenticatorAssuranceLevel();
+      isAal2 = aal.currentLevel == AuthenticatorAssuranceLevels.aal2;
+    } catch (_) {
+      // Fail-safe: if AAL check throws, deny access (treat as not AAL2).
+      isAal2 = false;
+    }
+
+    if (!isAal2) {
+      // Not MFA-verified: only allow the /mfa screen itself.
+      if (path != SuperAdminRoutes.mfa) {
+        return SuperAdminRoutes.mfa;
+      }
+      return null;
+    }
+
+    // AAL2 confirmed: redirect from public pages to dashboard.
+    if (path == SuperAdminRoutes.login ||
+        path == SuperAdminRoutes.splash ||
+        path == SuperAdminRoutes.mfa) {
+      return SuperAdminRoutes.dashboard;
     }
   }
 
@@ -124,6 +156,10 @@ final List<RouteBase> _routes = [
   GoRoute(
     path: SuperAdminRoutes.login,
     builder: (c, s) => const SALoginScreen(),
+  ),
+  GoRoute(
+    path: SuperAdminRoutes.mfa,
+    builder: (c, s) => const SAMfaScreen(),
   ),
 
   // Shell route with sidebar navigation
@@ -214,6 +250,10 @@ final List<RouteBase> _routes = [
       ),
 
       // Logs
+      GoRoute(
+        path: SuperAdminRoutes.auditLog,
+        builder: (c, s) => const SAAuditLogScreen(),
+      ),
       GoRoute(
         path: SuperAdminRoutes.logs,
         builder: (c, s) => const SALogsScreen(),

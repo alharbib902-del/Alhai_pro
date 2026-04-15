@@ -36,6 +36,8 @@ dependencies:
     path: ../../packages/alhai_ai
   alhai_reports:
     path: ../../packages/alhai_reports
+  alhai_zatca:
+    path: ../../packages/alhai_zatca
 
   # Media
   image_picker: ^1.0.7

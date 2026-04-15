@@ -44,6 +44,34 @@ class _LiteNotificationPrefsScreenState
           vertical: AlhaiSpacing.md,
         ),
         children: [
+          // Coming soon banner
+          Container(
+            padding: const EdgeInsets.all(AlhaiSpacing.md),
+            decoration: BoxDecoration(
+              color: AlhaiColors.warning.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: AlhaiColors.warning.withValues(alpha: 0.3),
+              ),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.construction, color: AlhaiColors.warning, size: 20),
+                const SizedBox(width: AlhaiSpacing.sm),
+                Expanded(
+                  child: Text(
+                    'Push notifications are coming soon. Settings below are saved locally and will take effect once push delivery is enabled.',
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: isDark ? Colors.white70 : Colors.black87,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AlhaiSpacing.lg),
+
           // Master toggle
           _buildSectionHeader(
             l10n.notifications,
