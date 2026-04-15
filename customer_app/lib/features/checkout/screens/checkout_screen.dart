@@ -1,4 +1,5 @@
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_zatca/alhai_zatca.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,7 +70,9 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     final addressesAsync = ref.watch(addressesListProvider);
     final deliveryFee = ref.watch(deliveryFeeProvider);
     final minOrderAmount = ref.watch(minOrderAmountProvider);
-    final orderTotal = cart.total + deliveryFee;
+    final subtotal = cart.total;
+    final vat = VatCalculator.vatFromNet(netAmount: subtotal);
+    final orderTotal = subtotal + vat + deliveryFee;
 
     final belowMinOrder = minOrderAmount > 0 && cart.total < minOrderAmount;
 
@@ -240,8 +243,13 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       child: Column(
                         children: [
                           _SummaryRow(
-                            label: 'المنتجات (${cart.itemCount})',
-                            value: '${cart.total.toStringAsFixed(2)} ر.س',
+                            label: 'المجموع الفرعي (${cart.itemCount})',
+                            value: '${subtotal.toStringAsFixed(2)} ر.س',
+                          ),
+                          const Divider(),
+                          _SummaryRow(
+                            label: 'ضريبة القيمة المضافة (15%)',
+                            value: '${vat.toStringAsFixed(2)} ر.س',
                           ),
                           const Divider(),
                           _SummaryRow(

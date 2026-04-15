@@ -12,8 +12,7 @@ part of 'order_response.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 OrderResponse _$OrderResponseFromJson(Map<String, dynamic> json) {
   return _OrderResponse.fromJson(json);
@@ -79,38 +78,36 @@ mixin _$OrderResponse {
 /// @nodoc
 abstract class $OrderResponseCopyWith<$Res> {
   factory $OrderResponseCopyWith(
-    OrderResponse value,
-    $Res Function(OrderResponse) then,
-  ) = _$OrderResponseCopyWithImpl<$Res, OrderResponse>;
+          OrderResponse value, $Res Function(OrderResponse) then) =
+      _$OrderResponseCopyWithImpl<$Res, OrderResponse>;
   @useResult
-  $Res call({
-    String id,
-    @JsonKey(name: 'order_number') String? orderNumber,
-    @JsonKey(name: 'customer_id') String customerId,
-    @JsonKey(name: 'customer_name') String? customerName,
-    @JsonKey(name: 'customer_phone') String? customerPhone,
-    @JsonKey(name: 'store_id') String storeId,
-    @JsonKey(name: 'store_name') String? storeName,
-    String status,
-    List<OrderItemResponse> items,
-    double subtotal,
-    double discount,
-    @JsonKey(name: 'delivery_fee') double deliveryFee,
-    double tax,
-    double total,
-    @JsonKey(name: 'payment_method') String paymentMethod,
-    @JsonKey(name: 'is_paid') bool isPaid,
-    @JsonKey(name: 'address_id') String? addressId,
-    String? notes,
-    @JsonKey(name: 'cancellation_reason') String? cancellationReason,
-    @JsonKey(name: 'confirmed_at') String? confirmedAt,
-    @JsonKey(name: 'preparing_at') String? preparingAt,
-    @JsonKey(name: 'ready_at') String? readyAt,
-    @JsonKey(name: 'delivered_at') String? deliveredAt,
-    @JsonKey(name: 'cancelled_at') String? cancelledAt,
-    @JsonKey(name: 'created_at') String createdAt,
-    @JsonKey(name: 'updated_at') String? updatedAt,
-  });
+  $Res call(
+      {String id,
+      @JsonKey(name: 'order_number') String? orderNumber,
+      @JsonKey(name: 'customer_id') String customerId,
+      @JsonKey(name: 'customer_name') String? customerName,
+      @JsonKey(name: 'customer_phone') String? customerPhone,
+      @JsonKey(name: 'store_id') String storeId,
+      @JsonKey(name: 'store_name') String? storeName,
+      String status,
+      List<OrderItemResponse> items,
+      double subtotal,
+      double discount,
+      @JsonKey(name: 'delivery_fee') double deliveryFee,
+      double tax,
+      double total,
+      @JsonKey(name: 'payment_method') String paymentMethod,
+      @JsonKey(name: 'is_paid') bool isPaid,
+      @JsonKey(name: 'address_id') String? addressId,
+      String? notes,
+      @JsonKey(name: 'cancellation_reason') String? cancellationReason,
+      @JsonKey(name: 'confirmed_at') String? confirmedAt,
+      @JsonKey(name: 'preparing_at') String? preparingAt,
+      @JsonKey(name: 'ready_at') String? readyAt,
+      @JsonKey(name: 'delivered_at') String? deliveredAt,
+      @JsonKey(name: 'cancelled_at') String? cancelledAt,
+      @JsonKey(name: 'created_at') String createdAt,
+      @JsonKey(name: 'updated_at') String? updatedAt});
 }
 
 /// @nodoc
@@ -155,115 +152,112 @@ class _$OrderResponseCopyWithImpl<$Res, $Val extends OrderResponse>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(
-      _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
-                      as String,
-            orderNumber: freezed == orderNumber
-                ? _value.orderNumber
-                : orderNumber // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            customerId: null == customerId
-                ? _value.customerId
-                : customerId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            customerName: freezed == customerName
-                ? _value.customerName
-                : customerName // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            customerPhone: freezed == customerPhone
-                ? _value.customerPhone
-                : customerPhone // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            storeId: null == storeId
-                ? _value.storeId
-                : storeId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            storeName: freezed == storeName
-                ? _value.storeName
-                : storeName // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            status: null == status
-                ? _value.status
-                : status // ignore: cast_nullable_to_non_nullable
-                      as String,
-            items: null == items
-                ? _value.items
-                : items // ignore: cast_nullable_to_non_nullable
-                      as List<OrderItemResponse>,
-            subtotal: null == subtotal
-                ? _value.subtotal
-                : subtotal // ignore: cast_nullable_to_non_nullable
-                      as double,
-            discount: null == discount
-                ? _value.discount
-                : discount // ignore: cast_nullable_to_non_nullable
-                      as double,
-            deliveryFee: null == deliveryFee
-                ? _value.deliveryFee
-                : deliveryFee // ignore: cast_nullable_to_non_nullable
-                      as double,
-            tax: null == tax
-                ? _value.tax
-                : tax // ignore: cast_nullable_to_non_nullable
-                      as double,
-            total: null == total
-                ? _value.total
-                : total // ignore: cast_nullable_to_non_nullable
-                      as double,
-            paymentMethod: null == paymentMethod
-                ? _value.paymentMethod
-                : paymentMethod // ignore: cast_nullable_to_non_nullable
-                      as String,
-            isPaid: null == isPaid
-                ? _value.isPaid
-                : isPaid // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            addressId: freezed == addressId
-                ? _value.addressId
-                : addressId // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            notes: freezed == notes
-                ? _value.notes
-                : notes // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            cancellationReason: freezed == cancellationReason
-                ? _value.cancellationReason
-                : cancellationReason // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            confirmedAt: freezed == confirmedAt
-                ? _value.confirmedAt
-                : confirmedAt // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            preparingAt: freezed == preparingAt
-                ? _value.preparingAt
-                : preparingAt // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            readyAt: freezed == readyAt
-                ? _value.readyAt
-                : readyAt // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            deliveredAt: freezed == deliveredAt
-                ? _value.deliveredAt
-                : deliveredAt // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            cancelledAt: freezed == cancelledAt
-                ? _value.cancelledAt
-                : cancelledAt // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            createdAt: null == createdAt
-                ? _value.createdAt
-                : createdAt // ignore: cast_nullable_to_non_nullable
-                      as String,
-            updatedAt: freezed == updatedAt
-                ? _value.updatedAt
-                : updatedAt // ignore: cast_nullable_to_non_nullable
-                      as String?,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      orderNumber: freezed == orderNumber
+          ? _value.orderNumber
+          : orderNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      customerId: null == customerId
+          ? _value.customerId
+          : customerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      customerName: freezed == customerName
+          ? _value.customerName
+          : customerName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      customerPhone: freezed == customerPhone
+          ? _value.customerPhone
+          : customerPhone // ignore: cast_nullable_to_non_nullable
+              as String?,
+      storeId: null == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      storeName: freezed == storeName
+          ? _value.storeName
+          : storeName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      items: null == items
+          ? _value.items
+          : items // ignore: cast_nullable_to_non_nullable
+              as List<OrderItemResponse>,
+      subtotal: null == subtotal
+          ? _value.subtotal
+          : subtotal // ignore: cast_nullable_to_non_nullable
+              as double,
+      discount: null == discount
+          ? _value.discount
+          : discount // ignore: cast_nullable_to_non_nullable
+              as double,
+      deliveryFee: null == deliveryFee
+          ? _value.deliveryFee
+          : deliveryFee // ignore: cast_nullable_to_non_nullable
+              as double,
+      tax: null == tax
+          ? _value.tax
+          : tax // ignore: cast_nullable_to_non_nullable
+              as double,
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as double,
+      paymentMethod: null == paymentMethod
+          ? _value.paymentMethod
+          : paymentMethod // ignore: cast_nullable_to_non_nullable
+              as String,
+      isPaid: null == isPaid
+          ? _value.isPaid
+          : isPaid // ignore: cast_nullable_to_non_nullable
+              as bool,
+      addressId: freezed == addressId
+          ? _value.addressId
+          : addressId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      notes: freezed == notes
+          ? _value.notes
+          : notes // ignore: cast_nullable_to_non_nullable
+              as String?,
+      cancellationReason: freezed == cancellationReason
+          ? _value.cancellationReason
+          : cancellationReason // ignore: cast_nullable_to_non_nullable
+              as String?,
+      confirmedAt: freezed == confirmedAt
+          ? _value.confirmedAt
+          : confirmedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      preparingAt: freezed == preparingAt
+          ? _value.preparingAt
+          : preparingAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      readyAt: freezed == readyAt
+          ? _value.readyAt
+          : readyAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      deliveredAt: freezed == deliveredAt
+          ? _value.deliveredAt
+          : deliveredAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      cancelledAt: freezed == cancelledAt
+          ? _value.cancelledAt
+          : cancelledAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
   }
 }
 
@@ -271,39 +265,37 @@ class _$OrderResponseCopyWithImpl<$Res, $Val extends OrderResponse>
 abstract class _$$OrderResponseImplCopyWith<$Res>
     implements $OrderResponseCopyWith<$Res> {
   factory _$$OrderResponseImplCopyWith(
-    _$OrderResponseImpl value,
-    $Res Function(_$OrderResponseImpl) then,
-  ) = __$$OrderResponseImplCopyWithImpl<$Res>;
+          _$OrderResponseImpl value, $Res Function(_$OrderResponseImpl) then) =
+      __$$OrderResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String id,
-    @JsonKey(name: 'order_number') String? orderNumber,
-    @JsonKey(name: 'customer_id') String customerId,
-    @JsonKey(name: 'customer_name') String? customerName,
-    @JsonKey(name: 'customer_phone') String? customerPhone,
-    @JsonKey(name: 'store_id') String storeId,
-    @JsonKey(name: 'store_name') String? storeName,
-    String status,
-    List<OrderItemResponse> items,
-    double subtotal,
-    double discount,
-    @JsonKey(name: 'delivery_fee') double deliveryFee,
-    double tax,
-    double total,
-    @JsonKey(name: 'payment_method') String paymentMethod,
-    @JsonKey(name: 'is_paid') bool isPaid,
-    @JsonKey(name: 'address_id') String? addressId,
-    String? notes,
-    @JsonKey(name: 'cancellation_reason') String? cancellationReason,
-    @JsonKey(name: 'confirmed_at') String? confirmedAt,
-    @JsonKey(name: 'preparing_at') String? preparingAt,
-    @JsonKey(name: 'ready_at') String? readyAt,
-    @JsonKey(name: 'delivered_at') String? deliveredAt,
-    @JsonKey(name: 'cancelled_at') String? cancelledAt,
-    @JsonKey(name: 'created_at') String createdAt,
-    @JsonKey(name: 'updated_at') String? updatedAt,
-  });
+  $Res call(
+      {String id,
+      @JsonKey(name: 'order_number') String? orderNumber,
+      @JsonKey(name: 'customer_id') String customerId,
+      @JsonKey(name: 'customer_name') String? customerName,
+      @JsonKey(name: 'customer_phone') String? customerPhone,
+      @JsonKey(name: 'store_id') String storeId,
+      @JsonKey(name: 'store_name') String? storeName,
+      String status,
+      List<OrderItemResponse> items,
+      double subtotal,
+      double discount,
+      @JsonKey(name: 'delivery_fee') double deliveryFee,
+      double tax,
+      double total,
+      @JsonKey(name: 'payment_method') String paymentMethod,
+      @JsonKey(name: 'is_paid') bool isPaid,
+      @JsonKey(name: 'address_id') String? addressId,
+      String? notes,
+      @JsonKey(name: 'cancellation_reason') String? cancellationReason,
+      @JsonKey(name: 'confirmed_at') String? confirmedAt,
+      @JsonKey(name: 'preparing_at') String? preparingAt,
+      @JsonKey(name: 'ready_at') String? readyAt,
+      @JsonKey(name: 'delivered_at') String? deliveredAt,
+      @JsonKey(name: 'cancelled_at') String? cancelledAt,
+      @JsonKey(name: 'created_at') String createdAt,
+      @JsonKey(name: 'updated_at') String? updatedAt});
 }
 
 /// @nodoc
@@ -311,9 +303,8 @@ class __$$OrderResponseImplCopyWithImpl<$Res>
     extends _$OrderResponseCopyWithImpl<$Res, _$OrderResponseImpl>
     implements _$$OrderResponseImplCopyWith<$Res> {
   __$$OrderResponseImplCopyWithImpl(
-    _$OrderResponseImpl _value,
-    $Res Function(_$OrderResponseImpl) _then,
-  ) : super(_value, _then);
+      _$OrderResponseImpl _value, $Res Function(_$OrderResponseImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of OrderResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -347,149 +338,147 @@ class __$$OrderResponseImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(
-      _$OrderResponseImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
-                  as String,
-        orderNumber: freezed == orderNumber
-            ? _value.orderNumber
-            : orderNumber // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        customerId: null == customerId
-            ? _value.customerId
-            : customerId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        customerName: freezed == customerName
-            ? _value.customerName
-            : customerName // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        customerPhone: freezed == customerPhone
-            ? _value.customerPhone
-            : customerPhone // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        storeId: null == storeId
-            ? _value.storeId
-            : storeId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        storeName: freezed == storeName
-            ? _value.storeName
-            : storeName // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        status: null == status
-            ? _value.status
-            : status // ignore: cast_nullable_to_non_nullable
-                  as String,
-        items: null == items
-            ? _value._items
-            : items // ignore: cast_nullable_to_non_nullable
-                  as List<OrderItemResponse>,
-        subtotal: null == subtotal
-            ? _value.subtotal
-            : subtotal // ignore: cast_nullable_to_non_nullable
-                  as double,
-        discount: null == discount
-            ? _value.discount
-            : discount // ignore: cast_nullable_to_non_nullable
-                  as double,
-        deliveryFee: null == deliveryFee
-            ? _value.deliveryFee
-            : deliveryFee // ignore: cast_nullable_to_non_nullable
-                  as double,
-        tax: null == tax
-            ? _value.tax
-            : tax // ignore: cast_nullable_to_non_nullable
-                  as double,
-        total: null == total
-            ? _value.total
-            : total // ignore: cast_nullable_to_non_nullable
-                  as double,
-        paymentMethod: null == paymentMethod
-            ? _value.paymentMethod
-            : paymentMethod // ignore: cast_nullable_to_non_nullable
-                  as String,
-        isPaid: null == isPaid
-            ? _value.isPaid
-            : isPaid // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        addressId: freezed == addressId
-            ? _value.addressId
-            : addressId // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        notes: freezed == notes
-            ? _value.notes
-            : notes // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        cancellationReason: freezed == cancellationReason
-            ? _value.cancellationReason
-            : cancellationReason // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        confirmedAt: freezed == confirmedAt
-            ? _value.confirmedAt
-            : confirmedAt // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        preparingAt: freezed == preparingAt
-            ? _value.preparingAt
-            : preparingAt // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        readyAt: freezed == readyAt
-            ? _value.readyAt
-            : readyAt // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        deliveredAt: freezed == deliveredAt
-            ? _value.deliveredAt
-            : deliveredAt // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        cancelledAt: freezed == cancelledAt
-            ? _value.cancelledAt
-            : cancelledAt // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        createdAt: null == createdAt
-            ? _value.createdAt
-            : createdAt // ignore: cast_nullable_to_non_nullable
-                  as String,
-        updatedAt: freezed == updatedAt
-            ? _value.updatedAt
-            : updatedAt // ignore: cast_nullable_to_non_nullable
-                  as String?,
-      ),
-    );
+    return _then(_$OrderResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      orderNumber: freezed == orderNumber
+          ? _value.orderNumber
+          : orderNumber // ignore: cast_nullable_to_non_nullable
+              as String?,
+      customerId: null == customerId
+          ? _value.customerId
+          : customerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      customerName: freezed == customerName
+          ? _value.customerName
+          : customerName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      customerPhone: freezed == customerPhone
+          ? _value.customerPhone
+          : customerPhone // ignore: cast_nullable_to_non_nullable
+              as String?,
+      storeId: null == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      storeName: freezed == storeName
+          ? _value.storeName
+          : storeName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      status: null == status
+          ? _value.status
+          : status // ignore: cast_nullable_to_non_nullable
+              as String,
+      items: null == items
+          ? _value._items
+          : items // ignore: cast_nullable_to_non_nullable
+              as List<OrderItemResponse>,
+      subtotal: null == subtotal
+          ? _value.subtotal
+          : subtotal // ignore: cast_nullable_to_non_nullable
+              as double,
+      discount: null == discount
+          ? _value.discount
+          : discount // ignore: cast_nullable_to_non_nullable
+              as double,
+      deliveryFee: null == deliveryFee
+          ? _value.deliveryFee
+          : deliveryFee // ignore: cast_nullable_to_non_nullable
+              as double,
+      tax: null == tax
+          ? _value.tax
+          : tax // ignore: cast_nullable_to_non_nullable
+              as double,
+      total: null == total
+          ? _value.total
+          : total // ignore: cast_nullable_to_non_nullable
+              as double,
+      paymentMethod: null == paymentMethod
+          ? _value.paymentMethod
+          : paymentMethod // ignore: cast_nullable_to_non_nullable
+              as String,
+      isPaid: null == isPaid
+          ? _value.isPaid
+          : isPaid // ignore: cast_nullable_to_non_nullable
+              as bool,
+      addressId: freezed == addressId
+          ? _value.addressId
+          : addressId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      notes: freezed == notes
+          ? _value.notes
+          : notes // ignore: cast_nullable_to_non_nullable
+              as String?,
+      cancellationReason: freezed == cancellationReason
+          ? _value.cancellationReason
+          : cancellationReason // ignore: cast_nullable_to_non_nullable
+              as String?,
+      confirmedAt: freezed == confirmedAt
+          ? _value.confirmedAt
+          : confirmedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      preparingAt: freezed == preparingAt
+          ? _value.preparingAt
+          : preparingAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      readyAt: freezed == readyAt
+          ? _value.readyAt
+          : readyAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      deliveredAt: freezed == deliveredAt
+          ? _value.deliveredAt
+          : deliveredAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      cancelledAt: freezed == cancelledAt
+          ? _value.cancelledAt
+          : cancelledAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$OrderResponseImpl extends _OrderResponse {
-  const _$OrderResponseImpl({
-    required this.id,
-    @JsonKey(name: 'order_number') this.orderNumber,
-    @JsonKey(name: 'customer_id') required this.customerId,
-    @JsonKey(name: 'customer_name') this.customerName,
-    @JsonKey(name: 'customer_phone') this.customerPhone,
-    @JsonKey(name: 'store_id') required this.storeId,
-    @JsonKey(name: 'store_name') this.storeName,
-    required this.status,
-    required final List<OrderItemResponse> items,
-    required this.subtotal,
-    this.discount = 0,
-    @JsonKey(name: 'delivery_fee') this.deliveryFee = 0,
-    this.tax = 0,
-    required this.total,
-    @JsonKey(name: 'payment_method') required this.paymentMethod,
-    @JsonKey(name: 'is_paid') this.isPaid = false,
-    @JsonKey(name: 'address_id') this.addressId,
-    this.notes,
-    @JsonKey(name: 'cancellation_reason') this.cancellationReason,
-    @JsonKey(name: 'confirmed_at') this.confirmedAt,
-    @JsonKey(name: 'preparing_at') this.preparingAt,
-    @JsonKey(name: 'ready_at') this.readyAt,
-    @JsonKey(name: 'delivered_at') this.deliveredAt,
-    @JsonKey(name: 'cancelled_at') this.cancelledAt,
-    @JsonKey(name: 'created_at') required this.createdAt,
-    @JsonKey(name: 'updated_at') this.updatedAt,
-  }) : _items = items,
-       super._();
+  const _$OrderResponseImpl(
+      {required this.id,
+      @JsonKey(name: 'order_number') this.orderNumber,
+      @JsonKey(name: 'customer_id') required this.customerId,
+      @JsonKey(name: 'customer_name') this.customerName,
+      @JsonKey(name: 'customer_phone') this.customerPhone,
+      @JsonKey(name: 'store_id') required this.storeId,
+      @JsonKey(name: 'store_name') this.storeName,
+      required this.status,
+      required final List<OrderItemResponse> items,
+      required this.subtotal,
+      this.discount = 0,
+      @JsonKey(name: 'delivery_fee') this.deliveryFee = 0,
+      this.tax = 0,
+      required this.total,
+      @JsonKey(name: 'payment_method') required this.paymentMethod,
+      @JsonKey(name: 'is_paid') this.isPaid = false,
+      @JsonKey(name: 'address_id') this.addressId,
+      this.notes,
+      @JsonKey(name: 'cancellation_reason') this.cancellationReason,
+      @JsonKey(name: 'confirmed_at') this.confirmedAt,
+      @JsonKey(name: 'preparing_at') this.preparingAt,
+      @JsonKey(name: 'ready_at') this.readyAt,
+      @JsonKey(name: 'delivered_at') this.deliveredAt,
+      @JsonKey(name: 'cancelled_at') this.cancelledAt,
+      @JsonKey(name: 'created_at') required this.createdAt,
+      @JsonKey(name: 'updated_at') this.updatedAt})
+      : _items = items,
+        super._();
 
   factory _$OrderResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$OrderResponseImplFromJson(json);
@@ -631,34 +620,34 @@ class _$OrderResponseImpl extends _OrderResponse {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
-    runtimeType,
-    id,
-    orderNumber,
-    customerId,
-    customerName,
-    customerPhone,
-    storeId,
-    storeName,
-    status,
-    const DeepCollectionEquality().hash(_items),
-    subtotal,
-    discount,
-    deliveryFee,
-    tax,
-    total,
-    paymentMethod,
-    isPaid,
-    addressId,
-    notes,
-    cancellationReason,
-    confirmedAt,
-    preparingAt,
-    readyAt,
-    deliveredAt,
-    cancelledAt,
-    createdAt,
-    updatedAt,
-  ]);
+        runtimeType,
+        id,
+        orderNumber,
+        customerId,
+        customerName,
+        customerPhone,
+        storeId,
+        storeName,
+        status,
+        const DeepCollectionEquality().hash(_items),
+        subtotal,
+        discount,
+        deliveryFee,
+        tax,
+        total,
+        paymentMethod,
+        isPaid,
+        addressId,
+        notes,
+        cancellationReason,
+        confirmedAt,
+        preparingAt,
+        readyAt,
+        deliveredAt,
+        cancelledAt,
+        createdAt,
+        updatedAt
+      ]);
 
   /// Create a copy of OrderResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -670,39 +659,41 @@ class _$OrderResponseImpl extends _OrderResponse {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$OrderResponseImplToJson(this);
+    return _$$OrderResponseImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _OrderResponse extends OrderResponse {
-  const factory _OrderResponse({
-    required final String id,
-    @JsonKey(name: 'order_number') final String? orderNumber,
-    @JsonKey(name: 'customer_id') required final String customerId,
-    @JsonKey(name: 'customer_name') final String? customerName,
-    @JsonKey(name: 'customer_phone') final String? customerPhone,
-    @JsonKey(name: 'store_id') required final String storeId,
-    @JsonKey(name: 'store_name') final String? storeName,
-    required final String status,
-    required final List<OrderItemResponse> items,
-    required final double subtotal,
-    final double discount,
-    @JsonKey(name: 'delivery_fee') final double deliveryFee,
-    final double tax,
-    required final double total,
-    @JsonKey(name: 'payment_method') required final String paymentMethod,
-    @JsonKey(name: 'is_paid') final bool isPaid,
-    @JsonKey(name: 'address_id') final String? addressId,
-    final String? notes,
-    @JsonKey(name: 'cancellation_reason') final String? cancellationReason,
-    @JsonKey(name: 'confirmed_at') final String? confirmedAt,
-    @JsonKey(name: 'preparing_at') final String? preparingAt,
-    @JsonKey(name: 'ready_at') final String? readyAt,
-    @JsonKey(name: 'delivered_at') final String? deliveredAt,
-    @JsonKey(name: 'cancelled_at') final String? cancelledAt,
-    @JsonKey(name: 'created_at') required final String createdAt,
-    @JsonKey(name: 'updated_at') final String? updatedAt,
-  }) = _$OrderResponseImpl;
+  const factory _OrderResponse(
+      {required final String id,
+      @JsonKey(name: 'order_number') final String? orderNumber,
+      @JsonKey(name: 'customer_id') required final String customerId,
+      @JsonKey(name: 'customer_name') final String? customerName,
+      @JsonKey(name: 'customer_phone') final String? customerPhone,
+      @JsonKey(name: 'store_id') required final String storeId,
+      @JsonKey(name: 'store_name') final String? storeName,
+      required final String status,
+      required final List<OrderItemResponse> items,
+      required final double subtotal,
+      final double discount,
+      @JsonKey(name: 'delivery_fee') final double deliveryFee,
+      final double tax,
+      required final double total,
+      @JsonKey(name: 'payment_method') required final String paymentMethod,
+      @JsonKey(name: 'is_paid') final bool isPaid,
+      @JsonKey(name: 'address_id') final String? addressId,
+      final String? notes,
+      @JsonKey(name: 'cancellation_reason') final String? cancellationReason,
+      @JsonKey(name: 'confirmed_at') final String? confirmedAt,
+      @JsonKey(name: 'preparing_at') final String? preparingAt,
+      @JsonKey(name: 'ready_at') final String? readyAt,
+      @JsonKey(name: 'delivered_at') final String? deliveredAt,
+      @JsonKey(name: 'cancelled_at') final String? cancelledAt,
+      @JsonKey(name: 'created_at') required final String createdAt,
+      @JsonKey(name: 'updated_at')
+      final String? updatedAt}) = _$OrderResponseImpl;
   const _OrderResponse._() : super._();
 
   factory _OrderResponse.fromJson(Map<String, dynamic> json) =

@@ -12,8 +12,7 @@ part of 'customer_account.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 CustomerAccount _$CustomerAccountFromJson(Map<String, dynamic> json) {
   return _CustomerAccount.fromJson(json);
@@ -49,24 +48,22 @@ mixin _$CustomerAccount {
 /// @nodoc
 abstract class $CustomerAccountCopyWith<$Res> {
   factory $CustomerAccountCopyWith(
-    CustomerAccount value,
-    $Res Function(CustomerAccount) then,
-  ) = _$CustomerAccountCopyWithImpl<$Res, CustomerAccount>;
+          CustomerAccount value, $Res Function(CustomerAccount) then) =
+      _$CustomerAccountCopyWithImpl<$Res, CustomerAccount>;
   @useResult
-  $Res call({
-    String id,
-    String customerId,
-    String storeId,
-    double balance,
-    double creditLimit,
-    bool isActive,
-    int totalOrders,
-    int completedOrders,
-    int cancelledOrders,
-    DateTime? lastOrderAt,
-    DateTime createdAt,
-    DateTime? updatedAt,
-  });
+  $Res call(
+      {String id,
+      String customerId,
+      String storeId,
+      double balance,
+      double creditLimit,
+      bool isActive,
+      int totalOrders,
+      int completedOrders,
+      int cancelledOrders,
+      DateTime? lastOrderAt,
+      DateTime createdAt,
+      DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -97,85 +94,80 @@ class _$CustomerAccountCopyWithImpl<$Res, $Val extends CustomerAccount>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(
-      _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
-                      as String,
-            customerId: null == customerId
-                ? _value.customerId
-                : customerId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            storeId: null == storeId
-                ? _value.storeId
-                : storeId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            balance: null == balance
-                ? _value.balance
-                : balance // ignore: cast_nullable_to_non_nullable
-                      as double,
-            creditLimit: null == creditLimit
-                ? _value.creditLimit
-                : creditLimit // ignore: cast_nullable_to_non_nullable
-                      as double,
-            isActive: null == isActive
-                ? _value.isActive
-                : isActive // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            totalOrders: null == totalOrders
-                ? _value.totalOrders
-                : totalOrders // ignore: cast_nullable_to_non_nullable
-                      as int,
-            completedOrders: null == completedOrders
-                ? _value.completedOrders
-                : completedOrders // ignore: cast_nullable_to_non_nullable
-                      as int,
-            cancelledOrders: null == cancelledOrders
-                ? _value.cancelledOrders
-                : cancelledOrders // ignore: cast_nullable_to_non_nullable
-                      as int,
-            lastOrderAt: freezed == lastOrderAt
-                ? _value.lastOrderAt
-                : lastOrderAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-            createdAt: null == createdAt
-                ? _value.createdAt
-                : createdAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime,
-            updatedAt: freezed == updatedAt
-                ? _value.updatedAt
-                : updatedAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      customerId: null == customerId
+          ? _value.customerId
+          : customerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      storeId: null == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      balance: null == balance
+          ? _value.balance
+          : balance // ignore: cast_nullable_to_non_nullable
+              as double,
+      creditLimit: null == creditLimit
+          ? _value.creditLimit
+          : creditLimit // ignore: cast_nullable_to_non_nullable
+              as double,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
+      totalOrders: null == totalOrders
+          ? _value.totalOrders
+          : totalOrders // ignore: cast_nullable_to_non_nullable
+              as int,
+      completedOrders: null == completedOrders
+          ? _value.completedOrders
+          : completedOrders // ignore: cast_nullable_to_non_nullable
+              as int,
+      cancelledOrders: null == cancelledOrders
+          ? _value.cancelledOrders
+          : cancelledOrders // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastOrderAt: freezed == lastOrderAt
+          ? _value.lastOrderAt
+          : lastOrderAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ) as $Val);
   }
 }
 
 /// @nodoc
 abstract class _$$CustomerAccountImplCopyWith<$Res>
     implements $CustomerAccountCopyWith<$Res> {
-  factory _$$CustomerAccountImplCopyWith(
-    _$CustomerAccountImpl value,
-    $Res Function(_$CustomerAccountImpl) then,
-  ) = __$$CustomerAccountImplCopyWithImpl<$Res>;
+  factory _$$CustomerAccountImplCopyWith(_$CustomerAccountImpl value,
+          $Res Function(_$CustomerAccountImpl) then) =
+      __$$CustomerAccountImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String id,
-    String customerId,
-    String storeId,
-    double balance,
-    double creditLimit,
-    bool isActive,
-    int totalOrders,
-    int completedOrders,
-    int cancelledOrders,
-    DateTime? lastOrderAt,
-    DateTime createdAt,
-    DateTime? updatedAt,
-  });
+  $Res call(
+      {String id,
+      String customerId,
+      String storeId,
+      double balance,
+      double creditLimit,
+      bool isActive,
+      int totalOrders,
+      int completedOrders,
+      int cancelledOrders,
+      DateTime? lastOrderAt,
+      DateTime createdAt,
+      DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -183,9 +175,8 @@ class __$$CustomerAccountImplCopyWithImpl<$Res>
     extends _$CustomerAccountCopyWithImpl<$Res, _$CustomerAccountImpl>
     implements _$$CustomerAccountImplCopyWith<$Res> {
   __$$CustomerAccountImplCopyWithImpl(
-    _$CustomerAccountImpl _value,
-    $Res Function(_$CustomerAccountImpl) _then,
-  ) : super(_value, _then);
+      _$CustomerAccountImpl _value, $Res Function(_$CustomerAccountImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of CustomerAccount
   /// with the given fields replaced by the non-null parameter values.
@@ -205,78 +196,76 @@ class __$$CustomerAccountImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(
-      _$CustomerAccountImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
-                  as String,
-        customerId: null == customerId
-            ? _value.customerId
-            : customerId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        storeId: null == storeId
-            ? _value.storeId
-            : storeId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        balance: null == balance
-            ? _value.balance
-            : balance // ignore: cast_nullable_to_non_nullable
-                  as double,
-        creditLimit: null == creditLimit
-            ? _value.creditLimit
-            : creditLimit // ignore: cast_nullable_to_non_nullable
-                  as double,
-        isActive: null == isActive
-            ? _value.isActive
-            : isActive // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        totalOrders: null == totalOrders
-            ? _value.totalOrders
-            : totalOrders // ignore: cast_nullable_to_non_nullable
-                  as int,
-        completedOrders: null == completedOrders
-            ? _value.completedOrders
-            : completedOrders // ignore: cast_nullable_to_non_nullable
-                  as int,
-        cancelledOrders: null == cancelledOrders
-            ? _value.cancelledOrders
-            : cancelledOrders // ignore: cast_nullable_to_non_nullable
-                  as int,
-        lastOrderAt: freezed == lastOrderAt
-            ? _value.lastOrderAt
-            : lastOrderAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-        createdAt: null == createdAt
-            ? _value.createdAt
-            : createdAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime,
-        updatedAt: freezed == updatedAt
-            ? _value.updatedAt
-            : updatedAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-      ),
-    );
+    return _then(_$CustomerAccountImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      customerId: null == customerId
+          ? _value.customerId
+          : customerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      storeId: null == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      balance: null == balance
+          ? _value.balance
+          : balance // ignore: cast_nullable_to_non_nullable
+              as double,
+      creditLimit: null == creditLimit
+          ? _value.creditLimit
+          : creditLimit // ignore: cast_nullable_to_non_nullable
+              as double,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
+      totalOrders: null == totalOrders
+          ? _value.totalOrders
+          : totalOrders // ignore: cast_nullable_to_non_nullable
+              as int,
+      completedOrders: null == completedOrders
+          ? _value.completedOrders
+          : completedOrders // ignore: cast_nullable_to_non_nullable
+              as int,
+      cancelledOrders: null == cancelledOrders
+          ? _value.cancelledOrders
+          : cancelledOrders // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastOrderAt: freezed == lastOrderAt
+          ? _value.lastOrderAt
+          : lastOrderAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$CustomerAccountImpl extends _CustomerAccount {
-  const _$CustomerAccountImpl({
-    required this.id,
-    required this.customerId,
-    required this.storeId,
-    this.balance = 0.0,
-    this.creditLimit = 500.0,
-    this.isActive = true,
-    this.totalOrders = 0,
-    this.completedOrders = 0,
-    this.cancelledOrders = 0,
-    this.lastOrderAt,
-    required this.createdAt,
-    this.updatedAt,
-  }) : super._();
+  const _$CustomerAccountImpl(
+      {required this.id,
+      required this.customerId,
+      required this.storeId,
+      this.balance = 0.0,
+      this.creditLimit = 500.0,
+      this.isActive = true,
+      this.totalOrders = 0,
+      this.completedOrders = 0,
+      this.cancelledOrders = 0,
+      this.lastOrderAt,
+      required this.createdAt,
+      this.updatedAt})
+      : super._();
 
   factory _$CustomerAccountImpl.fromJson(Map<String, dynamic> json) =>
       _$$CustomerAccountImplFromJson(json);
@@ -285,13 +274,13 @@ class _$CustomerAccountImpl extends _CustomerAccount {
   final String id;
   @override
   final String customerId;
-  // global_customers.id
+// global_customers.id
   @override
   final String storeId;
   @override
   @JsonKey()
   final double balance;
-  // negative = debt, positive = credit
+// negative = debt, positive = credit
   @override
   @JsonKey()
   final double creditLimit;
@@ -350,20 +339,19 @@ class _$CustomerAccountImpl extends _CustomerAccount {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    id,
-    customerId,
-    storeId,
-    balance,
-    creditLimit,
-    isActive,
-    totalOrders,
-    completedOrders,
-    cancelledOrders,
-    lastOrderAt,
-    createdAt,
-    updatedAt,
-  );
+      runtimeType,
+      id,
+      customerId,
+      storeId,
+      balance,
+      creditLimit,
+      isActive,
+      totalOrders,
+      completedOrders,
+      cancelledOrders,
+      lastOrderAt,
+      createdAt,
+      updatedAt);
 
   /// Create a copy of CustomerAccount
   /// with the given fields replaced by the non-null parameter values.
@@ -372,31 +360,30 @@ class _$CustomerAccountImpl extends _CustomerAccount {
   @pragma('vm:prefer-inline')
   _$$CustomerAccountImplCopyWith<_$CustomerAccountImpl> get copyWith =>
       __$$CustomerAccountImplCopyWithImpl<_$CustomerAccountImpl>(
-        this,
-        _$identity,
-      );
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CustomerAccountImplToJson(this);
+    return _$$CustomerAccountImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _CustomerAccount extends CustomerAccount {
-  const factory _CustomerAccount({
-    required final String id,
-    required final String customerId,
-    required final String storeId,
-    final double balance,
-    final double creditLimit,
-    final bool isActive,
-    final int totalOrders,
-    final int completedOrders,
-    final int cancelledOrders,
-    final DateTime? lastOrderAt,
-    required final DateTime createdAt,
-    final DateTime? updatedAt,
-  }) = _$CustomerAccountImpl;
+  const factory _CustomerAccount(
+      {required final String id,
+      required final String customerId,
+      required final String storeId,
+      final double balance,
+      final double creditLimit,
+      final bool isActive,
+      final int totalOrders,
+      final int completedOrders,
+      final int cancelledOrders,
+      final DateTime? lastOrderAt,
+      required final DateTime createdAt,
+      final DateTime? updatedAt}) = _$CustomerAccountImpl;
   const _CustomerAccount._() : super._();
 
   factory _CustomerAccount.fromJson(Map<String, dynamic> json) =

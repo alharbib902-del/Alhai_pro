@@ -1,8 +1,11 @@
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_zatca/alhai_zatca.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hijri/hijri_calendar.dart';
 import 'package:alhai_core/alhai_core.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../core/services/sentry_service.dart';
 import '../providers/orders_providers.dart';
@@ -138,6 +141,11 @@ class OrderDetailScreen extends ConsumerWidget {
                           label: 'الخصم',
                           value: '-${order.discount.toStringAsFixed(2)} ر.س',
                         ),
+                      if (order.tax > 0)
+                        _TotalRow(
+                          label: 'ضريبة القيمة المضافة (15%)',
+                          value: '${order.tax.toStringAsFixed(2)} ر.س',
+                        ),
                       _TotalRow(
                         label: 'التوصيل',
                         value: order.deliveryFee > 0
@@ -154,6 +162,10 @@ class OrderDetailScreen extends ConsumerWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: AlhaiSpacing.md),
+
+              // ZATCA Receipt
+              _ZatcaReceipt(order: order),
               const SizedBox(height: AlhaiSpacing.md),
 
               // Actions
@@ -339,6 +351,107 @@ class _OrderTimeline extends StatelessWidget {
               ],
             );
           }),
+        ),
+      ),
+    );
+  }
+}
+
+class _ZatcaReceipt extends StatelessWidget {
+  final Order order;
+
+  const _ZatcaReceipt({required this.order});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    final storeName = order.storeName ?? 'المتجر';
+    final vatNumber = order.storeVatNumber;
+    final vatAmount = order.tax;
+    final totalWithVat = order.total;
+
+    // If no tax data, hide receipt
+    if (vatAmount <= 0) {
+      return const SizedBox.shrink();
+    }
+
+    // If store has no VAT registration, show informational message
+    if (vatNumber == null || vatNumber.isEmpty) {
+      return Card(
+        child: Padding(
+          padding: const EdgeInsets.all(AlhaiSpacing.md),
+          child: Column(
+            children: [
+              Icon(Icons.info_outline, color: theme.colorScheme.tertiary),
+              const SizedBox(height: AlhaiSpacing.sm),
+              Text(
+                'هذا المتجر غير مسجّل في هيئة الزكاة والضريبة',
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium,
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    // Generate simplified QR (tags 1-5) using real store data
+    final encoder = ZatcaTlvEncoder();
+    final qrData = encoder.encodeSimplified(
+      sellerName: storeName,
+      vatNumber: vatNumber,
+      timestamp: order.createdAt,
+      totalWithVat: totalWithVat,
+      vatAmount: vatAmount,
+    );
+
+    // Hijri date
+    HijriCalendar.language = 'ar';
+    final hijri = HijriCalendar.fromDate(order.createdAt);
+    final hijriDate = '${hijri.hDay}/${hijri.hMonth}/${hijri.hYear}';
+
+    final gregorianDate =
+        '${order.createdAt.year}/${order.createdAt.month.toString().padLeft(2, '0')}/${order.createdAt.day.toString().padLeft(2, '0')}';
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(AlhaiSpacing.md),
+        child: Column(
+          children: [
+            Text(
+              'إيصال ضريبي',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: AlhaiSpacing.sm),
+            QrImageView(
+              data: qrData,
+              version: QrVersions.auto,
+              size: 180,
+            ),
+            const SizedBox(height: AlhaiSpacing.sm),
+            Text(
+              'التاريخ الميلادي: $gregorianDate',
+              style: theme.textTheme.bodySmall,
+            ),
+            Text(
+              'التاريخ الهجري: $hijriDate',
+              style: theme.textTheme.bodySmall,
+            ),
+            const SizedBox(height: AlhaiSpacing.xs),
+            Text(
+              'الضريبة: ${vatAmount.toStringAsFixed(2)} ر.س',
+              style: theme.textTheme.bodySmall,
+            ),
+            Text(
+              'الإجمالي شامل الضريبة: ${totalWithVat.toStringAsFixed(2)} ر.س',
+              style: theme.textTheme.bodySmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
         ),
       ),
     );

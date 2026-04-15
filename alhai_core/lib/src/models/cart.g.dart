@@ -7,14 +7,13 @@ part of 'cart.dart';
 // **************************************************************************
 
 _$CartImpl _$$CartImplFromJson(Map<String, dynamic> json) => _$CartImpl(
-  items:
-      (json['items'] as List<dynamic>?)
-          ?.map((e) => CartItem.fromJson(e as Map<String, dynamic>))
-          .toList() ??
-      const [],
-  storeId: json['storeId'] as String?,
-  notes: json['notes'] as String?,
-);
+      items: (json['items'] as List<dynamic>?)
+              ?.map((e) => CartItem.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const [],
+      storeId: json['storeId'] as String?,
+      notes: json['notes'] as String?,
+    );
 
 Map<String, dynamic> _$$CartImplToJson(_$CartImpl instance) =>
     <String, dynamic>{

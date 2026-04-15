@@ -12,8 +12,7 @@ part of 'create_product_params.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 CreateProductParams _$CreateProductParamsFromJson(Map<String, dynamic> json) {
   return _CreateProductParams.fromJson(json);
@@ -58,20 +57,18 @@ mixin _$CreateProductParams {
 /// @nodoc
 abstract class $CreateProductParamsCopyWith<$Res> {
   factory $CreateProductParamsCopyWith(
-    CreateProductParams value,
-    $Res Function(CreateProductParams) then,
-  ) = _$CreateProductParamsCopyWithImpl<$Res, CreateProductParams>;
+          CreateProductParams value, $Res Function(CreateProductParams) then) =
+      _$CreateProductParamsCopyWithImpl<$Res, CreateProductParams>;
   @useResult
-  $Res call({
-    String name,
-    double price,
-    String storeId,
-    String? description,
-    String? imageUrl,
-    String? barcode,
-    String? categoryId,
-    bool available,
-  });
+  $Res call(
+      {String name,
+      double price,
+      String storeId,
+      String? description,
+      String? imageUrl,
+      String? barcode,
+      String? categoryId,
+      bool available});
 }
 
 /// @nodoc
@@ -98,75 +95,69 @@ class _$CreateProductParamsCopyWithImpl<$Res, $Val extends CreateProductParams>
     Object? categoryId = freezed,
     Object? available = null,
   }) {
-    return _then(
-      _value.copyWith(
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
-                      as String,
-            price: null == price
-                ? _value.price
-                : price // ignore: cast_nullable_to_non_nullable
-                      as double,
-            storeId: null == storeId
-                ? _value.storeId
-                : storeId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            description: freezed == description
-                ? _value.description
-                : description // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            imageUrl: freezed == imageUrl
-                ? _value.imageUrl
-                : imageUrl // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            barcode: freezed == barcode
-                ? _value.barcode
-                : barcode // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            categoryId: freezed == categoryId
-                ? _value.categoryId
-                : categoryId // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            available: null == available
-                ? _value.available
-                : available // ignore: cast_nullable_to_non_nullable
-                      as bool,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as double,
+      storeId: null == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      barcode: freezed == barcode
+          ? _value.barcode
+          : barcode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      categoryId: freezed == categoryId
+          ? _value.categoryId
+          : categoryId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      available: null == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
   }
 }
 
 /// @nodoc
 abstract class _$$CreateProductParamsImplCopyWith<$Res>
     implements $CreateProductParamsCopyWith<$Res> {
-  factory _$$CreateProductParamsImplCopyWith(
-    _$CreateProductParamsImpl value,
-    $Res Function(_$CreateProductParamsImpl) then,
-  ) = __$$CreateProductParamsImplCopyWithImpl<$Res>;
+  factory _$$CreateProductParamsImplCopyWith(_$CreateProductParamsImpl value,
+          $Res Function(_$CreateProductParamsImpl) then) =
+      __$$CreateProductParamsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String name,
-    double price,
-    String storeId,
-    String? description,
-    String? imageUrl,
-    String? barcode,
-    String? categoryId,
-    bool available,
-  });
+  $Res call(
+      {String name,
+      double price,
+      String storeId,
+      String? description,
+      String? imageUrl,
+      String? barcode,
+      String? categoryId,
+      bool available});
 }
 
 /// @nodoc
 class __$$CreateProductParamsImplCopyWithImpl<$Res>
     extends _$CreateProductParamsCopyWithImpl<$Res, _$CreateProductParamsImpl>
     implements _$$CreateProductParamsImplCopyWith<$Res> {
-  __$$CreateProductParamsImplCopyWithImpl(
-    _$CreateProductParamsImpl _value,
-    $Res Function(_$CreateProductParamsImpl) _then,
-  ) : super(_value, _then);
+  __$$CreateProductParamsImplCopyWithImpl(_$CreateProductParamsImpl _value,
+      $Res Function(_$CreateProductParamsImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of CreateProductParams
   /// with the given fields replaced by the non-null parameter values.
@@ -182,58 +173,55 @@ class __$$CreateProductParamsImplCopyWithImpl<$Res>
     Object? categoryId = freezed,
     Object? available = null,
   }) {
-    return _then(
-      _$CreateProductParamsImpl(
-        name: null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
-                  as String,
-        price: null == price
-            ? _value.price
-            : price // ignore: cast_nullable_to_non_nullable
-                  as double,
-        storeId: null == storeId
-            ? _value.storeId
-            : storeId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        description: freezed == description
-            ? _value.description
-            : description // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        imageUrl: freezed == imageUrl
-            ? _value.imageUrl
-            : imageUrl // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        barcode: freezed == barcode
-            ? _value.barcode
-            : barcode // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        categoryId: freezed == categoryId
-            ? _value.categoryId
-            : categoryId // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        available: null == available
-            ? _value.available
-            : available // ignore: cast_nullable_to_non_nullable
-                  as bool,
-      ),
-    );
+    return _then(_$CreateProductParamsImpl(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as double,
+      storeId: null == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      barcode: freezed == barcode
+          ? _value.barcode
+          : barcode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      categoryId: freezed == categoryId
+          ? _value.categoryId
+          : categoryId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      available: null == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$CreateProductParamsImpl implements _CreateProductParams {
-  const _$CreateProductParamsImpl({
-    required this.name,
-    required this.price,
-    required this.storeId,
-    this.description,
-    this.imageUrl,
-    this.barcode,
-    this.categoryId,
-    this.available = true,
-  });
+  const _$CreateProductParamsImpl(
+      {required this.name,
+      required this.price,
+      required this.storeId,
+      this.description,
+      this.imageUrl,
+      this.barcode,
+      this.categoryId,
+      this.available = true});
 
   factory _$CreateProductParamsImpl.fromJson(Map<String, dynamic> json) =>
       _$$CreateProductParamsImplFromJson(json);
@@ -297,17 +285,8 @@ class _$CreateProductParamsImpl implements _CreateProductParams {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    name,
-    price,
-    storeId,
-    description,
-    imageUrl,
-    barcode,
-    categoryId,
-    available,
-  );
+  int get hashCode => Object.hash(runtimeType, name, price, storeId,
+      description, imageUrl, barcode, categoryId, available);
 
   /// Create a copy of CreateProductParams
   /// with the given fields replaced by the non-null parameter values.
@@ -316,27 +295,26 @@ class _$CreateProductParamsImpl implements _CreateProductParams {
   @pragma('vm:prefer-inline')
   _$$CreateProductParamsImplCopyWith<_$CreateProductParamsImpl> get copyWith =>
       __$$CreateProductParamsImplCopyWithImpl<_$CreateProductParamsImpl>(
-        this,
-        _$identity,
-      );
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CreateProductParamsImplToJson(this);
+    return _$$CreateProductParamsImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _CreateProductParams implements CreateProductParams {
-  const factory _CreateProductParams({
-    required final String name,
-    required final double price,
-    required final String storeId,
-    final String? description,
-    final String? imageUrl,
-    final String? barcode,
-    final String? categoryId,
-    final bool available,
-  }) = _$CreateProductParamsImpl;
+  const factory _CreateProductParams(
+      {required final String name,
+      required final double price,
+      required final String storeId,
+      final String? description,
+      final String? imageUrl,
+      final String? barcode,
+      final String? categoryId,
+      final bool available}) = _$CreateProductParamsImpl;
 
   factory _CreateProductParams.fromJson(Map<String, dynamic> json) =
       _$CreateProductParamsImpl.fromJson;

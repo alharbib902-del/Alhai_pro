@@ -14,8 +14,10 @@ ReceiveItemsRequest _$ReceiveItemsRequestFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$ReceiveItemsRequestToJson(
-  ReceiveItemsRequest instance,
-) => <String, dynamic>{'items': instance.items};
+        ReceiveItemsRequest instance) =>
+    <String, dynamic>{
+      'items': instance.items,
+    };
 
 ReceivedItemRequest _$ReceivedItemRequestFromJson(Map<String, dynamic> json) =>
     ReceivedItemRequest(
@@ -24,8 +26,8 @@ ReceivedItemRequest _$ReceivedItemRequestFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$ReceivedItemRequestToJson(
-  ReceivedItemRequest instance,
-) => <String, dynamic>{
-  'productId': instance.productId,
-  'quantity': instance.quantity,
-};
+        ReceivedItemRequest instance) =>
+    <String, dynamic>{
+      'productId': instance.productId,
+      'quantity': instance.quantity,
+    };

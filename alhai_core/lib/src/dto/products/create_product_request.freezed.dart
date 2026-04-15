@@ -12,8 +12,7 @@ part of 'create_product_request.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 CreateProductRequest _$CreateProductRequestFromJson(Map<String, dynamic> json) {
   return _CreateProductRequest.fromJson(json);
@@ -56,34 +55,30 @@ mixin _$CreateProductRequest {
 
 /// @nodoc
 abstract class $CreateProductRequestCopyWith<$Res> {
-  factory $CreateProductRequestCopyWith(
-    CreateProductRequest value,
-    $Res Function(CreateProductRequest) then,
-  ) = _$CreateProductRequestCopyWithImpl<$Res, CreateProductRequest>;
+  factory $CreateProductRequestCopyWith(CreateProductRequest value,
+          $Res Function(CreateProductRequest) then) =
+      _$CreateProductRequestCopyWithImpl<$Res, CreateProductRequest>;
   @useResult
-  $Res call({
-    String name,
-    double price,
-    @JsonKey(name: 'store_id') String storeId,
-    @JsonKey(name: 'cost_price') double? costPrice,
-    @JsonKey(name: 'stock_qty') int stockQty,
-    @JsonKey(name: 'min_qty') int minQty,
-    String? unit,
-    String? description,
-    @JsonKey(name: 'image_url') String? imageUrl,
-    String? barcode,
-    String? sku,
-    @JsonKey(name: 'category_id') String? categoryId,
-    @JsonKey(name: 'is_active') bool isActive,
-    @JsonKey(name: 'track_inventory') bool trackInventory,
-  });
+  $Res call(
+      {String name,
+      double price,
+      @JsonKey(name: 'store_id') String storeId,
+      @JsonKey(name: 'cost_price') double? costPrice,
+      @JsonKey(name: 'stock_qty') int stockQty,
+      @JsonKey(name: 'min_qty') int minQty,
+      String? unit,
+      String? description,
+      @JsonKey(name: 'image_url') String? imageUrl,
+      String? barcode,
+      String? sku,
+      @JsonKey(name: 'category_id') String? categoryId,
+      @JsonKey(name: 'is_active') bool isActive,
+      @JsonKey(name: 'track_inventory') bool trackInventory});
 }
 
 /// @nodoc
-class _$CreateProductRequestCopyWithImpl<
-  $Res,
-  $Val extends CreateProductRequest
->
+class _$CreateProductRequestCopyWithImpl<$Res,
+        $Val extends CreateProductRequest>
     implements $CreateProductRequestCopyWith<$Res> {
   _$CreateProductRequestCopyWithImpl(this._value, this._then);
 
@@ -112,105 +107,99 @@ class _$CreateProductRequestCopyWithImpl<
     Object? isActive = null,
     Object? trackInventory = null,
   }) {
-    return _then(
-      _value.copyWith(
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
-                      as String,
-            price: null == price
-                ? _value.price
-                : price // ignore: cast_nullable_to_non_nullable
-                      as double,
-            storeId: null == storeId
-                ? _value.storeId
-                : storeId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            costPrice: freezed == costPrice
-                ? _value.costPrice
-                : costPrice // ignore: cast_nullable_to_non_nullable
-                      as double?,
-            stockQty: null == stockQty
-                ? _value.stockQty
-                : stockQty // ignore: cast_nullable_to_non_nullable
-                      as int,
-            minQty: null == minQty
-                ? _value.minQty
-                : minQty // ignore: cast_nullable_to_non_nullable
-                      as int,
-            unit: freezed == unit
-                ? _value.unit
-                : unit // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            description: freezed == description
-                ? _value.description
-                : description // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            imageUrl: freezed == imageUrl
-                ? _value.imageUrl
-                : imageUrl // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            barcode: freezed == barcode
-                ? _value.barcode
-                : barcode // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            sku: freezed == sku
-                ? _value.sku
-                : sku // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            categoryId: freezed == categoryId
-                ? _value.categoryId
-                : categoryId // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            isActive: null == isActive
-                ? _value.isActive
-                : isActive // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            trackInventory: null == trackInventory
-                ? _value.trackInventory
-                : trackInventory // ignore: cast_nullable_to_non_nullable
-                      as bool,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as double,
+      storeId: null == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      costPrice: freezed == costPrice
+          ? _value.costPrice
+          : costPrice // ignore: cast_nullable_to_non_nullable
+              as double?,
+      stockQty: null == stockQty
+          ? _value.stockQty
+          : stockQty // ignore: cast_nullable_to_non_nullable
+              as int,
+      minQty: null == minQty
+          ? _value.minQty
+          : minQty // ignore: cast_nullable_to_non_nullable
+              as int,
+      unit: freezed == unit
+          ? _value.unit
+          : unit // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      barcode: freezed == barcode
+          ? _value.barcode
+          : barcode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      sku: freezed == sku
+          ? _value.sku
+          : sku // ignore: cast_nullable_to_non_nullable
+              as String?,
+      categoryId: freezed == categoryId
+          ? _value.categoryId
+          : categoryId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
+      trackInventory: null == trackInventory
+          ? _value.trackInventory
+          : trackInventory // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ) as $Val);
   }
 }
 
 /// @nodoc
 abstract class _$$CreateProductRequestImplCopyWith<$Res>
     implements $CreateProductRequestCopyWith<$Res> {
-  factory _$$CreateProductRequestImplCopyWith(
-    _$CreateProductRequestImpl value,
-    $Res Function(_$CreateProductRequestImpl) then,
-  ) = __$$CreateProductRequestImplCopyWithImpl<$Res>;
+  factory _$$CreateProductRequestImplCopyWith(_$CreateProductRequestImpl value,
+          $Res Function(_$CreateProductRequestImpl) then) =
+      __$$CreateProductRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String name,
-    double price,
-    @JsonKey(name: 'store_id') String storeId,
-    @JsonKey(name: 'cost_price') double? costPrice,
-    @JsonKey(name: 'stock_qty') int stockQty,
-    @JsonKey(name: 'min_qty') int minQty,
-    String? unit,
-    String? description,
-    @JsonKey(name: 'image_url') String? imageUrl,
-    String? barcode,
-    String? sku,
-    @JsonKey(name: 'category_id') String? categoryId,
-    @JsonKey(name: 'is_active') bool isActive,
-    @JsonKey(name: 'track_inventory') bool trackInventory,
-  });
+  $Res call(
+      {String name,
+      double price,
+      @JsonKey(name: 'store_id') String storeId,
+      @JsonKey(name: 'cost_price') double? costPrice,
+      @JsonKey(name: 'stock_qty') int stockQty,
+      @JsonKey(name: 'min_qty') int minQty,
+      String? unit,
+      String? description,
+      @JsonKey(name: 'image_url') String? imageUrl,
+      String? barcode,
+      String? sku,
+      @JsonKey(name: 'category_id') String? categoryId,
+      @JsonKey(name: 'is_active') bool isActive,
+      @JsonKey(name: 'track_inventory') bool trackInventory});
 }
 
 /// @nodoc
 class __$$CreateProductRequestImplCopyWithImpl<$Res>
     extends _$CreateProductRequestCopyWithImpl<$Res, _$CreateProductRequestImpl>
     implements _$$CreateProductRequestImplCopyWith<$Res> {
-  __$$CreateProductRequestImplCopyWithImpl(
-    _$CreateProductRequestImpl _value,
-    $Res Function(_$CreateProductRequestImpl) _then,
-  ) : super(_value, _then);
+  __$$CreateProductRequestImplCopyWithImpl(_$CreateProductRequestImpl _value,
+      $Res Function(_$CreateProductRequestImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of CreateProductRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -232,88 +221,86 @@ class __$$CreateProductRequestImplCopyWithImpl<$Res>
     Object? isActive = null,
     Object? trackInventory = null,
   }) {
-    return _then(
-      _$CreateProductRequestImpl(
-        name: null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
-                  as String,
-        price: null == price
-            ? _value.price
-            : price // ignore: cast_nullable_to_non_nullable
-                  as double,
-        storeId: null == storeId
-            ? _value.storeId
-            : storeId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        costPrice: freezed == costPrice
-            ? _value.costPrice
-            : costPrice // ignore: cast_nullable_to_non_nullable
-                  as double?,
-        stockQty: null == stockQty
-            ? _value.stockQty
-            : stockQty // ignore: cast_nullable_to_non_nullable
-                  as int,
-        minQty: null == minQty
-            ? _value.minQty
-            : minQty // ignore: cast_nullable_to_non_nullable
-                  as int,
-        unit: freezed == unit
-            ? _value.unit
-            : unit // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        description: freezed == description
-            ? _value.description
-            : description // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        imageUrl: freezed == imageUrl
-            ? _value.imageUrl
-            : imageUrl // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        barcode: freezed == barcode
-            ? _value.barcode
-            : barcode // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        sku: freezed == sku
-            ? _value.sku
-            : sku // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        categoryId: freezed == categoryId
-            ? _value.categoryId
-            : categoryId // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        isActive: null == isActive
-            ? _value.isActive
-            : isActive // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        trackInventory: null == trackInventory
-            ? _value.trackInventory
-            : trackInventory // ignore: cast_nullable_to_non_nullable
-                  as bool,
-      ),
-    );
+    return _then(_$CreateProductRequestImpl(
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as double,
+      storeId: null == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      costPrice: freezed == costPrice
+          ? _value.costPrice
+          : costPrice // ignore: cast_nullable_to_non_nullable
+              as double?,
+      stockQty: null == stockQty
+          ? _value.stockQty
+          : stockQty // ignore: cast_nullable_to_non_nullable
+              as int,
+      minQty: null == minQty
+          ? _value.minQty
+          : minQty // ignore: cast_nullable_to_non_nullable
+              as int,
+      unit: freezed == unit
+          ? _value.unit
+          : unit // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      barcode: freezed == barcode
+          ? _value.barcode
+          : barcode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      sku: freezed == sku
+          ? _value.sku
+          : sku // ignore: cast_nullable_to_non_nullable
+              as String?,
+      categoryId: freezed == categoryId
+          ? _value.categoryId
+          : categoryId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
+      trackInventory: null == trackInventory
+          ? _value.trackInventory
+          : trackInventory // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$CreateProductRequestImpl extends _CreateProductRequest {
-  const _$CreateProductRequestImpl({
-    required this.name,
-    required this.price,
-    @JsonKey(name: 'store_id') required this.storeId,
-    @JsonKey(name: 'cost_price') this.costPrice,
-    @JsonKey(name: 'stock_qty') this.stockQty = 0,
-    @JsonKey(name: 'min_qty') this.minQty = 1,
-    this.unit,
-    this.description,
-    @JsonKey(name: 'image_url') this.imageUrl,
-    this.barcode,
-    this.sku,
-    @JsonKey(name: 'category_id') this.categoryId,
-    @JsonKey(name: 'is_active') this.isActive = true,
-    @JsonKey(name: 'track_inventory') this.trackInventory = true,
-  }) : super._();
+  const _$CreateProductRequestImpl(
+      {required this.name,
+      required this.price,
+      @JsonKey(name: 'store_id') required this.storeId,
+      @JsonKey(name: 'cost_price') this.costPrice,
+      @JsonKey(name: 'stock_qty') this.stockQty = 0,
+      @JsonKey(name: 'min_qty') this.minQty = 1,
+      this.unit,
+      this.description,
+      @JsonKey(name: 'image_url') this.imageUrl,
+      this.barcode,
+      this.sku,
+      @JsonKey(name: 'category_id') this.categoryId,
+      @JsonKey(name: 'is_active') this.isActive = true,
+      @JsonKey(name: 'track_inventory') this.trackInventory = true})
+      : super._();
 
   factory _$CreateProductRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$CreateProductRequestImplFromJson(json);
@@ -391,22 +378,21 @@ class _$CreateProductRequestImpl extends _CreateProductRequest {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    name,
-    price,
-    storeId,
-    costPrice,
-    stockQty,
-    minQty,
-    unit,
-    description,
-    imageUrl,
-    barcode,
-    sku,
-    categoryId,
-    isActive,
-    trackInventory,
-  );
+      runtimeType,
+      name,
+      price,
+      storeId,
+      costPrice,
+      stockQty,
+      minQty,
+      unit,
+      description,
+      imageUrl,
+      barcode,
+      sku,
+      categoryId,
+      isActive,
+      trackInventory);
 
   /// Create a copy of CreateProductRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -414,35 +400,35 @@ class _$CreateProductRequestImpl extends _CreateProductRequest {
   @override
   @pragma('vm:prefer-inline')
   _$$CreateProductRequestImplCopyWith<_$CreateProductRequestImpl>
-  get copyWith =>
-      __$$CreateProductRequestImplCopyWithImpl<_$CreateProductRequestImpl>(
-        this,
-        _$identity,
-      );
+      get copyWith =>
+          __$$CreateProductRequestImplCopyWithImpl<_$CreateProductRequestImpl>(
+              this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CreateProductRequestImplToJson(this);
+    return _$$CreateProductRequestImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _CreateProductRequest extends CreateProductRequest {
-  const factory _CreateProductRequest({
-    required final String name,
-    required final double price,
-    @JsonKey(name: 'store_id') required final String storeId,
-    @JsonKey(name: 'cost_price') final double? costPrice,
-    @JsonKey(name: 'stock_qty') final int stockQty,
-    @JsonKey(name: 'min_qty') final int minQty,
-    final String? unit,
-    final String? description,
-    @JsonKey(name: 'image_url') final String? imageUrl,
-    final String? barcode,
-    final String? sku,
-    @JsonKey(name: 'category_id') final String? categoryId,
-    @JsonKey(name: 'is_active') final bool isActive,
-    @JsonKey(name: 'track_inventory') final bool trackInventory,
-  }) = _$CreateProductRequestImpl;
+  const factory _CreateProductRequest(
+          {required final String name,
+          required final double price,
+          @JsonKey(name: 'store_id') required final String storeId,
+          @JsonKey(name: 'cost_price') final double? costPrice,
+          @JsonKey(name: 'stock_qty') final int stockQty,
+          @JsonKey(name: 'min_qty') final int minQty,
+          final String? unit,
+          final String? description,
+          @JsonKey(name: 'image_url') final String? imageUrl,
+          final String? barcode,
+          final String? sku,
+          @JsonKey(name: 'category_id') final String? categoryId,
+          @JsonKey(name: 'is_active') final bool isActive,
+          @JsonKey(name: 'track_inventory') final bool trackInventory}) =
+      _$CreateProductRequestImpl;
   const _CreateProductRequest._() : super._();
 
   factory _CreateProductRequest.fromJson(Map<String, dynamic> json) =
@@ -490,5 +476,5 @@ abstract class _CreateProductRequest extends CreateProductRequest {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$CreateProductRequestImplCopyWith<_$CreateProductRequestImpl>
-  get copyWith => throw _privateConstructorUsedError;
+      get copyWith => throw _privateConstructorUsedError;
 }

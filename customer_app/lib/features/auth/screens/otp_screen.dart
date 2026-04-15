@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -172,7 +173,9 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
         );
       }
     } catch (e) {
-      debugPrint('[OtpScreen] Error resending OTP: $e');
+      if (kDebugMode) {
+        debugPrint('[OtpScreen] Error resending OTP: $e');
+      }
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('فشل إعادة إرسال الرمز. حاول مرة أخرى')),

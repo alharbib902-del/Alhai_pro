@@ -18,6 +18,8 @@ dependencies:
     path: ../alhai_core
   alhai_design_system:
     path: ../alhai_design_system
+  alhai_zatca:
+    path: ../packages/alhai_zatca
 
   # State Management (DI + ViewModels)
   flutter_riverpod: ^2.4.9
@@ -40,6 +42,9 @@ dependencies:
   # Images
   cached_network_image: ^3.3.1
   image_picker: ^1.0.7
+
+  # Crypto (for cert pinning)
+  crypto: ^3.0.3
 
   # Utils
   intl: any
@@ -65,6 +70,8 @@ dependencies:
 
   # Crash reporting
   sentry_flutter: ^9.14.0
+  qr_flutter: ^4.1.0
+  hijri: ^3.0.0
 
 dev_dependencies:
   flutter_test:

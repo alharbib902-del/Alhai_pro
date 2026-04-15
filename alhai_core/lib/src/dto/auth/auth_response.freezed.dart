@@ -12,8 +12,7 @@ part of 'auth_response.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 UserResponse _$UserResponseFromJson(Map<String, dynamic> json) {
   return _UserResponse.fromJson(json);
@@ -43,18 +42,16 @@ mixin _$UserResponse {
 /// @nodoc
 abstract class $UserResponseCopyWith<$Res> {
   factory $UserResponseCopyWith(
-    UserResponse value,
-    $Res Function(UserResponse) then,
-  ) = _$UserResponseCopyWithImpl<$Res, UserResponse>;
+          UserResponse value, $Res Function(UserResponse) then) =
+      _$UserResponseCopyWithImpl<$Res, UserResponse>;
   @useResult
-  $Res call({
-    String id,
-    String phone,
-    String name,
-    String role,
-    @JsonKey(name: 'store_id') String? storeId,
-    @JsonKey(name: 'created_at') String createdAt,
-  });
+  $Res call(
+      {String id,
+      String phone,
+      String name,
+      String role,
+      @JsonKey(name: 'store_id') String? storeId,
+      @JsonKey(name: 'created_at') String createdAt});
 }
 
 /// @nodoc
@@ -79,35 +76,32 @@ class _$UserResponseCopyWithImpl<$Res, $Val extends UserResponse>
     Object? storeId = freezed,
     Object? createdAt = null,
   }) {
-    return _then(
-      _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
-                      as String,
-            phone: null == phone
-                ? _value.phone
-                : phone // ignore: cast_nullable_to_non_nullable
-                      as String,
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
-                      as String,
-            role: null == role
-                ? _value.role
-                : role // ignore: cast_nullable_to_non_nullable
-                      as String,
-            storeId: freezed == storeId
-                ? _value.storeId
-                : storeId // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            createdAt: null == createdAt
-                ? _value.createdAt
-                : createdAt // ignore: cast_nullable_to_non_nullable
-                      as String,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone: null == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      role: null == role
+          ? _value.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String,
+      storeId: freezed == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ) as $Val);
   }
 }
 
@@ -115,19 +109,17 @@ class _$UserResponseCopyWithImpl<$Res, $Val extends UserResponse>
 abstract class _$$UserResponseImplCopyWith<$Res>
     implements $UserResponseCopyWith<$Res> {
   factory _$$UserResponseImplCopyWith(
-    _$UserResponseImpl value,
-    $Res Function(_$UserResponseImpl) then,
-  ) = __$$UserResponseImplCopyWithImpl<$Res>;
+          _$UserResponseImpl value, $Res Function(_$UserResponseImpl) then) =
+      __$$UserResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String id,
-    String phone,
-    String name,
-    String role,
-    @JsonKey(name: 'store_id') String? storeId,
-    @JsonKey(name: 'created_at') String createdAt,
-  });
+  $Res call(
+      {String id,
+      String phone,
+      String name,
+      String role,
+      @JsonKey(name: 'store_id') String? storeId,
+      @JsonKey(name: 'created_at') String createdAt});
 }
 
 /// @nodoc
@@ -135,9 +127,8 @@ class __$$UserResponseImplCopyWithImpl<$Res>
     extends _$UserResponseCopyWithImpl<$Res, _$UserResponseImpl>
     implements _$$UserResponseImplCopyWith<$Res> {
   __$$UserResponseImplCopyWithImpl(
-    _$UserResponseImpl _value,
-    $Res Function(_$UserResponseImpl) _then,
-  ) : super(_value, _then);
+      _$UserResponseImpl _value, $Res Function(_$UserResponseImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of UserResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -151,48 +142,46 @@ class __$$UserResponseImplCopyWithImpl<$Res>
     Object? storeId = freezed,
     Object? createdAt = null,
   }) {
-    return _then(
-      _$UserResponseImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
-                  as String,
-        phone: null == phone
-            ? _value.phone
-            : phone // ignore: cast_nullable_to_non_nullable
-                  as String,
-        name: null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
-                  as String,
-        role: null == role
-            ? _value.role
-            : role // ignore: cast_nullable_to_non_nullable
-                  as String,
-        storeId: freezed == storeId
-            ? _value.storeId
-            : storeId // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        createdAt: null == createdAt
-            ? _value.createdAt
-            : createdAt // ignore: cast_nullable_to_non_nullable
-                  as String,
-      ),
-    );
+    return _then(_$UserResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone: null == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      role: null == role
+          ? _value.role
+          : role // ignore: cast_nullable_to_non_nullable
+              as String,
+      storeId: freezed == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$UserResponseImpl extends _UserResponse {
-  const _$UserResponseImpl({
-    required this.id,
-    required this.phone,
-    required this.name,
-    required this.role,
-    @JsonKey(name: 'store_id') this.storeId,
-    @JsonKey(name: 'created_at') required this.createdAt,
-  }) : super._();
+  const _$UserResponseImpl(
+      {required this.id,
+      required this.phone,
+      required this.name,
+      required this.role,
+      @JsonKey(name: 'store_id') this.storeId,
+      @JsonKey(name: 'created_at') required this.createdAt})
+      : super._();
 
   factory _$UserResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$UserResponseImplFromJson(json);
@@ -246,19 +235,21 @@ class _$UserResponseImpl extends _UserResponse {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$UserResponseImplToJson(this);
+    return _$$UserResponseImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _UserResponse extends UserResponse {
-  const factory _UserResponse({
-    required final String id,
-    required final String phone,
-    required final String name,
-    required final String role,
-    @JsonKey(name: 'store_id') final String? storeId,
-    @JsonKey(name: 'created_at') required final String createdAt,
-  }) = _$UserResponseImpl;
+  const factory _UserResponse(
+          {required final String id,
+          required final String phone,
+          required final String name,
+          required final String role,
+          @JsonKey(name: 'store_id') final String? storeId,
+          @JsonKey(name: 'created_at') required final String createdAt}) =
+      _$UserResponseImpl;
   const _UserResponse._() : super._();
 
   factory _UserResponse.fromJson(Map<String, dynamic> json) =
@@ -309,9 +300,8 @@ mixin _$AuthResponse {
 /// @nodoc
 abstract class $AuthResponseCopyWith<$Res> {
   factory $AuthResponseCopyWith(
-    AuthResponse value,
-    $Res Function(AuthResponse) then,
-  ) = _$AuthResponseCopyWithImpl<$Res, AuthResponse>;
+          AuthResponse value, $Res Function(AuthResponse) then) =
+      _$AuthResponseCopyWithImpl<$Res, AuthResponse>;
   @useResult
   $Res call({UserResponse user, AuthTokensResponse tokens});
 
@@ -333,20 +323,20 @@ class _$AuthResponseCopyWithImpl<$Res, $Val extends AuthResponse>
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? user = null, Object? tokens = null}) {
-    return _then(
-      _value.copyWith(
-            user: null == user
-                ? _value.user
-                : user // ignore: cast_nullable_to_non_nullable
-                      as UserResponse,
-            tokens: null == tokens
-                ? _value.tokens
-                : tokens // ignore: cast_nullable_to_non_nullable
-                      as AuthTokensResponse,
-          )
-          as $Val,
-    );
+  $Res call({
+    Object? user = null,
+    Object? tokens = null,
+  }) {
+    return _then(_value.copyWith(
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as UserResponse,
+      tokens: null == tokens
+          ? _value.tokens
+          : tokens // ignore: cast_nullable_to_non_nullable
+              as AuthTokensResponse,
+    ) as $Val);
   }
 
   /// Create a copy of AuthResponse
@@ -374,9 +364,8 @@ class _$AuthResponseCopyWithImpl<$Res, $Val extends AuthResponse>
 abstract class _$$AuthResponseImplCopyWith<$Res>
     implements $AuthResponseCopyWith<$Res> {
   factory _$$AuthResponseImplCopyWith(
-    _$AuthResponseImpl value,
-    $Res Function(_$AuthResponseImpl) then,
-  ) = __$$AuthResponseImplCopyWithImpl<$Res>;
+          _$AuthResponseImpl value, $Res Function(_$AuthResponseImpl) then) =
+      __$$AuthResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
   $Res call({UserResponse user, AuthTokensResponse tokens});
@@ -392,27 +381,27 @@ class __$$AuthResponseImplCopyWithImpl<$Res>
     extends _$AuthResponseCopyWithImpl<$Res, _$AuthResponseImpl>
     implements _$$AuthResponseImplCopyWith<$Res> {
   __$$AuthResponseImplCopyWithImpl(
-    _$AuthResponseImpl _value,
-    $Res Function(_$AuthResponseImpl) _then,
-  ) : super(_value, _then);
+      _$AuthResponseImpl _value, $Res Function(_$AuthResponseImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of AuthResponse
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
-  $Res call({Object? user = null, Object? tokens = null}) {
-    return _then(
-      _$AuthResponseImpl(
-        user: null == user
-            ? _value.user
-            : user // ignore: cast_nullable_to_non_nullable
-                  as UserResponse,
-        tokens: null == tokens
-            ? _value.tokens
-            : tokens // ignore: cast_nullable_to_non_nullable
-                  as AuthTokensResponse,
-      ),
-    );
+  $Res call({
+    Object? user = null,
+    Object? tokens = null,
+  }) {
+    return _then(_$AuthResponseImpl(
+      user: null == user
+          ? _value.user
+          : user // ignore: cast_nullable_to_non_nullable
+              as UserResponse,
+      tokens: null == tokens
+          ? _value.tokens
+          : tokens // ignore: cast_nullable_to_non_nullable
+              as AuthTokensResponse,
+    ));
   }
 }
 
@@ -420,7 +409,7 @@ class __$$AuthResponseImplCopyWithImpl<$Res>
 @JsonSerializable()
 class _$AuthResponseImpl extends _AuthResponse {
   const _$AuthResponseImpl({required this.user, required this.tokens})
-    : super._();
+      : super._();
 
   factory _$AuthResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$AuthResponseImplFromJson(json);
@@ -458,15 +447,16 @@ class _$AuthResponseImpl extends _AuthResponse {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$AuthResponseImplToJson(this);
+    return _$$AuthResponseImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _AuthResponse extends AuthResponse {
-  const factory _AuthResponse({
-    required final UserResponse user,
-    required final AuthTokensResponse tokens,
-  }) = _$AuthResponseImpl;
+  const factory _AuthResponse(
+      {required final UserResponse user,
+      required final AuthTokensResponse tokens}) = _$AuthResponseImpl;
   const _AuthResponse._() : super._();
 
   factory _AuthResponse.fromJson(Map<String, dynamic> json) =

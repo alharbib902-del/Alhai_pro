@@ -12,8 +12,7 @@ part of 'promotion.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 Promotion _$PromotionFromJson(Map<String, dynamic> json) {
   return _Promotion.fromJson(json);
@@ -52,23 +51,22 @@ abstract class $PromotionCopyWith<$Res> {
   factory $PromotionCopyWith(Promotion value, $Res Function(Promotion) then) =
       _$PromotionCopyWithImpl<$Res, Promotion>;
   @useResult
-  $Res call({
-    String id,
-    String storeId,
-    String name,
-    String? code,
-    PromoType type,
-    double value,
-    double? minOrderAmount,
-    double? maxDiscount,
-    int? usageLimit,
-    int usageCount,
-    DateTime startDate,
-    DateTime endDate,
-    bool isActive,
-    DateTime createdAt,
-    DateTime? updatedAt,
-  });
+  $Res call(
+      {String id,
+      String storeId,
+      String name,
+      String? code,
+      PromoType type,
+      double value,
+      double? minOrderAmount,
+      double? maxDiscount,
+      int? usageLimit,
+      int usageCount,
+      DateTime startDate,
+      DateTime endDate,
+      bool isActive,
+      DateTime createdAt,
+      DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -102,71 +100,68 @@ class _$PromotionCopyWithImpl<$Res, $Val extends Promotion>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(
-      _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
-                      as String,
-            storeId: null == storeId
-                ? _value.storeId
-                : storeId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
-                      as String,
-            code: freezed == code
-                ? _value.code
-                : code // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            type: null == type
-                ? _value.type
-                : type // ignore: cast_nullable_to_non_nullable
-                      as PromoType,
-            value: null == value
-                ? _value.value
-                : value // ignore: cast_nullable_to_non_nullable
-                      as double,
-            minOrderAmount: freezed == minOrderAmount
-                ? _value.minOrderAmount
-                : minOrderAmount // ignore: cast_nullable_to_non_nullable
-                      as double?,
-            maxDiscount: freezed == maxDiscount
-                ? _value.maxDiscount
-                : maxDiscount // ignore: cast_nullable_to_non_nullable
-                      as double?,
-            usageLimit: freezed == usageLimit
-                ? _value.usageLimit
-                : usageLimit // ignore: cast_nullable_to_non_nullable
-                      as int?,
-            usageCount: null == usageCount
-                ? _value.usageCount
-                : usageCount // ignore: cast_nullable_to_non_nullable
-                      as int,
-            startDate: null == startDate
-                ? _value.startDate
-                : startDate // ignore: cast_nullable_to_non_nullable
-                      as DateTime,
-            endDate: null == endDate
-                ? _value.endDate
-                : endDate // ignore: cast_nullable_to_non_nullable
-                      as DateTime,
-            isActive: null == isActive
-                ? _value.isActive
-                : isActive // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            createdAt: null == createdAt
-                ? _value.createdAt
-                : createdAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime,
-            updatedAt: freezed == updatedAt
-                ? _value.updatedAt
-                : updatedAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      storeId: null == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      code: freezed == code
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
+              as String?,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as PromoType,
+      value: null == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as double,
+      minOrderAmount: freezed == minOrderAmount
+          ? _value.minOrderAmount
+          : minOrderAmount // ignore: cast_nullable_to_non_nullable
+              as double?,
+      maxDiscount: freezed == maxDiscount
+          ? _value.maxDiscount
+          : maxDiscount // ignore: cast_nullable_to_non_nullable
+              as double?,
+      usageLimit: freezed == usageLimit
+          ? _value.usageLimit
+          : usageLimit // ignore: cast_nullable_to_non_nullable
+              as int?,
+      usageCount: null == usageCount
+          ? _value.usageCount
+          : usageCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      startDate: null == startDate
+          ? _value.startDate
+          : startDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      endDate: null == endDate
+          ? _value.endDate
+          : endDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ) as $Val);
   }
 }
 
@@ -174,28 +169,26 @@ class _$PromotionCopyWithImpl<$Res, $Val extends Promotion>
 abstract class _$$PromotionImplCopyWith<$Res>
     implements $PromotionCopyWith<$Res> {
   factory _$$PromotionImplCopyWith(
-    _$PromotionImpl value,
-    $Res Function(_$PromotionImpl) then,
-  ) = __$$PromotionImplCopyWithImpl<$Res>;
+          _$PromotionImpl value, $Res Function(_$PromotionImpl) then) =
+      __$$PromotionImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String id,
-    String storeId,
-    String name,
-    String? code,
-    PromoType type,
-    double value,
-    double? minOrderAmount,
-    double? maxDiscount,
-    int? usageLimit,
-    int usageCount,
-    DateTime startDate,
-    DateTime endDate,
-    bool isActive,
-    DateTime createdAt,
-    DateTime? updatedAt,
-  });
+  $Res call(
+      {String id,
+      String storeId,
+      String name,
+      String? code,
+      PromoType type,
+      double value,
+      double? minOrderAmount,
+      double? maxDiscount,
+      int? usageLimit,
+      int usageCount,
+      DateTime startDate,
+      DateTime endDate,
+      bool isActive,
+      DateTime createdAt,
+      DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -203,9 +196,8 @@ class __$$PromotionImplCopyWithImpl<$Res>
     extends _$PromotionCopyWithImpl<$Res, _$PromotionImpl>
     implements _$$PromotionImplCopyWith<$Res> {
   __$$PromotionImplCopyWithImpl(
-    _$PromotionImpl _value,
-    $Res Function(_$PromotionImpl) _then,
-  ) : super(_value, _then);
+      _$PromotionImpl _value, $Res Function(_$PromotionImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of Promotion
   /// with the given fields replaced by the non-null parameter values.
@@ -228,93 +220,91 @@ class __$$PromotionImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(
-      _$PromotionImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
-                  as String,
-        storeId: null == storeId
-            ? _value.storeId
-            : storeId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        name: null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
-                  as String,
-        code: freezed == code
-            ? _value.code
-            : code // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        type: null == type
-            ? _value.type
-            : type // ignore: cast_nullable_to_non_nullable
-                  as PromoType,
-        value: null == value
-            ? _value.value
-            : value // ignore: cast_nullable_to_non_nullable
-                  as double,
-        minOrderAmount: freezed == minOrderAmount
-            ? _value.minOrderAmount
-            : minOrderAmount // ignore: cast_nullable_to_non_nullable
-                  as double?,
-        maxDiscount: freezed == maxDiscount
-            ? _value.maxDiscount
-            : maxDiscount // ignore: cast_nullable_to_non_nullable
-                  as double?,
-        usageLimit: freezed == usageLimit
-            ? _value.usageLimit
-            : usageLimit // ignore: cast_nullable_to_non_nullable
-                  as int?,
-        usageCount: null == usageCount
-            ? _value.usageCount
-            : usageCount // ignore: cast_nullable_to_non_nullable
-                  as int,
-        startDate: null == startDate
-            ? _value.startDate
-            : startDate // ignore: cast_nullable_to_non_nullable
-                  as DateTime,
-        endDate: null == endDate
-            ? _value.endDate
-            : endDate // ignore: cast_nullable_to_non_nullable
-                  as DateTime,
-        isActive: null == isActive
-            ? _value.isActive
-            : isActive // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        createdAt: null == createdAt
-            ? _value.createdAt
-            : createdAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime,
-        updatedAt: freezed == updatedAt
-            ? _value.updatedAt
-            : updatedAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-      ),
-    );
+    return _then(_$PromotionImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      storeId: null == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      code: freezed == code
+          ? _value.code
+          : code // ignore: cast_nullable_to_non_nullable
+              as String?,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as PromoType,
+      value: null == value
+          ? _value.value
+          : value // ignore: cast_nullable_to_non_nullable
+              as double,
+      minOrderAmount: freezed == minOrderAmount
+          ? _value.minOrderAmount
+          : minOrderAmount // ignore: cast_nullable_to_non_nullable
+              as double?,
+      maxDiscount: freezed == maxDiscount
+          ? _value.maxDiscount
+          : maxDiscount // ignore: cast_nullable_to_non_nullable
+              as double?,
+      usageLimit: freezed == usageLimit
+          ? _value.usageLimit
+          : usageLimit // ignore: cast_nullable_to_non_nullable
+              as int?,
+      usageCount: null == usageCount
+          ? _value.usageCount
+          : usageCount // ignore: cast_nullable_to_non_nullable
+              as int,
+      startDate: null == startDate
+          ? _value.startDate
+          : startDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      endDate: null == endDate
+          ? _value.endDate
+          : endDate // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$PromotionImpl extends _Promotion {
-  const _$PromotionImpl({
-    required this.id,
-    required this.storeId,
-    required this.name,
-    this.code,
-    required this.type,
-    required this.value,
-    this.minOrderAmount,
-    this.maxDiscount,
-    this.usageLimit,
-    this.usageCount = 0,
-    required this.startDate,
-    required this.endDate,
-    this.isActive = true,
-    required this.createdAt,
-    this.updatedAt,
-  }) : super._();
+  const _$PromotionImpl(
+      {required this.id,
+      required this.storeId,
+      required this.name,
+      this.code,
+      required this.type,
+      required this.value,
+      this.minOrderAmount,
+      this.maxDiscount,
+      this.usageLimit,
+      this.usageCount = 0,
+      required this.startDate,
+      required this.endDate,
+      this.isActive = true,
+      required this.createdAt,
+      this.updatedAt})
+      : super._();
 
   factory _$PromotionImpl.fromJson(Map<String, dynamic> json) =>
       _$$PromotionImplFromJson(json);
@@ -390,23 +380,22 @@ class _$PromotionImpl extends _Promotion {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    id,
-    storeId,
-    name,
-    code,
-    type,
-    value,
-    minOrderAmount,
-    maxDiscount,
-    usageLimit,
-    usageCount,
-    startDate,
-    endDate,
-    isActive,
-    createdAt,
-    updatedAt,
-  );
+      runtimeType,
+      id,
+      storeId,
+      name,
+      code,
+      type,
+      value,
+      minOrderAmount,
+      maxDiscount,
+      usageLimit,
+      usageCount,
+      startDate,
+      endDate,
+      isActive,
+      createdAt,
+      updatedAt);
 
   /// Create a copy of Promotion
   /// with the given fields replaced by the non-null parameter values.
@@ -418,28 +407,29 @@ class _$PromotionImpl extends _Promotion {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PromotionImplToJson(this);
+    return _$$PromotionImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _Promotion extends Promotion {
-  const factory _Promotion({
-    required final String id,
-    required final String storeId,
-    required final String name,
-    final String? code,
-    required final PromoType type,
-    required final double value,
-    final double? minOrderAmount,
-    final double? maxDiscount,
-    final int? usageLimit,
-    final int usageCount,
-    required final DateTime startDate,
-    required final DateTime endDate,
-    final bool isActive,
-    required final DateTime createdAt,
-    final DateTime? updatedAt,
-  }) = _$PromotionImpl;
+  const factory _Promotion(
+      {required final String id,
+      required final String storeId,
+      required final String name,
+      final String? code,
+      required final PromoType type,
+      required final double value,
+      final double? minOrderAmount,
+      final double? maxDiscount,
+      final int? usageLimit,
+      final int usageCount,
+      required final DateTime startDate,
+      required final DateTime endDate,
+      final bool isActive,
+      required final DateTime createdAt,
+      final DateTime? updatedAt}) = _$PromotionImpl;
   const _Promotion._() : super._();
 
   factory _Promotion.fromJson(Map<String, dynamic> json) =

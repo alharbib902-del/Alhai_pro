@@ -39,7 +39,9 @@ class CartNotifier extends StateNotifier<Cart> {
         state = Cart.fromJson(jsonDecode(json) as Map<String, dynamic>);
       }
     } catch (e, stack) {
-      debugPrint('[CartProvider] Error loading cart from disk: $e');
+      if (kDebugMode) {
+        debugPrint('[CartProvider] Error loading cart from disk: $e');
+      }
       reportError(e, stackTrace: stack, hint: 'CartProvider.loadFromDisk');
     } finally {
       _loaded = true;
@@ -54,7 +56,9 @@ class CartNotifier extends StateNotifier<Cart> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_cartKey, jsonEncode(state.toJson()));
     } catch (e, stack) {
-      debugPrint('[CartProvider] Error saving cart to disk: $e');
+      if (kDebugMode) {
+        debugPrint('[CartProvider] Error saving cart to disk: $e');
+      }
       reportError(e, stackTrace: stack, hint: 'CartProvider._saveToDisk');
     } finally {
       _saving = false;

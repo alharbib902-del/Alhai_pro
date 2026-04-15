@@ -7,19 +7,19 @@ part of 'low_stock_product_response.dart';
 // **************************************************************************
 
 LowStockProductResponse _$LowStockProductResponseFromJson(
-  Map<String, dynamic> json,
-) => LowStockProductResponse(
-  productId: json['productId'] as String,
-  productName: json['productName'] as String,
-  currentQty: (json['currentQty'] as num).toDouble(),
-  minQty: (json['minQty'] as num).toDouble(),
-);
+        Map<String, dynamic> json) =>
+    LowStockProductResponse(
+      productId: json['productId'] as String,
+      productName: json['productName'] as String,
+      currentQty: (json['currentQty'] as num).toDouble(),
+      minQty: (json['minQty'] as num).toDouble(),
+    );
 
 Map<String, dynamic> _$LowStockProductResponseToJson(
-  LowStockProductResponse instance,
-) => <String, dynamic>{
-  'productId': instance.productId,
-  'productName': instance.productName,
-  'currentQty': instance.currentQty,
-  'minQty': instance.minQty,
-};
+        LowStockProductResponse instance) =>
+    <String, dynamic>{
+      'productId': instance.productId,
+      'productName': instance.productName,
+      'currentQty': instance.currentQty,
+      'minQty': instance.minQty,
+    };

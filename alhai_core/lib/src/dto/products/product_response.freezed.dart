@@ -12,8 +12,7 @@ part of 'product_response.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 ProductResponse _$ProductResponseFromJson(Map<String, dynamic> json) {
   return _ProductResponse.fromJson(json);
@@ -38,7 +37,8 @@ mixin _$ProductResponse {
   String? get description => throw _privateConstructorUsedError;
   @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
   @JsonKey(name: 'image_url')
-  String? get imageUrl => throw _privateConstructorUsedError; // R2 Image Storage (Cloudflare CDN)
+  String? get imageUrl =>
+      throw _privateConstructorUsedError; // R2 Image Storage (Cloudflare CDN)
   @JsonKey(name: 'image_thumbnail')
   String? get imageThumbnail => throw _privateConstructorUsedError; // 300×300
   @JsonKey(name: 'image_medium')
@@ -71,35 +71,33 @@ mixin _$ProductResponse {
 /// @nodoc
 abstract class $ProductResponseCopyWith<$Res> {
   factory $ProductResponseCopyWith(
-    ProductResponse value,
-    $Res Function(ProductResponse) then,
-  ) = _$ProductResponseCopyWithImpl<$Res, ProductResponse>;
+          ProductResponse value, $Res Function(ProductResponse) then) =
+      _$ProductResponseCopyWithImpl<$Res, ProductResponse>;
   @useResult
-  $Res call({
-    String id,
-    @JsonKey(name: 'store_id') String storeId,
-    String name,
-    String? sku,
-    String? barcode,
-    double price,
-    @JsonKey(name: 'cost_price') double? costPrice,
-    @JsonKey(name: 'stock_qty') double stockQty,
-    @JsonKey(name: 'min_qty') double minQty,
-    String? unit,
-    String? description,
-    @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
-    @JsonKey(name: 'image_url')
-    String? imageUrl,
-    @JsonKey(name: 'image_thumbnail') String? imageThumbnail,
-    @JsonKey(name: 'image_medium') String? imageMedium,
-    @JsonKey(name: 'image_large') String? imageLarge,
-    @JsonKey(name: 'image_hash') String? imageHash,
-    @JsonKey(name: 'category_id') String? categoryId,
-    @JsonKey(name: 'is_active') bool isActive,
-    @JsonKey(name: 'track_inventory') bool trackInventory,
-    @JsonKey(name: 'created_at') String createdAt,
-    @JsonKey(name: 'updated_at') String? updatedAt,
-  });
+  $Res call(
+      {String id,
+      @JsonKey(name: 'store_id') String storeId,
+      String name,
+      String? sku,
+      String? barcode,
+      double price,
+      @JsonKey(name: 'cost_price') double? costPrice,
+      @JsonKey(name: 'stock_qty') double stockQty,
+      @JsonKey(name: 'min_qty') double minQty,
+      String? unit,
+      String? description,
+      @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
+      @JsonKey(name: 'image_url')
+      String? imageUrl,
+      @JsonKey(name: 'image_thumbnail') String? imageThumbnail,
+      @JsonKey(name: 'image_medium') String? imageMedium,
+      @JsonKey(name: 'image_large') String? imageLarge,
+      @JsonKey(name: 'image_hash') String? imageHash,
+      @JsonKey(name: 'category_id') String? categoryId,
+      @JsonKey(name: 'is_active') bool isActive,
+      @JsonKey(name: 'track_inventory') bool trackInventory,
+      @JsonKey(name: 'created_at') String createdAt,
+      @JsonKey(name: 'updated_at') String? updatedAt});
 }
 
 /// @nodoc
@@ -139,132 +137,127 @@ class _$ProductResponseCopyWithImpl<$Res, $Val extends ProductResponse>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(
-      _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
-                      as String,
-            storeId: null == storeId
-                ? _value.storeId
-                : storeId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
-                      as String,
-            sku: freezed == sku
-                ? _value.sku
-                : sku // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            barcode: freezed == barcode
-                ? _value.barcode
-                : barcode // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            price: null == price
-                ? _value.price
-                : price // ignore: cast_nullable_to_non_nullable
-                      as double,
-            costPrice: freezed == costPrice
-                ? _value.costPrice
-                : costPrice // ignore: cast_nullable_to_non_nullable
-                      as double?,
-            stockQty: null == stockQty
-                ? _value.stockQty
-                : stockQty // ignore: cast_nullable_to_non_nullable
-                      as double,
-            minQty: null == minQty
-                ? _value.minQty
-                : minQty // ignore: cast_nullable_to_non_nullable
-                      as double,
-            unit: freezed == unit
-                ? _value.unit
-                : unit // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            description: freezed == description
-                ? _value.description
-                : description // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            imageUrl: freezed == imageUrl
-                ? _value.imageUrl
-                : imageUrl // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            imageThumbnail: freezed == imageThumbnail
-                ? _value.imageThumbnail
-                : imageThumbnail // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            imageMedium: freezed == imageMedium
-                ? _value.imageMedium
-                : imageMedium // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            imageLarge: freezed == imageLarge
-                ? _value.imageLarge
-                : imageLarge // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            imageHash: freezed == imageHash
-                ? _value.imageHash
-                : imageHash // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            categoryId: freezed == categoryId
-                ? _value.categoryId
-                : categoryId // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            isActive: null == isActive
-                ? _value.isActive
-                : isActive // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            trackInventory: null == trackInventory
-                ? _value.trackInventory
-                : trackInventory // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            createdAt: null == createdAt
-                ? _value.createdAt
-                : createdAt // ignore: cast_nullable_to_non_nullable
-                      as String,
-            updatedAt: freezed == updatedAt
-                ? _value.updatedAt
-                : updatedAt // ignore: cast_nullable_to_non_nullable
-                      as String?,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      storeId: null == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      sku: freezed == sku
+          ? _value.sku
+          : sku // ignore: cast_nullable_to_non_nullable
+              as String?,
+      barcode: freezed == barcode
+          ? _value.barcode
+          : barcode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as double,
+      costPrice: freezed == costPrice
+          ? _value.costPrice
+          : costPrice // ignore: cast_nullable_to_non_nullable
+              as double?,
+      stockQty: null == stockQty
+          ? _value.stockQty
+          : stockQty // ignore: cast_nullable_to_non_nullable
+              as double,
+      minQty: null == minQty
+          ? _value.minQty
+          : minQty // ignore: cast_nullable_to_non_nullable
+              as double,
+      unit: freezed == unit
+          ? _value.unit
+          : unit // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageThumbnail: freezed == imageThumbnail
+          ? _value.imageThumbnail
+          : imageThumbnail // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageMedium: freezed == imageMedium
+          ? _value.imageMedium
+          : imageMedium // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageLarge: freezed == imageLarge
+          ? _value.imageLarge
+          : imageLarge // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageHash: freezed == imageHash
+          ? _value.imageHash
+          : imageHash // ignore: cast_nullable_to_non_nullable
+              as String?,
+      categoryId: freezed == categoryId
+          ? _value.categoryId
+          : categoryId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
+      trackInventory: null == trackInventory
+          ? _value.trackInventory
+          : trackInventory // ignore: cast_nullable_to_non_nullable
+              as bool,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
   }
 }
 
 /// @nodoc
 abstract class _$$ProductResponseImplCopyWith<$Res>
     implements $ProductResponseCopyWith<$Res> {
-  factory _$$ProductResponseImplCopyWith(
-    _$ProductResponseImpl value,
-    $Res Function(_$ProductResponseImpl) then,
-  ) = __$$ProductResponseImplCopyWithImpl<$Res>;
+  factory _$$ProductResponseImplCopyWith(_$ProductResponseImpl value,
+          $Res Function(_$ProductResponseImpl) then) =
+      __$$ProductResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String id,
-    @JsonKey(name: 'store_id') String storeId,
-    String name,
-    String? sku,
-    String? barcode,
-    double price,
-    @JsonKey(name: 'cost_price') double? costPrice,
-    @JsonKey(name: 'stock_qty') double stockQty,
-    @JsonKey(name: 'min_qty') double minQty,
-    String? unit,
-    String? description,
-    @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
-    @JsonKey(name: 'image_url')
-    String? imageUrl,
-    @JsonKey(name: 'image_thumbnail') String? imageThumbnail,
-    @JsonKey(name: 'image_medium') String? imageMedium,
-    @JsonKey(name: 'image_large') String? imageLarge,
-    @JsonKey(name: 'image_hash') String? imageHash,
-    @JsonKey(name: 'category_id') String? categoryId,
-    @JsonKey(name: 'is_active') bool isActive,
-    @JsonKey(name: 'track_inventory') bool trackInventory,
-    @JsonKey(name: 'created_at') String createdAt,
-    @JsonKey(name: 'updated_at') String? updatedAt,
-  });
+  $Res call(
+      {String id,
+      @JsonKey(name: 'store_id') String storeId,
+      String name,
+      String? sku,
+      String? barcode,
+      double price,
+      @JsonKey(name: 'cost_price') double? costPrice,
+      @JsonKey(name: 'stock_qty') double stockQty,
+      @JsonKey(name: 'min_qty') double minQty,
+      String? unit,
+      String? description,
+      @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
+      @JsonKey(name: 'image_url')
+      String? imageUrl,
+      @JsonKey(name: 'image_thumbnail') String? imageThumbnail,
+      @JsonKey(name: 'image_medium') String? imageMedium,
+      @JsonKey(name: 'image_large') String? imageLarge,
+      @JsonKey(name: 'image_hash') String? imageHash,
+      @JsonKey(name: 'category_id') String? categoryId,
+      @JsonKey(name: 'is_active') bool isActive,
+      @JsonKey(name: 'track_inventory') bool trackInventory,
+      @JsonKey(name: 'created_at') String createdAt,
+      @JsonKey(name: 'updated_at') String? updatedAt});
 }
 
 /// @nodoc
@@ -272,9 +265,8 @@ class __$$ProductResponseImplCopyWithImpl<$Res>
     extends _$ProductResponseCopyWithImpl<$Res, _$ProductResponseImpl>
     implements _$$ProductResponseImplCopyWith<$Res> {
   __$$ProductResponseImplCopyWithImpl(
-    _$ProductResponseImpl _value,
-    $Res Function(_$ProductResponseImpl) _then,
-  ) : super(_value, _then);
+      _$ProductResponseImpl _value, $Res Function(_$ProductResponseImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of ProductResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -303,125 +295,123 @@ class __$$ProductResponseImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(
-      _$ProductResponseImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
-                  as String,
-        storeId: null == storeId
-            ? _value.storeId
-            : storeId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        name: null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
-                  as String,
-        sku: freezed == sku
-            ? _value.sku
-            : sku // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        barcode: freezed == barcode
-            ? _value.barcode
-            : barcode // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        price: null == price
-            ? _value.price
-            : price // ignore: cast_nullable_to_non_nullable
-                  as double,
-        costPrice: freezed == costPrice
-            ? _value.costPrice
-            : costPrice // ignore: cast_nullable_to_non_nullable
-                  as double?,
-        stockQty: null == stockQty
-            ? _value.stockQty
-            : stockQty // ignore: cast_nullable_to_non_nullable
-                  as double,
-        minQty: null == minQty
-            ? _value.minQty
-            : minQty // ignore: cast_nullable_to_non_nullable
-                  as double,
-        unit: freezed == unit
-            ? _value.unit
-            : unit // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        description: freezed == description
-            ? _value.description
-            : description // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        imageUrl: freezed == imageUrl
-            ? _value.imageUrl
-            : imageUrl // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        imageThumbnail: freezed == imageThumbnail
-            ? _value.imageThumbnail
-            : imageThumbnail // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        imageMedium: freezed == imageMedium
-            ? _value.imageMedium
-            : imageMedium // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        imageLarge: freezed == imageLarge
-            ? _value.imageLarge
-            : imageLarge // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        imageHash: freezed == imageHash
-            ? _value.imageHash
-            : imageHash // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        categoryId: freezed == categoryId
-            ? _value.categoryId
-            : categoryId // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        isActive: null == isActive
-            ? _value.isActive
-            : isActive // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        trackInventory: null == trackInventory
-            ? _value.trackInventory
-            : trackInventory // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        createdAt: null == createdAt
-            ? _value.createdAt
-            : createdAt // ignore: cast_nullable_to_non_nullable
-                  as String,
-        updatedAt: freezed == updatedAt
-            ? _value.updatedAt
-            : updatedAt // ignore: cast_nullable_to_non_nullable
-                  as String?,
-      ),
-    );
+    return _then(_$ProductResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      storeId: null == storeId
+          ? _value.storeId
+          : storeId // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      sku: freezed == sku
+          ? _value.sku
+          : sku // ignore: cast_nullable_to_non_nullable
+              as String?,
+      barcode: freezed == barcode
+          ? _value.barcode
+          : barcode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      price: null == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as double,
+      costPrice: freezed == costPrice
+          ? _value.costPrice
+          : costPrice // ignore: cast_nullable_to_non_nullable
+              as double?,
+      stockQty: null == stockQty
+          ? _value.stockQty
+          : stockQty // ignore: cast_nullable_to_non_nullable
+              as double,
+      minQty: null == minQty
+          ? _value.minQty
+          : minQty // ignore: cast_nullable_to_non_nullable
+              as double,
+      unit: freezed == unit
+          ? _value.unit
+          : unit // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageThumbnail: freezed == imageThumbnail
+          ? _value.imageThumbnail
+          : imageThumbnail // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageMedium: freezed == imageMedium
+          ? _value.imageMedium
+          : imageMedium // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageLarge: freezed == imageLarge
+          ? _value.imageLarge
+          : imageLarge // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageHash: freezed == imageHash
+          ? _value.imageHash
+          : imageHash // ignore: cast_nullable_to_non_nullable
+              as String?,
+      categoryId: freezed == categoryId
+          ? _value.categoryId
+          : categoryId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
+      trackInventory: null == trackInventory
+          ? _value.trackInventory
+          : trackInventory // ignore: cast_nullable_to_non_nullable
+              as bool,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$ProductResponseImpl extends _ProductResponse {
-  const _$ProductResponseImpl({
-    required this.id,
-    @JsonKey(name: 'store_id') required this.storeId,
-    required this.name,
-    this.sku,
-    this.barcode,
-    required this.price,
-    @JsonKey(name: 'cost_price') this.costPrice,
-    @JsonKey(name: 'stock_qty') required this.stockQty,
-    @JsonKey(name: 'min_qty') this.minQty = 0,
-    this.unit,
-    this.description,
-    @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
-    @JsonKey(name: 'image_url')
-    this.imageUrl,
-    @JsonKey(name: 'image_thumbnail') this.imageThumbnail,
-    @JsonKey(name: 'image_medium') this.imageMedium,
-    @JsonKey(name: 'image_large') this.imageLarge,
-    @JsonKey(name: 'image_hash') this.imageHash,
-    @JsonKey(name: 'category_id') this.categoryId,
-    @JsonKey(name: 'is_active') required this.isActive,
-    @JsonKey(name: 'track_inventory') this.trackInventory = true,
-    @JsonKey(name: 'created_at') required this.createdAt,
-    @JsonKey(name: 'updated_at') this.updatedAt,
-  }) : super._();
+  const _$ProductResponseImpl(
+      {required this.id,
+      @JsonKey(name: 'store_id') required this.storeId,
+      required this.name,
+      this.sku,
+      this.barcode,
+      required this.price,
+      @JsonKey(name: 'cost_price') this.costPrice,
+      @JsonKey(name: 'stock_qty') required this.stockQty,
+      @JsonKey(name: 'min_qty') this.minQty = 0,
+      this.unit,
+      this.description,
+      @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
+      @JsonKey(name: 'image_url')
+      this.imageUrl,
+      @JsonKey(name: 'image_thumbnail') this.imageThumbnail,
+      @JsonKey(name: 'image_medium') this.imageMedium,
+      @JsonKey(name: 'image_large') this.imageLarge,
+      @JsonKey(name: 'image_hash') this.imageHash,
+      @JsonKey(name: 'category_id') this.categoryId,
+      @JsonKey(name: 'is_active') required this.isActive,
+      @JsonKey(name: 'track_inventory') this.trackInventory = true,
+      @JsonKey(name: 'created_at') required this.createdAt,
+      @JsonKey(name: 'updated_at') this.updatedAt})
+      : super._();
 
   factory _$ProductResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$ProductResponseImplFromJson(json);
@@ -456,23 +446,23 @@ class _$ProductResponseImpl extends _ProductResponse {
   @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
   @JsonKey(name: 'image_url')
   final String? imageUrl;
-  // R2 Image Storage (Cloudflare CDN)
+// R2 Image Storage (Cloudflare CDN)
   @override
   @JsonKey(name: 'image_thumbnail')
   final String? imageThumbnail;
-  // 300×300
+// 300×300
   @override
   @JsonKey(name: 'image_medium')
   final String? imageMedium;
-  // 600×600
+// 600×600
   @override
   @JsonKey(name: 'image_large')
   final String? imageLarge;
-  // 1200×1200
+// 1200×1200
   @override
   @JsonKey(name: 'image_hash')
   final String? imageHash;
-  // Versioning
+// Versioning
   @override
   @JsonKey(name: 'category_id')
   final String? categoryId;
@@ -538,29 +528,29 @@ class _$ProductResponseImpl extends _ProductResponse {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
-    runtimeType,
-    id,
-    storeId,
-    name,
-    sku,
-    barcode,
-    price,
-    costPrice,
-    stockQty,
-    minQty,
-    unit,
-    description,
-    imageUrl,
-    imageThumbnail,
-    imageMedium,
-    imageLarge,
-    imageHash,
-    categoryId,
-    isActive,
-    trackInventory,
-    createdAt,
-    updatedAt,
-  ]);
+        runtimeType,
+        id,
+        storeId,
+        name,
+        sku,
+        barcode,
+        price,
+        costPrice,
+        stockQty,
+        minQty,
+        unit,
+        description,
+        imageUrl,
+        imageThumbnail,
+        imageMedium,
+        imageLarge,
+        imageHash,
+        categoryId,
+        isActive,
+        trackInventory,
+        createdAt,
+        updatedAt
+      ]);
 
   /// Create a copy of ProductResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -569,42 +559,42 @@ class _$ProductResponseImpl extends _ProductResponse {
   @pragma('vm:prefer-inline')
   _$$ProductResponseImplCopyWith<_$ProductResponseImpl> get copyWith =>
       __$$ProductResponseImplCopyWithImpl<_$ProductResponseImpl>(
-        this,
-        _$identity,
-      );
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ProductResponseImplToJson(this);
+    return _$$ProductResponseImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _ProductResponse extends ProductResponse {
-  const factory _ProductResponse({
-    required final String id,
-    @JsonKey(name: 'store_id') required final String storeId,
-    required final String name,
-    final String? sku,
-    final String? barcode,
-    required final double price,
-    @JsonKey(name: 'cost_price') final double? costPrice,
-    @JsonKey(name: 'stock_qty') required final double stockQty,
-    @JsonKey(name: 'min_qty') final double minQty,
-    final String? unit,
-    final String? description,
-    @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
-    @JsonKey(name: 'image_url')
-    final String? imageUrl,
-    @JsonKey(name: 'image_thumbnail') final String? imageThumbnail,
-    @JsonKey(name: 'image_medium') final String? imageMedium,
-    @JsonKey(name: 'image_large') final String? imageLarge,
-    @JsonKey(name: 'image_hash') final String? imageHash,
-    @JsonKey(name: 'category_id') final String? categoryId,
-    @JsonKey(name: 'is_active') required final bool isActive,
-    @JsonKey(name: 'track_inventory') final bool trackInventory,
-    @JsonKey(name: 'created_at') required final String createdAt,
-    @JsonKey(name: 'updated_at') final String? updatedAt,
-  }) = _$ProductResponseImpl;
+  const factory _ProductResponse(
+          {required final String id,
+          @JsonKey(name: 'store_id') required final String storeId,
+          required final String name,
+          final String? sku,
+          final String? barcode,
+          required final double price,
+          @JsonKey(name: 'cost_price') final double? costPrice,
+          @JsonKey(name: 'stock_qty') required final double stockQty,
+          @JsonKey(name: 'min_qty') final double minQty,
+          final String? unit,
+          final String? description,
+          @Deprecated('Use imageThumbnail, imageMedium, or imageLarge')
+          @JsonKey(name: 'image_url')
+          final String? imageUrl,
+          @JsonKey(name: 'image_thumbnail') final String? imageThumbnail,
+          @JsonKey(name: 'image_medium') final String? imageMedium,
+          @JsonKey(name: 'image_large') final String? imageLarge,
+          @JsonKey(name: 'image_hash') final String? imageHash,
+          @JsonKey(name: 'category_id') final String? categoryId,
+          @JsonKey(name: 'is_active') required final bool isActive,
+          @JsonKey(name: 'track_inventory') final bool trackInventory,
+          @JsonKey(name: 'created_at') required final String createdAt,
+          @JsonKey(name: 'updated_at') final String? updatedAt}) =
+      _$ProductResponseImpl;
   const _ProductResponse._() : super._();
 
   factory _ProductResponse.fromJson(Map<String, dynamic> json) =

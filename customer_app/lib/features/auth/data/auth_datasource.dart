@@ -92,7 +92,9 @@ class AuthDatasource {
         ),
       );
     } catch (e, stack) {
-      debugPrint('[AuthDatasource] Error fetching current user: $e');
+      if (kDebugMode) {
+        debugPrint('[AuthDatasource] Error fetching current user: $e');
+      }
       reportError(e, stackTrace: stack, hint: 'getCurrentUser');
       return null;
     }
@@ -122,7 +124,9 @@ class AuthDatasource {
       final prefs = await SharedPreferences.getInstance();
       await prefs.clear();
     } catch (e, stack) {
-      debugPrint('[AuthDatasource] Error clearing SharedPreferences: $e');
+      if (kDebugMode) {
+        debugPrint('[AuthDatasource] Error clearing SharedPreferences: $e');
+      }
       reportError(
         e,
         stackTrace: stack,
@@ -137,12 +141,14 @@ class AuthDatasource {
       );
       await secureStorage.deleteAll();
     } catch (e, stack) {
-      debugPrint('[AuthDatasource] Error clearing secure storage: $e');
+      if (kDebugMode) {
+        debugPrint('[AuthDatasource] Error clearing secure storage: $e');
+      }
       reportError(e, stackTrace: stack, hint: 'logout: clear secure storage');
     }
 
     // Verify session is cleared (assert is stripped in release builds)
-    if (_client.auth.currentSession != null) {
+    if (kDebugMode && _client.auth.currentSession != null) {
       debugPrint('[AuthDatasource] Warning: session not null after logout');
     }
   }

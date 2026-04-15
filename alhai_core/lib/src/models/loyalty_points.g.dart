@@ -11,8 +11,7 @@ _$LoyaltyPointsImpl _$$LoyaltyPointsImplFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       customerId: json['customerId'] as String,
       balance: (json['balance'] as num?)?.toInt() ?? 0,
-      tier:
-          $enumDecodeNullable(_$LoyaltyTierEnumMap, json['tier']) ??
+      tier: $enumDecodeNullable(_$LoyaltyTierEnumMap, json['tier']) ??
           LoyaltyTier.bronze,
       earnedThisMonth: (json['earnedThisMonth'] as num?)?.toInt() ?? 0,
       redeemedThisMonth: (json['redeemedThisMonth'] as num?)?.toInt() ?? 0,

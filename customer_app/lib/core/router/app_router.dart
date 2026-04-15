@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../providers/app_providers.dart';
+import '../supabase/supabase_client.dart';
 
 import '../../features/auth/screens/splash_screen.dart';
 import '../../features/auth/screens/login_screen.dart';
@@ -47,7 +49,28 @@ class AppRouter {
   static final router = GoRouter(
     navigatorKey: _rootNavigatorKey,
     initialLocation: '/',
-    debugLogDiagnostics: true,
+    debugLogDiagnostics: kDebugMode,
+    redirect: (context, state) {
+      final isAuth = AppSupabase.isAuthenticated;
+      final location = state.matchedLocation;
+
+      // Public routes accessible without authentication
+      final isPublicRoute = location == '/' ||
+          location.startsWith('/auth') ||
+          location.startsWith('/onboarding');
+
+      // Not authenticated → redirect to login (except public routes)
+      if (!isAuth && !isPublicRoute) {
+        return '/auth/login';
+      }
+
+      // Authenticated → redirect away from auth routes (except splash)
+      if (isAuth && isPublicRoute && location != '/') {
+        return '/home';
+      }
+
+      return null;
+    },
     routes: [
       // ==========================================
       // Auth routes (no bottom nav)

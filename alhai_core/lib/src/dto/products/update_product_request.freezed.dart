@@ -12,8 +12,7 @@ part of 'update_product_request.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 UpdateProductRequest _$UpdateProductRequestFromJson(Map<String, dynamic> json) {
   return _UpdateProductRequest.fromJson(json);
@@ -43,27 +42,23 @@ mixin _$UpdateProductRequest {
 
 /// @nodoc
 abstract class $UpdateProductRequestCopyWith<$Res> {
-  factory $UpdateProductRequestCopyWith(
-    UpdateProductRequest value,
-    $Res Function(UpdateProductRequest) then,
-  ) = _$UpdateProductRequestCopyWithImpl<$Res, UpdateProductRequest>;
+  factory $UpdateProductRequestCopyWith(UpdateProductRequest value,
+          $Res Function(UpdateProductRequest) then) =
+      _$UpdateProductRequestCopyWithImpl<$Res, UpdateProductRequest>;
   @useResult
-  $Res call({
-    String? name,
-    double? price,
-    String? description,
-    @JsonKey(name: 'image_url') String? imageUrl,
-    String? barcode,
-    @JsonKey(name: 'category_id') String? categoryId,
-    bool? available,
-  });
+  $Res call(
+      {String? name,
+      double? price,
+      String? description,
+      @JsonKey(name: 'image_url') String? imageUrl,
+      String? barcode,
+      @JsonKey(name: 'category_id') String? categoryId,
+      bool? available});
 }
 
 /// @nodoc
-class _$UpdateProductRequestCopyWithImpl<
-  $Res,
-  $Val extends UpdateProductRequest
->
+class _$UpdateProductRequestCopyWithImpl<$Res,
+        $Val extends UpdateProductRequest>
     implements $UpdateProductRequestCopyWith<$Res> {
   _$UpdateProductRequestCopyWithImpl(this._value, this._then);
 
@@ -85,70 +80,64 @@ class _$UpdateProductRequestCopyWithImpl<
     Object? categoryId = freezed,
     Object? available = freezed,
   }) {
-    return _then(
-      _value.copyWith(
-            name: freezed == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            price: freezed == price
-                ? _value.price
-                : price // ignore: cast_nullable_to_non_nullable
-                      as double?,
-            description: freezed == description
-                ? _value.description
-                : description // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            imageUrl: freezed == imageUrl
-                ? _value.imageUrl
-                : imageUrl // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            barcode: freezed == barcode
-                ? _value.barcode
-                : barcode // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            categoryId: freezed == categoryId
-                ? _value.categoryId
-                : categoryId // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            available: freezed == available
-                ? _value.available
-                : available // ignore: cast_nullable_to_non_nullable
-                      as bool?,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      price: freezed == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as double?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      barcode: freezed == barcode
+          ? _value.barcode
+          : barcode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      categoryId: freezed == categoryId
+          ? _value.categoryId
+          : categoryId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      available: freezed == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ) as $Val);
   }
 }
 
 /// @nodoc
 abstract class _$$UpdateProductRequestImplCopyWith<$Res>
     implements $UpdateProductRequestCopyWith<$Res> {
-  factory _$$UpdateProductRequestImplCopyWith(
-    _$UpdateProductRequestImpl value,
-    $Res Function(_$UpdateProductRequestImpl) then,
-  ) = __$$UpdateProductRequestImplCopyWithImpl<$Res>;
+  factory _$$UpdateProductRequestImplCopyWith(_$UpdateProductRequestImpl value,
+          $Res Function(_$UpdateProductRequestImpl) then) =
+      __$$UpdateProductRequestImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String? name,
-    double? price,
-    String? description,
-    @JsonKey(name: 'image_url') String? imageUrl,
-    String? barcode,
-    @JsonKey(name: 'category_id') String? categoryId,
-    bool? available,
-  });
+  $Res call(
+      {String? name,
+      double? price,
+      String? description,
+      @JsonKey(name: 'image_url') String? imageUrl,
+      String? barcode,
+      @JsonKey(name: 'category_id') String? categoryId,
+      bool? available});
 }
 
 /// @nodoc
 class __$$UpdateProductRequestImplCopyWithImpl<$Res>
     extends _$UpdateProductRequestCopyWithImpl<$Res, _$UpdateProductRequestImpl>
     implements _$$UpdateProductRequestImplCopyWith<$Res> {
-  __$$UpdateProductRequestImplCopyWithImpl(
-    _$UpdateProductRequestImpl _value,
-    $Res Function(_$UpdateProductRequestImpl) _then,
-  ) : super(_value, _then);
+  __$$UpdateProductRequestImplCopyWithImpl(_$UpdateProductRequestImpl _value,
+      $Res Function(_$UpdateProductRequestImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of UpdateProductRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -163,53 +152,51 @@ class __$$UpdateProductRequestImplCopyWithImpl<$Res>
     Object? categoryId = freezed,
     Object? available = freezed,
   }) {
-    return _then(
-      _$UpdateProductRequestImpl(
-        name: freezed == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        price: freezed == price
-            ? _value.price
-            : price // ignore: cast_nullable_to_non_nullable
-                  as double?,
-        description: freezed == description
-            ? _value.description
-            : description // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        imageUrl: freezed == imageUrl
-            ? _value.imageUrl
-            : imageUrl // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        barcode: freezed == barcode
-            ? _value.barcode
-            : barcode // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        categoryId: freezed == categoryId
-            ? _value.categoryId
-            : categoryId // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        available: freezed == available
-            ? _value.available
-            : available // ignore: cast_nullable_to_non_nullable
-                  as bool?,
-      ),
-    );
+    return _then(_$UpdateProductRequestImpl(
+      name: freezed == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String?,
+      price: freezed == price
+          ? _value.price
+          : price // ignore: cast_nullable_to_non_nullable
+              as double?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      barcode: freezed == barcode
+          ? _value.barcode
+          : barcode // ignore: cast_nullable_to_non_nullable
+              as String?,
+      categoryId: freezed == categoryId
+          ? _value.categoryId
+          : categoryId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      available: freezed == available
+          ? _value.available
+          : available // ignore: cast_nullable_to_non_nullable
+              as bool?,
+    ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$UpdateProductRequestImpl extends _UpdateProductRequest {
-  const _$UpdateProductRequestImpl({
-    this.name,
-    this.price,
-    this.description,
-    @JsonKey(name: 'image_url') this.imageUrl,
-    this.barcode,
-    @JsonKey(name: 'category_id') this.categoryId,
-    this.available,
-  }) : super._();
+  const _$UpdateProductRequestImpl(
+      {this.name,
+      this.price,
+      this.description,
+      @JsonKey(name: 'image_url') this.imageUrl,
+      this.barcode,
+      @JsonKey(name: 'category_id') this.categoryId,
+      this.available})
+      : super._();
 
   factory _$UpdateProductRequestImpl.fromJson(Map<String, dynamic> json) =>
       _$$UpdateProductRequestImplFromJson(json);
@@ -256,16 +243,8 @@ class _$UpdateProductRequestImpl extends _UpdateProductRequest {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    name,
-    price,
-    description,
-    imageUrl,
-    barcode,
-    categoryId,
-    available,
-  );
+  int get hashCode => Object.hash(runtimeType, name, price, description,
+      imageUrl, barcode, categoryId, available);
 
   /// Create a copy of UpdateProductRequest
   /// with the given fields replaced by the non-null parameter values.
@@ -273,28 +252,27 @@ class _$UpdateProductRequestImpl extends _UpdateProductRequest {
   @override
   @pragma('vm:prefer-inline')
   _$$UpdateProductRequestImplCopyWith<_$UpdateProductRequestImpl>
-  get copyWith =>
-      __$$UpdateProductRequestImplCopyWithImpl<_$UpdateProductRequestImpl>(
-        this,
-        _$identity,
-      );
+      get copyWith =>
+          __$$UpdateProductRequestImplCopyWithImpl<_$UpdateProductRequestImpl>(
+              this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$UpdateProductRequestImplToJson(this);
+    return _$$UpdateProductRequestImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _UpdateProductRequest extends UpdateProductRequest {
-  const factory _UpdateProductRequest({
-    final String? name,
-    final double? price,
-    final String? description,
-    @JsonKey(name: 'image_url') final String? imageUrl,
-    final String? barcode,
-    @JsonKey(name: 'category_id') final String? categoryId,
-    final bool? available,
-  }) = _$UpdateProductRequestImpl;
+  const factory _UpdateProductRequest(
+      {final String? name,
+      final double? price,
+      final String? description,
+      @JsonKey(name: 'image_url') final String? imageUrl,
+      final String? barcode,
+      @JsonKey(name: 'category_id') final String? categoryId,
+      final bool? available}) = _$UpdateProductRequestImpl;
   const _UpdateProductRequest._() : super._();
 
   factory _UpdateProductRequest.fromJson(Map<String, dynamic> json) =
@@ -322,5 +300,5 @@ abstract class _UpdateProductRequest extends UpdateProductRequest {
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$UpdateProductRequestImplCopyWith<_$UpdateProductRequestImpl>
-  get copyWith => throw _privateConstructorUsedError;
+      get copyWith => throw _privateConstructorUsedError;
 }
