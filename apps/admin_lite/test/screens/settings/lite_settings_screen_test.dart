@@ -167,7 +167,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Al-HAI Lite'), findsOneWidget);
-      expect(find.text('v2.4.0'), findsOneWidget);
+      // Version is now read dynamically via package_info_plus
+      expect(find.text('v1.0.0-beta.1'), findsOneWidget);
       expect(find.byIcon(Icons.info_outline), findsOneWidget);
 
       tester.view.resetPhysicalSize();

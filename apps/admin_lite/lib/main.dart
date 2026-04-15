@@ -15,10 +15,12 @@ import 'package:alhai_database/alhai_database.dart'
     show setDatabaseEncryptionKey;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
+import 'package:package_info_plus/package_info_plus.dart';
 import 'di/injection.dart';
 import 'dart:async';
 import 'router/lite_router.dart';
 import 'screens/onboarding_screen.dart';
+import 'screens/settings/lite_settings_screen.dart' show appVersionProvider;
 import 'core/services/sentry_service.dart';
 
 void main() {
@@ -108,6 +110,17 @@ Future<void> _appMain() async {
   // M56: Pre-load onboarding state so router guard can check synchronously
   final hasSeenOnboardingFlag = await hasSeenLiteOnboarding();
 
+  // Read app version from platform (pubspec.yaml)
+  String appVersion = 'v1.0.0-beta.1';
+  try {
+    final info = await PackageInfo.fromPlatform();
+    if (info.version.isNotEmpty) {
+      appVersion = 'v${info.version}';
+    }
+  } catch (_) {
+    // Fallback to default
+  }
+
   addBreadcrumb(message: 'App initialized', category: 'lifecycle');
 
   runApp(
@@ -115,6 +128,7 @@ Future<void> _appMain() async {
       overrides: [
         themeProvider.overrideWith((ref) => ThemeNotifier(initialThemeMode)),
         liteOnboardingSeenProvider.overrideWith((ref) => hasSeenOnboardingFlag),
+        appVersionProvider.overrideWith((ref) => appVersion),
       ],
       child: const AdminLiteApp(),
     ),

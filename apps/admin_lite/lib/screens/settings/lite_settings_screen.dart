@@ -17,6 +17,9 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart' hide themeProvider;
 
+/// App version string, initialized from package_info_plus in main.dart.
+final appVersionProvider = StateProvider<String>((ref) => '');
+
 // =============================================================================
 // LOCAL STATE PROVIDERS
 // =============================================================================
@@ -254,7 +257,7 @@ class LiteSettingsScreen extends ConsumerWidget {
               _SettingsTile(
                 icon: Icons.admin_panel_settings,
                 title: 'Al-HAI Lite',
-                subtitle: 'v2.4.0',
+                subtitle: ref.watch(appVersionProvider),
                 isDark: isDark,
                 showArrow: false,
               ),

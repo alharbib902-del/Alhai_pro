@@ -5,6 +5,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:alhai_sync/alhai_sync.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+import 'package:admin_lite/screens/settings/lite_settings_screen.dart'
+    show appVersionProvider;
 
 // ============================================================================
 // MOCK SERVICE CLASSES
@@ -46,5 +48,6 @@ List<Override> defaultProviderOverrides({
   return [
     currentStoreIdProvider.overrideWith((ref) => storeId),
     syncServiceProvider.overrideWithValue(mockSyncService),
+    appVersionProvider.overrideWith((ref) => 'v1.0.0-beta.1'),
   ];
 }
