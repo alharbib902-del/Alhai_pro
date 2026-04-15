@@ -191,12 +191,33 @@ class OrdersDatasource {
   }
 
   Future<void> cancelOrder(String id, {String? reason}) async {
-    // 1. Release reserved stock
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) throw StateError('Not authenticated');
+
+    // 1. Verify ownership and check status before cancelling
+    final existing = await _client
+        .from('orders')
+        .select('id, customer_id, status')
+        .eq('id', id)
+        .eq('customer_id', userId)
+        .maybeSingle()
+        .timeout(AppConstants.networkTimeout);
+
+    if (existing == null) {
+      throw Exception('Order not found or access denied');
+    }
+
+    final status = existing['status'] as String?;
+    if (status == 'delivered' || status == 'cancelled') {
+      throw Exception('Cannot cancel order in status: $status');
+    }
+
+    // 2. Release reserved stock
     await _client
         .rpc('release_reserved_stock', params: {'p_order_id': id})
         .timeout(AppConstants.networkTimeout);
 
-    // 2. Update order status
+    // 3. Update order status with ownership double-check
     await _client
         .from('orders')
         .update({
@@ -205,6 +226,7 @@ class OrdersDatasource {
           'cancelled_at': DateTime.now().toUtc().toIso8601String(),
         })
         .eq('id', id)
+        .eq('customer_id', userId)
         .timeout(AppConstants.networkTimeout);
   }
 
