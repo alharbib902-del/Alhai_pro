@@ -1,4 +1,5 @@
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -242,7 +243,9 @@ class AddressesScreen extends ConsumerWidget {
                     lng = position.longitude;
                   }
                 } catch (e) {
-                  debugPrint('[AddressesScreen] Could not get location: $e');
+                  if (kDebugMode) {
+                    debugPrint('[AddressesScreen] Could not get location: $e');
+                  }
                 }
 
                 final ds = locator<AddressesDatasource>();
