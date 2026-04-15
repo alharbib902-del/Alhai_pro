@@ -7,20 +7,20 @@ part of 'debt_response.dart';
 // **************************************************************************
 
 DebtResponse _$DebtResponseFromJson(Map<String, dynamic> json) => DebtResponse(
-  id: json['id'] as String,
-  storeId: json['storeId'] as String,
-  type: json['type'] as String,
-  partyId: json['partyId'] as String,
-  partyName: json['partyName'] as String,
-  partyPhone: json['partyPhone'] as String?,
-  originalAmount: (json['originalAmount'] as num).toDouble(),
-  remainingAmount: (json['remainingAmount'] as num).toDouble(),
-  orderId: json['orderId'] as String?,
-  notes: json['notes'] as String?,
-  dueDate: json['dueDate'] as String?,
-  createdAt: json['createdAt'] as String,
-  updatedAt: json['updatedAt'] as String?,
-);
+      id: json['id'] as String,
+      storeId: json['storeId'] as String,
+      type: json['type'] as String,
+      partyId: json['partyId'] as String,
+      partyName: json['partyName'] as String,
+      partyPhone: json['partyPhone'] as String?,
+      originalAmount: (json['originalAmount'] as num).toDouble(),
+      remainingAmount: (json['remainingAmount'] as num).toDouble(),
+      orderId: json['orderId'] as String?,
+      notes: json['notes'] as String?,
+      dueDate: json['dueDate'] as String?,
+      createdAt: json['createdAt'] as String,
+      updatedAt: json['updatedAt'] as String?,
+    );
 
 Map<String, dynamic> _$DebtResponseToJson(DebtResponse instance) =>
     <String, dynamic>{

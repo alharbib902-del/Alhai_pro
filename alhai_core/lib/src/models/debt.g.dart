@@ -7,24 +7,24 @@ part of 'debt.dart';
 // **************************************************************************
 
 _$DebtImpl _$$DebtImplFromJson(Map<String, dynamic> json) => _$DebtImpl(
-  id: json['id'] as String,
-  storeId: json['storeId'] as String,
-  type: $enumDecode(_$DebtTypeEnumMap, json['type']),
-  partyId: json['partyId'] as String,
-  partyName: json['partyName'] as String,
-  partyPhone: json['partyPhone'] as String?,
-  originalAmount: (json['originalAmount'] as num).toDouble(),
-  remainingAmount: (json['remainingAmount'] as num).toDouble(),
-  orderId: json['orderId'] as String?,
-  notes: json['notes'] as String?,
-  dueDate: json['dueDate'] == null
-      ? null
-      : DateTime.parse(json['dueDate'] as String),
-  createdAt: DateTime.parse(json['createdAt'] as String),
-  updatedAt: json['updatedAt'] == null
-      ? null
-      : DateTime.parse(json['updatedAt'] as String),
-);
+      id: json['id'] as String,
+      storeId: json['storeId'] as String,
+      type: $enumDecode(_$DebtTypeEnumMap, json['type']),
+      partyId: json['partyId'] as String,
+      partyName: json['partyName'] as String,
+      partyPhone: json['partyPhone'] as String?,
+      originalAmount: (json['originalAmount'] as num).toDouble(),
+      remainingAmount: (json['remainingAmount'] as num).toDouble(),
+      orderId: json['orderId'] as String?,
+      notes: json['notes'] as String?,
+      dueDate: json['dueDate'] == null
+          ? null
+          : DateTime.parse(json['dueDate'] as String),
+      createdAt: DateTime.parse(json['createdAt'] as String),
+      updatedAt: json['updatedAt'] == null
+          ? null
+          : DateTime.parse(json['updatedAt'] as String),
+    );
 
 Map<String, dynamic> _$$DebtImplToJson(_$DebtImpl instance) =>
     <String, dynamic>{

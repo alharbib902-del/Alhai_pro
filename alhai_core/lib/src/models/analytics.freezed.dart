@@ -12,8 +12,7 @@ part of 'analytics.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 SlowMovingProduct _$SlowMovingProductFromJson(Map<String, dynamic> json) {
   return _SlowMovingProduct.fromJson(json);
@@ -43,20 +42,18 @@ mixin _$SlowMovingProduct {
 /// @nodoc
 abstract class $SlowMovingProductCopyWith<$Res> {
   factory $SlowMovingProductCopyWith(
-    SlowMovingProduct value,
-    $Res Function(SlowMovingProduct) then,
-  ) = _$SlowMovingProductCopyWithImpl<$Res, SlowMovingProduct>;
+          SlowMovingProduct value, $Res Function(SlowMovingProduct) then) =
+      _$SlowMovingProductCopyWithImpl<$Res, SlowMovingProduct>;
   @useResult
-  $Res call({
-    String productId,
-    String productName,
-    String? categoryName,
-    int daysSinceLastSale,
-    double stockQty,
-    double stockValue,
-    double suggestedDiscount,
-    DateTime? lastSaleDate,
-  });
+  $Res call(
+      {String productId,
+      String productName,
+      String? categoryName,
+      int daysSinceLastSale,
+      double stockQty,
+      double stockValue,
+      double suggestedDiscount,
+      DateTime? lastSaleDate});
 }
 
 /// @nodoc
@@ -83,75 +80,69 @@ class _$SlowMovingProductCopyWithImpl<$Res, $Val extends SlowMovingProduct>
     Object? suggestedDiscount = null,
     Object? lastSaleDate = freezed,
   }) {
-    return _then(
-      _value.copyWith(
-            productId: null == productId
-                ? _value.productId
-                : productId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            productName: null == productName
-                ? _value.productName
-                : productName // ignore: cast_nullable_to_non_nullable
-                      as String,
-            categoryName: freezed == categoryName
-                ? _value.categoryName
-                : categoryName // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            daysSinceLastSale: null == daysSinceLastSale
-                ? _value.daysSinceLastSale
-                : daysSinceLastSale // ignore: cast_nullable_to_non_nullable
-                      as int,
-            stockQty: null == stockQty
-                ? _value.stockQty
-                : stockQty // ignore: cast_nullable_to_non_nullable
-                      as double,
-            stockValue: null == stockValue
-                ? _value.stockValue
-                : stockValue // ignore: cast_nullable_to_non_nullable
-                      as double,
-            suggestedDiscount: null == suggestedDiscount
-                ? _value.suggestedDiscount
-                : suggestedDiscount // ignore: cast_nullable_to_non_nullable
-                      as double,
-            lastSaleDate: freezed == lastSaleDate
-                ? _value.lastSaleDate
-                : lastSaleDate // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      productId: null == productId
+          ? _value.productId
+          : productId // ignore: cast_nullable_to_non_nullable
+              as String,
+      productName: null == productName
+          ? _value.productName
+          : productName // ignore: cast_nullable_to_non_nullable
+              as String,
+      categoryName: freezed == categoryName
+          ? _value.categoryName
+          : categoryName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      daysSinceLastSale: null == daysSinceLastSale
+          ? _value.daysSinceLastSale
+          : daysSinceLastSale // ignore: cast_nullable_to_non_nullable
+              as int,
+      stockQty: null == stockQty
+          ? _value.stockQty
+          : stockQty // ignore: cast_nullable_to_non_nullable
+              as double,
+      stockValue: null == stockValue
+          ? _value.stockValue
+          : stockValue // ignore: cast_nullable_to_non_nullable
+              as double,
+      suggestedDiscount: null == suggestedDiscount
+          ? _value.suggestedDiscount
+          : suggestedDiscount // ignore: cast_nullable_to_non_nullable
+              as double,
+      lastSaleDate: freezed == lastSaleDate
+          ? _value.lastSaleDate
+          : lastSaleDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ) as $Val);
   }
 }
 
 /// @nodoc
 abstract class _$$SlowMovingProductImplCopyWith<$Res>
     implements $SlowMovingProductCopyWith<$Res> {
-  factory _$$SlowMovingProductImplCopyWith(
-    _$SlowMovingProductImpl value,
-    $Res Function(_$SlowMovingProductImpl) then,
-  ) = __$$SlowMovingProductImplCopyWithImpl<$Res>;
+  factory _$$SlowMovingProductImplCopyWith(_$SlowMovingProductImpl value,
+          $Res Function(_$SlowMovingProductImpl) then) =
+      __$$SlowMovingProductImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String productId,
-    String productName,
-    String? categoryName,
-    int daysSinceLastSale,
-    double stockQty,
-    double stockValue,
-    double suggestedDiscount,
-    DateTime? lastSaleDate,
-  });
+  $Res call(
+      {String productId,
+      String productName,
+      String? categoryName,
+      int daysSinceLastSale,
+      double stockQty,
+      double stockValue,
+      double suggestedDiscount,
+      DateTime? lastSaleDate});
 }
 
 /// @nodoc
 class __$$SlowMovingProductImplCopyWithImpl<$Res>
     extends _$SlowMovingProductCopyWithImpl<$Res, _$SlowMovingProductImpl>
     implements _$$SlowMovingProductImplCopyWith<$Res> {
-  __$$SlowMovingProductImplCopyWithImpl(
-    _$SlowMovingProductImpl _value,
-    $Res Function(_$SlowMovingProductImpl) _then,
-  ) : super(_value, _then);
+  __$$SlowMovingProductImplCopyWithImpl(_$SlowMovingProductImpl _value,
+      $Res Function(_$SlowMovingProductImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of SlowMovingProduct
   /// with the given fields replaced by the non-null parameter values.
@@ -167,58 +158,56 @@ class __$$SlowMovingProductImplCopyWithImpl<$Res>
     Object? suggestedDiscount = null,
     Object? lastSaleDate = freezed,
   }) {
-    return _then(
-      _$SlowMovingProductImpl(
-        productId: null == productId
-            ? _value.productId
-            : productId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        productName: null == productName
-            ? _value.productName
-            : productName // ignore: cast_nullable_to_non_nullable
-                  as String,
-        categoryName: freezed == categoryName
-            ? _value.categoryName
-            : categoryName // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        daysSinceLastSale: null == daysSinceLastSale
-            ? _value.daysSinceLastSale
-            : daysSinceLastSale // ignore: cast_nullable_to_non_nullable
-                  as int,
-        stockQty: null == stockQty
-            ? _value.stockQty
-            : stockQty // ignore: cast_nullable_to_non_nullable
-                  as double,
-        stockValue: null == stockValue
-            ? _value.stockValue
-            : stockValue // ignore: cast_nullable_to_non_nullable
-                  as double,
-        suggestedDiscount: null == suggestedDiscount
-            ? _value.suggestedDiscount
-            : suggestedDiscount // ignore: cast_nullable_to_non_nullable
-                  as double,
-        lastSaleDate: freezed == lastSaleDate
-            ? _value.lastSaleDate
-            : lastSaleDate // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-      ),
-    );
+    return _then(_$SlowMovingProductImpl(
+      productId: null == productId
+          ? _value.productId
+          : productId // ignore: cast_nullable_to_non_nullable
+              as String,
+      productName: null == productName
+          ? _value.productName
+          : productName // ignore: cast_nullable_to_non_nullable
+              as String,
+      categoryName: freezed == categoryName
+          ? _value.categoryName
+          : categoryName // ignore: cast_nullable_to_non_nullable
+              as String?,
+      daysSinceLastSale: null == daysSinceLastSale
+          ? _value.daysSinceLastSale
+          : daysSinceLastSale // ignore: cast_nullable_to_non_nullable
+              as int,
+      stockQty: null == stockQty
+          ? _value.stockQty
+          : stockQty // ignore: cast_nullable_to_non_nullable
+              as double,
+      stockValue: null == stockValue
+          ? _value.stockValue
+          : stockValue // ignore: cast_nullable_to_non_nullable
+              as double,
+      suggestedDiscount: null == suggestedDiscount
+          ? _value.suggestedDiscount
+          : suggestedDiscount // ignore: cast_nullable_to_non_nullable
+              as double,
+      lastSaleDate: freezed == lastSaleDate
+          ? _value.lastSaleDate
+          : lastSaleDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$SlowMovingProductImpl extends _SlowMovingProduct {
-  const _$SlowMovingProductImpl({
-    required this.productId,
-    required this.productName,
-    this.categoryName,
-    required this.daysSinceLastSale,
-    required this.stockQty,
-    required this.stockValue,
-    this.suggestedDiscount = 0,
-    this.lastSaleDate,
-  }) : super._();
+  const _$SlowMovingProductImpl(
+      {required this.productId,
+      required this.productName,
+      this.categoryName,
+      required this.daysSinceLastSale,
+      required this.stockQty,
+      required this.stockValue,
+      this.suggestedDiscount = 0,
+      this.lastSaleDate})
+      : super._();
 
   factory _$SlowMovingProductImpl.fromJson(Map<String, dynamic> json) =>
       _$$SlowMovingProductImplFromJson(json);
@@ -272,16 +261,15 @@ class _$SlowMovingProductImpl extends _SlowMovingProduct {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    productId,
-    productName,
-    categoryName,
-    daysSinceLastSale,
-    stockQty,
-    stockValue,
-    suggestedDiscount,
-    lastSaleDate,
-  );
+      runtimeType,
+      productId,
+      productName,
+      categoryName,
+      daysSinceLastSale,
+      stockQty,
+      stockValue,
+      suggestedDiscount,
+      lastSaleDate);
 
   /// Create a copy of SlowMovingProduct
   /// with the given fields replaced by the non-null parameter values.
@@ -290,27 +278,26 @@ class _$SlowMovingProductImpl extends _SlowMovingProduct {
   @pragma('vm:prefer-inline')
   _$$SlowMovingProductImplCopyWith<_$SlowMovingProductImpl> get copyWith =>
       __$$SlowMovingProductImplCopyWithImpl<_$SlowMovingProductImpl>(
-        this,
-        _$identity,
-      );
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$SlowMovingProductImplToJson(this);
+    return _$$SlowMovingProductImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _SlowMovingProduct extends SlowMovingProduct {
-  const factory _SlowMovingProduct({
-    required final String productId,
-    required final String productName,
-    final String? categoryName,
-    required final int daysSinceLastSale,
-    required final double stockQty,
-    required final double stockValue,
-    final double suggestedDiscount,
-    final DateTime? lastSaleDate,
-  }) = _$SlowMovingProductImpl;
+  const factory _SlowMovingProduct(
+      {required final String productId,
+      required final String productName,
+      final String? categoryName,
+      required final int daysSinceLastSale,
+      required final double stockQty,
+      required final double stockValue,
+      final double suggestedDiscount,
+      final DateTime? lastSaleDate}) = _$SlowMovingProductImpl;
   const _SlowMovingProduct._() : super._();
 
   factory _SlowMovingProduct.fromJson(Map<String, dynamic> json) =
@@ -367,18 +354,16 @@ mixin _$SalesForecast {
 /// @nodoc
 abstract class $SalesForecastCopyWith<$Res> {
   factory $SalesForecastCopyWith(
-    SalesForecast value,
-    $Res Function(SalesForecast) then,
-  ) = _$SalesForecastCopyWithImpl<$Res, SalesForecast>;
+          SalesForecast value, $Res Function(SalesForecast) then) =
+      _$SalesForecastCopyWithImpl<$Res, SalesForecast>;
   @useResult
-  $Res call({
-    DateTime date,
-    double predictedRevenue,
-    int predictedOrders,
-    double confidence,
-    double? lowerBound,
-    double? upperBound,
-  });
+  $Res call(
+      {DateTime date,
+      double predictedRevenue,
+      int predictedOrders,
+      double confidence,
+      double? lowerBound,
+      double? upperBound});
 }
 
 /// @nodoc
@@ -403,35 +388,32 @@ class _$SalesForecastCopyWithImpl<$Res, $Val extends SalesForecast>
     Object? lowerBound = freezed,
     Object? upperBound = freezed,
   }) {
-    return _then(
-      _value.copyWith(
-            date: null == date
-                ? _value.date
-                : date // ignore: cast_nullable_to_non_nullable
-                      as DateTime,
-            predictedRevenue: null == predictedRevenue
-                ? _value.predictedRevenue
-                : predictedRevenue // ignore: cast_nullable_to_non_nullable
-                      as double,
-            predictedOrders: null == predictedOrders
-                ? _value.predictedOrders
-                : predictedOrders // ignore: cast_nullable_to_non_nullable
-                      as int,
-            confidence: null == confidence
-                ? _value.confidence
-                : confidence // ignore: cast_nullable_to_non_nullable
-                      as double,
-            lowerBound: freezed == lowerBound
-                ? _value.lowerBound
-                : lowerBound // ignore: cast_nullable_to_non_nullable
-                      as double?,
-            upperBound: freezed == upperBound
-                ? _value.upperBound
-                : upperBound // ignore: cast_nullable_to_non_nullable
-                      as double?,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      date: null == date
+          ? _value.date
+          : date // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      predictedRevenue: null == predictedRevenue
+          ? _value.predictedRevenue
+          : predictedRevenue // ignore: cast_nullable_to_non_nullable
+              as double,
+      predictedOrders: null == predictedOrders
+          ? _value.predictedOrders
+          : predictedOrders // ignore: cast_nullable_to_non_nullable
+              as int,
+      confidence: null == confidence
+          ? _value.confidence
+          : confidence // ignore: cast_nullable_to_non_nullable
+              as double,
+      lowerBound: freezed == lowerBound
+          ? _value.lowerBound
+          : lowerBound // ignore: cast_nullable_to_non_nullable
+              as double?,
+      upperBound: freezed == upperBound
+          ? _value.upperBound
+          : upperBound // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ) as $Val);
   }
 }
 
@@ -439,19 +421,17 @@ class _$SalesForecastCopyWithImpl<$Res, $Val extends SalesForecast>
 abstract class _$$SalesForecastImplCopyWith<$Res>
     implements $SalesForecastCopyWith<$Res> {
   factory _$$SalesForecastImplCopyWith(
-    _$SalesForecastImpl value,
-    $Res Function(_$SalesForecastImpl) then,
-  ) = __$$SalesForecastImplCopyWithImpl<$Res>;
+          _$SalesForecastImpl value, $Res Function(_$SalesForecastImpl) then) =
+      __$$SalesForecastImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    DateTime date,
-    double predictedRevenue,
-    int predictedOrders,
-    double confidence,
-    double? lowerBound,
-    double? upperBound,
-  });
+  $Res call(
+      {DateTime date,
+      double predictedRevenue,
+      int predictedOrders,
+      double confidence,
+      double? lowerBound,
+      double? upperBound});
 }
 
 /// @nodoc
@@ -459,9 +439,8 @@ class __$$SalesForecastImplCopyWithImpl<$Res>
     extends _$SalesForecastCopyWithImpl<$Res, _$SalesForecastImpl>
     implements _$$SalesForecastImplCopyWith<$Res> {
   __$$SalesForecastImplCopyWithImpl(
-    _$SalesForecastImpl _value,
-    $Res Function(_$SalesForecastImpl) _then,
-  ) : super(_value, _then);
+      _$SalesForecastImpl _value, $Res Function(_$SalesForecastImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of SalesForecast
   /// with the given fields replaced by the non-null parameter values.
@@ -475,48 +454,46 @@ class __$$SalesForecastImplCopyWithImpl<$Res>
     Object? lowerBound = freezed,
     Object? upperBound = freezed,
   }) {
-    return _then(
-      _$SalesForecastImpl(
-        date: null == date
-            ? _value.date
-            : date // ignore: cast_nullable_to_non_nullable
-                  as DateTime,
-        predictedRevenue: null == predictedRevenue
-            ? _value.predictedRevenue
-            : predictedRevenue // ignore: cast_nullable_to_non_nullable
-                  as double,
-        predictedOrders: null == predictedOrders
-            ? _value.predictedOrders
-            : predictedOrders // ignore: cast_nullable_to_non_nullable
-                  as int,
-        confidence: null == confidence
-            ? _value.confidence
-            : confidence // ignore: cast_nullable_to_non_nullable
-                  as double,
-        lowerBound: freezed == lowerBound
-            ? _value.lowerBound
-            : lowerBound // ignore: cast_nullable_to_non_nullable
-                  as double?,
-        upperBound: freezed == upperBound
-            ? _value.upperBound
-            : upperBound // ignore: cast_nullable_to_non_nullable
-                  as double?,
-      ),
-    );
+    return _then(_$SalesForecastImpl(
+      date: null == date
+          ? _value.date
+          : date // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      predictedRevenue: null == predictedRevenue
+          ? _value.predictedRevenue
+          : predictedRevenue // ignore: cast_nullable_to_non_nullable
+              as double,
+      predictedOrders: null == predictedOrders
+          ? _value.predictedOrders
+          : predictedOrders // ignore: cast_nullable_to_non_nullable
+              as int,
+      confidence: null == confidence
+          ? _value.confidence
+          : confidence // ignore: cast_nullable_to_non_nullable
+              as double,
+      lowerBound: freezed == lowerBound
+          ? _value.lowerBound
+          : lowerBound // ignore: cast_nullable_to_non_nullable
+              as double?,
+      upperBound: freezed == upperBound
+          ? _value.upperBound
+          : upperBound // ignore: cast_nullable_to_non_nullable
+              as double?,
+    ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$SalesForecastImpl extends _SalesForecast {
-  const _$SalesForecastImpl({
-    required this.date,
-    required this.predictedRevenue,
-    required this.predictedOrders,
-    required this.confidence,
-    this.lowerBound,
-    this.upperBound,
-  }) : super._();
+  const _$SalesForecastImpl(
+      {required this.date,
+      required this.predictedRevenue,
+      required this.predictedOrders,
+      required this.confidence,
+      this.lowerBound,
+      this.upperBound})
+      : super._();
 
   factory _$SalesForecastImpl.fromJson(Map<String, dynamic> json) =>
       _$$SalesForecastImplFromJson(json);
@@ -559,15 +536,8 @@ class _$SalesForecastImpl extends _SalesForecast {
 
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  int get hashCode => Object.hash(
-    runtimeType,
-    date,
-    predictedRevenue,
-    predictedOrders,
-    confidence,
-    lowerBound,
-    upperBound,
-  );
+  int get hashCode => Object.hash(runtimeType, date, predictedRevenue,
+      predictedOrders, confidence, lowerBound, upperBound);
 
   /// Create a copy of SalesForecast
   /// with the given fields replaced by the non-null parameter values.
@@ -579,19 +549,20 @@ class _$SalesForecastImpl extends _SalesForecast {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$SalesForecastImplToJson(this);
+    return _$$SalesForecastImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _SalesForecast extends SalesForecast {
-  const factory _SalesForecast({
-    required final DateTime date,
-    required final double predictedRevenue,
-    required final int predictedOrders,
-    required final double confidence,
-    final double? lowerBound,
-    final double? upperBound,
-  }) = _$SalesForecastImpl;
+  const factory _SalesForecast(
+      {required final DateTime date,
+      required final double predictedRevenue,
+      required final int predictedOrders,
+      required final double confidence,
+      final double? lowerBound,
+      final double? upperBound}) = _$SalesForecastImpl;
   const _SalesForecast._() : super._();
 
   factory _SalesForecast.fromJson(Map<String, dynamic> json) =
@@ -647,21 +618,19 @@ mixin _$SmartAlert {
 /// @nodoc
 abstract class $SmartAlertCopyWith<$Res> {
   factory $SmartAlertCopyWith(
-    SmartAlert value,
-    $Res Function(SmartAlert) then,
-  ) = _$SmartAlertCopyWithImpl<$Res, SmartAlert>;
+          SmartAlert value, $Res Function(SmartAlert) then) =
+      _$SmartAlertCopyWithImpl<$Res, SmartAlert>;
   @useResult
-  $Res call({
-    String id,
-    AlertType type,
-    String title,
-    String message,
-    String? actionLabel,
-    String? actionRoute,
-    Map<String, dynamic>? metadata,
-    bool isRead,
-    DateTime createdAt,
-  });
+  $Res call(
+      {String id,
+      AlertType type,
+      String title,
+      String message,
+      String? actionLabel,
+      String? actionRoute,
+      Map<String, dynamic>? metadata,
+      bool isRead,
+      DateTime createdAt});
 }
 
 /// @nodoc
@@ -689,47 +658,44 @@ class _$SmartAlertCopyWithImpl<$Res, $Val extends SmartAlert>
     Object? isRead = null,
     Object? createdAt = null,
   }) {
-    return _then(
-      _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
-                      as String,
-            type: null == type
-                ? _value.type
-                : type // ignore: cast_nullable_to_non_nullable
-                      as AlertType,
-            title: null == title
-                ? _value.title
-                : title // ignore: cast_nullable_to_non_nullable
-                      as String,
-            message: null == message
-                ? _value.message
-                : message // ignore: cast_nullable_to_non_nullable
-                      as String,
-            actionLabel: freezed == actionLabel
-                ? _value.actionLabel
-                : actionLabel // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            actionRoute: freezed == actionRoute
-                ? _value.actionRoute
-                : actionRoute // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            metadata: freezed == metadata
-                ? _value.metadata
-                : metadata // ignore: cast_nullable_to_non_nullable
-                      as Map<String, dynamic>?,
-            isRead: null == isRead
-                ? _value.isRead
-                : isRead // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            createdAt: null == createdAt
-                ? _value.createdAt
-                : createdAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as AlertType,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+      actionLabel: freezed == actionLabel
+          ? _value.actionLabel
+          : actionLabel // ignore: cast_nullable_to_non_nullable
+              as String?,
+      actionRoute: freezed == actionRoute
+          ? _value.actionRoute
+          : actionRoute // ignore: cast_nullable_to_non_nullable
+              as String?,
+      metadata: freezed == metadata
+          ? _value.metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      isRead: null == isRead
+          ? _value.isRead
+          : isRead // ignore: cast_nullable_to_non_nullable
+              as bool,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+    ) as $Val);
   }
 }
 
@@ -737,22 +703,20 @@ class _$SmartAlertCopyWithImpl<$Res, $Val extends SmartAlert>
 abstract class _$$SmartAlertImplCopyWith<$Res>
     implements $SmartAlertCopyWith<$Res> {
   factory _$$SmartAlertImplCopyWith(
-    _$SmartAlertImpl value,
-    $Res Function(_$SmartAlertImpl) then,
-  ) = __$$SmartAlertImplCopyWithImpl<$Res>;
+          _$SmartAlertImpl value, $Res Function(_$SmartAlertImpl) then) =
+      __$$SmartAlertImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String id,
-    AlertType type,
-    String title,
-    String message,
-    String? actionLabel,
-    String? actionRoute,
-    Map<String, dynamic>? metadata,
-    bool isRead,
-    DateTime createdAt,
-  });
+  $Res call(
+      {String id,
+      AlertType type,
+      String title,
+      String message,
+      String? actionLabel,
+      String? actionRoute,
+      Map<String, dynamic>? metadata,
+      bool isRead,
+      DateTime createdAt});
 }
 
 /// @nodoc
@@ -760,9 +724,8 @@ class __$$SmartAlertImplCopyWithImpl<$Res>
     extends _$SmartAlertCopyWithImpl<$Res, _$SmartAlertImpl>
     implements _$$SmartAlertImplCopyWith<$Res> {
   __$$SmartAlertImplCopyWithImpl(
-    _$SmartAlertImpl _value,
-    $Res Function(_$SmartAlertImpl) _then,
-  ) : super(_value, _then);
+      _$SmartAlertImpl _value, $Res Function(_$SmartAlertImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of SmartAlert
   /// with the given fields replaced by the non-null parameter values.
@@ -779,64 +742,62 @@ class __$$SmartAlertImplCopyWithImpl<$Res>
     Object? isRead = null,
     Object? createdAt = null,
   }) {
-    return _then(
-      _$SmartAlertImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
-                  as String,
-        type: null == type
-            ? _value.type
-            : type // ignore: cast_nullable_to_non_nullable
-                  as AlertType,
-        title: null == title
-            ? _value.title
-            : title // ignore: cast_nullable_to_non_nullable
-                  as String,
-        message: null == message
-            ? _value.message
-            : message // ignore: cast_nullable_to_non_nullable
-                  as String,
-        actionLabel: freezed == actionLabel
-            ? _value.actionLabel
-            : actionLabel // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        actionRoute: freezed == actionRoute
-            ? _value.actionRoute
-            : actionRoute // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        metadata: freezed == metadata
-            ? _value._metadata
-            : metadata // ignore: cast_nullable_to_non_nullable
-                  as Map<String, dynamic>?,
-        isRead: null == isRead
-            ? _value.isRead
-            : isRead // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        createdAt: null == createdAt
-            ? _value.createdAt
-            : createdAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime,
-      ),
-    );
+    return _then(_$SmartAlertImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as AlertType,
+      title: null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      message: null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+      actionLabel: freezed == actionLabel
+          ? _value.actionLabel
+          : actionLabel // ignore: cast_nullable_to_non_nullable
+              as String?,
+      actionRoute: freezed == actionRoute
+          ? _value.actionRoute
+          : actionRoute // ignore: cast_nullable_to_non_nullable
+              as String?,
+      metadata: freezed == metadata
+          ? _value._metadata
+          : metadata // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      isRead: null == isRead
+          ? _value.isRead
+          : isRead // ignore: cast_nullable_to_non_nullable
+              as bool,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+    ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$SmartAlertImpl extends _SmartAlert {
-  const _$SmartAlertImpl({
-    required this.id,
-    required this.type,
-    required this.title,
-    required this.message,
-    this.actionLabel,
-    this.actionRoute,
-    final Map<String, dynamic>? metadata,
-    this.isRead = false,
-    required this.createdAt,
-  }) : _metadata = metadata,
-       super._();
+  const _$SmartAlertImpl(
+      {required this.id,
+      required this.type,
+      required this.title,
+      required this.message,
+      this.actionLabel,
+      this.actionRoute,
+      final Map<String, dynamic>? metadata,
+      this.isRead = false,
+      required this.createdAt})
+      : _metadata = metadata,
+        super._();
 
   factory _$SmartAlertImpl.fromJson(Map<String, dynamic> json) =>
       _$$SmartAlertImplFromJson(json);
@@ -896,17 +857,16 @@ class _$SmartAlertImpl extends _SmartAlert {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    id,
-    type,
-    title,
-    message,
-    actionLabel,
-    actionRoute,
-    const DeepCollectionEquality().hash(_metadata),
-    isRead,
-    createdAt,
-  );
+      runtimeType,
+      id,
+      type,
+      title,
+      message,
+      actionLabel,
+      actionRoute,
+      const DeepCollectionEquality().hash(_metadata),
+      isRead,
+      createdAt);
 
   /// Create a copy of SmartAlert
   /// with the given fields replaced by the non-null parameter values.
@@ -918,22 +878,23 @@ class _$SmartAlertImpl extends _SmartAlert {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$SmartAlertImplToJson(this);
+    return _$$SmartAlertImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _SmartAlert extends SmartAlert {
-  const factory _SmartAlert({
-    required final String id,
-    required final AlertType type,
-    required final String title,
-    required final String message,
-    final String? actionLabel,
-    final String? actionRoute,
-    final Map<String, dynamic>? metadata,
-    final bool isRead,
-    required final DateTime createdAt,
-  }) = _$SmartAlertImpl;
+  const factory _SmartAlert(
+      {required final String id,
+      required final AlertType type,
+      required final String title,
+      required final String message,
+      final String? actionLabel,
+      final String? actionRoute,
+      final Map<String, dynamic>? metadata,
+      final bool isRead,
+      required final DateTime createdAt}) = _$SmartAlertImpl;
   const _SmartAlert._() : super._();
 
   factory _SmartAlert.fromJson(Map<String, dynamic> json) =
@@ -994,20 +955,18 @@ mixin _$ReorderSuggestion {
 /// @nodoc
 abstract class $ReorderSuggestionCopyWith<$Res> {
   factory $ReorderSuggestionCopyWith(
-    ReorderSuggestion value,
-    $Res Function(ReorderSuggestion) then,
-  ) = _$ReorderSuggestionCopyWithImpl<$Res, ReorderSuggestion>;
+          ReorderSuggestion value, $Res Function(ReorderSuggestion) then) =
+      _$ReorderSuggestionCopyWithImpl<$Res, ReorderSuggestion>;
   @useResult
-  $Res call({
-    String productId,
-    String productName,
-    int currentStock,
-    int suggestedQuantity,
-    double averageDailySales,
-    int daysUntilStockout,
-    String? preferredSupplierId,
-    String? preferredSupplierName,
-  });
+  $Res call(
+      {String productId,
+      String productName,
+      int currentStock,
+      int suggestedQuantity,
+      double averageDailySales,
+      int daysUntilStockout,
+      String? preferredSupplierId,
+      String? preferredSupplierName});
 }
 
 /// @nodoc
@@ -1034,75 +993,69 @@ class _$ReorderSuggestionCopyWithImpl<$Res, $Val extends ReorderSuggestion>
     Object? preferredSupplierId = freezed,
     Object? preferredSupplierName = freezed,
   }) {
-    return _then(
-      _value.copyWith(
-            productId: null == productId
-                ? _value.productId
-                : productId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            productName: null == productName
-                ? _value.productName
-                : productName // ignore: cast_nullable_to_non_nullable
-                      as String,
-            currentStock: null == currentStock
-                ? _value.currentStock
-                : currentStock // ignore: cast_nullable_to_non_nullable
-                      as int,
-            suggestedQuantity: null == suggestedQuantity
-                ? _value.suggestedQuantity
-                : suggestedQuantity // ignore: cast_nullable_to_non_nullable
-                      as int,
-            averageDailySales: null == averageDailySales
-                ? _value.averageDailySales
-                : averageDailySales // ignore: cast_nullable_to_non_nullable
-                      as double,
-            daysUntilStockout: null == daysUntilStockout
-                ? _value.daysUntilStockout
-                : daysUntilStockout // ignore: cast_nullable_to_non_nullable
-                      as int,
-            preferredSupplierId: freezed == preferredSupplierId
-                ? _value.preferredSupplierId
-                : preferredSupplierId // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            preferredSupplierName: freezed == preferredSupplierName
-                ? _value.preferredSupplierName
-                : preferredSupplierName // ignore: cast_nullable_to_non_nullable
-                      as String?,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      productId: null == productId
+          ? _value.productId
+          : productId // ignore: cast_nullable_to_non_nullable
+              as String,
+      productName: null == productName
+          ? _value.productName
+          : productName // ignore: cast_nullable_to_non_nullable
+              as String,
+      currentStock: null == currentStock
+          ? _value.currentStock
+          : currentStock // ignore: cast_nullable_to_non_nullable
+              as int,
+      suggestedQuantity: null == suggestedQuantity
+          ? _value.suggestedQuantity
+          : suggestedQuantity // ignore: cast_nullable_to_non_nullable
+              as int,
+      averageDailySales: null == averageDailySales
+          ? _value.averageDailySales
+          : averageDailySales // ignore: cast_nullable_to_non_nullable
+              as double,
+      daysUntilStockout: null == daysUntilStockout
+          ? _value.daysUntilStockout
+          : daysUntilStockout // ignore: cast_nullable_to_non_nullable
+              as int,
+      preferredSupplierId: freezed == preferredSupplierId
+          ? _value.preferredSupplierId
+          : preferredSupplierId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      preferredSupplierName: freezed == preferredSupplierName
+          ? _value.preferredSupplierName
+          : preferredSupplierName // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
   }
 }
 
 /// @nodoc
 abstract class _$$ReorderSuggestionImplCopyWith<$Res>
     implements $ReorderSuggestionCopyWith<$Res> {
-  factory _$$ReorderSuggestionImplCopyWith(
-    _$ReorderSuggestionImpl value,
-    $Res Function(_$ReorderSuggestionImpl) then,
-  ) = __$$ReorderSuggestionImplCopyWithImpl<$Res>;
+  factory _$$ReorderSuggestionImplCopyWith(_$ReorderSuggestionImpl value,
+          $Res Function(_$ReorderSuggestionImpl) then) =
+      __$$ReorderSuggestionImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String productId,
-    String productName,
-    int currentStock,
-    int suggestedQuantity,
-    double averageDailySales,
-    int daysUntilStockout,
-    String? preferredSupplierId,
-    String? preferredSupplierName,
-  });
+  $Res call(
+      {String productId,
+      String productName,
+      int currentStock,
+      int suggestedQuantity,
+      double averageDailySales,
+      int daysUntilStockout,
+      String? preferredSupplierId,
+      String? preferredSupplierName});
 }
 
 /// @nodoc
 class __$$ReorderSuggestionImplCopyWithImpl<$Res>
     extends _$ReorderSuggestionCopyWithImpl<$Res, _$ReorderSuggestionImpl>
     implements _$$ReorderSuggestionImplCopyWith<$Res> {
-  __$$ReorderSuggestionImplCopyWithImpl(
-    _$ReorderSuggestionImpl _value,
-    $Res Function(_$ReorderSuggestionImpl) _then,
-  ) : super(_value, _then);
+  __$$ReorderSuggestionImplCopyWithImpl(_$ReorderSuggestionImpl _value,
+      $Res Function(_$ReorderSuggestionImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of ReorderSuggestion
   /// with the given fields replaced by the non-null parameter values.
@@ -1118,58 +1071,56 @@ class __$$ReorderSuggestionImplCopyWithImpl<$Res>
     Object? preferredSupplierId = freezed,
     Object? preferredSupplierName = freezed,
   }) {
-    return _then(
-      _$ReorderSuggestionImpl(
-        productId: null == productId
-            ? _value.productId
-            : productId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        productName: null == productName
-            ? _value.productName
-            : productName // ignore: cast_nullable_to_non_nullable
-                  as String,
-        currentStock: null == currentStock
-            ? _value.currentStock
-            : currentStock // ignore: cast_nullable_to_non_nullable
-                  as int,
-        suggestedQuantity: null == suggestedQuantity
-            ? _value.suggestedQuantity
-            : suggestedQuantity // ignore: cast_nullable_to_non_nullable
-                  as int,
-        averageDailySales: null == averageDailySales
-            ? _value.averageDailySales
-            : averageDailySales // ignore: cast_nullable_to_non_nullable
-                  as double,
-        daysUntilStockout: null == daysUntilStockout
-            ? _value.daysUntilStockout
-            : daysUntilStockout // ignore: cast_nullable_to_non_nullable
-                  as int,
-        preferredSupplierId: freezed == preferredSupplierId
-            ? _value.preferredSupplierId
-            : preferredSupplierId // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        preferredSupplierName: freezed == preferredSupplierName
-            ? _value.preferredSupplierName
-            : preferredSupplierName // ignore: cast_nullable_to_non_nullable
-                  as String?,
-      ),
-    );
+    return _then(_$ReorderSuggestionImpl(
+      productId: null == productId
+          ? _value.productId
+          : productId // ignore: cast_nullable_to_non_nullable
+              as String,
+      productName: null == productName
+          ? _value.productName
+          : productName // ignore: cast_nullable_to_non_nullable
+              as String,
+      currentStock: null == currentStock
+          ? _value.currentStock
+          : currentStock // ignore: cast_nullable_to_non_nullable
+              as int,
+      suggestedQuantity: null == suggestedQuantity
+          ? _value.suggestedQuantity
+          : suggestedQuantity // ignore: cast_nullable_to_non_nullable
+              as int,
+      averageDailySales: null == averageDailySales
+          ? _value.averageDailySales
+          : averageDailySales // ignore: cast_nullable_to_non_nullable
+              as double,
+      daysUntilStockout: null == daysUntilStockout
+          ? _value.daysUntilStockout
+          : daysUntilStockout // ignore: cast_nullable_to_non_nullable
+              as int,
+      preferredSupplierId: freezed == preferredSupplierId
+          ? _value.preferredSupplierId
+          : preferredSupplierId // ignore: cast_nullable_to_non_nullable
+              as String?,
+      preferredSupplierName: freezed == preferredSupplierName
+          ? _value.preferredSupplierName
+          : preferredSupplierName // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$ReorderSuggestionImpl extends _ReorderSuggestion {
-  const _$ReorderSuggestionImpl({
-    required this.productId,
-    required this.productName,
-    required this.currentStock,
-    required this.suggestedQuantity,
-    required this.averageDailySales,
-    required this.daysUntilStockout,
-    this.preferredSupplierId,
-    this.preferredSupplierName,
-  }) : super._();
+  const _$ReorderSuggestionImpl(
+      {required this.productId,
+      required this.productName,
+      required this.currentStock,
+      required this.suggestedQuantity,
+      required this.averageDailySales,
+      required this.daysUntilStockout,
+      this.preferredSupplierId,
+      this.preferredSupplierName})
+      : super._();
 
   factory _$ReorderSuggestionImpl.fromJson(Map<String, dynamic> json) =>
       _$$ReorderSuggestionImplFromJson(json);
@@ -1222,16 +1173,15 @@ class _$ReorderSuggestionImpl extends _ReorderSuggestion {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    productId,
-    productName,
-    currentStock,
-    suggestedQuantity,
-    averageDailySales,
-    daysUntilStockout,
-    preferredSupplierId,
-    preferredSupplierName,
-  );
+      runtimeType,
+      productId,
+      productName,
+      currentStock,
+      suggestedQuantity,
+      averageDailySales,
+      daysUntilStockout,
+      preferredSupplierId,
+      preferredSupplierName);
 
   /// Create a copy of ReorderSuggestion
   /// with the given fields replaced by the non-null parameter values.
@@ -1240,27 +1190,26 @@ class _$ReorderSuggestionImpl extends _ReorderSuggestion {
   @pragma('vm:prefer-inline')
   _$$ReorderSuggestionImplCopyWith<_$ReorderSuggestionImpl> get copyWith =>
       __$$ReorderSuggestionImplCopyWithImpl<_$ReorderSuggestionImpl>(
-        this,
-        _$identity,
-      );
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ReorderSuggestionImplToJson(this);
+    return _$$ReorderSuggestionImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _ReorderSuggestion extends ReorderSuggestion {
-  const factory _ReorderSuggestion({
-    required final String productId,
-    required final String productName,
-    required final int currentStock,
-    required final int suggestedQuantity,
-    required final double averageDailySales,
-    required final int daysUntilStockout,
-    final String? preferredSupplierId,
-    final String? preferredSupplierName,
-  }) = _$ReorderSuggestionImpl;
+  const factory _ReorderSuggestion(
+      {required final String productId,
+      required final String productName,
+      required final int currentStock,
+      required final int suggestedQuantity,
+      required final double averageDailySales,
+      required final int daysUntilStockout,
+      final String? preferredSupplierId,
+      final String? preferredSupplierName}) = _$ReorderSuggestionImpl;
   const _ReorderSuggestion._() : super._();
 
   factory _ReorderSuggestion.fromJson(Map<String, dynamic> json) =
@@ -1316,17 +1265,15 @@ mixin _$PeakHoursAnalysis {
 /// @nodoc
 abstract class $PeakHoursAnalysisCopyWith<$Res> {
   factory $PeakHoursAnalysisCopyWith(
-    PeakHoursAnalysis value,
-    $Res Function(PeakHoursAnalysis) then,
-  ) = _$PeakHoursAnalysisCopyWithImpl<$Res, PeakHoursAnalysis>;
+          PeakHoursAnalysis value, $Res Function(PeakHoursAnalysis) then) =
+      _$PeakHoursAnalysisCopyWithImpl<$Res, PeakHoursAnalysis>;
   @useResult
-  $Res call({
-    Map<int, double> hourlyRevenue,
-    Map<int, int> hourlyOrders,
-    int peakHour,
-    int slowestHour,
-    double peakHourRevenue,
-  });
+  $Res call(
+      {Map<int, double> hourlyRevenue,
+      Map<int, int> hourlyOrders,
+      int peakHour,
+      int slowestHour,
+      double peakHourRevenue});
 }
 
 /// @nodoc
@@ -1350,60 +1297,54 @@ class _$PeakHoursAnalysisCopyWithImpl<$Res, $Val extends PeakHoursAnalysis>
     Object? slowestHour = null,
     Object? peakHourRevenue = null,
   }) {
-    return _then(
-      _value.copyWith(
-            hourlyRevenue: null == hourlyRevenue
-                ? _value.hourlyRevenue
-                : hourlyRevenue // ignore: cast_nullable_to_non_nullable
-                      as Map<int, double>,
-            hourlyOrders: null == hourlyOrders
-                ? _value.hourlyOrders
-                : hourlyOrders // ignore: cast_nullable_to_non_nullable
-                      as Map<int, int>,
-            peakHour: null == peakHour
-                ? _value.peakHour
-                : peakHour // ignore: cast_nullable_to_non_nullable
-                      as int,
-            slowestHour: null == slowestHour
-                ? _value.slowestHour
-                : slowestHour // ignore: cast_nullable_to_non_nullable
-                      as int,
-            peakHourRevenue: null == peakHourRevenue
-                ? _value.peakHourRevenue
-                : peakHourRevenue // ignore: cast_nullable_to_non_nullable
-                      as double,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      hourlyRevenue: null == hourlyRevenue
+          ? _value.hourlyRevenue
+          : hourlyRevenue // ignore: cast_nullable_to_non_nullable
+              as Map<int, double>,
+      hourlyOrders: null == hourlyOrders
+          ? _value.hourlyOrders
+          : hourlyOrders // ignore: cast_nullable_to_non_nullable
+              as Map<int, int>,
+      peakHour: null == peakHour
+          ? _value.peakHour
+          : peakHour // ignore: cast_nullable_to_non_nullable
+              as int,
+      slowestHour: null == slowestHour
+          ? _value.slowestHour
+          : slowestHour // ignore: cast_nullable_to_non_nullable
+              as int,
+      peakHourRevenue: null == peakHourRevenue
+          ? _value.peakHourRevenue
+          : peakHourRevenue // ignore: cast_nullable_to_non_nullable
+              as double,
+    ) as $Val);
   }
 }
 
 /// @nodoc
 abstract class _$$PeakHoursAnalysisImplCopyWith<$Res>
     implements $PeakHoursAnalysisCopyWith<$Res> {
-  factory _$$PeakHoursAnalysisImplCopyWith(
-    _$PeakHoursAnalysisImpl value,
-    $Res Function(_$PeakHoursAnalysisImpl) then,
-  ) = __$$PeakHoursAnalysisImplCopyWithImpl<$Res>;
+  factory _$$PeakHoursAnalysisImplCopyWith(_$PeakHoursAnalysisImpl value,
+          $Res Function(_$PeakHoursAnalysisImpl) then) =
+      __$$PeakHoursAnalysisImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    Map<int, double> hourlyRevenue,
-    Map<int, int> hourlyOrders,
-    int peakHour,
-    int slowestHour,
-    double peakHourRevenue,
-  });
+  $Res call(
+      {Map<int, double> hourlyRevenue,
+      Map<int, int> hourlyOrders,
+      int peakHour,
+      int slowestHour,
+      double peakHourRevenue});
 }
 
 /// @nodoc
 class __$$PeakHoursAnalysisImplCopyWithImpl<$Res>
     extends _$PeakHoursAnalysisCopyWithImpl<$Res, _$PeakHoursAnalysisImpl>
     implements _$$PeakHoursAnalysisImplCopyWith<$Res> {
-  __$$PeakHoursAnalysisImplCopyWithImpl(
-    _$PeakHoursAnalysisImpl _value,
-    $Res Function(_$PeakHoursAnalysisImpl) _then,
-  ) : super(_value, _then);
+  __$$PeakHoursAnalysisImplCopyWithImpl(_$PeakHoursAnalysisImpl _value,
+      $Res Function(_$PeakHoursAnalysisImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of PeakHoursAnalysis
   /// with the given fields replaced by the non-null parameter values.
@@ -1416,44 +1357,42 @@ class __$$PeakHoursAnalysisImplCopyWithImpl<$Res>
     Object? slowestHour = null,
     Object? peakHourRevenue = null,
   }) {
-    return _then(
-      _$PeakHoursAnalysisImpl(
-        hourlyRevenue: null == hourlyRevenue
-            ? _value._hourlyRevenue
-            : hourlyRevenue // ignore: cast_nullable_to_non_nullable
-                  as Map<int, double>,
-        hourlyOrders: null == hourlyOrders
-            ? _value._hourlyOrders
-            : hourlyOrders // ignore: cast_nullable_to_non_nullable
-                  as Map<int, int>,
-        peakHour: null == peakHour
-            ? _value.peakHour
-            : peakHour // ignore: cast_nullable_to_non_nullable
-                  as int,
-        slowestHour: null == slowestHour
-            ? _value.slowestHour
-            : slowestHour // ignore: cast_nullable_to_non_nullable
-                  as int,
-        peakHourRevenue: null == peakHourRevenue
-            ? _value.peakHourRevenue
-            : peakHourRevenue // ignore: cast_nullable_to_non_nullable
-                  as double,
-      ),
-    );
+    return _then(_$PeakHoursAnalysisImpl(
+      hourlyRevenue: null == hourlyRevenue
+          ? _value._hourlyRevenue
+          : hourlyRevenue // ignore: cast_nullable_to_non_nullable
+              as Map<int, double>,
+      hourlyOrders: null == hourlyOrders
+          ? _value._hourlyOrders
+          : hourlyOrders // ignore: cast_nullable_to_non_nullable
+              as Map<int, int>,
+      peakHour: null == peakHour
+          ? _value.peakHour
+          : peakHour // ignore: cast_nullable_to_non_nullable
+              as int,
+      slowestHour: null == slowestHour
+          ? _value.slowestHour
+          : slowestHour // ignore: cast_nullable_to_non_nullable
+              as int,
+      peakHourRevenue: null == peakHourRevenue
+          ? _value.peakHourRevenue
+          : peakHourRevenue // ignore: cast_nullable_to_non_nullable
+              as double,
+    ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$PeakHoursAnalysisImpl implements _PeakHoursAnalysis {
-  const _$PeakHoursAnalysisImpl({
-    required final Map<int, double> hourlyRevenue,
-    required final Map<int, int> hourlyOrders,
-    required this.peakHour,
-    required this.slowestHour,
-    required this.peakHourRevenue,
-  }) : _hourlyRevenue = hourlyRevenue,
-       _hourlyOrders = hourlyOrders;
+  const _$PeakHoursAnalysisImpl(
+      {required final Map<int, double> hourlyRevenue,
+      required final Map<int, int> hourlyOrders,
+      required this.peakHour,
+      required this.slowestHour,
+      required this.peakHourRevenue})
+      : _hourlyRevenue = hourlyRevenue,
+        _hourlyOrders = hourlyOrders;
 
   factory _$PeakHoursAnalysisImpl.fromJson(Map<String, dynamic> json) =>
       _$$PeakHoursAnalysisImplFromJson(json);
@@ -1491,14 +1430,10 @@ class _$PeakHoursAnalysisImpl implements _PeakHoursAnalysis {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
             other is _$PeakHoursAnalysisImpl &&
-            const DeepCollectionEquality().equals(
-              other._hourlyRevenue,
-              _hourlyRevenue,
-            ) &&
-            const DeepCollectionEquality().equals(
-              other._hourlyOrders,
-              _hourlyOrders,
-            ) &&
+            const DeepCollectionEquality()
+                .equals(other._hourlyRevenue, _hourlyRevenue) &&
+            const DeepCollectionEquality()
+                .equals(other._hourlyOrders, _hourlyOrders) &&
             (identical(other.peakHour, peakHour) ||
                 other.peakHour == peakHour) &&
             (identical(other.slowestHour, slowestHour) ||
@@ -1510,13 +1445,12 @@ class _$PeakHoursAnalysisImpl implements _PeakHoursAnalysis {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    const DeepCollectionEquality().hash(_hourlyRevenue),
-    const DeepCollectionEquality().hash(_hourlyOrders),
-    peakHour,
-    slowestHour,
-    peakHourRevenue,
-  );
+      runtimeType,
+      const DeepCollectionEquality().hash(_hourlyRevenue),
+      const DeepCollectionEquality().hash(_hourlyOrders),
+      peakHour,
+      slowestHour,
+      peakHourRevenue);
 
   /// Create a copy of PeakHoursAnalysis
   /// with the given fields replaced by the non-null parameter values.
@@ -1525,24 +1459,23 @@ class _$PeakHoursAnalysisImpl implements _PeakHoursAnalysis {
   @pragma('vm:prefer-inline')
   _$$PeakHoursAnalysisImplCopyWith<_$PeakHoursAnalysisImpl> get copyWith =>
       __$$PeakHoursAnalysisImplCopyWithImpl<_$PeakHoursAnalysisImpl>(
-        this,
-        _$identity,
-      );
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$PeakHoursAnalysisImplToJson(this);
+    return _$$PeakHoursAnalysisImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _PeakHoursAnalysis implements PeakHoursAnalysis {
-  const factory _PeakHoursAnalysis({
-    required final Map<int, double> hourlyRevenue,
-    required final Map<int, int> hourlyOrders,
-    required final int peakHour,
-    required final int slowestHour,
-    required final double peakHourRevenue,
-  }) = _$PeakHoursAnalysisImpl;
+  const factory _PeakHoursAnalysis(
+      {required final Map<int, double> hourlyRevenue,
+      required final Map<int, int> hourlyOrders,
+      required final int peakHour,
+      required final int slowestHour,
+      required final double peakHourRevenue}) = _$PeakHoursAnalysisImpl;
 
   factory _PeakHoursAnalysis.fromJson(Map<String, dynamic> json) =
       _$PeakHoursAnalysisImpl.fromJson;
@@ -1594,20 +1527,18 @@ mixin _$CustomerPattern {
 /// @nodoc
 abstract class $CustomerPatternCopyWith<$Res> {
   factory $CustomerPatternCopyWith(
-    CustomerPattern value,
-    $Res Function(CustomerPattern) then,
-  ) = _$CustomerPatternCopyWithImpl<$Res, CustomerPattern>;
+          CustomerPattern value, $Res Function(CustomerPattern) then) =
+      _$CustomerPatternCopyWithImpl<$Res, CustomerPattern>;
   @useResult
-  $Res call({
-    String customerId,
-    String customerName,
-    int totalOrders,
-    double totalSpent,
-    double averageOrderValue,
-    List<String> frequentProducts,
-    int daysSinceLastOrder,
-    DateTime? lastOrderDate,
-  });
+  $Res call(
+      {String customerId,
+      String customerName,
+      int totalOrders,
+      double totalSpent,
+      double averageOrderValue,
+      List<String> frequentProducts,
+      int daysSinceLastOrder,
+      DateTime? lastOrderDate});
 }
 
 /// @nodoc
@@ -1634,65 +1565,60 @@ class _$CustomerPatternCopyWithImpl<$Res, $Val extends CustomerPattern>
     Object? daysSinceLastOrder = null,
     Object? lastOrderDate = freezed,
   }) {
-    return _then(
-      _value.copyWith(
-            customerId: null == customerId
-                ? _value.customerId
-                : customerId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            customerName: null == customerName
-                ? _value.customerName
-                : customerName // ignore: cast_nullable_to_non_nullable
-                      as String,
-            totalOrders: null == totalOrders
-                ? _value.totalOrders
-                : totalOrders // ignore: cast_nullable_to_non_nullable
-                      as int,
-            totalSpent: null == totalSpent
-                ? _value.totalSpent
-                : totalSpent // ignore: cast_nullable_to_non_nullable
-                      as double,
-            averageOrderValue: null == averageOrderValue
-                ? _value.averageOrderValue
-                : averageOrderValue // ignore: cast_nullable_to_non_nullable
-                      as double,
-            frequentProducts: null == frequentProducts
-                ? _value.frequentProducts
-                : frequentProducts // ignore: cast_nullable_to_non_nullable
-                      as List<String>,
-            daysSinceLastOrder: null == daysSinceLastOrder
-                ? _value.daysSinceLastOrder
-                : daysSinceLastOrder // ignore: cast_nullable_to_non_nullable
-                      as int,
-            lastOrderDate: freezed == lastOrderDate
-                ? _value.lastOrderDate
-                : lastOrderDate // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      customerId: null == customerId
+          ? _value.customerId
+          : customerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      customerName: null == customerName
+          ? _value.customerName
+          : customerName // ignore: cast_nullable_to_non_nullable
+              as String,
+      totalOrders: null == totalOrders
+          ? _value.totalOrders
+          : totalOrders // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalSpent: null == totalSpent
+          ? _value.totalSpent
+          : totalSpent // ignore: cast_nullable_to_non_nullable
+              as double,
+      averageOrderValue: null == averageOrderValue
+          ? _value.averageOrderValue
+          : averageOrderValue // ignore: cast_nullable_to_non_nullable
+              as double,
+      frequentProducts: null == frequentProducts
+          ? _value.frequentProducts
+          : frequentProducts // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      daysSinceLastOrder: null == daysSinceLastOrder
+          ? _value.daysSinceLastOrder
+          : daysSinceLastOrder // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastOrderDate: freezed == lastOrderDate
+          ? _value.lastOrderDate
+          : lastOrderDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ) as $Val);
   }
 }
 
 /// @nodoc
 abstract class _$$CustomerPatternImplCopyWith<$Res>
     implements $CustomerPatternCopyWith<$Res> {
-  factory _$$CustomerPatternImplCopyWith(
-    _$CustomerPatternImpl value,
-    $Res Function(_$CustomerPatternImpl) then,
-  ) = __$$CustomerPatternImplCopyWithImpl<$Res>;
+  factory _$$CustomerPatternImplCopyWith(_$CustomerPatternImpl value,
+          $Res Function(_$CustomerPatternImpl) then) =
+      __$$CustomerPatternImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String customerId,
-    String customerName,
-    int totalOrders,
-    double totalSpent,
-    double averageOrderValue,
-    List<String> frequentProducts,
-    int daysSinceLastOrder,
-    DateTime? lastOrderDate,
-  });
+  $Res call(
+      {String customerId,
+      String customerName,
+      int totalOrders,
+      double totalSpent,
+      double averageOrderValue,
+      List<String> frequentProducts,
+      int daysSinceLastOrder,
+      DateTime? lastOrderDate});
 }
 
 /// @nodoc
@@ -1700,9 +1626,8 @@ class __$$CustomerPatternImplCopyWithImpl<$Res>
     extends _$CustomerPatternCopyWithImpl<$Res, _$CustomerPatternImpl>
     implements _$$CustomerPatternImplCopyWith<$Res> {
   __$$CustomerPatternImplCopyWithImpl(
-    _$CustomerPatternImpl _value,
-    $Res Function(_$CustomerPatternImpl) _then,
-  ) : super(_value, _then);
+      _$CustomerPatternImpl _value, $Res Function(_$CustomerPatternImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of CustomerPattern
   /// with the given fields replaced by the non-null parameter values.
@@ -1718,58 +1643,56 @@ class __$$CustomerPatternImplCopyWithImpl<$Res>
     Object? daysSinceLastOrder = null,
     Object? lastOrderDate = freezed,
   }) {
-    return _then(
-      _$CustomerPatternImpl(
-        customerId: null == customerId
-            ? _value.customerId
-            : customerId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        customerName: null == customerName
-            ? _value.customerName
-            : customerName // ignore: cast_nullable_to_non_nullable
-                  as String,
-        totalOrders: null == totalOrders
-            ? _value.totalOrders
-            : totalOrders // ignore: cast_nullable_to_non_nullable
-                  as int,
-        totalSpent: null == totalSpent
-            ? _value.totalSpent
-            : totalSpent // ignore: cast_nullable_to_non_nullable
-                  as double,
-        averageOrderValue: null == averageOrderValue
-            ? _value.averageOrderValue
-            : averageOrderValue // ignore: cast_nullable_to_non_nullable
-                  as double,
-        frequentProducts: null == frequentProducts
-            ? _value._frequentProducts
-            : frequentProducts // ignore: cast_nullable_to_non_nullable
-                  as List<String>,
-        daysSinceLastOrder: null == daysSinceLastOrder
-            ? _value.daysSinceLastOrder
-            : daysSinceLastOrder // ignore: cast_nullable_to_non_nullable
-                  as int,
-        lastOrderDate: freezed == lastOrderDate
-            ? _value.lastOrderDate
-            : lastOrderDate // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-      ),
-    );
+    return _then(_$CustomerPatternImpl(
+      customerId: null == customerId
+          ? _value.customerId
+          : customerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      customerName: null == customerName
+          ? _value.customerName
+          : customerName // ignore: cast_nullable_to_non_nullable
+              as String,
+      totalOrders: null == totalOrders
+          ? _value.totalOrders
+          : totalOrders // ignore: cast_nullable_to_non_nullable
+              as int,
+      totalSpent: null == totalSpent
+          ? _value.totalSpent
+          : totalSpent // ignore: cast_nullable_to_non_nullable
+              as double,
+      averageOrderValue: null == averageOrderValue
+          ? _value.averageOrderValue
+          : averageOrderValue // ignore: cast_nullable_to_non_nullable
+              as double,
+      frequentProducts: null == frequentProducts
+          ? _value._frequentProducts
+          : frequentProducts // ignore: cast_nullable_to_non_nullable
+              as List<String>,
+      daysSinceLastOrder: null == daysSinceLastOrder
+          ? _value.daysSinceLastOrder
+          : daysSinceLastOrder // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastOrderDate: freezed == lastOrderDate
+          ? _value.lastOrderDate
+          : lastOrderDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$CustomerPatternImpl implements _CustomerPattern {
-  const _$CustomerPatternImpl({
-    required this.customerId,
-    required this.customerName,
-    required this.totalOrders,
-    required this.totalSpent,
-    required this.averageOrderValue,
-    required final List<String> frequentProducts,
-    required this.daysSinceLastOrder,
-    this.lastOrderDate,
-  }) : _frequentProducts = frequentProducts;
+  const _$CustomerPatternImpl(
+      {required this.customerId,
+      required this.customerName,
+      required this.totalOrders,
+      required this.totalSpent,
+      required this.averageOrderValue,
+      required final List<String> frequentProducts,
+      required this.daysSinceLastOrder,
+      this.lastOrderDate})
+      : _frequentProducts = frequentProducts;
 
   factory _$CustomerPatternImpl.fromJson(Map<String, dynamic> json) =>
       _$$CustomerPatternImplFromJson(json);
@@ -1818,10 +1741,8 @@ class _$CustomerPatternImpl implements _CustomerPattern {
                 other.totalSpent == totalSpent) &&
             (identical(other.averageOrderValue, averageOrderValue) ||
                 other.averageOrderValue == averageOrderValue) &&
-            const DeepCollectionEquality().equals(
-              other._frequentProducts,
-              _frequentProducts,
-            ) &&
+            const DeepCollectionEquality()
+                .equals(other._frequentProducts, _frequentProducts) &&
             (identical(other.daysSinceLastOrder, daysSinceLastOrder) ||
                 other.daysSinceLastOrder == daysSinceLastOrder) &&
             (identical(other.lastOrderDate, lastOrderDate) ||
@@ -1831,16 +1752,15 @@ class _$CustomerPatternImpl implements _CustomerPattern {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    customerId,
-    customerName,
-    totalOrders,
-    totalSpent,
-    averageOrderValue,
-    const DeepCollectionEquality().hash(_frequentProducts),
-    daysSinceLastOrder,
-    lastOrderDate,
-  );
+      runtimeType,
+      customerId,
+      customerName,
+      totalOrders,
+      totalSpent,
+      averageOrderValue,
+      const DeepCollectionEquality().hash(_frequentProducts),
+      daysSinceLastOrder,
+      lastOrderDate);
 
   /// Create a copy of CustomerPattern
   /// with the given fields replaced by the non-null parameter values.
@@ -1849,27 +1769,26 @@ class _$CustomerPatternImpl implements _CustomerPattern {
   @pragma('vm:prefer-inline')
   _$$CustomerPatternImplCopyWith<_$CustomerPatternImpl> get copyWith =>
       __$$CustomerPatternImplCopyWithImpl<_$CustomerPatternImpl>(
-        this,
-        _$identity,
-      );
+          this, _$identity);
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$CustomerPatternImplToJson(this);
+    return _$$CustomerPatternImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _CustomerPattern implements CustomerPattern {
-  const factory _CustomerPattern({
-    required final String customerId,
-    required final String customerName,
-    required final int totalOrders,
-    required final double totalSpent,
-    required final double averageOrderValue,
-    required final List<String> frequentProducts,
-    required final int daysSinceLastOrder,
-    final DateTime? lastOrderDate,
-  }) = _$CustomerPatternImpl;
+  const factory _CustomerPattern(
+      {required final String customerId,
+      required final String customerName,
+      required final int totalOrders,
+      required final double totalSpent,
+      required final double averageOrderValue,
+      required final List<String> frequentProducts,
+      required final int daysSinceLastOrder,
+      final DateTime? lastOrderDate}) = _$CustomerPatternImpl;
 
   factory _CustomerPattern.fromJson(Map<String, dynamic> json) =
       _$CustomerPatternImpl.fromJson;

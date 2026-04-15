@@ -29,10 +29,12 @@ Map<String, dynamic> _$$UserResponseImplToJson(_$UserResponseImpl instance) =>
 _$AuthResponseImpl _$$AuthResponseImplFromJson(Map<String, dynamic> json) =>
     _$AuthResponseImpl(
       user: UserResponse.fromJson(json['user'] as Map<String, dynamic>),
-      tokens: AuthTokensResponse.fromJson(
-        json['tokens'] as Map<String, dynamic>,
-      ),
+      tokens:
+          AuthTokensResponse.fromJson(json['tokens'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$$AuthResponseImplToJson(_$AuthResponseImpl instance) =>
-    <String, dynamic>{'user': instance.user, 'tokens': instance.tokens};
+    <String, dynamic>{
+      'user': instance.user,
+      'tokens': instance.tokens,
+    };

@@ -15,10 +15,10 @@ DebtSummaryResponse _$DebtSummaryResponseFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$DebtSummaryResponseToJson(
-  DebtSummaryResponse instance,
-) => <String, dynamic>{
-  'totalCustomerDebts': instance.totalCustomerDebts,
-  'totalSupplierDebts': instance.totalSupplierDebts,
-  'overdueCount': instance.overdueCount,
-  'overdueAmount': instance.overdueAmount,
-};
+        DebtSummaryResponse instance) =>
+    <String, dynamic>{
+      'totalCustomerDebts': instance.totalCustomerDebts,
+      'totalSupplierDebts': instance.totalSupplierDebts,
+      'overdueCount': instance.overdueCount,
+      'overdueAmount': instance.overdueAmount,
+    };

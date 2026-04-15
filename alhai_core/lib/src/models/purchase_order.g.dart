@@ -65,23 +65,23 @@ const _$PurchaseOrderStatusEnumMap = {
 };
 
 _$PurchaseOrderItemImpl _$$PurchaseOrderItemImplFromJson(
-  Map<String, dynamic> json,
-) => _$PurchaseOrderItemImpl(
-  productId: json['productId'] as String,
-  name: json['name'] as String,
-  orderedQty: (json['orderedQty'] as num).toInt(),
-  receivedQty: (json['receivedQty'] as num?)?.toInt() ?? 0,
-  unitCost: (json['unitCost'] as num).toDouble(),
-  lineTotal: (json['lineTotal'] as num).toDouble(),
-);
+        Map<String, dynamic> json) =>
+    _$PurchaseOrderItemImpl(
+      productId: json['productId'] as String,
+      name: json['name'] as String,
+      orderedQty: (json['orderedQty'] as num).toInt(),
+      receivedQty: (json['receivedQty'] as num?)?.toInt() ?? 0,
+      unitCost: (json['unitCost'] as num).toDouble(),
+      lineTotal: (json['lineTotal'] as num).toDouble(),
+    );
 
 Map<String, dynamic> _$$PurchaseOrderItemImplToJson(
-  _$PurchaseOrderItemImpl instance,
-) => <String, dynamic>{
-  'productId': instance.productId,
-  'name': instance.name,
-  'orderedQty': instance.orderedQty,
-  'receivedQty': instance.receivedQty,
-  'unitCost': instance.unitCost,
-  'lineTotal': instance.lineTotal,
-};
+        _$PurchaseOrderItemImpl instance) =>
+    <String, dynamic>{
+      'productId': instance.productId,
+      'name': instance.name,
+      'orderedQty': instance.orderedQty,
+      'receivedQty': instance.receivedQty,
+      'unitCost': instance.unitCost,
+      'lineTotal': instance.lineTotal,
+    };

@@ -12,8 +12,7 @@ part of 'store_response.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 StoreResponse _$StoreResponseFromJson(Map<String, dynamic> json) {
   return _StoreResponse.fromJson(json);
@@ -68,32 +67,30 @@ mixin _$StoreResponse {
 /// @nodoc
 abstract class $StoreResponseCopyWith<$Res> {
   factory $StoreResponseCopyWith(
-    StoreResponse value,
-    $Res Function(StoreResponse) then,
-  ) = _$StoreResponseCopyWithImpl<$Res, StoreResponse>;
+          StoreResponse value, $Res Function(StoreResponse) then) =
+      _$StoreResponseCopyWithImpl<$Res, StoreResponse>;
   @useResult
-  $Res call({
-    String id,
-    String name,
-    String address,
-    String? phone,
-    String? email,
-    double lat,
-    double lng,
-    @JsonKey(name: 'image_url') String? imageUrl,
-    @JsonKey(name: 'logo_url') String? logoUrl,
-    String? description,
-    @JsonKey(name: 'is_active') bool isActive,
-    @JsonKey(name: 'owner_id') String ownerId,
-    @JsonKey(name: 'delivery_radius') double? deliveryRadius,
-    @JsonKey(name: 'min_order_amount') double? minOrderAmount,
-    @JsonKey(name: 'delivery_fee') double? deliveryFee,
-    @JsonKey(name: 'accepts_delivery') bool acceptsDelivery,
-    @JsonKey(name: 'accepts_pickup') bool acceptsPickup,
-    @JsonKey(name: 'working_hours') Map<String, dynamic>? workingHoursJson,
-    @JsonKey(name: 'created_at') String createdAt,
-    @JsonKey(name: 'updated_at') String? updatedAt,
-  });
+  $Res call(
+      {String id,
+      String name,
+      String address,
+      String? phone,
+      String? email,
+      double lat,
+      double lng,
+      @JsonKey(name: 'image_url') String? imageUrl,
+      @JsonKey(name: 'logo_url') String? logoUrl,
+      String? description,
+      @JsonKey(name: 'is_active') bool isActive,
+      @JsonKey(name: 'owner_id') String ownerId,
+      @JsonKey(name: 'delivery_radius') double? deliveryRadius,
+      @JsonKey(name: 'min_order_amount') double? minOrderAmount,
+      @JsonKey(name: 'delivery_fee') double? deliveryFee,
+      @JsonKey(name: 'accepts_delivery') bool acceptsDelivery,
+      @JsonKey(name: 'accepts_pickup') bool acceptsPickup,
+      @JsonKey(name: 'working_hours') Map<String, dynamic>? workingHoursJson,
+      @JsonKey(name: 'created_at') String createdAt,
+      @JsonKey(name: 'updated_at') String? updatedAt});
 }
 
 /// @nodoc
@@ -132,91 +129,88 @@ class _$StoreResponseCopyWithImpl<$Res, $Val extends StoreResponse>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(
-      _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
-                      as String,
-            name: null == name
-                ? _value.name
-                : name // ignore: cast_nullable_to_non_nullable
-                      as String,
-            address: null == address
-                ? _value.address
-                : address // ignore: cast_nullable_to_non_nullable
-                      as String,
-            phone: freezed == phone
-                ? _value.phone
-                : phone // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            email: freezed == email
-                ? _value.email
-                : email // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            lat: null == lat
-                ? _value.lat
-                : lat // ignore: cast_nullable_to_non_nullable
-                      as double,
-            lng: null == lng
-                ? _value.lng
-                : lng // ignore: cast_nullable_to_non_nullable
-                      as double,
-            imageUrl: freezed == imageUrl
-                ? _value.imageUrl
-                : imageUrl // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            logoUrl: freezed == logoUrl
-                ? _value.logoUrl
-                : logoUrl // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            description: freezed == description
-                ? _value.description
-                : description // ignore: cast_nullable_to_non_nullable
-                      as String?,
-            isActive: null == isActive
-                ? _value.isActive
-                : isActive // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            ownerId: null == ownerId
-                ? _value.ownerId
-                : ownerId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            deliveryRadius: freezed == deliveryRadius
-                ? _value.deliveryRadius
-                : deliveryRadius // ignore: cast_nullable_to_non_nullable
-                      as double?,
-            minOrderAmount: freezed == minOrderAmount
-                ? _value.minOrderAmount
-                : minOrderAmount // ignore: cast_nullable_to_non_nullable
-                      as double?,
-            deliveryFee: freezed == deliveryFee
-                ? _value.deliveryFee
-                : deliveryFee // ignore: cast_nullable_to_non_nullable
-                      as double?,
-            acceptsDelivery: null == acceptsDelivery
-                ? _value.acceptsDelivery
-                : acceptsDelivery // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            acceptsPickup: null == acceptsPickup
-                ? _value.acceptsPickup
-                : acceptsPickup // ignore: cast_nullable_to_non_nullable
-                      as bool,
-            workingHoursJson: freezed == workingHoursJson
-                ? _value.workingHoursJson
-                : workingHoursJson // ignore: cast_nullable_to_non_nullable
-                      as Map<String, dynamic>?,
-            createdAt: null == createdAt
-                ? _value.createdAt
-                : createdAt // ignore: cast_nullable_to_non_nullable
-                      as String,
-            updatedAt: freezed == updatedAt
-                ? _value.updatedAt
-                : updatedAt // ignore: cast_nullable_to_non_nullable
-                      as String?,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      address: null == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone: freezed == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String?,
+      email: freezed == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lat: null == lat
+          ? _value.lat
+          : lat // ignore: cast_nullable_to_non_nullable
+              as double,
+      lng: null == lng
+          ? _value.lng
+          : lng // ignore: cast_nullable_to_non_nullable
+              as double,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      logoUrl: freezed == logoUrl
+          ? _value.logoUrl
+          : logoUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
+      ownerId: null == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      deliveryRadius: freezed == deliveryRadius
+          ? _value.deliveryRadius
+          : deliveryRadius // ignore: cast_nullable_to_non_nullable
+              as double?,
+      minOrderAmount: freezed == minOrderAmount
+          ? _value.minOrderAmount
+          : minOrderAmount // ignore: cast_nullable_to_non_nullable
+              as double?,
+      deliveryFee: freezed == deliveryFee
+          ? _value.deliveryFee
+          : deliveryFee // ignore: cast_nullable_to_non_nullable
+              as double?,
+      acceptsDelivery: null == acceptsDelivery
+          ? _value.acceptsDelivery
+          : acceptsDelivery // ignore: cast_nullable_to_non_nullable
+              as bool,
+      acceptsPickup: null == acceptsPickup
+          ? _value.acceptsPickup
+          : acceptsPickup // ignore: cast_nullable_to_non_nullable
+              as bool,
+      workingHoursJson: freezed == workingHoursJson
+          ? _value.workingHoursJson
+          : workingHoursJson // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
   }
 }
 
@@ -224,33 +218,31 @@ class _$StoreResponseCopyWithImpl<$Res, $Val extends StoreResponse>
 abstract class _$$StoreResponseImplCopyWith<$Res>
     implements $StoreResponseCopyWith<$Res> {
   factory _$$StoreResponseImplCopyWith(
-    _$StoreResponseImpl value,
-    $Res Function(_$StoreResponseImpl) then,
-  ) = __$$StoreResponseImplCopyWithImpl<$Res>;
+          _$StoreResponseImpl value, $Res Function(_$StoreResponseImpl) then) =
+      __$$StoreResponseImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String id,
-    String name,
-    String address,
-    String? phone,
-    String? email,
-    double lat,
-    double lng,
-    @JsonKey(name: 'image_url') String? imageUrl,
-    @JsonKey(name: 'logo_url') String? logoUrl,
-    String? description,
-    @JsonKey(name: 'is_active') bool isActive,
-    @JsonKey(name: 'owner_id') String ownerId,
-    @JsonKey(name: 'delivery_radius') double? deliveryRadius,
-    @JsonKey(name: 'min_order_amount') double? minOrderAmount,
-    @JsonKey(name: 'delivery_fee') double? deliveryFee,
-    @JsonKey(name: 'accepts_delivery') bool acceptsDelivery,
-    @JsonKey(name: 'accepts_pickup') bool acceptsPickup,
-    @JsonKey(name: 'working_hours') Map<String, dynamic>? workingHoursJson,
-    @JsonKey(name: 'created_at') String createdAt,
-    @JsonKey(name: 'updated_at') String? updatedAt,
-  });
+  $Res call(
+      {String id,
+      String name,
+      String address,
+      String? phone,
+      String? email,
+      double lat,
+      double lng,
+      @JsonKey(name: 'image_url') String? imageUrl,
+      @JsonKey(name: 'logo_url') String? logoUrl,
+      String? description,
+      @JsonKey(name: 'is_active') bool isActive,
+      @JsonKey(name: 'owner_id') String ownerId,
+      @JsonKey(name: 'delivery_radius') double? deliveryRadius,
+      @JsonKey(name: 'min_order_amount') double? minOrderAmount,
+      @JsonKey(name: 'delivery_fee') double? deliveryFee,
+      @JsonKey(name: 'accepts_delivery') bool acceptsDelivery,
+      @JsonKey(name: 'accepts_pickup') bool acceptsPickup,
+      @JsonKey(name: 'working_hours') Map<String, dynamic>? workingHoursJson,
+      @JsonKey(name: 'created_at') String createdAt,
+      @JsonKey(name: 'updated_at') String? updatedAt});
 }
 
 /// @nodoc
@@ -258,9 +250,8 @@ class __$$StoreResponseImplCopyWithImpl<$Res>
     extends _$StoreResponseCopyWithImpl<$Res, _$StoreResponseImpl>
     implements _$$StoreResponseImplCopyWith<$Res> {
   __$$StoreResponseImplCopyWithImpl(
-    _$StoreResponseImpl _value,
-    $Res Function(_$StoreResponseImpl) _then,
-  ) : super(_value, _then);
+      _$StoreResponseImpl _value, $Res Function(_$StoreResponseImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of StoreResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -288,120 +279,118 @@ class __$$StoreResponseImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(
-      _$StoreResponseImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
-                  as String,
-        name: null == name
-            ? _value.name
-            : name // ignore: cast_nullable_to_non_nullable
-                  as String,
-        address: null == address
-            ? _value.address
-            : address // ignore: cast_nullable_to_non_nullable
-                  as String,
-        phone: freezed == phone
-            ? _value.phone
-            : phone // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        email: freezed == email
-            ? _value.email
-            : email // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        lat: null == lat
-            ? _value.lat
-            : lat // ignore: cast_nullable_to_non_nullable
-                  as double,
-        lng: null == lng
-            ? _value.lng
-            : lng // ignore: cast_nullable_to_non_nullable
-                  as double,
-        imageUrl: freezed == imageUrl
-            ? _value.imageUrl
-            : imageUrl // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        logoUrl: freezed == logoUrl
-            ? _value.logoUrl
-            : logoUrl // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        description: freezed == description
-            ? _value.description
-            : description // ignore: cast_nullable_to_non_nullable
-                  as String?,
-        isActive: null == isActive
-            ? _value.isActive
-            : isActive // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        ownerId: null == ownerId
-            ? _value.ownerId
-            : ownerId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        deliveryRadius: freezed == deliveryRadius
-            ? _value.deliveryRadius
-            : deliveryRadius // ignore: cast_nullable_to_non_nullable
-                  as double?,
-        minOrderAmount: freezed == minOrderAmount
-            ? _value.minOrderAmount
-            : minOrderAmount // ignore: cast_nullable_to_non_nullable
-                  as double?,
-        deliveryFee: freezed == deliveryFee
-            ? _value.deliveryFee
-            : deliveryFee // ignore: cast_nullable_to_non_nullable
-                  as double?,
-        acceptsDelivery: null == acceptsDelivery
-            ? _value.acceptsDelivery
-            : acceptsDelivery // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        acceptsPickup: null == acceptsPickup
-            ? _value.acceptsPickup
-            : acceptsPickup // ignore: cast_nullable_to_non_nullable
-                  as bool,
-        workingHoursJson: freezed == workingHoursJson
-            ? _value._workingHoursJson
-            : workingHoursJson // ignore: cast_nullable_to_non_nullable
-                  as Map<String, dynamic>?,
-        createdAt: null == createdAt
-            ? _value.createdAt
-            : createdAt // ignore: cast_nullable_to_non_nullable
-                  as String,
-        updatedAt: freezed == updatedAt
-            ? _value.updatedAt
-            : updatedAt // ignore: cast_nullable_to_non_nullable
-                  as String?,
-      ),
-    );
+    return _then(_$StoreResponseImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      name: null == name
+          ? _value.name
+          : name // ignore: cast_nullable_to_non_nullable
+              as String,
+      address: null == address
+          ? _value.address
+          : address // ignore: cast_nullable_to_non_nullable
+              as String,
+      phone: freezed == phone
+          ? _value.phone
+          : phone // ignore: cast_nullable_to_non_nullable
+              as String?,
+      email: freezed == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String?,
+      lat: null == lat
+          ? _value.lat
+          : lat // ignore: cast_nullable_to_non_nullable
+              as double,
+      lng: null == lng
+          ? _value.lng
+          : lng // ignore: cast_nullable_to_non_nullable
+              as double,
+      imageUrl: freezed == imageUrl
+          ? _value.imageUrl
+          : imageUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      logoUrl: freezed == logoUrl
+          ? _value.logoUrl
+          : logoUrl // ignore: cast_nullable_to_non_nullable
+              as String?,
+      description: freezed == description
+          ? _value.description
+          : description // ignore: cast_nullable_to_non_nullable
+              as String?,
+      isActive: null == isActive
+          ? _value.isActive
+          : isActive // ignore: cast_nullable_to_non_nullable
+              as bool,
+      ownerId: null == ownerId
+          ? _value.ownerId
+          : ownerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      deliveryRadius: freezed == deliveryRadius
+          ? _value.deliveryRadius
+          : deliveryRadius // ignore: cast_nullable_to_non_nullable
+              as double?,
+      minOrderAmount: freezed == minOrderAmount
+          ? _value.minOrderAmount
+          : minOrderAmount // ignore: cast_nullable_to_non_nullable
+              as double?,
+      deliveryFee: freezed == deliveryFee
+          ? _value.deliveryFee
+          : deliveryFee // ignore: cast_nullable_to_non_nullable
+              as double?,
+      acceptsDelivery: null == acceptsDelivery
+          ? _value.acceptsDelivery
+          : acceptsDelivery // ignore: cast_nullable_to_non_nullable
+              as bool,
+      acceptsPickup: null == acceptsPickup
+          ? _value.acceptsPickup
+          : acceptsPickup // ignore: cast_nullable_to_non_nullable
+              as bool,
+      workingHoursJson: freezed == workingHoursJson
+          ? _value._workingHoursJson
+          : workingHoursJson // ignore: cast_nullable_to_non_nullable
+              as Map<String, dynamic>?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as String,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$StoreResponseImpl extends _StoreResponse {
-  const _$StoreResponseImpl({
-    required this.id,
-    required this.name,
-    required this.address,
-    this.phone,
-    this.email,
-    required this.lat,
-    required this.lng,
-    @JsonKey(name: 'image_url') this.imageUrl,
-    @JsonKey(name: 'logo_url') this.logoUrl,
-    this.description,
-    @JsonKey(name: 'is_active') required this.isActive,
-    @JsonKey(name: 'owner_id') required this.ownerId,
-    @JsonKey(name: 'delivery_radius') this.deliveryRadius,
-    @JsonKey(name: 'min_order_amount') this.minOrderAmount,
-    @JsonKey(name: 'delivery_fee') this.deliveryFee,
-    @JsonKey(name: 'accepts_delivery') this.acceptsDelivery = true,
-    @JsonKey(name: 'accepts_pickup') this.acceptsPickup = true,
-    @JsonKey(name: 'working_hours')
-    final Map<String, dynamic>? workingHoursJson,
-    @JsonKey(name: 'created_at') required this.createdAt,
-    @JsonKey(name: 'updated_at') this.updatedAt,
-  }) : _workingHoursJson = workingHoursJson,
-       super._();
+  const _$StoreResponseImpl(
+      {required this.id,
+      required this.name,
+      required this.address,
+      this.phone,
+      this.email,
+      required this.lat,
+      required this.lng,
+      @JsonKey(name: 'image_url') this.imageUrl,
+      @JsonKey(name: 'logo_url') this.logoUrl,
+      this.description,
+      @JsonKey(name: 'is_active') required this.isActive,
+      @JsonKey(name: 'owner_id') required this.ownerId,
+      @JsonKey(name: 'delivery_radius') this.deliveryRadius,
+      @JsonKey(name: 'min_order_amount') this.minOrderAmount,
+      @JsonKey(name: 'delivery_fee') this.deliveryFee,
+      @JsonKey(name: 'accepts_delivery') this.acceptsDelivery = true,
+      @JsonKey(name: 'accepts_pickup') this.acceptsPickup = true,
+      @JsonKey(name: 'working_hours')
+      final Map<String, dynamic>? workingHoursJson,
+      @JsonKey(name: 'created_at') required this.createdAt,
+      @JsonKey(name: 'updated_at') this.updatedAt})
+      : _workingHoursJson = workingHoursJson,
+        super._();
 
   factory _$StoreResponseImpl.fromJson(Map<String, dynamic> json) =>
       _$$StoreResponseImplFromJson(json);
@@ -502,10 +491,8 @@ class _$StoreResponseImpl extends _StoreResponse {
                 other.acceptsDelivery == acceptsDelivery) &&
             (identical(other.acceptsPickup, acceptsPickup) ||
                 other.acceptsPickup == acceptsPickup) &&
-            const DeepCollectionEquality().equals(
-              other._workingHoursJson,
-              _workingHoursJson,
-            ) &&
+            const DeepCollectionEquality()
+                .equals(other._workingHoursJson, _workingHoursJson) &&
             (identical(other.createdAt, createdAt) ||
                 other.createdAt == createdAt) &&
             (identical(other.updatedAt, updatedAt) ||
@@ -515,28 +502,28 @@ class _$StoreResponseImpl extends _StoreResponse {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hashAll([
-    runtimeType,
-    id,
-    name,
-    address,
-    phone,
-    email,
-    lat,
-    lng,
-    imageUrl,
-    logoUrl,
-    description,
-    isActive,
-    ownerId,
-    deliveryRadius,
-    minOrderAmount,
-    deliveryFee,
-    acceptsDelivery,
-    acceptsPickup,
-    const DeepCollectionEquality().hash(_workingHoursJson),
-    createdAt,
-    updatedAt,
-  ]);
+        runtimeType,
+        id,
+        name,
+        address,
+        phone,
+        email,
+        lat,
+        lng,
+        imageUrl,
+        logoUrl,
+        description,
+        isActive,
+        ownerId,
+        deliveryRadius,
+        minOrderAmount,
+        deliveryFee,
+        acceptsDelivery,
+        acceptsPickup,
+        const DeepCollectionEquality().hash(_workingHoursJson),
+        createdAt,
+        updatedAt
+      ]);
 
   /// Create a copy of StoreResponse
   /// with the given fields replaced by the non-null parameter values.
@@ -548,34 +535,36 @@ class _$StoreResponseImpl extends _StoreResponse {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$StoreResponseImplToJson(this);
+    return _$$StoreResponseImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _StoreResponse extends StoreResponse {
-  const factory _StoreResponse({
-    required final String id,
-    required final String name,
-    required final String address,
-    final String? phone,
-    final String? email,
-    required final double lat,
-    required final double lng,
-    @JsonKey(name: 'image_url') final String? imageUrl,
-    @JsonKey(name: 'logo_url') final String? logoUrl,
-    final String? description,
-    @JsonKey(name: 'is_active') required final bool isActive,
-    @JsonKey(name: 'owner_id') required final String ownerId,
-    @JsonKey(name: 'delivery_radius') final double? deliveryRadius,
-    @JsonKey(name: 'min_order_amount') final double? minOrderAmount,
-    @JsonKey(name: 'delivery_fee') final double? deliveryFee,
-    @JsonKey(name: 'accepts_delivery') final bool acceptsDelivery,
-    @JsonKey(name: 'accepts_pickup') final bool acceptsPickup,
-    @JsonKey(name: 'working_hours')
-    final Map<String, dynamic>? workingHoursJson,
-    @JsonKey(name: 'created_at') required final String createdAt,
-    @JsonKey(name: 'updated_at') final String? updatedAt,
-  }) = _$StoreResponseImpl;
+  const factory _StoreResponse(
+          {required final String id,
+          required final String name,
+          required final String address,
+          final String? phone,
+          final String? email,
+          required final double lat,
+          required final double lng,
+          @JsonKey(name: 'image_url') final String? imageUrl,
+          @JsonKey(name: 'logo_url') final String? logoUrl,
+          final String? description,
+          @JsonKey(name: 'is_active') required final bool isActive,
+          @JsonKey(name: 'owner_id') required final String ownerId,
+          @JsonKey(name: 'delivery_radius') final double? deliveryRadius,
+          @JsonKey(name: 'min_order_amount') final double? minOrderAmount,
+          @JsonKey(name: 'delivery_fee') final double? deliveryFee,
+          @JsonKey(name: 'accepts_delivery') final bool acceptsDelivery,
+          @JsonKey(name: 'accepts_pickup') final bool acceptsPickup,
+          @JsonKey(name: 'working_hours')
+          final Map<String, dynamic>? workingHoursJson,
+          @JsonKey(name: 'created_at') required final String createdAt,
+          @JsonKey(name: 'updated_at') final String? updatedAt}) =
+      _$StoreResponseImpl;
   const _StoreResponse._() : super._();
 
   factory _StoreResponse.fromJson(Map<String, dynamic> json) =

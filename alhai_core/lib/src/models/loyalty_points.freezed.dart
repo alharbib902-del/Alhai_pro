@@ -12,8 +12,7 @@ part of 'loyalty_points.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
-);
+    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 LoyaltyPoints _$LoyaltyPointsFromJson(Map<String, dynamic> json) {
   return _LoyaltyPoints.fromJson(json);
@@ -49,25 +48,23 @@ mixin _$LoyaltyPoints {
 /// @nodoc
 abstract class $LoyaltyPointsCopyWith<$Res> {
   factory $LoyaltyPointsCopyWith(
-    LoyaltyPoints value,
-    $Res Function(LoyaltyPoints) then,
-  ) = _$LoyaltyPointsCopyWithImpl<$Res, LoyaltyPoints>;
+          LoyaltyPoints value, $Res Function(LoyaltyPoints) then) =
+      _$LoyaltyPointsCopyWithImpl<$Res, LoyaltyPoints>;
   @useResult
-  $Res call({
-    String id,
-    String customerId,
-    int balance,
-    LoyaltyTier tier,
-    int earnedThisMonth,
-    int redeemedThisMonth,
-    int expiringPoints,
-    DateTime? expiryDate,
-    int currentStreak,
-    int longestStreak,
-    DateTime? lastEarnedAt,
-    DateTime createdAt,
-    DateTime? updatedAt,
-  });
+  $Res call(
+      {String id,
+      String customerId,
+      int balance,
+      LoyaltyTier tier,
+      int earnedThisMonth,
+      int redeemedThisMonth,
+      int expiringPoints,
+      DateTime? expiryDate,
+      int currentStreak,
+      int longestStreak,
+      DateTime? lastEarnedAt,
+      DateTime createdAt,
+      DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -99,63 +96,60 @@ class _$LoyaltyPointsCopyWithImpl<$Res, $Val extends LoyaltyPoints>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(
-      _value.copyWith(
-            id: null == id
-                ? _value.id
-                : id // ignore: cast_nullable_to_non_nullable
-                      as String,
-            customerId: null == customerId
-                ? _value.customerId
-                : customerId // ignore: cast_nullable_to_non_nullable
-                      as String,
-            balance: null == balance
-                ? _value.balance
-                : balance // ignore: cast_nullable_to_non_nullable
-                      as int,
-            tier: null == tier
-                ? _value.tier
-                : tier // ignore: cast_nullable_to_non_nullable
-                      as LoyaltyTier,
-            earnedThisMonth: null == earnedThisMonth
-                ? _value.earnedThisMonth
-                : earnedThisMonth // ignore: cast_nullable_to_non_nullable
-                      as int,
-            redeemedThisMonth: null == redeemedThisMonth
-                ? _value.redeemedThisMonth
-                : redeemedThisMonth // ignore: cast_nullable_to_non_nullable
-                      as int,
-            expiringPoints: null == expiringPoints
-                ? _value.expiringPoints
-                : expiringPoints // ignore: cast_nullable_to_non_nullable
-                      as int,
-            expiryDate: freezed == expiryDate
-                ? _value.expiryDate
-                : expiryDate // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-            currentStreak: null == currentStreak
-                ? _value.currentStreak
-                : currentStreak // ignore: cast_nullable_to_non_nullable
-                      as int,
-            longestStreak: null == longestStreak
-                ? _value.longestStreak
-                : longestStreak // ignore: cast_nullable_to_non_nullable
-                      as int,
-            lastEarnedAt: freezed == lastEarnedAt
-                ? _value.lastEarnedAt
-                : lastEarnedAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-            createdAt: null == createdAt
-                ? _value.createdAt
-                : createdAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime,
-            updatedAt: freezed == updatedAt
-                ? _value.updatedAt
-                : updatedAt // ignore: cast_nullable_to_non_nullable
-                      as DateTime?,
-          )
-          as $Val,
-    );
+    return _then(_value.copyWith(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      customerId: null == customerId
+          ? _value.customerId
+          : customerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      balance: null == balance
+          ? _value.balance
+          : balance // ignore: cast_nullable_to_non_nullable
+              as int,
+      tier: null == tier
+          ? _value.tier
+          : tier // ignore: cast_nullable_to_non_nullable
+              as LoyaltyTier,
+      earnedThisMonth: null == earnedThisMonth
+          ? _value.earnedThisMonth
+          : earnedThisMonth // ignore: cast_nullable_to_non_nullable
+              as int,
+      redeemedThisMonth: null == redeemedThisMonth
+          ? _value.redeemedThisMonth
+          : redeemedThisMonth // ignore: cast_nullable_to_non_nullable
+              as int,
+      expiringPoints: null == expiringPoints
+          ? _value.expiringPoints
+          : expiringPoints // ignore: cast_nullable_to_non_nullable
+              as int,
+      expiryDate: freezed == expiryDate
+          ? _value.expiryDate
+          : expiryDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      currentStreak: null == currentStreak
+          ? _value.currentStreak
+          : currentStreak // ignore: cast_nullable_to_non_nullable
+              as int,
+      longestStreak: null == longestStreak
+          ? _value.longestStreak
+          : longestStreak // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastEarnedAt: freezed == lastEarnedAt
+          ? _value.lastEarnedAt
+          : lastEarnedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ) as $Val);
   }
 }
 
@@ -163,26 +157,24 @@ class _$LoyaltyPointsCopyWithImpl<$Res, $Val extends LoyaltyPoints>
 abstract class _$$LoyaltyPointsImplCopyWith<$Res>
     implements $LoyaltyPointsCopyWith<$Res> {
   factory _$$LoyaltyPointsImplCopyWith(
-    _$LoyaltyPointsImpl value,
-    $Res Function(_$LoyaltyPointsImpl) then,
-  ) = __$$LoyaltyPointsImplCopyWithImpl<$Res>;
+          _$LoyaltyPointsImpl value, $Res Function(_$LoyaltyPointsImpl) then) =
+      __$$LoyaltyPointsImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({
-    String id,
-    String customerId,
-    int balance,
-    LoyaltyTier tier,
-    int earnedThisMonth,
-    int redeemedThisMonth,
-    int expiringPoints,
-    DateTime? expiryDate,
-    int currentStreak,
-    int longestStreak,
-    DateTime? lastEarnedAt,
-    DateTime createdAt,
-    DateTime? updatedAt,
-  });
+  $Res call(
+      {String id,
+      String customerId,
+      int balance,
+      LoyaltyTier tier,
+      int earnedThisMonth,
+      int redeemedThisMonth,
+      int expiringPoints,
+      DateTime? expiryDate,
+      int currentStreak,
+      int longestStreak,
+      DateTime? lastEarnedAt,
+      DateTime createdAt,
+      DateTime? updatedAt});
 }
 
 /// @nodoc
@@ -190,9 +182,8 @@ class __$$LoyaltyPointsImplCopyWithImpl<$Res>
     extends _$LoyaltyPointsCopyWithImpl<$Res, _$LoyaltyPointsImpl>
     implements _$$LoyaltyPointsImplCopyWith<$Res> {
   __$$LoyaltyPointsImplCopyWithImpl(
-    _$LoyaltyPointsImpl _value,
-    $Res Function(_$LoyaltyPointsImpl) _then,
-  ) : super(_value, _then);
+      _$LoyaltyPointsImpl _value, $Res Function(_$LoyaltyPointsImpl) _then)
+      : super(_value, _then);
 
   /// Create a copy of LoyaltyPoints
   /// with the given fields replaced by the non-null parameter values.
@@ -213,83 +204,81 @@ class __$$LoyaltyPointsImplCopyWithImpl<$Res>
     Object? createdAt = null,
     Object? updatedAt = freezed,
   }) {
-    return _then(
-      _$LoyaltyPointsImpl(
-        id: null == id
-            ? _value.id
-            : id // ignore: cast_nullable_to_non_nullable
-                  as String,
-        customerId: null == customerId
-            ? _value.customerId
-            : customerId // ignore: cast_nullable_to_non_nullable
-                  as String,
-        balance: null == balance
-            ? _value.balance
-            : balance // ignore: cast_nullable_to_non_nullable
-                  as int,
-        tier: null == tier
-            ? _value.tier
-            : tier // ignore: cast_nullable_to_non_nullable
-                  as LoyaltyTier,
-        earnedThisMonth: null == earnedThisMonth
-            ? _value.earnedThisMonth
-            : earnedThisMonth // ignore: cast_nullable_to_non_nullable
-                  as int,
-        redeemedThisMonth: null == redeemedThisMonth
-            ? _value.redeemedThisMonth
-            : redeemedThisMonth // ignore: cast_nullable_to_non_nullable
-                  as int,
-        expiringPoints: null == expiringPoints
-            ? _value.expiringPoints
-            : expiringPoints // ignore: cast_nullable_to_non_nullable
-                  as int,
-        expiryDate: freezed == expiryDate
-            ? _value.expiryDate
-            : expiryDate // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-        currentStreak: null == currentStreak
-            ? _value.currentStreak
-            : currentStreak // ignore: cast_nullable_to_non_nullable
-                  as int,
-        longestStreak: null == longestStreak
-            ? _value.longestStreak
-            : longestStreak // ignore: cast_nullable_to_non_nullable
-                  as int,
-        lastEarnedAt: freezed == lastEarnedAt
-            ? _value.lastEarnedAt
-            : lastEarnedAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-        createdAt: null == createdAt
-            ? _value.createdAt
-            : createdAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime,
-        updatedAt: freezed == updatedAt
-            ? _value.updatedAt
-            : updatedAt // ignore: cast_nullable_to_non_nullable
-                  as DateTime?,
-      ),
-    );
+    return _then(_$LoyaltyPointsImpl(
+      id: null == id
+          ? _value.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      customerId: null == customerId
+          ? _value.customerId
+          : customerId // ignore: cast_nullable_to_non_nullable
+              as String,
+      balance: null == balance
+          ? _value.balance
+          : balance // ignore: cast_nullable_to_non_nullable
+              as int,
+      tier: null == tier
+          ? _value.tier
+          : tier // ignore: cast_nullable_to_non_nullable
+              as LoyaltyTier,
+      earnedThisMonth: null == earnedThisMonth
+          ? _value.earnedThisMonth
+          : earnedThisMonth // ignore: cast_nullable_to_non_nullable
+              as int,
+      redeemedThisMonth: null == redeemedThisMonth
+          ? _value.redeemedThisMonth
+          : redeemedThisMonth // ignore: cast_nullable_to_non_nullable
+              as int,
+      expiringPoints: null == expiringPoints
+          ? _value.expiringPoints
+          : expiringPoints // ignore: cast_nullable_to_non_nullable
+              as int,
+      expiryDate: freezed == expiryDate
+          ? _value.expiryDate
+          : expiryDate // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      currentStreak: null == currentStreak
+          ? _value.currentStreak
+          : currentStreak // ignore: cast_nullable_to_non_nullable
+              as int,
+      longestStreak: null == longestStreak
+          ? _value.longestStreak
+          : longestStreak // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastEarnedAt: freezed == lastEarnedAt
+          ? _value.lastEarnedAt
+          : lastEarnedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+      createdAt: null == createdAt
+          ? _value.createdAt
+          : createdAt // ignore: cast_nullable_to_non_nullable
+              as DateTime,
+      updatedAt: freezed == updatedAt
+          ? _value.updatedAt
+          : updatedAt // ignore: cast_nullable_to_non_nullable
+              as DateTime?,
+    ));
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$LoyaltyPointsImpl extends _LoyaltyPoints {
-  const _$LoyaltyPointsImpl({
-    required this.id,
-    required this.customerId,
-    this.balance = 0,
-    this.tier = LoyaltyTier.bronze,
-    this.earnedThisMonth = 0,
-    this.redeemedThisMonth = 0,
-    this.expiringPoints = 0,
-    this.expiryDate,
-    this.currentStreak = 0,
-    this.longestStreak = 0,
-    this.lastEarnedAt,
-    required this.createdAt,
-    this.updatedAt,
-  }) : super._();
+  const _$LoyaltyPointsImpl(
+      {required this.id,
+      required this.customerId,
+      this.balance = 0,
+      this.tier = LoyaltyTier.bronze,
+      this.earnedThisMonth = 0,
+      this.redeemedThisMonth = 0,
+      this.expiringPoints = 0,
+      this.expiryDate,
+      this.currentStreak = 0,
+      this.longestStreak = 0,
+      this.lastEarnedAt,
+      required this.createdAt,
+      this.updatedAt})
+      : super._();
 
   factory _$LoyaltyPointsImpl.fromJson(Map<String, dynamic> json) =>
       _$$LoyaltyPointsImplFromJson(json);
@@ -318,7 +307,7 @@ class _$LoyaltyPointsImpl extends _LoyaltyPoints {
   @override
   @JsonKey()
   final int currentStreak;
-  // Days ordering consecutively
+// Days ordering consecutively
   @override
   @JsonKey()
   final int longestStreak;
@@ -367,21 +356,20 @@ class _$LoyaltyPointsImpl extends _LoyaltyPoints {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-    runtimeType,
-    id,
-    customerId,
-    balance,
-    tier,
-    earnedThisMonth,
-    redeemedThisMonth,
-    expiringPoints,
-    expiryDate,
-    currentStreak,
-    longestStreak,
-    lastEarnedAt,
-    createdAt,
-    updatedAt,
-  );
+      runtimeType,
+      id,
+      customerId,
+      balance,
+      tier,
+      earnedThisMonth,
+      redeemedThisMonth,
+      expiringPoints,
+      expiryDate,
+      currentStreak,
+      longestStreak,
+      lastEarnedAt,
+      createdAt,
+      updatedAt);
 
   /// Create a copy of LoyaltyPoints
   /// with the given fields replaced by the non-null parameter values.
@@ -393,26 +381,27 @@ class _$LoyaltyPointsImpl extends _LoyaltyPoints {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$LoyaltyPointsImplToJson(this);
+    return _$$LoyaltyPointsImplToJson(
+      this,
+    );
   }
 }
 
 abstract class _LoyaltyPoints extends LoyaltyPoints {
-  const factory _LoyaltyPoints({
-    required final String id,
-    required final String customerId,
-    final int balance,
-    final LoyaltyTier tier,
-    final int earnedThisMonth,
-    final int redeemedThisMonth,
-    final int expiringPoints,
-    final DateTime? expiryDate,
-    final int currentStreak,
-    final int longestStreak,
-    final DateTime? lastEarnedAt,
-    required final DateTime createdAt,
-    final DateTime? updatedAt,
-  }) = _$LoyaltyPointsImpl;
+  const factory _LoyaltyPoints(
+      {required final String id,
+      required final String customerId,
+      final int balance,
+      final LoyaltyTier tier,
+      final int earnedThisMonth,
+      final int redeemedThisMonth,
+      final int expiringPoints,
+      final DateTime? expiryDate,
+      final int currentStreak,
+      final int longestStreak,
+      final DateTime? lastEarnedAt,
+      required final DateTime createdAt,
+      final DateTime? updatedAt}) = _$LoyaltyPointsImpl;
   const _LoyaltyPoints._() : super._();
 
   factory _LoyaltyPoints.fromJson(Map<String, dynamic> json) =
