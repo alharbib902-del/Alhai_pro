@@ -49,8 +49,28 @@ class _DistributorOrderDetailScreenState
     super.dispose();
   }
 
+  /// Track which items have been auto-filled with tier discount price
+  /// to avoid overwriting user edits on rebuild.
+  final Set<String> _autoFilledItems = {};
+
   TextEditingController _getController(String itemId) {
     return _priceControllers.putIfAbsent(itemId, () => TextEditingController());
+  }
+
+  /// Pre-fill a controller with the tier-discounted price if not already filled.
+  void _autoFillWithDiscount(
+    String itemId,
+    double suggestedPrice,
+    double discountPercent,
+  ) {
+    if (_autoFilledItems.contains(itemId)) return;
+    final controller = _getController(itemId);
+    if (controller.text.isNotEmpty) return;
+    if (discountPercent <= 0) return;
+
+    final discountedPrice = suggestedPrice * (1 - discountPercent / 100);
+    controller.text = discountedPrice.toStringAsFixed(2);
+    _autoFilledItems.add(itemId);
   }
 
   /// Synchronize controllers with the current item list,
@@ -352,12 +372,29 @@ class _DistributorOrderDetailScreenState
                 return Center(child: Text(l10n.distributorNoOrders));
               }
 
+              // Watch tier discount for this store (returns 0 if unavailable)
+              final discountAsync =
+                  ref.watch(storeDiscountProvider(order.storeId));
+              final discountPercent = discountAsync.valueOrNull ?? 0.0;
+
               return itemsAsync.when(
                 loading: () => const TableSkeleton(rows: 4, columns: 4),
                 error: (e, _) => Center(child: Text(l10n.distributorLoadError)),
                 data: (items) {
                   // Sync controllers: dispose stale ones, prepare for current items
                   _syncControllers(items);
+
+                  // Auto-fill controllers with tier-discounted prices
+                  if (discountPercent > 0) {
+                    for (final item in items) {
+                      _autoFillWithDiscount(
+                        item.id,
+                        item.suggestedPrice,
+                        discountPercent,
+                      );
+                    }
+                  }
+
                   final total = _calculatedTotal(items);
 
                   return SingleChildScrollView(
@@ -420,6 +457,14 @@ class _DistributorOrderDetailScreenState
                                   ? AlhaiSpacing.lg
                                   : AlhaiSpacing.md,
                             ),
+
+                            // Tier discount banner
+                            if (discountPercent > 0)
+                              _buildTierDiscountBanner(
+                                discountPercent,
+                                order.storeName,
+                                isDark,
+                              ),
 
                             // Items
                             if (isWide)
@@ -588,6 +633,44 @@ class _DistributorOrderDetailScreenState
                   ),
                 ),
               ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTierDiscountBanner(
+    double discountPercent,
+    String storeName,
+    bool isDark,
+  ) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: AlhaiSpacing.md),
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.success.withValues(alpha: isDark ? 0.1 : 0.05),
+        borderRadius: BorderRadius.circular(AlhaiRadius.md),
+        border: Border.all(
+          color: AppColors.success.withValues(alpha: 0.3),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.discount_outlined,
+            color: AppColors.success,
+            size: 20,
+          ),
+          const SizedBox(width: AlhaiSpacing.sm),
+          Expanded(
+            child: Text(
+              'فئة سعرية مطبّقة: خصم ${discountPercent.toStringAsFixed(discountPercent.truncateToDouble() == discountPercent ? 0 : 2)}% '
+              'على متجر $storeName — الأسعار معبّأة تلقائياً (قابلة للتعديل)',
+              style: TextStyle(
+                fontSize: 13,
+                color: AppColors.getTextSecondary(isDark),
+              ),
             ),
           ),
         ],
