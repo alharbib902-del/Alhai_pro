@@ -17,6 +17,7 @@ import '../../screens/pricing/pricing_tiers_screen.dart'
 import '../../screens/reports/distributor_reports_screen.dart'
     deferred as reports;
 import '../../screens/settings/distributor_settings_screen.dart';
+import '../../screens/documents/distributor_documents_screen.dart';
 import '../supabase/supabase_client.dart';
 
 /// Router provider that rebuilds when auth state changes.
@@ -146,6 +147,16 @@ final distributorRouterProvider = Provider<GoRouter>((ref) {
                 loader: reports.loadLibrary,
                 builder: () => reports.DistributorReportsScreen(),
               ),
+              transitionsBuilder: (c, a, sa, child) =>
+                  FadeTransition(opacity: a, child: child),
+            ),
+          ),
+          GoRoute(
+            path: '/documents',
+            name: 'distributor-documents',
+            pageBuilder: (context, state) => CustomTransitionPage(
+              key: state.pageKey,
+              child: const DistributorDocumentsScreen(),
               transitionsBuilder: (c, a, sa, child) =>
                   FadeTransition(opacity: a, child: child),
             ),

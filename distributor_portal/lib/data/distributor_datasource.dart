@@ -1657,4 +1657,247 @@ class DistributorDatasource {
       return 0;
     }
   }
+
+  // ─── Documents ──────────────────────────────────────────────────
+
+  /// Storage bucket for distributor legal documents (private).
+  static const String _documentsBucket = 'distributor-documents';
+
+  /// Max document file size: 10 MB.
+  static const int _maxDocumentSize = 10 * 1024 * 1024;
+
+  /// Allowed MIME types for document uploads.
+  static const List<String> _allowedDocumentMimes = [
+    'application/pdf',
+    'image/jpeg',
+    'image/png',
+  ];
+
+  /// Whether the distributor_documents table is available.
+  /// Set to false on first 42P01 error to avoid repeated failures.
+  bool _documentsTableAvailable = true;
+
+  /// Check if an error indicates the documents table doesn't exist.
+  bool _isDocumentsTableError(Object e) {
+    if (e is PostgrestException) {
+      return e.code == '42P01' || (e.message.contains('distributor_documents'));
+    }
+    return false;
+  }
+
+  /// Upload a legal document to private storage.
+  Future<DistributorDocument> uploadDocument({
+    required DocumentType type,
+    required Uint8List fileBytes,
+    required String fileName,
+    required String mimeType,
+    DateTime? expiryDate,
+  }) async {
+    try {
+      _rateLimiter.check('uploadDocument');
+
+      // 1. Validate size
+      if (fileBytes.length > _maxDocumentSize) {
+        throw const DatasourceError(
+          type: DatasourceErrorType.validation,
+          message: 'حجم الملف يجب أن يكون أقل من 10 ميجابايت',
+        );
+      }
+
+      // 2. Validate MIME type
+      if (!_allowedDocumentMimes.contains(mimeType)) {
+        throw const DatasourceError(
+          type: DatasourceErrorType.validation,
+          message: 'نوع الملف غير مدعوم (PDF, JPG, PNG فقط)',
+        );
+      }
+
+      final orgId = await _requireOrgId('uploadDocument');
+
+      // 3. Check for existing active document of same type
+      try {
+        final existing = await _client
+            .from('distributor_documents')
+            .select('id, status')
+            .eq('org_id', orgId)
+            .eq('document_type', type.dbValue)
+            .inFilter('status', ['under_review', 'approved'])
+            .maybeSingle();
+
+        if (existing != null) {
+          final status = existing['status'] as String;
+          if (status == 'approved') {
+            throw const DatasourceError(
+              type: DatasourceErrorType.validation,
+              message: 'هذه الوثيقة موافق عليها بالفعل',
+            );
+          }
+          if (status == 'under_review') {
+            throw const DatasourceError(
+              type: DatasourceErrorType.validation,
+              message: 'هذه الوثيقة قيد المراجعة بالفعل',
+            );
+          }
+        }
+      } on PostgrestException catch (e) {
+        if (_isDocumentsTableError(e)) {
+          _documentsTableAvailable = false;
+          throw const DatasourceError(
+            type: DatasourceErrorType.unknown,
+            message: 'جدول الوثائق غير منشأ بعد. راجع الدعم.',
+          );
+        }
+        rethrow;
+      }
+
+      // 4. Upload to private storage
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final storagePath = '$orgId/${type.dbValue}/${timestamp}_$fileName';
+
+      try {
+        await _client.storage.from(_documentsBucket).uploadBinary(
+          storagePath,
+          fileBytes,
+          fileOptions: FileOptions(contentType: mimeType, upsert: false),
+        );
+      } on StorageException catch (e) {
+        throw DatasourceError(
+          type: DatasourceErrorType.unknown,
+          message: 'فشل رفع الملف: ${e.message}',
+          originalError: e,
+        );
+      }
+
+      // 5. Insert record in DB
+      final docId = const Uuid().v4();
+      try {
+        final response = await _client
+            .from('distributor_documents')
+            .insert({
+              'id': docId,
+              'org_id': orgId,
+              'document_type': type.dbValue,
+              'file_url': storagePath,
+              'file_name': fileName,
+              'file_size': fileBytes.length,
+              'mime_type': mimeType,
+              'status': 'under_review',
+              'expiry_date': expiryDate?.toIso8601String().split('T')[0],
+              'uploaded_at': DateTime.now().toIso8601String(),
+            })
+            .select()
+            .single();
+
+        return DistributorDocument.fromJson(response);
+      } on PostgrestException catch (e) {
+        // Cleanup orphan file on DB insert failure
+        try {
+          await _client.storage.from(_documentsBucket).remove([storagePath]);
+        } catch (_) {}
+
+        if (_isDocumentsTableError(e)) {
+          _documentsTableAvailable = false;
+          throw const DatasourceError(
+            type: DatasourceErrorType.unknown,
+            message: 'جدول الوثائق غير منشأ بعد. راجع الدعم.',
+          );
+        }
+        rethrow;
+      }
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      final error = _categorizeError(e, 'uploadDocument');
+      if (kDebugMode) debugPrint('$error');
+      throw error;
+    }
+  }
+
+  /// List all documents for the current org.
+  Future<List<DistributorDocument>> getDocuments() async {
+    if (!_documentsTableAvailable) return [];
+    try {
+      final orgId = await _requireOrgId('getDocuments');
+
+      final response = await _client
+          .from('distributor_documents')
+          .select()
+          .eq('org_id', orgId)
+          .order('uploaded_at', ascending: false);
+
+      return (response as List)
+          .map((json) =>
+              DistributorDocument.fromJson(json as Map<String, dynamic>))
+          .toList();
+    } on PostgrestException catch (e) {
+      if (_isDocumentsTableError(e)) {
+        _documentsTableAvailable = false;
+        return []; // Graceful degradation
+      }
+      final error = _categorizeError(e, 'getDocuments');
+      if (kDebugMode) debugPrint('$error');
+      throw error;
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      final error = _categorizeError(e, 'getDocuments');
+      if (kDebugMode) debugPrint('$error');
+      throw error;
+    }
+  }
+
+  /// Get a signed URL for viewing a document (expires in 1 hour).
+  Future<String> getDocumentSignedUrl(String storagePath) async {
+    try {
+      final url = await _client.storage
+          .from(_documentsBucket)
+          .createSignedUrl(storagePath, 3600);
+      return url;
+    } on StorageException catch (e) {
+      throw DatasourceError(
+        type: DatasourceErrorType.unknown,
+        message: 'فشل تحضير رابط الملف: ${e.message}',
+        originalError: e,
+      );
+    }
+  }
+
+  /// Delete a document (only if not approved).
+  Future<void> deleteDocument(String documentId) async {
+    try {
+      _rateLimiter.check('deleteDocument');
+
+      // Get document first for storage cleanup & status check
+      final doc = await _client
+          .from('distributor_documents')
+          .select('file_url, status')
+          .eq('id', documentId)
+          .single();
+
+      if (doc['status'] == 'approved') {
+        throw const DatasourceError(
+          type: DatasourceErrorType.validation,
+          message: 'لا يمكن حذف وثيقة موافق عليها',
+        );
+      }
+
+      // Delete from storage (best effort)
+      try {
+        await _client.storage
+            .from(_documentsBucket)
+            .remove([doc['file_url'] as String]);
+      } catch (_) {
+        // Don't block DB delete on storage failure
+      }
+
+      // Delete from DB (RLS enforces ownership + non-approved)
+      await _client
+          .from('distributor_documents')
+          .delete()
+          .eq('id', documentId);
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      final error = _categorizeError(e, 'deleteDocument');
+      if (kDebugMode) debugPrint('$error');
+      throw error;
+    }
+  }
 }
