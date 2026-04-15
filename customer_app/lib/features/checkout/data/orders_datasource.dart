@@ -106,12 +106,20 @@ class OrdersDatasource {
   }
 
   Future<Order> getOrder(String id) async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) throw StateError('Not authenticated');
+
     final data = await _client
         .from('orders')
         .select('*, order_items(*)')
         .eq('id', id)
-        .single()
+        .eq('customer_id', userId)
+        .maybeSingle()
         .timeout(AppConstants.networkTimeout);
+
+    if (data == null) {
+      throw Exception('Order not found or access denied');
+    }
 
     final items = ((data['order_items'] as List?) ?? [])
         .map(
