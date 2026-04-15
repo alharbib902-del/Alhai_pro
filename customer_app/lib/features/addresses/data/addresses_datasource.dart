@@ -100,6 +100,7 @@ class AddressesDatasource {
         .from('addresses')
         .update({'is_default': true})
         .eq('id', id)
+        .eq('user_id', _userId)
         .timeout(AppConstants.networkTimeout);
   }
 
