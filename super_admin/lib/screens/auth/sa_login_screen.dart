@@ -4,7 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_core/alhai_core.dart' show UserRole;
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthException;
 
+import '../../core/router/app_router.dart';
 import '../../core/services/audit_log_service.dart';
 import '../../providers/sa_dashboard_providers.dart' show saSupabaseClientProvider;
 
@@ -109,7 +112,23 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
         return;
       }
 
-      // Step 4: Login fully verified — audit success
+      // Step 4: Check MFA status — redirect to MFA screen if needed.
+      final mfaRequired = await _checkMfaRequired();
+      if (mfaRequired) {
+        _logLoginAttempt(
+          email: email,
+          userId: authState.user?.id,
+          success: true,
+          reason: 'password_verified_mfa_pending',
+        );
+        if (mounted) {
+          setState(() => _isLoading = false);
+          context.go(SuperAdminRoutes.mfa);
+        }
+        return;
+      }
+
+      // Step 5: No MFA or already at AAL2 — full login success.
       _logLoginAttempt(
         email: email,
         userId: authState.user?.id,
@@ -151,6 +170,31 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
       }
       // Fail-safe: if we can't verify, deny access.
       return false;
+    }
+  }
+
+  /// Checks whether the user needs to complete MFA verification.
+  ///
+  /// Returns `true` if the user has TOTP factors enrolled (or needs
+  /// enrollment) and the current AAL is below AAL2. Returns `false`
+  /// if MFA is not available or the user is already at AAL2.
+  Future<bool> _checkMfaRequired() async {
+    try {
+      final client = ref.read(saSupabaseClientProvider);
+      final aal = await client.auth.mfa.getAuthenticatorAssuranceLevel();
+
+      // Already at AAL2 — MFA complete.
+      if (aal.currentLevel == AuthenticatorAssuranceLevels.aal2) {
+        return false;
+      }
+
+      // Below AAL2 — need verification or enrollment.
+      return true;
+    } catch (e) {
+      if (kDebugMode) debugPrint('MFA check failed: $e');
+      // If MFA API is unavailable (e.g., Supabase project doesn't support it),
+      // still redirect to MFA screen which will show an appropriate message.
+      return true;
     }
   }
 

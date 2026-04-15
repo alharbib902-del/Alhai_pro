@@ -6,6 +6,7 @@ import 'package:alhai_core/alhai_core.dart' show UserRole;
 
 import '../../ui/super_admin_shell.dart';
 import '../../screens/auth/sa_login_screen.dart';
+import '../../screens/auth/sa_mfa_screen.dart';
 import '../../screens/dashboard/sa_dashboard_screen.dart';
 import '../../screens/stores/sa_stores_list_screen.dart';
 import '../../screens/stores/sa_store_detail_screen.dart';
@@ -31,6 +32,7 @@ import '../../screens/settings/sa_system_health_screen.dart' deferred as health;
 class SuperAdminRoutes {
   static const splash = '/';
   static const login = '/login';
+  static const mfa = '/mfa';
 
   // Dashboard
   static const dashboard = '/dashboard';
@@ -84,7 +86,11 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
   final authState = ref.read(authStateProvider);
   final path = state.uri.path;
 
-  const publicPaths = [SuperAdminRoutes.splash, SuperAdminRoutes.login];
+  const publicPaths = [
+    SuperAdminRoutes.splash,
+    SuperAdminRoutes.login,
+    SuperAdminRoutes.mfa,
+  ];
   final isPublic = publicPaths.contains(path);
 
   // Still resolving -> stay on current page
@@ -93,18 +99,24 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
   // Not authenticated -> login
   if (authState.status == AuthStatus.unauthenticated ||
       authState.status == AuthStatus.sessionExpired) {
-    return isPublic ? null : SuperAdminRoutes.login;
+    if (path == SuperAdminRoutes.login || path == SuperAdminRoutes.splash) {
+      return null;
+    }
+    return SuperAdminRoutes.login;
   }
 
   // Authenticated: check super_admin role
   if (authState.status == AuthStatus.authenticated) {
-    // Redirect to dashboard if on public page
-    if (isPublic) return SuperAdminRoutes.dashboard;
-
     // Enforce super_admin role for all protected routes
     final role = authState.user?.role;
     if (role != UserRole.superAdmin) {
       return SuperAdminRoutes.login;
+    }
+
+    // If on login/splash and authenticated with super_admin role,
+    // redirect to dashboard (MFA is handled by the login screen flow).
+    if (path == SuperAdminRoutes.login || path == SuperAdminRoutes.splash) {
+      return SuperAdminRoutes.dashboard;
     }
   }
 
@@ -124,6 +136,10 @@ final List<RouteBase> _routes = [
   GoRoute(
     path: SuperAdminRoutes.login,
     builder: (c, s) => const SALoginScreen(),
+  ),
+  GoRoute(
+    path: SuperAdminRoutes.mfa,
+    builder: (c, s) => const SAMfaScreen(),
   ),
 
   // Shell route with sidebar navigation
