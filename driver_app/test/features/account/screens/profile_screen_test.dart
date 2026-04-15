@@ -102,6 +102,12 @@ void main() {
       await tester.pumpWidget(buildTestWidget());
       await tester.pump();
 
+      // Scroll down to reveal the version text (may be off-screen after
+      // adding the driving mode toggle card).
+      await tester.scrollUntilVisible(
+        find.text('Alhai Driver v1.0.0'),
+        200,
+      );
       expect(find.text('Alhai Driver v1.0.0'), findsOneWidget);
     });
 

@@ -11,6 +11,7 @@ import '../../features/deliveries/screens/deliveries_list_screen.dart';
 import '../../features/deliveries/screens/order_details_screen.dart';
 import '../../features/deliveries/screens/new_order_screen.dart';
 import '../../features/navigation/screens/navigation_screen.dart';
+import '../../features/deliveries/screens/pickup_otp_screen.dart';
 import '../../features/proof/screens/delivery_proof_screen.dart';
 import '../../features/chat/screens/chat_screen.dart';
 import '../../features/earnings/screens/earnings_screen.dart';
@@ -130,6 +131,23 @@ final driverRouterProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => _slideTransitionPage(
           key: state.pageKey,
           child: NavigationScreen(deliveryId: state.pathParameters['id'] ?? ''),
+        ),
+      ),
+      GoRoute(
+        path: '/orders/:id/pickup-otp',
+        name: 'pickupOtp',
+        pageBuilder: (context, state) => _slideTransitionPage(
+          key: state.pageKey,
+          child: PickupOtpScreen(
+            orderId: state.pathParameters['id'] ?? '',
+            onVerified: () {
+              // After OTP verification, go back to order details.
+              // The status will have been updated by the backend RPC.
+              if (context.canPop()) {
+                context.pop();
+              }
+            },
+          ),
         ),
       ),
       GoRoute(

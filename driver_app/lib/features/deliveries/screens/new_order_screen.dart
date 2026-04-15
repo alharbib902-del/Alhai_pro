@@ -7,7 +7,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/driver_constants.dart';
+import '../../../core/widgets/driving_mode_scale.dart';
 import '../providers/delivery_providers.dart';
+import '../providers/driving_mode_provider.dart';
 
 /// Full-screen alert for new delivery assignment.
 ///
@@ -201,9 +203,10 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
           final isUrgent = _remainingSeconds <= 10;
           final progressColor = isUrgent ? Colors.red : Colors.orange;
 
-          return SafeArea(
-            child: Padding(
-              padding: const EdgeInsets.all(AlhaiSpacing.lg),
+          return DrivingModeScale(
+            child: SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.all(AlhaiSpacing.lg),
               child: Column(
                 children: [
                   // Countdown progress bar
@@ -310,62 +313,76 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
                   // Action buttons
                   if (_isLoading)
                     const CircularProgressIndicator()
-                  else ...[
-                    SizedBox(
-                      width: double.infinity,
-                      child: Semantics(
-                        label: 'قبول طلب التوصيل',
-                        button: true,
-                        child: FilledButton.icon(
-                          onPressed: () => _accept(deliveryId),
-                          icon: const Icon(Icons.check_circle),
-                          label: const Text(
-                            'قبول الطلب',
-                            style: TextStyle(fontSize: 18),
-                          ),
-                          style: FilledButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                              vertical: AlhaiSpacing.md,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                AlhaiRadius.button,
+                  else
+                    Builder(builder: (context) {
+                      final isDriving = ref.watch(drivingModeProvider);
+                      final acceptHeight = isDriving ? 80.0 : 56.0;
+                      final rejectHeight = isDriving ? 80.0 : 48.0;
+                      return Column(
+                        children: [
+                          SizedBox(
+                            width: double.infinity,
+                            height: acceptHeight,
+                            child: Semantics(
+                              label: 'قبول طلب التوصيل',
+                              button: true,
+                              child: FilledButton.icon(
+                                onPressed: () => _accept(deliveryId),
+                                icon: const Icon(Icons.check_circle),
+                                label: Text(
+                                  'قبول الطلب',
+                                  style: isDriving
+                                      ? theme.textTheme.headlineSmall
+                                      : const TextStyle(fontSize: 18),
+                                ),
+                                style: FilledButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                    vertical: AlhaiSpacing.md,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      AlhaiRadius.button,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: AlhaiSpacing.sm),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Semantics(
-                        label: 'رفض طلب التوصيل',
-                        button: true,
-                        child: OutlinedButton.icon(
-                          onPressed: () => _reject(deliveryId),
-                          icon: const Icon(Icons.cancel_outlined),
-                          label: const Text(
-                            'رفض',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: theme.colorScheme.error,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                AlhaiRadius.button,
+                          const SizedBox(height: AlhaiSpacing.sm),
+                          SizedBox(
+                            width: double.infinity,
+                            height: rejectHeight,
+                            child: Semantics(
+                              label: 'رفض طلب التوصيل',
+                              button: true,
+                              child: OutlinedButton.icon(
+                                onPressed: () => _reject(deliveryId),
+                                icon: const Icon(Icons.cancel_outlined),
+                                label: const Text(
+                                  'رفض',
+                                  style: TextStyle(fontSize: 16),
+                                ),
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: theme.colorScheme.error,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 14),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(
+                                      AlhaiRadius.button,
+                                    ),
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ],
+                        ],
+                      );
+                    }),
                   const SizedBox(height: AlhaiSpacing.lg),
                 ],
               ),
             ),
+          ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),

@@ -76,6 +76,9 @@ dependencies:
   # Signature capture
   signature: ^5.4.1
 
+  # Text-to-speech for driving mode voice prompts
+  flutter_tts: ^4.0.2
+
   # Screen wake lock during active delivery
   wakelock_plus: ^1.4.0
 
@@ -100,6 +103,7 @@ dev_dependencies:
   geolocator_platform_interface: any
   image_picker_platform_interface: any
   plugin_platform_interface: any
+  url_launcher_platform_interface: any
   wakelock_plus_platform_interface: any
 
 flutter:

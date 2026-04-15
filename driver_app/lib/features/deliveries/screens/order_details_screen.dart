@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/constants/driver_constants.dart';
+import '../../../core/widgets/driving_mode_scale.dart';
 import '../providers/delivery_providers.dart';
 import '../widgets/delivery_status_badge.dart';
 import '../widgets/delivery_action_buttons.dart';
@@ -63,11 +64,12 @@ class OrderDetailsScreen extends ConsumerWidget {
                 ),
             ],
           ),
-          body: SafeArea(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 800),
-                child: Column(
+          body: DrivingModeScale(
+            child: SafeArea(
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 800),
+                  child: Column(
                   children: [
                     Expanded(
                       child: ListView(
@@ -142,11 +144,14 @@ class OrderDetailsScreen extends ConsumerWidget {
                       currentStatus: status,
                       onProofRequired: () =>
                           context.push('/orders/$deliveryId/proof'),
+                      onOtpRequired: () =>
+                          context.push('/orders/$deliveryId/pickup-otp'),
                     ),
                   ],
                 ),
               ),
             ),
+          ),
           ),
         );
       },

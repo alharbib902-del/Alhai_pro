@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/providers/app_providers.dart';
 import '../../auth/providers/auth_providers.dart';
+import '../../deliveries/providers/driving_mode_provider.dart';
 
 class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
@@ -61,6 +62,19 @@ class ProfileScreen extends ConsumerWidget {
                           ),
                         ],
                       ),
+                    ),
+                  ),
+                  const SizedBox(height: AlhaiSpacing.md),
+
+                  // Driving mode toggle
+                  Card(
+                    child: SwitchListTile(
+                      secondary: const Icon(Icons.directions_car),
+                      title: const Text('وضع القيادة'),
+                      subtitle: const Text('نصوص وأزرار أكبر + تنبيهات صوتية'),
+                      value: ref.watch(drivingModeProvider),
+                      onChanged: (_) =>
+                          ref.read(drivingModeProvider.notifier).toggle(),
                     ),
                   ),
                   const SizedBox(height: AlhaiSpacing.md),
