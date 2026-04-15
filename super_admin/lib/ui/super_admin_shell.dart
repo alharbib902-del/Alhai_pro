@@ -1,21 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../core/router/app_router.dart';
+import '../core/services/audit_log_service.dart';
 
 /// Shell scaffold with persistent sidebar navigation for Super Admin.
 /// Web-first responsive layout: expanded sidebar on desktop, rail on tablet,
 /// bottom nav on mobile (unlikely for admin panel but handled).
-class SuperAdminShell extends StatefulWidget {
+class SuperAdminShell extends ConsumerStatefulWidget {
   final Widget child;
   const SuperAdminShell({super.key, required this.child});
 
   @override
-  State<SuperAdminShell> createState() => _SuperAdminShellState();
+  ConsumerState<SuperAdminShell> createState() => _SuperAdminShellState();
 }
 
-class _SuperAdminShellState extends State<SuperAdminShell> {
+class _SuperAdminShellState extends ConsumerState<SuperAdminShell> {
   bool _sidebarCollapsed = false;
 
   int _currentIndex(String location) {
@@ -121,11 +124,29 @@ class _SuperAdminShellState extends State<SuperAdminShell> {
             collapsed: _sidebarCollapsed,
             onToggleCollapse: () =>
                 setState(() => _sidebarCollapsed = !_sidebarCollapsed),
+            onLogout: _logout,
           ),
           Expanded(child: widget.child),
         ],
       ),
     );
+  }
+
+  Future<void> _logout() async {
+    final authState = ref.read(authStateProvider);
+    // Audit log the logout event before signing out.
+    try {
+      ref.read(auditLogServiceProvider).log(
+        action: 'auth.logout',
+        targetType: 'user',
+        targetId: authState.user?.id ?? 'unknown',
+        metadata: {
+          'email': authState.user?.email ?? '',
+          'timestamp': DateTime.now().toUtc().toIso8601String(),
+        },
+      );
+    } catch (_) {}
+    await ref.read(authStateProvider.notifier).logout();
   }
 
   List<_NavItem> _buildNavItems(AppLocalizations l10n) {
@@ -171,6 +192,7 @@ class _DesktopSidebar extends StatelessWidget {
   final ValueChanged<int> onItemTapped;
   final bool collapsed;
   final VoidCallback onToggleCollapse;
+  final VoidCallback? onLogout;
 
   const _DesktopSidebar({
     required this.items,
@@ -178,6 +200,7 @@ class _DesktopSidebar extends StatelessWidget {
     required this.onItemTapped,
     required this.collapsed,
     required this.onToggleCollapse,
+    this.onLogout,
   });
 
   @override
@@ -224,6 +247,10 @@ class _DesktopSidebar extends StatelessWidget {
               },
             ),
           ),
+
+          // Logout button
+          const Divider(height: 1),
+          _LogoutButton(collapsed: collapsed, onTap: onLogout),
 
           // Collapse toggle
           const Divider(height: 1),
@@ -341,6 +368,58 @@ class _SidebarTile extends StatelessWidget {
                         fontWeight: isSelected
                             ? FontWeight.w600
                             : FontWeight.normal,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LogoutButton extends StatelessWidget {
+  final bool collapsed;
+  final VoidCallback? onTap;
+  const _LogoutButton({required this.collapsed, this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AlhaiSpacing.xs,
+        vertical: AlhaiSpacing.xxxs,
+      ),
+      child: Material(
+        color: Colors.transparent,
+        borderRadius: BorderRadius.circular(AlhaiRadius.sm),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(AlhaiRadius.sm),
+          onTap: onTap,
+          child: Padding(
+            padding: EdgeInsets.symmetric(
+              horizontal: collapsed ? AlhaiSpacing.md : AlhaiSpacing.sm,
+              vertical: AlhaiSpacing.sm,
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.logout_rounded,
+                  color: theme.colorScheme.error,
+                  size: 22,
+                ),
+                if (!collapsed) ...[
+                  const SizedBox(width: AlhaiSpacing.sm),
+                  Expanded(
+                    child: Text(
+                      'Logout',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.error,
                       ),
                       overflow: TextOverflow.ellipsis,
                     ),
