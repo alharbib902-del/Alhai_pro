@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/foundation.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -12,6 +13,7 @@ import 'package:signature/signature.dart';
 
 import '../../../core/constants/driver_constants.dart';
 import '../data/proof_datasource.dart';
+import '../../deliveries/data/delivery_datasource.dart';
 import '../../deliveries/providers/delivery_providers.dart';
 import '../../../core/services/location_service.dart';
 
@@ -136,8 +138,33 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
         }
       }
 
-      // Get current location
-      final position = await LocationService.instance.getCurrentPosition();
+      // Get current location — verified against mock GPS.
+      // This is the critical fraud gate for the 'delivered' transition.
+      Position? position;
+      try {
+        position = await LocationService.instance.getVerifiedPosition();
+      } on MockGpsDetectedException catch (e) {
+        // Best-effort audit log — do not let logging failure unblock fraud.
+        try {
+          final ds = GetIt.instance<DeliveryDatasource>();
+          await ds.logMockGpsDetected(
+            lat: e.position.latitude,
+            lng: e.position.longitude,
+          );
+        } catch (_) {}
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.message),
+              backgroundColor: Theme.of(context).colorScheme.error,
+              duration: const Duration(seconds: 5),
+            ),
+          );
+          setState(() => _isLoading = false);
+        }
+        return;
+      }
 
       final ds = GetIt.instance<ProofDatasource>();
       await ds.submitProof(
@@ -150,8 +177,8 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
         notes: _notesController.text.trim().isEmpty
             ? null
             : _notesController.text.trim(),
-        lat: position?.latitude,
-        lng: position?.longitude,
+        lat: position.latitude,
+        lng: position.longitude,
       );
 
       // Mark as delivered
