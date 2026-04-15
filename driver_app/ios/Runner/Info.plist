@@ -53,5 +53,11 @@
 	<string>يحتاج التطبيق لتحديد موقعك لتتبع مسار التوصيل وعرض الخريطة</string>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
 	<string>يحتاج التطبيق لتتبع موقعك في الخلفية أثناء التوصيل</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>location</string>
+		<string>fetch</string>
+		<string>remote-notification</string>
+	</array>
 </dict>
 </plist>
