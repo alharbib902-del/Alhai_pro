@@ -181,7 +181,7 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
   Future<bool> _checkMfaRequired() async {
     try {
       final client = ref.read(saSupabaseClientProvider);
-      final aal = await client.auth.mfa.getAuthenticatorAssuranceLevel();
+      final aal = client.auth.mfa.getAuthenticatorAssuranceLevel();
 
       // Already at AAL2 — MFA complete.
       if (aal.currentLevel == AuthenticatorAssuranceLevels.aal2) {

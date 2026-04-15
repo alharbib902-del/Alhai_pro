@@ -65,7 +65,7 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
 
     try {
       final client = ref.read(saSupabaseClientProvider);
-      final aal = await client.auth.mfa.getAuthenticatorAssuranceLevel();
+      final aal = client.auth.mfa.getAuthenticatorAssuranceLevel();
 
       if (kDebugMode) {
         debugPrint('MFA AAL: current=${aal.currentLevel}, next=${aal.nextLevel}');

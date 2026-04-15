@@ -88,13 +88,6 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
   final authState = ref.read(authStateProvider);
   final path = state.uri.path;
 
-  const publicPaths = [
-    SuperAdminRoutes.splash,
-    SuperAdminRoutes.login,
-    SuperAdminRoutes.mfa,
-  ];
-  final isPublic = publicPaths.contains(path);
-
   // Still resolving -> stay on current page
   if (authState.status == AuthStatus.unknown) return null;
 
