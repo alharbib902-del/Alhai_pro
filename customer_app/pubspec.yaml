@@ -43,6 +43,9 @@ dependencies:
   cached_network_image: ^3.3.1
   image_picker: ^1.0.7
 
+  # Crypto (for cert pinning)
+  crypto: ^3.0.3
+
   # Utils
   intl: any
   uuid: ^4.4.0
