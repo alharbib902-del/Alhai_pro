@@ -33,7 +33,7 @@ class TaxSettingsScreen extends ConsumerStatefulWidget {
 class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
   bool _enableVat = true;
   double _vatRate = 15.0;
-  final _taxNumberController = TextEditingController(text: '310123456700003');
+  final _taxNumberController = TextEditingController();
   bool _priceIncludesTax = true;
   bool _showTaxOnReceipt = true;
   bool _enableZatca = false;
