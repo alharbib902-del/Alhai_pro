@@ -14,6 +14,7 @@ import '../../core/providers/unsaved_changes_provider.dart';
 import '../../core/services/sentry_service.dart';
 import '../../core/constants/admin_permissions.dart';
 import '../../core/widgets/permission_guard.dart';
+import 'package:alhai_auth/alhai_auth.dart' show currentUserProvider;
 
 /// Admin Product Form Screen - Add/Edit product
 class ProductFormScreen extends ConsumerStatefulWidget {
@@ -965,6 +966,28 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         );
 
         await db.productsDao.updateProduct(updated);
+
+        // Log price change to audit trail if price changed
+        final newPrice = double.tryParse(priceText) ?? 0.0;
+        if (existing.price != newPrice) {
+          try {
+            final currentUser = ref.read(currentUserProvider);
+            db.auditLogDao.log(
+              storeId: storeId,
+              userId: currentUser?.id ?? 'unknown',
+              userName: currentUser?.name ?? 'unknown',
+              action: AuditAction.priceChange,
+              entityType: 'product',
+              entityId: existing.id,
+              oldValue: {'price': existing.price},
+              newValue: {'price': newPrice},
+              description:
+                  'Price changed for "${existing.name}": ${existing.price} \u2192 $newPrice',
+            );
+          } catch (_) {
+            // Audit logging should not block the save
+          }
+        }
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
