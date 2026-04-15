@@ -234,6 +234,9 @@ class UblInvoiceBuilder {
     }
     addressChildren.add(_cbcElement('CityName', seller.city));
     addressChildren.add(_cbcElement('PostalZone', seller.postalCode));
+    if (seller.region != null) {
+      addressChildren.add(_cbcElement('CountrySubentity', seller.region!));
+    }
     addressChildren.add(
       XmlElement(XmlName('Country', 'cac'), [], [
         _cbcElement('IdentificationCode', seller.countryCode),
@@ -329,6 +332,11 @@ class UblInvoiceBuilder {
       }
       if (buyer?.postalCode != null) {
         addressChildren.add(_cbcElement('PostalZone', buyer!.postalCode!));
+      }
+      if (buyer?.region != null) {
+        addressChildren.add(
+          _cbcElement('CountrySubentity', buyer!.region!),
+        );
       }
       if (buyer?.countryCode != null) {
         addressChildren.add(

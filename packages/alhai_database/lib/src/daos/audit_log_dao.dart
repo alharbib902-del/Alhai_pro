@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:drift/drift.dart';
 import '../app_database.dart';
+import '../constants/retention_policy.dart';
 import '../tables/audit_log_table.dart';
 
 part 'audit_log_dao.g.dart';
@@ -244,8 +245,16 @@ class AuditLogDao extends DatabaseAccessor<AppDatabase>
     );
   }
 
-  /// حذف السجلات المزامنة القديمة (أقدم من المدة المحددة)
-  Future<int> cleanupOldLogs({Duration olderThan = const Duration(days: 90)}) {
+  /// LEGAL WARNING: This cleanup MUST respect Saudi VAT Law Article 66.
+  /// Records must be retained for minimum 6 years.
+  /// DO NOT reduce retention without legal review.
+  Future<int> cleanupOldLogs({
+    Duration olderThan = RetentionPolicy.auditLogRetention,
+  }) {
+    assert(
+      olderThan.inDays >= RetentionPolicy.auditLogRetention.inDays,
+      'CRITICAL: Audit log retention must be >= 6 years per Saudi VAT law',
+    );
     final cutoff = DateTime.now().subtract(olderThan);
     return (delete(auditLogTable)..where(
           (l) =>

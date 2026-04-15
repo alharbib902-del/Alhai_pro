@@ -92,6 +92,33 @@ Future<String> createReturn(
 
   if (items.isNotEmpty) {
     await db.returnsDao.insertReturnItems(items);
+
+    // ─── Restock inventory for returned items ───────────────
+    for (final item in items) {
+      final productId = item.productId.value;
+      final returnedQty = item.qty.value;
+
+      // Get current stock level
+      final product = await db.productsDao.getProductById(productId);
+      if (product != null) {
+        final currentStock = product.stockQty;
+        final newStock = currentStock + returnedQty;
+
+        // Update product stock
+        await db.productsDao.updateStock(productId, newStock);
+
+        // Record inventory movement
+        await db.inventoryDao.recordReturnMovement(
+          id: _uuid.v4(),
+          productId: productId,
+          storeId: storeId,
+          qty: returnedQty,
+          previousQty: currentStock,
+          returnId: id,
+          userId: createdBy,
+        );
+      }
+    }
   }
 
   // إضافة للطابور المزامنة

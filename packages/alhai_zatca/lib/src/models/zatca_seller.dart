@@ -32,6 +32,10 @@ class ZatcaSeller {
   /// Country code (BT-40), always 'SA' for Saudi Arabia
   final String countryCode;
 
+  /// Administrative region / province (BT-39 CountrySubentity)
+  /// e.g. 'Makkah Region', 'Riyadh Region', 'Eastern Province'
+  final String? region;
+
   /// Additional ID (e.g., 10-digit TIN)
   final String? additionalId;
 
@@ -49,6 +53,7 @@ class ZatcaSeller {
     this.district,
     required this.postalCode,
     this.countryCode = 'SA',
+    this.region,
     this.additionalId,
     this.additionalIdScheme,
   });
@@ -71,6 +76,7 @@ class ZatcaSeller {
     String? district,
     String? postalCode,
     String? countryCode,
+    String? region,
     String? additionalId,
     String? additionalIdScheme,
   }) {
@@ -85,6 +91,7 @@ class ZatcaSeller {
       district: district ?? this.district,
       postalCode: postalCode ?? this.postalCode,
       countryCode: countryCode ?? this.countryCode,
+      region: region ?? this.region,
       additionalId: additionalId ?? this.additionalId,
       additionalIdScheme: additionalIdScheme ?? this.additionalIdScheme,
     );
@@ -101,6 +108,7 @@ class ZatcaSeller {
     if (district != null) 'district': district,
     'postalCode': postalCode,
     'countryCode': countryCode,
+    if (region != null) 'region': region,
     if (additionalId != null) 'additionalId': additionalId,
     if (additionalIdScheme != null) 'additionalIdScheme': additionalIdScheme,
   };
@@ -116,6 +124,7 @@ class ZatcaSeller {
     district: json['district'] as String?,
     postalCode: json['postalCode'] as String,
     countryCode: json['countryCode'] as String? ?? 'SA',
+    region: json['region'] as String?,
     additionalId: json['additionalId'] as String?,
     additionalIdScheme: json['additionalIdScheme'] as String?,
   );
