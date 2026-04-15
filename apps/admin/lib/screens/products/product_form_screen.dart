@@ -883,6 +883,30 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       final stockText = _stockController.text.trim();
       final minStockText = _minStockController.text.trim();
 
+      // Check for duplicate barcode before save
+      if (barcode.isNotEmpty) {
+        final existingProduct =
+            await db.productsDao.getProductByBarcode(barcode, storeId);
+        if (existingProduct != null) {
+          final isSameProduct =
+              widget.isEditing && existingProduct.id == widget.productId;
+          if (!isSameProduct) {
+            if (mounted) {
+              setState(() => _isSaving = false);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(
+                    '\u0627\u0644\u0628\u0627\u0631\u0643\u0648\u062f \u0645\u0633\u062a\u062e\u062f\u0645 \u0628\u0627\u0644\u0641\u0639\u0644 \u0644\u0644\u0645\u0646\u062a\u062c: ${existingProduct.name}',
+                  ),
+                  backgroundColor: AppColors.error,
+                ),
+              );
+            }
+            return;
+          }
+        }
+      }
+
       if (widget.isEditing) {
         final existing = await db.productsDao.getProductById(widget.productId!);
         if (existing == null) throw Exception('Product not found');
