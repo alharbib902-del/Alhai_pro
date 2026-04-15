@@ -65,7 +65,7 @@ void main() {
 
       // After AAL2 check passes, guard redirects public pages to dashboard.
       String? redirect;
-      final isAal2 = currentLevel == AuthenticatorAssuranceLevels.aal2;
+      const isAal2 = currentLevel == AuthenticatorAssuranceLevels.aal2;
       if (isAal2) {
         if (path == loginPath || path == splashPath || path == mfaPath) {
           redirect = dashboardPath;

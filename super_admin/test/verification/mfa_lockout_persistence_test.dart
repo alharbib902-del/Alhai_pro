@@ -48,7 +48,7 @@ void main() {
     test('null user → locked out (fail-safe)', () {
       // Simulates: if (user == null) return true;
       const dynamic user = null;
-      final locked = user == null ? true : false;
+      const locked = user == null ? true : false;
       expect(locked, isTrue);
     });
   });
