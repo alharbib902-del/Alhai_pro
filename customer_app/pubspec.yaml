@@ -18,6 +18,8 @@ dependencies:
     path: ../alhai_core
   alhai_design_system:
     path: ../alhai_design_system
+  alhai_zatca:
+    path: ../packages/alhai_zatca
 
   # State Management (DI + ViewModels)
   flutter_riverpod: ^2.4.9

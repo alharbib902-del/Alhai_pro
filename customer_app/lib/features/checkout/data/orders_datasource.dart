@@ -1,3 +1,4 @@
+import 'package:alhai_zatca/alhai_zatca.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart';
 
@@ -30,11 +31,13 @@ class OrdersDatasource {
       throw Exception('بعض المنتجات غير متوفرة: $count منتجات');
     }
 
-    // 2. Calculate totals
+    // 2. Calculate totals with VAT
     double subtotal = 0;
     for (final item in params.items) {
       subtotal += item.lineTotal;
     }
+    final taxAmount = VatCalculator.vatFromNet(netAmount: subtotal);
+    final total = subtotal + taxAmount + params.deliveryFee;
 
     // 3. Insert order
     final orderMap = <String, dynamic>{
@@ -44,7 +47,9 @@ class OrdersDatasource {
       'store_id': params.storeId,
       'status': 'created',
       'subtotal': subtotal,
-      'total': subtotal,
+      'tax_amount': taxAmount,
+      'delivery_fee': params.deliveryFee,
+      'total': total,
       'payment_method': params.paymentMethod.name,
       'created_at': DateTime.now().toUtc().toIso8601String(),
     };
