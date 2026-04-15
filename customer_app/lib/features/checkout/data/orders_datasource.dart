@@ -195,6 +195,22 @@ class OrdersDatasource {
     );
   }
 
+  // ============================================================
+  // BACKEND REQUIREMENT (DEFERRED):
+  // Create RPC: cancel_order_by_customer(p_order_id UUID, p_reason TEXT)
+  // RETURNS BOOLEAN
+  // SECURITY DEFINER
+  //
+  // Logic:
+  //   1. Verify order belongs to auth.uid()
+  //   2. Check current status is cancellable (created, confirmed, preparing)
+  //   3. Call release_reserved_stock(p_order_id)
+  //   4. UPDATE orders SET status='cancelled', cancelled_at=NOW(), ...
+  //   5. Notify merchant via realtime
+  //   6. RETURN true on success, false if status not cancellable
+  //
+  // See: customer_app/docs/BACKEND_RPC_REQUIRED.md
+  // ============================================================
   Future<void> cancelOrder(String id, {String? reason}) async {
     final userId = _client.auth.currentUser?.id;
     if (userId == null) throw StateError('Not authenticated');
@@ -213,26 +229,53 @@ class OrdersDatasource {
     }
 
     final status = existing['status'] as String?;
+
+    // Terminal statuses: cancellation not allowed
     if (status == 'delivered' || status == 'cancelled') {
       throw Exception('Cannot cancel order in status: $status');
     }
 
-    // 2. Release reserved stock
-    await _client
-        .rpc('release_reserved_stock', params: {'p_order_id': id})
-        .timeout(AppConstants.networkTimeout);
+    // For status='created': direct UPDATE path (RLS allows this)
+    if (status == 'created') {
+      await _client
+          .rpc('release_reserved_stock', params: {'p_order_id': id})
+          .timeout(AppConstants.networkTimeout);
 
-    // 3. Update order status with ownership double-check
-    await _client
-        .from('orders')
-        .update({
-          'status': 'cancelled',
-          'cancellation_reason': reason,
-          'cancelled_at': DateTime.now().toUtc().toIso8601String(),
-        })
-        .eq('id', id)
-        .eq('customer_id', userId)
-        .timeout(AppConstants.networkTimeout);
+      await _client
+          .from('orders')
+          .update({
+            'status': 'cancelled',
+            'cancellation_reason': reason,
+            'cancelled_at': DateTime.now().toUtc().toIso8601String(),
+          })
+          .eq('id', id)
+          .eq('customer_id', userId)
+          .timeout(AppConstants.networkTimeout);
+      return;
+    }
+
+    // For other statuses (confirmed, preparing, ready, out_for_delivery):
+    // RLS policy orders_customer_update_created blocks direct UPDATE.
+    // Must use backend RPC that runs with SECURITY DEFINER.
+    try {
+      await _client
+          .rpc(
+            'cancel_order_by_customer',
+            params: {
+              'p_order_id': id,
+              'p_reason': reason,
+            },
+          )
+          .timeout(AppConstants.networkTimeout);
+    } on PostgrestException catch (e) {
+      // RPC not yet deployed: inform user clearly
+      if (e.code == '42883' || e.message.contains('function')) {
+        throw Exception(
+          'لا يمكن إلغاء الطلب في حالته الحالية. يرجى التواصل مع المتجر.',
+        );
+      }
+      rethrow;
+    }
   }
 
   Order _orderFromRow(Map<String, dynamic> row, List<OrderItem> items) {
