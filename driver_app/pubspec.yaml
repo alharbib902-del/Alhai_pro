@@ -94,6 +94,8 @@ dev_dependencies:
   # Testing
   mocktail: ^1.0.4
   faker: ^2.1.0
+  geolocator_platform_interface: any
+  plugin_platform_interface: any
 
 flutter:
   uses-material-design: true

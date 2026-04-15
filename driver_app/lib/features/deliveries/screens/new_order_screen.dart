@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,8 +10,14 @@ import '../../../core/constants/driver_constants.dart';
 import '../providers/delivery_providers.dart';
 
 /// Full-screen alert for new delivery assignment.
+///
+/// Starts a 30-second countdown timer when an assigned delivery is shown.
+/// Auto-rejects the order if the driver does not act before the timer expires.
 class NewOrderScreen extends ConsumerStatefulWidget {
-  const NewOrderScreen({super.key});
+  /// Acceptance window in seconds. Exposed for testing.
+  final int timeoutSeconds;
+
+  const NewOrderScreen({super.key, this.timeoutSeconds = 30});
 
   @override
   ConsumerState<NewOrderScreen> createState() => _NewOrderScreenState();
@@ -18,10 +26,62 @@ class NewOrderScreen extends ConsumerStatefulWidget {
 class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
     with SingleTickerProviderStateMixin {
   bool _isLoading = false;
+  late int _remainingSeconds;
+  Timer? _countdownTimer;
+  String? _assignedDeliveryId;
 
   /// Tracks the last time an action button was tapped to prevent double-tap.
   DateTime? _lastTapTime;
   static const _debounceInterval = Duration(seconds: 2);
+
+  @override
+  void initState() {
+    super.initState();
+    _remainingSeconds = widget.timeoutSeconds;
+    // Alert the driver immediately.
+    SystemSound.play(SystemSoundType.alert);
+    HapticFeedback.heavyImpact();
+  }
+
+  /// Starts the countdown when the first assigned delivery is rendered.
+  /// Idempotent — only the first call has effect.
+  void _ensureCountdownStarted(String deliveryId) {
+    if (_countdownTimer != null) return;
+    _assignedDeliveryId = deliveryId;
+    _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingSeconds <= 1) {
+        timer.cancel();
+        _autoReject();
+      } else {
+        setState(() => _remainingSeconds--);
+        // Extra haptic nudge in the last 10 seconds.
+        if (_remainingSeconds <= 10) {
+          HapticFeedback.lightImpact();
+        }
+      }
+    });
+  }
+
+  Future<void> _autoReject() async {
+    if (_assignedDeliveryId == null || _isLoading) return;
+    setState(() {
+      _remainingSeconds = 0;
+      _isLoading = true;
+    });
+    try {
+      await ref.read(
+        updateDeliveryStatusProvider((
+          id: _assignedDeliveryId!,
+          status: DeliveryStatus.cancelled,
+          notes: 'timeout',
+        )).future,
+      );
+    } catch (_) {
+      // Even if the server call fails, close the screen — the order should
+      // not hang in the UI.
+    }
+    if (mounted && context.canPop()) context.pop();
+  }
 
   Future<void> _accept(String deliveryId) async {
     // Debounce: ignore rapid taps within the interval.
@@ -32,6 +92,7 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
     }
     _lastTapTime = now;
 
+    _countdownTimer?.cancel();
     HapticFeedback.heavyImpact();
     setState(() => _isLoading = true);
     try {
@@ -62,6 +123,7 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
     }
     _lastTapTime = now;
 
+    _countdownTimer?.cancel();
     HapticFeedback.heavyImpact();
     setState(() => _isLoading = true);
     try {
@@ -69,10 +131,10 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
         updateDeliveryStatusProvider((
           id: deliveryId,
           status: DeliveryStatus.cancelled,
-          notes: 'رفض السائق',
+          notes: 'manual_rejection',
         )).future,
       );
-      if (mounted) context.pop();
+      if (mounted && context.canPop()) context.pop();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(
@@ -81,6 +143,12 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
         setState(() => _isLoading = false);
       }
     }
+  }
+
+  @override
+  void dispose() {
+    _countdownTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -96,6 +164,7 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
               .toList();
 
           if (assigned.isEmpty) {
+            _countdownTimer?.cancel();
             return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -126,12 +195,39 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
           final estimatedTime = delivery['estimated_time_minutes'];
           final deliveryId = delivery['id'] as String;
 
+          // Start the countdown once we have a delivery to show.
+          _ensureCountdownStarted(deliveryId);
+
+          final isUrgent = _remainingSeconds <= 10;
+          final progressColor = isUrgent ? Colors.red : Colors.orange;
+
           return SafeArea(
             child: Padding(
               padding: const EdgeInsets.all(AlhaiSpacing.lg),
               child: Column(
                 children: [
+                  // Countdown progress bar
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(4),
+                    child: LinearProgressIndicator(
+                      value: _remainingSeconds / widget.timeoutSeconds,
+                      minHeight: 6,
+                      valueColor: AlwaysStoppedAnimation(progressColor),
+                      backgroundColor: progressColor.withValues(alpha: 0.2),
+                    ),
+                  ),
+                  const SizedBox(height: AlhaiSpacing.xs),
+                  Text(
+                    '$_remainingSeconds ثانية للقبول',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: isUrgent
+                          ? Colors.red
+                          : theme.colorScheme.onSurfaceVariant,
+                      fontWeight: isUrgent ? FontWeight.bold : FontWeight.normal,
+                    ),
+                  ),
                   const Spacer(),
+
                   // Alert icon
                   Container(
                     width: 100,

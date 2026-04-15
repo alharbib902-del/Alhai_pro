@@ -2,8 +2,11 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_it/get_it.dart';
 
 import '../../../core/constants/driver_constants.dart';
+import '../../../core/services/location_service.dart';
+import '../data/delivery_datasource.dart';
 import '../providers/delivery_providers.dart';
 
 /// Dynamic action buttons based on current delivery status.
@@ -31,6 +34,14 @@ class _DeliveryActionButtonsState extends ConsumerState<DeliveryActionButtons> {
   DateTime? _lastTapTime;
   static const _debounceInterval = Duration(seconds: 2);
 
+  /// Statuses where mock GPS must be checked before allowing the transition.
+  static const _mockGpsGuardedStatuses = {
+    DeliveryStatus.arrivedAtPickup,
+    DeliveryStatus.pickedUp,
+    DeliveryStatus.arrivedAtCustomer,
+    DeliveryStatus.delivered,
+  };
+
   Future<void> _updateStatus(String newStatus, {String? notes}) async {
     // Debounce: ignore rapid taps within the interval.
     final now = DateTime.now();
@@ -42,6 +53,33 @@ class _DeliveryActionButtonsState extends ConsumerState<DeliveryActionButtons> {
 
     HapticFeedback.mediumImpact();
     setState(() => _isLoading = true);
+
+    // Block critical status transitions when mock GPS is detected.
+    if (_mockGpsGuardedStatuses.contains(newStatus)) {
+      try {
+        await LocationService.instance.getVerifiedPosition();
+      } on MockGpsDetectedException catch (e) {
+        // Best-effort audit log — do not let logging failure unblock fraud.
+        final ds = GetIt.instance<DeliveryDatasource>();
+        await ds.logMockGpsDetected(
+          lat: e.position.latitude,
+          lng: e.position.longitude,
+        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(e.message),
+              backgroundColor: Theme.of(context).colorScheme.error,
+            ),
+          );
+          setState(() => _isLoading = false);
+        }
+        return;
+      } catch (_) {
+        // Location fetch failed for non-mock reason — allow the transition.
+      }
+    }
+
     try {
       await ref.read(
         updateDeliveryStatusProvider((
