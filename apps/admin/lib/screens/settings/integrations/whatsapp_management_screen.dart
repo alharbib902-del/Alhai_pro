@@ -7,6 +7,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:get_it/get_it.dart';
 import 'package:drift/drift.dart' hide Column;
 import '../../../core/services/sentry_service.dart';
+import 'package:alhai_auth/alhai_auth.dart' show SecureStorageService;
 
 /// شاشة إدارة قائمة انتظار WhatsApp وقوالب الرسائل
 class WhatsAppManagementScreen extends ConsumerStatefulWidget {
@@ -113,6 +114,18 @@ class _WhatsAppManagementScreenState
           }
           _isLoading = false;
         });
+      }
+
+      // Load encrypted API credentials from secure storage
+      final savedApiKey =
+          await SecureStorageService.read('whatsapp_api_key');
+      final savedInstanceId =
+          await SecureStorageService.read('whatsapp_instance_id');
+      if (mounted && savedApiKey != null) {
+        _apiKeyController.text = savedApiKey;
+      }
+      if (mounted && savedInstanceId != null) {
+        _instanceIdController.text = savedInstanceId;
       }
     } catch (e, st) {
       await reportError(
@@ -738,13 +751,29 @@ class _WhatsAppManagementScreenState
           SizedBox(
             width: double.infinity,
             child: FilledButton.icon(
-              onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(AppLocalizations.of(context).settingsSaved),
-                    backgroundColor: AppColors.success,
-                  ),
-                );
+              onPressed: () async {
+                // Save API credentials to encrypted secure storage
+                if (_apiKeyController.text.isNotEmpty) {
+                  await SecureStorageService.write(
+                    'whatsapp_api_key',
+                    _apiKeyController.text,
+                  );
+                }
+                if (_instanceIdController.text.isNotEmpty) {
+                  await SecureStorageService.write(
+                    'whatsapp_instance_id',
+                    _instanceIdController.text,
+                  );
+                }
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content:
+                          Text(AppLocalizations.of(context).settingsSaved),
+                      backgroundColor: AppColors.success,
+                    ),
+                  );
+                }
               },
               icon: const Icon(Icons.save_outlined),
               label: Text(AppLocalizations.of(context).saveSettings),
