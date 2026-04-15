@@ -58,7 +58,7 @@ void main() {
       const status = 'created';
 
       // Decision logic from cancelOrder:
-      final useDirectUpdate = status == 'created';
+      const useDirectUpdate = status == 'created';
       expect(useDirectUpdate, isTrue);
     });
 
@@ -108,14 +108,14 @@ void main() {
       const status = 'delivered';
 
       // Step 1: terminal check (before any RPC/UPDATE)
-      final isTerminal = status == 'delivered' || status == 'cancelled';
+      const isTerminal = status == 'delivered' || status == 'cancelled';
       expect(isTerminal, isTrue,
           reason: 'Terminal check must happen before stock release');
 
       // If this were a non-terminal, non-created status:
       const status2 = 'confirmed';
-      final isTerminal2 = status2 == 'delivered' || status2 == 'cancelled';
-      final isCreated = status2 == 'created';
+      const isTerminal2 = status2 == 'delivered' || status2 == 'cancelled';
+      const isCreated = status2 == 'created';
       expect(isTerminal2, isFalse);
       expect(isCreated, isFalse);
       // → goes to RPC path, where stock release is handled atomically by backend
