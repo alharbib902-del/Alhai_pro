@@ -111,7 +111,8 @@ class _OrderTrackingScreenState extends ConsumerState<OrderTrackingScreen> {
                   delivery.deliveryAddress.lat,
                   delivery.deliveryAddress.lng,
                 )
-              : const LatLng(24.7136, 46.6753);
+              // Default fallback: Jeddah center
+              : const LatLng(21.4858, 39.1925);
 
           return Column(
             children: [

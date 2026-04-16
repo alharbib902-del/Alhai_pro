@@ -6,6 +6,8 @@ import 'package:alhai_core/alhai_core.dart';
 
 import '../../../core/services/sentry_service.dart';
 
+// Cart stores product IDs, names, prices, and quantities — non-PII data.
+// SharedPreferences is acceptable here; encryption is optional.
 const _cartKey = 'customer_cart';
 
 /// Cart state provider with persistence.

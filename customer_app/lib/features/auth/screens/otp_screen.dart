@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/providers/app_providers.dart';
@@ -27,7 +28,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   bool _loading = false;
   String? _error;
 
-  /// OTP verification rate limiting
+  /// OTP verification rate limiting (persisted via SharedPreferences)
   int _failedAttempts = 0;
   int _lockoutSeconds = 0;
   Timer? _lockoutTimer;
@@ -37,12 +38,16 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   Timer? _resendTimer;
 
   static const int _maxAttempts = 5;
-  static const int _lockoutDuration = AppConstants.otpLockoutSeconds;
+  static const int _lockoutDuration = 900; // 15 minutes
   static const int _resendCooldown = AppConstants.otpLockoutSeconds;
+
+  String get _attemptsKey => 'otp_failed_attempts_${widget.phone}';
+  String get _lockoutKey => 'otp_lockout_until_${widget.phone}';
 
   @override
   void initState() {
     super.initState();
+    _restoreRateLimitState();
     _startResendCooldown();
   }
 
@@ -54,12 +59,45 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     super.dispose();
   }
 
+  Future<void> _restoreRateLimitState() async {
+    final prefs = await SharedPreferences.getInstance();
+    _failedAttempts = prefs.getInt(_attemptsKey) ?? 0;
+    final lockoutUntilMs = prefs.getInt(_lockoutKey) ?? 0;
+    if (lockoutUntilMs > 0) {
+      final remaining = lockoutUntilMs - DateTime.now().millisecondsSinceEpoch;
+      if (remaining > 0) {
+        if (mounted) {
+          setState(() => _lockoutSeconds = (remaining / 1000).ceil());
+        }
+        _startLockoutTimer();
+      } else {
+        // Lockout expired — reset
+        await prefs.remove(_attemptsKey);
+        await prefs.remove(_lockoutKey);
+        _failedAttempts = 0;
+      }
+    }
+  }
+
+  Future<void> _persistRateLimitState() async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_attemptsKey, _failedAttempts);
+  }
+
   bool get _isLockedOut => _lockoutSeconds > 0;
 
-  void _startLockout() {
+  Future<void> _startLockout() async {
     _lockoutSeconds = _lockoutDuration;
+    final prefs = await SharedPreferences.getInstance();
+    final lockoutUntilMs =
+        DateTime.now().millisecondsSinceEpoch + (_lockoutDuration * 1000);
+    await prefs.setInt(_lockoutKey, lockoutUntilMs);
+    _startLockoutTimer();
+  }
+
+  void _startLockoutTimer() {
     _lockoutTimer?.cancel();
-    _lockoutTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+    _lockoutTimer = Timer.periodic(const Duration(seconds: 1), (timer) async {
       if (!mounted) {
         timer.cancel();
         return;
@@ -69,6 +107,11 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
         if (_lockoutSeconds <= 0) {
           timer.cancel();
           _failedAttempts = 0;
+          // Clear persisted state when lockout expires
+          SharedPreferences.getInstance().then((prefs) {
+            prefs.remove(_attemptsKey);
+            prefs.remove(_lockoutKey);
+          });
         }
       });
     });
@@ -133,8 +176,9 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       if (mounted) setState(() => _error = 'انتهت مهلة الاتصال. حاول مرة أخرى');
     } catch (e) {
       _failedAttempts++;
+      _persistRateLimitState();
       if (_failedAttempts >= _maxAttempts) {
-        _startLockout();
+        await _startLockout();
         if (mounted) {
           setState(
             () =>

@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart';
 
-import '../../../core/services/sentry_service.dart';
 import '../../../di/injection.dart';
 import '../../checkout/data/orders_datasource.dart';
 
@@ -11,6 +10,16 @@ final ordersListProvider =
     FutureProvider.family<Paginated<Order>, OrderStatus?>((ref, status) async {
       final datasource = locator<OrdersDatasource>();
       return datasource.getOrders(status: status);
+    });
+
+/// Orders list filtered by multiple statuses (server-side).
+final ordersListByStatusesProvider =
+    FutureProvider.family<Paginated<Order>, List<String>>((
+      ref,
+      statuses,
+    ) async {
+      final datasource = locator<OrdersDatasource>();
+      return datasource.getOrdersByStatuses(statuses);
     });
 
 /// Single order detail.
@@ -33,36 +42,8 @@ final orderRealtimeProvider =
           .map((data) => data.isNotEmpty ? data.first : null);
     });
 
-/// Active orders (for home screen banner).
-/// Uses individual error isolation so one failing status doesn't break the whole list.
+/// Active orders (for home screen banner) — single query with inFilter.
 final activeOrdersProvider = FutureProvider<List<Order>>((ref) async {
   final datasource = locator<OrdersDatasource>();
-  final statuses = [
-    OrderStatus.created,
-    OrderStatus.confirmed,
-    OrderStatus.preparing,
-    OrderStatus.ready,
-    OrderStatus.outForDelivery,
-  ];
-  final results = await Future.wait(
-    statuses.map((s) async {
-      try {
-        return await datasource.getOrders(status: s);
-      } catch (e, stack) {
-        reportError(
-          e,
-          stackTrace: stack,
-          hint: 'activeOrdersProvider: status=$s',
-        );
-        return const Paginated<Order>(
-          items: [],
-          page: 1,
-          limit: 20,
-          total: 0,
-          hasMore: false,
-        );
-      }
-    }),
-  );
-  return results.expand((p) => p.items).toList();
+  return datasource.getActiveOrders();
 });

@@ -8,6 +8,7 @@ import 'package:alhai_core/alhai_core.dart';
 
 import '../../cart/providers/cart_provider.dart';
 import '../../addresses/providers/address_providers.dart';
+import '../../shared/widgets/summary_row.dart';
 import '../providers/checkout_provider.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
@@ -20,6 +21,23 @@ class CheckoutScreen extends ConsumerStatefulWidget {
 class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   bool _loading = false;
   String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    // Guard: redirect if cart is empty (e.g. deeplink to /checkout)
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final cart = ref.read(cartProvider);
+      if (cart.isEmpty) {
+        if (GoRouter.maybeOf(context) != null) {
+          context.go('/home');
+        } else {
+          Navigator.of(context).maybePop();
+        }
+      }
+    });
+  }
 
   Future<void> _placeOrder() async {
     final cart = ref.read(cartProvider);
@@ -242,24 +260,24 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
                       padding: const EdgeInsets.all(AlhaiSpacing.md),
                       child: Column(
                         children: [
-                          _SummaryRow(
+                          SummaryRow(
                             label: 'المجموع الفرعي (${cart.itemCount})',
                             value: '${subtotal.toStringAsFixed(2)} ر.س',
                           ),
                           const Divider(),
-                          _SummaryRow(
+                          SummaryRow(
                             label: 'ضريبة القيمة المضافة (15%)',
                             value: '${vat.toStringAsFixed(2)} ر.س',
                           ),
                           const Divider(),
-                          _SummaryRow(
+                          SummaryRow(
                             label: 'رسوم التوصيل',
                             value: deliveryFee > 0
                                 ? '${deliveryFee.toStringAsFixed(2)} ر.س'
                                 : 'مجاني',
                           ),
                           const Divider(),
-                          _SummaryRow(
+                          SummaryRow(
                             label: 'الإجمالي',
                             value: '${orderTotal.toStringAsFixed(2)} ر.س',
                             isBold: true,
@@ -324,34 +342,3 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
   }
 }
 
-class _SummaryRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool isBold;
-
-  const _SummaryRow({
-    required this.label,
-    required this.value,
-    this.isBold = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final style = isBold
-        ? Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)
-        : Theme.of(context).textTheme.bodyMedium;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: style),
-          Text(value, style: style),
-        ],
-      ),
-    );
-  }
-}

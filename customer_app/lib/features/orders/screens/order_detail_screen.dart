@@ -1,6 +1,7 @@
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_zatca/alhai_zatca.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hijri/hijri_calendar.dart';
@@ -8,6 +9,7 @@ import 'package:alhai_core/alhai_core.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../core/services/sentry_service.dart';
+import '../../shared/widgets/summary_row.dart';
 import '../providers/orders_providers.dart';
 import '../../../di/injection.dart';
 import '../../checkout/data/orders_datasource.dart';
@@ -132,28 +134,28 @@ class OrderDetailScreen extends ConsumerWidget {
                   padding: const EdgeInsets.all(AlhaiSpacing.md),
                   child: Column(
                     children: [
-                      _TotalRow(
+                      SummaryRow(
                         label: 'المجموع الفرعي',
                         value: '${order.subtotal.toStringAsFixed(2)} ر.س',
                       ),
                       if (order.discount > 0)
-                        _TotalRow(
+                        SummaryRow(
                           label: 'الخصم',
                           value: '-${order.discount.toStringAsFixed(2)} ر.س',
                         ),
                       if (order.tax > 0)
-                        _TotalRow(
+                        SummaryRow(
                           label: 'ضريبة القيمة المضافة (15%)',
                           value: '${order.tax.toStringAsFixed(2)} ر.س',
                         ),
-                      _TotalRow(
+                      SummaryRow(
                         label: 'التوصيل',
                         value: order.deliveryFee > 0
                             ? '${order.deliveryFee.toStringAsFixed(2)} ر.س'
                             : 'مجاني',
                       ),
                       const Divider(),
-                      _TotalRow(
+                      SummaryRow(
                         label: 'الإجمالي',
                         value: '${order.total.toStringAsFixed(2)} ر.س',
                         isBold: true,
@@ -259,6 +261,7 @@ class OrderDetailScreen extends ConsumerWidget {
     );
 
     if (confirmed == true) {
+      HapticFeedback.lightImpact();
       try {
         final datasource = locator<OrdersDatasource>();
         await datasource.cancelOrder(orderId);
@@ -458,34 +461,3 @@ class _ZatcaReceipt extends StatelessWidget {
   }
 }
 
-class _TotalRow extends StatelessWidget {
-  final String label;
-  final String value;
-  final bool isBold;
-
-  const _TotalRow({
-    required this.label,
-    required this.value,
-    this.isBold = false,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final style = isBold
-        ? Theme.of(
-            context,
-          ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)
-        : Theme.of(context).textTheme.bodyMedium;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(label, style: style),
-          Text(value, style: style),
-        ],
-      ),
-    );
-  }
-}

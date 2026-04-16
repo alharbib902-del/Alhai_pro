@@ -181,7 +181,7 @@ class AddressesScreen extends ConsumerWidget {
   void _showAddAddressDialog(BuildContext context, WidgetRef ref) {
     final labelCtrl = TextEditingController();
     final addressCtrl = TextEditingController();
-    final cityCtrl = TextEditingController(text: 'الرياض');
+    final cityCtrl = TextEditingController(text: 'جدة');
 
     showModalBottomSheet(
       context: context,
@@ -233,19 +233,31 @@ class AddressesScreen extends ConsumerWidget {
               onPressed: () async {
                 if (labelCtrl.text.isEmpty || addressCtrl.text.isEmpty) return;
 
-                // Get actual device location, fall back to Riyadh center
-                double lat = 24.7136;
-                double lng = 46.6753;
+                // Get actual device location, fall back to Jeddah center
+                /// Default fallback: Jeddah center (user is based in Jeddah)
+                double lat = 21.4858;
+                double lng = 39.1925;
+                bool usedFallback = false;
                 try {
                   final position = await LocationService.getCurrentPosition();
                   if (position != null) {
                     lat = position.latitude;
                     lng = position.longitude;
+                  } else {
+                    usedFallback = true;
                   }
                 } catch (e) {
+                  usedFallback = true;
                   if (kDebugMode) {
                     debugPrint('[AddressesScreen] Could not get location: $e');
                   }
+                }
+                if (usedFallback && context.mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('يرجى تحديد الموقع يدوياً من الإعدادات'),
+                    ),
+                  );
                 }
 
                 final ds = locator<AddressesDatasource>();

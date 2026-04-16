@@ -13,7 +13,7 @@ void main() {
         title: 'Test',
         theme: AlhaiTheme.light,
         locale: const Locale('ar'),
-        supportedLocales: const [Locale('ar'), Locale('en')],
+        supportedLocales: const [Locale('ar')],
         localizationsDelegates: const [
           GlobalMaterialLocalizations.delegate,
           GlobalWidgetsLocalizations.delegate,

@@ -69,21 +69,23 @@ class OrdersDatasource {
 
     final orderId = orderData['id'] as String;
 
-    // 4. Insert order items
+    // 4. Insert order items (batch)
     try {
-      for (final item in params.items) {
-        await _client
-            .from('order_items')
-            .insert({
-              'order_id': orderId,
-              'product_id': item.productId,
-              'product_name': item.name,
-              'unit_price': item.unitPrice,
-              'qty': item.qty,
-              'total_price': item.lineTotal,
-            })
-            .timeout(AppConstants.networkTimeout);
-      }
+      await _client
+          .from('order_items')
+          .insert(
+            params.items
+                .map((item) => {
+                      'order_id': orderId,
+                      'product_id': item.productId,
+                      'product_name': item.name,
+                      'unit_price': item.unitPrice,
+                      'qty': item.qty,
+                      'total_price': item.lineTotal,
+                    })
+                .toList(),
+          )
+          .timeout(AppConstants.networkTimeout);
     } catch (e, stack) {
       reportError(
         e,
@@ -183,6 +185,90 @@ class OrdersDatasource {
           )
           .toList();
 
+      return _orderFromRow(row, items);
+    }).toList();
+
+    return Paginated(
+      items: orders,
+      page: page,
+      limit: limit,
+      total: null,
+      hasMore: orders.length == limit,
+    );
+  }
+
+  /// Fetch active orders (single query with inFilter).
+  Future<List<Order>> getActiveOrders() async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) throw StateError('User not authenticated');
+
+    final data = await _client
+        .from('orders')
+        .select('*, order_items(*), stores(name, tax_number)')
+        .eq('customer_id', userId)
+        .inFilter('status', ['created', 'confirmed', 'preparing', 'ready', 'out_for_delivery'])
+        .order('created_at', ascending: false)
+        .timeout(AppConstants.networkTimeout);
+
+    return (data as List<dynamic>).map((row) {
+      if (row is! Map<String, dynamic>) {
+        throw FormatException('Unexpected order row type: ${row.runtimeType}');
+      }
+      final rawItems = row['order_items'];
+      final itemsList = rawItems is List ? rawItems : <dynamic>[];
+      final items = itemsList
+          .map(
+            (r) => OrderItem(
+              productId: (r['product_id'] as String?) ?? '',
+              name: (r['product_name'] as String?) ?? '',
+              unitPrice: (r['unit_price'] as num).toDouble(),
+              qty: (r['qty'] as num).toInt(),
+              lineTotal: (r['total_price'] as num).toDouble(),
+            ),
+          )
+          .toList();
+      return _orderFromRow(row, items);
+    }).toList();
+  }
+
+  /// Fetch orders filtered by multiple statuses (single query).
+  Future<Paginated<Order>> getOrdersByStatuses(
+    List<String> statuses, {
+    int page = 1,
+    int limit = 20,
+  }) async {
+    final userId = _client.auth.currentUser?.id;
+    if (userId == null) throw StateError('User not authenticated');
+
+    final from = (page - 1) * limit;
+    final to = from + limit - 1;
+
+    final data = await _client
+        .from('orders')
+        .select('*, order_items(*), stores(name, tax_number)')
+        .eq('customer_id', userId)
+        .inFilter('status', statuses)
+        .order('created_at', ascending: false)
+        .range(from, to)
+        .timeout(AppConstants.networkTimeout);
+
+    final orders = (data as List<dynamic>).map((row) {
+      if (row is! Map<String, dynamic>) {
+        throw FormatException('Unexpected order row type: ${row.runtimeType}');
+      }
+      final rawItems = row['order_items'];
+      final itemsList = rawItems is List ? rawItems : <dynamic>[];
+      final items = itemsList
+          .map(
+            (r) => OrderItem(
+              productId: (r['product_id'] as String?) ?? '',
+              name: (r['product_name'] as String?) ?? '',
+              unitPrice: (r['unit_price'] as num).toDouble(),
+              qty: (r['qty'] as num).toInt(),
+              lineTotal: (r['total_price'] as num).toDouble(),
+            ),
+          )
+          .toList();
       return _orderFromRow(row, items);
     }).toList();
 
