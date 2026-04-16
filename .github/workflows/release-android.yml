@@ -1,0 +1,211 @@
+name: Release Android (Play Store)
+
+# Triggered manually from the Actions tab. Pick an app + track.
+# Produces a signed AAB, uploads to Play Internal, and attaches the
+# APK to a GitHub Release for side-loading.
+#
+# Prerequisites (per app) in repo Secrets:
+#   <APP>_KEYSTORE_BASE64       — base64 of the release keystore
+#   <APP>_KEYSTORE_PASSWORD     — keystore password
+#   <APP>_KEY_PASSWORD          — key password (often same as keystore)
+#   <APP>_KEY_ALIAS             — the key alias (e.g. cashier-release)
+#   PLAY_SERVICE_ACCOUNT_JSON   — Google Play service account JSON (shared across apps)
+#
+# Shared secrets:
+#   SUPABASE_URL
+#   SUPABASE_ANON_KEY
+#   SUPABASE_CERT_FINGERPRINT
+#   SUPABASE_CERT_FINGERPRINT_BACKUP
+#   SENTRY_DSN_CASHIER / SENTRY_DSN_ADMIN / SENTRY_DSN_ADMIN_LITE
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: Which app to release
+        required: true
+        type: choice
+        options:
+          - cashier
+          - admin
+          - admin_lite
+      track:
+        description: Play Store track
+        required: true
+        default: internal
+        type: choice
+        options:
+          - internal
+          - alpha
+          - beta
+          - production
+      release_notes:
+        description: One-line release notes (shown on Play + GitHub)
+        required: true
+        default: 'Bug fixes and stability improvements.'
+
+concurrency:
+  group: release-${{ inputs.app }}-${{ inputs.track }}
+  cancel-in-progress: false
+
+jobs:
+  build_and_release:
+    name: Release ${{ inputs.app }} → ${{ inputs.track }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Resolve app path + secret prefix
+        id: paths
+        run: |
+          case "${{ inputs.app }}" in
+            cashier)    echo "path=apps/cashier"    >> "$GITHUB_OUTPUT" ;;
+            admin)      echo "path=apps/admin"      >> "$GITHUB_OUTPUT" ;;
+            admin_lite) echo "path=apps/admin_lite" >> "$GITHUB_OUTPUT" ;;
+          esac
+          echo "prefix=$(echo '${{ inputs.app }}' | tr '[:lower:]' '[:upper:]')" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.7'
+          channel: stable
+          cache: true
+
+      - name: Install melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap workspace
+        run: melos bootstrap
+
+      # ─── Preflight: reject unsigned release ─────────────────────────
+      - name: Verify keystore secret is configured
+        env:
+          KB64: ${{ secrets[format('{0}_KEYSTORE_BASE64', steps.paths.outputs.prefix)] }}
+        run: |
+          if [ -z "$KB64" ]; then
+            echo "::error::Missing secret ${{ steps.paths.outputs.prefix }}_KEYSTORE_BASE64 — cannot produce signed build"
+            exit 1
+          fi
+          echo "Keystore secret found."
+
+      # ─── Decode keystore into key.properties ────────────────────────
+      - name: Decode keystore
+        env:
+          KB64:     ${{ secrets[format('{0}_KEYSTORE_BASE64', steps.paths.outputs.prefix)] }}
+          STORE_PW: ${{ secrets[format('{0}_KEYSTORE_PASSWORD', steps.paths.outputs.prefix)] }}
+          KEY_PW:   ${{ secrets[format('{0}_KEY_PASSWORD', steps.paths.outputs.prefix)] }}
+          ALIAS:    ${{ secrets[format('{0}_KEY_ALIAS', steps.paths.outputs.prefix)] }}
+        run: |
+          KEYSTORE_PATH="$GITHUB_WORKSPACE/release.keystore"
+          echo "$KB64" | base64 -d > "$KEYSTORE_PATH"
+          cat > "${{ steps.paths.outputs.path }}/android/key.properties" <<EOF
+          storeFile=$KEYSTORE_PATH
+          storePassword=$STORE_PW
+          keyAlias=$ALIAS
+          keyPassword=$KEY_PW
+          EOF
+          # Quick integrity check — keytool will fail loudly if the
+          # password is wrong or the keystore is corrupt.
+          keytool -list -keystore "$KEYSTORE_PATH" -storepass "$STORE_PW" >/dev/null
+          echo "Keystore verified."
+
+      # ─── Resolve Sentry DSN for this app ────────────────────────────
+      - name: Pick Sentry DSN
+        id: sentry
+        env:
+          DSN_CASHIER:    ${{ secrets.SENTRY_DSN_CASHIER }}
+          DSN_ADMIN:      ${{ secrets.SENTRY_DSN_ADMIN }}
+          DSN_ADMIN_LITE: ${{ secrets.SENTRY_DSN_ADMIN_LITE }}
+        run: |
+          case "${{ inputs.app }}" in
+            cashier)    echo "dsn=$DSN_CASHIER"    >> "$GITHUB_OUTPUT" ;;
+            admin)      echo "dsn=$DSN_ADMIN"      >> "$GITHUB_OUTPUT" ;;
+            admin_lite) echo "dsn=$DSN_ADMIN_LITE" >> "$GITHUB_OUTPUT" ;;
+          esac
+
+      # ─── Build signed AAB for Play Store ────────────────────────────
+      - name: Build signed AAB
+        working-directory: ${{ steps.paths.outputs.path }}
+        run: |
+          flutter build appbundle --release \
+            --obfuscate \
+            --split-debug-info=build/debug-info \
+            --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT=${{ secrets.SUPABASE_CERT_FINGERPRINT }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_BACKUP=${{ secrets.SUPABASE_CERT_FINGERPRINT_BACKUP }} \
+            --dart-define=SENTRY_DSN=${{ steps.sentry.outputs.dsn }}
+
+      # ─── Build signed APK (for side-loading / GitHub Release) ───────
+      - name: Build signed APK
+        working-directory: ${{ steps.paths.outputs.path }}
+        run: |
+          flutter build apk --release \
+            --obfuscate \
+            --split-debug-info=build/debug-info \
+            --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT=${{ secrets.SUPABASE_CERT_FINGERPRINT }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_BACKUP=${{ secrets.SUPABASE_CERT_FINGERPRINT_BACKUP }} \
+            --dart-define=SENTRY_DSN=${{ steps.sentry.outputs.dsn }}
+
+      # ─── Upload to Play Store ───────────────────────────────────────
+      - name: Upload to Play ${{ inputs.track }}
+        if: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON != '' }}
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+          # packageName must match applicationId in android/app/build.gradle.kts
+          packageName: com.alhai.${{ inputs.app }}
+          releaseFiles: ${{ steps.paths.outputs.path }}/build/app/outputs/bundle/release/app-release.aab
+          track: ${{ inputs.track }}
+          status: completed
+          inAppUpdatePriority: 3
+          whatsNewDirectory: ${{ steps.paths.outputs.path }}/android/fastlane/metadata/android
+
+      # ─── Archive artifacts even if Play upload isn't configured ─────
+      - name: Upload AAB artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.app }}-${{ inputs.track }}-aab
+          path: ${{ steps.paths.outputs.path }}/build/app/outputs/bundle/release/app-release.aab
+          retention-days: 90
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.app }}-${{ inputs.track }}-apk
+          path: ${{ steps.paths.outputs.path }}/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 90
+
+      - name: Upload debug symbols
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ inputs.app }}-${{ inputs.track }}-symbols
+          path: ${{ steps.paths.outputs.path }}/build/debug-info/
+          retention-days: 90
+
+      # ─── Create GitHub Release tag (production only) ────────────────
+      - name: Create GitHub Release
+        if: ${{ inputs.track == 'production' }}
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.app }}-v${{ github.run_number }}
+          name: ${{ inputs.app }} v${{ github.run_number }}
+          body: |
+            ## ${{ inputs.app }} — ${{ inputs.track }} release
+
+            ${{ inputs.release_notes }}
+
+            Build: GitHub Actions run #${{ github.run_number }}
+            Commit: ${{ github.sha }}
+          files: |
+            ${{ steps.paths.outputs.path }}/build/app/outputs/flutter-apk/app-release.apk
+            ${{ steps.paths.outputs.path }}/build/app/outputs/bundle/release/app-release.aab
