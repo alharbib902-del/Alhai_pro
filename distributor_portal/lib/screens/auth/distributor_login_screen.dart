@@ -11,6 +11,7 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 
 import '../../core/supabase/supabase_client.dart';
+import '../../data/services/mfa_service.dart';
 
 class DistributorLoginScreen extends ConsumerStatefulWidget {
   const DistributorLoginScreen({super.key});
@@ -49,6 +50,19 @@ class _DistributorLoginScreenState
         email: _emailController.text.trim(),
         password: _passwordController.text,
       );
+
+      if (!mounted) return;
+
+      // Check if user has MFA enrolled → redirect to MFA verify
+      final mfaService = MfaService(AppSupabase.client);
+      if (mfaService.needsMfaVerification()) {
+        final factor = await mfaService.getVerifiedFactor();
+        if (!mounted) return;
+        if (factor != null) {
+          context.go('/mfa-verify', extra: factor.id);
+          return;
+        }
+      }
 
       if (!mounted) return;
       context.go('/dashboard');

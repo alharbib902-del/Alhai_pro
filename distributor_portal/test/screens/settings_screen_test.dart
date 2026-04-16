@@ -4,10 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'package:distributor_portal/data/distributor_datasource.dart';
 import 'package:distributor_portal/data/models.dart';
 import 'package:distributor_portal/providers/distributor_datasource_provider.dart';
+import 'package:distributor_portal/providers/distributor_auth_providers.dart';
+import 'package:distributor_portal/providers/mfa_providers.dart';
 import 'package:distributor_portal/screens/settings/distributor_settings_screen.dart';
 
 /// Minimal fake that returns empty defaults so provider errors don't
@@ -28,6 +31,12 @@ void main() {
         distributorDatasourceProvider.overrideWithValue(
           _FakeDistributorDatasource(),
         ),
+        // Override auth providers to avoid Supabase initialization
+        currentUserProvider.overrideWithValue(null),
+        authStateProvider.overrideWith(
+          (ref) => const Stream<AuthState>.empty(),
+        ),
+        mfaEnrollmentStatusProvider.overrideWith((ref) async => false),
       ],
       child: MaterialApp(
         title: 'Test',
