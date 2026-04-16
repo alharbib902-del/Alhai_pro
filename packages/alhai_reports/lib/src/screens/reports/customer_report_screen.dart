@@ -10,6 +10,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import '../../utils/csv_export_helper.dart';
 
 /// شاشة تقرير العملاء
 class CustomerReportScreen extends ConsumerStatefulWidget {
@@ -1359,10 +1360,20 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
     }
   }
 
-  void _exportReport() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context).exportingReportMsg)),
+  Future<void> _exportReport() async {
+    final l10n = AppLocalizations.of(context);
+    final result = await CsvExportHelper.exportAndShare(
+      context: context,
+      fileName: l10n.customerReport,
+      headers: [l10n.totalCustomersLabel, l10n.totalRevenueFromCustomers, l10n.avgOrderValueLabel, 'المستوى'],
+      rows: _topCustomers.map((c) => [
+        c.name,
+        c.totalSpent.toStringAsFixed(2),
+        c.avgOrderValue.toStringAsFixed(2),
+        _getTierName(context, c.tier),
+      ]).toList(),
     );
+    if (mounted) CsvExportHelper.showResultSnackBar(context, result);
   }
 }
 

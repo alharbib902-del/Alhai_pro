@@ -6,6 +6,7 @@ export 'config/app_endpoints.dart';
 export 'config/app_flavor.dart';
 export 'config/app_limits.dart';
 export 'config/environment.dart';
+export 'config/feature_flags.dart';
 export 'config/whatsapp_config.dart';
 export 'config/supabase_config.dart';
 

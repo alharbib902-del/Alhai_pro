@@ -6,6 +6,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import '../../utils/csv_export_helper.dart';
 
 /// شاشة تقرير أداء الموظفين
 class StaffPerformanceScreen extends ConsumerStatefulWidget {
@@ -148,6 +149,11 @@ class _StaffPerformanceScreenState
                 ],
               ),
             ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.file_download_outlined),
+            tooltip: 'CSV',
+            onPressed: _exportCsv,
           ),
         ],
       ),
@@ -312,6 +318,22 @@ class _StaffPerformanceScreenState
               ],
             ),
     );
+  }
+
+  Future<void> _exportCsv() async {
+    final result = await CsvExportHelper.exportAndShare(
+      context: context,
+      fileName: 'أداء_الموظفين_${_getPeriodName()}',
+      headers: ['الموظف', 'الدور', 'المبيعات', 'الفواتير', 'متوسط الفاتورة'],
+      rows: _staff.map((s) => [
+        s.name,
+        s.role,
+        s.sales.toStringAsFixed(2),
+        '${s.transactions}',
+        '${s.avgTicket}',
+      ]).toList(),
+    );
+    if (mounted) CsvExportHelper.showResultSnackBar(context, result);
   }
 
   String _getPeriodName() {

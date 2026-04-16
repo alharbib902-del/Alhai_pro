@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
@@ -63,8 +64,8 @@ class FeedbackNotifier extends StateNotifier<List<UserFeedback>> {
         final list = jsonDecode(jsonStr) as List;
         state = list.map((e) => UserFeedback.fromJson(e)).toList();
       }
-    } catch (_) {
-      // تجاهل الأخطاء
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error loading user feedback: $e');
     }
   }
 
@@ -73,8 +74,8 @@ class FeedbackNotifier extends StateNotifier<List<UserFeedback>> {
       final prefs = await SharedPreferences.getInstance();
       final jsonStr = jsonEncode(state.map((e) => e.toJson()).toList());
       await prefs.setString(_prefKey, jsonStr);
-    } catch (_) {
-      // تجاهل الأخطاء
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error saving user feedback: $e');
     }
   }
 

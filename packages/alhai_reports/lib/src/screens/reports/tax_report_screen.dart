@@ -7,6 +7,11 @@ import 'package:get_it/get_it.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import '../../utils/csv_export_helper.dart';
+import '../../utils/pdf_font_helper.dart';
 
 /// شاشة تقرير الضرائب
 class TaxReportScreen extends ConsumerStatefulWidget {
@@ -153,6 +158,120 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
     }
   }
 
+  Future<pw.Document> _buildReportPdf() async {
+    final pdf = await PdfFontHelper.createDocument();
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        textDirection: pw.TextDirection.rtl,
+        build: (context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(
+              'تقرير الضرائب',
+              style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.Divider(),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('إجمالي المبيعات'),
+                pw.Text('${_totalSales.toStringAsFixed(2)} ر.س'),
+              ],
+            ),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('ضريبة المبيعات 15%'),
+                pw.Text('${_salesTax.toStringAsFixed(2)} ر.س'),
+              ],
+            ),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('إجمالي المشتريات'),
+                pw.Text('${_totalPurchases.toStringAsFixed(2)} ر.س'),
+              ],
+            ),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text('ضريبة المشتريات'),
+                pw.Text('${_purchasesTax.toStringAsFixed(2)} ر.س'),
+              ],
+            ),
+            pw.Divider(),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text(
+                  'صافي الضريبة المستحقة',
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                ),
+                pw.Text(
+                  '${_netTax.toStringAsFixed(2)} ر.س',
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                ),
+              ],
+            ),
+            if (_taxByPayment.isNotEmpty) ...[
+              pw.SizedBox(height: 10),
+              pw.Text(
+                'الضريبة حسب طريقة الدفع:',
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+              ),
+              ..._taxByPayment.map(
+                (item) => pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text(item.method),
+                    pw.Text('${item.tax.toStringAsFixed(2)} ر.س'),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+    return pdf;
+  }
+
+  Future<void> _exportCsv() async {
+    final result = await CsvExportHelper.exportAndShare(
+      context: context,
+      fileName: 'تقرير_الضرائب',
+      headers: ['البند', 'المبلغ (ر.س)'],
+      rows: [
+        ['إجمالي المبيعات', _totalSales.toStringAsFixed(2)],
+        ['ضريبة المبيعات 15%', _salesTax.toStringAsFixed(2)],
+        ['إجمالي المشتريات', _totalPurchases.toStringAsFixed(2)],
+        ['ضريبة المشتريات', _purchasesTax.toStringAsFixed(2)],
+        ['صافي الضريبة المستحقة', _netTax.toStringAsFixed(2)],
+        ..._taxByPayment.map(
+          (item) => [item.method, item.tax.toStringAsFixed(2)],
+        ),
+      ],
+    );
+    if (mounted) CsvExportHelper.showResultSnackBar(context, result);
+  }
+
+  Future<void> _sharePdf() async {
+    final pdf = await _buildReportPdf();
+    await Printing.sharePdf(
+      bytes: await pdf.save(),
+      filename: 'tax_report_${DateTime.now().toIso8601String().split('T').first}.pdf',
+    );
+  }
+
+  Future<void> _printReport() async {
+    final pdf = await _buildReportPdf();
+    await Printing.layoutPdf(
+      onLayout: (_) => pdf.save(),
+      name: 'tax_report_${DateTime.now().toIso8601String().split('T').first}',
+    );
+  }
+
   /// ترجمة أسماء طرق الدفع
   String _translatePaymentMethod(BuildContext context, String method) {
     final l10n = AppLocalizations.of(context);
@@ -208,16 +327,19 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
         title: Text(l10n.taxReportTitle),
         actions: [
           IconButton(
-            icon: const Icon(Icons.file_download),
-            onPressed: () => ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(l10n.exportReportAction))),
+            icon: const Icon(Icons.share),
+            tooltip: l10n.shareAction,
+            onPressed: _sharePdf,
+          ),
+          IconButton(
+            icon: const Icon(Icons.file_download_outlined),
+            tooltip: 'CSV',
+            onPressed: _exportCsv,
           ),
           IconButton(
             icon: const Icon(Icons.print),
-            onPressed: () => ScaffoldMessenger.of(
-              context,
-            ).showSnackBar(SnackBar(content: Text(l10n.printReportAction))),
+            tooltip: l10n.printReportAction,
+            onPressed: _printReport,
           ),
         ],
       ),

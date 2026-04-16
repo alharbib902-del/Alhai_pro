@@ -12,6 +12,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import '../../utils/csv_export_helper.dart';
 
 /// شاشة تقرير أفضل المنتجات
 class TopProductsReportScreen extends ConsumerStatefulWidget {
@@ -1063,11 +1064,22 @@ class _TopProductsReportScreenState
     }
   }
 
-  void _exportReport() {
+  Future<void> _exportReport() async {
     final l10n = AppLocalizations.of(context);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text(l10n.exportingReport)));
+    final result = await CsvExportHelper.exportAndShare(
+      context: context,
+      fileName: 'تقرير_المنتجات',
+      headers: [l10n.products, 'SKU', l10n.revenueLabel, l10n.unitsLabel, l10n.profitLabel, l10n.stockLabel],
+      rows: _filteredProducts.map((p) => [
+        p.name,
+        p.sku,
+        p.revenue.toStringAsFixed(2),
+        '${p.unitsSold}',
+        p.profit.toStringAsFixed(2),
+        '${p.stockLevel.round()}',
+      ]).toList(),
+    );
+    if (mounted) CsvExportHelper.showResultSnackBar(context, result);
   }
 }
 

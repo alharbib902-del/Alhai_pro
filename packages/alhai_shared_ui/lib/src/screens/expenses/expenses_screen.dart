@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -360,7 +361,9 @@ class ExpensesScreen extends ConsumerWidget {
       } else if (hex.length == 8) {
         return Color(int.parse(hex, radix: 16));
       }
-    } catch (_) {}
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error parsing category color: $e');
+    }
     return AppColors.textSecondary;
   }
 

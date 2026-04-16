@@ -7,6 +7,7 @@
 /// alhai_auth cannot depend on alhai_shared_ui. Keep both in sync.
 library;
 
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -74,6 +75,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
 
       state = state.copyWith(themeMode: mode, isLoading: false);
     } catch (e) {
+      if (kDebugMode) debugPrint('Error loading theme mode: $e');
       state = state.copyWith(isLoading: false);
     }
   }
@@ -98,7 +100,7 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
       }
       await prefs.setString(_themeKey, modeString);
     } catch (e) {
-      // تجاهل أخطاء الحفظ
+      if (kDebugMode) debugPrint('Error saving theme mode: $e');
     }
   }
 

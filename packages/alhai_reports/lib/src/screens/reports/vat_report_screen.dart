@@ -5,6 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import '../../utils/csv_export_helper.dart';
+import '../../utils/pdf_font_helper.dart';
 
 /// شاشة تقرير الضريبة VAT
 class VatReportScreen extends ConsumerStatefulWidget {
@@ -75,9 +80,19 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
         title: Text(AppLocalizations.of(context).vatReportTitle),
         actions: [
           IconButton(
-            icon: const Icon(Icons.picture_as_pdf),
+            icon: const Icon(Icons.share),
             tooltip: AppLocalizations.of(context).exportPdf,
             onPressed: _exportPdf,
+          ),
+          IconButton(
+            icon: const Icon(Icons.file_download_outlined),
+            tooltip: 'CSV',
+            onPressed: _exportCsv,
+          ),
+          IconButton(
+            icon: const Icon(Icons.print),
+            tooltip: AppLocalizations.of(context).printAction,
+            onPressed: _printReportPdf,
           ),
         ],
       ),
@@ -330,9 +345,100 @@ class _VatReportScreenState extends ConsumerState<VatReportScreen> {
     }
   }
 
-  void _exportPdf() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context).exportingPdfReport)),
+  Future<pw.Document> _buildReportPdf() async {
+    final l10n = AppLocalizations.of(context);
+    final pdf = await PdfFontHelper.createDocument();
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        textDirection: pw.TextDirection.rtl,
+        build: (context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(
+              l10n.vatReportTitle,
+              style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.Divider(),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text(l10n.totalSalesIncVat),
+                pw.Text('${_totalSales.toStringAsFixed(2)} ${l10n.sar}'),
+              ],
+            ),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text(l10n.vatCollected),
+                pw.Text('${_vatCollected.toStringAsFixed(2)} ${l10n.sar}'),
+              ],
+            ),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text(l10n.totalPurchasesIncVat),
+                pw.Text('${_totalPurchases.toStringAsFixed(2)} ${l10n.sar}'),
+              ],
+            ),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text(l10n.vatPaid),
+                pw.Text('${_vatPaid.toStringAsFixed(2)} ${l10n.sar}'),
+              ],
+            ),
+            pw.Divider(),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text(
+                  l10n.netVatDue,
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                ),
+                pw.Text(
+                  '${_netVat.toStringAsFixed(2)} ${l10n.sar}',
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+    return pdf;
+  }
+
+  Future<void> _exportCsv() async {
+    final l10n = AppLocalizations.of(context);
+    final result = await CsvExportHelper.exportAndShare(
+      context: context,
+      fileName: l10n.vatReportTitle,
+      headers: ['البند', 'المبلغ (${l10n.sar})'],
+      rows: [
+        [l10n.totalSalesIncVat, _totalSales.toStringAsFixed(2)],
+        [l10n.vatCollected, _vatCollected.toStringAsFixed(2)],
+        [l10n.totalPurchasesIncVat, _totalPurchases.toStringAsFixed(2)],
+        [l10n.vatPaid, _vatPaid.toStringAsFixed(2)],
+        [l10n.netVatDue, _netVat.toStringAsFixed(2)],
+      ],
+    );
+    if (mounted) CsvExportHelper.showResultSnackBar(context, result);
+  }
+
+  Future<void> _exportPdf() async {
+    final pdf = await _buildReportPdf();
+    await Printing.sharePdf(
+      bytes: await pdf.save(),
+      filename: 'vat_report_${DateTime.now().toIso8601String().split('T').first}.pdf',
+    );
+  }
+
+  Future<void> _printReportPdf() async {
+    final pdf = await _buildReportPdf();
+    await Printing.layoutPdf(
+      onLayout: (_) => pdf.save(),
+      name: 'vat_report_${DateTime.now().toIso8601String().split('T').first}',
     );
   }
 }

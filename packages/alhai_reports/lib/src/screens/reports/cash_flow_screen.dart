@@ -5,8 +5,14 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import '../../utils/csv_export_helper.dart';
+import '../../utils/pdf_font_helper.dart';
 
-/// شاشة قائمة التدفق النقدي
+/// Cash Flow Statement screen with full l10n support
 class CashFlowScreen extends ConsumerStatefulWidget {
   const CashFlowScreen({super.key});
 
@@ -70,7 +76,7 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) {
         setState(() {
-          _error = 'لم يتم تحديد المتجر';
+          _error = 'store_not_selected';
           _isLoading = false;
         });
         return;
@@ -178,46 +184,147 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
     return 0.0;
   }
 
-  String _periodLabel() {
+  String _periodLabel(AppLocalizations l10n) {
     switch (_period) {
       case 'week':
-        return 'هذا الأسبوع';
+        return l10n.thisWeek;
       case 'month':
-        return 'هذا الشهر';
+        return l10n.thisMonth;
       case 'quarter':
-        return 'هذا الربع';
+        return l10n.reportThisQuarter;
       case 'year':
-        return 'هذه السنة';
+        return l10n.reportThisYear;
       default:
-        return 'هذا الشهر';
+        return l10n.thisMonth;
     }
+  }
+
+  Future<pw.Document> _buildReportPdf() async {
+    final l10n = AppLocalizations.of(context);
+    final pdf = await PdfFontHelper.createDocument();
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        textDirection: pw.TextDirection.rtl,
+        build: (context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(
+              l10n.reportCashFlowTitle,
+              style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(_periodLabel(l10n)),
+            pw.Divider(),
+            pw.Text(
+              l10n.reportOperatingActivities,
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+            ),
+            _pdfRow(l10n.reportSalesReceipts, _salesReceipts),
+            _pdfRow(l10n.reportExpensesPaid, -_expensesPaid),
+            _pdfRow(l10n.reportTaxesPaidVat, -_taxesPaid),
+            pw.Divider(),
+            pw.Text(
+              l10n.reportInvestingActivities,
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+            ),
+            _pdfRow(l10n.reportPurchasePayments, -_purchasesPaid),
+            pw.Divider(),
+            pw.Text(
+              l10n.reportFinancingActivities,
+              style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+            ),
+            _pdfRow(l10n.reportCashDeposit, _cashIn),
+            _pdfRow(l10n.reportCashWithdrawal, -_cashOut),
+            pw.Divider(),
+            _pdfRow(l10n.reportNetCashFlow, _netCashFlow, bold: true),
+          ],
+        ),
+      ),
+    );
+    return pdf;
+  }
+
+  pw.Widget _pdfRow(String label, double amount, {bool bold = false}) {
+    final style = bold ? pw.TextStyle(fontWeight: pw.FontWeight.bold) : null;
+    final l10n = AppLocalizations.of(context);
+    return pw.Padding(
+      padding: const pw.EdgeInsets.symmetric(vertical: 2),
+      child: pw.Row(
+        mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+        children: [
+          pw.Text(label, style: style),
+          pw.Text('${amount.toStringAsFixed(0)} ${l10n.currency}', style: style),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _exportCsv() async {
+    final l10n = AppLocalizations.of(context);
+    final result = await CsvExportHelper.exportAndShare(
+      context: context,
+      fileName: l10n.reportCashFlowTitle,
+      headers: [l10n.reportIndicator, l10n.currency],
+      rows: [
+        [l10n.reportSalesReceipts, _salesReceipts.toStringAsFixed(2)],
+        [l10n.reportExpensesPaid, (-_expensesPaid).toStringAsFixed(2)],
+        [l10n.reportTaxesPaidVat, (-_taxesPaid).toStringAsFixed(2)],
+        [l10n.reportPurchasePayments, (-_purchasesPaid).toStringAsFixed(2)],
+        [l10n.reportCashDeposit, _cashIn.toStringAsFixed(2)],
+        [l10n.reportCashWithdrawal, (-_cashOut).toStringAsFixed(2)],
+        [l10n.reportNetCashFlow, _netCashFlow.toStringAsFixed(2)],
+      ],
+    );
+    if (mounted) CsvExportHelper.showResultSnackBar(context, result);
+  }
+
+  Future<void> _sharePdf() async {
+    final pdf = await _buildReportPdf();
+    await Printing.sharePdf(
+      bytes: await pdf.save(),
+      filename: 'cash_flow_${DateTime.now().toIso8601String().split('T').first}.pdf',
+    );
+  }
+
+  Future<void> _printReport() async {
+    final pdf = await _buildReportPdf();
+    await Printing.layoutPdf(
+      onLayout: (_) => pdf.save(),
+      name: 'cash_flow_${DateTime.now().toIso8601String().split('T').first}',
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
 
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('قائمة التدفق النقدي')),
+        appBar: AppBar(title: Text(l10n.reportCashFlowTitle)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
     if (_error != null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('قائمة التدفق النقدي')),
+        appBar: AppBar(title: Text(l10n.reportCashFlowTitle)),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.error_outline, size: 48, color: AlhaiColors.error),
               const SizedBox(height: AlhaiSpacing.sm),
-              Text(_error!),
+              Text(
+                _error == 'store_not_selected'
+                    ? l10n.storeNotSelected
+                    : _error!,
+              ),
               const SizedBox(height: AlhaiSpacing.sm),
               ElevatedButton(
                 onPressed: _loadData,
-                child: const Text('إعادة المحاولة'),
+                child: Text(l10n.retry),
               ),
             ],
           ),
@@ -227,7 +334,7 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('قائمة التدفق النقدي'),
+        title: Text(l10n.reportCashFlowTitle),
         actions: [
           PopupMenuButton<String>(
             onSelected: (v) {
@@ -235,20 +342,35 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
               _loadData();
             },
             itemBuilder: (_) => [
-              const PopupMenuItem(value: 'week', child: Text('هذا الأسبوع')),
-              const PopupMenuItem(value: 'month', child: Text('هذا الشهر')),
-              const PopupMenuItem(value: 'quarter', child: Text('ربع سنوي')),
-              const PopupMenuItem(value: 'year', child: Text('سنوي')),
+              PopupMenuItem(value: 'week', child: Text(l10n.thisWeek)),
+              PopupMenuItem(value: 'month', child: Text(l10n.thisMonth)),
+              PopupMenuItem(value: 'quarter', child: Text(l10n.reportQuarterly)),
+              PopupMenuItem(value: 'year', child: Text(l10n.reportAnnual)),
             ],
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
               child: Row(
                 children: [
-                  Text(_periodLabel()),
+                  Text(_periodLabel(l10n)),
                   const Icon(Icons.arrow_drop_down),
                 ],
               ),
             ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.share),
+            tooltip: l10n.shareAction,
+            onPressed: _sharePdf,
+          ),
+          IconButton(
+            icon: const Icon(Icons.file_download_outlined),
+            tooltip: l10n.exportCsv,
+            onPressed: _exportCsv,
+          ),
+          IconButton(
+            icon: const Icon(Icons.print),
+            tooltip: l10n.printAction,
+            onPressed: _printReport,
           ),
         ],
       ),
@@ -261,32 +383,34 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
             children: [
               // Net cash flow card
               _NetCard(
-                label: 'صافي التدفق النقدي',
+                label: l10n.reportNetCashFlow,
                 amount: _netCashFlow,
                 isPositive: _netCashFlow >= 0,
+                currency: l10n.currency,
               ),
               const SizedBox(height: AlhaiSpacing.mdl),
 
               // Operating activities
               _ActivitySection(
-                title: 'الأنشطة التشغيلية',
+                title: l10n.reportOperatingActivities,
                 icon: Icons.storefront_rounded,
                 color: AlhaiColors.info,
                 netAmount: _operatingNet,
                 isDark: isDark,
+                currency: l10n.currency,
                 rows: [
                   _FlowRow(
-                    label: 'إيرادات المبيعات',
+                    label: l10n.reportSalesReceipts,
                     amount: _salesReceipts,
                     isInflow: true,
                   ),
                   _FlowRow(
-                    label: 'المصروفات المدفوعة',
+                    label: l10n.reportExpensesPaid,
                     amount: -_expensesPaid,
                     isInflow: false,
                   ),
                   _FlowRow(
-                    label: 'الضرائب المدفوعة (ضريبة القيمة المضافة)',
+                    label: l10n.reportTaxesPaidVat,
                     amount: -_taxesPaid,
                     isInflow: false,
                   ),
@@ -296,14 +420,15 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
 
               // Investing activities
               _ActivitySection(
-                title: 'الأنشطة الاستثمارية',
+                title: l10n.reportInvestingActivities,
                 icon: Icons.trending_up_rounded,
                 color: Colors.orange,
                 netAmount: _investingNet,
                 isDark: isDark,
+                currency: l10n.currency,
                 rows: [
                   _FlowRow(
-                    label: 'مدفوعات المشتريات',
+                    label: l10n.reportPurchasePayments,
                     amount: -_purchasesPaid,
                     isInflow: false,
                   ),
@@ -313,19 +438,20 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
 
               // Financing activities
               _ActivitySection(
-                title: 'الأنشطة التمويلية',
+                title: l10n.reportFinancingActivities,
                 icon: Icons.account_balance_rounded,
                 color: AlhaiColors.success,
                 netAmount: _financingNet,
                 isDark: isDark,
+                currency: l10n.currency,
                 rows: [
                   _FlowRow(
-                    label: 'إيداع نقدي',
+                    label: l10n.reportCashDeposit,
                     amount: _cashIn,
                     isInflow: true,
                   ),
                   _FlowRow(
-                    label: 'سحب نقدي',
+                    label: l10n.reportCashWithdrawal,
                     amount: -_cashOut,
                     isInflow: false,
                   ),
@@ -343,11 +469,13 @@ class _NetCard extends StatelessWidget {
   final String label;
   final double amount;
   final bool isPositive;
+  final String currency;
 
   const _NetCard({
     required this.label,
     required this.amount,
     required this.isPositive,
+    required this.currency,
   });
 
   @override
@@ -376,7 +504,7 @@ class _NetCard extends StatelessWidget {
             ),
             const SizedBox(height: AlhaiSpacing.xs),
             Text(
-              '${isPositive ? '+' : ''}${amount.toStringAsFixed(0)} ر.س',
+              '${isPositive ? '+' : ''}${amount.toStringAsFixed(0)} $currency',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
@@ -403,6 +531,7 @@ class _ActivitySection extends StatelessWidget {
   final Color color;
   final double netAmount;
   final bool isDark;
+  final String currency;
   final List<_FlowRow> rows;
 
   const _ActivitySection({
@@ -411,6 +540,7 @@ class _ActivitySection extends StatelessWidget {
     required this.color,
     required this.netAmount,
     required this.isDark,
+    required this.currency,
     required this.rows,
   });
 
@@ -445,7 +575,7 @@ class _ActivitySection extends StatelessWidget {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
-                    '${netAmount >= 0 ? '+' : ''}${netAmount.toStringAsFixed(0)} ر.س',
+                    '${netAmount >= 0 ? '+' : ''}${netAmount.toStringAsFixed(0)} $currency',
                     style: TextStyle(
                       color: netAmount >= 0 ? color : AlhaiColors.error,
                       fontWeight: FontWeight.bold,
@@ -478,7 +608,7 @@ class _ActivitySection extends StatelessWidget {
                       ],
                     ),
                     Text(
-                      '${row.amount >= 0 ? '+' : ''}${row.amount.toStringAsFixed(0)} ر.س',
+                      '${row.amount >= 0 ? '+' : ''}${row.amount.toStringAsFixed(0)} $currency',
                       style: TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w500,

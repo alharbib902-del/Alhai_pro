@@ -6,8 +6,14 @@ import 'package:get_it/get_it.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiColors, AlhaiSpacing;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import '../../utils/csv_export_helper.dart';
+import '../../utils/pdf_font_helper.dart';
 
-/// شاشة تقرير المشتريات الكاملة
+/// Purchase Report screen with full l10n support
 class PurchaseReportScreen extends ConsumerStatefulWidget {
   const PurchaseReportScreen({super.key});
 
@@ -62,7 +68,7 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) {
         setState(() {
-          _error = 'لم يتم تحديد المتجر';
+          _error = 'store_not_selected';
           _isLoading = false;
         });
         return;
@@ -95,7 +101,7 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
       final bySup = await db
           .customSelect(
             '''SELECT
-             COALESCE(s.name, 'بدون مورد') as sup_name,
+             COALESCE(s.name, ?) as sup_name,
              COUNT(*) as cnt,
              COALESCE(SUM(p.total), 0) as total
            FROM purchases p
@@ -107,6 +113,7 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
            ORDER BY total DESC
            LIMIT 8''',
             variables: [
+              Variable.withString('—'),
               Variable.withString(storeId),
               Variable.withDateTime(dr.start),
               Variable.withDateTime(dr.end),
@@ -122,7 +129,7 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
              p.invoice_number,
              p.created_at,
              p.total,
-             COALESCE(s.name, 'بدون مورد') as sup_name
+             COALESCE(s.name, ?) as sup_name
            FROM purchases p
            LEFT JOIN suppliers s ON s.id = p.supplier_id
            WHERE p.store_id = ?
@@ -131,6 +138,7 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
            ORDER BY p.created_at DESC
            LIMIT 10''',
             variables: [
+              Variable.withString('—'),
               Variable.withString(storeId),
               Variable.withDateTime(dr.start),
               Variable.withDateTime(dr.end),
@@ -186,43 +194,138 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
     return 0.0;
   }
 
-  String _periodLabel() {
+  String _periodLabel(AppLocalizations l10n) {
     switch (_period) {
       case 'week':
-        return 'هذا الأسبوع';
+        return l10n.thisWeek;
       case 'month':
-        return 'هذا الشهر';
+        return l10n.thisMonth;
       case 'quarter':
-        return 'هذا الربع';
+        return l10n.reportThisQuarter;
       case 'year':
-        return 'هذه السنة';
+        return l10n.reportThisYear;
       default:
-        return 'هذا الشهر';
+        return l10n.thisMonth;
     }
+  }
+
+  Future<pw.Document> _buildReportPdf() async {
+    final l10n = AppLocalizations.of(context);
+    final pdf = await PdfFontHelper.createDocument();
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        textDirection: pw.TextDirection.rtl,
+        build: (context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(
+              l10n.reportPurchaseTitle,
+              style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.SizedBox(height: 10),
+            pw.Text(_periodLabel(l10n)),
+            pw.Divider(),
+            _pdfSummaryRow(l10n.totalPurchases, '${_totalPurchases.toStringAsFixed(0)} ${l10n.currency}'),
+            _pdfSummaryRow(l10n.invoices, '$_invoiceCount'),
+            _pdfSummaryRow(l10n.averageInvoice, '${_avgInvoice.toStringAsFixed(0)} ${l10n.currency}'),
+            _pdfSummaryRow(l10n.reportTotalTax, '${_totalTax.toStringAsFixed(0)} ${l10n.currency}'),
+            pw.Divider(),
+            if (_bySupplier.isNotEmpty) ...[
+              pw.Text(
+                l10n.reportPurchasesBySupplier,
+                style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+              ),
+              pw.SizedBox(height: 5),
+              ..._bySupplier.map(
+                (s) => pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text(s.name),
+                    pw.Text('${s.total.toStringAsFixed(0)} ${l10n.currency}'),
+                  ],
+                ),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+    return pdf;
+  }
+
+  pw.Widget _pdfSummaryRow(String label, String value) => pw.Padding(
+        padding: const pw.EdgeInsets.symmetric(vertical: 2),
+        child: pw.Row(
+          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+          children: [pw.Text(label), pw.Text(value)],
+        ),
+      );
+
+  Future<void> _exportCsv() async {
+    final l10n = AppLocalizations.of(context);
+    final rows = <List<dynamic>>[
+      [l10n.totalPurchases, _totalPurchases.toStringAsFixed(2)],
+      [l10n.invoices, '$_invoiceCount'],
+      [l10n.averageInvoice, _avgInvoice.toStringAsFixed(2)],
+      [l10n.reportTotalTax, _totalTax.toStringAsFixed(2)],
+    ];
+    for (final s in _bySupplier) {
+      rows.add([s.name, s.total.toStringAsFixed(2)]);
+    }
+    final result = await CsvExportHelper.exportAndShare(
+      context: context,
+      fileName: l10n.reportPurchaseTitle,
+      headers: [l10n.reportIndicator, l10n.currency],
+      rows: rows,
+    );
+    if (mounted) CsvExportHelper.showResultSnackBar(context, result);
+  }
+
+  Future<void> _sharePdf() async {
+    final pdf = await _buildReportPdf();
+    await Printing.sharePdf(
+      bytes: await pdf.save(),
+      filename: 'purchases_${DateTime.now().toIso8601String().split('T').first}.pdf',
+    );
+  }
+
+  Future<void> _printReport() async {
+    final pdf = await _buildReportPdf();
+    await Printing.layoutPdf(
+      onLayout: (_) => pdf.save(),
+      name: 'purchases_${DateTime.now().toIso8601String().split('T').first}',
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('تقرير المشتريات')),
+        appBar: AppBar(title: Text(l10n.reportPurchaseTitle)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
     if (_error != null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('تقرير المشتريات')),
+        appBar: AppBar(title: Text(l10n.reportPurchaseTitle)),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(Icons.error_outline, size: 48, color: AlhaiColors.error),
               const SizedBox(height: AlhaiSpacing.sm),
-              Text(_error!),
+              Text(
+                _error == 'store_not_selected'
+                    ? l10n.storeNotSelected
+                    : _error!,
+              ),
               const SizedBox(height: AlhaiSpacing.sm),
               ElevatedButton(
                 onPressed: _loadData,
-                child: const Text('إعادة المحاولة'),
+                child: Text(l10n.retry),
               ),
             ],
           ),
@@ -231,7 +334,7 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
     }
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تقرير المشتريات'),
+        title: Text(l10n.reportPurchaseTitle),
         actions: [
           PopupMenuButton<String>(
             onSelected: (v) {
@@ -239,20 +342,35 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
               _loadData();
             },
             itemBuilder: (_) => [
-              const PopupMenuItem(value: 'week', child: Text('هذا الأسبوع')),
-              const PopupMenuItem(value: 'month', child: Text('هذا الشهر')),
-              const PopupMenuItem(value: 'quarter', child: Text('ربع سنوي')),
-              const PopupMenuItem(value: 'year', child: Text('سنوي')),
+              PopupMenuItem(value: 'week', child: Text(l10n.thisWeek)),
+              PopupMenuItem(value: 'month', child: Text(l10n.thisMonth)),
+              PopupMenuItem(value: 'quarter', child: Text(l10n.reportQuarterly)),
+              PopupMenuItem(value: 'year', child: Text(l10n.reportAnnual)),
             ],
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.md),
               child: Row(
                 children: [
-                  Text(_periodLabel()),
+                  Text(_periodLabel(l10n)),
                   const Icon(Icons.arrow_drop_down),
                 ],
               ),
             ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.share),
+            tooltip: l10n.shareAction,
+            onPressed: _sharePdf,
+          ),
+          IconButton(
+            icon: const Icon(Icons.file_download_outlined),
+            tooltip: l10n.exportCsv,
+            onPressed: _exportCsv,
+          ),
+          IconButton(
+            icon: const Icon(Icons.print),
+            tooltip: l10n.printAction,
+            onPressed: _printReport,
           ),
         ],
       ),
@@ -266,8 +384,8 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
               children: [
                 Expanded(
                   child: _SummaryCard(
-                    label: 'إجمالي المشتريات',
-                    value: '${_totalPurchases.toStringAsFixed(0)} ر.س',
+                    label: l10n.totalPurchases,
+                    value: '${_totalPurchases.toStringAsFixed(0)} ${l10n.currency}',
                     icon: Icons.shopping_cart_rounded,
                     color: AlhaiColors.info,
                   ),
@@ -275,7 +393,7 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
                 const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: _SummaryCard(
-                    label: 'عدد الفواتير',
+                    label: l10n.invoices,
                     value: _invoiceCount.toString(),
                     icon: Icons.receipt_long_rounded,
                     color: Colors.orange,
@@ -288,8 +406,8 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
               children: [
                 Expanded(
                   child: _SummaryCard(
-                    label: 'متوسط الفاتورة',
-                    value: '${_avgInvoice.toStringAsFixed(0)} ر.س',
+                    label: l10n.averageInvoice,
+                    value: '${_avgInvoice.toStringAsFixed(0)} ${l10n.currency}',
                     icon: Icons.calculate_rounded,
                     color: AlhaiColors.success,
                   ),
@@ -297,8 +415,8 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
                 const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: _SummaryCard(
-                    label: 'إجمالي الضريبة',
-                    value: '${_totalTax.toStringAsFixed(0)} ر.س',
+                    label: l10n.reportTotalTax,
+                    value: '${_totalTax.toStringAsFixed(0)} ${l10n.currency}',
                     icon: Icons.percent_rounded,
                     color: Colors.purple,
                   ),
@@ -309,9 +427,9 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
 
             // By supplier
             if (_bySupplier.isNotEmpty) ...[
-              const Text(
-                'المشتريات حسب المورد',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              Text(
+                l10n.reportPurchasesBySupplier,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: AlhaiSpacing.xs),
               Card(
@@ -348,14 +466,14 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
                         crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
                           Text(
-                            '${s.total.toStringAsFixed(0)} ر.س',
+                            '${s.total.toStringAsFixed(0)} ${l10n.currency}',
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 13,
                             ),
                           ),
                           Text(
-                            '${s.count} فاتورة',
+                            l10n.reportNInvoices(s.count),
                             style: TextStyle(
                               fontSize: 11,
                               color: Theme.of(
@@ -374,9 +492,9 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
 
             // Recent purchases
             if (_recent.isNotEmpty) ...[
-              const Text(
-                'آخر الفواتير',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              Text(
+                l10n.reportRecentInvoices,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
               ),
               const SizedBox(height: AlhaiSpacing.xs),
               Card(
@@ -398,7 +516,7 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
                             style: const TextStyle(fontSize: 11),
                           ),
                           trailing: Text(
-                            '${p.total.toStringAsFixed(0)} ر.س',
+                            '${p.total.toStringAsFixed(0)} ${l10n.currency}',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: AlhaiColors.info,
@@ -424,7 +542,7 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
                       ),
                       const SizedBox(height: AlhaiSpacing.sm),
                       Text(
-                        'لا توجد مشتريات في هذه الفترة',
+                        l10n.reportNoPurchasesInPeriod,
                         style: TextStyle(
                           color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),

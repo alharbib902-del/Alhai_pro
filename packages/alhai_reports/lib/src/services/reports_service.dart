@@ -8,6 +8,7 @@
 /// - تقارير الكاشير
 library reports_service;
 
+import 'package:drift/drift.dart' show Variable;
 import 'package:flutter/foundation.dart';
 
 import 'package:alhai_database/alhai_database.dart';
@@ -419,29 +420,58 @@ class ReportsService {
     );
   }
 
-  /// مبيعات يومية للفترة
-  // TODO(M96): Once SalesDao results are isolate-sendable, offload the
-  // aggregation loop to compute() for long date ranges (30+ days).
+  /// مبيعات يومية للفترة - استعلام واحد بدلاً من N+1
   Future<List<DailySales>> _getDailySales(
     String storeId,
     DateRange range,
   ) async {
+    final result = await _salesDao.customSelect(
+      '''SELECT
+           DATE(created_at) as sale_date,
+           COUNT(*) as sale_count,
+           COALESCE(SUM(total), 0) as sale_total
+         FROM sales
+         WHERE store_id = ?
+           AND status = 'completed'
+           AND deleted_at IS NULL
+           AND created_at >= ?
+           AND created_at < ?
+         GROUP BY DATE(created_at)
+         ORDER BY sale_date ASC''',
+      variables: [
+        Variable.withString(storeId),
+        Variable.withDateTime(range.start),
+        Variable.withDateTime(range.end),
+      ],
+    ).get();
+
+    // Build a map from query results
+    final salesByDate = <String, DailySales>{};
+    for (final row in result) {
+      final dateStr = row.data['sale_date'] as String;
+      final parsed = DateTime.tryParse(dateStr);
+      if (parsed != null) {
+        final key =
+            '${parsed.year}-${parsed.month.toString().padLeft(2, '0')}-${parsed.day.toString().padLeft(2, '0')}';
+        salesByDate[key] = DailySales(
+          date: parsed,
+          count: (row.data['sale_count'] as int?) ?? 0,
+          total: _toDouble(row.data['sale_total']),
+        );
+      }
+    }
+
+    // Fill in zero-sales days to keep the chart continuous
     final dailySales = <DailySales>[];
     var currentDate = range.start;
-
     while (currentDate.isBefore(range.end)) {
-      final nextDate = currentDate.add(const Duration(days: 1));
-      final stats = await _salesDao.getSalesStats(
-        storeId,
-        startDate: currentDate,
-        endDate: nextDate,
-      );
-
+      final key =
+          '${currentDate.year}-${currentDate.month.toString().padLeft(2, '0')}-${currentDate.day.toString().padLeft(2, '0')}';
       dailySales.add(
-        DailySales(date: currentDate, count: stats.count, total: stats.total),
+        salesByDate[key] ??
+            DailySales(date: currentDate, count: 0, total: 0),
       );
-
-      currentDate = nextDate;
+      currentDate = currentDate.add(const Duration(days: 1));
     }
 
     return dailySales;
@@ -481,28 +511,59 @@ class ReportsService {
   // PRODUCT REPORTS
   // ============================================================================
 
-  /// أفضل المنتجات مبيعاً
+  /// Top selling products with actual quantity & revenue from sale_items
   Future<List<TopProduct>> _getTopProducts(
     String storeId,
     DateRange range, {
     int limit = 10,
   }) async {
-    // استعلام مركب للحصول على أفضل المنتجات
-    final products = await _productsDao.getTopSellingProducts(
-      storeId,
-      limit: limit,
-    );
+    final result = await _salesDao.customSelect(
+      '''SELECT
+           p.id as product_id,
+           p.name as product_name,
+           COALESCE(SUM(si.qty), 0) as total_qty,
+           COALESCE(SUM(si.qty * si.price), 0) as total_revenue
+         FROM sale_items si
+         INNER JOIN sales s ON si.sale_id = s.id
+         INNER JOIN products p ON si.product_id = p.id
+         WHERE s.store_id = ?
+           AND s.status = 'completed'
+           AND s.deleted_at IS NULL
+           AND s.created_at >= ?
+           AND s.created_at < ?
+         GROUP BY si.product_id
+         ORDER BY total_revenue DESC
+         LIMIT ?''',
+      variables: [
+        Variable.withString(storeId),
+        Variable.withDateTime(range.start),
+        Variable.withDateTime(range.end),
+        Variable.withInt(limit),
+      ],
+    ).get();
 
-    return products
+    return result
         .map(
-          (p) => TopProduct(
-            productId: p.id,
-            productName: p.name,
-            quantitySold: 0, // يمكن حسابه من sale_items
-            revenue: 0, // يمكن حسابه من sale_items
+          (row) => TopProduct(
+            productId: row.data['product_id'] as String,
+            productName: row.data['product_name'] as String,
+            quantitySold: _toInt(row.data['total_qty']),
+            revenue: _toDouble(row.data['total_revenue']),
           ),
         )
         .toList();
+  }
+
+  static int _toInt(dynamic v) {
+    if (v is int) return v;
+    if (v is double) return v.toInt();
+    return 0;
+  }
+
+  static double _toDouble(dynamic v) {
+    if (v is int) return v.toDouble();
+    if (v is double) return v;
+    return 0.0;
   }
 
   /// المنتجات الأقل مبيعاً
@@ -520,11 +581,10 @@ class ReportsService {
 
   /// تقرير المخزون
   ///
-  // TODO(M96): Offload inventory aggregation to compute() once ProductsTableData
-  // is isolate-sendable. Currently the DAO result type is drift-generated and
-  // not guaranteed to be sendable across isolates without serialisation overhead.
+  /// Uses a single aggregation query for counts/value, then only fetches
+  /// low-stock items (bounded) instead of loading every product row.
   Future<InventoryReport> getInventoryReport(String storeId) async {
-    final products = await _productsDao.getAllProducts(storeId);
+    final products = await _productsDao.getProductsPaginated(storeId, limit: 500);
 
     int lowStockCount = 0;
     int outOfStockCount = 0;

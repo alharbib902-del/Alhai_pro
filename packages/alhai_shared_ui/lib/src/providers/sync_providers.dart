@@ -4,6 +4,7 @@
 /// تشمل: محرك المزامنة، المستمع الفوري، متتبع الحالة
 library;
 
+import 'package:flutter/foundation.dart' show debugPrint, kDebugMode;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -134,7 +135,9 @@ final syncExistingCustomersProvider = FutureProvider<int>((ref) async {
     try {
       final store = await db.storesDao.getStoreById(storeId);
       orgId = store?.orgId;
-    } catch (_) {}
+    } catch (e) {
+      if (kDebugMode) debugPrint('[SyncCustomers] Error resolving orgId: $e');
+    }
 
     int count = 0;
     for (final customer in unsyncedCustomers) {

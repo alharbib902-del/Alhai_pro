@@ -7,6 +7,7 @@
 /// - اقتراحات AI
 library;
 
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_core/alhai_core.dart' show StoreSettings;
@@ -265,7 +266,7 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
       final jsonList = state.notifications.map((n) => n.toJson()).toList();
       await prefs.setString(_storageKey, jsonEncode(jsonList));
     } catch (e) {
-      // تجاهل أخطاء الحفظ
+      if (kDebugMode) debugPrint('Error saving notifications: $e');
     }
   }
 

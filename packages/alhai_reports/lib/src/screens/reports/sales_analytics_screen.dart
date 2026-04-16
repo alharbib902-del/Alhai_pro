@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+import '../../utils/csv_export_helper.dart';
 
 /// شاشة تحليلات المبيعات - بيانات حقيقية من قاعدة البيانات
 class SalesAnalyticsScreen extends ConsumerStatefulWidget {
@@ -37,6 +38,25 @@ class _SalesAnalyticsScreenState extends ConsumerState<SalesAnalyticsScreen> {
     }
   }
 
+  Future<void> _exportCsv(AppLocalizations l10n) async {
+    final statsAsync = ref.read(salesAnalyticsProvider(_dateRange));
+    final stats = statsAsync.valueOrNull;
+    if (stats == null) return;
+    final result = await CsvExportHelper.exportAndShare(
+      context: context,
+      fileName: l10n.salesAnalytics,
+      headers: ['البند', 'القيمة'],
+      rows: [
+        [l10n.totalSales, stats.total.toStringAsFixed(2)],
+        [l10n.invoices, '${stats.count}'],
+        [l10n.averageSale, stats.average.toStringAsFixed(2)],
+        ['أعلى فاتورة', stats.maxSale.toStringAsFixed(2)],
+        ['أقل فاتورة', stats.minSale.toStringAsFixed(2)],
+      ],
+    );
+    if (mounted) CsvExportHelper.showResultSnackBar(context, result);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context);
@@ -56,6 +76,11 @@ class _SalesAnalyticsScreenState extends ConsumerState<SalesAnalyticsScreen> {
               PopupMenuItem(value: 'week', child: Text(l10n.thisWeek)),
               PopupMenuItem(value: 'month', child: Text(l10n.thisMonth)),
             ],
+          ),
+          IconButton(
+            icon: const Icon(Icons.file_download_outlined),
+            tooltip: 'CSV',
+            onPressed: () => _exportCsv(l10n),
           ),
         ],
       ),

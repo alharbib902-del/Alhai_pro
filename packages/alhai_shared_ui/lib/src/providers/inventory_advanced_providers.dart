@@ -3,6 +3,7 @@
 /// تحويلات المخزون، الجرد، تتبع الصلاحية
 library;
 
+import 'package:flutter/foundation.dart' show debugPrint, kDebugMode;
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:alhai_auth/alhai_auth.dart';

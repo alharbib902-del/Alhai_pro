@@ -5,9 +5,14 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
+import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import '../../utils/csv_export_helper.dart';
+import '../../utils/pdf_font_helper.dart';
 
-/// شاشة تقرير أعمار الديون (Aging Report)
-/// تصنف الديون حسب المدة: 0-30 يوم، 31-60، 61-90، +90 يوم
+/// Debt Aging Report screen with full l10n support
 class DebtAgingReportScreen extends ConsumerStatefulWidget {
   const DebtAgingReportScreen({super.key});
 
@@ -44,7 +49,7 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) {
         setState(() {
-          _error = 'لم يتم تحديد المتجر';
+          _error = 'store_not_selected';
           _isLoading = false;
         });
         return;
@@ -84,16 +89,16 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
         String bucket;
         Color color;
         if (days <= 30) {
-          bucket = '0-30 يوم';
+          bucket = '0-30';
           color = Colors.green;
         } else if (days <= 60) {
-          bucket = '31-60 يوم';
+          bucket = '31-60';
           color = Colors.orange;
         } else if (days <= 90) {
-          bucket = '61-90 يوم';
+          bucket = '61-90';
           color = Colors.deepOrange;
         } else {
-          bucket = '+90 يوم';
+          bucket = '90+';
           color = Colors.red;
         }
 
@@ -112,12 +117,13 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
       for (final e in entries) {
         if (e.days <= 30) {
           t0 += e.balance;
-        } else if (e.days <= 60)
+        } else if (e.days <= 60) {
           t30 += e.balance;
-        else if (e.days <= 90)
+        } else if (e.days <= 90) {
           t60 += e.balance;
-        else
+        } else {
           t90 += e.balance;
+        }
       }
 
       if (mounted) {
@@ -146,27 +152,183 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
     return 0.0;
   }
 
+  String _bucketLabel(AppLocalizations l10n, String bucket) {
+    switch (bucket) {
+      case '0-30':
+        return l10n.reportDebtBucket0to30;
+      case '31-60':
+        return l10n.reportDebtBucket31to60;
+      case '61-90':
+        return l10n.reportDebtBucket61to90;
+      default:
+        return l10n.reportDebtBucket90plus;
+    }
+  }
+
+  Future<pw.Document> _buildReportPdf() async {
+    final l10n = AppLocalizations.of(context);
+    final pdf = await PdfFontHelper.createDocument();
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        textDirection: pw.TextDirection.rtl,
+        build: (context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(
+              l10n.reportDebtAgingTitle,
+              style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.Divider(),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text(l10n.reportDebtBucket0to30),
+                pw.Text('${_total0_30.toStringAsFixed(0)} ${l10n.currency}'),
+              ],
+            ),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text(l10n.reportDebtBucket31to60),
+                pw.Text('${_total31_60.toStringAsFixed(0)} ${l10n.currency}'),
+              ],
+            ),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text(l10n.reportDebtBucket61to90),
+                pw.Text('${_total61_90.toStringAsFixed(0)} ${l10n.currency}'),
+              ],
+            ),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text(l10n.reportDebtBucket90plus),
+                pw.Text('${_total90plus.toStringAsFixed(0)} ${l10n.currency}'),
+              ],
+            ),
+            pw.Divider(),
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Text(
+                  l10n.reportTotalDebts,
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                ),
+                pw.Text(
+                  '${_grandTotal.toStringAsFixed(0)} ${l10n.currency}',
+                  style: pw.TextStyle(fontWeight: pw.FontWeight.bold),
+                ),
+              ],
+            ),
+            pw.SizedBox(height: 20),
+            if (_entries.isNotEmpty) ...[
+              pw.Table(
+                border: pw.TableBorder.all(color: PdfColors.grey300),
+                children: [
+                  pw.TableRow(
+                    decoration: const pw.BoxDecoration(
+                      color: PdfColors.blueGrey700,
+                    ),
+                    children: [
+                      _pdfHeaderCell(l10n.reportIndicator),
+                      _pdfHeaderCell(l10n.currency),
+                      _pdfHeaderCell(l10n.day),
+                    ],
+                  ),
+                  ..._entries.take(30).map(
+                    (e) => pw.TableRow(
+                      children: [
+                        _pdfCell(e.name),
+                        _pdfCell('${e.balance.toStringAsFixed(0)} ${l10n.currency}'),
+                        _pdfCell(l10n.reportNDays(e.days)),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+    return pdf;
+  }
+
+  pw.Widget _pdfHeaderCell(String text) => pw.Padding(
+        padding: const pw.EdgeInsets.all(6),
+        child: pw.Text(
+          text,
+          style: pw.TextStyle(
+            color: PdfColors.white,
+            fontWeight: pw.FontWeight.bold,
+            fontSize: 10,
+          ),
+        ),
+      );
+
+  pw.Widget _pdfCell(String text) => pw.Padding(
+        padding: const pw.EdgeInsets.all(5),
+        child: pw.Text(text, style: const pw.TextStyle(fontSize: 9)),
+      );
+
+  Future<void> _exportCsv() async {
+    final l10n = AppLocalizations.of(context);
+    final result = await CsvExportHelper.exportAndShare(
+      context: context,
+      fileName: l10n.reportDebtAgingTitle,
+      headers: [l10n.reportIndicator, l10n.currency, l10n.day],
+      rows: _entries
+          .map((e) => [e.name, e.balance.toStringAsFixed(2), '${e.days}'])
+          .toList(),
+    );
+    if (mounted) CsvExportHelper.showResultSnackBar(context, result);
+  }
+
+  Future<void> _sharePdf() async {
+    final pdf = await _buildReportPdf();
+    await Printing.sharePdf(
+      bytes: await pdf.save(),
+      filename: 'debt_aging_${DateTime.now().toIso8601String().split('T').first}.pdf',
+    );
+  }
+
+  Future<void> _printReport() async {
+    final pdf = await _buildReportPdf();
+    await Printing.layoutPdf(
+      onLayout: (_) => pdf.save(),
+      name: 'debt_aging_${DateTime.now().toIso8601String().split('T').first}',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('تقرير أعمار الديون')),
+        appBar: AppBar(title: Text(l10n.reportDebtAgingTitle)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
     if (_error != null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('تقرير أعمار الديون')),
+        appBar: AppBar(title: Text(l10n.reportDebtAgingTitle)),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(Icons.error_outline, size: 48, color: Colors.red),
               const SizedBox(height: AlhaiSpacing.sm),
-              Text(_error!),
+              Text(
+                _error == 'store_not_selected'
+                    ? l10n.storeNotSelected
+                    : _error!,
+              ),
               TextButton(
                 onPressed: _loadData,
-                child: const Text('إعادة المحاولة'),
+                child: Text(l10n.retry),
               ),
             ],
           ),
@@ -176,11 +338,26 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تقرير أعمار الديون'),
+        title: Text(l10n.reportDebtAgingTitle),
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh_rounded),
             onPressed: _loadData,
+          ),
+          IconButton(
+            icon: const Icon(Icons.share),
+            tooltip: l10n.shareAction,
+            onPressed: _sharePdf,
+          ),
+          IconButton(
+            icon: const Icon(Icons.file_download_outlined),
+            tooltip: l10n.exportCsv,
+            onPressed: _exportCsv,
+          ),
+          IconButton(
+            icon: const Icon(Icons.print),
+            tooltip: l10n.printAction,
+            onPressed: _printReport,
           ),
         ],
       ),
@@ -196,19 +373,21 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
                   children: [
                     Expanded(
                       child: _BucketCard(
-                        label: '0-30 يوم',
+                        label: l10n.reportDebtBucket0to30,
                         amount: _total0_30,
                         color: Colors.green,
                         pct: _grandTotal > 0 ? _total0_30 / _grandTotal : 0,
+                        currency: l10n.currency,
                       ),
                     ),
                     const SizedBox(width: AlhaiSpacing.xs),
                     Expanded(
                       child: _BucketCard(
-                        label: '31-60 يوم',
+                        label: l10n.reportDebtBucket31to60,
                         amount: _total31_60,
                         color: Colors.orange,
                         pct: _grandTotal > 0 ? _total31_60 / _grandTotal : 0,
+                        currency: l10n.currency,
                       ),
                     ),
                   ],
@@ -218,19 +397,21 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
                   children: [
                     Expanded(
                       child: _BucketCard(
-                        label: '61-90 يوم',
+                        label: l10n.reportDebtBucket61to90,
                         amount: _total61_90,
                         color: Colors.deepOrange,
                         pct: _grandTotal > 0 ? _total61_90 / _grandTotal : 0,
+                        currency: l10n.currency,
                       ),
                     ),
                     const SizedBox(width: AlhaiSpacing.xs),
                     Expanded(
                       child: _BucketCard(
-                        label: '+90 يوم',
+                        label: l10n.reportDebtBucket90plus,
                         amount: _total90plus,
                         color: Colors.red,
                         pct: _grandTotal > 0 ? _total90plus / _grandTotal : 0,
+                        currency: l10n.currency,
                       ),
                     ),
                   ],
@@ -251,15 +432,15 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'إجمالي الديون',
-                        style: TextStyle(
+                      Text(
+                        l10n.reportTotalDebts,
+                        style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
                       Text(
-                        '${_grandTotal.toStringAsFixed(0)} ر.س',
+                        '${_grandTotal.toStringAsFixed(0)} ${l10n.currency}',
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -287,7 +468,7 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
                         ),
                         const SizedBox(height: AlhaiSpacing.sm),
                         Text(
-                          'لا توجد ديون مستحقة',
+                          l10n.noOutstandingDebts,
                           style: TextStyle(
                             color: Theme.of(
                               context,
@@ -332,7 +513,7 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
                                   borderRadius: BorderRadius.circular(8),
                                 ),
                                 child: Text(
-                                  e.bucket,
+                                  _bucketLabel(l10n, e.bucket),
                                   style: TextStyle(
                                     fontSize: 10,
                                     color: e.color,
@@ -342,13 +523,13 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
                               ),
                               const SizedBox(width: 6),
                               Text(
-                                '${e.days} يوم',
+                                l10n.reportNDays(e.days),
                                 style: const TextStyle(fontSize: 11),
                               ),
                             ],
                           ),
                           trailing: Text(
-                            '${e.balance.toStringAsFixed(0)} ر.س',
+                            '${e.balance.toStringAsFixed(0)} ${l10n.currency}',
                             style: TextStyle(
                               fontWeight: FontWeight.bold,
                               color: e.color,
@@ -371,12 +552,14 @@ class _BucketCard extends StatelessWidget {
   final double amount;
   final Color color;
   final double pct;
+  final String currency;
 
   const _BucketCard({
     required this.label,
     required this.amount,
     required this.color,
     required this.pct,
+    required this.currency,
   });
 
   @override
@@ -401,7 +584,7 @@ class _BucketCard extends StatelessWidget {
           ),
           const SizedBox(height: AlhaiSpacing.xxs),
           Text(
-            '${amount.toStringAsFixed(0)} ر.س',
+            '${amount.toStringAsFixed(0)} $currency',
             style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.bold,

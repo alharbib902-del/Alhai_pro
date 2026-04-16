@@ -3,7 +3,9 @@
 /// توفر بيانات المصروفات وتصنيفاتها من قاعدة البيانات
 library;
 
+import 'package:flutter/foundation.dart' show debugPrint, kDebugMode;
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -124,8 +126,9 @@ Future<void> addExpense(
         'created_at': now.toIso8601String(),
       },
     );
-  } catch (_) {
+  } catch (e) {
     // المزامنة اختيارية - لا تمنع العملية المحلية
+    if (kDebugMode) debugPrint('Expense sync enqueue failed: $e');
   }
 
   ref.invalidate(expensesListProvider);
@@ -141,8 +144,9 @@ Future<void> deleteExpense(WidgetRef ref, String id) async {
   try {
     final syncService = ref.read(syncServiceProvider);
     await syncService.enqueueDelete(tableName: 'expenses', recordId: id);
-  } catch (_) {
+  } catch (e) {
     // المزامنة اختيارية - لا تمنع العملية المحلية
+    if (kDebugMode) debugPrint('Expense delete sync enqueue failed: $e');
   }
 
   ref.invalidate(expensesListProvider);

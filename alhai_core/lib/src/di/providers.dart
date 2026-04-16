@@ -7,12 +7,13 @@
 ///   OLD: final repo = getIt<ProductsRepository>();
 ///   NEW: final repo = ref.read(productsRepositoryProvider);
 ///
-/// Providers marked with `throw UnimplementedError(...)` need their
-/// corresponding Impl classes created before they can be used.
-/// Override them in ProviderScope when ready.
+/// DataSource and infrastructure providers delegate to GetIt as a bridge
+/// until the full Riverpod migration is complete. Providers can still be
+/// overridden in ProviderScope (e.g. for tests or local-first repos).
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
@@ -73,12 +74,9 @@ import '../repositories/impl/analytics_repository_impl.dart';
 // Phase 1: Infrastructure Providers
 // ============================================
 
-/// SharedPreferences - override with pre-resolved instance in main()
+/// SharedPreferences - delegates to GetIt (pre-resolved during configureDependencies)
 final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
-  throw UnimplementedError(
-    'sharedPreferencesProvider must be overridden in ProviderScope. '
-    'Example: sharedPreferencesProvider.overrideWithValue(await SharedPreferences.getInstance())',
-  );
+  return GetIt.instance<SharedPreferences>();
 });
 
 /// FlutterSecureStorage
@@ -141,110 +139,77 @@ final ordersRemoteDataSourceProvider = Provider<OrdersRemoteDataSource>((ref) {
   return OrdersRemoteDataSourceImpl(dio: ref.read(apiDioProvider));
 });
 
-/// Products remote - override in ProviderScope when Impl is created
+/// Products remote - delegates to GetIt registration
 final productsRemoteDataSourceProvider = Provider<ProductsRemoteDataSource>((
   ref,
 ) {
-  throw UnimplementedError(
-    'productsRemoteDataSourceProvider: ProductsRemoteDataSourceImpl not yet created. '
-    'Override this provider in ProviderScope.',
-  );
+  return GetIt.instance<ProductsRemoteDataSource>();
 });
 
-/// Categories remote - override in ProviderScope when Impl is created
+/// Categories remote - delegates to GetIt registration
 final categoriesRemoteDataSourceProvider = Provider<CategoriesRemoteDataSource>((
   ref,
 ) {
-  throw UnimplementedError(
-    'categoriesRemoteDataSourceProvider: CategoriesRemoteDataSourceImpl not yet created. '
-    'Override this provider in ProviderScope.',
-  );
+  return GetIt.instance<CategoriesRemoteDataSource>();
 });
 
-/// Delivery remote - override in ProviderScope when Impl is created
+/// Delivery remote - delegates to GetIt registration
 final deliveryRemoteDataSourceProvider = Provider<DeliveryRemoteDataSource>((
   ref,
 ) {
-  throw UnimplementedError(
-    'deliveryRemoteDataSourceProvider: DeliveryRemoteDataSourceImpl not yet created. '
-    'Override this provider in ProviderScope.',
-  );
+  return GetIt.instance<DeliveryRemoteDataSource>();
 });
 
-/// Addresses remote - override in ProviderScope when Impl is created
+/// Addresses remote - delegates to GetIt registration
 final addressesRemoteDataSourceProvider = Provider<AddressesRemoteDataSource>((
   ref,
 ) {
-  throw UnimplementedError(
-    'addressesRemoteDataSourceProvider: AddressesRemoteDataSourceImpl not yet created. '
-    'Override this provider in ProviderScope.',
-  );
+  return GetIt.instance<AddressesRemoteDataSource>();
 });
 
-/// Stores remote - override in ProviderScope when Impl is created
+/// Stores remote - delegates to GetIt registration
 final storesRemoteDataSourceProvider = Provider<StoresRemoteDataSource>((ref) {
-  throw UnimplementedError(
-    'storesRemoteDataSourceProvider: StoresRemoteDataSourceImpl not yet created. '
-    'Override this provider in ProviderScope.',
-  );
+  return GetIt.instance<StoresRemoteDataSource>();
 });
 
-/// Inventory remote - override in ProviderScope when Impl is created
+/// Inventory remote - delegates to GetIt registration
 final inventoryRemoteDataSourceProvider = Provider<InventoryRemoteDataSource>((
   ref,
 ) {
-  throw UnimplementedError(
-    'inventoryRemoteDataSourceProvider: InventoryRemoteDataSourceImpl not yet created. '
-    'Override this provider in ProviderScope.',
-  );
+  return GetIt.instance<InventoryRemoteDataSource>();
 });
 
-/// Suppliers remote - override in ProviderScope when Impl is created
+/// Suppliers remote - delegates to GetIt registration
 final suppliersRemoteDataSourceProvider = Provider<SuppliersRemoteDataSource>((
   ref,
 ) {
-  throw UnimplementedError(
-    'suppliersRemoteDataSourceProvider: SuppliersRemoteDataSourceImpl not yet created. '
-    'Override this provider in ProviderScope.',
-  );
+  return GetIt.instance<SuppliersRemoteDataSource>();
 });
 
-/// Purchases remote - override in ProviderScope when Impl is created
+/// Purchases remote - delegates to GetIt registration
 final purchasesRemoteDataSourceProvider = Provider<PurchasesRemoteDataSource>((
   ref,
 ) {
-  throw UnimplementedError(
-    'purchasesRemoteDataSourceProvider: PurchasesRemoteDataSourceImpl not yet created. '
-    'Override this provider in ProviderScope.',
-  );
+  return GetIt.instance<PurchasesRemoteDataSource>();
 });
 
-/// Debts remote - override in ProviderScope when Impl is created
+/// Debts remote - delegates to GetIt registration
 final debtsRemoteDataSourceProvider = Provider<DebtsRemoteDataSource>((ref) {
-  throw UnimplementedError(
-    'debtsRemoteDataSourceProvider: DebtsRemoteDataSourceImpl not yet created. '
-    'Override this provider in ProviderScope.',
-  );
+  return GetIt.instance<DebtsRemoteDataSource>();
 });
 
-/// Reports remote - override in ProviderScope when Impl is created
+/// Reports remote - delegates to GetIt registration
 final reportsRemoteDataSourceProvider = Provider<ReportsRemoteDataSource>((
   ref,
 ) {
-  throw UnimplementedError(
-    'reportsRemoteDataSourceProvider: ReportsRemoteDataSourceImpl not yet created. '
-    'Override this provider in ProviderScope.',
-  );
+  return GetIt.instance<ReportsRemoteDataSource>();
 });
 
-/// Analytics remote - override in ProviderScope when Impl is created
+/// Analytics remote - delegates to GetIt registration
 final analyticsRemoteDataSourceProvider = Provider<AnalyticsRemoteDataSource>((
   ref,
 ) {
-  throw UnimplementedError(
-    'analyticsRemoteDataSourceProvider: AnalyticsRemoteDataSourceImpl not yet created. '
-    'Override this provider in ProviderScope.',
-  );
+  return GetIt.instance<AnalyticsRemoteDataSource>();
 });
 
 // ============================================

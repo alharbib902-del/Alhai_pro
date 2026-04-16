@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,7 +50,9 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
       purchases = allPurchases
           .where((p) => p.supplierId == widget.supplierId)
           .toList();
-    } catch (_) {}
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error loading supplier purchases: $e');
+    }
     if (mounted) {
       setState(() {
         _supplier = supplier;

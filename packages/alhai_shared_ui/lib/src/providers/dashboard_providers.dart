@@ -4,8 +4,10 @@
 /// بدلاً من القيم المحفوظة مسبقاً (hardcoded)
 library;
 
+import 'package:flutter/foundation.dart' show debugPrint, kDebugMode;
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:drift/drift.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -174,7 +176,8 @@ Future<int> _getTodayNewCustomersCount(
         )
         .getSingle();
     return result.data['count'] as int? ?? 0;
-  } catch (_) {
+  } catch (e) {
+    if (kDebugMode) debugPrint('Error getting today customer count: $e');
     return 0;
   }
 }
@@ -202,7 +205,8 @@ Future<List<DailySalesData>> _getWeeklySales(
       days.add(
         DailySalesData(date: date, total: stats.total, count: stats.count),
       );
-    } catch (_) {
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error getting daily sales for $date: $e');
       days.add(DailySalesData(date: date, total: 0, count: 0));
     }
   }
@@ -232,7 +236,8 @@ Future<List<DailySalesData>> _getMonthlySales(
       weeks.add(
         DailySalesData(date: weekStart, total: stats.total, count: stats.count),
       );
-    } catch (_) {
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error getting weekly sales for $weekStart: $e');
       weeks.add(DailySalesData(date: weekStart, total: 0, count: 0));
     }
   }
@@ -262,7 +267,8 @@ Future<int> _getExpiringProductsCount(
         )
         .getSingle();
     return result.data['count'] as int? ?? 0;
-  } catch (_) {
+  } catch (e) {
+    if (kDebugMode) debugPrint('Error getting expiring products count: $e');
     return 0;
   }
 }

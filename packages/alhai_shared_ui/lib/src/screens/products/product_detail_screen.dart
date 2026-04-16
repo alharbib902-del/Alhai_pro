@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -89,7 +90,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
             orElse: () => const Category(id: '', name: ''),
           );
           if (category.id.isEmpty) category = null;
-        } catch (_) {}
+        } catch (e) {
+          if (kDebugMode) debugPrint('Error loading product category: $e');
+        }
       }
 
       // 3. Load stock movements
@@ -99,7 +102,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           widget.productId,
           storeId: productData.storeId,
         );
-      } catch (_) {}
+      } catch (e) {
+        if (kDebugMode) debugPrint('Error loading stock movements: $e');
+      }
 
       // 4. Load total sales count
       int salesCount = 0;
@@ -109,7 +114,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
           productData.storeId,
         );
         salesCount = count.toInt();
-      } catch (_) {}
+      } catch (e) {
+        if (kDebugMode) debugPrint('Error loading product sales count: $e');
+      }
 
       setState(() {
         _product = product;

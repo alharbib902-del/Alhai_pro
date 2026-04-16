@@ -5,8 +5,14 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
+import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
+import '../../utils/csv_export_helper.dart';
+import '../../utils/pdf_font_helper.dart';
 
-/// شاشة تقرير المقارنة بين الفترات
+/// Comparison Report screen with full l10n support
 class ComparisonReportScreen extends ConsumerStatefulWidget {
   const ComparisonReportScreen({super.key});
 
@@ -158,7 +164,7 @@ class _ComparisonReportScreenState
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) {
         setState(() {
-          _error = 'لم يتم تحديد المتجر';
+          _error = 'store_not_selected';
           _isLoading = false;
         });
         return;
@@ -184,53 +190,174 @@ class _ComparisonReportScreenState
     }
   }
 
-  String _currentLabel() {
+  String _currentLabel(AppLocalizations l10n) {
     switch (_compareMode) {
       case 'month':
-        return 'هذا الشهر';
+        return l10n.thisMonth;
       case 'quarter':
-        return 'هذا الربع';
+        return l10n.reportThisQuarter;
       case 'year':
-        return 'هذه السنة';
+        return l10n.reportThisYear;
       default:
-        return 'الفترة الحالية';
+        return l10n.reportCurrentPeriod;
     }
   }
 
-  String _previousLabel() {
+  String _previousLabel(AppLocalizations l10n) {
     switch (_compareMode) {
       case 'month':
-        return 'الشهر الماضي';
+        return l10n.reportLastMonth;
       case 'quarter':
-        return 'الربع الماضي';
+        return l10n.reportLastQuarter;
       case 'year':
-        return 'السنة الماضية';
+        return l10n.reportLastYear;
       default:
-        return 'الفترة السابقة';
+        return l10n.reportPreviousPeriod;
     }
+  }
+
+  Future<pw.Document> _buildReportPdf() async {
+    final l10n = AppLocalizations.of(context);
+    final cur = _current!;
+    final prev = _previous!;
+    final pdf = await PdfFontHelper.createDocument();
+    pdf.addPage(
+      pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        textDirection: pw.TextDirection.rtl,
+        build: (context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(
+              l10n.reportComparisonTitle,
+              style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.Divider(),
+            pw.Table(
+              border: pw.TableBorder.all(color: PdfColors.grey300),
+              children: [
+                pw.TableRow(
+                  decoration: const pw.BoxDecoration(
+                    color: PdfColors.blueGrey700,
+                  ),
+                  children: [
+                    _pdfHeaderCell(l10n.reportIndicator),
+                    _pdfHeaderCell(_currentLabel(l10n)),
+                    _pdfHeaderCell(_previousLabel(l10n)),
+                  ],
+                ),
+                _pdfDataRow(l10n.sales, cur.revenue, prev.revenue, l10n.currency),
+                _pdfDataRow(l10n.invoices, cur.invoices.toDouble(), prev.invoices.toDouble(), '', isCount: true),
+                _pdfDataRow(l10n.purchases, cur.purchases, prev.purchases, l10n.currency),
+                _pdfDataRow(l10n.expenses, cur.expenses, prev.expenses, l10n.currency),
+                _pdfDataRow(l10n.tax, cur.tax, prev.tax, l10n.currency),
+                _pdfDataRow(l10n.netProfit, cur.profit, prev.profit, l10n.currency),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+    return pdf;
+  }
+
+  pw.Widget _pdfHeaderCell(String text) => pw.Padding(
+        padding: const pw.EdgeInsets.all(6),
+        child: pw.Text(
+          text,
+          style: pw.TextStyle(
+            color: PdfColors.white,
+            fontWeight: pw.FontWeight.bold,
+            fontSize: 10,
+          ),
+        ),
+      );
+
+  pw.TableRow _pdfDataRow(String label, double current, double previous, String currency, {bool isCount = false}) {
+    final fmt = isCount
+        ? (double v) => v.toStringAsFixed(0)
+        : (double v) => '${v.toStringAsFixed(0)} $currency';
+    return pw.TableRow(
+      children: [
+        pw.Padding(
+          padding: const pw.EdgeInsets.all(5),
+          child: pw.Text(label, style: const pw.TextStyle(fontSize: 9)),
+        ),
+        pw.Padding(
+          padding: const pw.EdgeInsets.all(5),
+          child: pw.Text(fmt(current), style: const pw.TextStyle(fontSize: 9)),
+        ),
+        pw.Padding(
+          padding: const pw.EdgeInsets.all(5),
+          child: pw.Text(fmt(previous), style: const pw.TextStyle(fontSize: 9)),
+        ),
+      ],
+    );
+  }
+
+  Future<void> _exportCsv() async {
+    final l10n = AppLocalizations.of(context);
+    final cur = _current!;
+    final prev = _previous!;
+    final result = await CsvExportHelper.exportAndShare(
+      context: context,
+      fileName: l10n.reportComparisonTitle,
+      headers: [l10n.reportIndicator, _currentLabel(l10n), _previousLabel(l10n)],
+      rows: [
+        [l10n.sales, cur.revenue.toStringAsFixed(2), prev.revenue.toStringAsFixed(2)],
+        [l10n.invoices, '${cur.invoices}', '${prev.invoices}'],
+        [l10n.purchases, cur.purchases.toStringAsFixed(2), prev.purchases.toStringAsFixed(2)],
+        [l10n.expenses, cur.expenses.toStringAsFixed(2), prev.expenses.toStringAsFixed(2)],
+        [l10n.tax, cur.tax.toStringAsFixed(2), prev.tax.toStringAsFixed(2)],
+        [l10n.netProfit, cur.profit.toStringAsFixed(2), prev.profit.toStringAsFixed(2)],
+      ],
+    );
+    if (mounted) CsvExportHelper.showResultSnackBar(context, result);
+  }
+
+  Future<void> _sharePdf() async {
+    final pdf = await _buildReportPdf();
+    await Printing.sharePdf(
+      bytes: await pdf.save(),
+      filename: 'comparison_${DateTime.now().toIso8601String().split('T').first}.pdf',
+    );
+  }
+
+  Future<void> _printReport() async {
+    final pdf = await _buildReportPdf();
+    await Printing.layoutPdf(
+      onLayout: (_) => pdf.save(),
+      name: 'comparison_${DateTime.now().toIso8601String().split('T').first}',
+    );
   }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+
     if (_isLoading) {
       return Scaffold(
-        appBar: AppBar(title: const Text('تقرير المقارنة')),
+        appBar: AppBar(title: Text(l10n.reportComparisonTitle)),
         body: const Center(child: CircularProgressIndicator()),
       );
     }
     if (_error != null || _current == null || _previous == null) {
       return Scaffold(
-        appBar: AppBar(title: const Text('تقرير المقارنة')),
+        appBar: AppBar(title: Text(l10n.reportComparisonTitle)),
         body: Center(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               const Icon(Icons.error_outline, size: 48, color: Colors.red),
               const SizedBox(height: AlhaiSpacing.sm),
-              Text(_error ?? 'خطأ في تحميل البيانات'),
+              Text(
+                _error == 'store_not_selected'
+                    ? l10n.storeNotSelected
+                    : (_error ?? l10n.errorLoadingData),
+              ),
               TextButton(
                 onPressed: _loadData,
-                child: const Text('إعادة المحاولة'),
+                child: Text(l10n.retry),
               ),
             ],
           ),
@@ -243,16 +370,33 @@ class _ComparisonReportScreenState
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('تقرير المقارنة'),
+        title: Text(l10n.reportComparisonTitle),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.share),
+            tooltip: l10n.shareAction,
+            onPressed: _sharePdf,
+          ),
+          IconButton(
+            icon: const Icon(Icons.file_download_outlined),
+            tooltip: l10n.exportCsv,
+            onPressed: _exportCsv,
+          ),
+          IconButton(
+            icon: const Icon(Icons.print),
+            tooltip: l10n.printAction,
+            onPressed: _printReport,
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
           child: Padding(
             padding: const EdgeInsetsDirectional.fromSTEB(16, 0, 16, 8),
             child: SegmentedButton<String>(
-              segments: const [
-                ButtonSegment(value: 'month', label: Text('شهري')),
-                ButtonSegment(value: 'quarter', label: Text('ربعي')),
-                ButtonSegment(value: 'year', label: Text('سنوي')),
+              segments: [
+                ButtonSegment(value: 'month', label: Text(l10n.monthly)),
+                ButtonSegment(value: 'quarter', label: Text(l10n.reportQuarterly)),
+                ButtonSegment(value: 'year', label: Text(l10n.reportAnnual)),
               ],
               selected: {_compareMode},
               onSelectionChanged: (s) {
@@ -274,7 +418,7 @@ class _ComparisonReportScreenState
                 Expanded(
                   flex: 2,
                   child: Text(
-                    'المؤشر',
+                    l10n.reportIndicator,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
                       color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -283,7 +427,7 @@ class _ComparisonReportScreenState
                 ),
                 Expanded(
                   child: Text(
-                    _currentLabel(),
+                    _currentLabel(l10n),
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                       fontWeight: FontWeight.bold,
@@ -293,7 +437,7 @@ class _ComparisonReportScreenState
                 ),
                 Expanded(
                   child: Text(
-                    _previousLabel(),
+                    _previousLabel(l10n),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -303,7 +447,7 @@ class _ComparisonReportScreenState
                 ),
                 Expanded(
                   child: Text(
-                    'التغيير',
+                    l10n.reportChange,
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontWeight: FontWeight.bold,
@@ -316,43 +460,49 @@ class _ComparisonReportScreenState
             const Divider(height: 20, thickness: 2),
 
             _CompRow(
-              label: 'المبيعات',
+              label: l10n.sales,
               current: cur.revenue,
               previous: prev.revenue,
               higherIsBetter: true,
+              currency: l10n.currency,
             ),
             _CompRow(
-              label: 'عدد الفواتير',
+              label: l10n.invoices,
               current: cur.invoices.toDouble(),
               previous: prev.invoices.toDouble(),
               higherIsBetter: true,
               isCount: true,
+              currency: l10n.currency,
             ),
             _CompRow(
-              label: 'المشتريات',
+              label: l10n.purchases,
               current: cur.purchases,
               previous: prev.purchases,
               higherIsBetter: false,
+              currency: l10n.currency,
             ),
             _CompRow(
-              label: 'المصروفات',
+              label: l10n.expenses,
               current: cur.expenses,
               previous: prev.expenses,
               higherIsBetter: false,
+              currency: l10n.currency,
             ),
             _CompRow(
-              label: 'الضريبة',
+              label: l10n.tax,
               current: cur.tax,
               previous: prev.tax,
               higherIsBetter: false,
+              currency: l10n.currency,
             ),
             const Divider(),
             _CompRow(
-              label: 'صافي الربح',
+              label: l10n.netProfit,
               current: cur.profit,
               previous: prev.profit,
               higherIsBetter: true,
               bold: true,
+              currency: l10n.currency,
             ),
           ],
         ),
@@ -368,12 +518,14 @@ class _CompRow extends StatelessWidget {
   final bool higherIsBetter;
   final bool isCount;
   final bool bold;
+  final String currency;
 
   const _CompRow({
     required this.label,
     required this.current,
     required this.previous,
     required this.higherIsBetter,
+    required this.currency,
     this.isCount = false,
     this.bold = false,
   });
@@ -406,7 +558,7 @@ class _CompRow extends StatelessWidget {
             child: Text(
               isCount
                   ? current.toStringAsFixed(0)
-                  : '${current.toStringAsFixed(0)} ر.س',
+                  : '${current.toStringAsFixed(0)} $currency',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontWeight: bold ? FontWeight.bold : FontWeight.w500,
@@ -419,7 +571,7 @@ class _CompRow extends StatelessWidget {
             child: Text(
               isCount
                   ? previous.toStringAsFixed(0)
-                  : '${previous.toStringAsFixed(0)} ر.س',
+                  : '${previous.toStringAsFixed(0)} $currency',
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 13,

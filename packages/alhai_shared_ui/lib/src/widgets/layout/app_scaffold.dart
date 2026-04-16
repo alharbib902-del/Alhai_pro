@@ -6,6 +6,7 @@
 /// - Responsive Layout
 library;
 
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import '../../core/theme/app_sizes.dart';
@@ -363,7 +364,8 @@ class _AppScaffoldState extends State<AppScaffold> {
   AppNavigationItem? _getCurrentItem() {
     try {
       return widget.items.firstWhere((item) => item.id == widget.selectedId);
-    } catch (_) {
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error finding navigation item: $e');
       return widget.items.isNotEmpty ? widget.items.first : null;
     }
   }

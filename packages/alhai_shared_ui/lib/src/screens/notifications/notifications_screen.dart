@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -186,7 +187,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
                               await db.notificationsDao.deleteNotification(
                                 notification.id,
                               );
-                            } catch (_) {}
+                            } catch (e) {
+                              if (kDebugMode) debugPrint('Error deleting notification: $e');
+                            }
                             setState(() => _notifications.removeAt(index));
                           },
                           child: Container(
@@ -324,7 +327,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       final db = GetIt.I<AppDatabase>();
       await db.notificationsDao.markAllAsRead(storeId);
       await _loadData();
-    } catch (_) {}
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error marking all read: $e');
+    }
   }
 
   Future<void> _openNotification(NotificationsTableData n) async {
@@ -334,7 +339,9 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
         await db.notificationsDao.markAsRead(n.id);
         await _loadData();
       }
-    } catch (_) {}
+    } catch (e) {
+      if (kDebugMode) debugPrint('Error opening notification: $e');
+    }
     if (mounted) {
       final l10n = AppLocalizations.of(context);
       ScaffoldMessenger.of(context).showSnackBar(

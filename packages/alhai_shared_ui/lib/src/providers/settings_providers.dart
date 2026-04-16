@@ -3,6 +3,7 @@
 /// توفر بيانات التقارير والإعدادات من قاعدة البيانات
 library;
 
+import 'package:flutter/foundation.dart' show debugPrint, kDebugMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 
@@ -171,7 +172,8 @@ final paymentDeviceSettingsProvider =
           enableNfcSoftPos: settingsMap['payment_enable_nfc_softpos'] == 'true',
           softPosMode: settingsMap['payment_softpos_mode'] ?? 'mock',
         );
-      } catch (_) {
+      } catch (e) {
+        if (kDebugMode) debugPrint('Error parsing payment settings: $e');
         return const PaymentDeviceSettings();
       }
     });

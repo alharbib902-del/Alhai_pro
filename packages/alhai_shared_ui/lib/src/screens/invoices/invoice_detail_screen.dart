@@ -9,6 +9,7 @@
 /// - إلغاء الفاتورة (Void)
 library;
 
+import 'package:flutter/foundation.dart' show kDebugMode;
 import '../../widgets/common/adaptive_icon.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -111,7 +112,9 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                           'updatedAt': DateTime.now().toIso8601String(),
                         },
                       );
-                } catch (_) {}
+                } catch (e) {
+                  if (kDebugMode) debugPrint('Error syncing voided invoice: $e');
+                }
                 // Refresh the provider
                 ref.invalidate(invoiceDetailProvider(widget.invoiceId));
                 if (mounted) {

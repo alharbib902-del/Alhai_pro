@@ -1,17 +1,21 @@
 /// خدمة API الذكاء الاصطناعي - AI API Service
 ///
 /// عميل HTTP للاتصال بخادم FastAPI للذكاء الاصطناعي
-/// يدعم: المصادقة، التخزين المؤقت، إعادة المحاولة، العمل بدون اتصال
+/// يدعم: المصادقة، التخزين المؤقت، إعادة المحاولة، العمل بدون اتصال،
+/// تثبيت الشهادات، تنظيف البيانات الشخصية
 library;
 
 import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:alhai_auth/alhai_auth.dart' show SecureStorageService;
 import 'package:alhai_core/alhai_core.dart' show AppEndpoints;
+import 'package:crypto/crypto.dart';
 import 'package:dio/dio.dart';
+import 'package:dio/io.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 // ============================================================================
@@ -33,6 +37,60 @@ const int _kMaxRetries = 2;
 
 /// مدة التخزين المؤقت (دقيقة)
 const int _kCacheDurationMinutes = 15;
+
+// ============================================================================
+// CERTIFICATE PINNING CONFIGURATION
+// ============================================================================
+
+/// Primary SHA-256 fingerprint for the AI server certificate, injected via
+/// `--dart-define=AI_SERVER_CERT_FINGERPRINT=<base64 sha256>`.
+const String _kPrimaryFingerprint = String.fromEnvironment(
+  'AI_SERVER_CERT_FINGERPRINT',
+);
+
+/// Backup fingerprint for certificate rotation windows.
+const String _kBackupFingerprint = String.fromEnvironment(
+  'AI_SERVER_CERT_FINGERPRINT_BACKUP',
+);
+
+/// Active pin list, normalized (trimmed, non-empty).
+final List<String> _kPinnedHashes = <String>[
+  if (_kPrimaryFingerprint.trim().isNotEmpty) _kPrimaryFingerprint.trim(),
+  if (_kBackupFingerprint.trim().isNotEmpty) _kBackupFingerprint.trim(),
+];
+
+// ============================================================================
+// PII SANITIZATION
+// ============================================================================
+
+/// Strips personally identifiable information from user input before sending
+/// to the AI server. Removes:
+/// - Email addresses
+/// - Phone numbers (international and Saudi formats)
+/// - Saudi national IDs (10 digits starting with 1 or 2)
+String sanitizePii(String input) {
+  // Email addresses
+  var result = input.replaceAll(
+    RegExp(r'[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}'),
+    '[EMAIL]',
+  );
+
+  // Saudi national IDs: exactly 10 digits starting with 1 or 2
+  // Must check BEFORE phone numbers since NID could match phone patterns.
+  // Use word-boundary to avoid matching inside longer digit sequences.
+  result = result.replaceAll(
+    RegExp(r'\b[12]\d{9}\b'),
+    '[NATIONAL_ID]',
+  );
+
+  // Phone numbers: +966…, 05…, or generic international format
+  result = result.replaceAll(
+    RegExp(r'(?:\+?\d{1,3}[-.\s]?)?\(?\d{2,4}\)?[-.\s]?\d{3,4}[-.\s]?\d{3,4}'),
+    '[PHONE]',
+  );
+
+  return result;
+}
 
 // ============================================================================
 // PROVIDER
@@ -57,6 +115,9 @@ class AiApiService {
   static const int _kMaxRequestsPerMinute = 10;
   static const Duration _kRateLimitWindow = Duration(minutes: 1);
 
+  /// Secure cache key prefix in SecureStorageService
+  static const String _kCacheKeyPrefix = 'ai_cache_';
+
   AiApiService() {
     _dio = Dio(
       BaseOptions(
@@ -66,6 +127,9 @@ class AiApiService {
         headers: {'Content-Type': 'application/json'},
       ),
     );
+
+    // Configure certificate pinning (release builds only)
+    _configureCertificatePinning();
 
     // Add auth interceptor
     _dio.interceptors.add(
@@ -86,6 +150,79 @@ class AiApiService {
         },
       ),
     );
+  }
+
+  // ==========================================================================
+  // CERTIFICATE PINNING
+  // ==========================================================================
+
+  /// Configures TLS certificate pinning on the Dio HTTP adapter.
+  ///
+  /// In **release** builds, rejects connections whose certificate SHA-256
+  /// fingerprint does not match any pin supplied via `--dart-define`.
+  /// Throws [StateError] if no pins are configured in release mode (fail-closed).
+  ///
+  /// In **debug** builds, pinning is disabled so proxy/inspection tools work.
+  void _configureCertificatePinning() {
+    if (kDebugMode) {
+      if (_kPinnedHashes.isEmpty) {
+        debugPrint(
+          '[AI-CertPin] Debug build has no pinned fingerprints — '
+          'certificate pinning DISABLED.',
+        );
+      } else {
+        debugPrint(
+          '[AI-CertPin] Debug mode: pinning disabled for dev tools '
+          '(${_kPinnedHashes.length} pin(s) configured)',
+        );
+      }
+      return;
+    }
+
+    // Release mode: fail-closed when no pins are configured.
+    if (_kPinnedHashes.isEmpty) {
+      throw StateError(
+        '[AI-CertPin] No pinned fingerprints configured for a release build. '
+        'Rebuild with --dart-define=AI_SERVER_CERT_FINGERPRINT=<base64 sha256> '
+        '(and optionally AI_SERVER_CERT_FINGERPRINT_BACKUP). '
+        'Refusing to initialize an unpinned HTTP client.',
+      );
+    }
+
+    final adapter = _dio.httpClientAdapter;
+    if (adapter is IOHttpClientAdapter) {
+      adapter.createHttpClient = () {
+        final client = HttpClient()
+          ..connectionTimeout = const Duration(seconds: _kTimeoutSeconds);
+        client.badCertificateCallback =
+            (X509Certificate cert, String host, int port) {
+          final derBytes = cert.der;
+          final digest = sha256.convert(derBytes);
+          final actual = base64.encode(digest.bytes);
+          for (final pin in _kPinnedHashes) {
+            if (_constantTimeEquals(actual, pin)) {
+              return true;
+            }
+          }
+          debugPrint(
+            '[AI-CertPin] REJECTED certificate for $host:$port '
+            '(fingerprint mismatch)',
+          );
+          return false;
+        };
+        return client;
+      };
+    }
+  }
+
+  /// Constant-time string comparison to avoid timing oracles.
+  static bool _constantTimeEquals(String a, String b) {
+    if (a.length != b.length) return false;
+    var diff = 0;
+    for (var i = 0; i < a.length; i++) {
+      diff |= a.codeUnitAt(i) ^ b.codeUnitAt(i);
+    }
+    return diff == 0;
   }
 
   // ==========================================================================
@@ -186,69 +323,33 @@ class AiApiService {
     _cache[key] = _CacheEntry(data: data, timestamp: DateTime.now());
   }
 
-  /// Obfuscation key for cache encoding. This provides a basic layer of
-  /// protection so cached AI responses are not stored as plain-text JSON
-  /// in SharedPreferences. For production-grade encryption, consider
-  /// migrating to flutter_secure_storage.
-  static const String _obfuscationKey = 'AlH4i_Ai_C@che_2026!';
-
-  /// XOR-based obfuscation for cache values.
-  /// Not cryptographically secure, but prevents casual reading of cached data.
-  static String _xorObfuscate(String input, String key) {
-    final inputBytes = utf8.encode(input);
-    final keyBytes = utf8.encode(key);
-    final result = List<int>.generate(
-      inputBytes.length,
-      (i) => inputBytes[i] ^ keyBytes[i % keyBytes.length],
-    );
-    return base64Encode(result);
-  }
-
-  /// Reverse XOR obfuscation.
-  static String _xorDeobfuscate(String encoded, String key) {
-    final inputBytes = base64Decode(encoded);
-    final keyBytes = utf8.encode(key);
-    final result = List<int>.generate(
-      inputBytes.length,
-      (i) => inputBytes[i] ^ keyBytes[i % keyBytes.length],
-    );
-    return utf8.decode(result);
-  }
-
-  /// Persists cache entry with XOR+base64 obfuscation to prevent plain-text
-  /// storage of sensitive business data (sales forecasts, fraud alerts, pricing).
+  /// Persists cache entry using [SecureStorageService] (native keychain /
+  /// encrypted SharedPreferences). Replaces the old XOR+SharedPreferences
+  /// approach which was NOT real encryption.
   Future<void> _persistCache(String key, Map<String, dynamic> data) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
       final cacheData = jsonEncode({
         'data': data,
         'timestamp': DateTime.now().toIso8601String(),
       });
-      final obfuscated = _xorObfuscate(cacheData, _obfuscationKey);
-      await prefs.setString('ai_cache_$key', obfuscated);
+      await SecureStorageService.write(
+        '$_kCacheKeyPrefix$key',
+        cacheData,
+      );
     } catch (_) {
       // Silently fail - caching is best-effort
     }
   }
 
-  /// Retrieves and deobfuscates a persisted cache entry.
-  /// Falls back gracefully if the stored data is in the old unencrypted format.
+  /// Retrieves a persisted cache entry from secure storage.
   Future<Map<String, dynamic>?> _getPersistedCache(String key) async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      final raw = prefs.getString('ai_cache_$key');
+      final raw = await SecureStorageService.read(
+        '$_kCacheKeyPrefix$key',
+      );
       if (raw == null) return null;
 
-      String decoded;
-      try {
-        // Try deobfuscating (new format)
-        decoded = _xorDeobfuscate(raw, _obfuscationKey);
-      } catch (_) {
-        // Fallback: old unencrypted format (backward compatibility)
-        decoded = raw;
-      }
-
-      final parsed = jsonDecode(decoded) as Map<String, dynamic>;
+      final parsed = jsonDecode(raw) as Map<String, dynamic>;
       return parsed['data'] as Map<String, dynamic>;
     } catch (_) {
       return null;
@@ -548,7 +649,7 @@ class AiApiService {
     return _post('/ai/chat', {
       'org_id': orgId,
       'store_id': storeId,
-      'message': message,
+      'message': sanitizePii(message),
       'language': language,
       if (conversationId != null) 'conversation_id': conversationId,
     }, useCache: false);
@@ -567,7 +668,7 @@ class AiApiService {
     return _post('/ai/assistant', {
       'org_id': orgId,
       'store_id': storeId,
-      'query': query,
+      'query': sanitizePii(query),
       'context': context,
     }, useCache: false);
   }

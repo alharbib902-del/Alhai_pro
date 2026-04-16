@@ -3,6 +3,7 @@
 /// تحليل أوقات الذروة والنشاط خلال اليوم والأسبوع
 library;
 
+import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSpacing;
@@ -10,6 +11,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import '../../utils/csv_export_helper.dart';
 
 /// شاشة تقرير ساعات الذروة
 class PeakHoursReportScreen extends ConsumerStatefulWidget {
@@ -61,31 +63,60 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
           )
           .toList();
 
-      // Load daily data by iterating last 7 days
-      // Day indices: 0=Saturday, 1=Sunday, ..., 6=Friday
-      // Names will be resolved with l10n at display time
+      // Load daily data with a single GROUP BY query instead of 7 queries
       final dayNames = ['sat', 'sun', 'mon', 'tue', 'wed', 'thu', 'fri'];
+      final sevenDaysAgo = DateTime.now().subtract(const Duration(days: 6));
+      final startOfRange = DateTime(
+        sevenDaysAgo.year,
+        sevenDaysAgo.month,
+        sevenDaysAgo.day,
+      );
+      final dailyResults = await db.customSelect(
+        '''SELECT
+             DATE(created_at) as sale_date,
+             COUNT(*) as sale_count,
+             COALESCE(SUM(total), 0) as sale_total
+           FROM sales
+           WHERE store_id = ?
+             AND status = 'completed'
+             AND created_at >= ?
+             AND created_at < ?
+           GROUP BY DATE(created_at)
+           ORDER BY sale_date ASC''',
+        variables: [
+          Variable.withString(storeId),
+          Variable.withDateTime(startOfRange),
+          Variable.withDateTime(DateTime.now().add(const Duration(days: 1))),
+        ],
+      ).get();
+
+      // Build a map of date -> (count, total)
+      final dailyMap = <String, ({int count, double total})>{};
+      for (final row in dailyResults) {
+        final dateStr = row.data['sale_date'] as String;
+        dailyMap[dateStr] = (
+          count: (row.data['sale_count'] as int?) ?? 0,
+          total: (row.data['sale_total'] is int)
+              ? (row.data['sale_total'] as int).toDouble()
+              : (row.data['sale_total'] as double?) ?? 0.0,
+        );
+      }
+
+      // Fill 7 days with zero-fills for missing dates
       final dailyList = <DailyData>[];
       for (int i = 6; i >= 0; i--) {
         final date = DateTime.now().subtract(Duration(days: i));
-        try {
-          final daySales = await db.salesDao.getSalesStats(
-            storeId,
-            startDate: DateTime(date.year, date.month, date.day),
-            endDate: DateTime(date.year, date.month, date.day + 1),
-          );
-          // weekday: 1=Monday ... 7=Sunday; map to Arabic week starting Saturday
-          final arabicDayIndex = (date.weekday + 1) % 7; // Saturday=0
-          dailyList.add(
-            DailyData(
-              day: dayNames[arabicDayIndex],
-              transactions: daySales.count,
-              revenue: daySales.total,
-            ),
-          );
-        } catch (_) {
-          // Skip days that fail
-        }
+        final key =
+            '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+        final data = dailyMap[key];
+        final arabicDayIndex = (date.weekday + 1) % 7;
+        dailyList.add(
+          DailyData(
+            day: dayNames[arabicDayIndex],
+            transactions: data?.count ?? 0,
+            revenue: data?.total ?? 0,
+          ),
+        );
       }
       _dailyData = dailyList;
 
@@ -764,10 +795,30 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
     }
   }
 
-  void _exportReport() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(AppLocalizations.of(context).exportingReport)),
+  Future<void> _exportReport() async {
+    final l10n = AppLocalizations.of(context);
+    final headers = _viewMode == 'hourly'
+        ? [l10n.hourlyView, l10n.transactionWord, l10n.revenue]
+        : [l10n.dailyView, l10n.transactionWord, l10n.revenue];
+    final rows = _viewMode == 'hourly'
+        ? _hourlyData.map((h) => [
+            '${h.hour}:00',
+            '${h.transactions}',
+            h.revenue.toStringAsFixed(2),
+          ]).toList()
+        : _dailyData.map((d) => [
+            _getDayShort(context, d.day),
+            '${d.transactions}',
+            d.revenue.toStringAsFixed(2),
+          ]).toList();
+
+    final result = await CsvExportHelper.exportAndShare(
+      context: context,
+      fileName: 'تقرير_ساعات_الذروة',
+      headers: headers,
+      rows: rows,
     );
+    if (mounted) CsvExportHelper.showResultSnackBar(context, result);
   }
 }
 
