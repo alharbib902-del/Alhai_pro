@@ -8,6 +8,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 
@@ -232,6 +233,8 @@ class _DistributorSettingsScreenState
                                 children: [
                                   _buildAppearanceSection(isDark, ref),
                                   const SizedBox(height: AlhaiSpacing.lg),
+                                  _buildSecuritySection(isDark),
+                                  const SizedBox(height: AlhaiSpacing.lg),
                                   _buildNotificationsSection(isDark),
                                   const SizedBox(height: AlhaiSpacing.lg),
                                   _buildSaveButton(isDark),
@@ -244,6 +247,12 @@ class _DistributorSettingsScreenState
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
                             _buildAppearanceSection(isDark, ref),
+                            SizedBox(
+                              height: isMedium
+                                  ? AlhaiSpacing.lg
+                                  : AlhaiSpacing.md,
+                            ),
+                            _buildSecuritySection(isDark),
                             SizedBox(
                               height: isMedium
                                   ? AlhaiSpacing.lg
@@ -605,6 +614,370 @@ class _DistributorSettingsScreenState
         ),
       ),
     );
+  }
+
+  // ─── Security Section (super_admin only) ──────────────────────
+
+  Widget _buildSecuritySection(bool isDark) {
+    final user = ref.watch(currentUserProvider);
+    final isSuperAdmin = user?.userMetadata?['role'] == 'super_admin';
+    if (!isSuperAdmin) return const SizedBox.shrink();
+
+    final mfaStatusAsync = ref.watch(mfaEnrollmentStatusProvider);
+
+    return _sectionCard(
+      icon: Icons.security_rounded,
+      iconColor: AppColors.error,
+      title: 'الأمان',
+      isDark: isDark,
+      children: [
+        mfaStatusAsync.when(
+          loading: () => const Padding(
+            padding: EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+            child: Center(
+              child: SizedBox(
+                width: 20,
+                height: 20,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+          ),
+          error: (_, __) => Padding(
+            padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xs),
+            child: Row(
+              children: [
+                ExcludeSemantics(
+                  child: Icon(
+                    Icons.shield_outlined,
+                    color: AppColors.getTextMuted(isDark),
+                    size: 20,
+                  ),
+                ),
+                const SizedBox(width: AlhaiSpacing.sm),
+                Expanded(
+                  child: Text(
+                    'المصادقة الثنائية',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: AppColors.getTextPrimary(isDark),
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => ref.invalidate(mfaEnrollmentStatusProvider),
+                  child: const Text('إعادة المحاولة'),
+                ),
+              ],
+            ),
+          ),
+          data: (isEnrolled) => Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
+                child: Row(
+                  children: [
+                    ExcludeSemantics(
+                      child: Icon(
+                        Icons.shield_rounded,
+                        color: isEnrolled
+                            ? AppColors.success
+                            : AppColors.getTextMuted(isDark),
+                        size: 20,
+                      ),
+                    ),
+                    const SizedBox(width: AlhaiSpacing.sm),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'المصادقة الثنائية (TOTP)',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.getTextPrimary(isDark),
+                            ),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            isEnrolled ? 'مفعّلة' : 'غير مفعّلة',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: isEnrolled
+                                  ? AppColors.success
+                                  : AppColors.getTextMuted(isDark),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (isEnrolled)
+                      OutlinedButton(
+                        onPressed: () => _confirmDisableMfa(isDark),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: AppColors.error,
+                          side: BorderSide(
+                            color: AppColors.error.withValues(alpha: 0.5),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AlhaiSpacing.md,
+                            vertical: AlhaiSpacing.xs,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AlhaiRadius.sm),
+                          ),
+                        ),
+                        child: const Text('تعطيل', style: TextStyle(fontSize: 13)),
+                      )
+                    else
+                      FilledButton(
+                        onPressed: () async {
+                          final result = await context.push<bool>('/mfa-enroll');
+                          if (result == true) {
+                            ref.invalidate(mfaEnrollmentStatusProvider);
+                          }
+                        },
+                        style: FilledButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: AppColors.textOnPrimary,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: AlhaiSpacing.md,
+                            vertical: AlhaiSpacing.xs,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(AlhaiRadius.sm),
+                          ),
+                        ),
+                        child: const Text('تفعيل', style: TextStyle(fontSize: 13)),
+                      ),
+                  ],
+                ),
+              ),
+              if (isEnrolled) ...[
+                const SizedBox(height: AlhaiSpacing.sm),
+                Divider(color: AppColors.getBorder(isDark)),
+                const SizedBox(height: AlhaiSpacing.xs),
+                _buildBackupCodesInfo(isDark),
+              ],
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBackupCodesInfo(bool isDark) {
+    final mfaService = ref.read(mfaServiceProvider);
+    final remaining = mfaService.getRemainingBackupCodeCount();
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
+      child: Row(
+        children: [
+          ExcludeSemantics(
+            child: Icon(
+              Icons.vpn_key_rounded,
+              color: AppColors.getTextMuted(isDark),
+              size: 20,
+            ),
+          ),
+          const SizedBox(width: AlhaiSpacing.sm),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'رموز الاستعادة',
+                  style: TextStyle(
+                    fontSize: 14,
+                    color: AppColors.getTextPrimary(isDark),
+                  ),
+                ),
+                const SizedBox(height: 2),
+                Text(
+                  '$remaining رمز متبقي',
+                  style: TextStyle(
+                    fontSize: 12,
+                    color: remaining <= 2
+                        ? AppColors.warning
+                        : AppColors.getTextMuted(isDark),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          TextButton(
+            onPressed: () => _regenerateBackupCodes(isDark),
+            child: Text(
+              'تجديد',
+              style: TextStyle(color: AppColors.primary, fontSize: 13),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _confirmDisableMfa(bool isDark) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('تعطيل المصادقة الثنائية'),
+        content: const Text(
+          'هل أنت متأكد من تعطيل المصادقة الثنائية؟ '
+          'سيصبح حسابك أقل أماناً.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('إلغاء'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.error,
+              foregroundColor: AppColors.textOnPrimary,
+            ),
+            child: const Text('تعطيل'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    try {
+      final mfaService = ref.read(mfaServiceProvider);
+      final factor = await mfaService.getVerifiedFactor();
+      if (factor != null) {
+        await mfaService.unenroll(factor.id);
+      }
+      ref.invalidate(mfaEnrollmentStatusProvider);
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم تعطيل المصادقة الثنائية'),
+          backgroundColor: AppColors.success,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('فشل تعطيل المصادقة الثنائية. حاول مرة أخرى.'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
+  }
+
+  Future<void> _regenerateBackupCodes(bool isDark) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('تجديد رموز الاستعادة'),
+        content: const Text(
+          'سيتم إلغاء الرموز القديمة وإنشاء رموز جديدة. '
+          'تأكد من حفظ الرموز الجديدة.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: const Text('إلغاء'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: AppColors.textOnPrimary,
+            ),
+            child: const Text('تجديد'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    try {
+      final mfaService = ref.read(mfaServiceProvider);
+      final codes = mfaService.generateBackupCodes();
+      await mfaService.storeBackupCodes(codes);
+
+      if (!mounted) return;
+
+      // Show new codes in a dialog
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (ctx) => AlertDialog(
+          title: const Text('رموز الاستعادة الجديدة'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                'احفظ هذه الرموز في مكان آمن. لن تُعرض مرة أخرى.',
+                style: TextStyle(fontSize: 13),
+              ),
+              const SizedBox(height: AlhaiSpacing.md),
+              Container(
+                padding: const EdgeInsets.all(AlhaiSpacing.md),
+                decoration: BoxDecoration(
+                  color: Theme.of(ctx).colorScheme.surfaceContainerHighest,
+                  borderRadius: BorderRadius.circular(AlhaiRadius.sm),
+                ),
+                child: Column(
+                  children: codes
+                      .map(
+                        (c) => Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 2),
+                          child: Text(
+                            c,
+                            style: const TextStyle(
+                              fontFamily: 'monospace',
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList(),
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Clipboard.setData(ClipboardData(text: codes.join('\n')));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('تم نسخ الرموز'),
+                    backgroundColor: AppColors.success,
+                  ),
+                );
+              },
+              child: const Text('نسخ'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: const Text('حفظت الرموز'),
+            ),
+          ],
+        ),
+      );
+
+      setState(() {}); // Refresh backup code count
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('فشل تجديد الرموز. حاول مرة أخرى.'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
   }
 
   // ─── Save Button ───────────────────────────────────────────────
