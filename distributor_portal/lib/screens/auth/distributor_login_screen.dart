@@ -323,6 +323,21 @@ class _DistributorLoginScreenState
                       ),
                     ),
                   ),
+                  const SizedBox(height: AlhaiSpacing.md),
+
+                  // Signup link
+                  Center(
+                    child: TextButton(
+                      onPressed: () => context.go('/signup'),
+                      child: Text(
+                        'ليس لديك حساب؟ إنشاء حساب جديد',
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

@@ -12,6 +12,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 
 import '../core/supabase/supabase_client.dart';
 import '../providers/distributor_providers.dart';
+import 'widgets/account_status_banner.dart';
 
 /// Navigation item model
 class _NavItem {
@@ -465,7 +466,14 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
               ),
             ),
             // Content
-            Expanded(child: widget.child),
+            Expanded(
+              child: Column(
+                children: [
+                  const AccountStatusBanner(),
+                  Expanded(child: widget.child),
+                ],
+              ),
+            ),
           ],
         ),
       );
@@ -491,7 +499,14 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
                 child: _buildCollapsedSidebar(selectedId, isDark, l10n),
               ),
             ),
-            Expanded(child: widget.child),
+            Expanded(
+              child: Column(
+                children: [
+                  const AccountStatusBanner(),
+                  Expanded(child: widget.child),
+                ],
+              ),
+            ),
           ],
         ),
       );
@@ -515,20 +530,27 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
             child: _buildSidebarContent(selectedId, isDark, l10n),
           ),
         ),
-        body: LayoutBuilder(
-          builder: (context, constraints) {
-            // Ensure minimum width to prevent overflow on Galaxy Fold
-            if (constraints.maxWidth < 280) {
-              return SingleChildScrollView(
-                scrollDirection: Axis.horizontal,
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(minWidth: 280),
-                  child: widget.child,
-                ),
-              );
-            }
-            return widget.child;
-          },
+        body: Column(
+          children: [
+            const AccountStatusBanner(),
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  // Ensure minimum width to prevent overflow on Galaxy Fold
+                  if (constraints.maxWidth < 280) {
+                    return SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(minWidth: 280),
+                        child: widget.child,
+                      ),
+                    );
+                  }
+                  return widget.child;
+                },
+              ),
+            ),
+          ],
         ),
       );
     }
