@@ -91,7 +91,7 @@ class CustomerApp extends StatelessWidget {
       routerConfig: AppRouter.router,
       // RTL + localization support
       locale: const Locale('ar'),
-      supportedLocales: const [Locale('ar'), Locale('en')],
+      supportedLocales: const [Locale('ar')],
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
