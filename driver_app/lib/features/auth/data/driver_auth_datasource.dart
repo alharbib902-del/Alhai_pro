@@ -41,9 +41,13 @@ class DriverAuthDatasource {
       if (role != 'delivery') {
         throw Exception('هذا الحساب ليس حساب سائق');
       }
+      // Block inactive drivers — they must wait for admin approval.
+      if (existing['is_active'] != true) {
+        throw const DriverPendingApprovalException();
+      }
       userData = existing;
     } else {
-      // New user - create with delivery role
+      // New user - create with delivery role, inactive until admin approves.
       userData = await _client
           .from('users')
           .upsert({
@@ -51,11 +55,16 @@ class DriverAuthDatasource {
             'phone': phone,
             'name': phone,
             'role': 'delivery',
-            'is_active': true,
+            'is_active': false,
             'created_at': DateTime.now().toIso8601String(),
           }, onConflict: 'id')
           .select()
           .single();
+    }
+
+    // Block inactive drivers — they must wait for admin approval.
+    if (userData['is_active'] != true) {
+      throw const DriverPendingApprovalException();
     }
 
     final user = _mapUser(userData);
@@ -158,4 +167,14 @@ class DriverAuthDatasource {
       ),
     );
   }
+}
+
+/// Thrown when a driver account exists but has not been approved by admin yet.
+class DriverPendingApprovalException implements Exception {
+  const DriverPendingApprovalException();
+
+  String get message => 'حسابك قيد المراجعة من قبل الإدارة';
+
+  @override
+  String toString() => message;
 }

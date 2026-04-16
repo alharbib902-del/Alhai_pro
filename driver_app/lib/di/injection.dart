@@ -29,8 +29,9 @@ void configureDependencies() {
       stackTrace: st,
       hint: 'DI: Supabase not initialized - offline mode',
     );
-    if (kDebugMode)
+    if (kDebugMode) {
       debugPrint('Supabase not initialized - running in offline mode');
+    }
   }
 
   // Datasources

@@ -102,13 +102,15 @@ void main() {
       await tester.pumpWidget(buildTestWidget());
       await tester.pump();
 
-      // Scroll down to reveal the version text (may be off-screen after
-      // adding the driving mode toggle card).
-      await tester.scrollUntilVisible(
-        find.text('Alhai Driver v1.0.0'),
-        200,
-      );
-      expect(find.text('Alhai Driver v1.0.0'), findsOneWidget);
+      // Scroll the ListView to reveal the version text at the bottom.
+      final listFinder = find.byType(ListView);
+      await tester.drag(listFinder, const Offset(0, -400));
+      await tester.pump();
+
+      // In test environment, PackageInfo.fromPlatform() may fail so the
+      // fallback "Alhai Driver" is shown. In production it shows the full
+      // version string from pubspec.yaml.
+      expect(find.textContaining('Alhai Driver'), findsOneWidget);
     });
 
     testWidgets('has CircleAvatar for driver initials', (tester) async {

@@ -2,16 +2,36 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 import '../../../core/providers/app_providers.dart';
 import '../../auth/providers/auth_providers.dart';
 import '../../deliveries/providers/driving_mode_provider.dart';
 
-class ProfileScreen extends ConsumerWidget {
+class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends ConsumerState<ProfileScreen> {
+  String _versionText = 'Alhai Driver';
+
+  @override
+  void initState() {
+    super.initState();
+    PackageInfo.fromPlatform().then((info) {
+      if (mounted) {
+        setState(() {
+          _versionText = 'Alhai Driver v${info.version}+${info.buildNumber}';
+        });
+      }
+    }).catchError((_) {});
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final driver = ref.watch(currentDriverProvider);
     final theme = Theme.of(context);
 
@@ -168,7 +188,7 @@ class ProfileScreen extends ConsumerWidget {
                   const SizedBox(height: AlhaiSpacing.lg),
                   Center(
                     child: Text(
-                      'Alhai Driver v1.0.0',
+                      _versionText,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.outline,
                       ),
