@@ -25,13 +25,14 @@ colon-separated hex fingerprint that `openssl x509 -fingerprint` prints.
 
 ## How to obtain the SHA-256 fingerprint
 
-Run this one-liner against each production host. It prints the pin value
-exactly as it should be pasted into the build command:
+The apps compute `sha256(cert.der)` (see `_matchesPinnedFingerprint` in the
+service files — it hashes `X509Certificate.der`, the FULL DER-encoded
+certificate, NOT the SPKI subkey). The openssl pipeline that matches
+exactly is:
 
 ```bash
-echo | openssl s_client -servername <host> -connect <host>:443 2>/dev/null \
-  | openssl x509 -pubkey -noout \
-  | openssl pkey -pubin -outform der \
+echo | openssl s_client -servername <host> -connect <host>:443 -showcerts 2>/dev/null \
+  | openssl x509 -outform DER \
   | openssl dgst -sha256 -binary \
   | openssl enc -base64
 ```
@@ -40,10 +41,37 @@ Hosts to pin:
 
 - Supabase REST + Realtime: `<your-project>.supabase.co`
 - AI Server (if the client talks to it directly): `api.alhai.store`
+- POS web (if the client talks to it directly): `pos.alhai.store`
 
-Run the command twice — once for the **leaf** certificate (current) and once
-against the chain's **intermediate** so you have a backup pin whose rotation
-window is independent of the leaf's.
+### Getting both primary AND backup pins from the full chain
+
+For a chain of N certificates, save the stream and split them so you can
+hash each one individually. Primary = intermediate (stable ~5 yrs).
+Backup = either the root (most stable) or the leaf (current, rotates):
+
+```bash
+echo | openssl s_client -servername <host> -connect <host>:443 -showcerts 2>/dev/null > chain.txt
+awk '/BEGIN CERTIFICATE/{n++} {print > "cert_" n ".pem"}' chain.txt
+
+for i in 1 2 3; do
+  [ -f cert_$i.pem ] || continue
+  echo "Cert $i:"
+  openssl x509 -in cert_$i.pem -noout -subject
+  openssl x509 -in cert_$i.pem -outform DER | openssl dgst -sha256 -binary | openssl enc -base64
+done
+```
+
+Cert 1 is the leaf, cert 2 is the intermediate, cert 3 is the root (if
+the server sends it).
+
+### Pinning strategy
+
+- **Primary pin → intermediate cert** (~5 year stability, survives leaf
+  rotation, recommended for any app you can't push-update instantly).
+- **Backup pin → root cert** if the server sends it (~10 year stability),
+  otherwise the current leaf (~60-90 day rotation).
+- **Never pin only the leaf** for a published app — the next cert renewal
+  will hard-break every installed build until you ship an update.
 
 ## When to rotate
 
