@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../data/driver_auth_datasource.dart';
 import '../providers/auth_providers.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -87,6 +88,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       } else {
         context.go('/home');
       }
+    } on DriverPendingApprovalException {
+      setState(() {
+        _error = 'حسابك قيد المراجعة من قبل الإدارة. يرجى الانتظار حتى يتم تفعيله.';
+        _isLoading = false;
+      });
     } catch (e) {
       setState(() {
         _error = e.toString().contains('ليس حساب سائق')
