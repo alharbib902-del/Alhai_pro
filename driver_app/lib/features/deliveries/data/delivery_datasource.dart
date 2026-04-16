@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/services/driver_audit_service.dart';
 import '../../../core/services/local_cache_service.dart';
 import '../../../core/services/offline_queue_service.dart';
 import '../../../core/services/sentry_service.dart';
@@ -309,6 +310,20 @@ class DeliveryDatasource {
         });
       }
 
+      // 3b. Audit status change on success (fire-and-forget).
+      if (resultMap['success'] == true) {
+        await DriverAuditService.instance.log(
+          action: 'delivery.status.change',
+          targetType: 'delivery',
+          targetId: deliveryId,
+          metadata: {
+            'new_status': newStatus,
+            if (original != null) 'previous_status': original['status'],
+            if (notes != null && notes.isNotEmpty) 'notes': notes,
+          },
+        );
+      }
+
       return resultMap;
     } on PostgrestException catch (e) {
       final classified = _classifyDatasourceError(
@@ -418,20 +433,15 @@ class DeliveryDatasource {
     required double lat,
     required double lng,
   }) async {
-    try {
-      await _client.from('audit_log').insert({
-        'user_id': _driverId,
-        'action': 'mock_gps_detected',
-        'details': {
-          'lat': lat,
-          'lng': lng,
-          'is_mocked': true,
-        },
-        'created_at': DateTime.now().toIso8601String(),
-      });
-    } catch (e, st) {
-      reportError(e, stackTrace: st, hint: 'logMockGpsDetected');
-    }
+    // Delegated to DriverAuditService so it goes into the platform-wide
+    // sa_audit_log (v40) with the correct actor_id shape, instead of the
+    // POS-style public.audit_log which requires store_id NOT NULL.
+    await DriverAuditService.instance.log(
+      action: 'driver.mock_gps_detected',
+      targetType: 'driver',
+      targetId: _driverId,
+      metadata: {'lat': lat, 'lng': lng, 'is_mocked': true},
+    );
   }
 
   // ─── Error classification ────────────────────────────────────────────────

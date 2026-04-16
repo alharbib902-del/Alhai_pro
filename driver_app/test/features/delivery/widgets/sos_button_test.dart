@@ -55,10 +55,13 @@ void main() {
     when(() => mockAuth.currentUser).thenReturn(mockUser);
     when(() => mockUser.id).thenReturn('driver-001');
 
-    // Mock audit_log: let `from()` throw so the try/catch in SOS handles it
-    // gracefully. This verifies the best-effort pattern works.
-    when(() => mockClient.from('audit_log')).thenThrow(
-      Exception('audit_log mock — expected in test'),
+    // Mock sa_audit_log: let `from()` throw so the try/catch in SOS handles
+    // it gracefully. This verifies the best-effort pattern works.
+    // (Post-v40: the SOS flow now routes through DriverAuditService which
+    // uses Supabase.instance.client — not the mocked provider — so this
+    // mock is primarily documentation; the real singleton swallows errors.)
+    when(() => mockClient.from('sa_audit_log')).thenThrow(
+      Exception('sa_audit_log mock — expected in test'),
     );
 
     // Set mock url_launcher platform.

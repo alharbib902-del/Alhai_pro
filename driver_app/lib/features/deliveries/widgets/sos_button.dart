@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/providers/app_providers.dart';
+import '../../../core/services/driver_audit_service.dart';
 import '../../../core/services/location_service.dart';
 
 /// Emergency SOS button shown during active deliveries.
@@ -72,36 +73,34 @@ class SosButton extends ConsumerWidget {
   }
 
   /// Best-effort audit log — fire-and-forget.
+  ///
+  /// Routes through DriverAuditService → sa_audit_log (v40). Distinct from
+  /// public.audit_log which requires store_id (POS pipeline).
   void _logSosEvent(WidgetRef ref) {
     Future<void>(() async {
+      final client = ref.read(supabaseClientProvider);
+      final userId = client.auth.currentUser?.id;
+
+      double? lat;
+      double? lng;
       try {
-        final client = ref.read(supabaseClientProvider);
-        final userId = client.auth.currentUser?.id;
-
-        double? lat;
-        double? lng;
-        try {
-          final position = await LocationService.instance.getCurrentPosition();
-          lat = position?.latitude;
-          lng = position?.longitude;
-        } catch (_) {
-          // Location unavailable — log without coordinates.
-        }
-
-        await client.from('audit_log').insert({
-          'user_id': userId,
-          'action': 'sos_triggered',
-          'details': {
-            'lat': lat,
-            'lng': lng,
-            'order_id': activeDeliveryId,
-            'timestamp': DateTime.now().toIso8601String(),
-          },
-          'created_at': DateTime.now().toIso8601String(),
-        });
+        final position = await LocationService.instance.getCurrentPosition();
+        lat = position?.latitude;
+        lng = position?.longitude;
       } catch (_) {
-        // Best-effort — SOS must not be blocked by audit failure.
+        // Location unavailable — log without coordinates.
       }
+
+      await DriverAuditService.instance.log(
+        action: 'driver.sos_triggered',
+        targetType: 'delivery',
+        targetId: activeDeliveryId,
+        metadata: {
+          if (userId != null) 'driver_id': userId,
+          'lat': lat,
+          'lng': lng,
+        },
+      );
     });
   }
 }
