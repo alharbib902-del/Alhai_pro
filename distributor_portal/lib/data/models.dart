@@ -4,6 +4,7 @@
 library;
 
 export 'models/dashboard_kpis.dart';
+export 'models/distributor_document.dart';
 export 'models/distributor_invoice.dart';
 export 'models/distributor_order.dart';
 export 'models/distributor_order_item.dart';

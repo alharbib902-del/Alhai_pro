@@ -7,6 +7,7 @@ library;
 export 'distributor_auth_providers.dart';
 export 'distributor_dashboard_providers.dart';
 export 'distributor_datasource_provider.dart';
+export 'distributor_documents_providers.dart';
 export 'distributor_orders_providers.dart';
 export 'distributor_products_providers.dart';
 export 'distributor_reports_providers.dart';
