@@ -31,13 +31,15 @@ final distributorRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: '/dashboard',
     redirect: (context, state) {
       final isLoggedIn = AppSupabase.isAuthenticated;
-      final isPublicRoute = state.matchedLocation == '/login' ||
-          state.matchedLocation == '/signup' ||
-          state.matchedLocation == '/verify-email' ||
-          state.matchedLocation == '/mfa-verify';
+      final location = state.matchedLocation;
+      final isPublicRoute = location == '/login' ||
+          location == '/signup' ||
+          location == '/verify-email' ||
+          location == '/mfa-verify' ||
+          location == '/mfa-enroll';
 
       if (!isLoggedIn && !isPublicRoute) return '/login';
-      if (isLoggedIn && state.matchedLocation == '/login') return '/dashboard';
+      if (isLoggedIn && location == '/login') return '/dashboard';
       return null;
     },
     routes: [
@@ -82,6 +84,19 @@ final distributorRouterProvider = Provider<GoRouter>((ref) {
           return CustomTransitionPage(
             key: state.pageKey,
             child: MfaVerifyScreen(factorId: factorId),
+            transitionsBuilder: (c, a, sa, child) =>
+                FadeTransition(opacity: a, child: child),
+          );
+        },
+      ),
+      GoRoute(
+        path: '/mfa-enroll',
+        name: 'distributor-mfa-enroll',
+        pageBuilder: (context, state) {
+          final forced = state.extra as bool? ?? false;
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: MfaEnrollmentScreen(forced: forced),
             transitionsBuilder: (c, a, sa, child) =>
                 FadeTransition(opacity: a, child: child),
           );
@@ -221,16 +236,6 @@ final distributorRouterProvider = Provider<GoRouter>((ref) {
             pageBuilder: (context, state) => CustomTransitionPage(
               key: state.pageKey,
               child: const DistributorSettingsScreen(),
-              transitionsBuilder: (c, a, sa, child) =>
-                  FadeTransition(opacity: a, child: child),
-            ),
-          ),
-          GoRoute(
-            path: '/mfa-enroll',
-            name: 'distributor-mfa-enroll',
-            pageBuilder: (context, state) => CustomTransitionPage(
-              key: state.pageKey,
-              child: const MfaEnrollmentScreen(),
               transitionsBuilder: (c, a, sa, child) =>
                   FadeTransition(opacity: a, child: child),
             ),
