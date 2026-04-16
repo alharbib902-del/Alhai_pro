@@ -30,7 +30,6 @@ packages:
   - packages/**
   # Root-level shared libraries
   - alhai_core
-  - alhai_services
   - alhai_design_system
   # Root-level apps (to be moved under apps/ in a future migration)
   - customer_app

@@ -9,7 +9,6 @@
 packages/*/pubspec.lock
 alhai_core/pubspec.lock
 alhai_design_system/pubspec.lock
-alhai_services/pubspec.lock
 .idea/
 .vscode/
 *.iml

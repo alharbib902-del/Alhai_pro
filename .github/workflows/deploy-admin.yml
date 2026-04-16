@@ -1,0 +1,98 @@
+# ============================================================================
+# Deploy Admin App (main branch -> Vercel)
+# ----------------------------------------------------------------------------
+# Triggers on pushes to main that touch the admin app or shared packages.
+#
+# Required GitHub secrets (add under repo Settings -> Secrets -> Actions):
+#   - VERCEL_TOKEN        (Vercel personal access token)
+#   - VERCEL_ORG_ID       (from .vercel/project.json or Vercel dashboard)
+#   - VERCEL_PROJECT_ID   (from .vercel/project.json or Vercel dashboard)
+#   - SUPABASE_URL        (Supabase project URL)
+#   - SUPABASE_ANON_KEY   (Supabase anonymous key)
+#
+# One-time manual setup:
+#   1. Install Vercel CLI: npm i -g vercel
+#   2. Run: cd apps/admin && vercel link
+#      This creates .vercel/project.json with orgId and projectId.
+#   3. Copy those IDs into the GitHub secrets above.
+#   4. Generate a Vercel token at https://vercel.com/account/tokens
+# ============================================================================
+
+name: Deploy Admin
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/admin/**'
+      - 'packages/**'
+      - 'alhai_core/**'
+      - 'alhai_design_system/**'
+      - '.github/workflows/deploy-admin.yml'
+
+  # Allow manual trigger from Actions tab
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-admin-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    name: Build & Deploy Admin to Vercel
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.38.7'
+          channel: 'stable'
+          cache: true
+
+      - name: Install melos
+        run: dart pub global activate melos
+
+      - name: Bootstrap workspace
+        run: melos bootstrap
+
+      - name: Install dependencies
+        working-directory: apps/admin
+        run: flutter pub get
+
+      - name: Build web (release)
+        working-directory: apps/admin
+        # --no-tree-shake-icons: required because some screens use dynamic
+        # IconData lookups (category icons from DB, conditional report icons).
+        run: |
+          flutter build web --release --no-tree-shake-icons \
+            --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+
+      # Copy vercel.json into the build output so Vercel picks up the
+      # rewrite and header rules.
+      - name: Copy Vercel config
+        run: cp apps/admin/vercel.json apps/admin/build/web/vercel.json
+
+      - name: Install Vercel CLI
+        run: npm install -g vercel@latest
+
+      - name: Deploy to Vercel (production)
+        working-directory: apps/admin/build/web
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          vercel deploy --prod --yes --token="$VERCEL_TOKEN"
+
+      - name: Upload web build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: admin-web-deploy
+          path: apps/admin/build/web
+          retention-days: 7
+          if-no-files-found: error

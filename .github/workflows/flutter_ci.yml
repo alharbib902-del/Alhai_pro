@@ -111,7 +111,7 @@ jobs:
           echo "| Package | Coverage |" >> $GITHUB_STEP_SUMMARY
           echo "|---------|----------|" >> $GITHUB_STEP_SUMMARY
 
-          for pkg_dir in packages/*/coverage/lcov.info alhai_core/coverage/lcov.info alhai_services/coverage/lcov.info; do
+          for pkg_dir in packages/*/coverage/lcov.info alhai_core/coverage/lcov.info; do
             if [ -f "$pkg_dir" ]; then
               PKG_NAME=$(echo "$pkg_dir" | sed 's|/coverage/lcov.info||' | sed 's|packages/||')
               PKG_COV=$(lcov --summary "$pkg_dir" 2>&1 | grep "lines" | grep -oP '[\d.]+%' | head -1 || echo "N/A")
