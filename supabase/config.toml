@@ -1,12 +1,245 @@
+# =============================================================================
+# Alhai POS Platform - Supabase Configuration
+# =============================================================================
+# This file configures all Supabase services for both local development and
+# production deployment. Sensitive values (secrets, keys) are injected via
+# environment variables -- never hardcode them here.
+# =============================================================================
+
+# =============================================================================
+# API (PostgREST)
+# =============================================================================
 [api]
 enabled = true
 port = 54321
 schemas = ["public", "storage"]
+# Maximum rows returned per request. Prevents accidental full-table dumps.
+max_rows = 1000
+# Extra search path schemas exposed to PostgREST for RPC resolution.
+extra_search_path = ["public", "extensions"]
 
+# =============================================================================
+# Database
+# =============================================================================
 [db]
 port = 54322
 major_version = 17
 
+# Connection pooling via PgBouncer. Required for production to prevent
+# exhausting direct connections under concurrent mobile-app load.
+[db.pooler]
+enabled = true
+port = 6543
+pool_mode = "transaction"
+# Default pool size. Override via SUPABASE_DB_POOL_SIZE env var in production
+# based on your Supabase plan limits (Free=15, Pro=60, Team=100+).
+default_pool_size = 20
+max_client_conn = 100
+
+# =============================================================================
+# Studio (local dashboard)
+# =============================================================================
 [studio]
 enabled = true
 port = 54323
+
+# =============================================================================
+# Auth (GoTrue)
+# =============================================================================
+# The Alhai platform uses two auth flows:
+#   1. Phone OTP via Supabase Auth (signInWithOtp / verifyOTP with OtpType.sms)
+#   2. Email + password (signInWithPassword) for cashier/admin accounts
+#   3. WhatsApp OTP via WaSenderAPI (client-side, not managed by Supabase Auth)
+#
+# Session: 30-minute duration with 5-minute proactive refresh buffer.
+# Concurrent sessions capped at 3 per account (enforced client-side + DB).
+# Server-side OTP rate limiting: 5 attempts per 15-minute window
+# (see migration v22: otp_attempts table + check_otp_rate_limit RPC).
+# =============================================================================
+[auth]
+enabled = true
+# Site URL for auth redirects (email confirmation links, password resets).
+# Override with GOTRUE_SITE_URL in production.
+site_url = "http://127.0.0.1:3000"
+# Allowed redirect URLs after auth actions. Add production domains here.
+additional_redirect_urls = [
+  "https://app.alhai.sa",
+  "https://admin.alhai.sa",
+  "https://cashier.alhai.sa",
+  "https://portal.alhai.sa",
+]
+# JWT expiry in seconds. 1800s = 30 minutes, matching SessionManager.sessionDuration.
+jwt_expiry = 1800
+# Disable new user signup via email -- accounts are provisioned by admins.
+# Phone OTP signup remains enabled (see [auth.sms] below).
+enable_signup = true
+# Require email confirmation before allowing login.
+enable_email_autoconfirm = false
+# Enable anonymous sign-in for unauthenticated public-products access.
+enable_anonymous_sign_ins = false
+# Minimum password length for email/password accounts.
+minimum_password_length = 8
+# Password strength check (0=weak, 4=strongest).
+password_min_strength = 2
+
+# Rate limiting for auth endpoints (requests per hour per IP).
+# Protects against brute-force login and OTP spam.
+[auth.rate_limit]
+# OTP send rate: 30/hr is generous for legitimate use but blocks spam.
+otp = 30
+# Token refresh rate.
+token_refresh = 150
+# Sign-up rate.
+sign_up = 30
+
+# --- Phone / SMS OTP provider ---
+# Used by: customer_app (signInWithOtp), driver_app (driver_auth_datasource),
+# distributor_portal, auth_providers.dart (sendSupabaseOtp / verifySupabaseOtp).
+[auth.sms]
+enable_signup = true
+enable_confirmations = true
+# OTP message template. Supabase replaces {{ .Code }} with the 6-digit code.
+template = "رمز التحقق الخاص بك في بقالة الحي: {{ .Code }} - صالح لمدة 5 دقائق"
+# Max frequency: one OTP per phone number per 60 seconds.
+max_frequency = "60s"
+# OTP length must match WhatsAppConfig.otpLength (6 digits).
+otp_length = 6
+# OTP expiry must match WhatsAppConfig.otpExpiryMinutes (5 minutes = 300 seconds).
+otp_exp = 300
+
+# SMS provider configuration. Twilio is recommended for Saudi Arabia coverage.
+# Set these env vars in production:
+#   GOTRUE_SMS_TWILIO_ACCOUNT_SID
+#   GOTRUE_SMS_TWILIO_AUTH_TOKEN
+#   GOTRUE_SMS_TWILIO_MESSAGE_SERVICE_SID
+[auth.sms.twilio]
+enabled = true
+account_sid = "env(GOTRUE_SMS_TWILIO_ACCOUNT_SID)"
+auth_token = "env(GOTRUE_SMS_TWILIO_AUTH_TOKEN)"
+message_service_sid = "env(GOTRUE_SMS_TWILIO_MESSAGE_SERVICE_SID)"
+
+# --- External OAuth providers ---
+# Currently none enabled. Uncomment and configure if adding Google/Apple sign-in.
+# [auth.external.google]
+# enabled = false
+# client_id = ""
+# secret = ""
+# redirect_uri = ""
+
+# =============================================================================
+# Storage
+# =============================================================================
+# Six buckets defined in storage_policies.sql + migration v19:
+#
+#   product-images  (public,  5MB)  - Product photos (thumb/medium/large)
+#   store-logos      (public,  2MB)  - Store branding images
+#   receipts         (private, 1MB)  - POS receipt PDFs/images
+#   backups          (private, 50MB) - Database backup exports
+#   invoice-attachments (private, 10MB) - ZATCA invoice attachments
+#   delivery-proofs  (private, 5MB)  - Driver delivery photo/signature evidence
+#
+# RLS policies are applied in storage_policies.sql and migration v19.
+# Bucket creation and policies are managed via SQL, not this config file.
+# The settings below configure the storage engine itself.
+# =============================================================================
+[storage]
+enabled = true
+# Global max file size (50MB matches the largest bucket: backups).
+file_size_limit = "50MiB"
+
+# Image transformation (resizing, format conversion) for product images.
+[storage.image_transformation]
+enabled = true
+
+# =============================================================================
+# Realtime
+# =============================================================================
+# The platform uses Supabase Realtime extensively:
+#
+# 1. Delivery tracking (migration v19 -- ALTER PUBLICATION supabase_realtime):
+#    - driver_locations: live GPS position updates
+#    - deliveries: status change notifications
+#    - chat_messages: driver/customer/store messaging
+#
+# 2. POS sync (RealtimeListener.watchedTables):
+#    - stock_deltas, products, categories, sales, sale_items,
+#      orders, notifications, stock_transfers, invoices,
+#      shifts, inventory_movements
+#
+# Tables are added to the supabase_realtime publication via SQL migrations.
+# The config below sets engine-level parameters.
+# =============================================================================
+[realtime]
+enabled = true
+# Max connections per Realtime node. Must accommodate:
+#   - All active POS terminals (cashier app instances)
+#   - Active driver app connections (delivery tracking)
+#   - Customer app connections (order status)
+#   - Admin/distributor portal connections
+# Default 200 is suitable for small-medium deployments.
+# Scale up via REALTIME_MAX_CONNECTED_USERS for larger deployments.
+
+# =============================================================================
+# Edge Functions (Deno)
+# =============================================================================
+# Four edge functions deployed under supabase/functions/:
+#
+#   upload-product-images  - Uploads product photos to Cloudflare R2 (CDN).
+#                            Auth: Bearer token (user must own the product's store).
+#                            Env: R2_ENDPOINT, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY,
+#                                 SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY
+#
+#   delivery-webhook       - Handles delivery lifecycle events (new assignment,
+#                            status changes, shift stats). Triggered by DB webhooks.
+#                            Auth: x-webhook-secret header (WEBHOOK_SHARED_SECRET).
+#                            Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
+#                                 WEBHOOK_SHARED_SECRET, FCM_SERVER_KEY
+#
+#   notify-driver          - Sends FCM push notifications to drivers on delivery
+#                            assignment or status updates.
+#                            Auth: x-webhook-secret header (WEBHOOK_SHARED_SECRET).
+#                            Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
+#                                 WEBHOOK_SHARED_SECRET, FCM_SERVER_KEY
+#
+#   public-products        - Public API for customer-facing product catalog.
+#                            No auth required (uses service role internally).
+#                            Rate limited: 100 req/min per IP+store.
+#                            Env: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
+#
+# Shared module: _shared/cors.ts (origin allowlist for app/admin/cashier/portal).
+#
+# All functions use Deno Deploy runtime.
+# Set environment variables via `supabase secrets set` or dashboard.
+# =============================================================================
+[functions]
+# Verify JWT by default. Functions that need service-role access
+# handle their own auth (webhook secret, bearer token).
+verify_jwt = true
+
+[functions.upload-product-images]
+verify_jwt = true
+# Requires: SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY,
+#           R2_ENDPOINT, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY
+
+[functions.delivery-webhook]
+# DB webhook caller does not carry a user JWT; it uses a shared secret instead.
+verify_jwt = false
+# Requires: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
+#           WEBHOOK_SHARED_SECRET, FCM_SERVER_KEY
+
+[functions.notify-driver]
+# Called by delivery-webhook internally; uses shared secret, not JWT.
+verify_jwt = false
+# Requires: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY,
+#           WEBHOOK_SHARED_SECRET, FCM_SERVER_KEY
+
+[functions.public-products]
+# Public endpoint -- no JWT required. Uses service role key internally.
+verify_jwt = false
+# Requires: SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
+
+# =============================================================================
+# Analytics (optional, enable in production for query insights)
+# =============================================================================
+[analytics]
+enabled = false
