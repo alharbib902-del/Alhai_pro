@@ -27,18 +27,17 @@ class ChatDatasource {
     required String text,
     String? deliveryId,
   }) async {
-    final sanitized = text
-        .trim()
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;');
-    if (sanitized.isEmpty) return;
+    // Supabase uses parameterized queries — no SQL injection risk.
+    // HTML entity encoding was removed because it corrupts user text
+    // (e.g. "&" becomes "&amp;") and provides no security benefit here.
+    final trimmed = text.trim();
+    if (trimmed.isEmpty) return;
     await _client.from('chat_messages').insert({
       'order_id': orderId,
       'delivery_id': deliveryId,
       'sender_type': 'driver',
       'sender_id': _userId,
-      'text': sanitized,
+      'text': trimmed,
       'language': 'ar',
     });
   }

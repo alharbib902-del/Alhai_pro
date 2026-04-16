@@ -12,6 +12,7 @@ import 'core/services/location_service.dart';
 import 'core/services/sentry_service.dart';
 import 'core/services/wakelock_service.dart';
 import 'features/deliveries/providers/delivery_providers.dart';
+import 'features/deliveries/providers/location_tracking_provider.dart';
 import 'core/supabase/supabase_client.dart';
 import 'di/injection.dart';
 
@@ -184,6 +185,9 @@ class _DriverAppState extends ConsumerState<DriverApp>
       },
     );
 
+    // Wire location tracking — starts/stops automatically with active deliveries.
+    ref.watch(locationTrackingWiringProvider);
+
     final router = ref.watch(driverRouterProvider);
 
     return MaterialApp.router(
@@ -194,14 +198,7 @@ class _DriverAppState extends ConsumerState<DriverApp>
       themeMode: ThemeMode.system,
       routerConfig: router,
       locale: const Locale('ar'),
-      supportedLocales: const [
-        Locale('ar'),
-        Locale('en'),
-        Locale('ur'),
-        Locale('hi'),
-        Locale('id'),
-        Locale('bn'),
-      ],
+      supportedLocales: const [Locale('ar')],
       // Clamp text scaling to prevent layout overflows while still
       // respecting accessibility preferences within a safe range.
       builder: (context, child) {

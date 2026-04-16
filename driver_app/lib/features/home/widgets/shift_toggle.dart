@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/services/location_service.dart';
+import '../../deliveries/providers/delivery_providers.dart';
 import '../../shifts/providers/shifts_providers.dart';
 
 class ShiftToggle extends ConsumerWidget {
@@ -43,6 +44,38 @@ class ShiftToggle extends ConsumerWidget {
           ),
           onPressed: () async {
             HapticFeedback.mediumImpact();
+
+            // Warn if ending shift while an active delivery exists.
+            if (isOnShift) {
+              final active =
+                  ref.read(activeDeliveriesStreamProvider).valueOrNull ?? [];
+              if (active.isNotEmpty && context.mounted) {
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('لديك توصيل نشط'),
+                    content: const Text(
+                      'لديك توصيل نشط حالياً. هل تريد إنهاء الوردية؟',
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: const Text('إلغاء'),
+                      ),
+                      FilledButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        style: FilledButton.styleFrom(
+                          backgroundColor: Colors.amber.shade700,
+                        ),
+                        child: const Text('إنهاء'),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirm != true) return;
+              }
+            }
+
             try {
               await ref.read(toggleShiftProvider.future);
             } on MockGpsDetectedException {

@@ -46,6 +46,7 @@ dependencies:
   intl: any
   uuid: ^4.4.0
   connectivity_plus: ^5.0.2
+  package_info_plus: ^9.0.1
   permission_handler: ^11.2.0
 
   # UI helpers
@@ -59,7 +60,6 @@ dependencies:
   # Maps & Navigation
   google_maps_flutter: ^2.5.0
   geolocator: ^10.1.0
-  flutter_polyline_points: ^2.0.0
   url_launcher: ^6.2.5
   
   # Background Location Tracking
@@ -69,9 +69,6 @@ dependencies:
   firebase_core: ^3.8.0
   firebase_messaging: ^15.1.6
   flutter_local_notifications: ^17.2.3
-  
-  # Camera (for delivery proof)
-  camera: ^0.10.5+9
   
   # Signature capture
   signature: ^5.4.1

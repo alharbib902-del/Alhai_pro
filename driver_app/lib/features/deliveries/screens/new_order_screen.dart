@@ -94,6 +94,35 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
     }
     _lastTapTime = now;
 
+    // Check if driver already has an active (non-assigned) delivery.
+    final active = ref.read(activeDeliveriesProvider).valueOrNull ?? [];
+    final inProgress = active
+        .where((d) =>
+            d['status'] != DeliveryStatus.assigned &&
+            d['id'] != deliveryId)
+        .toList();
+
+    if (inProgress.isNotEmpty && mounted) {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('لديك توصيل نشط'),
+          content: const Text('لديك توصيل نشط حالياً. هل تريد قبول طلب إضافي؟'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: const Text('إلغاء'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: const Text('قبول'),
+            ),
+          ],
+        ),
+      );
+      if (confirm != true) return;
+    }
+
     _countdownTimer?.cancel();
     HapticFeedback.heavyImpact();
     setState(() => _isLoading = true);
