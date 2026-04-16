@@ -157,15 +157,20 @@ ai_server/
 ## Running Tests / تشغيل الاختبارات
 
 ```bash
-# Run all tests
-pytest
+cd ai_server
 
-# Run with verbose output
+# Run all tests
 pytest -v
 
 # Run a specific test file
 pytest tests/test_endpoints.py
+
+# Run only the startup-validation / health tests
+pytest tests/test_config_validation.py tests/test_health.py -v
 ```
+
+Tests do not hit Supabase or OpenAI; a test JWT secret and fake
+`SUPABASE_URL` are injected via `tests/conftest.py`.
 
 ---
 
