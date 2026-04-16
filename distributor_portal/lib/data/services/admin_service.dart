@@ -7,6 +7,7 @@ library;
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/services/distributor_audit_service.dart';
 import '../models/admin_notification.dart';
 import '../models/distributor_account_status.dart';
 import '../models/distributor_document.dart';
@@ -96,6 +97,13 @@ class AdminService {
       'updated_at': DateTime.now().toIso8601String(),
     }).eq('id', orgId);
 
+    await DistributorAuditService.instance.log(
+      action: 'distributor.approve',
+      targetType: 'organization',
+      targetId: orgId,
+      after: {'status': 'active', 'is_active': true},
+    );
+
     await _createNotification(
       type: 'distributor_approved',
       title: 'تم اعتماد موزع',
@@ -114,6 +122,14 @@ class AdminService {
       'is_active': false,
       'updated_at': DateTime.now().toIso8601String(),
     }).eq('id', orgId);
+
+    await DistributorAuditService.instance.log(
+      action: 'distributor.reject',
+      targetType: 'organization',
+      targetId: orgId,
+      after: {'status': 'rejected', 'is_active': false},
+      metadata: {'reason': reason},
+    );
 
     await _createNotification(
       type: 'distributor_rejected',
@@ -135,6 +151,14 @@ class AdminService {
       'updated_at': DateTime.now().toIso8601String(),
     }).eq('id', orgId);
 
+    await DistributorAuditService.instance.log(
+      action: 'distributor.suspend',
+      targetType: 'organization',
+      targetId: orgId,
+      after: {'status': 'suspended', 'is_active': false},
+      metadata: {'reason': reason},
+    );
+
     await _createNotification(
       type: 'distributor_suspended',
       title: 'تم إيقاف موزع',
@@ -150,6 +174,13 @@ class AdminService {
       'is_active': true,
       'updated_at': DateTime.now().toIso8601String(),
     }).eq('id', orgId);
+
+    await DistributorAuditService.instance.log(
+      action: 'distributor.reinstate',
+      targetType: 'organization',
+      targetId: orgId,
+      after: {'status': 'active', 'is_active': true},
+    );
 
     await _createNotification(
       type: 'distributor_approved',
@@ -208,6 +239,13 @@ class AdminService {
       'reviewed_by': user?.id,
       'reviewed_at': DateTime.now().toIso8601String(),
     }).eq('id', documentId);
+
+    await DistributorAuditService.instance.log(
+      action: 'document.approve',
+      targetType: 'distributor_document',
+      targetId: documentId,
+      after: {'status': 'approved'},
+    );
   }
 
   /// Reject a document with reason.
@@ -223,6 +261,14 @@ class AdminService {
       'reviewed_at': DateTime.now().toIso8601String(),
       'rejection_reason': reason,
     }).eq('id', documentId);
+
+    await DistributorAuditService.instance.log(
+      action: 'document.reject',
+      targetType: 'distributor_document',
+      targetId: documentId,
+      after: {'status': 'rejected'},
+      metadata: {'reason': reason},
+    );
   }
 
   /// Get signed URL for viewing a document (expires in 1 hour).

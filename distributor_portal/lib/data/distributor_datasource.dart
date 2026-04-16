@@ -9,6 +9,7 @@ import 'package:intl/intl.dart' show DateFormat;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
+import '../core/services/distributor_audit_service.dart';
 import '../core/services/sentry_service.dart';
 import '../core/supabase/supabase_client.dart';
 import 'models.dart';
@@ -506,6 +507,17 @@ class DistributorDatasource {
         },
       );
 
+      await DistributorAuditService.instance.log(
+        action: 'order.status.update',
+        targetType: 'order',
+        targetId: orderId,
+        after: {'status': newStatus},
+        metadata: {
+          if (notes != null && notes.isNotEmpty) 'notes': notes,
+          'item_price_changes': itemPrices?.length ?? 0,
+        },
+      );
+
       return true;
     } catch (e) {
       if (e is DatasourceError) {
@@ -644,6 +656,15 @@ class DistributorDatasource {
       await _client.rpc(
         'batch_update_product_prices',
         params: {'p_org_id': orgId, 'p_prices': pricesJsonb},
+      );
+
+      // Aggregated audit: one entry for the batch rather than per-product,
+      // since individual-price updates already go through _logPriceChange.
+      await DistributorAuditService.instance.log(
+        action: 'price.batch_update',
+        targetType: 'product_batch',
+        targetId: orgId,
+        metadata: {'count': prices.length},
       );
 
       // Invalidate product cache after mutation
@@ -1108,6 +1129,13 @@ class DistributorDatasource {
           .update(settings.toJson())
           .eq('id', orgId);
 
+      await DistributorAuditService.instance.log(
+        action: 'settings.update',
+        targetType: 'organization',
+        targetId: orgId,
+        after: settings.toJson(),
+      );
+
       // Invalidate org settings cache after mutation
       _orgSettingsCache = null;
 
@@ -1287,6 +1315,18 @@ class DistributorDatasource {
           .select('*, categories(name)')
           .single();
 
+      await DistributorAuditService.instance.log(
+        action: 'product.create',
+        targetType: 'product',
+        targetId: productId,
+        after: {
+          'name': name.trim(),
+          'price': price,
+          'store_id': storeId,
+          'category_id': categoryId,
+        },
+      );
+
       // Invalidate caches after mutation
       invalidateProductCaches();
 
@@ -1368,7 +1408,17 @@ class DistributorDatasource {
       final response =
           await _client.from('invoices').insert(json).select().single();
 
-      return DistributorInvoice.fromJson(response);
+      final created = DistributorInvoice.fromJson(response);
+      await DistributorAuditService.instance.log(
+        action: 'invoice.create',
+        targetType: 'invoice',
+        targetId: created.id,
+        metadata: {
+          'invoice_number': response['invoice_number'],
+          'total': response['total'],
+        },
+      );
+      return created;
     } catch (e) {
       if (e is DatasourceError) rethrow;
       final error = _categorizeError(e, 'createInvoice');
@@ -1476,6 +1526,17 @@ class DistributorDatasource {
       if (status != null) updates['status'] = status;
 
       await _client.from('invoices').update(updates).eq('id', invoiceId);
+      await DistributorAuditService.instance.log(
+        action: 'invoice.zatca_update',
+        targetType: 'invoice',
+        targetId: invoiceId,
+        after: {
+          if (zatcaHash != null) 'zatca_hash': '<set>',
+          if (zatcaQr != null) 'zatca_qr': '<set>',
+          if (zatcaUuid != null) 'zatca_uuid': zatcaUuid,
+          if (status != null) 'status': status,
+        },
+      );
       return true;
     } catch (e) {
       if (e is DatasourceError) rethrow;
@@ -1562,7 +1623,18 @@ class DistributorDatasource {
           .single();
 
       _pricingTiersAvailable = true;
-      return PricingTier.fromJson(data);
+      final tier = PricingTier.fromJson(data);
+      await DistributorAuditService.instance.log(
+        action: 'pricing_tier.create',
+        targetType: 'pricing_tier',
+        targetId: tier.id,
+        after: {
+          'name': name,
+          'discount_percent': discountPercent,
+          'is_default': isDefault,
+        },
+      );
+      return tier;
     } catch (e) {
       if (e is DatasourceError) rethrow;
       throw _categorizeError(e, 'createPricingTier');
@@ -1610,6 +1682,13 @@ class DistributorDatasource {
           .select()
           .single();
 
+      await DistributorAuditService.instance.log(
+        action: 'pricing_tier.update',
+        targetType: 'pricing_tier',
+        targetId: tierId,
+        after: updates,
+      );
+
       return PricingTier.fromJson(data);
     } catch (e) {
       if (e is DatasourceError) rethrow;
@@ -1636,6 +1715,12 @@ class DistributorDatasource {
           .delete()
           .eq('id', tierId)
           .eq('org_id', orgId);
+
+      await DistributorAuditService.instance.log(
+        action: 'pricing_tier.delete',
+        targetType: 'pricing_tier',
+        targetId: tierId,
+      );
     } catch (e) {
       if (e is DatasourceError) rethrow;
       throw _categorizeError(e, 'deletePricingTier');
@@ -1709,6 +1794,13 @@ class DistributorDatasource {
         },
         onConflict: 'org_id, store_id',
       );
+
+      await DistributorAuditService.instance.log(
+        action: 'store_tier.assign',
+        targetType: 'store',
+        targetId: storeId,
+        metadata: {'tier_id': tierId},
+      );
     } catch (e) {
       if (e is DatasourceError) rethrow;
       throw _categorizeError(e, 'assignStoreToTier');
@@ -1726,6 +1818,12 @@ class DistributorDatasource {
           .delete()
           .eq('org_id', orgId)
           .eq('store_id', storeId);
+
+      await DistributorAuditService.instance.log(
+        action: 'store_tier.remove',
+        targetType: 'store',
+        targetId: storeId,
+      );
     } catch (e) {
       if (e is DatasourceError) rethrow;
       throw _categorizeError(e, 'removeStoreFromTier');
@@ -1889,6 +1987,17 @@ class DistributorDatasource {
             .select()
             .single();
 
+        await DistributorAuditService.instance.log(
+          action: 'document.upload',
+          targetType: 'distributor_document',
+          targetId: docId,
+          metadata: {
+            'document_type': type.dbValue,
+            'file_name': fileName,
+            'file_size': fileBytes.length,
+          },
+        );
+
         return DistributorDocument.fromJson(response);
       } on PostgrestException catch (e) {
         // Cleanup orphan file on DB insert failure
@@ -1994,6 +2103,12 @@ class DistributorDatasource {
           .from('distributor_documents')
           .delete()
           .eq('id', documentId);
+
+      await DistributorAuditService.instance.log(
+        action: 'document.delete',
+        targetType: 'distributor_document',
+        targetId: documentId,
+      );
     } catch (e) {
       if (e is DatasourceError) rethrow;
       final error = _categorizeError(e, 'deleteDocument');
@@ -2079,6 +2194,17 @@ class DistributorDatasource {
         category: 'onboarding',
       );
 
+      await DistributorAuditService.instance.log(
+        action: 'distributor.signup',
+        targetType: 'distributor',
+        targetId: distributorId,
+        metadata: {
+          'company_name': params.companyName,
+          'email': params.email,
+          'city': params.city,
+        },
+      );
+
       return DistributorSignupResult(
         distributorId: distributorId,
         email: params.email,
@@ -2153,6 +2279,13 @@ class DistributorDatasource {
       addBreadcrumb(
         message: 'Email verified, status → pending_review',
         category: 'onboarding',
+      );
+
+      await DistributorAuditService.instance.log(
+        action: 'distributor.email_verified',
+        targetType: 'distributor',
+        targetId: user.id,
+        after: {'status': DistributorAccountStatus.pendingReview.dbValue},
       );
     } catch (e) {
       if (e is DatasourceError) rethrow;
