@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../ui/distributor_shell.dart';
 import '../../screens/auth/distributor_login_screen.dart';
+import '../../screens/auth/distributor_signup_screen.dart';
+import '../../screens/auth/email_verification_screen.dart';
 import '../../screens/dashboard/distributor_dashboard_screen.dart';
 import '../../screens/orders/distributor_orders_screen.dart';
 import '../../screens/orders/distributor_order_detail_screen.dart';
@@ -26,10 +28,12 @@ final distributorRouterProvider = Provider<GoRouter>((ref) {
     initialLocation: '/dashboard',
     redirect: (context, state) {
       final isLoggedIn = AppSupabase.isAuthenticated;
-      final isLoginRoute = state.matchedLocation == '/login';
+      final isPublicRoute = state.matchedLocation == '/login' ||
+          state.matchedLocation == '/signup' ||
+          state.matchedLocation == '/verify-email';
 
-      if (!isLoggedIn && !isLoginRoute) return '/login';
-      if (isLoggedIn && isLoginRoute) return '/dashboard';
+      if (!isLoggedIn && !isPublicRoute) return '/login';
+      if (isLoggedIn && state.matchedLocation == '/login') return '/dashboard';
       return null;
     },
     routes: [
@@ -42,6 +46,29 @@ final distributorRouterProvider = Provider<GoRouter>((ref) {
           transitionsBuilder: (c, a, sa, child) =>
               FadeTransition(opacity: a, child: child),
         ),
+      ),
+      GoRoute(
+        path: '/signup',
+        name: 'distributor-signup',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const DistributorSignupScreen(),
+          transitionsBuilder: (c, a, sa, child) =>
+              FadeTransition(opacity: a, child: child),
+        ),
+      ),
+      GoRoute(
+        path: '/verify-email',
+        name: 'distributor-verify-email',
+        pageBuilder: (context, state) {
+          final email = state.extra as String?;
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: EmailVerificationScreen(email: email),
+            transitionsBuilder: (c, a, sa, child) =>
+                FadeTransition(opacity: a, child: child),
+          );
+        },
       ),
       ShellRoute(
         builder: (context, state, child) => DistributorShell(child: child),

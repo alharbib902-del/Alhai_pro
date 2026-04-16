@@ -1900,4 +1900,177 @@ class DistributorDatasource {
       throw error;
     }
   }
+
+  // ─── Onboarding / Signup ────────────────────────────────────────
+
+  /// Sign up a new distributor (self-service registration).
+  ///
+  /// 1. Creates auth user via Supabase Auth (sends verification email)
+  /// 2. Inserts distributor record with status = pending_email_verification
+  /// Returns [DistributorSignupResult] on success.
+  Future<DistributorSignupResult> signUpDistributor(
+    SignupParams params,
+  ) async {
+    if (!params.acceptedTerms) {
+      throw const DatasourceError(
+        type: DatasourceErrorType.validation,
+        message: 'يجب الموافقة على الشروط والأحكام',
+      );
+    }
+
+    // 1. Sign up via Supabase Auth (sends verification email)
+    final AuthResponse authResponse;
+    try {
+      authResponse = await _client.auth.signUp(
+        email: params.email,
+        password: params.password,
+        data: {
+          'company_name': params.companyName,
+          'phone': params.phoneNumber,
+          'role': 'distributor',
+        },
+      );
+    } on AuthException catch (e) {
+      if (e.message.toLowerCase().contains('already registered') ||
+          e.message.toLowerCase().contains('user already')) {
+        throw const DatasourceError(
+          type: DatasourceErrorType.validation,
+          message: 'هذا البريد مسجّل بالفعل',
+        );
+      }
+      throw DatasourceError(
+        type: DatasourceErrorType.auth,
+        message: 'فشل التسجيل: ${e.message}',
+        originalError: e,
+      );
+    }
+
+    final user = authResponse.user;
+    if (user == null) {
+      throw const DatasourceError(
+        type: DatasourceErrorType.auth,
+        message: 'فشل إنشاء الحساب',
+      );
+    }
+
+    // 2. Insert distributor record
+    final distributorId = const Uuid().v4();
+    try {
+      await _client.from('distributors').insert({
+        'id': distributorId,
+        'user_id': user.id,
+        'company_name': params.companyName,
+        'company_name_en': params.companyNameEn,
+        'phone': params.phoneNumber,
+        'email': params.email,
+        'commercial_register': params.commercialRegister,
+        'vat_number': params.vatNumber,
+        'city': params.city,
+        'address': params.address,
+        'status': DistributorAccountStatus.pendingEmailVerification.dbValue,
+        'terms_accepted_at': DateTime.now().toUtc().toIso8601String(),
+        'terms_version': '1.0',
+        'created_at': DateTime.now().toUtc().toIso8601String(),
+      });
+
+      addBreadcrumb(
+        message: 'Distributor signup: $distributorId',
+        category: 'onboarding',
+      );
+
+      return DistributorSignupResult(
+        distributorId: distributorId,
+        email: params.email,
+        requiresEmailVerification: true,
+      );
+    } on PostgrestException catch (e) {
+      // User created in Auth but distributor INSERT failed
+      if (e.code == '23505') {
+        throw const DatasourceError(
+          type: DatasourceErrorType.validation,
+          message: 'شركة بهذا الاسم أو الرقم موجودة مسبقاً',
+        );
+      }
+      throw DatasourceError(
+        type: DatasourceErrorType.unknown,
+        message: 'فشل حفظ بيانات الشركة: ${e.message}',
+        originalError: e,
+      );
+    }
+  }
+
+  /// Get the current distributor's account status.
+  ///
+  /// Returns null if no distributor record exists for the current user.
+  Future<DistributorAccountStatus?> getCurrentDistributorStatus() async {
+    final user = _client.auth.currentUser;
+    if (user == null) return null;
+
+    try {
+      final response = await _client
+          .from('distributors')
+          .select('status')
+          .eq('user_id', user.id)
+          .maybeSingle();
+
+      if (response == null) return null;
+
+      return DistributorAccountStatus.fromDbValue(
+        response['status'] as String,
+      );
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      final error = _categorizeError(e, 'getCurrentDistributorStatus');
+      if (kDebugMode) debugPrint('$error');
+      throw error;
+    }
+  }
+
+  /// Update status from pending_email_verification → pending_review
+  /// after email confirmation.
+  Future<void> markEmailVerified() async {
+    final user = _client.auth.currentUser;
+    if (user == null) {
+      throw const DatasourceError(
+        type: DatasourceErrorType.auth,
+        message: 'غير مسجّل دخول',
+      );
+    }
+
+    try {
+      await _client
+          .from('distributors')
+          .update({
+            'status': DistributorAccountStatus.pendingReview.dbValue,
+          })
+          .eq('user_id', user.id)
+          .eq(
+            'status',
+            DistributorAccountStatus.pendingEmailVerification.dbValue,
+          );
+
+      addBreadcrumb(
+        message: 'Email verified, status → pending_review',
+        category: 'onboarding',
+      );
+    } catch (e) {
+      if (e is DatasourceError) rethrow;
+      final error = _categorizeError(e, 'markEmailVerified');
+      if (kDebugMode) debugPrint('$error');
+      throw error;
+    }
+  }
+
+  /// Resend verification email via Supabase Auth.
+  Future<void> resendVerificationEmail(String email) async {
+    try {
+      await _client.auth.resend(type: OtpType.signup, email: email);
+    } on AuthException catch (e) {
+      throw DatasourceError(
+        type: DatasourceErrorType.auth,
+        message: 'فشل إعادة إرسال البريد: ${e.message}',
+        originalError: e,
+      );
+    }
+  }
 }
