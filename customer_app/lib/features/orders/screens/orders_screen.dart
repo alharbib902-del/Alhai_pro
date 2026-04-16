@@ -58,8 +58,8 @@ class _OrdersList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    // Use first status for query (simplified)
-    final ordersAsync = ref.watch(ordersListProvider(null));
+    final statusNames = statuses.map((s) => s.name).toList();
+    final ordersAsync = ref.watch(ordersListByStatusesProvider(statusNames));
 
     return ordersAsync.when(
       loading: () => AlhaiShimmer(
@@ -77,13 +77,12 @@ class _OrdersList extends ConsumerWidget {
           title: 'فشل تحميل الطلبات',
           description: 'تحقق من اتصالك بالإنترنت',
           actionText: 'إعادة المحاولة',
-          onAction: () => ref.invalidate(ordersListProvider(null)),
+          onAction: () =>
+              ref.invalidate(ordersListByStatusesProvider(statusNames)),
         ),
       ),
       data: (paginated) {
-        final orders = paginated.items
-            .where((o) => statuses.contains(o.status))
-            .toList();
+        final orders = paginated.items;
 
         if (orders.isEmpty) {
           return Center(
@@ -157,7 +156,7 @@ class _OrdersList extends ConsumerWidget {
 
         return RefreshIndicator(
           onRefresh: () async {
-            ref.invalidate(ordersListProvider(null));
+            ref.invalidate(ordersListByStatusesProvider(statusNames));
           },
           child: isTablet
               ? GridView.builder(

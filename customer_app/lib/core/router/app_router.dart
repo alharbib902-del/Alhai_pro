@@ -199,6 +199,35 @@ class AppRouter {
           );
         },
       ),
+      // Chat placeholder
+      GoRoute(
+        path: '/orders/:id/chat',
+        name: 'orderChat',
+        builder: (context, state) {
+          final id = state.pathParameters['id'];
+          if (!_isValidUuid(id)) return _invalidLinkScreen();
+          return Scaffold(
+            appBar: AppBar(
+              title: const Text('محادثة'),
+              leading: IconButton(
+                icon: const Icon(Icons.arrow_back),
+                tooltip: 'رجوع',
+                onPressed: () => Navigator.pop(context),
+              ),
+            ),
+            body: const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.chat_bubble_outline, size: 64, color: Colors.grey),
+                  SizedBox(height: 16),
+                  Text('المحادثة قيد التطوير', style: TextStyle(fontSize: 18)),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
       GoRoute(
         path: '/profile/addresses',
         name: 'addresses',
