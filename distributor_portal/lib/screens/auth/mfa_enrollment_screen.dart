@@ -21,7 +21,11 @@ import '../../providers/mfa_providers.dart';
 enum _EnrollStep { intro, scan, verify, backupCodes, done }
 
 class MfaEnrollmentScreen extends ConsumerStatefulWidget {
-  const MfaEnrollmentScreen({super.key});
+  /// When true, MFA enrollment is mandatory (super_admin policy).
+  /// The user cannot skip or navigate back.
+  final bool forced;
+
+  const MfaEnrollmentScreen({super.key, this.forced = false});
 
   @override
   ConsumerState<MfaEnrollmentScreen> createState() =>
@@ -146,8 +150,9 @@ class _MfaEnrollmentScreenState extends ConsumerState<MfaEnrollmentScreen> {
           style: TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
         ),
         centerTitle: false,
-        leading: _step == _EnrollStep.backupCodes
-            ? null // Can't go back from backup codes step
+        leading: _step == _EnrollStep.backupCodes ||
+                (widget.forced && _step == _EnrollStep.intro)
+            ? null // Can't go back from backup codes step or forced intro
             : IconButton(
                 icon: const Icon(Icons.arrow_back),
                 onPressed: () {
@@ -193,6 +198,34 @@ class _MfaEnrollmentScreenState extends ConsumerState<MfaEnrollmentScreen> {
   Widget _buildIntro(bool isDark) {
     return Column(
       children: [
+        if (widget.forced) ...[
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(AlhaiSpacing.sm),
+            decoration: BoxDecoration(
+              color: AppColors.warning.withValues(alpha: 0.1),
+              borderRadius: BorderRadius.circular(AlhaiRadius.sm),
+              border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
+            ),
+            child: Row(
+              children: [
+                Icon(Icons.shield_rounded, color: AppColors.warning, size: 20),
+                const SizedBox(width: AlhaiSpacing.xs),
+                Expanded(
+                  child: Text(
+                    'كأدمن عام، المصادقة الثنائية إلزامية لحماية حسابك.',
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.getTextPrimary(isDark),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: AlhaiSpacing.lg),
+        ],
         Container(
           padding: const EdgeInsets.all(AlhaiSpacing.lg),
           decoration: BoxDecoration(
@@ -766,7 +799,11 @@ class _MfaEnrollmentScreenState extends ConsumerState<MfaEnrollmentScreen> {
           child: FilledButton(
             onPressed: () {
               ref.invalidate(mfaEnrollmentStatusProvider);
-              context.pop(true);
+              if (widget.forced) {
+                context.go('/dashboard');
+              } else {
+                context.pop(true);
+              }
             },
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,

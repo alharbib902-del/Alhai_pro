@@ -53,13 +53,28 @@ class _DistributorLoginScreenState
 
       if (!mounted) return;
 
-      // Check if user has MFA enrolled → redirect to MFA verify
+      if (!mounted) return;
+
+      final user = AppSupabase.client.auth.currentUser;
       final mfaService = MfaService(AppSupabase.client);
+      final isSuperAdmin = user?.userMetadata?['role'] == 'super_admin';
+
+      // Check if user has MFA enrolled → redirect to MFA verify
       if (mfaService.needsMfaVerification()) {
         final factor = await mfaService.getVerifiedFactor();
         if (!mounted) return;
         if (factor != null) {
           context.go('/mfa-verify', extra: factor.id);
+          return;
+        }
+      }
+
+      // Super admin without MFA → forced enrollment
+      if (isSuperAdmin) {
+        final enrolled = await mfaService.isEnrolled();
+        if (!mounted) return;
+        if (!enrolled) {
+          context.go('/mfa-enroll', extra: true); // forced = true
           return;
         }
       }

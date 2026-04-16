@@ -9,7 +9,7 @@ import 'package:distributor_portal/screens/auth/mfa_enrollment_screen.dart';
 
 // ─── Test Helpers ────────────────────────────────────────────────
 
-Widget _buildTestWidget() {
+Widget _buildTestWidget({bool forced = false}) {
   return ProviderScope(
     child: MaterialApp(
       title: 'Test',
@@ -22,7 +22,7 @@ Widget _buildTestWidget() {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      home: const MfaEnrollmentScreen(),
+      home: MfaEnrollmentScreen(forced: forced),
     ),
   );
 }
@@ -121,6 +121,45 @@ void main() {
   group('MfaEnrollmentScreen navigation', () {
     testWidgets('has back button in intro step', (tester) async {
       await tester.pumpWidget(_buildTestWidget());
+      await tester.pump();
+
+      expect(find.byIcon(Icons.arrow_back), findsOneWidget);
+    });
+  });
+
+  // ─── Forced Enrollment (super_admin MFA mandatory) ─────────────
+
+  group('MfaEnrollmentScreen forced enrollment', () {
+    testWidgets('forced mode shows mandatory notice banner', (tester) async {
+      await tester.pumpWidget(_buildTestWidget(forced: true));
+      await tester.pump();
+
+      expect(
+        find.textContaining('كأدمن عام، المصادقة الثنائية إلزامية'),
+        findsOneWidget,
+      );
+      expect(find.byIcon(Icons.shield_rounded), findsOneWidget);
+    });
+
+    testWidgets('forced mode hides back button on intro step', (tester) async {
+      await tester.pumpWidget(_buildTestWidget(forced: true));
+      await tester.pump();
+
+      expect(find.byIcon(Icons.arrow_back), findsNothing);
+    });
+
+    testWidgets('non-forced mode does not show mandatory notice', (tester) async {
+      await tester.pumpWidget(_buildTestWidget(forced: false));
+      await tester.pump();
+
+      expect(
+        find.textContaining('كأدمن عام، المصادقة الثنائية إلزامية'),
+        findsNothing,
+      );
+    });
+
+    testWidgets('non-forced mode shows back button', (tester) async {
+      await tester.pumpWidget(_buildTestWidget(forced: false));
       await tester.pump();
 
       expect(find.byIcon(Icons.arrow_back), findsOneWidget);
