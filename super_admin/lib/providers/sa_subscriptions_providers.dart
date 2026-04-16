@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/services/audit_log_service.dart';
 import '../data/sa_subscriptions_datasource.dart';
 import '../data/models/sa_subscription_model.dart';
 
@@ -12,7 +13,10 @@ import 'sa_dashboard_providers.dart' show saSupabaseClientProvider;
 final saSubscriptionsDatasourceProvider = Provider<SASubscriptionsDatasource>((
   ref,
 ) {
-  return SASubscriptionsDatasource(ref.watch(saSupabaseClientProvider));
+  return SASubscriptionsDatasource(
+    ref.watch(saSupabaseClientProvider),
+    audit: ref.watch(auditLogServiceProvider),
+  );
 });
 
 // ============================================================================

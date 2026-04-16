@@ -3,10 +3,9 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_core/alhai_core.dart' show UserRole;
-import 'package:supabase_flutter/supabase_flutter.dart' hide AuthException;
-
 import '../../providers/sa_dashboard_providers.dart'
     show saSupabaseClientProvider;
+import '../services/mfa_guard_service.dart';
 
 import '../../ui/super_admin_shell.dart';
 import '../../screens/auth/sa_login_screen.dart';
@@ -113,16 +112,8 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
     }
 
     // F1 fix: enforce AAL2 (MFA completed) before granting access.
-    // getAuthenticatorAssuranceLevel() is synchronous (reads from JWT).
-    bool isAal2 = false;
-    try {
-      final client = ref.read(saSupabaseClientProvider);
-      final aal = client.auth.mfa.getAuthenticatorAssuranceLevel();
-      isAal2 = aal.currentLevel == AuthenticatorAssuranceLevels.aal2;
-    } catch (_) {
-      // Fail-safe: if AAL check throws, deny access (treat as not AAL2).
-      isAal2 = false;
-    }
+    // Centralized in MfaGuardService so router + login share one implementation.
+    final isAal2 = MfaGuardService.isAAL2(ref.read(saSupabaseClientProvider));
 
     if (!isAal2) {
       // Not MFA-verified: only allow the /mfa screen itself.

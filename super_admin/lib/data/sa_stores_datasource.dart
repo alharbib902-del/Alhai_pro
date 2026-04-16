@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../core/services/audit_log_service.dart';
 import 'models/sa_store_model.dart';
 
 /// Datasource for multi-tenant store management.
@@ -11,12 +12,18 @@ class SAStoresDatasource {
   /// fake via the [SAStoresDatasource.test] constructor.
   final dynamic _client;
 
+  /// Optional audit logger for privileged mutations.
+  final AuditLogService? _audit;
+
   /// Production constructor -- accepts a typed [SupabaseClient].
-  SAStoresDatasource(SupabaseClient client) : _client = client;
+  SAStoresDatasource(SupabaseClient client, {AuditLogService? audit})
+    : _client = client,
+      _audit = audit;
 
   /// Test constructor -- accepts a fake client that implements the same
   /// postgrest query-chain surface as [SupabaseClient].
-  SAStoresDatasource.test(this._client);
+  SAStoresDatasource.test(this._client, {AuditLogService? audit})
+    : _audit = audit;
 
   /// Fetch all stores with owner info.
   Future<List<SAStore>> getStores({
@@ -148,6 +155,18 @@ class SAStoresDatasource {
       rethrow;
     }
 
+    await _audit?.log(
+      action: 'store.create',
+      targetType: 'store',
+      targetId: storeId,
+      after: {
+        'name': name,
+        'business_type': businessType,
+        'owner_email': ownerEmail,
+        'plan_slug': planSlug,
+      },
+    );
+
     return SAStore.fromJson(storeData);
   }
 
@@ -157,6 +176,12 @@ class SAStoresDatasource {
         .from('stores')
         .update({'is_active': isActive})
         .eq('id', storeId);
+    await _audit?.log(
+      action: 'store.status.update',
+      targetType: 'store',
+      targetId: storeId,
+      after: {'is_active': isActive},
+    );
   }
 
   /// Update store subscription plan.
@@ -174,6 +199,12 @@ class SAStoresDatasource {
         .update({'plan': planSlug})
         .eq('org_id', orgId)
         .eq('status', 'active');
+    await _audit?.log(
+      action: 'store.plan.update',
+      targetType: 'store',
+      targetId: storeId,
+      after: {'plan': planSlug, 'org_id': orgId},
+    );
   }
 
   /// Get total store count.
@@ -198,11 +229,23 @@ class SAStoresDatasource {
   /// Soft delete a store (set is_active = false instead of deleting).
   Future<void> softDeleteStore(String storeId) async {
     await _client.from('stores').update({'is_active': false}).eq('id', storeId);
+    await _audit?.log(
+      action: 'store.soft_delete',
+      targetType: 'store',
+      targetId: storeId,
+      after: {'is_active': false},
+    );
   }
 
   /// Restore a soft-deleted store.
   Future<void> restoreStore(String storeId) async {
     await _client.from('stores').update({'is_active': true}).eq('id', storeId);
+    await _audit?.log(
+      action: 'store.restore',
+      targetType: 'store',
+      targetId: storeId,
+      after: {'is_active': true},
+    );
   }
 
   /// Get store owner info from users.

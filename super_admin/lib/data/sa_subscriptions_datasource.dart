@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../core/services/audit_log_service.dart';
 import '../core/services/sentry_service.dart';
 import 'models/sa_subscription_model.dart';
 
@@ -8,8 +9,12 @@ import 'models/sa_subscription_model.dart';
 class SASubscriptionsDatasource {
   final SupabaseClient _client;
 
+  /// Optional audit logger for privileged mutations.
+  final AuditLogService? _audit;
+
   /// Creates a datasource bound to the given [SupabaseClient].
-  SASubscriptionsDatasource(this._client);
+  SASubscriptionsDatasource(this._client, {AuditLogService? audit})
+    : _audit = audit;
 
   // ========================================================================
   // SUBSCRIPTIONS
@@ -192,6 +197,17 @@ class SASubscriptionsDatasource {
           })
           .select()
           .single();
+      await _audit?.log(
+        action: 'plan.create',
+        targetType: 'plan',
+        targetId: (data['id'] as String?) ?? slug,
+        after: {
+          'name': name,
+          'slug': slug,
+          'monthly_price': monthlyPrice,
+          'yearly_price': yearlyPrice,
+        },
+      );
       return SAPlan.fromJson(data);
     } catch (e) {
       // sa_plans table may not exist; return the plan object anyway
@@ -213,6 +229,12 @@ class SASubscriptionsDatasource {
   Future<void> updatePlan(String planId, Map<String, dynamic> updates) async {
     try {
       await _client.from('sa_plans').update(updates).eq('id', planId);
+      await _audit?.log(
+        action: 'plan.update',
+        targetType: 'plan',
+        targetId: planId,
+        after: updates,
+      );
     } catch (e, st) {
       await reportError(
         e,

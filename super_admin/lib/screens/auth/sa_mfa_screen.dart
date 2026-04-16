@@ -157,7 +157,7 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
           .toIso8601String();
 
       final response = await client
-          .from('audit_log')
+          .from('sa_audit_log')
           .select('id')
           .eq('target_id', user.id)
           .eq('action', 'auth.mfa_failed')

@@ -96,7 +96,7 @@ class AuditLogService {
     };
 
     try {
-      await _client.from('audit_log').insert(row);
+      await _client.from('sa_audit_log').insert(row);
 
       // Current insert succeeded -- flush any previously queued retries.
       await _flushRetryQueue();
@@ -133,7 +133,7 @@ class AuditLogService {
     _pendingRetries.clear();
     for (final row in batch) {
       try {
-        await _client.from('audit_log').insert(row);
+        await _client.from('sa_audit_log').insert(row);
       } catch (e, st) {
         // Already reported on first failure; just log retry failure.
         await reportError(

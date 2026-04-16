@@ -1,5 +1,6 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../core/services/audit_log_service.dart';
 import 'models/sa_user_model.dart';
 
 /// Datasource for platform user management.
@@ -11,12 +12,20 @@ class SAUsersDatasource {
   /// fake via the [SAUsersDatasource.test] constructor.
   final dynamic _client;
 
+  /// Optional audit logger. When non-null, every privileged mutation is
+  /// recorded in `audit_log` after it succeeds. Tests that don't supply one
+  /// still exercise the mutation logic — audit is best-effort.
+  final AuditLogService? _audit;
+
   /// Production constructor -- accepts a typed [SupabaseClient].
-  SAUsersDatasource(SupabaseClient client) : _client = client;
+  SAUsersDatasource(SupabaseClient client, {AuditLogService? audit})
+    : _client = client,
+      _audit = audit;
 
   /// Test constructor -- accepts a fake client that implements the same
   /// postgrest query-chain surface as [SupabaseClient].
-  SAUsersDatasource.test(this._client);
+  SAUsersDatasource.test(this._client, {AuditLogService? audit})
+    : _audit = audit;
 
   /// Fetch platform-level admin/support users.
   /// These are users with role = super_admin, support, or viewer
@@ -51,6 +60,12 @@ class SAUsersDatasource {
   /// Update user role.
   Future<void> updateUserRole(String userId, String role) async {
     await _client.from('users').update({'role': role}).eq('id', userId);
+    await _audit?.log(
+      action: 'user.role.update',
+      targetType: 'user',
+      targetId: userId,
+      after: {'role': role},
+    );
   }
 
   /// Get total platform user count (all roles across all stores).
@@ -91,11 +106,23 @@ class SAUsersDatasource {
   /// Soft delete a user (set is_active = false).
   Future<void> softDeleteUser(String userId) async {
     await _client.from('users').update({'is_active': false}).eq('id', userId);
+    await _audit?.log(
+      action: 'user.soft_delete',
+      targetType: 'user',
+      targetId: userId,
+      after: {'is_active': false},
+    );
   }
 
   /// Restore a soft-deleted user.
   Future<void> restoreUser(String userId) async {
     await _client.from('users').update({'is_active': true}).eq('id', userId);
+    await _audit?.log(
+      action: 'user.restore',
+      targetType: 'user',
+      targetId: userId,
+      after: {'is_active': true},
+    );
   }
 
   /// Check if a user is currently online (last_sign_in within 5 minutes).

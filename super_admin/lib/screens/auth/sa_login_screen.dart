@@ -5,10 +5,9 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_core/alhai_core.dart' show UserRole;
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' hide AuthException;
-
 import '../../core/router/app_router.dart';
 import '../../core/services/audit_log_service.dart';
+import '../../core/services/mfa_guard_service.dart';
 import '../../providers/sa_dashboard_providers.dart' show saSupabaseClientProvider;
 
 /// Super Admin login screen.
@@ -179,23 +178,9 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
   /// enrollment) and the current AAL is below AAL2. Returns `false`
   /// if MFA is not available or the user is already at AAL2.
   Future<bool> _checkMfaRequired() async {
-    try {
-      final client = ref.read(saSupabaseClientProvider);
-      final aal = client.auth.mfa.getAuthenticatorAssuranceLevel();
-
-      // Already at AAL2 — MFA complete.
-      if (aal.currentLevel == AuthenticatorAssuranceLevels.aal2) {
-        return false;
-      }
-
-      // Below AAL2 — need verification or enrollment.
-      return true;
-    } catch (e) {
-      if (kDebugMode) debugPrint('MFA check failed: $e');
-      // If MFA API is unavailable (e.g., Supabase project doesn't support it),
-      // still redirect to MFA screen which will show an appropriate message.
-      return true;
-    }
+    // Delegates to MfaGuardService so router + login share one implementation.
+    final client = ref.read(saSupabaseClientProvider);
+    return MfaGuardService.requiresMfa(client);
   }
 
   /// Fire-and-forget audit log entry for login attempts.

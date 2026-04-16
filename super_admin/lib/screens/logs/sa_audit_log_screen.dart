@@ -52,7 +52,7 @@ class _SAAuditLogScreenState extends ConsumerState<SAAuditLogScreen> {
     try {
       final client = ref.read(saSupabaseClientProvider);
       var query = client
-          .from('audit_log')
+          .from('sa_audit_log')
           .select('*')
           .order('created_at', ascending: false)
           .limit(_pageSize);
