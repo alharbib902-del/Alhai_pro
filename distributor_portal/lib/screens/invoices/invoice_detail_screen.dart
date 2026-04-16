@@ -11,6 +11,7 @@ import 'package:intl/intl.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
+import '../../core/utils/date_helper.dart';
 import '../../core/utils/print_helper.dart';
 
 import '../../data/models.dart';
@@ -25,7 +26,7 @@ String _formatCurrency(double amount) => '${_currencyFmt.format(amount)} ر.س';
 
 String _formatDate(DateTime? dt) {
   if (dt == null) return '-';
-  return DateFormat('yyyy/MM/dd', 'ar').format(dt);
+  return DateHelper.dual(dt);
 }
 
 String _invoiceTypeLabel(String type) {

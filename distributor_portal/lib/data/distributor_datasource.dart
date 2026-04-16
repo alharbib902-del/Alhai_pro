@@ -97,11 +97,15 @@ const int maxNotesLength = 500;
 const int maxDeliveryZonesLength = 200;
 
 /// Valid order status transitions for distributor actions.
+/// Includes post-approval workflow: approved → preparing → packed → shipped → delivered.
 const Map<String, Set<String>> validStatusTransitions = {
   'sent': {'approved', 'rejected'},
   'pending': {'approved', 'rejected'},
   'draft': {'sent'},
-  'approved': {'received'},
+  'approved': {'received', 'preparing'},
+  'preparing': {'packed'},
+  'packed': {'shipped'},
+  'shipped': {'delivered'},
 };
 
 /// Validate a price value is within bounds.
@@ -575,6 +579,16 @@ class DistributorDatasource {
 
       final orgId = await _requireOrgId('updateProductPrice');
 
+      // Fetch current price for audit trail before updating
+      final existing = await _client
+          .from('products')
+          .select('price, name')
+          .eq('id', productId)
+          .eq('org_id', orgId)
+          .maybeSingle();
+      final oldPrice = (existing?['price'] as num?)?.toDouble();
+      final productName = existing?['name'] as String? ?? productId;
+
       await _client
           .from('products')
           .update({
@@ -583,6 +597,14 @@ class DistributorDatasource {
           })
           .eq('id', productId)
           .eq('org_id', orgId);
+
+      // Log price change for audit (non-blocking)
+      _logPriceChange(
+        productId: productId,
+        productName: productName,
+        oldPrice: oldPrice,
+        newPrice: newPrice,
+      );
 
       return true;
     } catch (e) {
@@ -636,6 +658,85 @@ class DistributorDatasource {
       final error = _categorizeError(e, 'updateProductPrices');
       if (kDebugMode) debugPrint('$error');
       throw error;
+    }
+  }
+
+  // ─── Price Audit Log ────────────────────────────────────────────
+
+  /// Fetch price audit log entries, optionally filtered by product.
+  /// Returns empty list gracefully if the table does not exist (42P01).
+  Future<List<PriceAuditEntry>> getPriceAuditLog({
+    String? productId,
+    DateTime? fromDate,
+    DateTime? toDate,
+    int limit = 100,
+  }) async {
+    try {
+      final orgId = await _requireOrgId('getPriceAuditLog');
+
+      var query = _client
+          .from('price_audit_log')
+          .select()
+          .eq('org_id', orgId);
+
+      if (productId != null) {
+        query = query.eq('product_id', productId);
+      }
+      if (fromDate != null) {
+        query = query.gte('changed_at', fromDate.toIso8601String());
+      }
+      if (toDate != null) {
+        query = query.lte('changed_at', toDate.toIso8601String());
+      }
+
+      final data = await query
+          .order('changed_at', ascending: false)
+          .limit(limit);
+      return (data as List).map((e) =>
+          PriceAuditEntry.fromJson(e as Map<String, dynamic>)).toList();
+    } catch (e) {
+      // 42P01 = table does not exist → graceful empty return
+      if (e is PostgrestException && e.code == '42P01') {
+        if (kDebugMode) debugPrint('price_audit_log table not found, returning empty');
+        return [];
+      }
+      if (e is DatasourceError) rethrow;
+      final error = _categorizeError(e, 'getPriceAuditLog');
+      if (kDebugMode) debugPrint('$error');
+      throw error;
+    }
+  }
+
+  /// Insert an audit entry for a price change.
+  /// Fails silently if the audit table does not exist (42P01).
+  Future<void> _logPriceChange({
+    required String productId,
+    required String productName,
+    double? oldPrice,
+    required double newPrice,
+    String? reason,
+  }) async {
+    try {
+      final orgId = await _requireOrgId('_logPriceChange');
+      final userId = _client.auth.currentUser?.id ?? 'unknown';
+
+      await _client.from('price_audit_log').insert({
+        'org_id': orgId,
+        'product_id': productId,
+        'product_name': productName,
+        'old_price': oldPrice,
+        'new_price': newPrice,
+        'changed_by': userId,
+        'reason': reason,
+      });
+    } catch (e) {
+      // 42P01 = table does not exist → skip silently
+      if (e is PostgrestException && e.code == '42P01') {
+        if (kDebugMode) debugPrint('price_audit_log table not found, skipping audit');
+        return;
+      }
+      // Non-critical: log but don't fail the price update
+      if (kDebugMode) debugPrint('Failed to log price change: $e');
     }
   }
 

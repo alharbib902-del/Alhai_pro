@@ -3,13 +3,58 @@
 /// Maps to the Supabase `orders` table with a join on `stores`.
 library;
 
+/// All known order statuses including post-approval workflow stages.
+/// Legacy statuses (draft, sent, approved, received, rejected) are preserved.
+/// New post-approval stages: preparing, packed, shipped, delivered.
+const List<String> orderWorkflowStages = [
+  'draft',
+  'sent',
+  'approved',
+  'preparing',
+  'packed',
+  'shipped',
+  'delivered',
+];
+
+/// Whether a status is a post-approval workflow stage.
+bool isPostApprovalStatus(String status) {
+  return const {'preparing', 'packed', 'shipped', 'delivered'}.contains(status);
+}
+
+/// Get the next workflow status after the given one, or null if terminal.
+String? nextWorkflowStatus(String current) {
+  const transitions = {
+    'approved': 'preparing',
+    'preparing': 'packed',
+    'packed': 'shipped',
+    'shipped': 'delivered',
+  };
+  return transitions[current];
+}
+
+/// Arabic label for a workflow status.
+String workflowStatusLabel(String status) {
+  const labels = {
+    'draft': 'مسودة',
+    'sent': 'مُرسل',
+    'approved': 'مقبول',
+    'preparing': 'قيد التحضير',
+    'packed': 'تم التغليف',
+    'shipped': 'تم الشحن',
+    'delivered': 'تم التسليم',
+    'received': 'مستلم',
+    'rejected': 'مرفوض',
+  };
+  return labels[status] ?? status;
+}
+
 class DistributorOrder {
   final String id;
   final String purchaseNumber;
   final String storeName;
   final String storeId;
   final double total;
-  final String status; // draft, sent, approved, received, rejected
+  final String status; // draft, sent, approved, preparing, packed, shipped, delivered, received, rejected
   final DateTime createdAt;
   final String? notes;
 

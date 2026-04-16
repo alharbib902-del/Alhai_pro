@@ -9,6 +9,7 @@ export 'models/distributor_document.dart';
 export 'models/distributor_invoice.dart';
 export 'models/distributor_order.dart';
 export 'models/distributor_order_item.dart';
+export 'models/price_audit_entry.dart';
 export 'models/distributor_product.dart';
 export 'models/org_settings.dart';
 export 'models/pricing_tier.dart';

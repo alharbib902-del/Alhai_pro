@@ -13,8 +13,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
-import 'package:intl/intl.dart' show NumberFormat, DateFormat;
+import 'package:intl/intl.dart' show NumberFormat;
 
+import '../../core/utils/date_helper.dart';
+import '../../core/utils/vat_calculator.dart';
 import '../../data/models.dart';
 import '../../providers/distributor_providers.dart';
 import '../../ui/shared_widgets.dart' show responsivePadding, kMaxContentWidth;
@@ -108,6 +110,14 @@ class _DistributorOrderDetailScreenState
         return l10n?.distributorStatusApproved ?? 'Approved';
       case 'rejected':
         return l10n?.distributorStatusRejected ?? 'Rejected';
+      case 'preparing':
+        return 'قيد التحضير';
+      case 'packed':
+        return 'تم التغليف';
+      case 'shipped':
+        return 'تم الشحن';
+      case 'delivered':
+        return 'تم التسليم';
       default:
         return status;
     }
@@ -515,9 +525,20 @@ class _DistributorOrderDetailScreenState
                                 l10n,
                               ),
 
-                            // Invoice action (for approved/received orders)
+                            // Post-approval workflow timeline
                             if (order.status == 'approved' ||
-                                order.status == 'received')
+                                isPostApprovalStatus(order.status))
+                              _buildWorkflowTimeline(order, isDark),
+
+                            // Post-approval next action button
+                            if (order.status == 'approved' ||
+                                isPostApprovalStatus(order.status))
+                              _buildWorkflowActionButton(order, isDark),
+
+                            // Invoice action (for approved/received/post-approval orders)
+                            if (order.status == 'approved' ||
+                                order.status == 'received' ||
+                                isPostApprovalStatus(order.status))
                               _buildInvoiceAction(order, isDark),
                             const SizedBox(height: AlhaiSpacing.xl),
                           ],
@@ -540,10 +561,7 @@ class _DistributorOrderDetailScreenState
     bool isMedium,
     AppLocalizations? l10n,
   ) {
-    final dateFormatted = DateFormat(
-      'yyyy/MM/dd - HH:mm',
-      'ar',
-    ).format(order.createdAt);
+    final dateFormatted = DateHelper.dualWithTime(order.createdAt);
 
     return Container(
       padding: EdgeInsets.all(isMedium ? AlhaiSpacing.lg : AlhaiSpacing.md),
@@ -1100,6 +1118,10 @@ class _DistributorOrderDetailScreenState
     bool isDark,
     AppLocalizations? l10n,
   ) {
+    final vatBreakdown = VatCalculator.breakdown(total);
+    final fmt = NumberFormat('#,##0.00');
+    final riyal = l10n?.distributorRiyal ?? 'SAR';
+
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -1151,8 +1173,25 @@ class _DistributorOrderDetailScreenState
             ],
           ),
           const SizedBox(height: AlhaiSpacing.md),
+          // Subtotal
+          if (total > 0) ...[
+            _buildTotalRow(
+              'المجموع الفرعي',
+              '${fmt.format(vatBreakdown['subtotal']!)} $riyal',
+              isDark,
+            ),
+            const SizedBox(height: AlhaiSpacing.xs),
+            _buildTotalRow(
+              'ضريبة القيمة المضافة 15%',
+              '${fmt.format(vatBreakdown['vat']!)} $riyal',
+              isDark,
+              isVat: true,
+            ),
+            const Divider(height: AlhaiSpacing.md),
+          ],
+          // Grand total with VAT
           Text(
-            '${NumberFormat('#,##0.00').format(total)} ${l10n?.distributorRiyal ?? 'SAR'}',
+            '${fmt.format(vatBreakdown['total']!)} $riyal',
             style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -1161,6 +1200,14 @@ class _DistributorOrderDetailScreenState
                   : AppColors.getTextMuted(isDark),
             ),
           ),
+          if (total > 0)
+            Text(
+              'شامل ضريبة القيمة المضافة 15%',
+              style: TextStyle(
+                fontSize: 11,
+                color: AppColors.getTextMuted(isDark),
+              ),
+            ),
           if (total > 0 && order.total > 0) ...[
             const SizedBox(height: AlhaiSpacing.xs),
             Builder(
@@ -1200,6 +1247,38 @@ class _DistributorOrderDetailScreenState
           ],
         ],
       ),
+    );
+  }
+
+  Widget _buildTotalRow(
+    String label,
+    String value,
+    bool isDark, {
+    bool isVat = false,
+  }) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 13,
+            color: isVat
+                ? AppColors.info
+                : AppColors.getTextSecondary(isDark),
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            fontSize: 13,
+            fontWeight: FontWeight.w500,
+            color: isVat
+                ? AppColors.info
+                : AppColors.getTextPrimary(isDark),
+          ),
+        ),
+      ],
     );
   }
 
@@ -1413,6 +1492,160 @@ class _DistributorOrderDetailScreenState
           ),
         );
       },
+    );
+  }
+
+  // ── Post-approval workflow timeline ──────────────────────────
+
+  Widget _buildWorkflowTimeline(DistributorOrder order, bool isDark) {
+    const stages = ['approved', 'preparing', 'packed', 'shipped', 'delivered'];
+    final currentIndex = stages.indexOf(order.status);
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AlhaiSpacing.md),
+      child: Container(
+        padding: const EdgeInsets.all(AlhaiSpacing.mdl),
+        decoration: BoxDecoration(
+          color: AppColors.getSurface(isDark),
+          borderRadius: BorderRadius.circular(AlhaiRadius.lg),
+          border: Border.all(color: AppColors.getBorder(isDark)),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'مراحل تنفيذ الطلب',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w600,
+                color: AppColors.getTextPrimary(isDark),
+              ),
+            ),
+            const SizedBox(height: AlhaiSpacing.md),
+            Row(
+              children: List.generate(stages.length * 2 - 1, (i) {
+                if (i.isOdd) {
+                  // Connector line
+                  final stageIdx = i ~/ 2;
+                  final isDone = stageIdx < currentIndex;
+                  return Expanded(
+                    child: Container(
+                      height: 3,
+                      color: isDone
+                          ? AppColors.success
+                          : AppColors.getBorder(isDark),
+                    ),
+                  );
+                }
+                final stageIdx = i ~/ 2;
+                final isDone = stageIdx <= currentIndex;
+                final isCurrent = stageIdx == currentIndex;
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: isCurrent ? 28 : 22,
+                      height: isCurrent ? 28 : 22,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: isDone
+                            ? AppColors.success
+                            : AppColors.getSurfaceVariant(isDark),
+                        border: isCurrent
+                            ? Border.all(
+                                color: AppColors.success,
+                                width: 3,
+                              )
+                            : null,
+                      ),
+                      child: isDone
+                          ? const Icon(Icons.check, size: 14, color: Colors.white)
+                          : null,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      workflowStatusLabel(stages[stageIdx]),
+                      style: TextStyle(
+                        fontSize: 10,
+                        fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
+                        color: isDone
+                            ? AppColors.success
+                            : AppColors.getTextMuted(isDark),
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                );
+              }),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildWorkflowActionButton(DistributorOrder order, bool isDark) {
+    final nextStatus = nextWorkflowStatus(order.status);
+    if (nextStatus == null) return const SizedBox.shrink();
+
+    final labels = {
+      'preparing': 'بدء التحضير',
+      'packed': 'تم التغليف',
+      'shipped': 'تم الشحن',
+      'delivered': 'تم التسليم',
+    };
+    final icons = {
+      'preparing': Icons.kitchen_rounded,
+      'packed': Icons.inventory_2_rounded,
+      'shipped': Icons.local_shipping_rounded,
+      'delivered': Icons.check_circle_rounded,
+    };
+
+    return Padding(
+      padding: const EdgeInsets.only(bottom: AlhaiSpacing.md),
+      child: SizedBox(
+        width: double.infinity,
+        child: FilledButton.icon(
+          onPressed: _isProcessing
+              ? null
+              : () async {
+                  final confirmed = await _showConfirmationDialog(
+                    title: labels[nextStatus] ?? nextStatus,
+                    message:
+                        'هل تريد تحديث حالة الطلب إلى "${workflowStatusLabel(nextStatus)}"؟',
+                    confirmLabel: labels[nextStatus] ?? nextStatus,
+                    confirmColor: AppColors.primary,
+                  );
+                  if (!confirmed) return;
+                  await _updateStatus(nextStatus, order.total);
+                },
+          icon: _isProcessing
+              ? const SizedBox(
+                  width: 18,
+                  height: 18,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: AppColors.textOnPrimary,
+                  ),
+                )
+              : Icon(icons[nextStatus] ?? Icons.arrow_forward, size: 20),
+          label: Text(
+            labels[nextStatus] ?? nextStatus,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          style: FilledButton.styleFrom(
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.textOnPrimary,
+            padding: const EdgeInsets.symmetric(vertical: 14),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AlhaiRadius.md),
+            ),
+          ),
+        ),
+      ),
     );
   }
 
