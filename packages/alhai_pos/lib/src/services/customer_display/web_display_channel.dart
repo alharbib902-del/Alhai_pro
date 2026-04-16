@@ -145,7 +145,9 @@ class WebBroadcastDisplayChannel implements CustomerDisplayChannel {
   void dispose() {
     try {
       _channel?.close();
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('[CustomerDisplay] BroadcastChannel close failed: $e');
+    }
     _controller.close();
     _isConnected = false;
     _channel = null;

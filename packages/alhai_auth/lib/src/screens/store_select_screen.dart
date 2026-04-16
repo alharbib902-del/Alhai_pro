@@ -186,7 +186,10 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
     try {
       final supabaseUser = Supabase.instance.client.auth.currentUser;
       if (supabaseUser != null) return supabaseUser.id;
-    } catch (_) {}
+    } catch (e) {
+      // Supabase unavailable or uninitialized — fall through to SecureStorage fallback below.
+      debugPrint('[StoreSelect] Supabase currentUser lookup failed: $e');
+    }
     // Fallback: SecureStorage (للوضع المحلي / Web بدون Supabase)
     try {
       return await SecureStorageService.getUserId();
@@ -1098,7 +1101,10 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
         // تنسيق الرقم: 966500000001 → +966 500 000 001
         userPhone = '+$userPhone';
       }
-    } catch (_) {}
+    } catch (e) {
+      // Display-only; if Supabase auth isn't ready we simply show an empty phone.
+      debugPrint('[StoreSelect] Failed to read current user phone: $e');
+    }
 
     return Row(
       mainAxisSize: MainAxisSize.min,

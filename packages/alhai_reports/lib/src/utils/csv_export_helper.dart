@@ -86,7 +86,10 @@ class CsvExportHelper {
       // تنظيف الملف المؤقت بعد المشاركة (M109 fix)
       try {
         if (await file.exists()) await file.delete();
-      } catch (_) {}
+      } catch (e) {
+        // Best-effort temp-file cleanup; the OS will reclaim temp storage.
+        debugPrint('[CsvExport] Failed to delete temp CSV: $e');
+      }
 
       return CsvExportResult(success: true, filePath: file.path);
     } catch (e) {

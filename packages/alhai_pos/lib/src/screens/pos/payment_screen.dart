@@ -105,7 +105,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     // إيقاف NFC listener
     try {
       ref.read(nfcListenerServiceProvider).stopListening();
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('[PaymentScreen] Failed to stop NFC listener on dispose: $e');
+    }
     super.dispose();
   }
 
@@ -1204,7 +1206,10 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         total: total,
         paymentMethodName: _getMethodLabel(),
       );
-    } catch (_) {}
+    } catch (e) {
+      // Customer display is a peripheral side-channel; payment flow continues.
+      debugPrint('[PaymentScreen] Customer display showPayment failed: $e');
+    }
 
     try {
       final cartState = ref.read(cartStateProvider);
@@ -1285,7 +1290,10 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         ref
             .read(customerDisplayServiceProvider)
             .showSuccess(total: total, message: successMessage);
-      } catch (_) {}
+      } catch (e) {
+        // Customer display is a peripheral side-channel; sale already succeeded.
+        debugPrint('[PaymentScreen] Customer display showSuccess failed: $e');
+      }
       _animationController.forward();
 
       // Wait and navigate
@@ -1348,7 +1356,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
       Future.delayed(const Duration(seconds: 3), () {
         try {
           ref.read(customerDisplayServiceProvider).showIdle();
-        } catch (_) {}
+        } catch (e) {
+          debugPrint('[PaymentScreen] Customer display showIdle failed: $e');
+        }
       });
 
       // الانتقال لشاشة الإيصال
@@ -1361,7 +1371,10 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
         ref
             .read(customerDisplayServiceProvider)
             .showFailure(message: e.toString());
-      } catch (_) {}
+      } catch (displayErr) {
+        debugPrint(
+            '[PaymentScreen] Customer display showFailure failed: $displayErr');
+      }
       if (mounted) {
         setState(() => _isProcessing = false);
         ScaffoldMessenger.of(context).showSnackBar(

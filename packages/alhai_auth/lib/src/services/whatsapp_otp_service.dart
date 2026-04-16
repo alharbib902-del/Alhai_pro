@@ -675,7 +675,10 @@ class WhatsAppOtpService {
     try {
       await SecureStorageService.delete(_sendHistoryKey);
       await SecureStorageService.delete(_lastSendTimeKey);
-    } catch (_) {}
+    } catch (_) {
+      // Test-only reset; in-memory caches above are already cleared and are
+      // the source of truth. Secure-storage failures here are non-fatal.
+    }
   }
 
   /// الحصول على الوقت المتبقي للـ cooldown

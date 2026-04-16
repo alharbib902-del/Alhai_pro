@@ -421,7 +421,9 @@ class AuthNotifier extends StateNotifier<AuthState> {
             if (retrySession != null) {
               if (state.status == AuthStatus.authenticated) return;
             }
-          } catch (_) {}
+          } catch (e) {
+            debugPrint('⚠️ Web session retry failed: $e');
+          }
         }
       }
 
@@ -655,7 +657,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
       if (_supabaseClient != null) {
         try {
           await _supabaseClient.auth.signOut();
-        } catch (_) {}
+        } catch (e) {
+          // Best-effort remote sign-out; local cleanup below always runs.
+          debugPrint('⚠️ Supabase signOut failed during logout: $e');
+        }
       }
 
       await _authRepository.logout();

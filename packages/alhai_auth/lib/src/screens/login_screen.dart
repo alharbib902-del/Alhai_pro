@@ -98,7 +98,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           await prefs.remove(_lockoutKey);
         }
       }
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('فشل فحص حالة قفل OTP: $e');
+    }
   }
 
   /// تفعيل القفل المؤقت بعد 3 محاولات خاطئة
@@ -107,7 +109,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(_lockoutKey, until.toIso8601String());
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('فشل حفظ حالة قفل OTP: $e');
+    }
 
     if (!mounted) return;
     setState(() {
