@@ -8,6 +8,31 @@ compare the server's TLS certificate against a hardcoded set of SHA-256
 fingerprints and refuse any connection that does not match — so a rotation
 procedure is required whenever an upstream TLS cert is renewed.
 
+## Scope — what is pinned today and what is NOT
+
+**Pinned:** Supabase TLS cert, in `customer_app` and `driver_app` only.
+
+**NOT pinned (intentional, as of 2026-04-17):**
+
+- `api.alhai.store` (Railway — AI Server). Reason: only `packages/alhai_ai`
+  calls it, which is consumed by `cashier` / `admin` / `admin_lite` — all
+  of which are **web apps**. Browsers manage TLS themselves; Dart-level
+  cert pinning cannot be enforced in-browser.
+- `pos.alhai.store` (Railway — cashier web deployment). Same reason.
+
+**Re-evaluate and add Railway pinning when ANY of these become true:**
+
+1. `customer_app` or `driver_app` starts importing `package:alhai_ai` and
+   making direct HTTPS calls to `api.alhai.store`.
+2. An Android/iOS native wrapper is built around the cashier or admin
+   web app (i.e. it becomes a native binary instead of a browser tab).
+3. A new mobile-only feature talks to any `*.alhai.store` endpoint.
+
+If re-evaluation is triggered, extend `CertificatePinningService` to accept
+a host→pins map (currently it has a single global pin list), add
+`RAILWAY_CERT_FINGERPRINT` / `RAILWAY_CERT_FINGERPRINT_BACKUP` build args,
+and pass the host in `_matchesPinnedFingerprint(cert, host)`.
+
 ## Which apps enforce pinning
 
 | App           | Service file                                                           | Backing env vars                                             |
