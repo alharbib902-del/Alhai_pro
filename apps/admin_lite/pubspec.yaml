@@ -70,10 +70,13 @@ flutter_launcher_icons:
   # ---------------------------------------------------------------
   image_path: "assets/icons/app_icon.png"
   min_sdk_android: 21
-  adaptive_icon_background: "#FFFFFF"
+  # Brand purple matching the center of the icon's radial gradient.
+  # Must NOT be white (#FFFFFF) because the foreground chart is white and
+  # would become invisible on a white adaptive background.
+  adaptive_icon_background: "#6D28D9"
   adaptive_icon_foreground: "assets/icons/app_icon_foreground.png"
   web:
     generate: true
     image_path: "assets/icons/app_icon.png"
-    background_color: "#FFFFFF"
-    theme_color: "#FFFFFF"
+    background_color: "#6D28D9"
+    theme_color: "#6D28D9"
