@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/services/audit_log_service.dart';
+import '../core/services/mfa_guard_service.dart';
 import 'models/sa_user_model.dart';
 
 /// Datasource for platform user management.
@@ -59,6 +60,7 @@ class SAUsersDatasource {
 
   /// Update user role.
   Future<void> updateUserRole(String userId, String role) async {
+    MfaGuardService.requireAAL2(_client);
     await _client.from('users').update({'role': role}).eq('id', userId);
     await _audit?.log(
       action: 'user.role.update',
@@ -105,6 +107,7 @@ class SAUsersDatasource {
 
   /// Soft delete a user (set is_active = false).
   Future<void> softDeleteUser(String userId) async {
+    MfaGuardService.requireAAL2(_client);
     await _client.from('users').update({'is_active': false}).eq('id', userId);
     await _audit?.log(
       action: 'user.soft_delete',
@@ -116,6 +119,7 @@ class SAUsersDatasource {
 
   /// Restore a soft-deleted user.
   Future<void> restoreUser(String userId) async {
+    MfaGuardService.requireAAL2(_client);
     await _client.from('users').update({'is_active': true}).eq('id', userId);
     await _audit?.log(
       action: 'user.restore',

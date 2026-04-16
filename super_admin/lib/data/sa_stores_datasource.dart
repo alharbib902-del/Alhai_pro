@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/services/audit_log_service.dart';
+import '../core/services/mfa_guard_service.dart';
 import 'models/sa_store_model.dart';
 
 /// Datasource for multi-tenant store management.
@@ -117,6 +118,7 @@ class SAStoresDatasource {
     required String planSlug,
     int branchCount = 1,
   }) async {
+    MfaGuardService.requireAAL2(_client);
     // Step 1: Insert store
     final storeData = await _client
         .from('stores')
@@ -172,6 +174,7 @@ class SAStoresDatasource {
 
   /// Update store status (activate/suspend).
   Future<void> updateStoreStatus(String storeId, bool isActive) async {
+    MfaGuardService.requireAAL2(_client);
     await _client
         .from('stores')
         .update({'is_active': isActive})
@@ -186,6 +189,7 @@ class SAStoresDatasource {
 
   /// Update store subscription plan.
   Future<void> updateStorePlan(String storeId, String planSlug) async {
+    MfaGuardService.requireAAL2(_client);
     // Get org_id for this store
     final store = await _client
         .from('stores')
@@ -228,6 +232,7 @@ class SAStoresDatasource {
 
   /// Soft delete a store (set is_active = false instead of deleting).
   Future<void> softDeleteStore(String storeId) async {
+    MfaGuardService.requireAAL2(_client);
     await _client.from('stores').update({'is_active': false}).eq('id', storeId);
     await _audit?.log(
       action: 'store.soft_delete',
@@ -239,6 +244,7 @@ class SAStoresDatasource {
 
   /// Restore a soft-deleted store.
   Future<void> restoreStore(String storeId) async {
+    MfaGuardService.requireAAL2(_client);
     await _client.from('stores').update({'is_active': true}).eq('id', storeId);
     await _audit?.log(
       action: 'store.restore',

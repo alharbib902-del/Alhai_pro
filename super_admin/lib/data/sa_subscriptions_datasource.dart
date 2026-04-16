@@ -1,6 +1,7 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../core/services/audit_log_service.dart';
+import '../core/services/mfa_guard_service.dart';
 import '../core/services/sentry_service.dart';
 import 'models/sa_subscription_model.dart';
 
@@ -182,6 +183,7 @@ class SASubscriptionsDatasource {
     required int maxUsers,
     List<String> features = const [],
   }) async {
+    MfaGuardService.requireAAL2(_client);
     try {
       final data = await _client
           .from('sa_plans')
@@ -227,6 +229,7 @@ class SASubscriptionsDatasource {
 
   /// Update an existing plan.
   Future<void> updatePlan(String planId, Map<String, dynamic> updates) async {
+    MfaGuardService.requireAAL2(_client);
     try {
       await _client.from('sa_plans').update(updates).eq('id', planId);
       await _audit?.log(

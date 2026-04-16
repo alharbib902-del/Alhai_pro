@@ -44,4 +44,34 @@ class MfaGuardService {
       return true;
     }
   }
+
+  /// Defense-in-depth guard for privileged mutations.
+  ///
+  /// Call before any super-admin mutation (update/delete/privileged RPC).
+  /// The GoRouter redirect already enforces AAL2 on navigation, but a
+  /// widget already mounted when the session's AAL drops to aal1 would
+  /// only be re-guarded on the next navigation event. This method-level
+  /// check plugs that window.
+  ///
+  /// Throws [MfaRequiredException] if the session is not AAL2 — callers
+  /// let it propagate so the top-level error boundary can route to /mfa.
+  static void requireAAL2(SupabaseClient client) {
+    if (!isAAL2(client)) {
+      throw const MfaRequiredException(
+        'This action requires recent multi-factor authentication. '
+        'Please complete MFA verification and try again.',
+      );
+    }
+  }
+}
+
+/// Thrown by [MfaGuardService.requireAAL2] when the current session is
+/// below AAL2. The top-level error boundary should catch this and redirect
+/// the user to the MFA screen.
+class MfaRequiredException implements Exception {
+  final String message;
+  const MfaRequiredException(this.message);
+
+  @override
+  String toString() => 'MfaRequiredException: $message';
 }
