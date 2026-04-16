@@ -1,0 +1,13 @@
+# Copy this file to android/key.properties and fill in your release keystore details.
+# android/key.properties is gitignored -- never commit the real file.
+#
+# To generate a new keystore:
+#   keytool -genkey -v -keystore android/keystore/cashier-release.keystore \
+#     -keyalg RSA -keysize 2048 -validity 10000 -alias cashier-release
+#
+# Then point storeFile at the generated keystore file (relative to android/app/).
+
+storePassword=CHANGE_ME
+keyPassword=CHANGE_ME
+keyAlias=cashier-release
+storeFile=../keystore/cashier-release.keystore

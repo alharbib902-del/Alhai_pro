@@ -9,6 +9,7 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'core/router/app_router.dart';
+import 'core/services/push_notification_service.dart';
 import 'core/services/sentry_service.dart';
 import 'core/supabase/supabase_client.dart';
 import 'di/injection.dart';
@@ -59,6 +60,14 @@ Future<void> _appMain() async {
   } catch (e, stack) {
     if (kDebugMode) debugPrint('Supabase init failed: $e');
     reportError(e, stackTrace: stack, hint: 'Supabase init');
+  }
+
+  // Initialize push notifications (requires Firebase + Supabase)
+  try {
+    await PushNotificationService.initialize();
+  } catch (e, stack) {
+    if (kDebugMode) debugPrint('Push notifications init failed: $e');
+    reportError(e, stackTrace: stack, hint: 'Push notifications init');
   }
 
   // Initialize SharedPreferences

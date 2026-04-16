@@ -1,20 +1,24 @@
 import 'dart:async';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/router/app_router.dart';
 import 'core/services/location_service.dart';
+import 'core/services/push_notification_service.dart';
 import 'core/services/sentry_service.dart';
 import 'core/services/wakelock_service.dart';
 import 'features/deliveries/providers/delivery_providers.dart';
 import 'features/deliveries/providers/location_tracking_provider.dart';
 import 'core/supabase/supabase_client.dart';
 import 'di/injection.dart';
+import 'firebase_options.dart';
 
 // ─── Required --dart-define variables ──────────────────────────────────────
 //
@@ -54,6 +58,35 @@ void main() {
   );
 }
 
+/// Delivery ID from a notification tap that opened the app from terminated
+/// state. Consumed once by the splash screen after auth completes.
+String? pendingDeliveryId;
+
+/// Global GoRouter reference, set when the DriverApp builds.
+/// Used by [_onNotificationTap] to navigate imperatively.
+GoRouter? _appRouter;
+
+/// Handles a notification tap by navigating to the delivery detail screen.
+///
+/// If the app is already running (foreground/background), we navigate
+/// immediately via the GoRouter.  If the app was terminated (router not yet
+/// available), we stash the ID in [pendingDeliveryId] so the splash screen
+/// can consume it after the auth check completes.
+void _onNotificationTap(String deliveryId) {
+  if (kDebugMode) debugPrint('[Notification tap] delivery=$deliveryId');
+  addBreadcrumb(
+    message: 'Notification tap: delivery $deliveryId',
+    category: 'push',
+  );
+
+  if (_appRouter != null) {
+    _appRouter!.go('/orders/$deliveryId');
+  } else {
+    // App not yet mounted — stash for later navigation.
+    pendingDeliveryId = deliveryId;
+  }
+}
+
 Future<void> _appMain() async {
   WidgetsFlutterBinding.ensureInitialized();
 
@@ -84,6 +117,22 @@ Future<void> _appMain() async {
     const SystemUiOverlayStyle(statusBarColor: Colors.transparent),
   );
 
+  // Initialize Firebase
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e, stack) {
+    reportError(e, stackTrace: stack, hint: 'Firebase init');
+    if (kDebugMode) {
+      debugPrint(
+        'Firebase init failed — push notifications will not work.\n'
+        'Run `flutterfire configure` to generate firebase_options.dart '
+        'with your project credentials.',
+      );
+    }
+  }
+
   // Initialize Supabase
   try {
     await AppSupabase.initialize();
@@ -93,6 +142,15 @@ Future<void> _appMain() async {
 
   // Initialize DI
   configureDependencies();
+
+  // Initialize push notifications
+  try {
+    await PushNotificationService.instance.initialize(
+      onNotificationTap: _onNotificationTap,
+    );
+  } catch (e, stack) {
+    reportError(e, stackTrace: stack, hint: 'PushNotificationService init');
+  }
 
   // Initialize location service
   try {
@@ -189,6 +247,8 @@ class _DriverAppState extends ConsumerState<DriverApp>
     ref.watch(locationTrackingWiringProvider);
 
     final router = ref.watch(driverRouterProvider);
+    // Expose the router globally so push notification taps can navigate.
+    _appRouter = router;
 
     return MaterialApp.router(
       title: 'Alhai Driver',

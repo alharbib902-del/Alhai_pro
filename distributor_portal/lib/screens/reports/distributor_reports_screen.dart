@@ -16,11 +16,11 @@ import 'package:intl/intl.dart' show NumberFormat;
 
 // Conditional import for web download
 import '../../core/utils/csv_export_stub.dart'
-    if (dart.library.html) '../../core/utils/csv_export_web.dart'
+    if (dart.library.js_interop) '../../core/utils/csv_export_web.dart'
     as csv_export;
 // Conditional import for web print
 import '../../core/utils/print_stub.dart'
-    if (dart.library.html) '../../core/utils/print_web.dart'
+    if (dart.library.js_interop) '../../core/utils/print_web.dart'
     as js_interop;
 
 import '../../data/models.dart';

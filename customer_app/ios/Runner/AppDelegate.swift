@@ -1,6 +1,7 @@
 import Flutter
 import UIKit
 import GoogleMaps
+import firebase_messaging
 
 @main
 @objc class AppDelegate: FlutterAppDelegate {
@@ -16,6 +17,14 @@ import GoogleMaps
        !apiKey.contains("$(") {
       GMSServices.provideAPIKey(apiKey)
     }
+
+    // Required for Firebase Cloud Messaging on iOS
+    if #available(iOS 10.0, *) {
+      UNUserNotificationCenter.current().delegate = self
+    }
+
+    // Register for remote notifications (APNs)
+    application.registerForRemoteNotifications()
 
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)

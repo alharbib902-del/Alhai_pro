@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/providers/app_providers.dart';
 import '../../../core/services/sentry_service.dart';
+import '../../../main.dart' show pendingDeliveryId;
 import '../providers/auth_providers.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -49,7 +50,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
         context.go('/profile-setup');
       case DriverAuthState.authenticated:
       case DriverAuthState.loading:
-        context.go('/home');
+        // If a push notification opened the app from terminated state,
+        // navigate directly to the delivery detail screen.
+        final deepLink = pendingDeliveryId;
+        if (deepLink != null) {
+          pendingDeliveryId = null; // consume once
+          context.go('/orders/$deepLink');
+        } else {
+          context.go('/home');
+        }
     }
   }
 

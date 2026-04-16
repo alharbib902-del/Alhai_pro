@@ -6,6 +6,8 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    // Firebase — requires google-services.json in android/app/
+    id("com.google.gms.google-services")
 }
 
 // Load signing config from android/key.properties if it exists.
@@ -23,7 +25,7 @@ if (hasReleaseKeystore) {
 val googleMapsApiKey: String = (project.findProperty("GOOGLE_MAPS_API_KEY") as String?) ?: ""
 
 android {
-    namespace = "com.alhai.customer_app"
+    namespace = "com.alhai.customer"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -38,7 +40,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.alhai.customer_app"
+        applicationId = "com.alhai.customer"
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode

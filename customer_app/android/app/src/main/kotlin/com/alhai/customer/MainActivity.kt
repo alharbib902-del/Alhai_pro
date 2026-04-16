@@ -1,4 +1,4 @@
-package com.alhai.customer_app
+package com.alhai.customer
 
 import io.flutter.embedding.android.FlutterActivity
 

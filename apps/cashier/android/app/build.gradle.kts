@@ -8,11 +8,14 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-// Load key.properties for release signing
-val keyPropertiesFile = rootProject.file("app/key.properties")
-val keyProperties = Properties()
-if (keyPropertiesFile.exists()) {
-    keyProperties.load(FileInputStream(keyPropertiesFile))
+// Load signing config from android/key.properties if it exists.
+// This file is gitignored and must be provided by the developer/CI for release builds.
+// See android/key.properties.example for the expected format.
+val keystoreProperties = Properties()
+val keystorePropertiesFile = rootProject.file("key.properties")
+val hasReleaseKeystore = keystorePropertiesFile.exists()
+if (hasReleaseKeystore) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -38,29 +41,38 @@ android {
     }
 
     signingConfigs {
-        if (keyPropertiesFile.exists()) {
+        if (hasReleaseKeystore) {
             create("release") {
-                keyAlias = keyProperties["keyAlias"] as String
-                keyPassword = keyProperties["keyPassword"] as String
-                storeFile = file(keyProperties["storeFile"] as String)
-                storePassword = keyProperties["storePassword"] as String
+                keyAlias = keystoreProperties["keyAlias"] as String
+                keyPassword = keystoreProperties["keyPassword"] as String
+                storeFile = keystoreProperties["storeFile"]?.let { file(it) }
+                storePassword = keystoreProperties["storePassword"] as String
             }
         }
     }
 
     buildTypes {
         release {
-            signingConfig = if (keyPropertiesFile.exists()) {
-                signingConfigs.getByName("release")
-            } else {
-                signingConfigs.getByName("debug")
+            // Release builds MUST be signed with a real keystore.
+            // Provide android/key.properties (see key.properties.example).
+            if (!hasReleaseKeystore) {
+                throw GradleException(
+                    "cashier: android/key.properties not found. " +
+                    "Release builds require a signing key. " +
+                    "See android/key.properties.example for the expected format."
+                )
             }
+            signingConfig = signingConfigs.getByName("release")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        // Debug builds use the auto-generated debug keystore.
+        debug {
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
 }

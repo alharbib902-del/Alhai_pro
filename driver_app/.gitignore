@@ -43,3 +43,11 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Firebase configuration files (contain project-specific API keys)
+**/google-services.json
+**/GoogleService-Info.plist
+# Keep firebase_options.dart OUT of gitignore — the placeholder is committed
+# and will be overwritten by `flutterfire configure` with real values.
+# If you prefer to gitignore it after setup, uncomment the line below:
+# lib/firebase_options.dart

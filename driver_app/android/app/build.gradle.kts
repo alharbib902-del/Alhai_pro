@@ -6,6 +6,9 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    // Firebase — requires google-services.json in app/ directory.
+    // Run `flutterfire configure` to generate it.
+    id("com.google.gms.google-services")
 }
 
 // Load signing config from android/key.properties if it exists.
