@@ -40,71 +40,107 @@ class DistributorShell extends ConsumerStatefulWidget {
 }
 
 class _DistributorShellState extends ConsumerState<DistributorShell> {
-  static final _navItems = [
+  static const _baseNavItems = [
     _NavItem(
       id: 'dashboard',
-      label: (l10n) => l10n?.distributorDashboard ?? 'Dashboard',
+      label: _dashboardLabel,
       icon: Icons.dashboard_outlined,
       route: '/dashboard',
     ),
     _NavItem(
       id: 'orders',
-      label: (l10n) => l10n?.orders ?? 'Orders',
+      label: _ordersLabel,
       icon: Icons.shopping_bag_outlined,
       route: '/orders',
     ),
     _NavItem(
       id: 'invoices',
-      label: (l10n) => 'الفواتير',
+      label: _invoicesLabel,
       icon: Icons.receipt_long_outlined,
       route: '/invoices',
     ),
     _NavItem(
       id: 'products',
-      label: (l10n) => l10n?.products ?? 'Products',
+      label: _productsLabel,
       icon: Icons.inventory_2_outlined,
       route: '/products',
     ),
     _NavItem(
       id: 'pricing',
-      label: (l10n) => l10n?.price ?? 'Pricing',
+      label: _pricingLabel,
       icon: Icons.price_change_outlined,
       route: '/pricing',
     ),
     _NavItem(
       id: 'pricing-tiers',
-      label: (l10n) => 'فئات الأسعار',
+      label: _pricingTiersLabel,
       icon: Icons.layers_outlined,
       route: '/pricing-tiers',
     ),
     _NavItem(
       id: 'reports',
-      label: (l10n) => l10n?.reports ?? 'Reports',
+      label: _reportsLabel,
       icon: Icons.bar_chart_outlined,
       route: '/reports',
     ),
     _NavItem(
       id: 'audit',
-      label: (l10n) => 'سجل الأسعار',
+      label: _auditLabel,
       icon: Icons.history_outlined,
       route: '/audit',
     ),
     _NavItem(
       id: 'documents',
-      label: (l10n) => 'الوثائق',
+      label: _documentsLabel,
       icon: Icons.description_outlined,
       route: '/documents',
     ),
     _NavItem(
       id: 'settings',
-      label: (l10n) => l10n?.settings ?? 'Settings',
+      label: _settingsLabel,
       icon: Icons.settings_outlined,
       route: '/settings',
     ),
   ];
 
+  static const _adminNavItem = _NavItem(
+    id: 'admin',
+    label: _adminLabel,
+    icon: Icons.admin_panel_settings_outlined,
+    route: '/admin',
+  );
+
+  // Label functions (must be top-level or static for const)
+  static String _dashboardLabel(AppLocalizations? l10n) =>
+      l10n?.distributorDashboard ?? 'Dashboard';
+  static String _ordersLabel(AppLocalizations? l10n) =>
+      l10n?.orders ?? 'Orders';
+  static String _invoicesLabel(AppLocalizations? l10n) => 'الفواتير';
+  static String _productsLabel(AppLocalizations? l10n) =>
+      l10n?.products ?? 'Products';
+  static String _pricingLabel(AppLocalizations? l10n) =>
+      l10n?.price ?? 'Pricing';
+  static String _pricingTiersLabel(AppLocalizations? l10n) => 'فئات الأسعار';
+  static String _reportsLabel(AppLocalizations? l10n) =>
+      l10n?.reports ?? 'Reports';
+  static String _auditLabel(AppLocalizations? l10n) => 'سجل الأسعار';
+  static String _documentsLabel(AppLocalizations? l10n) => 'الوثائق';
+  static String _settingsLabel(AppLocalizations? l10n) =>
+      l10n?.settings ?? 'Settings';
+  static String _adminLabel(AppLocalizations? l10n) => 'الإدارة';
+
+  List<_NavItem> _getNavItems() {
+    final user = AppSupabase.client.auth.currentUser;
+    final role = user?.userMetadata?['role'];
+    if (role == 'super_admin') {
+      return [..._baseNavItems, _adminNavItem];
+    }
+    return _baseNavItems;
+  }
+
   String _getSelectedId(BuildContext context) {
     final location = GoRouterState.of(context).uri.path;
+    if (location.startsWith('/admin')) return 'admin';
     if (location.startsWith('/orders')) return 'orders';
     if (location.startsWith('/invoices')) return 'invoices';
     if (location.startsWith('/products')) return 'products';
@@ -217,7 +253,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
         Expanded(
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.sm),
-            children: _navItems.map((item) {
+            children: _getNavItems().map((item) {
               final isSelected = item.id == selectedId;
               return Padding(
                 padding: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),
@@ -373,7 +409,7 @@ class _DistributorShellState extends ConsumerState<DistributorShell> {
         Expanded(
           child: ListView(
             padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
-            children: _navItems.map((item) {
+            children: _getNavItems().map((item) {
               final isSelected = item.id == selectedId;
               return Padding(
                 padding: const EdgeInsets.only(bottom: AlhaiSpacing.xxs),

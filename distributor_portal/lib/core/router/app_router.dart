@@ -23,6 +23,8 @@ import '../../screens/reports/distributor_reports_screen.dart'
 import '../../screens/settings/distributor_settings_screen.dart';
 import '../../screens/documents/distributor_documents_screen.dart';
 import '../../screens/audit/price_audit_screen.dart';
+import '../../screens/admin/admin_dashboard_screen.dart';
+import '../../screens/admin/distributor_detail_admin_screen.dart';
 import '../supabase/supabase_client.dart';
 
 /// Router provider that rebuilds when auth state changes.
@@ -239,6 +241,41 @@ final distributorRouterProvider = Provider<GoRouter>((ref) {
               transitionsBuilder: (c, a, sa, child) =>
                   FadeTransition(opacity: a, child: child),
             ),
+          ),
+          GoRoute(
+            path: '/admin',
+            name: 'admin-dashboard',
+            redirect: (context, state) {
+              final user = AppSupabase.client.auth.currentUser;
+              final role = user?.userMetadata?['role'];
+              if (role != 'super_admin') return '/dashboard';
+              return null;
+            },
+            pageBuilder: (context, state) => CustomTransitionPage(
+              key: state.pageKey,
+              child: const AdminDashboardScreen(),
+              transitionsBuilder: (c, a, sa, child) =>
+                  FadeTransition(opacity: a, child: child),
+            ),
+          ),
+          GoRoute(
+            path: '/admin/distributor/:id',
+            name: 'admin-distributor-detail',
+            redirect: (context, state) {
+              final user = AppSupabase.client.auth.currentUser;
+              final role = user?.userMetadata?['role'];
+              if (role != 'super_admin') return '/dashboard';
+              return null;
+            },
+            pageBuilder: (context, state) {
+              final id = state.pathParameters['id'] ?? '';
+              return CustomTransitionPage(
+                key: state.pageKey,
+                child: DistributorDetailAdminScreen(orgId: id),
+                transitionsBuilder: (c, a, sa, child) =>
+                    FadeTransition(opacity: a, child: child),
+              );
+            },
           ),
         ],
       ),
