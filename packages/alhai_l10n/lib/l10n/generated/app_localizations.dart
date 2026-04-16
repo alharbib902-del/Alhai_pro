@@ -25064,6 +25064,444 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'حالة مزامنة البيانات'**
   String get dataSynchronizationStatus;
+
+  /// No description provided for @reportBalanceSheetTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الميزانية العمومية'**
+  String get reportBalanceSheetTitle;
+
+  /// No description provided for @reportBalanceSheetAsOf.
+  ///
+  /// In ar, this message translates to:
+  /// **'كما في {date}'**
+  String reportBalanceSheetAsOf(String date);
+
+  /// No description provided for @reportAssets.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأصول'**
+  String get reportAssets;
+
+  /// No description provided for @reportCurrentAssets.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأصول المتداولة'**
+  String get reportCurrentAssets;
+
+  /// No description provided for @reportCashInDrawer.
+  ///
+  /// In ar, this message translates to:
+  /// **'النقد في الصندوق'**
+  String get reportCashInDrawer;
+
+  /// No description provided for @reportAccountsReceivable.
+  ///
+  /// In ar, this message translates to:
+  /// **'ذمم مدينة (عملاء)'**
+  String get reportAccountsReceivable;
+
+  /// No description provided for @reportInventoryValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيمة المخزون'**
+  String get reportInventoryValue;
+
+  /// No description provided for @reportTotalCurrentAssets.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الأصول المتداولة'**
+  String get reportTotalCurrentAssets;
+
+  /// No description provided for @reportTotalAssets.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الأصول'**
+  String get reportTotalAssets;
+
+  /// No description provided for @reportLiabilities.
+  ///
+  /// In ar, this message translates to:
+  /// **'الالتزامات'**
+  String get reportLiabilities;
+
+  /// No description provided for @reportCurrentLiabilities.
+  ///
+  /// In ar, this message translates to:
+  /// **'الالتزامات المتداولة'**
+  String get reportCurrentLiabilities;
+
+  /// No description provided for @reportAccountsPayable.
+  ///
+  /// In ar, this message translates to:
+  /// **'ذمم دائنة (موردون)'**
+  String get reportAccountsPayable;
+
+  /// No description provided for @reportTotalCurrentLiabilities.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الالتزامات المتداولة'**
+  String get reportTotalCurrentLiabilities;
+
+  /// No description provided for @reportTotalLiabilities.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الالتزامات'**
+  String get reportTotalLiabilities;
+
+  /// No description provided for @reportEquity.
+  ///
+  /// In ar, this message translates to:
+  /// **'حقوق الملكية'**
+  String get reportEquity;
+
+  /// No description provided for @reportNetEquity.
+  ///
+  /// In ar, this message translates to:
+  /// **'صافي حقوق الملكية'**
+  String get reportNetEquity;
+
+  /// No description provided for @reportAccountingEquation.
+  ///
+  /// In ar, this message translates to:
+  /// **'معادلة المحاسبة'**
+  String get reportAccountingEquation;
+
+  /// No description provided for @reportAssetsEqualsLiabilitiesPlusEquity.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأصول = الالتزامات + حقوق الملكية'**
+  String get reportAssetsEqualsLiabilitiesPlusEquity;
+
+  /// No description provided for @reportCashFlowTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'قائمة التدفق النقدي'**
+  String get reportCashFlowTitle;
+
+  /// No description provided for @reportNetCashFlow.
+  ///
+  /// In ar, this message translates to:
+  /// **'صافي التدفق النقدي'**
+  String get reportNetCashFlow;
+
+  /// No description provided for @reportOperatingActivities.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأنشطة التشغيلية'**
+  String get reportOperatingActivities;
+
+  /// No description provided for @reportSalesReceipts.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيرادات المبيعات'**
+  String get reportSalesReceipts;
+
+  /// No description provided for @reportExpensesPaid.
+  ///
+  /// In ar, this message translates to:
+  /// **'المصروفات المدفوعة'**
+  String get reportExpensesPaid;
+
+  /// No description provided for @reportTaxesPaidVat.
+  ///
+  /// In ar, this message translates to:
+  /// **'الضرائب المدفوعة (ضريبة القيمة المضافة)'**
+  String get reportTaxesPaidVat;
+
+  /// No description provided for @reportInvestingActivities.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأنشطة الاستثمارية'**
+  String get reportInvestingActivities;
+
+  /// No description provided for @reportPurchasePayments.
+  ///
+  /// In ar, this message translates to:
+  /// **'مدفوعات المشتريات'**
+  String get reportPurchasePayments;
+
+  /// No description provided for @reportFinancingActivities.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأنشطة التمويلية'**
+  String get reportFinancingActivities;
+
+  /// No description provided for @reportCashDeposit.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيداع نقدي'**
+  String get reportCashDeposit;
+
+  /// No description provided for @reportCashWithdrawal.
+  ///
+  /// In ar, this message translates to:
+  /// **'سحب نقدي'**
+  String get reportCashWithdrawal;
+
+  /// No description provided for @reportThisQuarter.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا الربع'**
+  String get reportThisQuarter;
+
+  /// No description provided for @reportThisYear.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذه السنة'**
+  String get reportThisYear;
+
+  /// No description provided for @reportQuarterly.
+  ///
+  /// In ar, this message translates to:
+  /// **'ربع سنوي'**
+  String get reportQuarterly;
+
+  /// No description provided for @reportAnnual.
+  ///
+  /// In ar, this message translates to:
+  /// **'سنوي'**
+  String get reportAnnual;
+
+  /// No description provided for @reportDebtAgingTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقرير أعمار الديون'**
+  String get reportDebtAgingTitle;
+
+  /// No description provided for @reportDebtBucket0to30.
+  ///
+  /// In ar, this message translates to:
+  /// **'0-30 يوم'**
+  String get reportDebtBucket0to30;
+
+  /// No description provided for @reportDebtBucket31to60.
+  ///
+  /// In ar, this message translates to:
+  /// **'31-60 يوم'**
+  String get reportDebtBucket31to60;
+
+  /// No description provided for @reportDebtBucket61to90.
+  ///
+  /// In ar, this message translates to:
+  /// **'61-90 يوم'**
+  String get reportDebtBucket61to90;
+
+  /// No description provided for @reportDebtBucket90plus.
+  ///
+  /// In ar, this message translates to:
+  /// **'+90 يوم'**
+  String get reportDebtBucket90plus;
+
+  /// No description provided for @reportTotalDebts.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الديون'**
+  String get reportTotalDebts;
+
+  /// No description provided for @reportNDays.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} يوم'**
+  String reportNDays(int count);
+
+  /// No description provided for @reportComparisonTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقرير المقارنة'**
+  String get reportComparisonTitle;
+
+  /// No description provided for @reportIndicator.
+  ///
+  /// In ar, this message translates to:
+  /// **'المؤشر'**
+  String get reportIndicator;
+
+  /// No description provided for @reportChange.
+  ///
+  /// In ar, this message translates to:
+  /// **'التغيير'**
+  String get reportChange;
+
+  /// No description provided for @reportLastMonth.
+  ///
+  /// In ar, this message translates to:
+  /// **'الشهر الماضي'**
+  String get reportLastMonth;
+
+  /// No description provided for @reportLastQuarter.
+  ///
+  /// In ar, this message translates to:
+  /// **'الربع الماضي'**
+  String get reportLastQuarter;
+
+  /// No description provided for @reportLastYear.
+  ///
+  /// In ar, this message translates to:
+  /// **'السنة الماضية'**
+  String get reportLastYear;
+
+  /// No description provided for @reportCurrentPeriod.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفترة الحالية'**
+  String get reportCurrentPeriod;
+
+  /// No description provided for @reportPreviousPeriod.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفترة السابقة'**
+  String get reportPreviousPeriod;
+
+  /// No description provided for @reportZakatTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساب الزكاة'**
+  String get reportZakatTitle;
+
+  /// No description provided for @reportZakatDue.
+  ///
+  /// In ar, this message translates to:
+  /// **'وجبت الزكاة'**
+  String get reportZakatDue;
+
+  /// No description provided for @reportZakatBelowNisab.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يبلغ النصاب'**
+  String get reportZakatBelowNisab;
+
+  /// No description provided for @reportZakatAmountDue.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقدار الزكاة الواجبة'**
+  String get reportZakatAmountDue;
+
+  /// No description provided for @reportZakatRateOf.
+  ///
+  /// In ar, this message translates to:
+  /// **'بنسبة {rate}% من وعاء الزكاة'**
+  String reportZakatRateOf(String rate);
+
+  /// No description provided for @reportNisabThreshold.
+  ///
+  /// In ar, this message translates to:
+  /// **'النصاب الشرعي: {amount} ر.س'**
+  String reportNisabThreshold(String amount);
+
+  /// No description provided for @reportCurrentZakatBase.
+  ///
+  /// In ar, this message translates to:
+  /// **'وعاء الزكاة الحالي: {amount} ر.س'**
+  String reportCurrentZakatBase(String amount);
+
+  /// No description provided for @reportNisabInfo.
+  ///
+  /// In ar, this message translates to:
+  /// **'النصاب: {amount} ر.س (قيمة 85 جرام من الذهب تقريباً)'**
+  String reportNisabInfo(String amount);
+
+  /// No description provided for @reportZakatAssets.
+  ///
+  /// In ar, this message translates to:
+  /// **'أصول الزكاة (+)'**
+  String get reportZakatAssets;
+
+  /// No description provided for @reportGoodsAndInventory.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيمة البضاعة والمخزون'**
+  String get reportGoodsAndInventory;
+
+  /// No description provided for @reportAvailableCash.
+  ///
+  /// In ar, this message translates to:
+  /// **'النقد المتوفر'**
+  String get reportAvailableCash;
+
+  /// No description provided for @reportExpectedReceivables.
+  ///
+  /// In ar, this message translates to:
+  /// **'الديون المتوقع تحصيلها'**
+  String get reportExpectedReceivables;
+
+  /// No description provided for @reportDeductions.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخصومات (-)'**
+  String get reportDeductions;
+
+  /// No description provided for @reportDebtsToSuppliers.
+  ///
+  /// In ar, this message translates to:
+  /// **'الديون الواجبة للموردين'**
+  String get reportDebtsToSuppliers;
+
+  /// No description provided for @reportOtherLiabilities.
+  ///
+  /// In ar, this message translates to:
+  /// **'التزامات أخرى'**
+  String get reportOtherLiabilities;
+
+  /// No description provided for @reportNetZakatBase.
+  ///
+  /// In ar, this message translates to:
+  /// **'وعاء الزكاة الصافي'**
+  String get reportNetZakatBase;
+
+  /// No description provided for @reportZakatDisclaimer.
+  ///
+  /// In ar, this message translates to:
+  /// **'تنبيه: هذا الحساب تقريبي. يُنصح بمراجعة مختص شرعي لتحديد الزكاة الواجبة بدقة.'**
+  String get reportZakatDisclaimer;
+
+  /// No description provided for @reportPurchaseTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تقرير المشتريات'**
+  String get reportPurchaseTitle;
+
+  /// No description provided for @reportPurchasesBySupplier.
+  ///
+  /// In ar, this message translates to:
+  /// **'المشتريات حسب المورد'**
+  String get reportPurchasesBySupplier;
+
+  /// No description provided for @reportRecentInvoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر الفواتير'**
+  String get reportRecentInvoices;
+
+  /// No description provided for @reportNoPurchasesInPeriod.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد مشتريات في هذه الفترة'**
+  String get reportNoPurchasesInPeriod;
+
+  /// No description provided for @reportNInvoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} فاتورة'**
+  String reportNInvoices(int count);
+
+  /// No description provided for @reportTotalTax.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجمالي الضريبة'**
+  String get reportTotalTax;
+
+  /// No description provided for @reportExportSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تصدير التقرير بنجاح'**
+  String get reportExportSuccess;
+
+  /// No description provided for @reportExportFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل التصدير: {error}'**
+  String reportExportFailed(String error);
 }
 
 class _AppLocalizationsDelegate

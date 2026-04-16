@@ -13494,4 +13494,241 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get dataSynchronizationStatus => 'Data synchronization status';
+
+  @override
+  String get reportBalanceSheetTitle => 'Balance Sheet';
+
+  @override
+  String reportBalanceSheetAsOf(String date) {
+    return 'As of $date';
+  }
+
+  @override
+  String get reportAssets => 'Assets';
+
+  @override
+  String get reportCurrentAssets => 'Current Assets';
+
+  @override
+  String get reportCashInDrawer => 'Cash in Drawer';
+
+  @override
+  String get reportAccountsReceivable => 'Accounts Receivable (Customers)';
+
+  @override
+  String get reportInventoryValue => 'Inventory Value';
+
+  @override
+  String get reportTotalCurrentAssets => 'Total Current Assets';
+
+  @override
+  String get reportTotalAssets => 'Total Assets';
+
+  @override
+  String get reportLiabilities => 'Liabilities';
+
+  @override
+  String get reportCurrentLiabilities => 'Current Liabilities';
+
+  @override
+  String get reportAccountsPayable => 'Accounts Payable (Suppliers)';
+
+  @override
+  String get reportTotalCurrentLiabilities => 'Total Current Liabilities';
+
+  @override
+  String get reportTotalLiabilities => 'Total Liabilities';
+
+  @override
+  String get reportEquity => 'Equity';
+
+  @override
+  String get reportNetEquity => 'Net Equity';
+
+  @override
+  String get reportAccountingEquation => 'Accounting Equation';
+
+  @override
+  String get reportAssetsEqualsLiabilitiesPlusEquity =>
+      'Assets = Liabilities + Equity';
+
+  @override
+  String get reportCashFlowTitle => 'Cash Flow Statement';
+
+  @override
+  String get reportNetCashFlow => 'Net Cash Flow';
+
+  @override
+  String get reportOperatingActivities => 'Operating Activities';
+
+  @override
+  String get reportSalesReceipts => 'Sales Receipts';
+
+  @override
+  String get reportExpensesPaid => 'Expenses Paid';
+
+  @override
+  String get reportTaxesPaidVat => 'Taxes Paid (VAT)';
+
+  @override
+  String get reportInvestingActivities => 'Investing Activities';
+
+  @override
+  String get reportPurchasePayments => 'Purchase Payments';
+
+  @override
+  String get reportFinancingActivities => 'Financing Activities';
+
+  @override
+  String get reportCashDeposit => 'Cash Deposit';
+
+  @override
+  String get reportCashWithdrawal => 'Cash Withdrawal';
+
+  @override
+  String get reportThisQuarter => 'This Quarter';
+
+  @override
+  String get reportThisYear => 'This Year';
+
+  @override
+  String get reportQuarterly => 'Quarterly';
+
+  @override
+  String get reportAnnual => 'Annual';
+
+  @override
+  String get reportDebtAgingTitle => 'Debt Aging Report';
+
+  @override
+  String get reportDebtBucket0to30 => '0-30 Days';
+
+  @override
+  String get reportDebtBucket31to60 => '31-60 Days';
+
+  @override
+  String get reportDebtBucket61to90 => '61-90 Days';
+
+  @override
+  String get reportDebtBucket90plus => '90+ Days';
+
+  @override
+  String get reportTotalDebts => 'Total Debts';
+
+  @override
+  String reportNDays(int count) {
+    return '$count days';
+  }
+
+  @override
+  String get reportComparisonTitle => 'Comparison Report';
+
+  @override
+  String get reportIndicator => 'Indicator';
+
+  @override
+  String get reportChange => 'Change';
+
+  @override
+  String get reportLastMonth => 'Last Month';
+
+  @override
+  String get reportLastQuarter => 'Last Quarter';
+
+  @override
+  String get reportLastYear => 'Last Year';
+
+  @override
+  String get reportCurrentPeriod => 'Current Period';
+
+  @override
+  String get reportPreviousPeriod => 'Previous Period';
+
+  @override
+  String get reportZakatTitle => 'Zakat Calculation';
+
+  @override
+  String get reportZakatDue => 'Zakat is Due';
+
+  @override
+  String get reportZakatBelowNisab => 'Below Nisab';
+
+  @override
+  String get reportZakatAmountDue => 'Zakat Amount Due';
+
+  @override
+  String reportZakatRateOf(String rate) {
+    return 'At a rate of $rate% of the Zakat base';
+  }
+
+  @override
+  String reportNisabThreshold(String amount) {
+    return 'Nisab Threshold: $amount SAR';
+  }
+
+  @override
+  String reportCurrentZakatBase(String amount) {
+    return 'Current Zakat Base: $amount SAR';
+  }
+
+  @override
+  String reportNisabInfo(String amount) {
+    return 'Nisab: $amount SAR (approx. value of 85g of gold)';
+  }
+
+  @override
+  String get reportZakatAssets => 'Zakat Assets (+)';
+
+  @override
+  String get reportGoodsAndInventory => 'Goods & Inventory Value';
+
+  @override
+  String get reportAvailableCash => 'Available Cash';
+
+  @override
+  String get reportExpectedReceivables => 'Expected Receivables';
+
+  @override
+  String get reportDeductions => 'Deductions (-)';
+
+  @override
+  String get reportDebtsToSuppliers => 'Debts Owed to Suppliers';
+
+  @override
+  String get reportOtherLiabilities => 'Other Liabilities';
+
+  @override
+  String get reportNetZakatBase => 'Net Zakat Base';
+
+  @override
+  String get reportZakatDisclaimer =>
+      'Note: This is an approximate calculation. Consult a qualified scholar for precise Zakat determination.';
+
+  @override
+  String get reportPurchaseTitle => 'Purchase Report';
+
+  @override
+  String get reportPurchasesBySupplier => 'Purchases by Supplier';
+
+  @override
+  String get reportRecentInvoices => 'Recent Invoices';
+
+  @override
+  String get reportNoPurchasesInPeriod => 'No purchases in this period';
+
+  @override
+  String reportNInvoices(int count) {
+    return '$count invoices';
+  }
+
+  @override
+  String get reportTotalTax => 'Total Tax';
+
+  @override
+  String get reportExportSuccess => 'Report exported successfully';
+
+  @override
+  String reportExportFailed(String error) {
+    return 'Export failed: $error';
+  }
 }

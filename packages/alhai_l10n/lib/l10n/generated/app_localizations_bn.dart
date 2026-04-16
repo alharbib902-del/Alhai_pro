@@ -13485,4 +13485,241 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get dataSynchronizationStatus => 'Data synchronization status';
+
+  @override
+  String get reportBalanceSheetTitle => 'الميزانية العمومية';
+
+  @override
+  String reportBalanceSheetAsOf(String date) {
+    return 'كما في $date';
+  }
+
+  @override
+  String get reportAssets => 'الأصول';
+
+  @override
+  String get reportCurrentAssets => 'الأصول المتداولة';
+
+  @override
+  String get reportCashInDrawer => 'النقد في الصندوق';
+
+  @override
+  String get reportAccountsReceivable => 'ذمم مدينة (عملاء)';
+
+  @override
+  String get reportInventoryValue => 'قيمة المخزون';
+
+  @override
+  String get reportTotalCurrentAssets => 'إجمالي الأصول المتداولة';
+
+  @override
+  String get reportTotalAssets => 'إجمالي الأصول';
+
+  @override
+  String get reportLiabilities => 'الالتزامات';
+
+  @override
+  String get reportCurrentLiabilities => 'الالتزامات المتداولة';
+
+  @override
+  String get reportAccountsPayable => 'ذمم دائنة (موردون)';
+
+  @override
+  String get reportTotalCurrentLiabilities => 'إجمالي الالتزامات المتداولة';
+
+  @override
+  String get reportTotalLiabilities => 'إجمالي الالتزامات';
+
+  @override
+  String get reportEquity => 'حقوق الملكية';
+
+  @override
+  String get reportNetEquity => 'صافي حقوق الملكية';
+
+  @override
+  String get reportAccountingEquation => 'معادلة المحاسبة';
+
+  @override
+  String get reportAssetsEqualsLiabilitiesPlusEquity =>
+      'الأصول = الالتزامات + حقوق الملكية';
+
+  @override
+  String get reportCashFlowTitle => 'قائمة التدفق النقدي';
+
+  @override
+  String get reportNetCashFlow => 'صافي التدفق النقدي';
+
+  @override
+  String get reportOperatingActivities => 'الأنشطة التشغيلية';
+
+  @override
+  String get reportSalesReceipts => 'إيرادات المبيعات';
+
+  @override
+  String get reportExpensesPaid => 'المصروفات المدفوعة';
+
+  @override
+  String get reportTaxesPaidVat => 'الضرائب المدفوعة (ضريبة القيمة المضافة)';
+
+  @override
+  String get reportInvestingActivities => 'الأنشطة الاستثمارية';
+
+  @override
+  String get reportPurchasePayments => 'مدفوعات المشتريات';
+
+  @override
+  String get reportFinancingActivities => 'الأنشطة التمويلية';
+
+  @override
+  String get reportCashDeposit => 'إيداع نقدي';
+
+  @override
+  String get reportCashWithdrawal => 'سحب نقدي';
+
+  @override
+  String get reportThisQuarter => 'هذا الربع';
+
+  @override
+  String get reportThisYear => 'هذه السنة';
+
+  @override
+  String get reportQuarterly => 'ربع سنوي';
+
+  @override
+  String get reportAnnual => 'سنوي';
+
+  @override
+  String get reportDebtAgingTitle => 'تقرير أعمار الديون';
+
+  @override
+  String get reportDebtBucket0to30 => '0-30 يوم';
+
+  @override
+  String get reportDebtBucket31to60 => '31-60 يوم';
+
+  @override
+  String get reportDebtBucket61to90 => '61-90 يوم';
+
+  @override
+  String get reportDebtBucket90plus => '+90 يوم';
+
+  @override
+  String get reportTotalDebts => 'إجمالي الديون';
+
+  @override
+  String reportNDays(int count) {
+    return '$count يوم';
+  }
+
+  @override
+  String get reportComparisonTitle => 'تقرير المقارنة';
+
+  @override
+  String get reportIndicator => 'المؤشر';
+
+  @override
+  String get reportChange => 'التغيير';
+
+  @override
+  String get reportLastMonth => 'الشهر الماضي';
+
+  @override
+  String get reportLastQuarter => 'الربع الماضي';
+
+  @override
+  String get reportLastYear => 'السنة الماضية';
+
+  @override
+  String get reportCurrentPeriod => 'الفترة الحالية';
+
+  @override
+  String get reportPreviousPeriod => 'الفترة السابقة';
+
+  @override
+  String get reportZakatTitle => 'حساب الزكاة';
+
+  @override
+  String get reportZakatDue => 'وجبت الزكاة';
+
+  @override
+  String get reportZakatBelowNisab => 'لم يبلغ النصاب';
+
+  @override
+  String get reportZakatAmountDue => 'مقدار الزكاة الواجبة';
+
+  @override
+  String reportZakatRateOf(String rate) {
+    return 'بنسبة $rate% من وعاء الزكاة';
+  }
+
+  @override
+  String reportNisabThreshold(String amount) {
+    return 'النصاب الشرعي: $amount ر.س';
+  }
+
+  @override
+  String reportCurrentZakatBase(String amount) {
+    return 'وعاء الزكاة الحالي: $amount ر.س';
+  }
+
+  @override
+  String reportNisabInfo(String amount) {
+    return 'النصاب: $amount ر.س (قيمة 85 جرام من الذهب تقريباً)';
+  }
+
+  @override
+  String get reportZakatAssets => 'أصول الزكاة (+)';
+
+  @override
+  String get reportGoodsAndInventory => 'قيمة البضاعة والمخزون';
+
+  @override
+  String get reportAvailableCash => 'النقد المتوفر';
+
+  @override
+  String get reportExpectedReceivables => 'الديون المتوقع تحصيلها';
+
+  @override
+  String get reportDeductions => 'الخصومات (-)';
+
+  @override
+  String get reportDebtsToSuppliers => 'الديون الواجبة للموردين';
+
+  @override
+  String get reportOtherLiabilities => 'التزامات أخرى';
+
+  @override
+  String get reportNetZakatBase => 'وعاء الزكاة الصافي';
+
+  @override
+  String get reportZakatDisclaimer =>
+      'تنبيه: هذا الحساب تقريبي. يُنصح بمراجعة مختص شرعي لتحديد الزكاة الواجبة بدقة.';
+
+  @override
+  String get reportPurchaseTitle => 'تقرير المشتريات';
+
+  @override
+  String get reportPurchasesBySupplier => 'المشتريات حسب المورد';
+
+  @override
+  String get reportRecentInvoices => 'آخر الفواتير';
+
+  @override
+  String get reportNoPurchasesInPeriod => 'لا توجد مشتريات في هذه الفترة';
+
+  @override
+  String reportNInvoices(int count) {
+    return '$count فاتورة';
+  }
+
+  @override
+  String get reportTotalTax => 'إجمالي الضريبة';
+
+  @override
+  String get reportExportSuccess => 'تم تصدير التقرير بنجاح';
+
+  @override
+  String reportExportFailed(String error) {
+    return 'فشل التصدير: $error';
+  }
 }
