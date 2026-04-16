@@ -132,7 +132,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 23;
+  int get schemaVersion => 37;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -553,6 +553,48 @@ class AppDatabase extends _$AppDatabase {
         debugPrint(
           '[Migration v23] ZATCA append-only triggers + '
           'reference_invoice_id created',
+        );
+
+      // ────────────────────────────────────────────────────────────────
+      // v24 → v37: version alignment with Supabase.
+      //
+      // Per `docs/schema_alignment_v23_to_v37_plan.md`, the audit confirmed
+      // Drift was the source of truth for the columns Supabase added in
+      // v29/v30 (shifts.orgId, returns.orgId, daily_summaries.totalSales,
+      // etc. — all already present on the Drift side). The remaining
+      // migrations v24..v37 are RLS / RPC / server-only — no client
+      // schema change.
+      //
+      // The no-op cases below exist only so `_runMigrationStep`'s linear
+      // loop (`for version in from+1..to`) does not fall into `default`
+      // and log "Unknown migration version". The version pointer advances
+      // and `_recordMigrationHistory` captures each step for audit.
+      //
+      // If a future Supabase migration introduces a real client-side
+      // column, replace the matching case body with the appropriate
+      // `m.addColumn(...)` / `customStatement(...)` call.
+      //
+      // Known follow-ups (tracked in the plan, not implemented here):
+      //  - v35 `audit_log` naming collision with Super Admin audit shape.
+      //  - `daily_summaries.total_sales` INT vs DOUBLE semantic drift.
+      // ────────────────────────────────────────────────────────────────
+      case 24:
+      case 25:
+      case 26:
+      case 27:
+      case 28:
+      case 29:
+      case 30:
+      case 31:
+      case 32:
+      case 33:
+      case 34:
+      case 35:
+      case 36:
+      case 37:
+        debugPrint(
+          '[Migration v$targetVersion] Server-only change — '
+          'no Drift schema update required.',
         );
 
       default:

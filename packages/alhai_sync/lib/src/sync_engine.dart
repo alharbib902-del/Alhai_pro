@@ -223,7 +223,9 @@ class SyncEngine {
     int deadLetterCount = 0;
     try {
       deadLetterCount = await _syncQueueDao.getDeadLetterCount();
-    } catch (_) {}
+    } catch (e) {
+      debugPrint('SyncEngine: failed to read dead letter count: $e');
+    }
 
     return SyncHealthReport(
       isServerReachable: isReachable,

@@ -316,7 +316,12 @@ class BidirectionalStrategy {
                 .eq('id', item.recordId)
                 .maybeSingle()
                 .timeout(const Duration(seconds: 10));
-          } catch (_) {}
+          } catch (e) {
+            // Server fetch failed — conflict is still recorded below with
+            // serverData=null so the resolver can treat it as missing-remote.
+            debugPrint(
+                'BidirectionalStrategy: failed to fetch server row for conflict on $tableName/${item.recordId}: $e');
+          }
 
           final conflict = SyncConflict(
             syncQueueId: item.id,

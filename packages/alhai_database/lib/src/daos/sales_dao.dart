@@ -154,7 +154,11 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
               variables: [Variable.withString(storeId)],
             ).getSingleOrNull();
             orgId = storeRow?.data['org_id'] as String?;
-          } catch (_) {}
+          } catch (e) {
+            // org_id is only needed for stock-delta logging; leaving it null
+            // falls back to store-scoped delta tracking.
+            debugPrint('[DB] voidSale: org_id lookup failed for store $storeId: $e');
+          }
         }
 
         // 1. جلب عناصر البيع لاستعادة الكميات

@@ -74,7 +74,11 @@ class DatabaseSeeder {
         debugPrint('   ✓ المتجر موجود مسبقاً');
         return;
       }
-    } catch (_) {}
+    } catch (e) {
+      // Lookup failure is non-fatal: fall through to insertStore below,
+      // which is the seeder's primary goal.
+      debugPrint('   ⚠️ فشل فحص وجود المتجر، سيتم المحاولة بالإنشاء: $e');
+    }
 
     await _db.storesDao.insertStore(
       StoresTableCompanion.insert(

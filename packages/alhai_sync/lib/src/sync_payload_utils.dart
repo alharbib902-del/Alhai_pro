@@ -74,13 +74,33 @@ String _camelToSnake(String input) {
 
 /// Column renames: local Drift name -> Supabase remote name.
 ///
-/// The Drift ORM generates snake_case column names from Dart camelCase getters,
-/// but the Supabase SQL schema uses different names for some columns.
-/// This map defines the renames per table.
-/// Verified against LIVE Supabase schema 2026-04-04:
-/// All Drift column names match Supabase exactly. NO renames needed.
-/// Previous renames were based on migration files, not the actual DB.
-const Map<String, Map<String, String>> _localToRemoteColumnMap = {};
+/// The Drift ORM generates snake_case column names from Dart camelCase
+/// getters, but the Supabase SQL schema uses different names for some
+/// columns. This map defines the renames per table.
+///
+/// Verified against LIVE Supabase schema 2026-04-04: all Drift column
+/// names match Supabase exactly for the vast majority of tables.
+///
+/// EXCEPTIONS (daily_summaries, added 2026-04-17 after v39):
+/// - Drift `total_sales`   (INT  count) -> Supabase `total_sales_count`
+///   (INT added in v29). Without this rename a push would stuff a count
+///   into the Supabase DOUBLE `total_sales` column — which is money.
+/// - Drift `total_sales_amount` (REAL money) -> Supabase `total_sales`
+///   (DOUBLE money from v25). Drift's `_amount` suffix is the money
+///   field; Supabase's canonical money column is `total_sales`.
+/// - Drift `total_refunds` (INT count) -> Supabase `total_refunds_count`
+///   (INT added in v39, this repo). See migration
+///   supabase/migrations/20260417_v39_daily_summaries_count_column.sql.
+/// - `total_refunds_amount` stays as-is (name + money semantic agree).
+/// - `total_orders` / `total_orders_amount` agree between Drift and
+///   Supabase (no rename needed).
+const Map<String, Map<String, String>> _localToRemoteColumnMap = {
+  'daily_summaries': {
+    'total_sales': 'total_sales_count',
+    'total_sales_amount': 'total_sales',
+    'total_refunds': 'total_refunds_count',
+  },
+};
 
 /// Reverse map: Supabase remote name -> local Drift name.
 /// Built lazily from [_localToRemoteColumnMap].
