@@ -45,8 +45,11 @@ dependencies:
   # UUID generation for product IDs
   uuid: ^4.5.1
 
-  # QR code display for ZATCA invoices
+  # QR code display for ZATCA invoices + MFA TOTP enrollment
   qr_flutter: ^4.1.0
+
+  # SHA-256 hashing for MFA backup codes
+  crypto: ^3.0.5
 
 dev_dependencies:
   flutter_test:
