@@ -16,3 +16,5 @@ export 'models/pricing_tier.dart';
 export 'models/report_data.dart';
 export 'models/signup_params.dart';
 export 'models/store_tier_assignment.dart';
+export 'models/pending_distributor.dart';
+export 'models/admin_notification.dart';
