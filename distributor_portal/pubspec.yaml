@@ -30,6 +30,7 @@ dependencies:
   http: ^1.2.1
   shared_preferences: ^2.2.2
   intl: any
+  hijri: ^3.0.0
   fl_chart: ^0.65.0
 
   # Crash reporting
