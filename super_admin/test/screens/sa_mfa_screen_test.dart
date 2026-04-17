@@ -13,7 +13,7 @@ void main() {
 
   setUp(() {
     mock = MockSupabaseClient();
-    mock.setResponse('audit_log', <dynamic>[]);
+    mock.setResponse('sa_audit_log', <dynamic>[]);
   });
 
   group('MFA audit events', () {
@@ -31,7 +31,7 @@ void main() {
         metadata: {'email': 'admin@bltech.sa', 'enrollment': false},
       );
 
-      final ops = mock.queryLog['audit_log']!;
+      final ops = mock.queryLog['sa_audit_log']!;
       expect(ops, hasLength(1));
       final row =
           ops.first.firstWhere((o) => o.method == 'insert').args[0]
@@ -57,7 +57,7 @@ void main() {
         },
       );
 
-      final ops = mock.queryLog['audit_log']!;
+      final ops = mock.queryLog['sa_audit_log']!;
       final row =
           ops.first.firstWhere((o) => o.method == 'insert').args[0]
               as Map<String, dynamic>;
@@ -79,7 +79,7 @@ void main() {
         metadata: {'email': 'admin@bltech.sa', 'reason': 'lockout_triggered'},
       );
 
-      final ops = mock.queryLog['audit_log']!;
+      final ops = mock.queryLog['sa_audit_log']!;
       final row =
           ops.first.firstWhere((o) => o.method == 'insert').args[0]
               as Map<String, dynamic>;
@@ -102,7 +102,7 @@ void main() {
           metadata: {'email': 'admin@bltech.sa', 'enrollment': true},
         );
 
-        final ops = mock.queryLog['audit_log']!;
+        final ops = mock.queryLog['sa_audit_log']!;
         final row =
             ops.first.firstWhere((o) => o.method == 'insert').args[0]
                 as Map<String, dynamic>;

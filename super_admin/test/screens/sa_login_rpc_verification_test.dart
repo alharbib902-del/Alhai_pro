@@ -15,7 +15,7 @@ void main() {
 
   setUp(() {
     mock = MockSupabaseClient();
-    mock.setResponse('audit_log', <dynamic>[]);
+    mock.setResponse('sa_audit_log', <dynamic>[]);
   });
 
   group('is_super_admin RPC verification', () {
@@ -67,7 +67,7 @@ void main() {
         metadata: {'email': 'admin@bltech.sa'},
       );
 
-      final ops = mock.queryLog['audit_log']!;
+      final ops = mock.queryLog['sa_audit_log']!;
       expect(ops, hasLength(1));
       final row =
           ops.first.firstWhere((o) => o.method == 'insert').args[0]
@@ -95,7 +95,7 @@ void main() {
         },
       );
 
-      final ops = mock.queryLog['audit_log']!;
+      final ops = mock.queryLog['sa_audit_log']!;
       final row =
           ops.first.firstWhere((o) => o.method == 'insert').args[0]
               as Map<String, dynamic>;
@@ -105,7 +105,7 @@ void main() {
     });
 
     test('login audit does not block on failure', () async {
-      mock.setError('audit_log', Exception('db down'));
+      mock.setError('sa_audit_log', Exception('db down'));
       const actor = AuditActor(id: 'sa-user-1', email: 'admin@bltech.sa');
       final audit = AuditLogService.test(
         mock.client,
@@ -120,7 +120,7 @@ void main() {
       );
 
       // Insert was attempted (but failed silently).
-      expect(mock.queryLog['audit_log'], isNotNull);
+      expect(mock.queryLog['sa_audit_log'], isNotNull);
     });
   });
 }

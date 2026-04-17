@@ -13,7 +13,7 @@ void main() {
     mock = MockSupabaseClient();
     service = AuditLogService.test(mock.client, resolveActor: () => actor);
     // Insert terminates when awaited — just provide an empty response.
-    mock.setResponse('audit_log', <dynamic>[]);
+    mock.setResponse('sa_audit_log', <dynamic>[]);
   });
 
   group('AuditLogService.log', () {
@@ -24,7 +24,7 @@ void main() {
         targetId: 'store-42',
       );
 
-      final ops = mock.queryLog['audit_log'];
+      final ops = mock.queryLog['sa_audit_log'];
       expect(ops, isNotNull, reason: 'expected an audit_log insert');
       expect(ops!, hasLength(1));
 
@@ -51,7 +51,7 @@ void main() {
         metadata: {'reason': 'rename'},
       );
 
-      final ops = mock.queryLog['audit_log']!;
+      final ops = mock.queryLog['sa_audit_log']!;
       final insertOp = ops.first.firstWhere((op) => op.method == 'insert');
       final row = insertOp.args[0] as Map<String, dynamic>;
       expect(row['before'], equals({'name': 'Old'}));
@@ -71,7 +71,7 @@ void main() {
         targetId: 'u-1',
       );
 
-      final ops = mock.queryLog['audit_log']!;
+      final ops = mock.queryLog['sa_audit_log']!;
       final insertOp = ops.first.firstWhere((op) => op.method == 'insert');
       final row = insertOp.args[0] as Map<String, dynamic>;
       expect(row['actor_id'], equals('actor-2'));
@@ -81,7 +81,7 @@ void main() {
     test(
       'swallows backend errors so the parent mutation is unaffected',
       () async {
-        mock.setError('audit_log', Exception('network down'));
+        mock.setError('sa_audit_log', Exception('network down'));
 
         // Must not throw.
         await service.log(
@@ -91,7 +91,7 @@ void main() {
         );
 
         // The insert was still attempted.
-        expect(mock.queryLog['audit_log'], isNotNull);
+        expect(mock.queryLog['sa_audit_log'], isNotNull);
       },
     );
 
@@ -105,7 +105,7 @@ void main() {
       );
 
       expect(
-        mock.queryLog['audit_log'],
+        mock.queryLog['sa_audit_log'],
         isNull,
         reason: 'with no actor, we should not attempt the insert',
       );
