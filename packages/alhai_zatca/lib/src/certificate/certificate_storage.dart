@@ -122,11 +122,11 @@ class InMemoryCertificateStorage implements CertificateStorage {
 ///
 /// Stores certificates as JSON strings using a key-value backend.
 /// Subclasses must implement [readValue] and [writeValue] for the
-/// actual storage mechanism (SharedPreferences, Hive, etc.).
+/// actual storage mechanism (encrypted Hive, secure-storage, etc.).
 ///
 /// WARNING: Subclasses MUST use encrypted storage in production
-/// (e.g., flutter_secure_storage, encrypted Hive). Plain
-/// SharedPreferences is NOT acceptable for ZATCA certificates.
+/// (e.g., flutter_secure_storage, encrypted Hive). Plain unencrypted
+/// key-value stores are NOT acceptable for ZATCA certificates.
 abstract class JsonCertificateStorage implements CertificateStorage {
   static const String _prefix = 'zatca_cert_';
   static const String _keyPrefix = 'zatca_pk_';
