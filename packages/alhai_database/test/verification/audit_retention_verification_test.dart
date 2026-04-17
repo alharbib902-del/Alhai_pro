@@ -110,14 +110,23 @@ void main() {
       test(
         'record at exactly 2190 days, synced → NOT deleted (boundary)',
         () async {
-          final age = DateTime.now().subtract(const Duration(days: 2190));
+          // cleanupOldLogs uses `isSmallerThanValue(cutoff)` where cutoff is
+          // computed from its own DateTime.now(), which always lags this
+          // test's DateTime.now() by a few microseconds-to-milliseconds.
+          // Without a buffer, `age` drifts slightly *below* the cutoff and
+          // the DB incorrectly classifies the record as past retention.
+          //
+          // A 10s lead keeps the record conceptually at "day 2190" (within
+          // 0.0053% of the boundary) while guaranteeing age > cutoff, so the
+          // test measures the strict-`<` boundary behaviour deterministically.
+          final age = DateTime.now()
+              .subtract(const Duration(days: 2190))
+              .add(const Duration(seconds: 10));
           await insertAuditLog(id: 'a2', createdAt: age, syncedAt: age);
 
           await db.auditLogDao.cleanupOldLogs();
 
           final rows = await db.select(db.auditLogTable).get();
-          // cleanupOldLogs uses `isSmallerThanValue(cutoff)` which is strict <
-          // cutoff = now - 2190d.  A record created exactly at cutoff is NOT < cutoff.
           expect(
             rows.length,
             1,
