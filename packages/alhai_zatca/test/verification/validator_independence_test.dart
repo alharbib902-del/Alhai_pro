@@ -22,7 +22,7 @@ void main() {
   setUp(() {
     validator = InvoiceXmlValidator();
     builder = UblInvoiceBuilder();
-    validXml = builder.build(_validInvoice());
+    validXml = builder.build(validInvoice());
   });
 
   group('VERIFICATION — Fix #4: Validator post-cascade-fix', () {
@@ -152,7 +152,7 @@ void main() {
   });
 }
 
-ZatcaInvoice _validInvoice() => ZatcaInvoice(
+ZatcaInvoice validInvoice() => ZatcaInvoice(
   invoiceNumber: 'INV-VERIFY-001',
   uuid: '550e8400-e29b-41d4-a716-446655440088',
   issueDate: DateTime(2026, 4, 14),

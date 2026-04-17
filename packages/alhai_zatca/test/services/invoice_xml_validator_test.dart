@@ -17,7 +17,7 @@ void main() {
     builder = UblInvoiceBuilder();
   });
 
-  ZatcaInvoice _validInvoice() => ZatcaInvoice(
+  ZatcaInvoice validInvoice() => ZatcaInvoice(
     invoiceNumber: 'INV-001',
     uuid: '550e8400-e29b-41d4-a716-446655440000',
     issueDate: DateTime(2026, 4, 10),
@@ -56,7 +56,7 @@ void main() {
 
   group('InvoiceXmlValidator', () {
     test('passes a fully valid invoice XML', () {
-      final xml = builder.build(_validInvoice());
+      final xml = builder.build(validInvoice());
       final result = validator.validate(xml);
 
       expect(result.isValid, isTrue);
@@ -81,7 +81,7 @@ void main() {
 
     test('catches missing ProfileID', () {
       // Build XML then strip ProfileID
-      var xml = builder.build(_validInvoice());
+      var xml = builder.build(validInvoice());
       xml = xml.replaceAll(RegExp(r'<cbc:ProfileID>.*?</cbc:ProfileID>'), '');
       final result = validator.validate(xml);
 
@@ -90,7 +90,7 @@ void main() {
 
     test('catches missing invoice lines', () {
       // Build with lines then remove them
-      var xml = builder.build(_validInvoice());
+      var xml = builder.build(validInvoice());
       xml = xml.replaceAll(
         RegExp(r'<cac:InvoiceLine>[\s\S]*?</cac:InvoiceLine>'),
         '',
@@ -104,7 +104,7 @@ void main() {
     });
 
     test('catches missing TaxTotal elements', () {
-      var xml = builder.build(_validInvoice());
+      var xml = builder.build(validInvoice());
       xml = xml.replaceAll(
         RegExp(r'<cac:TaxTotal>[\s\S]*?</cac:TaxTotal>'),
         '',
@@ -154,7 +154,7 @@ void main() {
 
   group('InvoiceXmlValidator.validateSigned', () {
     test('delegates to validate() for structural checks', () {
-      final xml = builder.build(_validInvoice());
+      final xml = builder.build(validInvoice());
       final result = validator.validateSigned(xml);
 
       // validateSigned should return same result as validate

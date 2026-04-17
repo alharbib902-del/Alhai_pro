@@ -19,7 +19,7 @@ void main() {
     builder = UblInvoiceBuilder();
   });
 
-  ZatcaInvoice _makeInvoice({String? sellerRegion, String? buyerRegion}) {
+  ZatcaInvoice makeInvoice({String? sellerRegion, String? buyerRegion}) {
     return ZatcaInvoice(
       invoiceNumber: 'INV-VERIFY-CS',
       uuid: '550e8400-e29b-41d4-a716-446655440077',
@@ -61,7 +61,7 @@ void main() {
 
   group('VERIFICATION — Fix #3: CountrySubentity ordering', () {
     test('full UBL 2.1 ordering of seller PostalAddress elements', () {
-      final invoice = _makeInvoice(sellerRegion: 'Makkah Region');
+      final invoice = makeInvoice(sellerRegion: 'Makkah Region');
       final xml = builder.build(invoice);
       final doc = XmlDocument.parse(xml);
 
@@ -108,7 +108,7 @@ void main() {
     });
 
     test('CountrySubentity value is "Makkah Region"', () {
-      final invoice = _makeInvoice(sellerRegion: 'Makkah Region');
+      final invoice = makeInvoice(sellerRegion: 'Makkah Region');
       final xml = builder.build(invoice);
       final doc = XmlDocument.parse(xml);
 
@@ -119,7 +119,7 @@ void main() {
     });
 
     test('CountrySubentity omitted entirely when region is null', () {
-      final invoice = _makeInvoice(sellerRegion: null);
+      final invoice = makeInvoice(sellerRegion: null);
       final xml = builder.build(invoice);
       final doc = XmlDocument.parse(xml);
 
@@ -142,7 +142,7 @@ void main() {
     });
 
     test('Country element still present when region is null', () {
-      final invoice = _makeInvoice(sellerRegion: null);
+      final invoice = makeInvoice(sellerRegion: null);
       final xml = builder.build(invoice);
       final doc = XmlDocument.parse(xml);
 
@@ -162,7 +162,7 @@ void main() {
     });
 
     test('buyer PostalAddress also follows correct order when region set', () {
-      final invoice = _makeInvoice(
+      final invoice = makeInvoice(
         sellerRegion: 'Riyadh Region',
         buyerRegion: 'Eastern Province',
       );

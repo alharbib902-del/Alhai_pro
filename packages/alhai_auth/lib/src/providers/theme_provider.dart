@@ -23,6 +23,11 @@
 /// in `packages/alhai_shared_ui/lib/src/providers/theme_provider.dart`.
 library;
 
+// The ThemeState class is marked @Deprecated to signal the pending move to
+// alhai_theme. Suppress its self-references in this file so strict analysis
+// (--fatal-infos) doesn't fail on an intentional temporary duplicate.
+// ignore_for_file: deprecated_member_use_from_same_package
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';

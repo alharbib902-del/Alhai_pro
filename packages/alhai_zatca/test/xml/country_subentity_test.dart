@@ -17,7 +17,7 @@ void main() {
 
   group('CountrySubentity — UBL 2.1 / ZATCA', () {
     test('seller PostalAddress contains CountrySubentity when region set', () {
-      final invoice = _makeInvoice(sellerRegion: 'Makkah Region');
+      final invoice = makeInvoice(sellerRegion: 'Makkah Region');
       final xml = builder.build(invoice);
       final doc = XmlDocument.parse(xml);
 
@@ -37,7 +37,7 @@ void main() {
     });
 
     test('buyer PostalAddress contains CountrySubentity when region set', () {
-      final invoice = _makeInvoice(
+      final invoice = makeInvoice(
         sellerRegion: 'Riyadh Region',
         buyerRegion: 'Eastern Province',
       );
@@ -60,7 +60,7 @@ void main() {
     });
 
     test('CountrySubentity appears after PostalZone and before Country', () {
-      final invoice = _makeInvoice(sellerRegion: 'Riyadh Region');
+      final invoice = makeInvoice(sellerRegion: 'Riyadh Region');
       final xml = builder.build(invoice);
 
       // Use indices in the full XML string
@@ -85,7 +85,7 @@ void main() {
     });
 
     test('CountrySubentity omitted when seller region is null', () {
-      final invoice = _makeInvoice(sellerRegion: null);
+      final invoice = makeInvoice(sellerRegion: null);
       final xml = builder.build(invoice);
 
       final doc = XmlDocument.parse(xml);
@@ -108,7 +108,7 @@ void main() {
     });
 
     test('XML remains valid and parseable with CountrySubentity', () {
-      final invoice = _makeInvoice(
+      final invoice = makeInvoice(
         sellerRegion: 'Makkah Region',
         buyerRegion: 'Riyadh Region',
       );
@@ -118,7 +118,7 @@ void main() {
   });
 }
 
-ZatcaInvoice _makeInvoice({String? sellerRegion, String? buyerRegion}) {
+ZatcaInvoice makeInvoice({String? sellerRegion, String? buyerRegion}) {
   return ZatcaInvoice(
     invoiceNumber: 'INV-TEST-CS',
     uuid: '550e8400-e29b-41d4-a716-446655440099',
