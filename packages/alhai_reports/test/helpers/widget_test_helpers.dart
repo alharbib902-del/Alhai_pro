@@ -120,6 +120,17 @@ setupMockGetIt() {
     () => mockProductsDao.getAllProducts(any()),
   ).thenAnswer((_) async => <ProductsTableData>[]);
 
+  // inventory_report_screen.dart calls getProductsPaginated (not getAllProducts).
+  when(
+    () => mockProductsDao.getProductsPaginated(
+      any(),
+      offset: any(named: 'offset'),
+      limit: any(named: 'limit'),
+      categoryId: any(named: 'categoryId'),
+      activeOnly: any(named: 'activeOnly'),
+    ),
+  ).thenAnswer((_) async => <ProductsTableData>[]);
+
   when(
     () => mockExpensesDao.getExpensesByDateRange(any(), any(), any()),
   ).thenAnswer((_) async => <ExpensesTableData>[]);

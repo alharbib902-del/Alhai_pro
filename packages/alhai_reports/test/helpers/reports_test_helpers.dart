@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_reports/alhai_reports.dart';
@@ -16,6 +17,9 @@ class MockLoyaltyDao extends Mock implements LoyaltyDao {}
 
 class MockReportsService extends Mock implements ReportsService {}
 
+/// Fake Selectable for mocking `customSelect(...).get()` chains.
+class MockSelectable<T> extends Mock implements Selectable<T> {}
+
 // =============================================================================
 // FALLBACK VALUES
 // =============================================================================
@@ -23,6 +27,8 @@ class MockReportsService extends Mock implements ReportsService {}
 void registerReportsFallbackValues() {
   registerFallbackValue(DateTime(2026, 1, 1));
   registerFallbackValue(ReportPeriod.today);
+  // Needed for `any(named: 'variables')` on customSelect.
+  registerFallbackValue(<Variable<Object>>[]);
 }
 
 // =============================================================================

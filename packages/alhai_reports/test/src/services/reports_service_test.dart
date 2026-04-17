@@ -1,3 +1,5 @@
+// `hide` avoids a symbol clash with flutter_test's isNull/isNotNull matchers.
+import 'package:drift/drift.dart' hide isNull, isNotNull;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:alhai_database/alhai_database.dart';
@@ -78,8 +80,15 @@ void main() {
         // Create mock products with varying stock levels
         final products = <ProductsTableData>[];
 
+        // Service calls getProductsPaginated(storeId, limit: 500).
         when(
-          () => mockProductsDao.getAllProducts(any()),
+          () => mockProductsDao.getProductsPaginated(
+            any(),
+            offset: any(named: 'offset'),
+            limit: any(named: 'limit'),
+            categoryId: any(named: 'categoryId'),
+            activeOnly: any(named: 'activeOnly'),
+          ),
         ).thenAnswer((_) async => products);
 
         final report = await service.getInventoryReport('store-1');
@@ -204,12 +213,17 @@ void main() {
           () => mockSalesDao.getHourlySales(any(), any()),
         ).thenAnswer((_) async => []);
 
+        // _getTopProducts runs a raw SQL via salesDao.customSelect(...).get().
+        final topProductsSelectable = MockSelectable<QueryRow>();
         when(
-          () => mockProductsDao.getTopSellingProducts(
+          () => topProductsSelectable.get(),
+        ).thenAnswer((_) async => <QueryRow>[]);
+        when(
+          () => mockSalesDao.customSelect(
             any(),
-            limit: any(named: 'limit'),
+            variables: any(named: 'variables'),
           ),
-        ).thenAnswer((_) async => []);
+        ).thenReturn(topProductsSelectable);
 
         final report = await service.getSalesReport(
           'store-1',
@@ -236,9 +250,16 @@ void main() {
           (_) async => createTestSalesStats(count: 20, total: 3000.0),
         );
 
+        // getDashboardSummary → getInventoryReport → getProductsPaginated.
         when(
-          () => mockProductsDao.getAllProducts(any()),
-        ).thenAnswer((_) async => []);
+          () => mockProductsDao.getProductsPaginated(
+            any(),
+            offset: any(named: 'offset'),
+            limit: any(named: 'limit'),
+            categoryId: any(named: 'categoryId'),
+            activeOnly: any(named: 'activeOnly'),
+          ),
+        ).thenAnswer((_) async => <ProductsTableData>[]);
 
         when(
           () => mockLoyaltyDao.getStats(

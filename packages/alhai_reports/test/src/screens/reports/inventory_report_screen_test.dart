@@ -37,7 +37,13 @@ void main() {
     testWidgets('shows loading indicator initially', (tester) async {
       final completer = Completer<List<ProductsTableData>>();
       when(
-        () => mockProductsDao.getAllProducts(any()),
+        () => mockProductsDao.getProductsPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+          categoryId: any(named: 'categoryId'),
+          activeOnly: any(named: 'activeOnly'),
+        ),
       ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(
@@ -54,7 +60,13 @@ void main() {
 
     testWidgets('shows error state when loading fails', (tester) async {
       when(
-        () => mockProductsDao.getAllProducts(any()),
+        () => mockProductsDao.getProductsPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+          categoryId: any(named: 'categoryId'),
+          activeOnly: any(named: 'activeOnly'),
+        ),
       ).thenThrow(Exception('Database error'));
 
       await tester.pumpWidget(
@@ -80,7 +92,15 @@ void main() {
 
     testWidgets('shows data table when products exist', (tester) async {
       final now = DateTime.now();
-      when(() => mockProductsDao.getAllProducts(any())).thenAnswer(
+      when(
+        () => mockProductsDao.getProductsPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+          categoryId: any(named: 'categoryId'),
+          activeOnly: any(named: 'activeOnly'),
+        ),
+      ).thenAnswer(
         (_) async => [
           ProductsTableData(
             id: 'p1',
@@ -122,7 +142,15 @@ void main() {
 
     testWidgets('retry button reloads data on error', (tester) async {
       int callCount = 0;
-      when(() => mockProductsDao.getAllProducts(any())).thenAnswer((_) async {
+      when(
+        () => mockProductsDao.getProductsPaginated(
+          any(),
+          offset: any(named: 'offset'),
+          limit: any(named: 'limit'),
+          categoryId: any(named: 'categoryId'),
+          activeOnly: any(named: 'activeOnly'),
+        ),
+      ).thenAnswer((_) async {
         callCount++;
         if (callCount == 1) {
           throw Exception('Database error');
