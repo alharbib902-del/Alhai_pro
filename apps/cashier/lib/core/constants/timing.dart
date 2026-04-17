@@ -23,7 +23,12 @@ abstract final class Timeouts {
   static const queueFlush = Duration(seconds: 30);
 
   /// Quick Supabase session check on web.
-  static const sessionCheck = Duration(milliseconds: 500);
+  ///
+  /// Bumped from 500ms to 1500ms to accommodate slower networks; Supabase
+  /// `onAuthStateChange` sometimes emits late on cold-start over flaky mobile
+  /// connections. The value is still below the user-perceived "frozen app"
+  /// threshold (~2s) so app bootstrapping feels responsive.
+  static const sessionCheck = Duration(milliseconds: 1500);
 
   /// Post-operation delay (e.g. after save, before navigation).
   static const postOperationDelay = Duration(seconds: 1);

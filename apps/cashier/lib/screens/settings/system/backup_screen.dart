@@ -99,8 +99,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     } catch (e) {
       // Use default values if settings cannot be loaded. This is an
       // acceptable fallback, but we log it for debug visibility.
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint('[Backup] Failed to load settings, using defaults: $e');
+      }
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

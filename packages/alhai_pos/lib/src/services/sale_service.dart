@@ -1,6 +1,8 @@
 import 'package:drift/drift.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart'
+    show TextInputSanitizer;
 
 import '../core/errors/app_exceptions.dart';
 import 'package:alhai_database/alhai_database.dart';
@@ -350,6 +352,14 @@ class SaleService {
 
               if (account == null) {
                 final accountId = _uuid.v4();
+                // Sanitize name/phone at write boundary — upstream callers
+                // may pass raw UI text (bidi overrides, zero-width chars).
+                final safeName = TextInputSanitizer.sanitizeName(
+                  customerName ?? 'عميل',
+                );
+                final safePhone = TextInputSanitizer.sanitizePhone(
+                  customerPhone,
+                );
                 await _db.accountsDao.insertAccount(
                   AccountsTableCompanion.insert(
                     id: accountId,
@@ -357,8 +367,8 @@ class SaleService {
                     orgId: Value(orgId),
                     type: 'receivable',
                     customerId: Value(validCustomerId),
-                    name: customerName ?? 'عميل',
-                    phone: Value(customerPhone),
+                    name: safeName.isEmpty ? 'عميل' : safeName,
+                    phone: Value(safePhone.isEmpty ? null : safePhone),
                     balance: Value(debtAmount),
                     createdAt: now,
                   ),

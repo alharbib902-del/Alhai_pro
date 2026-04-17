@@ -1021,11 +1021,17 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
 
               if (storeId != null) {
                 final id = DateTime.now().millisecondsSinceEpoch.toString();
+                // Sanitize customer name at write boundary: strip bidi
+                // overrides, zero-width chars, HTML — prevents receipt
+                // corruption and loyalty-alias fraud.
+                final sanitizedName = TextInputSanitizer.sanitizeName(
+                  nameController.text,
+                );
                 await db.accountsDao.insertAccount(
                   AccountsTableCompanion.insert(
                     id: id,
                     storeId: storeId,
-                    name: nameController.text,
+                    name: sanitizedName,
                     type: 'receivable',
                     createdAt: DateTime.now(),
                   ),

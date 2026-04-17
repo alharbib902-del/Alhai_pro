@@ -55,14 +55,25 @@ android {
         release {
             // Release builds MUST be signed with a real keystore.
             // Provide android/key.properties (see key.properties.example).
-            if (!hasReleaseKeystore) {
+            // Only fail configuration when actually building a release artifact;
+            // evaluating this closure for debug tasks (e.g. assembleDebug) must not throw.
+            val isBuildingRelease = gradle.startParameter.taskNames.any { name ->
+                name.contains("Release", ignoreCase = true) ||
+                name.contains("Bundle", ignoreCase = true) ||
+                name.endsWith(":assemble") ||
+                name == "assemble"
+            }
+            if (isBuildingRelease && !hasReleaseKeystore) {
                 throw GradleException(
                     "cashier: android/key.properties not found. " +
                     "Release builds require a signing key. " +
                     "See android/key.properties.example for the expected format."
                 )
             }
-            signingConfig = signingConfigs.getByName("release")
+            signingConfig = if (hasReleaseKeystore)
+                signingConfigs.getByName("release")
+            else
+                signingConfigs.getByName("debug")
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(

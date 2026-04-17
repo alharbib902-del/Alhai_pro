@@ -5,6 +5,7 @@
 library;
 
 import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart' show TextInputSanitizer;
 import 'package:get_it/get_it.dart';
 
 /// Centralized audit service wrapping AuditLogDao
@@ -14,6 +15,70 @@ class AuditService {
   AuditService(this._db);
 
   AuditLogDao get _dao => _db.auditLogDao;
+
+  /// Unified append that always routes through the tamper-evident hash chain.
+  ///
+  /// All `logXxx` methods funnel through here, replacing what used to be a
+  /// direct `_dao.log(...)` call. Business semantics (oldValue, entityType,
+  /// description, etc.) are preserved — only the storage format changes:
+  /// newValue JSON now carries a `__meta__` envelope with contentHash /
+  /// previousHash, verifiable via [AuditLogDao.verifyChain].
+  ///
+  /// Defense in depth: all string fields in `newValue` / `oldValue` / meta
+  /// identifiers are sanitized via [TextInputSanitizer.sanitize] before
+  /// persistence, so the hash chain can't be poisoned by bidi overrides or
+  /// zero-width chars in audit payloads.
+  Future<void> _append({
+    required String storeId,
+    required String userId,
+    required String userName,
+    required AuditAction action,
+    String? entityType,
+    String? entityId,
+    Map<String, dynamic>? oldValue,
+    Map<String, dynamic>? newValue,
+    String? description,
+    String? ipAddress,
+    String? deviceInfo,
+  }) async {
+    await _dao.appendLogWithHashChain(
+      storeId: storeId,
+      userId: TextInputSanitizer.sanitize(userId, maxLength: 200),
+      userName: TextInputSanitizer.sanitize(userName, maxLength: 200),
+      action: action,
+      payload: _sanitizePayload(newValue) ?? const <String, dynamic>{},
+      entityType: entityType,
+      entityId: entityId,
+      oldValue: _sanitizePayload(oldValue),
+      description: description == null
+          ? null
+          : TextInputSanitizer.sanitize(description, maxLength: 2000),
+      ipAddress: ipAddress,
+      deviceInfo: deviceInfo,
+    );
+  }
+
+  /// Shallow-sanitize string values in an audit payload map. Non-string
+  /// primitives (numbers, bools, nested maps/lists) pass through untouched —
+  /// they can't carry the bidi/zero-width risk we're defending against.
+  Map<String, dynamic>? _sanitizePayload(Map<String, dynamic>? payload) {
+    if (payload == null) return null;
+    final out = <String, dynamic>{};
+    for (final entry in payload.entries) {
+      final v = entry.value;
+      out[entry.key] = v is String
+          ? TextInputSanitizer.sanitize(v, maxLength: 2000)
+          : v;
+    }
+    return out;
+  }
+
+  /// Verify the tamper-evident hash chain for a store.
+  ///
+  /// Returns the id of the first broken row, or `null` if the chain is intact.
+  /// Useful for ZATCA audit handoff and periodic self-checks.
+  Future<String?> verifyChain({String? storeId}) =>
+      _dao.verifyChain(storeId: storeId);
 
   // ============================================================================
   // SALE OPERATIONS
@@ -28,7 +93,7 @@ class AuditService {
     required double total,
     required String paymentMethod,
     String? receiptNo,
-  }) => _dao.log(
+  }) => _append(
     storeId: storeId,
     userId: userId,
     userName: userName,
@@ -51,7 +116,7 @@ class AuditService {
     required String saleId,
     required double total,
     String? reason,
-  }) => _dao.log(
+  }) => _append(
     storeId: storeId,
     userId: userId,
     userName: userName,
@@ -70,13 +135,15 @@ class AuditService {
     required String saleId,
     required double amount,
     String? reason,
-  }) => _dao.logRefund(
+  }) => _append(
     storeId: storeId,
     userId: userId,
     userName: userName,
-    saleId: saleId,
-    amount: amount,
-    reason: reason ?? 'مرتجع',
+    action: AuditAction.saleRefund,
+    entityType: 'sale',
+    entityId: saleId,
+    newValue: {'amount': amount, 'reason': reason ?? 'مرتجع'},
+    description: 'مرتجع بمبلغ $amount ر.س - ${reason ?? 'مرتجع'}',
   );
 
   /// Log exchange
@@ -86,7 +153,7 @@ class AuditService {
     required String userName,
     required int returnCount,
     required int newCount,
-  }) => _dao.log(
+  }) => _append(
     storeId: storeId,
     userId: userId,
     userName: userName,
@@ -110,7 +177,7 @@ class AuditService {
     required String type,
     required double amount,
     required double balanceAfter,
-  }) => _dao.log(
+  }) => _append(
     storeId: storeId,
     userId: userId,
     userName: userName,
@@ -136,7 +203,7 @@ class AuditService {
     required int accountCount,
     required double rate,
     required double totalInterest,
-  }) => _dao.log(
+  }) => _append(
     storeId: storeId,
     userId: userId,
     userName: userName,
@@ -162,7 +229,7 @@ class AuditService {
     required String userName,
     required String shiftId,
     required double openingCash,
-  }) => _dao.log(
+  }) => _append(
     storeId: storeId,
     userId: userId,
     userName: userName,
@@ -184,7 +251,7 @@ class AuditService {
     required double difference,
     required int totalSales,
     required double totalSalesAmount,
-  }) => _dao.log(
+  }) => _append(
     storeId: storeId,
     userId: userId,
     userName: userName,
@@ -210,7 +277,7 @@ class AuditService {
     required String type,
     required double amount,
     String? reason,
-  }) => _dao.log(
+  }) => _append(
     storeId: storeId,
     userId: userId,
     userName: userName,
@@ -238,7 +305,7 @@ class AuditService {
     required String productId,
     required String productName,
     required double price,
-  }) => _dao.log(
+  }) => _append(
     storeId: storeId,
     userId: userId,
     userName: userName,
@@ -258,14 +325,16 @@ class AuditService {
     required String productName,
     required double oldPrice,
     required double newPrice,
-  }) => _dao.logPriceChange(
+  }) => _append(
     storeId: storeId,
     userId: userId,
     userName: userName,
-    productId: productId,
-    productName: productName,
-    oldPrice: oldPrice,
-    newPrice: newPrice,
+    action: AuditAction.priceChange,
+    entityType: 'product',
+    entityId: productId,
+    oldValue: {'price': oldPrice},
+    newValue: {'price': newPrice},
+    description: 'تغيير سعر $productName من $oldPrice إلى $newPrice',
   );
 
   // ============================================================================
@@ -282,15 +351,16 @@ class AuditService {
     required double oldQty,
     required double newQty,
     required String reason,
-  }) => _dao.logStockAdjust(
+  }) => _append(
     storeId: storeId,
     userId: userId,
     userName: userName,
-    productId: productId,
-    productName: productName,
-    oldQty: oldQty,
-    newQty: newQty,
-    reason: reason,
+    action: AuditAction.stockAdjust,
+    entityType: 'product',
+    entityId: productId,
+    oldValue: {'quantity': oldQty},
+    newValue: {'quantity': newQty},
+    description: '$reason: تعديل كمية $productName من $oldQty إلى $newQty',
   );
 
   /// Log stock receive (purchase receiving)
@@ -301,7 +371,7 @@ class AuditService {
     required String purchaseId,
     String? purchaseNumber,
     required int itemCount,
-  }) => _dao.log(
+  }) => _append(
     storeId: storeId,
     userId: userId,
     userName: userName,
@@ -327,7 +397,7 @@ class AuditService {
     required String userName,
     required String customerId,
     required String customerName,
-  }) => _dao.log(
+  }) => _append(
     storeId: storeId,
     userId: userId,
     userName: userName,
@@ -346,7 +416,7 @@ class AuditService {
     required String customerId,
     required String customerName,
     Map<String, dynamic>? changes,
-  }) => _dao.log(
+  }) => _append(
     storeId: storeId,
     userId: userId,
     userName: userName,

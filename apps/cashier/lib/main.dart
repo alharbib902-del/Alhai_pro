@@ -19,7 +19,11 @@ import 'package:alhai_database/alhai_database.dart'
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
 import 'package:alhai_auth/alhai_auth.dart'
-    show SecureStorageService, currentStoreIdProvider;
+    show
+        ForegroundLockGate,
+        SecureStorageService,
+        authStateProvider,
+        currentStoreIdProvider;
 import 'package:alhai_pos/alhai_pos.dart' show clockOffsetProvider;
 import 'di/injection.dart';
 import 'dart:async';
@@ -115,25 +119,29 @@ void main() {
 
       // SESSION-FIX: على الويب، فحص سريع لجلسة Supabase
       // معظم المستخدمين يسجلون دخول محلي (verifyLocalOtp) بدون Supabase session
-      // لذلك نقلل الانتظار إلى 500ms فقط لعدم تأخير بدء التطبيق
+      // لذلك ننتظر 1500ms فقط (Timeouts.sessionCheck) لتحمّل الشبكات البطيئة
+      // دون تأخير بدء التطبيق ملحوظًا
       if (kIsWeb) {
         try {
           final client = Supabase.instance.client;
           if (client.auth.currentSession == null) {
-            if (kDebugMode)
+            if (kDebugMode) {
               debugPrint('⏳ Quick check for Supabase session on web...');
+            }
             await client.auth.onAuthStateChange
                 .where((data) => data.session != null)
                 .first
                 .timeout(Timeouts.sessionCheck);
             if (kDebugMode) debugPrint('✅ Supabase session recovered');
           } else {
-            if (kDebugMode)
+            if (kDebugMode) {
               debugPrint('✅ Supabase session available immediately');
+            }
           }
         } catch (e) {
-          if (kDebugMode)
+          if (kDebugMode) {
             debugPrint('ℹ️ No Supabase session (normal for local auth): $e');
+          }
         }
 
         // SESSION-FIX: تشخيص حالة SecureStorage قبل runApp
@@ -379,9 +387,16 @@ class _CashierAppState extends ConsumerState<CashierApp> {
         GlobalCupertinoLocalizations.delegate,
       ],
       builder: (context, child) {
-        return Directionality(
-          textDirection: localeState.textDirection,
-          child: SessionTimeoutWrapper(child: child ?? const SizedBox.shrink()),
+        return ForegroundLockGate(
+          thresholdMinutes: 2,
+          onForceLogout: () =>
+              ref.read(authStateProvider.notifier).logout(),
+          child: Directionality(
+            textDirection: localeState.textDirection,
+            child: SessionTimeoutWrapper(
+              child: child ?? const SizedBox.shrink(),
+            ),
+          ),
         );
       },
     );

@@ -11,6 +11,7 @@ import 'package:alhai_core/alhai_core.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../providers/auth_providers.dart';
 import '../providers/theme_provider.dart';
+import '../security/login_rate_limiter.dart';
 import '../services/whatsapp_otp_service.dart';
 import '../widgets/branding/mascot_widget.dart';
 import '../widgets/branding/gradient_background.dart';
@@ -201,6 +202,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       return;
     }
 
+    // فحص قفل Rate Limiter (يمنع Brute-Force عبر إعادة التحميل)
+    // يعمل إلى جانب _isLockedOut الخاص بـOTP ويشاركه نفس تجربة المستخدم.
+    final rateLimiter = ref.read(loginRateLimiterProvider);
+    final rlStatus = await rateLimiter.checkStatus(_fullPhoneNumber);
+    if (rlStatus is RateLimitLocked) {
+      final mins = (rlStatus.remainingSeconds / 60).ceil();
+      if (!mounted) return;
+      setState(() {
+        _error =
+            'تم قفل الحساب مؤقتاً. حاول بعد $mins دقيقة.\n'
+            'Account locked temporarily. Try again in $mins minutes.';
+      });
+      return;
+    }
+
     final phoneDigits = _phoneController.text.replaceAll(' ', '');
 
     // التحقق من طول الرقم
@@ -309,6 +325,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         debugPrint('✅ OTP verified (dev mode): $_devOtp');
       }
 
+      // تسجيل دخول ناجح → مسح عدّاد Rate Limiter للرقم
+      await ref
+          .read(loginRateLimiterProvider)
+          .recordSuccess(_fullPhoneNumber);
+
       // === إنشاء جلسة محلية (مطلوب لـ Router Guard) ===
       final authNotifier = ref.read(authStateProvider.notifier);
 
@@ -364,7 +385,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       return;
     }
 
-    // الرمز غير صحيح
+    // الرمز غير صحيح → تسجيل فشل في Rate Limiter
+    await ref
+        .read(loginRateLimiterProvider)
+        .recordFailure(_fullPhoneNumber);
+
     if (!mounted) return;
 
     _remainingAttempts--;

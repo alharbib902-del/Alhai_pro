@@ -8,6 +8,7 @@ library;
 import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shimmer/shimmer.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
@@ -297,16 +298,12 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                                         l10n,
                                       );
                                     }
-                                    // مؤشر تحميل المزيد
+                                    // مؤشر تحميل المزيد — صف shimmer واحد
+                                    // (يتماشى مع ShimmerList المستخدم في الحالة
+                                    // الأولى للتحميل بدلاً من spinner مكسور
+                                    // الإيقاع).
                                     if (_isLoadingMore) {
-                                      return const Padding(
-                                        padding: EdgeInsets.all(
-                                          AlhaiSpacing.md,
-                                        ),
-                                        child: Center(
-                                          child: CircularProgressIndicator(),
-                                        ),
-                                      );
+                                      return _buildSkeletonRow(context);
                                     }
                                     // زر تحميل المزيد
                                     if (_hasMore) {
@@ -1128,5 +1125,23 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
       default:
         return status;
     }
+  }
+
+  /// Shimmer skeleton row used while paginating (_isLoadingMore).
+  /// Colors derive from the current theme so dark mode stays coherent.
+  Widget _buildSkeletonRow(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    return Shimmer.fromColors(
+      baseColor: scheme.surfaceContainerHighest,
+      highlightColor: scheme.surfaceContainer,
+      child: Container(
+        height: 64,
+        margin: const EdgeInsets.symmetric(vertical: 4, horizontal: 12),
+        decoration: BoxDecoration(
+          color: scheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+    );
   }
 }

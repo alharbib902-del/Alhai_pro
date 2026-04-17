@@ -49,6 +49,71 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
         .get();
   }
 
+  /// الحصول على مبيعات مع عناصرها لنطاق تاريخ معين (بدون N+1)
+  ///
+  /// Fetches sales in a single query, then batch-loads every matching
+  /// sale_items row in a second query using `WHERE sale_id IN (...)`.
+  /// Callers get `(sale, items)` tuples without looping and issuing
+  /// one item query per sale.
+  ///
+  /// Sales without items return an empty list for `items` (never null).
+  /// Results are ordered by sale.createdAt DESC (same as [getSalesByDate]).
+  ///
+  /// [to] is exclusive so callers can pass next-day midnight and not
+  /// worry about double-counting rows on the boundary.
+  Future<List<({SalesTableData sale, List<SaleItemsTableData> items})>>
+  getSalesWithItemsByDate(
+    String storeId,
+    DateTime from,
+    DateTime to, {
+    int limit = 1000,
+  }) async {
+    // 1. Fetch sales in range (non-deleted) ordered newest first.
+    final sales = await (select(salesTable)
+          ..where(
+            (s) =>
+                s.storeId.equals(storeId) &
+                s.deletedAt.isNull() &
+                s.createdAt.isBiggerOrEqualValue(from) &
+                s.createdAt.isSmallerThanValue(to),
+          )
+          ..orderBy([(s) => OrderingTerm.desc(s.createdAt)])
+          ..limit(limit))
+        .get();
+
+    if (sales.isEmpty) return const [];
+
+    // 2. Batch-load items for all these sales in chunked IN() queries so
+    //    we never exceed SQLite's variable limit (~999 per statement).
+    final saleIds = sales.map((s) => s.id).toList(growable: false);
+    final itemsBySaleId = <String, List<SaleItemsTableData>>{};
+    const chunkSize = 500;
+
+    for (var i = 0; i < saleIds.length; i += chunkSize) {
+      final end = (i + chunkSize > saleIds.length)
+          ? saleIds.length
+          : i + chunkSize;
+      final chunk = saleIds.sublist(i, end);
+      final rows = await (select(attachedDatabase.saleItemsTable)
+            ..where((si) => si.saleId.isIn(chunk)))
+          .get();
+      for (final item in rows) {
+        (itemsBySaleId[item.saleId] ??= <SaleItemsTableData>[]).add(item);
+      }
+    }
+
+    // 3. Stitch sales + items together preserving sales order.
+    return sales
+        .map(
+          (s) => (
+            sale: s,
+            items:
+                itemsBySaleId[s.id] ?? const <SaleItemsTableData>[],
+          ),
+        )
+        .toList(growable: false);
+  }
+
   /// الحصول على مبيعات الفترة (باستثناء المحذوفة)
   Future<List<SalesTableData>> getSalesByDateRange(
     String storeId,
@@ -87,6 +152,32 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
   /// إدراج بيع
   Future<int> insertSale(SalesTableCompanion sale) {
     return into(salesTable).insert(sale);
+  }
+
+  /// إدراج بيع مع عناصره في معاملة واحدة (atomic)
+  ///
+  /// Creates a new sale plus all its items in a single Drift transaction so
+  /// partial writes can never leave the database in an inconsistent state
+  /// (e.g. a sale row without its items if the app crashes mid-insert).
+  ///
+  /// Returns the sale id (which is always the UUID already set on the
+  /// [sale] companion — sale ids are client-generated strings).
+  ///
+  /// This method is additive: existing callers of [insertSale] continue
+  /// to work and can migrate to this at their own pace.
+  Future<String> createSaleWithItems({
+    required SalesTableCompanion sale,
+    required List<SaleItemsTableCompanion> items,
+  }) async {
+    // Sale id is required on the companion (TextColumn primary key, no default).
+    final saleId = sale.id.value;
+    return attachedDatabase.transaction(() async {
+      await into(salesTable).insert(sale);
+      if (items.isNotEmpty) {
+        await attachedDatabase.saleItemsDao.insertItems(items);
+      }
+      return saleId;
+    });
   }
 
   /// Immutable statuses (ZATCA compliance: completed invoices cannot be

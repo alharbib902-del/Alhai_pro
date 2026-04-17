@@ -18,6 +18,8 @@ export 'src/security/biometric_service.dart';
 export 'src/security/pin_service.dart';
 export 'src/security/otp_service.dart';
 export 'src/security/security_logger.dart';
+export 'src/security/login_rate_limiter.dart';
+export 'src/security/foreground_lock_service.dart';
 
 // Services
 export 'src/services/whatsapp_otp_service.dart';
@@ -25,6 +27,7 @@ export 'src/services/whatsapp_otp_service.dart';
 // Widgets
 export 'src/widgets/phone_input_field.dart';
 export 'src/widgets/pin_numpad.dart';
+export 'src/widgets/foreground_lock_gate.dart';
 export 'src/widgets/branch_card.dart';
 export 'src/widgets/otp_input_field.dart';
 export 'src/widgets/branding/mascot_widget.dart';

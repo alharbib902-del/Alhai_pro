@@ -627,31 +627,36 @@ class _CashierShellState extends ConsumerState<CashierShell> {
                         ),
                         children: [
                           // Parent route itself
-                          ListTile(
-                            leading: Icon(
-                              item.icon,
-                              size: 20,
-                              color: isSelected ? AppColors.primary : null,
-                            ),
-                            title: Text(
-                              label,
-                              style: TextStyle(
-                                fontWeight: isSelected
-                                    ? FontWeight.w600
-                                    : FontWeight.normal,
-                                color: isSelected ? AppColors.primary : null,
-                                fontSize: 14,
-                              ),
-                            ),
-                            dense: true,
+                          Semantics(
+                            label: label,
+                            button: true,
                             selected: isSelected,
-                            selectedTileColor: AppColors.primary.withValues(
-                              alpha: 0.08,
+                            child: ListTile(
+                              leading: Icon(
+                                item.icon,
+                                size: 20,
+                                color: isSelected ? AppColors.primary : null,
+                              ),
+                              title: Text(
+                                label,
+                                style: TextStyle(
+                                  fontWeight: isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.normal,
+                                  color: isSelected ? AppColors.primary : null,
+                                  fontSize: 14,
+                                ),
+                              ),
+                              dense: true,
+                              selected: isSelected,
+                              selectedTileColor: AppColors.primary.withValues(
+                                alpha: 0.08,
+                              ),
+                              onTap: () {
+                                Navigator.of(context).pop();
+                                _onNavItemTapped(item.route);
+                              },
                             ),
-                            onTap: () {
-                              Navigator.of(context).pop();
-                              _onNavItemTapped(item.route);
-                            },
                           ),
                           ...item.children.map((child) {
                             final childSelected = child.id == selectedId;
@@ -659,61 +664,73 @@ class _CashierShellState extends ConsumerState<CashierShell> {
                               context,
                               child,
                             );
-                            return ListTile(
-                              leading: Icon(
-                                child.icon,
-                                size: 20,
-                                color: childSelected ? AppColors.primary : null,
-                              ),
-                              title: Text(
-                                childLabel,
-                                style: TextStyle(
-                                  fontWeight: childSelected
-                                      ? FontWeight.w600
-                                      : FontWeight.normal,
+                            return Semantics(
+                              label: childLabel,
+                              button: true,
+                              selected: childSelected,
+                              child: ListTile(
+                                leading: Icon(
+                                  child.icon,
+                                  size: 20,
                                   color: childSelected
                                       ? AppColors.primary
                                       : null,
-                                  fontSize: 14,
                                 ),
+                                title: Text(
+                                  childLabel,
+                                  style: TextStyle(
+                                    fontWeight: childSelected
+                                        ? FontWeight.w600
+                                        : FontWeight.normal,
+                                    color: childSelected
+                                        ? AppColors.primary
+                                        : null,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                                dense: true,
+                                selected: childSelected,
+                                selectedTileColor: AppColors.primary.withValues(
+                                  alpha: 0.08,
+                                ),
+                                onTap: () {
+                                  Navigator.of(context).pop();
+                                  _onNavItemTapped(child.route);
+                                },
                               ),
-                              dense: true,
-                              selected: childSelected,
-                              selectedTileColor: AppColors.primary.withValues(
-                                alpha: 0.08,
-                              ),
-                              onTap: () {
-                                Navigator.of(context).pop();
-                                _onNavItemTapped(child.route);
-                              },
                             );
                           }),
                         ],
                       );
                     }
 
-                    return ListTile(
-                      leading: Icon(
-                        item.icon,
-                        color: isSelected ? AppColors.primary : null,
-                      ),
-                      title: Text(
-                        label,
-                        style: TextStyle(
-                          fontWeight: isSelected
-                              ? FontWeight.w600
-                              : FontWeight.normal,
+                    return Semantics(
+                      label: label,
+                      button: true,
+                      selected: isSelected,
+                      child: ListTile(
+                        leading: Icon(
+                          item.icon,
                           color: isSelected ? AppColors.primary : null,
                         ),
+                        title: Text(
+                          label,
+                          style: TextStyle(
+                            fontWeight: isSelected
+                                ? FontWeight.w600
+                                : FontWeight.normal,
+                            color: isSelected ? AppColors.primary : null,
+                          ),
+                        ),
+                        selected: isSelected,
+                        selectedTileColor: AppColors.primary.withValues(
+                          alpha: 0.08,
+                        ),
+                        onTap: () {
+                          Navigator.of(context).pop(); // close drawer
+                          _onNavItemTapped(item.route);
+                        },
                       ),
-                      selected: isSelected,
-                      selectedTileColor: AppColors.primary.withValues(
-                        alpha: 0.08,
-                      ),
-                      onTap: () {
-                        Navigator.of(context).pop(); // close drawer
-                        _onNavItemTapped(item.route);
-                      },
                     );
                   }).toList(),
                 ),

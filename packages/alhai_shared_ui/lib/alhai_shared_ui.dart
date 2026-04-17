@@ -29,6 +29,7 @@ export 'src/core/theme/app_theme.dart';
 export 'src/core/router/routes.dart';
 export 'src/core/validators/validators.dart';
 export 'src/core/validators/input_sanitizer.dart';
+export 'src/core/sanitizers/input_sanitizer.dart';
 export 'src/core/responsive/responsive_utils.dart';
 export 'src/core/constants/breakpoints.dart';
 export 'src/core/accessibility/semantic_labels.dart';

@@ -159,7 +159,11 @@ class PosCategoryColumnItem extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Padding(
+    return Semantics(
+      label: label,
+      button: true,
+      selected: isActive,
+      child: Padding(
       padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
       child: Material(
         color: Colors.transparent,
@@ -224,6 +228,7 @@ class PosCategoryColumnItem extends StatelessWidget {
             ),
           ),
         ),
+      ),
       ),
     );
   }
@@ -370,7 +375,11 @@ class PosCategoryPill extends StatelessWidget {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
 
-    return Padding(
+    return Semantics(
+      label: label,
+      button: true,
+      selected: isActive,
+      child: Padding(
       padding: const EdgeInsetsDirectional.only(end: AlhaiSpacing.xs),
       child: Material(
         color: Colors.transparent,
@@ -439,6 +448,7 @@ class PosCategoryPill extends StatelessWidget {
             ),
           ),
         ),
+      ),
       ),
     );
   }

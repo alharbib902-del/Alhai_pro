@@ -70,6 +70,9 @@ dependencies:
   # Printer packages removed for web builds (esc_pos_utils, esc_pos_printer, esc_pos_bluetooth, sunmi_printer_plus)
   # Stub implementations in lib/services/printing/ provide no-op fallbacks
 
+  # Skeleton loaders (see _buildSkeletonRow inline helper in list screens)
+  shimmer: ^3.0.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -78,8 +81,24 @@ dev_dependencies:
   flutter_lints: ^3.0.1
   build_runner: ^2.4.7
   mocktail: ^1.0.4
+  # Native splash generator; run `dart run flutter_native_splash:create`
+  # once the brand splash PNGs are placed under assets/images/.
+  flutter_native_splash: ^2.4.0
 
 flutter:
   uses-material-design: true
   assets:
     - assets/data/
+
+# Native splash config (no assets generated yet — uncomment image paths
+# and re-run `dart run flutter_native_splash:create` once brand art ships).
+flutter_native_splash:
+  color: "#FFFFFF"
+  color_dark: "#121212"
+  # image: assets/images/splash.png
+  # image_dark: assets/images/splash_dark.png
+  android_12:
+    color: "#FFFFFF"
+    color_dark: "#121212"
+  web: false  # web uses CanvasKit loader
+  fullscreen: false

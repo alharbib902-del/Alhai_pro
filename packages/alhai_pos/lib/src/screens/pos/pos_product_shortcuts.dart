@@ -481,7 +481,11 @@ class PosFab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    return FloatingActionButton(
+    final l10n = AppLocalizations.of(context);
+    return Semantics(
+      label: '${l10n.cart}, ${l10n.nItems(itemCount)}',
+      button: true,
+      child: FloatingActionButton(
       onPressed: onTap,
       backgroundColor: AppColors.primary,
       elevation: 6,
@@ -523,6 +527,7 @@ class PosFab extends StatelessWidget {
               ),
           ],
         ),
+      ),
       ),
     );
   }

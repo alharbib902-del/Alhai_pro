@@ -101,8 +101,9 @@ class ConnectivityService {
 
       return _isOnline;
     } on TimeoutException {
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint('ConnectivityService: فحص الاتصال تجاوز المهلة');
+      }
       return _isOnline;
     } catch (e) {
       if (kDebugMode) debugPrint('ConnectivityService: خطأ في الفحص: $e');

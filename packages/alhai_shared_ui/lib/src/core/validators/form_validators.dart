@@ -274,6 +274,32 @@ class FormValidators {
     };
   }
 
+  /// التحقق من نسبة الضريبة (0-100)
+  /// يقبل أرقام عشرية مثل 15 أو 14.5
+  static String? Function(String?) taxRate({
+    String locale = 'ar',
+    bool isRequired = true,
+  }) {
+    return (String? value) {
+      if (!isRequired && (value == null || value.trim().isEmpty)) return null;
+      if (isRequired && (value == null || value.trim().isEmpty)) {
+        return locale == 'ar' ? 'نسبة الضريبة مطلوبة' : 'Tax rate is required';
+      }
+      final parsed = double.tryParse(value!.trim());
+      if (parsed == null) {
+        return locale == 'ar'
+            ? 'أدخل نسبة صحيحة'
+            : 'Enter a valid percentage';
+      }
+      if (parsed < 0 || parsed > 100) {
+        return locale == 'ar'
+            ? 'النسبة يجب أن تكون بين 0 و 100'
+            : 'Rate must be between 0 and 100';
+      }
+      return null;
+    };
+  }
+
   /// التحقق من رقم السجل التجاري السعودي
   /// 10 أرقام
   static String? Function(String?) crNumber({

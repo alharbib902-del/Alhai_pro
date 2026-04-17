@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Exclude encrypted DB, secure storage, and auth tokens from backups -->
+    <exclude domain="database" path="." />
+    <exclude domain="sharedpref" path="FlutterSecureStorage.xml" />
+    <exclude domain="sharedpref" path="flutter_secure_storage.xml" />
+    <exclude domain="file" path="flutter_assets/kernel_blob.bin" />
+</full-backup-content>

@@ -28,6 +28,10 @@ dependencies:
   # only (server-side B2B exports). Do NOT add 'excel' to mobile apps.
   csv: ^6.0.0
 
+  # SHA-256 for tamper-evident audit log hash chain (ZATCA regulatory value).
+  # Already a transitive dep via Drift/Supabase — made explicit for clarity.
+  crypto: ^3.0.3
+
 dev_dependencies:
   flutter_lints: ^3.0.1
   flutter_test:

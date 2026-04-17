@@ -205,6 +205,11 @@ class SecureStorageService {
     _storage = kIsWeb ? _WebStorage() : _NativeStorage();
   }
 
+  /// Exposed for services that need to share the same underlying storage
+  /// backend (e.g. [LoginRateLimiter]). Respects any override set via
+  /// [setStorage] so tests can inject an [InMemoryStorage].
+  static StorageInterface get storage => _storage;
+
   // ============================================================================
   // KEYS
   // ============================================================================

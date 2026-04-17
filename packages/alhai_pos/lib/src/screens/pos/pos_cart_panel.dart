@@ -725,7 +725,12 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                     ),
                     FilledButton(
                       onPressed: () async {
-                        final name = nameCtrl.text.trim();
+                        // Sanitize at write boundary: strip bidi overrides,
+                        // zero-width chars, control chars, HTML tags — defends
+                        // against receipt corruption and loyalty-alias fraud.
+                        final name = TextInputSanitizer.sanitizeName(
+                          nameCtrl.text,
+                        );
                         if (name.isEmpty) return;
                         Navigator.pop(ctx);
                         final db = ref.read(appDatabaseProvider);
@@ -739,7 +744,9 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                         try {
                           final customerId =
                               'cust_${DateTime.now().millisecondsSinceEpoch}';
-                          final phone = phoneCtrl.text.trim();
+                          final phone = TextInputSanitizer.sanitizePhone(
+                            phoneCtrl.text,
+                          );
                           final now = DateTime.now();
                           await db.customersDao.insertCustomer(
                             CustomersTableCompanion.insert(
@@ -958,32 +965,37 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
           Divider(height: 20, color: colorScheme.outlineVariant),
 
           // Grand total
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Flexible(
-                child: Text(
-                  l10n.grandTotal,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isDark
-                        ? AppColors.textPrimaryDark
-                        : AppColors.textPrimary,
+          Semantics(
+            label:
+                '${l10n.grandTotal}: ${_fmtCurrency(context, total)}, ${l10n.nItems(cartState.itemCount)}',
+            liveRegion: true,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Flexible(
+                  child: Text(
+                    l10n.grandTotal,
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: isDark
+                          ? AppColors.textPrimaryDark
+                          : AppColors.textPrimary,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
                 ),
-              ),
-              Text(
-                _fmtCurrency(context, total),
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.primary,
+                Text(
+                  _fmtCurrency(context, total),
+                  style: const TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.primary,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
 
           const SizedBox(height: AlhaiSpacing.md),
@@ -994,12 +1006,17 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
               // Draft button with held invoices badge
               Expanded(
                 flex: 1,
-                child: PosDraftButton(
-                  hasItems: hasItems,
-                  isDark: isDark,
+                child: Semantics(
                   label: l10n.draft,
-                  onTap: hasItems ? widget.onHoldInvoice : null,
-                  onLongPress: widget.onShowHeldInvoices,
+                  button: true,
+                  enabled: hasItems,
+                  child: PosDraftButton(
+                    hasItems: hasItems,
+                    isDark: isDark,
+                    label: l10n.draft,
+                    onTap: hasItems ? widget.onHoldInvoice : null,
+                    onLongPress: widget.onShowHeldInvoices,
+                  ),
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.xs),
@@ -1007,7 +1024,11 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
               // Pay button
               Expanded(
                 flex: 3,
-                child: Container(
+                child: Semantics(
+                  label: l10n.pay,
+                  button: true,
+                  enabled: hasItems,
+                  child: Container(
                   decoration: BoxDecoration(
                     gradient: hasItems ? AppColors.primaryGradient : null,
                     color: hasItems ? null : colorScheme.surfaceContainerHigh,
@@ -1066,6 +1087,7 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                       ),
                     ),
                   ),
+                ),
                 ),
               ),
             ],
@@ -1245,7 +1267,10 @@ class PosCartItemTile extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
 
-    return Row(
+    return Semantics(
+      label:
+          '${item.product.name}, ${_fmtCurrency(context, item.effectivePrice)}, ${l10n.quantityColon} ${item.quantity}',
+      child: Row(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         // Product image
@@ -1523,6 +1548,7 @@ class PosCartItemTile extends ConsumerWidget {
           ),
         ),
       ],
+      ),
     );
   }
 }

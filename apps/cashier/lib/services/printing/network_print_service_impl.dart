@@ -114,8 +114,9 @@ class NetworkPrintService implements ThermalPrintService {
         address: ip,
       );
     } catch (e) {
-      if (kDebugMode)
+      if (kDebugMode) {
         debugPrint('Network printer probe failed at $ip:$port: $e');
+      }
       return null;
     }
   }

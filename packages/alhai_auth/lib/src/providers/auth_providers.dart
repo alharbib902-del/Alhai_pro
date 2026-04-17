@@ -15,6 +15,7 @@ import 'package:alhai_core/alhai_core.dart';
 import 'package:supabase_flutter/supabase_flutter.dart'
     hide User, AuthException;
 import 'package:uuid/uuid.dart';
+import '../security/login_rate_limiter.dart';
 import '../security/secure_storage_service.dart';
 import '../security/session_manager.dart';
 import '../services/whatsapp_otp_service.dart';
@@ -792,6 +793,62 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  /// تسجيل دخول بالبريد/كلمة المرور مع حماية Rate Limiting.
+  ///
+  /// يغلّف [signInWithEmailPassword] بفحص [LoginRateLimiter] قبل المحاولة
+  /// ويسجّل النتيجة (نجاح/فشل) لتحديث العدّاد. **لا يكسر** الاستدعاءات
+  /// الحالية لـ[signInWithEmailPassword] — يُستخدم كبديل أكثر أمناً في
+  /// الشاشات الجديدة.
+  ///
+  /// النتائج المحتملة:
+  /// - `(success: true, error: null, locked: false)` — دخول ناجح.
+  /// - `(success: false, error: String, locked: true)` — مقفل مؤقتاً؛ الرسالة
+  ///   تحتوي على الدقائق المتبقية.
+  /// - `(success: false, error: String, locked: false)` — اعتمادات غير صحيحة
+  ///   أو خطأ شبكة.
+  Future<({bool success, String? error, bool locked, int? remainingSeconds})>
+  loginWithRateLimit({
+    required String identifier,
+    required String password,
+    LoginRateLimiter? rateLimiter,
+  }) async {
+    final limiter = rateLimiter ?? LoginRateLimiter();
+
+    // 1) فحص حالة الحد قبل أي طلب شبكة
+    final status = await limiter.checkStatus(identifier);
+    if (status is RateLimitLocked) {
+      final mins = (status.remainingSeconds / 60).ceil();
+      return (
+        success: false,
+        error:
+            'تم قفل الحساب مؤقتاً. حاول بعد $mins دقيقة. '
+            '(Account locked temporarily. Try again in $mins minutes.)',
+        locked: true,
+        remainingSeconds: status.remainingSeconds,
+      );
+    }
+
+    // 2) تنفيذ الدخول عبر المسار الحالي
+    final result = await signInWithEmailPassword(
+      email: identifier,
+      password: password,
+    );
+
+    // 3) تحديث العدّاد بناءً على النتيجة
+    if (result.success) {
+      await limiter.recordSuccess(identifier);
+      return (success: true, error: null, locked: false, remainingSeconds: null);
+    } else {
+      await limiter.recordFailure(identifier);
+      return (
+        success: false,
+        error: result.error,
+        locked: false,
+        remainingSeconds: null,
+      );
+    }
+  }
+
   /// إرسال OTP عبر Supabase Auth
   Future<bool> sendSupabaseOtp(String phone) async {
     try {
@@ -1085,6 +1142,14 @@ final authStateProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   final supabase = ref.watch(supabaseClientProvider);
   return AuthNotifier(authRepository, supabase);
 });
+
+/// مزود خدمة الحد من محاولات تسجيل الدخول (Rate Limiter).
+///
+/// يمنع هجمات Brute-Force: بعد 5 محاولات فاشلة خلال 15 دقيقة،
+/// يُقفل المعرّف لمدة 5 دقائق.
+final loginRateLimiterProvider = Provider<LoginRateLimiter>(
+  (ref) => LoginRateLimiter(),
+);
 
 /// مزود المستخدم الحالي (اختصار)
 final currentUserProvider = Provider<User?>((ref) {
