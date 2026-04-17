@@ -67,32 +67,40 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
       }
 
       // Inventory value
-      final invResult = await db.customSelect(
-        '''SELECT COALESCE(SUM(current_stock * COALESCE(cost_price, price * 0.7)), 0) as total
+      final invResult = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(current_stock * COALESCE(cost_price, price * 0.7)), 0) as total
            FROM products WHERE store_id = ? AND current_stock > 0''',
-        variables: [Variable.withString(storeId)],
-      ).getSingle();
+            variables: [Variable.withString(storeId)],
+          )
+          .getSingle();
 
       // Cash balance
-      final cashResult = await db.customSelect(
-        '''SELECT COALESCE(SUM(CASE WHEN type IN ('sale','cash_in') THEN amount ELSE -amount END), 0) as cash
+      final cashResult = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(CASE WHEN type IN ('sale','cash_in') THEN amount ELSE -amount END), 0) as cash
            FROM transactions WHERE store_id = ?''',
-        variables: [Variable.withString(storeId)],
-      ).getSingle();
+            variables: [Variable.withString(storeId)],
+          )
+          .getSingle();
 
       // Receivables
-      final recResult = await db.customSelect(
-        '''SELECT COALESCE(SUM(balance), 0) as total
+      final recResult = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(balance), 0) as total
            FROM accounts WHERE store_id = ? AND type = 'receivable' AND balance > 0''',
-        variables: [Variable.withString(storeId)],
-      ).getSingle();
+            variables: [Variable.withString(storeId)],
+          )
+          .getSingle();
 
       // Payables
-      final payResult = await db.customSelect(
-        '''SELECT COALESCE(SUM(balance), 0) as total
+      final payResult = await db
+          .customSelect(
+            '''SELECT COALESCE(SUM(balance), 0) as total
            FROM accounts WHERE store_id = ? AND type = 'payable' AND balance > 0''',
-        variables: [Variable.withString(storeId)],
-      ).getSingle();
+            variables: [Variable.withString(storeId)],
+          )
+          .getSingle();
 
       if (mounted) {
         setState(() {

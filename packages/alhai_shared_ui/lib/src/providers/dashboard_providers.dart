@@ -161,18 +161,20 @@ Future<int> _getTodayNewCustomersCount(
   DateTime endOfDay,
 ) async {
   try {
-    final result = await db.customSelect(
-      '''SELECT COUNT(*) as count
+    final result = await db
+        .customSelect(
+          '''SELECT COUNT(*) as count
          FROM customers
          WHERE store_id = ?
          AND created_at >= ?
          AND created_at < ?''',
-      variables: [
-        Variable.withString(storeId),
-        Variable.withDateTime(startOfDay),
-        Variable.withDateTime(endOfDay),
-      ],
-    ).getSingle();
+          variables: [
+            Variable.withString(storeId),
+            Variable.withDateTime(startOfDay),
+            Variable.withDateTime(endOfDay),
+          ],
+        )
+        .getSingle();
     return result.data['count'] as int? ?? 0;
   } catch (e) {
     if (kDebugMode) debugPrint('Error getting today customer count: $e');
@@ -251,18 +253,20 @@ Future<int> _getExpiringProductsCount(
 ) async {
   try {
     final in7Days = now.add(const Duration(days: 7));
-    final result = await db.customSelect(
-      '''SELECT COUNT(*) as count
+    final result = await db
+        .customSelect(
+          '''SELECT COUNT(*) as count
          FROM product_expiry
          WHERE store_id = ?
          AND expiry_date > ?
          AND expiry_date <= ?''',
-      variables: [
-        Variable.withString(storeId),
-        Variable.withDateTime(now),
-        Variable.withDateTime(in7Days),
-      ],
-    ).getSingle();
+          variables: [
+            Variable.withString(storeId),
+            Variable.withDateTime(now),
+            Variable.withDateTime(in7Days),
+          ],
+        )
+        .getSingle();
     return result.data['count'] as int? ?? 0;
   } catch (e) {
     if (kDebugMode) debugPrint('Error getting expiring products count: $e');
@@ -273,9 +277,9 @@ Future<int> _getExpiringProductsCount(
 /// مزود مراقبة مبيعات اليوم (Stream) - للتحديث التلقائي
 final todaySalesStreamProvider =
     StreamProvider.autoDispose<List<SalesTableData>>((ref) {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return const Stream.empty();
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return const Stream.empty();
 
-  final db = GetIt.I<AppDatabase>();
-  return db.salesDao.watchTodaySales(storeId);
-});
+      final db = GetIt.I<AppDatabase>();
+      return db.salesDao.watchTodaySales(storeId);
+    });

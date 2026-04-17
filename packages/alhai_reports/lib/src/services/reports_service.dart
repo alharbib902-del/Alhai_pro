@@ -334,10 +334,10 @@ class ReportsService {
     required ProductsDao productsDao,
     required InventoryDao inventoryDao,
     LoyaltyDao? loyaltyDao,
-  })  : _salesDao = salesDao,
-        _productsDao = productsDao,
-        _inventoryDao = inventoryDao,
-        _loyaltyDao = loyaltyDao;
+  }) : _salesDao = salesDao,
+       _productsDao = productsDao,
+       _inventoryDao = inventoryDao,
+       _loyaltyDao = loyaltyDao;
 
   // ============================================================================
   // SALES REPORTS
@@ -425,8 +425,9 @@ class ReportsService {
     String storeId,
     DateRange range,
   ) async {
-    final result = await _salesDao.customSelect(
-      '''SELECT
+    final result = await _salesDao
+        .customSelect(
+          '''SELECT
            DATE(created_at) as sale_date,
            COUNT(*) as sale_count,
            COALESCE(SUM(total), 0) as sale_total
@@ -438,12 +439,13 @@ class ReportsService {
            AND created_at < ?
          GROUP BY DATE(created_at)
          ORDER BY sale_date ASC''',
-      variables: [
-        Variable.withString(storeId),
-        Variable.withDateTime(range.start),
-        Variable.withDateTime(range.end),
-      ],
-    ).get();
+          variables: [
+            Variable.withString(storeId),
+            Variable.withDateTime(range.start),
+            Variable.withDateTime(range.end),
+          ],
+        )
+        .get();
 
     // Build a map from query results
     final salesByDate = <String, DailySales>{};
@@ -516,8 +518,9 @@ class ReportsService {
     DateRange range, {
     int limit = 10,
   }) async {
-    final result = await _salesDao.customSelect(
-      '''SELECT
+    final result = await _salesDao
+        .customSelect(
+          '''SELECT
            p.id as product_id,
            p.name as product_name,
            COALESCE(SUM(si.qty), 0) as total_qty,
@@ -533,13 +536,14 @@ class ReportsService {
          GROUP BY si.product_id
          ORDER BY total_revenue DESC
          LIMIT ?''',
-      variables: [
-        Variable.withString(storeId),
-        Variable.withDateTime(range.start),
-        Variable.withDateTime(range.end),
-        Variable.withInt(limit),
-      ],
-    ).get();
+          variables: [
+            Variable.withString(storeId),
+            Variable.withDateTime(range.start),
+            Variable.withDateTime(range.end),
+            Variable.withInt(limit),
+          ],
+        )
+        .get();
 
     return result
         .map(

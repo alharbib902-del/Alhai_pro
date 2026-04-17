@@ -101,15 +101,17 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                 await db.salesDao.voidSale(sale.id);
                 // Enqueue to SyncQueue
                 try {
-                  ref.read(syncServiceProvider).enqueueUpdate(
-                    tableName: 'sales',
-                    recordId: sale.id,
-                    changes: {
-                      'id': sale.id,
-                      'status': 'voided',
-                      'updatedAt': DateTime.now().toIso8601String(),
-                    },
-                  );
+                  ref
+                      .read(syncServiceProvider)
+                      .enqueueUpdate(
+                        tableName: 'sales',
+                        recordId: sale.id,
+                        changes: {
+                          'id': sale.id,
+                          'status': 'voided',
+                          'updatedAt': DateTime.now().toIso8601String(),
+                        },
+                      );
                 } catch (e) {
                   if (kDebugMode)
                     debugPrint('Error syncing voided invoice: $e');

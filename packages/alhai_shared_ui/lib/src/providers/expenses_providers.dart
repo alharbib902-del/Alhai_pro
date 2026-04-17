@@ -22,20 +22,20 @@ const _uuid = Uuid();
 /// مراقبة المصروفات (Stream)
 final expensesStreamProvider =
     StreamProvider.autoDispose<List<ExpensesTableData>>((ref) {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return Stream.value([]);
-  final db = GetIt.I<AppDatabase>();
-  return db.expensesDao.watchExpenses(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return Stream.value([]);
+      final db = GetIt.I<AppDatabase>();
+      return db.expensesDao.watchExpenses(storeId);
+    });
 
 /// قائمة المصروفات (Future)
 final expensesListProvider =
     FutureProvider.autoDispose<List<ExpensesTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
-  final db = GetIt.I<AppDatabase>();
-  return db.expensesDao.getAllExpenses(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
+      final db = GetIt.I<AppDatabase>();
+      return db.expensesDao.getAllExpenses(storeId);
+    });
 
 /// إجمالي مصروفات اليوم
 final todayExpensesTotalProvider = FutureProvider.autoDispose<double>((
@@ -50,29 +50,29 @@ final todayExpensesTotalProvider = FutureProvider.autoDispose<double>((
 /// تصنيفات المصروفات النشطة
 final expenseCategoriesProvider =
     FutureProvider.autoDispose<List<ExpenseCategoriesTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
-  final db = GetIt.I<AppDatabase>();
-  return db.expensesDao.getActiveCategories(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
+      final db = GetIt.I<AppDatabase>();
+      return db.expensesDao.getActiveCategories(storeId);
+    });
 
 /// جميع تصنيفات المصروفات
 final allExpenseCategoriesProvider =
     FutureProvider.autoDispose<List<ExpenseCategoriesTableData>>((ref) async {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return [];
-  final db = GetIt.I<AppDatabase>();
-  return db.expensesDao.getAllCategories(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return [];
+      final db = GetIt.I<AppDatabase>();
+      return db.expensesDao.getAllCategories(storeId);
+    });
 
 /// مراقبة التصنيفات (Stream)
 final expenseCategoriesStreamProvider =
     StreamProvider.autoDispose<List<ExpenseCategoriesTableData>>((ref) {
-  final storeId = ref.watch(currentStoreIdProvider);
-  if (storeId == null) return Stream.value([]);
-  final db = GetIt.I<AppDatabase>();
-  return db.expensesDao.watchCategories(storeId);
-});
+      final storeId = ref.watch(currentStoreIdProvider);
+      if (storeId == null) return Stream.value([]);
+      final db = GetIt.I<AppDatabase>();
+      return db.expensesDao.watchCategories(storeId);
+    });
 
 // ============================================================================
 // ACTION HELPERS
