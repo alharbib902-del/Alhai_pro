@@ -68,3 +68,4 @@ GoogleService-Info.plist
 # Test coverage
 packages/*/coverage/
 coverage/
+config/*.env
