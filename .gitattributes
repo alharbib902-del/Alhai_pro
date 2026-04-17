@@ -1,0 +1,31 @@
+# Normalize line endings across platforms — prevents CRLF on Windows
+# from showing as format drift on Linux CI.
+*            text=auto eol=lf
+*.dart       text eol=lf
+*.yaml       text eol=lf
+*.yml        text eol=lf
+*.sh         text eol=lf
+*.md         text eol=lf
+*.sql        text eol=lf
+*.json       text eol=lf
+*.arb        text eol=lf
+*.toml       text eol=lf
+
+# Binary files should stay binary
+*.png        binary
+*.jpg        binary
+*.jpeg       binary
+*.gif        binary
+*.ico        binary
+*.webp       binary
+*.pdf        binary
+*.woff       binary
+*.woff2      binary
+*.ttf        binary
+*.otf        binary
+*.jar        binary
+*.keystore   binary
+
+# Generated files — keep LF for reproducibility
+*.g.dart     text eol=lf
+*.freezed.dart text eol=lf

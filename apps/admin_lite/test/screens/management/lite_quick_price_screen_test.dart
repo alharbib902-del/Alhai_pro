@@ -33,9 +33,7 @@ void main() {
   // Helper
   // ===========================================================================
 
-  Widget buildScreen({
-    AsyncValue<List<ProductsTableData>>? productsValue,
-  }) {
+  Widget buildScreen({AsyncValue<List<ProductsTableData>>? productsValue}) {
     return createTestWidget(
       const LiteQuickPriceScreen(),
       overrides: [
@@ -104,16 +102,8 @@ void main() {
       suppressOverflowErrors();
 
       final products = [
-        createTestProduct(
-          id: 'p1',
-          name: 'Milk',
-          price: 12.0,
-        ),
-        createTestProduct(
-          id: 'p2',
-          name: 'Bread',
-          price: 5.0,
-        ),
+        createTestProduct(id: 'p1', name: 'Milk', price: 12.0),
+        createTestProduct(id: 'p2', name: 'Bread', price: 5.0),
       ];
 
       await tester.pumpWidget(

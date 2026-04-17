@@ -139,8 +139,9 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('navigates to third page and shows start button',
-        (tester) async {
+    testWidgets('navigates to third page and shows start button', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1080, 1920);
       tester.view.devicePixelRatio = 1.0;
 

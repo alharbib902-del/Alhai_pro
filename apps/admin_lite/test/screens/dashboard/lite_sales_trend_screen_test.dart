@@ -32,10 +32,7 @@ void main() {
   // Factory helpers
   // ===========================================================================
 
-  DailySalesData createTestDailySales({
-    int count = 10,
-    double total = 2500.0,
-  }) {
+  DailySalesData createTestDailySales({int count = 10, double total = 2500.0}) {
     return DailySalesData(
       todayStats: SalesStats(
         count: count,
@@ -136,8 +133,9 @@ void main() {
           const LiteSalesTrendScreen(),
           overrides: [
             liteDailySalesProvider.overrideWith((ref) => dailyCompleter.future),
-            liteWeeklyComparisonProvider
-                .overrideWith((ref) => weeklyCompleter.future),
+            liteWeeklyComparisonProvider.overrideWith(
+              (ref) => weeklyCompleter.future,
+            ),
           ],
         ),
       );

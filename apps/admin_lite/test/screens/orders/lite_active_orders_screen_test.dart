@@ -54,9 +54,7 @@ void main() {
   // Helper
   // ===========================================================================
 
-  Widget buildScreen({
-    AsyncValue<List<OrderWithCustomer>>? ordersValue,
-  }) {
+  Widget buildScreen({AsyncValue<List<OrderWithCustomer>>? ordersValue}) {
     return createTestWidget(
       const LiteActiveOrdersScreen(),
       overrides: [
@@ -160,11 +158,7 @@ void main() {
       suppressOverflowErrors();
 
       final orders = [
-        createTestOrder(
-          id: 'o1',
-          orderNumber: 'ORD-001',
-          status: 'confirmed',
-        ),
+        createTestOrder(id: 'o1', orderNumber: 'ORD-001', status: 'confirmed'),
       ];
 
       await tester.pumpWidget(
@@ -184,11 +178,7 @@ void main() {
       suppressOverflowErrors();
 
       final orders = [
-        createTestOrder(
-          id: 'o1',
-          orderNumber: 'ORD-001',
-          total: 250.0,
-        ),
+        createTestOrder(id: 'o1', orderNumber: 'ORD-001', total: 250.0),
       ];
 
       await tester.pumpWidget(

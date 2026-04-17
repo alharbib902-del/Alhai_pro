@@ -31,9 +31,7 @@ void main() {
   // Helper
   // ===========================================================================
 
-  Widget buildScreen({
-    AsyncValue<List<SystemAlertData>>? alertsValue,
-  }) {
+  Widget buildScreen({AsyncValue<List<SystemAlertData>>? alertsValue}) {
     return createTestWidget(
       const LiteSystemAlertsScreen(),
       overrides: [
@@ -153,8 +151,9 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('shows action button when actionLabel provided',
-        (tester) async {
+    testWidgets('shows action button when actionLabel provided', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();

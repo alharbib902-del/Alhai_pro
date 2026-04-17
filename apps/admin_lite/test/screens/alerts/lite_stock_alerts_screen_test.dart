@@ -33,9 +33,7 @@ void main() {
   // Helper
   // ===========================================================================
 
-  Widget buildScreen({
-    AsyncValue<List<ProductsTableData>>? alertsValue,
-  }) {
+  Widget buildScreen({AsyncValue<List<ProductsTableData>>? alertsValue}) {
     return createTestWidget(
       const LiteStockAlertsScreen(),
       overrides: [

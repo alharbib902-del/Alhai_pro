@@ -54,9 +54,7 @@ void main() {
   // Helper
   // ===========================================================================
 
-  Widget buildScreen({
-    AsyncValue<List<OrderWithCustomer>>? ordersValue,
-  }) {
+  Widget buildScreen({AsyncValue<List<OrderWithCustomer>>? ordersValue}) {
     return createTestWidget(
       const LiteOrderHistoryScreen(),
       overrides: [

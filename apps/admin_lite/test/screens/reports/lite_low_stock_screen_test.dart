@@ -33,9 +33,7 @@ void main() {
   // Helper
   // ===========================================================================
 
-  Widget buildScreen({
-    AsyncValue<List<ProductsTableData>>? stockValue,
-  }) {
+  Widget buildScreen({AsyncValue<List<ProductsTableData>>? stockValue}) {
     return createTestWidget(
       const LiteLowStockScreen(),
       overrides: [
@@ -103,18 +101,8 @@ void main() {
       suppressOverflowErrors();
 
       final products = [
-        createTestProduct(
-          id: 'p1',
-          name: 'Product A',
-          stockQty: 2,
-          minQty: 10,
-        ),
-        createTestProduct(
-          id: 'p2',
-          name: 'Product B',
-          stockQty: 0,
-          minQty: 5,
-        ),
+        createTestProduct(id: 'p1', name: 'Product A', stockQty: 2, minQty: 10),
+        createTestProduct(id: 'p2', name: 'Product B', stockQty: 0, minQty: 5),
       ];
 
       await tester.pumpWidget(

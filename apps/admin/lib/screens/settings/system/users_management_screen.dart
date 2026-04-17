@@ -89,20 +89,20 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
                 ? const Center(child: CircularProgressIndicator())
                 : SingleChildScrollView(
                     padding: EdgeInsets.all(padding),
-                  child: Center(
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        maxWidth: isWideScreen ? 800 : double.infinity,
-                      ),
-                      child: _buildContent(
-                        isWideScreen,
-                        size.width >= 600,
-                        isDark,
-                        l10n,
+                    child: Center(
+                      child: ConstrainedBox(
+                        constraints: BoxConstraints(
+                          maxWidth: isWideScreen ? 800 : double.infinity,
+                        ),
+                        child: _buildContent(
+                          isWideScreen,
+                          size.width >= 600,
+                          isDark,
+                          l10n,
+                        ),
                       ),
                     ),
                   ),
-                ),
           ),
         ),
       ],

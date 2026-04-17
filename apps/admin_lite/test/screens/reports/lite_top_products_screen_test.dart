@@ -49,9 +49,7 @@ void main() {
   // Helper
   // ===========================================================================
 
-  Widget buildScreen({
-    AsyncValue<List<TopProductData>>? productsValue,
-  }) {
+  Widget buildScreen({AsyncValue<List<TopProductData>>? productsValue}) {
     return createTestWidget(
       const LiteTopProductsScreen(),
       overrides: [
@@ -176,9 +174,7 @@ void main() {
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
 
-      final products = [
-        createTestTopProduct(quantity: 75, productId: 'p1'),
-      ];
+      final products = [createTestTopProduct(quantity: 75, productId: 'p1')];
 
       await tester.pumpWidget(
         buildScreen(productsValue: AsyncValue.data(products)),

@@ -1,7 +1,5 @@
 import 'package:xml/xml.dart';
 
-import 'package:alhai_zatca/src/xml/ubl_namespaces.dart';
-
 /// Validates a generated ZATCA invoice XML against structural requirements.
 ///
 /// This validator inspects the XML *output* (after generation, before or after

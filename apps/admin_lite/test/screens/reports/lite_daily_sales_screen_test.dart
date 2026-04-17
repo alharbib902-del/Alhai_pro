@@ -56,7 +56,8 @@ void main() {
         maxSale: refundTotal,
         minSale: refundTotal,
       ),
-      paymentMethods: paymentMethods ??
+      paymentMethods:
+          paymentMethods ??
           [
             const PaymentMethodStats(method: 'cash', count: 8, total: 2000.0),
             const PaymentMethodStats(method: 'card', count: 4, total: 1500.0),
@@ -70,9 +71,7 @@ void main() {
   // Helper
   // ===========================================================================
 
-  Widget buildScreen({
-    AsyncValue<DailySalesData>? salesValue,
-  }) {
+  Widget buildScreen({AsyncValue<DailySalesData>? salesValue}) {
     return createTestWidget(
       const LiteDailySalesScreen(),
       overrides: [
@@ -128,9 +127,7 @@ void main() {
         refundTotal: 150.0,
       );
 
-      await tester.pumpWidget(
-        buildScreen(salesValue: AsyncValue.data(data)),
-      );
+      await tester.pumpWidget(buildScreen(salesValue: AsyncValue.data(data)));
       await tester.pumpAndSettle();
 
       // Total sales value
@@ -175,9 +172,7 @@ void main() {
         ],
       );
 
-      await tester.pumpWidget(
-        buildScreen(salesValue: AsyncValue.data(data)),
-      );
+      await tester.pumpWidget(buildScreen(salesValue: AsyncValue.data(data)));
       await tester.pumpAndSettle();
 
       // Payment method labels

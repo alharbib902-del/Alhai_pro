@@ -396,10 +396,12 @@ class _ShippingGatewaysScreenState
                         'shipping_${nameEn.replaceAll(' ', '_').toLowerCase()}_api_key';
                     final accountStorageKey =
                         'shipping_${nameEn.replaceAll(' ', '_').toLowerCase()}_account';
-                    final existingKey =
-                        await SecureStorageService.read(storageKey);
-                    final existingAccount =
-                        await SecureStorageService.read(accountStorageKey);
+                    final existingKey = await SecureStorageService.read(
+                      storageKey,
+                    );
+                    final existingAccount = await SecureStorageService.read(
+                      accountStorageKey,
+                    );
 
                     final apiKeyController = TextEditingController();
                     final accountController = TextEditingController(
@@ -408,8 +410,8 @@ class _ShippingGatewaysScreenState
 
                     final maskedHint =
                         existingKey != null && existingKey.length >= 4
-                            ? '****${existingKey.substring(existingKey.length - 4)}'
-                            : null;
+                        ? '****${existingKey.substring(existingKey.length - 4)}'
+                        : null;
 
                     if (!context.mounted) return;
 
@@ -427,7 +429,8 @@ class _ShippingGatewaysScreenState
                               obscureText: true,
                               decoration: InputDecoration(
                                 labelText: 'API Key',
-                                hintText: maskedHint ??
+                                hintText:
+                                    maskedHint ??
                                     AppLocalizations.of(ctx).enterApiKey,
                               ),
                             ),

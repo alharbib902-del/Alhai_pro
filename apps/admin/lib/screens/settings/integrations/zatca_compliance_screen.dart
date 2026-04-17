@@ -72,9 +72,7 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
       // Load certificate info (non-blocking)
       try {
         final certStorage = getIt<CertificateStorage>();
-        final cert = await certStorage.getCertificateMetadata(
-          storeId: storeId,
-        );
+        final cert = await certStorage.getCertificateMetadata(storeId: storeId);
         if (mounted) {
           setState(() => _certificate = cert);
         }
@@ -310,23 +308,25 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
               _certificate == null
                   ? Icons.warning_rounded
                   : _certificate!.isValid
-                      ? (_certificate!.isNearExpiry
-                          ? Icons.warning_rounded
-                          : Icons.check_circle_rounded)
-                      : Icons.error_rounded,
+                  ? (_certificate!.isNearExpiry
+                        ? Icons.warning_rounded
+                        : Icons.check_circle_rounded)
+                  : Icons.error_rounded,
               color: _certificate == null
                   ? AppColors.warning
                   : _certificate!.isValid
-                      ? (_certificate!.isNearExpiry
-                          ? AppColors.warning
-                          : AppColors.success)
-                      : AppColors.error,
+                  ? (_certificate!.isNearExpiry
+                        ? AppColors.warning
+                        : AppColors.success)
+                  : AppColors.error,
             ),
           ),
           _tile(
             Icons.key_rounded,
             l10n.privateKey,
-            _certificate != null ? l10n.configured : '\u063a\u064a\u0631 \u0645\u064f\u0639\u062f',
+            _certificate != null
+                ? l10n.configured
+                : '\u063a\u064a\u0631 \u0645\u064f\u0639\u062f',
             isDark,
             trailing: Icon(
               _certificate != null
@@ -353,9 +353,7 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
                         title: Text(
                           AppLocalizations.of(ctx).submitToZatcaAuthority,
                         ),
-                        content: Text(
-                          AppLocalizations.of(ctx).zatcaSubmitBody,
-                        ),
+                        content: Text(AppLocalizations.of(ctx).zatcaSubmitBody),
                         actions: [
                           TextButton(
                             onPressed: () => Navigator.pop(ctx),
@@ -385,8 +383,8 @@ class _ZatcaComplianceScreenState extends ConsumerState<ZatcaComplianceScreen> {
               _certificate == null
                   ? '\u0633\u062c\u0651\u0644 \u0634\u0647\u0627\u062f\u0629 CSID \u0623\u0648\u0644\u0627\u064b'
                   : !_certificate!.isValid
-                      ? '\u0627\u0644\u0634\u0647\u0627\u062f\u0629 \u0645\u0646\u062a\u0647\u064a\u0629 \u2014 \u062c\u062f\u062f\u0647\u0627 \u0644\u0644\u0625\u0631\u0633\u0627\u0644'
-                      : AppLocalizations.of(context).submitToAuthority,
+                  ? '\u0627\u0644\u0634\u0647\u0627\u062f\u0629 \u0645\u0646\u062a\u0647\u064a\u0629 \u2014 \u062c\u062f\u062f\u0647\u0627 \u0644\u0644\u0625\u0631\u0633\u0627\u0644'
+                  : AppLocalizations.of(context).submitToAuthority,
             ),
             style: FilledButton.styleFrom(
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),

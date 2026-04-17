@@ -24,36 +24,43 @@ void main() {
   tearDown(() => tearDownTestGetIt());
 
   group('Barcode duplicate check', () {
-    test('creating product A with barcode 123 succeeds when no duplicate',
-        () async {
-      when(
-        () => productsDao.getProductByBarcode('123', any()),
-      ).thenAnswer((_) async => null);
+    test(
+      'creating product A with barcode 123 succeeds when no duplicate',
+      () async {
+        when(
+          () => productsDao.getProductByBarcode('123', any()),
+        ).thenAnswer((_) async => null);
 
-      final result =
-          await db.productsDao.getProductByBarcode('123', 'test-store-1');
-      expect(result, isNull, reason: 'No existing product — insert allowed');
-    });
+        final result = await db.productsDao.getProductByBarcode(
+          '123',
+          'test-store-1',
+        );
+        expect(result, isNull, reason: 'No existing product — insert allowed');
+      },
+    );
 
     test(
-        'creating product B with barcode 123 fails when product A already uses it',
-        () async {
-      final existingProduct = createTestProduct(
-        id: 'prod-A',
-        barcode: '123',
-        name: '\u0645\u0646\u062a\u062c \u0623',
-      );
+      'creating product B with barcode 123 fails when product A already uses it',
+      () async {
+        final existingProduct = createTestProduct(
+          id: 'prod-A',
+          barcode: '123',
+          name: '\u0645\u0646\u062a\u062c \u0623',
+        );
 
-      when(
-        () => productsDao.getProductByBarcode('123', any()),
-      ).thenAnswer((_) async => existingProduct);
+        when(
+          () => productsDao.getProductByBarcode('123', any()),
+        ).thenAnswer((_) async => existingProduct);
 
-      final result =
-          await db.productsDao.getProductByBarcode('123', 'test-store-1');
-      expect(result, isNotNull, reason: 'Duplicate barcode detected');
-      expect(result!.id, equals('prod-A'));
-      expect(result.name, equals('\u0645\u0646\u062a\u062c \u0623'));
-    });
+        final result = await db.productsDao.getProductByBarcode(
+          '123',
+          'test-store-1',
+        );
+        expect(result, isNotNull, reason: 'Duplicate barcode detected');
+        expect(result!.id, equals('prod-A'));
+        expect(result.name, equals('\u0645\u0646\u062a\u062c \u0623'));
+      },
+    );
 
     test('editing product A with same barcode 123 is allowed', () async {
       final existingProduct = createTestProduct(
@@ -66,8 +73,10 @@ void main() {
         () => productsDao.getProductByBarcode('123', any()),
       ).thenAnswer((_) async => existingProduct);
 
-      final result =
-          await db.productsDao.getProductByBarcode('123', 'test-store-1');
+      final result = await db.productsDao.getProductByBarcode(
+        '123',
+        'test-store-1',
+      );
       expect(result, isNotNull);
 
       // When editing, the form checks: existingProduct.id == widget.productId

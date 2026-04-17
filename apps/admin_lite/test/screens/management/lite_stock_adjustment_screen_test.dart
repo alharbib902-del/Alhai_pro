@@ -33,9 +33,7 @@ void main() {
   // Helper
   // ===========================================================================
 
-  Widget buildScreen({
-    AsyncValue<List<ProductsTableData>>? productsValue,
-  }) {
+  Widget buildScreen({AsyncValue<List<ProductsTableData>>? productsValue}) {
     return createTestWidget(
       const LiteStockAdjustmentScreen(),
       overrides: [
