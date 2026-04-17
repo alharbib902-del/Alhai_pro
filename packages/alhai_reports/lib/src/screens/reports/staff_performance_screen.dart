@@ -325,13 +325,17 @@ class _StaffPerformanceScreenState
       context: context,
       fileName: 'أداء_الموظفين_${_getPeriodName()}',
       headers: ['الموظف', 'الدور', 'المبيعات', 'الفواتير', 'متوسط الفاتورة'],
-      rows: _staff.map((s) => [
-        s.name,
-        s.role,
-        s.sales.toStringAsFixed(2),
-        '${s.transactions}',
-        '${s.avgTicket}',
-      ]).toList(),
+      rows: _staff
+          .map(
+            (s) => [
+              s.name,
+              s.role,
+              s.sales.toStringAsFixed(2),
+              '${s.transactions}',
+              '${s.avgTicket}',
+            ],
+          )
+          .toList(),
     );
     if (mounted) CsvExportHelper.showResultSnackBar(context, result);
   }

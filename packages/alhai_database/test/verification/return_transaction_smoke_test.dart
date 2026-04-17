@@ -34,7 +34,9 @@ void main() {
       await db.productsDao.updateStock('prod-smoke', 100.0);
 
       // Setup: sale (FK target for returns)
-      await db.into(db.salesTable).insert(
+      await db
+          .into(db.salesTable)
+          .insert(
             SalesTableCompanion.insert(
               id: 'sale-smoke',
               receiptNo: 'REC-SMOKE',

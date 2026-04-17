@@ -74,9 +74,7 @@ void main() {
           'verify_pickup_otp',
           params: {'order_id': 'order-1', 'otp_code': '9999'},
         ),
-      ).thenThrow(
-        PostgrestException(message: 'invalid code', code: 'P0001'),
-      );
+      ).thenThrow(PostgrestException(message: 'invalid code', code: 'P0001'));
 
       final service = PickupOtpService(mockClient);
 
@@ -116,9 +114,7 @@ void main() {
           'verify_pickup_otp',
           params: {'order_id': 'order-1', 'otp_code': '1234'},
         ),
-      ).thenThrow(
-        PostgrestException(message: 'OTP expired', code: 'P0001'),
-      );
+      ).thenThrow(PostgrestException(message: 'OTP expired', code: 'P0001'));
 
       final service = PickupOtpService(mockClient);
 
@@ -154,9 +150,7 @@ void main() {
 
     Widget buildTestWidget({VoidCallback? onVerified}) {
       return ProviderScope(
-        overrides: [
-          supabaseClientProvider.overrideWithValue(mockClient),
-        ],
+        overrides: [supabaseClientProvider.overrideWithValue(mockClient)],
         child: MaterialApp(
           theme: AlhaiTheme.light,
           locale: const Locale('ar'),
@@ -255,10 +249,7 @@ void main() {
     });
 
     test('OtpVerificationException locked state', () {
-      final e = OtpVerificationException(
-        'تم القفل',
-        isLocked: true,
-      );
+      final e = OtpVerificationException('تم القفل', isLocked: true);
       expect(e.isLocked, isTrue);
     });
   });

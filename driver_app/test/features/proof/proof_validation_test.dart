@@ -33,8 +33,14 @@ class MockDeliveryDatasource extends Mock implements DeliveryDatasource {}
 
 /// Returns in-memory JPEG bytes via Future.value (safe for FakeAsync).
 class _FakeXFile extends Fake implements XFile {
-  static final _jpegBytes =
-      Uint8List.fromList([0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10]);
+  static final _jpegBytes = Uint8List.fromList([
+    0xFF,
+    0xD8,
+    0xFF,
+    0xE0,
+    0x00,
+    0x10,
+  ]);
 
   @override
   Future<Uint8List> readAsBytes() => Future.value(_jpegBytes);
@@ -47,8 +53,7 @@ class _FakeImagePickerPlatform extends Fake
   Future<XFile?> getImageFromSource({
     required ImageSource source,
     ImagePickerOptions? options,
-  }) =>
-      Future.value(_FakeXFile());
+  }) => Future.value(_FakeXFile());
 }
 
 // ---------------------------------------------------------------------------
@@ -75,7 +80,10 @@ class _StatusUpdateTracker {
   final calls = <({String id, String status, String? notes})>[];
 
   Future<Map<String, dynamic>> call(
-      String id, String status, String? notes) async {
+    String id,
+    String status,
+    String? notes,
+  ) async {
     calls.add((id: id, status: status, notes: notes));
     return {'success': true};
   }
@@ -117,11 +125,9 @@ Widget _buildTestWidget({_StatusUpdateTracker? tracker}) {
   return ProviderScope(
     overrides: [
       if (tracker != null)
-        updateDeliveryStatusProvider.overrideWith(
-          (ref, params) async {
-            return tracker.call(params.id, params.status, params.notes);
-          },
-        ),
+        updateDeliveryStatusProvider.overrideWith((ref, params) async {
+          return tracker.call(params.id, params.status, params.notes);
+        }),
     ],
     child: MaterialApp.router(
       title: 'Test',
@@ -198,8 +204,7 @@ void main() {
   });
 
   group('GH-1: Proof validation — mandatory photo or signature', () {
-    testWidgets('blocks submit when no photo and no signature',
-        (tester) async {
+    testWidgets('blocks submit when no photo and no signature', (tester) async {
       _setPhoneViewport(tester);
 
       await tester.pumpWidget(_buildTestWidget());
@@ -207,8 +212,11 @@ void main() {
 
       // Submit button must be disabled (onPressed == null)
       final button = tester.widget<FilledButton>(_submitButtonFinder);
-      expect(button.onPressed, isNull,
-          reason: 'Submit button should be disabled without proof');
+      expect(
+        button.onPressed,
+        isNull,
+        reason: 'Submit button should be disabled without proof',
+      );
 
       // Tapping the disabled button does nothing
       await tester.tap(find.text('تأكيد التسليم'));
@@ -252,8 +260,11 @@ void main() {
 
       // Button should now be enabled
       button = tester.widget<FilledButton>(_submitButtonFinder);
-      expect(button.onPressed, isNotNull,
-          reason: 'Submit should enable after capturing photo');
+      expect(
+        button.onPressed,
+        isNotNull,
+        reason: 'Submit should enable after capturing photo',
+      );
 
       // Tap submit
       await tester.tap(find.text('تأكيد التسليم'));
@@ -293,8 +304,11 @@ void main() {
 
       // Button should now be enabled
       button = tester.widget<FilledButton>(_submitButtonFinder);
-      expect(button.onPressed, isNotNull,
-          reason: 'Submit should enable after drawing signature');
+      expect(
+        button.onPressed,
+        isNotNull,
+        reason: 'Submit should enable after drawing signature',
+      );
 
       // NOTE: We do not test full submit here because compute() (used by
       // signature PNG encoding) spawns a real isolate which cannot complete

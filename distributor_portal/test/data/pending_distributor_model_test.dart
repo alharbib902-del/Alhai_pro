@@ -101,8 +101,7 @@ void main() {
     });
 
     test('shows Arabic only when no English name', () {
-      final noEnJson = Map<String, dynamic>.from(sampleJson)
-        ..remove('name_en');
+      final noEnJson = Map<String, dynamic>.from(sampleJson)..remove('name_en');
       final d = PendingDistributor.fromJson(noEnJson);
       expect(d.displayName, 'شركة الابتكار');
     });

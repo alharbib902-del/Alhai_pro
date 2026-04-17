@@ -14,10 +14,7 @@ void main() {
     testWidgets('renders with data', (tester) async {
       await tester.pumpWidget(
         createSimpleTestWidget(
-          SizedBox(
-            height: 300,
-            child: SimpleBarChart(data: sampleData),
-          ),
+          SizedBox(height: 300, child: SimpleBarChart(data: sampleData)),
         ),
       );
       await tester.pumpAndSettle();
@@ -29,10 +26,7 @@ void main() {
     testWidgets('shows no data message when empty', (tester) async {
       await tester.pumpWidget(
         createSimpleTestWidget(
-          const SizedBox(
-            height: 300,
-            child: SimpleBarChart(data: []),
-          ),
+          const SizedBox(height: 300, child: SimpleBarChart(data: [])),
         ),
       );
       await tester.pumpAndSettle();
@@ -45,10 +39,7 @@ void main() {
         createSimpleTestWidget(
           SizedBox(
             height: 300,
-            child: SimpleBarChart(
-              data: sampleData,
-              showLabels: false,
-            ),
+            child: SimpleBarChart(data: sampleData, showLabels: false),
           ),
         ),
       );
@@ -61,10 +52,7 @@ void main() {
         createSimpleTestWidget(
           SizedBox(
             height: 300,
-            child: SimpleBarChart(
-              data: sampleData,
-              barColor: Colors.red,
-            ),
+            child: SimpleBarChart(data: sampleData, barColor: Colors.red),
           ),
         ),
       );
@@ -114,10 +102,7 @@ void main() {
         createSimpleTestWidget(
           SizedBox(
             height: 400,
-            child: SalesChartCard(
-              data: chartData,
-              title: 'Sales Report',
-            ),
+            child: SalesChartCard(data: chartData, title: 'Sales Report'),
           ),
         ),
       );
@@ -128,10 +113,7 @@ void main() {
     testWidgets('renders period toggle buttons', (tester) async {
       await tester.pumpWidget(
         createSimpleTestWidget(
-          SizedBox(
-            height: 400,
-            child: SalesChartCard(data: chartData),
-          ),
+          SizedBox(height: 400, child: SalesChartCard(data: chartData)),
         ),
       );
       await tester.pumpAndSettle();

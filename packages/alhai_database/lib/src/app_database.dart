@@ -221,9 +221,7 @@ class AppDatabase extends _$AppDatabase {
               .inMilliseconds;
           debugPrint('[Migration] v$version FAILED (${stepDuration}ms): $e');
           debugPrint('[Migration] Stack trace: $stackTrace');
-          debugPrint(
-            '[Migration] Pre-migration backup available: $backupId',
-          );
+          debugPrint('[Migration] Pre-migration backup available: $backupId');
           await _recordMigrationHistory(
             version: version,
             durationMs: stepDuration,

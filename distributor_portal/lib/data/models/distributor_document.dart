@@ -123,9 +123,7 @@ class DistributorDocument {
     return DistributorDocument(
       id: json['id'] as String,
       orgId: json['org_id'] as String,
-      documentType: DocumentType.fromDbValue(
-        json['document_type'] as String,
-      ),
+      documentType: DocumentType.fromDbValue(json['document_type'] as String),
       fileUrl: json['file_url'] as String,
       fileName: json['file_name'] as String,
       fileSize: (json['file_size'] as num).toInt(),

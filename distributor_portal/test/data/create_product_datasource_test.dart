@@ -78,8 +78,7 @@ void main() {
         'updated_at': '2026-04-16T10:00:00Z',
       };
 
-      final product =
-          DistributorProduct.fromJson(json);
+      final product = DistributorProduct.fromJson(json);
       expect(product.id, 'test-uuid');
       expect(product.name, 'منتج جديد');
       expect(product.barcode, '1234567890');
@@ -97,8 +96,7 @@ void main() {
         'stock': 0,
       };
 
-      final product =
-          DistributorProduct.fromJson(json);
+      final product = DistributorProduct.fromJson(json);
       expect(product.category, 'مشروبات');
     });
 
@@ -110,8 +108,7 @@ void main() {
         'stock': 0,
       };
 
-      final product =
-          DistributorProduct.fromJson(json);
+      final product = DistributorProduct.fromJson(json);
       expect(product.barcode, isNull);
       expect(product.category, '');
       expect(product.updatedAt, isNull);
@@ -148,26 +145,29 @@ void main() {
 
   group('userFriendlyMessage', () {
     test('returns network message', () {
-      final msg = userFriendlyMessage(const DatasourceError(
-        type: DatasourceErrorType.network,
-        message: 'err',
-      ));
+      final msg = userFriendlyMessage(
+        const DatasourceError(
+          type: DatasourceErrorType.network,
+          message: 'err',
+        ),
+      );
       expect(msg, contains('internet'));
     });
 
     test('returns auth message', () {
-      final msg = userFriendlyMessage(const DatasourceError(
-        type: DatasourceErrorType.auth,
-        message: 'err',
-      ));
+      final msg = userFriendlyMessage(
+        const DatasourceError(type: DatasourceErrorType.auth, message: 'err'),
+      );
       expect(msg, contains('session'));
     });
 
     test('returns validation message', () {
-      final msg = userFriendlyMessage(const DatasourceError(
-        type: DatasourceErrorType.validation,
-        message: 'err',
-      ));
+      final msg = userFriendlyMessage(
+        const DatasourceError(
+          type: DatasourceErrorType.validation,
+          message: 'err',
+        ),
+      );
       expect(msg, contains('Invalid'));
     });
   });

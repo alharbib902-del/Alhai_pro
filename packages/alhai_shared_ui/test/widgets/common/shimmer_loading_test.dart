@@ -8,10 +8,7 @@ void main() {
     testWidgets('renders child when not loading', (tester) async {
       await tester.pumpWidget(
         createSimpleTestWidget(
-          const ShimmerLoading(
-            isLoading: false,
-            child: Text('Loaded Content'),
-          ),
+          const ShimmerLoading(isLoading: false, child: Text('Loaded Content')),
         ),
       );
       expect(find.text('Loaded Content'), findsOneWidget);
@@ -33,20 +30,14 @@ void main() {
     testWidgets('switches from loading to content', (tester) async {
       await tester.pumpWidget(
         createSimpleTestWidget(
-          const ShimmerLoading(
-            isLoading: true,
-            child: Text('Content'),
-          ),
+          const ShimmerLoading(isLoading: true, child: Text('Content')),
         ),
       );
       expect(find.byType(ShaderMask), findsOneWidget);
 
       await tester.pumpWidget(
         createSimpleTestWidget(
-          const ShimmerLoading(
-            isLoading: false,
-            child: Text('Content'),
-          ),
+          const ShimmerLoading(isLoading: false, child: Text('Content')),
         ),
       );
       expect(find.text('Content'), findsOneWidget);
@@ -99,9 +90,7 @@ void main() {
 
   group('ShimmerCard', () {
     testWidgets('renders with default height', (tester) async {
-      await tester.pumpWidget(
-        createSimpleTestWidget(const ShimmerCard()),
-      );
+      await tester.pumpWidget(createSimpleTestWidget(const ShimmerCard()));
       expect(find.byType(ShimmerCard), findsOneWidget);
     });
 
@@ -115,17 +104,13 @@ void main() {
 
   group('ShimmerStats', () {
     testWidgets('renders with default count', (tester) async {
-      await tester.pumpWidget(
-        createSimpleTestWidget(const ShimmerStats()),
-      );
+      await tester.pumpWidget(createSimpleTestWidget(const ShimmerStats()));
       expect(find.byType(ShimmerStats), findsOneWidget);
     });
 
     testWidgets('renders narrow layout', (tester) async {
       await tester.pumpWidget(
-        createSimpleTestWidget(
-          const ShimmerStats(isWide: false, count: 2),
-        ),
+        createSimpleTestWidget(const ShimmerStats(isWide: false, count: 2)),
       );
       expect(find.byType(ShimmerStats), findsOneWidget);
     });
@@ -133,9 +118,7 @@ void main() {
 
   group('ShimmerTopBar', () {
     testWidgets('renders', (tester) async {
-      await tester.pumpWidget(
-        createSimpleTestWidget(const ShimmerTopBar()),
-      );
+      await tester.pumpWidget(createSimpleTestWidget(const ShimmerTopBar()));
       expect(find.byType(ShimmerTopBar), findsOneWidget);
     });
   });

@@ -109,18 +109,16 @@ void main() {
       await tester.pumpWidget(_buildTestWidget());
       await tester.pump();
 
-      expect(
-        find.byType(DropdownButtonFormField<String>),
-        findsOneWidget,
-      );
+      expect(find.byType(DropdownButtonFormField<String>), findsOneWidget);
     });
   });
 
   // ─── Validation ─────────────────────────────────────────────────
 
   group('form validation', () {
-    testWidgets('shows error when email is empty and submit tapped',
-        (tester) async {
+    testWidgets('shows error when email is empty and submit tapped', (
+      tester,
+    ) async {
       await tester.pumpWidget(_buildTestWidget());
       await tester.pump();
 
@@ -174,10 +172,7 @@ void main() {
       await tester.pump();
 
       await tester.enterText(find.byType(TextFormField).first, 'a@b.com');
-      await tester.enterText(
-        find.byType(TextFormField).at(1),
-        'abcdefgh',
-      );
+      await tester.enterText(find.byType(TextFormField).at(1), 'abcdefgh');
 
       await tester.ensureVisible(find.text('إنشاء الحساب').first);
       await tester.tap(find.text('إنشاء الحساب').first);

@@ -75,14 +75,16 @@ class OrdersDatasource {
           .from('order_items')
           .insert(
             params.items
-                .map((item) => {
-                      'order_id': orderId,
-                      'product_id': item.productId,
-                      'product_name': item.name,
-                      'unit_price': item.unitPrice,
-                      'qty': item.qty,
-                      'total_price': item.lineTotal,
-                    })
+                .map(
+                  (item) => {
+                    'order_id': orderId,
+                    'product_id': item.productId,
+                    'product_name': item.name,
+                    'unit_price': item.unitPrice,
+                    'qty': item.qty,
+                    'total_price': item.lineTotal,
+                  },
+                )
                 .toList(),
           )
           .timeout(AppConstants.networkTimeout);
@@ -206,7 +208,13 @@ class OrdersDatasource {
         .from('orders')
         .select('*, order_items(*), stores(name, tax_number)')
         .eq('customer_id', userId)
-        .inFilter('status', ['created', 'confirmed', 'preparing', 'ready', 'out_for_delivery'])
+        .inFilter('status', [
+          'created',
+          'confirmed',
+          'preparing',
+          'ready',
+          'out_for_delivery',
+        ])
         .order('created_at', ascending: false)
         .timeout(AppConstants.networkTimeout);
 
@@ -347,10 +355,7 @@ class OrdersDatasource {
       await _client
           .rpc(
             'cancel_order_by_customer',
-            params: {
-              'p_order_id': id,
-              'p_reason': reason,
-            },
+            params: {'p_order_id': id, 'p_reason': reason},
           )
           .timeout(AppConstants.networkTimeout);
     } on PostgrestException catch (e) {

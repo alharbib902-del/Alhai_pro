@@ -136,15 +136,17 @@ class _SuperAdminShellState extends ConsumerState<SuperAdminShell> {
     final authState = ref.read(authStateProvider);
     // Audit log the logout event before signing out.
     try {
-      ref.read(auditLogServiceProvider).log(
-        action: 'auth.logout',
-        targetType: 'user',
-        targetId: authState.user?.id ?? 'unknown',
-        metadata: {
-          'email': authState.user?.email ?? '',
-          'timestamp': DateTime.now().toUtc().toIso8601String(),
-        },
-      );
+      ref
+          .read(auditLogServiceProvider)
+          .log(
+            action: 'auth.logout',
+            targetType: 'user',
+            targetId: authState.user?.id ?? 'unknown',
+            metadata: {
+              'email': authState.user?.email ?? '',
+              'timestamp': DateTime.now().toUtc().toIso8601String(),
+            },
+          );
     } catch (_) {}
     await ref.read(authStateProvider.notifier).logout();
   }

@@ -58,10 +58,8 @@ void main() {
       ),
       paymentMethods: paymentMethods ??
           [
-            const PaymentMethodStats(
-                method: 'cash', count: 8, total: 2000.0),
-            const PaymentMethodStats(
-                method: 'card', count: 4, total: 1500.0),
+            const PaymentMethodStats(method: 'cash', count: 8, total: 2000.0),
+            const PaymentMethodStats(method: 'card', count: 4, total: 1500.0),
           ],
       hourlySales: hourlySales ?? [],
       topProducts: topProducts ?? [],

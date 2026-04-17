@@ -429,11 +429,7 @@ class _ZatcaReceipt extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AlhaiSpacing.sm),
-            QrImageView(
-              data: qrData,
-              version: QrVersions.auto,
-              size: 180,
-            ),
+            QrImageView(data: qrData, version: QrVersions.auto, size: 180),
             const SizedBox(height: AlhaiSpacing.sm),
             Text(
               'التاريخ الميلادي: $gregorianDate',
@@ -460,4 +456,3 @@ class _ZatcaReceipt extends StatelessWidget {
     );
   }
 }
-

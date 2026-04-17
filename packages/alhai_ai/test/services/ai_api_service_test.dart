@@ -112,10 +112,7 @@ void main() {
     });
 
     test('strips email with plus addressing', () {
-      expect(
-        sanitizePii('user+tag@gmail.com'),
-        '[EMAIL]',
-      );
+      expect(sanitizePii('user+tag@gmail.com'), '[EMAIL]');
     });
 
     test('strips multiple emails in one message', () {
@@ -127,17 +124,11 @@ void main() {
     // ---- Saudi national IDs ----
 
     test('strips Saudi NID starting with 1 (citizen)', () {
-      expect(
-        sanitizePii('ID: 1012345678'),
-        'ID: [NATIONAL_ID]',
-      );
+      expect(sanitizePii('ID: 1012345678'), 'ID: [NATIONAL_ID]');
     });
 
     test('strips Saudi NID starting with 2 (resident)', () {
-      expect(
-        sanitizePii('Iqama 2098765432'),
-        'Iqama [NATIONAL_ID]',
-      );
+      expect(sanitizePii('Iqama 2098765432'), 'Iqama [NATIONAL_ID]');
     });
 
     test('does not strip 10-digit number starting with 3', () {
@@ -150,33 +141,21 @@ void main() {
 
     test('does not strip 9-digit number starting with 1', () {
       // Only 9 digits -- not a valid NID
-      expect(
-        sanitizePii('ref 123456789 ok'),
-        isNot(contains('[NATIONAL_ID]')),
-      );
+      expect(sanitizePii('ref 123456789 ok'), isNot(contains('[NATIONAL_ID]')));
     });
 
     // ---- Phone numbers ----
 
     test('strips Saudi mobile with +966 prefix', () {
-      expect(
-        sanitizePii('call +966 50 123 4567'),
-        contains('[PHONE]'),
-      );
+      expect(sanitizePii('call +966 50 123 4567'), contains('[PHONE]'));
     });
 
     test('strips local Saudi mobile 05xxxxxxxx', () {
-      expect(
-        sanitizePii('call 0512345678'),
-        contains('[PHONE]'),
-      );
+      expect(sanitizePii('call 0512345678'), contains('[PHONE]'));
     });
 
     test('strips phone with dashes', () {
-      expect(
-        sanitizePii('phone: 050-123-4567'),
-        contains('[PHONE]'),
-      );
+      expect(sanitizePii('phone: 050-123-4567'), contains('[PHONE]'));
     });
 
     // ---- Mixed content ----

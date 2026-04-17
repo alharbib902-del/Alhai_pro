@@ -8,8 +8,10 @@ class DistributorInvoice {
   final String? orgId;
   final String storeId;
   final String invoiceNumber;
-  final String invoiceType; // simplified_tax | standard_tax | credit_note | debit_note
-  final String status; // draft | issued | sent | paid | partially_paid | overdue | cancelled | archived
+  final String
+  invoiceType; // simplified_tax | standard_tax | credit_note | debit_note
+  final String
+  status; // draft | issued | sent | paid | partially_paid | overdue | cancelled | archived
   final String? saleId;
   final String? refInvoiceId;
   final String? refReason;

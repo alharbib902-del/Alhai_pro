@@ -181,8 +181,9 @@ class _CreateProductDialogState extends ConsumerState<CreateProductDialog> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.close),
-                        onPressed:
-                            _isLoading ? null : () => Navigator.of(context).pop(),
+                        onPressed: _isLoading
+                            ? null
+                            : () => Navigator.of(context).pop(),
                       ),
                     ],
                   ),
@@ -221,8 +222,9 @@ class _CreateProductDialogState extends ConsumerState<CreateProductDialog> {
                       labelText: 'السعر (ريال) *',
                       border: OutlineInputBorder(),
                     ),
-                    keyboardType:
-                        const TextInputType.numberWithOptions(decimal: true),
+                    keyboardType: const TextInputType.numberWithOptions(
+                      decimal: true,
+                    ),
                     inputFormatters: [
                       FilteringTextInputFormatter.allow(RegExp(r'[\d.]')),
                     ],
@@ -263,8 +265,9 @@ class _CreateProductDialogState extends ConsumerState<CreateProductDialog> {
                               ),
                             )
                             .toList(),
-                        onChanged:
-                            _isLoading ? null : (v) => setState(() => _selectedCategoryId = v),
+                        onChanged: _isLoading
+                            ? null
+                            : (v) => setState(() => _selectedCategoryId = v),
                         validator: (v) =>
                             v == null ? 'اختر تصنيفاً للمنتج' : null,
                       );
@@ -321,9 +324,7 @@ class _CreateProductDialogState extends ConsumerState<CreateProductDialog> {
                       border: OutlineInputBorder(),
                     ),
                     keyboardType: TextInputType.number,
-                    inputFormatters: [
-                      FilteringTextInputFormatter.digitsOnly,
-                    ],
+                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     enabled: !_isLoading,
                   ),
                   const SizedBox(height: 24),
@@ -337,8 +338,9 @@ class _CreateProductDialogState extends ConsumerState<CreateProductDialog> {
                         backgroundColor: AppColors.primary,
                         foregroundColor: AppColors.textOnPrimary,
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(AlhaiRadius.sm + 2),
+                          borderRadius: BorderRadius.circular(
+                            AlhaiRadius.sm + 2,
+                          ),
                         ),
                       ),
                       child: _isLoading
@@ -393,10 +395,7 @@ class _CreateProductDialogState extends ConsumerState<CreateProductDialog> {
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        Image.memory(
-                          _imageBytes!,
-                          fit: BoxFit.contain,
-                        ),
+                        Image.memory(_imageBytes!, fit: BoxFit.contain),
                         Positioned(
                           top: 8,
                           left: 8,

@@ -51,14 +51,18 @@ Widget buildDistributorTestApp({
         path: '/verify-email',
         builder: (_, state) {
           final email = state.extra as String?;
-          return _StubScreen(label: 'Verify Email${email != null ? ' $email' : ''}');
+          return _StubScreen(
+            label: 'Verify Email${email != null ? ' $email' : ''}',
+          );
         },
       ),
       GoRoute(
         path: '/mfa-verify',
         builder: (_, state) {
           final factorId = state.extra as String? ?? '';
-          return _StubScreen(label: 'MFA Verify${factorId.isNotEmpty ? ' $factorId' : ''}');
+          return _StubScreen(
+            label: 'MFA Verify${factorId.isNotEmpty ? ' $factorId' : ''}',
+          );
         },
       ),
       GoRoute(
@@ -133,8 +137,9 @@ Widget buildDistributorTestApp({
       ),
       GoRoute(
         path: '/admin/distributor/:id',
-        builder: (_, state) =>
-            _StubScreen(label: 'Admin Distributor ${state.pathParameters["id"]}'),
+        builder: (_, state) => _StubScreen(
+          label: 'Admin Distributor ${state.pathParameters["id"]}',
+        ),
       ),
     ],
   );

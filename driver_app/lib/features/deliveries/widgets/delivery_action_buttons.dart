@@ -172,8 +172,9 @@ class _DeliveryActionButtonsState extends ConsumerState<DeliveryActionButtons> {
                             ? Theme.of(context).colorScheme.error
                             : null,
                         shape: RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.circular(AlhaiRadius.button),
+                          borderRadius: BorderRadius.circular(
+                            AlhaiRadius.button,
+                          ),
                         ),
                       ),
                     ),

@@ -21,6 +21,6 @@ final categoriesProvider = FutureProvider<List<String>>((ref) async {
 /// Categories with IDs for product creation forms.
 final categoriesWithIdsProvider =
     FutureProvider<List<({String id, String name})>>((ref) async {
-  final ds = ref.watch(distributorDatasourceProvider);
-  return ds.getCategoriesWithIds();
-});
+      final ds = ref.watch(distributorDatasourceProvider);
+      return ds.getCategoriesWithIds();
+    });

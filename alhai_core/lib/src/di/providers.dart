@@ -147,11 +147,11 @@ final productsRemoteDataSourceProvider = Provider<ProductsRemoteDataSource>((
 });
 
 /// Categories remote - delegates to GetIt registration
-final categoriesRemoteDataSourceProvider = Provider<CategoriesRemoteDataSource>((
-  ref,
-) {
-  return GetIt.instance<CategoriesRemoteDataSource>();
-});
+final categoriesRemoteDataSourceProvider = Provider<CategoriesRemoteDataSource>(
+  (ref) {
+    return GetIt.instance<CategoriesRemoteDataSource>();
+  },
+);
 
 /// Delivery remote - delegates to GetIt registration
 final deliveryRemoteDataSourceProvider = Provider<DeliveryRemoteDataSource>((

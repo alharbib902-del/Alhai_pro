@@ -21,9 +21,7 @@ final _assignedDelivery = <String, dynamic>{
   'delivery_fee': 15,
   'distance_km': 3.2,
   'estimated_time_minutes': 12,
-  'orders': <String, dynamic>{
-    'order_number': '1234',
-  },
+  'orders': <String, dynamic>{'order_number': '1234'},
 };
 
 // ---------------------------------------------------------------------------
@@ -35,7 +33,10 @@ class _StatusUpdateTracker {
   final calls = <({String id, String status, String? notes})>[];
 
   Future<Map<String, dynamic>> call(
-      String id, String status, String? notes) async {
+    String id,
+    String status,
+    String? notes,
+  ) async {
     calls.add((id: id, status: status, notes: notes));
     return {'success': true};
   }
@@ -65,14 +66,12 @@ Widget _buildTestWidget({
       ),
       GoRoute(
         path: '/new-order',
-        builder: (_, __) =>
-            NewOrderScreen(timeoutSeconds: timeoutSeconds),
+        builder: (_, __) => NewOrderScreen(timeoutSeconds: timeoutSeconds),
       ),
       GoRoute(
         path: '/orders/:id',
-        builder: (_, state) => Scaffold(
-          body: Text('order-detail-${state.pathParameters['id']}'),
-        ),
+        builder: (_, state) =>
+            Scaffold(body: Text('order-detail-${state.pathParameters['id']}')),
       ),
     ],
   );
@@ -81,11 +80,9 @@ Widget _buildTestWidget({
     overrides: [
       activeDeliveriesProvider.overrideWith((ref) async => deliveries),
       if (tracker != null)
-        updateDeliveryStatusProvider.overrideWith(
-          (ref, params) async {
-            return tracker.call(params.id, params.status, params.notes);
-          },
-        ),
+        updateDeliveryStatusProvider.overrideWith((ref, params) async {
+          return tracker.call(params.id, params.status, params.notes);
+        }),
     ],
     child: MaterialApp.router(
       title: 'Test',
@@ -110,10 +107,9 @@ void main() {
   group('NewOrderScreen Timeout (C4)', () {
     testWidgets('shows countdown text with initial seconds', (tester) async {
       _setPhoneViewport(tester);
-      await tester.pumpWidget(_buildTestWidget(
-        deliveries: [_assignedDelivery],
-        timeoutSeconds: 5,
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(deliveries: [_assignedDelivery], timeoutSeconds: 5),
+      );
       await tester.pumpAndSettle();
 
       expect(find.textContaining('ثانية للقبول'), findsOneWidget);
@@ -122,10 +118,9 @@ void main() {
 
     testWidgets('countdown decrements each second', (tester) async {
       _setPhoneViewport(tester);
-      await tester.pumpWidget(_buildTestWidget(
-        deliveries: [_assignedDelivery],
-        timeoutSeconds: 5,
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(deliveries: [_assignedDelivery], timeoutSeconds: 5),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('5 ثانية للقبول'), findsOneWidget);
@@ -139,25 +134,27 @@ void main() {
 
     testWidgets('shows progress bar', (tester) async {
       _setPhoneViewport(tester);
-      await tester.pumpWidget(_buildTestWidget(
-        deliveries: [_assignedDelivery],
-        timeoutSeconds: 5,
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(deliveries: [_assignedDelivery], timeoutSeconds: 5),
+      );
       await tester.pumpAndSettle();
 
       expect(find.byType(LinearProgressIndicator), findsOneWidget);
     });
 
-    testWidgets('auto-rejects with reason=timeout when timer expires',
-        (tester) async {
+    testWidgets('auto-rejects with reason=timeout when timer expires', (
+      tester,
+    ) async {
       _setPhoneViewport(tester);
       final tracker = _StatusUpdateTracker();
 
-      await tester.pumpWidget(_buildTestWidget(
-        deliveries: [_assignedDelivery],
-        tracker: tracker,
-        timeoutSeconds: 3,
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          deliveries: [_assignedDelivery],
+          tracker: tracker,
+          timeoutSeconds: 3,
+        ),
+      );
       await tester.pumpAndSettle();
 
       // Tick through the full countdown: 3 → 2 → 1 → 0 (auto-reject).
@@ -182,11 +179,13 @@ void main() {
       _setPhoneViewport(tester);
       final tracker = _StatusUpdateTracker();
 
-      await tester.pumpWidget(_buildTestWidget(
-        deliveries: [_assignedDelivery],
-        tracker: tracker,
-        timeoutSeconds: 5,
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          deliveries: [_assignedDelivery],
+          tracker: tracker,
+          timeoutSeconds: 5,
+        ),
+      );
       await tester.pumpAndSettle();
 
       await tester.pump(const Duration(seconds: 1));
@@ -206,8 +205,9 @@ void main() {
       expect(acceptCall.id, _testDeliveryId);
 
       // No timeout reject should have fired.
-      final timeoutCalls =
-          tracker.calls.where((c) => c.notes == 'timeout').toList();
+      final timeoutCalls = tracker.calls
+          .where((c) => c.notes == 'timeout')
+          .toList();
       expect(timeoutCalls, isEmpty);
     });
 
@@ -215,11 +215,13 @@ void main() {
       _setPhoneViewport(tester);
       final tracker = _StatusUpdateTracker();
 
-      await tester.pumpWidget(_buildTestWidget(
-        deliveries: [_assignedDelivery],
-        tracker: tracker,
-        timeoutSeconds: 10,
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(
+          deliveries: [_assignedDelivery],
+          tracker: tracker,
+          timeoutSeconds: 10,
+        ),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('رفض'));
@@ -236,10 +238,9 @@ void main() {
 
     testWidgets('dispose cleans up timer without errors', (tester) async {
       _setPhoneViewport(tester);
-      await tester.pumpWidget(_buildTestWidget(
-        deliveries: [_assignedDelivery],
-        timeoutSeconds: 30,
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(deliveries: [_assignedDelivery], timeoutSeconds: 30),
+      );
       await tester.pumpAndSettle();
 
       // Tick to ensure timer is running.
@@ -247,9 +248,9 @@ void main() {
       expect(find.text('29 ثانية للقبول'), findsOneWidget);
 
       // Replace the widget tree — triggers dispose of the NewOrderScreen.
-      await tester.pumpWidget(const MaterialApp(
-        home: Scaffold(body: Text('replaced')),
-      ));
+      await tester.pumpWidget(
+        const MaterialApp(home: Scaffold(body: Text('replaced'))),
+      );
       await tester.pumpAndSettle();
 
       // No exceptions thrown — timer was cleaned up.
@@ -258,10 +259,9 @@ void main() {
 
     testWidgets('shows order details (number, address, fee)', (tester) async {
       _setPhoneViewport(tester);
-      await tester.pumpWidget(_buildTestWidget(
-        deliveries: [_assignedDelivery],
-        timeoutSeconds: 30,
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(deliveries: [_assignedDelivery], timeoutSeconds: 30),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('#1234'), findsOneWidget);
@@ -272,10 +272,9 @@ void main() {
 
     testWidgets('empty assigned list shows no-orders message', (tester) async {
       _setPhoneViewport(tester);
-      await tester.pumpWidget(_buildTestWidget(
-        deliveries: [],
-        timeoutSeconds: 5,
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(deliveries: [], timeoutSeconds: 5),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('لا توجد طلبات جديدة'), findsOneWidget);

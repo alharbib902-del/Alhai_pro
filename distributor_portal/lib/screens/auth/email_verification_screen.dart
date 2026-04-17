@@ -31,9 +31,7 @@ class _EmailVerificationScreenState
   Timer? _cooldownTimer;
 
   String get _displayEmail =>
-      widget.email ??
-      AppSupabase.client.auth.currentUser?.email ??
-      '';
+      widget.email ?? AppSupabase.client.auth.currentUser?.email ?? '';
 
   @override
   void dispose() {
@@ -119,8 +117,7 @@ class _EmailVerificationScreenState
           padding: EdgeInsets.all(isWide ? AlhaiSpacing.xl : AlhaiSpacing.lg),
           child: Container(
             constraints: const BoxConstraints(maxWidth: 460),
-            padding:
-                EdgeInsets.all(isWide ? AlhaiSpacing.xl : AlhaiSpacing.lg),
+            padding: EdgeInsets.all(isWide ? AlhaiSpacing.xl : AlhaiSpacing.lg),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(20),
@@ -131,10 +128,9 @@ class _EmailVerificationScreenState
                   ? null
                   : [
                       BoxShadow(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .shadow
-                            .withValues(alpha: 0.08),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.shadow.withValues(alpha: 0.08),
                         blurRadius: 24,
                         offset: const Offset(0, 8),
                       ),

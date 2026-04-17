@@ -13,7 +13,4 @@ _$AuthResultImpl _$$AuthResultImplFromJson(Map<String, dynamic> json) =>
     );
 
 Map<String, dynamic> _$$AuthResultImplToJson(_$AuthResultImpl instance) =>
-    <String, dynamic>{
-      'user': instance.user,
-      'tokens': instance.tokens,
-    };
+    <String, dynamic>{'user': instance.user, 'tokens': instance.tokens};

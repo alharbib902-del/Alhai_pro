@@ -145,9 +145,9 @@ void main() {
     });
 
     testWidgets('shows document list with correct info', (tester) async {
-      await tester.pumpWidget(_buildTestWidget(
-        documents: [_sampleDoc, _approvedDoc],
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(documents: [_sampleDoc, _approvedDoc]),
+      );
       await tester.pumpAndSettle();
 
       // Document type names
@@ -160,9 +160,9 @@ void main() {
     });
 
     testWidgets('shows status badges', (tester) async {
-      await tester.pumpWidget(_buildTestWidget(
-        documents: [_sampleDoc, _approvedDoc, _rejectedDoc],
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(documents: [_sampleDoc, _approvedDoc, _rejectedDoc]),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('قيد المراجعة'), findsOneWidget);
@@ -178,9 +178,9 @@ void main() {
     });
 
     testWidgets('delete button shown for non-approved docs', (tester) async {
-      await tester.pumpWidget(_buildTestWidget(
-        documents: [_sampleDoc, _approvedDoc],
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(documents: [_sampleDoc, _approvedDoc]),
+      );
       await tester.pumpAndSettle();
 
       // Under-review doc should have delete icon
@@ -198,11 +198,12 @@ void main() {
       expect(find.textContaining('2027-03-15'), findsOneWidget);
     });
 
-    testWidgets('no missing docs warning when all required present',
-        (tester) async {
-      await tester.pumpWidget(_buildTestWidget(
-        documents: [_sampleDoc, _approvedDoc],
-      ));
+    testWidgets('no missing docs warning when all required present', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _buildTestWidget(documents: [_sampleDoc, _approvedDoc]),
+      );
       await tester.pumpAndSettle();
 
       // Both CR and VAT are present → no "missing" warning

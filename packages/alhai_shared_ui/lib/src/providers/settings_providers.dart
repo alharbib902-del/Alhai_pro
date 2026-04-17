@@ -17,50 +17,50 @@ import 'package:get_it/get_it.dart';
 /// إحصائيات المبيعات (للتقارير)
 final salesAnalyticsProvider = FutureProvider.autoDispose
     .family<SalesStats, DateRange?>((ref, dateRange) async {
-      final storeId = ref.watch(currentStoreIdProvider);
-      if (storeId == null) {
-        return const SalesStats(
-          count: 0,
-          total: 0,
-          average: 0,
-          maxSale: 0,
-          minSale: 0,
-        );
-      }
-      final db = GetIt.I<AppDatabase>();
-      return db.salesDao.getSalesStats(
-        storeId,
-        startDate: dateRange?.start,
-        endDate: dateRange?.end,
-      );
-    });
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) {
+    return const SalesStats(
+      count: 0,
+      total: 0,
+      average: 0,
+      maxSale: 0,
+      minSale: 0,
+    );
+  }
+  final db = GetIt.I<AppDatabase>();
+  return db.salesDao.getSalesStats(
+    storeId,
+    startDate: dateRange?.start,
+    endDate: dateRange?.end,
+  );
+});
 
 /// المبيعات بالساعة (تقرير أوقات الذروة)
 final hourlySalesProvider = FutureProvider.autoDispose
     .family<List<HourlySales>, DateTime>((ref, date) async {
-      final storeId = ref.watch(currentStoreIdProvider);
-      if (storeId == null) return [];
-      final db = GetIt.I<AppDatabase>();
-      return db.salesDao.getHourlySales(storeId, date);
-    });
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) return [];
+  final db = GetIt.I<AppDatabase>();
+  return db.salesDao.getHourlySales(storeId, date);
+});
 
 /// مبيعات يوم محدد
 final dailySalesProvider = FutureProvider.autoDispose
     .family<List<SalesTableData>, DateTime>((ref, date) async {
-      final storeId = ref.watch(currentStoreIdProvider);
-      if (storeId == null) return [];
-      final db = GetIt.I<AppDatabase>();
-      return db.salesDao.getSalesByDate(storeId, date);
-    });
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) return [];
+  final db = GetIt.I<AppDatabase>();
+  return db.salesDao.getSalesByDate(storeId, date);
+});
 
 /// إحصائيات طرق الدفع (للتقارير)
 final paymentReportProvider =
     FutureProvider.autoDispose<List<PaymentMethodStats>>((ref) async {
-      final storeId = ref.watch(currentStoreIdProvider);
-      if (storeId == null) return [];
-      final db = GetIt.I<AppDatabase>();
-      return db.salesDao.getPaymentMethodStats(storeId);
-    });
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) return [];
+  final db = GetIt.I<AppDatabase>();
+  return db.salesDao.getPaymentMethodStats(storeId);
+});
 
 // ============================================================================
 // SETTINGS PROVIDERS - Users & Roles
@@ -99,15 +99,15 @@ final activityLogProvider = FutureProvider.autoDispose<List<AuditLogTableData>>(
 /// سجل النشاطات حسب الفترة
 final activityLogByDateProvider = FutureProvider.autoDispose
     .family<List<AuditLogTableData>, DateRange>((ref, dateRange) async {
-      final storeId = ref.watch(currentStoreIdProvider);
-      if (storeId == null) return [];
-      final db = GetIt.I<AppDatabase>();
-      return db.auditLogDao.getLogsByDateRange(
-        storeId,
-        dateRange.start,
-        dateRange.end,
-      );
-    });
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) return [];
+  final db = GetIt.I<AppDatabase>();
+  return db.auditLogDao.getLogsByDateRange(
+    storeId,
+    dateRange.start,
+    dateRange.end,
+  );
+});
 
 // ============================================================================
 // PAYMENT DEVICE SETTINGS PROVIDER
@@ -148,35 +148,36 @@ class PaymentDeviceSettings {
 /// مزود إعدادات أجهزة الدفع
 final paymentDeviceSettingsProvider =
     FutureProvider.autoDispose<PaymentDeviceSettings>((ref) async {
-      final storeId = ref.watch(currentStoreIdProvider);
-      if (storeId == null) return const PaymentDeviceSettings();
+  final storeId = ref.watch(currentStoreIdProvider);
+  if (storeId == null) return const PaymentDeviceSettings();
 
-      final db = GetIt.I<AppDatabase>();
-      try {
-        final settings = await (db.select(
-          db.settingsTable,
-        )..where((s) => s.storeId.equals(storeId))).get();
+  final db = GetIt.I<AppDatabase>();
+  try {
+    final settings = await (db.select(
+      db.settingsTable,
+    )..where((s) => s.storeId.equals(storeId)))
+        .get();
 
-        final settingsMap = <String, String>{};
-        for (final s in settings) {
-          settingsMap[s.key] = s.value;
-        }
+    final settingsMap = <String, String>{};
+    for (final s in settings) {
+      settingsMap[s.key] = s.value;
+    }
 
-        return PaymentDeviceSettings(
-          enableMada: settingsMap['payment_enable_mada'] != 'false',
-          enableVisa: settingsMap['payment_enable_visa'] != 'false',
-          enableStcPay: settingsMap['payment_enable_stc_pay'] == 'true',
-          enableApplePay: settingsMap['payment_enable_apple_pay'] == 'true',
-          terminalType: settingsMap['payment_terminal_type'] ?? 'ingenico',
-          autoSettle: settingsMap['payment_auto_settle'] != 'false',
-          enableNfcSoftPos: settingsMap['payment_enable_nfc_softpos'] == 'true',
-          softPosMode: settingsMap['payment_softpos_mode'] ?? 'mock',
-        );
-      } catch (e) {
-        if (kDebugMode) debugPrint('Error parsing payment settings: $e');
-        return const PaymentDeviceSettings();
-      }
-    });
+    return PaymentDeviceSettings(
+      enableMada: settingsMap['payment_enable_mada'] != 'false',
+      enableVisa: settingsMap['payment_enable_visa'] != 'false',
+      enableStcPay: settingsMap['payment_enable_stc_pay'] == 'true',
+      enableApplePay: settingsMap['payment_enable_apple_pay'] == 'true',
+      terminalType: settingsMap['payment_terminal_type'] ?? 'ingenico',
+      autoSettle: settingsMap['payment_auto_settle'] != 'false',
+      enableNfcSoftPos: settingsMap['payment_enable_nfc_softpos'] == 'true',
+      softPosMode: settingsMap['payment_softpos_mode'] ?? 'mock',
+    );
+  } catch (e) {
+    if (kDebugMode) debugPrint('Error parsing payment settings: $e');
+    return const PaymentDeviceSettings();
+  }
+});
 
 // ============================================================================
 // DATA MODELS

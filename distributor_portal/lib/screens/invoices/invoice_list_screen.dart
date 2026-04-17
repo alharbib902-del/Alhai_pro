@@ -147,8 +147,7 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen> {
 
                 // ── Content ──
                 invoicesAsync.when(
-                  loading: () =>
-                      const TableSkeleton(rows: 6, columns: 5),
+                  loading: () => const TableSkeleton(rows: 6, columns: 5),
                   error: (err, _) => ErrorStateWidget(
                     message: 'حدث خطأ أثناء تحميل الفواتير',
                     onRetry: () =>
@@ -187,11 +186,7 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen> {
     );
     return Row(
       children: [
-        Icon(
-          Icons.receipt_long,
-          size: 28,
-          color: AppColors.primary,
-        ),
+        Icon(Icons.receipt_long, size: 28, color: AppColors.primary),
         const SizedBox(width: AlhaiSpacing.sm),
         Expanded(
           child: Text(
@@ -257,10 +252,7 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen> {
         decoration: InputDecoration(
           hintText: 'بحث برقم الفاتورة أو اسم العميل...',
           hintStyle: TextStyle(color: AppColors.getTextMuted(isDark)),
-          prefixIcon: Icon(
-            Icons.search,
-            color: AppColors.getTextMuted(isDark),
-          ),
+          prefixIcon: Icon(Icons.search, color: AppColors.getTextMuted(isDark)),
           suffixIcon: _searchQuery.isNotEmpty
               ? IconButton(
                   icon: const Icon(Icons.clear, size: 18),
@@ -414,10 +406,7 @@ class _InvoiceListScreenState extends ConsumerState<InvoiceListScreen> {
                 ),
               ),
             ),
-            Expanded(
-              flex: 1,
-              child: _statusBadge(inv.status, isDark),
-            ),
+            Expanded(flex: 1, child: _statusBadge(inv.status, isDark)),
             Expanded(
               flex: 1,
               child: Row(

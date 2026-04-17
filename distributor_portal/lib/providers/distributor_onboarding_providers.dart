@@ -12,9 +12,9 @@ import 'distributor_datasource_provider.dart';
 /// Current distributor account status (for routing/UI).
 final distributorAccountStatusProvider =
     FutureProvider.autoDispose<DistributorAccountStatus?>((ref) async {
-  final ds = ref.watch(distributorDatasourceProvider);
-  return ds.getCurrentDistributorStatus();
-});
+      final ds = ref.watch(distributorDatasourceProvider);
+      return ds.getCurrentDistributorStatus();
+    });
 
 // ─── Signup notifier ────────────────────────────────────────────
 
@@ -24,11 +24,7 @@ class SignupState {
   final String? error;
   final DistributorSignupResult? result;
 
-  const SignupState({
-    this.isLoading = false,
-    this.error,
-    this.result,
-  });
+  const SignupState({this.isLoading = false, this.error, this.result});
 
   SignupState copyWith({
     bool? isLoading,

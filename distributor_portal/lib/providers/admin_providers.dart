@@ -23,51 +23,42 @@ final isSuperAdminProvider = Provider<bool>((ref) {
 /// Pending distributors awaiting review.
 final pendingDistributorsProvider =
     FutureProvider.autoDispose<List<PendingDistributor>>((ref) {
-  return ref.read(adminServiceProvider).listPendingDistributors();
-});
+      return ref.read(adminServiceProvider).listPendingDistributors();
+    });
 
 /// Distributors filtered by status.
 final distributorsByStatusProvider = FutureProvider.autoDispose
-    .family<List<PendingDistributor>, DistributorAccountStatus>(
-  (ref, status) {
-    return ref.read(adminServiceProvider).listDistributorsByStatus(status);
-  },
-);
+    .family<List<PendingDistributor>, DistributorAccountStatus>((ref, status) {
+      return ref.read(adminServiceProvider).listDistributorsByStatus(status);
+    });
 
 /// Single distributor detail.
-final distributorDetailProvider =
-    FutureProvider.autoDispose.family<PendingDistributor, String>(
-  (ref, orgId) {
-    return ref.read(adminServiceProvider).getDistributor(orgId);
-  },
-);
+final distributorDetailProvider = FutureProvider.autoDispose
+    .family<PendingDistributor, String>((ref, orgId) {
+      return ref.read(adminServiceProvider).getDistributor(orgId);
+    });
 
 /// Documents for a specific org.
-final orgDocumentsProvider =
-    FutureProvider.autoDispose.family<List<DistributorDocument>, String>(
-  (ref, orgId) {
-    return ref.read(adminServiceProvider).listDocumentsForOrg(orgId);
-  },
-);
+final orgDocumentsProvider = FutureProvider.autoDispose
+    .family<List<DistributorDocument>, String>((ref, orgId) {
+      return ref.read(adminServiceProvider).listDocumentsForOrg(orgId);
+    });
 
 /// Pending documents for review.
 final pendingDocumentsProvider =
     FutureProvider.autoDispose<List<DistributorDocument>>((ref) {
-  return ref.read(adminServiceProvider).listPendingDocuments();
-});
+      return ref.read(adminServiceProvider).listPendingDocuments();
+    });
 
 /// Admin notifications (parameterized by unreadOnly filter).
 final adminNotificationsProvider = FutureProvider.autoDispose
-    .family<List<AdminNotification>, bool>(
-  (ref, unreadOnly) {
-    return ref.read(adminServiceProvider).listNotifications(
-          unreadOnly: unreadOnly,
-        );
-  },
-);
+    .family<List<AdminNotification>, bool>((ref, unreadOnly) {
+      return ref
+          .read(adminServiceProvider)
+          .listNotifications(unreadOnly: unreadOnly);
+    });
 
 /// Count of unread admin notifications.
-final unreadNotificationCountProvider =
-    FutureProvider.autoDispose<int>((ref) {
+final unreadNotificationCountProvider = FutureProvider.autoDispose<int>((ref) {
   return ref.read(adminServiceProvider).getUnreadCount();
 });

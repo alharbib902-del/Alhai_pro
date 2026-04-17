@@ -7,8 +7,9 @@ const _kDrivingModeKey = 'driving_mode_enabled';
 ///
 /// Driving mode increases text scale and touch targets for safer in-vehicle
 /// use. The setting is persisted in SharedPreferences so it survives restarts.
-final drivingModeProvider =
-    StateNotifierProvider<DrivingModeNotifier, bool>((ref) {
+final drivingModeProvider = StateNotifierProvider<DrivingModeNotifier, bool>((
+  ref,
+) {
   return DrivingModeNotifier();
 });
 

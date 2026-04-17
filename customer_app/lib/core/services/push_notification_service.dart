@@ -78,8 +78,9 @@ class PushNotificationService {
     _tokenRefreshSub = _messaging.onTokenRefresh.listen(_saveTokenToSupabase);
 
     // Foreground messages -> show local notification
-    _foregroundSub =
-        FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
+    _foregroundSub = FirebaseMessaging.onMessage.listen(
+      _handleForegroundMessage,
+    );
 
     // Notification tap while app is in background (not terminated)
     FirebaseMessaging.onMessageOpenedApp.listen(_handleNotificationTap);
@@ -106,7 +107,8 @@ class PushNotificationService {
       if (userId != null) {
         await Supabase.instance.client
             .from('users')
-            .update({'fcm_token': null}).eq('id', userId);
+            .update({'fcm_token': null})
+            .eq('id', userId);
       }
       await _messaging.deleteToken();
     } catch (e, stack) {
@@ -131,9 +133,7 @@ class PushNotificationService {
       );
 
       if (kDebugMode) {
-        debugPrint(
-          '[FCM] Permission status: ${settings.authorizationStatus}',
-        );
+        debugPrint('[FCM] Permission status: ${settings.authorizationStatus}');
       }
 
       // iOS: set foreground presentation options
@@ -169,7 +169,8 @@ class PushNotificationService {
 
       await Supabase.instance.client
           .from('users')
-          .update({'fcm_token': token}).eq('id', userId);
+          .update({'fcm_token': token})
+          .eq('id', userId);
 
       if (kDebugMode) {
         debugPrint('[FCM] Token saved for user $userId');
@@ -199,9 +200,10 @@ class PushNotificationService {
   }
 
   static Future<void> _createNotificationChannels() async {
-    final androidPlugin =
-        _localNotifications.resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>();
+    final androidPlugin = _localNotifications
+        .resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >();
 
     if (androidPlugin != null) {
       await androidPlugin.createNotificationChannel(_orderChannel);

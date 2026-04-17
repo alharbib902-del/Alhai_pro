@@ -226,10 +226,19 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
             pw.SizedBox(height: 10),
             pw.Text(_periodLabel(l10n)),
             pw.Divider(),
-            _pdfSummaryRow(l10n.totalPurchases, '${_totalPurchases.toStringAsFixed(0)} ${l10n.currency}'),
+            _pdfSummaryRow(
+              l10n.totalPurchases,
+              '${_totalPurchases.toStringAsFixed(0)} ${l10n.currency}',
+            ),
             _pdfSummaryRow(l10n.invoices, '$_invoiceCount'),
-            _pdfSummaryRow(l10n.averageInvoice, '${_avgInvoice.toStringAsFixed(0)} ${l10n.currency}'),
-            _pdfSummaryRow(l10n.reportTotalTax, '${_totalTax.toStringAsFixed(0)} ${l10n.currency}'),
+            _pdfSummaryRow(
+              l10n.averageInvoice,
+              '${_avgInvoice.toStringAsFixed(0)} ${l10n.currency}',
+            ),
+            _pdfSummaryRow(
+              l10n.reportTotalTax,
+              '${_totalTax.toStringAsFixed(0)} ${l10n.currency}',
+            ),
             pw.Divider(),
             if (_bySupplier.isNotEmpty) ...[
               pw.Text(
@@ -255,12 +264,12 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
   }
 
   pw.Widget _pdfSummaryRow(String label, String value) => pw.Padding(
-        padding: const pw.EdgeInsets.symmetric(vertical: 2),
-        child: pw.Row(
-          mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-          children: [pw.Text(label), pw.Text(value)],
-        ),
-      );
+    padding: const pw.EdgeInsets.symmetric(vertical: 2),
+    child: pw.Row(
+      mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+      children: [pw.Text(label), pw.Text(value)],
+    ),
+  );
 
   Future<void> _exportCsv() async {
     final l10n = AppLocalizations.of(context);
@@ -286,7 +295,8 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
     final pdf = await _buildReportPdf();
     await Printing.sharePdf(
       bytes: await pdf.save(),
-      filename: 'purchases_${DateTime.now().toIso8601String().split('T').first}.pdf',
+      filename:
+          'purchases_${DateTime.now().toIso8601String().split('T').first}.pdf',
     );
   }
 
@@ -323,10 +333,7 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
                     : _error!,
               ),
               const SizedBox(height: AlhaiSpacing.sm),
-              ElevatedButton(
-                onPressed: _loadData,
-                child: Text(l10n.retry),
-              ),
+              ElevatedButton(onPressed: _loadData, child: Text(l10n.retry)),
             ],
           ),
         ),
@@ -344,7 +351,10 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
             itemBuilder: (_) => [
               PopupMenuItem(value: 'week', child: Text(l10n.thisWeek)),
               PopupMenuItem(value: 'month', child: Text(l10n.thisMonth)),
-              PopupMenuItem(value: 'quarter', child: Text(l10n.reportQuarterly)),
+              PopupMenuItem(
+                value: 'quarter',
+                child: Text(l10n.reportQuarterly),
+              ),
               PopupMenuItem(value: 'year', child: Text(l10n.reportAnnual)),
             ],
             child: Padding(
@@ -385,7 +395,8 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
                 Expanded(
                   child: _SummaryCard(
                     label: l10n.totalPurchases,
-                    value: '${_totalPurchases.toStringAsFixed(0)} ${l10n.currency}',
+                    value:
+                        '${_totalPurchases.toStringAsFixed(0)} ${l10n.currency}',
                     icon: Icons.shopping_cart_rounded,
                     color: AlhaiColors.info,
                   ),
@@ -429,7 +440,10 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
             if (_bySupplier.isNotEmpty) ...[
               Text(
                 l10n.reportPurchasesBySupplier,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: AlhaiSpacing.xs),
               Card(
@@ -494,7 +508,10 @@ class _PurchaseReportScreenState extends ConsumerState<PurchaseReportScreen> {
             if (_recent.isNotEmpty) ...[
               Text(
                 l10n.reportRecentInvoices,
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: AlhaiSpacing.xs),
               Card(

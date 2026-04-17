@@ -19,9 +19,15 @@ void main() {
       );
     }
     for (final id in ['user-1']) {
-      await db.into(db.usersTable).insert(
-        UsersTableCompanion.insert(id: id, name: 'User $id', createdAt: now),
-      );
+      await db
+          .into(db.usersTable)
+          .insert(
+            UsersTableCompanion.insert(
+              id: id,
+              name: 'User $id',
+              createdAt: now,
+            ),
+          );
     }
   });
 
@@ -73,9 +79,11 @@ void main() {
       expect(product!.name, 'Safe Product');
 
       // Verify: sales table still exists (injection attempt failed)
-      final salesCount = await db.customSelect(
-        "SELECT COUNT(*) as cnt FROM sqlite_master WHERE type='table' AND name='sales'",
-      ).getSingle();
+      final salesCount = await db
+          .customSelect(
+            "SELECT COUNT(*) as cnt FROM sqlite_master WHERE type='table' AND name='sales'",
+          )
+          .getSingle();
       expect(salesCount.data['cnt'], 1);
     });
 

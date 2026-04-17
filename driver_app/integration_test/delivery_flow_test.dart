@@ -42,9 +42,7 @@ void main() {
         expectStubScreen('Login');
       });
 
-      testWidgets('authenticated driver sees deliveries list', (
-        tester,
-      ) async {
+      testWidgets('authenticated driver sees deliveries list', (tester) async {
         // Arrange: Start at deliveries (authenticated driver)
         await tester.pumpWidget(
           buildDriverTestApp(initialRoute: '/deliveries'),
@@ -148,9 +146,7 @@ void main() {
         // Act: Driver taps "Navigate to Store". In production this calls
         // update_delivery_status(heading_to_pickup) then opens NavigationScreen.
         final router = GoRouter.of(
-          tester.element(
-            find.byKey(Key('stub_Order $kTestDeliveryId')),
-          ),
+          tester.element(find.byKey(Key('stub_Order $kTestDeliveryId'))),
         );
         router.go('/orders/$kTestDeliveryId/navigate');
         await pumpAndSettleWithTimeout(tester);
@@ -162,9 +158,7 @@ void main() {
       testWidgets('arriving at pickup opens OTP screen', (tester) async {
         // Arrange: Driver is navigating to store (heading_to_pickup)
         await tester.pumpWidget(
-          buildDriverTestApp(
-            initialRoute: '/orders/$kTestDeliveryId/navigate',
-          ),
+          buildDriverTestApp(initialRoute: '/orders/$kTestDeliveryId/navigate'),
         );
         await pumpAndSettleWithTimeout(tester);
         expectStubScreen('Navigate $kTestDeliveryId');
@@ -172,9 +166,7 @@ void main() {
         // Act: Driver arrives at store. In production, geofence triggers
         // arrived_at_pickup status and navigates to OTP screen.
         final router = GoRouter.of(
-          tester.element(
-            find.byKey(Key('stub_Navigate $kTestDeliveryId')),
-          ),
+          tester.element(find.byKey(Key('stub_Navigate $kTestDeliveryId'))),
         );
         router.go('/orders/$kTestDeliveryId/pickup-otp');
         await pumpAndSettleWithTimeout(tester);
@@ -183,9 +175,7 @@ void main() {
         expectStubScreen('Pickup OTP $kTestDeliveryId');
       });
 
-      testWidgets('OTP verification returns to order details', (
-        tester,
-      ) async {
+      testWidgets('OTP verification returns to order details', (tester) async {
         // Arrange: Driver is on the OTP screen
         await tester.pumpWidget(
           buildDriverTestApp(
@@ -199,9 +189,7 @@ void main() {
         // In production, PickupOtpScreen calls the backend, updates status
         // to picked_up, and pops back to order details.
         final router = GoRouter.of(
-          tester.element(
-            find.byKey(Key('stub_Pickup OTP $kTestDeliveryId')),
-          ),
+          tester.element(find.byKey(Key('stub_Pickup OTP $kTestDeliveryId'))),
         );
         router.go('/orders/$kTestDeliveryId');
         await pumpAndSettleWithTimeout(tester);
@@ -221,9 +209,7 @@ void main() {
           expectStubScreen('Order $kTestDeliveryId');
 
           final router = GoRouter.of(
-            tester.element(
-              find.byKey(Key('stub_Order $kTestDeliveryId')),
-            ),
+            tester.element(find.byKey(Key('stub_Order $kTestDeliveryId'))),
           );
 
           // Step 1: heading_to_pickup -> navigate to store
@@ -260,9 +246,7 @@ void main() {
         // Act: Driver taps "Navigate to Customer". Status transitions
         // to heading_to_customer.
         final router = GoRouter.of(
-          tester.element(
-            find.byKey(Key('stub_Order $kTestDeliveryId')),
-          ),
+          tester.element(find.byKey(Key('stub_Order $kTestDeliveryId'))),
         );
         router.go('/orders/$kTestDeliveryId/navigate');
         await pumpAndSettleWithTimeout(tester);
@@ -274,9 +258,7 @@ void main() {
       testWidgets('arriving at customer opens proof capture', (tester) async {
         // Arrange: Driver is heading to customer
         await tester.pumpWidget(
-          buildDriverTestApp(
-            initialRoute: '/orders/$kTestDeliveryId/navigate',
-          ),
+          buildDriverTestApp(initialRoute: '/orders/$kTestDeliveryId/navigate'),
         );
         await pumpAndSettleWithTimeout(tester);
         expectStubScreen('Navigate $kTestDeliveryId');
@@ -284,9 +266,7 @@ void main() {
         // Act: Driver arrives at customer location. Geofence triggers
         // arrived_at_customer status and navigates to proof capture.
         final router = GoRouter.of(
-          tester.element(
-            find.byKey(Key('stub_Navigate $kTestDeliveryId')),
-          ),
+          tester.element(find.byKey(Key('stub_Navigate $kTestDeliveryId'))),
         );
         router.go('/orders/$kTestDeliveryId/proof');
         await pumpAndSettleWithTimeout(tester);
@@ -298,9 +278,7 @@ void main() {
       testWidgets('proof capture completes delivery', (tester) async {
         // Arrange: Driver is on proof capture screen
         await tester.pumpWidget(
-          buildDriverTestApp(
-            initialRoute: '/orders/$kTestDeliveryId/proof',
-          ),
+          buildDriverTestApp(initialRoute: '/orders/$kTestDeliveryId/proof'),
         );
         await pumpAndSettleWithTimeout(tester);
         expectStubScreen('Proof $kTestDeliveryId');
@@ -309,9 +287,7 @@ void main() {
         // DeliveryProofScreen calls the backend, updates status to delivered,
         // and navigates back to deliveries list.
         final router = GoRouter.of(
-          tester.element(
-            find.byKey(Key('stub_Proof $kTestDeliveryId')),
-          ),
+          tester.element(find.byKey(Key('stub_Proof $kTestDeliveryId'))),
         );
         router.go('/deliveries');
         await pumpAndSettleWithTimeout(tester);
@@ -331,9 +307,7 @@ void main() {
           expectStubScreen('Order $kTestDeliveryId');
 
           final router = GoRouter.of(
-            tester.element(
-              find.byKey(Key('stub_Order $kTestDeliveryId')),
-            ),
+            tester.element(find.byKey(Key('stub_Order $kTestDeliveryId'))),
           );
 
           // Step 1: heading_to_customer -> navigate
@@ -358,63 +332,62 @@ void main() {
     // END-TO-END: Full Delivery Lifecycle
     // ========================================================================
     group('End-to-End: Complete Delivery Lifecycle', () {
-      testWidgets(
-        'full flow: accept -> pickup -> deliver -> back to list',
-        (tester) async {
-          // Arrange: Driver on deliveries list, new order arrives
-          await tester.pumpWidget(
-            buildDriverTestApp(initialRoute: '/deliveries'),
-          );
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Deliveries');
+      testWidgets('full flow: accept -> pickup -> deliver -> back to list', (
+        tester,
+      ) async {
+        // Arrange: Driver on deliveries list, new order arrives
+        await tester.pumpWidget(
+          buildDriverTestApp(initialRoute: '/deliveries'),
+        );
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Deliveries');
 
-          final router = GoRouter.of(
-            tester.element(find.byKey(const Key('stub_Deliveries'))),
-          );
+        final router = GoRouter.of(
+          tester.element(find.byKey(const Key('stub_Deliveries'))),
+        );
 
-          // ── Phase 1: Accept ──
-          // New order notification -> accept
-          router.go('/orders/new');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('New Order');
+        // ── Phase 1: Accept ──
+        // New order notification -> accept
+        router.go('/orders/new');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('New Order');
 
-          router.go('/orders/$kTestDeliveryId');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Order $kTestDeliveryId');
+        router.go('/orders/$kTestDeliveryId');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Order $kTestDeliveryId');
 
-          // ── Phase 2: Pickup ──
-          // heading_to_pickup -> navigate to store
-          router.go('/orders/$kTestDeliveryId/navigate');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Navigate $kTestDeliveryId');
+        // ── Phase 2: Pickup ──
+        // heading_to_pickup -> navigate to store
+        router.go('/orders/$kTestDeliveryId/navigate');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Navigate $kTestDeliveryId');
 
-          // arrived_at_pickup -> OTP verification
-          router.go('/orders/$kTestDeliveryId/pickup-otp');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Pickup OTP $kTestDeliveryId');
+        // arrived_at_pickup -> OTP verification
+        router.go('/orders/$kTestDeliveryId/pickup-otp');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Pickup OTP $kTestDeliveryId');
 
-          // picked_up -> back to order details
-          router.go('/orders/$kTestDeliveryId');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Order $kTestDeliveryId');
+        // picked_up -> back to order details
+        router.go('/orders/$kTestDeliveryId');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Order $kTestDeliveryId');
 
-          // ── Phase 3: Deliver ──
-          // heading_to_customer -> navigate to customer
-          router.go('/orders/$kTestDeliveryId/navigate');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Navigate $kTestDeliveryId');
+        // ── Phase 3: Deliver ──
+        // heading_to_customer -> navigate to customer
+        router.go('/orders/$kTestDeliveryId/navigate');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Navigate $kTestDeliveryId');
 
-          // arrived_at_customer -> proof capture
-          router.go('/orders/$kTestDeliveryId/proof');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Proof $kTestDeliveryId');
+        // arrived_at_customer -> proof capture
+        router.go('/orders/$kTestDeliveryId/proof');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Proof $kTestDeliveryId');
 
-          // delivered -> back to deliveries list
-          router.go('/deliveries');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Deliveries');
-        },
-      );
+        // delivered -> back to deliveries list
+        router.go('/deliveries');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Deliveries');
+      });
     });
   });
 }

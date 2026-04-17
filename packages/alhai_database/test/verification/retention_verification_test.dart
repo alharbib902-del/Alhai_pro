@@ -28,7 +28,9 @@ void main() {
     required DateTime createdAt,
     DateTime? syncedAt,
   }) async {
-    await db.into(db.salesTable).insert(
+    await db
+        .into(db.salesTable)
+        .insert(
           SalesTableCompanion.insert(
             id: id,
             receiptNo: 'REC-$id',
@@ -53,9 +55,9 @@ void main() {
 
       await service.runCleanup();
 
-      final remaining = await (db.select(db.salesTable)
-            ..where((s) => s.id.equals('sale-5yr')))
-          .get();
+      final remaining = await (db.select(
+        db.salesTable,
+      )..where((s) => s.id.equals('sale-5yr'))).get();
       expect(remaining.length, 1);
     });
 
@@ -66,9 +68,9 @@ void main() {
       final result = await service.runCleanup();
 
       expect(result.deletedSales, 1);
-      final remaining = await (db.select(db.salesTable)
-            ..where((s) => s.id.equals('sale-7yr')))
-          .get();
+      final remaining = await (db.select(
+        db.salesTable,
+      )..where((s) => s.id.equals('sale-7yr'))).get();
       expect(remaining, isEmpty);
     });
 
@@ -81,11 +83,14 @@ void main() {
 
       await service.runCleanup();
 
-      final remaining = await (db.select(db.salesTable)
-            ..where((s) => s.id.equals('sale-unsync')))
-          .get();
-      expect(remaining.length, 1,
-          reason: 'Unsynced sales must NEVER be deleted regardless of age');
+      final remaining = await (db.select(
+        db.salesTable,
+      )..where((s) => s.id.equals('sale-unsync'))).get();
+      expect(
+        remaining.length,
+        1,
+        reason: 'Unsynced sales must NEVER be deleted regardless of age',
+      );
     });
 
     // -----------------------------------------------------------------------
@@ -122,7 +127,9 @@ void main() {
       );
 
       await _insertSale(id: 'sale-items-7yr', createdAt: age, syncedAt: age);
-      await db.into(db.saleItemsTable).insert(
+      await db
+          .into(db.saleItemsTable)
+          .insert(
             SaleItemsTableCompanion.insert(
               id: 'si-ret-7',
               saleId: 'sale-items-7yr',
@@ -137,21 +144,22 @@ void main() {
 
       await service.runCleanup();
 
-      final remainingItems = await (db.select(db.saleItemsTable)
-            ..where((si) => si.saleId.equals('sale-items-7yr')))
-          .get();
-      expect(remainingItems, isEmpty,
-          reason: 'Sale items must be deleted with their parent sale');
+      final remainingItems = await (db.select(
+        db.saleItemsTable,
+      )..where((si) => si.saleId.equals('sale-items-7yr'))).get();
+      expect(
+        remainingItems,
+        isEmpty,
+        reason: 'Sale items must be deleted with their parent sale',
+      );
     });
 
     // -----------------------------------------------------------------------
     // 7.5 Sync queue cleanup
     // -----------------------------------------------------------------------
     test('sync queue: only completed items > 30 days are deleted', () async {
-      final cutoff35d =
-          DateTime.now().subtract(const Duration(days: 35));
-      final cutoff10d =
-          DateTime.now().subtract(const Duration(days: 10));
+      final cutoff35d = DateTime.now().subtract(const Duration(days: 35));
+      final cutoff10d = DateTime.now().subtract(const Duration(days: 10));
 
       // 35-day-old completed → should be deleted
       await db.syncQueueDao.enqueue(
@@ -200,8 +208,11 @@ void main() {
 
       final result = await service.runCleanup();
 
-      expect(result.deletedSyncItems, equals(1),
-          reason: 'Only old+completed sync items should be deleted');
+      expect(
+        result.deletedSyncItems,
+        equals(1),
+        reason: 'Only old+completed sync items should be deleted',
+      );
     });
 
     // -----------------------------------------------------------------------
@@ -209,19 +220,18 @@ void main() {
     // -----------------------------------------------------------------------
     test('exact 2190-day boundary: sale is NOT deleted (strict <)', () async {
       final age = DateTime.now().subtract(const Duration(days: 2190));
-      await _insertSale(
-        id: 'sale-boundary',
-        createdAt: age,
-        syncedAt: age,
-      );
+      await _insertSale(id: 'sale-boundary', createdAt: age, syncedAt: age);
 
       await service.runCleanup();
 
-      final remaining = await (db.select(db.salesTable)
-            ..where((s) => s.id.equals('sale-boundary')))
-          .get();
-      expect(remaining.length, 1,
-          reason: 'Exact boundary record should NOT be deleted (strict <)');
+      final remaining = await (db.select(
+        db.salesTable,
+      )..where((s) => s.id.equals('sale-boundary'))).get();
+      expect(
+        remaining.length,
+        1,
+        reason: 'Exact boundary record should NOT be deleted (strict <)',
+      );
     });
   });
 }

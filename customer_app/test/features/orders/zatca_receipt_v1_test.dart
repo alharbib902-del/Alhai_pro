@@ -80,10 +80,7 @@ void main() {
         'created_at': '2026-04-15T14:30:00.000Z',
         'order_items': <Map<String, dynamic>>[],
         // This is the JOIN result from stores(name, tax_number)
-        'stores': {
-          'name': 'سوبرماركت الحي',
-          'tax_number': '310123456700003',
-        },
+        'stores': {'name': 'سوبرماركت الحي', 'tax_number': '310123456700003'},
       };
 
       // Extract store data the same way _orderFromRow does
@@ -123,27 +120,29 @@ void main() {
       expect(decoded[2], equals('310123456700003'));
     });
 
-    test('Order without store VAT → storeVatNumber is null (fallback path)',
-        () {
-      // Store with no tax_number (not VAT-registered)
-      final order = Order(
-        id: 'order-789',
-        customerId: 'cust-1',
-        storeId: 'store-2',
-        storeName: 'بقالة صغيرة',
-        storeVatNumber: null,
-        status: OrderStatus.created,
-        items: const [],
-        subtotal: 50.0,
-        tax: 7.5,
-        total: 57.5,
-        paymentMethod: PaymentMethod.cash,
-        createdAt: DateTime.now(),
-      );
+    test(
+      'Order without store VAT → storeVatNumber is null (fallback path)',
+      () {
+        // Store with no tax_number (not VAT-registered)
+        final order = Order(
+          id: 'order-789',
+          customerId: 'cust-1',
+          storeId: 'store-2',
+          storeName: 'بقالة صغيرة',
+          storeVatNumber: null,
+          status: OrderStatus.created,
+          items: const [],
+          subtotal: 50.0,
+          tax: 7.5,
+          total: 57.5,
+          paymentMethod: PaymentMethod.cash,
+          createdAt: DateTime.now(),
+        );
 
-      expect(order.storeVatNumber, isNull);
-      // UI should show "not registered" message, NOT generate QR
-    });
+        expect(order.storeVatNumber, isNull);
+        // UI should show "not registered" message, NOT generate QR
+      },
+    );
 
     test('Order with empty VAT string → treated same as null', () {
       final order = Order(

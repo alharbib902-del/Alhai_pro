@@ -17,19 +17,20 @@ void main() {
 
   group('CountrySubentity — UBL 2.1 / ZATCA', () {
     test('seller PostalAddress contains CountrySubentity when region set', () {
-      final invoice = _makeInvoice(
-        sellerRegion: 'Makkah Region',
-      );
+      final invoice = _makeInvoice(sellerRegion: 'Makkah Region');
       final xml = builder.build(invoice);
       final doc = XmlDocument.parse(xml);
 
       final supplier = doc.rootElement
           .findAllElements('AccountingSupplierParty', namespace: '*')
           .first;
-      final address =
-          supplier.findAllElements('PostalAddress', namespace: '*').first;
-      final subentities =
-          address.findAllElements('CountrySubentity', namespace: '*');
+      final address = supplier
+          .findAllElements('PostalAddress', namespace: '*')
+          .first;
+      final subentities = address.findAllElements(
+        'CountrySubentity',
+        namespace: '*',
+      );
 
       expect(subentities.length, equals(1));
       expect(subentities.first.innerText, equals('Makkah Region'));
@@ -46,10 +47,13 @@ void main() {
       final customer = doc.rootElement
           .findAllElements('AccountingCustomerParty', namespace: '*')
           .first;
-      final address =
-          customer.findAllElements('PostalAddress', namespace: '*').first;
-      final subentities =
-          address.findAllElements('CountrySubentity', namespace: '*');
+      final address = customer
+          .findAllElements('PostalAddress', namespace: '*')
+          .first;
+      final subentities = address.findAllElements(
+        'CountrySubentity',
+        namespace: '*',
+      );
 
       expect(subentities.length, equals(1));
       expect(subentities.first.innerText, equals('Eastern Province'));
@@ -68,10 +72,16 @@ void main() {
       expect(subentityIdx, greaterThan(-1));
       expect(countryIdx, greaterThan(-1));
 
-      expect(postalZoneIdx, lessThan(subentityIdx),
-          reason: 'PostalZone must precede CountrySubentity');
-      expect(subentityIdx, lessThan(countryIdx),
-          reason: 'CountrySubentity must precede Country');
+      expect(
+        postalZoneIdx,
+        lessThan(subentityIdx),
+        reason: 'PostalZone must precede CountrySubentity',
+      );
+      expect(
+        subentityIdx,
+        lessThan(countryIdx),
+        reason: 'CountrySubentity must precede Country',
+      );
     });
 
     test('CountrySubentity omitted when seller region is null', () {
@@ -82,13 +92,19 @@ void main() {
       final supplier = doc.rootElement
           .findAllElements('AccountingSupplierParty', namespace: '*')
           .first;
-      final address =
-          supplier.findAllElements('PostalAddress', namespace: '*').first;
-      final subentities =
-          address.findAllElements('CountrySubentity', namespace: '*');
+      final address = supplier
+          .findAllElements('PostalAddress', namespace: '*')
+          .first;
+      final subentities = address.findAllElements(
+        'CountrySubentity',
+        namespace: '*',
+      );
 
-      expect(subentities, isEmpty,
-          reason: 'No CountrySubentity when region is null');
+      expect(
+        subentities,
+        isEmpty,
+        reason: 'No CountrySubentity when region is null',
+      );
     });
 
     test('XML remains valid and parseable with CountrySubentity', () {
@@ -102,10 +118,7 @@ void main() {
   });
 }
 
-ZatcaInvoice _makeInvoice({
-  String? sellerRegion,
-  String? buyerRegion,
-}) {
+ZatcaInvoice _makeInvoice({String? sellerRegion, String? buyerRegion}) {
   return ZatcaInvoice(
     invoiceNumber: 'INV-TEST-CS',
     uuid: '550e8400-e29b-41d4-a716-446655440099',

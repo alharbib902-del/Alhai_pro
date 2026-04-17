@@ -260,7 +260,8 @@ class _TaxReportScreenState extends ConsumerState<TaxReportScreen> {
     final pdf = await _buildReportPdf();
     await Printing.sharePdf(
       bytes: await pdf.save(),
-      filename: 'tax_report_${DateTime.now().toIso8601String().split('T').first}.pdf',
+      filename:
+          'tax_report_${DateTime.now().toIso8601String().split('T').first}.pdf',
     );
   }
 

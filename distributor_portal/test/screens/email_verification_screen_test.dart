@@ -89,10 +89,7 @@ void main() {
       await tester.pumpWidget(_buildTestWidget());
       await tester.pump();
 
-      expect(
-        find.text('لم يصلك البريد؟ إعادة الإرسال'),
-        findsOneWidget,
-      );
+      expect(find.text('لم يصلك البريد؟ إعادة الإرسال'), findsOneWidget);
     });
 
     testWidgets('shows back to login link', (tester) async {

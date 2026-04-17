@@ -55,7 +55,8 @@ class AppRouter {
       final location = state.matchedLocation;
 
       // Public routes accessible without authentication
-      final isPublicRoute = location == '/' ||
+      final isPublicRoute =
+          location == '/' ||
           location.startsWith('/auth') ||
           location.startsWith('/onboarding');
 

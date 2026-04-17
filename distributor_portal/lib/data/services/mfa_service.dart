@@ -83,10 +83,7 @@ class MfaService {
     required String factorId,
     required String code,
   }) async {
-    await _client.auth.mfa.challengeAndVerify(
-      factorId: factorId,
-      code: code,
-    );
+    await _client.auth.mfa.challengeAndVerify(factorId: factorId, code: code);
   }
 
   /// Generate cryptographically secure backup codes.
@@ -97,8 +94,7 @@ class MfaService {
     final random = Random.secure();
     return List.generate(count, (_) {
       final bytes = List<int>.generate(6, (_) => random.nextInt(256));
-      final hex =
-          bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+      final hex = bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
       final upper = hex.toUpperCase();
       // Format: XXXX-XXXX-XXXX
       return '${upper.substring(0, 4)}-${upper.substring(4, 8)}-${upper.substring(8, 12)}';
@@ -133,10 +129,7 @@ class MfaService {
     required String factorId,
     required String code,
   }) async {
-    await _client.auth.mfa.challengeAndVerify(
-      factorId: factorId,
-      code: code,
-    );
+    await _client.auth.mfa.challengeAndVerify(factorId: factorId, code: code);
   }
 
   /// Verify a backup code. Returns true if valid.

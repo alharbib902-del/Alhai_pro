@@ -149,7 +149,11 @@ class PushStrategy {
           }
 
           // ZATCA append-only guard: reject UPDATE pushes on completed sales
-          if (_isAppendOnlyViolation(item.tableName_, item.operation, payload)) {
+          if (_isAppendOnlyViolation(
+            item.tableName_,
+            item.operation,
+            payload,
+          )) {
             await _syncQueueDao.markAsFailed(
               item.id,
               'append_only_violation: cannot push UPDATE for '

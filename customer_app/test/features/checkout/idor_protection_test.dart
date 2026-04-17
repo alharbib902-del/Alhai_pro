@@ -107,11 +107,13 @@ void main() {
           orderCustomerId: 'user-B',
           orderStatus: 'created',
         ),
-        throwsA(isA<Exception>().having(
-          (e) => e.toString(),
-          'message',
-          contains('access denied'),
-        )),
+        throwsA(
+          isA<Exception>().having(
+            (e) => e.toString(),
+            'message',
+            contains('access denied'),
+          ),
+        ),
       );
     });
 
@@ -123,11 +125,13 @@ void main() {
           orderCustomerId: 'user-A',
           orderStatus: 'delivered',
         ),
-        throwsA(isA<Exception>().having(
-          (e) => e.toString(),
-          'message',
-          contains('Cannot cancel'),
-        )),
+        throwsA(
+          isA<Exception>().having(
+            (e) => e.toString(),
+            'message',
+            contains('Cannot cancel'),
+          ),
+        ),
       );
     });
 
@@ -139,11 +143,13 @@ void main() {
           orderCustomerId: 'user-A',
           orderStatus: 'cancelled',
         ),
-        throwsA(isA<Exception>().having(
-          (e) => e.toString(),
-          'message',
-          contains('Cannot cancel'),
-        )),
+        throwsA(
+          isA<Exception>().having(
+            (e) => e.toString(),
+            'message',
+            contains('Cannot cancel'),
+          ),
+        ),
       );
     });
 

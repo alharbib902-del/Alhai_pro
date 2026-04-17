@@ -66,56 +66,50 @@ void main() {
       );
     });
 
-    test(
-      'backup with SQL injection column name throws ArgumentError '
-      'and tables remain intact',
-      () async {
-        // Seed a sale so we can verify it survives the attack
-        await db.productsDao.insertProduct(
-          ProductsTableCompanion.insert(
-            id: 'prod-safe',
-            storeId: 'store-1',
-            name: 'Safe Product',
-            price: 10.0,
-            createdAt: DateTime(2025, 1, 1),
-          ),
-        );
-        await db.salesDao.insertSale(
-          SalesTableCompanion.insert(
-            id: 'sale-safe',
-            storeId: 'store-1',
-            receiptNo: 'REC-SAFE',
-            cashierId: 'cashier-1',
-            subtotal: 100.0,
-            total: 100.0,
-            paymentMethod: 'cash',
-            status: const Value('completed'),
-            createdAt: DateTime(2025, 6, 15),
-          ),
-        );
+    test('backup with SQL injection column name throws ArgumentError '
+        'and tables remain intact', () async {
+      // Seed a sale so we can verify it survives the attack
+      await db.productsDao.insertProduct(
+        ProductsTableCompanion.insert(
+          id: 'prod-safe',
+          storeId: 'store-1',
+          name: 'Safe Product',
+          price: 10.0,
+          createdAt: DateTime(2025, 1, 1),
+        ),
+      );
+      await db.salesDao.insertSale(
+        SalesTableCompanion.insert(
+          id: 'sale-safe',
+          storeId: 'store-1',
+          receiptNo: 'REC-SAFE',
+          cashierId: 'cashier-1',
+          subtotal: 100.0,
+          total: 100.0,
+          paymentMethod: 'cash',
+          status: const Value('completed'),
+          createdAt: DateTime(2025, 6, 15),
+        ),
+      );
 
-        // Craft a malicious backup that attempts SQL injection via column name
-        final maliciousBackup = jsonEncode({
-          '_meta': {'schemaVersion': db.schemaVersion},
-          'products': [
-            {
-              'id': '1',
-              "name) VALUES ('x'); DROP TABLE sales; --": 'payload',
-            },
-          ],
-        });
+      // Craft a malicious backup that attempts SQL injection via column name
+      final maliciousBackup = jsonEncode({
+        '_meta': {'schemaVersion': db.schemaVersion},
+        'products': [
+          {'id': '1', "name) VALUES ('x'); DROP TABLE sales; --": 'payload'},
+        ],
+      });
 
-        // The import must throw ArgumentError
-        expect(
-          () => backupService.importFromJson(maliciousBackup),
-          throwsA(isA<ArgumentError>()),
-        );
+      // The import must throw ArgumentError
+      expect(
+        () => backupService.importFromJson(maliciousBackup),
+        throwsA(isA<ArgumentError>()),
+      );
 
-        // Verify the sales table still exists and data is intact
-        final sale = await db.salesDao.getSaleById('sale-safe');
-        expect(sale, isNotNull, reason: 'sales table must survive injection');
-        expect(sale!.receiptNo, 'REC-SAFE');
-      },
-    );
+      // Verify the sales table still exists and data is intact
+      final sale = await db.salesDao.getSaleById('sale-safe');
+      expect(sale, isNotNull, reason: 'sales table must survive injection');
+      expect(sale!.receiptNo, 'REC-SAFE');
+    });
   });
 }

@@ -16,7 +16,10 @@ void main() {
 
       expect(qrData, isNotEmpty);
       // Should be valid base64
-      expect(() => Uri.parse('data:text/plain;base64,$qrData'), returnsNormally);
+      expect(
+        () => Uri.parse('data:text/plain;base64,$qrData'),
+        returnsNormally,
+      );
     });
 
     test('order with VAT > 0 should generate QR data', () {

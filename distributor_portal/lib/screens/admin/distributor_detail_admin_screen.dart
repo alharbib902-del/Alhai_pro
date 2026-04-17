@@ -41,7 +41,8 @@ class DistributorDetailAdminScreen extends ConsumerWidget {
               Text('فشل تحميل البيانات: $error'),
               const SizedBox(height: 16),
               FilledButton.tonal(
-                onPressed: () => ref.invalidate(distributorDetailProvider(orgId)),
+                onPressed: () =>
+                    ref.invalidate(distributorDetailProvider(orgId)),
                 child: const Text('إعادة المحاولة'),
               ),
             ],
@@ -87,13 +88,11 @@ class DistributorDetailAdminScreen extends ConsumerWidget {
                                         distributor.displayName,
                                         style: theme.textTheme.headlineSmall
                                             ?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                        ),
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                       ),
                                       const SizedBox(height: 4),
-                                      _StatusChip(
-                                        status: distributor.status,
-                                      ),
+                                      _StatusChip(status: distributor.status),
                                     ],
                                   ),
                                 ),
@@ -101,28 +100,35 @@ class DistributorDetailAdminScreen extends ConsumerWidget {
                             ),
                             const Divider(height: 32),
                             _DetailRow(
-                                label: 'السجل التجاري',
-                                value: distributor.commercialReg),
+                              label: 'السجل التجاري',
+                              value: distributor.commercialReg,
+                            ),
                             _DetailRow(
-                                label: 'الرقم الضريبي',
-                                value: distributor.taxNumber),
+                              label: 'الرقم الضريبي',
+                              value: distributor.taxNumber,
+                            ),
                             _DetailRow(
-                                label: 'المدينة',
-                                value: distributor.city),
+                              label: 'المدينة',
+                              value: distributor.city,
+                            ),
                             _DetailRow(
-                                label: 'العنوان',
-                                value: distributor.address),
+                              label: 'العنوان',
+                              value: distributor.address,
+                            ),
                             _DetailRow(
-                                label: 'الهاتف',
-                                value: distributor.phone),
+                              label: 'الهاتف',
+                              value: distributor.phone,
+                            ),
                             _DetailRow(
-                                label: 'البريد',
-                                value: distributor.email),
+                              label: 'البريد',
+                              value: distributor.email,
+                            ),
                             if (distributor.termsAcceptedAt != null)
                               _DetailRow(
                                 label: 'قبول الشروط',
                                 value: _formatDate(
-                                    distributor.termsAcceptedAt!),
+                                  distributor.termsAcceptedAt!,
+                                ),
                               ),
                             _DetailRow(
                               label: 'تاريخ التسجيل',
@@ -179,10 +185,12 @@ class DistributorDetailAdminScreen extends ConsumerWidget {
                         }
                         return Column(
                           children: docs
-                              .map((doc) => _DocumentReviewCard(
-                                    document: doc,
-                                    orgId: orgId,
-                                  ))
+                              .map(
+                                (doc) => _DocumentReviewCard(
+                                  document: doc,
+                                  orgId: orgId,
+                                ),
+                              )
                               .toList(),
                         );
                       },
@@ -203,22 +211,23 @@ class DistributorDetailAdminScreen extends ConsumerWidget {
                               label: const Text('اعتماد الموزع'),
                               style: FilledButton.styleFrom(
                                 backgroundColor: Colors.green,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                               ),
                             ),
                           ),
                           const SizedBox(width: 16),
                           Expanded(
                             child: FilledButton.icon(
-                              onPressed: () =>
-                                  _rejectDistributor(context, ref),
+                              onPressed: () => _rejectDistributor(context, ref),
                               icon: const Icon(Icons.close),
                               label: const Text('رفض الموزع'),
                               style: FilledButton.styleFrom(
                                 backgroundColor: Colors.red,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16),
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
                               ),
                             ),
                           ),
@@ -228,8 +237,7 @@ class DistributorDetailAdminScreen extends ConsumerWidget {
                     if (distributor.status ==
                         DistributorAccountStatus.active) ...[
                       FilledButton.icon(
-                        onPressed: () =>
-                            _suspendDistributor(context, ref),
+                        onPressed: () => _suspendDistributor(context, ref),
                         icon: const Icon(Icons.block),
                         label: const Text('إيقاف الموزع'),
                         style: FilledButton.styleFrom(
@@ -242,8 +250,7 @@ class DistributorDetailAdminScreen extends ConsumerWidget {
                     if (distributor.status ==
                         DistributorAccountStatus.suspended) ...[
                       FilledButton.icon(
-                        onPressed: () =>
-                            _reinstateDistributor(context, ref),
+                        onPressed: () => _reinstateDistributor(context, ref),
                         icon: const Icon(Icons.restore),
                         label: const Text('إعادة تفعيل الموزع'),
                         style: FilledButton.styleFrom(
@@ -270,10 +277,7 @@ class DistributorDetailAdminScreen extends ConsumerWidget {
         '${date.minute.toString().padLeft(2, '0')}';
   }
 
-  Future<void> _approveDistributor(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
+  Future<void> _approveDistributor(BuildContext context, WidgetRef ref) async {
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -324,10 +328,7 @@ class DistributorDetailAdminScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _rejectDistributor(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
+  Future<void> _rejectDistributor(BuildContext context, WidgetRef ref) async {
     final controller = TextEditingController();
     final result = await showDialog<String>(
       context: context,
@@ -376,9 +377,7 @@ class DistributorDetailAdminScreen extends ConsumerWidget {
     if (result == null || result.isEmpty || !context.mounted) return;
 
     try {
-      await ref
-          .read(adminServiceProvider)
-          .rejectDistributor(orgId, result);
+      await ref.read(adminServiceProvider).rejectDistributor(orgId, result);
       ref.invalidate(distributorDetailProvider(orgId));
       ref.invalidate(pendingDistributorsProvider);
       ref.invalidate(unreadNotificationCountProvider);
@@ -393,19 +392,13 @@ class DistributorDetailAdminScreen extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('فشل: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('فشل: $e'), backgroundColor: Colors.red),
         );
       }
     }
   }
 
-  Future<void> _suspendDistributor(
-    BuildContext context,
-    WidgetRef ref,
-  ) async {
+  Future<void> _suspendDistributor(BuildContext context, WidgetRef ref) async {
     final controller = TextEditingController();
     final result = await showDialog<String>(
       context: context,
@@ -417,9 +410,7 @@ class DistributorDetailAdminScreen extends ConsumerWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'سيتم إيقاف وصول الموزع للمنصة فوراً.',
-                ),
+                const Text('سيتم إيقاف وصول الموزع للمنصة فوراً.'),
                 const SizedBox(height: 16),
                 TextField(
                   controller: controller,
@@ -455,9 +446,7 @@ class DistributorDetailAdminScreen extends ConsumerWidget {
     if (result == null || result.isEmpty || !context.mounted) return;
 
     try {
-      await ref
-          .read(adminServiceProvider)
-          .suspendDistributor(orgId, result);
+      await ref.read(adminServiceProvider).suspendDistributor(orgId, result);
       ref.invalidate(distributorDetailProvider(orgId));
       ref.invalidate(pendingDistributorsProvider);
       if (context.mounted) {
@@ -471,10 +460,7 @@ class DistributorDetailAdminScreen extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('فشل: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('فشل: $e'), backgroundColor: Colors.red),
         );
       }
     }
@@ -520,10 +506,7 @@ class DistributorDetailAdminScreen extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('فشل: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('فشل: $e'), backgroundColor: Colors.red),
         );
       }
     }
@@ -594,16 +577,13 @@ class _DetailRow extends StatelessWidget {
             child: Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    fontWeight: FontWeight.w500,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ),
           Expanded(
-            child: Text(
-              value!,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
+            child: Text(value!, style: Theme.of(context).textTheme.bodyMedium),
           ),
         ],
       ),
@@ -615,10 +595,7 @@ class _DocumentReviewCard extends ConsumerWidget {
   final DistributorDocument document;
   final String orgId;
 
-  const _DocumentReviewCard({
-    required this.document,
-    required this.orgId,
-  });
+  const _DocumentReviewCard({required this.document, required this.orgId});
 
   Color get _statusColor {
     switch (document.status) {
@@ -675,10 +652,7 @@ class _DocumentReviewCard extends ConsumerWidget {
                     ),
                     child: Text(
                       document.status.arabicName,
-                      style: TextStyle(
-                        color: _statusColor,
-                        fontSize: 11,
-                      ),
+                      style: TextStyle(color: _statusColor, fontSize: 11),
                     ),
                   ),
                   if (document.rejectionReason != null) ...[
@@ -772,9 +746,7 @@ class _DocumentReviewCard extends ConsumerWidget {
     if (result == null || !context.mounted) return;
 
     try {
-      await ref
-          .read(adminServiceProvider)
-          .rejectDocument(document.id, result);
+      await ref.read(adminServiceProvider).rejectDocument(document.id, result);
       ref.invalidate(orgDocumentsProvider(orgId));
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(

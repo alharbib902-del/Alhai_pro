@@ -20,7 +20,9 @@ void main() {
       DateTime? syncedAt,
     }) async {
       final id = 'test_${createdAt.millisecondsSinceEpoch}';
-      await db.into(db.auditLogTable).insert(
+      await db
+          .into(db.auditLogTable)
+          .insert(
             AuditLogTableCompanion.insert(
               id: id,
               storeId: 'store-1',
@@ -35,8 +37,7 @@ void main() {
 
     test('does NOT delete synced audit logs younger than 6 years', () async {
       // 5-year-old synced log — must survive cleanup
-      final fiveYearsAgo =
-          DateTime.now().subtract(const Duration(days: 1825));
+      final fiveYearsAgo = DateTime.now().subtract(const Duration(days: 1825));
       await _insertAuditLog(
         createdAt: fiveYearsAgo,
         syncedAt: fiveYearsAgo.add(const Duration(hours: 1)),
@@ -54,8 +55,7 @@ void main() {
 
     test('deletes synced audit logs older than 6 years', () async {
       // 7-year-old synced log — should be cleaned
-      final sevenYearsAgo =
-          DateTime.now().subtract(const Duration(days: 2555));
+      final sevenYearsAgo = DateTime.now().subtract(const Duration(days: 2555));
       await _insertAuditLog(
         createdAt: sevenYearsAgo,
         syncedAt: sevenYearsAgo.add(const Duration(hours: 1)),
@@ -70,8 +70,7 @@ void main() {
 
     test('never deletes unsynced audit logs regardless of age', () async {
       // 8-year-old UNSYNCED log — must survive (not yet backed up)
-      final eightYearsAgo =
-          DateTime.now().subtract(const Duration(days: 2920));
+      final eightYearsAgo = DateTime.now().subtract(const Duration(days: 2920));
       await _insertAuditLog(
         createdAt: eightYearsAgo,
         syncedAt: null, // not synced
@@ -94,19 +93,11 @@ void main() {
         syncedAt: DateTime.now().subtract(const Duration(days: 29)),
       );
       // 2) 5-year-old synced — keep (under 6 years)
-      final fiveYearsAgo =
-          DateTime.now().subtract(const Duration(days: 1825));
-      await _insertAuditLog(
-        createdAt: fiveYearsAgo,
-        syncedAt: fiveYearsAgo,
-      );
+      final fiveYearsAgo = DateTime.now().subtract(const Duration(days: 1825));
+      await _insertAuditLog(createdAt: fiveYearsAgo, syncedAt: fiveYearsAgo);
       // 3) 7-year-old synced — delete
-      final sevenYearsAgo =
-          DateTime.now().subtract(const Duration(days: 2555));
-      await _insertAuditLog(
-        createdAt: sevenYearsAgo,
-        syncedAt: sevenYearsAgo,
-      );
+      final sevenYearsAgo = DateTime.now().subtract(const Duration(days: 2555));
+      await _insertAuditLog(createdAt: sevenYearsAgo, syncedAt: sevenYearsAgo);
       // 4) 8-year-old unsynced — keep (not synced)
       await _insertAuditLog(
         createdAt: DateTime.now().subtract(const Duration(days: 2920)),

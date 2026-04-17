@@ -246,12 +246,38 @@ class _ComparisonReportScreenState
                     _pdfHeaderCell(_previousLabel(l10n)),
                   ],
                 ),
-                _pdfDataRow(l10n.sales, cur.revenue, prev.revenue, l10n.currency),
-                _pdfDataRow(l10n.invoices, cur.invoices.toDouble(), prev.invoices.toDouble(), '', isCount: true),
-                _pdfDataRow(l10n.purchases, cur.purchases, prev.purchases, l10n.currency),
-                _pdfDataRow(l10n.expenses, cur.expenses, prev.expenses, l10n.currency),
+                _pdfDataRow(
+                  l10n.sales,
+                  cur.revenue,
+                  prev.revenue,
+                  l10n.currency,
+                ),
+                _pdfDataRow(
+                  l10n.invoices,
+                  cur.invoices.toDouble(),
+                  prev.invoices.toDouble(),
+                  '',
+                  isCount: true,
+                ),
+                _pdfDataRow(
+                  l10n.purchases,
+                  cur.purchases,
+                  prev.purchases,
+                  l10n.currency,
+                ),
+                _pdfDataRow(
+                  l10n.expenses,
+                  cur.expenses,
+                  prev.expenses,
+                  l10n.currency,
+                ),
                 _pdfDataRow(l10n.tax, cur.tax, prev.tax, l10n.currency),
-                _pdfDataRow(l10n.netProfit, cur.profit, prev.profit, l10n.currency),
+                _pdfDataRow(
+                  l10n.netProfit,
+                  cur.profit,
+                  prev.profit,
+                  l10n.currency,
+                ),
               ],
             ),
           ],
@@ -262,18 +288,24 @@ class _ComparisonReportScreenState
   }
 
   pw.Widget _pdfHeaderCell(String text) => pw.Padding(
-        padding: const pw.EdgeInsets.all(6),
-        child: pw.Text(
-          text,
-          style: pw.TextStyle(
-            color: PdfColors.white,
-            fontWeight: pw.FontWeight.bold,
-            fontSize: 10,
-          ),
-        ),
-      );
+    padding: const pw.EdgeInsets.all(6),
+    child: pw.Text(
+      text,
+      style: pw.TextStyle(
+        color: PdfColors.white,
+        fontWeight: pw.FontWeight.bold,
+        fontSize: 10,
+      ),
+    ),
+  );
 
-  pw.TableRow _pdfDataRow(String label, double current, double previous, String currency, {bool isCount = false}) {
+  pw.TableRow _pdfDataRow(
+    String label,
+    double current,
+    double previous,
+    String currency, {
+    bool isCount = false,
+  }) {
     final fmt = isCount
         ? (double v) => v.toStringAsFixed(0)
         : (double v) => '${v.toStringAsFixed(0)} $currency';
@@ -302,14 +334,34 @@ class _ComparisonReportScreenState
     final result = await CsvExportHelper.exportAndShare(
       context: context,
       fileName: l10n.reportComparisonTitle,
-      headers: [l10n.reportIndicator, _currentLabel(l10n), _previousLabel(l10n)],
+      headers: [
+        l10n.reportIndicator,
+        _currentLabel(l10n),
+        _previousLabel(l10n),
+      ],
       rows: [
-        [l10n.sales, cur.revenue.toStringAsFixed(2), prev.revenue.toStringAsFixed(2)],
+        [
+          l10n.sales,
+          cur.revenue.toStringAsFixed(2),
+          prev.revenue.toStringAsFixed(2),
+        ],
         [l10n.invoices, '${cur.invoices}', '${prev.invoices}'],
-        [l10n.purchases, cur.purchases.toStringAsFixed(2), prev.purchases.toStringAsFixed(2)],
-        [l10n.expenses, cur.expenses.toStringAsFixed(2), prev.expenses.toStringAsFixed(2)],
+        [
+          l10n.purchases,
+          cur.purchases.toStringAsFixed(2),
+          prev.purchases.toStringAsFixed(2),
+        ],
+        [
+          l10n.expenses,
+          cur.expenses.toStringAsFixed(2),
+          prev.expenses.toStringAsFixed(2),
+        ],
         [l10n.tax, cur.tax.toStringAsFixed(2), prev.tax.toStringAsFixed(2)],
-        [l10n.netProfit, cur.profit.toStringAsFixed(2), prev.profit.toStringAsFixed(2)],
+        [
+          l10n.netProfit,
+          cur.profit.toStringAsFixed(2),
+          prev.profit.toStringAsFixed(2),
+        ],
       ],
     );
     if (mounted) CsvExportHelper.showResultSnackBar(context, result);
@@ -319,7 +371,8 @@ class _ComparisonReportScreenState
     final pdf = await _buildReportPdf();
     await Printing.sharePdf(
       bytes: await pdf.save(),
-      filename: 'comparison_${DateTime.now().toIso8601String().split('T').first}.pdf',
+      filename:
+          'comparison_${DateTime.now().toIso8601String().split('T').first}.pdf',
     );
   }
 
@@ -355,10 +408,7 @@ class _ComparisonReportScreenState
                     ? l10n.storeNotSelected
                     : (_error ?? l10n.errorLoadingData),
               ),
-              TextButton(
-                onPressed: _loadData,
-                child: Text(l10n.retry),
-              ),
+              TextButton(onPressed: _loadData, child: Text(l10n.retry)),
             ],
           ),
         ),
@@ -395,7 +445,10 @@ class _ComparisonReportScreenState
             child: SegmentedButton<String>(
               segments: [
                 ButtonSegment(value: 'month', label: Text(l10n.monthly)),
-                ButtonSegment(value: 'quarter', label: Text(l10n.reportQuarterly)),
+                ButtonSegment(
+                  value: 'quarter',
+                  label: Text(l10n.reportQuarterly),
+                ),
                 ButtonSegment(value: 'year', label: Text(l10n.reportAnnual)),
               ],
               selected: {_compareMode},

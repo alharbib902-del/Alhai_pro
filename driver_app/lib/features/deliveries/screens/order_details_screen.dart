@@ -70,88 +70,90 @@ class OrderDetailsScreen extends ConsumerWidget {
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 800),
                   child: Column(
-                  children: [
-                    Expanded(
-                      child: ListView(
-                        padding: const EdgeInsets.all(AlhaiSpacing.md),
-                        children: [
-                          // Status + Fee header
-                          Card(
-                            child: Padding(
-                              padding: const EdgeInsets.all(AlhaiSpacing.md),
-                              child: Row(
-                                children: [
-                                  DeliveryStatusBadge(status: status),
-                                  const Spacer(),
-                                  if (fee != null)
-                                    Text(
-                                      '${(fee as num).toStringAsFixed(0)} ر.س',
-                                      style: theme.textTheme.titleLarge
-                                          ?.copyWith(
-                                            fontWeight: FontWeight.bold,
-                                            color: theme.colorScheme.primary,
-                                          ),
-                                    ),
-                                ],
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: AlhaiSpacing.xs),
-
-                          // Delivery address
-                          if (address.isNotEmpty)
+                    children: [
+                      Expanded(
+                        child: ListView(
+                          padding: const EdgeInsets.all(AlhaiSpacing.md),
+                          children: [
+                            // Status + Fee header
                             Card(
-                              child: ListTile(
-                                leading: const Icon(Icons.location_on_outlined),
-                                title: const Text('عنوان التوصيل'),
-                                subtitle: Text(address),
+                              child: Padding(
+                                padding: const EdgeInsets.all(AlhaiSpacing.md),
+                                child: Row(
+                                  children: [
+                                    DeliveryStatusBadge(status: status),
+                                    const Spacer(),
+                                    if (fee != null)
+                                      Text(
+                                        '${(fee as num).toStringAsFixed(0)} ر.س',
+                                        style: theme.textTheme.titleLarge
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color: theme.colorScheme.primary,
+                                            ),
+                                      ),
+                                  ],
+                                ),
                               ),
                             ),
-                          const SizedBox(height: AlhaiSpacing.xs),
-
-                          // Customer info
-                          CustomerInfoCard(
-                            name: order?['customer_name'] as String?,
-                            phone: order?['customer_phone'] as String?,
-                            address: address,
-                          ),
-                          const SizedBox(height: AlhaiSpacing.xs),
-
-                          // Order items
-                          OrderItemsList(items: items),
-
-                          // Notes
-                          if (notes != null && notes.isNotEmpty) ...[
                             const SizedBox(height: AlhaiSpacing.xs),
-                            Card(
-                              child: ListTile(
-                                leading: const Icon(Icons.note_outlined),
-                                title: const Text('ملاحظات'),
-                                subtitle: Text(notes),
+
+                            // Delivery address
+                            if (address.isNotEmpty)
+                              Card(
+                                child: ListTile(
+                                  leading: const Icon(
+                                    Icons.location_on_outlined,
+                                  ),
+                                  title: const Text('عنوان التوصيل'),
+                                  subtitle: Text(address),
+                                ),
                               ),
+                            const SizedBox(height: AlhaiSpacing.xs),
+
+                            // Customer info
+                            CustomerInfoCard(
+                              name: order?['customer_name'] as String?,
+                              phone: order?['customer_phone'] as String?,
+                              address: address,
                             ),
+                            const SizedBox(height: AlhaiSpacing.xs),
+
+                            // Order items
+                            OrderItemsList(items: items),
+
+                            // Notes
+                            if (notes != null && notes.isNotEmpty) ...[
+                              const SizedBox(height: AlhaiSpacing.xs),
+                              Card(
+                                child: ListTile(
+                                  leading: const Icon(Icons.note_outlined),
+                                  title: const Text('ملاحظات'),
+                                  subtitle: Text(notes),
+                                ),
+                              ),
+                            ],
+
+                            // Spacer for action buttons
+                            const SizedBox(height: 80),
                           ],
-
-                          // Spacer for action buttons
-                          const SizedBox(height: 80),
-                        ],
+                        ),
                       ),
-                    ),
 
-                    // Action buttons at the bottom
-                    DeliveryActionButtons(
-                      deliveryId: deliveryId,
-                      currentStatus: status,
-                      onProofRequired: () =>
-                          context.push('/orders/$deliveryId/proof'),
-                      onOtpRequired: () =>
-                          context.push('/orders/$deliveryId/pickup-otp'),
-                    ),
-                  ],
+                      // Action buttons at the bottom
+                      DeliveryActionButtons(
+                        deliveryId: deliveryId,
+                        currentStatus: status,
+                        onProofRequired: () =>
+                            context.push('/orders/$deliveryId/proof'),
+                        onOtpRequired: () =>
+                            context.push('/orders/$deliveryId/pickup-otp'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
           ),
         );
       },

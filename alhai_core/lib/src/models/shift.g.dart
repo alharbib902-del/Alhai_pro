@@ -7,21 +7,22 @@ part of 'shift.dart';
 // **************************************************************************
 
 _$ShiftImpl _$$ShiftImplFromJson(Map<String, dynamic> json) => _$ShiftImpl(
-      id: json['id'] as String,
-      storeId: json['storeId'] as String,
-      cashierId: json['cashierId'] as String,
-      openingCash: (json['openingCash'] as num).toDouble(),
-      closingCash: (json['closingCash'] as num?)?.toDouble(),
-      expectedCash: (json['expectedCash'] as num?)?.toDouble(),
-      cashDifference: (json['cashDifference'] as num?)?.toDouble(),
-      status: $enumDecodeNullable(_$ShiftStatusEnumMap, json['status']) ??
-          ShiftStatus.open,
-      openedAt: DateTime.parse(json['openedAt'] as String),
-      closedAt: json['closedAt'] == null
-          ? null
-          : DateTime.parse(json['closedAt'] as String),
-      notes: json['notes'] as String?,
-    );
+  id: json['id'] as String,
+  storeId: json['storeId'] as String,
+  cashierId: json['cashierId'] as String,
+  openingCash: (json['openingCash'] as num).toDouble(),
+  closingCash: (json['closingCash'] as num?)?.toDouble(),
+  expectedCash: (json['expectedCash'] as num?)?.toDouble(),
+  cashDifference: (json['cashDifference'] as num?)?.toDouble(),
+  status:
+      $enumDecodeNullable(_$ShiftStatusEnumMap, json['status']) ??
+      ShiftStatus.open,
+  openedAt: DateTime.parse(json['openedAt'] as String),
+  closedAt: json['closedAt'] == null
+      ? null
+      : DateTime.parse(json['closedAt'] as String),
+  notes: json['notes'] as String?,
+);
 
 Map<String, dynamic> _$$ShiftImplToJson(_$ShiftImpl instance) =>
     <String, dynamic>{

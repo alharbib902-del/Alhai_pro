@@ -32,8 +32,14 @@ class MockDeliveryDatasource extends Mock implements DeliveryDatasource {}
 
 /// Returns in-memory JPEG bytes via Future.value (safe for FakeAsync).
 class _FakeXFile extends Fake implements XFile {
-  static final _jpegBytes =
-      Uint8List.fromList([0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10]);
+  static final _jpegBytes = Uint8List.fromList([
+    0xFF,
+    0xD8,
+    0xFF,
+    0xE0,
+    0x00,
+    0x10,
+  ]);
 
   @override
   Future<Uint8List> readAsBytes() => Future.value(_jpegBytes);
@@ -46,8 +52,7 @@ class _FakeImagePickerPlatform extends Fake
   Future<XFile?> getImageFromSource({
     required ImageSource source,
     ImagePickerOptions? options,
-  }) =>
-      Future.value(_FakeXFile());
+  }) => Future.value(_FakeXFile());
 }
 
 // ---------------------------------------------------------------------------
@@ -75,7 +80,10 @@ class _StatusUpdateTracker {
   final calls = <({String id, String status, String? notes})>[];
 
   Future<Map<String, dynamic>> call(
-      String id, String status, String? notes) async {
+    String id,
+    String status,
+    String? notes,
+  ) async {
     calls.add((id: id, status: status, notes: notes));
     return {'success': true};
   }
@@ -96,9 +104,7 @@ Future<void> _capturePhoto(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
-Widget _buildTestWidget({
-  _StatusUpdateTracker? tracker,
-}) {
+Widget _buildTestWidget({_StatusUpdateTracker? tracker}) {
   final router = GoRouter(
     initialLocation: '/proof',
     routes: [
@@ -121,11 +127,9 @@ Widget _buildTestWidget({
   return ProviderScope(
     overrides: [
       if (tracker != null)
-        updateDeliveryStatusProvider.overrideWith(
-          (ref, params) async {
-            return tracker.call(params.id, params.status, params.notes);
-          },
-        ),
+        updateDeliveryStatusProvider.overrideWith((ref, params) async {
+          return tracker.call(params.id, params.status, params.notes);
+        }),
     ],
     child: MaterialApp.router(
       title: 'Test',
@@ -229,8 +233,10 @@ void main() {
       await tester.pumpAndSettle();
 
       // Verify: SnackBar with mock GPS error appears
-      expect(find.text('تم اكتشاف تطبيق محاكاة موقع. يرجى تعطيله للاستمرار.'),
-          findsOneWidget);
+      expect(
+        find.text('تم اكتشاف تطبيق محاكاة موقع. يرجى تعطيله للاستمرار.'),
+        findsOneWidget,
+      );
 
       // Verify: updateDeliveryStatus NOT called (delivery not completed)
       expect(tracker.calls, isEmpty);
@@ -320,8 +326,10 @@ void main() {
 
       // Delivery must still be blocked even though audit log failed
       expect(tracker.calls, isEmpty);
-      expect(find.text('تم اكتشاف تطبيق محاكاة موقع. يرجى تعطيله للاستمرار.'),
-          findsOneWidget);
+      expect(
+        find.text('تم اكتشاف تطبيق محاكاة موقع. يرجى تعطيله للاستمرار.'),
+        findsOneWidget,
+      );
     });
   });
 }

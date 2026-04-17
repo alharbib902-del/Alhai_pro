@@ -599,8 +599,9 @@ class ConflictResolver {
 
       final List<String> columns;
       if (allowedColumns != null) {
-        final rejected =
-            rawColumns.where((c) => !allowedColumns.contains(c)).toList();
+        final rejected = rawColumns
+            .where((c) => !allowedColumns.contains(c))
+            .toList();
         if (rejected.isNotEmpty) {
           if (kDebugMode) {
             debugPrint(

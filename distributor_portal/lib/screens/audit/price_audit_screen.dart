@@ -18,9 +18,9 @@ import '../../ui/shared_widgets.dart' show responsivePadding, kMaxContentWidth;
 
 final priceAuditProvider = FutureProvider.autoDispose
     .family<List<PriceAuditEntry>, String?>((ref, productId) async {
-  final ds = ref.read(distributorDatasourceProvider);
-  return ds.getPriceAuditLog(productId: productId);
-});
+      final ds = ref.read(distributorDatasourceProvider);
+      return ds.getPriceAuditLog(productId: productId);
+    });
 
 // ─── Screen ───────────────────────────────────────────────────
 
@@ -70,8 +70,7 @@ class _PriceAuditScreenState extends ConsumerState<PriceAuditScreen> {
                 if (_selectedProductId != null)
                   ActionChip(
                     label: const Text('إزالة الفلتر'),
-                    onPressed: () =>
-                        setState(() => _selectedProductId = null),
+                    onPressed: () => setState(() => _selectedProductId = null),
                     avatar: const Icon(Icons.close, size: 16),
                   ),
               ],
@@ -129,8 +128,8 @@ class _PriceAuditScreenState extends ConsumerState<PriceAuditScreen> {
                     return _AuditEntryCard(
                       entry: entry,
                       isDark: isDark,
-                      onProductTap: () => setState(
-                          () => _selectedProductId = entry.productId),
+                      onProductTap: () =>
+                          setState(() => _selectedProductId = entry.productId),
                     );
                   },
                 );
@@ -238,10 +237,9 @@ class _AuditEntryCard extends StatelessWidget {
                           vertical: 2,
                         ),
                         decoration: BoxDecoration(
-                          color: (isIncrease
-                                  ? AppColors.error
-                                  : AppColors.success)
-                              .withValues(alpha: 0.1),
+                          color:
+                              (isIncrease ? AppColors.error : AppColors.success)
+                                  .withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(

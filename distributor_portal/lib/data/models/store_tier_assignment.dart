@@ -39,8 +39,7 @@ class StoreTierAssignment {
           DateTime.now(),
       storeName: storeData?['name'] as String?,
       tierName: tierData?['name'] as String?,
-      discountPercent:
-          (tierData?['discount_percent'] as num?)?.toDouble(),
+      discountPercent: (tierData?['discount_percent'] as num?)?.toDouble(),
     );
   }
 

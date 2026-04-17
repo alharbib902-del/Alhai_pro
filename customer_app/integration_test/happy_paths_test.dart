@@ -217,9 +217,7 @@ void main() {
         expectStubScreen('Cart');
       });
 
-      testWidgets('adding multiple products then viewing cart', (
-        tester,
-      ) async {
+      testWidgets('adding multiple products then viewing cart', (tester) async {
         // الترتيب: زيارة عدة منتجات ثم السلة
         await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/catalog'));
         await pumpAndSettleWithTimeout(tester);
@@ -251,9 +249,7 @@ void main() {
         expectStubScreen('Cart');
       });
 
-      testWidgets('cart → continue shopping → back to catalog', (
-        tester,
-      ) async {
+      testWidgets('cart → continue shopping → back to catalog', (tester) async {
         await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/cart'));
         await pumpAndSettleWithTimeout(tester);
         expectStubScreen('Cart');
@@ -299,7 +295,9 @@ void main() {
       testWidgets('checkout → address selection → back to checkout', (
         tester,
       ) async {
-        await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/checkout'));
+        await tester.pumpWidget(
+          buildCustomerTestApp(initialRoute: '/checkout'),
+        );
         await pumpAndSettleWithTimeout(tester);
         expectStubScreen('Checkout');
 
@@ -322,7 +320,9 @@ void main() {
         tester,
       ) async {
         // الترتيب: البداية من شاشة إتمام الطلب
-        await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/checkout'));
+        await tester.pumpWidget(
+          buildCustomerTestApp(initialRoute: '/checkout'),
+        );
         await pumpAndSettleWithTimeout(tester);
         expectStubScreen('Checkout');
 
@@ -344,7 +344,9 @@ void main() {
         'full checkout flow: catalog → product → cart → checkout → order',
         (tester) async {
           // المسار الكامل من التصفح حتى تأكيد الطلب
-          await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/catalog'));
+          await tester.pumpWidget(
+            buildCustomerTestApp(initialRoute: '/catalog'),
+          );
           await pumpAndSettleWithTimeout(tester);
 
           final router = GoRouter.of(
@@ -404,9 +406,7 @@ void main() {
         expectStubScreen('Orders');
       });
 
-      testWidgets('orders list → select order → order detail', (
-        tester,
-      ) async {
+      testWidgets('orders list → select order → order detail', (tester) async {
         // الترتيب: البداية من قائمة الطلبات
         await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/orders'));
         await pumpAndSettleWithTimeout(tester);

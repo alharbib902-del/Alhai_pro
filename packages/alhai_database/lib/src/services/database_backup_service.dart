@@ -369,8 +369,9 @@ class DatabaseBackupService {
 
             // Validate columns against the schema whitelist
             if (allowedColumns != null) {
-              final invalidColumns =
-                  columns.where((c) => !allowedColumns.contains(c)).toList();
+              final invalidColumns = columns
+                  .where((c) => !allowedColumns.contains(c))
+                  .toList();
               if (invalidColumns.isNotEmpty) {
                 debugPrint(
                   '[Backup] SECURITY: Rejected backup for table $tableName — '

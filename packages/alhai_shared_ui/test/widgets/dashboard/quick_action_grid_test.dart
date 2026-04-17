@@ -132,10 +132,7 @@ void main() {
     testWidgets('renders all actions', (tester) async {
       await tester.pumpWidget(
         createSimpleTestWidget(
-          QuickActionGrid(
-            actions: actions,
-            crossAxisCount: 2,
-          ),
+          QuickActionGrid(actions: actions, crossAxisCount: 2),
         ),
       );
       expect(find.text('Action 1'), findsOneWidget);
@@ -161,9 +158,7 @@ void main() {
 
     testWidgets('renders actions in a row', (tester) async {
       await tester.pumpWidget(
-        createSimpleTestWidget(
-          QuickActionRow(actions: actions),
-        ),
+        createSimpleTestWidget(QuickActionRow(actions: actions)),
       );
       expect(find.text('Row 1'), findsOneWidget);
       expect(find.text('Row 2'), findsOneWidget);

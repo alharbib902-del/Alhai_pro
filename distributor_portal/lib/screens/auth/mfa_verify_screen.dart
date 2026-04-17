@@ -136,10 +136,9 @@ class _MfaVerifyScreenState extends ConsumerState<MfaVerifyScreen> {
                   ? null
                   : [
                       BoxShadow(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .shadow
-                            .withValues(alpha: 0.08),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.shadow.withValues(alpha: 0.08),
                         blurRadius: 24,
                         offset: const Offset(0, 8),
                       ),
@@ -237,12 +236,19 @@ class _MfaVerifyScreenState extends ConsumerState<MfaVerifyScreen> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.error_outline, color: AppColors.error, size: 18),
+                const Icon(
+                  Icons.error_outline,
+                  color: AppColors.error,
+                  size: 18,
+                ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 Expanded(
                   child: Text(
                     _error!,
-                    style: const TextStyle(fontSize: 13, color: AppColors.error),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.error,
+                    ),
                   ),
                 ),
               ],
@@ -389,12 +395,19 @@ class _MfaVerifyScreenState extends ConsumerState<MfaVerifyScreen> {
             ),
             child: Row(
               children: [
-                const Icon(Icons.error_outline, color: AppColors.error, size: 18),
+                const Icon(
+                  Icons.error_outline,
+                  color: AppColors.error,
+                  size: 18,
+                ),
                 const SizedBox(width: AlhaiSpacing.xs),
                 Expanded(
                   child: Text(
                     _error!,
-                    style: const TextStyle(fontSize: 13, color: AppColors.error),
+                    style: const TextStyle(
+                      fontSize: 13,
+                      color: AppColors.error,
+                    ),
                   ),
                 ),
               ],

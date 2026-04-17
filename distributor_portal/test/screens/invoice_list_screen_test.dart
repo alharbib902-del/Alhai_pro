@@ -142,9 +142,7 @@ void main() {
     });
 
     testWidgets('shows invoice data when invoices exist', (tester) async {
-      await tester.pumpWidget(
-        _buildTestWidget(invoices: _sampleInvoices),
-      );
+      await tester.pumpWidget(_buildTestWidget(invoices: _sampleInvoices));
       await tester.pumpAndSettle();
 
       expect(find.text('INV-2026-0001'), findsOneWidget);
@@ -153,9 +151,7 @@ void main() {
     });
 
     testWidgets('shows currency formatted amounts', (tester) async {
-      await tester.pumpWidget(
-        _buildTestWidget(invoices: _sampleInvoices),
-      );
+      await tester.pumpWidget(_buildTestWidget(invoices: _sampleInvoices));
       await tester.pumpAndSettle();
 
       // Check for formatted amounts with ر.س
@@ -163,9 +159,7 @@ void main() {
     });
 
     testWidgets('shows status badges', (tester) async {
-      await tester.pumpWidget(
-        _buildTestWidget(invoices: _sampleInvoices),
-      );
+      await tester.pumpWidget(_buildTestWidget(invoices: _sampleInvoices));
       await tester.pumpAndSettle();
 
       expect(find.text('صادرة'), findsWidgets);
@@ -173,9 +167,7 @@ void main() {
     });
 
     testWidgets('search filters results', (tester) async {
-      await tester.pumpWidget(
-        _buildTestWidget(invoices: _sampleInvoices),
-      );
+      await tester.pumpWidget(_buildTestWidget(invoices: _sampleInvoices));
       await tester.pumpAndSettle();
 
       // Type in search field
@@ -188,9 +180,7 @@ void main() {
     });
 
     testWidgets('search shows no results message', (tester) async {
-      await tester.pumpWidget(
-        _buildTestWidget(invoices: _sampleInvoices),
-      );
+      await tester.pumpWidget(_buildTestWidget(invoices: _sampleInvoices));
       await tester.pumpAndSettle();
 
       await tester.enterText(find.byType(TextField), 'غير موجود');

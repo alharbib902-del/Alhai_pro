@@ -25,10 +25,7 @@ void main() {
     });
 
     test('constantTimeEquals handles empty strings', () {
-      expect(
-        CertificatePinningService.constantTimeEquals('', ''),
-        isTrue,
-      );
+      expect(CertificatePinningService.constantTimeEquals('', ''), isTrue);
     });
 
     test('diagnosticStatus reports debug mode', () {

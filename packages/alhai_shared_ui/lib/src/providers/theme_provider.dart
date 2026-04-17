@@ -44,12 +44,12 @@ class ThemeState {
 /// مُدير الثيم
 class ThemeNotifier extends StateNotifier<ThemeState> {
   ThemeNotifier([ThemeMode? initialMode])
-    : super(
-        ThemeState(
-          themeMode: initialMode ?? ThemeMode.system,
-          isLoading: initialMode == null,
-        ),
-      ) {
+      : super(
+          ThemeState(
+            themeMode: initialMode ?? ThemeMode.system,
+            isLoading: initialMode == null,
+          ),
+        ) {
     if (initialMode == null) _loadTheme();
   }
 

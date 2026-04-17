@@ -60,9 +60,9 @@ void main() {
     // (Post-v40: the SOS flow now routes through DriverAuditService which
     // uses Supabase.instance.client — not the mocked provider — so this
     // mock is primarily documentation; the real singleton swallows errors.)
-    when(() => mockClient.from('sa_audit_log')).thenThrow(
-      Exception('sa_audit_log mock — expected in test'),
-    );
+    when(
+      () => mockClient.from('sa_audit_log'),
+    ).thenThrow(Exception('sa_audit_log mock — expected in test'));
 
     // Set mock url_launcher platform.
     UrlLauncherPlatform.instance = mockUrlLauncher;
@@ -70,9 +70,7 @@ void main() {
 
   Widget buildTestWidget({bool showSos = true}) {
     return ProviderScope(
-      overrides: [
-        supabaseClientProvider.overrideWithValue(mockClient),
-      ],
+      overrides: [supabaseClientProvider.overrideWithValue(mockClient)],
       child: MaterialApp(
         theme: AlhaiTheme.light,
         locale: const Locale('ar'),

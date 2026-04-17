@@ -375,12 +375,7 @@ class _ErrorScreenState extends State<_ErrorScreen> {
     }
 
     return Scaffold(
-      body: Center(
-        child: Text(
-          widget.label,
-          key: Key('stub_${widget.label}'),
-        ),
-      ),
+      body: Center(child: Text(widget.label, key: Key('stub_${widget.label}'))),
     );
   }
 }
@@ -557,9 +552,7 @@ void main() {
     group('2. Empty cart checkout blocked - حظر الدفع بسلة فارغة', () {
       testWidgets('empty cart shows "سلتك فارغة" message', (tester) async {
         // الترتيب: فتح السلة وهي فارغة
-        await tester.pumpWidget(
-          _buildCartTestApp(cartIsEmpty: true),
-        );
+        await tester.pumpWidget(_buildCartTestApp(cartIsEmpty: true));
         await pumpAndSettleWithTimeout(tester);
 
         // التأكيد: رسالة السلة الفارغة ظاهرة
@@ -568,9 +561,7 @@ void main() {
       });
 
       testWidgets('empty cart shows shopping cart icon', (tester) async {
-        await tester.pumpWidget(
-          _buildCartTestApp(cartIsEmpty: true),
-        );
+        await tester.pumpWidget(_buildCartTestApp(cartIsEmpty: true));
         await pumpAndSettleWithTimeout(tester);
 
         // التأكيد: أيقونة السلة الفارغة ظاهرة
@@ -579,9 +570,7 @@ void main() {
 
       testWidgets('empty cart has no checkout button', (tester) async {
         // الترتيب: السلة فارغة
-        await tester.pumpWidget(
-          _buildCartTestApp(cartIsEmpty: true),
-        );
+        await tester.pumpWidget(_buildCartTestApp(cartIsEmpty: true));
         await pumpAndSettleWithTimeout(tester);
 
         // التأكيد: لا يوجد زر إتمام الطلب
@@ -593,38 +582,31 @@ void main() {
 
       testWidgets('empty cart has "browse products" button', (tester) async {
         // الترتيب: السلة فارغة
-        await tester.pumpWidget(
-          _buildCartTestApp(cartIsEmpty: true),
-        );
+        await tester.pumpWidget(_buildCartTestApp(cartIsEmpty: true));
         await pumpAndSettleWithTimeout(tester);
 
         // التأكيد: زر "تصفح المنتجات" ظاهر
         expect(find.text('تصفح المنتجات'), findsOneWidget);
       });
 
-      testWidgets(
-        'empty cart "browse products" navigates to catalog',
-        (tester) async {
-          // الترتيب: السلة فارغة
-          await tester.pumpWidget(
-            _buildCartTestApp(cartIsEmpty: true),
-          );
-          await pumpAndSettleWithTimeout(tester);
+      testWidgets('empty cart "browse products" navigates to catalog', (
+        tester,
+      ) async {
+        // الترتيب: السلة فارغة
+        await tester.pumpWidget(_buildCartTestApp(cartIsEmpty: true));
+        await pumpAndSettleWithTimeout(tester);
 
-          // الفعل: الضغط على "تصفح المنتجات"
-          await tester.tap(find.text('تصفح المنتجات'));
-          await pumpAndSettleWithTimeout(tester);
+        // الفعل: الضغط على "تصفح المنتجات"
+        await tester.tap(find.text('تصفح المنتجات'));
+        await pumpAndSettleWithTimeout(tester);
 
-          // التأكيد: الانتقال للكتالوج
-          expect(find.byKey(const Key('stub_Catalog')), findsOneWidget);
-        },
-      );
+        // التأكيد: الانتقال للكتالوج
+        expect(find.byKey(const Key('stub_Catalog')), findsOneWidget);
+      });
 
       testWidgets('non-empty cart shows checkout button', (tester) async {
         // الترتيب: السلة تحتوي منتجات
-        await tester.pumpWidget(
-          _buildCartTestApp(cartIsEmpty: false),
-        );
+        await tester.pumpWidget(_buildCartTestApp(cartIsEmpty: false));
         await pumpAndSettleWithTimeout(tester);
 
         // التأكيد: زر إتمام الطلب ظاهر
@@ -636,9 +618,7 @@ void main() {
         tester,
       ) async {
         // الترتيب: السلة تحتوي منتجات
-        await tester.pumpWidget(
-          _buildCartTestApp(cartIsEmpty: false),
-        );
+        await tester.pumpWidget(_buildCartTestApp(cartIsEmpty: false));
         await pumpAndSettleWithTimeout(tester);
 
         // الفعل: الضغط على زر إتمام الطلب
@@ -650,9 +630,7 @@ void main() {
       });
 
       testWidgets('non-empty cart shows FAB', (tester) async {
-        await tester.pumpWidget(
-          _buildCartTestApp(cartIsEmpty: false),
-        );
+        await tester.pumpWidget(_buildCartTestApp(cartIsEmpty: false));
         await pumpAndSettleWithTimeout(tester);
 
         // التأكيد: FAB ظاهر
@@ -667,9 +645,7 @@ void main() {
     group('3. Network error shows retry - إعادة المحاولة عند خطأ الشبكة', () {
       testWidgets('error state shows error icon and message', (tester) async {
         // الترتيب: خطأ في الشبكة
-        await tester.pumpWidget(
-          _buildErrorRetryTestApp(hasError: true),
-        );
+        await tester.pumpWidget(_buildErrorRetryTestApp(hasError: true));
         await pumpAndSettleWithTimeout(tester);
 
         // التأكيد: أيقونة الخطأ ظاهرة
@@ -683,9 +659,7 @@ void main() {
       });
 
       testWidgets('error state shows retry button', (tester) async {
-        await tester.pumpWidget(
-          _buildErrorRetryTestApp(hasError: true),
-        );
+        await tester.pumpWidget(_buildErrorRetryTestApp(hasError: true));
         await pumpAndSettleWithTimeout(tester);
 
         // التأكيد: زر إعادة المحاولة ظاهر
@@ -695,9 +669,7 @@ void main() {
       });
 
       testWidgets('retry button increments attempt counter', (tester) async {
-        await tester.pumpWidget(
-          _buildErrorRetryTestApp(hasError: true),
-        );
+        await tester.pumpWidget(_buildErrorRetryTestApp(hasError: true));
         await pumpAndSettleWithTimeout(tester);
 
         // التأكيد: عدد المحاولات 0
@@ -713,9 +685,7 @@ void main() {
 
       testWidgets('retry succeeds after multiple attempts', (tester) async {
         // الترتيب: خطأ في الشبكة (يحتاج محاولتين للنجاح)
-        await tester.pumpWidget(
-          _buildErrorRetryTestApp(hasError: true),
-        );
+        await tester.pumpWidget(_buildErrorRetryTestApp(hasError: true));
         await pumpAndSettleWithTimeout(tester);
 
         // التأكيد: حالة الخطأ
@@ -738,9 +708,7 @@ void main() {
 
       testWidgets('no error state shows content directly', (tester) async {
         // الترتيب: لا يوجد خطأ
-        await tester.pumpWidget(
-          _buildErrorRetryTestApp(hasError: false),
-        );
+        await tester.pumpWidget(_buildErrorRetryTestApp(hasError: false));
         await pumpAndSettleWithTimeout(tester);
 
         // التأكيد: المحتوى ظاهر بدون خطأ
@@ -789,9 +757,7 @@ void main() {
 
       testWidgets('app recovers after initial error', (tester) async {
         // التطبيق يبدأ بخطأ ثم يتعافى
-        await tester.pumpWidget(
-          _buildErrorRetryTestApp(hasError: true),
-        );
+        await tester.pumpWidget(_buildErrorRetryTestApp(hasError: true));
         await pumpAndSettleWithTimeout(tester);
 
         // حالة الخطأ

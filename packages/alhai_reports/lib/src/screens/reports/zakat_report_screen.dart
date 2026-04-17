@@ -67,40 +67,32 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
       }
 
       // Inventory value
-      final invResult = await db
-          .customSelect(
-            '''SELECT COALESCE(SUM(current_stock * COALESCE(cost_price, price * 0.7)), 0) as total
+      final invResult = await db.customSelect(
+        '''SELECT COALESCE(SUM(current_stock * COALESCE(cost_price, price * 0.7)), 0) as total
            FROM products WHERE store_id = ? AND current_stock > 0''',
-            variables: [Variable.withString(storeId)],
-          )
-          .getSingle();
+        variables: [Variable.withString(storeId)],
+      ).getSingle();
 
       // Cash balance
-      final cashResult = await db
-          .customSelect(
-            '''SELECT COALESCE(SUM(CASE WHEN type IN ('sale','cash_in') THEN amount ELSE -amount END), 0) as cash
+      final cashResult = await db.customSelect(
+        '''SELECT COALESCE(SUM(CASE WHEN type IN ('sale','cash_in') THEN amount ELSE -amount END), 0) as cash
            FROM transactions WHERE store_id = ?''',
-            variables: [Variable.withString(storeId)],
-          )
-          .getSingle();
+        variables: [Variable.withString(storeId)],
+      ).getSingle();
 
       // Receivables
-      final recResult = await db
-          .customSelect(
-            '''SELECT COALESCE(SUM(balance), 0) as total
+      final recResult = await db.customSelect(
+        '''SELECT COALESCE(SUM(balance), 0) as total
            FROM accounts WHERE store_id = ? AND type = 'receivable' AND balance > 0''',
-            variables: [Variable.withString(storeId)],
-          )
-          .getSingle();
+        variables: [Variable.withString(storeId)],
+      ).getSingle();
 
       // Payables
-      final payResult = await db
-          .customSelect(
-            '''SELECT COALESCE(SUM(balance), 0) as total
+      final payResult = await db.customSelect(
+        '''SELECT COALESCE(SUM(balance), 0) as total
            FROM accounts WHERE store_id = ? AND type = 'payable' AND balance > 0''',
-            variables: [Variable.withString(storeId)],
-          )
-          .getSingle();
+        variables: [Variable.withString(storeId)],
+      ).getSingle();
 
       if (mounted) {
         setState(() {
@@ -193,7 +185,10 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
           pw.Text(label, style: style),
-          pw.Text('${amount.toStringAsFixed(0)} ${l10n.currency}', style: style),
+          pw.Text(
+            '${amount.toStringAsFixed(0)} ${l10n.currency}',
+            style: style,
+          ),
         ],
       ),
     );
@@ -208,7 +203,10 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
       rows: [
         [l10n.reportGoodsAndInventory, _inventoryValue.toStringAsFixed(2)],
         [l10n.reportAvailableCash, _cashBalance.toStringAsFixed(2)],
-        [l10n.reportExpectedReceivables, _accountsReceivable.toStringAsFixed(2)],
+        [
+          l10n.reportExpectedReceivables,
+          _accountsReceivable.toStringAsFixed(2),
+        ],
         [l10n.reportDebtsToSuppliers, _accountsPayable.toStringAsFixed(2)],
         [l10n.reportOtherLiabilities, _otherLiabilities.toStringAsFixed(2)],
         [l10n.reportNetZakatBase, _netZakatBase.toStringAsFixed(2)],
@@ -222,7 +220,8 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
     final pdf = await _buildReportPdf();
     await Printing.sharePdf(
       bytes: await pdf.save(),
-      filename: 'zakat_${DateTime.now().toIso8601String().split('T').first}.pdf',
+      filename:
+          'zakat_${DateTime.now().toIso8601String().split('T').first}.pdf',
     );
   }
 
@@ -260,10 +259,7 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                     ? l10n.storeNotSelected
                     : _error!,
               ),
-              TextButton(
-                onPressed: _loadData,
-                child: Text(l10n.retry),
-              ),
+              TextButton(onPressed: _loadData, child: Text(l10n.retry)),
             ],
           ),
         ),
@@ -322,7 +318,9 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                   ),
                   const SizedBox(height: AlhaiSpacing.sm),
                   Text(
-                    _aboveNisab ? l10n.reportZakatDue : l10n.reportZakatBelowNisab,
+                    _aboveNisab
+                        ? l10n.reportZakatDue
+                        : l10n.reportZakatBelowNisab,
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -350,7 +348,9 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                       ),
                     ),
                     Text(
-                      l10n.reportZakatRateOf((_zakatRate * 100).toStringAsFixed(1)),
+                      l10n.reportZakatRateOf(
+                        (_zakatRate * 100).toStringAsFixed(1),
+                      ),
                       style: TextStyle(
                         color: theme.colorScheme.onSurfaceVariant,
                         fontSize: 12,
@@ -363,7 +363,9 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
                       style: TextStyle(color: AlhaiColors.infoDark),
                     ),
                     Text(
-                      l10n.reportCurrentZakatBase(_netZakatBase.toStringAsFixed(0)),
+                      l10n.reportCurrentZakatBase(
+                        _netZakatBase.toStringAsFixed(0),
+                      ),
                       style: TextStyle(
                         color: theme.colorScheme.onSurfaceVariant,
                         fontSize: 12,
@@ -471,7 +473,10 @@ class _ZakatReportScreenState extends ConsumerState<ZakatReportScreen> {
               children: [
                 Text(
                   l10n.reportNetZakatBase,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 15,
+                  ),
                 ),
                 Text(
                   '${_netZakatBase.toStringAsFixed(0)} ${l10n.currency}',

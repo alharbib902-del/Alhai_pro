@@ -18,41 +18,41 @@ void main() {
   });
 
   ZatcaInvoice _validInvoice() => ZatcaInvoice(
-        invoiceNumber: 'INV-001',
-        uuid: '550e8400-e29b-41d4-a716-446655440000',
-        issueDate: DateTime(2026, 4, 10),
-        issueTime: DateTime(2026, 4, 10, 12, 0, 0),
-        typeCode: InvoiceTypeCode.standard,
-        subType: InvoiceSubType.standardB2B,
-        seller: const ZatcaSeller(
-          name: 'Test Seller',
-          vatNumber: '310122393500003',
-          streetName: 'King Fahd Rd',
-          buildingNumber: '1234',
-          city: 'Riyadh',
-          postalCode: '12345',
-          region: 'Riyadh Region',
-        ),
-        buyer: const ZatcaBuyer(
-          name: 'Buyer Co',
-          vatNumber: '399999999900003',
-          streetName: 'Main St',
-          buildingNumber: '5678',
-          city: 'Jeddah',
-          postalCode: '21589',
-          countryCode: 'SA',
-        ),
-        lines: const [
-          ZatcaInvoiceLine(
-            lineId: '1',
-            itemName: 'Widget',
-            quantity: 2,
-            unitPrice: 100.0,
-            vatRate: 15.0,
-            vatCategoryCode: 'S',
-          ),
-        ],
-      );
+    invoiceNumber: 'INV-001',
+    uuid: '550e8400-e29b-41d4-a716-446655440000',
+    issueDate: DateTime(2026, 4, 10),
+    issueTime: DateTime(2026, 4, 10, 12, 0, 0),
+    typeCode: InvoiceTypeCode.standard,
+    subType: InvoiceSubType.standardB2B,
+    seller: const ZatcaSeller(
+      name: 'Test Seller',
+      vatNumber: '310122393500003',
+      streetName: 'King Fahd Rd',
+      buildingNumber: '1234',
+      city: 'Riyadh',
+      postalCode: '12345',
+      region: 'Riyadh Region',
+    ),
+    buyer: const ZatcaBuyer(
+      name: 'Buyer Co',
+      vatNumber: '399999999900003',
+      streetName: 'Main St',
+      buildingNumber: '5678',
+      city: 'Jeddah',
+      postalCode: '21589',
+      countryCode: 'SA',
+    ),
+    lines: const [
+      ZatcaInvoiceLine(
+        lineId: '1',
+        itemName: 'Widget',
+        quantity: 2,
+        unitPrice: 100.0,
+        vatRate: 15.0,
+        vatCategoryCode: 'S',
+      ),
+    ],
+  );
 
   group('InvoiceXmlValidator', () {
     test('passes a fully valid invoice XML', () {
@@ -82,16 +82,10 @@ void main() {
     test('catches missing ProfileID', () {
       // Build XML then strip ProfileID
       var xml = builder.build(_validInvoice());
-      xml = xml.replaceAll(
-        RegExp(r'<cbc:ProfileID>.*?</cbc:ProfileID>'),
-        '',
-      );
+      xml = xml.replaceAll(RegExp(r'<cbc:ProfileID>.*?</cbc:ProfileID>'), '');
       final result = validator.validate(xml);
 
-      expect(
-        result.errors.any((e) => e.code == 'MISSING_PROFILEID'),
-        isTrue,
-      );
+      expect(result.errors.any((e) => e.code == 'MISSING_PROFILEID'), isTrue);
     });
 
     test('catches missing invoice lines', () {
@@ -117,10 +111,7 @@ void main() {
       );
       final result = validator.validate(xml);
 
-      expect(
-        result.errors.any((e) => e.code == 'MISSING_TAX_TOTALS'),
-        isTrue,
-      );
+      expect(result.errors.any((e) => e.code == 'MISSING_TAX_TOTALS'), isTrue);
     });
 
     test('warns when CountrySubentity is missing', () {

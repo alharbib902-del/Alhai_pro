@@ -103,16 +103,16 @@ class AppNotification {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'title': title,
-    'message': message,
-    'type': type.index,
-    'priority': priority.index,
-    'createdAt': createdAt.toIso8601String(),
-    'isRead': isRead,
-    'data': data,
-    'actionRoute': actionRoute,
-  };
+        'id': id,
+        'title': title,
+        'message': message,
+        'type': type.index,
+        'priority': priority.index,
+        'createdAt': createdAt.toIso8601String(),
+        'isRead': isRead,
+        'data': data,
+        'actionRoute': actionRoute,
+      };
 
   factory AppNotification.fromJson(Map<String, dynamic> json) {
     return AppNotification(
@@ -243,9 +243,8 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
 
       if (jsonString != null) {
         final List<dynamic> jsonList = jsonDecode(jsonString);
-        final notifications = jsonList
-            .map((json) => AppNotification.fromJson(json))
-            .toList();
+        final notifications =
+            jsonList.map((json) => AppNotification.fromJson(json)).toList();
 
         // ترتيب حسب التاريخ (الأحدث أولاً)
         notifications.sort((a, b) => b.createdAt.compareTo(a.createdAt));
@@ -318,18 +317,16 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
 
   /// تعيين الكل كمقروء
   Future<void> markAllAsRead() async {
-    final notifications = state.notifications
-        .map((n) => n.copyWith(isRead: true))
-        .toList();
+    final notifications =
+        state.notifications.map((n) => n.copyWith(isRead: true)).toList();
     state = state.copyWith(notifications: notifications);
     await _saveNotifications();
   }
 
   /// حذف إشعار
   Future<void> deleteNotification(String notificationId) async {
-    final notifications = state.notifications
-        .where((n) => n.id != notificationId)
-        .toList();
+    final notifications =
+        state.notifications.where((n) => n.id != notificationId).toList();
     state = state.copyWith(notifications: notifications);
     await _saveNotifications();
   }
@@ -435,8 +432,8 @@ class NotificationsNotifier extends StateNotifier<NotificationsState> {
 /// مزود الإشعارات
 final notificationsProvider =
     StateNotifierProvider<NotificationsNotifier, NotificationsState>((ref) {
-      return NotificationsNotifier();
-    });
+  return NotificationsNotifier();
+});
 
 /// مزود عدد الإشعارات غير المقروءة
 final unreadNotificationsCountProvider = Provider<int>((ref) {

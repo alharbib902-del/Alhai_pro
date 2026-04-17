@@ -6,9 +6,7 @@ import '../../helpers/shared_ui_test_helpers.dart';
 void main() {
   group('SkeletonLoader', () {
     testWidgets('renders with default dimensions', (tester) async {
-      await tester.pumpWidget(
-        createSimpleTestWidget(const SkeletonLoader()),
-      );
+      await tester.pumpWidget(createSimpleTestWidget(const SkeletonLoader()));
       expect(find.byType(SkeletonLoader), findsOneWidget);
     });
 
@@ -24,26 +22,20 @@ void main() {
 
   group('SkeletonListItem', () {
     testWidgets('renders with leading', (tester) async {
-      await tester.pumpWidget(
-        createSimpleTestWidget(const SkeletonListItem()),
-      );
+      await tester.pumpWidget(createSimpleTestWidget(const SkeletonListItem()));
       expect(find.byType(SkeletonListItem), findsOneWidget);
     });
 
     testWidgets('renders without leading', (tester) async {
       await tester.pumpWidget(
-        createSimpleTestWidget(
-          const SkeletonListItem(hasLeading: false),
-        ),
+        createSimpleTestWidget(const SkeletonListItem(hasLeading: false)),
       );
       expect(find.byType(SkeletonListItem), findsOneWidget);
     });
 
     testWidgets('renders with trailing', (tester) async {
       await tester.pumpWidget(
-        createSimpleTestWidget(
-          const SkeletonListItem(hasTrailing: true),
-        ),
+        createSimpleTestWidget(const SkeletonListItem(hasTrailing: true)),
       );
       expect(find.byType(SkeletonListItem), findsOneWidget);
     });
@@ -51,26 +43,20 @@ void main() {
 
   group('SkeletonCard', () {
     testWidgets('renders', (tester) async {
-      await tester.pumpWidget(
-        createSimpleTestWidget(const SkeletonCard()),
-      );
+      await tester.pumpWidget(createSimpleTestWidget(const SkeletonCard()));
       expect(find.byType(SkeletonCard), findsOneWidget);
     });
   });
 
   group('SkeletonTable', () {
     testWidgets('renders with default rows and columns', (tester) async {
-      await tester.pumpWidget(
-        createSimpleTestWidget(const SkeletonTable()),
-      );
+      await tester.pumpWidget(createSimpleTestWidget(const SkeletonTable()));
       expect(find.byType(SkeletonTable), findsOneWidget);
     });
 
     testWidgets('renders with custom rows and columns', (tester) async {
       await tester.pumpWidget(
-        createSimpleTestWidget(
-          const SkeletonTable(rows: 3, columns: 2),
-        ),
+        createSimpleTestWidget(const SkeletonTable(rows: 3, columns: 2)),
       );
       expect(find.byType(SkeletonTable), findsOneWidget);
     });

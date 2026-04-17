@@ -35,10 +35,7 @@ void main() {
     });
 
     test('arabicName returns Arabic labels', () {
-      expect(
-        DocumentType.commercialRegistration.arabicName,
-        'السجل التجاري',
-      );
+      expect(DocumentType.commercialRegistration.arabicName, 'السجل التجاري');
       expect(
         DocumentType.vatCertificate.arabicName,
         'شهادة ضريبة القيمة المضافة',
@@ -88,10 +85,7 @@ void main() {
     });
 
     test('fromDbValue defaults to underReview for unknown value', () {
-      expect(
-        DocumentStatus.fromDbValue('unknown'),
-        DocumentStatus.underReview,
-      );
+      expect(DocumentStatus.fromDbValue('unknown'), DocumentStatus.underReview);
     });
   });
 
@@ -104,10 +98,7 @@ void main() {
       expect(doc.id, 'doc-001');
       expect(doc.orgId, 'org-1');
       expect(doc.documentType, DocumentType.commercialRegistration);
-      expect(
-        doc.fileUrl,
-        'org-1/commercial_registration/1713200000000_cr.pdf',
-      );
+      expect(doc.fileUrl, 'org-1/commercial_registration/1713200000000_cr.pdf');
       expect(doc.fileName, 'cr.pdf');
       expect(doc.fileSize, 2400000);
       expect(doc.mimeType, 'application/pdf');

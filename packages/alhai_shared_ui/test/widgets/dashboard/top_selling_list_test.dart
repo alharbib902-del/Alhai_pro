@@ -42,9 +42,7 @@ void main() {
   group('TopSellingList', () {
     testWidgets('renders product names', (tester) async {
       await tester.pumpWidget(
-        createSimpleTestWidget(
-          TopSellingList(products: sampleProducts),
-        ),
+        createSimpleTestWidget(TopSellingList(products: sampleProducts)),
       );
       await tester.pumpAndSettle();
       expect(find.text('Arabic Coffee'), findsOneWidget);
@@ -54,10 +52,7 @@ void main() {
     testWidgets('renders view all button when provided', (tester) async {
       await tester.pumpWidget(
         createSimpleTestWidget(
-          TopSellingList(
-            products: sampleProducts,
-            onViewAll: () {},
-          ),
+          TopSellingList(products: sampleProducts, onViewAll: () {}),
         ),
       );
       await tester.pumpAndSettle();
@@ -75,9 +70,7 @@ void main() {
         ),
       );
       await tester.pumpWidget(
-        createSimpleTestWidget(
-          TopSellingList(products: manyProducts),
-        ),
+        createSimpleTestWidget(TopSellingList(products: manyProducts)),
       );
       await tester.pumpAndSettle();
       // Should only show first 5
@@ -88,9 +81,7 @@ void main() {
 
     testWidgets('renders with empty list', (tester) async {
       await tester.pumpWidget(
-        createSimpleTestWidget(
-          const TopSellingList(products: []),
-        ),
+        createSimpleTestWidget(const TopSellingList(products: [])),
       );
       await tester.pumpAndSettle();
       expect(find.byType(TopSellingList), findsOneWidget);

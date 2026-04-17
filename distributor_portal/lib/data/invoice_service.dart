@@ -21,8 +21,8 @@ class InvoiceService {
   InvoiceService({
     required DistributorDatasource datasource,
     ZatcaInvoiceService? zatcaService,
-  })  : _datasource = datasource,
-        _zatcaService = zatcaService;
+  }) : _datasource = datasource,
+       _zatcaService = zatcaService;
 
   static const double _saudiVatRate = 15.0;
 
@@ -138,9 +138,7 @@ class InvoiceService {
   }
 
   /// Convert order items to ZATCA invoice lines.
-  List<ZatcaInvoiceLine> _buildInvoiceLines(
-    List<DistributorOrderItem> items,
-  ) {
+  List<ZatcaInvoiceLine> _buildInvoiceLines(List<DistributorOrderItem> items) {
     return items.asMap().entries.map((entry) {
       final index = entry.key;
       final item = entry.value;
@@ -184,6 +182,5 @@ class InvoiceService {
     );
   }
 
-  static double _round2(double value) =>
-      (value * 100).roundToDouble() / 100;
+  static double _round2(double value) => (value * 100).roundToDouble() / 100;
 }

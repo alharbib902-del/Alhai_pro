@@ -219,10 +219,7 @@ void main() {
 
     testWidgets('switching to store assignment tab', (tester) async {
       await tester.pumpWidget(
-        _buildTestWidget(
-          tiers: _sampleTiers,
-          stores: _sampleStores,
-        ),
+        _buildTestWidget(tiers: _sampleTiers, stores: _sampleStores),
       );
       await tester.pumpAndSettle();
 
@@ -236,26 +233,24 @@ void main() {
       expect(find.text('متجر السلام'), findsOneWidget);
     });
 
-    testWidgets('store assignment tab shows "create tier first" when no tiers',
-        (tester) async {
+    testWidgets(
+      'store assignment tab shows "create tier first" when no tiers',
+      (tester) async {
+        await tester.pumpWidget(_buildTestWidget(stores: _sampleStores));
+        await tester.pumpAndSettle();
+
+        await tester.tap(find.text('تعيين المتاجر'));
+        await tester.pumpAndSettle();
+
+        expect(find.text('أنشئ فئة أولاً'), findsOneWidget);
+      },
+    );
+
+    testWidgets('store assignment shows dropdowns with tier options', (
+      tester,
+    ) async {
       await tester.pumpWidget(
-        _buildTestWidget(stores: _sampleStores),
-      );
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('تعيين المتاجر'));
-      await tester.pumpAndSettle();
-
-      expect(find.text('أنشئ فئة أولاً'), findsOneWidget);
-    });
-
-    testWidgets('store assignment shows dropdowns with tier options',
-        (tester) async {
-      await tester.pumpWidget(
-        _buildTestWidget(
-          tiers: _sampleTiers,
-          stores: _sampleStores,
-        ),
+        _buildTestWidget(tiers: _sampleTiers, stores: _sampleStores),
       );
       await tester.pumpAndSettle();
 
@@ -339,10 +334,7 @@ void main() {
     testWidgets('is a ConsumerStatefulWidget', (tester) async {
       await tester.pumpWidget(_buildTestWidget());
       await tester.pump();
-      expect(
-        find.byType(PricingTiersScreen),
-        findsOneWidget,
-      );
+      expect(find.byType(PricingTiersScreen), findsOneWidget);
     });
   });
 }

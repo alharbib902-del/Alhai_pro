@@ -9,9 +9,7 @@ import 'package:driver_app/features/deliveries/screens/new_order_screen.dart';
 
 void main() {
   group('M2 — Max Concurrent Orders Check', () {
-    Widget buildTestWidget({
-      List<Override> overrides = const [],
-    }) {
+    Widget buildTestWidget({List<Override> overrides = const []}) {
       return ProviderScope(
         overrides: overrides,
         child: MaterialApp(
@@ -28,8 +26,9 @@ void main() {
       );
     }
 
-    testWidgets('shows confirmation dialog when active delivery exists',
-        (tester) async {
+    testWidgets('shows confirmation dialog when active delivery exists', (
+      tester,
+    ) async {
       // Override activeDeliveriesProvider to return one active delivery
       // and one assigned delivery.
       await tester.pumpWidget(

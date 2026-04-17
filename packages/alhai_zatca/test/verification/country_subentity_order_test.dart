@@ -68,11 +68,13 @@ void main() {
       final supplier = doc.rootElement
           .findAllElements('AccountingSupplierParty', namespace: '*')
           .first;
-      final address =
-          supplier.findAllElements('PostalAddress', namespace: '*').first;
+      final address = supplier
+          .findAllElements('PostalAddress', namespace: '*')
+          .first;
 
-      final childNames =
-          address.childElements.map((e) => e.name.local).toList();
+      final childNames = address.childElements
+          .map((e) => e.name.local)
+          .toList();
 
       // UBL 2.1 mandated order:
       // StreetName, BuildingNumber, [PlotIdentification], [CitySubdivisionName],
@@ -91,9 +93,16 @@ void main() {
       int lastIdx = -1;
       for (final name in expectedOrder) {
         final idx = childNames.indexOf(name);
-        expect(idx, greaterThan(-1), reason: '$name must exist in PostalAddress');
-        expect(idx, greaterThan(lastIdx),
-            reason: '$name must come after previous elements (UBL order)');
+        expect(
+          idx,
+          greaterThan(-1),
+          reason: '$name must exist in PostalAddress',
+        );
+        expect(
+          idx,
+          greaterThan(lastIdx),
+          reason: '$name must come after previous elements (UBL order)',
+        );
         lastIdx = idx;
       }
     });
@@ -117,13 +126,19 @@ void main() {
       final supplier = doc.rootElement
           .findAllElements('AccountingSupplierParty', namespace: '*')
           .first;
-      final address =
-          supplier.findAllElements('PostalAddress', namespace: '*').first;
-      final subentities =
-          address.findAllElements('CountrySubentity', namespace: '*');
+      final address = supplier
+          .findAllElements('PostalAddress', namespace: '*')
+          .first;
+      final subentities = address.findAllElements(
+        'CountrySubentity',
+        namespace: '*',
+      );
 
-      expect(subentities, isEmpty,
-          reason: 'Null region must NOT produce empty CountrySubentity');
+      expect(
+        subentities,
+        isEmpty,
+        reason: 'Null region must NOT produce empty CountrySubentity',
+      );
     });
 
     test('Country element still present when region is null', () {
@@ -134,12 +149,16 @@ void main() {
       final supplier = doc.rootElement
           .findAllElements('AccountingSupplierParty', namespace: '*')
           .first;
-      final address =
-          supplier.findAllElements('PostalAddress', namespace: '*').first;
+      final address = supplier
+          .findAllElements('PostalAddress', namespace: '*')
+          .first;
       final country = address.findAllElements('Country', namespace: '*');
 
-      expect(country.length, equals(1),
-          reason: 'Country must still exist even when region is null');
+      expect(
+        country.length,
+        equals(1),
+        reason: 'Country must still exist even when region is null',
+      );
     });
 
     test('buyer PostalAddress also follows correct order when region set', () {
@@ -154,10 +173,16 @@ void main() {
       final buyerPostalZoneIdx = xml.lastIndexOf('PostalZone');
       final buyerCountryIdx = xml.lastIndexOf('IdentificationCode');
 
-      expect(buyerPostalZoneIdx, lessThan(buyerSubentityIdx),
-          reason: 'Buyer: PostalZone must precede CountrySubentity');
-      expect(buyerSubentityIdx, lessThan(buyerCountryIdx),
-          reason: 'Buyer: CountrySubentity must precede Country');
+      expect(
+        buyerPostalZoneIdx,
+        lessThan(buyerSubentityIdx),
+        reason: 'Buyer: PostalZone must precede CountrySubentity',
+      );
+      expect(
+        buyerSubentityIdx,
+        lessThan(buyerCountryIdx),
+        reason: 'Buyer: CountrySubentity must precede Country',
+      );
     });
   });
 }

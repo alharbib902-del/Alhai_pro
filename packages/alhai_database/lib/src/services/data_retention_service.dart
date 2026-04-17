@@ -40,27 +40,27 @@ class DataRetentionService {
     final cutoff = DateTime.now().subtract(RetentionPolicy.salesRetention);
 
     // Find candidates: old + synced + not soft-deleted
-    final candidates = await (
-      _db.select(_db.salesTable)
-        ..where((s) =>
-            s.createdAt.isSmallerThanValue(cutoff) &
-            s.syncedAt.isNotNull() &
-            s.deletedAt.isNull(),
-        )
-    ).get();
+    final candidates =
+        await (_db.select(_db.salesTable)..where(
+              (s) =>
+                  s.createdAt.isSmallerThanValue(cutoff) &
+                  s.syncedAt.isNotNull() &
+                  s.deletedAt.isNull(),
+            ))
+            .get();
 
     var count = 0;
     for (final sale in candidates) {
       // Delete the sale first — this removes the trigger condition that
       // prevents deleting sale_items of completed/paid/refunded sales.
-      await (_db.delete(_db.salesTable)
-            ..where((s) => s.id.equals(sale.id)))
-          .go();
+      await (_db.delete(
+        _db.salesTable,
+      )..where((s) => s.id.equals(sale.id))).go();
 
       // Delete orphaned sale_items (parent sale already gone).
-      await (_db.delete(_db.saleItemsTable)
-            ..where((si) => si.saleId.equals(sale.id)))
-          .go();
+      await (_db.delete(
+        _db.saleItemsTable,
+      )..where((si) => si.saleId.equals(sale.id))).go();
 
       count++;
     }
@@ -70,27 +70,27 @@ class DataRetentionService {
 
   /// Delete completed sync queue items older than 30 days.
   Future<int> _cleanupOldSyncQueue() async {
-    final cutoff =
-        DateTime.now().subtract(RetentionPolicy.syncQueueRetention);
+    final cutoff = DateTime.now().subtract(RetentionPolicy.syncQueueRetention);
 
-    return (_db.delete(_db.syncQueueTable)
-          ..where((q) =>
+    return (_db.delete(_db.syncQueueTable)..where(
+          (q) =>
               q.createdAt.isSmallerThanValue(cutoff) &
               q.status.equals('completed'),
-          ))
+        ))
         .go();
   }
 
   /// Delete synced stock deltas older than 7 days.
   Future<int> _cleanupOldStockDeltas() async {
-    final cutoff =
-        DateTime.now().subtract(RetentionPolicy.stockDeltasRetention);
+    final cutoff = DateTime.now().subtract(
+      RetentionPolicy.stockDeltasRetention,
+    );
 
-    return (_db.delete(_db.stockDeltasTable)
-          ..where((d) =>
+    return (_db.delete(_db.stockDeltasTable)..where(
+          (d) =>
               d.createdAt.isSmallerThanValue(cutoff) &
               d.syncStatus.equals('synced'),
-          ))
+        ))
         .go();
   }
 }

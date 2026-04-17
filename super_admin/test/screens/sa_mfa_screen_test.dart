@@ -28,16 +28,14 @@ void main() {
         action: 'auth.mfa_verified',
         targetType: 'user',
         targetId: 'sa-user-1',
-        metadata: {
-          'email': 'admin@bltech.sa',
-          'enrollment': false,
-        },
+        metadata: {'email': 'admin@bltech.sa', 'enrollment': false},
       );
 
       final ops = mock.queryLog['audit_log']!;
       expect(ops, hasLength(1));
-      final row = ops.first.firstWhere((o) => o.method == 'insert').args[0]
-          as Map<String, dynamic>;
+      final row =
+          ops.first.firstWhere((o) => o.method == 'insert').args[0]
+              as Map<String, dynamic>;
       expect(row['action'], equals('auth.mfa_verified'));
       expect(row['metadata']?['enrollment'], isFalse);
     });
@@ -60,8 +58,9 @@ void main() {
       );
 
       final ops = mock.queryLog['audit_log']!;
-      final row = ops.first.firstWhere((o) => o.method == 'insert').args[0]
-          as Map<String, dynamic>;
+      final row =
+          ops.first.firstWhere((o) => o.method == 'insert').args[0]
+              as Map<String, dynamic>;
       expect(row['action'], equals('auth.mfa_failed'));
       expect(row['metadata']?['reason'], contains('attempt=3'));
     });
@@ -77,42 +76,40 @@ void main() {
         action: 'auth.mfa_failed',
         targetType: 'user',
         targetId: 'sa-user-1',
-        metadata: {
-          'email': 'admin@bltech.sa',
-          'reason': 'lockout_triggered',
-        },
+        metadata: {'email': 'admin@bltech.sa', 'reason': 'lockout_triggered'},
       );
 
       final ops = mock.queryLog['audit_log']!;
-      final row = ops.first.firstWhere((o) => o.method == 'insert').args[0]
-          as Map<String, dynamic>;
+      final row =
+          ops.first.firstWhere((o) => o.method == 'insert').args[0]
+              as Map<String, dynamic>;
       expect(row['metadata']?['reason'], equals('lockout_triggered'));
     });
 
-    test('MFA enrollment verification is audited with enrollment=true',
-        () async {
-      const actor = AuditActor(id: 'sa-user-1', email: 'admin@bltech.sa');
-      final audit = AuditLogService.test(
-        mock.client,
-        resolveActor: () => actor,
-      );
+    test(
+      'MFA enrollment verification is audited with enrollment=true',
+      () async {
+        const actor = AuditActor(id: 'sa-user-1', email: 'admin@bltech.sa');
+        final audit = AuditLogService.test(
+          mock.client,
+          resolveActor: () => actor,
+        );
 
-      await audit.log(
-        action: 'auth.mfa_verified',
-        targetType: 'user',
-        targetId: 'sa-user-1',
-        metadata: {
-          'email': 'admin@bltech.sa',
-          'enrollment': true,
-        },
-      );
+        await audit.log(
+          action: 'auth.mfa_verified',
+          targetType: 'user',
+          targetId: 'sa-user-1',
+          metadata: {'email': 'admin@bltech.sa', 'enrollment': true},
+        );
 
-      final ops = mock.queryLog['audit_log']!;
-      final row = ops.first.firstWhere((o) => o.method == 'insert').args[0]
-          as Map<String, dynamic>;
-      expect(row['action'], equals('auth.mfa_verified'));
-      expect(row['metadata']?['enrollment'], isTrue);
-    });
+        final ops = mock.queryLog['audit_log']!;
+        final row =
+            ops.first.firstWhere((o) => o.method == 'insert').args[0]
+                as Map<String, dynamic>;
+        expect(row['action'], equals('auth.mfa_verified'));
+        expect(row['metadata']?['enrollment'], isTrue);
+      },
+    );
   });
 
   group('MFA lockout logic', () {

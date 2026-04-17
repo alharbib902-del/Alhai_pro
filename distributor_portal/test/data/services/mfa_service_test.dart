@@ -36,8 +36,9 @@ void main() {
       // Replicate MfaService backup code format logic for testing
       return List.generate(count, (i) {
         final bytes = List<int>.generate(6, (j) => (i * 6 + j) % 256);
-        final hex =
-            bytes.map((b) => b.toRadixString(16).padLeft(2, '0')).join();
+        final hex = bytes
+            .map((b) => b.toRadixString(16).padLeft(2, '0'))
+            .join();
         final upper = hex.toUpperCase();
         return '${upper.substring(0, 4)}-${upper.substring(4, 8)}-${upper.substring(8, 12)}';
       });

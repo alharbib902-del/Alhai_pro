@@ -16,7 +16,8 @@ String? authRedirect({
   required bool isAuthenticated,
   required String location,
 }) {
-  final isPublicRoute = location == '/' ||
+  final isPublicRoute =
+      location == '/' ||
       location.startsWith('/auth') ||
       location.startsWith('/onboarding');
 
@@ -33,23 +34,32 @@ String? authRedirect({
 
 void main() {
   group('Auth guard redirect logic', () {
-    test('unauthenticated user accessing /orders → redirect to /auth/login',
-        () {
-      final result = authRedirect(isAuthenticated: false, location: '/orders');
-      expect(result, equals('/auth/login'));
-    });
+    test(
+      'unauthenticated user accessing /orders → redirect to /auth/login',
+      () {
+        final result = authRedirect(
+          isAuthenticated: false,
+          location: '/orders',
+        );
+        expect(result, equals('/auth/login'));
+      },
+    );
 
     test('unauthenticated user accessing /home → redirect to /auth/login', () {
       final result = authRedirect(isAuthenticated: false, location: '/home');
       expect(result, equals('/auth/login'));
     });
 
-    test('unauthenticated user accessing /checkout → redirect to /auth/login',
-        () {
-      final result =
-          authRedirect(isAuthenticated: false, location: '/checkout');
-      expect(result, equals('/auth/login'));
-    });
+    test(
+      'unauthenticated user accessing /checkout → redirect to /auth/login',
+      () {
+        final result = authRedirect(
+          isAuthenticated: false,
+          location: '/checkout',
+        );
+        expect(result, equals('/auth/login'));
+      },
+    );
 
     test('unauthenticated user accessing /cart → redirect to /auth/login', () {
       final result = authRedirect(isAuthenticated: false, location: '/cart');
@@ -57,8 +67,10 @@ void main() {
     });
 
     test('unauthenticated user accessing /auth/login → no redirect', () {
-      final result =
-          authRedirect(isAuthenticated: false, location: '/auth/login');
+      final result = authRedirect(
+        isAuthenticated: false,
+        location: '/auth/login',
+      );
       expect(result, isNull);
     });
 
@@ -78,14 +90,15 @@ void main() {
     });
 
     test('authenticated user accessing /auth/login → redirect to /home', () {
-      final result =
-          authRedirect(isAuthenticated: true, location: '/auth/login');
+      final result = authRedirect(
+        isAuthenticated: true,
+        location: '/auth/login',
+      );
       expect(result, equals('/home'));
     });
 
     test('authenticated user accessing /auth/otp → redirect to /home', () {
-      final result =
-          authRedirect(isAuthenticated: true, location: '/auth/otp');
+      final result = authRedirect(isAuthenticated: true, location: '/auth/otp');
       expect(result, equals('/home'));
     });
 

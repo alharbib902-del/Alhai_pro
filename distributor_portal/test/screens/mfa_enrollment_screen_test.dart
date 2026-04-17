@@ -148,7 +148,9 @@ void main() {
       expect(find.byIcon(Icons.arrow_back), findsNothing);
     });
 
-    testWidgets('non-forced mode does not show mandatory notice', (tester) async {
+    testWidgets('non-forced mode does not show mandatory notice', (
+      tester,
+    ) async {
       await tester.pumpWidget(_buildTestWidget(forced: false));
       await tester.pump();
 

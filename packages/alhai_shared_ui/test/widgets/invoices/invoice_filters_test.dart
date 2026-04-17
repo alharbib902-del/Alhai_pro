@@ -5,8 +5,9 @@ import '../../helpers/shared_ui_test_helpers.dart';
 
 void main() {
   group('InvoiceFilters', () {
-    testWidgets('renders on mobile width (tabs only, no filter row)',
-        (tester) async {
+    testWidgets('renders on mobile width (tabs only, no filter row)', (
+      tester,
+    ) async {
       // Mobile width: isWide=false, so only tabs render (no Row overflow)
       tester.view.physicalSize = const Size(375, 812);
       tester.view.devicePixelRatio = 1.0;

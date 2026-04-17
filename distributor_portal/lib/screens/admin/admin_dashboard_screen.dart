@@ -277,9 +277,7 @@ class _DistributorCard extends ConsumerWidget {
           ),
           FilledButton(
             onPressed: () => Navigator.of(ctx).pop(true),
-            style: FilledButton.styleFrom(
-              backgroundColor: Colors.green,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: Colors.green),
             child: const Text('نعم، اعتماد'),
           ),
         ],
@@ -290,9 +288,7 @@ class _DistributorCard extends ConsumerWidget {
     if (!context.mounted) return;
 
     try {
-      await ref
-          .read(adminServiceProvider)
-          .approveDistributor(distributor.id);
+      await ref.read(adminServiceProvider).approveDistributor(distributor.id);
       ref.invalidate(pendingDistributorsProvider);
       ref.invalidate(unreadNotificationCountProvider);
       if (context.mounted) {
@@ -389,9 +385,7 @@ class _DistributorCard extends ConsumerWidget {
               onPressed: reasonController.text.trim().length >= 10
                   ? () => Navigator.of(ctx).pop(reasonController.text.trim())
                   : null,
-              style: FilledButton.styleFrom(
-                backgroundColor: Colors.red,
-              ),
+              style: FilledButton.styleFrom(backgroundColor: Colors.red),
               child: const Text('رفض'),
             ),
           ],
@@ -421,10 +415,7 @@ class _DistributorCard extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('فشل الرفض: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('فشل الرفض: $e'), backgroundColor: Colors.red),
         );
       }
     }
@@ -573,9 +564,9 @@ class _DocumentCard extends ConsumerWidget {
           .getDocumentSignedUrl(document.fileUrl);
       if (!context.mounted) return;
       // Open URL — on web this opens a new tab
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('رابط المستند: $url')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('رابط المستند: $url')));
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -593,8 +584,9 @@ class _DocumentCard extends ConsumerWidget {
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('تأكيد الموافقة'),
-        content:
-            Text('هل تريد الموافقة على "${document.documentType.arabicName}"؟'),
+        content: Text(
+          'هل تريد الموافقة على "${document.documentType.arabicName}"؟',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(false),
@@ -624,10 +616,7 @@ class _DocumentCard extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('فشل: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('فشل: $e'), backgroundColor: Colors.red),
         );
       }
     }
@@ -704,9 +693,7 @@ class _DocumentCard extends ConsumerWidget {
     if (result == null || result.isEmpty || !context.mounted) return;
 
     try {
-      await ref
-          .read(adminServiceProvider)
-          .rejectDocument(document.id, result);
+      await ref.read(adminServiceProvider).rejectDocument(document.id, result);
       ref.invalidate(pendingDocumentsProvider);
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -719,10 +706,7 @@ class _DocumentCard extends ConsumerWidget {
     } catch (e) {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('فشل: $e'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('فشل: $e'), backgroundColor: Colors.red),
         );
       }
     }
@@ -745,8 +729,9 @@ class _NotificationsTabState extends ConsumerState<_NotificationsTab> {
 
   @override
   Widget build(BuildContext context) {
-    final asyncNotifications =
-        ref.watch(adminNotificationsProvider(_unreadOnly));
+    final asyncNotifications = ref.watch(
+      adminNotificationsProvider(_unreadOnly),
+    );
 
     return Column(
       children: [
@@ -794,8 +779,9 @@ class _NotificationsTabState extends ConsumerState<_NotificationsTab> {
               return RefreshIndicator(
                 onRefresh: () async {
                   ref.invalidate(adminNotificationsProvider(_unreadOnly));
-                  await ref
-                      .read(adminNotificationsProvider(_unreadOnly).future);
+                  await ref.read(
+                    adminNotificationsProvider(_unreadOnly).future,
+                  );
                 },
                 child: ListView.separated(
                   padding: const EdgeInsets.all(16),
@@ -862,9 +848,7 @@ class _NotificationTile extends ConsumerWidget {
 
     return Card(
       elevation: notification.isRead ? 0 : 1,
-      color: notification.isRead
-          ? null
-          : color.withValues(alpha: 0.05),
+      color: notification.isRead ? null : color.withValues(alpha: 0.05),
       child: ListTile(
         leading: CircleAvatar(
           backgroundColor: color.withValues(alpha: 0.1),
@@ -873,7 +857,9 @@ class _NotificationTile extends ConsumerWidget {
         title: Text(
           notification.title,
           style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
+            fontWeight: notification.isRead
+                ? FontWeight.normal
+                : FontWeight.bold,
           ),
         ),
         subtitle: Column(
@@ -914,9 +900,9 @@ class _NotificationTile extends ConsumerWidget {
                     ref.invalidate(unreadNotificationCountProvider);
                   } catch (e) {
                     if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text('فشل: $e')),
-                      );
+                      ScaffoldMessenger.of(
+                        context,
+                      ).showSnackBar(SnackBar(content: Text('فشل: $e')));
                     }
                   }
                 },
@@ -959,8 +945,8 @@ class _InfoRow extends StatelessWidget {
           Text(
             '$label: ',
             style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
           Expanded(
             child: Text(
@@ -992,8 +978,8 @@ class _EmptyView extends StatelessWidget {
           Text(
             message,
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurfaceVariant,
-                ),
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            ),
           ),
         ],
       ),

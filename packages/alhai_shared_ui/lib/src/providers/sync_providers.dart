@@ -414,9 +414,9 @@ final pendingSyncCountProvider = StreamProvider<int>((ref) {
 /// يُستخدم لعرض بانر التحذير عند وجود عناصر معلقة لأكثر من 5 دقائق
 final unsyncedSalesInfoProvider =
     StreamProvider<({int count, DateTime? oldestAt})>((ref) {
-      final syncService = ref.watch(syncServiceProvider);
-      return syncService.watchPendingCountWithOldest();
-    });
+  final syncService = ref.watch(syncServiceProvider);
+  return syncService.watchPendingCountWithOldest();
+});
 
 /// مزود حالة المزامنة (القديم - للتوافق)
 final syncStatusProvider = StreamProvider<SyncStatus>((ref) {

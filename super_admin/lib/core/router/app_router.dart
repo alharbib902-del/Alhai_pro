@@ -148,10 +148,7 @@ final List<RouteBase> _routes = [
     path: SuperAdminRoutes.login,
     builder: (c, s) => const SALoginScreen(),
   ),
-  GoRoute(
-    path: SuperAdminRoutes.mfa,
-    builder: (c, s) => const SAMfaScreen(),
-  ),
+  GoRoute(path: SuperAdminRoutes.mfa, builder: (c, s) => const SAMfaScreen()),
 
   // Shell route with sidebar navigation
   ShellRoute(

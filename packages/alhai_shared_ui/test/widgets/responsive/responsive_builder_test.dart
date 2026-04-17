@@ -80,8 +80,9 @@ void main() {
       expect(find.text('Tablet'), findsOneWidget);
     });
 
-    testWidgets('falls back to desktop when no tablet provided',
-        (tester) async {
+    testWidgets('falls back to desktop when no tablet provided', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(768, 1024);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());

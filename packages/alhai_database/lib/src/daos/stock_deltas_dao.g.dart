@@ -19,10 +19,14 @@ class StockDeltasDaoManager {
       $$StoresTableTableTableManager(_db.attachedDatabase, _db.storesTable);
   $$CategoriesTableTableTableManager get categoriesTable =>
       $$CategoriesTableTableTableManager(
-          _db.attachedDatabase, _db.categoriesTable);
+        _db.attachedDatabase,
+        _db.categoriesTable,
+      );
   $$ProductsTableTableTableManager get productsTable =>
       $$ProductsTableTableTableManager(_db.attachedDatabase, _db.productsTable);
   $$StockDeltasTableTableTableManager get stockDeltasTable =>
       $$StockDeltasTableTableTableManager(
-          _db.attachedDatabase, _db.stockDeltasTable);
+        _db.attachedDatabase,
+        _db.stockDeltasTable,
+      );
 }

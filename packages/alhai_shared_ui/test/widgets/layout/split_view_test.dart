@@ -23,8 +23,9 @@ void main() {
       expect(find.text('Primary'), findsOneWidget);
     });
 
-    testWidgets('renders secondary content when showSecondary is true',
-        (tester) async {
+    testWidgets('renders secondary content when showSecondary is true', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1280, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());
@@ -42,8 +43,9 @@ void main() {
       expect(find.text('Secondary'), findsOneWidget);
     });
 
-    testWidgets('hides secondary content when showSecondary is false',
-        (tester) async {
+    testWidgets('hides secondary content when showSecondary is false', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1280, 800);
       tester.view.devicePixelRatio = 1.0;
       addTearDown(() => tester.view.resetPhysicalSize());
@@ -87,19 +89,14 @@ void main() {
         SplitViewDirection.values,
         contains(SplitViewDirection.horizontal),
       );
-      expect(
-        SplitViewDirection.values,
-        contains(SplitViewDirection.vertical),
-      );
+      expect(SplitViewDirection.values, contains(SplitViewDirection.vertical));
     });
   });
 
   group('SplitPanelHeader', () {
     testWidgets('renders title', (tester) async {
       await tester.pumpWidget(
-        createSimpleTestWidget(
-          const SplitPanelHeader(title: 'Panel Header'),
-        ),
+        createSimpleTestWidget(const SplitPanelHeader(title: 'Panel Header')),
       );
       expect(find.text('Panel Header'), findsOneWidget);
     });
@@ -107,10 +104,7 @@ void main() {
     testWidgets('renders icon when provided', (tester) async {
       await tester.pumpWidget(
         createSimpleTestWidget(
-          const SplitPanelHeader(
-            title: 'With Icon',
-            icon: Icons.shopping_cart,
-          ),
+          const SplitPanelHeader(title: 'With Icon', icon: Icons.shopping_cart),
         ),
       );
       expect(find.byIcon(Icons.shopping_cart), findsOneWidget);
@@ -120,10 +114,7 @@ void main() {
       var closed = false;
       await tester.pumpWidget(
         createSimpleTestWidget(
-          SplitPanelHeader(
-            title: 'Closable',
-            onClose: () => closed = true,
-          ),
+          SplitPanelHeader(title: 'Closable', onClose: () => closed = true),
         ),
       );
       await tester.tap(find.byIcon(Icons.close));
@@ -136,10 +127,7 @@ void main() {
           SplitPanelHeader(
             title: 'With Actions',
             actions: [
-              IconButton(
-                onPressed: () {},
-                icon: const Icon(Icons.search),
-              ),
+              IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
             ],
           ),
         ),

@@ -57,10 +57,7 @@ void main() {
       await tester.pumpWidget(_buildTestWidget());
       await tester.pump();
 
-      expect(
-        find.textContaining('6 أرقام'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('6 أرقام'), findsOneWidget);
     });
 
     testWidgets('has 6-digit code input field', (tester) async {
@@ -138,7 +135,9 @@ void main() {
       expect(find.byIcon(Icons.vpn_key_rounded), findsOneWidget);
     });
 
-    testWidgets('backup entry has input field with placeholder', (tester) async {
+    testWidgets('backup entry has input field with placeholder', (
+      tester,
+    ) async {
       await tester.pumpWidget(_buildTestWidget());
       await tester.pump();
 
@@ -215,8 +214,9 @@ void main() {
 
       // Container with maxWidth: 420
       final containers = tester.widgetList<Container>(find.byType(Container));
-      final hasConstraint = containers.any((c) =>
-          c.constraints != null && c.constraints!.maxWidth == 420);
+      final hasConstraint = containers.any(
+        (c) => c.constraints != null && c.constraints!.maxWidth == 420,
+      );
       expect(hasConstraint, isTrue);
     });
   });

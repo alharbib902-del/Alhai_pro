@@ -21,13 +21,16 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   @override
   void initState() {
     super.initState();
-    PackageInfo.fromPlatform().then((info) {
-      if (mounted) {
-        setState(() {
-          _versionText = 'Alhai Driver v${info.version}+${info.buildNumber}';
-        });
-      }
-    }).catchError((_) {});
+    PackageInfo.fromPlatform()
+        .then((info) {
+          if (mounted) {
+            setState(() {
+              _versionText =
+                  'Alhai Driver v${info.version}+${info.buildNumber}';
+            });
+          }
+        })
+        .catchError((_) {});
   }
 
   @override

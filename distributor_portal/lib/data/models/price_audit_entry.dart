@@ -32,31 +32,30 @@ class PriceAuditEntry {
       oldPrice: (json['old_price'] as num?)?.toDouble(),
       newPrice: (json['new_price'] as num?)?.toDouble() ?? 0,
       changedBy: json['changed_by'] as String? ?? '',
-      changedAt: DateTime.tryParse(json['changed_at'] as String? ?? '') ??
+      changedAt:
+          DateTime.tryParse(json['changed_at'] as String? ?? '') ??
           DateTime.now(),
       reason: json['reason'] as String?,
     );
   }
 
   Map<String, dynamic> toJson() => {
-        'product_id': productId,
-        'product_name': productName,
-        'old_price': oldPrice,
-        'new_price': newPrice,
-        'changed_by': changedBy,
-        'changed_at': changedAt.toIso8601String(),
-        'reason': reason,
-      };
+    'product_id': productId,
+    'product_name': productName,
+    'old_price': oldPrice,
+    'new_price': newPrice,
+    'changed_by': changedBy,
+    'changed_at': changedAt.toIso8601String(),
+    'reason': reason,
+  };
 
   /// Difference between old and new price, or null if no old price.
-  double? get priceDifference =>
-      oldPrice != null ? newPrice - oldPrice! : null;
+  double? get priceDifference => oldPrice != null ? newPrice - oldPrice! : null;
 
   /// Percentage change, or null if no old price.
-  double? get percentChange =>
-      oldPrice != null && oldPrice! > 0
-          ? ((newPrice - oldPrice!) / oldPrice!) * 100
-          : null;
+  double? get percentChange => oldPrice != null && oldPrice! > 0
+      ? ((newPrice - oldPrice!) / oldPrice!) * 100
+      : null;
 
   @override
   bool operator ==(Object other) =>

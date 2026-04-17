@@ -32,21 +32,17 @@ final invoicesProvider =
     });
 
 /// Single invoice by ID.
-final invoiceByIdProvider =
-    FutureProvider.family<DistributorInvoice?, String>((
-      ref,
-      invoiceId,
-    ) async {
-      final ds = ref.watch(distributorDatasourceProvider);
-      return ds.getInvoiceById(invoiceId);
-    });
+final invoiceByIdProvider = FutureProvider.family<DistributorInvoice?, String>((
+  ref,
+  invoiceId,
+) async {
+  final ds = ref.watch(distributorDatasourceProvider);
+  return ds.getInvoiceById(invoiceId);
+});
 
 /// Check if an order already has an invoice.
 final invoiceByOrderProvider =
-    FutureProvider.family<DistributorInvoice?, String>((
-      ref,
-      orderId,
-    ) async {
+    FutureProvider.family<DistributorInvoice?, String>((ref, orderId) async {
       final ds = ref.watch(distributorDatasourceProvider);
       return ds.getInvoiceByOrderId(orderId);
     });

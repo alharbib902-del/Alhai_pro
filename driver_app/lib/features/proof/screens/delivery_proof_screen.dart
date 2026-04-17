@@ -406,8 +406,8 @@ class _DeliveryProofScreenState extends ConsumerState<DeliveryProofScreen> {
                     label: _isLoading
                         ? 'جاري تأكيد التسليم'
                         : !_hasProof
-                            ? 'أضف صورة أو توقيع أولاً'
-                            : 'تأكيد التسليم',
+                        ? 'أضف صورة أو توقيع أولاً'
+                        : 'تأكيد التسليم',
                     button: true,
                     child: FilledButton.icon(
                       onPressed: _isLoading || !_hasProof ? null : _submit,

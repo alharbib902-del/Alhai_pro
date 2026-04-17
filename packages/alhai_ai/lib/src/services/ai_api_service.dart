@@ -78,10 +78,7 @@ String sanitizePii(String input) {
   // Saudi national IDs: exactly 10 digits starting with 1 or 2
   // Must check BEFORE phone numbers since NID could match phone patterns.
   // Use word-boundary to avoid matching inside longer digit sequences.
-  result = result.replaceAll(
-    RegExp(r'\b[12]\d{9}\b'),
-    '[NATIONAL_ID]',
-  );
+  result = result.replaceAll(RegExp(r'\b[12]\d{9}\b'), '[NATIONAL_ID]');
 
   // Phone numbers: +966…, 05…, or generic international format
   result = result.replaceAll(
@@ -196,20 +193,20 @@ class AiApiService {
           ..connectionTimeout = const Duration(seconds: _kTimeoutSeconds);
         client.badCertificateCallback =
             (X509Certificate cert, String host, int port) {
-          final derBytes = cert.der;
-          final digest = sha256.convert(derBytes);
-          final actual = base64.encode(digest.bytes);
-          for (final pin in _kPinnedHashes) {
-            if (_constantTimeEquals(actual, pin)) {
-              return true;
-            }
-          }
-          debugPrint(
-            '[AI-CertPin] REJECTED certificate for $host:$port '
-            '(fingerprint mismatch)',
-          );
-          return false;
-        };
+              final derBytes = cert.der;
+              final digest = sha256.convert(derBytes);
+              final actual = base64.encode(digest.bytes);
+              for (final pin in _kPinnedHashes) {
+                if (_constantTimeEquals(actual, pin)) {
+                  return true;
+                }
+              }
+              debugPrint(
+                '[AI-CertPin] REJECTED certificate for $host:$port '
+                '(fingerprint mismatch)',
+              );
+              return false;
+            };
         return client;
       };
     }
@@ -332,10 +329,7 @@ class AiApiService {
         'data': data,
         'timestamp': DateTime.now().toIso8601String(),
       });
-      await SecureStorageService.write(
-        '$_kCacheKeyPrefix$key',
-        cacheData,
-      );
+      await SecureStorageService.write('$_kCacheKeyPrefix$key', cacheData);
     } catch (_) {
       // Silently fail - caching is best-effort
     }
@@ -344,9 +338,7 @@ class AiApiService {
   /// Retrieves a persisted cache entry from secure storage.
   Future<Map<String, dynamic>?> _getPersistedCache(String key) async {
     try {
-      final raw = await SecureStorageService.read(
-        '$_kCacheKeyPrefix$key',
-      );
+      final raw = await SecureStorageService.read('$_kCacheKeyPrefix$key');
       if (raw == null) return null;
 
       final parsed = jsonDecode(raw) as Map<String, dynamic>;

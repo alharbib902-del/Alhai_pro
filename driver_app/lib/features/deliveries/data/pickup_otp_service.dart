@@ -66,7 +66,9 @@ class PickupOtpService {
       // Map known error messages to user-friendly exceptions.
       final msg = e.message;
       if (msg.contains('expired') || msg.contains('انتهت')) {
-        throw OtpVerificationException('انتهت صلاحية الرمز. اطلب رمزاً جديداً.');
+        throw OtpVerificationException(
+          'انتهت صلاحية الرمز. اطلب رمزاً جديداً.',
+        );
       }
       if (msg.contains('max_attempts') || msg.contains('محاولات')) {
         throw OtpVerificationException(
@@ -77,9 +79,7 @@ class PickupOtpService {
       if (msg.contains('already_verified') || msg.contains('مسبقاً')) {
         throw OtpVerificationException('تم التحقق من هذا الطلب مسبقاً.');
       }
-      throw OtpVerificationException(
-        'رمز غير صحيح. حاول مرة أخرى.',
-      );
+      throw OtpVerificationException('رمز غير صحيح. حاول مرة أخرى.');
     }
   }
 }

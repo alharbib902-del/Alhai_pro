@@ -23,15 +23,17 @@ class SAStoreDetailScreen extends ConsumerWidget {
       _loggedAccess.clear();
     }
     try {
-      ref.read(auditLogServiceProvider).log(
-        action: 'store.accessed',
-        targetType: 'store',
-        targetId: storeId,
-        metadata: {
-          'store_name': storeName,
-          'timestamp': DateTime.now().toUtc().toIso8601String(),
-        },
-      );
+      ref
+          .read(auditLogServiceProvider)
+          .log(
+            action: 'store.accessed',
+            targetType: 'store',
+            targetId: storeId,
+            metadata: {
+              'store_name': storeName,
+              'timestamp': DateTime.now().toUtc().toIso8601String(),
+            },
+          );
     } catch (_) {}
   }
 

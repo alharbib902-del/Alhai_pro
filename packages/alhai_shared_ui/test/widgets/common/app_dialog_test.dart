@@ -71,14 +71,8 @@ void main() {
                     title: 'With Actions',
                     content: const Text('Content'),
                     actions: [
-                      TextButton(
-                        onPressed: () {},
-                        child: const Text('Cancel'),
-                      ),
-                      TextButton(
-                        onPressed: () {},
-                        child: const Text('OK'),
-                      ),
+                      TextButton(onPressed: () {}, child: const Text('Cancel')),
+                      TextButton(onPressed: () {}, child: const Text('OK')),
                     ],
                   ),
                 );
@@ -101,9 +95,7 @@ void main() {
     testWidgets('renders content', (tester) async {
       await tester.pumpWidget(
         createSimpleTestWidget(
-          const AppBottomSheet(
-            content: Text('Sheet Content'),
-          ),
+          const AppBottomSheet(content: Text('Sheet Content')),
         ),
       );
       expect(find.text('Sheet Content'), findsOneWidget);
@@ -112,10 +104,7 @@ void main() {
     testWidgets('renders title when provided', (tester) async {
       await tester.pumpWidget(
         createSimpleTestWidget(
-          const AppBottomSheet(
-            title: 'Sheet Title',
-            content: Text('Content'),
-          ),
+          const AppBottomSheet(title: 'Sheet Title', content: Text('Content')),
         ),
       );
       expect(find.text('Sheet Title'), findsOneWidget);
@@ -124,10 +113,7 @@ void main() {
     testWidgets('renders handle when showHandle is true', (tester) async {
       await tester.pumpWidget(
         createSimpleTestWidget(
-          const AppBottomSheet(
-            showHandle: true,
-            content: Text('Content'),
-          ),
+          const AppBottomSheet(showHandle: true, content: Text('Content')),
         ),
       );
       // The handle is a Container - the sheet should render
@@ -137,10 +123,7 @@ void main() {
     testWidgets('hides handle when showHandle is false', (tester) async {
       await tester.pumpWidget(
         createSimpleTestWidget(
-          const AppBottomSheet(
-            showHandle: false,
-            content: Text('Content'),
-          ),
+          const AppBottomSheet(showHandle: false, content: Text('Content')),
         ),
       );
       expect(find.text('Content'), findsOneWidget);

@@ -14,5 +14,7 @@ class PosTerminalsDaoManager {
   PosTerminalsDaoManager(this._db);
   $$PosTerminalsTableTableTableManager get posTerminalsTable =>
       $$PosTerminalsTableTableTableManager(
-          _db.attachedDatabase, _db.posTerminalsTable);
+        _db.attachedDatabase,
+        _db.posTerminalsTable,
+      );
 }

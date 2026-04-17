@@ -141,8 +141,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, _) => ErrorStateWidget(
           message: 'حدث خطأ أثناء تحميل الفاتورة',
-          onRetry: () =>
-              ref.invalidate(invoiceByIdProvider(widget.invoiceId)),
+          onRetry: () => ref.invalidate(invoiceByIdProvider(widget.invoiceId)),
           isDark: isDark,
         ),
         data: (invoice) {
@@ -219,8 +218,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                     _buildTotals(invoice, isDark),
 
                     // ── Notes ──
-                    if (invoice.notes != null &&
-                        invoice.notes!.isNotEmpty) ...[
+                    if (invoice.notes != null && invoice.notes!.isNotEmpty) ...[
                       const Divider(height: AlhaiSpacing.xl),
                       _buildNotes(invoice, isDark),
                     ],
@@ -466,21 +464,13 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
       spacing: AlhaiSpacing.xl,
       runSpacing: AlhaiSpacing.sm,
       children: [
-        _metaItem(
-          'رقم الفاتورة',
-          invoice.invoiceNumber,
-          isDark,
-        ),
+        _metaItem('رقم الفاتورة', invoice.invoiceNumber, isDark),
         _metaItem(
           'التاريخ',
           _formatDate(invoice.issuedAt ?? invoice.createdAt),
           isDark,
         ),
-        _metaItem(
-          'تاريخ الاستحقاق',
-          _formatDate(invoice.dueAt),
-          isDark,
-        ),
+        _metaItem('تاريخ الاستحقاق', _formatDate(invoice.dueAt), isDark),
         Row(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -656,9 +646,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                   return TableRow(
                     decoration: BoxDecoration(
                       border: Border(
-                        top: BorderSide(
-                          color: AppColors.getBorder(isDark),
-                        ),
+                        top: BorderSide(color: AppColors.getBorder(isDark)),
                       ),
                     ),
                     children: [
@@ -669,10 +657,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                         _currencyFmt.format(unitPrice),
                         isDark: isDark,
                       ),
-                      _tableCell(
-                        _currencyFmt.format(lineVat),
-                        isDark: isDark,
-                      ),
+                      _tableCell(_currencyFmt.format(lineVat), isDark: isDark),
                       _tableCell(
                         _currencyFmt.format(lineGross),
                         isDark: isDark,

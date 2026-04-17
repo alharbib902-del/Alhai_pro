@@ -160,10 +160,7 @@ void main() {
     });
 
     test('handles missing tax fields gracefully', () {
-      final org = OrgSettings.fromJson({
-        'id': 'org-2',
-        'name': 'No Tax Co',
-      });
+      final org = OrgSettings.fromJson({'id': 'org-2', 'name': 'No Tax Co'});
 
       expect(org.taxNumber, isNull);
       expect(org.commercialReg, isNull);

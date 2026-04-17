@@ -7,9 +7,7 @@ void main() {
   group('AppCard', () {
     testWidgets('renders child widget', (tester) async {
       await tester.pumpWidget(
-        createSimpleTestWidget(
-          const AppCard(child: Text('Card Content')),
-        ),
+        createSimpleTestWidget(const AppCard(child: Text('Card Content'))),
       );
       expect(find.text('Card Content'), findsOneWidget);
     });
@@ -42,10 +40,7 @@ void main() {
     testWidgets('renders with custom padding', (tester) async {
       await tester.pumpWidget(
         createSimpleTestWidget(
-          const AppCard(
-            padding: EdgeInsets.all(32),
-            child: Text('Padded'),
-          ),
+          const AppCard(padding: EdgeInsets.all(32), child: Text('Padded')),
         ),
       );
       expect(find.text('Padded'), findsOneWidget);

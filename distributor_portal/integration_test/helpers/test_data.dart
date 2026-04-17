@@ -100,12 +100,7 @@ const kSampleOrderItems = <Map<String, dynamic>>[
 const kTestInvoiceId = 'inv-001';
 
 /// Invoice statuses in lifecycle order.
-const kInvoiceStatuses = [
-  'draft',
-  'issued',
-  'paid',
-  'cancelled',
-];
+const kInvoiceStatuses = ['draft', 'issued', 'paid', 'cancelled'];
 
 /// Sample distributor invoice as a JSON-like map.
 const kSampleInvoice = <String, dynamic>{

@@ -237,15 +237,19 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
                       _pdfHeaderCell(l10n.day),
                     ],
                   ),
-                  ..._entries.take(30).map(
-                    (e) => pw.TableRow(
-                      children: [
-                        _pdfCell(e.name),
-                        _pdfCell('${e.balance.toStringAsFixed(0)} ${l10n.currency}'),
-                        _pdfCell(l10n.reportNDays(e.days)),
-                      ],
-                    ),
-                  ),
+                  ..._entries
+                      .take(30)
+                      .map(
+                        (e) => pw.TableRow(
+                          children: [
+                            _pdfCell(e.name),
+                            _pdfCell(
+                              '${e.balance.toStringAsFixed(0)} ${l10n.currency}',
+                            ),
+                            _pdfCell(l10n.reportNDays(e.days)),
+                          ],
+                        ),
+                      ),
                 ],
               ),
             ],
@@ -257,21 +261,21 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
   }
 
   pw.Widget _pdfHeaderCell(String text) => pw.Padding(
-        padding: const pw.EdgeInsets.all(6),
-        child: pw.Text(
-          text,
-          style: pw.TextStyle(
-            color: PdfColors.white,
-            fontWeight: pw.FontWeight.bold,
-            fontSize: 10,
-          ),
-        ),
-      );
+    padding: const pw.EdgeInsets.all(6),
+    child: pw.Text(
+      text,
+      style: pw.TextStyle(
+        color: PdfColors.white,
+        fontWeight: pw.FontWeight.bold,
+        fontSize: 10,
+      ),
+    ),
+  );
 
   pw.Widget _pdfCell(String text) => pw.Padding(
-        padding: const pw.EdgeInsets.all(5),
-        child: pw.Text(text, style: const pw.TextStyle(fontSize: 9)),
-      );
+    padding: const pw.EdgeInsets.all(5),
+    child: pw.Text(text, style: const pw.TextStyle(fontSize: 9)),
+  );
 
   Future<void> _exportCsv() async {
     final l10n = AppLocalizations.of(context);
@@ -290,7 +294,8 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
     final pdf = await _buildReportPdf();
     await Printing.sharePdf(
       bytes: await pdf.save(),
-      filename: 'debt_aging_${DateTime.now().toIso8601String().split('T').first}.pdf',
+      filename:
+          'debt_aging_${DateTime.now().toIso8601String().split('T').first}.pdf',
     );
   }
 
@@ -326,10 +331,7 @@ class _DebtAgingReportScreenState extends ConsumerState<DebtAgingReportScreen> {
                     ? l10n.storeNotSelected
                     : _error!,
               ),
-              TextButton(
-                onPressed: _loadData,
-                child: Text(l10n.retry),
-              ),
+              TextButton(onPressed: _loadData, child: Text(l10n.retry)),
             ],
           ),
         ),

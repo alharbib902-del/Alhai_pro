@@ -55,9 +55,8 @@ class _TopProductsReportScreenState
       final storeId = ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
 
       // استعلام المنتجات الأكثر مبيعاً من sale_items مع join على products و sales
-      final results = await db
-          .customSelect(
-            '''SELECT
+      final results = await db.customSelect(
+        '''SELECT
              p.id,
              p.name,
              p.sku,
@@ -78,19 +77,18 @@ class _TopProductsReportScreenState
              AND p.is_active = 1
            GROUP BY p.id
            ORDER BY revenue DESC''',
-            variables: [
-              Variable.withDateTime(_dateRange.start),
-              Variable.withDateTime(
-                DateTime(
-                  _dateRange.end.year,
-                  _dateRange.end.month,
-                  _dateRange.end.day + 1,
-                ),
-              ),
-              Variable.withString(storeId),
-            ],
-          )
-          .get();
+        variables: [
+          Variable.withDateTime(_dateRange.start),
+          Variable.withDateTime(
+            DateTime(
+              _dateRange.end.year,
+              _dateRange.end.month,
+              _dateRange.end.day + 1,
+            ),
+          ),
+          Variable.withString(storeId),
+        ],
+      ).get();
 
       if (results.isEmpty) {
         setState(() => _isLoading = false);
@@ -161,9 +159,8 @@ class _TopProductsReportScreenState
   List<ProductReport> get _filteredProducts {
     var filtered = List<ProductReport>.from(_products);
     if (_selectedCategory != 'all') {
-      filtered = filtered
-          .where((p) => p.category == _selectedCategory)
-          .toList();
+      filtered =
+          filtered.where((p) => p.category == _selectedCategory).toList();
     }
 
     switch (_sortBy) {
@@ -374,10 +371,10 @@ class _TopProductsReportScreenState
                   decoration: BoxDecoration(
                     color: rank <= 3
                         ? (rank == 1
-                              ? AppColors.warning
-                              : rank == 2
-                              ? AppColors.grey400
-                              : const Color(0xFF795548))
+                            ? AppColors.warning
+                            : rank == 2
+                                ? AppColors.grey400
+                                : const Color(0xFF795548))
                         : Theme.of(context).colorScheme.surfaceContainerHighest,
                     borderRadius: BorderRadius.circular(AppSizes.radiusSm),
                   ),
@@ -450,13 +447,13 @@ class _TopProductsReportScreenState
                   product.trend == 'up'
                       ? Icons.trending_up
                       : product.trend == 'down'
-                      ? Icons.trending_down
-                      : Icons.trending_flat,
+                          ? Icons.trending_down
+                          : Icons.trending_flat,
                   color: product.trend == 'up'
                       ? AppColors.success
                       : product.trend == 'down'
-                      ? AppColors.error
-                      : AppColors.warning,
+                          ? AppColors.error
+                          : AppColors.warning,
                 ),
               ],
             ),
@@ -526,9 +523,8 @@ class _TopProductsReportScreenState
     // حساب إحصائيات الفئات
     final categoryStats = <String, CategoryStats>{};
     for (final product in _products) {
-      final catName = product.category.isEmpty
-          ? l10n.unclassified
-          : product.category;
+      final catName =
+          product.category.isEmpty ? l10n.unclassified : product.category;
       if (!categoryStats.containsKey(catName)) {
         categoryStats[catName] = CategoryStats(
           name: catName,
@@ -628,15 +624,14 @@ class _TopProductsReportScreenState
 
   Widget _buildCategoryCard(CategoryStats category) {
     final l10n = AppLocalizations.of(context);
-    final categoryProducts =
-        _products
-            .where(
-              (p) =>
-                  (p.category.isEmpty ? l10n.unclassified : p.category) ==
-                  category.name,
-            )
-            .toList()
-          ..sort((a, b) => b.revenue.compareTo(a.revenue));
+    final categoryProducts = _products
+        .where(
+          (p) =>
+              (p.category.isEmpty ? l10n.unclassified : p.category) ==
+              category.name,
+        )
+        .toList()
+      ..sort((a, b) => b.revenue.compareTo(a.revenue));
 
     return Card(
       margin: const EdgeInsets.only(bottom: AppSizes.md),
@@ -881,9 +876,10 @@ class _TopProductsReportScreenState
   Widget _buildSlowMovingProducts() {
     final l10n = AppLocalizations.of(context);
     // المنتجات التي لم تُباع أو مبيعاتها منخفضة جداً
-    final slowMoving =
-        _products.where((p) => p.unitsSold == 0 && p.stockLevel > 0).toList()
-          ..sort((a, b) => b.stockLevel.compareTo(a.stockLevel));
+    final slowMoving = _products
+        .where((p) => p.unitsSold == 0 && p.stockLevel > 0)
+        .toList()
+      ..sort((a, b) => b.stockLevel.compareTo(a.stockLevel));
 
     if (slowMoving.isEmpty) {
       return const SizedBox.shrink();
@@ -908,9 +904,7 @@ class _TopProductsReportScreenState
               ],
             ),
             const SizedBox(height: AppSizes.md),
-            ...slowMoving
-                .take(5)
-                .map(
+            ...slowMoving.take(5).map(
                   (product) => ListTile(
                     title: Text(product.name),
                     subtitle: Text(
@@ -943,9 +937,10 @@ class _TopProductsReportScreenState
   /// منتجات مبيعاتها عالية ولكن مخزونها منخفض - تحتاج إعادة طلب
   Widget _buildLowStockHighSales() {
     final l10n = AppLocalizations.of(context);
-    final needsReorder =
-        _products.where((p) => p.unitsSold > 10 && p.stockLevel < 20).toList()
-          ..sort((a, b) => a.stockLevel.compareTo(b.stockLevel));
+    final needsReorder = _products
+        .where((p) => p.unitsSold > 10 && p.stockLevel < 20)
+        .toList()
+      ..sort((a, b) => a.stockLevel.compareTo(b.stockLevel));
 
     if (needsReorder.isEmpty) {
       return const SizedBox.shrink();
@@ -970,9 +965,7 @@ class _TopProductsReportScreenState
               ],
             ),
             const SizedBox(height: AppSizes.md),
-            ...needsReorder
-                .take(5)
-                .map(
+            ...needsReorder.take(5).map(
                   (product) => ListTile(
                     title: Text(product.name),
                     subtitle: Text(
@@ -1069,15 +1062,26 @@ class _TopProductsReportScreenState
     final result = await CsvExportHelper.exportAndShare(
       context: context,
       fileName: 'تقرير_المنتجات',
-      headers: [l10n.products, 'SKU', l10n.revenueLabel, l10n.unitsLabel, l10n.profitLabel, l10n.stockLabel],
-      rows: _filteredProducts.map((p) => [
-        p.name,
-        p.sku,
-        p.revenue.toStringAsFixed(2),
-        '${p.unitsSold}',
-        p.profit.toStringAsFixed(2),
-        '${p.stockLevel.round()}',
-      ]).toList(),
+      headers: [
+        l10n.products,
+        'SKU',
+        l10n.revenueLabel,
+        l10n.unitsLabel,
+        l10n.profitLabel,
+        l10n.stockLabel,
+      ],
+      rows: _filteredProducts
+          .map(
+            (p) => [
+              p.name,
+              p.sku,
+              p.revenue.toStringAsFixed(2),
+              '${p.unitsSold}',
+              p.profit.toStringAsFixed(2),
+              '${p.stockLevel.round()}',
+            ],
+          )
+          .toList(),
     );
     if (mounted) CsvExportHelper.showResultSnackBar(context, result);
   }

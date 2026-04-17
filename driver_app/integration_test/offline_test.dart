@@ -72,14 +72,8 @@ void main() {
                 body: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text(
-                      'Order Details',
-                      key: Key('stub_Order Details'),
-                    ),
-                    const Text(
-                      'غير متصل',
-                      key: Key('offline_indicator'),
-                    ),
+                    const Text('Order Details', key: Key('stub_Order Details')),
+                    const Text('غير متصل', key: Key('offline_indicator')),
                     ElevatedButton(
                       key: const Key('transition_button'),
                       onPressed: () {
@@ -173,15 +167,9 @@ void main() {
 
         // Assert: Both operations are queued in order
         expect(queuedOperations, hasLength(2));
-        expect(
-          queuedOperations[0]['status'],
-          kDeliveryStatusArrivedAtPickup,
-        );
+        expect(queuedOperations[0]['status'], kDeliveryStatusArrivedAtPickup);
         expect(queuedOperations[1]['status'], kDeliveryStatusPickedUp);
-        expect(
-          find.text('عمليات في الانتظار: 2'),
-          findsOneWidget,
-        );
+        expect(find.text('عمليات في الانتظار: 2'), findsOneWidget);
       });
     });
 
@@ -401,9 +389,7 @@ void main() {
 
         // Act: Continue with normal delivery flow
         final router = GoRouter.of(
-          tester.element(
-            find.byKey(Key('stub_Order $kTestDeliveryId')),
-          ),
+          tester.element(find.byKey(Key('stub_Order $kTestDeliveryId'))),
         );
 
         // Navigate to customer
@@ -422,74 +408,67 @@ void main() {
         expectStubScreen('Deliveries');
       });
 
-      testWidgets(
-        'offline-to-online transition preserves route state',
-        (tester) async {
-          // Concept test: When connectivity changes, the current screen
-          // should not be disrupted. The driver stays on whichever route
-          // they were on.
+      testWidgets('offline-to-online transition preserves route state', (
+        tester,
+      ) async {
+        // Concept test: When connectivity changes, the current screen
+        // should not be disrupted. The driver stays on whichever route
+        // they were on.
 
-          final connectivityController = StreamController<bool>();
+        final connectivityController = StreamController<bool>();
 
-          await tester.pumpWidget(
-            ProviderScope(
-              child: MaterialApp(
-                locale: const Locale('ar'),
-                home: StreamBuilder<bool>(
-                  stream: connectivityController.stream,
-                  initialData: false,
-                  builder: (context, snapshot) {
-                    final isOnline = snapshot.data ?? false;
-                    return Scaffold(
-                      body: Column(
-                        children: [
-                          if (!isOnline)
-                            Container(
-                              key: const Key('offline_bar'),
-                              color: Colors.orange,
-                              padding: const EdgeInsets.all(8),
-                              child: const Text('غير متصل'),
-                            ),
-                          const Expanded(
-                            child: Center(
-                              child: Text(
-                                'Order Details',
-                                key: Key('stub_Order Details'),
-                              ),
+        await tester.pumpWidget(
+          ProviderScope(
+            child: MaterialApp(
+              locale: const Locale('ar'),
+              home: StreamBuilder<bool>(
+                stream: connectivityController.stream,
+                initialData: false,
+                builder: (context, snapshot) {
+                  final isOnline = snapshot.data ?? false;
+                  return Scaffold(
+                    body: Column(
+                      children: [
+                        if (!isOnline)
+                          Container(
+                            key: const Key('offline_bar'),
+                            color: Colors.orange,
+                            padding: const EdgeInsets.all(8),
+                            child: const Text('غير متصل'),
+                          ),
+                        const Expanded(
+                          child: Center(
+                            child: Text(
+                              'Order Details',
+                              key: Key('stub_Order Details'),
                             ),
                           ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
+                        ),
+                      ],
+                    ),
+                  );
+                },
               ),
             ),
-          );
-          await pumpAndSettleWithTimeout(tester);
+          ),
+        );
+        await pumpAndSettleWithTimeout(tester);
 
-          // Assert: Offline, order details visible
-          expect(find.byKey(const Key('offline_bar')), findsOneWidget);
-          expect(
-            find.byKey(const Key('stub_Order Details')),
-            findsOneWidget,
-          );
+        // Assert: Offline, order details visible
+        expect(find.byKey(const Key('offline_bar')), findsOneWidget);
+        expect(find.byKey(const Key('stub_Order Details')), findsOneWidget);
 
-          // Act: Come online
-          connectivityController.add(true);
-          await tester.pumpAndSettle();
+        // Act: Come online
+        connectivityController.add(true);
+        await tester.pumpAndSettle();
 
-          // Assert: Offline bar gone, order details still visible
-          expect(find.byKey(const Key('offline_bar')), findsNothing);
-          expect(
-            find.byKey(const Key('stub_Order Details')),
-            findsOneWidget,
-          );
+        // Assert: Offline bar gone, order details still visible
+        expect(find.byKey(const Key('offline_bar')), findsNothing);
+        expect(find.byKey(const Key('stub_Order Details')), findsOneWidget);
 
-          // Cleanup
-          await connectivityController.close();
-        },
-      );
+        // Cleanup
+        await connectivityController.close();
+      });
     });
   });
 }

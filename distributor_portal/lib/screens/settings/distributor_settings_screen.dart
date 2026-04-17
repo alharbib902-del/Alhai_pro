@@ -727,12 +727,17 @@ class _DistributorSettingsScreenState
                             borderRadius: BorderRadius.circular(AlhaiRadius.sm),
                           ),
                         ),
-                        child: const Text('تعطيل', style: TextStyle(fontSize: 13)),
+                        child: const Text(
+                          'تعطيل',
+                          style: TextStyle(fontSize: 13),
+                        ),
                       )
                     else
                       FilledButton(
                         onPressed: () async {
-                          final result = await context.push<bool>('/mfa-enroll');
+                          final result = await context.push<bool>(
+                            '/mfa-enroll',
+                          );
                           if (result == true) {
                             ref.invalidate(mfaEnrollmentStatusProvider);
                           }
@@ -748,7 +753,10 @@ class _DistributorSettingsScreenState
                             borderRadius: BorderRadius.circular(AlhaiRadius.sm),
                           ),
                         ),
-                        child: const Text('تفعيل', style: TextStyle(fontSize: 13)),
+                        child: const Text(
+                          'تفعيل',
+                          style: TextStyle(fontSize: 13),
+                        ),
                       ),
                   ],
                 ),

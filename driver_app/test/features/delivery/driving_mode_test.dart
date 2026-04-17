@@ -117,8 +117,9 @@ void main() {
       expect(find.text('driving: true'), findsOneWidget);
     });
 
-    testWidgets('DrivingModeScale applies 1.4x textScaler when driving',
-        (tester) async {
+    testWidgets('DrivingModeScale applies 1.4x textScaler when driving', (
+      tester,
+    ) async {
       double? capturedScale;
 
       await tester.pumpWidget(
@@ -143,8 +144,9 @@ void main() {
               body: DrivingModeScale(
                 child: Builder(
                   builder: (context) {
-                    capturedScale =
-                        MediaQuery.of(context).textScaler.scale(1.0);
+                    capturedScale = MediaQuery.of(
+                      context,
+                    ).textScaler.scale(1.0);
                     return const Text('Test');
                   },
                 ),
@@ -158,8 +160,9 @@ void main() {
       expect(capturedScale, closeTo(1.4, 0.01));
     });
 
-    testWidgets('DrivingModeScale applies 1.0x when NOT driving',
-        (tester) async {
+    testWidgets('DrivingModeScale applies 1.0x when NOT driving', (
+      tester,
+    ) async {
       double? capturedScale;
 
       await tester.pumpWidget(
@@ -177,8 +180,9 @@ void main() {
               body: DrivingModeScale(
                 child: Builder(
                   builder: (context) {
-                    capturedScale =
-                        MediaQuery.of(context).textScaler.scale(1.0);
+                    capturedScale = MediaQuery.of(
+                      context,
+                    ).textScaler.scale(1.0);
                     return const Text('Test');
                   },
                 ),

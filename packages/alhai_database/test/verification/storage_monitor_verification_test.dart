@@ -17,14 +17,19 @@ void main() {
     // -----------------------------------------------------------------------
     // 1. Without override, always returns healthy (the null limitation)
     // -----------------------------------------------------------------------
-    test('without override: always returns healthy (_getStorageInfo is null)',
-        () async {
-      // This documents the limitation: _getStorageInfo() returns null,
-      // so checkStorage() always returns healthy in production.
-      final status = await monitor.checkStorage();
-      expect(status, equals(StorageStatus.healthy),
-          reason: '_getStorageInfo returns null → defaults to healthy');
-    });
+    test(
+      'without override: always returns healthy (_getStorageInfo is null)',
+      () async {
+        // This documents the limitation: _getStorageInfo() returns null,
+        // so checkStorage() always returns healthy in production.
+        final status = await monitor.checkStorage();
+        expect(
+          status,
+          equals(StorageStatus.healthy),
+          reason: '_getStorageInfo returns null → defaults to healthy',
+        );
+      },
+    );
 
     // -----------------------------------------------------------------------
     // 2. Threshold boundary tests via override
@@ -49,14 +54,20 @@ void main() {
       expect(await monitor.checkStorage(), StorageStatus.full);
     });
 
-    test('override can be cleared back to null (defaults to healthy)', () async {
-      monitor.setOverrideStatus(StorageStatus.full);
-      expect(await monitor.checkStorage(), StorageStatus.full);
+    test(
+      'override can be cleared back to null (defaults to healthy)',
+      () async {
+        monitor.setOverrideStatus(StorageStatus.full);
+        expect(await monitor.checkStorage(), StorageStatus.full);
 
-      monitor.setOverrideStatus(null);
-      expect(await monitor.checkStorage(), StorageStatus.healthy,
-          reason: 'After clearing override, _getStorageInfo is null → healthy');
-    });
+        monitor.setOverrideStatus(null);
+        expect(
+          await monitor.checkStorage(),
+          StorageStatus.healthy,
+          reason: 'After clearing override, _getStorageInfo is null → healthy',
+        );
+      },
+    );
   });
 
   group('VERIFICATION — Fix #6: assertCanWrite', () {

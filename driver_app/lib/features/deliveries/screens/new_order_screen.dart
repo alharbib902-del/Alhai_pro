@@ -97,9 +97,10 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
     // Check if driver already has an active (non-assigned) delivery.
     final active = ref.read(activeDeliveriesProvider).valueOrNull ?? [];
     final inProgress = active
-        .where((d) =>
-            d['status'] != DeliveryStatus.assigned &&
-            d['id'] != deliveryId)
+        .where(
+          (d) =>
+              d['status'] != DeliveryStatus.assigned && d['id'] != deliveryId,
+        )
         .toList();
 
     if (inProgress.isNotEmpty && mounted) {
@@ -236,182 +237,187 @@ class _NewOrderScreenState extends ConsumerState<NewOrderScreen>
             child: SafeArea(
               child: Padding(
                 padding: const EdgeInsets.all(AlhaiSpacing.lg),
-              child: Column(
-                children: [
-                  // Countdown progress bar
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: _remainingSeconds / widget.timeoutSeconds,
-                      minHeight: 6,
-                      valueColor: AlwaysStoppedAnimation(progressColor),
-                      backgroundColor: progressColor.withValues(alpha: 0.2),
+                child: Column(
+                  children: [
+                    // Countdown progress bar
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(4),
+                      child: LinearProgressIndicator(
+                        value: _remainingSeconds / widget.timeoutSeconds,
+                        minHeight: 6,
+                        valueColor: AlwaysStoppedAnimation(progressColor),
+                        backgroundColor: progressColor.withValues(alpha: 0.2),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: AlhaiSpacing.xs),
-                  Text(
-                    '$_remainingSeconds ثانية للقبول',
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: isUrgent
-                          ? Colors.red
-                          : theme.colorScheme.onSurfaceVariant,
-                      fontWeight: isUrgent ? FontWeight.bold : FontWeight.normal,
-                    ),
-                  ),
-                  const Spacer(),
-
-                  // Alert icon
-                  Container(
-                    width: 100,
-                    height: 100,
-                    decoration: BoxDecoration(
-                      color: theme.colorScheme.primaryContainer,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.notification_important_rounded,
-                      size: 52,
-                      color: theme.colorScheme.primary,
-                    ),
-                  ),
-                  const SizedBox(height: AlhaiSpacing.lg),
-                  Text(
-                    'طلب توصيل جديد',
-                    style: theme.textTheme.headlineMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  if (orderNumber.toString().isNotEmpty)
+                    const SizedBox(height: AlhaiSpacing.xs),
                     Text(
-                      '#$orderNumber',
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        color: theme.colorScheme.outline,
+                      '$_remainingSeconds ثانية للقبول',
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: isUrgent
+                            ? Colors.red
+                            : theme.colorScheme.onSurfaceVariant,
+                        fontWeight: isUrgent
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                       ),
                     ),
-                  const SizedBox(height: AlhaiSpacing.xl),
+                    const Spacer(),
 
-                  // Details card
-                  Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(AlhaiSpacing.md),
-                      child: Column(
-                        children: [
-                          if (address.toString().isNotEmpty)
-                            ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading: const Icon(Icons.location_on_outlined),
-                              title: Text(address.toString()),
-                              dense: true,
-                            ),
-                          if (distance != null)
-                            ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading: const Icon(Icons.straighten),
-                              title: Text(
-                                '${(distance as num).toStringAsFixed(1)} كم',
-                              ),
-                              dense: true,
-                            ),
-                          if (estimatedTime != null)
-                            ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading: const Icon(Icons.schedule),
-                              title: Text('$estimatedTime دقيقة تقريباً'),
-                              dense: true,
-                            ),
-                          if (fee != null)
-                            ListTile(
-                              contentPadding: EdgeInsets.zero,
-                              leading: const Icon(Icons.payments),
-                              title: Text(
-                                '${(fee as num).toStringAsFixed(0)} ر.س',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  color: theme.colorScheme.primary,
-                                  fontSize: 18,
-                                ),
-                              ),
-                              dense: true,
-                            ),
-                        ],
+                    // Alert icon
+                    Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: theme.colorScheme.primaryContainer,
+                        shape: BoxShape.circle,
+                      ),
+                      child: Icon(
+                        Icons.notification_important_rounded,
+                        size: 52,
+                        color: theme.colorScheme.primary,
                       ),
                     ),
-                  ),
-                  const Spacer(),
+                    const SizedBox(height: AlhaiSpacing.lg),
+                    Text(
+                      'طلب توصيل جديد',
+                      style: theme.textTheme.headlineMedium?.copyWith(
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    if (orderNumber.toString().isNotEmpty)
+                      Text(
+                        '#$orderNumber',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: theme.colorScheme.outline,
+                        ),
+                      ),
+                    const SizedBox(height: AlhaiSpacing.xl),
 
-                  // Action buttons
-                  if (_isLoading)
-                    const CircularProgressIndicator()
-                  else
-                    Builder(builder: (context) {
-                      final isDriving = ref.watch(drivingModeProvider);
-                      final acceptHeight = isDriving ? 80.0 : 56.0;
-                      final rejectHeight = isDriving ? 80.0 : 48.0;
-                      return Column(
-                        children: [
-                          SizedBox(
-                            width: double.infinity,
-                            height: acceptHeight,
-                            child: Semantics(
-                              label: 'قبول طلب التوصيل',
-                              button: true,
-                              child: FilledButton.icon(
-                                onPressed: () => _accept(deliveryId),
-                                icon: const Icon(Icons.check_circle),
-                                label: Text(
-                                  'قبول الطلب',
-                                  style: isDriving
-                                      ? theme.textTheme.headlineSmall
-                                      : const TextStyle(fontSize: 18),
+                    // Details card
+                    Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(AlhaiSpacing.md),
+                        child: Column(
+                          children: [
+                            if (address.toString().isNotEmpty)
+                              ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: const Icon(Icons.location_on_outlined),
+                                title: Text(address.toString()),
+                                dense: true,
+                              ),
+                            if (distance != null)
+                              ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: const Icon(Icons.straighten),
+                                title: Text(
+                                  '${(distance as num).toStringAsFixed(1)} كم',
                                 ),
-                                style: FilledButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: AlhaiSpacing.md,
+                                dense: true,
+                              ),
+                            if (estimatedTime != null)
+                              ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: const Icon(Icons.schedule),
+                                title: Text('$estimatedTime دقيقة تقريباً'),
+                                dense: true,
+                              ),
+                            if (fee != null)
+                              ListTile(
+                                contentPadding: EdgeInsets.zero,
+                                leading: const Icon(Icons.payments),
+                                title: Text(
+                                  '${(fee as num).toStringAsFixed(0)} ر.س',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: theme.colorScheme.primary,
+                                    fontSize: 18,
                                   ),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      AlhaiRadius.button,
+                                ),
+                                dense: true,
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const Spacer(),
+
+                    // Action buttons
+                    if (_isLoading)
+                      const CircularProgressIndicator()
+                    else
+                      Builder(
+                        builder: (context) {
+                          final isDriving = ref.watch(drivingModeProvider);
+                          final acceptHeight = isDriving ? 80.0 : 56.0;
+                          final rejectHeight = isDriving ? 80.0 : 48.0;
+                          return Column(
+                            children: [
+                              SizedBox(
+                                width: double.infinity,
+                                height: acceptHeight,
+                                child: Semantics(
+                                  label: 'قبول طلب التوصيل',
+                                  button: true,
+                                  child: FilledButton.icon(
+                                    onPressed: () => _accept(deliveryId),
+                                    icon: const Icon(Icons.check_circle),
+                                    label: Text(
+                                      'قبول الطلب',
+                                      style: isDriving
+                                          ? theme.textTheme.headlineSmall
+                                          : const TextStyle(fontSize: 18),
+                                    ),
+                                    style: FilledButton.styleFrom(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: AlhaiSpacing.md,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          AlhaiRadius.button,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                          const SizedBox(height: AlhaiSpacing.sm),
-                          SizedBox(
-                            width: double.infinity,
-                            height: rejectHeight,
-                            child: Semantics(
-                              label: 'رفض طلب التوصيل',
-                              button: true,
-                              child: OutlinedButton.icon(
-                                onPressed: () => _reject(deliveryId),
-                                icon: const Icon(Icons.cancel_outlined),
-                                label: const Text(
-                                  'رفض',
-                                  style: TextStyle(fontSize: 16),
-                                ),
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: theme.colorScheme.error,
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 14),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(
-                                      AlhaiRadius.button,
+                              const SizedBox(height: AlhaiSpacing.sm),
+                              SizedBox(
+                                width: double.infinity,
+                                height: rejectHeight,
+                                child: Semantics(
+                                  label: 'رفض طلب التوصيل',
+                                  button: true,
+                                  child: OutlinedButton.icon(
+                                    onPressed: () => _reject(deliveryId),
+                                    icon: const Icon(Icons.cancel_outlined),
+                                    label: const Text(
+                                      'رفض',
+                                      style: TextStyle(fontSize: 16),
+                                    ),
+                                    style: OutlinedButton.styleFrom(
+                                      foregroundColor: theme.colorScheme.error,
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 14,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(
+                                          AlhaiRadius.button,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ),
-                            ),
-                          ),
-                        ],
-                      );
-                    }),
-                  const SizedBox(height: AlhaiSpacing.lg),
-                ],
+                            ],
+                          );
+                        },
+                      ),
+                    const SizedBox(height: AlhaiSpacing.lg),
+                  ],
+                ),
               ),
             ),
-          ),
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),

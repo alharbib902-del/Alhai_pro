@@ -6,10 +6,7 @@ import '../../helpers/shared_ui_test_helpers.dart';
 void main() {
   final testData = ['Apple', 'Banana', 'Cherry'];
   final testColumns = [
-    AppDataColumn<String>(
-      title: 'Fruit',
-      builder: (item) => Text(item),
-    ),
+    AppDataColumn<String>(title: 'Fruit', builder: (item) => Text(item)),
   ];
 
   group('AppDataTable', () {
@@ -18,10 +15,7 @@ void main() {
         createSimpleTestWidget(
           SizedBox(
             height: 400,
-            child: AppDataTable<String>(
-              data: testData,
-              columns: testColumns,
-            ),
+            child: AppDataTable<String>(data: testData, columns: testColumns),
           ),
         ),
       );
@@ -36,10 +30,7 @@ void main() {
         createSimpleTestWidget(
           SizedBox(
             height: 400,
-            child: AppDataTable<String>(
-              data: testData,
-              columns: testColumns,
-            ),
+            child: AppDataTable<String>(data: testData, columns: testColumns),
           ),
         ),
       );
@@ -52,10 +43,7 @@ void main() {
         createSimpleTestWidget(
           SizedBox(
             height: 400,
-            child: AppDataTable<String>(
-              data: const [],
-              columns: testColumns,
-            ),
+            child: AppDataTable<String>(data: const [], columns: testColumns),
           ),
         ),
       );
@@ -106,18 +94,13 @@ void main() {
     testWidgets('renders page numbers', (tester) async {
       await tester.pumpWidget(
         createSimpleTestWidget(
-          AppPagination(
-            currentPage: 1,
-            totalPages: 5,
-            onPageChanged: (_) {},
-          ),
+          AppPagination(currentPage: 1, totalPages: 5, onPageChanged: (_) {}),
         ),
       );
       expect(find.text('1'), findsOneWidget);
     });
 
-    testWidgets('calls onPageChanged when page button tapped',
-        (tester) async {
+    testWidgets('calls onPageChanged when page button tapped', (tester) async {
       int? newPage;
       await tester.pumpWidget(
         createSimpleTestWidget(

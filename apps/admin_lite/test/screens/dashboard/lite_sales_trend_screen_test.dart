@@ -135,10 +135,9 @@ void main() {
         createTestWidget(
           const LiteSalesTrendScreen(),
           overrides: [
-            liteDailySalesProvider.overrideWith(
-                (ref) => dailyCompleter.future),
-            liteWeeklyComparisonProvider.overrideWith(
-                (ref) => weeklyCompleter.future),
+            liteDailySalesProvider.overrideWith((ref) => dailyCompleter.future),
+            liteWeeklyComparisonProvider
+                .overrideWith((ref) => weeklyCompleter.future),
           ],
         ),
       );

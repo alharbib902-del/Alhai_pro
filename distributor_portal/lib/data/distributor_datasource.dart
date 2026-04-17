@@ -695,10 +695,7 @@ class DistributorDatasource {
     try {
       final orgId = await _requireOrgId('getPriceAuditLog');
 
-      var query = _client
-          .from('price_audit_log')
-          .select()
-          .eq('org_id', orgId);
+      var query = _client.from('price_audit_log').select().eq('org_id', orgId);
 
       if (productId != null) {
         query = query.eq('product_id', productId);
@@ -713,12 +710,14 @@ class DistributorDatasource {
       final data = await query
           .order('changed_at', ascending: false)
           .limit(limit);
-      return (data as List).map((e) =>
-          PriceAuditEntry.fromJson(e as Map<String, dynamic>)).toList();
+      return (data as List)
+          .map((e) => PriceAuditEntry.fromJson(e as Map<String, dynamic>))
+          .toList();
     } catch (e) {
       // 42P01 = table does not exist → graceful empty return
       if (e is PostgrestException && e.code == '42P01') {
-        if (kDebugMode) debugPrint('price_audit_log table not found, returning empty');
+        if (kDebugMode)
+          debugPrint('price_audit_log table not found, returning empty');
         return [];
       }
       if (e is DatasourceError) rethrow;
@@ -753,7 +752,8 @@ class DistributorDatasource {
     } catch (e) {
       // 42P01 = table does not exist → skip silently
       if (e is PostgrestException && e.code == '42P01') {
-        if (kDebugMode) debugPrint('price_audit_log table not found, skipping audit');
+        if (kDebugMode)
+          debugPrint('price_audit_log table not found, skipping audit');
         return;
       }
       // Non-critical: log but don't fail the price update
@@ -1282,14 +1282,13 @@ class DistributorDatasource {
       final ext = imageFilename.split('.').last.toLowerCase();
       final imagePath = '$storeId/$productId.$ext';
 
-      await _client.storage.from(_productImagesBucket).uploadBinary(
-        imagePath,
-        imageBytes,
-        fileOptions: FileOptions(
-          contentType: 'image/$ext',
-          upsert: false,
-        ),
-      );
+      await _client.storage
+          .from(_productImagesBucket)
+          .uploadBinary(
+            imagePath,
+            imageBytes,
+            fileOptions: FileOptions(contentType: 'image/$ext', upsert: false),
+          );
 
       final imageUrl = _client.storage
           .from(_productImagesBucket)
@@ -1405,8 +1404,11 @@ class DistributorDatasource {
       final json = invoice.toInsertJson();
       json['org_id'] = orgId;
 
-      final response =
-          await _client.from('invoices').insert(json).select().single();
+      final response = await _client
+          .from('invoices')
+          .insert(json)
+          .select()
+          .single();
 
       final created = DistributorInvoice.fromJson(response);
       await DistributorAuditService.instance.log(
@@ -1452,8 +1454,9 @@ class DistributorDatasource {
           .range(offset, offset + limit - 1);
 
       return (data as List)
-          .map((json) =>
-              DistributorInvoice.fromJson(json as Map<String, dynamic>))
+          .map(
+            (json) => DistributorInvoice.fromJson(json as Map<String, dynamic>),
+          )
           .toList();
     } catch (e) {
       if (e is DatasourceError) rethrow;
@@ -1741,8 +1744,7 @@ class DistributorDatasource {
 
       _pricingTiersAvailable = true;
       return (data as List)
-          .map((e) =>
-              StoreTierAssignment.fromJson(e as Map<String, dynamic>))
+          .map((e) => StoreTierAssignment.fromJson(e as Map<String, dynamic>))
           .toList();
     } catch (e) {
       if (_isPricingTableError(e)) {
@@ -1765,10 +1767,12 @@ class DistributorDatasource {
           .order('name', ascending: true);
 
       return (data as List)
-          .map((e) => (
-                id: (e as Map<String, dynamic>)['id'] as String,
-                name: e['name'] as String? ?? '',
-              ))
+          .map(
+            (e) => (
+              id: (e as Map<String, dynamic>)['id'] as String,
+              name: e['name'] as String? ?? '',
+            ),
+          )
           .toList();
     } catch (e) {
       if (e is DatasourceError) rethrow;
@@ -1785,15 +1789,12 @@ class DistributorDatasource {
       _rateLimiter.check('assignStoreToTier');
       final orgId = await _requireOrgId('assignStoreToTier');
 
-      await _client.from('distributor_store_tiers').upsert(
-        {
-          'org_id': orgId,
-          'store_id': storeId,
-          'tier_id': tierId,
-          'assigned_at': DateTime.now().toIso8601String(),
-        },
-        onConflict: 'org_id, store_id',
-      );
+      await _client.from('distributor_store_tiers').upsert({
+        'org_id': orgId,
+        'store_id': storeId,
+        'tier_id': tierId,
+        'assigned_at': DateTime.now().toIso8601String(),
+      }, onConflict: 'org_id, store_id');
 
       await DistributorAuditService.instance.log(
         action: 'store_tier.assign',
@@ -1954,11 +1955,13 @@ class DistributorDatasource {
       final storagePath = '$orgId/${type.dbValue}/${timestamp}_$fileName';
 
       try {
-        await _client.storage.from(_documentsBucket).uploadBinary(
-          storagePath,
-          fileBytes,
-          fileOptions: FileOptions(contentType: mimeType, upsert: false),
-        );
+        await _client.storage
+            .from(_documentsBucket)
+            .uploadBinary(
+              storagePath,
+              fileBytes,
+              fileOptions: FileOptions(contentType: mimeType, upsert: false),
+            );
       } on StorageException catch (e) {
         throw DatasourceError(
           type: DatasourceErrorType.unknown,
@@ -2035,8 +2038,10 @@ class DistributorDatasource {
           .order('uploaded_at', ascending: false);
 
       return (response as List)
-          .map((json) =>
-              DistributorDocument.fromJson(json as Map<String, dynamic>))
+          .map(
+            (json) =>
+                DistributorDocument.fromJson(json as Map<String, dynamic>),
+          )
           .toList();
     } on PostgrestException catch (e) {
       if (_isDocumentsTableError(e)) {
@@ -2091,18 +2096,15 @@ class DistributorDatasource {
 
       // Delete from storage (best effort)
       try {
-        await _client.storage
-            .from(_documentsBucket)
-            .remove([doc['file_url'] as String]);
+        await _client.storage.from(_documentsBucket).remove([
+          doc['file_url'] as String,
+        ]);
       } catch (_) {
         // Don't block DB delete on storage failure
       }
 
       // Delete from DB (RLS enforces ownership + non-approved)
-      await _client
-          .from('distributor_documents')
-          .delete()
-          .eq('id', documentId);
+      await _client.from('distributor_documents').delete().eq('id', documentId);
 
       await DistributorAuditService.instance.log(
         action: 'document.delete',
@@ -2124,9 +2126,7 @@ class DistributorDatasource {
   /// 1. Creates auth user via Supabase Auth (sends verification email)
   /// 2. Inserts distributor record with status = pending_email_verification
   /// Returns [DistributorSignupResult] on success.
-  Future<DistributorSignupResult> signUpDistributor(
-    SignupParams params,
-  ) async {
+  Future<DistributorSignupResult> signUpDistributor(SignupParams params) async {
     if (!params.acceptedTerms) {
       throw const DatasourceError(
         type: DatasourceErrorType.validation,
@@ -2242,9 +2242,7 @@ class DistributorDatasource {
 
       if (response == null) return null;
 
-      return DistributorAccountStatus.fromDbValue(
-        response['status'] as String,
-      );
+      return DistributorAccountStatus.fromDbValue(response['status'] as String);
     } catch (e) {
       if (e is DatasourceError) rethrow;
       final error = _categorizeError(e, 'getCurrentDistributorStatus');
@@ -2267,9 +2265,7 @@ class DistributorDatasource {
     try {
       await _client
           .from('distributors')
-          .update({
-            'status': DistributorAccountStatus.pendingReview.dbValue,
-          })
+          .update({'status': DistributorAccountStatus.pendingReview.dbValue})
           .eq('user_id', user.id)
           .eq(
             'status',

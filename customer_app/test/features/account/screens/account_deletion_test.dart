@@ -39,8 +39,9 @@ void main() {
       expect(find.text('حذف الحساب'), findsOneWidget);
     });
 
-    testWidgets('tapping delete account shows confirmation dialog',
-        (tester) async {
+    testWidgets('tapping delete account shows confirmation dialog', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pump();
 
@@ -57,10 +58,7 @@ void main() {
 
       // Verify dialog content
       expect(find.text('حذف الحساب'), findsWidgets); // title + button
-      expect(
-        find.textContaining('هل أنت متأكد من حذف حسابك'),
-        findsOneWidget,
-      );
+      expect(find.textContaining('هل أنت متأكد من حذف حسابك'), findsOneWidget);
       expect(find.text('إلغاء'), findsOneWidget);
       expect(find.text('حذف نهائياً'), findsOneWidget);
     });

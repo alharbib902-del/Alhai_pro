@@ -142,9 +142,7 @@ class CsvExportHelper {
                       .toList(),
                 ),
                 // Data rows
-                ...rows
-                    .take(50)
-                    .map(
+                ...rows.take(50).map(
                       (row) => pw.TableRow(
                         children: row
                             .map(

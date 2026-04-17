@@ -16,6 +16,7 @@ import '../../providers/distributor_providers.dart';
 /// Returns the uploaded [DistributorDocument] on success, or null on cancel.
 Future<DistributorDocument?> showUploadDocumentDialog(
   BuildContext context, {
+
   /// Document types that already have an active (under_review or approved) doc.
   List<DocumentType> disabledTypes = const [],
 }) {
@@ -36,15 +37,9 @@ class _UploadDocumentDialog extends ConsumerStatefulWidget {
       _UploadDocumentDialogState();
 }
 
-class _UploadDocumentDialogState
-    extends ConsumerState<_UploadDocumentDialog> {
+class _UploadDocumentDialogState extends ConsumerState<_UploadDocumentDialog> {
   static const int _maxFileSize = 10 * 1024 * 1024; // 10 MB
-  static const List<String> _allowedExtensions = [
-    'pdf',
-    'jpg',
-    'jpeg',
-    'png',
-  ];
+  static const List<String> _allowedExtensions = ['pdf', 'jpg', 'jpeg', 'png'];
 
   DocumentType? _selectedType;
   Uint8List? _fileBytes;
@@ -122,7 +117,8 @@ class _UploadDocumentDialogState
   }
 
   Future<void> _upload() async {
-    if (_selectedType == null || _fileBytes == null || _fileName == null) return;
+    if (_selectedType == null || _fileBytes == null || _fileName == null)
+      return;
 
     setState(() => _isUploading = true);
     try {

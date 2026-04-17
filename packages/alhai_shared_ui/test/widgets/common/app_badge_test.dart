@@ -46,9 +46,7 @@ void main() {
     });
 
     testWidgets('success factory renders correctly', (tester) async {
-      await tester.pumpWidget(
-        createSimpleTestWidget(AppBadge.success('Done')),
-      );
+      await tester.pumpWidget(createSimpleTestWidget(AppBadge.success('Done')));
       expect(find.text('Done'), findsOneWidget);
     });
 
@@ -60,16 +58,12 @@ void main() {
     });
 
     testWidgets('error factory renders correctly', (tester) async {
-      await tester.pumpWidget(
-        createSimpleTestWidget(AppBadge.error('Failed')),
-      );
+      await tester.pumpWidget(createSimpleTestWidget(AppBadge.error('Failed')));
       expect(find.text('Failed'), findsOneWidget);
     });
 
     testWidgets('info factory renders correctly', (tester) async {
-      await tester.pumpWidget(
-        createSimpleTestWidget(AppBadge.info('Note')),
-      );
+      await tester.pumpWidget(createSimpleTestWidget(AppBadge.info('Note')));
       expect(find.text('Note'), findsOneWidget);
     });
 
@@ -94,10 +88,7 @@ void main() {
     testWidgets('renders outlined variant', (tester) async {
       await tester.pumpWidget(
         createSimpleTestWidget(
-          const AppBadge(
-            label: 'Outlined',
-            variant: AppBadgeVariant.outlined,
-          ),
+          const AppBadge(label: 'Outlined', variant: AppBadgeVariant.outlined),
         ),
       );
       expect(find.text('Outlined'), findsOneWidget);
@@ -121,9 +112,7 @@ void main() {
 
     testWidgets('shows when count is 0 and showZero is true', (tester) async {
       await tester.pumpWidget(
-        createSimpleTestWidget(
-          const AppCountBadge(count: 0, showZero: true),
-        ),
+        createSimpleTestWidget(const AppCountBadge(count: 0, showZero: true)),
       );
       expect(find.text('0'), findsOneWidget);
     });
@@ -179,9 +168,7 @@ void main() {
   group('AppCategoryBadge', () {
     testWidgets('renders category name', (tester) async {
       await tester.pumpWidget(
-        createSimpleTestWidget(
-          const AppCategoryBadge(category: 'Electronics'),
-        ),
+        createSimpleTestWidget(const AppCategoryBadge(category: 'Electronics')),
       );
       expect(find.text('Electronics'), findsOneWidget);
     });
@@ -190,10 +177,7 @@ void main() {
       var tapped = false;
       await tester.pumpWidget(
         createSimpleTestWidget(
-          AppCategoryBadge(
-            category: 'Food',
-            onTap: () => tapped = true,
-          ),
+          AppCategoryBadge(category: 'Food', onTap: () => tapped = true),
         ),
       );
       await tester.tap(find.text('Food'));

@@ -54,7 +54,8 @@ class DistributorOrder {
   final String storeName;
   final String storeId;
   final double total;
-  final String status; // draft, sent, approved, preparing, packed, shipped, delivered, received, rejected
+  final String
+  status; // draft, sent, approved, preparing, packed, shipped, delivered, received, rejected
   final DateTime createdAt;
   final String? notes;
 

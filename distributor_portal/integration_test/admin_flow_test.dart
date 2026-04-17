@@ -36,7 +36,9 @@ void main() {
     group('Flow 1: Admin Login with MFA', () {
       testWidgets('login screen loads for admin', (tester) async {
         // Arrange: Launch at login
-        await tester.pumpWidget(buildDistributorTestApp(initialRoute: '/login'));
+        await tester.pumpWidget(
+          buildDistributorTestApp(initialRoute: '/login'),
+        );
         await pumpAndSettleWithTimeout(tester);
 
         // Assert: Login screen stub is visible
@@ -54,38 +56,37 @@ void main() {
         expectStubScreen('MFA Verify');
       });
 
-      testWidgets(
-        'full MFA login flow: login -> mfa-verify -> dashboard',
-        (tester) async {
-          // Arrange: Start at login
-          await tester.pumpWidget(
-            buildDistributorTestApp(initialRoute: '/login'),
-          );
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Login');
+      testWidgets('full MFA login flow: login -> mfa-verify -> dashboard', (
+        tester,
+      ) async {
+        // Arrange: Start at login
+        await tester.pumpWidget(
+          buildDistributorTestApp(initialRoute: '/login'),
+        );
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Login');
 
-          final router = GoRouter.of(
-            tester.element(find.byKey(const Key('stub_Login'))),
-          );
+        final router = GoRouter.of(
+          tester.element(find.byKey(const Key('stub_Login'))),
+        );
 
-          // Step 1: Admin submits credentials. In the real app, Supabase
-          // returns an MFA challenge requiring TOTP code entry.
-          router.go('/mfa-verify');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('MFA Verify');
+        // Step 1: Admin submits credentials. In the real app, Supabase
+        // returns an MFA challenge requiring TOTP code entry.
+        router.go('/mfa-verify');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('MFA Verify');
 
-          // Step 2: Admin enters TOTP code. On success, navigates to dashboard.
-          // MFA is mandatory for super_admin role (F8 requirement).
-          router.go('/dashboard');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Dashboard');
+        // Step 2: Admin enters TOTP code. On success, navigates to dashboard.
+        // MFA is mandatory for super_admin role (F8 requirement).
+        router.go('/dashboard');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Dashboard');
 
-          // Step 3: From dashboard, admin navigates to admin panel
-          router.go('/admin');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Admin');
-        },
-      );
+        // Step 3: From dashboard, admin navigates to admin panel
+        router.go('/admin');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Admin');
+      });
 
       testWidgets('MFA enrollment screen loads for forced enrollment', (
         tester,
@@ -146,10 +147,7 @@ void main() {
 
           // Step 1: Admin sees list of pending distributors.
           // Verify pending distributor data is in 'pending_review' status.
-          expect(
-            kSamplePendingDistributor['status'],
-            equals('pending_review'),
-          );
+          expect(kSamplePendingDistributor['status'], equals('pending_review'));
           expect(kSamplePendingDistributor['name'], isNotEmpty);
           expect(kSamplePendingDistributor['commercial_reg'], isNotNull);
 
@@ -249,26 +247,25 @@ void main() {
         expectStubScreen('Admin');
       });
 
-      testWidgets(
-        'notification data shape includes required fields',
-        (tester) async {
-          // Arrange: Start at admin
-          await tester.pumpWidget(
-            buildDistributorTestApp(initialRoute: '/admin'),
-          );
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Admin');
+      testWidgets('notification data shape includes required fields', (
+        tester,
+      ) async {
+        // Arrange: Start at admin
+        await tester.pumpWidget(
+          buildDistributorTestApp(initialRoute: '/admin'),
+        );
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Admin');
 
-          // Verify notification data has the expected structure
-          expect(kSampleNotification['id'], isNotEmpty);
-          expect(kSampleNotification['type'], equals('new_distributor'));
-          expect(kSampleNotification['title'], isNotEmpty);
-          expect(kSampleNotification['message'], isNotEmpty);
-          expect(kSampleNotification['is_read'], isFalse);
-          expect(kSampleNotification['related_id'], isNotNull);
-          expect(kSampleNotification['related_type'], equals('organization'));
-        },
-      );
+        // Verify notification data has the expected structure
+        expect(kSampleNotification['id'], isNotEmpty);
+        expect(kSampleNotification['type'], equals('new_distributor'));
+        expect(kSampleNotification['title'], isNotEmpty);
+        expect(kSampleNotification['message'], isNotEmpty);
+        expect(kSampleNotification['is_read'], isFalse);
+        expect(kSampleNotification['related_id'], isNotNull);
+        expect(kSampleNotification['related_type'], equals('organization'));
+      });
 
       testWidgets(
         'mark as read flow: admin -> notification -> mark read -> verify',

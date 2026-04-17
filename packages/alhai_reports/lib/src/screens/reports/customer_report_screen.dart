@@ -1365,13 +1365,22 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
     final result = await CsvExportHelper.exportAndShare(
       context: context,
       fileName: l10n.customerReport,
-      headers: [l10n.totalCustomersLabel, l10n.totalRevenueFromCustomers, l10n.avgOrderValueLabel, 'المستوى'],
-      rows: _topCustomers.map((c) => [
-        c.name,
-        c.totalSpent.toStringAsFixed(2),
-        c.avgOrderValue.toStringAsFixed(2),
-        _getTierName(context, c.tier),
-      ]).toList(),
+      headers: [
+        l10n.totalCustomersLabel,
+        l10n.totalRevenueFromCustomers,
+        l10n.avgOrderValueLabel,
+        'المستوى',
+      ],
+      rows: _topCustomers
+          .map(
+            (c) => [
+              c.name,
+              c.totalSpent.toStringAsFixed(2),
+              c.avgOrderValue.toStringAsFixed(2),
+              _getTierName(context, c.tier),
+            ],
+          )
+          .toList(),
     );
     if (mounted) CsvExportHelper.showResultSnackBar(context, result);
   }

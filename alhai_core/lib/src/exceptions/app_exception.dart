@@ -42,7 +42,7 @@ class NotFoundException extends AppException {
 /// completed sale).  Used by ZATCA-compliance guards.
 class AppendOnlyViolationException extends AppException {
   const AppendOnlyViolationException(super.message, {super.code})
-      : super(statusCode: 409);
+    : super(statusCode: 409);
 }
 
 /// Migration failure with backup path for recovery.

@@ -27,10 +27,12 @@ class InvoiceXmlValidator {
 
     // 1. Root element
     if (root.name.local != 'Invoice') {
-      errors.add(XmlValidationError(
-        'INVALID_ROOT',
-        'Root element must be Invoice, got ${root.name.local}',
-      ));
+      errors.add(
+        XmlValidationError(
+          'INVALID_ROOT',
+          'Root element must be Invoice, got ${root.name.local}',
+        ),
+      );
       return XmlValidationResult(errors: errors, warnings: warnings);
     }
 
@@ -59,10 +61,12 @@ class InvoiceXmlValidator {
         .where((e) => e.name.local == 'InvoiceLine')
         .toList();
     if (lines.isEmpty) {
-      errors.add(const XmlValidationError(
-        'MISSING_INVOICE_LINES',
-        'At least one InvoiceLine is required',
-      ));
+      errors.add(
+        const XmlValidationError(
+          'MISSING_INVOICE_LINES',
+          'At least one InvoiceLine is required',
+        ),
+      );
     }
 
     // 7. ZATCA-specific: ICV document reference
@@ -89,26 +93,34 @@ class InvoiceXmlValidator {
     List<XmlValidationError> errors,
     List<XmlValidationWarning> warnings,
   ) {
-    final suppliers =
-        root.findAllElements('AccountingSupplierParty', namespace: '*');
+    final suppliers = root.findAllElements(
+      'AccountingSupplierParty',
+      namespace: '*',
+    );
     if (suppliers.isEmpty) {
-      errors.add(const XmlValidationError(
-        'MISSING_SUPPLIER',
-        'AccountingSupplierParty is required',
-      ));
+      errors.add(
+        const XmlValidationError(
+          'MISSING_SUPPLIER',
+          'AccountingSupplierParty is required',
+        ),
+      );
       return;
     }
 
     final party = suppliers.first.findAllElements('Party', namespace: '*');
     if (party.isEmpty) return;
 
-    final address =
-        party.first.findAllElements('PostalAddress', namespace: '*');
+    final address = party.first.findAllElements(
+      'PostalAddress',
+      namespace: '*',
+    );
     if (address.isEmpty) {
-      errors.add(const XmlValidationError(
-        'MISSING_SUPPLIER_ADDRESS',
-        'Seller PostalAddress is required',
-      ));
+      errors.add(
+        const XmlValidationError(
+          'MISSING_SUPPLIER_ADDRESS',
+          'Seller PostalAddress is required',
+        ),
+      );
       return;
     }
 
@@ -118,23 +130,28 @@ class InvoiceXmlValidator {
     _requireChild(address.first, 'PostalZone', errors);
 
     // CountrySubentity check (Fix #3)
-    final subentities =
-        address.first.findAllElements('CountrySubentity', namespace: '*');
+    final subentities = address.first.findAllElements(
+      'CountrySubentity',
+      namespace: '*',
+    );
     if (subentities.isEmpty) {
-      warnings.add(const XmlValidationWarning(
-        'MISSING_COUNTRY_SUBENTITY',
-        'Seller PostalAddress should contain CountrySubentity per UBL 2.1',
-      ));
+      warnings.add(
+        const XmlValidationWarning(
+          'MISSING_COUNTRY_SUBENTITY',
+          'Seller PostalAddress should contain CountrySubentity per UBL 2.1',
+        ),
+      );
     }
 
     // Country
-    final countries =
-        address.first.findAllElements('Country', namespace: '*');
+    final countries = address.first.findAllElements('Country', namespace: '*');
     if (countries.isEmpty) {
-      errors.add(const XmlValidationError(
-        'MISSING_SELLER_COUNTRY',
-        'Seller Country element is required',
-      ));
+      errors.add(
+        const XmlValidationError(
+          'MISSING_SELLER_COUNTRY',
+          'Seller Country element is required',
+        ),
+      );
     }
   }
 
@@ -143,29 +160,33 @@ class InvoiceXmlValidator {
     List<XmlValidationError> errors,
     List<XmlValidationWarning> warnings,
   ) {
-    final customers =
-        root.findAllElements('AccountingCustomerParty', namespace: '*');
+    final customers = root.findAllElements(
+      'AccountingCustomerParty',
+      namespace: '*',
+    );
     if (customers.isEmpty) {
-      errors.add(const XmlValidationError(
-        'MISSING_CUSTOMER',
-        'AccountingCustomerParty is required',
-      ));
+      errors.add(
+        const XmlValidationError(
+          'MISSING_CUSTOMER',
+          'AccountingCustomerParty is required',
+        ),
+      );
     }
     // Buyer postal address is optional for simplified invoices
   }
 
-  void _validateTaxTotals(
-    XmlElement root,
-    List<XmlValidationError> errors,
-  ) {
-    final taxTotals =
-        root.childElements.where((e) => e.name.local == 'TaxTotal').toList();
+  void _validateTaxTotals(XmlElement root, List<XmlValidationError> errors) {
+    final taxTotals = root.childElements
+        .where((e) => e.name.local == 'TaxTotal')
+        .toList();
     if (taxTotals.length < 2) {
-      errors.add(XmlValidationError(
-        'MISSING_TAX_TOTALS',
-        'ZATCA requires exactly 2 TaxTotal elements at invoice level '
-            '(found ${taxTotals.length})',
-      ));
+      errors.add(
+        XmlValidationError(
+          'MISSING_TAX_TOTALS',
+          'ZATCA requires exactly 2 TaxTotal elements at invoice level '
+              '(found ${taxTotals.length})',
+        ),
+      );
     }
   }
 
@@ -174,17 +195,21 @@ class InvoiceXmlValidator {
     String expectedUuid,
     List<XmlValidationError> errors,
   ) {
-    final refs =
-        root.findAllElements('AdditionalDocumentReference', namespace: '*');
+    final refs = root.findAllElements(
+      'AdditionalDocumentReference',
+      namespace: '*',
+    );
     final hasRef = refs.any((ref) {
       final uuids = ref.findAllElements('UUID', namespace: '*');
       return uuids.any((u) => u.innerText == expectedUuid);
     });
     if (!hasRef) {
-      errors.add(XmlValidationError(
-        'MISSING_$expectedUuid',
-        'AdditionalDocumentReference with UUID=$expectedUuid is required',
-      ));
+      errors.add(
+        XmlValidationError(
+          'MISSING_$expectedUuid',
+          'AdditionalDocumentReference with UUID=$expectedUuid is required',
+        ),
+      );
     }
   }
 
@@ -195,10 +220,12 @@ class InvoiceXmlValidator {
   ) {
     final found = parent.childElements.any((e) => e.name.local == localName);
     if (!found) {
-      errors.add(XmlValidationError(
-        'MISSING_$localName'.toUpperCase(),
-        '$localName element is required in ${parent.name.local}',
-      ));
+      errors.add(
+        XmlValidationError(
+          'MISSING_$localName'.toUpperCase(),
+          '$localName element is required in ${parent.name.local}',
+        ),
+      );
     }
   }
 
@@ -209,10 +236,12 @@ class InvoiceXmlValidator {
   ) {
     final found = root.findAllElements(localName, namespace: '*');
     if (found.isEmpty) {
-      errors.add(XmlValidationError(
-        'MISSING_$localName'.toUpperCase(),
-        '$localName element is required',
-      ));
+      errors.add(
+        XmlValidationError(
+          'MISSING_$localName'.toUpperCase(),
+          '$localName element is required',
+        ),
+      );
     }
   }
 }
@@ -244,10 +273,7 @@ class XmlValidationResult {
   final List<XmlValidationError> errors;
   final List<XmlValidationWarning> warnings;
 
-  const XmlValidationResult({
-    required this.errors,
-    required this.warnings,
-  });
+  const XmlValidationResult({required this.errors, required this.warnings});
 
   bool get hasErrors => errors.isNotEmpty;
   bool get isValid => errors.isEmpty;

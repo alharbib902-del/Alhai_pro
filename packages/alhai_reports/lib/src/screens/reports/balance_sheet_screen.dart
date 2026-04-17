@@ -208,7 +208,8 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
     final pdf = await _buildReportPdf();
     await Printing.sharePdf(
       bytes: await pdf.save(),
-      filename: 'balance_sheet_${DateTime.now().toIso8601String().split('T').first}.pdf',
+      filename:
+          'balance_sheet_${DateTime.now().toIso8601String().split('T').first}.pdf',
     );
   }
 
@@ -216,7 +217,8 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
     final pdf = await _buildReportPdf();
     await Printing.layoutPdf(
       onLayout: (_) => pdf.save(),
-      name: 'balance_sheet_${DateTime.now().toIso8601String().split('T').first}',
+      name:
+          'balance_sheet_${DateTime.now().toIso8601String().split('T').first}',
     );
   }
 
@@ -247,10 +249,7 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
                     : _error!,
               ),
               const SizedBox(height: AlhaiSpacing.sm),
-              ElevatedButton(
-                onPressed: _loadData,
-                child: Text(l10n.retry),
-              ),
+              ElevatedButton(onPressed: _loadData, child: Text(l10n.retry)),
             ],
           ),
         ),
@@ -329,12 +328,18 @@ class _BalanceSheetScreenState extends ConsumerState<BalanceSheetScreen> {
                 isDark: isDark,
                 currency: l10n.currency,
                 items: [
-                  _LineItem(label: l10n.reportCashInDrawer, amount: _cashInDrawer),
+                  _LineItem(
+                    label: l10n.reportCashInDrawer,
+                    amount: _cashInDrawer,
+                  ),
                   _LineItem(
                     label: l10n.reportAccountsReceivable,
                     amount: _accountsReceivable,
                   ),
-                  _LineItem(label: l10n.reportInventoryValue, amount: _inventoryValue),
+                  _LineItem(
+                    label: l10n.reportInventoryValue,
+                    amount: _inventoryValue,
+                  ),
                 ],
                 total: _totalCurrentAssets,
                 totalLabel: l10n.reportTotalCurrentAssets,

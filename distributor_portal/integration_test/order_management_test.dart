@@ -34,7 +34,9 @@ void main() {
     group('Flow 1: Approve Order', () {
       testWidgets('login screen loads at /login', (tester) async {
         // Arrange: Launch at login
-        await tester.pumpWidget(buildDistributorTestApp(initialRoute: '/login'));
+        await tester.pumpWidget(
+          buildDistributorTestApp(initialRoute: '/login'),
+        );
         await pumpAndSettleWithTimeout(tester);
 
         // Assert: Login screen stub is visible
@@ -72,9 +74,7 @@ void main() {
         expectStubScreen('Orders');
       });
 
-      testWidgets('tapping an order navigates to order detail', (
-        tester,
-      ) async {
+      testWidgets('tapping an order navigates to order detail', (tester) async {
         // Arrange: Start at orders list
         await tester.pumpWidget(
           buildDistributorTestApp(initialRoute: '/orders'),
@@ -92,47 +92,46 @@ void main() {
         expectStubScreen('Order $kTestOrderId');
       });
 
-      testWidgets(
-        'full approve flow: login -> orders -> detail -> approve',
-        (tester) async {
-          // Arrange: Start at login
-          await tester.pumpWidget(
-            buildDistributorTestApp(initialRoute: '/login'),
-          );
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Login');
+      testWidgets('full approve flow: login -> orders -> detail -> approve', (
+        tester,
+      ) async {
+        // Arrange: Start at login
+        await tester.pumpWidget(
+          buildDistributorTestApp(initialRoute: '/login'),
+        );
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Login');
 
-          final router = GoRouter.of(
-            tester.element(find.byKey(const Key('stub_Login'))),
-          );
+        final router = GoRouter.of(
+          tester.element(find.byKey(const Key('stub_Login'))),
+        );
 
-          // Step 1: Login -> Dashboard
-          router.go('/dashboard');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Dashboard');
+        // Step 1: Login -> Dashboard
+        router.go('/dashboard');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Dashboard');
 
-          // Step 2: Dashboard -> Orders
-          router.go('/orders');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Orders');
+        // Step 2: Dashboard -> Orders
+        router.go('/orders');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Orders');
 
-          // Step 3: Orders -> Order Detail (status: sent)
-          router.go('/orders/$kTestOrderId');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Order $kTestOrderId');
+        // Step 3: Orders -> Order Detail (status: sent)
+        router.go('/orders/$kTestOrderId');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Order $kTestOrderId');
 
-          // Step 4: In the real app, the distributor reviews items, confirms
-          // pricing, and taps "Approve". The order status transitions from
-          // 'sent' to 'approved'. We verify the route parameter was passed.
-          expect(kSampleOrder['status'], equals('sent'));
-          expect(kOrderStatuses.contains('approved'), isTrue);
+        // Step 4: In the real app, the distributor reviews items, confirms
+        // pricing, and taps "Approve". The order status transitions from
+        // 'sent' to 'approved'. We verify the route parameter was passed.
+        expect(kSampleOrder['status'], equals('sent'));
+        expect(kOrderStatuses.contains('approved'), isTrue);
 
-          // Step 5: After approval, navigate back to orders list
-          router.go('/orders');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Orders');
-        },
-      );
+        // Step 5: After approval, navigate back to orders list
+        router.go('/orders');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Orders');
+      });
     });
 
     // ========================================================================

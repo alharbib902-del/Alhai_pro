@@ -20,15 +20,21 @@ class OrdersDaoManager {
       $$StoresTableTableTableManager(_db.attachedDatabase, _db.storesTable);
   $$CustomersTableTableTableManager get customersTable =>
       $$CustomersTableTableTableManager(
-          _db.attachedDatabase, _db.customersTable);
+        _db.attachedDatabase,
+        _db.customersTable,
+      );
   $$OrdersTableTableTableManager get ordersTable =>
       $$OrdersTableTableTableManager(_db.attachedDatabase, _db.ordersTable);
   $$CategoriesTableTableTableManager get categoriesTable =>
       $$CategoriesTableTableTableManager(
-          _db.attachedDatabase, _db.categoriesTable);
+        _db.attachedDatabase,
+        _db.categoriesTable,
+      );
   $$ProductsTableTableTableManager get productsTable =>
       $$ProductsTableTableTableManager(_db.attachedDatabase, _db.productsTable);
   $$OrderItemsTableTableTableManager get orderItemsTable =>
       $$OrderItemsTableTableTableManager(
-          _db.attachedDatabase, _db.orderItemsTable);
+        _db.attachedDatabase,
+        _db.orderItemsTable,
+      );
 }

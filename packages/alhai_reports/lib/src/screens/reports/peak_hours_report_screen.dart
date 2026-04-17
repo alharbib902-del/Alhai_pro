@@ -71,8 +71,9 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
         sevenDaysAgo.month,
         sevenDaysAgo.day,
       );
-      final dailyResults = await db.customSelect(
-        '''SELECT
+      final dailyResults = await db
+          .customSelect(
+            '''SELECT
              DATE(created_at) as sale_date,
              COUNT(*) as sale_count,
              COALESCE(SUM(total), 0) as sale_total
@@ -83,12 +84,15 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
              AND created_at < ?
            GROUP BY DATE(created_at)
            ORDER BY sale_date ASC''',
-        variables: [
-          Variable.withString(storeId),
-          Variable.withDateTime(startOfRange),
-          Variable.withDateTime(DateTime.now().add(const Duration(days: 1))),
-        ],
-      ).get();
+            variables: [
+              Variable.withString(storeId),
+              Variable.withDateTime(startOfRange),
+              Variable.withDateTime(
+                DateTime.now().add(const Duration(days: 1)),
+              ),
+            ],
+          )
+          .get();
 
       // Build a map of date -> (count, total)
       final dailyMap = <String, ({int count, double total})>{};
@@ -801,16 +805,24 @@ class _PeakHoursReportScreenState extends ConsumerState<PeakHoursReportScreen> {
         ? [l10n.hourlyView, l10n.transactionWord, l10n.revenue]
         : [l10n.dailyView, l10n.transactionWord, l10n.revenue];
     final rows = _viewMode == 'hourly'
-        ? _hourlyData.map((h) => [
-            '${h.hour}:00',
-            '${h.transactions}',
-            h.revenue.toStringAsFixed(2),
-          ]).toList()
-        : _dailyData.map((d) => [
-            _getDayShort(context, d.day),
-            '${d.transactions}',
-            d.revenue.toStringAsFixed(2),
-          ]).toList();
+        ? _hourlyData
+              .map(
+                (h) => [
+                  '${h.hour}:00',
+                  '${h.transactions}',
+                  h.revenue.toStringAsFixed(2),
+                ],
+              )
+              .toList()
+        : _dailyData
+              .map(
+                (d) => [
+                  _getDayShort(context, d.day),
+                  '${d.transactions}',
+                  d.revenue.toStringAsFixed(2),
+                ],
+              )
+              .toList();
 
     final result = await CsvExportHelper.exportAndShare(
       context: context,

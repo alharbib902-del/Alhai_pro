@@ -145,7 +145,10 @@ void main() {
       final position = _makePosition(isMocked: true);
       final exception = MockGpsDetectedException(position: position);
 
-      expect(exception.message, 'تم اكتشاف تطبيق محاكاة موقع. يرجى تعطيله للاستمرار.');
+      expect(
+        exception.message,
+        'تم اكتشاف تطبيق محاكاة موقع. يرجى تعطيله للاستمرار.',
+      );
     });
 
     test('toString returns the message', () {

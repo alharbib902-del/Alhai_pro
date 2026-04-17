@@ -55,8 +55,9 @@ class _TierFormDialogState extends State<_TierFormDialog> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.existing?.name ?? '');
-    _nameArController =
-        TextEditingController(text: widget.existing?.nameAr ?? '');
+    _nameArController = TextEditingController(
+      text: widget.existing?.nameAr ?? '',
+    );
     _discountController = TextEditingController(
       text: widget.existing?.discountPercent.toString() ?? '',
     );
@@ -77,10 +78,9 @@ class _TierFormDialogState extends State<_TierFormDialog> {
     Navigator.of(context).pop(
       PricingTierFormResult(
         name: _nameController.text.trim(),
-        nameAr:
-            _nameArController.text.trim().isEmpty
-                ? null
-                : _nameArController.text.trim(),
+        nameAr: _nameArController.text.trim().isEmpty
+            ? null
+            : _nameArController.text.trim(),
         discountPercent: double.parse(_discountController.text.trim()),
         isDefault: _isDefault,
       ),
@@ -143,10 +143,13 @@ class _TierFormDialogState extends State<_TierFormDialog> {
               const SizedBox(height: AlhaiSpacing.md),
               TextFormField(
                 controller: _discountController,
-                keyboardType:
-                    const TextInputType.numberWithOptions(decimal: true),
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
                 inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d{0,3}\.?\d{0,2}')),
+                  FilteringTextInputFormatter.allow(
+                    RegExp(r'^\d{0,3}\.?\d{0,2}'),
+                  ),
                 ],
                 decoration: InputDecoration(
                   labelText: 'نسبة الخصم (%) *',

@@ -43,8 +43,7 @@ class AdminService {
           .order('created_at', ascending: false);
 
       return (response as List)
-          .map((r) =>
-              PendingDistributor.fromJson(r as Map<String, dynamic>))
+          .map((r) => PendingDistributor.fromJson(r as Map<String, dynamic>))
           .toList();
     } on PostgrestException catch (e) {
       // Table may not exist yet in dev environments
@@ -69,8 +68,7 @@ class AdminService {
         .order('created_at', ascending: false);
 
     return (response as List)
-        .map(
-            (r) => PendingDistributor.fromJson(r as Map<String, dynamic>))
+        .map((r) => PendingDistributor.fromJson(r as Map<String, dynamic>))
         .toList();
   }
 
@@ -91,11 +89,14 @@ class AdminService {
 
   /// Approve distributor — sets status to active.
   Future<void> approveDistributor(String orgId) async {
-    await _client.from('organizations').update({
-      'status': 'active',
-      'is_active': true,
-      'updated_at': DateTime.now().toIso8601String(),
-    }).eq('id', orgId);
+    await _client
+        .from('organizations')
+        .update({
+          'status': 'active',
+          'is_active': true,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', orgId);
 
     await DistributorAuditService.instance.log(
       action: 'distributor.approve',
@@ -117,11 +118,14 @@ class AdminService {
       throw ArgumentError('سبب الرفض مطلوب');
     }
 
-    await _client.from('organizations').update({
-      'status': 'rejected',
-      'is_active': false,
-      'updated_at': DateTime.now().toIso8601String(),
-    }).eq('id', orgId);
+    await _client
+        .from('organizations')
+        .update({
+          'status': 'rejected',
+          'is_active': false,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', orgId);
 
     await DistributorAuditService.instance.log(
       action: 'distributor.reject',
@@ -145,11 +149,14 @@ class AdminService {
       throw ArgumentError('سبب الإيقاف مطلوب');
     }
 
-    await _client.from('organizations').update({
-      'status': 'suspended',
-      'is_active': false,
-      'updated_at': DateTime.now().toIso8601String(),
-    }).eq('id', orgId);
+    await _client
+        .from('organizations')
+        .update({
+          'status': 'suspended',
+          'is_active': false,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', orgId);
 
     await DistributorAuditService.instance.log(
       action: 'distributor.suspend',
@@ -169,11 +176,14 @@ class AdminService {
 
   /// Reinstate a suspended distributor.
   Future<void> reinstateDistributor(String orgId) async {
-    await _client.from('organizations').update({
-      'status': 'active',
-      'is_active': true,
-      'updated_at': DateTime.now().toIso8601String(),
-    }).eq('id', orgId);
+    await _client
+        .from('organizations')
+        .update({
+          'status': 'active',
+          'is_active': true,
+          'updated_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', orgId);
 
     await DistributorAuditService.instance.log(
       action: 'distributor.reinstate',
@@ -201,8 +211,7 @@ class AdminService {
           .order('uploaded_at', ascending: false);
 
       return (response as List)
-          .map((r) =>
-              DistributorDocument.fromJson(r as Map<String, dynamic>))
+          .map((r) => DistributorDocument.fromJson(r as Map<String, dynamic>))
           .toList();
     } on PostgrestException catch (e) {
       if (e.code == '42P01') return [];
@@ -211,9 +220,7 @@ class AdminService {
   }
 
   /// List documents for a specific distributor.
-  Future<List<DistributorDocument>> listDocumentsForOrg(
-    String orgId,
-  ) async {
+  Future<List<DistributorDocument>> listDocumentsForOrg(String orgId) async {
     try {
       final response = await _client
           .from('distributor_documents')
@@ -222,8 +229,7 @@ class AdminService {
           .order('uploaded_at', ascending: false);
 
       return (response as List)
-          .map((r) =>
-              DistributorDocument.fromJson(r as Map<String, dynamic>))
+          .map((r) => DistributorDocument.fromJson(r as Map<String, dynamic>))
           .toList();
     } on PostgrestException catch (e) {
       if (e.code == '42P01') return [];
@@ -234,11 +240,14 @@ class AdminService {
   /// Approve a document.
   Future<void> approveDocument(String documentId) async {
     final user = _client.auth.currentUser;
-    await _client.from('distributor_documents').update({
-      'status': 'approved',
-      'reviewed_by': user?.id,
-      'reviewed_at': DateTime.now().toIso8601String(),
-    }).eq('id', documentId);
+    await _client
+        .from('distributor_documents')
+        .update({
+          'status': 'approved',
+          'reviewed_by': user?.id,
+          'reviewed_at': DateTime.now().toIso8601String(),
+        })
+        .eq('id', documentId);
 
     await DistributorAuditService.instance.log(
       action: 'document.approve',
@@ -255,12 +264,15 @@ class AdminService {
     }
 
     final user = _client.auth.currentUser;
-    await _client.from('distributor_documents').update({
-      'status': 'rejected',
-      'reviewed_by': user?.id,
-      'reviewed_at': DateTime.now().toIso8601String(),
-      'rejection_reason': reason,
-    }).eq('id', documentId);
+    await _client
+        .from('distributor_documents')
+        .update({
+          'status': 'rejected',
+          'reviewed_by': user?.id,
+          'reviewed_at': DateTime.now().toIso8601String(),
+          'rejection_reason': reason,
+        })
+        .eq('id', documentId);
 
     await DistributorAuditService.instance.log(
       action: 'document.reject',
@@ -292,12 +304,12 @@ class AdminService {
         query = query.eq('is_read', false);
       }
 
-      final response =
-          await query.order('created_at', ascending: false).limit(limit);
+      final response = await query
+          .order('created_at', ascending: false)
+          .limit(limit);
 
       return (response as List)
-          .map((r) =>
-              AdminNotification.fromJson(r as Map<String, dynamic>))
+          .map((r) => AdminNotification.fromJson(r as Map<String, dynamic>))
           .toList();
     } on PostgrestException catch (e) {
       if (e.code == '42P01') return [];
@@ -308,11 +320,14 @@ class AdminService {
   /// Mark a notification as read.
   Future<void> markNotificationAsRead(String notificationId) async {
     final user = _client.auth.currentUser;
-    await _client.from('admin_notifications').update({
-      'is_read': true,
-      'read_at': DateTime.now().toIso8601String(),
-      'read_by': user?.id,
-    }).eq('id', notificationId);
+    await _client
+        .from('admin_notifications')
+        .update({
+          'is_read': true,
+          'read_at': DateTime.now().toIso8601String(),
+          'read_by': user?.id,
+        })
+        .eq('id', notificationId);
   }
 
   /// Get count of unread notifications.

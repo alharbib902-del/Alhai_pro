@@ -82,10 +82,7 @@ void main() {
     });
 
     test('pendingReview can access', () {
-      expect(
-        DistributorAccountStatus.pendingReview.canAccessDashboard,
-        isTrue,
-      );
+      expect(DistributorAccountStatus.pendingReview.canAccessDashboard, isTrue);
     });
 
     test('active can access', () {
@@ -113,10 +110,7 @@ void main() {
         DistributorAccountStatus.pendingEmailVerification.canReceiveOrders,
         isFalse,
       );
-      expect(
-        DistributorAccountStatus.pendingReview.canReceiveOrders,
-        isFalse,
-      );
+      expect(DistributorAccountStatus.pendingReview.canReceiveOrders, isFalse);
     });
 
     test('rejected/suspended cannot receive orders', () {
@@ -139,7 +133,10 @@ void main() {
     });
 
     test('pendingReview label is قيد المراجعة', () {
-      expect(DistributorAccountStatus.pendingReview.arabicLabel, 'قيد المراجعة');
+      expect(
+        DistributorAccountStatus.pendingReview.arabicLabel,
+        'قيد المراجعة',
+      );
     });
   });
 
@@ -148,8 +145,9 @@ void main() {
   group('roundtrip', () {
     test('every enum value survives dbValue → fromDbValue roundtrip', () {
       for (final status in DistributorAccountStatus.values) {
-        final roundtripped =
-            DistributorAccountStatus.fromDbValue(status.dbValue);
+        final roundtripped = DistributorAccountStatus.fromDbValue(
+          status.dbValue,
+        );
         expect(roundtripped, status);
       }
     });

@@ -165,9 +165,7 @@ void main() {
     // ==========================================================================
     group('2. Account deletion flow - حذف الحساب', () {
       testWidgets('profile screen loads', (tester) async {
-        await tester.pumpWidget(
-          buildCustomerTestApp(initialRoute: '/profile'),
-        );
+        await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/profile'));
         await pumpAndSettleWithTimeout(tester);
 
         expectStubScreen('Profile');
@@ -175,9 +173,7 @@ void main() {
 
       testWidgets('profile → settings navigation', (tester) async {
         // الترتيب: البداية من الملف الشخصي
-        await tester.pumpWidget(
-          buildCustomerTestApp(initialRoute: '/profile'),
-        );
+        await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/profile'));
         await pumpAndSettleWithTimeout(tester);
         expectStubScreen('Profile');
 
@@ -248,9 +244,7 @@ void main() {
 
       testWidgets('cancelled deletion stays on profile', (tester) async {
         // إذا ألغى المستخدم الحذف، يبقى في الملف الشخصي
-        await tester.pumpWidget(
-          buildCustomerTestApp(initialRoute: '/profile'),
-        );
+        await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/profile'));
         await pumpAndSettleWithTimeout(tester);
         expectStubScreen('Profile');
 
@@ -317,13 +311,9 @@ void main() {
         expectStubScreen('Home');
       });
 
-      testWidgets('authenticated user → logout → login screen', (
-        tester,
-      ) async {
+      testWidgets('authenticated user → logout → login screen', (tester) async {
         // مستخدم مسجّل → تسجيل الخروج
-        await tester.pumpWidget(
-          buildCustomerTestApp(initialRoute: '/profile'),
-        );
+        await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/profile'));
         await pumpAndSettleWithTimeout(tester);
         expectStubScreen('Profile');
 
@@ -448,48 +438,44 @@ void main() {
         expectStubScreen('Login');
       });
 
-      testWidgets(
-        'direct navigation to protected route shows route exists',
-        (tester) async {
-          // في بيئة الاختبار: المسارات المحمية تعمل مباشرة لأن الاختبار
-          // لا يستخدم AppRouter.redirect الحقيقي
-          // في التطبيق الحقيقي: /home بدون مصادقة → redirect لـ /auth/login
+      testWidgets('direct navigation to protected route shows route exists', (
+        tester,
+      ) async {
+        // في بيئة الاختبار: المسارات المحمية تعمل مباشرة لأن الاختبار
+        // لا يستخدم AppRouter.redirect الحقيقي
+        // في التطبيق الحقيقي: /home بدون مصادقة → redirect لـ /auth/login
 
-          await tester.pumpWidget(
-            buildCustomerTestApp(initialRoute: '/home'),
-          );
-          await pumpAndSettleWithTimeout(tester);
+        await tester.pumpWidget(buildCustomerTestApp(initialRoute: '/home'));
+        await pumpAndSettleWithTimeout(tester);
 
-          // في بيئة الاختبار: المسار يعمل (لأن buildCustomerTestApp لا يطبق redirect)
-          expectStubScreen('Home');
-        },
-      );
+        // في بيئة الاختبار: المسار يعمل (لأن buildCustomerTestApp لا يطبق redirect)
+        expectStubScreen('Home');
+      });
 
-      testWidgets(
-        'route transitions preserve app state between auth screens',
-        (tester) async {
-          // التنقل بين شاشات المصادقة يحافظ على حالة التطبيق
-          await tester.pumpWidget(
-            buildCustomerTestApp(initialRoute: '/auth/login'),
-          );
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Login');
+      testWidgets('route transitions preserve app state between auth screens', (
+        tester,
+      ) async {
+        // التنقل بين شاشات المصادقة يحافظ على حالة التطبيق
+        await tester.pumpWidget(
+          buildCustomerTestApp(initialRoute: '/auth/login'),
+        );
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Login');
 
-          final router = GoRouter.of(
-            tester.element(find.byKey(const Key('stub_Login'))),
-          );
+        final router = GoRouter.of(
+          tester.element(find.byKey(const Key('stub_Login'))),
+        );
 
-          // تسجيل الدخول → OTP
-          router.go('/auth/otp');
-          await pumpAndSettleWithTimeout(tester);
-          expect(find.textContaining('OTP'), findsOneWidget);
+        // تسجيل الدخول → OTP
+        router.go('/auth/otp');
+        await pumpAndSettleWithTimeout(tester);
+        expect(find.textContaining('OTP'), findsOneWidget);
 
-          // العودة لتسجيل الدخول (المستخدم يريد تغيير الرقم)
-          router.go('/auth/login');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Login');
-        },
-      );
+        // العودة لتسجيل الدخول (المستخدم يريد تغيير الرقم)
+        router.go('/auth/login');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Login');
+      });
     });
   });
 }

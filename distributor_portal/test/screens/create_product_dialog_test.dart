@@ -31,10 +31,7 @@ class _FakeDistributorDatasource extends DistributorDatasource {
   Future<List<({String id, String name})>> getCategoriesWithIds({
     int limit = 100,
   }) async {
-    return [
-      (id: 'cat-1', name: 'مواد غذائية'),
-      (id: 'cat-2', name: 'مشروبات'),
-    ];
+    return [(id: 'cat-1', name: 'مواد غذائية'), (id: 'cat-2', name: 'مشروبات')];
   }
 
   @override
@@ -112,8 +109,9 @@ void main() {
       expect(find.text('إنشاء المنتج'), findsOneWidget);
     });
 
-    testWidgets('validates empty name — image error shown on submit',
-        (tester) async {
+    testWidgets('validates empty name — image error shown on submit', (
+      tester,
+    ) async {
       await tester.pumpWidget(buildTestWidget());
       await tester.pump();
 
@@ -232,14 +230,8 @@ void main() {
       });
       await tester.pumpAndSettle();
 
-      expect(
-        find.text('اضغط لاختيار صورة المنتج *'),
-        findsOneWidget,
-      );
-      expect(
-        find.text('JPG, PNG, WebP — حد أقصى 5 MB'),
-        findsOneWidget,
-      );
+      expect(find.text('اضغط لاختيار صورة المنتج *'), findsOneWidget);
+      expect(find.text('JPG, PNG, WebP — حد أقصى 5 MB'), findsOneWidget);
       expect(find.byIcon(Icons.add_photo_alternate_rounded), findsOneWidget);
     });
 

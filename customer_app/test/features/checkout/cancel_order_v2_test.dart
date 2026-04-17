@@ -28,13 +28,18 @@ void main() {
           createdAt: DateTime.now(),
         );
 
-        if (status == OrderStatus.created ||
-            status == OrderStatus.confirmed) {
-          expect(order.canCancel, isTrue,
-              reason: '$status should be cancellable');
+        if (status == OrderStatus.created || status == OrderStatus.confirmed) {
+          expect(
+            order.canCancel,
+            isTrue,
+            reason: '$status should be cancellable',
+          );
         } else {
-          expect(order.canCancel, isFalse,
-              reason: '$status should NOT be cancellable');
+          expect(
+            order.canCancel,
+            isFalse,
+            reason: '$status should NOT be cancellable',
+          );
         }
       }
     });
@@ -45,10 +50,12 @@ void main() {
       const terminalStatuses = ['delivered', 'cancelled'];
 
       for (final status in terminalStatuses) {
-        final isTerminal =
-            status == 'delivered' || status == 'cancelled';
-        expect(isTerminal, isTrue,
-            reason: '$status should be recognized as terminal');
+        final isTerminal = status == 'delivered' || status == 'cancelled';
+        expect(
+          isTerminal,
+          isTrue,
+          reason: '$status should be recognized as terminal',
+        );
       }
     });
 
@@ -73,15 +80,13 @@ void main() {
       ];
 
       for (final status in nonCreatedStatuses) {
-        final isTerminal =
-            status == 'delivered' || status == 'cancelled';
+        final isTerminal = status == 'delivered' || status == 'cancelled';
         final useDirectUpdate = status == 'created';
 
         // Should NOT be terminal (so we don't throw)
         expect(isTerminal, isFalse, reason: '$status is not terminal');
         // Should NOT use direct update (RLS blocks it)
-        expect(useDirectUpdate, isFalse,
-            reason: '$status must use RPC path');
+        expect(useDirectUpdate, isFalse, reason: '$status must use RPC path');
       }
     });
 
@@ -91,7 +96,8 @@ void main() {
       // this to a user-friendly Arabic message.
       const errorCode = '42883';
       final isUndefinedFunction =
-          errorCode == '42883' || 'function does not exist'.contains('function');
+          errorCode == '42883' ||
+          'function does not exist'.contains('function');
       expect(isUndefinedFunction, isTrue);
     });
 
@@ -109,8 +115,11 @@ void main() {
 
       // Step 1: terminal check (before any RPC/UPDATE)
       const isTerminal = status == 'delivered' || status == 'cancelled';
-      expect(isTerminal, isTrue,
-          reason: 'Terminal check must happen before stock release');
+      expect(
+        isTerminal,
+        isTrue,
+        reason: 'Terminal check must happen before stock release',
+      );
 
       // If this were a non-terminal, non-created status:
       const status2 = 'confirmed';
@@ -135,10 +144,7 @@ void main() {
       expect(directUpdatePayload['cancellation_reason'], equals(reason));
 
       // RPC path sends: {'p_order_id': id, 'p_reason': reason}
-      final rpcParams = {
-        'p_order_id': 'order-123',
-        'p_reason': reason,
-      };
+      final rpcParams = {'p_order_id': 'order-123', 'p_reason': reason};
       expect(rpcParams['p_reason'], equals(reason));
     });
 
@@ -147,14 +153,11 @@ void main() {
       // If null is returned, it throws before releasing stock or updating.
       const existing = null;
 
-      expect(
-        () {
-          if (existing == null) {
-            throw Exception('Order not found or access denied');
-          }
-        },
-        throwsException,
-      );
+      expect(() {
+        if (existing == null) {
+          throw Exception('Order not found or access denied');
+        }
+      }, throwsException);
     });
   });
 }

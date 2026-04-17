@@ -39,8 +39,11 @@ void main() {
       // After Fix #2 revert, validateSigned should not require
       // SignaturePolicyIdentifier
       final result = validator.validateSigned(validXml);
-      expect(result.isValid, isTrue,
-          reason: 'validateSigned must work without SignaturePolicyIdentifier');
+      expect(
+        result.isValid,
+        isTrue,
+        reason: 'validateSigned must work without SignaturePolicyIdentifier',
+      );
     });
 
     // -----------------------------------------------------------------------
@@ -52,8 +55,11 @@ void main() {
         '',
       );
       final result = validator.validate(xml);
-      expect(result.errors.any((e) => e.code == 'MISSING_ID'), isTrue,
-          reason: 'Must detect missing ID');
+      expect(
+        result.errors.any((e) => e.code == 'MISSING_ID'),
+        isTrue,
+        reason: 'Must detect missing ID',
+      );
     });
 
     test('catches missing <cbc:IssueDate>', () {
@@ -62,8 +68,11 @@ void main() {
         '',
       );
       final result = validator.validate(xml);
-      expect(result.errors.any((e) => e.code == 'MISSING_ISSUEDATE'), isTrue,
-          reason: 'Must detect missing IssueDate');
+      expect(
+        result.errors.any((e) => e.code == 'MISSING_ISSUEDATE'),
+        isTrue,
+        reason: 'Must detect missing IssueDate',
+      );
     });
 
     test('catches missing TaxTotal', () {
@@ -106,10 +115,12 @@ void main() {
     });
 
     test('catches wrong root element', () {
-      final result =
-          validator.validate('<?xml version="1.0"?><Order></Order>');
-      expect(result.errors.any((e) => e.code == 'INVALID_ROOT'), isTrue,
-          reason: 'Non-Invoice root must be rejected');
+      final result = validator.validate('<?xml version="1.0"?><Order></Order>');
+      expect(
+        result.errors.any((e) => e.code == 'INVALID_ROOT'),
+        isTrue,
+        reason: 'Non-Invoice root must be rejected',
+      );
     });
 
     // -----------------------------------------------------------------------
@@ -142,38 +153,38 @@ void main() {
 }
 
 ZatcaInvoice _validInvoice() => ZatcaInvoice(
-      invoiceNumber: 'INV-VERIFY-001',
-      uuid: '550e8400-e29b-41d4-a716-446655440088',
-      issueDate: DateTime(2026, 4, 14),
-      issueTime: DateTime(2026, 4, 14, 10, 0, 0),
-      typeCode: InvoiceTypeCode.standard,
-      subType: InvoiceSubType.standardB2B,
-      seller: const ZatcaSeller(
-        name: 'Verify Seller',
-        vatNumber: '310122393500003',
-        streetName: 'King Fahd Rd',
-        buildingNumber: '1234',
-        city: 'Riyadh',
-        postalCode: '12345',
-        region: 'Riyadh Region',
-      ),
-      buyer: const ZatcaBuyer(
-        name: 'Verify Buyer',
-        vatNumber: '399999999900003',
-        streetName: 'Main St',
-        buildingNumber: '5678',
-        city: 'Jeddah',
-        postalCode: '21589',
-        countryCode: 'SA',
-      ),
-      lines: const [
-        ZatcaInvoiceLine(
-          lineId: '1',
-          itemName: 'Verification Widget',
-          quantity: 2,
-          unitPrice: 100.0,
-          vatRate: 15.0,
-          vatCategoryCode: 'S',
-        ),
-      ],
-    );
+  invoiceNumber: 'INV-VERIFY-001',
+  uuid: '550e8400-e29b-41d4-a716-446655440088',
+  issueDate: DateTime(2026, 4, 14),
+  issueTime: DateTime(2026, 4, 14, 10, 0, 0),
+  typeCode: InvoiceTypeCode.standard,
+  subType: InvoiceSubType.standardB2B,
+  seller: const ZatcaSeller(
+    name: 'Verify Seller',
+    vatNumber: '310122393500003',
+    streetName: 'King Fahd Rd',
+    buildingNumber: '1234',
+    city: 'Riyadh',
+    postalCode: '12345',
+    region: 'Riyadh Region',
+  ),
+  buyer: const ZatcaBuyer(
+    name: 'Verify Buyer',
+    vatNumber: '399999999900003',
+    streetName: 'Main St',
+    buildingNumber: '5678',
+    city: 'Jeddah',
+    postalCode: '21589',
+    countryCode: 'SA',
+  ),
+  lines: const [
+    ZatcaInvoiceLine(
+      lineId: '1',
+      itemName: 'Verification Widget',
+      quantity: 2,
+      unitPrice: 100.0,
+      vatRate: 15.0,
+      vatCategoryCode: 'S',
+    ),
+  ],
+);

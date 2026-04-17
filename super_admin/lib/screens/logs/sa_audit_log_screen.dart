@@ -79,7 +79,9 @@ class _SAAuditLogScreenState extends ConsumerState<SAAuditLogScreen> {
     // Filter by action prefix.
     if (_filterAction != 'all') {
       filtered = filtered
-          .where((e) => (e['action'] as String? ?? '').startsWith(_filterAction))
+          .where(
+            (e) => (e['action'] as String? ?? '').startsWith(_filterAction),
+          )
           .toList();
     }
 
@@ -196,56 +198,55 @@ class _SAAuditLogScreenState extends ConsumerState<SAAuditLogScreen> {
             child: _isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : _error != null
-                    ? Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              Icons.error_outline,
-                              size: 48,
-                              color: theme.colorScheme.error,
-                            ),
-                            const SizedBox(height: 16),
-                            const Text('Failed to load audit log'),
-                            const SizedBox(height: 16),
-                            FilledButton.tonal(
-                              onPressed: _loadAuditLog,
-                              child: const Text('Retry'),
-                            ),
-                          ],
+                ? Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.error_outline,
+                          size: 48,
+                          color: theme.colorScheme.error,
                         ),
-                      )
-                    : _filteredEntries.isEmpty
-                        ? Center(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(
-                                  Icons.shield_rounded,
-                                  size: 48,
-                                  color: theme.colorScheme.onSurfaceVariant,
-                                ),
-                                const SizedBox(height: 16),
-                                Text(
-                                  'No audit entries found',
-                                  style: theme.textTheme.bodyLarge,
-                                ),
-                              ],
-                            ),
-                          )
-                        : RefreshIndicator(
-                            onRefresh: _loadAuditLog,
-                            child: ListView.separated(
-                              padding: const EdgeInsets.all(AlhaiSpacing.md),
-                              itemCount: _filteredEntries.length,
-                              separatorBuilder: (_, __) =>
-                                  const SizedBox(height: 4),
-                              itemBuilder: (context, index) {
-                                final entry = _filteredEntries[index];
-                                return _AuditEntryTile(entry: entry);
-                              },
-                            ),
-                          ),
+                        const SizedBox(height: 16),
+                        const Text('Failed to load audit log'),
+                        const SizedBox(height: 16),
+                        FilledButton.tonal(
+                          onPressed: _loadAuditLog,
+                          child: const Text('Retry'),
+                        ),
+                      ],
+                    ),
+                  )
+                : _filteredEntries.isEmpty
+                ? Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.shield_rounded,
+                          size: 48,
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'No audit entries found',
+                          style: theme.textTheme.bodyLarge,
+                        ),
+                      ],
+                    ),
+                  )
+                : RefreshIndicator(
+                    onRefresh: _loadAuditLog,
+                    child: ListView.separated(
+                      padding: const EdgeInsets.all(AlhaiSpacing.md),
+                      itemCount: _filteredEntries.length,
+                      separatorBuilder: (_, __) => const SizedBox(height: 4),
+                      itemBuilder: (context, index) {
+                        final entry = _filteredEntries[index];
+                        return _AuditEntryTile(entry: entry);
+                      },
+                    ),
+                  ),
           ),
         ],
       ),
@@ -296,29 +297,42 @@ class _AuditEntryTile extends StatelessWidget {
     final ts = DateTime.tryParse(createdAt);
     final timeStr = ts != null
         ? '${ts.year}-${ts.month.toString().padLeft(2, '0')}-'
-          '${ts.day.toString().padLeft(2, '0')} '
-          '${ts.hour.toString().padLeft(2, '0')}:'
-          '${ts.minute.toString().padLeft(2, '0')}:'
-          '${ts.second.toString().padLeft(2, '0')}'
+              '${ts.day.toString().padLeft(2, '0')} '
+              '${ts.hour.toString().padLeft(2, '0')}:'
+              '${ts.minute.toString().padLeft(2, '0')}:'
+              '${ts.second.toString().padLeft(2, '0')}'
         : createdAt;
 
     // Choose icon and color based on action.
     final (IconData icon, Color color) = switch (action) {
-      String a when a.startsWith('auth.login_failed') ||
-          a.startsWith('auth.mfa_failed') =>
+      String a
+          when a.startsWith('auth.login_failed') ||
+              a.startsWith('auth.mfa_failed') =>
         (Icons.warning_rounded, Colors.red),
-      String a when a.startsWith('auth.login') =>
-        (Icons.login_rounded, Colors.green),
-      String a when a.startsWith('auth.logout') =>
-        (Icons.logout_rounded, Colors.orange),
-      String a when a.startsWith('auth.mfa') =>
-        (Icons.security_rounded, Colors.blue),
-      String a when a.startsWith('store.') =>
-        (Icons.store_rounded, theme.colorScheme.primary),
-      String a when a.startsWith('user.') =>
-        (Icons.person_rounded, theme.colorScheme.primary),
-      String a when a.startsWith('subscription.') =>
-        (Icons.card_membership_rounded, theme.colorScheme.primary),
+      String a when a.startsWith('auth.login') => (
+        Icons.login_rounded,
+        Colors.green,
+      ),
+      String a when a.startsWith('auth.logout') => (
+        Icons.logout_rounded,
+        Colors.orange,
+      ),
+      String a when a.startsWith('auth.mfa') => (
+        Icons.security_rounded,
+        Colors.blue,
+      ),
+      String a when a.startsWith('store.') => (
+        Icons.store_rounded,
+        theme.colorScheme.primary,
+      ),
+      String a when a.startsWith('user.') => (
+        Icons.person_rounded,
+        theme.colorScheme.primary,
+      ),
+      String a when a.startsWith('subscription.') => (
+        Icons.card_membership_rounded,
+        theme.colorScheme.primary,
+      ),
       _ => (Icons.shield_rounded, theme.colorScheme.onSurfaceVariant),
     };
 
@@ -326,10 +340,7 @@ class _AuditEntryTile extends StatelessWidget {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8),
-        side: BorderSide(
-          color: theme.colorScheme.outlineVariant,
-          width: 0.5,
-        ),
+        side: BorderSide(color: theme.colorScheme.outlineVariant, width: 0.5),
       ),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),

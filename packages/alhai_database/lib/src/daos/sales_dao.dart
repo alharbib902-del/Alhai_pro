@@ -157,7 +157,9 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
           } catch (e) {
             // org_id is only needed for stock-delta logging; leaving it null
             // falls back to store-scoped delta tracking.
-            debugPrint('[DB] voidSale: org_id lookup failed for store $storeId: $e');
+            debugPrint(
+              '[DB] voidSale: org_id lookup failed for store $storeId: $e',
+            );
           }
         }
 

@@ -12,10 +12,7 @@ void main() {
     });
 
     test('sales retention is at least 6 years', () {
-      expect(
-        RetentionPolicy.salesRetention.inDays,
-        greaterThanOrEqualTo(2190),
-      );
+      expect(RetentionPolicy.salesRetention.inDays, greaterThanOrEqualTo(2190));
     });
 
     test('shifts retention is at least 6 years', () {
@@ -33,8 +30,7 @@ void main() {
     });
 
     test('cannot delete audit log younger than 6 years', () {
-      final fiveYearsAgo =
-          DateTime.now().subtract(const Duration(days: 1825));
+      final fiveYearsAgo = DateTime.now().subtract(const Duration(days: 1825));
       expect(
         RetentionPolicy.canDeleteAuditLog(fiveYearsAgo),
         isFalse,
@@ -43,30 +39,18 @@ void main() {
     });
 
     test('can delete audit log older than 6 years', () {
-      final sevenYearsAgo =
-          DateTime.now().subtract(const Duration(days: 2555));
-      expect(
-        RetentionPolicy.canDeleteAuditLog(sevenYearsAgo),
-        isTrue,
-      );
+      final sevenYearsAgo = DateTime.now().subtract(const Duration(days: 2555));
+      expect(RetentionPolicy.canDeleteAuditLog(sevenYearsAgo), isTrue);
     });
 
     test('cannot delete sale younger than 6 years', () {
-      final fiveYearsAgo =
-          DateTime.now().subtract(const Duration(days: 1825));
-      expect(
-        RetentionPolicy.canDeleteSale(fiveYearsAgo),
-        isFalse,
-      );
+      final fiveYearsAgo = DateTime.now().subtract(const Duration(days: 1825));
+      expect(RetentionPolicy.canDeleteSale(fiveYearsAgo), isFalse);
     });
 
     test('can delete sale older than 6 years', () {
-      final sevenYearsAgo =
-          DateTime.now().subtract(const Duration(days: 2555));
-      expect(
-        RetentionPolicy.canDeleteSale(sevenYearsAgo),
-        isTrue,
-      );
+      final sevenYearsAgo = DateTime.now().subtract(const Duration(days: 2555));
+      expect(RetentionPolicy.canDeleteSale(sevenYearsAgo), isTrue);
     });
 
     test('sync queue retention is 30 days (non-legal record)', () {
@@ -78,10 +62,7 @@ void main() {
     test('default parameter uses 6-year retention', () {
       // The default value is RetentionPolicy.auditLogRetention which is
       // 2190 days.  This test verifies the constant itself.
-      expect(
-        RetentionPolicy.auditLogRetention.inDays,
-        equals(2190),
-      );
+      expect(RetentionPolicy.auditLogRetention.inDays, equals(2190));
     });
   });
 }

@@ -8,7 +8,8 @@ import 'package:go_router/go_router.dart';
 import '../../core/router/app_router.dart';
 import '../../core/services/audit_log_service.dart';
 import '../../core/services/mfa_guard_service.dart';
-import '../../providers/sa_dashboard_providers.dart' show saSupabaseClientProvider;
+import '../../providers/sa_dashboard_providers.dart'
+    show saSupabaseClientProvider;
 
 /// Super Admin login screen.
 /// Shows phone + OTP flow, then verifies the user has superAdmin role.
@@ -50,10 +51,7 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
       // Step 1: Supabase email/password auth
       final result = await ref
           .read(authStateProvider.notifier)
-          .signInWithEmailPassword(
-            email: email,
-            password: password,
-          );
+          .signInWithEmailPassword(email: email, password: password);
 
       if (!result.success) {
         // Audit: failed login (password wrong or user not found)
@@ -128,11 +126,7 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
       }
 
       // Step 5: No MFA or already at AAL2 — full login success.
-      _logLoginAttempt(
-        email: email,
-        userId: authState.user?.id,
-        success: true,
-      );
+      _logLoginAttempt(email: email, userId: authState.user?.id, success: true);
     } catch (e) {
       _logLoginAttempt(email: email, success: false, reason: e.toString());
       if (mounted) {

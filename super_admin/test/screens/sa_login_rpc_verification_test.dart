@@ -69,8 +69,9 @@ void main() {
 
       final ops = mock.queryLog['audit_log']!;
       expect(ops, hasLength(1));
-      final row = ops.first.firstWhere((o) => o.method == 'insert').args[0]
-          as Map<String, dynamic>;
+      final row =
+          ops.first.firstWhere((o) => o.method == 'insert').args[0]
+              as Map<String, dynamic>;
       expect(row['action'], equals('auth.login'));
       expect(row['target_type'], equals('user'));
       expect(row['target_id'], equals('sa-user-1'));
@@ -95,8 +96,9 @@ void main() {
       );
 
       final ops = mock.queryLog['audit_log']!;
-      final row = ops.first.firstWhere((o) => o.method == 'insert').args[0]
-          as Map<String, dynamic>;
+      final row =
+          ops.first.firstWhere((o) => o.method == 'insert').args[0]
+              as Map<String, dynamic>;
       expect(row['action'], equals('auth.login_failed'));
       expect(row['target_id'], equals('attacker@evil.com'));
       expect(row['metadata']?['reason'], equals('rpc_is_super_admin_rejected'));

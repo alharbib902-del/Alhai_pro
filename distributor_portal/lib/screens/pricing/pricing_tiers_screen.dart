@@ -68,10 +68,7 @@ class _PricingTiersScreenState extends ConsumerState<PricingTiersScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('خطأ: $e'),
-            backgroundColor: AppColors.error,
-          ),
+          SnackBar(content: Text('خطأ: $e'), backgroundColor: AppColors.error),
         );
       }
     }
@@ -105,10 +102,7 @@ class _PricingTiersScreenState extends ConsumerState<PricingTiersScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('خطأ: $e'),
-            backgroundColor: AppColors.error,
-          ),
+          SnackBar(content: Text('خطأ: $e'), backgroundColor: AppColors.error),
         );
       }
     }
@@ -159,10 +153,7 @@ class _PricingTiersScreenState extends ConsumerState<PricingTiersScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('خطأ: $e'),
-            backgroundColor: AppColors.error,
-          ),
+          SnackBar(content: Text('خطأ: $e'), backgroundColor: AppColors.error),
         );
       }
     }
@@ -184,10 +175,7 @@ class _PricingTiersScreenState extends ConsumerState<PricingTiersScreen>
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('خطأ: $e'),
-            backgroundColor: AppColors.error,
-          ),
+          SnackBar(content: Text('خطأ: $e'), backgroundColor: AppColors.error),
         );
       }
     }
@@ -242,10 +230,7 @@ class _PricingTiersScreenState extends ConsumerState<PricingTiersScreen>
       body: TabBarView(
         controller: _tabController,
         children: [
-          _TiersTab(
-            onEdit: _editTier,
-            onDelete: _deleteTier,
-          ),
+          _TiersTab(onEdit: _editTier, onDelete: _deleteTier),
           _StoreAssignmentTab(onAssign: _assignStore),
         ],
       ),
@@ -392,8 +377,7 @@ class _TierCard extends StatelessWidget {
                         ),
                         decoration: BoxDecoration(
                           color: AppColors.primary.withValues(alpha: 0.1),
-                          borderRadius:
-                              BorderRadius.circular(AlhaiRadius.sm),
+                          borderRadius: BorderRadius.circular(AlhaiRadius.sm),
                         ),
                         child: const Text(
                           'افتراضي',
@@ -431,8 +415,7 @@ class _TierCard extends StatelessWidget {
                     ),
                     const SizedBox(width: 4),
                     Text(
-                      DateFormat('dd/MM/yyyy', 'ar')
-                          .format(tier.createdAt),
+                      DateFormat('dd/MM/yyyy', 'ar').format(tier.createdAt),
                       style: TextStyle(
                         fontSize: 12,
                         color: AppColors.getTextMuted(isDark),
@@ -470,18 +453,12 @@ class _TierCard extends StatelessWidget {
                       color: AppColors.error,
                     ),
                     SizedBox(width: 8),
-                    Text(
-                      'حذف',
-                      style: TextStyle(color: AppColors.error),
-                    ),
+                    Text('حذف', style: TextStyle(color: AppColors.error)),
                   ],
                 ),
               ),
             ],
-            icon: Icon(
-              Icons.more_vert,
-              color: AppColors.getTextMuted(isDark),
-            ),
+            icon: Icon(Icons.more_vert, color: AppColors.getTextMuted(isDark)),
           ),
         ],
       ),

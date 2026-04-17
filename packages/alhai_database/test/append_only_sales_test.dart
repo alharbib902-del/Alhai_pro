@@ -64,21 +64,22 @@ void main() {
       expect(refreshed!.total, 200.0);
     });
 
-    test('completed sale financial update throws AppendOnlyViolationException',
-        () async {
-      await _seedProduct('prod-2');
-      final sale = await _insertSale(id: 'sale-done', status: 'completed');
+    test(
+      'completed sale financial update throws AppendOnlyViolationException',
+      () async {
+        await _seedProduct('prod-2');
+        final sale = await _insertSale(id: 'sale-done', status: 'completed');
 
-      // Attempt to change the total on a completed sale
-      final modified = sale.copyWith(total: 999.0);
-      expect(
-        () => db.salesDao.updateSale(modified),
-        throwsA(isA<AppendOnlyViolationException>()),
-      );
-    });
+        // Attempt to change the total on a completed sale
+        final modified = sale.copyWith(total: 999.0);
+        expect(
+          () => db.salesDao.updateSale(modified),
+          throwsA(isA<AppendOnlyViolationException>()),
+        );
+      },
+    );
 
-    test('completed sale technical field (syncedAt) update succeeds',
-        () async {
+    test('completed sale technical field (syncedAt) update succeeds', () async {
       await _seedProduct('prod-3');
       await _insertSale(id: 'sale-sync', status: 'completed');
 
@@ -95,31 +96,33 @@ void main() {
       await _insertSale(id: 'sale-items-test', status: 'completed');
 
       // Insert a sale item
-      await db.into(db.saleItemsTable).insert(
-        SaleItemsTableCompanion.insert(
-          id: 'si-1',
-          saleId: 'sale-items-test',
-          productId: 'prod-4',
-          productName: 'Product 4',
-          qty: 2.0,
-          unitPrice: 50.0,
-          subtotal: 100.0,
-          total: 100.0,
-        ),
-      );
+      await db
+          .into(db.saleItemsTable)
+          .insert(
+            SaleItemsTableCompanion.insert(
+              id: 'si-1',
+              saleId: 'sale-items-test',
+              productId: 'prod-4',
+              productName: 'Product 4',
+              qty: 2.0,
+              unitPrice: 50.0,
+              subtotal: 100.0,
+              total: 100.0,
+            ),
+          );
 
       // The DB trigger should prevent deleting this item
       expect(
-        () => (db.delete(db.saleItemsTable)
-              ..where((t) => t.id.equals('si-1')))
-            .go(),
+        () => (db.delete(
+          db.saleItemsTable,
+        )..where((t) => t.id.equals('si-1'))).go(),
         throwsA(anything),
       );
 
       // Verify the item still exists
-      final items = await (db.select(db.saleItemsTable)
-            ..where((t) => t.saleId.equals('sale-items-test')))
-          .get();
+      final items = await (db.select(
+        db.saleItemsTable,
+      )..where((t) => t.saleId.equals('sale-items-test'))).get();
       expect(items, hasLength(1));
     });
   });

@@ -55,8 +55,9 @@ void main() {
       final product = await db.productsDao.getProductById('prod-full-ret');
       expect(product!.stockQty, equals(100.0));
 
-      final movements =
-          await db.inventoryDao.getMovementsByProduct('prod-full-ret');
+      final movements = await db.inventoryDao.getMovementsByProduct(
+        'prod-full-ret',
+      );
       expect(movements.length, equals(1));
       expect(movements.first.type, equals('return'));
       expect(movements.first.qty, equals(10.0));
@@ -94,13 +95,15 @@ void main() {
       final product = await db.productsDao.getProductById('prod-partial');
       expect(product!.stockQty, equals(97.0));
 
-      final movements =
-          await db.inventoryDao.getMovementsByProduct('prod-partial');
+      final movements = await db.inventoryDao.getMovementsByProduct(
+        'prod-partial',
+      );
       expect(movements.length, equals(2));
 
       // Verify movement trail
-      final returnMovements =
-          movements.where((m) => m.type == 'return').toList();
+      final returnMovements = movements
+          .where((m) => m.type == 'return')
+          .toList();
       expect(returnMovements.length, equals(2));
       final totalReturned = returnMovements.fold<double>(
         0,
@@ -124,12 +127,17 @@ void main() {
         returnId: 'ret-pos-1',
       );
 
-      final movements =
-          await db.inventoryDao.getMovementsByProduct('prod-pos');
-      expect(movements.first.qty, greaterThan(0),
-          reason: 'Return qty must be positive (restock)');
-      expect(movements.first.newQty, equals(55.0),
-          reason: 'New qty should be previous + return qty');
+      final movements = await db.inventoryDao.getMovementsByProduct('prod-pos');
+      expect(
+        movements.first.qty,
+        greaterThan(0),
+        reason: 'Return qty must be positive (restock)',
+      );
+      expect(
+        movements.first.newQty,
+        equals(55.0),
+        reason: 'New qty should be previous + return qty',
+      );
     });
 
     // -----------------------------------------------------------------------
@@ -137,41 +145,48 @@ void main() {
     // -----------------------------------------------------------------------
     // GHOST BUG (FIXED): Variable.withReal/withString in customStatement
     // was replaced with raw Dart values.  See return_transaction_smoke_test.dart.
-    test('createReturnTransaction completes without error (ghost bug fixed)',
-        () async {
-      await _insertProduct('prod-txn', 100.0);
+    test(
+      'createReturnTransaction completes without error (ghost bug fixed)',
+      () async {
+        await _insertProduct('prod-txn', 100.0);
 
-      await db.into(db.salesTable).insert(
-            SalesTableCompanion.insert(
-              id: 'sale-txn-1',
-              receiptNo: 'REC-TXN',
-              storeId: 'store-1',
-              cashierId: 'user-1',
-              subtotal: 50.0,
-              total: 57.5,
-              paymentMethod: 'cash',
-              createdAt: DateTime.now(),
-            ),
-          );
+        await db
+            .into(db.salesTable)
+            .insert(
+              SalesTableCompanion.insert(
+                id: 'sale-txn-1',
+                receiptNo: 'REC-TXN',
+                storeId: 'store-1',
+                cashierId: 'user-1',
+                subtotal: 50.0,
+                total: 57.5,
+                paymentMethod: 'cash',
+                createdAt: DateTime.now(),
+              ),
+            );
 
-      await db.createReturnTransaction(
-        returnData: ReturnsTableCompanion.insert(
-          id: 'ret-txn-1',
-          returnNumber: 'RET-TXN-001',
-          saleId: 'sale-txn-1',
-          storeId: 'store-1',
-          totalRefund: 50.0,
-          reason: const Value('defective'),
-          createdAt: DateTime.now(),
-        ),
-        items: const [],
-        stockAdditions: [const MapEntry('prod-txn', 3.0)],
-      );
+        await db.createReturnTransaction(
+          returnData: ReturnsTableCompanion.insert(
+            id: 'ret-txn-1',
+            returnNumber: 'RET-TXN-001',
+            saleId: 'sale-txn-1',
+            storeId: 'store-1',
+            totalRefund: 50.0,
+            reason: const Value('defective'),
+            createdAt: DateTime.now(),
+          ),
+          items: const [],
+          stockAdditions: [const MapEntry('prod-txn', 3.0)],
+        );
 
-      final product = await db.productsDao.getProductById('prod-txn');
-      expect(product!.stockQty, equals(103.0),
-          reason: 'Atomic stock update via SQL: stock_qty = stock_qty + 3');
-    });
+        final product = await db.productsDao.getProductById('prod-txn');
+        expect(
+          product!.stockQty,
+          equals(103.0),
+          reason: 'Atomic stock update via SQL: stock_qty = stock_qty + 3',
+        );
+      },
+    );
 
     // -----------------------------------------------------------------------
     // 5.5 Movement records reference the return
@@ -189,8 +204,7 @@ void main() {
         userId: 'user-1',
       );
 
-      final movements =
-          await db.inventoryDao.getMovementsByProduct('prod-ref');
+      final movements = await db.inventoryDao.getMovementsByProduct('prod-ref');
       expect(movements.first.referenceType, equals('return'));
       expect(movements.first.referenceId, equals('ret-ref-001'));
       expect(movements.first.userId, equals('user-1'));

@@ -213,10 +213,7 @@ void main() {
         'tier_id': 'tier-1',
         'assigned_at': '2026-04-01T00:00:00Z',
         'stores': {'name': 'متجر الأمل'},
-        'pricing_tiers': {
-          'name': 'Gold',
-          'discount_percent': 15,
-        },
+        'pricing_tiers': {'name': 'Gold', 'discount_percent': 15},
       };
 
       final assignment = StoreTierAssignment.fromJson(json);

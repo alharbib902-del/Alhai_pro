@@ -41,7 +41,10 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
       final db = GetIt.I<AppDatabase>();
-      final products = await db.productsDao.getProductsPaginated(storeId, limit: 500);
+      final products = await db.productsDao.getProductsPaginated(
+        storeId,
+        limit: 500,
+      );
       if (mounted) {
         setState(() {
           _products = products;
@@ -63,7 +66,15 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
     final result = await CsvExportHelper.exportAndShare(
       context: context,
       fileName: l10n.inventoryReport,
-      headers: [l10n.products, 'SKU', l10n.inventory, l10n.lowStock, l10n.costs, l10n.price, l10n.status],
+      headers: [
+        l10n.products,
+        'SKU',
+        l10n.inventory,
+        l10n.lowStock,
+        l10n.costs,
+        l10n.price,
+        l10n.status,
+      ],
       rows: _products.map((p) {
         final isLow = p.stockQty < p.minQty;
         return [
@@ -101,30 +112,56 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
               border: pw.TableBorder.all(color: PdfColors.grey300),
               children: [
                 pw.TableRow(
-                  decoration: const pw.BoxDecoration(color: PdfColors.blueGrey700),
-                  children: [l10n.products, 'SKU', l10n.inventory, l10n.costs, l10n.price]
-                      .map((h) => pw.Padding(
-                            padding: const pw.EdgeInsets.all(5),
-                            child: pw.Text(h, style: pw.TextStyle(color: PdfColors.white, fontWeight: pw.FontWeight.bold, fontSize: 9)),
-                          ))
-                      .toList(),
-                ),
-                ..._products.take(50).map(
-                  (p) => pw.TableRow(
-                    children: [
-                      p.name,
-                      p.sku ?? '',
-                      '${p.stockQty}',
-                      (p.costPrice ?? 0).toStringAsFixed(0),
-                      p.price.toStringAsFixed(0),
-                    ]
-                        .map((c) => pw.Padding(
-                              padding: const pw.EdgeInsets.all(4),
-                              child: pw.Text(c, style: const pw.TextStyle(fontSize: 8)),
-                            ))
-                        .toList(),
+                  decoration: const pw.BoxDecoration(
+                    color: PdfColors.blueGrey700,
                   ),
+                  children:
+                      [
+                            l10n.products,
+                            'SKU',
+                            l10n.inventory,
+                            l10n.costs,
+                            l10n.price,
+                          ]
+                          .map(
+                            (h) => pw.Padding(
+                              padding: const pw.EdgeInsets.all(5),
+                              child: pw.Text(
+                                h,
+                                style: pw.TextStyle(
+                                  color: PdfColors.white,
+                                  fontWeight: pw.FontWeight.bold,
+                                  fontSize: 9,
+                                ),
+                              ),
+                            ),
+                          )
+                          .toList(),
                 ),
+                ..._products
+                    .take(50)
+                    .map(
+                      (p) => pw.TableRow(
+                        children:
+                            [
+                                  p.name,
+                                  p.sku ?? '',
+                                  '${p.stockQty}',
+                                  (p.costPrice ?? 0).toStringAsFixed(0),
+                                  p.price.toStringAsFixed(0),
+                                ]
+                                .map(
+                                  (c) => pw.Padding(
+                                    padding: const pw.EdgeInsets.all(4),
+                                    child: pw.Text(
+                                      c,
+                                      style: const pw.TextStyle(fontSize: 8),
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                      ),
+                    ),
               ],
             ),
           ],
@@ -138,7 +175,8 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
     final pdf = await _buildReportPdf();
     await Printing.sharePdf(
       bytes: await pdf.save(),
-      filename: 'inventory_${DateTime.now().toIso8601String().split('T').first}.pdf',
+      filename:
+          'inventory_${DateTime.now().toIso8601String().split('T').first}.pdf',
     );
   }
 

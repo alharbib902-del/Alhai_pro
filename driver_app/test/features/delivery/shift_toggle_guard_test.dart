@@ -27,8 +27,9 @@ void main() {
       );
     }
 
-    testWidgets('shows warning dialog when ending shift with active delivery',
-        (tester) async {
+    testWidgets('shows warning dialog when ending shift with active delivery', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         buildTestWidget(
           overrides: [

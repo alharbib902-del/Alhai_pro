@@ -12,7 +12,8 @@ part of 'shift.dart';
 T _$identity<T>(T value) => value;
 
 final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
+  'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models',
+);
 
 Shift _$ShiftFromJson(Map<String, dynamic> json) {
   return _Shift.fromJson(json);
@@ -46,18 +47,19 @@ abstract class $ShiftCopyWith<$Res> {
   factory $ShiftCopyWith(Shift value, $Res Function(Shift) then) =
       _$ShiftCopyWithImpl<$Res, Shift>;
   @useResult
-  $Res call(
-      {String id,
-      String storeId,
-      String cashierId,
-      double openingCash,
-      double? closingCash,
-      double? expectedCash,
-      double? cashDifference,
-      ShiftStatus status,
-      DateTime openedAt,
-      DateTime? closedAt,
-      String? notes});
+  $Res call({
+    String id,
+    String storeId,
+    String cashierId,
+    double openingCash,
+    double? closingCash,
+    double? expectedCash,
+    double? cashDifference,
+    ShiftStatus status,
+    DateTime openedAt,
+    DateTime? closedAt,
+    String? notes,
+  });
 }
 
 /// @nodoc
@@ -87,74 +89,79 @@ class _$ShiftCopyWithImpl<$Res, $Val extends Shift>
     Object? closedAt = freezed,
     Object? notes = freezed,
   }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      cashierId: null == cashierId
-          ? _value.cashierId
-          : cashierId // ignore: cast_nullable_to_non_nullable
-              as String,
-      openingCash: null == openingCash
-          ? _value.openingCash
-          : openingCash // ignore: cast_nullable_to_non_nullable
-              as double,
-      closingCash: freezed == closingCash
-          ? _value.closingCash
-          : closingCash // ignore: cast_nullable_to_non_nullable
-              as double?,
-      expectedCash: freezed == expectedCash
-          ? _value.expectedCash
-          : expectedCash // ignore: cast_nullable_to_non_nullable
-              as double?,
-      cashDifference: freezed == cashDifference
-          ? _value.cashDifference
-          : cashDifference // ignore: cast_nullable_to_non_nullable
-              as double?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as ShiftStatus,
-      openedAt: null == openedAt
-          ? _value.openedAt
-          : openedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      closedAt: freezed == closedAt
-          ? _value.closedAt
-          : closedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+    return _then(
+      _value.copyWith(
+            id: null == id
+                ? _value.id
+                : id // ignore: cast_nullable_to_non_nullable
+                      as String,
+            storeId: null == storeId
+                ? _value.storeId
+                : storeId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            cashierId: null == cashierId
+                ? _value.cashierId
+                : cashierId // ignore: cast_nullable_to_non_nullable
+                      as String,
+            openingCash: null == openingCash
+                ? _value.openingCash
+                : openingCash // ignore: cast_nullable_to_non_nullable
+                      as double,
+            closingCash: freezed == closingCash
+                ? _value.closingCash
+                : closingCash // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            expectedCash: freezed == expectedCash
+                ? _value.expectedCash
+                : expectedCash // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            cashDifference: freezed == cashDifference
+                ? _value.cashDifference
+                : cashDifference // ignore: cast_nullable_to_non_nullable
+                      as double?,
+            status: null == status
+                ? _value.status
+                : status // ignore: cast_nullable_to_non_nullable
+                      as ShiftStatus,
+            openedAt: null == openedAt
+                ? _value.openedAt
+                : openedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime,
+            closedAt: freezed == closedAt
+                ? _value.closedAt
+                : closedAt // ignore: cast_nullable_to_non_nullable
+                      as DateTime?,
+            notes: freezed == notes
+                ? _value.notes
+                : notes // ignore: cast_nullable_to_non_nullable
+                      as String?,
+          )
+          as $Val,
+    );
   }
 }
 
 /// @nodoc
 abstract class _$$ShiftImplCopyWith<$Res> implements $ShiftCopyWith<$Res> {
   factory _$$ShiftImplCopyWith(
-          _$ShiftImpl value, $Res Function(_$ShiftImpl) then) =
-      __$$ShiftImplCopyWithImpl<$Res>;
+    _$ShiftImpl value,
+    $Res Function(_$ShiftImpl) then,
+  ) = __$$ShiftImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call(
-      {String id,
-      String storeId,
-      String cashierId,
-      double openingCash,
-      double? closingCash,
-      double? expectedCash,
-      double? cashDifference,
-      ShiftStatus status,
-      DateTime openedAt,
-      DateTime? closedAt,
-      String? notes});
+  $Res call({
+    String id,
+    String storeId,
+    String cashierId,
+    double openingCash,
+    double? closingCash,
+    double? expectedCash,
+    double? cashDifference,
+    ShiftStatus status,
+    DateTime openedAt,
+    DateTime? closedAt,
+    String? notes,
+  });
 }
 
 /// @nodoc
@@ -162,8 +169,9 @@ class __$$ShiftImplCopyWithImpl<$Res>
     extends _$ShiftCopyWithImpl<$Res, _$ShiftImpl>
     implements _$$ShiftImplCopyWith<$Res> {
   __$$ShiftImplCopyWithImpl(
-      _$ShiftImpl _value, $Res Function(_$ShiftImpl) _then)
-      : super(_value, _then);
+    _$ShiftImpl _value,
+    $Res Function(_$ShiftImpl) _then,
+  ) : super(_value, _then);
 
   /// Create a copy of Shift
   /// with the given fields replaced by the non-null parameter values.
@@ -182,71 +190,73 @@ class __$$ShiftImplCopyWithImpl<$Res>
     Object? closedAt = freezed,
     Object? notes = freezed,
   }) {
-    return _then(_$ShiftImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      storeId: null == storeId
-          ? _value.storeId
-          : storeId // ignore: cast_nullable_to_non_nullable
-              as String,
-      cashierId: null == cashierId
-          ? _value.cashierId
-          : cashierId // ignore: cast_nullable_to_non_nullable
-              as String,
-      openingCash: null == openingCash
-          ? _value.openingCash
-          : openingCash // ignore: cast_nullable_to_non_nullable
-              as double,
-      closingCash: freezed == closingCash
-          ? _value.closingCash
-          : closingCash // ignore: cast_nullable_to_non_nullable
-              as double?,
-      expectedCash: freezed == expectedCash
-          ? _value.expectedCash
-          : expectedCash // ignore: cast_nullable_to_non_nullable
-              as double?,
-      cashDifference: freezed == cashDifference
-          ? _value.cashDifference
-          : cashDifference // ignore: cast_nullable_to_non_nullable
-              as double?,
-      status: null == status
-          ? _value.status
-          : status // ignore: cast_nullable_to_non_nullable
-              as ShiftStatus,
-      openedAt: null == openedAt
-          ? _value.openedAt
-          : openedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime,
-      closedAt: freezed == closedAt
-          ? _value.closedAt
-          : closedAt // ignore: cast_nullable_to_non_nullable
-              as DateTime?,
-      notes: freezed == notes
-          ? _value.notes
-          : notes // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
+    return _then(
+      _$ShiftImpl(
+        id: null == id
+            ? _value.id
+            : id // ignore: cast_nullable_to_non_nullable
+                  as String,
+        storeId: null == storeId
+            ? _value.storeId
+            : storeId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        cashierId: null == cashierId
+            ? _value.cashierId
+            : cashierId // ignore: cast_nullable_to_non_nullable
+                  as String,
+        openingCash: null == openingCash
+            ? _value.openingCash
+            : openingCash // ignore: cast_nullable_to_non_nullable
+                  as double,
+        closingCash: freezed == closingCash
+            ? _value.closingCash
+            : closingCash // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        expectedCash: freezed == expectedCash
+            ? _value.expectedCash
+            : expectedCash // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        cashDifference: freezed == cashDifference
+            ? _value.cashDifference
+            : cashDifference // ignore: cast_nullable_to_non_nullable
+                  as double?,
+        status: null == status
+            ? _value.status
+            : status // ignore: cast_nullable_to_non_nullable
+                  as ShiftStatus,
+        openedAt: null == openedAt
+            ? _value.openedAt
+            : openedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime,
+        closedAt: freezed == closedAt
+            ? _value.closedAt
+            : closedAt // ignore: cast_nullable_to_non_nullable
+                  as DateTime?,
+        notes: freezed == notes
+            ? _value.notes
+            : notes // ignore: cast_nullable_to_non_nullable
+                  as String?,
+      ),
+    );
   }
 }
 
 /// @nodoc
 @JsonSerializable()
 class _$ShiftImpl extends _Shift {
-  const _$ShiftImpl(
-      {required this.id,
-      required this.storeId,
-      required this.cashierId,
-      required this.openingCash,
-      this.closingCash,
-      this.expectedCash,
-      this.cashDifference,
-      this.status = ShiftStatus.open,
-      required this.openedAt,
-      this.closedAt,
-      this.notes})
-      : super._();
+  const _$ShiftImpl({
+    required this.id,
+    required this.storeId,
+    required this.cashierId,
+    required this.openingCash,
+    this.closingCash,
+    this.expectedCash,
+    this.cashDifference,
+    this.status = ShiftStatus.open,
+    required this.openedAt,
+    this.closedAt,
+    this.notes,
+  }) : super._();
 
   factory _$ShiftImpl.fromJson(Map<String, dynamic> json) =>
       _$$ShiftImplFromJson(json);
@@ -308,18 +318,19 @@ class _$ShiftImpl extends _Shift {
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      storeId,
-      cashierId,
-      openingCash,
-      closingCash,
-      expectedCash,
-      cashDifference,
-      status,
-      openedAt,
-      closedAt,
-      notes);
+    runtimeType,
+    id,
+    storeId,
+    cashierId,
+    openingCash,
+    closingCash,
+    expectedCash,
+    cashDifference,
+    status,
+    openedAt,
+    closedAt,
+    notes,
+  );
 
   /// Create a copy of Shift
   /// with the given fields replaced by the non-null parameter values.
@@ -331,25 +342,24 @@ class _$ShiftImpl extends _Shift {
 
   @override
   Map<String, dynamic> toJson() {
-    return _$$ShiftImplToJson(
-      this,
-    );
+    return _$$ShiftImplToJson(this);
   }
 }
 
 abstract class _Shift extends Shift {
-  const factory _Shift(
-      {required final String id,
-      required final String storeId,
-      required final String cashierId,
-      required final double openingCash,
-      final double? closingCash,
-      final double? expectedCash,
-      final double? cashDifference,
-      final ShiftStatus status,
-      required final DateTime openedAt,
-      final DateTime? closedAt,
-      final String? notes}) = _$ShiftImpl;
+  const factory _Shift({
+    required final String id,
+    required final String storeId,
+    required final String cashierId,
+    required final double openingCash,
+    final double? closingCash,
+    final double? expectedCash,
+    final double? cashDifference,
+    final ShiftStatus status,
+    required final DateTime openedAt,
+    final DateTime? closedAt,
+    final String? notes,
+  }) = _$ShiftImpl;
   const _Shift._() : super._();
 
   factory _Shift.fromJson(Map<String, dynamic> json) = _$ShiftImpl.fromJson;

@@ -242,27 +242,21 @@ void main() {
     });
 
     testWidgets('shows QR image when zatcaQr present', (tester) async {
-      await tester.pumpWidget(
-        _buildTestWidget(invoice: _invoiceWithQr),
-      );
+      await tester.pumpWidget(_buildTestWidget(invoice: _invoiceWithQr));
       await tester.pumpAndSettle();
 
       expect(find.byType(QrImageView), findsOneWidget);
     });
 
     testWidgets('shows discount row when discount > 0', (tester) async {
-      await tester.pumpWidget(
-        _buildTestWidget(invoice: _invoiceWithDiscount),
-      );
+      await tester.pumpWidget(_buildTestWidget(invoice: _invoiceWithDiscount));
       await tester.pumpAndSettle();
 
       expect(find.text('الخصم'), findsOneWidget);
     });
 
     testWidgets('shows not found for null invoice', (tester) async {
-      await tester.pumpWidget(
-        _buildTestWidget(invoice: null),
-      );
+      await tester.pumpWidget(_buildTestWidget(invoice: null));
       await tester.pumpAndSettle();
 
       expect(find.text('الفاتورة غير موجودة'), findsOneWidget);
@@ -279,9 +273,7 @@ void main() {
         createdAt: DateTime(2026, 4, 16),
         // saleId is null so no order items are fetched
       );
-      await tester.pumpWidget(
-        _buildTestWidget(invoice: invoiceNoOrder),
-      );
+      await tester.pumpWidget(_buildTestWidget(invoice: invoiceNoOrder));
       await tester.pumpAndSettle();
 
       expect(find.text('تفاصيل البنود غير متاحة'), findsOneWidget);

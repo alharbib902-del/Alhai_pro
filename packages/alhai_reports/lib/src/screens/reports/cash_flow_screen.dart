@@ -254,7 +254,10 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
         mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
         children: [
           pw.Text(label, style: style),
-          pw.Text('${amount.toStringAsFixed(0)} ${l10n.currency}', style: style),
+          pw.Text(
+            '${amount.toStringAsFixed(0)} ${l10n.currency}',
+            style: style,
+          ),
         ],
       ),
     );
@@ -283,7 +286,8 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
     final pdf = await _buildReportPdf();
     await Printing.sharePdf(
       bytes: await pdf.save(),
-      filename: 'cash_flow_${DateTime.now().toIso8601String().split('T').first}.pdf',
+      filename:
+          'cash_flow_${DateTime.now().toIso8601String().split('T').first}.pdf',
     );
   }
 
@@ -322,10 +326,7 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
                     : _error!,
               ),
               const SizedBox(height: AlhaiSpacing.sm),
-              ElevatedButton(
-                onPressed: _loadData,
-                child: Text(l10n.retry),
-              ),
+              ElevatedButton(onPressed: _loadData, child: Text(l10n.retry)),
             ],
           ),
         ),
@@ -344,7 +345,10 @@ class _CashFlowScreenState extends ConsumerState<CashFlowScreen> {
             itemBuilder: (_) => [
               PopupMenuItem(value: 'week', child: Text(l10n.thisWeek)),
               PopupMenuItem(value: 'month', child: Text(l10n.thisMonth)),
-              PopupMenuItem(value: 'quarter', child: Text(l10n.reportQuarterly)),
+              PopupMenuItem(
+                value: 'quarter',
+                child: Text(l10n.reportQuarterly),
+              ),
               PopupMenuItem(value: 'year', child: Text(l10n.reportAnnual)),
             ],
             child: Padding(

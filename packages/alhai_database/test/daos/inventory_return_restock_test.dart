@@ -41,8 +41,9 @@ void main() {
       );
 
       // Verify movement was recorded
-      final movements =
-          await db.inventoryDao.getMovementsByProduct('prod-return-1');
+      final movements = await db.inventoryDao.getMovementsByProduct(
+        'prod-return-1',
+      );
       expect(movements.length, equals(1));
       expect(movements.first.type, equals('return'));
       expect(movements.first.qty, equals(3.0));
@@ -72,8 +73,9 @@ void main() {
         returnId: 'ret-002',
       );
 
-      final movements =
-          await db.inventoryDao.getMovementsByProduct('prod-return-2');
+      final movements = await db.inventoryDao.getMovementsByProduct(
+        'prod-return-2',
+      );
       // qty should be positive (restocking)
       expect(movements.first.qty, greaterThan(0));
     });
@@ -105,8 +107,9 @@ void main() {
       );
 
       // Simulate partial return of 3 items
-      final productBeforeReturn =
-          await db.productsDao.getProductById('prod-e2e-1');
+      final productBeforeReturn = await db.productsDao.getProductById(
+        'prod-e2e-1',
+      );
       final stockBefore = productBeforeReturn!.stockQty;
       expect(stockBefore, equals(90.0));
 
@@ -123,13 +126,15 @@ void main() {
       );
 
       // Verify stock is now 93
-      final productAfterReturn =
-          await db.productsDao.getProductById('prod-e2e-1');
+      final productAfterReturn = await db.productsDao.getProductById(
+        'prod-e2e-1',
+      );
       expect(productAfterReturn!.stockQty, equals(93.0));
 
       // Verify movement trail shows both sale and return
-      final movements =
-          await db.inventoryDao.getMovementsByProduct('prod-e2e-1');
+      final movements = await db.inventoryDao.getMovementsByProduct(
+        'prod-e2e-1',
+      );
       expect(movements.length, equals(2));
       final types = movements.map((m) => m.type).toSet();
       expect(types, containsAll(['sale', 'return']));

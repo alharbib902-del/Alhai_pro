@@ -134,10 +134,7 @@ class ProfileScreen extends ConsumerWidget {
               onPressed: () => _showDeleteAccountDialog(context, ref),
               child: Text(
                 'حذف الحساب',
-                style: TextStyle(
-                  color: theme.colorScheme.error,
-                  fontSize: 14,
-                ),
+                style: TextStyle(color: theme.colorScheme.error, fontSize: 14),
               ),
             ),
           ],
@@ -147,7 +144,10 @@ class ProfileScreen extends ConsumerWidget {
   }
 }
 
-Future<void> _showDeleteAccountDialog(BuildContext context, WidgetRef ref) async {
+Future<void> _showDeleteAccountDialog(
+  BuildContext context,
+  WidgetRef ref,
+) async {
   final confirmed = await showDialog<bool>(
     context: context,
     builder: (ctx) => AlertDialog(
@@ -187,9 +187,7 @@ Future<void> _showDeleteAccountDialog(BuildContext context, WidgetRef ref) async
         // RPC not deployed — inform user
         if (context.mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('يرجى التواصل مع الدعم لحذف حسابك'),
-            ),
+            const SnackBar(content: Text('يرجى التواصل مع الدعم لحذف حسابك')),
           );
         }
         return;

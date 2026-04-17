@@ -142,8 +142,7 @@ class MockGpsDetectedException implements Exception {
 
   const MockGpsDetectedException({required this.position});
 
-  String get message =>
-      'تم اكتشاف تطبيق محاكاة موقع. يرجى تعطيله للاستمرار.';
+  String get message => 'تم اكتشاف تطبيق محاكاة موقع. يرجى تعطيله للاستمرار.';
 
   @override
   String toString() => message;

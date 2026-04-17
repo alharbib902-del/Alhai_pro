@@ -14,7 +14,9 @@ final mfaServiceProvider = Provider<MfaService>((ref) {
 /// Whether the current user has MFA enrolled (verified factor).
 ///
 /// Auto-disposes so it re-checks on re-read.
-final mfaEnrollmentStatusProvider = FutureProvider.autoDispose<bool>((ref) async {
+final mfaEnrollmentStatusProvider = FutureProvider.autoDispose<bool>((
+  ref,
+) async {
   final service = ref.read(mfaServiceProvider);
   return service.isEnrolled();
 });

@@ -9,8 +9,9 @@ import 'distributor_datasource_provider.dart';
 // ─── Pricing Tiers ─────────────────────────────────────────────
 
 /// All pricing tiers for the current org.
-final pricingTiersProvider =
-    FutureProvider.autoDispose<List<PricingTier>>((ref) async {
+final pricingTiersProvider = FutureProvider.autoDispose<List<PricingTier>>((
+  ref,
+) async {
   final ds = ref.watch(distributorDatasourceProvider);
   return ds.getPricingTiers();
 });
@@ -18,20 +19,21 @@ final pricingTiersProvider =
 /// Store tier assignments with joined store/tier info.
 final storeTierAssignmentsProvider =
     FutureProvider.autoDispose<List<StoreTierAssignment>>((ref) async {
-  final ds = ref.watch(distributorDatasourceProvider);
-  return ds.getStoreTierAssignments();
-});
+      final ds = ref.watch(distributorDatasourceProvider);
+      return ds.getStoreTierAssignments();
+    });
 
 /// All stores in the org (for assignment dropdown).
 final orgStoresProvider =
     FutureProvider.autoDispose<List<({String id, String name})>>((ref) async {
-  final ds = ref.watch(distributorDatasourceProvider);
-  return ds.getOrgStores();
-});
+      final ds = ref.watch(distributorDatasourceProvider);
+      return ds.getOrgStores();
+    });
 
 /// Discount percentage for a specific store (by store ID).
-final storeDiscountProvider =
-    FutureProvider.autoDispose.family<double, String>((ref, storeId) async {
-  final ds = ref.watch(distributorDatasourceProvider);
-  return ds.getStoreDiscountPercent(storeId);
-});
+final storeDiscountProvider = FutureProvider.autoDispose.family<double, String>(
+  (ref, storeId) async {
+    final ds = ref.watch(distributorDatasourceProvider);
+    return ds.getStoreDiscountPercent(storeId);
+  },
+);

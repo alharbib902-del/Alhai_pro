@@ -161,14 +161,8 @@ void main() {
           // a store to a specific tier.
 
           // Verify store assignment data links store to tier
-          expect(
-            kSampleStoreAssignment['store_id'],
-            equals(kTestStoreId),
-          );
-          expect(
-            kSampleStoreAssignment['tier_id'],
-            equals(kTestTierId),
-          );
+          expect(kSampleStoreAssignment['store_id'], equals(kTestStoreId));
+          expect(kSampleStoreAssignment['tier_id'], equals(kTestTierId));
           expect(kSampleStoreAssignment['store_name'], isNotEmpty);
           expect(kSampleStoreAssignment['tier_name'], equals('ذهبي'));
 
@@ -210,51 +204,47 @@ void main() {
         expect(kSampleOrder['discount_amount'], isNotNull);
       });
 
-      testWidgets(
-        'discount calculation: gold tier 10% on qualifying order',
-        (tester) async {
-          // Arrange: Start at pricing tiers to verify tier config
-          await tester.pumpWidget(
-            buildDistributorTestApp(initialRoute: '/pricing-tiers'),
-          );
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Pricing Tiers');
+      testWidgets('discount calculation: gold tier 10% on qualifying order', (
+        tester,
+      ) async {
+        // Arrange: Start at pricing tiers to verify tier config
+        await tester.pumpWidget(
+          buildDistributorTestApp(initialRoute: '/pricing-tiers'),
+        );
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Pricing Tiers');
 
-          final router = GoRouter.of(
-            tester.element(find.byKey(const Key('stub_Pricing Tiers'))),
-          );
+        final router = GoRouter.of(
+          tester.element(find.byKey(const Key('stub_Pricing Tiers'))),
+        );
 
-          // Step 1: The gold tier provides 10% discount on orders >= 5000 SAR.
-          final discountPercent =
-              kSampleTier['discount_percent'] as double;
-          final minOrderAmount =
-              kSampleTier['min_order_amount'] as double;
-          expect(discountPercent, equals(10.0));
-          expect(minOrderAmount, equals(5000.0));
+        // Step 1: The gold tier provides 10% discount on orders >= 5000 SAR.
+        final discountPercent = kSampleTier['discount_percent'] as double;
+        final minOrderAmount = kSampleTier['min_order_amount'] as double;
+        expect(discountPercent, equals(10.0));
+        expect(minOrderAmount, equals(5000.0));
 
-          // Step 2: The sample order total (1725 SAR) is below the gold
-          // tier's min_order_amount (5000 SAR), so no discount applies.
-          // This is correct business logic: the store needs to order more
-          // to qualify for the gold tier discount.
-          final orderTotal = kSampleOrder['total'] as double;
-          final qualifies = orderTotal >= minOrderAmount;
-          expect(qualifies, isFalse);
+        // Step 2: The sample order total (1725 SAR) is below the gold
+        // tier's min_order_amount (5000 SAR), so no discount applies.
+        // This is correct business logic: the store needs to order more
+        // to qualify for the gold tier discount.
+        final orderTotal = kSampleOrder['total'] as double;
+        final qualifies = orderTotal >= minOrderAmount;
+        expect(qualifies, isFalse);
 
-          // Step 3: Navigate to order detail to see the zero discount.
-          router.go('/orders/$kTestOrderId');
-          await pumpAndSettleWithTimeout(tester);
-          expectStubScreen('Order $kTestOrderId');
-          expect(kSampleOrder['discount_amount'], equals(0.0));
+        // Step 3: Navigate to order detail to see the zero discount.
+        router.go('/orders/$kTestOrderId');
+        await pumpAndSettleWithTimeout(tester);
+        expectStubScreen('Order $kTestOrderId');
+        expect(kSampleOrder['discount_amount'], equals(0.0));
 
-          // Step 4: For a qualifying order, the discount would be:
-          // subtotal * discount_percent / 100
-          // e.g., 5000 * 10 / 100 = 500 SAR discount
-          const hypotheticalSubtotal = 5000.0;
-          final expectedDiscount =
-              hypotheticalSubtotal * discountPercent / 100;
-          expect(expectedDiscount, equals(500.0));
-        },
-      );
+        // Step 4: For a qualifying order, the discount would be:
+        // subtotal * discount_percent / 100
+        // e.g., 5000 * 10 / 100 = 500 SAR discount
+        const hypotheticalSubtotal = 5000.0;
+        final expectedDiscount = hypotheticalSubtotal * discountPercent / 100;
+        expect(expectedDiscount, equals(500.0));
+      });
     });
 
     // ========================================================================

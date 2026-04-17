@@ -29,7 +29,8 @@ class HomeScreen extends ConsumerWidget {
     });
 
     // Extract active delivery ID for the SOS button.
-    final activeDeliveryId = stats.valueOrNull?['active_delivery_id'] as String?;
+    final activeDeliveryId =
+        stats.valueOrNull?['active_delivery_id'] as String?;
 
     return Scaffold(
       appBar: AppBar(

@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_auth/alhai_auth.dart';
-import 'package:supabase_flutter/supabase_flutter.dart'
-    hide AuthException;
+import 'package:supabase_flutter/supabase_flutter.dart' hide AuthException;
 
 import '../../core/services/audit_log_service.dart';
-import '../../providers/sa_dashboard_providers.dart' show saSupabaseClientProvider;
+import '../../providers/sa_dashboard_providers.dart'
+    show saSupabaseClientProvider;
 
 /// MFA verification/enrollment screen for Super Admin.
 ///
@@ -68,7 +68,9 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
       final aal = client.auth.mfa.getAuthenticatorAssuranceLevel();
 
       if (kDebugMode) {
-        debugPrint('MFA AAL: current=${aal.currentLevel}, next=${aal.nextLevel}');
+        debugPrint(
+          'MFA AAL: current=${aal.currentLevel}, next=${aal.nextLevel}',
+        );
         debugPrint('MFA factors: ${aal.currentAuthenticationMethods}');
       }
 
@@ -82,7 +84,9 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
       // Check if user has any TOTP factors enrolled.
       final factors = client.auth.currentUser?.factors ?? [];
       final totpFactors = factors.where(
-        (f) => f.factorType == FactorType.totp && f.status == FactorStatus.verified,
+        (f) =>
+            f.factorType == FactorType.totp &&
+            f.status == FactorStatus.verified,
       );
 
       if (totpFactors.isNotEmpty) {
@@ -133,7 +137,8 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
     } catch (e) {
       if (kDebugMode) debugPrint('MFA enrollment failed: $e');
       setState(() {
-        _error = 'MFA enrollment failed. '
+        _error =
+            'MFA enrollment failed. '
             'Ensure MFA is enabled in your Supabase project.';
         _isLoading = false;
         _needsEnrollment = true;
@@ -182,14 +187,18 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
     // Server-side lockout check (authoritative).
     final serverLocked = await _checkLockoutFromServer();
     if (serverLocked) {
-      setState(() => _error = 'Too many failed attempts. Locked for 30 minutes.');
+      setState(
+        () => _error = 'Too many failed attempts. Locked for 30 minutes.',
+      );
       return;
     }
 
     // In-memory lockout check (fast UI optimization, not authoritative).
     if (_lockoutUntil != null && DateTime.now().isBefore(_lockoutUntil!)) {
       final remaining = _lockoutUntil!.difference(DateTime.now()).inMinutes + 1;
-      setState(() => _error = 'Account locked. Try again in $remaining minutes.');
+      setState(
+        () => _error = 'Account locked. Try again in $remaining minutes.',
+      );
       return;
     }
 
@@ -202,9 +211,7 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
       final client = ref.read(saSupabaseClientProvider);
 
       // Create a challenge for this factor.
-      final challenge = await client.auth.mfa.challenge(
-        factorId: _factorId!,
-      );
+      final challenge = await client.auth.mfa.challenge(factorId: _factorId!);
 
       // Verify the TOTP code.
       await client.auth.mfa.verify(
@@ -225,7 +232,10 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
       }
     } catch (e) {
       _failedAttempts++;
-      _logMfaEvent(success: false, reason: 'invalid_code attempt=$_failedAttempts');
+      _logMfaEvent(
+        success: false,
+        reason: 'invalid_code attempt=$_failedAttempts',
+      );
 
       if (_failedAttempts >= _maxAttempts) {
         _lockoutUntil = DateTime.now().add(_lockoutDuration);
@@ -249,17 +259,19 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
   void _logMfaEvent({required bool success, String? reason}) {
     try {
       final authState = ref.read(authStateProvider);
-      ref.read(auditLogServiceProvider).log(
-        action: success ? 'auth.mfa_verified' : 'auth.mfa_failed',
-        targetType: 'user',
-        targetId: authState.user?.id ?? 'unknown',
-        metadata: {
-          'email': authState.user?.email ?? '',
-          'enrollment': _needsEnrollment,
-          if (reason != null) 'reason': reason,
-          'timestamp': DateTime.now().toUtc().toIso8601String(),
-        },
-      );
+      ref
+          .read(auditLogServiceProvider)
+          .log(
+            action: success ? 'auth.mfa_verified' : 'auth.mfa_failed',
+            targetType: 'user',
+            targetId: authState.user?.id ?? 'unknown',
+            metadata: {
+              'email': authState.user?.email ?? '',
+              'enrollment': _needsEnrollment,
+              if (reason != null) 'reason': reason,
+              'timestamp': DateTime.now().toUtc().toIso8601String(),
+            },
+          );
     } catch (_) {}
   }
 
@@ -308,8 +320,8 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
                       Text(
                         _needsEnrollment
                             ? 'Scan the QR code with your authenticator app '
-                              '(Google Authenticator, Authy, etc.) then enter '
-                              'the 6-digit code to complete setup.'
+                                  '(Google Authenticator, Authy, etc.) then enter '
+                                  'the 6-digit code to complete setup.'
                             : 'Enter the 6-digit code from your authenticator app.',
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
@@ -351,9 +363,10 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
                                     const SizedBox(height: 8),
                                     Text(
                                       'QR Code',
-                                      style: theme.textTheme.bodySmall?.copyWith(
-                                        color: Colors.grey.shade600,
-                                      ),
+                                      style: theme.textTheme.bodySmall
+                                          ?.copyWith(
+                                            color: Colors.grey.shade600,
+                                          ),
                                     ),
                                   ],
                                 ),
@@ -388,7 +401,10 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
                                       ),
                                     );
                                   },
-                                  icon: const Icon(Icons.copy_rounded, size: 16),
+                                  icon: const Icon(
+                                    Icons.copy_rounded,
+                                    size: 16,
+                                  ),
                                   label: const Text('Copy'),
                                 ),
                               ],
@@ -399,7 +415,9 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
                       ],
 
                       // MFA enrollment failed message
-                      if (_needsEnrollment && _totpUri == null && _error != null)
+                      if (_needsEnrollment &&
+                          _totpUri == null &&
+                          _error != null)
                         Padding(
                           padding: const EdgeInsets.only(bottom: 16),
                           child: Container(
@@ -455,7 +473,8 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
                         const SizedBox(height: 8),
 
                         // Error
-                        if (_error != null && !(_needsEnrollment && _totpUri == null))
+                        if (_error != null &&
+                            !(_needsEnrollment && _totpUri == null))
                           Padding(
                             padding: const EdgeInsets.only(bottom: 8),
                             child: Text(

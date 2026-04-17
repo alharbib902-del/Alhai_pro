@@ -150,7 +150,8 @@ class _MfaEnrollmentScreenState extends ConsumerState<MfaEnrollmentScreen> {
           style: TextStyle(fontWeight: FontWeight.bold, color: cs.onSurface),
         ),
         centerTitle: false,
-        leading: _step == _EnrollStep.backupCodes ||
+        leading:
+            _step == _EnrollStep.backupCodes ||
                 (widget.forced && _step == _EnrollStep.intro)
             ? null // Can't go back from backup codes step or forced intro
             : IconButton(
@@ -205,7 +206,9 @@ class _MfaEnrollmentScreenState extends ConsumerState<MfaEnrollmentScreen> {
             decoration: BoxDecoration(
               color: AppColors.warning.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(AlhaiRadius.sm),
-              border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
+              border: Border.all(
+                color: AppColors.warning.withValues(alpha: 0.3),
+              ),
             ),
             child: Row(
               children: [
@@ -232,7 +235,11 @@ class _MfaEnrollmentScreenState extends ConsumerState<MfaEnrollmentScreen> {
             color: AppColors.primary.withValues(alpha: isDark ? 0.2 : 0.1),
             shape: BoxShape.circle,
           ),
-          child: const Icon(Icons.security_rounded, size: 56, color: AppColors.primary),
+          child: const Icon(
+            Icons.security_rounded,
+            size: 56,
+            color: AppColors.primary,
+          ),
         ),
         const SizedBox(height: AlhaiSpacing.lg),
         Text(
@@ -534,7 +541,10 @@ class _MfaEnrollmentScreenState extends ConsumerState<MfaEnrollmentScreen> {
               ),
               focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(AlhaiRadius.md),
-                borderSide: const BorderSide(color: AppColors.primary, width: 2),
+                borderSide: const BorderSide(
+                  color: AppColors.primary,
+                  width: 2,
+                ),
               ),
             ),
           ),
@@ -738,7 +748,9 @@ class _MfaEnrollmentScreenState extends ConsumerState<MfaEnrollmentScreen> {
         SizedBox(
           width: double.infinity,
           child: FilledButton(
-            onPressed: _codesSaved ? () => setState(() => _step = _EnrollStep.done) : null,
+            onPressed: _codesSaved
+                ? () => setState(() => _step = _EnrollStep.done)
+                : null,
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.primary,
               foregroundColor: AppColors.textOnPrimary,

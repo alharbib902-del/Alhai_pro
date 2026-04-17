@@ -33,8 +33,11 @@ class DistributorDocumentsScreen extends ConsumerWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(Icons.error_outline, size: 48,
-                  color: AppColors.getTextSecondary(isDark)),
+              Icon(
+                Icons.error_outline,
+                size: 48,
+                color: AppColors.getTextSecondary(isDark),
+              ),
               const SizedBox(height: AlhaiSpacing.sm),
               Text(
                 'فشل تحميل الوثائق',
@@ -74,17 +77,17 @@ class _DocumentsBody extends ConsumerWidget {
 
     // Types with active docs (can't upload duplicate)
     final disabledTypes = documents
-        .where((d) =>
-            d.status == DocumentStatus.underReview ||
-            d.status == DocumentStatus.approved)
+        .where(
+          (d) =>
+              d.status == DocumentStatus.underReview ||
+              d.status == DocumentStatus.approved,
+        )
         .map((d) => d.documentType)
         .toList();
 
     // Missing required types
     final missingRequired = DocumentType.values
-        .where((t) =>
-            t.isRequired &&
-            !docsByType.containsKey(t))
+        .where((t) => t.isRequired && !docsByType.containsKey(t))
         .toList();
 
     return SingleChildScrollView(
@@ -104,9 +107,7 @@ class _DocumentsBody extends ConsumerWidget {
                       children: [
                         Text(
                           'الوثائق والشهادات',
-                          style: Theme.of(context)
-                              .textTheme
-                              .headlineSmall
+                          style: Theme.of(context).textTheme.headlineSmall
                               ?.copyWith(fontWeight: FontWeight.bold),
                         ),
                         const SizedBox(height: AlhaiSpacing.xxs),
@@ -169,18 +170,20 @@ class _DocumentsBody extends ConsumerWidget {
                               ),
                             ),
                             const SizedBox(height: AlhaiSpacing.xxs),
-                            ...missingRequired.map((t) => Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: AlhaiSpacing.xxs,
-                              ),
-                              child: Text(
-                                '• ${t.arabicName}',
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  color: AppColors.getTextSecondary(isDark),
+                            ...missingRequired.map(
+                              (t) => Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: AlhaiSpacing.xxs,
+                                ),
+                                child: Text(
+                                  '• ${t.arabicName}',
+                                  style: TextStyle(
+                                    fontSize: 13,
+                                    color: AppColors.getTextSecondary(isDark),
+                                  ),
                                 ),
                               ),
-                            )),
+                            ),
                           ],
                         ),
                       ),
@@ -195,10 +198,12 @@ class _DocumentsBody extends ConsumerWidget {
               if (documents.isEmpty)
                 _EmptyState(isDark: isDark)
               else
-                ...documents.map((doc) => Padding(
-                  padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
-                  child: _DocumentCard(document: doc),
-                )),
+                ...documents.map(
+                  (doc) => Padding(
+                    padding: const EdgeInsets.only(bottom: AlhaiSpacing.sm),
+                    child: _DocumentCard(document: doc),
+                  ),
+                ),
             ],
           ),
         ),
@@ -218,9 +223,7 @@ class _EmptyState extends StatelessWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outlineVariant,
-        ),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Column(
         children: [
@@ -265,9 +268,7 @@ class _DocumentCard extends ConsumerWidget {
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Theme.of(context).colorScheme.outlineVariant,
-        ),
+        border: Border.all(color: Theme.of(context).colorScheme.outlineVariant),
       ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -334,8 +335,11 @@ class _DocumentCard extends ConsumerWidget {
                     ),
                     child: Row(
                       children: [
-                        const Icon(Icons.info_outline,
-                            size: 16, color: AppColors.error),
+                        const Icon(
+                          Icons.info_outline,
+                          size: 16,
+                          color: AppColors.error,
+                        ),
                         const SizedBox(width: AlhaiSpacing.xs),
                         Expanded(
                           child: Text(
@@ -370,9 +374,7 @@ class _DocumentCard extends ConsumerWidget {
                 onPressed: () => _viewDocument(context, ref),
                 icon: const Icon(Icons.open_in_new, size: 20),
                 tooltip: 'عرض',
-                style: IconButton.styleFrom(
-                  foregroundColor: AppColors.primary,
-                ),
+                style: IconButton.styleFrom(foregroundColor: AppColors.primary),
               ),
               // Delete button (only if not approved)
               if (document.canDelete)
@@ -380,9 +382,7 @@ class _DocumentCard extends ConsumerWidget {
                   onPressed: () => _confirmDelete(context, ref),
                   icon: const Icon(Icons.delete_outline, size: 20),
                   tooltip: 'حذف',
-                  style: IconButton.styleFrom(
-                    foregroundColor: AppColors.error,
-                  ),
+                  style: IconButton.styleFrom(foregroundColor: AppColors.error),
                 ),
             ],
           ),
@@ -438,9 +438,9 @@ class _DocumentCard extends ConsumerWidget {
       await ds.deleteDocument(document.id);
       ref.invalidate(distributorDocumentsProvider);
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('تم حذف الوثيقة')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('تم حذف الوثيقة')));
       }
     } catch (e) {
       if (context.mounted) {
@@ -524,8 +524,8 @@ class _ExpiryBadge extends StatelessWidget {
     final color = isExpired
         ? AppColors.error
         : isNearExpiry
-            ? AppColors.warning
-            : AppColors.getTextSecondary(isDark);
+        ? AppColors.warning
+        : AppColors.getTextSecondary(isDark);
 
     return Container(
       padding: const EdgeInsets.symmetric(

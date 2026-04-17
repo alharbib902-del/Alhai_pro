@@ -334,9 +334,7 @@ class UblInvoiceBuilder {
         addressChildren.add(_cbcElement('PostalZone', buyer!.postalCode!));
       }
       if (buyer?.region != null) {
-        addressChildren.add(
-          _cbcElement('CountrySubentity', buyer!.region!),
-        );
+        addressChildren.add(_cbcElement('CountrySubentity', buyer!.region!));
       }
       if (buyer?.countryCode != null) {
         addressChildren.add(

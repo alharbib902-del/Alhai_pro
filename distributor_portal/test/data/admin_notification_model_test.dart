@@ -20,10 +20,7 @@ void main() {
 
   group('AdminNotificationType', () {
     test('dbValue returns correct snake_case values', () {
-      expect(
-        AdminNotificationType.newDistributor.dbValue,
-        'new_distributor',
-      );
+      expect(AdminNotificationType.newDistributor.dbValue, 'new_distributor');
       expect(
         AdminNotificationType.documentUploaded.dbValue,
         'document_uploaded',
@@ -45,10 +42,7 @@ void main() {
 
     test('arabicLabel returns Arabic labels', () {
       expect(AdminNotificationType.newDistributor.arabicLabel, 'موزع جديد');
-      expect(
-        AdminNotificationType.documentUploaded.arabicLabel,
-        'مستند مرفوع',
-      );
+      expect(AdminNotificationType.documentUploaded.arabicLabel, 'مستند مرفوع');
       expect(
         AdminNotificationType.distributorApproved.arabicLabel,
         'تم اعتماد موزع',
@@ -131,8 +125,7 @@ void main() {
     });
 
     test('handles missing type — defaults to general', () {
-      final noTypeJson = Map<String, dynamic>.from(sampleJson)
-        ..remove('type');
+      final noTypeJson = Map<String, dynamic>.from(sampleJson)..remove('type');
 
       final n = AdminNotification.fromJson(noTypeJson);
       expect(n.type, AdminNotificationType.general);

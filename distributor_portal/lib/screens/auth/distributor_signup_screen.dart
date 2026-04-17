@@ -139,8 +139,7 @@ class _DistributorSignupScreenState
           padding: EdgeInsets.all(isWide ? AlhaiSpacing.xl : AlhaiSpacing.lg),
           child: Container(
             constraints: const BoxConstraints(maxWidth: 520),
-            padding:
-                EdgeInsets.all(isWide ? AlhaiSpacing.xl : AlhaiSpacing.lg),
+            padding: EdgeInsets.all(isWide ? AlhaiSpacing.xl : AlhaiSpacing.lg),
             decoration: BoxDecoration(
               color: Theme.of(context).colorScheme.surface,
               borderRadius: BorderRadius.circular(20),
@@ -151,10 +150,9 @@ class _DistributorSignupScreenState
                   ? null
                   : [
                       BoxShadow(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .shadow
-                            .withValues(alpha: 0.08),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.shadow.withValues(alpha: 0.08),
                         blurRadius: 24,
                         offset: const Offset(0, 8),
                       ),
@@ -335,10 +333,8 @@ class _DistributorSignupScreenState
                     ),
                     items: saudiCities
                         .map(
-                          (city) => DropdownMenuItem(
-                            value: city,
-                            child: Text(city),
-                          ),
+                          (city) =>
+                              DropdownMenuItem(value: city, child: Text(city)),
                         )
                         .toList(),
                     onChanged: (v) => setState(() => _selectedCity = v),
@@ -357,8 +353,7 @@ class _DistributorSignupScreenState
                     icon: Icons.location_on_outlined,
                     maxLines: 2,
                     textInputAction: TextInputAction.done,
-                    validator: (v) =>
-                        _validateLength(v, 'العنوان', 10, 200),
+                    validator: (v) => _validateLength(v, 'العنوان', 10, 200),
                     isDark: isDark,
                   ),
                   const SizedBox(height: AlhaiSpacing.lg),
@@ -462,9 +457,7 @@ class _DistributorSignupScreenState
       maxLines: maxLines,
       validator: validator,
       inputFormatters: inputFormatters,
-      style: TextStyle(
-        color: Theme.of(context).colorScheme.onSurface,
-      ),
+      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
       decoration: _inputDecoration(
         label: label,
         icon: icon,
@@ -555,15 +548,11 @@ class _DistributorSignupScreenState
     return null;
   }
 
-  String? _validateLength(
-    String? value,
-    String fieldName,
-    int min,
-    int max,
-  ) {
+  String? _validateLength(String? value, String fieldName, int min, int max) {
     if (value == null || value.trim().isEmpty) return '$fieldName مطلوب';
     final trimmed = value.trim();
-    if (trimmed.length < min) return '$fieldName يجب أن يكون $min أحرف على الأقل';
+    if (trimmed.length < min)
+      return '$fieldName يجب أن يكون $min أحرف على الأقل';
     if (trimmed.length > max) return '$fieldName يجب ألا يتجاوز $max حرف';
     return null;
   }

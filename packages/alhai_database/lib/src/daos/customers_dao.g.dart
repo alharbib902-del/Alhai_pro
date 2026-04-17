@@ -18,8 +18,12 @@ class CustomersDaoManager {
       $$StoresTableTableTableManager(_db.attachedDatabase, _db.storesTable);
   $$CustomersTableTableTableManager get customersTable =>
       $$CustomersTableTableTableManager(
-          _db.attachedDatabase, _db.customersTable);
+        _db.attachedDatabase,
+        _db.customersTable,
+      );
   $$CustomerAddressesTableTableTableManager get customerAddressesTable =>
       $$CustomerAddressesTableTableTableManager(
-          _db.attachedDatabase, _db.customerAddressesTable);
+        _db.attachedDatabase,
+        _db.customerAddressesTable,
+      );
 }

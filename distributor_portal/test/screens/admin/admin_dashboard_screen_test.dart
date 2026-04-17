@@ -64,20 +64,14 @@ Widget _buildTestWidget({
 }) {
   return ProviderScope(
     overrides: [
-      pendingDistributorsProvider.overrideWith(
-        (ref) async => distributors,
-      ),
-      pendingDocumentsProvider.overrideWith(
-        (ref) async => documents,
-      ),
+      pendingDistributorsProvider.overrideWith((ref) async => distributors),
+      pendingDocumentsProvider.overrideWith((ref) async => documents),
       adminNotificationsProvider.overrideWith(
         (ref, unreadOnly) async => unreadOnly
             ? notifications.where((n) => !n.isRead).toList()
             : notifications,
       ),
-      unreadNotificationCountProvider.overrideWith(
-        (ref) async => unreadCount,
-      ),
+      unreadNotificationCountProvider.overrideWith((ref) async => unreadCount),
     ],
     child: MaterialApp(
       title: 'Test',
@@ -119,21 +113,19 @@ void main() {
   // ─── Pending Distributors Tab ──────────────────────────────────
 
   group('Pending distributors tab', () {
-    testWidgets('shows empty state when no pending distributors',
-        (tester) async {
+    testWidgets('shows empty state when no pending distributors', (
+      tester,
+    ) async {
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle();
 
-      expect(
-        find.text('لا يوجد موزعون بانتظار المراجعة'),
-        findsOneWidget,
-      );
+      expect(find.text('لا يوجد موزعون بانتظار المراجعة'), findsOneWidget);
     });
 
     testWidgets('shows distributor card with info', (tester) async {
-      await tester.pumpWidget(_buildTestWidget(
-        distributors: [_sampleDistributor],
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(distributors: [_sampleDistributor]),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('شركة الابتكار (Innovation Co)'), findsOneWidget);
@@ -141,9 +133,9 @@ void main() {
     });
 
     testWidgets('shows approve and reject buttons', (tester) async {
-      await tester.pumpWidget(_buildTestWidget(
-        distributors: [_sampleDistributor],
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(distributors: [_sampleDistributor]),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('قبول'), findsOneWidget);
@@ -152,9 +144,9 @@ void main() {
     });
 
     testWidgets('approve button shows confirmation dialog', (tester) async {
-      await tester.pumpWidget(_buildTestWidget(
-        distributors: [_sampleDistributor],
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(distributors: [_sampleDistributor]),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('قبول'));
@@ -166,9 +158,9 @@ void main() {
     });
 
     testWidgets('reject button shows reason dialog', (tester) async {
-      await tester.pumpWidget(_buildTestWidget(
-        distributors: [_sampleDistributor],
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(distributors: [_sampleDistributor]),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('رفض'));
@@ -181,11 +173,12 @@ void main() {
       expect(find.text('السجل التجاري منتهي'), findsOneWidget);
     });
 
-    testWidgets('reject dialog has disabled button when reason too short',
-        (tester) async {
-      await tester.pumpWidget(_buildTestWidget(
-        distributors: [_sampleDistributor],
-      ));
+    testWidgets('reject dialog has disabled button when reason too short', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _buildTestWidget(distributors: [_sampleDistributor]),
+      );
       await tester.pumpAndSettle();
 
       // Tap the reject button on the card (FilledButton.tonal)
@@ -197,8 +190,7 @@ void main() {
       final rejectButtons = find.widgetWithText(FilledButton, 'رفض');
       expect(rejectButtons, findsNWidgets(2));
       // The dialog button is the last one
-      final dialogButton =
-          tester.widget<FilledButton>(rejectButtons.last);
+      final dialogButton = tester.widget<FilledButton>(rejectButtons.last);
       expect(dialogButton.onPressed, isNull);
     });
 
@@ -210,9 +202,9 @@ void main() {
         'created_at': '2026-04-14T08:00:00.000Z',
       });
 
-      await tester.pumpWidget(_buildTestWidget(
-        distributors: [_sampleDistributor, d2],
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(distributors: [_sampleDistributor, d2]),
+      );
       await tester.pumpAndSettle();
 
       expect(find.text('شركة الابتكار (Innovation Co)'), findsOneWidget);
@@ -223,8 +215,7 @@ void main() {
   // ─── Documents Tab ─────────────────────────────────────────────
 
   group('Documents tab', () {
-    testWidgets('shows empty state when no pending documents',
-        (tester) async {
+    testWidgets('shows empty state when no pending documents', (tester) async {
       await tester.pumpWidget(_buildTestWidget());
       await tester.pumpAndSettle();
 
@@ -232,16 +223,11 @@ void main() {
       await tester.tap(find.text('وثائق'));
       await tester.pumpAndSettle();
 
-      expect(
-        find.text('لا توجد وثائق بانتظار المراجعة'),
-        findsOneWidget,
-      );
+      expect(find.text('لا توجد وثائق بانتظار المراجعة'), findsOneWidget);
     });
 
     testWidgets('shows document card with info', (tester) async {
-      await tester.pumpWidget(_buildTestWidget(
-        documents: [_sampleDocument],
-      ));
+      await tester.pumpWidget(_buildTestWidget(documents: [_sampleDocument]));
       await tester.pumpAndSettle();
 
       // Switch to documents tab
@@ -252,11 +238,10 @@ void main() {
       expect(find.text('cr.pdf'), findsOneWidget);
     });
 
-    testWidgets('shows approve and reject buttons for documents',
-        (tester) async {
-      await tester.pumpWidget(_buildTestWidget(
-        documents: [_sampleDocument],
-      ));
+    testWidgets('shows approve and reject buttons for documents', (
+      tester,
+    ) async {
+      await tester.pumpWidget(_buildTestWidget(documents: [_sampleDocument]));
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('وثائق'));
@@ -281,25 +266,22 @@ void main() {
     });
 
     testWidgets('shows notification tile', (tester) async {
-      await tester.pumpWidget(_buildTestWidget(
-        notifications: [_sampleNotification],
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(notifications: [_sampleNotification]),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('تنبيهات'));
       await tester.pumpAndSettle();
 
       expect(find.text('موزع جديد سجّل'), findsOneWidget);
-      expect(
-        find.text('شركة الابتكار سجّلت للمراجعة'),
-        findsOneWidget,
-      );
+      expect(find.text('شركة الابتكار سجّلت للمراجعة'), findsOneWidget);
     });
 
     testWidgets('shows filter chips (all vs unread)', (tester) async {
-      await tester.pumpWidget(_buildTestWidget(
-        notifications: [_sampleNotification],
-      ));
+      await tester.pumpWidget(
+        _buildTestWidget(notifications: [_sampleNotification]),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('تنبيهات'));
@@ -309,24 +291,23 @@ void main() {
       expect(find.text('غير مقروءة'), findsOneWidget);
     });
 
-    testWidgets('unread notification shows mark-as-read button',
-        (tester) async {
-      await tester.pumpWidget(_buildTestWidget(
-        notifications: [_sampleNotification],
-      ));
+    testWidgets('unread notification shows mark-as-read button', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        _buildTestWidget(notifications: [_sampleNotification]),
+      );
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('تنبيهات'));
       await tester.pumpAndSettle();
 
-      expect(
-        find.byTooltip('تعيين كمقروء'),
-        findsOneWidget,
-      );
+      expect(find.byTooltip('تعيين كمقروء'), findsOneWidget);
     });
 
-    testWidgets('read notification does not show mark-as-read button',
-        (tester) async {
+    testWidgets('read notification does not show mark-as-read button', (
+      tester,
+    ) async {
       final readNotif = AdminNotification.fromJson({
         ...Map<String, dynamic>.from({
           'id': 'notif-002',
@@ -339,9 +320,7 @@ void main() {
         }),
       });
 
-      await tester.pumpWidget(_buildTestWidget(
-        notifications: [readNotif],
-      ));
+      await tester.pumpWidget(_buildTestWidget(notifications: [readNotif]));
       await tester.pumpAndSettle();
 
       await tester.tap(find.text('تنبيهات'));

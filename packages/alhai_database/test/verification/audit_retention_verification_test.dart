@@ -19,29 +19,32 @@ void main() {
         expect(RetentionPolicy.auditLogRetention.inDays, equals(2190));
       });
 
-      test('canDeleteAuditLog — 5 years + 364 days (day 2189) → NOT deletable',
-          () {
-        final date = DateTime.now().subtract(const Duration(days: 2189));
-        expect(RetentionPolicy.canDeleteAuditLog(date), isFalse);
-      });
+      test(
+        'canDeleteAuditLog — 5 years + 364 days (day 2189) → NOT deletable',
+        () {
+          final date = DateTime.now().subtract(const Duration(days: 2189));
+          expect(RetentionPolicy.canDeleteAuditLog(date), isFalse);
+        },
+      );
 
       test(
-          'canDeleteAuditLog — exactly 2190 days → non-deterministic (microsecond race)',
-          () {
-        // NOTE: The helper uses `DateTime.now().difference(createdAt) > retention`.
-        // Between creating `date` and calling the helper, a variable number
-        // of microseconds pass.  This can push the difference above or below
-        // the threshold, making the result non-deterministic.
-        //
-        // KEY FINDING: The DB-level query (isSmallerThanValue) is the
-        // authoritative guard and correctly preserves exact-boundary records.
-        // The canDeleteAuditLog helper is advisory; it should NOT be used as
-        // the sole gatekeeper for deletions.
-        final date = DateTime.now().subtract(const Duration(days: 2190));
-        final result = RetentionPolicy.canDeleteAuditLog(date);
-        // We accept either true or false — the point is documenting the race.
-        expect(result, anyOf(isTrue, isFalse));
-      });
+        'canDeleteAuditLog — exactly 2190 days → non-deterministic (microsecond race)',
+        () {
+          // NOTE: The helper uses `DateTime.now().difference(createdAt) > retention`.
+          // Between creating `date` and calling the helper, a variable number
+          // of microseconds pass.  This can push the difference above or below
+          // the threshold, making the result non-deterministic.
+          //
+          // KEY FINDING: The DB-level query (isSmallerThanValue) is the
+          // authoritative guard and correctly preserves exact-boundary records.
+          // The canDeleteAuditLog helper is advisory; it should NOT be used as
+          // the sole gatekeeper for deletions.
+          final date = DateTime.now().subtract(const Duration(days: 2190));
+          final result = RetentionPolicy.canDeleteAuditLog(date);
+          // We accept either true or false — the point is documenting the race.
+          expect(result, anyOf(isTrue, isFalse));
+        },
+      );
 
       test('canDeleteAuditLog — 2191 days (6 years + 1 day) → deletable', () {
         final date = DateTime.now().subtract(const Duration(days: 2191));
@@ -79,7 +82,9 @@ void main() {
         DateTime? syncedAt,
         String action = 'login',
       }) async {
-        await db.into(db.auditLogTable).insert(
+        await db
+            .into(db.auditLogTable)
+            .insert(
               AuditLogTableCompanion.insert(
                 id: id,
                 storeId: 'store-1',
@@ -102,19 +107,24 @@ void main() {
         expect(rows.length, 1, reason: 'Day-2189 record must survive');
       });
 
-      test('record at exactly 2190 days, synced → NOT deleted (boundary)',
-          () async {
-        final age = DateTime.now().subtract(const Duration(days: 2190));
-        await insertAuditLog(id: 'a2', createdAt: age, syncedAt: age);
+      test(
+        'record at exactly 2190 days, synced → NOT deleted (boundary)',
+        () async {
+          final age = DateTime.now().subtract(const Duration(days: 2190));
+          await insertAuditLog(id: 'a2', createdAt: age, syncedAt: age);
 
-        await db.auditLogDao.cleanupOldLogs();
+          await db.auditLogDao.cleanupOldLogs();
 
-        final rows = await db.select(db.auditLogTable).get();
-        // cleanupOldLogs uses `isSmallerThanValue(cutoff)` which is strict <
-        // cutoff = now - 2190d.  A record created exactly at cutoff is NOT < cutoff.
-        expect(rows.length, 1,
-            reason: 'Exact-boundary record must NOT be deleted');
-      });
+          final rows = await db.select(db.auditLogTable).get();
+          // cleanupOldLogs uses `isSmallerThanValue(cutoff)` which is strict <
+          // cutoff = now - 2190d.  A record created exactly at cutoff is NOT < cutoff.
+          expect(
+            rows.length,
+            1,
+            reason: 'Exact-boundary record must NOT be deleted',
+          );
+        },
+      );
 
       test('record at 6y + 1d (day 2191), synced → deleted', () async {
         final age = DateTime.now().subtract(const Duration(days: 2191));
@@ -144,8 +154,11 @@ void main() {
         await db.auditLogDao.cleanupOldLogs();
 
         final rows = await db.select(db.auditLogTable).get();
-        expect(rows.length, 1,
-            reason: 'Unsynced records must NEVER be deleted');
+        expect(
+          rows.length,
+          1,
+          reason: 'Unsynced records must NEVER be deleted',
+        );
       });
 
       test('assert fires when caller tries shorter retention', () {
@@ -154,8 +167,7 @@ void main() {
             olderThan: const Duration(days: 90),
           ),
           throwsA(isA<AssertionError>()),
-          reason:
-              'cleanupOldLogs must assert against retention < 2190 days',
+          reason: 'cleanupOldLogs must assert against retention < 2190 days',
         );
       });
     });

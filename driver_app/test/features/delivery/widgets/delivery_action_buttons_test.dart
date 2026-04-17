@@ -79,27 +79,23 @@ void main() {
 
         expect(proofRequested, isTrue);
         // No error SnackBar should appear.
-        expect(
-          find.text('يجب تقديم إثبات التسليم قبل التأكيد'),
-          findsNothing,
-        );
+        expect(find.text('يجب تقديم إثبات التسليم قبل التأكيد'), findsNothing);
       },
     );
 
-    testWidgets(
-      'arrived_at_customer shows both confirm and fail buttons',
-      (tester) async {
-        await tester.pumpWidget(
-          buildTestWidget(
-            status: DeliveryStatus.arrivedAtCustomer,
-            onProofRequired: null,
-          ),
-        );
-        await tester.pump();
+    testWidgets('arrived_at_customer shows both confirm and fail buttons', (
+      tester,
+    ) async {
+      await tester.pumpWidget(
+        buildTestWidget(
+          status: DeliveryStatus.arrivedAtCustomer,
+          onProofRequired: null,
+        ),
+      );
+      await tester.pump();
 
-        expect(find.text('تأكيد التسليم'), findsOneWidget);
-        expect(find.text('فشل التوصيل'), findsOneWidget);
-      },
-    );
+      expect(find.text('تأكيد التسليم'), findsOneWidget);
+      expect(find.text('فشل التوصيل'), findsOneWidget);
+    });
   });
 }

@@ -16,8 +16,8 @@ import 'delivery_providers.dart';
 /// the foreground.
 final locationTrackingProvider =
     StateNotifierProvider<LocationTrackingNotifier, bool>((ref) {
-  return LocationTrackingNotifier(ref);
-});
+      return LocationTrackingNotifier(ref);
+    });
 
 class LocationTrackingNotifier extends StateNotifier<bool> {
   StreamSubscription<dynamic>? _locationSub;

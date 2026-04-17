@@ -1373,7 +1373,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
             .showFailure(message: e.toString());
       } catch (displayErr) {
         debugPrint(
-            '[PaymentScreen] Customer display showFailure failed: $displayErr');
+          '[PaymentScreen] Customer display showFailure failed: $displayErr',
+        );
       }
       if (mounted) {
         setState(() => _isProcessing = false);

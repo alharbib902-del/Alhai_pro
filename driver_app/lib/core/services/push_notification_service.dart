@@ -84,7 +84,8 @@ class PushNotificationService {
     if (Platform.isAndroid) {
       await _localNotifications
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>()
+            AndroidFlutterLocalNotificationsPlugin
+          >()
           ?.createNotificationChannel(_androidChannel);
     }
 
@@ -123,8 +124,10 @@ class PushNotificationService {
       _onTokenRefresh?.call(newToken);
     });
 
-    addBreadcrumb(message: 'PushNotificationService initialized',
-        category: 'push');
+    addBreadcrumb(
+      message: 'PushNotificationService initialized',
+      category: 'push',
+    );
   }
 
   /// Callback for token refresh events. Set by [onTokenRefresh].
@@ -168,14 +171,12 @@ class PushNotificationService {
         badge: true,
         sound: true,
         provisional: false,
-        announcement: true,        // iOS: announce via Siri
+        announcement: true, // iOS: announce via Siri
         criticalAlert: false,
       );
 
       if (kDebugMode) {
-        debugPrint(
-          '[FCM] Permission: ${settings.authorizationStatus}',
-        );
+        debugPrint('[FCM] Permission: ${settings.authorizationStatus}');
       }
 
       // On iOS, set foreground presentation options so notifications

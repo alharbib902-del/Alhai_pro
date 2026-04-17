@@ -334,10 +334,10 @@ class ReportsService {
     required ProductsDao productsDao,
     required InventoryDao inventoryDao,
     LoyaltyDao? loyaltyDao,
-  }) : _salesDao = salesDao,
-       _productsDao = productsDao,
-       _inventoryDao = inventoryDao,
-       _loyaltyDao = loyaltyDao;
+  })  : _salesDao = salesDao,
+        _productsDao = productsDao,
+        _inventoryDao = inventoryDao,
+        _loyaltyDao = loyaltyDao;
 
   // ============================================================================
   // SALES REPORTS
@@ -468,8 +468,7 @@ class ReportsService {
       final key =
           '${currentDate.year}-${currentDate.month.toString().padLeft(2, '0')}-${currentDate.day.toString().padLeft(2, '0')}';
       dailySales.add(
-        salesByDate[key] ??
-            DailySales(date: currentDate, count: 0, total: 0),
+        salesByDate[key] ?? DailySales(date: currentDate, count: 0, total: 0),
       );
       currentDate = currentDate.add(const Duration(days: 1));
     }
@@ -584,7 +583,10 @@ class ReportsService {
   /// Uses a single aggregation query for counts/value, then only fetches
   /// low-stock items (bounded) instead of loading every product row.
   Future<InventoryReport> getInventoryReport(String storeId) async {
-    final products = await _productsDao.getProductsPaginated(storeId, limit: 500);
+    final products = await _productsDao.getProductsPaginated(
+      storeId,
+      limit: 500,
+    );
 
     int lowStockCount = 0;
     int outOfStockCount = 0;

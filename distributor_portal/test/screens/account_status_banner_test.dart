@@ -14,9 +14,7 @@ import 'package:distributor_portal/ui/widgets/account_status_banner.dart';
 Widget _buildTestWidget(DistributorAccountStatus? status) {
   return ProviderScope(
     overrides: [
-      distributorAccountStatusProvider.overrideWith(
-        (ref) async => status,
-      ),
+      distributorAccountStatusProvider.overrideWith((ref) async => status),
     ],
     child: MaterialApp(
       title: 'Test',
@@ -56,18 +54,16 @@ void main() {
       expect(find.text('حسابك قيد المراجعة'), findsNothing);
     });
 
-    testWidgets('shows amber banner for pendingEmailVerification',
-        (tester) async {
+    testWidgets('shows amber banner for pendingEmailVerification', (
+      tester,
+    ) async {
       await tester.pumpWidget(
         _buildTestWidget(DistributorAccountStatus.pendingEmailVerification),
       );
       await tester.pumpAndSettle();
 
       expect(find.text('يرجى تأكيد بريدك الإلكتروني'), findsOneWidget);
-      expect(
-        find.text('تحقّق من صندوق الوارد لتأكيد حسابك'),
-        findsOneWidget,
-      );
+      expect(find.text('تحقّق من صندوق الوارد لتأكيد حسابك'), findsOneWidget);
       expect(find.byIcon(Icons.email_outlined), findsOneWidget);
     });
 
@@ -123,10 +119,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(
-        find.text('تواصل مع الدعم لإعادة التفعيل'),
-        findsOneWidget,
-      );
+      expect(find.text('تواصل مع الدعم لإعادة التفعيل'), findsOneWidget);
     });
 
     testWidgets('rejected shows contact subtitle', (tester) async {
@@ -135,10 +128,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(
-        find.text('يرجى التواصل مع الدعم لمعرفة السبب'),
-        findsOneWidget,
-      );
+      expect(find.text('يرجى التواصل مع الدعم لمعرفة السبب'), findsOneWidget);
     });
   });
 }

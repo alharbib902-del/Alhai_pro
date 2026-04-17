@@ -383,8 +383,9 @@ class _DistributorOrderDetailScreenState
               }
 
               // Watch tier discount for this store (returns 0 if unavailable)
-              final discountAsync =
-                  ref.watch(storeDiscountProvider(order.storeId));
+              final discountAsync = ref.watch(
+                storeDiscountProvider(order.storeId),
+              );
               final discountPercent = discountAsync.valueOrNull ?? 0.0;
 
               return itemsAsync.when(
@@ -669,17 +670,11 @@ class _DistributorOrderDetailScreenState
       decoration: BoxDecoration(
         color: AppColors.success.withValues(alpha: isDark ? 0.1 : 0.05),
         borderRadius: BorderRadius.circular(AlhaiRadius.md),
-        border: Border.all(
-          color: AppColors.success.withValues(alpha: 0.3),
-        ),
+        border: Border.all(color: AppColors.success.withValues(alpha: 0.3)),
       ),
       child: Row(
         children: [
-          Icon(
-            Icons.discount_outlined,
-            color: AppColors.success,
-            size: 20,
-          ),
+          Icon(Icons.discount_outlined, color: AppColors.success, size: 20),
           const SizedBox(width: AlhaiSpacing.sm),
           Expanded(
             child: Text(
@@ -1263,9 +1258,7 @@ class _DistributorOrderDetailScreenState
           label,
           style: TextStyle(
             fontSize: 13,
-            color: isVat
-                ? AppColors.info
-                : AppColors.getTextSecondary(isDark),
+            color: isVat ? AppColors.info : AppColors.getTextSecondary(isDark),
           ),
         ),
         Text(
@@ -1273,9 +1266,7 @@ class _DistributorOrderDetailScreenState
           style: TextStyle(
             fontSize: 13,
             fontWeight: FontWeight.w500,
-            color: isVat
-                ? AppColors.info
-                : AppColors.getTextPrimary(isDark),
+            color: isVat ? AppColors.info : AppColors.getTextPrimary(isDark),
           ),
         ),
       ],
@@ -1435,15 +1426,11 @@ class _DistributorOrderDetailScreenState
           return Padding(
             padding: const EdgeInsets.only(top: AlhaiSpacing.sm),
             child: FilledButton.icon(
-              onPressed: () =>
-                  context.go('/invoices/${existingInvoice.id}'),
+              onPressed: () => context.go('/invoices/${existingInvoice.id}'),
               icon: const Icon(Icons.receipt_long, size: 20),
               label: const Text(
                 'عرض الفاتورة',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                ),
+                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
               style: FilledButton.styleFrom(
                 backgroundColor: AppColors.primary,
@@ -1461,9 +1448,7 @@ class _DistributorOrderDetailScreenState
         return Padding(
           padding: const EdgeInsets.only(top: AlhaiSpacing.sm),
           child: FilledButton.icon(
-            onPressed: _isProcessing
-                ? null
-                : () => _generateInvoice(order),
+            onPressed: _isProcessing ? null : () => _generateInvoice(order),
             icon: _isProcessing
                 ? const SizedBox(
                     width: 18,
@@ -1476,10 +1461,7 @@ class _DistributorOrderDetailScreenState
                 : const Icon(Icons.receipt, size: 20),
             label: const Text(
               'إنشاء فاتورة',
-              style: TextStyle(
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
-              ),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
             ),
             style: FilledButton.styleFrom(
               backgroundColor: AppColors.info,
@@ -1552,14 +1534,15 @@ class _DistributorOrderDetailScreenState
                             ? AppColors.success
                             : AppColors.getSurfaceVariant(isDark),
                         border: isCurrent
-                            ? Border.all(
-                                color: AppColors.success,
-                                width: 3,
-                              )
+                            ? Border.all(color: AppColors.success, width: 3)
                             : null,
                       ),
                       child: isDone
-                          ? const Icon(Icons.check, size: 14, color: Colors.white)
+                          ? const Icon(
+                              Icons.check,
+                              size: 14,
+                              color: Colors.white,
+                            )
                           : null,
                     ),
                     const SizedBox(height: 4),
@@ -1567,7 +1550,9 @@ class _DistributorOrderDetailScreenState
                       workflowStatusLabel(stages[stageIdx]),
                       style: TextStyle(
                         fontSize: 10,
-                        fontWeight: isCurrent ? FontWeight.bold : FontWeight.normal,
+                        fontWeight: isCurrent
+                            ? FontWeight.bold
+                            : FontWeight.normal,
                         color: isDone
                             ? AppColors.success
                             : AppColors.getTextMuted(isDark),
@@ -1631,10 +1616,7 @@ class _DistributorOrderDetailScreenState
               : Icon(icons[nextStatus] ?? Icons.arrow_forward, size: 20),
           label: Text(
             labels[nextStatus] ?? nextStatus,
-            style: const TextStyle(
-              fontSize: 15,
-              fontWeight: FontWeight.w600,
-            ),
+            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
           ),
           style: FilledButton.styleFrom(
             backgroundColor: AppColors.primary,

@@ -37,9 +37,8 @@ class ExpensesScreen extends ConsumerWidget {
             subtitle: _getDateSubtitle(l10n),
             showSearch: isWideScreen,
             searchHint: l10n.searchPlaceholder,
-            onMenuTap: isWideScreen
-                ? null
-                : () => Scaffold.of(context).openDrawer(),
+            onMenuTap:
+                isWideScreen ? null : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
@@ -47,9 +46,7 @@ class ExpensesScreen extends ConsumerWidget {
             onUserTap: () {},
           ),
           Expanded(
-            child: ref
-                .watch(expensesStreamProvider)
-                .when(
+            child: ref.watch(expensesStreamProvider).when(
                   loading: () => const Padding(
                     padding: EdgeInsets.all(AlhaiSpacing.md),
                     child: ShimmerList(itemCount: 6, itemHeight: 72),

@@ -37,7 +37,9 @@ class PricingTier {
     }
     // Remove trailing zeros: 7.50 → 7.5
     final s = discountPercent.toStringAsFixed(2);
-    final trimmed = s.replaceAll(RegExp(r'0+$'), '').replaceAll(RegExp(r'\.$'), '');
+    final trimmed = s
+        .replaceAll(RegExp(r'0+$'), '')
+        .replaceAll(RegExp(r'\.$'), '');
     return '$trimmed%';
   }
 
@@ -47,8 +49,7 @@ class PricingTier {
       orgId: json['org_id'] as String? ?? '',
       name: json['name'] as String? ?? '',
       nameAr: json['name_ar'] as String?,
-      discountPercent:
-          (json['discount_percent'] as num?)?.toDouble() ?? 0,
+      discountPercent: (json['discount_percent'] as num?)?.toDouble() ?? 0,
       isDefault: json['is_default'] as bool? ?? false,
       sortOrder: (json['sort_order'] as num?)?.toInt() ?? 0,
       createdAt:
@@ -115,6 +116,12 @@ class PricingTier {
 
   @override
   int get hashCode => Object.hash(
-    id, orgId, name, nameAr, discountPercent, isDefault, sortOrder,
+    id,
+    orgId,
+    name,
+    nameAr,
+    discountPercent,
+    isDefault,
+    sortOrder,
   );
 }

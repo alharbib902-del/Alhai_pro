@@ -98,10 +98,7 @@ class _PickupOtpScreenState extends ConsumerState<PickupOtpScreen> {
     });
 
     try {
-      await _otpService.verifyOtp(
-        orderId: widget.orderId,
-        otpCode: code,
-      );
+      await _otpService.verifyOtp(orderId: widget.orderId, otpCode: code);
       // Success
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -243,8 +240,9 @@ class _PickupOtpScreenState extends ConsumerState<PickupOtpScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: FilledButton(
-                          onPressed:
-                              (_isLoading || _isLocked) ? null : _verifyOtp,
+                          onPressed: (_isLoading || _isLocked)
+                              ? null
+                              : _verifyOtp,
                           style: FilledButton.styleFrom(
                             padding: const EdgeInsets.symmetric(vertical: 16),
                           ),

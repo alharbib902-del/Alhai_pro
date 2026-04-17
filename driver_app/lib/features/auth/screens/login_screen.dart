@@ -90,7 +90,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       }
     } on DriverPendingApprovalException {
       setState(() {
-        _error = 'حسابك قيد المراجعة من قبل الإدارة. يرجى الانتظار حتى يتم تفعيله.';
+        _error =
+            'حسابك قيد المراجعة من قبل الإدارة. يرجى الانتظار حتى يتم تفعيله.';
         _isLoading = false;
       });
     } catch (e) {

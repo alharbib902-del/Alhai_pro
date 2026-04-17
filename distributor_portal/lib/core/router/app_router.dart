@@ -34,7 +34,8 @@ final distributorRouterProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       final isLoggedIn = AppSupabase.isAuthenticated;
       final location = state.matchedLocation;
-      final isPublicRoute = location == '/login' ||
+      final isPublicRoute =
+          location == '/login' ||
           location == '/signup' ||
           location == '/verify-email' ||
           location == '/mfa-verify' ||

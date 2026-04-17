@@ -8,9 +8,7 @@ void main() {
   group('ModernCard', () {
     testWidgets('renders child', (tester) async {
       await tester.pumpWidget(
-        createTestWidget(
-          const ModernCard(child: Text('Card Content')),
-        ),
+        createTestWidget(const ModernCard(child: Text('Card Content'))),
       );
       expect(find.text('Card Content'), findsOneWidget);
     });
@@ -19,10 +17,7 @@ void main() {
       var tapped = false;
       await tester.pumpWidget(
         createTestWidget(
-          ModernCard(
-            child: const Text('Tap Me'),
-            onTap: () => tapped = true,
-          ),
+          ModernCard(child: const Text('Tap Me'), onTap: () => tapped = true),
         ),
       );
       await tester.tap(find.text('Tap Me'));
@@ -81,9 +76,7 @@ void main() {
 
     testWidgets('renders glass variant', (tester) async {
       await tester.pumpWidget(
-        createTestWidget(
-          ModernCard.glass(child: const Text('Glass')),
-        ),
+        createTestWidget(ModernCard.glass(child: const Text('Glass'))),
       );
       expect(find.text('Glass'), findsOneWidget);
     });
@@ -121,11 +114,7 @@ void main() {
     testWidgets('renders with custom width and height', (tester) async {
       await tester.pumpWidget(
         createTestWidget(
-          const ModernCard(
-            width: 200,
-            height: 100,
-            child: Text('Sized'),
-          ),
+          const ModernCard(width: 200, height: 100, child: Text('Sized')),
         ),
       );
       expect(find.text('Sized'), findsOneWidget);
@@ -134,10 +123,7 @@ void main() {
     testWidgets('renders with border', (tester) async {
       await tester.pumpWidget(
         createTestWidget(
-          const ModernCard(
-            hasBorder: true,
-            child: Text('Bordered'),
-          ),
+          const ModernCard(hasBorder: true, child: Text('Bordered')),
         ),
       );
       expect(find.text('Bordered'), findsOneWidget);
