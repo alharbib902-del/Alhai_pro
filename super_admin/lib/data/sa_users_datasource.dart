@@ -18,15 +18,26 @@ class SAUsersDatasource {
   /// still exercise the mutation logic — audit is best-effort.
   final AuditLogService? _audit;
 
+  /// When true, mutation methods bypass the AAL2 MFA check. ONLY set by the
+  /// `.test` constructor so fake clients without MFA plumbing don't throw
+  /// MfaRequiredException. Production construction always enforces AAL2.
+  final bool _skipMfaCheck;
+
   /// Production constructor -- accepts a typed [SupabaseClient].
   SAUsersDatasource(SupabaseClient client, {AuditLogService? audit})
     : _client = client,
-      _audit = audit;
+      _audit = audit,
+      _skipMfaCheck = false;
 
   /// Test constructor -- accepts a fake client that implements the same
   /// postgrest query-chain surface as [SupabaseClient].
   SAUsersDatasource.test(this._client, {AuditLogService? audit})
-    : _audit = audit;
+    : _audit = audit,
+      _skipMfaCheck = true;
+
+  void _requireMfa() {
+    if (!_skipMfaCheck) MfaGuardService.requireAAL2(_client as SupabaseClient);
+  }
 
   /// Fetch platform-level admin/support users.
   /// These are users with role = super_admin, support, or viewer
@@ -60,7 +71,7 @@ class SAUsersDatasource {
 
   /// Update user role.
   Future<void> updateUserRole(String userId, String role) async {
-    MfaGuardService.requireAAL2(_client);
+    _requireMfa();
     await _client.from('users').update({'role': role}).eq('id', userId);
     await _audit?.log(
       action: 'user.role.update',
@@ -107,7 +118,7 @@ class SAUsersDatasource {
 
   /// Soft delete a user (set is_active = false).
   Future<void> softDeleteUser(String userId) async {
-    MfaGuardService.requireAAL2(_client);
+    _requireMfa();
     await _client.from('users').update({'is_active': false}).eq('id', userId);
     await _audit?.log(
       action: 'user.soft_delete',
@@ -119,7 +130,7 @@ class SAUsersDatasource {
 
   /// Restore a soft-deleted user.
   Future<void> restoreUser(String userId) async {
-    MfaGuardService.requireAAL2(_client);
+    _requireMfa();
     await _client.from('users').update({'is_active': true}).eq('id', userId);
     await _audit?.log(
       action: 'user.restore',

@@ -72,7 +72,6 @@ class ThemeState {
 /// مُدير الثيم
 ///
 /// L81: Duplicate - see library-level docs for dedup plan.
-// ignore: deprecated_member_use_from_same_package
 class ThemeNotifier extends StateNotifier<ThemeState> {
   ThemeNotifier([ThemeMode? initialMode])
     : super(
@@ -163,7 +162,6 @@ class ThemeNotifier extends StateNotifier<ThemeState> {
 /// مزود حالة الثيم
 ///
 /// L81: Duplicate provider - canonical version in alhai_shared_ui.
-// ignore: deprecated_member_use_from_same_package
 final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeState>((ref) {
   return ThemeNotifier();
 });

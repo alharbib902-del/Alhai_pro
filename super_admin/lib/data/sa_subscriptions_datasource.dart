@@ -13,9 +13,22 @@ class SASubscriptionsDatasource {
   /// Optional audit logger for privileged mutations.
   final AuditLogService? _audit;
 
+  /// When true, mutation methods bypass AAL2 MFA check. ONLY for tests.
+  final bool _skipMfaCheck;
+
   /// Creates a datasource bound to the given [SupabaseClient].
   SASubscriptionsDatasource(this._client, {AuditLogService? audit})
-    : _audit = audit;
+    : _audit = audit,
+      _skipMfaCheck = false;
+
+  /// Test constructor — bypasses the AAL2 MFA enforcement.
+  SASubscriptionsDatasource.test(this._client, {AuditLogService? audit})
+    : _audit = audit,
+      _skipMfaCheck = true;
+
+  void _requireMfa() {
+    if (!_skipMfaCheck) MfaGuardService.requireAAL2(_client);
+  }
 
   // ========================================================================
   // SUBSCRIPTIONS
@@ -183,7 +196,7 @@ class SASubscriptionsDatasource {
     required int maxUsers,
     List<String> features = const [],
   }) async {
-    MfaGuardService.requireAAL2(_client);
+    _requireMfa();
     try {
       final data = await _client
           .from('sa_plans')
@@ -229,7 +242,7 @@ class SASubscriptionsDatasource {
 
   /// Update an existing plan.
   Future<void> updatePlan(String planId, Map<String, dynamic> updates) async {
-    MfaGuardService.requireAAL2(_client);
+    _requireMfa();
     try {
       await _client.from('sa_plans').update(updates).eq('id', planId);
       await _audit?.log(
