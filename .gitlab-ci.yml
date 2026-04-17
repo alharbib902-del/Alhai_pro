@@ -1,0 +1,43 @@
+# Minimal GitLab CI for Alhai monorepo (Flutter + Melos)
+# Free tier: 400 min/month — kept lean.
+image: ghcr.io/cirruslabs/flutter:stable
+
+stages:
+  - verify
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+
+before_script:
+  - flutter --version
+  - dart pub global activate melos
+  - export PATH="$PATH:$HOME/.pub-cache/bin"
+  - melos bootstrap
+
+analyze:
+  stage: verify
+  script:
+    - melos analyze
+  timeout: 15m
+
+test:
+  stage: verify
+  script:
+    - melos test
+  needs: [analyze]
+  timeout: 30m
+
+build_cashier_apk:
+  stage: verify
+  script:
+    - cd apps/cashier
+    - flutter build apk --debug
+  needs: [analyze]
+  when: manual
+  timeout: 30m
+  artifacts:
+    paths:
+      - apps/cashier/build/app/outputs/flutter-apk/app-debug.apk
+    expire_in: 7 days
