@@ -255,8 +255,7 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
                       child: _isLoadingProduct
                           ? const Center(child: CircularProgressIndicator())
                           : SingleChildScrollView(
-                              padding:
-                                  EdgeInsets.all(isMediumScreen ? 24 : 16),
+                              padding: EdgeInsets.all(isMediumScreen ? 24 : 16),
                               child: _buildContent(
                                 isWideScreen,
                                 isMediumScreen,
@@ -924,8 +923,10 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
 
       // Check for duplicate barcode before save
       if (barcode.isNotEmpty) {
-        final existingProduct =
-            await db.productsDao.getProductByBarcode(barcode, storeId);
+        final existingProduct = await db.productsDao.getProductByBarcode(
+          barcode,
+          storeId,
+        );
         if (existingProduct != null) {
           final isSameProduct =
               widget.isEditing && existingProduct.id == widget.productId;

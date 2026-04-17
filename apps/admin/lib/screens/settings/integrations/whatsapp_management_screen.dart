@@ -117,10 +117,10 @@ class _WhatsAppManagementScreenState
       }
 
       // Load encrypted API credentials from secure storage
-      final savedApiKey =
-          await SecureStorageService.read('whatsapp_api_key');
-      final savedInstanceId =
-          await SecureStorageService.read('whatsapp_instance_id');
+      final savedApiKey = await SecureStorageService.read('whatsapp_api_key');
+      final savedInstanceId = await SecureStorageService.read(
+        'whatsapp_instance_id',
+      );
       if (mounted && savedApiKey != null) {
         _apiKeyController.text = savedApiKey;
       }
@@ -768,8 +768,7 @@ class _WhatsAppManagementScreenState
                 if (mounted) {
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(
-                      content:
-                          Text(AppLocalizations.of(context).settingsSaved),
+                      content: Text(AppLocalizations.of(context).settingsSaved),
                       backgroundColor: AppColors.success,
                     ),
                   );

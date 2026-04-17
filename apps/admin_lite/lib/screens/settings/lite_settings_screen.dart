@@ -34,6 +34,7 @@ class _BoolPrefNotifier extends StateNotifier<bool> {
     final prefs = await SharedPreferences.getInstance();
     state = prefs.getBool(key) ?? state;
   }
+
   Future<void> set(bool value) async {
     state = value;
     final prefs = await SharedPreferences.getInstance();
@@ -50,6 +51,7 @@ class _IntPrefNotifier extends StateNotifier<int> {
     final prefs = await SharedPreferences.getInstance();
     state = prefs.getInt(key) ?? state;
   }
+
   Future<void> set(int value) async {
     state = value;
     final prefs = await SharedPreferences.getInstance();
@@ -57,30 +59,26 @@ class _IntPrefNotifier extends StateNotifier<int> {
   }
 }
 
-final _lowStockAlertsProvider =
-    StateNotifierProvider<_BoolPrefNotifier, bool>(
+final _lowStockAlertsProvider = StateNotifierProvider<_BoolPrefNotifier, bool>(
   (ref) => _BoolPrefNotifier('notif_low_stock', true),
 );
-final _expiryAlertsProvider =
-    StateNotifierProvider<_BoolPrefNotifier, bool>(
+final _expiryAlertsProvider = StateNotifierProvider<_BoolPrefNotifier, bool>(
   (ref) => _BoolPrefNotifier('notif_expiry', true),
 );
-final _shiftRemindersProvider =
-    StateNotifierProvider<_BoolPrefNotifier, bool>(
+final _shiftRemindersProvider = StateNotifierProvider<_BoolPrefNotifier, bool>(
   (ref) => _BoolPrefNotifier('notif_shifts', true),
 );
 final _refundNotificationsProvider =
     StateNotifierProvider<_BoolPrefNotifier, bool>(
-  (ref) => _BoolPrefNotifier('notif_refunds', true),
-);
-final _lowStockThresholdProvider =
-    StateNotifierProvider<_IntPrefNotifier, int>(
+      (ref) => _BoolPrefNotifier('notif_refunds', true),
+    );
+final _lowStockThresholdProvider = StateNotifierProvider<_IntPrefNotifier, int>(
   (ref) => _IntPrefNotifier('threshold_low_stock', 10),
 );
 final _expiryDaysThresholdProvider =
     StateNotifierProvider<_IntPrefNotifier, int>(
-  (ref) => _IntPrefNotifier('threshold_expiry_days', 7),
-);
+      (ref) => _IntPrefNotifier('threshold_expiry_days', 7),
+    );
 
 /// Lite Settings Screen
 class LiteSettingsScreen extends ConsumerWidget {

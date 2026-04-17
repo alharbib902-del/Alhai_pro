@@ -15,7 +15,8 @@ import '../constants/admin_permissions.dart';
 final userPermissionsProvider = Provider<List<String>>((ref) {
   final role = ref.watch(userRoleProvider);
   return switch (role) {
-    UserRole.superAdmin || UserRole.storeOwner => AdminPermissions.ownerDefaults,
+    UserRole.superAdmin ||
+    UserRole.storeOwner => AdminPermissions.ownerDefaults,
     UserRole.employee => AdminPermissions.cashierDefaults,
     _ => const <String>[],
   };

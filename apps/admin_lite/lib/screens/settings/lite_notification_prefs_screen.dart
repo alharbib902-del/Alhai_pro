@@ -56,7 +56,11 @@ class _LiteNotificationPrefsScreenState
             ),
             child: Row(
               children: [
-                const Icon(Icons.construction, color: AlhaiColors.warning, size: 20),
+                const Icon(
+                  Icons.construction,
+                  color: AlhaiColors.warning,
+                  size: 20,
+                ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Expanded(
                   child: Text(
