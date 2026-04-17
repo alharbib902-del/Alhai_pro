@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>قاعدة البيانات - توثيق منصة الحي</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="header">
+        <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+        <a href="../index.html" class="logo"><span class="logo-icon">🏪</span><span class="logo-text">توثيق منصة الحي</span></a>
+        <div class="header-search"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="بحث في التوثيق..."></div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع"><i class="fas fa-moon"></i></button>
+    </header>
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+            <a href="../index.html" class="sidebar-link"><i class="fas fa-home"></i> الرئيسية</a>
+            <a href="01-project-structure.html" class="sidebar-link"><i class="fas fa-sitemap"></i> البنية العامة</a>
+            <a href="02-database.html" class="sidebar-link active"><i class="fas fa-database"></i> قاعدة البيانات</a>
+            <a href="03-auth-permissions.html" class="sidebar-link"><i class="fas fa-shield-halved"></i> الصلاحيات والمصادقة</a>
+            <a href="04-screens-ui.html" class="sidebar-link"><i class="fas fa-desktop"></i> الشاشات والواجهات</a>
+            <a href="05-services-api.html" class="sidebar-link"><i class="fas fa-server"></i> الخدمات والـ API</a>
+            <a href="06-architecture.html" class="sidebar-link"><i class="fas fa-cubes"></i> البنية المعمارية</a>
+            <a href="07-developer-guide.html" class="sidebar-link"><i class="fas fa-code"></i> دليل المطور</a>
+        </nav>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <main class="main-content">
+        <nav class="breadcrumbs"><a href="../index.html">الرئيسية</a><span class="separator">/</span><span class="current">قاعدة البيانات</span></nav>
+        <aside class="toc" id="toc"><h3>جدول المحتويات</h3><ul id="tocList"></ul></aside>
+        <article class="content" id="content">
+<h1>توثيق قاعدة البيانات - منصة الحي</h1>
+<blockquote>الإصدار: 2.4.0 | آخر تحديث: 2026-02-28 | إصدار المخطط المحلي: v13</blockquote>
+<hr>
+<h2>1. نظرة عامة على قاعدة البيانات</h2>
+<p>تعتمد منصة الحي على معمارية مزدوجة لقواعد البيانات تتيح العمل بدون إنترنت مع المزامنة التلقائية عند توفر الاتصال:</p>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>الطبقة</th><th>التقنية</th><th>الاستخدام</th></tr></thead>
+<tbody>
+<tr><td><strong>محلية (Local)</strong></td><td>Drift (SQLite) / WASM للويب</td><td>التخزين المحلي والعمل بدون إنترنت</td></tr>
+<tr><td><strong>سحابية (Remote)</strong></td><td>Supabase (PostgreSQL)</td><td>المزامنة، تطبيق العملاء، لوحة الإدارة</td></tr>
+</tbody>
+</table></div>
+<h3>البنية العامة</h3>
+<pre><code>packages/alhai_database/
+  lib/src/
+    app_database.dart          # تعريف قاعدة البيانات والترحيل
+    tables/                    # تعريفات الجداول (Drift)
+      tables.dart              # ملف التصدير الرئيسي
+      products_table.dart
+      sales_table.dart
+      ...
+    daos/                      # طبقة الوصول للبيانات
+      daos.dart                # ملف التصدير الرئيسي
+      products_dao.dart
+      sales_dao.dart
+      ...
+    fts/
+      products_fts.dart        # البحث النصي الكامل FTS5
+    seeders/
+      database_seeder.dart     # بيانات تجريبية
+    repositories/
+      local_products_repository.dart
+      local_categories_repository.dart
+    connection.dart             # إعدادات الاتصال
+    connection_native.dart      # اتصال الأجهزة المحلية
+    connection_web.dart         # اتصال الويب (WASM)
+
+supabase/
+  supabase_init.sql            # المخطط الأساسي للسحابة
+  sync_rpc_functions.sql       # دوال RPC للمزامنة
+  storage_policies.sql         # سياسات التخزين
+  migrations/                  # ترحيلات قاعدة البيانات</code></pre>
+<h3>إصدارات المخطط المحلي (Schema Versions)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>الإصدار</th><th>الوصف</th></tr></thead>
+<tbody>
+<tr><td>v1</td><td>الجداول الأساسية: products, sales, sale_items, inventory_movements, accounts, sync_queue</td></tr>
+<tr><td>v2</td><td>إضافة جدول transactions</td></tr>
+<tr><td>v3</td><td>إضافة جداول orders و order_items</td></tr>
+<tr><td>v4</td><td>إضافة جدول audit_log</td></tr>
+<tr><td>v5</td><td>إضافة جدول categories</td></tr>
+<tr><td>v6</td><td>إضافة جداول نظام الولاء: loyalty_points, loyalty_transactions, loyalty_rewards</td></tr>
+<tr><td>v7</td><td>إضافة FTS5 للبحث السريع في المنتجات</td></tr>
+<tr><td>v8</td><td>إضافة جميع الجداول الجديدة (stores, users, customers, suppliers, shifts, returns, expenses, الخ)</td></tr>
+<tr><td>v9</td><td>إضافة جداول واتساب: whatsapp_messages, whatsapp_templates</td></tr>
+<tr><td>v10</td><td>إضافة جداول متعددة المستأجرين: organizations, subscriptions, org_members, user_stores, pos_terminals + عمود org_id</td></tr>
+<tr><td>v11</td><td>إضافة جداول المزامنة المتقدمة: sync_metadata, stock_deltas</td></tr>
+<tr><td>v12</td><td>إضافة عمود deleted_at للحذف الناعم (Soft Delete)</td></tr>
+<tr><td>v13</td><td>توحيد أنواع أعمدة الكميات إلى REAL لدعم الكسور (مثل 0.5 كجم)</td></tr>
+</tbody>
+</table></div>
+<h3>الإعدادات المهمة</h3>
+<pre><code class="language-sql">-- تفعيل المفاتيح الأجنبية (يُنفذ عند فتح قاعدة البيانات)
+PRAGMA foreign_keys = ON;</code></pre>
+<hr>
+<h2>2. جداول قاعدة البيانات</h2>
+<h3>2.1 جدول المنتجات (<code class="inline-code">products</code>)</h3>
+<blockquote>يتطابق مع Product model من alhai_core</blockquote>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL, FK &rarr; stores(id) ON DELETE RESTRICT</td></tr>
+<tr><td><code class="inline-code">name</code></td><td>TEXT</td><td>اسم المنتج</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">sku</code></td><td>TEXT</td><td>رمز المنتج</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">barcode</code></td><td>TEXT</td><td>الباركود</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">price</code></td><td>REAL</td><td>سعر البيع</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">cost_price</code></td><td>REAL</td><td>سعر التكلفة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">stock_qty</code></td><td>INTEGER</td><td>كمية المخزون</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">min_qty</code></td><td>INTEGER</td><td>الحد الأدنى للمخزون</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">unit</code></td><td>TEXT</td><td>وحدة القياس</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">description</code></td><td>TEXT</td><td>وصف المنتج</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">image_thumbnail</code></td><td>TEXT</td><td>صورة مصغرة (300x300)</td><td>nullable, محلي فقط</td></tr>
+<tr><td><code class="inline-code">image_medium</code></td><td>TEXT</td><td>صورة متوسطة (600x600)</td><td>nullable, محلي فقط</td></tr>
+<tr><td><code class="inline-code">image_large</code></td><td>TEXT</td><td>صورة كبيرة (1200x1200)</td><td>nullable, محلي فقط</td></tr>
+<tr><td><code class="inline-code">image_hash</code></td><td>TEXT</td><td>هاش الصورة (SHA-256, 8 أحرف)</td><td>nullable, محلي فقط</td></tr>
+<tr><td><code class="inline-code">category_id</code></td><td>TEXT</td><td>معرف التصنيف</td><td>nullable, FK &rarr; categories(id) ON DELETE SET NULL</td></tr>
+<tr><td><code class="inline-code">is_active</code></td><td>BOOLEAN</td><td>هل المنتج نشط</td><td>DEFAULT true</td></tr>
+<tr><td><code class="inline-code">track_inventory</code></td><td>BOOLEAN</td><td>تتبع المخزون</td><td>DEFAULT true, محلي فقط</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">updated_at</code></td><td>DATETIME</td><td>تاريخ التحديث</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable, محلي فقط</td></tr>
+<tr><td><code class="inline-code">deleted_at</code></td><td>DATETIME</td><td>تاريخ الحذف الناعم</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<p><strong>الأعمدة المحلية فقط (لا تُزامن مع Supabase):</strong></p>
+<ul>
+    <li><code class="inline-code">stock_qty</code>, <code class="inline-code">min_qty</code>: يُدار المخزون محلياً؛ Supabase يستخدم جدول inventory منفصل</li>
+    <li><code class="inline-code">image_thumbnail</code>, <code class="inline-code">image_medium</code>, <code class="inline-code">image_large</code>, <code class="inline-code">image_hash</code>: بيانات التخزين المؤقت للصور</li>
+    <li><code class="inline-code">track_inventory</code>: إعداد محلي لنقطة البيع</li>
+    <li><code class="inline-code">synced_at</code>, <code class="inline-code">deleted_at</code>: أعمدة إدارة المزامنة</li>
+</ul>
+<h3>2.2 جدول المبيعات / الفواتير (<code class="inline-code">sales</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">receipt_no</code></td><td>TEXT</td><td>رقم الإيصال</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL, FK &rarr; stores(id) ON DELETE RESTRICT</td></tr>
+<tr><td><code class="inline-code">cashier_id</code></td><td>TEXT</td><td>معرف الكاشير</td><td>NOT NULL, FK &rarr; users(id) ON DELETE RESTRICT</td></tr>
+<tr><td><code class="inline-code">terminal_id</code></td><td>TEXT</td><td>معرف نقطة البيع</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">customer_id</code></td><td>TEXT</td><td>معرف العميل</td><td>nullable, FK &rarr; customers(id) ON DELETE SET NULL</td></tr>
+<tr><td><code class="inline-code">customer_name</code></td><td>TEXT</td><td>اسم العميل</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">customer_phone</code></td><td>TEXT</td><td>هاتف العميل</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">subtotal</code></td><td>REAL</td><td>المجموع الفرعي</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">discount</code></td><td>REAL</td><td>الخصم</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">tax</code></td><td>REAL</td><td>الضريبة</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">total</code></td><td>REAL</td><td>الإجمالي</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">payment_method</code></td><td>TEXT</td><td>طريقة الدفع</td><td>NOT NULL (cash, card, mixed, credit)</td></tr>
+<tr><td><code class="inline-code">is_paid</code></td><td>BOOLEAN</td><td>هل مدفوعة</td><td>DEFAULT true</td></tr>
+<tr><td><code class="inline-code">amount_received</code></td><td>REAL</td><td>المبلغ المستلم</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">change_amount</code></td><td>REAL</td><td>الباقي</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">notes</code></td><td>TEXT</td><td>ملاحظات</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">channel</code></td><td>TEXT</td><td>قناة البيع</td><td>DEFAULT &#x27;POS&#x27; (POS, ONLINE)</td></tr>
+<tr><td><code class="inline-code">status</code></td><td>TEXT</td><td>الحالة</td><td>DEFAULT &#x27;completed&#x27; (completed, voided, refunded)</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">updated_at</code></td><td>DATETIME</td><td>تاريخ التحديث</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">deleted_at</code></td><td>DATETIME</td><td>تاريخ الحذف الناعم</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h3>2.3 جدول عناصر البيع (<code class="inline-code">sale_items</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">sale_id</code></td><td>TEXT</td><td>معرف الفاتورة</td><td>NOT NULL, FK &rarr; sales(id) ON DELETE CASCADE</td></tr>
+<tr><td><code class="inline-code">product_id</code></td><td>TEXT</td><td>معرف المنتج</td><td>NOT NULL, FK &rarr; products(id) ON DELETE RESTRICT</td></tr>
+<tr><td><code class="inline-code">product_name</code></td><td>TEXT</td><td>اسم المنتج وقت البيع</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">product_sku</code></td><td>TEXT</td><td>SKU وقت البيع</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">product_barcode</code></td><td>TEXT</td><td>الباركود وقت البيع</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">qty</code></td><td>REAL</td><td>الكمية</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">unit_price</code></td><td>REAL</td><td>سعر الوحدة</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">cost_price</code></td><td>REAL</td><td>سعر التكلفة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">subtotal</code></td><td>REAL</td><td>المجموع الفرعي</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">discount</code></td><td>REAL</td><td>الخصم على مستوى العنصر</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">total</code></td><td>REAL</td><td>الإجمالي</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">notes</code></td><td>TEXT</td><td>ملاحظات</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h3>2.4 جدول حركات المخزون (<code class="inline-code">inventory_movements</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">product_id</code></td><td>TEXT</td><td>معرف المنتج</td><td>NOT NULL, FK &rarr; products(id)</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL, FK &rarr; stores(id)</td></tr>
+<tr><td><code class="inline-code">type</code></td><td>TEXT</td><td>نوع الحركة</td><td>NOT NULL (sale, purchase, adjustment, return, transfer, waste)</td></tr>
+<tr><td><code class="inline-code">qty</code></td><td>REAL</td><td>الكمية (موجب أو سالب)</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">previous_qty</code></td><td>REAL</td><td>الكمية السابقة</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">new_qty</code></td><td>REAL</td><td>الكمية الجديدة</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">reference_type</code></td><td>TEXT</td><td>نوع المرجع</td><td>nullable (sale, purchase_order, adjustment)</td></tr>
+<tr><td><code class="inline-code">reference_id</code></td><td>TEXT</td><td>معرف المرجع</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">reason</code></td><td>TEXT</td><td>السبب</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">notes</code></td><td>TEXT</td><td>ملاحظات</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">user_id</code></td><td>TEXT</td><td>معرف المستخدم</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h3>2.5 جدول الحسابات (<code class="inline-code">accounts</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL, FK &rarr; stores(id)</td></tr>
+<tr><td><code class="inline-code">type</code></td><td>TEXT</td><td>نوع الحساب</td><td>NOT NULL (receivable=عميل, payable=مورد)</td></tr>
+<tr><td><code class="inline-code">customer_id</code></td><td>TEXT</td><td>معرف العميل</td><td>nullable, FK &rarr; customers(id)</td></tr>
+<tr><td><code class="inline-code">supplier_id</code></td><td>TEXT</td><td>معرف المورد</td><td>nullable, FK &rarr; suppliers(id)</td></tr>
+<tr><td><code class="inline-code">name</code></td><td>TEXT</td><td>اسم صاحب الحساب</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">phone</code></td><td>TEXT</td><td>رقم الهاتف</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">balance</code></td><td>REAL</td><td>الرصيد</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">credit_limit</code></td><td>REAL</td><td>حد الائتمان</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">is_active</code></td><td>BOOLEAN</td><td>هل الحساب نشط</td><td>DEFAULT true</td></tr>
+<tr><td><code class="inline-code">last_transaction_at</code></td><td>DATETIME</td><td>آخر حركة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">updated_at</code></td><td>DATETIME</td><td>تاريخ التحديث</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">deleted_at</code></td><td>DATETIME</td><td>تاريخ الحذف الناعم</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h3>2.6 جدول طابور المزامنة (<code class="inline-code">sync_queue</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">table_name</code></td><td>TEXT</td><td>اسم الجدول المتأثر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">record_id</code></td><td>TEXT</td><td>معرف السجل</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">operation</code></td><td>TEXT</td><td>نوع العملية</td><td>NOT NULL (CREATE, UPDATE, DELETE)</td></tr>
+<tr><td><code class="inline-code">payload</code></td><td>TEXT</td><td>البيانات بصيغة JSON</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">idempotency_key</code></td><td>TEXT</td><td>مفتاح منع التكرار</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">status</code></td><td>TEXT</td><td>حالة المزامنة</td><td>DEFAULT &#x27;pending&#x27; (pending, syncing, synced, failed, conflict, resolved)</td></tr>
+<tr><td><code class="inline-code">retry_count</code></td><td>INTEGER</td><td>عدد محاولات إعادة المحاولة</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">max_retries</code></td><td>INTEGER</td><td>الحد الأقصى للمحاولات</td><td>DEFAULT 3</td></tr>
+<tr><td><code class="inline-code">last_error</code></td><td>TEXT</td><td>آخر خطأ</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">priority</code></td><td>INTEGER</td><td>الأولوية</td><td>DEFAULT 1 (1=منخفضة, 2=عادية, 3=عالية)</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">last_attempt_at</code></td><td>DATETIME</td><td>آخر محاولة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h3>2.7 جدول حركات الحسابات (<code class="inline-code">transactions</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL, FK &rarr; stores(id)</td></tr>
+<tr><td><code class="inline-code">account_id</code></td><td>TEXT</td><td>معرف الحساب</td><td>NOT NULL, FK &rarr; accounts(id)</td></tr>
+<tr><td><code class="inline-code">type</code></td><td>TEXT</td><td>نوع الحركة</td><td>NOT NULL (invoice, payment, interest, adjustment)</td></tr>
+<tr><td><code class="inline-code">amount</code></td><td>REAL</td><td>المبلغ</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">balance_after</code></td><td>REAL</td><td>الرصيد بعد الحركة</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">description</code></td><td>TEXT</td><td>الوصف</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">reference_id</code></td><td>TEXT</td><td>معرف المرجع</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">reference_type</code></td><td>TEXT</td><td>نوع المرجع</td><td>nullable (sale, purchase)</td></tr>
+<tr><td><code class="inline-code">period_key</code></td><td>TEXT</td><td>فترة الفائدة</td><td>nullable (YYYY-MM)</td></tr>
+<tr><td><code class="inline-code">payment_method</code></td><td>TEXT</td><td>طريقة الدفع</td><td>nullable (cash, card, transfer)</td></tr>
+<tr><td><code class="inline-code">created_by</code></td><td>TEXT</td><td>المستخدم المنشئ</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h3>2.8 جدول الطلبات (<code class="inline-code">orders</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL, FK &rarr; stores(id)</td></tr>
+<tr><td><code class="inline-code">customer_id</code></td><td>TEXT</td><td>معرف العميل</td><td>nullable, FK &rarr; customers(id)</td></tr>
+<tr><td><code class="inline-code">order_number</code></td><td>TEXT</td><td>رقم الطلب (ORD-YYYYMMDD-XXX)</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">channel</code></td><td>TEXT</td><td>قناة الطلب</td><td>DEFAULT &#x27;app&#x27; (app, pos)</td></tr>
+<tr><td><code class="inline-code">status</code></td><td>TEXT</td><td>حالة الطلب</td><td>DEFAULT &#x27;created&#x27;</td></tr>
+<tr><td><code class="inline-code">subtotal</code></td><td>REAL</td><td>المجموع الفرعي</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">tax_amount</code></td><td>REAL</td><td>مبلغ الضريبة</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">delivery_fee</code></td><td>REAL</td><td>رسوم التوصيل</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">discount</code></td><td>REAL</td><td>الخصم</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">total</code></td><td>REAL</td><td>الإجمالي</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">payment_method</code></td><td>TEXT</td><td>طريقة الدفع</td><td>nullable (cash, card, online)</td></tr>
+<tr><td><code class="inline-code">payment_status</code></td><td>TEXT</td><td>حالة الدفع</td><td>DEFAULT &#x27;pending&#x27; (pending, paid, refunded)</td></tr>
+<tr><td><code class="inline-code">delivery_type</code></td><td>TEXT</td><td>نوع التوصيل</td><td>DEFAULT &#x27;delivery&#x27; (delivery, pickup)</td></tr>
+<tr><td><code class="inline-code">delivery_address</code></td><td>TEXT</td><td>عنوان التوصيل</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">delivery_lat</code></td><td>REAL</td><td>خط العرض</td><td>nullable, محلي فقط</td></tr>
+<tr><td><code class="inline-code">delivery_lng</code></td><td>REAL</td><td>خط الطول</td><td>nullable, محلي فقط</td></tr>
+<tr><td><code class="inline-code">driver_id</code></td><td>TEXT</td><td>معرف السائق</td><td>nullable, محلي فقط</td></tr>
+<tr><td><code class="inline-code">notes</code></td><td>TEXT</td><td>ملاحظات</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">cancel_reason</code></td><td>TEXT</td><td>سبب الإلغاء</td><td>nullable, محلي فقط</td></tr>
+<tr><td><code class="inline-code">order_date</code></td><td>DATETIME</td><td>تاريخ الطلب</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">confirmed_at</code></td><td>DATETIME</td><td>تاريخ التأكيد</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">preparing_at</code></td><td>DATETIME</td><td>تاريخ بدء التحضير</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">ready_at</code></td><td>DATETIME</td><td>تاريخ الجاهزية</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">delivering_at</code></td><td>DATETIME</td><td>تاريخ بدء التوصيل</td><td>nullable, محلي فقط</td></tr>
+<tr><td><code class="inline-code">delivered_at</code></td><td>DATETIME</td><td>تاريخ التسليم</td><td>nullable, محلي فقط</td></tr>
+<tr><td><code class="inline-code">cancelled_at</code></td><td>DATETIME</td><td>تاريخ الإلغاء</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">updated_at</code></td><td>DATETIME</td><td>تاريخ التحديث</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">deleted_at</code></td><td>DATETIME</td><td>تاريخ الحذف الناعم</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<p><strong>حالات الطلب:</strong> <code class="inline-code">created</code> &rarr; <code class="inline-code">confirmed</code> &rarr; <code class="inline-code">preparing</code> &rarr; <code class="inline-code">ready</code> &rarr; <code class="inline-code">out_for_delivery</code> &rarr; <code class="inline-code">delivered</code> / <code class="inline-code">picked_up</code> &rarr; <code class="inline-code">completed</code> | <code class="inline-code">cancelled</code> | <code class="inline-code">refunded</code></p>
+<h3>2.9 جدول عناصر الطلب (<code class="inline-code">order_items</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">order_id</code></td><td>TEXT</td><td>معرف الطلب</td><td>NOT NULL, FK &rarr; orders(id) ON DELETE CASCADE</td></tr>
+<tr><td><code class="inline-code">product_id</code></td><td>TEXT</td><td>معرف المنتج</td><td>NOT NULL, FK &rarr; products(id) ON DELETE RESTRICT</td></tr>
+<tr><td><code class="inline-code">product_name</code></td><td>TEXT</td><td>اسم المنتج بالعربية</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">product_name_en</code></td><td>TEXT</td><td>اسم المنتج بالإنجليزية</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">barcode</code></td><td>TEXT</td><td>الباركود</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">quantity</code></td><td>REAL</td><td>الكمية</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">unit_price</code></td><td>REAL</td><td>سعر الوحدة</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">discount</code></td><td>REAL</td><td>الخصم</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">tax_rate</code></td><td>REAL</td><td>نسبة الضريبة</td><td>DEFAULT 15</td></tr>
+<tr><td><code class="inline-code">tax_amount</code></td><td>REAL</td><td>مبلغ الضريبة</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">total</code></td><td>REAL</td><td>الإجمالي</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">notes</code></td><td>TEXT</td><td>ملاحظات</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">is_reserved</code></td><td>BOOLEAN</td><td>هل تم حجز المخزون</td><td>DEFAULT false</td></tr>
+</tbody>
+</table></div>
+<h3>2.10 جدول سجل التدقيق (<code class="inline-code">audit_log</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">user_id</code></td><td>TEXT</td><td>معرف المستخدم</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">user_name</code></td><td>TEXT</td><td>اسم المستخدم</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">action</code></td><td>TEXT</td><td>نوع العملية</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">entity_type</code></td><td>TEXT</td><td>نوع الكيان</td><td>nullable (sale, product, customer, ...)</td></tr>
+<tr><td><code class="inline-code">entity_id</code></td><td>TEXT</td><td>معرف الكيان</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">old_value</code></td><td>TEXT</td><td>القيمة القديمة (JSON)</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">new_value</code></td><td>TEXT</td><td>القيمة الجديدة (JSON)</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">description</code></td><td>TEXT</td><td>وصف العملية</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">ip_address</code></td><td>TEXT</td><td>عنوان IP</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">device_info</code></td><td>TEXT</td><td>معلومات الجهاز</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<p><strong>أنواع العمليات (action):</strong> <code class="inline-code">login</code>, <code class="inline-code">logout</code>, <code class="inline-code">sale_create</code>, <code class="inline-code">sale_cancel</code>, <code class="inline-code">refund</code>, <code class="inline-code">price_change</code>, <code class="inline-code">stock_adjust</code>, <code class="inline-code">payment_record</code>, <code class="inline-code">shift_open</code>, <code class="inline-code">shift_close</code>, <code class="inline-code">settings_change</code></p>
+<h3>2.11 جدول التصنيفات (<code class="inline-code">categories</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL, FK &rarr; stores(id)</td></tr>
+<tr><td><code class="inline-code">name</code></td><td>TEXT</td><td>اسم التصنيف بالعربية</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">name_en</code></td><td>TEXT</td><td>اسم التصنيف بالإنجليزية</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">parent_id</code></td><td>TEXT</td><td>معرف التصنيف الأب</td><td>nullable, FK &rarr; categories(id)</td></tr>
+<tr><td><code class="inline-code">image_url</code></td><td>TEXT</td><td>رابط الصورة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">color</code></td><td>TEXT</td><td>اللون</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">icon</code></td><td>TEXT</td><td>الأيقونة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">sort_order</code></td><td>INTEGER</td><td>ترتيب العرض</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">is_active</code></td><td>BOOLEAN</td><td>هل نشط</td><td>DEFAULT true</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">updated_at</code></td><td>DATETIME</td><td>تاريخ التحديث</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">deleted_at</code></td><td>DATETIME</td><td>تاريخ الحذف الناعم</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h3>2.12 جداول نظام الولاء</h3>
+<h4>جدول نقاط الولاء (<code class="inline-code">loyalty_points</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">customer_id</code></td><td>TEXT</td><td>معرف العميل</td><td>NOT NULL, FK &rarr; customers(id)</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL, FK &rarr; stores(id)</td></tr>
+<tr><td><code class="inline-code">current_points</code></td><td>INTEGER</td><td>النقاط الحالية</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">total_earned</code></td><td>INTEGER</td><td>إجمالي النقاط المكتسبة</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">total_redeemed</code></td><td>INTEGER</td><td>إجمالي النقاط المستبدلة</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">tier_level</code></td><td>TEXT</td><td>مستوى العميل</td><td>DEFAULT &#x27;bronze&#x27; (bronze, silver, gold, platinum)</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">updated_at</code></td><td>DATETIME</td><td>تاريخ التحديث</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<p><strong>قيد فريد:</strong> (<code class="inline-code">customer_id</code>, <code class="inline-code">store_id</code>) - عميل واحد لكل متجر</p>
+<h4>جدول معاملات النقاط (<code class="inline-code">loyalty_transactions</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">loyalty_id</code></td><td>TEXT</td><td>معرف سجل الولاء</td><td>NOT NULL, FK &rarr; loyalty_points(id)</td></tr>
+<tr><td><code class="inline-code">customer_id</code></td><td>TEXT</td><td>معرف العميل</td><td>NOT NULL, FK &rarr; customers(id)</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL, FK &rarr; stores(id)</td></tr>
+<tr><td><code class="inline-code">transaction_type</code></td><td>TEXT</td><td>نوع المعاملة</td><td>NOT NULL (earn, redeem, expire, adjust)</td></tr>
+<tr><td><code class="inline-code">points</code></td><td>INTEGER</td><td>عدد النقاط</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">balance_after</code></td><td>INTEGER</td><td>الرصيد بعد المعاملة</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">sale_id</code></td><td>TEXT</td><td>معرف البيع المرتبط</td><td>nullable, FK &rarr; sales(id)</td></tr>
+<tr><td><code class="inline-code">sale_amount</code></td><td>REAL</td><td>مبلغ البيع</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">description</code></td><td>TEXT</td><td>الوصف</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">cashier_id</code></td><td>TEXT</td><td>معرف الكاشير</td><td>nullable, FK &rarr; users(id)</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h4>جدول المكافآت (<code class="inline-code">loyalty_rewards</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL, FK &rarr; stores(id)</td></tr>
+<tr><td><code class="inline-code">name</code></td><td>TEXT</td><td>اسم المكافأة</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">description</code></td><td>TEXT</td><td>الوصف</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">points_required</code></td><td>INTEGER</td><td>النقاط المطلوبة</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">reward_type</code></td><td>TEXT</td><td>نوع المكافأة</td><td>NOT NULL (discount_percentage, discount_fixed, free_item)</td></tr>
+<tr><td><code class="inline-code">reward_value</code></td><td>REAL</td><td>قيمة المكافأة</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">min_purchase</code></td><td>REAL</td><td>الحد الأدنى للشراء</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">required_tier</code></td><td>TEXT</td><td>المستوى المطلوب</td><td>DEFAULT &#x27;all&#x27;</td></tr>
+<tr><td><code class="inline-code">is_active</code></td><td>BOOLEAN</td><td>هل نشطة</td><td>DEFAULT true</td></tr>
+<tr><td><code class="inline-code">expires_at</code></td><td>DATETIME</td><td>تاريخ الانتهاء</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h3>2.13 جدول المتاجر (<code class="inline-code">stores</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">name</code></td><td>TEXT</td><td>اسم المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">name_en</code></td><td>TEXT</td><td>الاسم بالإنجليزية</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">phone</code></td><td>TEXT</td><td>رقم الهاتف</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">email</code></td><td>TEXT</td><td>البريد الإلكتروني</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">address</code></td><td>TEXT</td><td>العنوان</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">city</code></td><td>TEXT</td><td>المدينة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">logo</code></td><td>TEXT</td><td>رابط الشعار</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">tax_number</code></td><td>TEXT</td><td>الرقم الضريبي</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">commercial_reg</code></td><td>TEXT</td><td>السجل التجاري</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">currency</code></td><td>TEXT</td><td>العملة</td><td>DEFAULT &#x27;SAR&#x27;</td></tr>
+<tr><td><code class="inline-code">timezone</code></td><td>TEXT</td><td>المنطقة الزمنية</td><td>DEFAULT &#x27;Asia/Riyadh&#x27;</td></tr>
+<tr><td><code class="inline-code">is_active</code></td><td>BOOLEAN</td><td>هل نشط</td><td>DEFAULT true</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">updated_at</code></td><td>DATETIME</td><td>تاريخ التحديث</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">deleted_at</code></td><td>DATETIME</td><td>تاريخ الحذف الناعم</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h3>2.14 جدول المستخدمين (<code class="inline-code">users</code>) وجدول الأدوار (<code class="inline-code">roles</code>)</h3>
+<h4>جدول المستخدمين (<code class="inline-code">users</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">name</code></td><td>TEXT</td><td>الاسم الكامل</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">phone</code></td><td>TEXT</td><td>رقم الهاتف</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">email</code></td><td>TEXT</td><td>البريد الإلكتروني</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">pin</code></td><td>TEXT</td><td>رمز PIN</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">auth_uid</code></td><td>TEXT</td><td>معرف المصادقة (Supabase Auth)</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">role</code></td><td>TEXT</td><td>الدور</td><td>DEFAULT &#x27;cashier&#x27;</td></tr>
+<tr><td><code class="inline-code">role_id</code></td><td>TEXT</td><td>معرف الدور المخصص</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">avatar</code></td><td>TEXT</td><td>رابط الصورة الشخصية</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">is_active</code></td><td>BOOLEAN</td><td>هل نشط</td><td>DEFAULT true</td></tr>
+<tr><td><code class="inline-code">last_login_at</code></td><td>DATETIME</td><td>آخر تسجيل دخول</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">updated_at</code></td><td>DATETIME</td><td>تاريخ التحديث</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">deleted_at</code></td><td>DATETIME</td><td>تاريخ الحذف الناعم</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h4>جدول الأدوار (<code class="inline-code">roles</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف الفريد</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">name</code></td><td>TEXT</td><td>اسم الدور</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">name_en</code></td><td>TEXT</td><td>الاسم بالإنجليزية</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">permissions</code></td><td>TEXT</td><td>الصلاحيات (JSON)</td><td>DEFAULT &#x27;{}&#x27;</td></tr>
+<tr><td><code class="inline-code">is_system</code></td><td>BOOLEAN</td><td>هل دور نظامي</td><td>DEFAULT false</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">updated_at</code></td><td>DATETIME</td><td>تاريخ التحديث</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h3>2.15 جدول العملاء (<code class="inline-code">customers</code>) وعناوينهم (<code class="inline-code">customer_addresses</code>)</h3>
+<h4>جدول العملاء (<code class="inline-code">customers</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">name</code></td><td>TEXT</td><td>الاسم</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">phone</code></td><td>TEXT</td><td>الهاتف</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">email</code></td><td>TEXT</td><td>البريد</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">address</code></td><td>TEXT</td><td>العنوان</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">city</code></td><td>TEXT</td><td>المدينة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">tax_number</code></td><td>TEXT</td><td>الرقم الضريبي</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">type</code></td><td>TEXT</td><td>النوع</td><td>DEFAULT &#x27;individual&#x27;</td></tr>
+<tr><td><code class="inline-code">notes</code></td><td>TEXT</td><td>ملاحظات</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">is_active</code></td><td>BOOLEAN</td><td>نشط</td><td>DEFAULT true</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">updated_at</code></td><td>DATETIME</td><td>تاريخ التحديث</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">deleted_at</code></td><td>DATETIME</td><td>تاريخ الحذف</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h4>جدول عناوين العملاء (<code class="inline-code">customer_addresses</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">customer_id</code></td><td>TEXT</td><td>معرف العميل</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">label</code></td><td>TEXT</td><td>التسمية</td><td>DEFAULT &#x27;home&#x27;</td></tr>
+<tr><td><code class="inline-code">address</code></td><td>TEXT</td><td>العنوان</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">city</code></td><td>TEXT</td><td>المدينة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">lat</code></td><td>REAL</td><td>خط العرض</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">lng</code></td><td>REAL</td><td>خط الطول</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">is_default</code></td><td>BOOLEAN</td><td>هل افتراضي</td><td>DEFAULT false</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+</tbody>
+</table></div>
+<h3>2.16 جدول الموردين (<code class="inline-code">suppliers</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">name</code></td><td>TEXT</td><td>الاسم</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">phone</code></td><td>TEXT</td><td>الهاتف</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">email</code></td><td>TEXT</td><td>البريد</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">address</code></td><td>TEXT</td><td>العنوان</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">city</code></td><td>TEXT</td><td>المدينة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">tax_number</code></td><td>TEXT</td><td>الرقم الضريبي</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">payment_terms</code></td><td>TEXT</td><td>شروط الدفع</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">rating</code></td><td>INTEGER</td><td>التقييم (0-5)</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">balance</code></td><td>REAL</td><td>الرصيد</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">notes</code></td><td>TEXT</td><td>ملاحظات</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">is_active</code></td><td>BOOLEAN</td><td>نشط</td><td>DEFAULT true</td></tr>
+<tr><td><code class="inline-code">created_at</code> - <code class="inline-code">deleted_at</code></td><td>DATETIME</td><td>تواريخ الإدارة</td><td>---</td></tr>
+</tbody>
+</table></div>
+<h3>2.17 جدول الورديات (<code class="inline-code">shifts</code>) وحركات الصندوق (<code class="inline-code">cash_movements</code>)</h3>
+<h4>جدول الورديات (<code class="inline-code">shifts</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">terminal_id</code></td><td>TEXT</td><td>معرف نقطة البيع</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">cashier_id</code></td><td>TEXT</td><td>معرف الكاشير</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">cashier_name</code></td><td>TEXT</td><td>اسم الكاشير</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">opening_cash</code></td><td>REAL</td><td>النقد الافتتاحي</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">closing_cash</code></td><td>REAL</td><td>النقد الختامي</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">expected_cash</code></td><td>REAL</td><td>النقد المتوقع</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">difference</code></td><td>REAL</td><td>الفرق</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">total_sales</code></td><td>INTEGER</td><td>عدد المبيعات</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">total_sales_amount</code></td><td>REAL</td><td>إجمالي المبيعات</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">total_refunds</code></td><td>INTEGER</td><td>عدد المرتجعات</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">total_refunds_amount</code></td><td>REAL</td><td>إجمالي المرتجعات</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">status</code></td><td>TEXT</td><td>الحالة</td><td>DEFAULT &#x27;open&#x27; (open, closed)</td></tr>
+<tr><td><code class="inline-code">notes</code></td><td>TEXT</td><td>ملاحظات</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">opened_at</code></td><td>DATETIME</td><td>وقت الفتح</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">closed_at</code></td><td>DATETIME</td><td>وقت الإغلاق</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h4>جدول حركات الصندوق (<code class="inline-code">cash_movements</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">shift_id</code></td><td>TEXT</td><td>معرف الوردية</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">type</code></td><td>TEXT</td><td>النوع</td><td>NOT NULL (in, out)</td></tr>
+<tr><td><code class="inline-code">amount</code></td><td>REAL</td><td>المبلغ</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">reason</code></td><td>TEXT</td><td>السبب</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">reference</code></td><td>TEXT</td><td>المرجع</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">created_by</code></td><td>TEXT</td><td>المنشئ</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h3>2.18 جدول المرتجعات (<code class="inline-code">returns</code>) وعناصرها (<code class="inline-code">return_items</code>)</h3>
+<h4>جدول المرتجعات (<code class="inline-code">returns</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">return_number</code></td><td>TEXT</td><td>رقم المرتجع</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">sale_id</code></td><td>TEXT</td><td>معرف الفاتورة الأصلية</td><td>NOT NULL, FK &rarr; sales(id) ON DELETE RESTRICT</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL, FK &rarr; stores(id) ON DELETE RESTRICT</td></tr>
+<tr><td><code class="inline-code">customer_id</code></td><td>TEXT</td><td>معرف العميل</td><td>nullable, FK &rarr; customers(id) ON DELETE SET NULL</td></tr>
+<tr><td><code class="inline-code">customer_name</code></td><td>TEXT</td><td>اسم العميل</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">reason</code></td><td>TEXT</td><td>سبب الإرجاع</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">type</code></td><td>TEXT</td><td>النوع</td><td>DEFAULT &#x27;full&#x27; (full, partial)</td></tr>
+<tr><td><code class="inline-code">refund_method</code></td><td>TEXT</td><td>طريقة الاسترداد</td><td>DEFAULT &#x27;cash&#x27;</td></tr>
+<tr><td><code class="inline-code">total_refund</code></td><td>REAL</td><td>إجمالي المبلغ المسترد</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">status</code></td><td>TEXT</td><td>الحالة</td><td>DEFAULT &#x27;completed&#x27;</td></tr>
+<tr><td><code class="inline-code">created_by</code></td><td>TEXT</td><td>المنشئ</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">notes</code></td><td>TEXT</td><td>ملاحظات</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">deleted_at</code></td><td>DATETIME</td><td>تاريخ الحذف</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<p><strong>قيد فريد:</strong> (<code class="inline-code">store_id</code>, <code class="inline-code">return_number</code>)</p>
+<h4>جدول عناصر المرتجعات (<code class="inline-code">return_items</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">return_id</code></td><td>TEXT</td><td>معرف المرتجع</td><td>NOT NULL, FK &rarr; returns(id) ON DELETE CASCADE</td></tr>
+<tr><td><code class="inline-code">sale_item_id</code></td><td>TEXT</td><td>معرف عنصر البيع الأصلي</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">product_id</code></td><td>TEXT</td><td>معرف المنتج</td><td>NOT NULL, FK &rarr; products(id) ON DELETE RESTRICT</td></tr>
+<tr><td><code class="inline-code">product_name</code></td><td>TEXT</td><td>اسم المنتج</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">qty</code></td><td>REAL</td><td>الكمية</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">unit_price</code></td><td>REAL</td><td>سعر الوحدة</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">refund_amount</code></td><td>REAL</td><td>مبلغ الاسترداد</td><td>NOT NULL</td></tr>
+</tbody>
+</table></div>
+<h3>2.19 جدول المصروفات (<code class="inline-code">expenses</code>) وفئاتها (<code class="inline-code">expense_categories</code>)</h3>
+<h4>جدول المصروفات (<code class="inline-code">expenses</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">category_id</code></td><td>TEXT</td><td>معرف الفئة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">amount</code></td><td>REAL</td><td>المبلغ</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">description</code></td><td>TEXT</td><td>الوصف</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">payment_method</code></td><td>TEXT</td><td>طريقة الدفع</td><td>DEFAULT &#x27;cash&#x27;</td></tr>
+<tr><td><code class="inline-code">receipt_image</code></td><td>TEXT</td><td>صورة الإيصال</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">created_by</code></td><td>TEXT</td><td>المنشئ</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">expense_date</code></td><td>DATETIME</td><td>تاريخ المصروف</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">created_at</code> - <code class="inline-code">deleted_at</code></td><td>DATETIME</td><td>تواريخ الإدارة</td><td>---</td></tr>
+</tbody>
+</table></div>
+<h3>2.20 جدول المشتريات (<code class="inline-code">purchases</code>) وعناصرها (<code class="inline-code">purchase_items</code>)</h3>
+<h4>جدول المشتريات (<code class="inline-code">purchases</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL, FK &rarr; stores(id) ON DELETE RESTRICT</td></tr>
+<tr><td><code class="inline-code">supplier_id</code></td><td>TEXT</td><td>معرف المورد</td><td>nullable, FK &rarr; suppliers(id) ON DELETE SET NULL</td></tr>
+<tr><td><code class="inline-code">supplier_name</code></td><td>TEXT</td><td>اسم المورد</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">purchase_number</code></td><td>TEXT</td><td>رقم أمر الشراء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">status</code></td><td>TEXT</td><td>الحالة</td><td>DEFAULT &#x27;draft&#x27;</td></tr>
+<tr><td><code class="inline-code">subtotal</code></td><td>REAL</td><td>المجموع الفرعي</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">tax</code></td><td>REAL</td><td>الضريبة</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">discount</code></td><td>REAL</td><td>الخصم</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">total</code></td><td>REAL</td><td>الإجمالي</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">payment_status</code></td><td>TEXT</td><td>حالة الدفع</td><td>DEFAULT &#x27;pending&#x27;</td></tr>
+<tr><td><code class="inline-code">payment_method</code></td><td>TEXT</td><td>طريقة الدفع</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">notes</code></td><td>TEXT</td><td>ملاحظات</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">received_at</code></td><td>DATETIME</td><td>تاريخ الاستلام</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">created_at</code> - <code class="inline-code">deleted_at</code></td><td>DATETIME</td><td>تواريخ الإدارة</td><td>---</td></tr>
+</tbody>
+</table></div>
+<p><strong>قيد فريد:</strong> (<code class="inline-code">store_id</code>, <code class="inline-code">purchase_number</code>)</p>
+<h3>2.21 جداول الخصومات والكوبونات والعروض</h3>
+<h4>جدول الخصومات (<code class="inline-code">discounts</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">name</code></td><td>TEXT</td><td>الاسم</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">type</code></td><td>TEXT</td><td>النوع</td><td>NOT NULL (percentage, fixed)</td></tr>
+<tr><td><code class="inline-code">value</code></td><td>REAL</td><td>القيمة</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">min_purchase</code></td><td>REAL</td><td>الحد الأدنى للشراء</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">max_discount</code></td><td>REAL</td><td>الحد الأقصى للخصم</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">applies_to</code></td><td>TEXT</td><td>ينطبق على</td><td>DEFAULT &#x27;all&#x27;</td></tr>
+<tr><td><code class="inline-code">product_ids</code></td><td>TEXT</td><td>معرفات المنتجات (JSON)</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">category_ids</code></td><td>TEXT</td><td>معرفات التصنيفات (JSON)</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">start_date</code></td><td>DATETIME</td><td>تاريخ البداية</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">end_date</code></td><td>DATETIME</td><td>تاريخ النهاية</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">is_active</code></td><td>BOOLEAN</td><td>نشط</td><td>DEFAULT true</td></tr>
+</tbody>
+</table></div>
+<h4>جدول الكوبونات (<code class="inline-code">coupons</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">code</code></td><td>TEXT</td><td>رمز الكوبون</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">type</code></td><td>TEXT</td><td>النوع</td><td>NOT NULL (percentage, fixed)</td></tr>
+<tr><td><code class="inline-code">value</code></td><td>REAL</td><td>القيمة</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">max_uses</code></td><td>INTEGER</td><td>الحد الأقصى للاستخدام</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">current_uses</code></td><td>INTEGER</td><td>الاستخدام الحالي</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">min_purchase</code></td><td>REAL</td><td>الحد الأدنى للشراء</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">is_active</code></td><td>BOOLEAN</td><td>نشط</td><td>DEFAULT true</td></tr>
+<tr><td><code class="inline-code">expires_at</code></td><td>DATETIME</td><td>تاريخ الانتهاء</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h4>جدول العروض الترويجية (<code class="inline-code">promotions</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">name</code></td><td>TEXT</td><td>الاسم</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">type</code></td><td>TEXT</td><td>النوع</td><td>NOT NULL (buy_x_get_y, bundle, flash_sale)</td></tr>
+<tr><td><code class="inline-code">rules</code></td><td>TEXT</td><td>القواعد (JSON)</td><td>DEFAULT &#x27;{}&#x27;</td></tr>
+<tr><td><code class="inline-code">start_date</code></td><td>DATETIME</td><td>تاريخ البداية</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">end_date</code></td><td>DATETIME</td><td>تاريخ النهاية</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">is_active</code></td><td>BOOLEAN</td><td>نشط</td><td>DEFAULT true</td></tr>
+</tbody>
+</table></div>
+<h3>2.22 جداول أخرى</h3>
+<h4>الفواتير المعلقة (<code class="inline-code">held_invoices</code>)</h4>
+<p>تُخزن الفواتير المعلقة مؤقتاً مع عناصر السلة بصيغة JSON.</p>
+<h4>الإشعارات (<code class="inline-code">notifications</code>)</h4>
+<p>إشعارات النظام للمستخدمين مع دعم أنواع متعددة (info, warning, error, success).</p>
+<h4>تحويلات المخزون (<code class="inline-code">stock_transfers</code>)</h4>
+<p>تحويلات المخزون بين الفروع مع تتبع الحالة.</p>
+<h4>الإعدادات (<code class="inline-code">settings</code>)</h4>
+<p>إعدادات المتجر بنظام مفتاح-قيمة (key-value).</p>
+<h4>عمليات الجرد (<code class="inline-code">stock_takes</code>)</h4>
+<p>تتبع عمليات الجرد مع عناصر الجرد بصيغة JSON.</p>
+<h4>صلاحية المنتجات (<code class="inline-code">product_expiry</code>)</h4>
+<p>تتبع تواريخ صلاحية المنتجات حسب الدفعة.</p>
+<h4>السائقون (<code class="inline-code">drivers</code>)</h4>
+<p>بيانات سائقي التوصيل.</p>
+<h4>الملخصات اليومية (<code class="inline-code">daily_summaries</code>)</h4>
+<p>ملخصات المبيعات والطلبات والمصروفات اليومية للتقارير السريعة.</p>
+<h4>سجل حالات الطلبات (<code class="inline-code">order_status_history</code>)</h4>
+<p>تتبع تغييرات حالة الطلبات.</p>
+<h4>المفضلة (<code class="inline-code">favorites</code>)</h4>
+<p>المنتجات المفضلة لكل متجر. قيد فريد: (<code class="inline-code">store_id</code>, <code class="inline-code">product_id</code>).</p>
+<h3>2.23 جداول واتساب</h3>
+<h4>رسائل واتساب (<code class="inline-code">whatsapp_messages</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">phone</code></td><td>TEXT</td><td>رقم المستلم</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">customer_name</code></td><td>TEXT</td><td>اسم العميل</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">message_type</code></td><td>TEXT</td><td>نوع الرسالة</td><td>NOT NULL (text, image, document, ...)</td></tr>
+<tr><td><code class="inline-code">text_content</code></td><td>TEXT</td><td>محتوى النص</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">media_url</code></td><td>TEXT</td><td>رابط الوسائط</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">template_id</code></td><td>TEXT</td><td>معرف القالب</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">reference_type</code></td><td>TEXT</td><td>نوع المرجع</td><td>nullable (sale, order, debt_reminder, ...)</td></tr>
+<tr><td><code class="inline-code">reference_id</code></td><td>TEXT</td><td>معرف المرجع</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">status</code></td><td>TEXT</td><td>الحالة</td><td>DEFAULT &#x27;pending&#x27; (pending, uploading, sending, sent, delivered, read, failed)</td></tr>
+<tr><td><code class="inline-code">external_msg_id</code></td><td>TEXT</td><td>معرف WaSenderAPI</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">retry_count</code></td><td>INTEGER</td><td>عدد المحاولات</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">priority</code></td><td>INTEGER</td><td>الأولوية</td><td>DEFAULT 2 (1=عروض, 2=تذكير, 3=إيصالات)</td></tr>
+<tr><td><code class="inline-code">batch_id</code></td><td>TEXT</td><td>معرف الدفعة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">created_at</code> - <code class="inline-code">read_at</code></td><td>DATETIME</td><td>تواريخ متعددة</td><td>---</td></tr>
+</tbody>
+</table></div>
+<h4>قوالب واتساب (<code class="inline-code">whatsapp_templates</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">name</code></td><td>TEXT</td><td>اسم القالب</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">type</code></td><td>TEXT</td><td>النوع</td><td>NOT NULL (receipt, debt_reminder, promotion, ...)</td></tr>
+<tr><td><code class="inline-code">content</code></td><td>TEXT</td><td>المحتوى مع {{placeholders}}</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">language</code></td><td>TEXT</td><td>اللغة</td><td>DEFAULT &#x27;ar&#x27;</td></tr>
+<tr><td><code class="inline-code">is_active</code></td><td>BOOLEAN</td><td>نشط</td><td>DEFAULT true</td></tr>
+<tr><td><code class="inline-code">is_default</code></td><td>BOOLEAN</td><td>افتراضي</td><td>DEFAULT false</td></tr>
+<tr><td><code class="inline-code">media_type</code></td><td>TEXT</td><td>نوع الوسائط المرفقة</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h3>2.24 جداول متعددة المستأجرين</h3>
+<h4>المؤسسات (<code class="inline-code">organizations</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">name</code></td><td>TEXT</td><td>الاسم</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">slug</code></td><td>TEXT</td><td>المعرف النصي الفريد</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">owner_id</code></td><td>TEXT</td><td>معرف المالك</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">plan</code></td><td>TEXT</td><td>الخطة</td><td>DEFAULT &#x27;free&#x27;</td></tr>
+<tr><td><code class="inline-code">max_stores</code></td><td>INTEGER</td><td>الحد الأقصى للمتاجر</td><td>DEFAULT 1</td></tr>
+<tr><td><code class="inline-code">max_users</code></td><td>INTEGER</td><td>الحد الأقصى للمستخدمين</td><td>DEFAULT 3</td></tr>
+<tr><td><code class="inline-code">max_products</code></td><td>INTEGER</td><td>الحد الأقصى للمنتجات</td><td>DEFAULT 100</td></tr>
+<tr><td><code class="inline-code">country</code></td><td>TEXT</td><td>الدولة</td><td>DEFAULT &#x27;SA&#x27;</td></tr>
+<tr><td><code class="inline-code">currency</code></td><td>TEXT</td><td>العملة</td><td>DEFAULT &#x27;SAR&#x27;</td></tr>
+<tr><td><code class="inline-code">is_active</code></td><td>BOOLEAN</td><td>نشط</td><td>DEFAULT true</td></tr>
+<tr><td><code class="inline-code">trial_ends_at</code></td><td>DATETIME</td><td>نهاية الفترة التجريبية</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h4>الاشتراكات (<code class="inline-code">subscriptions</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">plan</code></td><td>TEXT</td><td>الخطة</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">status</code></td><td>TEXT</td><td>الحالة</td><td>DEFAULT &#x27;active&#x27;</td></tr>
+<tr><td><code class="inline-code">amount</code></td><td>REAL</td><td>المبلغ</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">billing_cycle</code></td><td>TEXT</td><td>دورة الفوترة</td><td>DEFAULT &#x27;monthly&#x27;</td></tr>
+<tr><td><code class="inline-code">current_period_start</code></td><td>DATETIME</td><td>بداية الفترة الحالية</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">current_period_end</code></td><td>DATETIME</td><td>نهاية الفترة الحالية</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">features</code></td><td>TEXT</td><td>الميزات (JSON)</td><td>DEFAULT &#x27;{}&#x27;</td></tr>
+</tbody>
+</table></div>
+<h4>أعضاء المؤسسة (<code class="inline-code">org_members</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">user_id</code></td><td>TEXT</td><td>معرف المستخدم</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">role</code></td><td>TEXT</td><td>الدور</td><td>DEFAULT &#x27;staff&#x27;</td></tr>
+<tr><td><code class="inline-code">is_active</code></td><td>BOOLEAN</td><td>نشط</td><td>DEFAULT true</td></tr>
+</tbody>
+</table></div>
+<p><strong>قيد فريد:</strong> (<code class="inline-code">org_id</code>, <code class="inline-code">user_id</code>)</p>
+<h4>متاجر المستخدمين (<code class="inline-code">user_stores</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">user_id</code></td><td>TEXT</td><td>معرف المستخدم</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">role</code></td><td>TEXT</td><td>الدور</td><td>DEFAULT &#x27;cashier&#x27;</td></tr>
+<tr><td><code class="inline-code">is_primary</code></td><td>BOOLEAN</td><td>هل أساسي</td><td>DEFAULT false</td></tr>
+<tr><td><code class="inline-code">is_active</code></td><td>BOOLEAN</td><td>نشط</td><td>DEFAULT true</td></tr>
+</tbody>
+</table></div>
+<p><strong>قيد فريد:</strong> (<code class="inline-code">user_id</code>, <code class="inline-code">store_id</code>)</p>
+<h4>نقاط البيع (<code class="inline-code">pos_terminals</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">name</code></td><td>TEXT</td><td>الاسم</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">terminal_number</code></td><td>INTEGER</td><td>رقم النقطة</td><td>DEFAULT 1</td></tr>
+<tr><td><code class="inline-code">device_id</code></td><td>TEXT</td><td>معرف الجهاز</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">device_name</code></td><td>TEXT</td><td>اسم الجهاز</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">status</code></td><td>TEXT</td><td>الحالة</td><td>DEFAULT &#x27;active&#x27;</td></tr>
+<tr><td><code class="inline-code">current_shift_id</code></td><td>TEXT</td><td>معرف الوردية الحالية</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">current_user_id</code></td><td>TEXT</td><td>معرف المستخدم الحالي</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">settings</code></td><td>TEXT</td><td>الإعدادات (JSON)</td><td>DEFAULT &#x27;{}&#x27;</td></tr>
+</tbody>
+</table></div>
+<h3>2.25 جداول المزامنة</h3>
+<h4>بيانات المزامنة الوصفية (<code class="inline-code">sync_metadata</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">table_name</code></td><td>TEXT</td><td>اسم الجدول المتتبع</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">last_pull_at</code></td><td>DATETIME</td><td>آخر سحب ناجح</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">last_push_at</code></td><td>DATETIME</td><td>آخر دفع ناجح</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">pending_count</code></td><td>INTEGER</td><td>عدد المعلقات</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">failed_count</code></td><td>INTEGER</td><td>عدد الفشل</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">is_initial_synced</code></td><td>BOOLEAN</td><td>هل تمت المزامنة الأولية</td><td>DEFAULT false</td></tr>
+<tr><td><code class="inline-code">last_sync_count</code></td><td>INTEGER</td><td>عدد آخر مزامنة</td><td>DEFAULT 0</td></tr>
+<tr><td><code class="inline-code">last_error</code></td><td>TEXT</td><td>آخر خطأ</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<h4>تغييرات المخزون (Delta Sync) (<code class="inline-code">stock_deltas</code>)</h4>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>العمود</th><th>النوع</th><th>وصف</th><th>قيود</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">id</code></td><td>TEXT</td><td>المعرف</td><td>PRIMARY KEY</td></tr>
+<tr><td><code class="inline-code">product_id</code></td><td>TEXT</td><td>معرف المنتج</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">store_id</code></td><td>TEXT</td><td>معرف المتجر</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">org_id</code></td><td>TEXT</td><td>معرف المؤسسة</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">quantity_change</code></td><td>REAL</td><td>التغيير في الكمية</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">device_id</code></td><td>TEXT</td><td>معرف الجهاز</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">operation_type</code></td><td>TEXT</td><td>نوع العملية</td><td>NOT NULL (sale, return, adjustment, purchase)</td></tr>
+<tr><td><code class="inline-code">reference_id</code></td><td>TEXT</td><td>معرف المرجع</td><td>nullable</td></tr>
+<tr><td><code class="inline-code">sync_status</code></td><td>TEXT</td><td>حالة المزامنة</td><td>DEFAULT &#x27;pending&#x27; (pending, synced, failed)</td></tr>
+<tr><td><code class="inline-code">created_at</code></td><td>DATETIME</td><td>تاريخ الإنشاء</td><td>NOT NULL</td></tr>
+<tr><td><code class="inline-code">synced_at</code></td><td>DATETIME</td><td>تاريخ المزامنة</td><td>nullable</td></tr>
+</tbody>
+</table></div>
+<hr>
+<h2>3. العلاقات بين الجداول</h2>
+<div class="mermaid">
+erDiagram
+    organizations ||--o{ stores : "تحتوي"
+    organizations ||--o{ subscriptions : "لديها"
+    organizations ||--o{ org_members : "أعضاء"
+
+    stores ||--o{ products : "تحتوي"
+    stores ||--o{ categories : "تحتوي"
+    stores ||--o{ sales : "مبيعات"
+    stores ||--o{ orders : "طلبات"
+    stores ||--o{ users : "موظفون"
+    stores ||--o{ customers : "عملاء"
+    stores ||--o{ suppliers : "موردون"
+    stores ||--o{ shifts : "ورديات"
+    stores ||--o{ accounts : "حسابات"
+    stores ||--o{ expenses : "مصروفات"
+    stores ||--o{ purchases : "مشتريات"
+    stores ||--o{ pos_terminals : "نقاط بيع"
+
+    categories ||--o{ products : "تصنيف"
+    categories ||--o{ categories : "تصنيف فرعي"
+
+    products ||--o{ sale_items : "عناصر بيع"
+    products ||--o{ order_items : "عناصر طلب"
+    products ||--o{ inventory_movements : "حركات مخزون"
+    products ||--o{ purchase_items : "عناصر شراء"
+    products ||--o{ return_items : "عناصر مرتجعات"
+    products ||--o{ stock_deltas : "تغييرات مخزون"
+
+    sales ||--o{ sale_items : "عناصر"
+    sales ||--o{ returns : "مرتجعات"
+    sales }o--|| users : "كاشير"
+    sales }o--o| customers : "عميل"
+
+    orders ||--o{ order_items : "عناصر"
+    orders }o--o| customers : "عميل"
+
+    returns ||--o{ return_items : "عناصر"
+
+    customers ||--o{ customer_addresses : "عناوين"
+    customers ||--o{ accounts : "حسابات"
+    customers ||--o{ loyalty_points : "نقاط ولاء"
+
+    suppliers ||--o{ accounts : "حسابات"
+    suppliers ||--o{ purchases : "مشتريات"
+
+    accounts ||--o{ transactions : "حركات"
+
+    purchases ||--o{ purchase_items : "عناصر"
+
+    shifts ||--o{ cash_movements : "حركات صندوق"
+
+    loyalty_points ||--o{ loyalty_transactions : "معاملات"
+    stores ||--o{ loyalty_rewards : "مكافآت"
+
+    user_stores }o--|| users : "مستخدم"
+    user_stores }o--|| stores : "متجر"
+</div>
+<hr>
+<h2>4. الفهارس (Indexes)</h2>
+<h3>فهارس جدول المنتجات (<code class="inline-code">products</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>اسم الفهرس</th><th>الأعمدة</th><th>فريد</th><th>الغرض</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">idx_products_store_id</code></td><td>store_id</td><td>لا</td><td>استعلامات حسب المتجر</td></tr>
+<tr><td><code class="inline-code">idx_products_barcode</code></td><td>barcode</td><td>لا</td><td>بحث سريع بالباركود</td></tr>
+<tr><td><code class="inline-code">idx_products_sku</code></td><td>sku</td><td>لا</td><td>بحث بـ SKU</td></tr>
+<tr><td><code class="inline-code">idx_products_category_id</code></td><td>category_id</td><td>لا</td><td>فلترة حسب التصنيف</td></tr>
+<tr><td><code class="inline-code">idx_products_name</code></td><td>name</td><td>لا</td><td>بحث بالاسم</td></tr>
+<tr><td><code class="inline-code">idx_products_synced_at</code></td><td>synced_at</td><td>لا</td><td>المزامنة</td></tr>
+<tr><td><code class="inline-code">idx_products_is_active</code></td><td>is_active</td><td>لا</td><td>فلترة المنتجات النشطة</td></tr>
+<tr><td><code class="inline-code">idx_products_store_barcode</code></td><td>store_id, barcode</td><td><strong>نعم</strong></td><td>منع تكرار الباركود في نفس المتجر</td></tr>
+</tbody>
+</table></div>
+<h3>فهارس جدول المبيعات (<code class="inline-code">sales</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>اسم الفهرس</th><th>الأعمدة</th><th>فريد</th><th>الغرض</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">idx_sales_store_id</code></td><td>store_id</td><td>لا</td><td>استعلامات حسب المتجر</td></tr>
+<tr><td><code class="inline-code">idx_sales_cashier_id</code></td><td>cashier_id</td><td>لا</td><td>استعلامات حسب الكاشير</td></tr>
+<tr><td><code class="inline-code">idx_sales_created_at</code></td><td>created_at</td><td>لا</td><td>استعلامات حسب التاريخ</td></tr>
+<tr><td><code class="inline-code">idx_sales_status</code></td><td>status</td><td>لا</td><td>فلترة حسب الحالة</td></tr>
+<tr><td><code class="inline-code">idx_sales_synced_at</code></td><td>synced_at</td><td>لا</td><td>المزامنة</td></tr>
+<tr><td><code class="inline-code">idx_sales_store_created</code></td><td>store_id, created_at</td><td>لا</td><td>استعلام مركب</td></tr>
+<tr><td><code class="inline-code">idx_sales_store_receipt_unique</code></td><td>store_id, receipt_no</td><td><strong>نعم</strong></td><td>منع تكرار رقم الإيصال</td></tr>
+</tbody>
+</table></div>
+<h3>فهارس جدول الطلبات (<code class="inline-code">orders</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>اسم الفهرس</th><th>الأعمدة</th><th>فريد</th><th>الغرض</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">idx_orders_store_id</code></td><td>store_id</td><td>لا</td><td>استعلامات حسب المتجر</td></tr>
+<tr><td><code class="inline-code">idx_orders_customer_id</code></td><td>customer_id</td><td>لا</td><td>استعلامات حسب العميل</td></tr>
+<tr><td><code class="inline-code">idx_orders_status</code></td><td>status</td><td>لا</td><td>فلترة حسب الحالة</td></tr>
+<tr><td><code class="inline-code">idx_orders_order_date</code></td><td>order_date</td><td>لا</td><td>استعلامات حسب التاريخ</td></tr>
+<tr><td><code class="inline-code">idx_orders_store_status</code></td><td>store_id, status</td><td>لا</td><td>استعلام مركب</td></tr>
+<tr><td><code class="inline-code">idx_orders_synced_at</code></td><td>synced_at</td><td>لا</td><td>المزامنة</td></tr>
+<tr><td><code class="inline-code">idx_orders_store_number_unique</code></td><td>store_id, order_number</td><td><strong>نعم</strong></td><td>منع تكرار رقم الطلب</td></tr>
+</tbody>
+</table></div>
+<h3>فهارس جدول المزامنة (<code class="inline-code">sync_queue</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>اسم الفهرس</th><th>الأعمدة</th><th>فريد</th><th>الغرض</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">idx_sync_status</code></td><td>status</td><td>لا</td><td>العمليات المعلقة</td></tr>
+<tr><td><code class="inline-code">idx_sync_priority</code></td><td>priority</td><td>لا</td><td>ترتيب حسب الأولوية</td></tr>
+<tr><td><code class="inline-code">idx_sync_created_at</code></td><td>created_at</td><td>لا</td><td>الترتيب الزمني</td></tr>
+<tr><td><code class="inline-code">idx_sync_idempotency</code></td><td>idempotency_key</td><td><strong>نعم</strong></td><td>منع التكرار</td></tr>
+<tr><td><code class="inline-code">idx_sync_status_priority</code></td><td>status, priority</td><td>لا</td><td>استعلام مركب</td></tr>
+</tbody>
+</table></div>
+<h3>فهارس جدول stock_deltas</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>اسم الفهرس</th><th>الأعمدة</th><th>فريد</th><th>الغرض</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">idx_stock_deltas_product</code></td><td>product_id</td><td>لا</td><td>استعلام حسب المنتج</td></tr>
+<tr><td><code class="inline-code">idx_stock_deltas_sync_status</code></td><td>sync_status</td><td>لا</td><td>التغييرات غير المزامنة</td></tr>
+<tr><td><code class="inline-code">idx_stock_deltas_device</code></td><td>device_id</td><td>لا</td><td>استعلام حسب الجهاز</td></tr>
+<tr><td><code class="inline-code">idx_stock_deltas_product_sync</code></td><td>product_id, sync_status</td><td>لا</td><td>استعلام مركب</td></tr>
+</tbody>
+</table></div>
+<h3>فهارس جدول واتساب (<code class="inline-code">whatsapp_messages</code>)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>اسم الفهرس</th><th>الأعمدة</th><th>فريد</th><th>الغرض</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">idx_wa_msg_status</code></td><td>status</td><td>لا</td><td>الرسائل المعلقة</td></tr>
+<tr><td><code class="inline-code">idx_wa_msg_phone</code></td><td>phone</td><td>لا</td><td>بحث برقم الهاتف</td></tr>
+<tr><td><code class="inline-code">idx_wa_msg_type</code></td><td>message_type</td><td>لا</td><td>بحث بنوع الرسالة</td></tr>
+<tr><td><code class="inline-code">idx_wa_msg_created_at</code></td><td>created_at</td><td>لا</td><td>الترتيب الزمني</td></tr>
+<tr><td><code class="inline-code">idx_wa_msg_reference</code></td><td>reference_type, reference_id</td><td>لا</td><td>الربط بالكيان المصدر</td></tr>
+<tr><td><code class="inline-code">idx_wa_msg_batch</code></td><td>batch_id</td><td>لا</td><td>تتبع الدفعات</td></tr>
+<tr><td><code class="inline-code">idx_wa_msg_external</code></td><td>external_msg_id</td><td>لا</td><td>الربط مع WaSenderAPI</td></tr>
+</tbody>
+</table></div>
+<hr>
+<h2>5. طبقة الوصول للبيانات (DAOs)</h2>
+<h3>5.1 ProductsDao</h3>
+<p><strong>الجداول:</strong> ProductsTable</p>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>الدالة</th><th>النوع</th><th>الوصف</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">getAllProducts(storeId)</code></td><td>Future</td><td>جميع المنتجات (باستثناء المحذوفة)</td></tr>
+<tr><td><code class="inline-code">getProductById(id)</code></td><td>Future</td><td>منتج بالمعرف</td></tr>
+<tr><td><code class="inline-code">getProductByBarcode(barcode, storeId)</code></td><td>Future</td><td>منتج بالباركود</td></tr>
+<tr><td><code class="inline-code">searchProducts(query, storeId)</code></td><td>Future</td><td>بحث (FTS أولاً، ثم LIKE)</td></tr>
+<tr><td><code class="inline-code">searchWithFts(query, storeId)</code></td><td>Future</td><td>بحث FTS مباشر</td></tr>
+<tr><td><code class="inline-code">getSearchSuggestions(query, storeId)</code></td><td>Future</td><td>اقتراحات البحث (autocomplete)</td></tr>
+<tr><td><code class="inline-code">getProductsByCategory(categoryId, storeId)</code></td><td>Future</td><td>منتجات حسب التصنيف</td></tr>
+<tr><td><code class="inline-code">getLowStockProducts(storeId)</code></td><td>Future</td><td>منتجات منخفضة المخزون</td></tr>
+<tr><td><code class="inline-code">getProductsPaginated(storeId, offset, limit)</code></td><td>Future</td><td>منتجات مع تصفح الصفحات</td></tr>
+<tr><td><code class="inline-code">getProductsCount(storeId)</code></td><td>Future</td><td>عدد المنتجات</td></tr>
+<tr><td><code class="inline-code">searchProductsPaginated(query, storeId)</code></td><td>Future</td><td>بحث مع تصفح الصفحات</td></tr>
+<tr><td><code class="inline-code">quickFindByBarcode(barcode, storeId)</code></td><td>Future</td><td>بحث سريع بالباركود</td></tr>
+<tr><td><code class="inline-code">getProductsByIds(ids)</code></td><td>Future</td><td>تحميل دفعة بالمعرفات (L60)</td></tr>
+<tr><td><code class="inline-code">getProductsByBarcodes(barcodes, storeId)</code></td><td>Future</td><td>تحميل دفعة بالباركود (L60)</td></tr>
+<tr><td><code class="inline-code">getTopSellingProducts(storeId)</code></td><td>Future</td><td>الأكثر مبيعاً (JOIN مع sale_items)</td></tr>
+<tr><td><code class="inline-code">getProductWithCategory(id)</code></td><td>Future</td><td>منتج مع اسم التصنيف (JOIN)</td></tr>
+<tr><td><code class="inline-code">getLowStockWithCategory(storeId)</code></td><td>Future</td><td>منخفض المخزون مع التصنيف (JOIN)</td></tr>
+<tr><td><code class="inline-code">insertProduct(product)</code></td><td>Future</td><td>إدراج منتج</td></tr>
+<tr><td><code class="inline-code">upsertProduct(product)</code></td><td>Future</td><td>إدراج أو تحديث</td></tr>
+<tr><td><code class="inline-code">updateProduct(product)</code></td><td>Future</td><td>تحديث منتج</td></tr>
+<tr><td><code class="inline-code">updateStock(productId, newQty)</code></td><td>Future</td><td>تحديث المخزون</td></tr>
+<tr><td><code class="inline-code">deleteProduct(id)</code></td><td>Future</td><td>حذف منتج</td></tr>
+<tr><td><code class="inline-code">markAsSynced(id)</code></td><td>Future</td><td>تعيين تاريخ المزامنة</td></tr>
+<tr><td><code class="inline-code">getUnsyncedProducts()</code></td><td>Future</td><td>المنتجات غير المزامنة</td></tr>
+<tr><td><code class="inline-code">watchProducts(storeId)</code></td><td>Stream</td><td>مراقبة المنتجات (Stream)</td></tr>
+<tr><td><code class="inline-code">batchUpdateStock(stockUpdates)</code></td><td>Future</td><td>تحديث دفعة للمخزون</td></tr>
+</tbody>
+</table></div>
+<h3>5.2 SalesDao</h3>
+<p><strong>الجداول:</strong> SalesTable</p>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>الدالة</th><th>النوع</th><th>الوصف</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">getAllSales(storeId)</code></td><td>Future</td><td>جميع المبيعات</td></tr>
+<tr><td><code class="inline-code">getSalesByDate(storeId, date)</code></td><td>Future</td><td>مبيعات بتاريخ محدد</td></tr>
+<tr><td><code class="inline-code">getSalesByDateRange(storeId, start, end)</code></td><td>Future</td><td>مبيعات الفترة</td></tr>
+<tr><td><code class="inline-code">getSaleById(id)</code></td><td>Future</td><td>بيع بالمعرف</td></tr>
+<tr><td><code class="inline-code">getSaleByReceiptNo(receiptNo, storeId)</code></td><td>Future</td><td>بيع برقم الإيصال</td></tr>
+<tr><td><code class="inline-code">getSalesPaginated(storeId, ...)</code></td><td>Future</td><td>مبيعات مع تصفح</td></tr>
+<tr><td><code class="inline-code">getSalesCount(storeId, ...)</code></td><td>Future</td><td>عدد المبيعات</td></tr>
+<tr><td><code class="inline-code">getSalesStats(storeId, ...)</code></td><td>Future</td><td>إحصائيات (عدد، مجموع، متوسط، أعلى، أدنى)</td></tr>
+<tr><td><code class="inline-code">getHourlySales(storeId, date)</code></td><td>Future</td><td>مبيعات بالساعة</td></tr>
+<tr><td><code class="inline-code">getPaymentMethodStats(storeId)</code></td><td>Future</td><td>إحصائيات طرق الدفع</td></tr>
+<tr><td><code class="inline-code">getSalesWithDetails(storeId)</code></td><td>Future</td><td>مبيعات مع اسم العميل (JOIN)</td></tr>
+<tr><td><code class="inline-code">insertSale(sale)</code></td><td>Future</td><td>إدراج بيع</td></tr>
+<tr><td><code class="inline-code">voidSale(id)</code></td><td>Future</td><td>إلغاء بيع مع استعادة المخزون (Transaction)</td></tr>
+<tr><td><code class="inline-code">getTodayTotal(storeId, cashierId)</code></td><td>Future</td><td>إجمالي مبيعات اليوم</td></tr>
+<tr><td><code class="inline-code">getTodayCount(storeId, cashierId)</code></td><td>Future</td><td>عدد مبيعات اليوم</td></tr>
+<tr><td><code class="inline-code">watchTodaySales(storeId)</code></td><td>Stream</td><td>مراقبة مبيعات اليوم</td></tr>
+</tbody>
+</table></div>
+<h3>5.3 OrdersDao</h3>
+<p><strong>الجداول:</strong> OrdersTable, OrderItemsTable</p>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>الدالة</th><th>النوع</th><th>الوصف</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">getOrders(storeId)</code></td><td>Future</td><td>جميع الطلبات</td></tr>
+<tr><td><code class="inline-code">getOrdersPaginated(storeId, ...)</code></td><td>Future</td><td>طلبات مع تصفح</td></tr>
+<tr><td><code class="inline-code">getOrdersByStatus(storeId, status)</code></td><td>Future</td><td>طلبات حسب الحالة</td></tr>
+<tr><td><code class="inline-code">getPendingOrders(storeId)</code></td><td>Future</td><td>الطلبات المعلقة</td></tr>
+<tr><td><code class="inline-code">getOrderById(id)</code></td><td>Future</td><td>طلب بالمعرف</td></tr>
+<tr><td><code class="inline-code">createOrder(order)</code></td><td>Future</td><td>إنشاء طلب</td></tr>
+<tr><td><code class="inline-code">updateOrderStatus(id, status)</code></td><td>Future</td><td>تحديث حالة الطلب مع التواريخ المناسبة</td></tr>
+<tr><td><code class="inline-code">assignDriver(orderId, driverId)</code></td><td>Future</td><td>تعيين سائق</td></tr>
+<tr><td><code class="inline-code">cancelOrder(id, reason)</code></td><td>Future</td><td>إلغاء طلب</td></tr>
+<tr><td><code class="inline-code">getOrderItems(orderId)</code></td><td>Future</td><td>عناصر الطلب</td></tr>
+<tr><td><code class="inline-code">addOrderItems(items)</code></td><td>Future</td><td>إضافة عناصر (batch)</td></tr>
+<tr><td><code class="inline-code">getOrderWithItems(orderId)</code></td><td>Future</td><td>طلب كامل مع العناصر (JOIN)</td></tr>
+<tr><td><code class="inline-code">getOrdersWithCustomer(storeId)</code></td><td>Future</td><td>طلبات مع اسم العميل (JOIN)</td></tr>
+<tr><td><code class="inline-code">getOrdersCountByStatus(storeId)</code></td><td>Future</td><td>عدد الطلبات حسب الحالة (GROUP BY)</td></tr>
+<tr><td><code class="inline-code">getOrdersStats(storeId)</code></td><td>Future</td><td>إحصائيات شاملة</td></tr>
+</tbody>
+</table></div>
+<h3>5.4 CustomersDao</h3>
+<p><strong>الجداول:</strong> CustomersTable, CustomerAddressesTable</p>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>الدالة</th><th>الوصف</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">getAllCustomers(storeId)</code></td><td>جميع العملاء</td></tr>
+<tr><td><code class="inline-code">getCustomersPaginated(storeId, ...)</code></td><td>عملاء مع تصفح</td></tr>
+<tr><td><code class="inline-code">getActiveCustomers(storeId)</code></td><td>العملاء النشطون</td></tr>
+<tr><td><code class="inline-code">searchCustomers(query, storeId)</code></td><td>بحث في العملاء</td></tr>
+<tr><td><code class="inline-code">getCustomerByPhone(phone, storeId)</code></td><td>عميل بالهاتف</td></tr>
+<tr><td><code class="inline-code">getCustomerWithAddresses(id)</code></td><td>عميل مع عناوينه</td></tr>
+<tr><td><code class="inline-code">getCustomerWithStats(customerId)</code></td><td>عميل مع إحصائيات المشتريات (JOIN)</td></tr>
+<tr><td><code class="inline-code">getTopCustomers(storeId)</code></td><td>أفضل العملاء حسب المشتريات (JOIN)</td></tr>
+</tbody>
+</table></div>
+<h3>5.5 AccountsDao</h3>
+<p><strong>الجداول:</strong> AccountsTable</p>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>الدالة</th><th>الوصف</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">getReceivableAccounts(storeId)</code></td><td>حسابات العملاء (الديون)</td></tr>
+<tr><td><code class="inline-code">getPayableAccounts(storeId)</code></td><td>حسابات الموردين</td></tr>
+<tr><td><code class="inline-code">getCustomerAccount(customerId, storeId)</code></td><td>حساب عميل محدد</td></tr>
+<tr><td><code class="inline-code">addToBalance(id, amount)</code></td><td>إضافة للرصيد (atomic SQL)</td></tr>
+<tr><td><code class="inline-code">subtractFromBalance(id, amount)</code></td><td>خصم من الرصيد (atomic SQL)</td></tr>
+<tr><td><code class="inline-code">getTotalReceivable(storeId)</code></td><td>إجمالي الديون</td></tr>
+<tr><td><code class="inline-code">watchReceivableAccounts(storeId)</code></td><td>مراقبة حسابات الديون (Stream)</td></tr>
+</tbody>
+</table></div>
+<h3>5.6 SyncQueueDao</h3>
+<p><strong>الجداول:</strong> SyncQueueTable</p>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>الدالة</th><th>الوصف</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">getPendingItems()</code></td><td>العناصر المعلقة (مرتبة بالأولوية)</td></tr>
+<tr><td><code class="inline-code">getPendingCount()</code></td><td>عدد المعلقات</td></tr>
+<tr><td><code class="inline-code">enqueue(...)</code></td><td>إضافة للطابور</td></tr>
+<tr><td><code class="inline-code">markAsSyncing(id)</code></td><td>تحديث: جاري المزامنة</td></tr>
+<tr><td><code class="inline-code">markAsSynced(id)</code></td><td>تحديث: تمت المزامنة</td></tr>
+<tr><td><code class="inline-code">markAsFailed(id, error)</code></td><td>تحديث: فشل + زيادة retry_count</td></tr>
+<tr><td><code class="inline-code">markAsConflict(id, error)</code></td><td>تحديث: تعارض</td></tr>
+<tr><td><code class="inline-code">markResolved(id)</code></td><td>تحديث: تم الحل</td></tr>
+<tr><td><code class="inline-code">retryItem(id)</code></td><td>إعادة تعيين للمحاولة</td></tr>
+<tr><td><code class="inline-code">findByIdempotencyKey(key)</code></td><td>بحث بمفتاح Idempotency</td></tr>
+<tr><td><code class="inline-code">cleanupSyncedItems(olderThan)</code></td><td>حذف المزامنة القديمة</td></tr>
+<tr><td><code class="inline-code">getConflictItems()</code></td><td>العناصر المتعارضة</td></tr>
+<tr><td><code class="inline-code">watchPendingCount()</code></td><td>مراقبة عدد المعلقات (Stream)</td></tr>
+<tr><td><code class="inline-code">watchConflictItems()</code></td><td>مراقبة المتعارضات (Stream)</td></tr>
+</tbody>
+</table></div>
+<h3>5.7 DAOs أخرى</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>DAO</th><th>الجداول</th><th>الوظائف الرئيسية</th></tr></thead>
+<tbody>
+<tr><td><strong>SaleItemsDao</strong></td><td>SaleItemsTable</td><td>إدارة عناصر البيع، insertItems (batch)</td></tr>
+<tr><td><strong>InventoryDao</strong></td><td>InventoryMovementsTable</td><td>تسجيل حركات المخزون</td></tr>
+<tr><td><strong>TransactionsDao</strong></td><td>TransactionsTable</td><td>حركات الحسابات المالية</td></tr>
+<tr><td><strong>AuditLogDao</strong></td><td>AuditLogTable</td><td>تسجيل العمليات الحساسة</td></tr>
+<tr><td><strong>CategoriesDao</strong></td><td>CategoriesTable</td><td>إدارة التصنيفات (شجرية)</td></tr>
+<tr><td><strong>LoyaltyDao</strong></td><td>LoyaltyPointsTable, LoyaltyTransactionsTable, LoyaltyRewardsTable</td><td>نظام نقاط الولاء</td></tr>
+<tr><td><strong>StoresDao</strong></td><td>StoresTable</td><td>إدارة المتاجر</td></tr>
+<tr><td><strong>UsersDao</strong></td><td>UsersTable, RolesTable</td><td>إدارة المستخدمين والأدوار</td></tr>
+<tr><td><strong>SuppliersDao</strong></td><td>SuppliersTable</td><td>إدارة الموردين (مع تحقق rating 0-5)</td></tr>
+<tr><td><strong>ShiftsDao</strong></td><td>ShiftsTable, CashMovementsTable</td><td>إدارة الورديات وحركات الصندوق</td></tr>
+<tr><td><strong>ReturnsDao</strong></td><td>ReturnsTable, ReturnItemsTable</td><td>إدارة المرتجعات</td></tr>
+<tr><td><strong>ExpensesDao</strong></td><td>ExpensesTable, ExpenseCategoriesTable</td><td>إدارة المصروفات</td></tr>
+<tr><td><strong>PurchasesDao</strong></td><td>PurchasesTable, PurchaseItemsTable</td><td>إدارة المشتريات</td></tr>
+<tr><td><strong>DiscountsDao</strong></td><td>DiscountsTable, CouponsTable, PromotionsTable</td><td>إدارة الخصومات والعروض</td></tr>
+<tr><td><strong>NotificationsDao</strong></td><td>NotificationsTable</td><td>إدارة الإشعارات</td></tr>
+<tr><td><strong>WhatsAppMessagesDao</strong></td><td>WhatsAppMessagesTable</td><td>إدارة رسائل واتساب</td></tr>
+<tr><td><strong>WhatsAppTemplatesDao</strong></td><td>WhatsAppTemplatesTable</td><td>إدارة قوالب واتساب</td></tr>
+<tr><td><strong>OrganizationsDao</strong></td><td>OrganizationsTable, SubscriptionsTable</td><td>إدارة المؤسسات</td></tr>
+<tr><td><strong>OrgMembersDao</strong></td><td>OrgMembersTable, UserStoresTable</td><td>إدارة أعضاء المؤسسة</td></tr>
+<tr><td><strong>PosTerminalsDao</strong></td><td>PosTerminalsTable</td><td>إدارة نقاط البيع</td></tr>
+<tr><td><strong>SyncMetadataDao</strong></td><td>SyncMetadataTable</td><td>بيانات المزامنة الوصفية</td></tr>
+<tr><td><strong>StockDeltasDao</strong></td><td>StockDeltasTable</td><td>تتبع تغييرات المخزون (Delta Sync)</td></tr>
+</tbody>
+</table></div>
+<hr>
+<h2>6. العمليات المركبة (Compound Transactions)</h2>
+<p>تُنفذ في <code class="inline-code">AppDatabase</code> ضمن معاملة واحدة (Transaction) لضمان الاتساق:</p>
+<h3>إنشاء عملية بيع (<code class="inline-code">createSaleTransaction</code>)</h3>
+<pre><code>1. إدراج الفاتورة في sales
+2. إدراج عناصر البيع في sale_items
+3. خصم المخزون من products (stock_qty - qty)
+4. تحديث حساب العميل (إذا كان بيع آجل)</code></pre>
+<h3>إنشاء عملية إرجاع (<code class="inline-code">createReturnTransaction</code>)</h3>
+<pre><code>1. إدراج المرتجع في returns
+2. إدراج عناصر المرتجع في return_items
+3. إعادة المخزون إلى products (stock_qty + qty)
+4. تحديث حساب العميل (إرجاع المبلغ)</code></pre>
+<h3>إلغاء عملية بيع (<code class="inline-code">voidSaleTransaction</code>)</h3>
+<pre><code>1. تحديث حالة البيع إلى &#x27;voided&#x27;
+2. استعادة المخزون (يتم تلقائياً داخل voidSale)
+3. إعادة المبلغ لحساب العميل</code></pre>
+<hr>
+<h2>7. دوال RPC في Supabase</h2>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>الدالة</th><th>المعاملات</th><th>الوصف</th><th>الأمان</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">update_user_role</code></td><td>(user_id, new_role, reason)</td><td>تغيير دور المستخدم مع سجل تدقيق</td><td>SECURITY DEFINER, super_admin فقط</td></tr>
+<tr><td><code class="inline-code">get_my_stores</code></td><td>()</td><td>إرجاع متاجر المستخدم الحالي مع دوره</td><td>SECURITY DEFINER, authenticated</td></tr>
+<tr><td><code class="inline-code">get_store_categories</code></td><td>(store_id)</td><td>جلب تصنيفات المتجر كـ JSONB</td><td>SECURITY DEFINER, أعضاء المتجر فقط</td></tr>
+<tr><td><code class="inline-code">get_store_products</code></td><td>(store_id, limit, offset)</td><td>جلب منتجات المتجر كـ JSONB</td><td>SECURITY DEFINER, أعضاء المتجر فقط (حد 1000)</td></tr>
+<tr><td><code class="inline-code">is_super_admin</code></td><td>()</td><td>هل المستخدم super_admin</td><td>SECURITY DEFINER</td></tr>
+<tr><td><code class="inline-code">is_store_member</code></td><td>(store_id)</td><td>هل المستخدم عضو نشط بالمتجر</td><td>SECURITY DEFINER</td></tr>
+<tr><td><code class="inline-code">is_store_admin</code></td><td>(store_id)</td><td>هل المستخدم مالك أو مدير</td><td>SECURITY DEFINER</td></tr>
+<tr><td><code class="inline-code">get_my_user_id</code></td><td>()</td><td>إرجاع auth.uid() (لتجاوز RLS)</td><td>SECURITY DEFINER</td></tr>
+<tr><td><code class="inline-code">update_updated_at_column</code></td><td>()</td><td>تحديث updated_at تلقائياً</td><td>TRIGGER FUNCTION</td></tr>
+</tbody>
+</table></div>
+<hr>
+<h2>8. المحفزات (Triggers)</h2>
+<h3>على مستوى Supabase (PostgreSQL)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>المحفز</th><th>الجدول</th><th>الحدث</th><th>الوصف</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">prevent_direct_role_update</code></td><td>users</td><td>BEFORE UPDATE OF role</td><td>يمنع تغيير الدور مباشرة؛ يجب استخدام RPC <code class="inline-code">update_user_role</code></td></tr>
+<tr><td><code class="inline-code">prevent_store_id_change_products</code></td><td>products</td><td>BEFORE UPDATE</td><td>يمنع تغيير store_id بعد الإنشاء</td></tr>
+<tr><td><code class="inline-code">prevent_store_id_change_store_members</code></td><td>store_members</td><td>BEFORE UPDATE</td><td>يمنع تغيير store_id بعد الإنشاء</td></tr>
+<tr><td><code class="inline-code">prevent_store_id_change_debts</code></td><td>debts</td><td>BEFORE UPDATE</td><td>يمنع تغيير store_id بعد الإنشاء</td></tr>
+<tr><td><code class="inline-code">prevent_store_id_change_purchase_orders</code></td><td>purchase_orders</td><td>BEFORE UPDATE</td><td>يمنع تغيير store_id بعد الإنشاء</td></tr>
+<tr><td><code class="inline-code">on_order_status_change</code></td><td>orders</td><td>AFTER UPDATE OF status</td><td>خصم المخزون عند تأكيد الطلب (created &rarr; confirmed/preparing)</td></tr>
+<tr><td><code class="inline-code">trg_*_updated_at</code></td><td>28 جدول</td><td>BEFORE UPDATE</td><td>تحديث عمود updated_at تلقائياً</td></tr>
+</tbody>
+</table></div>
+<h3>على مستوى SQLite المحلي (FTS)</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>المحفز</th><th>الجدول</th><th>الحدث</th><th>الوصف</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">products_fts_insert</code></td><td>products</td><td>AFTER INSERT</td><td>إدراج في جدول FTS</td></tr>
+<tr><td><code class="inline-code">products_fts_delete</code></td><td>products</td><td>AFTER DELETE</td><td>حذف من جدول FTS</td></tr>
+<tr><td><code class="inline-code">products_fts_update</code></td><td>products</td><td>AFTER UPDATE</td><td>تحديث في جدول FTS</td></tr>
+</tbody>
+</table></div>
+<hr>
+<h2>9. سياسات أمان الصفوف (RLS Policies)</h2>
+<p>تم تفعيل RLS على <strong>جميع الجداول</strong> في Supabase. السياسات تتبع نموذجاً هرمياً:</p>
+<h3>مستويات الوصول</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>المستوى</th><th>الوصف</th><th>الدوال المساعدة</th></tr></thead>
+<tbody>
+<tr><td><strong>super_admin</strong></td><td>وصول كامل لجميع الجداول</td><td><code class="inline-code">is_super_admin()</code></td></tr>
+<tr><td><strong>store_admin</strong></td><td>مالك أو مدير المتجر (قراءة + كتابة)</td><td><code class="inline-code">is_store_admin(store_id)</code></td></tr>
+<tr><td><strong>store_member</strong></td><td>عضو المتجر (قراءة فقط)</td><td><code class="inline-code">is_store_member(store_id)</code></td></tr>
+<tr><td><strong>customer</strong></td><td>العميل (بياناته فقط)</td><td><code class="inline-code">auth.uid()</code></td></tr>
+<tr><td><strong>public</strong></td><td>الجمهور (بيانات نشطة محدودة)</td><td>---</td></tr>
+</tbody>
+</table></div>
+<h3>ملخص السياسات حسب الجدول</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>الجدول</th><th>SELECT</th><th>INSERT</th><th>UPDATE</th><th>DELETE</th></tr></thead>
+<tbody>
+<tr><td><strong>users</strong></td><td>self + super_admin</td><td>---</td><td>self + super_admin</td><td>---</td></tr>
+<tr><td><strong>stores</strong></td><td>authenticated (نشط) + admin + super_admin</td><td>owner</td><td>owner</td><td>owner</td></tr>
+<tr><td><strong>store_members</strong></td><td>self + member + admin + super_admin</td><td>admin</td><td>admin</td><td>admin</td></tr>
+<tr><td><strong>products</strong></td><td>member + super_admin</td><td><strong>admin</strong></td><td><strong>admin</strong></td><td><strong>admin</strong></td></tr>
+<tr><td><strong>categories</strong></td><td>عام (نشط) + member + super_admin</td><td><strong>admin</strong></td><td><strong>admin</strong></td><td><strong>admin</strong></td></tr>
+<tr><td><strong>orders</strong></td><td>customer + member + super_admin</td><td>customer</td><td>customer (created فقط) + member</td><td>---</td></tr>
+<tr><td><strong>order_items</strong></td><td>via order + super_admin</td><td>customer + member (created فقط)</td><td>member (created فقط)</td><td>member (created فقط)</td></tr>
+<tr><td><strong>suppliers</strong></td><td>member + super_admin</td><td><strong>admin</strong></td><td><strong>admin</strong></td><td><strong>admin</strong></td></tr>
+<tr><td><strong>debts</strong></td><td>member + super_admin</td><td><strong>admin</strong></td><td><strong>admin</strong></td><td><strong>admin</strong></td></tr>
+<tr><td><strong>promotions</strong></td><td>عام (نشط) + member + super_admin</td><td><strong>admin</strong></td><td><strong>admin</strong></td><td><strong>admin</strong></td></tr>
+<tr><td><strong>shifts</strong></td><td>cashier (own) + member + admin + super_admin</td><td>member (own)</td><td>cashier (open) + admin</td><td>admin</td></tr>
+<tr><td><strong>notifications</strong></td><td>user + super_admin</td><td>---</td><td>user</td><td>---</td></tr>
+<tr><td><strong>addresses</strong></td><td>user</td><td>user</td><td>user</td><td>user</td></tr>
+</tbody>
+</table></div>
+<blockquote><strong>ملاحظة:</strong> الجداول المميزة بـ <strong>admin</strong> تعني أن الكتابة مقتصرة على المالك/المدير (is_store_admin). الكاشير يمكنه القراءة فقط.</blockquote>
+<h3>الجداول المحمية من التعديل</h3>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>الجدول</th><th>الحماية</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">stock_adjustments</code></td><td>REVOKE UPDATE, DELETE</td></tr>
+<tr><td><code class="inline-code">order_payments</code></td><td>REVOKE UPDATE, DELETE</td></tr>
+<tr><td><code class="inline-code">activity_logs</code></td><td>REVOKE UPDATE, DELETE</td></tr>
+<tr><td><code class="inline-code">role_audit_log</code></td><td>REVOKE ALL (super_admin SELECT فقط)</td></tr>
+</tbody>
+</table></div>
+<hr>
+<h2>10. التخزين السحابي (Storage Buckets)</h2>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>الحاوية</th><th>عام</th><th>الحد الأقصى</th><th>الأنواع المسموحة</th><th>الوصول</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">product-images</code></td><td>نعم</td><td>5 MB</td><td>JPEG, PNG, WebP</td><td>قراءة: الكل، كتابة: أعضاء المتجر</td></tr>
+<tr><td><code class="inline-code">store-logos</code></td><td>نعم</td><td>2 MB</td><td>JPEG, PNG, SVG, WebP</td><td>قراءة: الكل، كتابة: المالك/المدير</td></tr>
+<tr><td><code class="inline-code">receipts</code></td><td>لا</td><td>1 MB</td><td>PDF, PNG</td><td>أعضاء المتجر</td></tr>
+<tr><td><code class="inline-code">backups</code></td><td>لا</td><td>50 MB</td><td>JSON, Binary</td><td>المالك/المدير</td></tr>
+<tr><td><code class="inline-code">invoice-attachments</code></td><td>لا</td><td>10 MB</td><td>JPEG, PNG, PDF, WebP</td><td>أعضاء المتجر</td></tr>
+</tbody>
+</table></div>
+<hr>
+<h2>11. البحث النصي الكامل (FTS5)</h2>
+<p>يستخدم النظام SQLite FTS5 للبحث السريع في المنتجات:</p>
+<pre><code class="language-sql">CREATE VIRTUAL TABLE products_fts USING fts5(
+    id UNINDEXED,
+    store_id UNINDEXED,
+    name,           -- بحث في الاسم
+    barcode,        -- بحث في الباركود
+    sku,            -- بحث في SKU
+    description,    -- بحث في الوصف
+    content=&#x27;products&#x27;,
+    content_rowid=&#x27;rowid&#x27;,
+    tokenize=&#x27;unicode61 remove_diacritics 1&#x27;  -- دعم العربية
+);</code></pre>
+<h3>الميزات</h3>
+<ul>
+    <li><strong>البحث الجزئي (Prefix Matching):</strong> &quot;مان&quot; يجد &quot;مانجو&quot;</li>
+    <li><strong>دعم العربية:</strong> مع إزالة التشكيل</li>
+    <li><strong>الترتيب حسب الصلة:</strong> باستخدام bm25()</li>
+    <li><strong>المزامنة التلقائية:</strong> عبر محفزات INSERT/UPDATE/DELETE</li>
+    <li><strong>البحث في عدة حقول:</strong> الاسم، الباركود، SKU، الوصف</li>
+</ul>
+<hr>
+<h2>12. الأنواع المعرفة (Enums) في Supabase</h2>
+<div class="table-responsive"><table class="styled-table">
+<thead><tr><th>النوع</th><th>القيم</th></tr></thead>
+<tbody>
+<tr><td><code class="inline-code">user_role</code></td><td>super_admin, store_owner, employee, delivery, customer</td></tr>
+<tr><td><code class="inline-code">store_role</code></td><td>owner, manager, cashier</td></tr>
+<tr><td><code class="inline-code">order_status</code></td><td>created, confirmed, preparing, ready, out_for_delivery, delivered, picked_up, completed, cancelled, refunded</td></tr>
+<tr><td><code class="inline-code">delivery_status</code></td><td>assigned, accepted, picked_up, delivered, cancelled, failed</td></tr>
+<tr><td><code class="inline-code">payment_method</code></td><td>cash, card, credit, wallet</td></tr>
+<tr><td><code class="inline-code">adjustment_type</code></td><td>received, sold, adjustment, damaged, returned</td></tr>
+<tr><td><code class="inline-code">debt_type</code></td><td>customer_debt, supplier_debt</td></tr>
+<tr><td><code class="inline-code">po_status</code></td><td>draft, ordered, partial, received, cancelled</td></tr>
+<tr><td><code class="inline-code">promo_type</code></td><td>percentage, fixed_amount, buy_x_get_y</td></tr>
+<tr><td><code class="inline-code">shift_status</code></td><td>open, closed</td></tr>
+</tbody>
+</table></div>
+<hr>
+<h2>13. مخطط ER Diagram الرئيسي بالـ Mermaid</h2>
+<div class="mermaid">
+erDiagram
+    %% === الجداول الأساسية ===
+
+    stores {
+        TEXT id PK
+        TEXT org_id
+        TEXT name
+        TEXT name_en
+        TEXT phone
+        TEXT email
+        TEXT currency
+        BOOLEAN is_active
+    }
+
+    users {
+        TEXT id PK
+        TEXT store_id FK
+        TEXT name
+        TEXT phone
+        TEXT role
+        TEXT auth_uid
+        BOOLEAN is_active
+    }
+
+    products {
+        TEXT id PK
+        TEXT store_id FK
+        TEXT category_id FK
+        TEXT name
+        TEXT barcode
+        REAL price
+        REAL cost_price
+        INTEGER stock_qty
+        BOOLEAN is_active
+    }
+
+    categories {
+        TEXT id PK
+        TEXT store_id FK
+        TEXT parent_id FK
+        TEXT name
+        INTEGER sort_order
+        BOOLEAN is_active
+    }
+
+    customers {
+        TEXT id PK
+        TEXT store_id
+        TEXT name
+        TEXT phone
+        TEXT type
+        BOOLEAN is_active
+    }
+
+    suppliers {
+        TEXT id PK
+        TEXT store_id
+        TEXT name
+        TEXT phone
+        REAL balance
+    }
+
+    %% === المبيعات ===
+
+    sales {
+        TEXT id PK
+        TEXT store_id FK
+        TEXT cashier_id FK
+        TEXT customer_id FK
+        TEXT receipt_no
+        REAL total
+        TEXT payment_method
+        TEXT status
+    }
+
+    sale_items {
+        TEXT id PK
+        TEXT sale_id FK
+        TEXT product_id FK
+        REAL qty
+        REAL unit_price
+        REAL total
+    }
+
+    %% === الطلبات ===
+
+    orders {
+        TEXT id PK
+        TEXT store_id FK
+        TEXT customer_id FK
+        TEXT order_number
+        TEXT status
+        REAL total
+        TEXT delivery_type
+    }
+
+    order_items {
+        TEXT id PK
+        TEXT order_id FK
+        TEXT product_id FK
+        REAL quantity
+        REAL unit_price
+        REAL total
+    }
+
+    %% === المالية ===
+
+    accounts {
+        TEXT id PK
+        TEXT store_id FK
+        TEXT customer_id FK
+        TEXT supplier_id FK
+        TEXT type
+        REAL balance
+        REAL credit_limit
+    }
+
+    transactions {
+        TEXT id PK
+        TEXT store_id FK
+        TEXT account_id FK
+        TEXT type
+        REAL amount
+        REAL balance_after
+    }
+
+    %% === المخزون ===
+
+    inventory_movements {
+        TEXT id PK
+        TEXT product_id FK
+        TEXT store_id FK
+        TEXT type
+        REAL qty
+        REAL previous_qty
+        REAL new_qty
+    }
+
+    purchases {
+        TEXT id PK
+        TEXT store_id FK
+        TEXT supplier_id FK
+        TEXT purchase_number
+        TEXT status
+        REAL total
+    }
+
+    returns {
+        TEXT id PK
+        TEXT sale_id FK
+        TEXT store_id FK
+        TEXT return_number
+        REAL total_refund
+    }
+
+    %% === الورديات ===
+
+    shifts {
+        TEXT id PK
+        TEXT store_id
+        TEXT cashier_id
+        REAL opening_cash
+        REAL closing_cash
+        TEXT status
+    }
+
+    %% === الولاء ===
+
+    loyalty_points {
+        TEXT id PK
+        TEXT customer_id FK
+        TEXT store_id FK
+        INTEGER current_points
+        TEXT tier_level
+    }
+
+    %% === المزامنة ===
+
+    sync_queue {
+        TEXT id PK
+        TEXT table_name
+        TEXT record_id
+        TEXT operation
+        TEXT status
+        INTEGER priority
+    }
+
+    stock_deltas {
+        TEXT id PK
+        TEXT product_id
+        TEXT store_id
+        REAL quantity_change
+        TEXT device_id
+        TEXT sync_status
+    }
+
+    %% === العلاقات ===
+
+    stores ||--o{ products : ""
+    stores ||--o{ categories : ""
+    stores ||--o{ sales : ""
+    stores ||--o{ orders : ""
+    stores ||--o{ users : ""
+    stores ||--o{ shifts : ""
+    stores ||--o{ accounts : ""
+    stores ||--o{ purchases : ""
+
+    categories ||--o{ products : ""
+
+    sales ||--o{ sale_items : ""
+    sales }o--|| users : "cashier"
+    sales }o--o| customers : ""
+    sales ||--o{ returns : ""
+
+    sale_items }o--|| products : ""
+
+    orders ||--o{ order_items : ""
+    orders }o--o| customers : ""
+    order_items }o--|| products : ""
+
+    accounts }o--o| customers : ""
+    accounts }o--o| suppliers : ""
+    accounts ||--o{ transactions : ""
+
+    products ||--o{ inventory_movements : ""
+
+    purchases }o--o| suppliers : ""
+
+    customers ||--o{ loyalty_points : ""
+
+    returns }o--|| sales : ""
+</div>
+<hr>
+<h2>14. ملاحظات تقنية</h2>
+<h3>عدم اتساق في التسمية (Naming Inconsistency)</h3>
+<p>بعض الجداول تستخدم <code class="inline-code">created_by</code> بينما أخرى تستخدم <code class="inline-code">user_id</code> لنفس المفهوم. المعيار المفضل هو <code class="inline-code">user_id</code> للتوافق مع <code class="inline-code">auth.uid()</code> في Supabase. الأعمدة التالية تحتاج للتوحيد في ترحيل مستقبلي:</p>
+<ul>
+    <li><code class="inline-code">transactions.created_by</code></li>
+    <li><code class="inline-code">cash_movements.created_by</code></li>
+    <li><code class="inline-code">returns.created_by</code></li>
+    <li><code class="inline-code">expenses.created_by</code></li>
+    <li><code class="inline-code">stock_transfers.created_by</code></li>
+    <li><code class="inline-code">stock_takes.created_by</code></li>
+</ul>
+<h3>الحذف الناعم (Soft Delete)</h3>
+<p>الجداول التالية تدعم الحذف الناعم عبر عمود <code class="inline-code">deleted_at</code>:</p>
+<p><code class="inline-code">products</code>, <code class="inline-code">customers</code>, <code class="inline-code">categories</code>, <code class="inline-code">suppliers</code>, <code class="inline-code">sales</code>, <code class="inline-code">orders</code>, <code class="inline-code">purchases</code>, <code class="inline-code">returns</code>, <code class="inline-code">expenses</code>, <code class="inline-code">accounts</code>, <code class="inline-code">discounts</code>, <code class="inline-code">coupons</code>, <code class="inline-code">promotions</code>, <code class="inline-code">users</code>, <code class="inline-code">stores</code></p>
+<h3>Delta Sync للمخزون</h3>
+<p>بدلاً من إرسال القيمة المطلقة للمخزون (التي تسبب تعارضات بين الأجهزة)، يُسجل النظام التغييرات (الدلتا) لكل جهاز. السيرفر يطبق جميع التغييرات ويرجع المخزون النهائي.</p>
+<h3>PRAGMA foreign_keys</h3>
+<p>يتم تفعيل المفاتيح الأجنبية عند فتح قاعدة البيانات عبر <code class="inline-code">PRAGMA foreign_keys = ON</code> في دالة <code class="inline-code">beforeOpen</code>.</p>
+
+        </article>
+        <nav class="page-nav">
+            <a href="01-project-structure.html" class="page-nav-link prev"><span class="page-nav-direction">&rarr; السابق</span><span class="page-nav-title">البنية العامة</span></a>
+            <a href="03-auth-permissions.html" class="page-nav-link next"><span class="page-nav-direction">التالي &larr;</span><span class="page-nav-title">الصلاحيات والمصادقة</span></a>
+        </nav>
+    </main>
+    <footer class="footer"><p>منصة الحي &copy; 2026 - آخر تحديث: 2026-02-28</p></footer>
+    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

@@ -1,0 +1,1889 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>البنية العامة للمشروع - توثيق منصة الحي</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="header">
+        <button class="sidebar-toggle" onclick="toggleSidebar()"><i class="fas fa-bars"></i></button>
+        <a href="../index.html" class="logo"><span class="logo-icon">🏪</span><span class="logo-text">توثيق منصة الحي</span></a>
+        <div class="header-search"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="بحث في التوثيق..."></div>
+        <button class="theme-toggle" onclick="toggleTheme()" title="تبديل الوضع"><i class="fas fa-moon"></i></button>
+    </header>
+    <aside class="sidebar" id="sidebar">
+        <nav class="sidebar-nav">
+            <a href="../index.html" class="sidebar-link"><i class="fas fa-home"></i> الرئيسية</a>
+            <a href="01-project-structure.html" class="sidebar-link active"><i class="fas fa-sitemap"></i> البنية العامة</a>
+            <a href="02-database.html" class="sidebar-link"><i class="fas fa-database"></i> قاعدة البيانات</a>
+            <a href="03-auth-permissions.html" class="sidebar-link"><i class="fas fa-shield-halved"></i> الصلاحيات والمصادقة</a>
+            <a href="04-screens-ui.html" class="sidebar-link"><i class="fas fa-desktop"></i> الشاشات والواجهات</a>
+            <a href="05-services-api.html" class="sidebar-link"><i class="fas fa-server"></i> الخدمات والـ API</a>
+            <a href="06-architecture.html" class="sidebar-link"><i class="fas fa-cubes"></i> البنية المعمارية</a>
+            <a href="07-developer-guide.html" class="sidebar-link"><i class="fas fa-code"></i> دليل المطور</a>
+        </nav>
+    </aside>
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <main class="main-content">
+        <nav class="breadcrumbs"><a href="../index.html">الرئيسية</a><span class="separator">/</span><span class="current">البنية العامة للمشروع</span></nav>
+        <aside class="toc" id="toc"><h3>جدول المحتويات</h3><ul id="tocList"></ul></aside>
+        <article class="content" id="content">
+
+            <h1>هيكل مشروع الحي - التوثيق الشامل</h1>
+
+            <p><strong>التاريخ</strong>: 2026-02-28</p>
+            <p><strong>الإصدار</strong>: 1.0.0</p>
+            <p><strong>الحالة</strong>: مكتمل</p>
+
+            <hr>
+
+            <h2 id="جدول-المحتويات">جدول المحتويات</h2>
+
+            <ol>
+                <li><a href="#1-اسم-المشروع-ووصفه-وهدفه">اسم المشروع ووصفه وهدفه</a></li>
+                <li><a href="#2-التطبيقات">التطبيقات</a></li>
+                <li><a href="#3-الحزم-المشتركة">الحزم المشتركة</a></li>
+                <li><a href="#4-شجرة-المجلدات-الرئيسية">شجرة المجلدات الرئيسية</a></li>
+                <li><a href="#5-التقنيات-المستخدمة">التقنيات المستخدمة</a></li>
+                <li><a href="#6-طريقة-تشغيل-المشروع">طريقة تشغيل المشروع</a></li>
+                <li><a href="#7-متطلبات-البيئة">متطلبات البيئة</a></li>
+                <li><a href="#8-مخطط-العلاقات-بين-الحزم">مخطط العلاقات بين الحزم</a></li>
+                <li><a href="#9-قاعدة-البيانات-والجداول">قاعدة البيانات والجداول</a></li>
+                <li><a href="#10-نظام-الترجمة">نظام الترجمة</a></li>
+                <li><a href="#11-نظام-التصميم">نظام التصميم</a></li>
+                <li><a href="#12-بنية-الخدمات-الخلفية">بنية الخدمات الخلفية</a></li>
+                <li><a href="#13-التكامل-المستمر">التكامل المستمر</a></li>
+                <li><a href="#14-إحصائيات-المنصة">إحصائيات المنصة</a></li>
+            </ol>
+
+            <hr>
+
+            <!-- Section 1 -->
+            <h2 id="1-اسم-المشروع-ووصفه-وهدفه">1. اسم المشروع ووصفه وهدفه</h2>
+
+            <h3>الاسم</h3>
+            <p><strong>الحي (Alhai)</strong> - منصة البقالة الذكية</p>
+
+            <h3>الوصف</h3>
+            <p>الحي هي منصة SaaS شاملة متعددة المستأجرين (Multi-Tenant) مصممة خصيصا لمتاجر البقالة في المملكة العربية السعودية. توفر المنصة نظاما بيئيا متكاملا يضم 7 تطبيقات تخدم جميع الأطراف المعنية: صاحب المتجر، الكاشير، العميل، السائق، الموزع، ومدير المنصة.</p>
+
+            <h3>الهدف</h3>
+            <ul>
+                <li>توفير حل تقني شامل لمتاجر البقالة يغطي جميع العمليات من نقطة البيع حتى التوصيل</li>
+                <li>دعم نظام B2B للتجارة بالجملة بين الموزعين وأصحاب المتاجر</li>
+                <li>تقديم ميزات ذكاء اصطناعي لتحسين إدارة المخزون والتنبؤ بالطلبات</li>
+                <li>دعم 7 لغات لخدمة القوى العاملة المتنوعة في السعودية</li>
+                <li>توفير العمل بدون إنترنت (Offline-first) لتطبيق الكاشير</li>
+            </ul>
+
+            <h3>نوع المشروع</h3>
+            <p>مستودع أحادي (Monorepo) يُدار باستخدام أداة <strong>Melos</strong> لإدارة الحزم المتعددة.</p>
+
+            <h3>اسم المستودع في Melos</h3>
+            <pre><code class="language-yaml">name: alhai_monorepo</code></pre>
+
+            <hr>
+
+            <!-- Section 2 -->
+            <h2 id="2-التطبيقات">2. التطبيقات</h2>
+
+            <p>المنصة تتكون من 7 تطبيقات رئيسية موزعة في مسارين:</p>
+            <ul>
+                <li><code class="inline-code">apps/</code> - التطبيقات الأساسية الثلاثة (admin, admin_lite, cashier)</li>
+                <li>الجذر - التطبيقات المستقلة (customer_app, driver_app, super_admin, distributor_portal)</li>
+            </ul>
+
+            <h3>جدول ملخص التطبيقات</h3>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>التطبيق</th>
+                        <th>الاسم التقني</th>
+                        <th>المنصة</th>
+                        <th>المستخدم</th>
+                        <th>عدد الشاشات</th>
+                        <th>المسار</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>لوحة الإدارة</td><td><code class="inline-code">admin</code></td><td>ويب + موبايل + سطح المكتب</td><td>صاحب المتجر</td><td>106</td><td><code class="inline-code">apps/admin/</code></td></tr>
+                    <tr><td>الإدارة المبسطة</td><td><code class="inline-code">admin_lite</code></td><td>موبايل فقط</td><td>صاحب المتجر</td><td>28</td><td><code class="inline-code">apps/admin_lite/</code></td></tr>
+                    <tr><td>الكاشير</td><td><code class="inline-code">cashier</code></td><td>سطح المكتب / تابلت</td><td>الكاشير</td><td>79</td><td><code class="inline-code">apps/cashier/</code></td></tr>
+                    <tr><td>تطبيق العملاء</td><td><code class="inline-code">customer_app</code></td><td>موبايل</td><td>العميل</td><td>40</td><td><code class="inline-code">customer_app/</code></td></tr>
+                    <tr><td>تطبيق السائق</td><td><code class="inline-code">driver_app</code></td><td>موبايل</td><td>سائق التوصيل</td><td>18</td><td><code class="inline-code">driver_app/</code></td></tr>
+                    <tr><td>لوحة المدير العام</td><td><code class="inline-code">super_admin</code></td><td>ويب فقط</td><td>مدير المنصة</td><td>52</td><td><code class="inline-code">super_admin/</code></td></tr>
+                    <tr><td>بوابة الموزعين</td><td><code class="inline-code">distributor_portal</code></td><td>ويب فقط</td><td>الموزع/تاجر الجملة</td><td>25</td><td><code class="inline-code">distributor_portal/</code></td></tr>
+                    <tr><td><strong>المجموع</strong></td><td></td><td></td><td></td><td><strong>348</strong></td><td></td></tr>
+                </tbody>
+            </table></div>
+
+            <hr>
+
+            <!-- Section 2.1 -->
+            <h3 id="21-لوحة-الإدارة">2.1 لوحة الإدارة (admin)</h3>
+
+<pre><code class="language-plaintext">المسار: apps/admin/
+الاسم التقني: admin
+الوصف: Al-HAI Admin Dashboard - Full management system (all 123 screens)
+الإصدار: 1.0.0+1</code></pre>
+
+            <p><strong>الغرض</strong>: نظام إدارة شامل لصاحب المتجر يتضمن إدارة المنتجات، المخزون، الطلبات، التقارير، نظام B2B للطلب من الموزعين، وميزات الذكاء الاصطناعي.</p>
+
+            <p><strong>الحزم المستخدمة</strong>:</p>
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>الحزمة</th><th>الغرض</th></tr></thead>
+                <tbody>
+                    <tr><td><code class="inline-code">alhai_core</code></td><td>النواة المشتركة</td></tr>
+                    <tr><td><code class="inline-code">alhai_services</code></td><td>طبقة الخدمات</td></tr>
+                    <tr><td><code class="inline-code">alhai_design_system</code></td><td>نظام التصميم</td></tr>
+                    <tr><td><code class="inline-code">alhai_database</code></td><td>قاعدة البيانات</td></tr>
+                    <tr><td><code class="inline-code">alhai_sync</code></td><td>محرك المزامنة</td></tr>
+                    <tr><td><code class="inline-code">alhai_l10n</code></td><td>الترجمة</td></tr>
+                    <tr><td><code class="inline-code">alhai_auth</code></td><td>المصادقة</td></tr>
+                    <tr><td><code class="inline-code">alhai_shared_ui</code></td><td>الواجهات المشتركة</td></tr>
+                    <tr><td><code class="inline-code">alhai_pos</code></td><td>نقطة البيع</td></tr>
+                    <tr><td><code class="inline-code">alhai_ai</code></td><td>الذكاء الاصطناعي</td></tr>
+                    <tr><td><code class="inline-code">alhai_reports</code></td><td>التقارير</td></tr>
+                </tbody>
+            </table></div>
+
+            <p><strong>هيكل المجلدات الداخلي</strong>:</p>
+<pre><code class="language-plaintext">apps/admin/lib/
+├── core/           # إعدادات التطبيق الأساسية
+├── data/           # طبقة البيانات المحلية
+├── di/             # حقن الاعتماديات
+├── providers/      # مزودات Riverpod
+├── router/         # التوجيه (GoRouter)
+├── screens/        # الشاشات
+├── ui/             # مكونات الواجهة
+└── main.dart       # نقطة الدخول</code></pre>
+
+            <p><strong>الاعتماديات الخارجية الرئيسية</strong>:</p>
+            <ul>
+                <li><code class="inline-code">image_picker</code> - لالتقاط صور المنتجات</li>
+                <li><code class="inline-code">cached_network_image</code> - تخزين الصور مؤقتا</li>
+                <li><code class="inline-code">drift</code> - قاعدة البيانات المحلية</li>
+                <li><code class="inline-code">firebase_core</code> - خدمات Firebase</li>
+            </ul>
+
+            <hr>
+
+            <!-- Section 2.2 -->
+            <h3 id="22-الإدارة-المبسطة">2.2 الإدارة المبسطة (admin_lite)</h3>
+
+<pre><code class="language-plaintext">المسار: apps/admin_lite/
+الاسم التقني: admin_lite
+الوصف: Al-HAI Admin Lite - Quick monitoring, approvals, reports, AI
+الإصدار: غير محدد</code></pre>
+
+            <p><strong>الغرض</strong>: تطبيق موبايل مبسط لصاحب المتجر للمراقبة السريعة، الموافقات، التقارير، والطلب التلقائي الذكي بالذكاء الاصطناعي. يختصر عملية الطلب من 50 دقيقة إلى 5 ثوانٍ.</p>
+
+            <p><strong>الحزم المستخدمة</strong>: نفس حزم تطبيق الإدارة الكامل (باستثناء <code class="inline-code">alhai_pos</code>).</p>
+
+            <p><strong>هيكل المجلدات الداخلي</strong>:</p>
+<pre><code class="language-plaintext">apps/admin_lite/lib/
+├── core/           # إعدادات التطبيق
+├── data/           # طبقة البيانات
+├── di/             # حقن الاعتماديات
+├── providers/      # مزودات Riverpod
+├── router/         # التوجيه
+├── screens/        # الشاشات
+├── ui/             # مكونات الواجهة
+└── main.dart       # نقطة الدخول</code></pre>
+
+            <hr>
+
+            <!-- Section 2.3 -->
+            <h3 id="23-الكاشير">2.3 الكاشير (cashier)</h3>
+
+<pre><code class="language-plaintext">المسار: apps/cashier/
+الاسم التقني: cashier
+الوصف: Al-HAI Cashier - Professional POS for cashiers (100% offline)
+الإصدار: 1.0.0+1</code></pre>
+
+            <p><strong>الغرض</strong>: نظام نقطة بيع احترافي يعمل 100% بدون إنترنت. يدعم الدفع المقسم (نقدي + بطاقات متعددة + ائتمان)، مسح الباركود، الطباعة، وإرسال الإيصالات عبر واتساب.</p>
+
+            <p><strong>الحزم المستخدمة</strong>:</p>
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>الحزمة</th><th>الغرض</th></tr></thead>
+                <tbody>
+                    <tr><td><code class="inline-code">alhai_core</code></td><td>النواة المشتركة</td></tr>
+                    <tr><td><code class="inline-code">alhai_services</code></td><td>طبقة الخدمات</td></tr>
+                    <tr><td><code class="inline-code">alhai_design_system</code></td><td>نظام التصميم</td></tr>
+                    <tr><td><code class="inline-code">alhai_database</code></td><td>قاعدة البيانات (مشفرة بـ SQLCipher)</td></tr>
+                    <tr><td><code class="inline-code">alhai_sync</code></td><td>محرك المزامنة</td></tr>
+                    <tr><td><code class="inline-code">alhai_l10n</code></td><td>الترجمة</td></tr>
+                    <tr><td><code class="inline-code">alhai_auth</code></td><td>المصادقة</td></tr>
+                    <tr><td><code class="inline-code">alhai_shared_ui</code></td><td>الواجهات المشتركة</td></tr>
+                    <tr><td><code class="inline-code">alhai_pos</code></td><td>نقطة البيع</td></tr>
+                    <tr><td><code class="inline-code">alhai_reports</code></td><td>التقارير</td></tr>
+                </tbody>
+            </table></div>
+
+            <p><strong>هيكل المجلدات الداخلي</strong>:</p>
+<pre><code class="language-plaintext">apps/cashier/lib/
+├── core/           # إعدادات التطبيق
+├── data/           # طبقة البيانات (CSV seeder)
+├── di/             # حقن الاعتماديات (GetIt)
+├── router/         # التوجيه (GoRouter)
+├── screens/        # الشاشات
+│   └── onboarding/ # شاشة الإعداد الأولي
+├── ui/             # مكونات الواجهة
+├── widgets/        # ودجات مخصصة
+└── main.dart       # نقطة الدخول</code></pre>
+
+            <p><strong>ميزات خاصة بالكاشير</strong>:</p>
+            <ul>
+                <li>تشفير قاعدة البيانات المحلية باستخدام مفتاح مُخزّن في <code class="inline-code">FlutterSecureStorage</code></li>
+                <li>تحميل بيانات المتجر من ملفات CSV عند أول تشغيل</li>
+                <li>تحليل CSV في isolate منفصل لعدم حجب واجهة المستخدم</li>
+                <li>تشغيل Firebase + Supabase + مفتاح التشفير + SharedPreferences بالتوازي</li>
+            </ul>
+
+            <hr>
+
+            <!-- Section 2.4 -->
+            <h3 id="24-تطبيق-العملاء">2.4 تطبيق العملاء (customer_app)</h3>
+
+<pre><code class="language-plaintext">المسار: customer_app/
+الاسم التقني: customer_app
+الوصف: Customer mobile application for Alhai grocery stores
+الإصدار: 1.0.0+1</code></pre>
+
+            <p><strong>الغرض</strong>: تطبيق موبايل للعملاء لطلب البقالة عبر الإنترنت، تتبع الطلبات، برنامج الولاء، وتحديد موقع المتاجر القريبة.</p>
+
+            <p><strong>هيكل المجلدات الداخلي</strong>:</p>
+<pre><code class="language-plaintext">customer_app/lib/
+├── core/           # إعدادات وثوابت التطبيق
+├── di/             # حقن الاعتماديات
+├── features/       # الميزات (Feature-based architecture)
+├── shared/         # مكونات مشتركة
+└── main.dart       # نقطة الدخول</code></pre>
+
+            <p><strong>الاعتماديات الخاصة</strong>:</p>
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>المكتبة</th><th>الغرض</th></tr></thead>
+                <tbody>
+                    <tr><td><code class="inline-code">google_maps_flutter</code></td><td>عرض خرائط المتاجر</td></tr>
+                    <tr><td><code class="inline-code">geolocator</code></td><td>تحديد الموقع الجغرافي</td></tr>
+                    <tr><td><code class="inline-code">firebase_messaging</code></td><td>الإشعارات الفورية</td></tr>
+                    <tr><td><code class="inline-code">flutter_local_notifications</code></td><td>الإشعارات المحلية</td></tr>
+                    <tr><td><code class="inline-code">image_picker</code></td><td>رفع صور الملف الشخصي</td></tr>
+                    <tr><td><code class="inline-code">shimmer</code></td><td>تأثيرات التحميل</td></tr>
+                    <tr><td><code class="inline-code">connectivity_plus</code></td><td>مراقبة حالة الاتصال</td></tr>
+                </tbody>
+            </table></div>
+
+            <hr>
+
+            <!-- Section 2.5 -->
+            <h3 id="25-تطبيق-السائق">2.5 تطبيق السائق (driver_app)</h3>
+
+<pre><code class="language-plaintext">المسار: driver_app/
+الاسم التقني: driver_app
+الوصف: Driver/Delivery application for Alhai grocery stores
+الإصدار: 1.0.0+1</code></pre>
+
+            <p><strong>الغرض</strong>: تطبيق موبايل لسائقي التوصيل لإدارة عمليات التسليم، تتبع الموقع الجغرافي، التقاط صور إثبات التسليم، والتوقيع الإلكتروني.</p>
+
+            <p><strong>هيكل المجلدات الداخلي</strong>:</p>
+<pre><code class="language-plaintext">driver_app/lib/
+├── core/           # إعدادات التوجيه والتطبيق
+├── di/             # حقن الاعتماديات
+└── main.dart       # نقطة الدخول</code></pre>
+
+            <p><strong>الاعتماديات الخاصة بالسائق</strong>:</p>
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>المكتبة</th><th>الغرض</th></tr></thead>
+                <tbody>
+                    <tr><td><code class="inline-code">google_maps_flutter</code></td><td>عرض الخرائط والملاحة</td></tr>
+                    <tr><td><code class="inline-code">geolocator</code></td><td>تتبع الموقع</td></tr>
+                    <tr><td><code class="inline-code">flutter_polyline_points</code></td><td>رسم مسارات التوصيل</td></tr>
+                    <tr><td><code class="inline-code">flutter_background_service</code></td><td>تتبع الموقع في الخلفية</td></tr>
+                    <tr><td><code class="inline-code">camera</code></td><td>التقاط صور إثبات التسليم</td></tr>
+                    <tr><td><code class="inline-code">signature</code></td><td>التوقيع الإلكتروني للاستلام</td></tr>
+                    <tr><td><code class="inline-code">firebase_messaging</code></td><td>إشعارات الطلبات الجديدة</td></tr>
+                </tbody>
+            </table></div>
+
+            <hr>
+
+            <!-- Section 2.6 -->
+            <h3 id="26-لوحة-المدير-العام">2.6 لوحة المدير العام (super_admin)</h3>
+
+<pre><code class="language-plaintext">المسار: super_admin/
+الاسم التقني: super_admin
+الوصف: Super Admin dashboard for Alhai Platform - Web only
+الإصدار: 1.0.0+1</code></pre>
+
+            <p><strong>الغرض</strong>: لوحة تحكم ويب لمدير المنصة (God Mode) لإدارة جميع المتاجر، الاشتراكات، تحليلات الإيرادات، إدارة الموزعين، وحملات العروض.</p>
+
+            <p><strong>هيكل المجلدات الداخلي</strong>:</p>
+<pre><code class="language-plaintext">super_admin/lib/
+├── core/           # إعدادات التطبيق
+├── di/             # حقن الاعتماديات
+└── main.dart       # نقطة الدخول</code></pre>
+
+            <p><strong>الاعتماديات الخاصة</strong>:</p>
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>المكتبة</th><th>الغرض</th></tr></thead>
+                <tbody>
+                    <tr><td><code class="inline-code">fl_chart</code></td><td>الرسوم البيانية (مرخصة MIT)</td></tr>
+                    <tr><td><code class="inline-code">data_table_2</code></td><td>جداول بيانات متقدمة</td></tr>
+                    <tr><td><code class="inline-code">alhai_auth</code></td><td>المصادقة والتحكم بالوصول</td></tr>
+                </tbody>
+            </table></div>
+
+            <blockquote><strong>ملاحظة ترخيص</strong>: يُستخدم <code class="inline-code">fl_chart</code> (MIT) بدلا من <code class="inline-code">syncfusion_flutter_charts</code> لتجنب قيود الترخيص التجاري.</blockquote>
+
+            <hr>
+
+            <!-- Section 2.7 -->
+            <h3 id="27-بوابة-الموزعين">2.7 بوابة الموزعين (distributor_portal)</h3>
+
+<pre><code class="language-plaintext">المسار: distributor_portal/
+الاسم التقني: distributor_portal
+الوصف: Distributor Portal for Alhai Platform - Web only
+الإصدار: 1.0.0+1</code></pre>
+
+            <p><strong>الغرض</strong>: بوابة ويب لتجار الجملة والموزعين لإدارة سوق B2B، الطلبات بالجملة، الفواتير التلقائية، وتصدير البيانات بصيغة Excel.</p>
+
+            <p><strong>هيكل المجلدات الداخلي</strong>:</p>
+<pre><code class="language-plaintext">distributor_portal/lib/
+├── core/           # إعدادات التوجيه
+├── di/             # حقن الاعتماديات
+├── screens/        # الشاشات
+├── ui/             # مكونات الواجهة
+└── main.dart       # نقطة الدخول</code></pre>
+
+            <p><strong>الاعتماديات الخاصة</strong>:</p>
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>المكتبة</th><th>الغرض</th></tr></thead>
+                <tbody>
+                    <tr><td><code class="inline-code">fl_chart</code></td><td>الرسوم البيانية</td></tr>
+                    <tr><td><code class="inline-code">data_table_2</code></td><td>جداول البيانات</td></tr>
+                    <tr><td><code class="inline-code">file_picker</code></td><td>رفع الملفات</td></tr>
+                    <tr><td><code class="inline-code">excel</code></td><td>تصدير/استيراد Excel (.xlsx)</td></tr>
+                </tbody>
+            </table></div>
+
+            <blockquote><strong>ملاحظة</strong>: حزمة <code class="inline-code">excel</code> مُضافة فقط في بوابة الموزعين لأنها تضيف ~2MB لحجم التطبيق ولا تحتاجها التطبيقات الأخرى.</blockquote>
+
+            <hr>
+
+            <!-- Section 3 -->
+            <h2 id="3-الحزم-المشتركة">3. الحزم المشتركة</h2>
+
+            <p>المنصة تستخدم 11 حزمة مشتركة مقسمة إلى فئتين:</p>
+
+            <h3>حزم الجذر (Root-level)</h3>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>الحزمة</th><th>المسار</th><th>الوصف</th></tr></thead>
+                <tbody>
+                    <tr><td><code class="inline-code">alhai_core</code></td><td><code class="inline-code">alhai_core/</code></td><td>النواة المشتركة - معمارية نظيفة</td></tr>
+                    <tr><td><code class="inline-code">alhai_services</code></td><td><code class="inline-code">alhai_services/</code></td><td>طبقة منطق الأعمال</td></tr>
+                    <tr><td><code class="inline-code">alhai_design_system</code></td><td><code class="inline-code">alhai_design_system/</code></td><td>نظام التصميم الموحد</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>حزم داخل packages/</h3>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>الحزمة</th><th>المسار</th><th>الوصف</th></tr></thead>
+                <tbody>
+                    <tr><td><code class="inline-code">alhai_database</code></td><td><code class="inline-code">packages/alhai_database/</code></td><td>قاعدة البيانات والجداول و DAOs</td></tr>
+                    <tr><td><code class="inline-code">alhai_auth</code></td><td><code class="inline-code">packages/alhai_auth/</code></td><td>المصادقة والأمان</td></tr>
+                    <tr><td><code class="inline-code">alhai_l10n</code></td><td><code class="inline-code">packages/alhai_l10n/</code></td><td>الترجمة والتعريب (7 لغات)</td></tr>
+                    <tr><td><code class="inline-code">alhai_sync</code></td><td><code class="inline-code">packages/alhai_sync/</code></td><td>محرك المزامنة والعمل بدون إنترنت</td></tr>
+                    <tr><td><code class="inline-code">alhai_pos</code></td><td><code class="inline-code">packages/alhai_pos/</code></td><td>نقطة البيع والسلة والمدفوعات</td></tr>
+                    <tr><td><code class="inline-code">alhai_ai</code></td><td><code class="inline-code">packages/alhai_ai/</code></td><td>شاشات وخدمات الذكاء الاصطناعي</td></tr>
+                    <tr><td><code class="inline-code">alhai_reports</code></td><td><code class="inline-code">packages/alhai_reports/</code></td><td>التقارير وتصدير PDF</td></tr>
+                    <tr><td><code class="inline-code">alhai_shared_ui</code></td><td><code class="inline-code">packages/alhai_shared_ui/</code></td><td>واجهات مشتركة بين التطبيقات</td></tr>
+                </tbody>
+            </table></div>
+
+            <hr>
+
+            <!-- Section 3.1 -->
+            <h3 id="31-alhai-core">3.1 alhai_core - النواة المشتركة</h3>
+
+<pre><code class="language-yaml">name: alhai_core
+description: Core package for Alhai application - Clean Architecture implementation
+version: 1.0.0
+sdk: '&gt;=3.4.0 &lt;4.0.0'
+flutter: '&gt;=3.10.0'</code></pre>
+
+            <p><strong>الغرض</strong>: تنفيذ المعمارية النظيفة (Clean Architecture) مع النماذج الأساسية، واجهات المستودعات، مصادر البيانات، والتكوينات.</p>
+
+            <p><strong>البنية الداخلية</strong>:</p>
+<pre><code class="language-plaintext">alhai_core/lib/src/
+├── config/              # إعدادات التطبيق
+│   ├── app_endpoints.dart
+│   ├── app_flavor.dart
+│   ├── app_limits.dart
+│   ├── environment.dart
+│   ├── whatsapp_config.dart
+│   └── supabase_config.dart
+├── datasources/         # مصادر البيانات
+│   ├── local/           # محلية
+│   └── remote/          # عبر الشبكة (14 datasource)
+├── di/                  # حقن الاعتماديات (GetIt + Injectable)
+├── dto/                 # كائنات نقل البيانات
+│   ├── analytics/
+│   ├── auth/
+│   ├── categories/
+│   ├── debts/
+│   ├── inventory/
+│   ├── orders/
+│   ├── products/
+│   ├── purchases/
+│   ├── reports/
+│   ├── shared/
+│   ├── stores/
+│   └── suppliers/
+├── exceptions/          # الاستثناءات المخصصة
+├── models/              # نماذج المجال (Freezed)
+│   ├── product.dart
+│   ├── order.dart
+│   ├── customer_account.dart
+│   ├── cart.dart
+│   ├── shift.dart
+│   ├── store.dart
+│   ├── supplier.dart
+│   ├── wholesale_order.dart
+│   └── ... (30+ نموذج)
+├── monitoring/          # المراقبة
+│   └── production_logger.dart
+├── networking/          # طبقة الشبكة (Dio)
+├── repositories/        # واجهات المستودعات (29 واجهة)
+│   ├── auth_repository.dart
+│   ├── products_repository.dart
+│   ├── orders_repository.dart
+│   ├── inventory_repository.dart
+│   ├── wholesale_orders_repository.dart
+│   └── ... (29 مستودع)
+├── services/            # خدمات النواة
+│   └── image_service.dart
+└── utils/               # أدوات مساعدة</code></pre>
+
+            <p><strong>النماذج الرئيسية</strong> (جميعها تستخدم Freezed لتوليد الكود):</p>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>النموذج</th><th>الملف</th><th>الوصف</th></tr></thead>
+                <tbody>
+                    <tr><td><code class="inline-code">Product</code></td><td><code class="inline-code">product.dart</code></td><td>المنتج مع الباركود والسعر والمخزون</td></tr>
+                    <tr><td><code class="inline-code">Order</code></td><td><code class="inline-code">order.dart</code></td><td>الطلب مع الحالة والعناصر</td></tr>
+                    <tr><td><code class="inline-code">Cart</code></td><td><code class="inline-code">cart.dart</code></td><td>سلة التسوق</td></tr>
+                    <tr><td><code class="inline-code">Store</code></td><td><code class="inline-code">store.dart</code></td><td>المتجر مع الإعدادات</td></tr>
+                    <tr><td><code class="inline-code">Shift</code></td><td><code class="inline-code">shift.dart</code></td><td>وردية الكاشير</td></tr>
+                    <tr><td><code class="inline-code">Debt</code></td><td><code class="inline-code">debt.dart</code></td><td>الديون والحسابات الآجلة</td></tr>
+                    <tr><td><code class="inline-code">Supplier</code></td><td><code class="inline-code">supplier.dart</code></td><td>المورد</td></tr>
+                    <tr><td><code class="inline-code">WholesaleOrder</code></td><td><code class="inline-code">wholesale_order.dart</code></td><td>طلب الجملة B2B</td></tr>
+                    <tr><td><code class="inline-code">Delivery</code></td><td><code class="inline-code">delivery.dart</code></td><td>التوصيل</td></tr>
+                    <tr><td><code class="inline-code">CustomerAccount</code></td><td><code class="inline-code">customer_account.dart</code></td><td>حساب العميل</td></tr>
+                </tbody>
+            </table></div>
+
+            <p><strong>مصادر البيانات عبر الشبكة (Remote Datasources)</strong>:</p>
+            <ul>
+                <li><code class="inline-code">auth_remote_datasource.dart</code> - المصادقة</li>
+                <li><code class="inline-code">products_remote_datasource.dart</code> - المنتجات</li>
+                <li><code class="inline-code">orders_remote_datasource.dart</code> - الطلبات</li>
+                <li><code class="inline-code">inventory_remote_datasource.dart</code> - المخزون</li>
+                <li><code class="inline-code">purchases_remote_datasource.dart</code> - المشتريات</li>
+                <li><code class="inline-code">suppliers_remote_datasource.dart</code> - الموردين</li>
+                <li><code class="inline-code">analytics_remote_datasource.dart</code> - التحليلات</li>
+                <li><code class="inline-code">debts_remote_datasource.dart</code> - الديون</li>
+                <li><code class="inline-code">categories_remote_datasource.dart</code> - التصنيفات</li>
+                <li><code class="inline-code">stores_remote_datasource.dart</code> - المتاجر</li>
+                <li><code class="inline-code">addresses_remote_datasource.dart</code> - العناوين</li>
+                <li><code class="inline-code">delivery_remote_datasource.dart</code> - التوصيل</li>
+                <li><code class="inline-code">reports_remote_datasource.dart</code> - التقارير</li>
+            </ul>
+
+            <hr>
+
+            <!-- Section 3.2 -->
+            <h3 id="32-alhai-services">3.2 alhai_services - طبقة الخدمات</h3>
+
+<pre><code class="language-yaml">name: alhai_services
+description: Business logic service layer for Alhai platform
+version: 1.0.0</code></pre>
+
+            <p><strong>الغرض</strong>: طبقة منطق الأعمال التي تنسق بين المستودعات وتنفذ القواعد التجارية.</p>
+
+            <p><strong>الخدمات المتوفرة</strong> (41 خدمة):</p>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>الخدمة</th><th>الملف</th><th>الوصف</th></tr></thead>
+                <tbody>
+                    <tr><td><code class="inline-code">AuthService</code></td><td><code class="inline-code">auth_service.dart</code></td><td>المصادقة وتسجيل الدخول</td></tr>
+                    <tr><td><code class="inline-code">ProductService</code></td><td><code class="inline-code">product_service.dart</code></td><td>إدارة المنتجات</td></tr>
+                    <tr><td><code class="inline-code">OrderService</code></td><td><code class="inline-code">order_service.dart</code></td><td>إدارة الطلبات</td></tr>
+                    <tr><td><code class="inline-code">PaymentService</code></td><td><code class="inline-code">payment_service.dart</code></td><td>المدفوعات</td></tr>
+                    <tr><td><code class="inline-code">AiService</code></td><td><code class="inline-code">ai_service.dart</code></td><td>خدمات الذكاء الاصطناعي</td></tr>
+                    <tr><td><code class="inline-code">AnalyticsService</code></td><td><code class="inline-code">analytics_service.dart</code></td><td>التحليلات</td></tr>
+                    <tr><td><code class="inline-code">BackupService</code></td><td><code class="inline-code">backup_service.dart</code></td><td>النسخ الاحتياطي</td></tr>
+                    <tr><td><code class="inline-code">BarcodeService</code></td><td><code class="inline-code">barcode_service.dart</code></td><td>مسح الباركود</td></tr>
+                    <tr><td><code class="inline-code">ChatService</code></td><td><code class="inline-code">chat_service.dart</code></td><td>الدردشة</td></tr>
+                    <tr><td><code class="inline-code">DebtService</code></td><td><code class="inline-code">debt_service.dart</code></td><td>الديون</td></tr>
+                    <tr><td><code class="inline-code">DeliveryService</code></td><td><code class="inline-code">delivery_service.dart</code></td><td>التوصيل</td></tr>
+                    <tr><td><code class="inline-code">ExportService</code></td><td><code class="inline-code">export_service.dart</code></td><td>التصدير</td></tr>
+                    <tr><td><code class="inline-code">ImportService</code></td><td><code class="inline-code">import_service.dart</code></td><td>الاستيراد</td></tr>
+                    <tr><td><code class="inline-code">LoyaltyService</code></td><td><code class="inline-code">loyalty_service.dart</code></td><td>نقاط الولاء</td></tr>
+                    <tr><td><code class="inline-code">NotificationService</code></td><td><code class="inline-code">notification_service.dart</code></td><td>الإشعارات</td></tr>
+                    <tr><td><code class="inline-code">PrintService</code></td><td><code class="inline-code">print_service.dart</code></td><td>الطباعة</td></tr>
+                    <tr><td><code class="inline-code">ReceiptService</code></td><td><code class="inline-code">receipt_service.dart</code></td><td>الإيصالات</td></tr>
+                    <tr><td><code class="inline-code">RefundService</code></td><td><code class="inline-code">refund_service.dart</code></td><td>المرتجعات</td></tr>
+                    <tr><td><code class="inline-code">ReportService</code></td><td><code class="inline-code">report_service.dart</code></td><td>التقارير</td></tr>
+                    <tr><td><code class="inline-code">SearchService</code></td><td><code class="inline-code">search_service.dart</code></td><td>البحث</td></tr>
+                    <tr><td><code class="inline-code">SettingsService</code></td><td><code class="inline-code">settings_service.dart</code></td><td>الإعدادات</td></tr>
+                    <tr><td><code class="inline-code">SmsService</code></td><td><code class="inline-code">sms_service.dart</code></td><td>الرسائل النصية</td></tr>
+                    <tr><td><code class="inline-code">StoreService</code></td><td><code class="inline-code">store_service.dart</code></td><td>إدارة المتجر</td></tr>
+                    <tr><td><code class="inline-code">StoreMemberService</code></td><td><code class="inline-code">store_member_service.dart</code></td><td>أعضاء المتجر</td></tr>
+                    <tr><td><code class="inline-code">SupplierService</code></td><td><code class="inline-code">supplier_service.dart</code></td><td>الموردين</td></tr>
+                    <tr><td><code class="inline-code">TransferService</code></td><td><code class="inline-code">transfer_service.dart</code></td><td>التحويلات المالية</td></tr>
+                    <tr><td><code class="inline-code">WhatsappServiceImpl</code></td><td><code class="inline-code">whatsapp_service_impl.dart</code></td><td>واتساب</td></tr>
+                    <tr><td><code class="inline-code">WholesaleService</code></td><td><code class="inline-code">wholesale_service.dart</code></td><td>تجارة الجملة</td></tr>
+                    <tr><td><code class="inline-code">DistributorService</code></td><td><code class="inline-code">distributor_service.dart</code></td><td>الموزعين</td></tr>
+                    <tr><td><code class="inline-code">PromotionService</code></td><td><code class="inline-code">promotion_service.dart</code></td><td>العروض</td></tr>
+                    <tr><td><code class="inline-code">RatingService</code></td><td><code class="inline-code">rating_service.dart</code></td><td>التقييمات</td></tr>
+                    <tr><td><code class="inline-code">CacheService</code></td><td><code class="inline-code">cache_service.dart</code></td><td>التخزين المؤقت</td></tr>
+                    <tr><td><code class="inline-code">ConfigService</code></td><td><code class="inline-code">config_service.dart</code></td><td>الإعدادات</td></tr>
+                    <tr><td><code class="inline-code">GeoNotificationService</code></td><td><code class="inline-code">geo_notification_service.dart</code></td><td>إشعارات الموقع</td></tr>
+                    <tr><td><code class="inline-code">PinValidationServiceImpl</code></td><td><code class="inline-code">pin_validation_service_impl.dart</code></td><td>التحقق من PIN</td></tr>
+                    <tr><td><code class="inline-code">SyncQueueServiceImpl</code></td><td><code class="inline-code">sync_queue_service_impl.dart</code></td><td>طابور المزامنة</td></tr>
+                    <tr><td><code class="inline-code">AddressService</code></td><td><code class="inline-code">address_service.dart</code></td><td>العناوين</td></tr>
+                    <tr><td><code class="inline-code">ActivityLogService</code></td><td><code class="inline-code">activity_log_service.dart</code></td><td>سجل النشاطات</td></tr>
+                </tbody>
+            </table></div>
+
+            <hr>
+
+            <!-- Section 3.3 -->
+            <h3 id="33-alhai-design-system">3.3 alhai_design_system - نظام التصميم</h3>
+
+<pre><code class="language-yaml">name: alhai_design_system
+description: Production-grade design system for Alhai multi-app suite (POS/Consumer/Delivery/Merchant)
+version: 1.0.0</code></pre>
+
+            <p><strong>الغرض</strong>: نظام تصميم موحد على مستوى الإنتاج لجميع تطبيقات المنصة مع دعم كامل للعربية (RTL) والوضع المظلم.</p>
+
+            <p><strong>البنية الداخلية</strong>:</p>
+<pre><code class="language-plaintext">alhai_design_system/lib/src/
+├── tokens/              # رموز التصميم (Design Tokens)
+│   ├── alhai_colors.dart
+│   ├── alhai_typography.dart
+│   ├── alhai_spacing.dart
+│   ├── alhai_radius.dart
+│   ├── alhai_breakpoints.dart
+│   ├── alhai_durations.dart
+│   └── alhai_motion.dart
+├── theme/               # السمات
+│   ├── alhai_theme.dart
+│   ├── alhai_color_scheme.dart
+│   └── theme_extensions.dart
+├── responsive/          # التصميم المتجاوب
+│   ├── context_ext.dart
+│   └── responsive_builder.dart
+├── components/          # المكونات
+│   ├── buttons/         # الأزرار (AlhaiButton, AlhaiIconButton)
+│   ├── inputs/          # حقول الإدخال (7 مكونات)
+│   ├── feedback/        # التغذية الراجعة (8 مكونات)
+│   ├── navigation/      # التنقل (4 مكونات)
+│   ├── layout/          # التخطيط (6 مكونات)
+│   ├── data_display/    # عرض البيانات (5 مكونات)
+│   ├── images/          # الصور
+│   └── dashboard/       # لوحة المعلومات
+└── utils/               # أدوات مساعدة
+    ├── input_formatters.dart
+    └── validators.dart</code></pre>
+
+            <p><strong>الخطوط المدعومة</strong>:</p>
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>الخط</th><th>اللغة</th><th>الأوزان</th></tr></thead>
+                <tbody>
+                    <tr><td><code class="inline-code">Tajawal</code></td><td>العربية</td><td>300, 400, 500, 700</td></tr>
+                    <tr><td><code class="inline-code">NotoSansDevanagari</code></td><td>الهندية</td><td>400, 500, 700</td></tr>
+                    <tr><td><code class="inline-code">NotoSansBengali</code></td><td>البنغالية</td><td>400, 500, 700</td></tr>
+                </tbody>
+            </table></div>
+
+            <hr>
+
+            <!-- Section 3.4 -->
+            <h3 id="34-alhai-database">3.4 alhai_database - قاعدة البيانات</h3>
+
+<pre><code class="language-yaml">name: alhai_database
+description: Shared Drift database, tables, DAOs, FTS, and seeders for Alhai apps
+version: 1.0.0</code></pre>
+
+            <p><strong>الغرض</strong>: قاعدة بيانات Drift مشتركة مع الجداول، كائنات الوصول للبيانات (DAOs)، البحث النصي الكامل (FTS)، وأدوات التعبئة.</p>
+
+            <p><strong>البنية الداخلية</strong>:</p>
+<pre><code class="language-plaintext">packages/alhai_database/lib/
+├── app_database.dart        # تعريف قاعدة البيانات
+├── app_database.g.dart      # كود مولّد
+├── connection.dart          # اتصال قاعدة البيانات
+├── connection_native.dart   # اتصال للهواتف
+├── connection_web.dart      # اتصال للويب (WASM)
+├── schema.json              # مخطط قاعدة البيانات
+├── daos/                    # كائنات الوصول (29 DAO)
+├── enums/                   # تعدادات قاعدة البيانات
+├── fts/                     # البحث النصي الكامل
+├── repositories/            # التنفيذات المحلية
+├── seeders/                 # أدوات التعبئة (CSV)
+├── tables/                  # تعريفات الجداول (37 جدول)
+└── utils/                   # أدوات مساعدة</code></pre>
+
+            <p><strong>الجداول</strong> (37 جدول):</p>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>الجدول</th><th>الوصف</th></tr></thead>
+                <tbody>
+                    <tr><td><code class="inline-code">products</code></td><td>المنتجات</td></tr>
+                    <tr><td><code class="inline-code">categories</code></td><td>التصنيفات</td></tr>
+                    <tr><td><code class="inline-code">sales</code></td><td>المبيعات</td></tr>
+                    <tr><td><code class="inline-code">sale_items</code></td><td>عناصر المبيعات</td></tr>
+                    <tr><td><code class="inline-code">orders</code></td><td>الطلبات</td></tr>
+                    <tr><td><code class="inline-code">order_items</code></td><td>عناصر الطلبات</td></tr>
+                    <tr><td><code class="inline-code">order_status_history</code></td><td>تاريخ حالة الطلبات</td></tr>
+                    <tr><td><code class="inline-code">customers</code></td><td>العملاء</td></tr>
+                    <tr><td><code class="inline-code">suppliers</code></td><td>الموردين</td></tr>
+                    <tr><td><code class="inline-code">purchases</code></td><td>المشتريات</td></tr>
+                    <tr><td><code class="inline-code">returns</code></td><td>المرتجعات</td></tr>
+                    <tr><td><code class="inline-code">expenses</code></td><td>المصروفات</td></tr>
+                    <tr><td><code class="inline-code">inventory_movements</code></td><td>حركات المخزون</td></tr>
+                    <tr><td><code class="inline-code">stock_deltas</code></td><td>فروقات المخزون</td></tr>
+                    <tr><td><code class="inline-code">stock_takes</code></td><td>الجرد</td></tr>
+                    <tr><td><code class="inline-code">stock_transfers</code></td><td>تحويلات المخزون</td></tr>
+                    <tr><td><code class="inline-code">product_expiry</code></td><td>تواريخ الصلاحية</td></tr>
+                    <tr><td><code class="inline-code">shifts</code></td><td>الورديات</td></tr>
+                    <tr><td><code class="inline-code">transactions</code></td><td>المعاملات المالية</td></tr>
+                    <tr><td><code class="inline-code">accounts</code></td><td>الحسابات</td></tr>
+                    <tr><td><code class="inline-code">discounts</code></td><td>الخصومات</td></tr>
+                    <tr><td><code class="inline-code">favorites</code></td><td>المفضلة</td></tr>
+                    <tr><td><code class="inline-code">held_invoices</code></td><td>الفواتير المعلقة</td></tr>
+                    <tr><td><code class="inline-code">loyalty</code></td><td>نقاط الولاء</td></tr>
+                    <tr><td><code class="inline-code">notifications</code></td><td>الإشعارات</td></tr>
+                    <tr><td><code class="inline-code">users</code></td><td>المستخدمين</td></tr>
+                    <tr><td><code class="inline-code">stores</code></td><td>المتاجر</td></tr>
+                    <tr><td><code class="inline-code">organizations</code></td><td>المؤسسات</td></tr>
+                    <tr><td><code class="inline-code">org_members</code></td><td>أعضاء المؤسسة</td></tr>
+                    <tr><td><code class="inline-code">pos_terminals</code></td><td>أجهزة نقاط البيع</td></tr>
+                    <tr><td><code class="inline-code">drivers</code></td><td>السائقين</td></tr>
+                    <tr><td><code class="inline-code">daily_summaries</code></td><td>الملخصات اليومية</td></tr>
+                    <tr><td><code class="inline-code">settings</code></td><td>الإعدادات</td></tr>
+                    <tr><td><code class="inline-code">audit_log</code></td><td>سجل المراجعة</td></tr>
+                    <tr><td><code class="inline-code">sync_metadata</code></td><td>بيانات المزامنة</td></tr>
+                    <tr><td><code class="inline-code">sync_queue</code></td><td>طابور المزامنة</td></tr>
+                    <tr><td><code class="inline-code">whatsapp_messages</code></td><td>رسائل واتساب</td></tr>
+                    <tr><td><code class="inline-code">whatsapp_templates</code></td><td>قوالب واتساب</td></tr>
+                </tbody>
+            </table></div>
+
+            <p><strong>التشفير</strong>: يستخدم <code class="inline-code">sqlcipher_flutter_libs</code> بدلا من <code class="inline-code">sqlite3_flutter_libs</code> لدعم تشفير AES-256 على مستوى قاعدة البيانات.</p>
+
+            <hr>
+
+            <!-- Section 3.5 -->
+            <h3 id="35-alhai-auth">3.5 alhai_auth - المصادقة</h3>
+
+<pre><code class="language-yaml">name: alhai_auth
+description: Authentication screens, providers, and security for Alhai apps
+version: 1.0.0</code></pre>
+
+            <p><strong>الغرض</strong>: شاشات المصادقة ومزودات الأمان بما في ذلك تسجيل الدخول، البصمة، رمز PIN، والتشفير.</p>
+
+            <p><strong>البنية الداخلية</strong>:</p>
+<pre><code class="language-plaintext">packages/alhai_auth/lib/src/
+├── core/               # إعدادات أساسية
+├── providers/          # مزودات المصادقة
+├── routes/             # مسارات التوجيه
+├── screens/            # شاشات تسجيل الدخول
+├── security/           # خدمات الأمان
+├── services/           # خدمات المصادقة
+└── widgets/            # ودجات مخصصة</code></pre>
+
+            <p><strong>الاعتماديات الخاصة</strong>:</p>
+            <ul>
+                <li><code class="inline-code">local_auth</code> - المصادقة البيومترية (بصمة/وجه)</li>
+                <li><code class="inline-code">flutter_secure_storage</code> - التخزين المشفر</li>
+                <li><code class="inline-code">crypto</code> - التشفير</li>
+            </ul>
+
+            <hr>
+
+            <!-- Section 3.6 -->
+            <h3 id="36-alhai-l10n">3.6 alhai_l10n - الترجمة</h3>
+
+<pre><code class="language-yaml">name: alhai_l10n
+description: Shared localization (7 languages) and locale management for Alhai apps
+version: 1.0.0</code></pre>
+
+            <p><strong>الغرض</strong>: إدارة الترجمة المركزية لجميع التطبيقات مع دعم 7 لغات واتجاه النص (RTL/LTR).</p>
+
+            <p><strong>اللغات المدعومة</strong>:</p>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>اللغة</th><th>الرمز</th><th>الملف</th><th>الاتجاه</th></tr></thead>
+                <tbody>
+                    <tr><td>العربية</td><td><code class="inline-code">ar</code></td><td><code class="inline-code">app_ar.arb</code></td><td>RTL</td></tr>
+                    <tr><td>الإنجليزية</td><td><code class="inline-code">en</code></td><td><code class="inline-code">app_en.arb</code></td><td>LTR</td></tr>
+                    <tr><td>الأردية</td><td><code class="inline-code">ur</code></td><td><code class="inline-code">app_ur.arb</code></td><td>RTL</td></tr>
+                    <tr><td>الهندية</td><td><code class="inline-code">hi</code></td><td><code class="inline-code">app_hi.arb</code></td><td>LTR</td></tr>
+                    <tr><td>البنغالية</td><td><code class="inline-code">bn</code></td><td><code class="inline-code">app_bn.arb</code></td><td>LTR</td></tr>
+                    <tr><td>الفلبينية</td><td><code class="inline-code">fil</code></td><td><code class="inline-code">app_fil.arb</code></td><td>LTR</td></tr>
+                    <tr><td>الإندونيسية</td><td><code class="inline-code">id</code></td><td><code class="inline-code">app_id.arb</code></td><td>LTR</td></tr>
+                </tbody>
+            </table></div>
+
+            <p><strong>الإعدادات</strong> (<code class="inline-code">l10n.yaml</code>):</p>
+<pre><code class="language-yaml">arb-dir: lib/l10n
+template-arb-file: app_ar.arb        # القالب الأساسي عربي
+output-localization-file: app_localizations.dart
+output-class: AppLocalizations
+output-dir: lib/l10n/generated
+nullable-getter: false</code></pre>
+
+            <blockquote><strong>ملاحظة</strong>: اللغة العربية هي اللغة الأساسية (template) للترجمة.</blockquote>
+
+            <hr>
+
+            <!-- Section 3.7 -->
+            <h3 id="37-alhai-sync">3.7 alhai_sync - محرك المزامنة</h3>
+
+<pre><code class="language-yaml">name: alhai_sync
+description: Sync engine, strategies, offline manager, and connectivity for Alhai apps
+version: 1.0.0</code></pre>
+
+            <p><strong>الغرض</strong>: محرك مزامنة يدعم العمل بدون إنترنت مع استراتيجيات مزامنة متعددة والاستماع للتغييرات الآنية.</p>
+
+            <p><strong>البنية الداخلية</strong>:</p>
+<pre><code class="language-plaintext">packages/alhai_sync/lib/src/
+├── sync_engine.dart             # محرك المزامنة الرئيسي
+├── sync_manager.dart            # مدير المزامنة
+├── sync_service.dart            # خدمة المزامنة
+├── sync_api_service.dart        # خدمة API للمزامنة
+├── sync_status_tracker.dart     # تتبع حالة المزامنة
+├── sync_table_validator.dart    # التحقق من جداول المزامنة
+├── sync_payload_utils.dart      # أدوات الحمولة
+├── connectivity_service.dart    # مراقبة الاتصال
+├── initial_sync.dart            # المزامنة الأولية
+├── realtime_listener.dart       # الاستماع الآني (Supabase Realtime)
+├── org_sync_service.dart        # مزامنة المؤسسة
+├── json_converter.dart          # تحويل JSON
+├── schema_converter.dart        # تحويل المخطط
+├── strategies/                  # استراتيجيات المزامنة
+├── offline/                     # إدارة العمل بدون إنترنت
+└── providers/                   # مزودات Riverpod</code></pre>
+
+            <hr>
+
+            <!-- Section 3.8 -->
+            <h3 id="38-alhai-pos">3.8 alhai_pos - نقطة البيع</h3>
+
+<pre><code class="language-yaml">name: alhai_pos
+description: POS screens, cart, payments, returns for Alhai apps
+version: 1.0.0</code></pre>
+
+            <p><strong>الغرض</strong>: شاشات وخدمات نقطة البيع بما في ذلك السلة، المدفوعات، المرتجعات، وطباعة الإيصالات.</p>
+
+            <p><strong>البنية الداخلية</strong>:</p>
+<pre><code class="language-plaintext">packages/alhai_pos/lib/src/
+├── core/               # إعدادات أساسية
+├── models/             # نماذج POS
+├── providers/          # مزودات (سلة، مدفوعات، ...)
+├── routes/             # مسارات التوجيه
+├── screens/            # الشاشات
+│   ├── pos/            # شاشة نقطة البيع الرئيسية
+│   ├── cash/           # إدارة الصندوق
+│   ├── inventory/      # المخزون
+│   └── returns/        # المرتجعات
+├── services/           # خدمات (طباعة، PDF، ...)
+└── widgets/            # ودجات مخصصة</code></pre>
+
+            <p><strong>الاعتماديات الخاصة</strong>:</p>
+            <ul>
+                <li><code class="inline-code">pdf</code> - توليد ملفات PDF</li>
+                <li><code class="inline-code">printing</code> - الطباعة</li>
+                <li><code class="inline-code">qr_flutter</code> - توليد رموز QR</li>
+                <li><code class="inline-code">url_launcher</code> - فتح الروابط (واتساب)</li>
+            </ul>
+
+            <hr>
+
+            <!-- Section 3.9 -->
+            <h3 id="39-alhai-ai">3.9 alhai_ai - الذكاء الاصطناعي</h3>
+
+<pre><code class="language-yaml">name: alhai_ai
+description: AI screens, services, providers and widgets for Alhai apps
+version: 1.0.0</code></pre>
+
+            <p><strong>الغرض</strong>: شاشات وخدمات الذكاء الاصطناعي بما في ذلك التنبؤ بالمبيعات، تحليل السلة، اكتشاف الاحتيال، والطلب الذكي.</p>
+
+            <p><strong>البنية الداخلية</strong>:</p>
+<pre><code class="language-plaintext">packages/alhai_ai/lib/src/
+├── providers/          # مزودات الذكاء الاصطناعي
+├── routes/             # مسارات التوجيه
+├── screens/            # شاشات AI
+├── services/           # خدمات AI
+└── widgets/            # ودجات مخصصة</code></pre>
+
+            <hr>
+
+            <!-- Section 3.10 -->
+            <h3 id="310-alhai-reports">3.10 alhai_reports - التقارير</h3>
+
+<pre><code class="language-yaml">name: alhai_reports
+description: Report screens and services for Alhai apps
+version: 1.0.0</code></pre>
+
+            <p><strong>الغرض</strong>: شاشات وخدمات التقارير مع إمكانية التصدير كملفات PDF.</p>
+
+            <p><strong>البنية الداخلية</strong>:</p>
+<pre><code class="language-plaintext">packages/alhai_reports/lib/src/
+├── providers/          # مزودات التقارير
+├── routes/             # مسارات التوجيه
+├── screens/            # شاشات التقارير
+├── services/           # خدمات التقارير
+└── utils/              # أدوات مساعدة</code></pre>
+
+            <hr>
+
+            <!-- Section 3.11 -->
+            <h3 id="311-alhai-shared-ui">3.11 alhai_shared_ui - الواجهات المشتركة</h3>
+
+<pre><code class="language-yaml">name: alhai_shared_ui
+description: Shared widgets, layout, and common screens for Alhai apps
+version: 1.0.0</code></pre>
+
+            <p><strong>الغرض</strong>: مكونات واجهة مستخدم مشتركة بين جميع التطبيقات مثل Theme Notifier و Scaffold و Shell.</p>
+
+            <p><strong>البنية الداخلية</strong>:</p>
+<pre><code class="language-plaintext">packages/alhai_shared_ui/lib/src/
+├── core/               # إعدادات أساسية
+├── providers/          # مزودات (Theme, Settings)
+├── routes/             # مسارات مشتركة
+├── screens/            # شاشات مشتركة
+├── utils/              # أدوات مساعدة
+└── widgets/            # ودجات مشتركة</code></pre>
+
+            <hr>
+
+            <!-- Section 4 -->
+            <h2 id="4-شجرة-المجلدات-الرئيسية">4. شجرة المجلدات الرئيسية</h2>
+
+<pre><code class="language-plaintext">Alhai/                                    # جذر المستودع الأحادي (Monorepo)
+│
+├── melos.yaml                            # إعدادات Melos لإدارة الحزم
+├── .gitignore                            # قواعد Git
+├── README.md                             # التوثيق بالإنجليزية
+├── README_AR.md                          # التوثيق بالعربية
+├── PLATFORM_SUMMARY.md                   # ملخص المنصة
+├── MASTER_PROMPT.md                      # تعليمات المشروع
+├── HANDOVER_GUIDE.md                     # دليل التسليم
+│
+├── .github/
+│   └── workflows/
+│       └── flutter_ci.yml                # التكامل المستمر (CI)
+│
+├── docs/                                 # التوثيق التقني
+│   ├── 01-project-structure.md           # هذا الملف
+│   ├── 03-auth-permissions.md            # المصادقة والصلاحيات
+│   ├── DATABASE_SCHEMA.md                # مخطط قاعدة البيانات
+│   ├── DRIFT_SUPABASE_SCHEMA_MAPPING.md  # ربط Drift بـ Supabase
+│   ├── POS_FLOW_SPEC.md                  # مواصفات تدفق نقطة البيع
+│   ├── POS_SLICES.md                     # شرائح نقطة البيع
+│   ├── SERVICES_ROADMAP.md               # خارطة طريق الخدمات
+│   ├── ROADMAP_90_DAYS.md                # خارطة طريق 90 يوم
+│   ├── TEAM_WORKFLOW.md                  # سير عمل الفريق
+│   ├── WORKFLOW.md                       # سير العمل
+│   └── PRE_DEVELOPMENT_CHECKLIST.md      # قائمة ما قبل التطوير
+│
+├── Forms/                                # مواصفات التطبيقات
+│   ├── cashier.md                        # مواصفات الكاشير
+│   ├── admin_pos.md                      # مواصفات الإدارة
+│   ├── admin_pos_lite.md                 # مواصفات الإدارة المبسطة
+│   ├── customer_app.md                   # مواصفات تطبيق العملاء
+│   ├── driver_app.md                     # مواصفات تطبيق السائق
+│   ├── super_admin.md                    # مواصفات المدير العام
+│   └── distributor_portal.md             # مواصفات بوابة الموزعين
+│
+├── apps/                                 # التطبيقات الأساسية
+│   ├── admin/                            # لوحة الإدارة (106 شاشة)
+│   │   ├── lib/
+│   │   │   ├── core/
+│   │   │   ├── data/
+│   │   │   ├── di/
+│   │   │   ├── providers/
+│   │   │   ├── router/
+│   │   │   ├── screens/
+│   │   │   ├── ui/
+│   │   │   └── main.dart
+│   │   ├── android/
+│   │   ├── ios/
+│   │   ├── test/
+│   │   └── pubspec.yaml
+│   │
+│   ├── admin_lite/                       # الإدارة المبسطة (28 شاشة)
+│   │   ├── lib/
+│   │   │   ├── core/
+│   │   │   ├── data/
+│   │   │   ├── di/
+│   │   │   ├── providers/
+│   │   │   ├── router/
+│   │   │   ├── screens/
+│   │   │   ├── ui/
+│   │   │   └── main.dart
+│   │   ├── android/
+│   │   ├── ios/
+│   │   ├── test/
+│   │   └── pubspec.yaml
+│   │
+│   └── cashier/                          # الكاشير/نقطة البيع (79 شاشة)
+│       ├── lib/
+│       │   ├── core/
+│       │   ├── data/
+│       │   ├── di/
+│       │   ├── router/
+│       │   ├── screens/
+│       │   ├── ui/
+│       │   ├── widgets/
+│       │   └── main.dart
+│       ├── android/
+│       ├── ios/
+│       ├── assets/
+│       │   └── data/                     # بيانات CSV للتعبئة
+│       ├── test/
+│       └── pubspec.yaml
+│
+├── customer_app/                         # تطبيق العملاء (40 شاشة)
+│   ├── lib/
+│   │   ├── core/
+│   │   ├── di/
+│   │   ├── features/
+│   │   ├── shared/
+│   │   └── main.dart
+│   └── pubspec.yaml
+│
+├── driver_app/                           # تطبيق السائق (18 شاشة)
+│   ├── lib/
+│   │   ├── core/
+│   │   ├── di/
+│   │   └── main.dart
+│   └── pubspec.yaml
+│
+├── super_admin/                          # لوحة المدير العام (52 شاشة)
+│   ├── lib/
+│   │   ├── core/
+│   │   ├── di/
+│   │   └── main.dart
+│   └── pubspec.yaml
+│
+├── distributor_portal/                   # بوابة الموزعين (25 شاشة)
+│   ├── lib/
+│   │   ├── core/
+│   │   ├── di/
+│   │   ├── screens/
+│   │   ├── ui/
+│   │   └── main.dart
+│   └── pubspec.yaml
+│
+├── alhai_core/                           # النواة المشتركة
+│   ├── lib/src/
+│   │   ├── config/
+│   │   ├── datasources/
+│   │   ├── di/
+│   │   ├── dto/
+│   │   ├── exceptions/
+│   │   ├── models/
+│   │   ├── monitoring/
+│   │   ├── networking/
+│   │   ├── repositories/
+│   │   ├── services/
+│   │   └── utils/
+│   ├── test/
+│   └── pubspec.yaml
+│
+├── alhai_services/                       # طبقة الخدمات
+│   ├── lib/src/
+│   │   ├── di/
+│   │   └── services/                     # 41 خدمة
+│   ├── test/
+│   └── pubspec.yaml
+│
+├── alhai_design_system/                  # نظام التصميم
+│   ├── lib/src/
+│   │   ├── tokens/
+│   │   ├── theme/
+│   │   ├── responsive/
+│   │   ├── components/
+│   │   └── utils/
+│   ├── assets/fonts/                     # خطوط مخصصة
+│   ├── test/
+│   └── pubspec.yaml
+│
+└── packages/                             # الحزم الداخلية
+    ├── alhai_database/                   # قاعدة البيانات (37 جدول)
+    ├── alhai_auth/                       # المصادقة والأمان
+    ├── alhai_l10n/                       # الترجمة (7 لغات)
+    ├── alhai_sync/                       # محرك المزامنة
+    ├── alhai_pos/                        # نقطة البيع
+    ├── alhai_ai/                         # الذكاء الاصطناعي
+    ├── alhai_reports/                    # التقارير
+    └── alhai_shared_ui/                  # واجهات مشتركة</code></pre>
+
+            <hr>
+
+            <!-- Section 5 -->
+            <h2 id="5-التقنيات-المستخدمة">5. التقنيات المستخدمة</h2>
+
+            <h3>مخطط التقنيات</h3>
+
+            <div class="mermaid">
+graph TB
+    subgraph Frontend["الواجهة الأمامية"]
+        Flutter["Flutter 3.27.4"]
+        Dart["Dart SDK >=3.4.0"]
+    end
+
+    subgraph StateManagement["إدارة الحالة"]
+        Riverpod["flutter_riverpod 2.4.9"]
+        GetIt["get_it 7.7.0"]
+        Injectable["injectable 2.3.2"]
+    end
+
+    subgraph Database["قاعدة البيانات"]
+        Drift["Drift 2.14.1"]
+        SQLCipher["SQLCipher (تشفير AES-256)"]
+        WASM["WASM (للويب)"]
+    end
+
+    subgraph Backend["الخدمات الخلفية"]
+        Supabase["Supabase 2.3.4"]
+        Firebase["Firebase Core 3.8.0"]
+        CloudflareR2["Cloudflare R2"]
+    end
+
+    subgraph CodeGen["توليد الكود"]
+        Freezed["Freezed 2.4.5"]
+        JsonSer["json_serializable 6.7.1"]
+        BuildRunner["build_runner 2.4.7"]
+        DriftDev["drift_dev 2.14.1"]
+    end
+
+    subgraph Routing["التوجيه"]
+        GoRouter["go_router 13.0.0"]
+    end
+
+    subgraph Networking["الشبكة"]
+        Dio["Dio 5.4.0"]
+    end
+
+    Flutter --> StateManagement
+    Flutter --> Database
+    Flutter --> Backend
+    Flutter --> Routing
+    Flutter --> Networking
+    Database --> CodeGen
+            </div>
+
+            <h3>جدول التقنيات المفصل</h3>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>الفئة</th><th>التقنية</th><th>الإصدار</th><th>الغرض</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>إطار العمل</strong></td><td>Flutter</td><td>3.27.4 (stable)</td><td>تطوير متعدد المنصات</td></tr>
+                    <tr><td><strong>لغة البرمجة</strong></td><td>Dart</td><td>&gt;=3.4.0 &lt;4.0.0</td><td>اللغة الأساسية</td></tr>
+                    <tr><td><strong>إدارة الحزم</strong></td><td>Melos</td><td>الأحدث</td><td>إدارة المستودع الأحادي</td></tr>
+                    <tr><td><strong>إدارة الحالة</strong></td><td>flutter_riverpod</td><td>^2.4.9</td><td>إدارة حالة تفاعلية</td></tr>
+                    <tr><td><strong>حقن الاعتماديات</strong></td><td>get_it + injectable</td><td>^7.7.0 / ^2.3.2</td><td>حقن الاعتماديات</td></tr>
+                    <tr><td><strong>التوجيه</strong></td><td>go_router</td><td>^13.0.0</td><td>التنقل بين الشاشات</td></tr>
+                    <tr><td><strong>قاعدة البيانات المحلية</strong></td><td>Drift</td><td>^2.14.1</td><td>SQLite type-safe</td></tr>
+                    <tr><td><strong>تشفير قاعدة البيانات</strong></td><td>sqlcipher_flutter_libs</td><td>^0.6.5</td><td>تشفير AES-256</td></tr>
+                    <tr><td><strong>الخلفية</strong></td><td>Supabase</td><td>^2.3.4</td><td>PostgreSQL, Auth, Realtime</td></tr>
+                    <tr><td><strong>الإشعارات</strong></td><td>Firebase</td><td>^3.8.0</td><td>إشعارات فورية (FCM)</td></tr>
+                    <tr><td><strong>الشبكة</strong></td><td>Dio</td><td>^5.4.0</td><td>طلبات HTTP</td></tr>
+                    <tr><td><strong>توليد الكود</strong></td><td>Freezed</td><td>^2.4.5</td><td>نماذج غير قابلة للتغيير</td></tr>
+                    <tr><td><strong>توليد JSON</strong></td><td>json_serializable</td><td>^6.7.1</td><td>تسلسل JSON</td></tr>
+                    <tr><td><strong>التخزين الآمن</strong></td><td>flutter_secure_storage</td><td>^9.0.0</td><td>Keychain/Keystore</td></tr>
+                    <tr><td><strong>التخزين المؤقت</strong></td><td>shared_preferences</td><td>^2.2.2</td><td>تخزين خفيف</td></tr>
+                    <tr><td><strong>الصور</strong></td><td>cached_network_image</td><td>^3.3.1</td><td>تخزين الصور مؤقتا</td></tr>
+                    <tr><td><strong>الخرائط</strong></td><td>google_maps_flutter</td><td>^2.5.0</td><td>خرائط Google</td></tr>
+                    <tr><td><strong>الموقع</strong></td><td>geolocator</td><td>^10.1.0</td><td>تحديد الموقع</td></tr>
+                    <tr><td><strong>الرسوم البيانية</strong></td><td>fl_chart</td><td>^0.65.0</td><td>رسوم بيانية (MIT)</td></tr>
+                    <tr><td><strong>PDF</strong></td><td>pdf + printing</td><td>^3.10.8 / ^5.12.0</td><td>توليد وطباعة PDF</td></tr>
+                    <tr><td><strong>QR Code</strong></td><td>qr_flutter</td><td>^4.1.0</td><td>توليد رموز QR</td></tr>
+                    <tr><td><strong>الترجمة</strong></td><td>intl</td><td>^0.20.2</td><td>دعم التعريب</td></tr>
+                    <tr><td><strong>CSV</strong></td><td>csv</td><td>^6.0.0</td><td>معالجة ملفات CSV</td></tr>
+                    <tr><td><strong>Excel</strong></td><td>excel</td><td>^4.0.2</td><td>تصدير/استيراد XLSX</td></tr>
+                    <tr><td><strong>UUID</strong></td><td>uuid</td><td>^4.4.0</td><td>معرفات فريدة</td></tr>
+                    <tr><td><strong>الاتصال</strong></td><td>connectivity_plus</td><td>^5.0.2</td><td>مراقبة الشبكة</td></tr>
+                    <tr><td><strong>الكاميرا</strong></td><td>camera</td><td>^0.10.5+9</td><td>التقاط صور</td></tr>
+                    <tr><td><strong>التوقيع</strong></td><td>signature</td><td>^5.4.1</td><td>توقيع إلكتروني</td></tr>
+                    <tr><td><strong>الاختبار</strong></td><td>mocktail</td><td>^1.0.4</td><td>محاكاة الاختبارات</td></tr>
+                    <tr><td><strong>Golden Tests</strong></td><td>golden_toolkit</td><td>^0.15.0</td><td>اختبارات مرئية</td></tr>
+                    <tr><td><strong>التشفير</strong></td><td>crypto</td><td>^3.0.3</td><td>دوال تشفير</td></tr>
+                </tbody>
+            </table></div>
+
+            <hr>
+
+            <!-- Section 6 -->
+            <h2 id="6-طريقة-تشغيل-المشروع">6. طريقة تشغيل المشروع</h2>
+
+            <h3 id="61-التهيئة-الأولية">6.1 التهيئة الأولية</h3>
+
+<pre><code class="language-bash"># 1. استنساخ المستودع
+git clone &lt;repository-url&gt;
+cd Alhai
+
+# 2. تثبيت Melos
+dart pub global activate melos
+
+# 3. تهيئة جميع الحزم (bootstrap)
+melos bootstrap</code></pre>
+
+            <h3 id="62-أوامر-melos">6.2 أوامر Melos المتوفرة</h3>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>الأمر</th><th>الوصف</th></tr></thead>
+                <tbody>
+                    <tr><td><code class="inline-code">melos bootstrap</code></td><td>تهيئة جميع الحزم وتثبيت الاعتماديات</td></tr>
+                    <tr><td><code class="inline-code">melos run analyze</code></td><td>تحليل الكود في جميع الحزم</td></tr>
+                    <tr><td><code class="inline-code">melos run test</code></td><td>تشغيل الاختبارات في جميع الحزم</td></tr>
+                    <tr><td><code class="inline-code">melos run format</code></td><td>تنسيق الكود</td></tr>
+                    <tr><td><code class="inline-code">melos run format:check</code></td><td>التحقق من التنسيق (للـ CI)</td></tr>
+                    <tr><td><code class="inline-code">melos run codegen</code></td><td>توليد الكود (Drift, Injectable, Freezed)</td></tr>
+                    <tr><td><code class="inline-code">melos run clean</code></td><td>تنظيف جميع الحزم</td></tr>
+                    <tr><td><code class="inline-code">melos run fix</code></td><td>تطبيق إصلاحات dart fix</td></tr>
+                    <tr><td><code class="inline-code">melos run deps:check</code></td><td>فحص الاعتماديات القديمة</td></tr>
+                    <tr><td><code class="inline-code">melos run test:coverage</code></td><td>تشغيل الاختبارات مع تغطية الكود</td></tr>
+                    <tr><td><code class="inline-code">melos run test:responsive</code></td><td>اختبارات التصميم المتجاوب</td></tr>
+                    <tr><td><code class="inline-code">melos run test:responsive:update</code></td><td>تحديث الملفات الذهبية</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3 id="63-بناء-التطبيقات">6.3 بناء التطبيقات</h3>
+
+<pre><code class="language-bash"># بناء تطبيق الكاشير (APK)
+melos run build:cashier:apk
+
+# بناء لوحة الإدارة (ويب)
+melos run build:admin:web
+
+# بناء الإدارة المبسطة (APK)
+melos run build:lite:apk
+
+# بناء جميع التطبيقات
+melos run build:all</code></pre>
+
+            <h3 id="64-تشغيل-التطبيقات">6.4 تشغيل التطبيقات فرديا</h3>
+
+<pre><code class="language-bash"># تشغيل الكاشير
+cd apps/cashier
+flutter run
+
+# تشغيل لوحة الإدارة (ويب)
+cd apps/admin
+flutter run -d chrome
+
+# تشغيل الإدارة المبسطة
+cd apps/admin_lite
+flutter run
+
+# تشغيل تطبيق العملاء
+cd customer_app
+flutter run
+
+# تشغيل تطبيق السائق
+cd driver_app
+flutter run
+
+# تشغيل لوحة المدير العام (ويب)
+cd super_admin
+flutter run -d chrome
+
+# تشغيل بوابة الموزعين (ويب)
+cd distributor_portal
+flutter run -d chrome</code></pre>
+
+            <h3 id="65-توليد-الكود">6.5 توليد الكود</h3>
+
+<pre><code class="language-bash"># توليد كود Freezed + JSON + Drift + Injectable لجميع الحزم
+melos run codegen
+
+# أو لحزمة محددة:
+cd packages/alhai_database
+dart run build_runner build --delete-conflicting-outputs</code></pre>
+
+            <h3 id="66-بناء-الكاشير-للويب">6.6 بناء الكاشير للويب (بدون tree-shaking للأيقونات)</h3>
+
+<pre><code class="language-bash">cd apps/cashier
+flutter build web --no-tree-shake-icons</code></pre>
+
+            <hr>
+
+            <!-- Section 7 -->
+            <h2 id="7-متطلبات-البيئة">7. متطلبات البيئة</h2>
+
+            <h3 id="71-متطلبات-البرمجيات">7.1 متطلبات البرمجيات</h3>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>البرنامج</th><th>الإصدار المطلوب</th><th>ملاحظات</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Flutter</strong></td><td>3.27.4 (stable)</td><td>محدد في CI</td></tr>
+                    <tr><td><strong>Dart SDK</strong></td><td>&gt;=3.4.0 &lt;4.0.0</td><td>محدد في جميع pubspec.yaml</td></tr>
+                    <tr><td><strong>Flutter SDK</strong></td><td>&gt;=3.10.0</td><td>الحد الأدنى</td></tr>
+                    <tr><td><strong>Melos</strong></td><td>الأحدث</td><td><code class="inline-code">dart pub global activate melos</code></td></tr>
+                    <tr><td><strong>Android SDK</strong></td><td>API 21+</td><td>الحد الأدنى لـ Android</td></tr>
+                    <tr><td><strong>Xcode</strong></td><td>15+</td><td>لتطوير iOS</td></tr>
+                    <tr><td><strong>Chrome</strong></td><td>الأحدث</td><td>لتطوير الويب</td></tr>
+                    <tr><td><strong>Git</strong></td><td>2.x+</td><td>إدارة الإصدارات</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3 id="72-متطلبات-النظام">7.2 متطلبات النظام</h3>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>النظام</th><th>الاستخدام</th><th>المتطلبات</th></tr></thead>
+                <tbody>
+                    <tr><td>Windows 10/11</td><td>التطوير العام + Android</td><td>8GB RAM (16GB موصى به)</td></tr>
+                    <tr><td>macOS 13+</td><td>iOS + Android + Web</td><td>Xcode 15+</td></tr>
+                    <tr><td>Linux</td><td>Android + Web</td><td>Flutter SDK</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3 id="73-خدمات-خارجية">7.3 خدمات خارجية مطلوبة</h3>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>الخدمة</th><th>الغرض</th><th>الإعداد</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>Supabase</strong></td><td>قاعدة البيانات + المصادقة + Realtime</td><td>يتطلب URL و anon key</td></tr>
+                    <tr><td><strong>Firebase</strong></td><td>الإشعارات الفورية (FCM)</td><td>يتطلب <code class="inline-code">google-services.json</code></td></tr>
+                    <tr><td><strong>Google Maps</strong></td><td>الخرائط في تطبيقات العملاء والسائق</td><td>يتطلب API Key</td></tr>
+                    <tr><td><strong>Cloudflare R2</strong></td><td>تخزين الصور والملفات</td><td>تكوين في <code class="inline-code">alhai_core</code></td></tr>
+                </tbody>
+            </table></div>
+
+            <h3 id="74-ملفات-البيئة">7.4 ملفات البيئة</h3>
+
+            <p>الملفات التالية مطلوبة ولكنها <strong>غير مُضمّنة</strong> في المستودع (مذكورة في <code class="inline-code">.gitignore</code>):</p>
+
+<pre><code class="language-plaintext">.env
+.env.local
+.env.*.local
+.dart_define.env
+*.dart_define.env
+config/dev.env
+config/staging.env
+config/prod.env
+*.key
+*.pem
+key.properties
+*.keystore
+*.jks</code></pre>
+
+            <hr>
+
+            <!-- Section 8 -->
+            <h2 id="8-مخطط-العلاقات-بين-الحزم">8. مخطط العلاقات بين الحزم</h2>
+
+            <h3>مخطط الاعتمادية</h3>
+
+            <div class="mermaid">
+graph TD
+    subgraph Apps["التطبيقات"]
+        Admin["admin&lt;br/&gt;(لوحة الإدارة)"]
+        AdminLite["admin_lite&lt;br/&gt;(الإدارة المبسطة)"]
+        Cashier["cashier&lt;br/&gt;(الكاشير)"]
+        CustomerApp["customer_app&lt;br/&gt;(العملاء)"]
+        DriverApp["driver_app&lt;br/&gt;(السائق)"]
+        SuperAdmin["super_admin&lt;br/&gt;(المدير العام)"]
+        DistPortal["distributor_portal&lt;br/&gt;(الموزعين)"]
+    end
+
+    subgraph RootPkgs["حزم الجذر"]
+        Core["alhai_core"]
+        Services["alhai_services"]
+        DesignSystem["alhai_design_system"]
+    end
+
+    subgraph InternalPkgs["packages/"]
+        DB["alhai_database"]
+        Auth["alhai_auth"]
+        L10n["alhai_l10n"]
+        Sync["alhai_sync"]
+        POS["alhai_pos"]
+        AI["alhai_ai"]
+        Reports["alhai_reports"]
+        SharedUI["alhai_shared_ui"]
+    end
+
+    Services --> Core
+
+    DB --> Core
+    Auth --> Core
+    Auth --> DB
+    Auth --> L10n
+    Auth --> DesignSystem
+    Sync --> DB
+    SharedUI --> Core
+    SharedUI --> Services
+    SharedUI --> DesignSystem
+    SharedUI --> L10n
+    SharedUI --> DB
+    SharedUI --> Sync
+    SharedUI --> Auth
+    POS --> Core
+    POS --> Services
+    POS --> DesignSystem
+    POS --> L10n
+    POS --> DB
+    POS --> Sync
+    POS --> Auth
+    POS --> SharedUI
+    AI --> Core
+    AI --> Services
+    AI --> DesignSystem
+    AI --> L10n
+    AI --> DB
+    AI --> SharedUI
+    AI --> Auth
+    Reports --> Core
+    Reports --> Services
+    Reports --> DesignSystem
+    Reports --> L10n
+    Reports --> DB
+    Reports --> SharedUI
+    Reports --> Auth
+
+    Admin --> Core
+    Admin --> Services
+    Admin --> DesignSystem
+    Admin --> DB
+    Admin --> Sync
+    Admin --> L10n
+    Admin --> Auth
+    Admin --> SharedUI
+    Admin --> POS
+    Admin --> AI
+    Admin --> Reports
+
+    AdminLite --> Core
+    AdminLite --> Services
+    AdminLite --> DesignSystem
+    AdminLite --> DB
+    AdminLite --> Sync
+    AdminLite --> L10n
+    AdminLite --> Auth
+    AdminLite --> SharedUI
+    AdminLite --> AI
+    AdminLite --> Reports
+
+    Cashier --> Core
+    Cashier --> Services
+    Cashier --> DesignSystem
+    Cashier --> DB
+    Cashier --> Sync
+    Cashier --> L10n
+    Cashier --> Auth
+    Cashier --> SharedUI
+    Cashier --> POS
+    Cashier --> Reports
+
+    CustomerApp --> Core
+    CustomerApp --> Services
+    CustomerApp --> DesignSystem
+
+    DriverApp --> Core
+    DriverApp --> Services
+    DriverApp --> DesignSystem
+
+    SuperAdmin --> Core
+    SuperAdmin --> Services
+    SuperAdmin --> DesignSystem
+    SuperAdmin --> Auth
+
+    DistPortal --> Core
+    DistPortal --> Services
+    DistPortal --> DesignSystem
+
+    style Core fill:#e1f5fe
+    style Services fill:#e8f5e9
+    style DesignSystem fill:#fff3e0
+    style DB fill:#f3e5f5
+            </div>
+
+            <h3>مصفوفة الاعتمادية بين الحزم</h3>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead>
+                    <tr>
+                        <th>الحزمة</th><th>core</th><th>services</th><th>design</th><th>database</th><th>auth</th><th>l10n</th><th>sync</th><th>pos</th><th>ai</th><th>reports</th><th>shared_ui</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><strong>alhai_services</strong></td><td>*</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+                    <tr><td><strong>alhai_database</strong></td><td>*</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+                    <tr><td><strong>alhai_auth</strong></td><td>*</td><td>-</td><td>*</td><td>*</td><td>-</td><td>*</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+                    <tr><td><strong>alhai_l10n</strong></td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+                    <tr><td><strong>alhai_sync</strong></td><td>-</td><td>-</td><td>-</td><td>*</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+                    <tr><td><strong>alhai_shared_ui</strong></td><td>*</td><td>*</td><td>*</td><td>*</td><td>*</td><td>*</td><td>*</td><td>-</td><td>-</td><td>-</td><td>-</td></tr>
+                    <tr><td><strong>alhai_pos</strong></td><td>*</td><td>*</td><td>*</td><td>*</td><td>*</td><td>*</td><td>*</td><td>-</td><td>-</td><td>-</td><td>*</td></tr>
+                    <tr><td><strong>alhai_ai</strong></td><td>*</td><td>*</td><td>*</td><td>*</td><td>*</td><td>*</td><td>-</td><td>-</td><td>-</td><td>-</td><td>*</td></tr>
+                    <tr><td><strong>alhai_reports</strong></td><td>*</td><td>*</td><td>*</td><td>*</td><td>*</td><td>*</td><td>-</td><td>-</td><td>-</td><td>-</td><td>*</td></tr>
+                </tbody>
+            </table></div>
+
+            <blockquote><code class="inline-code">*</code> = يعتمد على، <code class="inline-code">-</code> = لا يعتمد على</blockquote>
+
+            <hr>
+
+            <!-- Section 9 -->
+            <h2 id="9-قاعدة-البيانات-والجداول">9. قاعدة البيانات والجداول</h2>
+
+            <h3>مخطط طبقات البيانات</h3>
+
+            <div class="mermaid">
+graph LR
+    subgraph Local["محلي (Offline)"]
+        Drift["Drift&lt;br/&gt;(SQLite/SQLCipher)"]
+        FTS["البحث النصي الكامل&lt;br/&gt;(FTS5)"]
+        CSV["تعبئة من CSV"]
+    end
+
+    subgraph Remote["عبر الشبكة"]
+        Supabase["Supabase&lt;br/&gt;(PostgreSQL)"]
+        Realtime["Realtime&lt;br/&gt;Subscriptions"]
+    end
+
+    subgraph SyncLayer["طبقة المزامنة"]
+        SyncEngine["محرك المزامنة"]
+        SyncQueue["طابور المزامنة"]
+        ConflictRes["حل التعارضات"]
+    end
+
+    Drift --> SyncLayer
+    SyncLayer --> Supabase
+    Realtime --> SyncLayer
+    CSV --> Drift
+    FTS --> Drift
+            </div>
+
+            <h3>ملخص الجداول حسب الفئة</h3>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>الفئة</th><th>الجداول</th><th>العدد</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>المنتجات والتصنيفات</strong></td><td>products, categories, product_expiry, favorites</td><td>4</td></tr>
+                    <tr><td><strong>المبيعات</strong></td><td>sales, sale_items</td><td>2</td></tr>
+                    <tr><td><strong>الطلبات</strong></td><td>orders, order_items, order_status_history</td><td>3</td></tr>
+                    <tr><td><strong>المخزون</strong></td><td>inventory_movements, stock_deltas, stock_takes, stock_transfers</td><td>4</td></tr>
+                    <tr><td><strong>المالية</strong></td><td>transactions, accounts, expenses</td><td>3</td></tr>
+                    <tr><td><strong>العملاء</strong></td><td>customers, loyalty</td><td>2</td></tr>
+                    <tr><td><strong>الموردين والمشتريات</strong></td><td>suppliers, purchases</td><td>2</td></tr>
+                    <tr><td><strong>المرتجعات</strong></td><td>returns</td><td>1</td></tr>
+                    <tr><td><strong>الخصومات</strong></td><td>discounts</td><td>1</td></tr>
+                    <tr><td><strong>الإدارة</strong></td><td>users, stores, organizations, org_members, pos_terminals, shifts</td><td>6</td></tr>
+                    <tr><td><strong>التوصيل</strong></td><td>drivers</td><td>1</td></tr>
+                    <tr><td><strong>التقارير</strong></td><td>daily_summaries</td><td>1</td></tr>
+                    <tr><td><strong>الإشعارات</strong></td><td>notifications</td><td>1</td></tr>
+                    <tr><td><strong>واتساب</strong></td><td>whatsapp_messages, whatsapp_templates</td><td>2</td></tr>
+                    <tr><td><strong>النظام</strong></td><td>settings, audit_log, held_invoices</td><td>3</td></tr>
+                    <tr><td><strong>المزامنة</strong></td><td>sync_metadata, sync_queue</td><td>2</td></tr>
+                    <tr><td><strong>المجموع</strong></td><td></td><td><strong>37</strong></td></tr>
+                </tbody>
+            </table></div>
+
+            <hr>
+
+            <!-- Section 10 -->
+            <h2 id="10-نظام-الترجمة">10. نظام الترجمة</h2>
+
+            <h3>مخطط تدفق الترجمة</h3>
+
+            <div class="mermaid">
+graph TD
+    ARB["ملفات ARB&lt;br/&gt;(7 لغات)"] --> Gen["توليد تلقائي&lt;br/&gt;flutter gen-l10n"]
+    Gen --> AppLoc["AppLocalizations"]
+    AppLoc --> Apps["جميع التطبيقات"]
+
+    subgraph Languages["اللغات المدعومة"]
+        AR["العربية (ar) - القالب الأساسي"]
+        EN["الإنجليزية (en)"]
+        UR["الأردية (ur)"]
+        HI["الهندية (hi)"]
+        BN["البنغالية (bn)"]
+        FIL["الفلبينية (fil)"]
+        ID["الإندونيسية (id)"]
+    end
+            </div>
+
+            <h3>الملفات والمسارات</h3>
+
+<pre><code class="language-plaintext">packages/alhai_l10n/
+├── l10n.yaml                           # إعدادات التوليد
+├── lib/
+│   ├── alhai_l10n.dart                 # الملف التصديري
+│   ├── l10n/
+│   │   ├── app_ar.arb                  # العربية (القالب الأساسي)
+│   │   ├── app_en.arb                  # الإنجليزية
+│   │   ├── app_ur.arb                  # الأردية
+│   │   ├── app_hi.arb                  # الهندية
+│   │   ├── app_bn.arb                  # البنغالية
+│   │   ├── app_fil.arb                 # الفلبينية
+│   │   ├── app_id.arb                  # الإندونيسية
+│   │   └── generated/                  # الكود المُولّد
+│   │       └── app_localizations.dart
+│   └── src/
+│       └── locale_provider.dart        # مزود اللغة (Riverpod)</code></pre>
+
+            <h3>طريقة الاستخدام في التطبيقات</h3>
+
+<pre><code class="language-dart">// في main.dart:
+import 'package:alhai_l10n/alhai_l10n.dart';
+
+MaterialApp.router(
+  localizationsDelegates: const [
+    AppLocalizations.delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+  ],
+  supportedLocales: SupportedLocales.all,
+  locale: localeState.locale,
+);
+
+// في الشاشات:
+final l10n = AppLocalizations.of(context);
+Text(l10n.productName); // نص مترجم</code></pre>
+
+            <hr>
+
+            <!-- Section 11 -->
+            <h2 id="11-نظام-التصميم">11. نظام التصميم</h2>
+
+            <h3>مكونات نظام التصميم</h3>
+
+            <div class="mermaid">
+graph TB
+    subgraph Tokens["رموز التصميم (Tokens)"]
+        Colors["AlhaiColors&lt;br/&gt;الألوان"]
+        Typography["AlhaiTypography&lt;br/&gt;الطباعة"]
+        Spacing["AlhaiSpacing&lt;br/&gt;المسافات"]
+        Radius["AlhaiRadius&lt;br/&gt;الزوايا"]
+        Breakpoints["AlhaiBreakpoints&lt;br/&gt;نقاط الانقطاع"]
+        Durations["AlhaiDurations&lt;br/&gt;المدد"]
+        Motion["AlhaiMotion&lt;br/&gt;الحركة"]
+    end
+
+    subgraph Theme["السمات"]
+        Light["السمة الفاتحة"]
+        Dark["السمة المظلمة"]
+        ColorScheme["AlhaiColorScheme"]
+    end
+
+    subgraph Components["المكونات"]
+        Buttons["الأزرار&lt;br/&gt;AlhaiButton, AlhaiIconButton"]
+        Inputs["حقول الإدخال&lt;br/&gt;7 مكونات"]
+        Feedback["التغذية الراجعة&lt;br/&gt;8 مكونات"]
+        Navigation["التنقل&lt;br/&gt;4 مكونات"]
+        Layout["التخطيط&lt;br/&gt;6 مكونات"]
+        DataDisplay["عرض البيانات&lt;br/&gt;5 مكونات"]
+    end
+
+    subgraph Responsive["التصميم المتجاوب"]
+        ContextExt["context.isMobile&lt;br/&gt;context.isTablet&lt;br/&gt;context.isDesktop"]
+        ResponsiveBuilder["ResponsiveBuilder"]
+    end
+
+    Tokens --> Theme
+    Theme --> Components
+    Tokens --> Components
+    Tokens --> Responsive
+            </div>
+
+            <h3>قائمة المكونات المتوفرة</h3>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>الفئة</th><th>المكون</th><th>الملف</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>الأزرار</strong></td><td><code class="inline-code">AlhaiButton</code></td><td><code class="inline-code">alhai_button.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiIconButton</code></td><td><code class="inline-code">alhai_icon_button.dart</code></td></tr>
+                    <tr><td><strong>حقول الإدخال</strong></td><td><code class="inline-code">AlhaiTextField</code></td><td><code class="inline-code">alhai_text_field.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiSearchField</code></td><td><code class="inline-code">alhai_search_field.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiDropdown</code></td><td><code class="inline-code">alhai_dropdown.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiQuantityControl</code></td><td><code class="inline-code">alhai_quantity_control.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiCheckbox</code></td><td><code class="inline-code">alhai_checkbox.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiSwitch</code></td><td><code class="inline-code">alhai_switch.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiRadioGroup</code></td><td><code class="inline-code">alhai_radio_group.dart</code></td></tr>
+                    <tr><td><strong>التغذية الراجعة</strong></td><td><code class="inline-code">AlhaiBadge</code></td><td><code class="inline-code">alhai_badge.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiEmptyState</code></td><td><code class="inline-code">alhai_empty_state.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiSnackbar</code></td><td><code class="inline-code">alhai_snackbar.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiBottomSheet</code></td><td><code class="inline-code">alhai_bottom_sheet.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiDialog</code></td><td><code class="inline-code">alhai_dialog.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiStateView</code></td><td><code class="inline-code">alhai_state_view.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiInlineAlert</code></td><td><code class="inline-code">alhai_inline_alert.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiSkeleton</code></td><td><code class="inline-code">alhai_skeleton.dart</code></td></tr>
+                    <tr><td><strong>التنقل</strong></td><td><code class="inline-code">AlhaiAppBar</code></td><td><code class="inline-code">alhai_app_bar.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiTabs</code></td><td><code class="inline-code">alhai_tabs.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiBottomNavBar</code></td><td><code class="inline-code">alhai_bottom_nav_bar.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiTabBar</code></td><td><code class="inline-code">alhai_tab_bar.dart</code></td></tr>
+                    <tr><td><strong>التخطيط</strong></td><td><code class="inline-code">AlhaiCard</code></td><td><code class="inline-code">alhai_card.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiSection</code></td><td><code class="inline-code">alhai_section.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiScaffold</code></td><td><code class="inline-code">alhai_scaffold.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiListTile</code></td><td><code class="inline-code">alhai_list_tile.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiAvatar</code></td><td><code class="inline-code">alhai_avatar.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiDivider</code></td><td><code class="inline-code">alhai_divider.dart</code></td></tr>
+                    <tr><td><strong>عرض البيانات</strong></td><td><code class="inline-code">AlhaiPriceText</code></td><td><code class="inline-code">alhai_price_text.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiProductCard</code></td><td><code class="inline-code">alhai_product_card.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiCartItem</code></td><td><code class="inline-code">alhai_cart_item.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiOrderStatus</code></td><td><code class="inline-code">alhai_order_status.dart</code></td></tr>
+                    <tr><td></td><td><code class="inline-code">AlhaiOrderCard</code></td><td><code class="inline-code">alhai_order_card.dart</code></td></tr>
+                    <tr><td><strong>الصور</strong></td><td><code class="inline-code">ProductImage</code></td><td><code class="inline-code">product_image.dart</code></td></tr>
+                    <tr><td><strong>لوحة المعلومات</strong></td><td><code class="inline-code">Dashboard</code></td><td><code class="inline-code">dashboard.dart</code></td></tr>
+                </tbody>
+            </table></div>
+
+            <hr>
+
+            <!-- Section 12 -->
+            <h2 id="12-بنية-الخدمات-الخلفية">12. بنية الخدمات الخلفية</h2>
+
+            <h3>مخطط البنية الخلفية</h3>
+
+            <div class="mermaid">
+graph TB
+    subgraph Client["التطبيقات (Flutter)"]
+        Apps["7 تطبيقات"]
+    end
+
+    subgraph Supabase["Supabase"]
+        Auth["Auth&lt;br/&gt;المصادقة"]
+        PostgreSQL["PostgreSQL&lt;br/&gt;قاعدة البيانات"]
+        Realtime["Realtime&lt;br/&gt;التحديثات الآنية"]
+        EdgeFunctions["Edge Functions&lt;br/&gt;وظائف الحافة"]
+        Storage["Storage&lt;br/&gt;التخزين"]
+    end
+
+    subgraph External["خدمات خارجية"]
+        Firebase["Firebase&lt;br/&gt;FCM إشعارات"]
+        GoogleMaps["Google Maps&lt;br/&gt;الخرائط"]
+        CloudflareR2["Cloudflare R2&lt;br/&gt;تخزين الصور"]
+        WhatsApp["WhatsApp API&lt;br/&gt;الرسائل"]
+        PaymentGW["بوابات الدفع&lt;br/&gt;مدى، فيزا، ماستركارد"]
+    end
+
+    Apps --> Auth
+    Apps --> PostgreSQL
+    Apps --> Realtime
+    Apps --> EdgeFunctions
+    Apps --> Firebase
+    Apps --> GoogleMaps
+    Apps --> CloudflareR2
+    Apps --> WhatsApp
+    Apps --> PaymentGW
+    EdgeFunctions --> Storage
+            </div>
+
+            <h3>واجهات المستودعات (Repository Interfaces)</h3>
+
+            <p>جميع المستودعات مُعرّفة كواجهات مجردة في <code class="inline-code">alhai_core</code> مع تنفيذات في <code class="inline-code">alhai_core/lib/src/repositories/impl/</code>:</p>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>المستودع</th><th>الوصف</th></tr></thead>
+                <tbody>
+                    <tr><td><code class="inline-code">AuthRepository</code></td><td>المصادقة وإدارة الجلسات</td></tr>
+                    <tr><td><code class="inline-code">ProductsRepository</code></td><td>المنتجات (CRUD + بحث + باركود)</td></tr>
+                    <tr><td><code class="inline-code">OrdersRepository</code></td><td>الطلبات</td></tr>
+                    <tr><td><code class="inline-code">CategoriesRepository</code></td><td>التصنيفات</td></tr>
+                    <tr><td><code class="inline-code">InventoryRepository</code></td><td>المخزون</td></tr>
+                    <tr><td><code class="inline-code">PurchasesRepository</code></td><td>المشتريات</td></tr>
+                    <tr><td><code class="inline-code">SuppliersRepository</code></td><td>الموردين</td></tr>
+                    <tr><td><code class="inline-code">DebtsRepository</code></td><td>الديون</td></tr>
+                    <tr><td><code class="inline-code">DeliveryRepository</code></td><td>التوصيل</td></tr>
+                    <tr><td><code class="inline-code">AnalyticsRepository</code></td><td>التحليلات</td></tr>
+                    <tr><td><code class="inline-code">ReportsRepository</code></td><td>التقارير</td></tr>
+                    <tr><td><code class="inline-code">StoresRepository</code></td><td>المتاجر</td></tr>
+                    <tr><td><code class="inline-code">ShiftsRepository</code></td><td>الورديات</td></tr>
+                    <tr><td><code class="inline-code">RefundsRepository</code></td><td>المرتجعات</td></tr>
+                    <tr><td><code class="inline-code">NotificationsRepository</code></td><td>الإشعارات</td></tr>
+                    <tr><td><code class="inline-code">LoyaltyRepository</code></td><td>نقاط الولاء</td></tr>
+                    <tr><td><code class="inline-code">PromotionsRepository</code></td><td>العروض</td></tr>
+                    <tr><td><code class="inline-code">DistributorsRepository</code></td><td>الموزعين</td></tr>
+                    <tr><td><code class="inline-code">WholesaleOrdersRepository</code></td><td>طلبات الجملة</td></tr>
+                    <tr><td><code class="inline-code">StoreSettingsRepository</code></td><td>إعدادات المتجر</td></tr>
+                    <tr><td><code class="inline-code">StoreMembersRepository</code></td><td>أعضاء المتجر</td></tr>
+                    <tr><td><code class="inline-code">TransfersRepository</code></td><td>التحويلات</td></tr>
+                    <tr><td><code class="inline-code">CashMovementsRepository</code></td><td>حركات النقد</td></tr>
+                    <tr><td><code class="inline-code">OrderPaymentsRepository</code></td><td>مدفوعات الطلبات</td></tr>
+                    <tr><td><code class="inline-code">RatingsRepository</code></td><td>التقييمات</td></tr>
+                    <tr><td><code class="inline-code">ChatsRepository</code></td><td>الدردشة</td></tr>
+                    <tr><td><code class="inline-code">AddressesRepository</code></td><td>العناوين</td></tr>
+                    <tr><td><code class="inline-code">ActivityLogsRepository</code></td><td>سجل النشاطات</td></tr>
+                </tbody>
+            </table></div>
+
+            <hr>
+
+            <!-- Section 13 -->
+            <h2 id="13-التكامل-المستمر">13. التكامل المستمر</h2>
+
+            <h3>مخطط سير العمل (CI Pipeline)</h3>
+
+            <div class="mermaid">
+graph LR
+    Push["Push/PR&lt;br/&gt;إلى main أو develop"] --> Test["Analyze &amp; Test"]
+    Test --> Analyze["تحليل الكود&lt;br/&gt;melos run analyze"]
+    Test --> RunTests["الاختبارات&lt;br/&gt;melos run test"]
+    RunTests --> Coverage["تغطية الكود&lt;br/&gt;الحد الأدنى: 60%"]
+    Coverage --> Report["رفع التقرير"]
+
+    Schedule["جدولة ربع سنوية"] --> CertCheck["فحص شهادات SSL"]
+    CertCheck --> Scan["مسح الشهادات المثبتة"]
+            </div>
+
+            <h3>تفاصيل سير العمل</h3>
+
+            <p><strong>الملف</strong>: <code class="inline-code">.github/workflows/flutter_ci.yml</code></p>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>المرحلة</th><th>الوصف</th><th>الأمر</th></tr></thead>
+                <tbody>
+                    <tr><td>Checkout</td><td>استنساخ الكود</td><td><code class="inline-code">actions/checkout@v4</code></td></tr>
+                    <tr><td>Setup Flutter</td><td>تثبيت Flutter 3.27.4</td><td><code class="inline-code">subosito/flutter-action@v2</code></td></tr>
+                    <tr><td>Install Melos</td><td>تثبيت Melos</td><td><code class="inline-code">dart pub global activate melos</code></td></tr>
+                    <tr><td>Bootstrap</td><td>تهيئة الحزم</td><td><code class="inline-code">melos bootstrap</code></td></tr>
+                    <tr><td>Analyze</td><td>تحليل الكود</td><td><code class="inline-code">melos run analyze</code></td></tr>
+                    <tr><td>Test</td><td>الاختبارات + تغطية</td><td><code class="inline-code">melos run test -- --coverage</code></td></tr>
+                    <tr><td>Coverage Check</td><td>فحص التغطية (60%)</td><td><code class="inline-code">lcov --summary</code></td></tr>
+                </tbody>
+            </table></div>
+
+            <p><strong>الأحداث المُفعِّلة</strong>:</p>
+            <ul>
+                <li><code class="inline-code">push</code> إلى فرعي <code class="inline-code">main</code> و <code class="inline-code">develop</code></li>
+                <li><code class="inline-code">pull_request</code> إلى فرع <code class="inline-code">main</code></li>
+                <li>جدولة ربع سنوية لفحص انتهاء شهادات SSL</li>
+            </ul>
+
+            <hr>
+
+            <!-- Section 14 -->
+            <h2 id="14-إحصائيات-المنصة">14. إحصائيات المنصة</h2>
+
+            <h3>ملخص عام</h3>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>المقياس</th><th>القيمة</th></tr></thead>
+                <tbody>
+                    <tr><td>إجمالي التطبيقات</td><td>7</td></tr>
+                    <tr><td>إجمالي الشاشات</td><td>348</td></tr>
+                    <tr><td>إجمالي الحزم المشتركة</td><td>11</td></tr>
+                    <tr><td>إجمالي الجداول</td><td>37</td></tr>
+                    <tr><td>إجمالي النماذج (Models)</td><td>30+</td></tr>
+                    <tr><td>إجمالي المستودعات (Repositories)</td><td>29</td></tr>
+                    <tr><td>إجمالي الخدمات (Services)</td><td>41</td></tr>
+                    <tr><td>إجمالي مكونات التصميم</td><td>30+</td></tr>
+                    <tr><td>إجمالي كائنات الوصول (DAOs)</td><td>29</td></tr>
+                    <tr><td>اللغات المدعومة</td><td>7</td></tr>
+                </tbody>
+            </table></div>
+
+            <h3>توزيع الشاشات حسب التطبيق</h3>
+
+            <div class="mermaid">
+pie title توزيع الشاشات (348 شاشة)
+    "لوحة الإدارة (admin)" : 106
+    "الكاشير (cashier)" : 79
+    "المدير العام (super_admin)" : 52
+    "تطبيق العملاء (customer_app)" : 40
+    "الإدارة المبسطة (admin_lite)" : 28
+    "بوابة الموزعين (distributor_portal)" : 25
+    "تطبيق السائق (driver_app)" : 18
+            </div>
+
+            <h3>نموذج الإيرادات</h3>
+
+            <div class="table-responsive"><table class="styled-table">
+                <thead><tr><th>الفئة</th><th>القيمة</th></tr></thead>
+                <tbody>
+                    <tr><td><strong>الاشتراكات الشهرية</strong></td><td></td></tr>
+                    <tr><td>- خطة أساسية (Basic)</td><td>49 ر.س/شهر</td></tr>
+                    <tr><td>- خطة احترافية (Pro)</td><td>499 ر.س/شهر</td></tr>
+                    <tr><td>- خطة مؤسسات (Enterprise)</td><td>1,999 ر.س/شهر</td></tr>
+                    <tr><td><strong>رسوم B2B</strong></td><td></td></tr>
+                    <tr><td>- رسوم المعاملات</td><td>2%</td></tr>
+                    <tr><td>- قائمة مميزة</td><td>500 ر.س/شهر</td></tr>
+                    <tr><td>- فئة متميزة</td><td>1,000 ر.س/شهر</td></tr>
+                    <tr><td><strong>الإيرادات الشهرية المتكررة (MRR)</strong></td><td>106,358 ر.س</td></tr>
+                    <tr><td><strong>الإيرادات السنوية (ARR)</strong></td><td>~1,276,296 ر.س</td></tr>
+                </tbody>
+            </table></div>
+
+            <hr>
+
+            <!-- Dependency Path Conventions -->
+            <h2 id="اصطلاحات-مسارات-الاعتمادية">اصطلاحات مسارات الاعتمادية</h2>
+
+            <p>وفقا لإعدادات Melos، تتبع مسارات الاعتمادية الأنماط التالية:</p>
+
+            <h3>من تطبيق داخل apps/&lt;app&gt;/pubspec.yaml</h3>
+
+<pre><code class="language-yaml">alhai_core:      { path: ../../alhai_core }
+alhai_database:  { path: ../../packages/alhai_database }</code></pre>
+
+            <h3>من حزمة داخل packages/&lt;pkg&gt;/pubspec.yaml</h3>
+
+<pre><code class="language-yaml">alhai_core:           { path: ../../alhai_core }
+&lt;حزمة شقيقة&gt;:        { path: ../&lt;sibling&gt; }</code></pre>
+
+            <h3>من تطبيق في الجذر (customer_app, driver_app, super_admin, distributor_portal)</h3>
+
+<pre><code class="language-yaml">alhai_core:      { path: ../alhai_core }
+alhai_database:  { path: ../packages/alhai_database }</code></pre>
+
+            <hr>
+
+            <!-- Developer Notes -->
+            <h2 id="ملاحظات-مهمة-للمطورين">ملاحظات مهمة للمطورين</h2>
+
+            <ol>
+                <li><strong>استخدم <code class="inline-code">withValues(alpha: X)</code> بدلا من <code class="inline-code">withOpacity(X)</code></strong> - هذا الأخير مهمل في Flutter الحديث.</li>
+                <li><strong>معرف المتجر التجريبي</strong>: <code class="inline-code">store_demo_001</code> - يُستخدم في التطوير والاختبار.</li>
+                <li><strong>تشفير قاعدة البيانات</strong>: تطبيق الكاشير يستخدم SQLCipher لتشفير قاعدة البيانات المحلية. المفتاح يُخزّن في <code class="inline-code">FlutterSecureStorage</code> على الهواتف و <code class="inline-code">SharedPreferences</code> على الويب.</li>
+                <li><strong>التحميل من CSV</strong>: عند أول تشغيل لتطبيق الكاشير، يتم تحميل بيانات المنتجات والتصنيفات من ملفات CSV في <code class="inline-code">assets/data/</code>.</li>
+                <li><strong>ترخيص الرسوم البيانية</strong>: يُستخدم <code class="inline-code">fl_chart</code> (MIT) فقط. لا تُضِف <code class="inline-code">syncfusion_flutter_charts</code> بسبب قيود الترخيص التجاري.</li>
+                <li><strong>حزمة Excel</strong>: مُضافة فقط في <code class="inline-code">distributor_portal</code> لأنها تضيف ~2MB ولا تحتاجها التطبيقات الأخرى.</li>
+                <li><strong>الإستراتيجية الإصدارية</strong>: جميع التطبيقات حاليا بالإصدار 1.0.0+1. يُخطط لاستخدام Melos versioning مع conventional commits قبل الإطلاق.</li>
+            </ol>
+
+            <hr>
+
+            <p><strong>آخر تحديث</strong>: 2026-02-28</p>
+            <p><strong>الحالة</strong>: مكتمل</p>
+
+        </article>
+        <nav class="page-nav">
+            <a href="../index.html" class="page-nav-link prev"><span class="page-nav-direction">→ السابق</span><span class="page-nav-title">الرئيسية</span></a>
+            <a href="02-database.html" class="page-nav-link next"><span class="page-nav-direction">التالي ←</span><span class="page-nav-title">قاعدة البيانات</span></a>
+        </nav>
+    </main>
+    <footer class="footer"><p>منصة الحي © 2026 - آخر تحديث: 2026-02-28</p></footer>
+    <button class="back-to-top" id="backToTop" onclick="window.scrollTo({top:0,behavior:'smooth'})"><i class="fas fa-arrow-up"></i></button>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+    <script src="../js/main.js"></script>
+    <script>hljs.highlightAll();</script>
+</body>
+</html>

@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="التوثيق الرسمي لمنصة الحي - نظام نقاط البيع المتكامل">
+  <title>منصة الحي - التوثيق</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Font Awesome 6 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Highlight.js (Atom One Dark) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+
+  <!-- Mermaid.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mermaid/10.9.0/mermaid.min.js"></script>
+
+  <!-- Site Styles -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ======== Header ======== -->
+  <header class="site-header">
+    <div class="header-inner">
+      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="قائمة التنقل">
+        <i class="fa-solid fa-bars"></i>
+      </button>
+
+      <a href="index.html" class="header-logo">
+        <span class="logo-icon">ح</span>
+        <span>منصة الحي</span>
+      </a>
+
+      <div class="header-search">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="search-input" placeholder="بحث في التوثيق... (Ctrl+K)" autocomplete="off">
+        <div class="search-results" id="search-results"></div>
+      </div>
+
+      <button class="theme-toggle" id="theme-toggle" title="الوضع الداكن">
+        <i class="fa-solid fa-moon"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ======== Sidebar Overlay (Mobile) ======== -->
+  <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+  <!-- ======== Layout ======== -->
+  <div class="layout">
+
+    <!-- ======== Sidebar (Right in RTL) ======== -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">التوثيق</div>
+        <ul class="sidebar-nav">
+          <li>
+            <a href="index.html" class="active">
+              <i class="fa-solid fa-house"></i>
+              الرئيسية
+            </a>
+          </li>
+          <li>
+            <a href="pages/01-project-structure.html">
+              <i class="fa-solid fa-sitemap"></i>
+              البنية العامة
+            </a>
+          </li>
+          <li>
+            <a href="pages/02-database.html">
+              <i class="fa-solid fa-database"></i>
+              قاعدة البيانات
+            </a>
+          </li>
+          <li>
+            <a href="pages/03-auth.html">
+              <i class="fa-solid fa-shield-halved"></i>
+              الصلاحيات والمصادقة
+            </a>
+          </li>
+          <li>
+            <a href="pages/04-screens.html">
+              <i class="fa-solid fa-desktop"></i>
+              الشاشات والواجهات
+            </a>
+          </li>
+          <li>
+            <a href="pages/05-services-api.html">
+              <i class="fa-solid fa-server"></i>
+              الخدمات والـ API
+            </a>
+          </li>
+          <li>
+            <a href="pages/06-architecture.html">
+              <i class="fa-solid fa-cubes"></i>
+              البنية المعمارية
+            </a>
+          </li>
+          <li>
+            <a href="pages/07-developer-guide.html">
+              <i class="fa-solid fa-code"></i>
+              دليل المطور
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">روابط سريعة</div>
+        <ul class="sidebar-nav">
+          <li>
+            <a href="https://github.com" target="_blank" rel="noopener">
+              <i class="fa-brands fa-github"></i>
+              المستودع
+            </a>
+          </li>
+        </ul>
+      </div>
+    </aside>
+
+    <!-- ======== Main Content ======== -->
+    <main class="main-content">
+      <div class="content">
+
+        <!-- Hero Section -->
+        <section class="hero">
+          <h1><i class="fa-solid fa-store"></i> منصة الحي</h1>
+          <p>التوثيق الرسمي والشامل لمنصة الحي - نظام نقاط البيع المتكامل للمحلات التجارية والمتاجر الإلكترونية في المنطقة العربية</p>
+        </section>
+
+        <!-- Statistics -->
+        <h2 id="stats">المنصة بالأرقام</h2>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-number">7</span>
+            <span class="stat-label">تطبيقات</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">11</span>
+            <span class="stat-label">حزمة برمجية</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">40+</span>
+            <span class="stat-label">جدول بيانات</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">10,000+</span>
+            <span class="stat-label">سطر توثيق</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">7</span>
+            <span class="stat-label">لغات مدعومة</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-number">300+</span>
+            <span class="stat-label">شاشة</span>
+          </div>
+        </div>
+
+        <!-- Quick Links -->
+        <h2 id="sections">أقسام التوثيق</h2>
+        <div class="cards-grid">
+          <a href="pages/01-project-structure.html" class="link-card">
+            <div class="card-icon">
+              <i class="fa-solid fa-sitemap"></i>
+            </div>
+            <div class="card-body">
+              <h3>البنية العامة</h3>
+              <p>هيكل المشروع، التطبيقات، الحزم المشتركة، وعلاقات الاعتماد بينها</p>
+            </div>
+          </a>
+
+          <a href="pages/02-database.html" class="link-card">
+            <div class="card-icon">
+              <i class="fa-solid fa-database"></i>
+            </div>
+            <div class="card-body">
+              <h3>قاعدة البيانات</h3>
+              <p>مخطط الجداول، العلاقات، المزامنة، Drift ORM، واستراتيجية الهجرة</p>
+            </div>
+          </a>
+
+          <a href="pages/03-auth.html" class="link-card">
+            <div class="card-icon">
+              <i class="fa-solid fa-shield-halved"></i>
+            </div>
+            <div class="card-body">
+              <h3>الصلاحيات والمصادقة</h3>
+              <p>نظام تسجيل الدخول، الأدوار، صلاحيات الوصول، JWT، وأمان التطبيق</p>
+            </div>
+          </a>
+
+          <a href="pages/04-screens.html" class="link-card">
+            <div class="card-icon">
+              <i class="fa-solid fa-desktop"></i>
+            </div>
+            <div class="card-body">
+              <h3>الشاشات والواجهات</h3>
+              <p>قائمة جميع الشاشات، التنقل، التصميم المتجاوب، ودعم RTL</p>
+            </div>
+          </a>
+
+          <a href="pages/05-services-api.html" class="link-card">
+            <div class="card-icon">
+              <i class="fa-solid fa-server"></i>
+            </div>
+            <div class="card-body">
+              <h3>الخدمات والـ API</h3>
+              <p>واجهات الـ API، خدمات الطباعة، الباركود، الواتساب، والذكاء الاصطناعي</p>
+            </div>
+          </a>
+
+          <a href="pages/06-architecture.html" class="link-card">
+            <div class="card-icon">
+              <i class="fa-solid fa-cubes"></i>
+            </div>
+            <div class="card-body">
+              <h3>البنية المعمارية</h3>
+              <p>Clean Architecture، إدارة الحالة بـ Riverpod، حقن الاعتماديات، والأنماط المستخدمة</p>
+            </div>
+          </a>
+
+          <a href="pages/07-developer-guide.html" class="link-card">
+            <div class="card-icon">
+              <i class="fa-solid fa-code"></i>
+            </div>
+            <div class="card-body">
+              <h3>دليل المطور</h3>
+              <p>إعداد بيئة التطوير، أوامر البناء، الاختبارات، معايير الكود، والنشر</p>
+            </div>
+          </a>
+        </div>
+
+        <!-- Getting Started -->
+        <h2 id="getting-started">كيف تبدأ؟</h2>
+        <p>إذا كنت مطورًا جديدًا في الفريق، اتبع هذه الخطوات للبدء بسرعة:</p>
+
+        <ol class="steps-list">
+          <li>
+            <div>
+              <strong>استنسخ المستودع</strong>
+              <p>قم بنسخ المستودع من GitHub وتأكد من تثبيت Flutter SDK (الإصدار 3.24 أو أحدث)</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>اقرأ البنية العامة</strong>
+              <p>ابدأ بصفحة <a href="pages/01-project-structure.html">البنية العامة</a> لفهم هيكل المشروع والحزم المشتركة</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>تعرف على قاعدة البيانات</strong>
+              <p>اطلع على <a href="pages/02-database.html">مخطط قاعدة البيانات</a> لفهم الجداول والعلاقات الأساسية</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>راجع البنية المعمارية</strong>
+              <p>اقرأ <a href="pages/06-architecture.html">البنية المعمارية</a> لفهم أنماط التصميم وإدارة الحالة</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <strong>ابدأ التطوير</strong>
+              <p>اتبع <a href="pages/07-developer-guide.html">دليل المطور</a> لإعداد بيئة التطوير وتشغيل التطبيق محليًا</p>
+            </div>
+          </li>
+        </ol>
+
+      </div>
+    </main>
+
+    <!-- ======== TOC (Left in RTL) ======== -->
+    <nav class="toc" aria-label="محتويات الصفحة">
+      <div class="toc-title">محتويات الصفحة</div>
+      <ul class="toc-list" id="toc-list">
+        <!-- Generated by JS -->
+      </ul>
+    </nav>
+
+  </div>
+
+  <!-- ======== Footer ======== -->
+  <footer class="site-footer">
+    منصة الحي &copy; 2026 - آخر تحديث: 2026-02-28
+  </footer>
+
+  <!-- ======== Back to Top ======== -->
+  <button class="back-to-top" id="back-to-top" aria-label="العودة للأعلى">
+    <i class="fa-solid fa-chevron-up"></i>
+  </button>
+
+  <!-- Site Scripts -->
+  <script src="js/main.js"></script>
+  <script>hljs.highlightAll();</script>
+</body>
+</html>
