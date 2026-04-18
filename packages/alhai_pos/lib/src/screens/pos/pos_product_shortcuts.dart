@@ -116,22 +116,46 @@ class _PosProductCardState extends State<PosProductCard> {
                               ),
                               child: Tooltip(
                                 message: l10n.addToCart,
+                                // P0-12: keep the 28-dp circular pill visual,
+                                // but give the tap target a 48-dp hit box
+                                // (Material 3 min). Outer Material is just a
+                                // transparent host for the InkWell ripple;
+                                // inner DecoratedBox carries the pill visual.
                                 child: Material(
-                                  color: AppColors.primary,
-                                  shape: const CircleBorder(),
-                                  elevation: 2,
+                                  color: Colors.transparent,
                                   child: InkWell(
                                     onTap:
                                         widget.onAddWithQuantity ??
                                         widget.onAddToCart,
                                     customBorder: const CircleBorder(),
                                     child: SizedBox(
-                                      width: 28,
-                                      height: 28,
-                                      child: Icon(
-                                        Icons.add_rounded,
-                                        color: colorScheme.onPrimary,
-                                        size: 16,
+                                      width: 48,
+                                      height: 48,
+                                      child: Center(
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(
+                                            color: AppColors.primary,
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black.withValues(
+                                                  alpha: 0.15,
+                                                ),
+                                                blurRadius: 2,
+                                                offset: const Offset(0, 1),
+                                              ),
+                                            ],
+                                          ),
+                                          child: SizedBox(
+                                            width: 28,
+                                            height: 28,
+                                            child: Icon(
+                                              Icons.add_rounded,
+                                              color: colorScheme.onPrimary,
+                                              size: 16,
+                                            ),
+                                          ),
+                                        ),
                                       ),
                                     ),
                                   ),

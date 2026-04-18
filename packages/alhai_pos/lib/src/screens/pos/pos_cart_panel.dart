@@ -1504,12 +1504,16 @@ class PosCartItemTile extends ConsumerWidget {
               );
             },
             borderRadius: BorderRadius.circular(8),
-            child: Padding(
-              padding: const EdgeInsets.all(AlhaiSpacing.xxs),
-              child: Icon(
-                Icons.edit_outlined,
-                size: 18,
-                color: AppColors.info.withValues(alpha: 0.7),
+            // P0-12: 48×48 hit box around the 18-dp icon (Material 3 min).
+            child: SizedBox(
+              width: 48,
+              height: 48,
+              child: Center(
+                child: Icon(
+                  Icons.edit_outlined,
+                  size: 18,
+                  color: AppColors.info.withValues(alpha: 0.7),
+                ),
               ),
             ),
           ),
@@ -1534,14 +1538,18 @@ class PosCartItemTile extends ConsumerWidget {
                 );
               },
               borderRadius: BorderRadius.circular(8),
-              child: Padding(
-                padding: const EdgeInsets.all(AlhaiSpacing.xxs),
-                child: Icon(
-                  Icons.delete_outline_rounded,
-                  size: 18,
-                  color: Theme.of(
-                    context,
-                  ).colorScheme.error.withValues(alpha: 0.7),
+              // P0-12: 48×48 hit box around the 18-dp icon (Material 3 min).
+              child: SizedBox(
+                width: 48,
+                height: 48,
+                child: Center(
+                  child: Icon(
+                    Icons.delete_outline_rounded,
+                    size: 18,
+                    color: Theme.of(
+                      context,
+                    ).colorScheme.error.withValues(alpha: 0.7),
+                  ),
                 ),
               ),
             ),
@@ -1574,28 +1582,42 @@ class PosQtyButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
+    // P0-12: keep the 28-dp pill visual, but give the tap a 48-dp hit box.
+    // Outer Material is transparent to host the wider InkWell; inner
+    // DecoratedBox carries the rounded-rectangle pill visual.
     return Material(
-      color: isPrimary ? AppColors.primary : colorScheme.surfaceContainerLow,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: isPrimary
-            ? BorderSide.none
-            : BorderSide(color: colorScheme.outlineVariant, width: 0.5),
-      ),
+      color: Colors.transparent,
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(8),
         child: SizedBox(
-          width: 28,
-          height: 28,
-          child: Icon(
-            icon,
-            size: 16,
-            color: isPrimary
-                ? colorScheme.onPrimary
-                : isDark
-                ? AppColors.textSecondaryDark
-                : AppColors.textSecondary,
+          width: 48,
+          height: 48,
+          child: Center(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: isPrimary
+                    ? AppColors.primary
+                    : colorScheme.surfaceContainerLow,
+                borderRadius: BorderRadius.circular(8),
+                border: isPrimary
+                    ? null
+                    : Border.all(color: colorScheme.outlineVariant, width: 0.5),
+              ),
+              child: SizedBox(
+                width: 28,
+                height: 28,
+                child: Icon(
+                  icon,
+                  size: 16,
+                  color: isPrimary
+                      ? colorScheme.onPrimary
+                      : isDark
+                      ? AppColors.textSecondaryDark
+                      : AppColors.textSecondary,
+                ),
+              ),
+            ),
           ),
         ),
       ),
