@@ -4,13 +4,15 @@ Per-endpoint rate limiting configuration.
 Heavy endpoints (image recognition, chat, reports) get stricter limits.
 Light endpoints (forecast, pricing, etc.) get standard limits.
 
-Key function: prefer `user:{sub}:store:{store_id}` when we have both from the
-verified JWT + request body, so one store can't exhaust another store's bucket
-(important for multi-tenant fairness). Falls back to `user:{sub}` if we have a
-token but no store_id (e.g. auth endpoints), then to remote IP.
+Key function: `user:{sub}` derived ONLY from a cryptographically valid and
+unexpired Bearer JWT; falls back to remote IP when the caller is
+unauthenticated. The bucket MUST NOT be influenced by body-controlled values
+like `store_id` -- a prior revision did so, which let any authenticated caller
+rotate buckets by submitting a different store_id per request (the membership
+check runs later, inside the route). Membership / store-scoped quotas, if ever
+needed, belong in a post-auth counter, not in SlowAPI's key function.
 """
 
-import json
 import logging
 
 import jwt as _jwt
@@ -22,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 def _verified_user_id(request) -> str | None:
-    """Return the JWT `sub` claim if the Bearer token is cryptographically valid."""
+    """Return JWT `sub` if the Bearer token is signed, audience-correct, unexpired."""
     auth_header = request.headers.get("Authorization", "")
     if not auth_header.startswith("Bearer "):
         return None
@@ -44,7 +46,7 @@ def _verified_user_id(request) -> str | None:
             secret,
             algorithms=["HS256"],
             audience=s.jwt_audience or "authenticated",
-            options={"verify_aud": True, "verify_exp": False},
+            options={"verify_aud": True, "verify_exp": True},
         )
         sub = payload.get("sub")
         return str(sub) if sub else None
@@ -55,33 +57,14 @@ def _verified_user_id(request) -> str | None:
         return None
 
 
-def _store_id_from_request(request) -> str | None:
-    """Best-effort peek at store_id on the request state (set by auth middleware)
-    or on a cached body. Never blocks and never raises.
-    """
-    store_id = getattr(request.state, "store_id", None)
-    if store_id:
-        return str(store_id)
-    # Fall back to reading a cached body if FastAPI has already parsed it.
-    body_bytes = getattr(request.state, "cached_body", None)
-    if body_bytes:
-        try:
-            data = json.loads(body_bytes)
-            sid = data.get("store_id")
-            if sid:
-                return str(sid)
-        except Exception:
-            return None
-    return None
-
-
 def rate_limit_key(request) -> str:
-    """SlowAPI key function: user+store bucket when possible, else user, else IP."""
+    """SlowAPI key function.
+
+    Returns `user:{sub}` for any request with a valid unexpired Bearer token,
+    else the remote IP. Body-controlled values are intentionally ignored.
+    """
     user_id = _verified_user_id(request)
     if user_id:
-        store_id = _store_id_from_request(request)
-        if store_id:
-            return f"user:{user_id}:store:{store_id}"
         return f"user:{user_id}"
     return get_remote_address(request)
 
