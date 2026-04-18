@@ -1,0 +1,31 @@
+# Template: merge the snippets below into your app's analysis_options.yaml to
+# enable alhai_lints.
+#
+# 1) Register the custom_lint analyzer plugin:
+#
+# analyzer:
+#   plugins:
+#     - custom_lint
+#
+# 2) Enable the Alhai rules you want. Omit a rule to disable it.
+#
+# custom_lint:
+#   rules:
+#     - avoid_direct_material_widgets
+#
+# 3) (Optional) Temporarily exclude files while migrating 832 existing
+#    violations incrementally. Prefer shrinking this list over time.
+#
+# analyzer:
+#   exclude:
+#     - lib/legacy/**
+#
+# NOTE: You ALSO need to add a path dev_dependency on alhai_lints. From an
+# app whose pubspec.yaml sits at `apps/<app>/pubspec.yaml`:
+#
+# dev_dependencies:
+#   alhai_lints:
+#     path: ../../packages/alhai_lints
+#   custom_lint: ^0.7.0
+#
+# Then run `flutter pub get` and (once) `dart run custom_lint`.

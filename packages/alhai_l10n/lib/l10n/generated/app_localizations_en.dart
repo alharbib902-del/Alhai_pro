@@ -5760,10 +5760,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String aiAssociationFrequency(
-    String productA,
-    String productB,
-    int frequency,
-  ) {
+      String productA, String productB, int frequency) {
     return '$productA + $productB: repeated $frequency times';
   }
 
@@ -10060,10 +10057,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String templateVariablesHint(
-    Object customer_name,
-    Object store_name,
-    Object total,
-  ) {
+      Object customer_name, Object store_name, Object total) {
     return 'Use $store_name $customer_name $total as variables';
   }
 
@@ -13123,11 +13117,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String confirmInterestMessage(
-    String rate,
-    int count,
-    String amount,
-    String currency,
-  ) {
+      String rate, int count, String amount, String currency) {
     return 'Apply $rate% interest to $count accounts?\nTotal interest: $amount $currency';
   }
 
@@ -13741,4 +13731,212 @@ class AppLocalizationsEn extends AppLocalizations {
   String reportExportFailed(String error) {
     return 'Export failed: $error';
   }
+
+  @override
+  String get saSaveChanges => 'Save Changes';
+
+  @override
+  String get saSaving => 'Saving...';
+
+  @override
+  String get saDiscardChanges => 'Discard';
+
+  @override
+  String get saConfirmSave => 'Save';
+
+  @override
+  String get saPlatformSettingsConfirm =>
+      'These changes affect all organizations on the platform. Save anyway?';
+
+  @override
+  String get saPlatformSettingsSaved => 'Platform settings saved successfully';
+
+  @override
+  String get saPlatformSettingsSaveFailed => 'Failed to save platform settings';
+
+  @override
+  String get saErrorLoadingSettings => 'Error loading settings';
+
+  @override
+  String get saEnvProduction => 'Production';
+
+  @override
+  String get saEnvSandbox => 'Sandbox';
+
+  @override
+  String get saMoyasarDescription => 'Credit/debit card processing';
+
+  @override
+  String get saHyperpayDescription => 'Multi-method payment gateway';
+
+  @override
+  String get saTabbyDescription => 'Buy now, pay later';
+
+  @override
+  String get saTamaraDescription => 'Installment payments';
+
+  @override
+  String get saGeneral => 'General';
+
+  @override
+  String get saLanguageArabic => 'Arabic';
+
+  @override
+  String get saLanguageEnglish => 'English';
+
+  @override
+  String get saAuditLog => 'Audit Log';
+
+  @override
+  String get saAuditLogRefresh => 'Refresh';
+
+  @override
+  String get saAuditFilterAll => 'All';
+
+  @override
+  String get saAuditFilterAuth => 'Auth';
+
+  @override
+  String get saAuditFilterStore => 'Store';
+
+  @override
+  String get saAuditFilterUser => 'User';
+
+  @override
+  String get saAuditFilterSubscription => 'Subscription';
+
+  @override
+  String get saAuditSearchHint => 'Search by email, ID, action...';
+
+  @override
+  String get saAuditLoadFailed => 'Failed to load audit log';
+
+  @override
+  String get saAuditLoadRetry => 'Retry';
+
+  @override
+  String get saAuditNoEntries => 'No audit entries found';
+
+  @override
+  String saAuditEntryBy(String email) {
+    return 'by $email';
+  }
+
+  @override
+  String get saReportsExportComingSoon =>
+      'Export is not yet available — coming soon';
+
+  @override
+  String get saSystemHealthMetricsNote =>
+      'CPU / Memory / Disk metrics require a backend health endpoint — not yet wired';
+
+  @override
+  String get saMfaScanQr => 'Scan this QR in your Authenticator app';
+
+  @override
+  String get saMfaSecretFallback => 'Or enter this key manually:';
+
+  @override
+  String get saMfaCopied => 'Copied to clipboard';
+
+  @override
+  String get saErrorGeneric => 'Something went wrong';
+
+  @override
+  String get saErrorNetwork => 'Network error — check your connection';
+
+  @override
+  String get saErrorRetry => 'Try Again';
+
+  @override
+  String get saErrorTechnical => 'Technical details';
+
+  @override
+  String get saNext => 'Next';
+
+  @override
+  String get saBackToLogin => 'Back to Login';
+
+  @override
+  String get saPopularBadge => 'POPULAR';
+
+  @override
+  String get saRefresh => 'Refresh';
+
+  @override
+  String get saPlanUpdated => 'Plan updated';
+
+  @override
+  String get saRenewal => 'Renewal';
+
+  @override
+  String get saBusinessTypeGrocery => 'Grocery';
+
+  @override
+  String get saBusinessTypeRestaurant => 'Restaurant';
+
+  @override
+  String get saBusinessTypeRetail => 'Retail';
+
+  @override
+  String get saBusinessTypeServices => 'Services';
+
+  @override
+  String get saNoPlanRevenueData => 'No plan revenue data';
+
+  @override
+  String get saNoStoreRevenueData => 'No store revenue data';
+
+  @override
+  String get saNoActiveUserData => 'No active user data';
+
+  @override
+  String get saNoTransactionData => 'No transaction data';
+
+  @override
+  String get saMfaSetupTitle => 'Set Up Two-Factor Authentication';
+
+  @override
+  String get saMfaVerifyTitle => 'Two-Factor Verification';
+
+  @override
+  String get saMfaEnrollmentInstruction =>
+      'Scan the QR code with your authenticator app (Google Authenticator, Authy, etc.) then enter the 6-digit code to complete setup.';
+
+  @override
+  String get saMfaVerifyInstruction =>
+      'Enter the 6-digit code from your authenticator app.';
+
+  @override
+  String get saMfaCopy => 'Copy';
+
+  @override
+  String get saMfaCompleteSetup => 'Complete Setup';
+
+  @override
+  String get saMfaVerifyButton => 'Verify';
+
+  @override
+  String get saMfaEnterValidCode => 'Enter a valid 6-digit code';
+
+  @override
+  String get saMfaTooManyAttempts =>
+      'Too many failed attempts. Locked for 30 minutes.';
+
+  @override
+  String saMfaAccountLocked(int minutes) {
+    return 'Account locked. Try again in $minutes minutes.';
+  }
+
+  @override
+  String saMfaInvalidCode(int remaining) {
+    return 'Invalid code. $remaining attempts remaining.';
+  }
+
+  @override
+  String get saMfaEnrollmentFailed =>
+      'MFA enrollment failed. Ensure MFA is enabled in your Supabase project.';
+
+  @override
+  String get saMfaEnrollmentNoData => 'TOTP enrollment returned no data.';
 }

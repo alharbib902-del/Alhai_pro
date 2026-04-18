@@ -1,0 +1,27 @@
+name: alhai_lints
+description: >-
+  Custom lints for the Alhai monorepo. Enforces design-system wrapper widgets
+  (AlhaiButton, AlhaiCard, AlhaiTextField, ...) over direct Material widgets
+  in app `lib/` code, so the design system stays the single source of truth
+  for typography, spacing, colour, and RTL handling.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+
+# NOTE: This package is a plain Dart package (no Flutter deps). It is consumed
+# as a dev_dependency by apps. It plugs into the analyzer through the
+# `custom_lint` plugin system.
+
+dependencies:
+  # Versions pinned to match the ones resolved elsewhere in the monorepo
+  # (see customer_app/pubspec.lock) so we don't create conflicts.
+  analyzer: ">=6.0.0 <9.0.0"
+  analyzer_plugin: ">=0.11.0 <0.15.0"
+  custom_lint_builder: ^0.7.0
+
+dev_dependencies:
+  custom_lint: ^0.7.0
+  lints: ^4.0.0
+  test: ^1.25.0

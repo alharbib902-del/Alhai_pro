@@ -5,6 +5,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../providers/sa_providers.dart';
 import '../../data/models/sa_analytics_model.dart';
+import '../../ui/widgets/sa_error_card.dart';
 
 /// Usage analytics: active users, transactions per store -- real Supabase data.
 class SAUsageAnalyticsScreen extends ConsumerWidget {
@@ -63,7 +64,7 @@ class SAUsageAnalyticsScreen extends ConsumerWidget {
                 height: 280,
                 child: Center(child: CircularProgressIndicator()),
               ),
-              error: (e, _) => Text('Error: $e'),
+              error: (e, _) => SAErrorCard(error: e, flat: true),
               data: (data) => _ActiveUsersChart(theme: theme, storeData: data),
             ),
             const SizedBox(height: AlhaiSpacing.xl),
@@ -81,7 +82,7 @@ class SAUsageAnalyticsScreen extends ConsumerWidget {
                 height: 120,
                 child: Center(child: CircularProgressIndicator()),
               ),
-              error: (e, _) => Text('Error: $e'),
+              error: (e, _) => SAErrorCard(error: e, flat: true),
               data: (stores) => _TransactionsTable(l10n: l10n, stores: stores),
             ),
           ],
@@ -104,8 +105,7 @@ class SAUsageAnalyticsScreen extends ConsumerWidget {
     final avgTx = avgTxAsync.valueOrNull;
     final totalUsers = totalUsersAsync.valueOrNull;
 
-    final isLoading =
-        kpisAsync.isLoading ||
+    final isLoading = kpisAsync.isLoading ||
         avgTxAsync.isLoading ||
         totalUsersAsync.isLoading;
 
@@ -249,7 +249,7 @@ class _ActiveUsersChart extends StatelessWidget {
           height: 250,
           child: Center(
             child: Text(
-              'No active user data',
+              AppLocalizations.of(context).saNoActiveUserData,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.outline,
               ),
@@ -259,15 +259,12 @@ class _ActiveUsersChart extends StatelessWidget {
       );
     }
 
-    final blueColor = isDark
-        ? const Color(0xFF60A5FA)
-        : const Color(0xFF2563EB);
-    final deepPurpleColor = isDark
-        ? const Color(0xFFA78BFA)
-        : const Color(0xFF7C3AED);
-    final tealColor = isDark
-        ? const Color(0xFF2DD4BF)
-        : const Color(0xFF0D9488);
+    final blueColor =
+        isDark ? const Color(0xFF60A5FA) : const Color(0xFF2563EB);
+    final deepPurpleColor =
+        isDark ? const Color(0xFFA78BFA) : const Color(0xFF7C3AED);
+    final tealColor =
+        isDark ? const Color(0xFF2DD4BF) : const Color(0xFF0D9488);
     final colors = [
       blueColor,
       deepPurpleColor,
@@ -344,9 +341,8 @@ class _ActiveUsersChart extends StatelessWidget {
                       }
                       final name = storeData[idx].storeName;
                       // Truncate long names
-                      final label = name.length > 8
-                          ? name.substring(0, 8)
-                          : name;
+                      final label =
+                          name.length > 8 ? name.substring(0, 8) : name;
                       return Padding(
                         padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
                         child: Text(
@@ -400,7 +396,7 @@ class _TransactionsTable extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(AlhaiSpacing.lg),
           child: Text(
-            'No transaction data',
+            l10n.saNoTransactionData,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.outline,
             ),

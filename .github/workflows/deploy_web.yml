@@ -114,6 +114,17 @@ jobs:
         working-directory: ${{ matrix.path }}
         run: flutter pub get
 
+      # Substitute the CSP report-uri placeholder with the ingest URL stored
+      # in the SENTRY_CSP_REPORT_URI secret. `|| true` keeps the build alive
+      # if the secret is unset — the placeholder is harmless (reports simply
+      # go nowhere). See docs/security/csp-violation-reporting.md.
+      - name: Inject CSP report-uri
+        if: matrix.changed == 'true'
+        run: |
+          sed -i "s|__SENTRY_CSP_REPORT_URI__|${{ secrets.SENTRY_CSP_REPORT_URI }}|g" \
+            ${{ matrix.path }}/web/_headers \
+            ${{ matrix.path }}/web/index.html 2>/dev/null || true
+
       # Build web with --dart-define values for runtime config.
       # Without these, SupabaseConfig.isConfigured fails and the app will
       # refuse to initialize. Sentry DSN is per-app (different secrets).

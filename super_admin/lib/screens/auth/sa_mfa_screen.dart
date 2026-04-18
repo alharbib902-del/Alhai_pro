@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' hide AuthException;
 
 import '../../core/services/audit_log_service.dart';
@@ -120,7 +122,7 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
       final totp = res.totp;
       if (totp == null) {
         setState(() {
-          _error = 'TOTP enrollment returned no data.';
+          _error = AppLocalizations.of(context).saMfaEnrollmentNoData;
           _isLoading = false;
           _needsEnrollment = true;
         });
@@ -136,10 +138,9 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
       });
     } catch (e) {
       if (kDebugMode) debugPrint('MFA enrollment failed: $e');
+      if (!mounted) return;
       setState(() {
-        _error =
-            'MFA enrollment failed. '
-            'Ensure MFA is enabled in your Supabase project.';
+        _error = AppLocalizations.of(context).saMfaEnrollmentFailed;
         _isLoading = false;
         _needsEnrollment = true;
       });
@@ -178,17 +179,19 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
 
   /// Verify a TOTP code (works for both first enrollment and subsequent logins).
   Future<void> _verifyCode() async {
+    final l10n = AppLocalizations.of(context);
     final code = _codeController.text.trim();
     if (code.length != 6 || int.tryParse(code) == null) {
-      setState(() => _error = 'Enter a valid 6-digit code');
+      setState(() => _error = l10n.saMfaEnterValidCode);
       return;
     }
 
     // Server-side lockout check (authoritative).
     final serverLocked = await _checkLockoutFromServer();
+    if (!mounted) return;
     if (serverLocked) {
       setState(
-        () => _error = 'Too many failed attempts. Locked for 30 minutes.',
+        () => _error = l10n.saMfaTooManyAttempts,
       );
       return;
     }
@@ -197,7 +200,7 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
     if (_lockoutUntil != null && DateTime.now().isBefore(_lockoutUntil!)) {
       final remaining = _lockoutUntil!.difference(DateTime.now()).inMinutes + 1;
       setState(
-        () => _error = 'Account locked. Try again in $remaining minutes.',
+        () => _error = l10n.saMfaAccountLocked(remaining),
       );
       return;
     }
@@ -246,10 +249,9 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
         setState(() {
           _isVerifying = false;
           if (_failedAttempts >= _maxAttempts) {
-            _error = 'Too many failed attempts. Locked for 30 minutes.';
+            _error = l10n.saMfaTooManyAttempts;
           } else {
-            _error =
-                'Invalid code. ${_maxAttempts - _failedAttempts} attempts remaining.';
+            _error = l10n.saMfaInvalidCode(_maxAttempts - _failedAttempts);
           }
         });
       }
@@ -259,25 +261,24 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
   void _logMfaEvent({required bool success, String? reason}) {
     try {
       final authState = ref.read(authStateProvider);
-      ref
-          .read(auditLogServiceProvider)
-          .log(
-            action: success ? 'auth.mfa_verified' : 'auth.mfa_failed',
-            targetType: 'user',
-            targetId: authState.user?.id ?? 'unknown',
-            metadata: {
-              'email': authState.user?.email ?? '',
-              'enrollment': _needsEnrollment,
-              if (reason != null) 'reason': reason,
-              'timestamp': DateTime.now().toUtc().toIso8601String(),
-            },
-          );
+      ref.read(auditLogServiceProvider).log(
+        action: success ? 'auth.mfa_verified' : 'auth.mfa_failed',
+        targetType: 'user',
+        targetId: authState.user?.id ?? 'unknown',
+        metadata: {
+          'email': authState.user?.email ?? '',
+          'enrollment': _needsEnrollment,
+          if (reason != null) 'reason': reason,
+          'timestamp': DateTime.now().toUtc().toIso8601String(),
+        },
+      );
     } catch (_) {}
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context);
 
     return Scaffold(
       body: Center(
@@ -308,8 +309,8 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
 
                       Text(
                         _needsEnrollment
-                            ? 'Set Up Two-Factor Authentication'
-                            : 'Two-Factor Verification',
+                            ? l10n.saMfaSetupTitle
+                            : l10n.saMfaVerifyTitle,
                         style: theme.textTheme.headlineSmall?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
@@ -319,10 +320,8 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
 
                       Text(
                         _needsEnrollment
-                            ? 'Scan the QR code with your authenticator app '
-                                  '(Google Authenticator, Authy, etc.) then enter '
-                                  'the 6-digit code to complete setup.'
-                            : 'Enter the 6-digit code from your authenticator app.',
+                            ? l10n.saMfaEnrollmentInstruction
+                            : l10n.saMfaVerifyInstruction,
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: theme.colorScheme.onSurfaceVariant,
                         ),
@@ -343,38 +342,23 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
                           ),
                           child: Column(
                             children: [
-                              // Placeholder for QR — in a real app, use qr_flutter
-                              // to render the QR code from _totpUri.
-                              Container(
-                                width: 200,
-                                height: 200,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade100,
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.qr_code_2_rounded,
-                                      size: 80,
-                                      color: Colors.grey.shade600,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'QR Code',
-                                      style: theme.textTheme.bodySmall
-                                          ?.copyWith(
-                                            color: Colors.grey.shade600,
-                                          ),
-                                    ),
-                                  ],
-                                ),
+                              // UX-P0-3 fix (2026-04-17): Real QR code rendered
+                              // by qr_flutter from the otpauth:// URI returned
+                              // by Supabase TOTP enrollment. Previously a grey
+                              // placeholder forced admins to hand-copy the
+                              // text secret into their Authenticator app.
+                              QrImageView(
+                                data: _totpUri!,
+                                version: QrVersions.auto,
+                                size: 200,
+                                backgroundColor: Colors.white,
+                                errorCorrectionLevel: QrErrorCorrectLevel.M,
+                                semanticsLabel: 'MFA enrollment QR code',
                               ),
                               if (_enrollSecret != null) ...[
                                 const SizedBox(height: 12),
                                 Text(
-                                  'Manual entry key:',
+                                  l10n.saMfaSecretFallback,
                                   style: theme.textTheme.bodySmall?.copyWith(
                                     color: theme.colorScheme.onSurfaceVariant,
                                   ),
@@ -395,9 +379,9 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
                                       ClipboardData(text: _enrollSecret!),
                                     );
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('Secret copied'),
-                                        duration: Duration(seconds: 2),
+                                      SnackBar(
+                                        content: Text(l10n.saMfaCopied),
+                                        duration: const Duration(seconds: 2),
                                       ),
                                     );
                                   },
@@ -405,7 +389,7 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
                                     Icons.copy_rounded,
                                     size: 16,
                                   ),
-                                  label: const Text('Copy'),
+                                  label: Text(l10n.saMfaCopy),
                                 ),
                               ],
                             ],
@@ -502,8 +486,8 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
                                   )
                                 : Text(
                                     _needsEnrollment
-                                        ? 'Complete Setup'
-                                        : 'Verify',
+                                        ? l10n.saMfaCompleteSetup
+                                        : l10n.saMfaVerifyButton,
                                   ),
                           ),
                         ),
@@ -516,7 +500,7 @@ class _SAMfaScreenState extends ConsumerState<SAMfaScreen> {
                         onPressed: () async {
                           await ref.read(authStateProvider.notifier).logout();
                         },
-                        child: const Text('Back to Login'),
+                        child: Text(l10n.saBackToLogin),
                       ),
                     ],
                   ),

@@ -68,7 +68,7 @@ import 'app_localizations_ur.dart';
 /// property.
 abstract class AppLocalizations {
   AppLocalizations(String locale)
-    : localeName = intl.Intl.canonicalizedLocale(locale.toString());
+      : localeName = intl.Intl.canonicalizedLocale(locale.toString());
 
   final String localeName;
 
@@ -91,11 +91,11 @@ abstract class AppLocalizations {
   /// of delegates is preferred or required.
   static const List<LocalizationsDelegate<dynamic>> localizationsDelegates =
       <LocalizationsDelegate<dynamic>>[
-        delegate,
-        GlobalMaterialLocalizations.delegate,
-        GlobalCupertinoLocalizations.delegate,
-        GlobalWidgetsLocalizations.delegate,
-      ];
+    delegate,
+    GlobalMaterialLocalizations.delegate,
+    GlobalCupertinoLocalizations.delegate,
+    GlobalWidgetsLocalizations.delegate,
+  ];
 
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
@@ -105,7 +105,7 @@ abstract class AppLocalizations {
     Locale('fil'),
     Locale('hi'),
     Locale('id'),
-    Locale('ur'),
+    Locale('ur')
   ];
 
   /// اسم التطبيق
@@ -10865,10 +10865,7 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'{productA} + {productB}: تكرار {frequency} مرة'**
   String aiAssociationFrequency(
-    String productA,
-    String productB,
-    int frequency,
-  );
+      String productA, String productB, int frequency);
 
   /// No description provided for @aiBundleActivated.
   ///
@@ -18765,10 +18762,7 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'استخدم {store_name} {customer_name} {total} كمتغيرات'**
   String templateVariablesHint(
-    Object customer_name,
-    Object store_name,
-    Object total,
-  );
+      Object customer_name, Object store_name, Object total);
 
   /// No description provided for @apiSettings.
   ///
@@ -24355,11 +24349,7 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تطبيق {rate}% فائدة على {count} حسابات؟\nإجمالي الفائدة: {amount} {currency}'**
   String confirmInterestMessage(
-    String rate,
-    int count,
-    String amount,
-    String currency,
-  );
+      String rate, int count, String amount, String currency);
 
   /// No description provided for @selectCustomers.
   ///
@@ -25512,6 +25502,396 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'فشل التصدير: {error}'**
   String reportExportFailed(String error);
+
+  /// No description provided for @saSaveChanges.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ التغييرات'**
+  String get saSaveChanges;
+
+  /// No description provided for @saSaving.
+  ///
+  /// In ar, this message translates to:
+  /// **'جاري الحفظ...'**
+  String get saSaving;
+
+  /// No description provided for @saDiscardChanges.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجاهل'**
+  String get saDiscardChanges;
+
+  /// No description provided for @saConfirmSave.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ'**
+  String get saConfirmSave;
+
+  /// No description provided for @saPlatformSettingsConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذه التغييرات تؤثر على جميع المؤسسات في المنصة. هل تريد الحفظ؟'**
+  String get saPlatformSettingsConfirm;
+
+  /// No description provided for @saPlatformSettingsSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حفظ إعدادات المنصة بنجاح'**
+  String get saPlatformSettingsSaved;
+
+  /// No description provided for @saPlatformSettingsSaveFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل حفظ إعدادات المنصة'**
+  String get saPlatformSettingsSaveFailed;
+
+  /// No description provided for @saErrorLoadingSettings.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في تحميل الإعدادات'**
+  String get saErrorLoadingSettings;
+
+  /// No description provided for @saEnvProduction.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإنتاج'**
+  String get saEnvProduction;
+
+  /// No description provided for @saEnvSandbox.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيئة الاختبار'**
+  String get saEnvSandbox;
+
+  /// No description provided for @saMoyasarDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'معالجة بطاقات الائتمان والخصم'**
+  String get saMoyasarDescription;
+
+  /// No description provided for @saHyperpayDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'بوابة دفع متعددة الطرق'**
+  String get saHyperpayDescription;
+
+  /// No description provided for @saTabbyDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشترِ الآن وادفع لاحقاً'**
+  String get saTabbyDescription;
+
+  /// No description provided for @saTamaraDescription.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفعات بالتقسيط'**
+  String get saTamaraDescription;
+
+  /// No description provided for @saGeneral.
+  ///
+  /// In ar, this message translates to:
+  /// **'عام'**
+  String get saGeneral;
+
+  /// No description provided for @saLanguageArabic.
+  ///
+  /// In ar, this message translates to:
+  /// **'العربية'**
+  String get saLanguageArabic;
+
+  /// No description provided for @saLanguageEnglish.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإنجليزية'**
+  String get saLanguageEnglish;
+
+  /// No description provided for @saAuditLog.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل التدقيق'**
+  String get saAuditLog;
+
+  /// No description provided for @saAuditLogRefresh.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديث'**
+  String get saAuditLogRefresh;
+
+  /// No description provided for @saAuditFilterAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'الكل'**
+  String get saAuditFilterAll;
+
+  /// No description provided for @saAuditFilterAuth.
+  ///
+  /// In ar, this message translates to:
+  /// **'مصادقة'**
+  String get saAuditFilterAuth;
+
+  /// No description provided for @saAuditFilterStore.
+  ///
+  /// In ar, this message translates to:
+  /// **'متجر'**
+  String get saAuditFilterStore;
+
+  /// No description provided for @saAuditFilterUser.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستخدم'**
+  String get saAuditFilterUser;
+
+  /// No description provided for @saAuditFilterSubscription.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتراك'**
+  String get saAuditFilterSubscription;
+
+  /// No description provided for @saAuditSearchHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابحث بالبريد أو المعرّف أو الإجراء...'**
+  String get saAuditSearchHint;
+
+  /// No description provided for @saAuditLoadFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل تحميل سجل التدقيق'**
+  String get saAuditLoadFailed;
+
+  /// No description provided for @saAuditLoadRetry.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة المحاولة'**
+  String get saAuditLoadRetry;
+
+  /// No description provided for @saAuditNoEntries.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد سجلات تدقيق'**
+  String get saAuditNoEntries;
+
+  /// No description provided for @saAuditEntryBy.
+  ///
+  /// In ar, this message translates to:
+  /// **'بواسطة {email}'**
+  String saAuditEntryBy(String email);
+
+  /// No description provided for @saReportsExportComingSoon.
+  ///
+  /// In ar, this message translates to:
+  /// **'التصدير غير متاح حالياً — سيضاف قريباً'**
+  String get saReportsExportComingSoon;
+
+  /// No description provided for @saSystemHealthMetricsNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقاييس المعالج/الذاكرة/القرص تتطلب نقطة خادم مخصصة — غير متصلة بعد'**
+  String get saSystemHealthMetricsNote;
+
+  /// No description provided for @saMfaScanQr.
+  ///
+  /// In ar, this message translates to:
+  /// **'امسح رمز QR في تطبيق المصادقة'**
+  String get saMfaScanQr;
+
+  /// No description provided for @saMfaSecretFallback.
+  ///
+  /// In ar, this message translates to:
+  /// **'أو أدخل هذا المفتاح يدوياً:'**
+  String get saMfaSecretFallback;
+
+  /// No description provided for @saMfaCopied.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم النسخ'**
+  String get saMfaCopied;
+
+  /// No description provided for @saErrorGeneric.
+  ///
+  /// In ar, this message translates to:
+  /// **'حدث خطأ ما'**
+  String get saErrorGeneric;
+
+  /// No description provided for @saErrorNetwork.
+  ///
+  /// In ar, this message translates to:
+  /// **'خطأ في الشبكة — تحقق من اتصالك'**
+  String get saErrorNetwork;
+
+  /// No description provided for @saErrorRetry.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة المحاولة'**
+  String get saErrorRetry;
+
+  /// No description provided for @saErrorTechnical.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل تقنية'**
+  String get saErrorTechnical;
+
+  /// No description provided for @saNext.
+  ///
+  /// In ar, this message translates to:
+  /// **'التالي'**
+  String get saNext;
+
+  /// No description provided for @saBackToLogin.
+  ///
+  /// In ar, this message translates to:
+  /// **'العودة لتسجيل الدخول'**
+  String get saBackToLogin;
+
+  /// No description provided for @saPopularBadge.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأكثر طلباً'**
+  String get saPopularBadge;
+
+  /// No description provided for @saRefresh.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديث'**
+  String get saRefresh;
+
+  /// No description provided for @saPlanUpdated.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تحديث الباقة'**
+  String get saPlanUpdated;
+
+  /// No description provided for @saRenewal.
+  ///
+  /// In ar, this message translates to:
+  /// **'التجديد'**
+  String get saRenewal;
+
+  /// No description provided for @saBusinessTypeGrocery.
+  ///
+  /// In ar, this message translates to:
+  /// **'بقالة'**
+  String get saBusinessTypeGrocery;
+
+  /// No description provided for @saBusinessTypeRestaurant.
+  ///
+  /// In ar, this message translates to:
+  /// **'مطعم'**
+  String get saBusinessTypeRestaurant;
+
+  /// No description provided for @saBusinessTypeRetail.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجزئة'**
+  String get saBusinessTypeRetail;
+
+  /// No description provided for @saBusinessTypeServices.
+  ///
+  /// In ar, this message translates to:
+  /// **'خدمات'**
+  String get saBusinessTypeServices;
+
+  /// No description provided for @saNoPlanRevenueData.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد بيانات إيرادات للباقات'**
+  String get saNoPlanRevenueData;
+
+  /// No description provided for @saNoStoreRevenueData.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد بيانات إيرادات للمتاجر'**
+  String get saNoStoreRevenueData;
+
+  /// No description provided for @saNoActiveUserData.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد بيانات للمستخدمين النشطين'**
+  String get saNoActiveUserData;
+
+  /// No description provided for @saNoTransactionData.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد بيانات معاملات'**
+  String get saNoTransactionData;
+
+  /// No description provided for @saMfaSetupTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعداد المصادقة الثنائية'**
+  String get saMfaSetupTitle;
+
+  /// No description provided for @saMfaVerifyTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'التحقق الثنائي'**
+  String get saMfaVerifyTitle;
+
+  /// No description provided for @saMfaEnrollmentInstruction.
+  ///
+  /// In ar, this message translates to:
+  /// **'امسح رمز QR بتطبيق المصادقة (Google Authenticator أو Authy وغيرها) ثم أدخل الرمز المكوّن من 6 أرقام لإكمال الإعداد.'**
+  String get saMfaEnrollmentInstruction;
+
+  /// No description provided for @saMfaVerifyInstruction.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل الرمز المكوّن من 6 أرقام من تطبيق المصادقة.'**
+  String get saMfaVerifyInstruction;
+
+  /// No description provided for @saMfaCopy.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخ'**
+  String get saMfaCopy;
+
+  /// No description provided for @saMfaCompleteSetup.
+  ///
+  /// In ar, this message translates to:
+  /// **'إكمال الإعداد'**
+  String get saMfaCompleteSetup;
+
+  /// No description provided for @saMfaVerifyButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحقق'**
+  String get saMfaVerifyButton;
+
+  /// No description provided for @saMfaEnterValidCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل رمزاً صحيحاً مكوّناً من 6 أرقام'**
+  String get saMfaEnterValidCode;
+
+  /// No description provided for @saMfaTooManyAttempts.
+  ///
+  /// In ar, this message translates to:
+  /// **'محاولات فاشلة كثيرة. تم القفل لمدة 30 دقيقة.'**
+  String get saMfaTooManyAttempts;
+
+  /// No description provided for @saMfaAccountLocked.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم قفل الحساب. حاول مجدداً خلال {minutes} دقيقة.'**
+  String saMfaAccountLocked(int minutes);
+
+  /// No description provided for @saMfaInvalidCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز غير صحيح. {remaining} محاولات متبقية.'**
+  String saMfaInvalidCode(int remaining);
+
+  /// No description provided for @saMfaEnrollmentFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'فشل تسجيل المصادقة الثنائية. تأكد من تفعيل MFA في مشروع Supabase.'**
+  String get saMfaEnrollmentFailed;
+
+  /// No description provided for @saMfaEnrollmentNoData.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم ترجع عملية تسجيل TOTP أي بيانات.'**
+  String get saMfaEnrollmentNoData;
 }
 
 class _AppLocalizationsDelegate
@@ -25525,14 +25905,14 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) => <String>[
-    'ar',
-    'bn',
-    'en',
-    'fil',
-    'hi',
-    'id',
-    'ur',
-  ].contains(locale.languageCode);
+        'ar',
+        'bn',
+        'en',
+        'fil',
+        'hi',
+        'id',
+        'ur'
+      ].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -25558,9 +25938,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   }
 
   throw FlutterError(
-    'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
-    'an issue with the localizations generation tool. Please file an issue '
-    'on GitHub with a reproducible sample app and the gen-l10n configuration '
-    'that was used.',
-  );
+      'AppLocalizations.delegate failed to load unsupported locale "$locale". This is likely '
+      'an issue with the localizations generation tool. Please file an issue '
+      'on GitHub with a reproducible sample app and the gen-l10n configuration '
+      'that was used.');
 }

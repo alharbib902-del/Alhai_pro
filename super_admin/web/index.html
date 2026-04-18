@@ -28,7 +28,13 @@
     than real HTTP headers (e.g., `frame-ancestors` is ignored in meta), so the
     `_headers` file is the primary defense.
   -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.sentry.io https://*.ingest.sentry.io; base-uri 'self'; form-action 'self'; object-src 'none'">
+  <!-- NOTE: <meta http-equiv="Content-Security-Policy"> cannot carry the
+       Report-To HTTP header — that directive is header-only (RFC 8942 /
+       Reporting API). Violation reporting is wired via the canonical
+       `web/_headers` (Cloudflare) and nginx.conf/vercel.json. The meta tag
+       below still carries `report-uri` (legacy directive, honoured as a
+       fallback). -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.sentry.io https://*.ingest.sentry.io; base-uri 'self'; form-action 'self'; object-src 'none'; report-uri https://__SENTRY_CSP_REPORT_URI__/">
   <meta name="referrer" content="strict-origin-when-cross-origin">
   <meta name="robots" content="noindex, nofollow">
 

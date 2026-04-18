@@ -1,0 +1,18 @@
+name: alhai_lints_example
+description: Minimal reproducer that triggers every alhai_lints rule.
+publish_to: none
+version: 0.0.1
+
+environment:
+  sdk: ">=3.4.0 <4.0.0"
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  alhai_lints:
+    path: ../
+  custom_lint: ^0.7.0
+  lints: ^4.0.0

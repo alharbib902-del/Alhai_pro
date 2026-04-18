@@ -5762,10 +5762,7 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String aiAssociationFrequency(
-    String productA,
-    String productB,
-    int frequency,
-  ) {
+      String productA, String productB, int frequency) {
     return '$productA + $productB: $frequency বার পুনরাবৃত্তি';
   }
 
@@ -10051,10 +10048,7 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String templateVariablesHint(
-    Object customer_name,
-    Object store_name,
-    Object total,
-  ) {
+      Object customer_name, Object store_name, Object total) {
     return 'Use $store_name $customer_name $total as variables';
   }
 
@@ -13114,11 +13108,7 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String confirmInterestMessage(
-    String rate,
-    int count,
-    String amount,
-    String currency,
-  ) {
+      String rate, int count, String amount, String currency) {
     return 'Apply $rate% interest to $count accounts?\nTotal interest: $amount $currency';
   }
 
@@ -13732,4 +13722,212 @@ class AppLocalizationsBn extends AppLocalizations {
   String reportExportFailed(String error) {
     return 'فشل التصدير: $error';
   }
+
+  @override
+  String get saSaveChanges => 'حفظ التغييرات';
+
+  @override
+  String get saSaving => 'جاري الحفظ...';
+
+  @override
+  String get saDiscardChanges => 'تجاهل';
+
+  @override
+  String get saConfirmSave => 'حفظ';
+
+  @override
+  String get saPlatformSettingsConfirm =>
+      'هذه التغييرات تؤثر على جميع المؤسسات في المنصة. هل تريد الحفظ؟';
+
+  @override
+  String get saPlatformSettingsSaved => 'تم حفظ إعدادات المنصة بنجاح';
+
+  @override
+  String get saPlatformSettingsSaveFailed => 'فشل حفظ إعدادات المنصة';
+
+  @override
+  String get saErrorLoadingSettings => 'خطأ في تحميل الإعدادات';
+
+  @override
+  String get saEnvProduction => 'الإنتاج';
+
+  @override
+  String get saEnvSandbox => 'بيئة الاختبار';
+
+  @override
+  String get saMoyasarDescription => 'معالجة بطاقات الائتمان والخصم';
+
+  @override
+  String get saHyperpayDescription => 'بوابة دفع متعددة الطرق';
+
+  @override
+  String get saTabbyDescription => 'اشترِ الآن وادفع لاحقاً';
+
+  @override
+  String get saTamaraDescription => 'دفعات بالتقسيط';
+
+  @override
+  String get saGeneral => 'عام';
+
+  @override
+  String get saLanguageArabic => 'العربية';
+
+  @override
+  String get saLanguageEnglish => 'الإنجليزية';
+
+  @override
+  String get saAuditLog => 'سجل التدقيق';
+
+  @override
+  String get saAuditLogRefresh => 'تحديث';
+
+  @override
+  String get saAuditFilterAll => 'الكل';
+
+  @override
+  String get saAuditFilterAuth => 'مصادقة';
+
+  @override
+  String get saAuditFilterStore => 'متجر';
+
+  @override
+  String get saAuditFilterUser => 'مستخدم';
+
+  @override
+  String get saAuditFilterSubscription => 'اشتراك';
+
+  @override
+  String get saAuditSearchHint => 'ابحث بالبريد أو المعرّف أو الإجراء...';
+
+  @override
+  String get saAuditLoadFailed => 'فشل تحميل سجل التدقيق';
+
+  @override
+  String get saAuditLoadRetry => 'إعادة المحاولة';
+
+  @override
+  String get saAuditNoEntries => 'لا توجد سجلات تدقيق';
+
+  @override
+  String saAuditEntryBy(String email) {
+    return 'بواسطة $email';
+  }
+
+  @override
+  String get saReportsExportComingSoon =>
+      'التصدير غير متاح حالياً — سيضاف قريباً';
+
+  @override
+  String get saSystemHealthMetricsNote =>
+      'مقاييس المعالج/الذاكرة/القرص تتطلب نقطة خادم مخصصة — غير متصلة بعد';
+
+  @override
+  String get saMfaScanQr => 'امسح رمز QR في تطبيق المصادقة';
+
+  @override
+  String get saMfaSecretFallback => 'أو أدخل هذا المفتاح يدوياً:';
+
+  @override
+  String get saMfaCopied => 'تم النسخ';
+
+  @override
+  String get saErrorGeneric => 'حدث خطأ ما';
+
+  @override
+  String get saErrorNetwork => 'خطأ في الشبكة — تحقق من اتصالك';
+
+  @override
+  String get saErrorRetry => 'إعادة المحاولة';
+
+  @override
+  String get saErrorTechnical => 'تفاصيل تقنية';
+
+  @override
+  String get saNext => 'التالي';
+
+  @override
+  String get saBackToLogin => 'العودة لتسجيل الدخول';
+
+  @override
+  String get saPopularBadge => 'الأكثر طلباً';
+
+  @override
+  String get saRefresh => 'تحديث';
+
+  @override
+  String get saPlanUpdated => 'تم تحديث الباقة';
+
+  @override
+  String get saRenewal => 'التجديد';
+
+  @override
+  String get saBusinessTypeGrocery => 'بقالة';
+
+  @override
+  String get saBusinessTypeRestaurant => 'مطعم';
+
+  @override
+  String get saBusinessTypeRetail => 'تجزئة';
+
+  @override
+  String get saBusinessTypeServices => 'خدمات';
+
+  @override
+  String get saNoPlanRevenueData => 'لا توجد بيانات إيرادات للباقات';
+
+  @override
+  String get saNoStoreRevenueData => 'لا توجد بيانات إيرادات للمتاجر';
+
+  @override
+  String get saNoActiveUserData => 'لا توجد بيانات للمستخدمين النشطين';
+
+  @override
+  String get saNoTransactionData => 'لا توجد بيانات معاملات';
+
+  @override
+  String get saMfaSetupTitle => 'إعداد المصادقة الثنائية';
+
+  @override
+  String get saMfaVerifyTitle => 'التحقق الثنائي';
+
+  @override
+  String get saMfaEnrollmentInstruction =>
+      'امسح رمز QR بتطبيق المصادقة (Google Authenticator أو Authy وغيرها) ثم أدخل الرمز المكوّن من 6 أرقام لإكمال الإعداد.';
+
+  @override
+  String get saMfaVerifyInstruction =>
+      'أدخل الرمز المكوّن من 6 أرقام من تطبيق المصادقة.';
+
+  @override
+  String get saMfaCopy => 'نسخ';
+
+  @override
+  String get saMfaCompleteSetup => 'إكمال الإعداد';
+
+  @override
+  String get saMfaVerifyButton => 'تحقق';
+
+  @override
+  String get saMfaEnterValidCode => 'أدخل رمزاً صحيحاً مكوّناً من 6 أرقام';
+
+  @override
+  String get saMfaTooManyAttempts =>
+      'محاولات فاشلة كثيرة. تم القفل لمدة 30 دقيقة.';
+
+  @override
+  String saMfaAccountLocked(int minutes) {
+    return 'تم قفل الحساب. حاول مجدداً خلال $minutes دقيقة.';
+  }
+
+  @override
+  String saMfaInvalidCode(int remaining) {
+    return 'رمز غير صحيح. $remaining محاولات متبقية.';
+  }
+
+  @override
+  String get saMfaEnrollmentFailed =>
+      'فشل تسجيل المصادقة الثنائية. تأكد من تفعيل MFA في مشروع Supabase.';
+
+  @override
+  String get saMfaEnrollmentNoData => 'لم ترجع عملية تسجيل TOTP أي بيانات.';
 }

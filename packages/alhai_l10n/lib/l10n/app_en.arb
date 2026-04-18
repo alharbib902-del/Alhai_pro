@@ -7100,5 +7100,91 @@
   "reportExportSuccess": "Report exported successfully",
   "reportExportFailed": "Export failed: {error}",
   "@reportExportFailed": { "placeholders": { "error": { "type": "String" } } },
-  "ok": "OK"
+  "ok": "OK",
+
+  "@@_section_super_admin": "Super Admin — platform console strings (2026-04-17)",
+
+  "saSaveChanges": "Save Changes",
+  "saSaving": "Saving...",
+  "saDiscardChanges": "Discard",
+  "saConfirmSave": "Save",
+  "saPlatformSettingsConfirm": "These changes affect all organizations on the platform. Save anyway?",
+  "saPlatformSettingsSaved": "Platform settings saved successfully",
+  "saPlatformSettingsSaveFailed": "Failed to save platform settings",
+  "saErrorLoadingSettings": "Error loading settings",
+  "saEnvProduction": "Production",
+  "saEnvSandbox": "Sandbox",
+  "saMoyasarDescription": "Credit/debit card processing",
+  "saHyperpayDescription": "Multi-method payment gateway",
+  "saTabbyDescription": "Buy now, pay later",
+  "saTamaraDescription": "Installment payments",
+  "saGeneral": "General",
+  "saLanguageArabic": "Arabic",
+  "saLanguageEnglish": "English",
+
+  "saAuditLog": "Audit Log",
+  "saAuditLogRefresh": "Refresh",
+  "saAuditFilterAll": "All",
+  "saAuditFilterAuth": "Auth",
+  "saAuditFilterStore": "Store",
+  "saAuditFilterUser": "User",
+  "saAuditFilterSubscription": "Subscription",
+  "saAuditSearchHint": "Search by email, ID, action...",
+  "saAuditLoadFailed": "Failed to load audit log",
+  "saAuditLoadRetry": "Retry",
+  "saAuditNoEntries": "No audit entries found",
+  "saAuditEntryBy": "by {email}",
+  "@saAuditEntryBy": { "placeholders": { "email": { "type": "String" } } },
+
+  "saReportsExportComingSoon": "Export is not yet available — coming soon",
+  "saSystemHealthMetricsNote": "CPU / Memory / Disk metrics require a backend health endpoint — not yet wired",
+
+  "saMfaScanQr": "Scan this QR in your Authenticator app",
+  "saMfaSecretFallback": "Or enter this key manually:",
+  "saMfaCopied": "Copied to clipboard",
+
+  "saErrorGeneric": "Something went wrong",
+  "saErrorNetwork": "Network error — check your connection",
+  "saErrorRetry": "Try Again",
+  "saErrorTechnical": "Technical details",
+
+  "saNext": "Next",
+  "saBackToLogin": "Back to Login",
+  "saPopularBadge": "POPULAR",
+  "saRefresh": "Refresh",
+  "saPlanUpdated": "Plan updated",
+  "saRenewal": "Renewal",
+  "saBusinessTypeGrocery": "Grocery",
+  "saBusinessTypeRestaurant": "Restaurant",
+  "saBusinessTypeRetail": "Retail",
+  "saBusinessTypeServices": "Services",
+
+  "saNoPlanRevenueData": "No plan revenue data",
+  "saNoStoreRevenueData": "No store revenue data",
+  "saNoActiveUserData": "No active user data",
+  "saNoTransactionData": "No transaction data",
+
+  "saMfaSetupTitle": "Set Up Two-Factor Authentication",
+  "saMfaVerifyTitle": "Two-Factor Verification",
+  "saMfaEnrollmentInstruction": "Scan the QR code with your authenticator app (Google Authenticator, Authy, etc.) then enter the 6-digit code to complete setup.",
+  "saMfaVerifyInstruction": "Enter the 6-digit code from your authenticator app.",
+  "saMfaCopy": "Copy",
+  "saMfaCompleteSetup": "Complete Setup",
+  "saMfaVerifyButton": "Verify",
+  "saMfaEnterValidCode": "Enter a valid 6-digit code",
+  "saMfaTooManyAttempts": "Too many failed attempts. Locked for 30 minutes.",
+  "saMfaAccountLocked": "Account locked. Try again in {minutes} minutes.",
+  "@saMfaAccountLocked": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "saMfaInvalidCode": "Invalid code. {remaining} attempts remaining.",
+  "@saMfaInvalidCode": {
+    "placeholders": {
+      "remaining": {"type": "int"}
+    }
+  },
+  "saMfaEnrollmentFailed": "MFA enrollment failed. Ensure MFA is enabled in your Supabase project.",
+  "saMfaEnrollmentNoData": "TOTP enrollment returned no data."
 }

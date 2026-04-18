@@ -1,0 +1,30 @@
+# Analysis options for the alhai_lints package itself.
+#
+# We lint our own source strictly. This file is NOT what apps should copy —
+# see analysis_options.yaml.template for the opt-in recipe.
+
+include: package:lints/recommended.yaml
+
+analyzer:
+  # The example/ subtree is a standalone package with its own pubspec and
+  # analysis_options.yaml that plugs custom_lint into the analyzer. Running
+  # `dart analyze` from the parent would descend into example/ and try to
+  # boot the plugin twice, producing spurious "Failed to start plugins"
+  # errors. Keep the package-level analysis focused on the plugin source.
+  exclude:
+    - example/**
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+  errors:
+    # Keep the plugin source free of any warnings.
+    todo: ignore
+
+linter:
+  rules:
+    - prefer_final_locals
+    - prefer_const_constructors
+    - prefer_const_declarations
+    - avoid_print
+    - sort_constructors_first

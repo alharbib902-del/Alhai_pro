@@ -80,6 +80,17 @@ jobs:
         working-directory: distributor_portal
         run: flutter test
 
+      # Substitute the CSP report-uri placeholder. `|| true` keeps the build
+      # alive if the secret is unset (placeholder remains, reports go nowhere
+      # but CSP still enforces). See docs/security/csp-violation-reporting.md.
+      - name: Inject CSP report-uri
+        run: |
+          sed -i "s|__SENTRY_CSP_REPORT_URI__|${{ secrets.SENTRY_CSP_REPORT_URI }}|g" \
+            distributor_portal/web/_headers \
+            distributor_portal/web/index.html \
+            distributor_portal/nginx.conf \
+            distributor_portal/vercel.json 2>/dev/null || true
+
       # Hardening: obfuscate Dart identifiers, split debug symbols out,
       # and disable source maps so Dart source is not served to end users.
       - name: Build web (release, obfuscated)

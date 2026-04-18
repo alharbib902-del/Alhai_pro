@@ -5,6 +5,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../providers/sa_providers.dart';
 import '../../data/models/sa_analytics_model.dart';
+import '../../ui/widgets/sa_error_card.dart';
 
 /// Revenue analytics: MRR, ARR, growth -- real Supabase data.
 class SARevenueAnalyticsScreen extends ConsumerStatefulWidget {
@@ -63,9 +64,9 @@ class _SARevenueAnalyticsScreenState
                     ),
                   ],
                   selected: {period},
-                  onSelectionChanged: (v) =>
-                      ref.read(saRevenuePeriodProvider.notifier).state =
-                          v.first,
+                  onSelectionChanged: (v) => ref
+                      .read(saRevenuePeriodProvider.notifier)
+                      .state = v.first,
                 ),
               ],
             ),
@@ -77,7 +78,7 @@ class _SARevenueAnalyticsScreenState
                 height: 100,
                 child: Center(child: CircularProgressIndicator()),
               ),
-              error: (e, _) => Text('Error: $e'),
+              error: (e, _) => SAErrorCard(error: e, flat: true),
               data: (kpis) {
                 return GridView.count(
                   crossAxisCount: isWide ? 4 : 2,
@@ -140,7 +141,7 @@ class _SARevenueAnalyticsScreenState
                 height: 280,
                 child: Center(child: CircularProgressIndicator()),
               ),
-              error: (e, _) => Text('Error: $e'),
+              error: (e, _) => SAErrorCard(error: e, flat: true),
               data: (data) => _MrrChart(theme: theme, monthlyData: data),
             ),
             const SizedBox(height: AlhaiSpacing.xl),
@@ -158,7 +159,7 @@ class _SARevenueAnalyticsScreenState
                 height: 120,
                 child: Center(child: CircularProgressIndicator()),
               ),
-              error: (e, _) => Text('Error: $e'),
+              error: (e, _) => SAErrorCard(error: e, flat: true),
               data: (plans) => _RevenueByPlanTable(l10n: l10n, plans: plans),
             ),
 
@@ -177,7 +178,7 @@ class _SARevenueAnalyticsScreenState
                 height: 120,
                 child: Center(child: CircularProgressIndicator()),
               ),
-              error: (e, _) => Text('Error: $e'),
+              error: (e, _) => SAErrorCard(error: e, flat: true),
               data: (stores) => _TopStoresTable(l10n: l10n, stores: stores),
             ),
           ],
@@ -302,7 +303,7 @@ class _MrrChart extends StatelessWidget {
           height: 250,
           child: Center(
             child: Text(
-              'No revenue data',
+              AppLocalizations.of(context).saNoRevenueData,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: theme.colorScheme.outline,
               ),
@@ -371,9 +372,8 @@ class _MrrChart extends StatelessWidget {
                         return const SizedBox();
                       }
                       final month = monthlyData[idx].month;
-                      final label = month.length >= 7
-                          ? month.substring(5)
-                          : month;
+                      final label =
+                          month.length >= 7 ? month.substring(5) : month;
                       return Padding(
                         padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
                         child: Text(
@@ -432,7 +432,7 @@ class _RevenueByPlanTable extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(AlhaiSpacing.lg),
           child: Text(
-            'No plan revenue data',
+            l10n.saNoPlanRevenueData,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.outline,
             ),
@@ -456,9 +456,9 @@ class _RevenueByPlanTable extends StatelessWidget {
         columnSpacing: AlhaiSpacing.xl,
         columns: [
           DataColumn(label: Text(l10n.planName)),
-          const DataColumn(label: Text('Subscribers'), numeric: true),
+          DataColumn(label: Text(l10n.saSubscribers), numeric: true),
           DataColumn(label: Text(l10n.revenue), numeric: true),
-          const DataColumn(label: Text('% of Total'), numeric: true),
+          DataColumn(label: Text(l10n.saPercentOfTotal), numeric: true),
         ],
         rows: plans.map((plan) {
           final pct = totalRevenue > 0
@@ -494,7 +494,7 @@ class _TopStoresTable extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.all(AlhaiSpacing.lg),
           child: Text(
-            'No store revenue data',
+            l10n.saNoStoreRevenueData,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: theme.colorScheme.outline,
             ),

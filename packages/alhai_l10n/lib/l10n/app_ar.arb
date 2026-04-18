@@ -6960,5 +6960,91 @@
   "reportExportSuccess": "تم تصدير التقرير بنجاح",
   "reportExportFailed": "فشل التصدير: {error}",
   "@reportExportFailed": { "placeholders": { "error": { "type": "String" } } },
-  "ok": "حسناً"
+  "ok": "حسناً",
+
+  "@@_section_super_admin": "Super Admin — نصوص لوحة التحكم (2026-04-17)",
+
+  "saSaveChanges": "حفظ التغييرات",
+  "saSaving": "جاري الحفظ...",
+  "saDiscardChanges": "تجاهل",
+  "saConfirmSave": "حفظ",
+  "saPlatformSettingsConfirm": "هذه التغييرات تؤثر على جميع المؤسسات في المنصة. هل تريد الحفظ؟",
+  "saPlatformSettingsSaved": "تم حفظ إعدادات المنصة بنجاح",
+  "saPlatformSettingsSaveFailed": "فشل حفظ إعدادات المنصة",
+  "saErrorLoadingSettings": "خطأ في تحميل الإعدادات",
+  "saEnvProduction": "الإنتاج",
+  "saEnvSandbox": "بيئة الاختبار",
+  "saMoyasarDescription": "معالجة بطاقات الائتمان والخصم",
+  "saHyperpayDescription": "بوابة دفع متعددة الطرق",
+  "saTabbyDescription": "اشترِ الآن وادفع لاحقاً",
+  "saTamaraDescription": "دفعات بالتقسيط",
+  "saGeneral": "عام",
+  "saLanguageArabic": "العربية",
+  "saLanguageEnglish": "الإنجليزية",
+
+  "saAuditLog": "سجل التدقيق",
+  "saAuditLogRefresh": "تحديث",
+  "saAuditFilterAll": "الكل",
+  "saAuditFilterAuth": "مصادقة",
+  "saAuditFilterStore": "متجر",
+  "saAuditFilterUser": "مستخدم",
+  "saAuditFilterSubscription": "اشتراك",
+  "saAuditSearchHint": "ابحث بالبريد أو المعرّف أو الإجراء...",
+  "saAuditLoadFailed": "فشل تحميل سجل التدقيق",
+  "saAuditLoadRetry": "إعادة المحاولة",
+  "saAuditNoEntries": "لا توجد سجلات تدقيق",
+  "saAuditEntryBy": "بواسطة {email}",
+  "@saAuditEntryBy": { "placeholders": { "email": { "type": "String" } } },
+
+  "saReportsExportComingSoon": "التصدير غير متاح حالياً — سيضاف قريباً",
+  "saSystemHealthMetricsNote": "مقاييس المعالج/الذاكرة/القرص تتطلب نقطة خادم مخصصة — غير متصلة بعد",
+
+  "saMfaScanQr": "امسح رمز QR في تطبيق المصادقة",
+  "saMfaSecretFallback": "أو أدخل هذا المفتاح يدوياً:",
+  "saMfaCopied": "تم النسخ",
+
+  "saErrorGeneric": "حدث خطأ ما",
+  "saErrorNetwork": "خطأ في الشبكة — تحقق من اتصالك",
+  "saErrorRetry": "إعادة المحاولة",
+  "saErrorTechnical": "تفاصيل تقنية",
+
+  "saNext": "التالي",
+  "saBackToLogin": "العودة لتسجيل الدخول",
+  "saPopularBadge": "الأكثر طلباً",
+  "saRefresh": "تحديث",
+  "saPlanUpdated": "تم تحديث الباقة",
+  "saRenewal": "التجديد",
+  "saBusinessTypeGrocery": "بقالة",
+  "saBusinessTypeRestaurant": "مطعم",
+  "saBusinessTypeRetail": "تجزئة",
+  "saBusinessTypeServices": "خدمات",
+
+  "saNoPlanRevenueData": "لا توجد بيانات إيرادات للباقات",
+  "saNoStoreRevenueData": "لا توجد بيانات إيرادات للمتاجر",
+  "saNoActiveUserData": "لا توجد بيانات للمستخدمين النشطين",
+  "saNoTransactionData": "لا توجد بيانات معاملات",
+
+  "saMfaSetupTitle": "إعداد المصادقة الثنائية",
+  "saMfaVerifyTitle": "التحقق الثنائي",
+  "saMfaEnrollmentInstruction": "امسح رمز QR بتطبيق المصادقة (Google Authenticator أو Authy وغيرها) ثم أدخل الرمز المكوّن من 6 أرقام لإكمال الإعداد.",
+  "saMfaVerifyInstruction": "أدخل الرمز المكوّن من 6 أرقام من تطبيق المصادقة.",
+  "saMfaCopy": "نسخ",
+  "saMfaCompleteSetup": "إكمال الإعداد",
+  "saMfaVerifyButton": "تحقق",
+  "saMfaEnterValidCode": "أدخل رمزاً صحيحاً مكوّناً من 6 أرقام",
+  "saMfaTooManyAttempts": "محاولات فاشلة كثيرة. تم القفل لمدة 30 دقيقة.",
+  "saMfaAccountLocked": "تم قفل الحساب. حاول مجدداً خلال {minutes} دقيقة.",
+  "@saMfaAccountLocked": {
+    "placeholders": {
+      "minutes": {"type": "int"}
+    }
+  },
+  "saMfaInvalidCode": "رمز غير صحيح. {remaining} محاولات متبقية.",
+  "@saMfaInvalidCode": {
+    "placeholders": {
+      "remaining": {"type": "int"}
+    }
+  },
+  "saMfaEnrollmentFailed": "فشل تسجيل المصادقة الثنائية. تأكد من تفعيل MFA في مشروع Supabase.",
+  "saMfaEnrollmentNoData": "لم ترجع عملية تسجيل TOTP أي بيانات."
 }
