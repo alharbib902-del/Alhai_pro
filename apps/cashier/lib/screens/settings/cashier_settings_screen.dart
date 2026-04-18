@@ -251,12 +251,12 @@ class _CashierSettingsScreenState extends ConsumerState<CashierSettingsScreen> {
           SnackBar(
             content: Row(
               children: [
-                const SizedBox(
+                SizedBox(
                   width: 20,
                   height: 20,
                   child: CircularProgressIndicator(
                     strokeWidth: 2,
-                    color: Colors.white,
+                    color: Theme.of(context).colorScheme.onInverseSurface,
                   ),
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
