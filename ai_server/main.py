@@ -4,7 +4,6 @@ Alhai POS AI Server - خادم الذكاء الاصطناعي لنقاط الب
 FastAPI backend serving 15 AI features for the Alhai POS app.
 """
 
-import json
 import logging
 import time
 import uuid
@@ -110,15 +109,95 @@ async def global_exception_handler(request: Request, exc: Exception):
 MAX_BODY_SIZE = 10 * 1024 * 1024
 
 
-@app.middleware("http")
-async def limit_request_body_middleware(request: Request, call_next):
-    content_length = request.headers.get("content-length")
-    if content_length and int(content_length) > MAX_BODY_SIZE:
-        return JSONResponse(
-            status_code=413,
-            content={"error": "حجم الطلب كبير جداً", "detail": "Request body too large"},
+class LimitBodySizeMiddleware:
+    """Pure-ASGI middleware that rejects oversized request bodies.
+
+    A `BaseHTTPMiddleware` version is not sufficient: (1) any outer middleware
+    that calls `await request.body()` (for request-ID tagging, audit logging,
+    rate-limit key extraction, ...) buffers the full body BEFORE a
+    BaseHTTPMiddleware subclass ever runs, nullifying the check; (2) a
+    Content-Length-only guard is trivially bypassed with
+    `Transfer-Encoding: chunked`.
+
+    This middleware is registered last so it ends up outermost in Starlette's
+    stack. It buffers and replays `http.request` ASGI messages, tallying byte
+    count as it goes, and short-circuits with 413 the moment the running total
+    exceeds `max_bytes` -- regardless of whether the caller sent
+    Content-Length or chunked encoding.
+    """
+
+    def __init__(self, app, max_bytes: int):
+        self.app = app
+        self.max_bytes = max_bytes
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http":
+            return await self.app(scope, receive, send)
+
+        method = scope.get("method", "GET")
+        if method not in ("POST", "PUT", "PATCH"):
+            return await self.app(scope, receive, send)
+
+        # Fast-path: reject before reading any body bytes if Content-Length
+        # declares an oversize payload.
+        declared_length = None
+        for name, value in scope.get("headers", []):
+            if name == b"content-length":
+                try:
+                    declared_length = int(value)
+                except ValueError:
+                    declared_length = None
+                break
+        if declared_length is not None and declared_length > self.max_bytes:
+            return await self._send_413(send)
+
+        # Stream-count the body. Send 413 as soon as bytes exceed the cap --
+        # works for Transfer-Encoding: chunked (no Content-Length) too.
+        chunks: list[dict] = []
+        total = 0
+        while True:
+            message = await receive()
+            mtype = message["type"]
+            if mtype == "http.disconnect":
+                return
+            if mtype == "http.request":
+                body = message.get("body", b"")
+                total += len(body)
+                if total > self.max_bytes:
+                    return await self._send_413(send)
+                chunks.append(message)
+                if not message.get("more_body", False):
+                    break
+            else:  # pragma: no cover -- other ASGI message types are rare here
+                chunks.append(message)
+
+        # Replay buffered messages for downstream middleware / the route.
+        iterator = iter(chunks)
+
+        async def replay_receive():
+            try:
+                return next(iterator)
+            except StopIteration:
+                return {"type": "http.request", "body": b"", "more_body": False}
+
+        await self.app(scope, replay_receive, send)
+
+    @staticmethod
+    async def _send_413(send) -> None:
+        body = (
+            b'{"error":"\xd8\xad\xd8\xac\xd9\x85 \xd8\xa7\xd9\x84\xd8\xb7\xd9'
+            b'\x84\xd8\xa8 \xd9\x83\xd8\xa8\xd9\x8a\xd8\xb1 \xd8\xac\xd8\xaf'
+            b'\xd8\xa7\xd9\x8b","detail":"Request body too large"}'
         )
-    return await call_next(request)
+        await send({
+            "type": "http.response.start",
+            "status": 413,
+            "headers": [
+                (b"content-type", b"application/json; charset=utf-8"),
+                (b"content-length", str(len(body)).encode("ascii")),
+            ],
+        })
+        await send({"type": "http.response.body", "body": body})
 
 
 # Request ID tracking middleware
@@ -126,25 +205,6 @@ async def limit_request_body_middleware(request: Request, call_next):
 async def request_id_middleware(request: Request, call_next):
     request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
     request.state.request_id = request_id
-    # Peek at the body once, cache it so rate_limit can read store_id and so
-    # downstream handlers still get a parseable body.
-    body = b""
-    if request.method in ("POST", "PUT", "PATCH"):
-        try:
-            body = await request.body()
-        except Exception:
-            body = b""
-    request.state.cached_body = body
-    if body:
-        try:
-            data = json.loads(body)
-            if isinstance(data, dict):
-                sid = data.get("store_id")
-                if sid:
-                    request.state.store_id = str(sid)
-        except Exception:
-            pass
-
     set_request_context(request_id=request_id)
     try:
         response = await call_next(request)
@@ -162,7 +222,6 @@ async def audit_log_middleware(request: Request, call_next):
     duration_ms = (time.time() - start) * 1000
     request_id = getattr(request.state, "request_id", "unknown")
     client_ip = request.client.host if request.client else "unknown"
-    store_id = getattr(request.state, "store_id", None)
     logger.info(
         "request handled",
         extra={
@@ -172,7 +231,6 @@ async def audit_log_middleware(request: Request, call_next):
             "endpoint": request.url.path,
             "status": response.status_code,
             "duration_ms": round(duration_ms, 1),
-            "store_id": store_id,
         },
     )
     return response
@@ -197,6 +255,12 @@ async def security_headers_middleware(request: Request, call_next):
         "geolocation=(), microphone=(), camera=(), payment=()"
     )
     return response
+
+
+# Body-size guard must be OUTERMOST so it runs before any middleware that calls
+# `await request.body()`. Registered last => first in user_middleware list =>
+# outermost after Starlette wraps the stack in reverse.
+app.add_middleware(LimitBodySizeMiddleware, max_bytes=MAX_BODY_SIZE)
 
 
 # Health check
