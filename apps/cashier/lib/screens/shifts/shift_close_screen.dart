@@ -223,7 +223,12 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
     final expectedCash =
         openingCash + cashIn - cashOut + totalSalesAmount - totalRefundsAmount;
 
-    final actualCash = double.tryParse(_actualCashController.text) ?? 0;
+    // P0-10: distinguish empty/invalid from a legitimate "0" entry.
+    // Empty or non-numeric input MUST NOT silently render a full-expected
+    // deficit — that blames the cashier for money they never received.
+    final parsedActualCash = double.tryParse(_actualCashController.text.trim());
+    final hasValidActualCash = parsedActualCash != null;
+    final actualCash = parsedActualCash ?? 0;
     final difference = actualCash - expectedCash;
 
     if (isWideScreen) {
@@ -254,7 +259,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
             flex: 2,
             child: Column(
               children: [
-                _buildActualCashCard(actualCash, difference, isDark, l10n),
+                _buildActualCashCard(actualCash, difference, hasValidActualCash, isDark, l10n),
                 const SizedBox(height: AlhaiSpacing.lg),
                 _buildCloseButton(shift, expectedCash, isDark, l10n),
               ],
@@ -280,7 +285,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
           l10n,
         ),
         SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
-        _buildActualCashCard(actualCash, difference, isDark, l10n),
+        _buildActualCashCard(actualCash, difference, hasValidActualCash, isDark, l10n),
         const SizedBox(height: AlhaiSpacing.lg),
         _buildCloseButton(shift, expectedCash, isDark, l10n),
       ],
@@ -489,6 +494,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
   Widget _buildActualCashCard(
     double actualCash,
     double difference,
+    bool hasValidActualCash,
     bool isDark,
     AppLocalizations l10n,
   ) {
@@ -607,7 +613,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
               fillColor: AppColors.getSurfaceVariant(isDark),
             ),
           ),
-          if (_actualCashController.text.isNotEmpty) ...[
+          if (hasValidActualCash) ...[
             const SizedBox(height: AlhaiSpacing.md),
             Container(
               padding: const EdgeInsets.all(AlhaiSpacing.md),
@@ -696,7 +702,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
-        onPressed: _isLoading || _actualCashController.text.isEmpty
+        onPressed: _isLoading || _actualCashController.text.trim().isEmpty
             ? null
             : () => _closeShift(shift, expectedCash),
         icon: _isLoading
@@ -727,7 +733,17 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
 
   Future<void> _closeShift(ShiftsTableData shift, double expectedCash) async {
     final l10n = AppLocalizations.of(context);
-    final actualCash = double.tryParse(_actualCashController.text) ?? 0;
+    // P0-10: do NOT coerce invalid text to 0. The cashier must enter an
+    // explicit amount — "0" is a valid value meaning "drawer was empty",
+    // but empty / whitespace / non-numeric input is a validation error.
+    final parsedActualCash = double.tryParse(_actualCashController.text.trim());
+    if (parsedActualCash == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.requiredField)),
+      );
+      return;
+    }
+    final actualCash = parsedActualCash;
     final difference = actualCash - expectedCash;
 
     final confirmed = await showDialog<bool>(
