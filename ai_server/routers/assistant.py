@@ -32,7 +32,14 @@ async def smart_assistant(
     """
     try:
         # Try OpenAI first
-        ai_reply = chat_completion(body.query, context=body.context, language=body.language)
+        ai_reply = chat_completion(
+            body.query,
+            context=body.context,
+            language=body.language,
+            org_id=str(body.org_id),
+            store_id=str(body.store_id),
+            endpoint_hint="assistant",
+        )
         if ai_reply:
             return AssistantResponse(
                 answer=ai_reply,

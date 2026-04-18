@@ -1,8 +1,8 @@
 """Redis cache for OpenAI responses.
 
 Thin sync wrapper. Used only to deduplicate repeat chat completions for the
-same (org, store, endpoint, message, lang) tuple. If Redis is unavailable we
-log once and skip caching -- calls proceed as normal.
+same (org, store, endpoint, context, message, lang) tuple. If Redis is
+unavailable we log once and skip caching -- calls proceed as normal.
 """
 
 from __future__ import annotations
@@ -62,10 +62,18 @@ def build_key(
     endpoint_hint: str,
     message: str,
     language: str,
+    context: str = "general",
 ) -> str:
-    """Build cache key with bounded message length + sha256 prefix."""
-    digest = hashlib.sha256(message[:500].encode("utf-8")).hexdigest()[:16]
-    return f"openai:{org_id}:{store_id}:{endpoint_hint}:{digest}:{language}"
+    """Build cache key scoped to (org, store, endpoint, context, message, lang).
+
+    Hashes the full message -- truncating the input before hashing would let
+    long messages sharing a common prefix collide.
+    """
+    digest = hashlib.sha256(message.encode("utf-8")).hexdigest()[:16]
+    return (
+        f"openai:{org_id}:{store_id}:{endpoint_hint}:"
+        f"{context}:{digest}:{language}"
+    )
 
 
 def get(key: str) -> str | None:

@@ -63,6 +63,7 @@ def chat_completion(
         endpoint_hint=endpoint_hint,
         message=message,
         language=language,
+        context=context,
     )
     cached = openai_cache.get(cache_key)
     if cached is not None:

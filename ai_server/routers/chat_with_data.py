@@ -32,7 +32,14 @@ async def chat(
     """
     try:
         # Try OpenAI first
-        ai_reply = chat_completion(body.message, context="chat_with_data", language=body.language)
+        ai_reply = chat_completion(
+            body.message,
+            context="chat_with_data",
+            language=body.language,
+            org_id=str(body.org_id),
+            store_id=str(body.store_id),
+            endpoint_hint="chat",
+        )
         if ai_reply:
             conv_id = body.conversation_id or "conv_ai"
             return ChatResponse(
