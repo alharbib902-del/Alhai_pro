@@ -9,6 +9,9 @@ class AppLocalizationsFil extends AppLocalizations {
   AppLocalizationsFil([String locale = 'fil']) : super(locale);
 
   @override
+  String get vatNumberMissing => 'VAT number not configured';
+
+  @override
   String get appTitle => 'Point of Sale System';
 
   @override

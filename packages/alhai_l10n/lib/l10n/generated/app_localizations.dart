@@ -108,6 +108,12 @@ abstract class AppLocalizations {
     Locale('ur')
   ];
 
+  /// Warning on receipt widget when store taxNumber is null, empty, or fails VAT format validation
+  ///
+  /// In ar, this message translates to:
+  /// **'الرقم الضريبي غير مُعدّ'**
+  String get vatNumberMissing;
+
   /// اسم التطبيق
   ///
   /// In ar, this message translates to:

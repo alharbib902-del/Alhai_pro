@@ -9,6 +9,9 @@ class AppLocalizationsId extends AppLocalizations {
   AppLocalizationsId([String locale = 'id']) : super(locale);
 
   @override
+  String get vatNumberMissing => 'VAT number not configured';
+
+  @override
   String get appTitle => 'Sistem POS';
 
   @override

@@ -524,7 +524,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
           const SizedBox(height: AlhaiSpacing.mdl),
           ZatcaQrWidget(
             sellerName: _store?.name ?? 'Al-HAI Store',
-            vatNumber: _store?.taxNumber ?? '300000000000003',
+            vatNumber: _store?.taxNumber,
             timestamp: order.createdAt,
             totalWithVat: order.total,
             vatAmount: order.tax,

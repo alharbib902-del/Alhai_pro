@@ -9,6 +9,9 @@ class AppLocalizationsAr extends AppLocalizations {
   AppLocalizationsAr([String locale = 'ar']) : super(locale);
 
   @override
+  String get vatNumberMissing => 'الرقم الضريبي غير مُعدّ';
+
+  @override
   String get appTitle => 'نظام نقاط البيع';
 
   @override

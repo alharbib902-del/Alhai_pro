@@ -9,6 +9,9 @@ class AppLocalizationsBn extends AppLocalizations {
   AppLocalizationsBn([String locale = 'bn']) : super(locale);
 
   @override
+  String get vatNumberMissing => 'VAT number not configured';
+
+  @override
   String get appTitle => 'পয়েন্ট অফ সেল';
 
   @override

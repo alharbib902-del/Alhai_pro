@@ -1,6 +1,10 @@
 {
   "@@locale": "en",
   "@@last_modified": "2026-02-04",
+  "vatNumberMissing": "VAT number not configured",
+  "@vatNumberMissing": {
+    "description": "Warning on receipt widget when store taxNumber is null, empty, or fails VAT format validation"
+  },
   "appTitle": "POS System",
   "@appTitle": {
     "description": "اسم التطبيق"

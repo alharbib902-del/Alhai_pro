@@ -9,6 +9,9 @@ class AppLocalizationsUr extends AppLocalizations {
   AppLocalizationsUr([String locale = 'ur']) : super(locale);
 
   @override
+  String get vatNumberMissing => 'VAT number not configured';
+
+  @override
   String get appTitle => 'پوائنٹ آف سیل';
 
   @override

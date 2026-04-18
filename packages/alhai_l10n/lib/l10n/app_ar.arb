@@ -1,6 +1,10 @@
 {
   "@@locale": "ar",
   "@@last_modified": "2026-02-04",
+  "vatNumberMissing": "الرقم الضريبي غير مُعدّ",
+  "@vatNumberMissing": {
+    "description": "Warning on receipt widget when store taxNumber is null, empty, or fails VAT format validation"
+  },
   "appTitle": "نظام نقاط البيع",
   "@appTitle": {
     "description": "اسم التطبيق"

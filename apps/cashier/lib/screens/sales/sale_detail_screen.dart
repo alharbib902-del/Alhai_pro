@@ -643,7 +643,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
   Widget _buildZatcaQrCard(bool isDark) {
     final order = _order!;
     final storeName = _store?.name ?? 'Al-HAI Store';
-    final vatNumber = _store?.taxNumber ?? '300000000000003';
+    final vatNumber = _store?.taxNumber;
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),

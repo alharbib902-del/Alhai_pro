@@ -9,6 +9,9 @@ class AppLocalizationsHi extends AppLocalizations {
   AppLocalizationsHi([String locale = 'hi']) : super(locale);
 
   @override
+  String get vatNumberMissing => 'VAT number not configured';
+
+  @override
   String get appTitle => 'पॉइंट ऑफ सेल';
 
   @override
