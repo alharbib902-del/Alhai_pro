@@ -8,6 +8,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'core/offline/offline_queue_auto_retry.dart';
+import 'core/offline/offline_queue_service.dart';
 import 'core/router/app_router.dart';
 import 'core/services/push_notification_service.dart';
 import 'core/services/sentry_service.dart';
@@ -75,6 +77,19 @@ Future<void> _appMain() async {
 
   // Wire DI
   configureDependencies();
+
+  // Start offline queue auto-retry: flushes queued orders at startup and
+  // whenever connectivity is restored.
+  if (locator.isRegistered<OfflineQueueService>()) {
+    try {
+      await OfflineQueueAutoRetry(
+        queue: locator<OfflineQueueService>(),
+      ).start();
+    } catch (e, stack) {
+      if (kDebugMode) debugPrint('OfflineQueueAutoRetry.start failed: $e');
+      reportError(e, stackTrace: stack, hint: 'OfflineQueueAutoRetry.start');
+    }
+  }
 
   // FIX 5: Configure image cache for better performance
   PaintingBinding.instance.imageCache.maximumSizeBytes =

@@ -3,6 +3,7 @@ import 'package:alhai_core/alhai_core.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../di/injection.dart';
+import '../data/order_submit_result.dart';
 import '../data/orders_datasource.dart';
 import '../../addresses/providers/address_providers.dart';
 import '../../../core/providers/app_providers.dart';
@@ -28,7 +29,10 @@ final minOrderAmountProvider = Provider<double>((ref) {
 });
 
 /// Place order action.
-final placeOrderProvider = FutureProvider.family<Order, Cart>((
+///
+/// Returns [OrderSubmitCreated] on success or [OrderSubmitQueued] when the
+/// network was unavailable and the order was enqueued for later retry.
+final placeOrderProvider = FutureProvider.family<OrderSubmitResult, Cart>((
   ref,
   cart,
 ) async {
@@ -65,5 +69,5 @@ final placeOrderProvider = FutureProvider.family<Order, Cart>((
   );
 
   final datasource = locator<OrdersDatasource>();
-  return datasource.createOrder(params);
+  return datasource.submitOrder(params);
 });

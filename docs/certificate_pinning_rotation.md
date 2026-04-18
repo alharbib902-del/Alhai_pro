@@ -1,5 +1,12 @@
 # Certificate Pinning — Fingerprint Rotation Guide
 
+> **Update (2026-04-18):** the pin service now accepts up to ten numbered
+> slots (`SUPABASE_CERT_FINGERPRINT_1` … `_10`) in addition to the legacy
+> primary/backup pair. See
+> [`docs/security/cert-pin-rotation.md`](./security/cert-pin-rotation.md)
+> for the current rotation procedure. The section below still describes
+> the underlying rationale and openssl pipeline.
+
 ## Why this matters
 
 Certificate pinning protects our mobile apps against man-in-the-middle attacks

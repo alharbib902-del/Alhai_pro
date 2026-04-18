@@ -1,14 +1,75 @@
+import 'dart:async';
+import 'dart:io';
+
 import 'package:alhai_zatca/alhai_zatca.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:alhai_core/alhai_core.dart';
 
 import '../../../core/constants/app_constants.dart';
+import '../../../core/offline/offline_queue_service.dart';
 import '../../../core/services/sentry_service.dart';
+import 'order_submit_result.dart';
+
+/// Mutation type used by [OfflineQueueService] for queued order submissions.
+const String kOrderSubmitMutationType = 'order.submit';
 
 class OrdersDatasource {
   final SupabaseClient _client;
+  final OfflineQueueService? _offlineQueue;
 
-  OrdersDatasource(this._client);
+  OrdersDatasource(this._client, {OfflineQueueService? offlineQueue})
+    : _offlineQueue = offlineQueue;
+
+  /// Submit an order with offline-queue fallback.
+  ///
+  /// On transient network failures ([SocketException], [TimeoutException],
+  /// or Postgrest 5xx) the request is queued via [OfflineQueueService] and
+  /// an [OrderSubmitQueued] result is returned. Validation / 4xx errors are
+  /// rethrown so the UI can surface them — queueing them would never
+  /// succeed.
+  Future<OrderSubmitResult> submitOrder(CreateOrderParams params) async {
+    try {
+      final order = await createOrder(params);
+      return OrderSubmitCreated(order);
+    } on SocketException catch (e, stack) {
+      return _queueOrRethrow(params, e, stack);
+    } on TimeoutException catch (e, stack) {
+      return _queueOrRethrow(params, e, stack);
+    } on PostgrestException catch (e, stack) {
+      if (_isTransientPostgrest(e)) {
+        return _queueOrRethrow(params, e, stack);
+      }
+      rethrow;
+    }
+  }
+
+  Future<OrderSubmitResult> _queueOrRethrow(
+    CreateOrderParams params,
+    Object error,
+    StackTrace stack,
+  ) async {
+    final queue = _offlineQueue;
+    if (queue == null) {
+      // No queue configured (e.g. unit tests) — preserve legacy behaviour.
+      Error.throwWithStackTrace(error, stack);
+    }
+    addBreadcrumb(
+      message: 'orders.submit queued ${error.runtimeType}',
+      category: 'offline_queue',
+    );
+    await queue.enqueue(kOrderSubmitMutationType, params.toJson());
+    return OrderSubmitQueued(params.clientOrderId);
+  }
+
+  static bool _isTransientPostgrest(PostgrestException e) {
+    final code = e.code;
+    if (code == null) return true; // No code → assume network trouble.
+    // PostgREST bubbles HTTP status in .code for HTTP errors. Treat 5xx as
+    // transient; 4xx as permanent validation failures.
+    final parsed = int.tryParse(code);
+    if (parsed == null) return false;
+    return parsed >= 500 && parsed < 600;
+  }
 
   Future<Order> createOrder(CreateOrderParams params) async {
     // 1. Reserve stock for all items at once (atomic)

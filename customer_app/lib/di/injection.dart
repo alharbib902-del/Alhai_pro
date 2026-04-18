@@ -1,7 +1,12 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:alhai_core/alhai_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get_it/get_it.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../core/offline/offline_queue_service.dart';
 import '../core/services/sentry_service.dart';
 
 import '../features/auth/data/auth_datasource.dart';
@@ -40,6 +45,12 @@ void configureDependencies() {
     );
   }
 
+  // Offline queue (available even without Supabase so the app can persist
+  // enqueued work while offline).
+  locator.registerLazySingleton<OfflineQueueService>(
+    () => OfflineQueueService(),
+  );
+
   // Datasources
   if (locator.isRegistered<SupabaseClient>()) {
     final client = locator<SupabaseClient>();
@@ -48,10 +59,39 @@ void configureDependencies() {
     locator.registerLazySingleton(() => StoresDatasource(client));
     locator.registerLazySingleton(() => ProductsDatasource(client));
     locator.registerLazySingleton(() => CategoriesDatasource(client));
-    locator.registerLazySingleton(() => OrdersDatasource(client));
+    locator.registerLazySingleton(
+      () => OrdersDatasource(
+        client,
+        offlineQueue: locator<OfflineQueueService>(),
+      ),
+    );
     locator.registerLazySingleton(() => AddressesDatasource(client));
     locator.registerLazySingleton(() => DeliveryDatasource(client));
     locator.registerLazySingleton(() => CustomerChatDatasource(client));
+
+    // Wire the order-submit handler onto the offline queue so that
+    // processQueue() can retry queued orders against the same client.
+    final queue = locator<OfflineQueueService>();
+    final ordersDs = locator<OrdersDatasource>();
+    queue.registerHandler(kOrderSubmitMutationType, (payload) async {
+      try {
+        final params = CreateOrderParams.fromJson(payload);
+        await ordersDs.createOrder(params);
+        return MutationOutcome.success;
+      } on SocketException {
+        return MutationOutcome.retry;
+      } on TimeoutException {
+        return MutationOutcome.retry;
+      } on PostgrestException catch (e) {
+        // 4xx → drop. 5xx / unknown → retry.
+        final code = e.code;
+        final status = code == null ? null : int.tryParse(code);
+        if (status != null && status >= 400 && status < 500) {
+          return MutationOutcome.drop;
+        }
+        return MutationOutcome.retry;
+      }
+    });
 
     // Repositories
     locator.registerLazySingleton(

@@ -9,6 +9,7 @@ import 'package:alhai_core/alhai_core.dart';
 import '../../cart/providers/cart_provider.dart';
 import '../../addresses/providers/address_providers.dart';
 import '../../shared/widgets/summary_row.dart';
+import '../data/order_submit_result.dart';
 import '../providers/checkout_provider.dart';
 
 class CheckoutScreen extends ConsumerStatefulWidget {
@@ -62,15 +63,29 @@ class _CheckoutScreenState extends ConsumerState<CheckoutScreen> {
     }
 
     try {
-      final order = await ref.read(placeOrderProvider(cart).future);
+      final result = await ref.read(placeOrderProvider(cart).future);
 
       HapticFeedback.heavyImpact();
 
-      // Clear cart
+      // Clear cart on either outcome — the order is either created or
+      // safely persisted in the offline queue.
       ref.read(cartProvider.notifier).clear();
 
-      if (mounted) {
-        context.go('/orders/${order.id}');
+      if (!mounted) return;
+
+      switch (result) {
+        case OrderSubmitCreated(:final order):
+          context.go('/orders/${order.id}');
+        case OrderSubmitQueued():
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'تم حفظ طلبك — سيتم إرساله عند عودة الاتصال',
+              ),
+              duration: Duration(seconds: 4),
+            ),
+          );
+          context.go('/orders');
       }
     } catch (e) {
       if (mounted) setState(() => _error = e.toString());
