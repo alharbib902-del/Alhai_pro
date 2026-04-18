@@ -275,11 +275,19 @@ class _CashierShellState extends ConsumerState<CashierShell> {
     context.go(route);
   }
 
+  /// P0-11: iPad Mini portrait is 768 px wide, which is inside the shared
+  /// tablet band (600–904) but below [AlhaiBreakpoints.desktop] (905). The
+  /// shell previously fell back to a hamburger drawer for any tablet under
+  /// 905 — so iPad Mini in portrait (an explicit target device) lost the
+  /// sidebar full-time. Keep the sidebar from 768 px upward so narrow-tablet
+  /// portrait orientations render the desktop layout; phones and truly
+  /// small tablets (<768) still get the mobile drawer.
+  static const double _sidebarBreakpoint = 768.0;
+
   @override
   Widget build(BuildContext context) {
-    // M115: Use shared breakpoint from design system (905px)
     final isDesktop =
-        MediaQuery.sizeOf(context).width >= AlhaiBreakpoints.desktop;
+        MediaQuery.sizeOf(context).width >= _sidebarBreakpoint;
     final selectedId = _getSelectedId(context);
 
     final layout = isDesktop
