@@ -22,6 +22,8 @@ dependencies:
   supabase_flutter: ^2.3.4
   crypto: ^3.0.3
   image: ^4.1.0
+  # HTTP client (used by CertificatePinningService)
+  http: ^1.2.1
 
 dev_dependencies:
   flutter_test:

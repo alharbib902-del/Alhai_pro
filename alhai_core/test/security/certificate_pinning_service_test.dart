@@ -1,4 +1,4 @@
-import 'package:admin_lite/core/network/certificate_pinning_service.dart';
+import 'package:alhai_core/alhai_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -28,7 +28,7 @@ void main() {
       expect(CertificatePinningService.constantTimeEquals('', ''), isTrue);
     });
 
-    test('diagnosticStatus reports debug mode in tests', () {
+    test('diagnosticStatus reports debug mode', () {
       final status = CertificatePinningService.diagnosticStatus;
       expect(status, contains('debug mode'));
     });

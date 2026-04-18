@@ -1,9 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
-
-import '../network/certificate_pinning_service.dart';
+import 'package:alhai_core/alhai_core.dart'
+    show CertificatePinningService, SupabaseConfig;
 
 /// Secure async storage backed by flutter_secure_storage for Supabase auth tokens.
 class SecureLocalStorage extends GotrueAsyncStorage {

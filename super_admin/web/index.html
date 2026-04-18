@@ -18,18 +18,30 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Alhai Super Admin — ZATCA-compliant multi-tenant platform control panel.">
+
+  <!--
+    Security headers (SEC-R1 fix, 2026-04-17)
+    -----------------------------------------
+    These meta tags are a best-effort backup for deployments where the canonical
+    headers in `web/_headers` (Cloudflare Pages) do not apply. They are weaker
+    than real HTTP headers (e.g., `frame-ancestors` is ignored in meta), so the
+    `_headers` file is the primary defense.
+  -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.sentry.io https://*.ingest.sentry.io; base-uri 'self'; form-action 'self'; object-src 'none'">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+  <meta name="robots" content="noindex, nofollow">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="super_admin">
+  <meta name="apple-mobile-web-app-title" content="Alhai Super Admin">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>super_admin</title>
+  <title>Alhai Super Admin</title>
   <link rel="manifest" href="manifest.json">
 </head>
 <body>

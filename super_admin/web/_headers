@@ -1,0 +1,43 @@
+# Cloudflare Pages security headers for Alhai Super Admin
+# Reference: https://developers.cloudflare.com/pages/platform/headers/
+#
+# This file is served from the root of the Cloudflare Pages deployment
+# and applies response headers to matching path patterns.
+
+/*
+  # Content-Security-Policy
+  # ------------------------
+  # default-src 'self'              — block everything by default
+  # script-src 'self' 'wasm-unsafe-eval' https://www.gstatic.com
+  #   — Flutter canvaskit loads CanvasKit.wasm from gstatic.com; WASM needs 'wasm-unsafe-eval'
+  # style-src 'self' 'unsafe-inline' — Flutter web injects inline styles (required for Material)
+  # font-src 'self' data:            — fonts embedded or loaded locally
+  # img-src 'self' data: blob: https: — Supabase public storage URLs may be any https
+  # connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.sentry.io
+  #   — REST + Realtime (websocket) to Supabase; Sentry ingest
+  # frame-ancestors 'none'           — prevent clickjacking (stronger than X-Frame-Options)
+  # base-uri 'self'                  — prevent <base> tag injection
+  # form-action 'self'               — prevent form hijacking
+  # object-src 'none'                — block legacy plugins
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://www.gstatic.com; style-src 'self' 'unsafe-inline'; font-src 'self' data:; img-src 'self' data: blob: https:; connect-src 'self' https://*.supabase.co wss://*.supabase.co https://*.sentry.io https://*.ingest.sentry.io; frame-ancestors 'none'; base-uri 'self'; form-action 'self'; object-src 'none'
+
+  # Clickjacking defense (legacy browsers that ignore frame-ancestors)
+  X-Frame-Options: DENY
+
+  # MIME-type sniffing defense
+  X-Content-Type-Options: nosniff
+
+  # Don't leak full URLs on cross-origin navigation
+  Referrer-Policy: strict-origin-when-cross-origin
+
+  # Disable browser APIs we don't need — super_admin is a data dashboard
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), usb=(), accelerometer=(), gyroscope=(), magnetometer=(), interest-cohort=()
+
+  # HSTS: force HTTPS for 2 years, include subdomains, preload eligible
+  Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+
+  # Legacy XSS filter for older browsers (deprecated, but harmless)
+  X-XSS-Protection: 1; mode=block
+
+  # Tell search engines to ignore this app (internal tool)
+  X-Robots-Tag: noindex, nofollow, noarchive

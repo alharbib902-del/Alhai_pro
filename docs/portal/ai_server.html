@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الحي — خادم الذكاء الاصطناعي | AI Server Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --bg: #0f0f1a;
+  --bg-card: #1a1a2e;
+  --bg-card-hover: #222240;
+  --accent: #10b981;
+  --accent-light: #34d399;
+  --green: #00d4aa;
+  --blue: #4facfe;
+  --red: #ef4444;
+  --yellow: #f59e0b;
+  --pink: #f093fb;
+  --purple: #a855f7;
+  --text: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border: rgba(16, 185, 129, 0.15);
+  --glass-bg: rgba(26, 26, 46, 0.6);
+  --glass-border: rgba(16, 185, 129, 0.2);
+  --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --font: 'Tajawal', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(16, 185, 129, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(79, 172, 254, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 50% 50%, rgba(168, 85, 247, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container { max-width: 1280px; margin: 0 auto; padding: 0 20px; position: relative; z-index: 1; }
+
+.glass {
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  box-shadow: var(--glass-shadow);
+}
+
+.animate-on-scroll { opacity: 0; transform: translateY(40px); transition: opacity 0.7s cubic-bezier(0.25,0.46,0.45,0.94), transform 0.7s cubic-bezier(0.25,0.46,0.45,0.94); }
+.animate-on-scroll.visible { opacity: 1; transform: translateY(0); }
+
+/* ====== HERO ====== */
+.hero {
+  padding: 80px 0 60px;
+  text-align: center;
+  position: relative;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 99px;
+  padding: 6px 20px;
+  font-size: 0.85rem;
+  color: var(--accent-light);
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.hero h1 {
+  font-size: clamp(2.2rem, 5vw, 3.5rem);
+  font-weight: 900;
+  line-height: 1.2;
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, var(--accent-light), var(--blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  font-size: 1.15rem;
+  color: var(--text-secondary);
+  max-width: 700px;
+  margin: 0 auto 32px;
+}
+
+.hero-stats {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  margin-top: 40px;
+}
+
+.hero-stat {
+  text-align: center;
+}
+
+.hero-stat .num {
+  font-size: 2.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--accent-light), var(--green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-stat .label {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.hero-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #fff;
+  padding: 12px 28px;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s;
+  margin-top: 24px;
+}
+
+.hero-link:hover { background: var(--accent-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3); }
+
+/* ====== SECTION ====== */
+.section { padding: 50px 0; }
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, var(--accent-light), var(--text));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.section-subtitle { text-align: center; color: var(--text-secondary); margin-bottom: 40px; font-size: 1rem; }
+
+/* ====== TECH STACK ====== */
+.tech-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-bottom: 40px;
+}
+
+.tech-card {
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: all 0.3s;
+}
+
+.tech-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+
+.tech-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  flex-shrink: 0;
+}
+
+.tech-card h4 { font-size: 1rem; font-weight: 700; margin-bottom: 2px; }
+.tech-card p { font-size: 0.82rem; color: var(--text-secondary); }
+
+/* ====== ENDPOINTS ====== */
+.endpoint-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 16px;
+}
+
+.endpoint-card {
+  padding: 24px;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.endpoint-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+
+.endpoint-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4px;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 0 4px 4px 0;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.endpoint-card:hover::before { opacity: 1; }
+
+.endpoint-header { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+
+.endpoint-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--accent-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.82rem;
+  font-weight: 800;
+  flex-shrink: 0;
+}
+
+.endpoint-title { font-size: 1.05rem; font-weight: 700; }
+
+.endpoint-path {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(16, 185, 129, 0.08);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  border-radius: var(--radius-xs);
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-family: monospace;
+  color: var(--accent-light);
+  margin-bottom: 10px;
+  direction: ltr;
+  text-align: left;
+}
+
+.method-badge {
+  background: var(--accent);
+  color: #fff;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.endpoint-desc { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.6; margin-bottom: 10px; }
+
+.endpoint-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  background: rgba(79, 172, 254, 0.1);
+  color: var(--blue);
+  border: 1px solid rgba(79, 172, 254, 0.15);
+}
+
+.tag-auth { background: rgba(168, 85, 247, 0.1); color: var(--purple); border-color: rgba(168, 85, 247, 0.15); }
+.tag-ai { background: rgba(16, 185, 129, 0.1); color: var(--accent-light); border-color: rgba(16, 185, 129, 0.15); }
+
+/* ====== ARCH DIAGRAM ====== */
+.arch-flow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  flex-wrap: wrap;
+  padding: 30px 20px;
+  margin-bottom: 40px;
+}
+
+.arch-box {
+  padding: 16px 24px;
+  border-radius: var(--radius-sm);
+  text-align: center;
+  min-width: 150px;
+}
+
+.arch-box h5 { font-size: 0.9rem; font-weight: 700; margin-bottom: 4px; }
+.arch-box p { font-size: 0.75rem; color: var(--text-secondary); }
+
+.arch-arrow {
+  font-size: 1.5rem;
+  color: var(--accent);
+  padding: 0 10px;
+}
+
+/* ====== AUTH SECTION ====== */
+.auth-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.auth-step {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 20px;
+}
+
+.auth-step-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.auth-step-content h5 { font-size: 0.95rem; font-weight: 700; }
+.auth-step-content p { font-size: 0.82rem; color: var(--text-secondary); }
+
+/* ====== I18N ====== */
+.lang-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 12px;
+}
+
+.lang-card {
+  padding: 20px 16px;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.lang-card:hover { transform: translateY(-3px); border-color: var(--accent); }
+.lang-card .lang-flag { font-size: 2.2rem; margin-bottom: 8px; }
+.lang-card h5 { font-size: 0.9rem; font-weight: 700; }
+.lang-card p { font-size: 0.75rem; color: var(--text-muted); }
+
+/* ====== FILES TABLE ====== */
+.files-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.files-table th {
+  background: rgba(16, 185, 129, 0.1);
+  padding: 12px 16px;
+  text-align: right;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  border-bottom: 2px solid var(--border);
+}
+
+.files-table td {
+  padding: 10px 16px;
+  font-size: 0.82rem;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.06);
+}
+
+.files-table tr:hover { background: rgba(16, 185, 129, 0.03); }
+
+.file-path {
+  font-family: monospace;
+  color: var(--accent-light);
+  direction: ltr;
+  text-align: left;
+  font-size: 0.78rem;
+}
+
+.file-lines { color: var(--blue); font-weight: 700; }
+
+/* ====== DEPS ====== */
+.deps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.dep-card {
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.dep-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba(16, 185, 129, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent-light);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.dep-name { font-size: 0.88rem; font-weight: 700; }
+.dep-ver { font-size: 0.72rem; color: var(--text-muted); }
+.dep-desc { font-size: 0.75rem; color: var(--text-secondary); }
+
+/* ====== DEPLOY ====== */
+.deploy-card {
+  padding: 30px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.deploy-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(16, 185, 129, 0.08);
+  font-size: 0.88rem;
+}
+
+.deploy-row .label { color: var(--text-secondary); }
+.deploy-row .value { font-weight: 700; color: var(--accent-light); }
+
+/* ====== FOOTER ====== */
+.footer {
+  text-align: center;
+  padding: 40px 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--border);
+  margin-top: 40px;
+}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width: 768px) {
+  .hero { padding: 50px 0 40px; }
+  .hero-stats { gap: 20px; }
+  .endpoint-grid { grid-template-columns: 1fr; }
+  .arch-flow { flex-direction: column; }
+  .arch-arrow { transform: rotate(90deg); }
+}
+
+@media print {
+  body { background: #fff; color: #000; }
+  body::before { display: none; }
+  .glass { background: #fff; border: 1px solid #ddd; backdrop-filter: none; box-shadow: none; }
+  .hero h1, .section-title { -webkit-text-fill-color: initial; color: #333; }
+  .hero-stat .num { -webkit-text-fill-color: initial; color: #10b981; }
+}
+/* ====== GLOBAL NAV ====== */
+.alhai-nav{position:sticky;top:0;z-index:999;background:rgba(15,15,26,0.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(108,99,255,0.12);padding:0 20px}
+.alhai-nav-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:50px}
+.alhai-nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#e2e8f0;font-weight:800;font-size:0.95rem}
+.alhai-nav-brand span{width:30px;height:30px;background:linear-gradient(135deg,#6c63ff,#00d4aa);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;color:#fff;font-weight:900}
+.alhai-nav-links{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.alhai-nav-links a{padding:6px 12px;border-radius:6px;font-size:0.78rem;font-weight:600;color:#94a3b8;text-decoration:none;transition:all 0.2s;white-space:nowrap}
+.alhai-nav-links a:hover{background:rgba(108,99,255,0.1);color:#8b83ff}
+.alhai-nav-links a.active{background:rgba(108,99,255,0.15);color:#8b83ff}
+@media(max-width:640px){.alhai-nav-links a{font-size:0.7rem;padding:5px 8px}}
+</style>
+</head>
+<body>
+<nav class="alhai-nav"><div class="alhai-nav-inner"><a href="index.html" class="alhai-nav-brand"><span>الحي</span> بوابة التوثيق</a><div class="alhai-nav-links"><a href="cashier_app.html"><i class="fas fa-cash-register"></i> الكاشير</a><a href="admin_app.html"><i class="fas fa-tachometer-alt"></i> الإدارة</a><a href="admin_lite_app.html"><i class="fas fa-mobile-alt"></i> المبسطة</a><a href="ai_server.html" class="active"><i class="fas fa-brain"></i> AI Server</a><a href="qa_tracker.html"><i class="fas fa-clipboard-check"></i> الاختبارات</a></div></div></nav>
+
+<div class="container">
+
+  <!-- ====== HERO ====== -->
+  <section class="hero animate-on-scroll">
+    <div class="hero-badge"><i class="fas fa-robot"></i> Alhai AI Server v1.0.0</div>
+    <h1><i class="fas fa-brain"></i> خادم الذكاء الاصطناعي</h1>
+    <p>خادم API متكامل يوفر 15 خدمة ذكاء اصطناعي لنظام الحي لنقاط البيع، مع دعم 7 لغات ومصادقة JWT وتكامل OpenAI</p>
+
+    <a href="https://alhai-ai-server.onrender.com/docs" target="_blank" class="hero-link">
+      <i class="fas fa-external-link-alt"></i> Swagger API Docs
+    </a>
+
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="num">15</div><div class="label">خدمة ذكية</div></div>
+      <div class="hero-stat"><div class="num">16</div><div class="label">نقطة نهائية</div></div>
+      <div class="hero-stat"><div class="num">7</div><div class="label">لغات مدعومة</div></div>
+      <div class="hero-stat"><div class="num">3,365</div><div class="label">سطر كود</div></div>
+      <div class="hero-stat"><div class="num">31</div><div class="label">ملف Python</div></div>
+      <div class="hero-stat"><div class="num">13</div><div class="label">مكتبة</div></div>
+    </div>
+  </section>
+
+  <!-- ====== TECH STACK ====== -->
+  <section class="section animate-on-scroll">
+    <h2 class="section-title"><i class="fas fa-layer-group"></i> التقنيات المستخدمة</h2>
+    <p class="section-subtitle">مبني بأحدث تقنيات Python مع تكامل كامل مع OpenAI و Supabase</p>
+
+    <div class="tech-grid">
+      <div class="glass tech-card">
+        <div class="tech-icon" style="background:rgba(16,185,129,0.15);color:var(--accent-light)"><i class="fas fa-bolt"></i></div>
+        <div><h4>FastAPI 0.115</h4><p>إطار عمل Python عالي الأداء مع توثيق تلقائي</p></div>
+      </div>
+      <div class="glass tech-card">
+        <div class="tech-icon" style="background:rgba(168,85,247,0.15);color:var(--purple)"><i class="fas fa-brain"></i></div>
+        <div><h4>OpenAI GPT-4o-mini</h4><p>تكامل مع نماذج OpenAI للمحادثة والتحليل</p></div>
+      </div>
+      <div class="glass tech-card">
+        <div class="tech-icon" style="background:rgba(79,172,254,0.15);color:var(--blue)"><i class="fas fa-database"></i></div>
+        <div><h4>Supabase</h4><p>قاعدة بيانات PostgreSQL + مصادقة JWT</p></div>
+      </div>
+      <div class="glass tech-card">
+        <div class="tech-icon" style="background:rgba(239,68,68,0.15);color:var(--red)"><i class="fas fa-shield-alt"></i></div>
+        <div><h4>JWT + JOSE</h4><p>مصادقة Bearer Token مع HS256</p></div>
+      </div>
+      <div class="glass tech-card">
+        <div class="tech-icon" style="background:rgba(245,158,11,0.15);color:var(--yellow)"><i class="fas fa-check-double"></i></div>
+        <div><h4>Pydantic v2</h4><p>التحقق من البيانات ونماذج الطلبات</p></div>
+      </div>
+      <div class="glass tech-card">
+        <div class="tech-icon" style="background:rgba(0,212,170,0.15);color:var(--green)"><i class="fas fa-docker"></i></div>
+        <div><h4>Docker + Render</h4><p>نشر محتوى عبر Docker على Render.com</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== ARCHITECTURE ====== -->
+  <section class="section animate-on-scroll">
+    <h2 class="section-title"><i class="fas fa-project-diagram"></i> البنية المعمارية</h2>
+    <p class="section-subtitle">تدفق الطلبات من التطبيق إلى الاستجابة</p>
+
+    <div class="glass arch-flow">
+      <div class="arch-box" style="background:rgba(79,172,254,0.1);border:1px solid rgba(79,172,254,0.2)">
+        <h5 style="color:var(--blue)"><i class="fas fa-mobile-alt"></i> التطبيق</h5>
+        <p>Flutter Web Apps</p>
+      </div>
+      <div class="arch-arrow"><i class="fas fa-arrow-left"></i></div>
+      <div class="arch-box" style="background:rgba(168,85,247,0.1);border:1px solid rgba(168,85,247,0.2)">
+        <h5 style="color:var(--purple)"><i class="fas fa-key"></i> المصادقة</h5>
+        <p>JWT + Store Access</p>
+      </div>
+      <div class="arch-arrow"><i class="fas fa-arrow-left"></i></div>
+      <div class="arch-box" style="background:rgba(16,185,129,0.1);border:1px solid rgba(16,185,129,0.2)">
+        <h5 style="color:var(--accent-light)"><i class="fas fa-route"></i> Router</h5>
+        <p>15 AI Endpoint</p>
+      </div>
+      <div class="arch-arrow"><i class="fas fa-arrow-left"></i></div>
+      <div class="arch-box" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.2)">
+        <h5 style="color:var(--yellow)"><i class="fas fa-cogs"></i> ML Service</h5>
+        <p>Data Generation</p>
+      </div>
+      <div class="arch-arrow"><i class="fas fa-arrow-left"></i></div>
+      <div class="arch-box" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.2)">
+        <h5 style="color:var(--red)"><i class="fas fa-robot"></i> OpenAI</h5>
+        <p>GPT-4o-mini (Fallback)</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== 15 ENDPOINTS ====== -->
+  <section class="section animate-on-scroll">
+    <h2 class="section-title"><i class="fas fa-plug"></i> الخدمات الـ 15</h2>
+    <p class="section-subtitle">جميع النقاط النهائية تحت المسار <code style="color:var(--accent-light)">/ai/</code> مع مصادقة إلزامية</p>
+
+    <div class="endpoint-grid">
+
+      <div class="glass endpoint-card">
+        <div class="endpoint-header"><div class="endpoint-num">1</div><div class="endpoint-title">التنبؤ بالمبيعات</div></div>
+        <div class="endpoint-path"><span class="method-badge">POST</span> /ai/forecast</div>
+        <div class="endpoint-desc">التنبؤ بالمبيعات المستقبلية بناءً على البيانات التاريخية لمدة 7/14/30/90 يوم</div>
+        <div class="endpoint-tags"><span class="tag tag-ai"><i class="fas fa-chart-line"></i> forecast</span><span class="tag">days_ahead</span><span class="tag">product_ids</span></div>
+      </div>
+
+      <div class="glass endpoint-card">
+        <div class="endpoint-header"><div class="endpoint-num">2</div><div class="endpoint-title">التسعير الذكي</div></div>
+        <div class="endpoint-path"><span class="method-badge">POST</span> /ai/pricing</div>
+        <div class="endpoint-desc">اقتراحات تسعير ذكية بناءً على الطلب والمنافسة (optimal / competitive / margin)</div>
+        <div class="endpoint-tags"><span class="tag tag-ai"><i class="fas fa-tags"></i> pricing</span><span class="tag">strategy</span><span class="tag">product_ids</span></div>
+      </div>
+
+      <div class="glass endpoint-card">
+        <div class="endpoint-header"><div class="endpoint-num">3</div><div class="endpoint-title">كشف الاحتيال</div></div>
+        <div class="endpoint-path"><span class="method-badge">POST</span> /ai/fraud</div>
+        <div class="endpoint-desc">كشف المعاملات المشبوهة وأنماط الاحتيال (8 أنماط)</div>
+        <div class="endpoint-tags"><span class="tag tag-ai"><i class="fas fa-shield-alt"></i> fraud</span><span class="tag">sale_id</span><span class="tag">8 patterns</span></div>
+      </div>
+
+      <div class="glass endpoint-card">
+        <div class="endpoint-header"><div class="endpoint-num">4</div><div class="endpoint-title">تحليل سلة المشتريات</div></div>
+        <div class="endpoint-path"><span class="method-badge">POST</span> /ai/basket</div>
+        <div class="endpoint-desc">تحليل أنماط الشراء واكتشاف المنتجات المرتبطة (8 قواعد)</div>
+        <div class="endpoint-tags"><span class="tag tag-ai"><i class="fas fa-shopping-basket"></i> basket</span><span class="tag">min_support</span><span class="tag">top_n</span></div>
+      </div>
+
+      <div class="glass endpoint-card">
+        <div class="endpoint-header"><div class="endpoint-num">5</div><div class="endpoint-title">توصيات العملاء</div></div>
+        <div class="endpoint-path"><span class="method-badge">POST</span> /ai/recommendations</div>
+        <div class="endpoint-desc">توصيات مخصصة لكل عميل (general / upsell / cross_sell / retention)</div>
+        <div class="endpoint-tags"><span class="tag tag-ai"><i class="fas fa-user-check"></i> recs</span><span class="tag">customer_id</span><span class="tag">context</span></div>
+      </div>
+
+      <div class="glass endpoint-card">
+        <div class="endpoint-header"><div class="endpoint-num">6</div><div class="endpoint-title">المخزون الذكي</div></div>
+        <div class="endpoint-path"><span class="method-badge">POST</span> /ai/inventory</div>
+        <div class="endpoint-desc">تحليل ذكي للمخزون مع توصيات إعادة الطلب (6 مستويات)</div>
+        <div class="endpoint-tags"><span class="tag tag-ai"><i class="fas fa-boxes"></i> inventory</span><span class="tag">include_reorder</span></div>
+      </div>
+
+      <div class="glass endpoint-card">
+        <div class="endpoint-header"><div class="endpoint-num">7</div><div class="endpoint-title">تحليل المنافسين</div></div>
+        <div class="endpoint-path"><span class="method-badge">POST</span> /ai/competitor</div>
+        <div class="endpoint-desc">تحليل المنافسين ومقارنة الأسعار حسب نطاق جغرافي</div>
+        <div class="endpoint-tags"><span class="tag tag-ai"><i class="fas fa-chess"></i> competitor</span><span class="tag">radius_km</span></div>
+      </div>
+
+      <div class="glass endpoint-card">
+        <div class="endpoint-header"><div class="endpoint-num">8</div><div class="endpoint-title">التقارير الذكية</div></div>
+        <div class="endpoint-path"><span class="method-badge">POST</span> /ai/reports</div>
+        <div class="endpoint-desc">تقارير تحليلية ذكية (daily_summary / weekly / monthly / custom)</div>
+        <div class="endpoint-tags"><span class="tag tag-ai"><i class="fas fa-file-alt"></i> reports</span><span class="tag">report_type</span></div>
+      </div>
+
+      <div class="glass endpoint-card">
+        <div class="endpoint-header"><div class="endpoint-num">9</div><div class="endpoint-title">تحليل الموظفين</div></div>
+        <div class="endpoint-path"><span class="method-badge">POST</span> /ai/staff</div>
+        <div class="endpoint-desc">تحليل أداء الموظفين مع توصيات جدولة الورديات</div>
+        <div class="endpoint-tags"><span class="tag tag-ai"><i class="fas fa-users"></i> staff</span><span class="tag">employee_id</span></div>
+      </div>
+
+      <div class="glass endpoint-card">
+        <div class="endpoint-header"><div class="endpoint-num">10</div><div class="endpoint-title">التعرف على المنتجات</div></div>
+        <div class="endpoint-path"><span class="method-badge">POST</span> /ai/recognize</div>
+        <div class="endpoint-desc">التعرف على المنتجات من الصورة أو الباركود أو الوصف النصي</div>
+        <div class="endpoint-tags"><span class="tag tag-ai"><i class="fas fa-camera"></i> recognize</span><span class="tag">image_base64</span><span class="tag">barcode</span></div>
+      </div>
+
+      <div class="glass endpoint-card">
+        <div class="endpoint-header"><div class="endpoint-num">11</div><div class="endpoint-title">تحليل المشاعر</div></div>
+        <div class="endpoint-path"><span class="method-badge">POST</span> /ai/sentiment</div>
+        <div class="endpoint-desc">تحليل مشاعر العملاء من التقييمات والتعليقات (reviews / social / support)</div>
+        <div class="endpoint-tags"><span class="tag tag-ai"><i class="fas fa-smile"></i> sentiment</span><span class="tag">text</span><span class="tag">source</span></div>
+      </div>
+
+      <div class="glass endpoint-card">
+        <div class="endpoint-header"><div class="endpoint-num">12</div><div class="endpoint-title">التنبؤ بالمرتجعات</div></div>
+        <div class="endpoint-path"><span class="method-badge">POST</span> /ai/returns</div>
+        <div class="endpoint-desc">التنبؤ بالمنتجات المرشحة للإرجاع مع نصائح الوقاية (5 أسباب)</div>
+        <div class="endpoint-tags"><span class="tag tag-ai"><i class="fas fa-undo-alt"></i> returns</span><span class="tag">days_ahead</span></div>
+      </div>
+
+      <div class="glass endpoint-card">
+        <div class="endpoint-header"><div class="endpoint-num">13</div><div class="endpoint-title">تصميم العروض</div></div>
+        <div class="endpoint-path"><span class="method-badge">POST</span> /ai/promotions</div>
+        <div class="endpoint-desc">تصميم عروض ترويجية ذكية حسب الهدف (زيادة المبيعات / تصفية / جذب / سلة أكبر)</div>
+        <div class="endpoint-tags"><span class="tag tag-ai"><i class="fas fa-bullhorn"></i> promotions</span><span class="tag">goal</span><span class="tag">duration_days</span></div>
+      </div>
+
+      <div class="glass endpoint-card">
+        <div class="endpoint-header"><div class="endpoint-num">14</div><div class="endpoint-title">الدردشة مع البيانات</div></div>
+        <div class="endpoint-path"><span class="method-badge">POST</span> /ai/chat</div>
+        <div class="endpoint-desc">محادثة ذكية مع بيانات المتجر - اسأل بالعربي أو الإنجليزي عن أي شيء</div>
+        <div class="endpoint-tags"><span class="tag tag-ai"><i class="fas fa-comments"></i> chat</span><span class="tag">message</span><span class="tag">OpenAI</span></div>
+      </div>
+
+      <div class="glass endpoint-card">
+        <div class="endpoint-header"><div class="endpoint-num">15</div><div class="endpoint-title">المساعد الذكي</div></div>
+        <div class="endpoint-path"><span class="method-badge">POST</span> /ai/assistant</div>
+        <div class="endpoint-desc">مساعد ذكي يجيب على الأسئلة ويقترح إجراءات (5 سياقات: عام / مبيعات / مخزون / مالية / عمليات)</div>
+        <div class="endpoint-tags"><span class="tag tag-ai"><i class="fas fa-robot"></i> assistant</span><span class="tag">query</span><span class="tag">context</span><span class="tag">OpenAI</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ====== AUTH ====== -->
+  <section class="section animate-on-scroll">
+    <h2 class="section-title"><i class="fas fa-lock"></i> نظام المصادقة</h2>
+    <p class="section-subtitle">مصادقة JWT مع التحقق من عضوية المتجر</p>
+
+    <div class="auth-flow">
+      <div class="glass auth-step">
+        <div class="auth-step-num">1</div>
+        <div class="auth-step-content">
+          <h5>استخراج التوكن</h5>
+          <p>HTTPBearer يستخرج Bearer Token من رأس Authorization</p>
+        </div>
+      </div>
+      <div class="glass auth-step">
+        <div class="auth-step-num">2</div>
+        <div class="auth-step-content">
+          <h5>التحقق من JWT</h5>
+          <p>فك تشفير التوكن باستخدام JOSE مع خوارزمية HS256 واستخراج user_id, email, role</p>
+        </div>
+      </div>
+      <div class="glass auth-step">
+        <div class="auth-step-num">3</div>
+        <div class="auth-step-content">
+          <h5>التحقق من عضوية المتجر</h5>
+          <p>استعلام جدول store_members في Supabase للتأكد من أن المستخدم عضو نشط في المتجر المطلوب</p>
+        </div>
+      </div>
+      <div class="glass auth-step">
+        <div class="auth-step-num">4</div>
+        <div class="auth-step-content">
+          <h5>تنفيذ الطلب</h5>
+          <p>تمرير الطلب إلى الخدمة المطلوبة مع بيانات المستخدم المُصادق عليه</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====== I18N ====== -->
+  <section class="section animate-on-scroll">
+    <h2 class="section-title"><i class="fas fa-globe"></i> دعم 7 لغات</h2>
+    <p class="section-subtitle">550+ مفتاح ترجمة | جميع الاستجابات مترجمة حسب لغة الطلب</p>
+
+    <div class="lang-grid">
+      <div class="glass lang-card"><div class="lang-flag">🇸🇦</div><h5>العربية</h5><p>ar - الافتراضية</p></div>
+      <div class="glass lang-card"><div class="lang-flag">🇬🇧</div><h5>English</h5><p>en</p></div>
+      <div class="glass lang-card"><div class="lang-flag">🇵🇰</div><h5>اردو</h5><p>ur</p></div>
+      <div class="glass lang-card"><div class="lang-flag">🇮🇳</div><h5>हिन्दी</h5><p>hi</p></div>
+      <div class="glass lang-card"><div class="lang-flag">🇧🇩</div><h5>বাংলা</h5><p>bn</p></div>
+      <div class="glass lang-card"><div class="lang-flag">🇵🇭</div><h5>Filipino</h5><p>fil</p></div>
+      <div class="glass lang-card"><div class="lang-flag">🇮🇩</div><h5>Indonesia</h5><p>id</p></div>
+    </div>
+  </section>
+
+  <!-- ====== FILE STRUCTURE ====== -->
+  <section class="section animate-on-scroll">
+    <h2 class="section-title"><i class="fas fa-folder-tree"></i> هيكل الملفات</h2>
+    <p class="section-subtitle">31 ملف Python | 3,365 سطر كود</p>
+
+    <div class="glass" style="padding:24px;overflow-x:auto">
+      <table class="files-table">
+        <thead>
+          <tr><th>الملف</th><th>الأسطر</th><th>الوصف</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="file-path">main.py</td><td class="file-lines">95</td><td>إعداد تطبيق FastAPI والـ CORS والـ Routers</td></tr>
+          <tr><td class="file-path">config.py</td><td class="file-lines">39</td><td>إعدادات Pydantic (بيئة التشغيل)</td></tr>
+          <tr><td class="file-path">auth.py</td><td class="file-lines">214</td><td>مصادقة JWT + التحقق من عضوية المتجر</td></tr>
+          <tr><td class="file-path">models/schemas.py</td><td class="file-lines">400+</td><td>نماذج Pydantic لجميع الطلبات والاستجابات</td></tr>
+          <tr><td class="file-path">services/ml_service.py</td><td class="file-lines">1,638</td><td>توليد بيانات ذكية لـ 15 خدمة</td></tr>
+          <tr><td class="file-path">services/openai_service.py</td><td class="file-lines">46</td><td>تكامل OpenAI GPT-4o-mini</td></tr>
+          <tr><td class="file-path">services/supabase_service.py</td><td class="file-lines">30</td><td>عميل Supabase (Singleton)</td></tr>
+          <tr><td class="file-path">i18n/translations.py</td><td class="file-lines">638</td><td>550+ مفتاح ترجمة لـ 7 لغات</td></tr>
+          <tr><td class="file-path">routers/ (15 ملف)</td><td class="file-lines">~490</td><td>15 نقطة نهائية AI</td></tr>
+          <tr><td class="file-path">Dockerfile</td><td class="file-lines">37</td><td>Multi-stage Docker build</td></tr>
+          <tr><td class="file-path">render.yaml</td><td class="file-lines">24</td><td>إعداد النشر على Render.com</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ====== DEPENDENCIES ====== -->
+  <section class="section animate-on-scroll">
+    <h2 class="section-title"><i class="fas fa-cubes"></i> المكتبات والتبعيات</h2>
+    <p class="section-subtitle">13 مكتبة Python</p>
+
+    <div class="deps-grid">
+      <div class="glass dep-card"><div class="dep-icon"><i class="fas fa-bolt"></i></div><div><div class="dep-name">FastAPI <span class="dep-ver">0.115.0</span></div><div class="dep-desc">إطار العمل</div></div></div>
+      <div class="glass dep-card"><div class="dep-icon"><i class="fas fa-server"></i></div><div><div class="dep-name">Uvicorn <span class="dep-ver">0.30.6</span></div><div class="dep-desc">خادم ASGI</div></div></div>
+      <div class="glass dep-card"><div class="dep-icon"><i class="fas fa-robot"></i></div><div><div class="dep-name">OpenAI <span class="dep-ver">1.58.1</span></div><div class="dep-desc">تكامل GPT</div></div></div>
+      <div class="glass dep-card"><div class="dep-icon"><i class="fas fa-database"></i></div><div><div class="dep-name">Supabase <span class="dep-ver">2.9.1</span></div><div class="dep-desc">قاعدة البيانات والمصادقة</div></div></div>
+      <div class="glass dep-card"><div class="dep-icon"><i class="fas fa-check"></i></div><div><div class="dep-name">Pydantic <span class="dep-ver">2.9.2</span></div><div class="dep-desc">التحقق من البيانات</div></div></div>
+      <div class="glass dep-card"><div class="dep-icon"><i class="fas fa-key"></i></div><div><div class="dep-name">python-jose <span class="dep-ver">3.3.0</span></div><div class="dep-desc">معالجة JWT</div></div></div>
+      <div class="glass dep-card"><div class="dep-icon"><i class="fas fa-globe"></i></div><div><div class="dep-name">HTTPX <span class="dep-ver">0.27.2</span></div><div class="dep-desc">عميل HTTP</div></div></div>
+      <div class="glass dep-card"><div class="dep-icon"><i class="fas fa-calculator"></i></div><div><div class="dep-name">NumPy <span class="dep-ver">1.26.4</span></div><div class="dep-desc">حسابات رقمية</div></div></div>
+      <div class="glass dep-card"><div class="dep-icon"><i class="fas fa-cog"></i></div><div><div class="dep-name">pydantic-settings <span class="dep-ver">2.5.2</span></div><div class="dep-desc">إدارة الإعدادات</div></div></div>
+      <div class="glass dep-card"><div class="dep-icon"><i class="fas fa-file-code"></i></div><div><div class="dep-name">python-dotenv <span class="dep-ver">1.0.1</span></div><div class="dep-desc">متغيرات البيئة</div></div></div>
+      <div class="glass dep-card"><div class="dep-icon"><i class="fas fa-upload"></i></div><div><div class="dep-name">python-multipart <span class="dep-ver">0.0.12</span></div><div class="dep-desc">معالجة النماذج</div></div></div>
+      <div class="glass dep-card"><div class="dep-icon"><i class="fas fa-flask"></i></div><div><div class="dep-name">pytest <span class="dep-ver">8.3.3</span></div><div class="dep-desc">إطار الاختبارات</div></div></div>
+      <div class="glass dep-card"><div class="dep-icon"><i class="fas fa-sync"></i></div><div><div class="dep-name">pytest-asyncio <span class="dep-ver">0.24.0</span></div><div class="dep-desc">اختبارات غير متزامنة</div></div></div>
+    </div>
+  </section>
+
+  <!-- ====== DEPLOYMENT ====== -->
+  <section class="section animate-on-scroll">
+    <h2 class="section-title"><i class="fas fa-cloud-upload-alt"></i> النشر والاستضافة</h2>
+    <p class="section-subtitle">منشور على Render.com عبر Docker</p>
+
+    <div class="glass deploy-card">
+      <div class="deploy-row"><span class="label">الرابط</span><span class="value"><a href="https://alhai-ai-server.onrender.com" target="_blank" style="color:var(--accent-light);text-decoration:none">alhai-ai-server.onrender.com</a></span></div>
+      <div class="deploy-row"><span class="label">نوع الخدمة</span><span class="value">Web Service</span></div>
+      <div class="deploy-row"><span class="label">البيئة</span><span class="value">Docker</span></div>
+      <div class="deploy-row"><span class="label">المنطقة</span><span class="value">Frankfurt, EU</span></div>
+      <div class="deploy-row"><span class="label">الخطة</span><span class="value">Free</span></div>
+      <div class="deploy-row"><span class="label">المنفذ</span><span class="value">8000</span></div>
+      <div class="deploy-row"><span class="label">Workers</span><span class="value">2</span></div>
+      <div class="deploy-row"><span class="label">Health Check</span><span class="value">GET /health</span></div>
+      <div class="deploy-row"><span class="label">Python</span><span class="value">3.11-slim</span></div>
+      <div class="deploy-row"><span class="label">مستخدم غير root</span><span class="value">appuser (uid 1000)</span></div>
+      <div class="deploy-row" style="border:none"><span class="label">Swagger Docs</span><span class="value"><a href="https://alhai-ai-server.onrender.com/docs" target="_blank" style="color:var(--accent-light);text-decoration:none">/docs</a></span></div>
+    </div>
+  </section>
+
+  <!-- ====== FOOTER ====== -->
+  <div class="footer">
+    <p><i class="fas fa-robot"></i> خادم الذكاء الاصطناعي — نظام الحي لنقاط البيع | Alhai POS AI Server</p>
+    <p style="margin-top:4px">تقرير بتاريخ 3 مارس 2026</p>
+  </div>
+
+</div>
+
+<script>
+// Scroll animation
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+
+document.querySelectorAll('.animate-on-scroll').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

@@ -31,5 +31,8 @@ export 'services/services.dart';
 // Networking (public types only)
 export 'networking/networking.dart';
 
+// Security
+export 'security/security.dart';
+
 // Monitoring
 export 'monitoring/production_logger.dart';

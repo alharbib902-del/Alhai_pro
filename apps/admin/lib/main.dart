@@ -13,12 +13,12 @@ import 'dart:math';
 import 'package:alhai_database/alhai_database.dart'
     show setDatabaseEncryptionKey;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
+import 'package:alhai_core/alhai_core.dart'
+    show CertificatePinningService, SupabaseConfig;
 import 'di/injection.dart';
 import 'dart:async';
 import 'router/admin_router.dart';
 import 'screens/onboarding/onboarding_screen.dart';
-import 'core/network/certificate_pinning_service.dart';
 import 'core/services/sentry_service.dart';
 
 /// Local theme provider (same pattern as cashier app)

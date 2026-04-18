@@ -1,8 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
-
-import '../services/certificate_pinning_service.dart';
+import 'package:alhai_core/alhai_core.dart'
+    show CertificatePinningService, SupabaseConfig;
 
 /// Supabase client initialization and access for the driver app.
 class AppSupabase {

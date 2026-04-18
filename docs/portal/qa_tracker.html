@@ -1,0 +1,1228 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الحي - لوحة تتبع الاختبارات QA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root {
+  --bg: #0f0f1a;
+  --bg-card: #1a1a2e;
+  --bg-card-hover: #222240;
+  --bg-input: #16162b;
+  --accent: #6c63ff;
+  --accent-light: #8b83ff;
+  --green: #00d4aa;
+  --green-bg: rgba(0,212,170,0.12);
+  --blue: #4facfe;
+  --blue-bg: rgba(79,172,254,0.12);
+  --red: #ef4444;
+  --red-bg: rgba(239,68,68,0.12);
+  --yellow: #f59e0b;
+  --yellow-bg: rgba(245,158,11,0.12);
+  --orange: #f97316;
+  --orange-bg: rgba(249,115,22,0.12);
+  --purple: #a855f7;
+  --purple-bg: rgba(168,85,247,0.12);
+  --gray: #64748b;
+  --gray-bg: rgba(100,116,139,0.12);
+  --text: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --border: rgba(108,99,255,0.15);
+  --glass-bg: rgba(26,26,46,0.85);
+  --glass-border: rgba(108,99,255,0.2);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-xs: 6px;
+  --font: 'Tajawal', sans-serif;
+  --shadow: 0 8px 32px rgba(0,0,0,0.3);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; font-size: 15px; }
+
+body {
+  font-family: var(--font);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  min-height: 100vh;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse at 20% 0%, rgba(108,99,255,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 100%, rgba(0,212,170,0.06) 0%, transparent 60%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.container { max-width: 1400px; margin: 0 auto; padding: 20px; position: relative; z-index: 1; }
+
+/* ===== HEADER ===== */
+.header {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  padding: 24px 32px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  backdrop-filter: blur(20px);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.logo {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, var(--accent), var(--green));
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 900;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.header-title h1 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--accent-light), var(--green));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header-title p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.header-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  background: var(--bg-input);
+  padding: 8px 14px;
+  border-radius: var(--radius-xs);
+  border: 1px solid var(--border);
+}
+
+.header-info input {
+  background: transparent;
+  border: none;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  width: 140px;
+  outline: none;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  background: var(--bg-input);
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn:hover { background: var(--bg-card-hover); border-color: var(--accent); color: var(--accent-light); }
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn-primary:hover { background: var(--accent-light); }
+.btn-success { background: var(--green); border-color: var(--green); color: #0f0f1a; font-weight: 700; }
+.btn-success:hover { opacity: 0.9; }
+.btn-danger { background: var(--red); border-color: var(--red); color: #fff; }
+
+/* ===== STATS ===== */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.stat-card {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 18px 20px;
+  text-align: center;
+  backdrop-filter: blur(10px);
+  transition: all 0.25s;
+  cursor: default;
+}
+
+.stat-card:hover { transform: translateY(-2px); border-color: var(--accent); }
+.stat-card .stat-num { font-size: 2rem; font-weight: 900; line-height: 1; }
+.stat-card .stat-label { font-size: 0.78rem; color: var(--text-secondary); margin-top: 4px; }
+.stat-total .stat-num { color: var(--accent-light); }
+.stat-pass .stat-num { color: var(--green); }
+.stat-fail .stat-num { color: var(--red); }
+.stat-block .stat-num { color: var(--orange); }
+.stat-skip .stat-num { color: var(--gray); }
+.stat-untested .stat-num { color: var(--blue); }
+
+/* ===== PROGRESS ===== */
+.progress-section {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 20px 24px;
+  margin-bottom: 20px;
+  backdrop-filter: blur(10px);
+}
+
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.progress-header h3 { font-size: 1rem; font-weight: 700; }
+.progress-percent { font-size: 1.6rem; font-weight: 900; color: var(--accent-light); }
+
+.progress-bar {
+  height: 14px;
+  background: var(--bg-input);
+  border-radius: 99px;
+  overflow: hidden;
+  display: flex;
+}
+
+.progress-bar > div { height: 100%; transition: width 0.5s ease; }
+.progress-pass { background: var(--green); }
+.progress-fail { background: var(--red); }
+.progress-block { background: var(--orange); }
+.progress-skip { background: var(--gray); }
+
+.progress-legend {
+  display: flex;
+  gap: 20px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ===== FILTERS ===== */
+.filters {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-sm);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  align-items: center;
+  backdrop-filter: blur(10px);
+}
+
+.filters label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+.filter-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+select, .search-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  padding: 7px 12px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+select:focus, .search-input:focus { border-color: var(--accent); }
+.search-input { width: 220px; }
+.search-input::placeholder { color: var(--text-muted); }
+
+/* ===== TABLE ===== */
+.table-wrapper {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+  margin-bottom: 24px;
+}
+
+.table-scroll { overflow-x: auto; }
+
+table { width: 100%; border-collapse: collapse; min-width: 1100px; }
+
+thead th {
+  background: rgba(108,99,255,0.1);
+  padding: 14px 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  text-align: right;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+tbody tr {
+  border-bottom: 1px solid rgba(108,99,255,0.06);
+  transition: background 0.15s;
+}
+
+tbody tr:hover { background: rgba(108,99,255,0.04); }
+
+tbody td {
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  vertical-align: middle;
+}
+
+.cell-id { font-family: monospace; font-weight: 700; color: var(--accent-light); white-space: nowrap; font-size: 0.78rem; }
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 10px;
+  border-radius: 99px;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.badge-high { background: var(--red-bg); color: var(--red); }
+.badge-medium { background: var(--yellow-bg); color: var(--yellow); }
+.badge-low { background: var(--green-bg); color: var(--green); }
+
+.badge-module {
+  background: var(--purple-bg);
+  color: var(--purple);
+  font-family: monospace;
+  font-size: 0.72rem;
+}
+
+.badge-app {
+  background: var(--blue-bg);
+  color: var(--blue);
+}
+
+/* Status select */
+.status-select {
+  padding: 5px 8px;
+  border-radius: var(--radius-xs);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  font-family: var(--font);
+  outline: none;
+  min-width: 110px;
+}
+
+.status-untested { background: var(--blue-bg); color: var(--blue); border-color: rgba(79,172,254,0.3); }
+.status-pass { background: var(--green-bg); color: var(--green); border-color: rgba(0,212,170,0.3); }
+.status-fail { background: var(--red-bg); color: var(--red); border-color: rgba(239,68,68,0.3); }
+.status-blocked { background: var(--orange-bg); color: var(--orange); border-color: rgba(249,115,22,0.3); }
+.status-skipped { background: var(--gray-bg); color: var(--gray); border-color: rgba(100,116,139,0.3); }
+
+/* Notes input */
+.notes-input {
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  padding: 5px 8px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.78rem;
+  width: 100%;
+  min-width: 120px;
+  outline: none;
+}
+
+.notes-input:focus { border-color: var(--accent); }
+
+.btn-detail {
+  background: rgba(108,99,255,0.12);
+  border: 1px solid rgba(108,99,255,0.25);
+  color: var(--accent-light);
+  padding: 5px 10px;
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-family: var(--font);
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-detail:hover { background: var(--accent); color: #fff; }
+
+/* Row status highlights */
+tr.row-pass { background: rgba(0,212,170,0.03); }
+tr.row-fail { background: rgba(239,68,68,0.04); }
+tr.row-blocked { background: rgba(249,115,22,0.03); }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.7);
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  backdrop-filter: blur(4px);
+}
+
+.modal-overlay.active { display: flex; }
+
+.modal {
+  background: var(--bg-card);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius);
+  width: 100%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  padding: 0;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--bg-card);
+  z-index: 1;
+}
+
+.modal-header h2 { font-size: 1.1rem; font-weight: 700; }
+
+.modal-close {
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 1.3rem;
+  cursor: pointer;
+  padding: 4px;
+  transition: color 0.2s;
+}
+
+.modal-close:hover { color: var(--red); }
+
+.modal-body { padding: 24px; }
+
+.modal-section {
+  margin-bottom: 20px;
+}
+
+.modal-section h4 {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--accent-light);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.modal-section p,
+.modal-section ol {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.8;
+}
+
+.modal-section ol { padding-right: 20px; }
+.modal-section ol li { margin-bottom: 4px; }
+
+.modal-expected {
+  background: var(--green-bg);
+  border: 1px solid rgba(0,212,170,0.2);
+  border-radius: var(--radius-xs);
+  padding: 10px 14px;
+  color: var(--green);
+  font-size: 0.85rem;
+}
+
+.modal-textarea {
+  width: 100%;
+  min-height: 80px;
+  background: var(--bg-input);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-xs);
+  padding: 10px 14px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.85rem;
+  outline: none;
+  resize: vertical;
+}
+
+.modal-textarea:focus { border-color: var(--accent); }
+
+.modal-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.modal-row label {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: var(--green);
+  color: #0f0f1a;
+  padding: 12px 24px;
+  border-radius: var(--radius-xs);
+  font-size: 0.88rem;
+  font-weight: 700;
+  z-index: 2000;
+  opacity: 0;
+  transition: all 0.35s ease;
+  pointer-events: none;
+}
+
+.toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+
+/* ===== PRINT ===== */
+@media print {
+  body { background: #fff; color: #000; font-size: 11px; }
+  body::before { display: none; }
+  .header-left .btn { display: none; }
+  .filters { display: none; }
+  .modal-overlay { display: none !important; }
+  .container { max-width: 100%; padding: 10px; }
+  .header, .stats-grid .stat-card, .progress-section, .table-wrapper {
+    background: #fff;
+    border: 1px solid #ddd;
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+  .stat-card .stat-num { -webkit-text-fill-color: initial; }
+  .header-title h1 { -webkit-text-fill-color: initial; color: #333; }
+  thead th { background: #f0f0f0; color: #333; }
+  tbody td { color: #333; }
+  .badge { border: 1px solid #ccc; }
+  .status-select { -webkit-appearance: none; border: 1px solid #ccc; }
+  .notes-input { border: 1px solid #ccc; color: #333; background: #fafafa; }
+  .btn-detail { display: none; }
+  .progress-bar { border: 1px solid #ccc; }
+  tr.row-pass { background: #e6fff7 !important; }
+  tr.row-fail { background: #fff0f0 !important; }
+  .progress-percent { color: #333; }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .header { flex-direction: column; align-items: stretch; padding: 16px; }
+  .header-left { justify-content: center; }
+  .stats-grid { grid-template-columns: repeat(3, 1fr); }
+  .filters { flex-direction: column; }
+  .search-input { width: 100%; }
+  .modal { max-width: 95vw; }
+}
+
+/* Hidden file input */
+#importInput { display: none; }
+/* ====== GLOBAL NAV ====== */
+.alhai-nav{position:sticky;top:0;z-index:999;background:rgba(15,15,26,0.92);backdrop-filter:blur(16px);border-bottom:1px solid rgba(108,99,255,0.12);padding:0 20px}
+.alhai-nav-inner{max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:50px}
+.alhai-nav-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#e2e8f0;font-weight:800;font-size:0.95rem}
+.alhai-nav-brand span{width:30px;height:30px;background:linear-gradient(135deg,#6c63ff,#00d4aa);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:0.75rem;color:#fff;font-weight:900}
+.alhai-nav-links{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.alhai-nav-links a{padding:6px 12px;border-radius:6px;font-size:0.78rem;font-weight:600;color:#94a3b8;text-decoration:none;transition:all 0.2s;white-space:nowrap}
+.alhai-nav-links a:hover{background:rgba(108,99,255,0.1);color:#8b83ff}
+.alhai-nav-links a.active{background:rgba(108,99,255,0.15);color:#8b83ff}
+@media(max-width:640px){.alhai-nav-links a{font-size:0.7rem;padding:5px 8px}}
+</style>
+</head>
+<body>
+<nav class="alhai-nav"><div class="alhai-nav-inner"><a href="index.html" class="alhai-nav-brand"><span>الحي</span> بوابة التوثيق</a><div class="alhai-nav-links"><a href="cashier_app.html"><i class="fas fa-cash-register"></i> الكاشير</a><a href="admin_app.html"><i class="fas fa-tachometer-alt"></i> الإدارة</a><a href="admin_lite_app.html"><i class="fas fa-mobile-alt"></i> المبسطة</a><a href="ai_server.html"><i class="fas fa-brain"></i> AI Server</a><a href="qa_tracker.html" class="active"><i class="fas fa-clipboard-check"></i> الاختبارات</a></div></div></nav>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-right">
+      <div class="logo">QA</div>
+      <div class="header-title">
+        <h1><i class="fas fa-clipboard-check"></i> لوحة تتبع الاختبارات</h1>
+        <p>نظام الحي لنقاط البيع - Alhai POS System</p>
+      </div>
+    </div>
+    <div class="header-left">
+      <div class="header-info">
+        <i class="fas fa-user"></i>
+        <input type="text" id="testerName" placeholder="اسم المختبر" />
+      </div>
+      <div class="header-info">
+        <i class="fas fa-calendar"></i>
+        <span id="currentDate"></span>
+      </div>
+      <button class="btn btn-success" onclick="saveData()"><i class="fas fa-save"></i> حفظ</button>
+      <button class="btn" onclick="exportJSON()"><i class="fas fa-file-export"></i> تصدير JSON</button>
+      <button class="btn" onclick="document.getElementById('importInput').click()"><i class="fas fa-file-import"></i> استيراد</button>
+      <input type="file" id="importInput" accept=".json" onchange="importJSON(event)" />
+      <button class="btn" onclick="resetAll()"><i class="fas fa-undo"></i> إعادة تعيين</button>
+      <button class="btn btn-primary" onclick="window.print()"><i class="fas fa-print"></i> طباعة PDF</button>
+    </div>
+  </div>
+
+  <!-- STATS -->
+  <div class="stats-grid">
+    <div class="stat-card stat-total"><div class="stat-num" id="statTotal">59</div><div class="stat-label">إجمالي الحالات</div></div>
+    <div class="stat-card stat-pass"><div class="stat-num" id="statPass">0</div><div class="stat-label"><i class="fas fa-check-circle"></i> ناجح</div></div>
+    <div class="stat-card stat-fail"><div class="stat-num" id="statFail">0</div><div class="stat-label"><i class="fas fa-times-circle"></i> فاشل</div></div>
+    <div class="stat-card stat-block"><div class="stat-num" id="statBlock">0</div><div class="stat-label"><i class="fas fa-ban"></i> محظور</div></div>
+    <div class="stat-card stat-skip"><div class="stat-num" id="statSkip">0</div><div class="stat-label"><i class="fas fa-forward"></i> متخطى</div></div>
+    <div class="stat-card stat-untested"><div class="stat-num" id="statUntested">59</div><div class="stat-label"><i class="fas fa-clock"></i> لم يُختبر</div></div>
+  </div>
+
+  <!-- PROGRESS -->
+  <div class="progress-section">
+    <div class="progress-header">
+      <h3><i class="fas fa-chart-bar"></i> نسبة الإنجاز</h3>
+      <div class="progress-percent" id="progressPercent">0%</div>
+    </div>
+    <div class="progress-bar">
+      <div class="progress-pass" id="progPass" style="width:0"></div>
+      <div class="progress-fail" id="progFail" style="width:0"></div>
+      <div class="progress-block" id="progBlock" style="width:0"></div>
+      <div class="progress-skip" id="progSkip" style="width:0"></div>
+    </div>
+    <div class="progress-legend">
+      <div class="legend-item"><div class="legend-dot" style="background:var(--green)"></div> ناجح</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> فاشل</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--orange)"></div> محظور</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--gray)"></div> متخطى</div>
+      <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> لم يُختبر</div>
+    </div>
+  </div>
+
+  <!-- FILTERS -->
+  <div class="filters">
+    <div class="filter-group">
+      <label><i class="fas fa-search"></i></label>
+      <input type="text" class="search-input" id="searchInput" placeholder="بحث في حالات الاختبار..." oninput="applyFilters()" />
+    </div>
+    <div class="filter-group">
+      <label>الوحدة:</label>
+      <select id="filterModule" onchange="applyFilters()">
+        <option value="">الكل</option>
+        <option value="AUTH">AUTH - المصادقة</option>
+        <option value="SHIFT">SHIFT - الورديات</option>
+        <option value="SALE">SALE - البيع</option>
+        <option value="WA">WA - WhatsApp</option>
+        <option value="PROD">PROD - المنتجات</option>
+        <option value="INV">INV - المخزون</option>
+        <option value="CUST">CUST - العملاء</option>
+        <option value="RPT">RPT - التقارير</option>
+        <option value="ADM">ADM - الإدارة</option>
+        <option value="LITE">LITE - المبسطة</option>
+        <option value="AI">AI - الذكاء الاصطناعي</option>
+        <option value="L10N">L10N - اللغات</option>
+        <option value="RESP">RESP - المتجاوب</option>
+        <option value="BROW">BROW - المتصفحات</option>
+        <option value="PERF">PERF - الأداء</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>الحالة:</label>
+      <select id="filterStatus" onchange="applyFilters()">
+        <option value="">الكل</option>
+        <option value="untested">لم يُختبر</option>
+        <option value="pass">ناجح</option>
+        <option value="fail">فاشل</option>
+        <option value="blocked">محظور</option>
+        <option value="skipped">متخطى</option>
+      </select>
+    </div>
+    <div class="filter-group">
+      <label>الأولوية:</label>
+      <select id="filterPriority" onchange="applyFilters()">
+        <option value="">الكل</option>
+        <option value="high">عالية</option>
+        <option value="medium">متوسطة</option>
+        <option value="low">منخفضة</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrapper">
+    <div class="table-scroll">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:36px">#</th>
+            <th>رقم الحالة</th>
+            <th>الوحدة</th>
+            <th>الوصف</th>
+            <th>الأولوية</th>
+            <th>التطبيق</th>
+            <th>الحالة</th>
+            <th>ملاحظات</th>
+            <th style="width:70px">تفاصيل</th>
+          </tr>
+        </thead>
+        <tbody id="testTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 id="modalTitle"></h2>
+      <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="modal-body" id="modalBody"></div>
+    <div class="modal-footer">
+      <button class="btn btn-success" onclick="saveModalAndClose()"><i class="fas fa-check"></i> حفظ وإغلاق</button>
+      <button class="btn" onclick="closeModal()">إغلاق</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ===== TEST DATA =====
+const TEST_CASES = [
+  // AUTH (6)
+  { id:"AUTH-001", module:"AUTH", moduleName:"المصادقة", title:"تسجيل دخول الكاشير بنجاح", priority:"high", app:"الكاشير", preconditions:"حساب كاشير مُسجل", steps:["فتح https://alhai-cashier.pages.dev","إدخال رقم الهاتف: 0500000001","الضغط على \"متابعة\"","إدخال OTP: 123456","الضغط على \"تحقق\""], expected:"الانتقال إلى شاشة POS الرئيسية" },
+  { id:"AUTH-002", module:"AUTH", moduleName:"المصادقة", title:"تسجيل دخول المدير بنجاح", priority:"high", app:"لوحة الإدارة", preconditions:"حساب مدير مُسجل", steps:["فتح https://alhai-admin.pages.dev","إدخال رقم الهاتف: 0500000000","الضغط على \"متابعة\"","إدخال OTP: 123456","الضغط على \"تحقق\""], expected:"الانتقال إلى لوحة التحكم الرئيسية" },
+  { id:"AUTH-003", module:"AUTH", moduleName:"المصادقة", title:"تسجيل دخول Admin Lite", priority:"high", app:"الإدارة المبسطة", preconditions:"حساب مدير مُسجل", steps:["فتح https://alhai-admin-lite.pages.dev","إدخال رقم الهاتف: 0500000000","إدخال OTP: 123456"], expected:"الانتقال إلى لوحة المعلومات" },
+  { id:"AUTH-004", module:"AUTH", moduleName:"المصادقة", title:"رقم هاتف غير مسجل", priority:"high", app:"جميع التطبيقات", preconditions:"", steps:["إدخال رقم هاتف غير مسجل: 0599999999","الضغط على \"متابعة\""], expected:"رسالة خطأ: \"رقم الهاتف غير مسجل\"" },
+  { id:"AUTH-005", module:"AUTH", moduleName:"المصادقة", title:"OTP خاطئ", priority:"high", app:"جميع التطبيقات", preconditions:"", steps:["إدخال رقم صحيح","إدخال OTP خاطئ: 000000"], expected:"رسالة خطأ: \"رمز التحقق غير صحيح\"" },
+  { id:"AUTH-006", module:"AUTH", moduleName:"المصادقة", title:"تسجيل الخروج", priority:"medium", app:"جميع التطبيقات", preconditions:"", steps:["تسجيل الدخول بنجاح","الضغط على \"تسجيل الخروج\""], expected:"العودة لشاشة تسجيل الدخول، تنظيف الجلسة" },
+
+  // SHIFT (4)
+  { id:"SHIFT-001", module:"SHIFT", moduleName:"الورديات", title:"فتح وردية جديدة", priority:"high", app:"الكاشير", preconditions:"تسجيل دخول ناجح، لا توجد وردية مفتوحة", steps:["الانتقال إلى \"فتح وردية\"","إدخال المبلغ الافتتاحي: 500","الضغط على \"فتح الوردية\""], expected:"الوردية مفتوحة، يظهر المبلغ الافتتاحي" },
+  { id:"SHIFT-002", module:"SHIFT", moduleName:"الورديات", title:"إغلاق وردية", priority:"high", app:"الكاشير", preconditions:"وردية مفتوحة", steps:["الانتقال إلى \"إغلاق الوردية\"","إدخال المبلغ الفعلي في الصندوق","الضغط على \"إغلاق الوردية\""], expected:"عرض ملخص الوردية (المبيعات، الفرق)، إغلاق الوردية" },
+  { id:"SHIFT-003", module:"SHIFT", moduleName:"الورديات", title:"تحصيل نقدي", priority:"medium", app:"الكاشير", preconditions:"وردية مفتوحة", steps:["الانتقال إلى \"التحصيل/الصرف\"","اختيار \"تحصيل\"","إدخال المبلغ: 100","إدخال الملاحظة: \"تحصيل اختباري\"","التأكيد"], expected:"تسجيل عملية التحصيل، تحديث رصيد الصندوق" },
+  { id:"SHIFT-004", module:"SHIFT", moduleName:"الورديات", title:"صرف نقدي", priority:"medium", app:"الكاشير", preconditions:"وردية مفتوحة", steps:["الانتقال إلى \"التحصيل/الصرف\"","اختيار \"صرف\"","إدخال المبلغ","إدخال الملاحظة","التأكيد"], expected:"تسجيل عملية الصرف، تحديث رصيد الصندوق" },
+
+  // SALE (10)
+  { id:"SALE-001", module:"SALE", moduleName:"البيع", title:"بيع منتج واحد (نقدي)", priority:"high", app:"الكاشير", preconditions:"وردية مفتوحة، منتجات موجودة", steps:["البحث عن منتج بالاسم","النقر على المنتج لإضافته للسلة","التحقق من السعر والكمية في السلة","الضغط على \"الدفع\"","اختيار \"نقدي\"","إدخال المبلغ المستلم","تأكيد الدفع"], expected:"عملية بيع ناجحة، عرض شاشة النجاح مع الباقي" },
+  { id:"SALE-002", module:"SALE", moduleName:"البيع", title:"بيع منتجات متعددة (نقدي)", priority:"high", app:"الكاشير", preconditions:"وردية مفتوحة", steps:["إضافة 3 منتجات مختلفة","تعديل كمية أحدها إلى 2","التحقق من المجموع","الدفع نقدياً"], expected:"المجموع صحيح، عملية ناجحة" },
+  { id:"SALE-003", module:"SALE", moduleName:"البيع", title:"الدفع بالبطاقة", priority:"high", app:"الكاشير", preconditions:"وردية مفتوحة", steps:["إضافة منتج للسلة","الضغط على \"الدفع\"","اختيار \"بطاقة\"","تأكيد الدفع"], expected:"عملية بيع ناجحة بدون حقل المبلغ المستلم" },
+  { id:"SALE-004", module:"SALE", moduleName:"البيع", title:"الدفع المختلط (نقد + بطاقة)", priority:"high", app:"الكاشير", preconditions:"وردية مفتوحة", steps:["إضافة منتج بسعر 100 ريال","اختيار \"مختلط\"","إدخال مبلغ النقد: 60","الباقي على البطاقة: 40","تأكيد"], expected:"تسجيل دفعتين (60 نقد + 40 بطاقة)" },
+  { id:"SALE-005", module:"SALE", moduleName:"البيع", title:"البيع الآجل (Credit)", priority:"high", app:"الكاشير", preconditions:"عميل مسجل مع حد ائتماني", steps:["إضافة منتج","اختيار \"آجل\"","البحث عن العميل","التحقق من الحد الائتماني","تأكيد"], expected:"بيع آجل مسجل على حساب العميل" },
+  { id:"SALE-006", module:"SALE", moduleName:"البيع", title:"تعديل الكمية", priority:"medium", app:"الكاشير", preconditions:"", steps:["إضافة منتج (نقرة واحدة = كمية 1)","النقر على زر \"+\" في السلة","إدخال الكمية المطلوبة في الحوار","تأكيد"], expected:"تحديث الكمية والإجمالي" },
+  { id:"SALE-007", module:"SALE", moduleName:"البيع", title:"حذف منتج من السلة", priority:"medium", app:"الكاشير", preconditions:"", steps:["إضافة منتجات للسلة","سحب المنتج لليسار (أو زر الحذف)","تأكيد الحذف"], expected:"حذف المنتج وتحديث المجموع" },
+  { id:"SALE-008", module:"SALE", moduleName:"البيع", title:"إفراغ السلة", priority:"medium", app:"الكاشير", preconditions:"", steps:["إضافة منتجات","الضغط على \"إفراغ السلة\"","تأكيد"], expected:"حذف جميع المنتجات، المجموع = 0" },
+  { id:"SALE-009", module:"SALE", moduleName:"البيع", title:"البحث بالباركود", priority:"high", app:"الكاشير", preconditions:"جهاز باركود USB متصل، منتج مع باركود", steps:["مسح الباركود بالجهاز","انتظار الإضافة التلقائية"], expected:"إضافة المنتج تلقائياً للسلة" },
+  { id:"SALE-010", module:"SALE", moduleName:"البيع", title:"البحث النصي عن منتج", priority:"high", app:"الكاشير", preconditions:"", steps:["النقر على حقل البحث","كتابة جزء من اسم المنتج","مراجعة النتائج"], expected:"عرض المنتجات المطابقة فوراً (FTS)" },
+
+  // WA (3)
+  { id:"WA-001", module:"WA", moduleName:"WhatsApp", title:"إرسال فاتورة عبر WhatsApp بعد البيع", priority:"high", app:"الكاشير", preconditions:"عملية بيع ناجحة، WaSender مُهيأ", steps:["إتمام عملية بيع بنجاح","في شاشة النجاح، إدخال رقم الهاتف","الضغط على \"إرسال عبر WhatsApp\""], expected:"وصول رسالة الفاتورة للرقم المحدد عبر WhatsApp" },
+  { id:"WA-002", module:"WA", moduleName:"WhatsApp", title:"التحقق من حالة اتصال WhatsApp", priority:"medium", app:"لوحة الإدارة", preconditions:"", steps:["تسجيل الدخول كمدير","الانتقال إلى الإعدادات ← إدارة WhatsApp","التحقق من حالة الاتصال"], expected:"عرض حالة الاتصال (متصل/غير متصل)، رقم الهاتف المربوط" },
+  { id:"WA-003", module:"WA", moduleName:"WhatsApp", title:"تنسيق الرقم السعودي", priority:"medium", app:"الكاشير", preconditions:"", steps:["بعد عملية بيع، إدخال الرقم بصيغة 05xxxxxxxx","إرسال"], expected:"تحويل الرقم تلقائياً إلى 9665xxxxxxxx والإرسال بنجاح" },
+
+  // PROD (4)
+  { id:"PROD-001", module:"PROD", moduleName:"المنتجات", title:"عرض المنتجات", priority:"high", app:"الكاشير", preconditions:"", steps:["فتح شاشة POS","مراجعة قائمة المنتجات"], expected:"عرض المنتجات مع الصور والأسعار والتصنيفات" },
+  { id:"PROD-002", module:"PROD", moduleName:"المنتجات", title:"التصفية حسب التصنيف", priority:"medium", app:"الكاشير", preconditions:"", steps:["النقر على تصنيف معين","مراجعة المنتجات المعروضة"], expected:"عرض منتجات التصنيف المحدد فقط" },
+  { id:"PROD-003", module:"PROD", moduleName:"المنتجات", title:"إضافة منتج سريع", priority:"medium", app:"الكاشير", preconditions:"", steps:["الانتقال إلى \"إضافة سريعة\"","إدخال: الاسم، السعر، الباركود (اختياري)","حفظ"], expected:"المنتج محفوظ ومتاح للبيع" },
+  { id:"PROD-004", module:"PROD", moduleName:"المنتجات", title:"تعديل سعر منتج", priority:"medium", app:"الكاشير", preconditions:"", steps:["الانتقال إلى \"تعديل الأسعار\"","البحث عن المنتج","تعديل السعر","حفظ"], expected:"تحديث السعر فوراً في شاشة POS" },
+
+  // INV (3)
+  { id:"INV-001", module:"INV", moduleName:"المخزون", title:"إضافة مخزون", priority:"high", app:"الكاشير", preconditions:"", steps:["الانتقال إلى \"إضافة مخزون\"","اختيار المنتج","إدخال الكمية المضافة","حفظ"], expected:"تحديث الكمية المتاحة للمنتج" },
+  { id:"INV-002", module:"INV", moduleName:"المخزون", title:"جرد المخزون", priority:"medium", app:"الكاشير", preconditions:"", steps:["الانتقال إلى \"الجرد\"","إدخال الكميات الفعلية","حفظ"], expected:"تسجيل فروقات الجرد، تحديث المخزون" },
+  { id:"INV-003", module:"INV", moduleName:"المخزون", title:"نقل مخزون", priority:"low", app:"الكاشير", preconditions:"", steps:["الانتقال إلى \"نقل المخزون\"","اختيار المنتجات والكميات","تحديد الوجهة","تأكيد النقل"], expected:"تسجيل عملية النقل وتحديث الأرصدة" },
+
+  // CUST (2)
+  { id:"CUST-001", module:"CUST", moduleName:"العملاء", title:"عرض حسابات العملاء", priority:"medium", app:"الكاشير", preconditions:"", steps:["الانتقال إلى \"حسابات العملاء\"","مراجعة القائمة"], expected:"عرض العملاء مع أرصدتهم" },
+  { id:"CUST-002", module:"CUST", moduleName:"العملاء", title:"كشف حساب عميل", priority:"medium", app:"الكاشير / الإدارة", preconditions:"", steps:["اختيار عميل","فتح \"كشف الحساب\""], expected:"عرض جميع المعاملات مع الرصيد المتراكم" },
+
+  // RPT (4)
+  { id:"RPT-001", module:"RPT", moduleName:"التقارير", title:"تقرير المبيعات اليومية", priority:"high", app:"الكاشير / الإدارة / Admin Lite", preconditions:"", steps:["الانتقال إلى التقارير","اختيار \"تقرير المبيعات\"","تحديد اليوم"], expected:"عرض مبيعات اليوم مع المجموع" },
+  { id:"RPT-002", module:"RPT", moduleName:"التقارير", title:"سجل المبيعات", priority:"high", app:"الكاشير", preconditions:"", steps:["الانتقال إلى \"سجل المبيعات\"","مراجعة العمليات"], expected:"عرض جميع عمليات البيع مرتبة بالتاريخ" },
+  { id:"RPT-003", module:"RPT", moduleName:"التقارير", title:"تفاصيل عملية بيع", priority:"medium", app:"الكاشير", preconditions:"", steps:["من سجل المبيعات، النقر على عملية","مراجعة التفاصيل"], expected:"عرض المنتجات، الكميات، الأسعار، طريقة الدفع" },
+  { id:"RPT-004", module:"RPT", moduleName:"التقارير", title:"الملخص اليومي", priority:"medium", app:"الكاشير", preconditions:"", steps:["الانتقال إلى \"الملخص اليومي\""], expected:"عرض: عدد المبيعات، الإجمالي، التوزيع حسب طريقة الدفع" },
+
+  // ADM (6)
+  { id:"ADM-001", module:"ADM", moduleName:"الإدارة", title:"لوحة التحكم الرئيسية", priority:"high", app:"لوحة الإدارة", preconditions:"", steps:["تسجيل الدخول كمدير","مراجعة لوحة التحكم"], expected:"عرض الإحصائيات: مبيعات اليوم، المنتجات الأكثر مبيعاً، الرسوم البيانية" },
+  { id:"ADM-002", module:"ADM", moduleName:"الإدارة", title:"إدارة التصنيفات", priority:"medium", app:"لوحة الإدارة", preconditions:"", steps:["المنتجات ← التصنيفات","إضافة تصنيف جديد","تعديل تصنيف","حذف تصنيف فارغ"], expected:"عمليات CRUD ناجحة على التصنيفات" },
+  { id:"ADM-003", module:"ADM", moduleName:"الإدارة", title:"نموذج المنتج", priority:"high", app:"لوحة الإدارة", preconditions:"", steps:["المنتجات ← إضافة منتج","تعبئة النموذج (الاسم، السعر، الباركود، التصنيف، الصورة)","حفظ"], expected:"المنتج محفوظ ومتاح في الكاشير" },
+  { id:"ADM-004", module:"ADM", moduleName:"الإدارة", title:"إدارة الموردين", priority:"medium", app:"لوحة الإدارة", preconditions:"", steps:["الموردين ← إضافة مورد","تعبئة البيانات","حفظ"], expected:"المورد مسجل ومتاح في المشتريات" },
+  { id:"ADM-005", module:"ADM", moduleName:"الإدارة", title:"إنشاء طلب شراء", priority:"medium", app:"لوحة الإدارة", preconditions:"", steps:["المشتريات ← طلب شراء جديد","اختيار المورد","إضافة المنتجات والكميات","حفظ"], expected:"طلب شراء مسجل" },
+  { id:"ADM-006", module:"ADM", moduleName:"الإدارة", title:"الإعدادات العامة", priority:"medium", app:"لوحة الإدارة", preconditions:"", steps:["الإعدادات ← عام","تعديل اسم المتجر / العنوان","حفظ"], expected:"تحديث بيانات المتجر" },
+
+  // LITE (5)
+  { id:"LITE-001", module:"LITE", moduleName:"المبسطة", title:"لوحة المعلومات", priority:"high", app:"Admin Lite", preconditions:"", steps:["تسجيل الدخول","مراجعة لوحة المعلومات"], expected:"عرض إحصائيات سريعة: مبيعات اليوم، حالة المخزون" },
+  { id:"LITE-002", module:"LITE", moduleName:"المبسطة", title:"التقارير", priority:"high", app:"Admin Lite", preconditions:"", steps:["تبويب \"التقارير\"","استعراض التقارير المتاحة","فتح تقرير"], expected:"عرض 12+ تقرير متخصص مع بيانات" },
+  { id:"LITE-003", module:"LITE", moduleName:"المبسطة", title:"شاشات الذكاء الاصطناعي", priority:"medium", app:"Admin Lite", preconditions:"", steps:["تبويب \"الذكاء الاصطناعي\"","فتح أي خدمة AI (مثال: توقع المبيعات)","طلب تحليل"], expected:"عرض نتائج التحليل من خادم AI" },
+  { id:"LITE-004", module:"LITE", moduleName:"المبسطة", title:"مراقبة المخزون", priority:"medium", app:"Admin Lite", preconditions:"", steps:["تبويب \"المراقبة\"","مراجعة تنبيهات المخزون","فتح تتبع الصلاحية"], expected:"عرض المنتجات منخفضة المخزون والقريبة من انتهاء الصلاحية" },
+  { id:"LITE-005", module:"LITE", moduleName:"المبسطة", title:"نظام الموافقات", priority:"medium", app:"Admin Lite", preconditions:"", steps:["لوحة المعلومات ← الموافقات","مراجعة الطلبات المعلقة","الموافقة/الرفض"], expected:"تحديث حالة الطلب" },
+
+  // AI (3)
+  { id:"AI-001", module:"AI", moduleName:"الذكاء الاصطناعي", title:"خادم AI متاح", priority:"high", app:"خادم AI", preconditions:"", steps:["فتح https://alhai-ai-server.onrender.com/docs"], expected:"عرض صفحة Swagger مع جميع النقاط النهائية" },
+  { id:"AI-002", module:"AI", moduleName:"الذكاء الاصطناعي", title:"توقع المبيعات", priority:"medium", app:"Admin Lite", preconditions:"", steps:["AI ← توقع المبيعات","طلب التوقع"], expected:"عرض توقعات المبيعات للفترة القادمة" },
+  { id:"AI-003", module:"AI", moduleName:"الذكاء الاصطناعي", title:"المساعد الذكي", priority:"medium", app:"Admin Lite", preconditions:"", steps:["AI ← المساعد","كتابة سؤال عن بيانات المتجر","مراجعة الرد"], expected:"رد ذكي بناءً على بيانات المتجر" },
+
+  // L10N (3)
+  { id:"L10N-001", module:"L10N", moduleName:"اللغات", title:"تبديل اللغة إلى العربية", priority:"high", app:"جميع التطبيقات", preconditions:"", steps:["الإعدادات ← اللغة","اختيار \"العربية\"","مراجعة الواجهة"], expected:"جميع النصوص بالعربية، اتجاه RTL" },
+  { id:"L10N-002", module:"L10N", moduleName:"اللغات", title:"تبديل اللغة إلى الإنجليزية", priority:"high", app:"جميع التطبيقات", preconditions:"", steps:["الإعدادات ← اللغة","اختيار \"English\"","مراجعة الواجهة"], expected:"جميع النصوص بالإنجليزية، اتجاه LTR" },
+  { id:"L10N-003", module:"L10N", moduleName:"اللغات", title:"لغات إضافية", priority:"low", app:"جميع التطبيقات", preconditions:"", steps:["اختبار كل لغة: الأردو، الهندية، البنغالية، الفلبينية، الإندونيسية"], expected:"عرض الترجمة بشكل صحيح لكل لغة" },
+
+  // RESP (3)
+  { id:"RESP-001", module:"RESP", moduleName:"المتجاوب", title:"شاشة سطح المكتب (1920x1080)", priority:"high", app:"الكاشير / الإدارة", preconditions:"", steps:["فتح التطبيق على شاشة كاملة","مراجعة التخطيط"], expected:"تخطيط مناسب، Sidebar ظاهر، لا تداخل" },
+  { id:"RESP-002", module:"RESP", moduleName:"المتجاوب", title:"تابلت (768px)", priority:"medium", app:"جميع التطبيقات", preconditions:"", steps:["تصغير المتصفح إلى 768px عرض","مراجعة التخطيط"], expected:"تكيف التخطيط، Sidebar قابل للطي" },
+  { id:"RESP-003", module:"RESP", moduleName:"المتجاوب", title:"جوال (375px) - Admin Lite", priority:"high", app:"Admin Lite", preconditions:"", steps:["فتح من متصفح الجوال أو تصغير إلى 375px","مراجعة جميع التبويبات"], expected:"واجهة مُحسّنة للجوال، bottom navigation يعمل" },
+
+  // BROW (4)
+  { id:"BROW-001", module:"BROW", moduleName:"المتصفحات", title:"Google Chrome", priority:"high", app:"جميع التطبيقات", preconditions:"", steps:["فتح جميع التطبيقات في Chrome","تسجيل الدخول","إجراء عملية بيع"], expected:"جميع الوظائف تعمل بشكل كامل" },
+  { id:"BROW-002", module:"BROW", moduleName:"المتصفحات", title:"Microsoft Edge", priority:"medium", app:"جميع التطبيقات", preconditions:"", steps:["نفس خطوات BROW-001 في Edge"], expected:"جميع الوظائف تعمل" },
+  { id:"BROW-003", module:"BROW", moduleName:"المتصفحات", title:"Safari (macOS/iOS)", priority:"medium", app:"جميع التطبيقات", preconditions:"", steps:["نفس خطوات BROW-001 في Safari"], expected:"جميع الوظائف تعمل (مع ملاحظة أي فروقات)" },
+  { id:"BROW-004", module:"BROW", moduleName:"المتصفحات", title:"Firefox", priority:"low", app:"جميع التطبيقات", preconditions:"", steps:["نفس خطوات BROW-001 في Firefox"], expected:"الوظائف الأساسية تعمل" },
+
+  // PERF (4)
+  { id:"PERF-001", module:"PERF", moduleName:"الأداء", title:"سرعة التحميل الأولي", priority:"high", app:"جميع التطبيقات", preconditions:"", steps:["فتح التطبيق لأول مرة","قياس وقت التحميل حتى الشاشة الرئيسية"], expected:"أقل من 5 ثوانٍ على اتصال جيد" },
+  { id:"PERF-002", module:"PERF", moduleName:"الأداء", title:"سرعة شاشة Splash", priority:"medium", app:"جميع التطبيقات", preconditions:"", steps:["فتح التطبيق","قياس مدة شاشة Splash"], expected:"500 ميلي ثانية أو أقل" },
+  { id:"PERF-003", module:"PERF", moduleName:"الأداء", title:"استجابة البحث", priority:"high", app:"الكاشير", preconditions:"", steps:["كتابة في حقل البحث","قياس وقت ظهور النتائج"], expected:"نتائج فورية (أقل من 200ms)" },
+  { id:"PERF-004", module:"PERF", moduleName:"الأداء", title:"عملية بيع سريعة", priority:"high", app:"الكاشير", preconditions:"", steps:["إضافة 5 منتجات بسرعة","إتمام الدفع"], expected:"لا تأخير ملحوظ، العملية سلسة" },
+];
+
+// ===== STATE =====
+const STORAGE_KEY = 'alhai_qa_tracker';
+let testResults = {};
+let currentModalId = null;
+
+// Priority labels
+const PRIORITY_LABELS = { high: 'عالية', medium: 'متوسطة', low: 'منخفضة' };
+const PRIORITY_CLASSES = { high: 'badge-high', medium: 'badge-medium', low: 'badge-low' };
+const STATUS_OPTIONS = [
+  { value: 'untested', label: 'لم يُختبر', icon: '⏳' },
+  { value: 'pass', label: 'ناجح ✅', icon: '✅' },
+  { value: 'fail', label: 'فاشل ❌', icon: '❌' },
+  { value: 'blocked', label: 'محظور ⚠️', icon: '⚠️' },
+  { value: 'skipped', label: 'متخطى ⏭️', icon: '⏭️' },
+];
+
+// ===== INIT =====
+function init() {
+  document.getElementById('currentDate').textContent = new Date().toLocaleDateString('ar-SA', { year:'numeric', month:'long', day:'numeric' });
+  loadData();
+  renderTable();
+  updateStats();
+}
+
+// ===== LOAD / SAVE =====
+function loadData() {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      testResults = parsed.results || {};
+      if (parsed.testerName) document.getElementById('testerName').value = parsed.testerName;
+    }
+  } catch(e) { console.error('Load error:', e); }
+}
+
+function saveData() {
+  try {
+    const data = {
+      testerName: document.getElementById('testerName').value,
+      results: testResults,
+      savedAt: new Date().toISOString()
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    showToast('تم الحفظ بنجاح');
+  } catch(e) { console.error('Save error:', e); }
+}
+
+function autoSave() {
+  try {
+    const data = {
+      testerName: document.getElementById('testerName').value,
+      results: testResults,
+      savedAt: new Date().toISOString()
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch(e) {}
+}
+
+// ===== RENDER TABLE =====
+function renderTable() {
+  const tbody = document.getElementById('testTableBody');
+  const filtered = getFilteredCases();
+  let html = '';
+
+  filtered.forEach((tc, idx) => {
+    const r = testResults[tc.id] || {};
+    const status = r.status || 'untested';
+    const notes = r.notes || '';
+    const rowClass = status === 'pass' ? 'row-pass' : status === 'fail' ? 'row-fail' : status === 'blocked' ? 'row-blocked' : '';
+
+    html += `<tr class="${rowClass}" data-id="${tc.id}">
+      <td style="text-align:center;color:var(--text-muted)">${idx+1}</td>
+      <td><span class="cell-id">${tc.id}</span></td>
+      <td><span class="badge badge-module">${tc.module}</span></td>
+      <td>${tc.title}</td>
+      <td><span class="badge ${PRIORITY_CLASSES[tc.priority]}">${PRIORITY_LABELS[tc.priority]}</span></td>
+      <td><span class="badge badge-app">${tc.app}</span></td>
+      <td>
+        <select class="status-select status-${status}" onchange="onStatusChange('${tc.id}', this.value, this)">
+          ${STATUS_OPTIONS.map(s => `<option value="${s.value}" ${s.value === status ? 'selected' : ''}>${s.label}</option>`).join('')}
+        </select>
+      </td>
+      <td><input type="text" class="notes-input" value="${escapeHtml(notes)}" placeholder="ملاحظات..." onchange="onNotesChange('${tc.id}', this.value)" /></td>
+      <td><button class="btn-detail" onclick="openModal('${tc.id}')"><i class="fas fa-eye"></i> عرض</button></td>
+    </tr>`;
+  });
+
+  if (filtered.length === 0) {
+    html = '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted)"><i class="fas fa-search" style="font-size:2rem;margin-bottom:10px;display:block;opacity:0.3"></i>لا توجد نتائج مطابقة</td></tr>';
+  }
+
+  tbody.innerHTML = html;
+}
+
+function getFilteredCases() {
+  const search = document.getElementById('searchInput').value.toLowerCase().trim();
+  const module = document.getElementById('filterModule').value;
+  const status = document.getElementById('filterStatus').value;
+  const priority = document.getElementById('filterPriority').value;
+
+  return TEST_CASES.filter(tc => {
+    if (module && tc.module !== module) return false;
+    if (priority && tc.priority !== priority) return false;
+    if (status) {
+      const r = testResults[tc.id] || {};
+      const s = r.status || 'untested';
+      if (s !== status) return false;
+    }
+    if (search) {
+      const haystack = (tc.id + ' ' + tc.title + ' ' + tc.module + ' ' + tc.moduleName + ' ' + tc.app).toLowerCase();
+      if (!haystack.includes(search)) return false;
+    }
+    return true;
+  });
+}
+
+function applyFilters() {
+  renderTable();
+}
+
+// ===== STATUS / NOTES CHANGE =====
+function onStatusChange(id, value, el) {
+  if (!testResults[id]) testResults[id] = {};
+  testResults[id].status = value;
+  testResults[id].testedAt = new Date().toISOString();
+
+  // Update select class
+  el.className = 'status-select status-' + value;
+
+  // Update row class
+  const tr = el.closest('tr');
+  tr.className = value === 'pass' ? 'row-pass' : value === 'fail' ? 'row-fail' : value === 'blocked' ? 'row-blocked' : '';
+
+  updateStats();
+  autoSave();
+}
+
+function onNotesChange(id, value) {
+  if (!testResults[id]) testResults[id] = {};
+  testResults[id].notes = value;
+  autoSave();
+}
+
+// ===== STATS =====
+function updateStats() {
+  let pass = 0, fail = 0, blocked = 0, skipped = 0, untested = 0;
+  TEST_CASES.forEach(tc => {
+    const s = (testResults[tc.id] || {}).status || 'untested';
+    if (s === 'pass') pass++;
+    else if (s === 'fail') fail++;
+    else if (s === 'blocked') blocked++;
+    else if (s === 'skipped') skipped++;
+    else untested++;
+  });
+
+  const total = TEST_CASES.length;
+  const tested = pass + fail + blocked + skipped;
+  const percent = total > 0 ? Math.round((tested / total) * 100) : 0;
+
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statPass').textContent = pass;
+  document.getElementById('statFail').textContent = fail;
+  document.getElementById('statBlock').textContent = blocked;
+  document.getElementById('statSkip').textContent = skipped;
+  document.getElementById('statUntested').textContent = untested;
+  document.getElementById('progressPercent').textContent = percent + '%';
+
+  // Progress bar
+  document.getElementById('progPass').style.width = (pass/total*100) + '%';
+  document.getElementById('progFail').style.width = (fail/total*100) + '%';
+  document.getElementById('progBlock').style.width = (blocked/total*100) + '%';
+  document.getElementById('progSkip').style.width = (skipped/total*100) + '%';
+}
+
+// ===== MODAL =====
+function openModal(id) {
+  currentModalId = id;
+  const tc = TEST_CASES.find(t => t.id === id);
+  if (!tc) return;
+  const r = testResults[id] || {};
+
+  document.getElementById('modalTitle').innerHTML = `<span class="cell-id" style="font-size:1rem">${tc.id}</span> ${tc.title}`;
+
+  let body = '';
+
+  // Preconditions
+  if (tc.preconditions) {
+    body += `<div class="modal-section"><h4><i class="fas fa-clipboard-list"></i> الشروط المسبقة</h4><p>${tc.preconditions}</p></div>`;
+  }
+
+  // Steps
+  body += `<div class="modal-section"><h4><i class="fas fa-list-ol"></i> خطوات الاختبار</h4><ol>`;
+  tc.steps.forEach(s => body += `<li>${s}</li>`);
+  body += `</ol></div>`;
+
+  // Expected
+  body += `<div class="modal-section"><h4><i class="fas fa-check-double"></i> النتيجة المتوقعة</h4><div class="modal-expected">${tc.expected}</div></div>`;
+
+  // Actual result textarea
+  body += `<div class="modal-section"><h4><i class="fas fa-pen"></i> النتيجة الفعلية</h4>
+    <textarea class="modal-textarea" id="modalActual" placeholder="أدخل النتيجة الفعلية هنا...">${escapeHtml(r.actualResult || '')}</textarea></div>`;
+
+  // Bug severity (only if fail)
+  const currentStatus = r.status || 'untested';
+  body += `<div class="modal-section" id="bugSeveritySection" style="${currentStatus === 'fail' ? '' : 'display:none'}">
+    <h4><i class="fas fa-bug"></i> تصنيف الخطأ</h4>
+    <div class="modal-row">
+      <label>الخطورة:</label>
+      <select id="modalSeverity" style="background:var(--bg-input);border:1px solid var(--border);border-radius:var(--radius-xs);padding:7px 12px;color:var(--text);font-family:var(--font);font-size:0.82rem;">
+        <option value="" ${!r.severity ? 'selected' : ''}>-- اختر --</option>
+        <option value="critical" ${r.severity === 'critical' ? 'selected' : ''}>حرج (Critical)</option>
+        <option value="high" ${r.severity === 'high' ? 'selected' : ''}>عالي (High)</option>
+        <option value="medium" ${r.severity === 'medium' ? 'selected' : ''}>متوسط (Medium)</option>
+        <option value="low" ${r.severity === 'low' ? 'selected' : ''}>منخفض (Low)</option>
+      </select>
+    </div>
+  </div>`;
+
+  // Status selector in modal
+  body += `<div class="modal-section"><h4><i class="fas fa-flag"></i> حالة الاختبار</h4>
+    <div class="modal-row">
+      <label>الحالة:</label>
+      <select id="modalStatus" class="status-select status-${currentStatus}" onchange="onModalStatusChange(this.value, this)" style="font-size:0.88rem;padding:8px 14px;">
+        ${STATUS_OPTIONS.map(s => `<option value="${s.value}" ${s.value === currentStatus ? 'selected' : ''}>${s.label}</option>`).join('')}
+      </select>
+    </div>
+  </div>`;
+
+  document.getElementById('modalBody').innerHTML = body;
+  document.getElementById('modalOverlay').classList.add('active');
+}
+
+function onModalStatusChange(val, el) {
+  el.className = 'status-select status-' + val;
+  const bugSection = document.getElementById('bugSeveritySection');
+  if (bugSection) bugSection.style.display = val === 'fail' ? '' : 'none';
+}
+
+function saveModalAndClose() {
+  if (!currentModalId) return;
+  if (!testResults[currentModalId]) testResults[currentModalId] = {};
+  const r = testResults[currentModalId];
+
+  r.actualResult = document.getElementById('modalActual').value;
+  r.status = document.getElementById('modalStatus').value;
+  r.severity = document.getElementById('modalSeverity') ? document.getElementById('modalSeverity').value : '';
+  r.testedAt = new Date().toISOString();
+
+  closeModal();
+  renderTable();
+  updateStats();
+  autoSave();
+  showToast('تم حفظ نتيجة الاختبار');
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('active');
+  currentModalId = null;
+}
+
+// ===== EXPORT / IMPORT =====
+function exportJSON() {
+  const data = {
+    projectName: 'نظام الحي لنقاط البيع - Alhai POS',
+    exportDate: new Date().toISOString(),
+    testerName: document.getElementById('testerName').value,
+    totalCases: TEST_CASES.length,
+    results: testResults,
+    summary: getSummary()
+  };
+
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `alhai_qa_results_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  showToast('تم تصدير النتائج بنجاح');
+}
+
+function importJSON(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.results) {
+        testResults = data.results;
+        if (data.testerName) document.getElementById('testerName').value = data.testerName;
+        renderTable();
+        updateStats();
+        autoSave();
+        showToast('تم استيراد النتائج بنجاح');
+      } else {
+        showToast('ملف غير صالح');
+      }
+    } catch(err) {
+      showToast('خطأ في قراءة الملف');
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+}
+
+function resetAll() {
+  if (!confirm('هل أنت متأكد من إعادة تعيين جميع نتائج الاختبار؟ لا يمكن التراجع عن هذا الإجراء.')) return;
+  testResults = {};
+  localStorage.removeItem(STORAGE_KEY);
+  renderTable();
+  updateStats();
+  showToast('تم إعادة التعيين');
+}
+
+function getSummary() {
+  let pass = 0, fail = 0, blocked = 0, skipped = 0, untested = 0;
+  TEST_CASES.forEach(tc => {
+    const s = (testResults[tc.id] || {}).status || 'untested';
+    if (s === 'pass') pass++;
+    else if (s === 'fail') fail++;
+    else if (s === 'blocked') blocked++;
+    else if (s === 'skipped') skipped++;
+    else untested++;
+  });
+  return { pass, fail, blocked, skipped, untested, total: TEST_CASES.length };
+}
+
+// ===== HELPERS =====
+function escapeHtml(str) {
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML;
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ===== KEYBOARD =====
+document.addEventListener('keydown', function(e) {
+  if (e.key === 'Escape') closeModal();
+  if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+    e.preventDefault();
+    saveData();
+  }
+});
+
+// ===== START =====
+init();
+</script>
+</body>
+</html>

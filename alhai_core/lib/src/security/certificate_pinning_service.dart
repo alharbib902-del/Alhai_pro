@@ -29,13 +29,6 @@ import 'package:http/io_client.dart';
 ///
 /// The expected format is the **base64-encoded SHA-256 hash of the DER-encoded
 /// certificate** (the `sha256//` value used by RFC 7469 HPKP-style pinning).
-/// To obtain it:
-/// ```
-/// openssl s_client -connect <project>.supabase.co:443 -servername <project>.supabase.co < /dev/null 2>/dev/null \
-///   | openssl x509 -outform DER \
-///   | openssl dgst -sha256 -binary \
-///   | base64
-/// ```
 ///
 /// Keep at least two pins (current + backup/next) to survive rotations
 /// without an app update.
@@ -55,8 +48,16 @@ class CertificatePinningService {
     if (_backupFingerprint.trim().isNotEmpty) _backupFingerprint.trim(),
   ];
 
+  /// Whether certificate pinning is active.
+  ///
+  /// Pinning is only enforced when running in release mode AND at least one
+  /// fingerprint has been configured.
   static bool get isEnabled => !kDebugMode && _pinnedHashes.isNotEmpty;
 
+  /// Creates an [http.Client] with certificate pinning enforced in release mode.
+  ///
+  /// Throws [StateError] in release mode when no fingerprints are configured.
+  /// In debug mode a missing pin list only triggers a warning log.
   static http.Client createPinnedClient() {
     if (kReleaseMode && _pinnedHashes.isEmpty) {
       throw StateError(
@@ -116,6 +117,7 @@ class CertificatePinningService {
     return false;
   }
 
+  /// Constant-time string comparison to avoid timing oracles.
   @visibleForTesting
   static bool constantTimeEquals(String a, String b) =>
       _constantTimeEquals(a, b);
@@ -129,6 +131,7 @@ class CertificatePinningService {
     return diff == 0;
   }
 
+  /// Returns a human-readable status string for diagnostics.
   static String get diagnosticStatus {
     if (kDebugMode) {
       return _pinnedHashes.isEmpty

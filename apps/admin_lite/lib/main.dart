@@ -14,14 +14,14 @@ import 'dart:math';
 import 'package:alhai_database/alhai_database.dart'
     show setDatabaseEncryptionKey;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
+import 'package:alhai_core/alhai_core.dart'
+    show CertificatePinningService, SupabaseConfig;
 import 'package:package_info_plus/package_info_plus.dart';
 import 'di/injection.dart';
 import 'dart:async';
 import 'router/lite_router.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/settings/lite_settings_screen.dart' show appVersionProvider;
-import 'core/network/certificate_pinning_service.dart';
 import 'core/services/sentry_service.dart';
 
 void main() {

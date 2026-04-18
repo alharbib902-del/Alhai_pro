@@ -6,8 +6,16 @@
 #   - super_admin         ->  Cloudflare Pages project: alhai-super-admin
 #
 # Required GitHub secrets (add under repo Settings -> Secrets -> Actions):
-#   - CLOUDFLARE_API_TOKEN   (Pages:Edit scoped token)
-#   - CLOUDFLARE_ACCOUNT_ID  (Cloudflare dashboard -> right sidebar)
+#   - CLOUDFLARE_API_TOKEN        (Pages:Edit scoped token)
+#   - CLOUDFLARE_ACCOUNT_ID       (Cloudflare dashboard -> right sidebar)
+#   - SUPABASE_URL                (https://<project>.supabase.co)
+#   - SUPABASE_ANON_KEY           (Supabase project anon/public key)
+#   - SENTRY_DSN_SUPER_ADMIN      (Sentry DSN for super_admin crash reporting)
+#   - SENTRY_DSN_DISTRIBUTOR      (Sentry DSN for distributor_portal — optional)
+#
+# IMPORTANT: Without these dart-define values, the built apps will fail
+# SupabaseConfig.isConfigured at runtime (see lib/core/supabase/supabase_client.dart
+# and alhai_core/lib/src/config/supabase_config.dart).
 #
 # One-time manual setup (MUST happen before the first successful deploy):
 #   1. Go to https://pages.cloudflare.com -> Create project -> Direct Upload
@@ -70,9 +78,11 @@ jobs:
         include:
           - app: distributor_portal
             path: distributor_portal
+            sentry_secret: SENTRY_DSN_DISTRIBUTOR
             changed: ${{ needs.changes.outputs.distributor_portal }}
           - app: super_admin
             path: super_admin
+            sentry_secret: SENTRY_DSN_SUPER_ADMIN
             changed: ${{ needs.changes.outputs.super_admin }}
     steps:
       - name: Skip if app unchanged
@@ -104,10 +114,44 @@ jobs:
         working-directory: ${{ matrix.path }}
         run: flutter pub get
 
-      - name: Build web (release)
+      # Build web with --dart-define values for runtime config.
+      # Without these, SupabaseConfig.isConfigured fails and the app will
+      # refuse to initialize. Sentry DSN is per-app (different secrets).
+      #
+      # Hardening flags:
+      #   --obfuscate + --split-debug-info   hide Dart class/field names; emit symbol files
+      #   --no-source-maps                   do not ship Dart source to production
+      - name: Build web (release, obfuscated)
         if: matrix.changed == 'true'
         working-directory: ${{ matrix.path }}
-        run: flutter build web --release
+        env:
+          SENTRY_DSN: ${{ secrets[matrix.sentry_secret] }}
+        run: |
+          flutter build web --release \
+            --obfuscate \
+            --split-debug-info=build/web/symbols \
+            --no-source-maps \
+            --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} \
+            --dart-define=${{ matrix.sentry_secret }}=$SENTRY_DSN \
+            --dart-define=FLAVOR=prod
+
+      # Upload Dart symbol files separately so we can de-obfuscate Sentry
+      # stack traces without shipping them to end users.
+      - name: Upload debug symbols
+        if: matrix.changed == 'true'
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.app }}-web-symbols
+          path: ${{ matrix.path }}/build/web/symbols
+          retention-days: 90
+          if-no-files-found: warn
+
+      # Do not ship the symbols/ directory to Cloudflare Pages.
+      - name: Strip symbols from deploy directory
+        if: matrix.changed == 'true'
+        working-directory: ${{ matrix.path }}
+        run: rm -rf build/web/symbols
 
       - name: Upload web build artifact
         if: matrix.changed == 'true'
