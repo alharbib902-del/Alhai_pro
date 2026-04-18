@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:alhai_core/alhai_core.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+
+class _MockX509 extends Mock implements X509Certificate {}
 
 void main() {
   group('CertificatePinningService', () {
@@ -134,6 +139,48 @@ void main() {
     test('pinCount getter is non-negative integer', () {
       expect(CertificatePinningService.pinCount, isA<int>());
       expect(CertificatePinningService.pinCount, greaterThanOrEqualTo(0));
+    });
+
+    group('post-handshake pin check', () {
+      // Regression: pinning previously lived ONLY in badCertificateCallback,
+      // which is never invoked for a CA-signed MITM cert (the OS accepts the
+      // chain). The release-mode client now inspects the server cert on every
+      // response -- this test exercises the matcher-based logic that gate.
+
+      test('throws HandshakeException when server cert is unpinned', () {
+        final unpinnedCert = _MockX509();
+        expect(
+          () => CertificatePinningService.assertCertMatchesForTest(
+            cert: unpinnedCert,
+            matcher: (X509Certificate _) => false,
+            host: 'victim.example',
+          ),
+          throwsA(isA<HandshakeException>()),
+        );
+      });
+
+      test('throws HandshakeException when server presents no certificate', () {
+        expect(
+          () => CertificatePinningService.assertCertMatchesForTest(
+            cert: null,
+            matcher: (X509Certificate _) => true,
+            host: 'victim.example',
+          ),
+          throwsA(isA<HandshakeException>()),
+        );
+      });
+
+      test('returns normally when server cert matches a pin', () {
+        final pinnedCert = _MockX509();
+        expect(
+          () => CertificatePinningService.assertCertMatchesForTest(
+            cert: pinnedCert,
+            matcher: (X509Certificate c) => identical(c, pinnedCert),
+            host: 'trusted.example',
+          ),
+          returnsNormally,
+        );
+      });
     });
   });
 }
