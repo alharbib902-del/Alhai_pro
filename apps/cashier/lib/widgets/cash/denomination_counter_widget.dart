@@ -225,9 +225,12 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
             ),
           ),
           // فاصل
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
-            child: Text('×', style: TextStyle(color: AppColors.textSecondary)),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AlhaiSpacing.xs),
+            child: Text(
+              '×',
+              style: TextStyle(color: AppColors.getTextSecondary(isDark)),
+            ),
           ),
           // الإجمالي الفرعي
           Expanded(
@@ -236,7 +239,9 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
               style: TextStyle(
                 fontSize: 13,
                 fontWeight: count > 0 ? FontWeight.bold : FontWeight.normal,
-                color: count > 0 ? AppColors.primary : AppColors.textSecondary,
+                color: count > 0
+                    ? AppColors.primary
+                    : AppColors.getTextSecondary(isDark),
               ),
             ),
           ),
