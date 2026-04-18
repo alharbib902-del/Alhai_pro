@@ -361,6 +361,7 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
                         AppColors.info,
                         AppColors.secondary,
                       ],
+                      surfaceColor: AppColors.getSurface(isDark),
                     ),
                   )
                 : Center(
@@ -659,8 +660,17 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
 class _PieChartPainter extends CustomPainter {
   final List<double> values;
   final List<Color> colors;
+  // Surface colour for slice separators and the donut hole.
+  // Passed from the caller so the chart blends with the card bg in
+  // both light and dark themes (previously hard-coded to Colors.white,
+  // which rendered as a bright disc on dark surfaces).
+  final Color surfaceColor;
 
-  _PieChartPainter({required this.values, required this.colors});
+  _PieChartPainter({
+    required this.values,
+    required this.colors,
+    required this.surfaceColor,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -685,9 +695,9 @@ class _PieChartPainter extends CustomPainter {
         paint,
       );
 
-      // White separator line
+      // Slice-separator stroke — blends with the card surface behind it.
       final separatorPaint = Paint()
-        ..color = Colors.white
+        ..color = surfaceColor
         ..strokeWidth = 2
         ..style = PaintingStyle.stroke;
 
@@ -702,9 +712,9 @@ class _PieChartPainter extends CustomPainter {
       startAngle += sweepAngle;
     }
 
-    // Inner circle for donut effect
+    // Inner circle creates the donut hole — matches the card bg.
     final innerPaint = Paint()
-      ..color = Colors.white
+      ..color = surfaceColor
       ..style = PaintingStyle.fill;
     canvas.drawCircle(center, radius * 0.55, innerPaint);
   }
