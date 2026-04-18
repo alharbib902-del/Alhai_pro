@@ -138,6 +138,40 @@ void main() {
         expect(decoded[2], equals('300000000000003'));
       });
 
+      test('tag 3 timestamp is emitted in UTC (ends with Z)', () {
+        // Local time in any non-UTC zone must be converted to UTC before
+        // being written to TLV tag 3 (ZATCA QR compliance).
+        final localTs = DateTime(2026, 3, 1, 14, 30);
+        final qrData = ZatcaQrService.generateQrData(
+          sellerName: 'Al-HAI Store',
+          vatNumber: '300000000000003',
+          timestamp: localTs,
+          totalWithVat: 115.0,
+          vatAmount: 15.0,
+        );
+        final tags = encoder.decodeToStrings(qrData);
+        expect(
+          tags[3],
+          equals(localTs.toUtc().toIso8601String()),
+          reason: 'Tag 3 must be UTC ISO-8601 (ends with Z)',
+        );
+        expect(tags[3], endsWith('Z'));
+      });
+
+      test('already-UTC timestamp stays UTC', () {
+        final utcTs = DateTime.utc(2026, 3, 1, 14, 30);
+        final qrData = ZatcaQrService.generateQrData(
+          sellerName: 'Al-HAI Store',
+          vatNumber: '300000000000003',
+          timestamp: utcTs,
+          totalWithVat: 115.0,
+          vatAmount: 15.0,
+        );
+        final tags = encoder.decodeToStrings(qrData);
+        expect(tags[3], equals(utcTs.toIso8601String()));
+        expect(tags[3], endsWith('Z'));
+      });
+
       test('different invoices should produce different QR data', () {
         final qr1 = ZatcaQrService.generateQrData(
           sellerName: 'Store A',

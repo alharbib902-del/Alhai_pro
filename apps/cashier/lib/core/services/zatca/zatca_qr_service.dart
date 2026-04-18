@@ -11,6 +11,9 @@ class ZatcaQrService {
   static final _encoder = ZatcaTlvEncoder();
 
   /// Generate base64-encoded QR data using the package TLV encoder
+  ///
+  /// ZATCA QR tag 3 must be a UTC ISO-8601 timestamp, so we convert here
+  /// regardless of whether the caller passes local or UTC time.
   static String generateQrData({
     required String sellerName,
     required String vatNumber,
@@ -21,7 +24,7 @@ class ZatcaQrService {
     return _encoder.encodeSimplified(
       sellerName: sellerName,
       vatNumber: vatNumber,
-      timestamp: timestamp,
+      timestamp: timestamp.toUtc(),
       totalWithVat: totalWithVat,
       vatAmount: vatAmount,
     );
