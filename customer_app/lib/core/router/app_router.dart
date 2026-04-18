@@ -19,6 +19,7 @@ import '../../features/orders/screens/orders_screen.dart';
 import '../../features/orders/screens/order_detail_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/addresses/screens/addresses_screen.dart';
+import '../../features/chat/presentation/chat_screen.dart';
 import '../../shared/widgets/bottom_nav_shell.dart';
 
 // FIX 2: Deferred imports for heavy/rarely-used screens
@@ -200,33 +201,13 @@ class AppRouter {
           );
         },
       ),
-      // Chat placeholder
       GoRoute(
         path: '/orders/:id/chat',
         name: 'orderChat',
         builder: (context, state) {
           final id = state.pathParameters['id'];
           if (!_isValidUuid(id)) return _invalidLinkScreen();
-          return Scaffold(
-            appBar: AppBar(
-              title: const Text('محادثة'),
-              leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
-                tooltip: 'رجوع',
-                onPressed: () => Navigator.pop(context),
-              ),
-            ),
-            body: const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.chat_bubble_outline, size: 64, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text('المحادثة قيد التطوير', style: TextStyle(fontSize: 18)),
-                ],
-              ),
-            ),
-          );
+          return ChatScreen(orderId: id!);
         },
       ),
       GoRoute(

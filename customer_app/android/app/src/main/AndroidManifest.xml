@@ -1,8 +1,24 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required for network access in release builds (debug manifest already
+         declares this, but the main manifest is the authoritative contract). -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <!-- Android 13+ (API 33): notifications are blocked by default without this
+         runtime permission. FirebaseMessaging.requestPermission() is a no-op
+         without this declaration. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <!-- Keep device awake briefly while delivering time-sensitive push payloads. -->
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+    <!-- Auto-restore notification channels after device reboot. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <application
         android:label="الهاي - عميل"
         android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:allowBackup="false"
+        android:fullBackupContent="@xml/backup_rules"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:networkSecurityConfig="@xml/network_security_config"
+        android:usesCleartextTraffic="false">
         <!-- Google Maps API key. Injected at build time via gradle property
              GOOGLE_MAPS_API_KEY (see android/app/build.gradle.kts). Empty value
              disables Maps rendering gracefully — do not hardcode a key here. -->

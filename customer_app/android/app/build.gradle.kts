@@ -6,8 +6,30 @@ plugins {
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
-    // Firebase — requires google-services.json in android/app/
-    id("com.google.gms.google-services")
+    // Firebase (Google Services) plugin applied conditionally below — requires
+    // android/app/google-services.json. See `if (googleServicesFile.exists())`.
+}
+
+// Apply Firebase/Google Services plugin only if google-services.json is present.
+// Rationale: lets `flutter build apk --debug` succeed on fresh checkouts that
+// haven't yet run `flutterfire configure`. Push notifications will NOT work at
+// runtime without the file — the warning below makes that explicit.
+//
+// To enable FCM:
+//   1. Create a Firebase project
+//   2. `dart pub global activate flutterfire_cli`
+//   3. `flutterfire configure --project=<firebase-project-id>`
+//      → generates android/app/google-services.json + ios/Runner/GoogleService-Info.plist
+//        + lib/firebase_options.dart
+val googleServicesFile = file("google-services.json")
+if (googleServicesFile.exists()) {
+    apply(plugin = "com.google.gms.google-services")
+} else {
+    logger.warn(
+        "⚠️  customer_app: android/app/google-services.json not found — " +
+            "Firebase plugin skipped. FCM / push notifications will not work " +
+            "at runtime until the file is generated via `flutterfire configure`."
+    )
 }
 
 // Load signing config from android/key.properties if it exists.
@@ -64,21 +86,25 @@ android {
 
     buildTypes {
         release {
-            // Use the real release signing config when key.properties is present.
-            // Otherwise fall back to debug signing so local `flutter run --release`
-            // still works. CI/Play Store builds MUST provide key.properties.
-            signingConfig = if (hasReleaseKeystore) {
-                signingConfigs.getByName("release")
-            } else {
-                logger.warn(
-                    "⚠️  customer_app: android/key.properties not found — " +
-                    "release build will be signed with debug keys. " +
-                    "Do NOT upload this build to the Play Store."
-                )
-                signingConfigs.getByName("debug")
+            // Only fail configuration when actually building a release artifact;
+            // evaluating this closure for debug tasks (e.g. assembleDebug) must not throw.
+            val isBuildingRelease = gradle.startParameter.taskNames.any { name ->
+                name.contains("Release", ignoreCase = true) ||
+                name.contains("Bundle", ignoreCase = true) ||
+                name.endsWith(":assemble") ||
+                name == "assemble"
             }
+            if (isBuildingRelease && !hasReleaseKeystore) {
+                throw GradleException(
+                    "Release build requires android/key.properties with upload keystore. " +
+                    "See docs/android-release.md."
+                )
+            }
+            signingConfig = if (hasReleaseKeystore)
+                signingConfigs.getByName("release")
+            else
+                signingConfigs.getByName("debug")
 
-            // Enable code shrinking, obfuscation, and optimization
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(

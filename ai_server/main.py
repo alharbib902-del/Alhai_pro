@@ -4,6 +4,7 @@ Alhai POS AI Server - خادم الذكاء الاصطناعي لنقاط الب
 FastAPI backend serving 15 AI features for the Alhai POS app.
 """
 
+import json
 import logging
 import time
 import uuid
@@ -13,8 +14,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from slowapi import _rate_limit_exceeded_handler
 from slowapi.errors import RateLimitExceeded
+from starlette.middleware.httpsredirect import HTTPSRedirectMiddleware
+from starlette.middleware.trustedhost import TrustedHostMiddleware
 
 from config import get_settings
+from core.logging_config import (
+    configure_logging,
+    reset_request_context,
+    set_request_context,
+)
 from rate_limit import limiter, RATE_HEALTH
 from routers import (
     assistant,
@@ -38,27 +46,43 @@ logger = logging.getLogger(__name__)
 
 settings = get_settings()
 
+configure_logging(settings.debug)
+
 # limiter is imported from rate_limit module
 
 app = FastAPI(
     title="Alhai POS AI Server",
     description="خادم الذكاء الاصطناعي لنظام نقاط البيع الحي - 15 خدمة ذكية",
     version="1.0.0",
-    docs_url="/docs",
-    redoc_url="/redoc",
+    # Disable public OpenAPI docs in production to avoid information disclosure;
+    # set DEBUG=true locally to re-enable.
+    docs_url="/docs" if settings.debug else None,
+    redoc_url="/redoc" if settings.debug else None,
+    openapi_url="/openapi.json" if settings.debug else None,
 )
 
 # Rate limiting
 app.state.limiter = limiter
 app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
+# HTTPS redirect in production (defence-in-depth behind the reverse proxy).
+if not settings.debug:
+    app.add_middleware(HTTPSRedirectMiddleware)
+
+# Host header validation — reject requests that don't match an allowed host.
+# In debug mode we accept everything so local curl / localhost still works.
+if settings.trusted_hosts:
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=settings.trusted_hosts)
+
 # CORS - only allow configured origins (no wildcard)
+# Note: with allow_credentials=True, allow_headers MUST be an explicit list
+# (spec forbids "*" combined with credentials). Only POST/GET/OPTIONS are used.
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.cors_origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allow_headers=["*", "Authorization"],
+    allow_methods=["GET", "POST", "OPTIONS"],
+    allow_headers=["Authorization", "Content-Type", "X-Request-ID"],
 )
 
 
@@ -102,7 +126,30 @@ async def limit_request_body_middleware(request: Request, call_next):
 async def request_id_middleware(request: Request, call_next):
     request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
     request.state.request_id = request_id
-    response = await call_next(request)
+    # Peek at the body once, cache it so rate_limit can read store_id and so
+    # downstream handlers still get a parseable body.
+    body = b""
+    if request.method in ("POST", "PUT", "PATCH"):
+        try:
+            body = await request.body()
+        except Exception:
+            body = b""
+    request.state.cached_body = body
+    if body:
+        try:
+            data = json.loads(body)
+            if isinstance(data, dict):
+                sid = data.get("store_id")
+                if sid:
+                    request.state.store_id = str(sid)
+        except Exception:
+            pass
+
+    set_request_context(request_id=request_id)
+    try:
+        response = await call_next(request)
+    finally:
+        reset_request_context()
     response.headers["X-Request-ID"] = request_id
     return response
 
@@ -112,15 +159,21 @@ async def request_id_middleware(request: Request, call_next):
 async def audit_log_middleware(request: Request, call_next):
     start = time.time()
     response = await call_next(request)
-    duration = (time.time() - start) * 1000
+    duration_ms = (time.time() - start) * 1000
     request_id = getattr(request.state, "request_id", "unknown")
+    client_ip = request.client.host if request.client else "unknown"
+    store_id = getattr(request.state, "store_id", None)
     logger.info(
-        "request_id=%s method=%s path=%s status=%d duration=%.1fms",
-        request_id,
-        request.method,
-        request.url.path,
-        response.status_code,
-        duration,
+        "request handled",
+        extra={
+            "request_id": request_id,
+            "ip": client_ip,
+            "method": request.method,
+            "endpoint": request.url.path,
+            "status": response.status_code,
+            "duration_ms": round(duration_ms, 1),
+            "store_id": store_id,
+        },
     )
     return response
 
@@ -133,6 +186,16 @@ async def security_headers_middleware(request: Request, call_next):
     response.headers["X-Frame-Options"] = "DENY"
     response.headers["X-XSS-Protection"] = "1; mode=block"
     response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+    # HSTS — force HTTPS for 1 year; only emit when not in debug mode to avoid
+    # trapping local http://localhost testing into https.
+    if not settings.debug:
+        response.headers["Strict-Transport-Security"] = (
+            "max-age=31536000; includeSubDomains"
+        )
+    # Lock down powerful browser features we never use.
+    response.headers["Permissions-Policy"] = (
+        "geolocation=(), microphone=(), camera=(), payment=()"
+    )
     return response
 
 

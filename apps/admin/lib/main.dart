@@ -18,6 +18,7 @@ import 'di/injection.dart';
 import 'dart:async';
 import 'router/admin_router.dart';
 import 'screens/onboarding/onboarding_screen.dart';
+import 'core/network/certificate_pinning_service.dart';
 import 'core/services/sentry_service.dart';
 
 /// Local theme provider (same pattern as cashier app)
@@ -81,12 +82,19 @@ Future<void> _appMain() async {
             'Supabase not configured. ${SupabaseConfig.configurationError}',
           );
         }
+        final pinnedClient = CertificatePinningService.createPinnedClient();
         await Supabase.initialize(
           url: SupabaseConfig.url,
           anonKey: SupabaseConfig.anonKey,
           debug: SupabaseConfig.enableDebugLogs,
+          httpClient: pinnedClient,
         );
-        if (kDebugMode) debugPrint('Supabase initialized successfully');
+        if (kDebugMode) {
+          debugPrint(
+            'Supabase initialized — cert pinning: '
+            '${CertificatePinningService.diagnosticStatus}',
+          );
+        }
       } catch (e, stack) {
         reportError(e, stackTrace: stack, hint: 'Supabase init');
         supabaseError = e.toString();

@@ -21,6 +21,7 @@ import 'dart:async';
 import 'router/lite_router.dart';
 import 'screens/onboarding_screen.dart';
 import 'screens/settings/lite_settings_screen.dart' show appVersionProvider;
+import 'core/network/certificate_pinning_service.dart';
 import 'core/services/sentry_service.dart';
 
 void main() {
@@ -76,13 +77,18 @@ Future<void> _appMain() async {
         'Supabase not configured. ${SupabaseConfig.configurationError}',
       );
     }
+    final pinnedClient = CertificatePinningService.createPinnedClient();
     await Supabase.initialize(
       url: SupabaseConfig.url,
       anonKey: SupabaseConfig.anonKey,
       debug: SupabaseConfig.enableDebugLogs,
+      httpClient: pinnedClient,
     );
     if (kDebugMode) {
-      debugPrint('Supabase initialized successfully');
+      debugPrint(
+        'Supabase initialized — cert pinning: '
+        '${CertificatePinningService.diagnosticStatus}',
+      );
     }
   } catch (e, stack) {
     if (kDebugMode) {

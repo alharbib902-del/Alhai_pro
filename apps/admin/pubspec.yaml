@@ -47,6 +47,8 @@ dependencies:
 
   # Security
   flutter_secure_storage: ^9.0.0
+  http: ^1.2.1
+  crypto: ^3.0.3
 
   # Formatting
   intl: ^0.20.2
@@ -84,16 +86,8 @@ flutter:
 
 flutter_launcher_icons:
   android: "ic_launcher"
-  ios: false
-  # ---------------------------------------------------------------
-  # To enable iOS icon generation after creating the iOS runner:
-  #   1. Run: flutter create --platforms=ios .
-  #   2. Change "ios: false" above to "ios: true"
-  #   3. Uncomment the two lines below
-  #   4. Run: dart run flutter_launcher_icons
-  # ios: true
-  # ios_content_mode: "scaleAspectFill"
-  # ---------------------------------------------------------------
+  ios: true
+  ios_content_mode: "scaleAspectFill"
   image_path: "assets/branding/app_icon.png"
   min_sdk_android: 21
   adaptive_icon_background: "#FFFFFF"
