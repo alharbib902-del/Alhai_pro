@@ -44,11 +44,11 @@ Map<String, dynamic> cleanSyncPayload(
 /// Supabase "column does not exist" errors. Add entries here when Drift has
 /// a column that Supabase lacks (rather than removing the column from Drift,
 /// which would require a local migration).
-const Map<String, Set<String>> _localOnlyColumns = {
-  // Verified against live Supabase 2026-04-04: these columns do NOT exist
-  'sales': {'shift_id', 'shiftId', 'deleted_at', 'deletedAt'},
-  'returns': {'deleted_at', 'deletedAt'},
-};
+// Re-verified against live Supabase 2026-04-18 (migration v44):
+// sales.shift_id, sales.deleted_at, returns.deleted_at now EXIST in Supabase,
+// so no stripping is needed. Kept as an empty map so future Drift-only
+// columns can be added here without re-plumbing callers.
+const Map<String, Set<String>> _localOnlyColumns = {};
 
 /// Converts map keys from camelCase to snake_case for Supabase compatibility.
 Map<String, dynamic> toSnakeCase(Map<String, dynamic> map) {

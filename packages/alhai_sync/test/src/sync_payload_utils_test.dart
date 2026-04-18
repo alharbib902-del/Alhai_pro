@@ -53,7 +53,9 @@ void main() {
       expect(cleaned.containsKey('items'), isTrue);
     });
 
-    test('removes local-only columns for specified table', () {
+    test('preserves shift_id and deleted_at for sales (Supabase v44)', () {
+      // After v44 migration these columns exist in Supabase; they must
+      // NOT be stripped or the server would miss them on push.
       final payload = {
         'id': 'sale-1',
         'total': 100.0,
@@ -64,9 +66,9 @@ void main() {
 
       final cleaned = cleanSyncPayload(payload, tableName: 'sales');
 
-      expect(cleaned.containsKey('shift_id'), isFalse);
-      expect(cleaned.containsKey('shiftId'), isFalse);
-      expect(cleaned.containsKey('deleted_at'), isFalse);
+      expect(cleaned['shift_id'], 'shift-1');
+      expect(cleaned['shiftId'], 'shift-1');
+      expect(cleaned['deleted_at'], '2026-01-01');
       expect(cleaned['id'], 'sale-1');
       expect(cleaned['total'], 100.0);
     });
