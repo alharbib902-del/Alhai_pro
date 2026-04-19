@@ -15,7 +15,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -581,9 +581,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
 
   Future<void> _saveCount() async {
     final l10n = AppLocalizations.of(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(l10n.success), backgroundColor: AppColors.success),
-    );
+    AlhaiSnackbar.success(context, l10n.success);
   }
 
   Future<void> _finalizeCount() async {
@@ -645,24 +643,14 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
       if (!mounted) return;
 
       final l10n = AppLocalizations.of(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.success),
-          backgroundColor: AppColors.success,
-        ),
-      );
+      AlhaiSnackbar.success(context, l10n.success);
 
       await _loadData();
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Save stock take');
       if (!mounted) return;
       final l10n = AppLocalizations.of(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.errorWithDetails('$e')),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

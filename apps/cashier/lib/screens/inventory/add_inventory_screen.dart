@@ -6,7 +6,7 @@ library;
 
 import 'dart:async';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -87,11 +87,9 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
       );
       if (mounted) {
         setState(() => _isSearching = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context).errorOccurred),
-            backgroundColor: AppColors.error,
-          ),
+        AlhaiSnackbar.error(
+          context,
+          AppLocalizations.of(context).errorOccurred,
         );
       }
     }
@@ -289,13 +287,9 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
                 height: 56,
                 child: FilledButton.icon(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          AppLocalizations.of(context).scanOrEnterBarcode,
-                        ),
-                        backgroundColor: AppColors.info,
-                      ),
+                    AlhaiSnackbar.info(
+                      context,
+                      AppLocalizations.of(context).scanOrEnterBarcode,
                     );
                   },
                   icon: const Icon(Icons.qr_code_scanner_rounded, size: 20),
@@ -772,11 +766,9 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).inventoryUpdatedMsg),
-          backgroundColor: AppColors.success,
-        ),
+      AlhaiSnackbar.success(
+        context,
+        AppLocalizations.of(context).inventoryUpdatedMsg,
       );
 
       // Clear form
@@ -790,12 +782,7 @@ class _AddInventoryScreenState extends ConsumerState<AddInventoryScreen> {
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Save add inventory');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.errorWithDetails('$e')),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
