@@ -5,6 +5,7 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/sa_providers.dart';
 import '../../core/services/audit_log_service.dart';
+import '../../core/services/sentry_service.dart';
 import '../../core/services/undo_service.dart';
 
 /// Store settings: suspend, upgrade, downgrade plan -- real Supabase operations.
@@ -34,7 +35,7 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
     return Scaffold(
       body: storeAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, st) => Center(child: Text(l10n.saErrorLoadingSettings)),
         data: (store) {
           final isActive = _isActive ?? store.isActive;
 
@@ -200,13 +201,22 @@ class _SAStoreSettingsScreenState extends ConsumerState<SAStoreSettingsScreen> {
                                                   ),
                                                 );
                                               }
-                                            } catch (e) {
+                                            } catch (e, st) {
+                                              await reportError(
+                                                e,
+                                                stackTrace: st,
+                                                hint: 'store.plan_change',
+                                              );
                                               if (context.mounted) {
                                                 ScaffoldMessenger.of(
                                                   context,
                                                 ).showSnackBar(
                                                   SnackBar(
-                                                    content: Text('Error: $e'),
+                                                    content: Text(
+                                                      AppLocalizations.of(
+                                                        context,
+                                                      ).saErrorGeneric,
+                                                    ),
                                                     backgroundColor:
                                                         theme.colorScheme.error,
                                                   ),
