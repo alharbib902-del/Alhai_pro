@@ -3,17 +3,12 @@ import 'package:flutter/foundation.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 
 import '../constants/timing.dart';
-import 'offline_queue_service.dart';
 
-/// Monitors network connectivity and auto-triggers queue processing
-/// when the device comes back online.
+/// Monitors network connectivity.
 ///
 /// Uses `connectivity_plus` to detect Wi-Fi, mobile, ethernet, etc.
 /// Exposes a [Stream] of connectivity changes and a synchronous
 /// [isOnline] getter for quick checks.
-///
-/// On transition from offline -> online, automatically calls
-/// [OfflineQueueService.flush] to replay pending operations.
 class ConnectivityService {
   ConnectivityService._();
 
@@ -94,9 +89,6 @@ class ConnectivityService {
 
       if (_isOnline != wasOnline) {
         _controller.add(_isOnline);
-        if (_isOnline) {
-          _onBackOnline();
-        }
       }
 
       return _isOnline;
@@ -132,37 +124,6 @@ class ConnectivityService {
       if (kDebugMode) {
         debugPrint('ConnectivityService: ${_isOnline ? "متصل" : "غير متصل"}');
       }
-
-      if (_isOnline) {
-        _onBackOnline();
-      }
     }
-  }
-
-  /// Called when transitioning from offline -> online.
-  /// Triggers queue flush to sync pending operations.
-  void _onBackOnline() {
-    if (kDebugMode) {
-      debugPrint(
-        'ConnectivityService: عاد الاتصال -- بدء مزامنة قائمة الانتظار',
-      );
-    }
-
-    // Fire-and-forget: flush the offline queue (with 30s timeout)
-    OfflineQueueService.instance
-        .flush()
-        .timeout(Timeouts.queueFlush)
-        .then((count) {
-          if (kDebugMode && count > 0) {
-            debugPrint('ConnectivityService: تمت مزامنة $count عملية');
-          }
-        })
-        .catchError((Object error) {
-          if (kDebugMode) {
-            debugPrint(
-              'ConnectivityService: فشل مزامنة قائمة الانتظار: $error',
-            );
-          }
-        });
   }
 }
