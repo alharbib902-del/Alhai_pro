@@ -16,7 +16,7 @@ import '../../../services/printing/print_service.dart';
 import '../../../services/printing/printing_providers.dart'
     hide autoPrintEnabledProvider;
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 
 /// Printer settings screen
 class PrinterSettingsScreen extends ConsumerStatefulWidget {
@@ -60,11 +60,9 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
       final service = ref.read(printServiceProvider);
       if (service == null) {
         if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context).printerInitFailed),
-              backgroundColor: AppColors.error,
-            ),
+          AlhaiSnackbar.error(
+            context,
+            AppLocalizations.of(context).printerInitFailed,
           );
         }
         return;
@@ -78,22 +76,18 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
         setState(() => _discoveredPrinters = printers);
 
         if (printers.isEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(AppLocalizations.of(context).noPrintersFound),
-              backgroundColor: AppColors.warning,
-            ),
+          AlhaiSnackbar.warning(
+            context,
+            AppLocalizations.of(context).noPrintersFound,
           );
         }
       }
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Scan printers');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context).searchErrorMsg('$e')),
-            backgroundColor: AppColors.error,
-          ),
+        AlhaiSnackbar.error(
+          context,
+          AppLocalizations.of(context).searchErrorMsg('$e'),
         );
       }
     } finally {
@@ -108,20 +102,19 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
           .connectAndSave(printer);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              success
-                  ? AppLocalizations.of(
-                      context,
-                    ).connectedToPrinterName(printer.name)
-                  : AppLocalizations.of(
-                      context,
-                    ).connectionFailedToPrinter(printer.name),
-            ),
-            backgroundColor: success ? AppColors.success : AppColors.error,
-          ),
-        );
+        if (success) {
+          AlhaiSnackbar.success(
+            context,
+            AppLocalizations.of(context).connectedToPrinterName(printer.name),
+          );
+        } else {
+          AlhaiSnackbar.error(
+            context,
+            AppLocalizations.of(
+              context,
+            ).connectionFailedToPrinter(printer.name),
+          );
+        }
         if (mounted) setState(() {}); // Refresh UI
       }
     } catch (e, stack) {
@@ -132,11 +125,9 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
   Future<void> _connectNetworkPrinter() async {
     final ip = _networkIp?.trim();
     if (ip == null || ip.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).enterPrinterIpAddress),
-          backgroundColor: AppColors.warning,
-        ),
+      AlhaiSnackbar.warning(
+        context,
+        AppLocalizations.of(context).enterPrinterIpAddress,
       );
       return;
     }
@@ -157,12 +148,7 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
     final l10n = AppLocalizations.of(context);
     final service = ref.read(printServiceProvider);
     if (service == null || service.status != PrinterStatus.connected) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.printerNotConnectedMsg),
-          backgroundColor: AppColors.warning,
-        ),
-      );
+      AlhaiSnackbar.warning(context, l10n.printerNotConnectedMsg);
       return;
     }
 
@@ -170,28 +156,19 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
     try {
       final result = await service.printTestPage();
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              result.success
-                  ? l10n.testPageSentSuccess
-                  : l10n.testFailedMsg(result.error ?? ''),
-            ),
-            backgroundColor: result.success
-                ? AppColors.success
-                : AppColors.error,
-          ),
-        );
+        if (result.success) {
+          AlhaiSnackbar.success(context, l10n.testPageSentSuccess);
+        } else {
+          AlhaiSnackbar.error(
+            context,
+            l10n.testFailedMsg(result.error ?? ''),
+          );
+        }
       }
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Test print');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorMsgGeneric('$e')),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        AlhaiSnackbar.error(context, l10n.errorMsgGeneric('$e'));
       }
     } finally {
       if (mounted) setState(() => _isTesting = false);
@@ -202,27 +179,20 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
     final l10n = AppLocalizations.of(context);
     final service = ref.read(printServiceProvider);
     if (service == null || service.status != PrinterStatus.connected) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.printerNotConnectedMsg),
-          backgroundColor: AppColors.warning,
-        ),
-      );
+      AlhaiSnackbar.warning(context, l10n.printerNotConnectedMsg);
       return;
     }
 
     final result = await service.openCashDrawer();
     if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            result.success
-                ? l10n.cashDrawerOpened
-                : l10n.cashDrawerFailed(result.error ?? ''),
-          ),
-          backgroundColor: result.success ? AppColors.success : AppColors.error,
-        ),
-      );
+      if (result.success) {
+        AlhaiSnackbar.success(context, l10n.cashDrawerOpened);
+      } else {
+        AlhaiSnackbar.error(
+          context,
+          l10n.cashDrawerFailed(result.error ?? ''),
+        );
+      }
     }
   }
 
@@ -230,11 +200,9 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
     await ref.read(printServiceProvider.notifier).disconnectAndClear();
     if (mounted) {
       setState(() {});
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).disconnectedMsg),
-          backgroundColor: AppColors.info,
-        ),
+      AlhaiSnackbar.info(
+        context,
+        AppLocalizations.of(context).disconnectedMsg,
       );
     }
   }

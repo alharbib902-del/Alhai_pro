@@ -14,7 +14,11 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show
+        AlhaiBreakpoints,
+        AlhaiSnackbar,
+        AlhaiSnackbarVariant,
+        AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../../core/services/sentry_service.dart';
 
@@ -107,14 +111,11 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
     final device = _devices[index];
 
     // Simulate connection test
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          AppLocalizations.of(context).testingConnectionName(device.name),
-        ),
-        backgroundColor: AppColors.info,
-        duration: const Duration(seconds: 1),
-      ),
+    AlhaiSnackbar.show(
+      context,
+      message: AppLocalizations.of(context).testingConnectionName(device.name),
+      variant: AlhaiSnackbarVariant.info,
+      duration: const Duration(seconds: 1),
     );
 
     await Future.delayed(const Duration(seconds: 2));
@@ -123,13 +124,9 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
       setState(() {
         _devices[index] = device.copyWith(isConnected: true);
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            AppLocalizations.of(context).connectionSuccessful(device.name),
-          ),
-          backgroundColor: AppColors.success,
-        ),
+      AlhaiSnackbar.success(
+        context,
+        AppLocalizations.of(context).connectionSuccessful(device.name),
       );
     }
   }

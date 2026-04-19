@@ -15,7 +15,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../../core/services/sentry_service.dart';
 
@@ -84,23 +84,17 @@ class _AddPaymentDeviceScreenState
 
       if (mounted) {
         setState(() => _testPassed = true);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context).connectionSuccessMsg),
-            backgroundColor: AppColors.success,
-          ),
+        AlhaiSnackbar.success(
+          context,
+          AppLocalizations.of(context).connectionSuccessMsg,
         );
       }
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Test payment device connection');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context).connectionFailedMsg('$e'),
-            ),
-            backgroundColor: AppColors.error,
-          ),
+        AlhaiSnackbar.error(
+          context,
+          AppLocalizations.of(context).connectionFailedMsg('$e'),
         );
       }
     } finally {
@@ -133,24 +127,18 @@ class _AddPaymentDeviceScreenState
       }
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context).deviceSavedMsg),
-            backgroundColor: AppColors.success,
-          ),
+        AlhaiSnackbar.success(
+          context,
+          AppLocalizations.of(context).deviceSavedMsg,
         );
         context.pop();
       }
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Save payment device');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context).settingsSaveErrorMsg('$e'),
-            ),
-            backgroundColor: AppColors.error,
-          ),
+        AlhaiSnackbar.error(
+          context,
+          AppLocalizations.of(context).settingsSaveErrorMsg('$e'),
         );
       }
     } finally {
