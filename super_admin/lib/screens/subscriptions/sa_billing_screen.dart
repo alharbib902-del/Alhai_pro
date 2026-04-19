@@ -36,7 +36,7 @@ class SABillingScreen extends ConsumerWidget {
             // Summary cards
             summaryAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Text('Error: $e'),
+              error: (e, st) => Text(l10n.saErrorLoading),
               data: (summary) {
                 final paid = summary['paid'] ?? 0.0;
                 final unpaid = summary['unpaid'] ?? 0.0;
