@@ -16,7 +16,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 import '../../core/services/sentry_service.dart';
 
 /// شاشة كشف حساب العميل
@@ -1375,11 +1375,9 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
                               amountController.text,
                             );
                             if (amount == null || amount <= 0) {
-                              ScaffoldMessenger.of(dialogContext).showSnackBar(
-                                SnackBar(
-                                  content: Text(l10n.enterValidAmount),
-                                  backgroundColor: AppColors.error,
-                                ),
+                              AlhaiSnackbar.error(
+                                dialogContext,
+                                l10n.enterValidAmount,
                               );
                               return;
                             }
@@ -1498,12 +1496,7 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
       await _loadData();
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.adjustmentSaved),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        AlhaiSnackbar.success(context, l10n.adjustmentSaved);
       }
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Save ledger adjustment');

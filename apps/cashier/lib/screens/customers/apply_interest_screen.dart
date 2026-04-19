@@ -14,7 +14,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -758,12 +758,7 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
       );
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.success),
-          backgroundColor: AppColors.success,
-        ),
-      );
+      AlhaiSnackbar.success(context, l10n.success);
 
       _selectedIds.clear();
       await _loadAccounts();

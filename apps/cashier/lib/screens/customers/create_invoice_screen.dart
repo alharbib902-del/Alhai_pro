@@ -7,7 +7,7 @@ library;
 
 import 'dart:async';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -95,13 +95,9 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Product search');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context).productSearchFailed('$e'),
-            ),
-            backgroundColor: AppColors.error,
-          ),
+        AlhaiSnackbar.error(
+          context,
+          AppLocalizations.of(context).productSearchFailed('$e'),
         );
       }
     }
@@ -122,13 +118,9 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Customer search');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context).customerSearchFailed('$e'),
-            ),
-            backgroundColor: AppColors.error,
-          ),
+        AlhaiSnackbar.error(
+          context,
+          AppLocalizations.of(context).customerSearchFailed('$e'),
         );
       }
     }
@@ -997,15 +989,9 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
       );
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            isDraft
-                ? 'Invoice saved as draft'
-                : 'Invoice finalized successfully',
-          ),
-          backgroundColor: AppColors.success,
-        ),
+      AlhaiSnackbar.success(
+        context,
+        isDraft ? 'Invoice saved as draft' : 'Invoice finalized successfully',
       );
 
       if (!isDraft) {
@@ -1019,12 +1005,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Save invoice');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.errorWithDetails('$e')),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
