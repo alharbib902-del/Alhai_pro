@@ -66,8 +66,8 @@ Map<String, dynamic> buildOrderItemRow({
     'product_id': productId,
     'product_name': productName,
     'unit_price': unitPrice,
-    'qty': qty,
-    'total_price': totalPrice,
+    'quantity': qty,
+    'total': totalPrice,
   };
 }
 
@@ -210,8 +210,8 @@ void main() {
               productId: (row['product_id'] as String?) ?? '',
               name: (row['product_name'] as String?) ?? '',
               unitPrice: (row['unit_price'] as num).toDouble(),
-              qty: (row['qty'] as num).toInt(),
-              lineTotal: (row['total_price'] as num).toDouble(),
+              qty: (row['quantity'] as num).toInt(),
+              lineTotal: (row['total'] as num).toDouble(),
             ),
           )
           .toList();
@@ -236,8 +236,8 @@ void main() {
               productId: (row['product_id'] as String?) ?? '',
               name: (row['product_name'] as String?) ?? '',
               unitPrice: (row['unit_price'] as num).toDouble(),
-              qty: (row['qty'] as num).toInt(),
-              lineTotal: (row['total_price'] as num).toDouble(),
+              qty: (row['quantity'] as num).toInt(),
+              lineTotal: (row['total'] as num).toDouble(),
             ),
           )
           .toList();
@@ -250,16 +250,16 @@ void main() {
         'product_id': null,
         'product_name': null,
         'unit_price': 10.0,
-        'qty': 1,
-        'total_price': 10.0,
+        'quantity': 1,
+        'total': 10.0,
       };
 
       final item = OrderItem(
         productId: (row['product_id'] as String?) ?? '',
         name: (row['product_name'] as String?) ?? '',
         unitPrice: (row['unit_price'] as num).toDouble(),
-        qty: (row['qty'] as num).toInt(),
-        lineTotal: (row['total_price'] as num).toDouble(),
+        qty: (row['quantity'] as num).toInt(),
+        lineTotal: (row['total'] as num).toDouble(),
       );
 
       expect(item.productId, equals(''));

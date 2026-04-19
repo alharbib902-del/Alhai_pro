@@ -142,8 +142,8 @@ class OrdersDatasource {
                     'product_id': item.productId,
                     'product_name': item.name,
                     'unit_price': item.unitPrice,
-                    'qty': item.qty,
-                    'total_price': item.lineTotal,
+                    'quantity': item.qty,
+                    'total': item.lineTotal,
                   },
                 )
                 .toList(),
@@ -197,8 +197,8 @@ class OrdersDatasource {
             productId: (row['product_id'] as String?) ?? '',
             name: (row['product_name'] as String?) ?? '',
             unitPrice: (row['unit_price'] as num).toDouble(),
-            qty: (row['qty'] as num).toInt(),
-            lineTotal: (row['total_price'] as num).toDouble(),
+            qty: (row['quantity'] as num).toInt(),
+            lineTotal: (row['total'] as num).toDouble(),
           ),
         )
         .toList();
@@ -242,8 +242,8 @@ class OrdersDatasource {
               productId: (r['product_id'] as String?) ?? '',
               name: (r['product_name'] as String?) ?? '',
               unitPrice: (r['unit_price'] as num).toDouble(),
-              qty: (r['qty'] as num).toInt(),
-              lineTotal: (r['total_price'] as num).toDouble(),
+              qty: (r['quantity'] as num).toInt(),
+              lineTotal: (r['total'] as num).toDouble(),
             ),
           )
           .toList();
@@ -291,8 +291,8 @@ class OrdersDatasource {
               productId: (r['product_id'] as String?) ?? '',
               name: (r['product_name'] as String?) ?? '',
               unitPrice: (r['unit_price'] as num).toDouble(),
-              qty: (r['qty'] as num).toInt(),
-              lineTotal: (r['total_price'] as num).toDouble(),
+              qty: (r['quantity'] as num).toInt(),
+              lineTotal: (r['total'] as num).toDouble(),
             ),
           )
           .toList();
@@ -333,8 +333,8 @@ class OrdersDatasource {
               productId: (r['product_id'] as String?) ?? '',
               name: (r['product_name'] as String?) ?? '',
               unitPrice: (r['unit_price'] as num).toDouble(),
-              qty: (r['qty'] as num).toInt(),
-              lineTotal: (r['total_price'] as num).toDouble(),
+              qty: (r['quantity'] as num).toInt(),
+              lineTotal: (r['total'] as num).toDouble(),
             ),
           )
           .toList();
