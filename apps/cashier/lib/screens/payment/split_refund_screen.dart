@@ -14,7 +14,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import 'package:alhai_auth/alhai_auth.dart';
 import '../../core/services/sentry_service.dart';
@@ -684,22 +684,15 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
       addBreadcrumb(message: 'Refund processed', category: 'payment');
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).refundProcessedSuccess),
-          backgroundColor: AppColors.success,
-        ),
+      AlhaiSnackbar.success(
+        context,
+        AppLocalizations.of(context).refundProcessedSuccess,
       );
       context.pop();
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Submit split refund');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.errorWithDetails('$e')),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }

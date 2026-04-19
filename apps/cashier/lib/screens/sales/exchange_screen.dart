@@ -16,7 +16,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// شاشة الاستبدال
@@ -76,11 +76,9 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Exchange search');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context).errorOccurred),
-            backgroundColor: AppColors.error,
-          ),
+        AlhaiSnackbar.error(
+          context,
+          AppLocalizations.of(context).errorOccurred,
         );
       }
     }
@@ -686,11 +684,9 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
       );
 
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).exchangeSuccessMsg),
-          backgroundColor: AppColors.success,
-        ),
+      AlhaiSnackbar.success(
+        context,
+        AppLocalizations.of(context).exchangeSuccessMsg,
       );
       setState(() {
         _returnItems.clear();
@@ -699,12 +695,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Submit exchange');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.errorWithDetails('$e')),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
     }
