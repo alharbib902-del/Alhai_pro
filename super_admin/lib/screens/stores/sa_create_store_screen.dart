@@ -93,7 +93,10 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
       // P0 audit trail: record the privileged mutation. Fire-and-forget
       // (AuditLogService.log swallows errors internally) so a Sentry-level
       // audit glitch never blocks the user flow.
-      // This is the reference pattern — wire more mutations in follow-up PRs.
+      //
+      // Owner PII (name/phone/email) is intentionally NOT included — it lives
+      // on the stores row (retrievable via target_id) and duplicating it into
+      // the append-only audit log would block GDPR right-to-erasure requests.
       await ref
           .read(auditLogServiceProvider)
           .log(
@@ -105,11 +108,6 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
               'business_type': _selectedBusiness,
               'plan': _selectedPlan,
               'branch_count': int.tryParse(_branchCountController.text) ?? 1,
-            },
-            metadata: {
-              'owner_name': _ownerNameController.text.trim(),
-              'owner_phone': _ownerPhoneController.text.trim(),
-              'owner_email': _ownerEmailController.text.trim(),
             },
           );
 

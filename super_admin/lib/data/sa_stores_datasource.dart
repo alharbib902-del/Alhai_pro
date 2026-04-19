@@ -167,6 +167,9 @@ class SAStoresDatasource {
       rethrow;
     }
 
+    // Owner email is NOT included — it lives on the stores row (stores.email)
+    // and duplicating it into the append-only audit log would block GDPR
+    // right-to-erasure. Auditors can correlate via target_id -> stores.id.
     await _audit?.log(
       action: 'store.create',
       targetType: 'store',
@@ -174,7 +177,6 @@ class SAStoresDatasource {
       after: {
         'name': name,
         'business_type': businessType,
-        'owner_email': ownerEmail,
         'plan_slug': planSlug,
       },
     );
