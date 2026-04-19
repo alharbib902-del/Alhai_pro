@@ -120,6 +120,19 @@ class DriverAuthDatasource {
 
     // Update driver record if vehicle info provided
     if (vehicleType != null || vehiclePlate != null) {
+      // Fetch the driver's assigned store_id. Admin sets this during approval.
+      // The v55 strict RLS policy (has_store_access(store_id)) requires
+      // store_id to be present and match the user's accessible stores.
+      final me = await _client
+          .from('users')
+          .select('store_id')
+          .eq('id', userId)
+          .single();
+      final storeId = me['store_id'] as String?;
+      if (storeId == null || storeId.isEmpty) {
+        throw Exception('السائق غير مرتبط بمتجر — يرجى التواصل مع الإدارة');
+      }
+
       final driverUpdates = <String, dynamic>{
         'updated_at': DateTime.now().toIso8601String(),
       };
@@ -128,6 +141,7 @@ class DriverAuthDatasource {
 
       await _client.from('drivers').upsert({
         'id': userId,
+        'store_id': storeId,
         'name': name ?? '',
         'phone': _client.auth.currentUser?.phone ?? '',
         ...driverUpdates,
