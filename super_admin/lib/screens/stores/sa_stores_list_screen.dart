@@ -135,7 +135,7 @@ class _SAStoresListScreenState extends ConsumerState<SAStoresListScreen> {
             Expanded(
               child: storesAsync.when(
                 loading: () => const SATableSkeleton(),
-                error: (e, _) => Center(child: Text('Error: $e')),
+                error: (e, st) => Center(child: Text(l10n.saErrorLoading)),
                 data: (stores) {
                   return Card(
                     elevation: 0,
