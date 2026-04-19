@@ -71,9 +71,7 @@ class SuperAdminApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       theme: AlhaiTheme.light,
       darkTheme: AlhaiTheme.dark,
-      themeMode: ThemeMode.dark, // Dark mode by default for admin
       routerConfig: router,
-      locale: const Locale('en'),
       supportedLocales: AppLocalizations.supportedLocales,
       localizationsDelegates: const [
         AppLocalizations.delegate,
