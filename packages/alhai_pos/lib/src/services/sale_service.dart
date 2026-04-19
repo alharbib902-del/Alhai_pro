@@ -113,6 +113,19 @@ class SaleService {
     late List<String> insertedItemIds;
     late Map<String, double> correctedPrices;
 
+    // Fetch org_id BEFORE the transaction so the local sales row and the
+    // downstream invoice (which reads sale.orgId from Drift) have a non-null
+    // org_id. Required for the invoices RLS policy, which gates INSERT on
+    //   org_id IN (SELECT org_id FROM org_members WHERE user_id = auth.uid())
+    // and silently denies NULL. Fetched outside the retry loop — org_id is
+    // tied to storeId and does not change across receipt-collision retries.
+    try {
+      final store = await _db.storesDao.getStoreById(storeId);
+      orgId = store?.orgId;
+    } catch (e) {
+      debugPrint('[SaleService] orgId fetch failed: $e');
+    }
+
     // Retry loop: if receipt number collides (unique constraint on idx_sales_store_receipt_unique),
     // regenerate and retry up to 3 times before giving up.
     const maxRetries = 3;
@@ -251,6 +264,7 @@ class SaleService {
           await _db.salesDao.insertSale(
             SalesTableCompanion.insert(
               id: saleId,
+              orgId: Value(orgId),
               storeId: storeId,
               receiptNo: receiptNo,
               cashierId: cashierId,
@@ -276,15 +290,8 @@ class SaleService {
             ),
           );
 
-          // 3. جلب org_id من المتجر (نحتاجه لدلتا المخزون والدين)
-          try {
-            final store = await _db.storesDao.getStoreById(storeId);
-            orgId = store?.orgId;
-          } catch (e) {
-            debugPrint('[SaleService] orgId fetch failed: $e');
-          }
-
-          // 4. إضافة عناصر البيع وخصم المخزون
+          // 3. إضافة عناصر البيع وخصم المخزون
+          // (org_id was fetched before the transaction — see top of createSale)
           insertedItemIds = <String>[];
           for (final item in items) {
             final freshProduct = freshProducts[item.product.id]!;
@@ -336,7 +343,7 @@ class SaleService {
             );
           }
 
-          // [FIX: BUG 1] 5. تسجيل الدين إذا كانت المبيعة تحتوي جزء آجل (credit)
+          // [FIX: BUG 1] 4. تسجيل الدين إذا كانت المبيعة تحتوي جزء آجل (credit)
           // تسجيل الدين جزء من المعاملة — إذا فشل، يُلغى البيع بالكامل
           // لأن بيع آجل بدون تسجيل دين = خسارة مالية صامتة
           if (!isPaid && validCustomerId != null) {
