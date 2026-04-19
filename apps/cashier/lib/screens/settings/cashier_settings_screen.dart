@@ -13,7 +13,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import '../../core/constants/timing.dart';
 import '../../core/utils/cache_cleaner.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// Main settings hub screen
@@ -276,12 +276,7 @@ class _CashierSettingsScreenState extends ConsumerState<CashierSettingsScreen> {
       reloadPage();
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.errorMsgGeneric('$e')),
-            backgroundColor: AppColors.error,
-          ),
-        );
+        AlhaiSnackbar.error(context, l10n.errorMsgGeneric('$e'));
       }
     }
   }

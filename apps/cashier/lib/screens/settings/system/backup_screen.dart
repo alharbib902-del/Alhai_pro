@@ -18,7 +18,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import '../../../core/services/sentry_service.dart';
 import '../../../core/services/backup_manager.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 
 /// Backup management screen
@@ -128,15 +128,11 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           _backupCount++;
           _backupSizeMb = bundle.sizeMb;
         });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              AppLocalizations.of(context).backupCompletedBody(
-                bundle.totalRows,
-                bundle.sizeMb.toStringAsFixed(1),
-              ),
-            ),
-            backgroundColor: AppColors.success,
+        AlhaiSnackbar.success(
+          context,
+          AppLocalizations.of(context).backupCompletedBody(
+            bundle.totalRows,
+            bundle.sizeMb.toStringAsFixed(1),
           ),
         );
         // Show share options
@@ -145,11 +141,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Perform backup');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context).backupFailedMsg('$e')),
-            backgroundColor: AppColors.error,
-          ),
+        AlhaiSnackbar.error(
+          context,
+          AppLocalizations.of(context).backupFailedMsg('$e'),
         );
       }
     } finally {
@@ -217,13 +211,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             onPressed: () {
               Clipboard.setData(ClipboardData(text: _lastBackupJson ?? ''));
               Navigator.pop(ctx);
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    AppLocalizations.of(context).backupCopiedToClipboard,
-                  ),
-                  backgroundColor: AppColors.info,
-                ),
+              AlhaiSnackbar.info(
+                context,
+                AppLocalizations.of(context).backupCopiedToClipboard,
               );
             },
             icon: const Icon(Icons.copy_rounded, size: 18),
@@ -393,13 +383,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       }
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              'Restore completed — ${report.restoredRows} rows, ${report.restoredTables} tables',
-            ),
-            backgroundColor: AppColors.success,
-          ),
+        AlhaiSnackbar.success(
+          context,
+          'Restore completed — ${report.restoredRows} rows, ${report.restoredTables} tables',
         );
         // Refresh the settings display
         _loadBackupSettings();
@@ -407,11 +393,9 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Perform restore');
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context).restoreFailed('$e')),
-            backgroundColor: AppColors.error,
-          ),
+        AlhaiSnackbar.error(
+          context,
+          AppLocalizations.of(context).restoreFailed('$e'),
         );
       }
     } finally {
