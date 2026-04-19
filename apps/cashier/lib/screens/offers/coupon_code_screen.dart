@@ -14,7 +14,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -223,12 +223,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
             width: double.infinity,
             child: OutlinedButton.icon(
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.scanBarcode),
-                    backgroundColor: AppColors.info,
-                  ),
-                );
+                AlhaiSnackbar.info(context, l10n.scanBarcode);
               },
               icon: const Icon(Icons.qr_code_scanner_rounded, size: 18),
               label: Text(l10n.scanCouponBarcode),
@@ -606,12 +601,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
 
   void _applyCoupon() {
     final l10n = AppLocalizations.of(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.couponCode),
-        backgroundColor: AppColors.success,
-      ),
-    );
+    AlhaiSnackbar.success(context, l10n.couponCode);
     context.pop();
   }
 }

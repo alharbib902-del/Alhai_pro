@@ -15,7 +15,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -806,12 +806,7 @@ class _CashierPurchaseRequestScreenState
 
     if (_requestItems.isEmpty) return;
     if (_requestItems.any((item) => item.quantity <= 0)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.validQuantityRequired),
-          backgroundColor: AppColors.warning,
-        ),
-      );
+      AlhaiSnackbar.warning(context, l10n.validQuantityRequired);
       return;
     }
 
@@ -878,12 +873,7 @@ class _CashierPurchaseRequestScreenState
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.requestSentToManager),
-          backgroundColor: AppColors.success,
-        ),
-      );
+      AlhaiSnackbar.success(context, l10n.requestSentToManager);
 
       // Clear form
       setState(() {
@@ -898,12 +888,7 @@ class _CashierPurchaseRequestScreenState
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Submit purchase request');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.errorWithDetails('$e')),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
     } finally {
       if (mounted) setState(() => _isSending = false);
     }
