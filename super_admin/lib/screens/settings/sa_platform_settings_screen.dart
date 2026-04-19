@@ -52,7 +52,7 @@ class _SAPlatformSettingsScreenState
     return Scaffold(
       body: settingsAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, st) => Center(child: Text(l10n.saErrorLoadingSettings)),
         data: (data) {
           _initFromData(data);
 

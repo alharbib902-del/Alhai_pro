@@ -47,7 +47,7 @@ class SAPlansScreen extends ConsumerWidget {
             const SizedBox(height: AlhaiSpacing.lg),
             plansAsync.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text('Error: $e')),
+              error: (e, st) => Center(child: Text(l10n.saErrorLoading)),
               data: (plans) {
                 final subCounts = subCountsAsync.valueOrNull ?? {};
 
