@@ -11,7 +11,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import 'package:alhai_core/alhai_core.dart' show UserRole;
 import '../../core/services/sentry_service.dart';
@@ -451,12 +451,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
     final openingCash = double.tryParse(_openingCashController.text);
 
     if (openingCash == null || openingCash <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.pleaseEnterOpeningCash),
-          backgroundColor: AppColors.warning,
-        ),
-      );
+      AlhaiSnackbar.warning(context, l10n.pleaseEnterOpeningCash);
       return;
     }
 
@@ -468,12 +463,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
       if (existingShift != null) {
         if (!mounted) return;
         setState(() => _isLoading = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(l10n.oneShiftAtATime),
-            backgroundColor: AppColors.warning,
-          ),
-        );
+        AlhaiSnackbar.warning(context, l10n.oneShiftAtATime);
         return;
       }
 
@@ -494,16 +484,9 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
         data: {'openingCash': openingCash},
       );
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-            l10n.shiftOpenedWithAmount(
-              openingCash.toStringAsFixed(0),
-              l10n.sar,
-            ),
-          ),
-          backgroundColor: AppColors.success,
-        ),
+      AlhaiSnackbar.success(
+        context,
+        l10n.shiftOpenedWithAmount(openingCash.toStringAsFixed(0), l10n.sar),
       );
 
       context.go(AppRoutes.pos);

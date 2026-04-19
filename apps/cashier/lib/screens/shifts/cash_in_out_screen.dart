@@ -13,7 +13,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../../widgets/cash/denomination_counter_widget.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import 'package:alhai_core/alhai_core.dart' show UserRole;
 import '../../core/services/sentry_service.dart';
@@ -700,11 +700,9 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(_isCashIn ? l10n.depositDone : l10n.withdrawalDone),
-          backgroundColor: AppColors.success,
-        ),
+      AlhaiSnackbar.success(
+        context,
+        _isCashIn ? l10n.depositDone : l10n.withdrawalDone,
       );
 
       // Clear form
@@ -714,12 +712,7 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Save cash in/out');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.errorWithDetails('$e')),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }

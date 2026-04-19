@@ -11,7 +11,11 @@ import 'package:go_router/go_router.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show
+        AlhaiBreakpoints,
+        AlhaiSnackbar,
+        AlhaiSnackbarVariant,
+        AlhaiSpacing;
 import 'package:alhai_auth/alhai_auth.dart' show authStateProvider, AuthStatus;
 import '../core/constants/timing.dart';
 import 'package:alhai_pos/alhai_pos.dart'
@@ -305,12 +309,12 @@ class _CashierShellState extends ConsumerState<CashierShell> {
         } else {
           _lastBackPress = now;
           final l10n = AppLocalizations.of(context);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(l10n.pressBackAgainToExit),
-              duration: Timeouts.doubleBackExit,
-              behavior: SnackBarBehavior.floating,
-            ),
+          AlhaiSnackbar.show(
+            context,
+            message: l10n.pressBackAgainToExit,
+            variant: AlhaiSnackbarVariant.neutral,
+            duration: Timeouts.doubleBackExit,
+            showCloseButton: false,
           );
         }
       },

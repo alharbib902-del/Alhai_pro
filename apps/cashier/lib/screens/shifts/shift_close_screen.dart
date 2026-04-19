@@ -14,7 +14,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../../widgets/cash/denomination_counter_widget.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import 'package:alhai_core/alhai_core.dart' show UserRole;
 import '../../core/services/sentry_service.dart';
@@ -738,9 +738,7 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
     // but empty / whitespace / non-numeric input is a validation error.
     final parsedActualCash = double.tryParse(_actualCashController.text.trim());
     if (parsedActualCash == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(l10n.requiredField)),
-      );
+      AlhaiSnackbar.warning(context, l10n.requiredField);
       return;
     }
     final actualCash = parsedActualCash;
