@@ -345,10 +345,6 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
       variables: [Variable.withString(orderId)],
     ).get();
 
-    // M36: Local Drift DB uses 'quantity', 'unit_price', 'total' as column names.
-    // These are the canonical names in the Drift schema (order_items_table.dart).
-    // The Supabase schema uses 'qty', 'unit_price', 'total_price' but that
-    // mapping is handled by the sync layer (sync_payload_utils.dart).
     final items = itemsResult
         .map(
           (row) => OrderItemWithProduct(
