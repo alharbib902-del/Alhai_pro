@@ -14,7 +14,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiSpacing, AlhaiContextExtensions;
+    show AlhaiContextExtensions, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -133,11 +133,9 @@ class _CashierCategoriesScreenState
       reportError(e, stackTrace: stack, hint: 'Load category products');
       if (mounted) {
         setState(() => _isLoadingProducts = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context).errorOccurred),
-            backgroundColor: AppColors.error,
-          ),
+        AlhaiSnackbar.error(
+          context,
+          AppLocalizations.of(context).errorOccurred,
         );
       }
     }

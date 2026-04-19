@@ -13,7 +13,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 
@@ -66,11 +66,9 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
       );
       if (mounted) {
         setState(() => _isSearching = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(AppLocalizations.of(context).errorOccurred),
-            backgroundColor: AppColors.error,
-          ),
+        AlhaiSnackbar.error(
+          context,
+          AppLocalizations.of(context).errorOccurred,
         );
       }
     }
@@ -274,13 +272,9 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                 height: 56,
                 child: FilledButton.icon(
                   onPressed: () {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                          AppLocalizations.of(context).enterBarcodeManually,
-                        ),
-                        backgroundColor: AppColors.info,
-                      ),
+                    AlhaiSnackbar.info(
+                      context,
+                      AppLocalizations.of(context).enterBarcodeManually,
                     );
                   },
                   icon: const Icon(Icons.qr_code_scanner_rounded, size: 20),
@@ -716,21 +710,11 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.printJobSentForLabels(qty)),
-          backgroundColor: AppColors.success,
-        ),
-      );
+      AlhaiSnackbar.success(context, l10n.printJobSentForLabels(qty));
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Print barcode labels');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.errorWithDetails('$e')),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
     } finally {
       if (mounted) setState(() => _isPrinting = false);
     }

@@ -14,7 +14,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -707,12 +707,7 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
     final l10n = AppLocalizations.of(context);
 
     if (newPrice == null || newPrice <= 0) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.enterValidAmount),
-          backgroundColor: AppColors.warning,
-        ),
-      );
+      AlhaiSnackbar.warning(context, l10n.enterValidAmount);
       return;
     }
 
@@ -744,23 +739,16 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context).priceUpdatedMsg),
-          backgroundColor: AppColors.success,
-        ),
+      AlhaiSnackbar.success(
+        context,
+        AppLocalizations.of(context).priceUpdatedMsg,
       );
 
       context.pop();
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Save price update');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.errorWithDetails('$e')),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }

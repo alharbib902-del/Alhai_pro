@@ -15,7 +15,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:uuid/uuid.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
-    show AlhaiBreakpoints, AlhaiSpacing;
+    show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -625,12 +625,7 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
   void _scanBarcode() {
     // Barcode scanning placeholder - will use camera/scanner
     final l10n = AppLocalizations.of(context);
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(l10n.enterBarcodeManually),
-        backgroundColor: AppColors.info,
-      ),
-    );
+    AlhaiSnackbar.info(context, l10n.enterBarcodeManually);
   }
 
   Future<void> _saveProduct() async {
@@ -688,12 +683,7 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
 
       if (!mounted) return;
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.productAddedSuccess),
-          backgroundColor: AppColors.success,
-        ),
-      );
+      AlhaiSnackbar.success(context, l10n.productAddedSuccess);
 
       // Clear form for next product
       _nameController.clear();
@@ -707,12 +697,7 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Save quick add product');
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(l10n.errorWithDetails('$e')),
-          backgroundColor: AppColors.error,
-        ),
-      );
+      AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
