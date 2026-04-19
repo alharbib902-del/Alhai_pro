@@ -1,10 +1,10 @@
 // ---------------------------------------------------------------------------
-// DUAL-QUEUE ARCHITECTURE -- DB-LEVEL QUEUE (Queue 2 of 2)
+// DB-LEVEL SYNC QUEUE (PushStrategy)
 // ---------------------------------------------------------------------------
 //
-// This is the GENERAL-PURPOSE sync queue used by ALL apps in the monorepo.
-// It pushes locally-created rows from the Drift/SQLite `sync_queue` table
-// to Supabase.
+// General-purpose sync queue used by ALL apps in the monorepo. Pushes
+// locally-created rows from the Drift/SQLite `sync_queue` table to Supabase.
+// Invoked by SyncEngine.syncNow() on reconnect and on periodic cadence.
 //
 // Tables pushed: sales, sale_items, orders, order_items, cash_movements,
 //   audit_log, inventory_movements, order_status_history, daily_summaries,
@@ -14,20 +14,7 @@
 //   size 100. Conflict types detected: duplicate key (23505), version
 //   conflict (409), delete-update, schema mismatch, network timeout.
 //
-// IMPORTANT -- Separate from OfflineQueueService in the cashier app.
-//   The cashier app has a SECOND queue:
-//     apps/cashier/lib/core/services/offline_queue_service.dart
-//   That queue uses FlutterSecureStorage (encrypted) for cashier-specific
-//   operations (sale creates/updates, refunds, inventory, customer sync)
-//   that contain sensitive PII / financial data.
-//
-// On reconnect both queues flush independently:
-//   - OfflineQueueService.flush()  (cashier encrypted queue)
-//   - SyncEngine.syncNow()         (this DB-level queue via PushStrategy)
-//   Idempotency keys on both sides prevent duplicate server-side processing.
-//
-// See the doc block at the top of offline_queue_service.dart for the full
-// architectural overview of both queues.
+// Idempotency keys prevent duplicate server-side processing on retry.
 // ---------------------------------------------------------------------------
 
 import 'dart:async';
