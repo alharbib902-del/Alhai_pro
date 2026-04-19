@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+
+import '../../core/services/sentry_service.dart';
+import '../../data/models/sa_analytics_model.dart';
 import '../../providers/sa_providers.dart';
 
 /// Platform settings: ZATCA config, payment gateways -- real Supabase data.
@@ -17,6 +20,9 @@ class _SAPlatformSettingsScreenState
     extends ConsumerState<SAPlatformSettingsScreen> {
   // Local state mirrors -- initialized from provider data
   bool _initialized = false;
+  bool _saving = false;
+  SAPlatformSettings? _original;
+
   bool _zatcaEnabled = true;
   String _zatcaEnvironment = 'production';
   String _vatRate = '15';
@@ -27,9 +33,10 @@ class _SAPlatformSettingsScreenState
   bool _tabbyEnabled = true;
   bool _tamaraEnabled = false;
 
-  void _initFromData(dynamic data) {
+  void _initFromData(SAPlatformSettings data) {
     if (_initialized) return;
     _initialized = true;
+    _original = data;
     _zatcaEnabled = data.zatcaEnabled;
     _zatcaEnvironment = data.zatcaEnvironment;
     _vatRate = '${data.vatRate}';
@@ -39,6 +46,107 @@ class _SAPlatformSettingsScreenState
     _hyperpayEnabled = data.hyperpayEnabled;
     _tabbyEnabled = data.tabbyEnabled;
     _tamaraEnabled = data.tamaraEnabled;
+  }
+
+  /// True when any local field differs from the last loaded snapshot.
+  bool get _isDirty {
+    final o = _original;
+    if (o == null) return false;
+    final parsedVat = double.tryParse(_vatRate) ?? o.vatRate;
+    return _zatcaEnabled != o.zatcaEnabled ||
+        _zatcaEnvironment != o.zatcaEnvironment ||
+        parsedVat != o.vatRate ||
+        _defaultLanguage != o.defaultLanguage ||
+        _trialPeriodDays != o.trialPeriodDays ||
+        _moyasarEnabled != o.moyasarEnabled ||
+        _hyperpayEnabled != o.hyperpayEnabled ||
+        _tabbyEnabled != o.tabbyEnabled ||
+        _tamaraEnabled != o.tamaraEnabled;
+  }
+
+  void _resetFromOriginal() {
+    final o = _original;
+    if (o == null) return;
+    setState(() {
+      _zatcaEnabled = o.zatcaEnabled;
+      _zatcaEnvironment = o.zatcaEnvironment;
+      _vatRate = '${o.vatRate}';
+      _defaultLanguage = o.defaultLanguage;
+      _trialPeriodDays = o.trialPeriodDays;
+      _moyasarEnabled = o.moyasarEnabled;
+      _hyperpayEnabled = o.hyperpayEnabled;
+      _tabbyEnabled = o.tabbyEnabled;
+      _tamaraEnabled = o.tamaraEnabled;
+    });
+  }
+
+  Future<void> _save(SAPlatformSettings original) async {
+    final l10n = AppLocalizations.of(context);
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.saSaveChanges),
+        content: Text(l10n.saPlatformSettingsConfirm),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(false),
+            child: Text(l10n.saDiscardChanges),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.of(ctx).pop(true),
+            child: Text(l10n.saConfirmSave),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true) return;
+    if (!mounted) return;
+
+    setState(() => _saving = true);
+    try {
+      final vatRate = double.tryParse(_vatRate) ?? original.vatRate;
+      final client = ref.read(saSupabaseClientProvider);
+      await client.rpc(
+        'update_platform_settings',
+        params: {
+          'p_zatca_enabled': _zatcaEnabled,
+          'p_zatca_environment': _zatcaEnvironment,
+          'p_vat_rate': vatRate,
+          'p_default_language': _defaultLanguage,
+          'p_default_currency': original.defaultCurrency,
+          'p_trial_period_days': _trialPeriodDays,
+          'p_moyasar_enabled': _moyasarEnabled,
+          'p_hyperpay_enabled': _hyperpayEnabled,
+          'p_tabby_enabled': _tabbyEnabled,
+          'p_tamara_enabled': _tamaraEnabled,
+        },
+      );
+      if (!mounted) return;
+
+      // Force a re-read so the displayed values match what Supabase now has,
+      // and reset the dirty-tracking snapshot on the next rebuild.
+      _initialized = false;
+      ref.invalidate(saPlatformSettingsProvider);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(l10n.saPlatformSettingsSaved)),
+      );
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'platform_settings.save');
+      if (!mounted) return;
+      // Preserve the user's unsaved local edits -- do NOT invalidate here.
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            AppLocalizations.of(context).saPlatformSettingsSaveFailed,
+          ),
+          backgroundColor: Theme.of(context).colorScheme.error,
+        ),
+      );
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
   }
 
   @override
@@ -242,6 +350,47 @@ class _SAPlatformSettingsScreenState
                               ),
                             ],
                           ),
+                        ),
+                        const SizedBox(height: AlhaiSpacing.lg),
+
+                        // Save / Discard action row.
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: (_isDirty && !_saving)
+                                  ? _resetFromOriginal
+                                  : null,
+                              child: Text(l10n.saDiscardChanges),
+                            ),
+                            const SizedBox(width: AlhaiSpacing.md),
+                            FilledButton(
+                              onPressed: (_isDirty && !_saving)
+                                  ? () => _save(data)
+                                  : null,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  if (_saving)
+                                    const SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                      ),
+                                    )
+                                  else
+                                    const Icon(Icons.save_rounded, size: 18),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    _saving
+                                        ? l10n.saSaving
+                                        : l10n.saSaveChanges,
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
                         ),
                       ],
                     ),
