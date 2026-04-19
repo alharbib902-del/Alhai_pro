@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
-import '../../core/services/audit_log_service.dart';
 import '../../core/services/sentry_service.dart';
 import '../../providers/sa_providers.dart';
 
@@ -19,23 +18,25 @@ class SACreateStoreScreen extends ConsumerStatefulWidget {
 class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
   final _formKey = GlobalKey<FormState>();
   int _currentStep = 0;
-  String _selectedPlan = 'basic';
+  // Default plan is 'free' -- one of the 4 values whitelisted by the
+  // live subscriptions_plan_check ('free','starter','professional',
+  // 'enterprise'). The pre-U4 default of 'basic' was a production bug:
+  // 'basic' is not in the whitelist and every submission raised 23514.
+  String _selectedPlan = 'free';
   String _selectedBusiness = 'grocery';
   bool _submitting = false;
 
   final _nameController = TextEditingController();
-  final _branchCountController = TextEditingController(text: '1');
-  final _ownerNameController = TextEditingController();
-  final _ownerPhoneController = TextEditingController();
-  final _ownerEmailController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _taxNumberController = TextEditingController();
 
   @override
   void dispose() {
     _nameController.dispose();
-    _branchCountController.dispose();
-    _ownerNameController.dispose();
-    _ownerPhoneController.dispose();
-    _ownerEmailController.dispose();
+    _phoneController.dispose();
+    _emailController.dispose();
+    _taxNumberController.dispose();
     super.dispose();
   }
 
@@ -80,36 +81,18 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
 
     try {
       final ds = ref.read(saStoresDatasourceProvider);
-      final created = await ds.createStore(
+      // The v49 `create_store` RPC writes the sa_audit_log row itself
+      // inside the same transaction. The former screen-side
+      // auditLogService.log('store.create') call was a pre-v49 duplicate
+      // and has been removed.
+      await ds.createStore(
         name: _nameController.text.trim(),
+        phone: _phoneController.text.trim(),
+        email: _emailController.text.trim(),
+        taxNumber: _taxNumberController.text.trim(),
+        plan: _selectedPlan,
         businessType: _selectedBusiness,
-        ownerName: _ownerNameController.text.trim(),
-        ownerPhone: _ownerPhoneController.text.trim(),
-        ownerEmail: _ownerEmailController.text.trim(),
-        planSlug: _selectedPlan,
-        branchCount: int.tryParse(_branchCountController.text) ?? 1,
       );
-
-      // P0 audit trail: record the privileged mutation. Fire-and-forget
-      // (AuditLogService.log swallows errors internally) so a Sentry-level
-      // audit glitch never blocks the user flow.
-      //
-      // Owner PII (name/phone/email) is intentionally NOT included — it lives
-      // on the stores row (retrievable via target_id) and duplicating it into
-      // the append-only audit log would block GDPR right-to-erasure requests.
-      await ref
-          .read(auditLogServiceProvider)
-          .log(
-            action: 'store.create',
-            targetType: 'store',
-            targetId: created.id,
-            after: {
-              'name': created.name,
-              'business_type': _selectedBusiness,
-              'plan': _selectedPlan,
-              'branch_count': int.tryParse(_branchCountController.text) ?? 1,
-            },
-          );
 
       // Invalidate stores list so it refreshes
       ref.invalidate(saStoresListProvider);
@@ -285,13 +268,46 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
                                   onChanged: (v) =>
                                       setState(() => _selectedBusiness = v!),
                                 ),
+                              ],
+                            ),
+                          ),
+
+                          // Step 2: Contact info
+                          Step(
+                            title: Text(l10n.contactInfo),
+                            isActive: _currentStep >= 1,
+                            state: _currentStep > 1
+                                ? StepState.complete
+                                : StepState.indexed,
+                            content: Column(
+                              children: [
+                                TextFormField(
+                                  controller: _phoneController,
+                                  decoration: InputDecoration(
+                                    labelText: l10n.phone,
+                                    prefixIcon: const Icon(Icons.phone_rounded),
+                                  ),
+                                  keyboardType: TextInputType.phone,
+                                  validator: _validatePhone,
+                                ),
                                 const SizedBox(height: AlhaiSpacing.md),
                                 TextFormField(
-                                  controller: _branchCountController,
+                                  controller: _emailController,
                                   decoration: InputDecoration(
-                                    labelText: l10n.branchCountLabel,
+                                    labelText: l10n.email,
+                                    prefixIcon: const Icon(Icons.email_rounded),
+                                  ),
+                                  keyboardType: TextInputType.emailAddress,
+                                  validator: _validateEmail,
+                                ),
+                                const SizedBox(height: AlhaiSpacing.md),
+                                TextFormField(
+                                  controller: _taxNumberController,
+                                  decoration: InputDecoration(
+                                    labelText: l10n.taxNumber,
+                                    hintText: l10n.taxNumberHint,
                                     prefixIcon: const Icon(
-                                      Icons.account_tree_rounded,
+                                      Icons.receipt_long_rounded,
                                     ),
                                   ),
                                   keyboardType: TextInputType.number,
@@ -300,83 +316,57 @@ class _SACreateStoreScreenState extends ConsumerState<SACreateStoreScreen> {
                             ),
                           ),
 
-                          // Step 2: Owner info
-                          Step(
-                            title: Text(l10n.storeOwner),
-                            isActive: _currentStep >= 1,
-                            state: _currentStep > 1
-                                ? StepState.complete
-                                : StepState.indexed,
-                            content: Column(
-                              children: [
-                                TextFormField(
-                                  controller: _ownerNameController,
-                                  decoration: InputDecoration(
-                                    labelText: l10n.ownerName,
-                                    prefixIcon: const Icon(
-                                      Icons.person_rounded,
-                                    ),
-                                  ),
-                                  validator: (v) => _validateName(v, l10n),
-                                ),
-                                const SizedBox(height: AlhaiSpacing.md),
-                                TextFormField(
-                                  controller: _ownerPhoneController,
-                                  decoration: InputDecoration(
-                                    labelText: l10n.ownerPhone,
-                                    prefixIcon: const Icon(Icons.phone_rounded),
-                                  ),
-                                  keyboardType: TextInputType.phone,
-                                  validator: _validatePhone,
-                                ),
-                                const SizedBox(height: AlhaiSpacing.md),
-                                TextFormField(
-                                  controller: _ownerEmailController,
-                                  decoration: InputDecoration(
-                                    labelText: l10n.ownerEmail,
-                                    prefixIcon: const Icon(Icons.email_rounded),
-                                  ),
-                                  keyboardType: TextInputType.emailAddress,
-                                  validator: _validateEmail,
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          // Step 3: Plan selection
+                          // Step 3: Plan selection.
+                          //
+                          // Slugs ('free','starter','professional',
+                          // 'enterprise') are authoritative: they must match
+                          // the subscriptions_plan_check CHECK constraint
+                          // exactly or the v49 RPC raises 23514. Labels are
+                          // hardcoded English (SaaS tier names are
+                          // industry-standard proper nouns; no l10n keys
+                          // needed per U4 Part 3 decision).
                           Step(
                             title: Text(l10n.storePlan),
                             isActive: _currentStep >= 2,
                             content: Column(
                               children: [
                                 _PlanOption(
-                                  title: l10n.basicPlan,
-                                  price: '99',
-                                  features: '1 branch, 500 products, 3 users',
-                                  isSelected: _selectedPlan == 'basic',
+                                  title: 'Free',
+                                  price: '0',
+                                  features: 'Single branch, limited catalog',
+                                  isSelected: _selectedPlan == 'free',
                                   onTap: () =>
-                                      setState(() => _selectedPlan = 'basic'),
+                                      setState(() => _selectedPlan = 'free'),
                                 ),
                                 const SizedBox(height: AlhaiSpacing.sm),
                                 _PlanOption(
-                                  title: l10n.advancedPlan,
+                                  title: 'Starter',
+                                  price: '99',
+                                  features: '1 branch, 500 products, 3 users',
+                                  isSelected: _selectedPlan == 'starter',
+                                  onTap: () =>
+                                      setState(() => _selectedPlan = 'starter'),
+                                ),
+                                const SizedBox(height: AlhaiSpacing.sm),
+                                _PlanOption(
+                                  title: 'Professional',
                                   price: '249',
                                   features:
                                       '3 branches, 2000 products, 10 users',
-                                  isSelected: _selectedPlan == 'advanced',
+                                  isSelected: _selectedPlan == 'professional',
                                   onTap: () => setState(
-                                    () => _selectedPlan = 'advanced',
+                                    () => _selectedPlan = 'professional',
                                   ),
                                 ),
                                 const SizedBox(height: AlhaiSpacing.sm),
                                 _PlanOption(
-                                  title: l10n.professionalPlan,
+                                  title: 'Enterprise',
                                   price: '499',
                                   features:
                                       'Unlimited branches, products, users',
-                                  isSelected: _selectedPlan == 'professional',
+                                  isSelected: _selectedPlan == 'enterprise',
                                   onTap: () => setState(
-                                    () => _selectedPlan = 'professional',
+                                    () => _selectedPlan = 'enterprise',
                                   ),
                                 ),
                               ],
