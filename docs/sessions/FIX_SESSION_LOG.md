@@ -2914,3 +2914,99 @@ Platform Admin RLS session / W2 deferrals (v60, 2026-04-22) / comprehensive wild
 ---
 
 END OF PLATFORM ADMIN RLS ENTRY
+
+
+---
+
+### Wildcard Gen 3 Bootstrap — 2026-04-21 — 🎉 CAMPAIGN 33/33 COMPLETE (v65)
+
+**Classification:** Bootstrap (true Gen 3 design from scratch) + wildcard cleanup. Two-step atomic application.
+**Branch:** fix/wildcard-gen3-bootstrap (off 53ade82, cumulative)
+**Migration:** v65 at supabase/migrations/20260421_v65_wildcard_gen3_bootstrap.sql
+**Applied:** Supabase production on 2026-04-21 via SQL Editor (Step 1 then Step 2)
+
+#### Scope delivered
+
+12 statements across two atomic BEGIN..COMMIT blocks, user-gated with V1-POST-A between:
+
+**Step 1 — 6 CREATE Gen 3 policies (additive, fail-safe):**
+- `sales_store_access` (`has_store_access(store_id)`)
+- `sales_super_admin` (`is_super_admin()` bypass for cross-org analytics)
+- `sale_items_sale_access` (`EXISTS (sales s WHERE s.id = sale_items.sale_id AND has_store_access(s.store_id))`)
+- `promotions_store_access` (`has_store_access(store_id)`)
+- `suppliers_store_access` (`has_store_access(store_id)`)
+- `whatsapp_messages_store_access` (`has_store_access(store_id)`)
+
+**Step 2 — 6 DROP (subtractive):**
+- `whatsapp_messages.store_isolation` (dead Gen 2, single-store scalar)
+- 5 `"Allow authenticated full access"` wildcards on sales + sale_items + promotions + suppliers + whatsapp_messages
+
+#### Phase A investigation (the scope-correcting surprise)
+
+Prior session notes (v58 comment + earlier entries) claimed sales + sale_items had Gen 3 behind the wildcard. Phase A live `pg_policies` scan **disproved** this: all 5 target tables had ONLY the Gen 1 wildcard. This was true bootstrap — every Gen 3 designed from scratch.
+
+Evidence captured in Q1-Q5 live DB probes:
+- Q1 (policies): wildcards only on 4 tables + wildcard + dead Gen 2 on whatsapp_messages.
+- Q2 (columns): all 5 store-scoped (direct `store_id`) except sale_items (only `sale_id` → sales FK).
+- Q3 (rows, test environment): sales=11, sale_items=30, promotions=0, suppliers=0, whatsapp_messages=0.
+- Q4 (helper sig): `has_store_access(p_store_id TEXT) → boolean`, SECURITY DEFINER, STABLE, search_path hardened.
+- Q5 (helper body): `p_store_id IN (SELECT get_user_store_ids()) OR is_store_owner(p_store_id)` — **no `is_super_admin()` short-circuit**. Confirmed need for separate bypass on sales.
+
+Cross-app usage:
+- `sales`: 4 `.from()` hits in super_admin (sa_analytics_datasource + sa_stores_datasource — cross-org platform analytics).
+- `sale_items`, `promotions`, `suppliers`, `whatsapp_messages`: **zero** direct REST hits — sync-only via alhai_sync.
+
+#### Honest scope correction
+
+Three prior-session assumptions were wrong:
+1. "sales + sale_items have Gen 3" — FALSE. Both had wildcards only.
+2. "pos_terminals needs platform-admin bypass" — FALSE (caught in v64 Phase A, not here).
+3. "Gen 3 already widespread" — FALSE on these 5 specifically.
+
+Same audit-methodology lesson (live DB > in-repo SQL as source of truth) keeps validating itself.
+
+#### Verification matrix
+
+| Step | Check | Expected | Actual |
+|---|---|---|---|
+| V-PRE | 6 rows (5 wildcards + 1 dead Gen 2) | ✓ | ✓ |
+| Step 1 | 6 CREATE atomic | Success. No rows returned | ✓ |
+| V1-POST-A | 12 rows (6 new Gen 3 + 6 old) | ✓ | ✓ |
+| Step 2 | 6 DROP atomic | Success. No rows returned | ✓ |
+| V2-POST-A | 6 rows (Gen 3 only, zero wildcards/dead) | ✓ | ✓ |
+| V2-POST-B | sales=11, sale_items=30, others=0 | preserved | ✓ |
+| V2-POST-C | zero wildcards on target tables | ✓ | ✓ |
+| Flutter tests | cashier 600/600 + alhai_sync 358/358 | baseline preserved | ✓ |
+
+#### 🎉 Campaign final tally
+
+| Migration | Scope | Wildcards | Cumulative |
+|---|---|---|---|
+| v58 | anon (sales, sale_items) | 2 | 2 |
+| v59 (W1) | financial | 6 wildcards + 6 dead | 8 |
+| v60 (W2 reduced) | identity | 3 + 1 dead | 11 |
+| v61 (W4) | operational + customers anon | 10 + 9 dead + 2 anon | 21 |
+| v62 (W5 reduced) | categories | 2 + 1 dead | 23 |
+| v63 | sync_queue (vestigial) | 1 | 24 |
+| v64 | Platform Admin RLS | 3 wildcards + 2 bypass | 27 |
+| **v65** | **Wildcard Gen 3 Bootstrap** | **5 wildcards + 6 Gen 3 + 1 dead** | **33** |
+| **TOTAL** | — | **33 of 33 (100%)** | — |
+
+Zero `"Allow authenticated full access"` policies remain on any `public.*` table in live Supabase. Wildcard-cleanup campaign — spanning 8 migrations across multiple sessions — **complete**.
+
+#### Methodology validations
+
+1. **Two-step user-gated pacing** — user requested "step by step" rather than combined v65. Split reduced risk for the 5-table bootstrap scope. V1-POST-A acted as explicit go/no-go gate.
+2. **Live DB as source of truth (again)** — Phase A scan disproved three pre-session assumptions. The `pg_policies` first, always rule is now ironclad across ~10 RLS sessions.
+3. **`has_store_access()` canonical extension** — 4 tables now use it; pattern matches W1 and W4 batches.
+4. **EXISTS-subquery Gen 3 for FK-only tables** — `sale_items` has no direct `store_id`; JOIN back to sales via RLS-safe EXISTS works cleanly.
+5. **Separate bypass policy preferred over inline OR** — keeps platform-admin access explicit and auditable. Same pattern as v64 subscriptions + organizations.
+6. **Atomic BEGIN..COMMIT scales** — 6-DROP transaction in Step 2 matched v56/v59/v61 patterns without issue.
+
+#### Audit refs
+
+Wildcard Gen 3 Bootstrap session / comprehensive wildcard audit 2026-04-22 (commit 1ea56b4) / v64 Platform Admin RLS pattern reused for sales super_admin bypass / Phase A live DB investigation (Q1-Q5).
+
+---
+
+END OF WILDCARD GEN 3 BOOTSTRAP ENTRY — 🎉 CAMPAIGN COMPLETE
