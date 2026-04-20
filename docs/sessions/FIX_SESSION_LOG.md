@@ -2831,3 +2831,86 @@ Next session resumes with Platform Admin RLS OR Wildcard Gen 3 Bootstrap OR Depl
 ---
 
 END OF 2026-04-22 FINAL SUMMARY
+
+
+---
+
+### Platform Admin RLS — 2026-04-21 — 3 W2 deferrals unblocked (v64)
+
+**Classification:** Additive (bypass) + subtractive (wildcard drops). Atomic application.
+**Branch:** fix/platform-admin-rls
+**Migration:** v64 at supabase/migrations/20260421_v64_platform_admin_bypass_and_wildcard_drops.sql
+**Applied:** Supabase production on 2026-04-21 via SQL Editor
+
+#### Scope delivered
+
+5 statements, single atomic BEGIN..COMMIT:
+- **2 CREATE POLICY** — `subscriptions_super_admin` + `organizations_super_admin`, both `FOR ALL TO public USING (is_super_admin()) WITH CHECK (is_super_admin())`.
+- **3 DROP POLICY** — Gen 1 `"Allow authenticated full access"` wildcards on `subscriptions` + `organizations` + `pos_terminals`.
+
+Resolves all 3 tables deferred from W2 (v60, 2026-04-22).
+
+#### Phase A investigation (read-only, ~40 min)
+
+Verified via live DB probes + cross-app grep:
+
+- **`is_super_admin()` helper**: live, SECURITY DEFINER, STABLE, `search_path=public,auth` (hardened in v50). Body: `EXISTS (SELECT 1 FROM public.users WHERE id = auth.uid() AND role = 'super_admin')`. 9 live policies already use it (canonical pattern).
+- **super_admin app**: 14 cross-org calls on `subscriptions` across 3 datasource files (`sa_subscriptions_datasource.dart`, `sa_analytics_datasource.dart`, `sa_stores_datasource.dart`). Auth via `userMetadata.role='super_admin'` + server-side `rpc('is_super_admin')` at login (`sa_login_screen.dart:153`) — same function v64 uses in RLS.
+- **distributor_portal admin**: 9 cross-org calls on `organizations` across `admin_service.dart` (approve/reject/suspend/reinstate distributors) + `distributor_datasource.dart` (tenant-scoped `getOrgSettings`/`updateOrgSettings`). Same auth model as super_admin app.
+- **`pos_terminals`**: **ALREADY COMPLETE** via existing `terminal_isolation` policy. Phase 1 fear was wrong — `packages/alhai_sync/lib/src/org_sync_service.dart` filters by `org_id` at line 129 (tenant-scoped, never cross-org).
+- **Cross-app grep**: zero `.from(subscriptions|organizations|pos_terminals)` hits in `apps/cashier`, `apps/admin`, `apps/admin_lite`, `customer_app`, `driver_app`.
+- **Live user roles**: 1 super_admin exists (bypass has a real caller).
+- **Row baseline**: subscriptions=0, organizations=1, pos_terminals=0.
+
+#### Honest scope reduction — pos_terminals didn't need a bypass
+
+Phase 1 grouped pos_terminals with subscriptions + organizations because a test file in `packages/alhai_sync/test/` mocked `.from('pos_terminals')`. Phase A investigation of production `org_sync_service.dart` proved the table is strictly tenant-scoped (line 129: `query.eq('org_id', orgId)`). Existing `terminal_isolation` policy (`(org_id = get_user_org_id()) AND (is_org_admin() OR store_id IN (SELECT get_user_store_ids()))`) already covers all real access paths.
+
+Result: v64 adds bypass for **2 tables** (not 3). `pos_terminals` only needed its Gen 1 wildcard dropped.
+
+#### Verification matrix
+
+| Step | Expected | Actual |
+|---|---|---|
+| V64-PRE | 7 rows (3 wildcards + 4 existing) | ✓ |
+| APPLY | 5 statements, atomic, no errors | ✓ |
+| V64-POST-A | 6 rows (0 wildcards, 2 new bypass + 4 existing) | ✓ |
+| V64-POST-B | subs=0, orgs=1, terminals=0 (preserved) | ✓ |
+| V64-POST-C | 0 wildcards on target tables | ✓ |
+| Flutter tests | cashier 600/600 + alhai_sync 358/358 | ✓ baselines preserved |
+
+#### Campaign progress (post-v64)
+
+| Migration | Scope | Wildcards resolved |
+|---|---|---|
+| v58 | anon (sales, sale_items) | 2 |
+| v59 (W1) | financial | 6 wildcards + 6 dead Gen 2 |
+| v60 (W2 reduced) | identity | 3 wildcards + 1 dead Gen 2 |
+| v61 (W4) | operational + customers anon | 10 wildcards + 9 dead + 2 anon |
+| v62 (W5 reduced) | categories | 2 wildcards + 1 dead |
+| v63 | sync_queue (vestigial) | 1 |
+| **v64** | **Platform Admin RLS** | **3 wildcards + 2 bypass policies** |
+| **TOTAL** | — | **28 of 33 (85%)** |
+
+**5 wildcards remaining**, all blocked on Wildcard Gen 3 Bootstrap session:
+- `sales` authenticated wildcard (partial drop in v58 — anon only)
+- `sale_items` authenticated wildcard (partial drop in v58 — anon only)
+- `promotions` (no Gen 3)
+- `suppliers` (no Gen 3)
+- `whatsapp_messages` (only dead store_isolation, no Gen 3)
+
+#### Methodology validations
+
+1. **Pre-investigation scope reduction** — Phase A caught the pos_terminals misclassification from Phase 1 (test-only mock mistaken for production cross-org write). Bypass scope reduced 3 → 2 tables. Same honest-scope-reduction pattern as W2 6→3 and W5 2→1.
+2. **Combined atomic additive+subtractive** — 5 statements in one `BEGIN..COMMIT` proved safe for this scope (unlike v51/v52 which were pure drops). No intermediate state visible to readers.
+3. **Canonical `is_super_admin()` bypass extension** — pre-v64 had 9 live consumers; v64 adds 2 more (11 total). Pattern well-established.
+4. **Cross-app grep before wildcard drops** — zero `.from()` hits outside super_admin + distributor_portal + alhai_sync (tenant-scoped) confirmed that drop wouldn't break any other app.
+5. **Live-DB verification over static SQL** — prior audit finding (methodology lesson from A-5/C-2/C-1) applied again: `pg_policies` is the source of truth, not the in-repo SQL.
+
+#### Audit refs
+
+Platform Admin RLS session / W2 deferrals (v60, 2026-04-22) / comprehensive wildcard audit 2026-04-22 / Phase A investigation evidence (live DB probes Q1-Q5 + cross-app grep).
+
+---
+
+END OF PLATFORM ADMIN RLS ENTRY
