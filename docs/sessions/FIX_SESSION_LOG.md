@@ -2625,3 +2625,209 @@ sync_queue investigation 2026-04-22 (commit 659eebc) / comprehensive wildcard au
 ---
 
 END OF sync_queue DROP ENTRY
+
+
+---
+
+## 📊 END OF DAY SUMMARY — 2026-04-22
+
+**Total session duration:** ~15.5 hours (06:40 → ~22:00)
+**Branches created:** 11
+**Commits:** 38
+**Live Supabase migrations:** 8 (v56 → v63)
+**Tests added:** +31 (4 driver_app + 27 Money)
+**Zero test regressions across all suites**
+
+---
+
+### ✅ COMPLETED TODAY
+
+**Wildcard cleanup campaign (25 of 33 resolved, 76%):**
+- v56 (Gen 2 cleanup): 7 dead store_isolation policies
+- v57 (orphans + coupons): 5 policies including S-1 coupons leak
+- v58 (S-0 anon fix): sales + sale_items anon wildcards
+- v59 (W1 financial): 12 policies across 6 tables
+- v60 (W2 identity reduced): 4 policies across 3 tables
+- v61 (W4 operational): 21 policies + S-0 customers anon fix
+- v62 (W5 categories reduced): 3 policies + S-0 categories anon fix
+- v63 (sync_queue vestigial): 1 policy
+
+**4 S-0 anon leaks closed (301 production records protected):**
+- sales (11 rows)
+- sale_items (30 rows)
+- customers (212 rows)
+- categories (48 rows)
+
+**C-4 Money Foundation:**
+- Money value object (327 LOC, 27 tests, ROUND_HALF_UP)
+- Barrel export wired
+- Session 1 Phase 1-3 discovery + 10-commit strategy documented
+
+**driver_app hardening:**
+- +4 unit tests for updateProfile (store_id fetch)
+
+**sync_queue investigation:**
+- Cross-app grep confirmed vestigial
+- Drift schema local-only confirmed
+- DROP applied via v63
+
+---
+
+### 🚨 W3 SESSION ATTEMPTED — BLOCKED AND DEFERRED
+
+**Attempted:** Session W3 (sales/sale_items authenticated wildcards cleanup, ~8:30 PM)
+
+**Blocker discovered during pre-verify:**
+- sales + sale_items have ONLY the "Allow authenticated full access" wildcard
+- ZERO Gen 3 policies beneath (unlike v51-v62 tables which all had has_store_access dominant)
+- Dropping wildcard = total access denial = POS/ZATCA/customer-facing operations broken
+
+**Decision:** Assistant refused execution despite user pressure. W3 moved to "Wildcard Gen 3 Bootstrap" session (3-4h dedicated) requiring Gen 3 design BEFORE drop.
+
+**Branch:** fix/session-w3-sales-wildcards-20260422 created (HEAD = e00e158, no commits) + backup pushed + tag audit-w3-sales-auto-start-20260422.
+
+---
+
+### ⏳ REMAINING BACKLOG — 8 wildcards + ~105 hours
+
+#### 🔴 URGENT (blocked on prerequisite sessions)
+
+1. **Platform Admin RLS Session** (2-3h)
+   - 3 tables blocked: subscriptions, organizations, pos_terminals
+   - Survey super_admin auth model (16+ cross-org calls)
+   - Survey distributor_portal admin_service (7+ cross-org calls)
+   - Verify alhai_sync/lib/src/org_sync_service.dart pos_terminals usage
+   - Design is_super_admin() / is_platform_admin() SQL helpers
+   - Add bypass policies → THEN drop wildcards
+
+2. **Wildcard Gen 3 Bootstrap Session** (3-4h, potentially 2 sessions)
+   - 5 tables blocked: sales + sale_items authenticated, promotions, suppliers, whatsapp_messages
+   - Design Gen 3 policies per table (select/insert/update/delete via has_store_access)
+   - Cross-app grep verification
+   - Create Gen 3 → wait → drop wildcards atomic
+   - HOT TABLES (sales/sale_items) — staging required
+
+#### 🟠 HIGH (C-4 Money Migration — ~17-23h remaining)
+
+3. **C-4 Session 1 Phase 4 Stage A** (2-3h)
+   - v64 migration: org_products + discounts ALTER TYPE
+   - Drift v38 schema bump + onUpgrade
+   - DAO + caller updates
+   - Admin UI catch-up
+   - Empty tables = low risk
+
+4. **C-4 Session 1 Phase 4 Stage B** (3-4h)
+   - v65 migration: products.price + cost_price (9742 rows backfill)
+   - Drift v39
+   - Domain models → Money
+   - DTOs → int-cents
+   - POS cart + ZATCA integration
+   - Hot path + production data = staging mandatory
+
+5. **C-4 Session 2** — Invoice/ZATCA core (8-10h, FULL DAY)
+6. **C-4 Session 3** — Shifts/cash (4-6h)
+7. **C-4 Session 4** — Analytics cleanup (3-4h)
+
+#### 🟡 MEDIUM
+
+8. **Deploy customer_app** (30-45 min) — branch ready (fix/customer-app-orders-20260421)
+9. **Deploy driver_app** (30-45 min) — branch ready (fix/rls-hardening-c9-20260421)
+10. **Admin audit triage** (3-4h phase 1) — 310 findings, 42 P0s, multi-day execution
+11. **Server-side RPC audit** (1-2h) — reserve_online_stock, release_reserved_stock
+12. **C-7 Tombstones** (4-5h)
+13. **C-8 full Drift migration** (2-3h)
+14. **C-1 receipt_no collision design** (half-day+)
+15. **C-10 historical NULL-orgId cleanup** (1-2h)
+16. **C-5 TLV encoder refactor** (2-3h)
+17. **super_admin Tier 3** (multi-day)
+18. **FakeSupabaseClient hardening** (1h)
+19. **RLS historical policies scan** (1h)
+
+#### 🔵 BIG SESSIONS
+
+20. **C-9 Option 1 full refactor** (30-40h multi-session) — app_users/users merge
+21. **Alhai Platform acceptance review** (2-3h)
+22. **ZATCA Phase 2 pipeline verification** (half-day)
+
+---
+
+### 🎯 NEXT SESSION PRIORITIES (top 3)
+
+1. **Deploy customer_app + driver_app** (1-1.5h combined) — real user value, code ready
+2. **Platform Admin RLS Session** (2-3h) — closes 3 of 8 remaining wildcards
+3. **Wildcard Gen 3 Bootstrap Session** (3-4h) — closes 5 of 8 remaining wildcards + handles today's W3 deferral
+
+**Target:** Finish wildcard campaign (33/33 = 100%) in next 2 dedicated sessions + have both apps deployed.
+
+---
+
+### 🔒 TECHNICAL DECISIONS LOCKED TODAY
+
+- D1-D7 from previous sessions still hold
+- Methodology: per-table POST-B spot-checks MANDATORY at scale (v56 false-alarm lesson)
+- Cross-app grep MANDATORY before dropping wildcards on tables with live Gen 3 dependencies
+- Skip-grep permitted ONLY when Gen 3 has_store_access pattern is uniform across scope (W1/W4)
+- BLOCKER detection via pre-verify MANDATORY before drafting drop migrations (W2/W5 demonstrated)
+- Honest scope reduction > forced completeness (W2 6→3, W5 2→1 table cuts validated)
+
+---
+
+### 💡 METHODOLOGY VALIDATIONS AT SCALE
+
+1. Atomic BEGIN..COMMIT scales cleanly: 1 → 5 → 7 → 12 → 21 DROPs all green
+2. Cross-app grep prevented 2 major incidents (W2 super_admin, coupons anon bonus)
+3. Per-table POST-B spot-checks: 10-table sweep (v61) all clean
+4. BLOCKER identification before drop: W2 saved super_admin dashboard, W3 saved POS
+5. 4 S-0 anon-access fixes in single day via targeted drops
+
+---
+
+### 📁 Key Files / Artifacts Today
+
+**Migrations (8 files):**
+- supabase/migrations/20260422_v56_drop_dead_store_isolation_policies.sql
+- supabase/migrations/20260422_v57_drop_orphans_and_coupons_cleanup.sql
+- supabase/migrations/20260422_v58_drop_anon_wildcards_sales_sale_items.sql
+- supabase/migrations/20260422_v59_drop_financial_wildcards_and_dead_store_isolation.sql
+- supabase/migrations/20260422_v60_drop_identity_wildcards_safe_subset.sql
+- supabase/migrations/20260422_v61_drop_operational_wildcards_and_dead_gen2.sql
+- supabase/migrations/20260422_v62_drop_categories_anon_and_redundant_wildcards.sql
+- supabase/migrations/20260422_v63_drop_sync_queue_vestigial_policy.sql
+
+**Core library:**
+- alhai_core/lib/src/money/money.dart (327 LOC)
+- alhai_core/test/money/money_test.dart (262 LOC, 27 tests)
+- alhai_core/lib/src/src.dart (+3 lines barrel export)
+
+**Tests:**
+- driver_app/test/features/auth/data/driver_auth_datasource_test.dart (345 LOC, 4 tests)
+
+**Documentation:**
+- docs/sessions/sync-queue-investigation-20260422.md (154 LOC)
+- docs/sessions/c4-money-migration-plan.md (593 LOC, on plan/c4-money-migration-20260421)
+
+**11 branches (all backed up on GitHub):**
+- fix/gen2-dead-policy-cleanup-20260422
+- fix/driver-app-test-coverage-20260422
+- feat/c4-session-0-money-foundation-20260422
+- fix/orphan-org-isolation-audit-20260422
+- audit/wildcard-comprehensive-scan-20260422
+- feat/c4-session-1-product-catalog-20260422
+- fix/session-w1-financial-wildcards-20260422
+- fix/session-w2-identity-wildcards-20260422
+- fix/session-w3-sales-wildcards-20260422 (empty, deferred)
+- fix/session-w4-operational-wildcards-20260422
+- fix/session-w5-anomalies-20260422
+- audit/sync-queue-investigation-20260422
+
+---
+
+### 🌙 DAY CLOSED — 10:00 PM (hard stop honored)
+
+38 commits. 8 migrations live. 25 wildcards removed. 4 S-0 anon leaks closed. 301 production records protected. Zero regressions. All work backed up.
+
+Next session resumes with Platform Admin RLS OR Wildcard Gen 3 Bootstrap OR Deploy apps.
+
+---
+
+END OF 2026-04-22 FINAL SUMMARY
