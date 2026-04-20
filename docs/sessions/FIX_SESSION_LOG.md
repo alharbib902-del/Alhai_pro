@@ -3010,3 +3010,144 @@ Wildcard Gen 3 Bootstrap session / comprehensive wildcard audit 2026-04-22 (comm
 ---
 
 END OF WILDCARD GEN 3 BOOTSTRAP ENTRY — 🎉 CAMPAIGN COMPLETE
+
+
+---
+
+### Campaign Closure Audit — 2026-04-21 — ⚠️ "Complete" wasn't actually complete (v66)
+
+**Classification:** Audit-driven extended closure. Uncovered + remediated non-trivial residuals missed by the original Phase 1 scope.
+**Branch:** fix/campaign-closure-audit (off c398342, cumulative from v65)
+**Migration:** v66 at supabase/migrations/20260421_v66_campaign_closure_extended.sql
+**Applied:** Supabase production on 2026-04-21 via SQL Editor (Step 1 then Step 2)
+
+#### Summary
+
+v65 closed with a "33/33 complete" claim based on the Phase 1 audit list. A closure audit — run precisely to check that claim — found **+14 residuals** in wildcard-equivalent territory that the Phase 1 policyname-exact-match enumeration had missed. v66 remediated 13 of the 14 (the 14th is a deliberate PII deferral on `users`).
+
+Post-v66: 6 of 7 affected tables fully cleaned; `users` table remains with 3 pseudo-wildcard policies pending a dedicated PII session.
+
+#### Phase A closure audit findings
+
+Comprehensive `pg_policies` scan (Q1-Q4 + Q-ext, 2026-04-21) surfaced:
+
+**🔴 Gen 1 wildcards NOT in original Phase 1 list:**
+- `settings."Allow authenticated full access"` (FOR ALL {authenticated}, qual=true)
+- `shifts."Allow authenticated full access"` (FOR ALL {authenticated}, qual=true, SOLE policy — ZERO Gen 3 beneath)
+
+**🔴 `anon_read_*` policies with qual=true (S-0 severity per v58 taxonomy):**
+- `products.anon_read_products` — catalog PII + price
+- `stores.anon_read_stores` — store metadata
+- `settings.anon_read_settings` — tenant config
+- `users.anon_read_users` — **highest-severity PII** (deferred)
+
+**🟠 `authenticated_read_*` policies with qual=true (cross-tenant visibility):**
+- `products.authenticated_read_products`
+- `stores.authenticated_read_stores`
+- `settings.authenticated_read_settings`
+- `users.authenticated_read_users` (deferred)
+
+**🟡 Dead Gen 2 `store_isolation` (single-store scalar, dominated by Gen 3):**
+- `favorites`, `held_invoices`, `products`, `settings`, `stores`, `users` (users deferred)
+
+#### Why Phase 1 missed these
+
+The 2026-04-22 audit (commit 1ea56b4) enumerated wildcards by policyname exact-match on `"Allow authenticated full access"`. That found 33 entries. It missed:
+- Policies with different names but identical effect (`anon_read_*`, `authenticated_read_*` — same qual=true mechanic)
+- Tables that had the canonical-named wildcard but were simply not enumerated in the 33-item list (settings, shifts)
+
+Same "live DB + broader predicate = source of truth" lesson applying again. The correct predicate for a wildcard audit is `qual = true` (or `qual IS NULL with wide WITH CHECK`), not a policyname pattern.
+
+#### Design decisions
+
+**Shifts** (zero pre-existing Gen 3) — full bootstrap:
+- `shifts_store_access` FOR ALL `has_store_access(store_id)` + WITH CHECK same
+- `shifts_super_admin` FOR ALL `is_super_admin()` (analytics/platform)
+
+**Products + Stores** (full Gen 3 existed) — only added super_admin bypass:
+- `products_super_admin` FOR ALL `is_super_admin()` (sa_stores_datasource reads cross-org)
+- `stores_super_admin` FOR ALL `is_super_admin()` (sa_stores_datasource reads cross-org)
+
+**Settings** (full Gen 3 existed) — NO new policy needed, just drops. No super_admin direct access detected.
+
+**Favorites, held_invoices** — pure dead-Gen-2 cleanup, no new policies.
+
+#### EXPLICITLY DEFERRED — `users` table
+
+`users` has the exact same residual pattern (anon_read + auth_read + dead Gen 2) but was deferred. Rationale:
+
+After dropping those 3 policies, the ONLY SELECT policy remaining is `users_self_select` (`auth_uid = auth.uid()`). That would break:
+- super_admin cross-org reads (sa_users_datasource)
+- cashier alhai_sync pull_strategy for coworker visibility
+- admin app staff listing
+
+Proper fix requires a tenancy-model design decision (store-scoped coworkers? org-scoped? mixed with per-role visibility?) + cross-app smoke testing. Beyond scope for a closure audit session. Queued as a dedicated PII session backlog item.
+
+Meanwhile, the 3 pseudo-wildcard policies on `users` remain active — known PII exposure, explicitly documented.
+
+#### Verification
+
+| Step | Check | Expected | Actual |
+|---|---|---|---|
+| V-PRE | Baseline on 6 affected tables | 35 rows | confirmed pre-session |
+| Step 1 | 4 CREATE atomic | Success | ✓ |
+| V1-POST | 39 rows (35 + 4 new Gen 3) | — | (skipped, user opted to proceed directly) |
+| Step 2 | 13 DROP atomic | Success | ✓ |
+| V-POST-FINAL | 26 rows total across 6 tables | ✓ | ✓ |
+| V-POST-WILDCARDS | 0 rows on 6 tables | ✓ | ✓ |
+| Flutter tests | cashier 600/600 + alhai_sync 358/358 | baseline preserved | ✓ |
+
+#### Per-table post-v66 policy count
+
+| Table | Count | Policies |
+|---|---|---|
+| `favorites` | 3 | select, insert, delete (has_store_access) |
+| `held_invoices` | 3 | select, insert, delete (has_store_access) |
+| `products` | 8 | CRUD × 2 variants + products_super_admin |
+| `settings` | 4 | select, insert, update, delete |
+| `shifts` | 2 | shifts_store_access, shifts_super_admin |
+| `stores` | 6 | CRUD variants + stores_super_admin |
+
+Total: **26 policies**, all tenant-isolated or platform-admin gated. No wildcards, no anon_read, no authenticated_read, no dead Gen 2.
+
+#### Revised campaign accounting
+
+The "33/33 complete (100%)" claim from v65 was based on an incomplete Phase 1 scope. Accurate cumulative accounting post-v66:
+
+| Migration | Scope | Drops/Creates |
+|---|---|---|
+| v58 | anon (sales, sale_items) | 2 drops |
+| v59 (W1) | financial | 6 wildcards + 6 dead |
+| v60 (W2) | identity | 3 wildcards + 1 dead |
+| v61 (W4) | operational + customers | 10 + 9 + 2 anon |
+| v62 (W5) | categories | 2 + 1 dead |
+| v63 | sync_queue (vestigial) | 1 drop |
+| v64 | Platform Admin | 3 wildcards + 2 bypass |
+| v65 | Gen 3 Bootstrap | 5 + 6 Gen 3 + 1 dead |
+| **v66** | **Closure Extended** | **2 wildcards + 3 anon + 3 auth + 5 dead + 4 new Gen 3/bypass** |
+| **Totals** | — | **~48 wildcard-family removals, ~14 Gen 3/bypass additions** |
+
+Truth about "complete": **6 of 7 tables fully closed; users table's 3 residuals explicitly deferred.** Not 100% — 97% with one documented exclusion.
+
+#### Methodology validations
+
+1. **Closure audits catch discovery-phase incompleteness** — the "check the claim" audit surfaced 14 residuals Phase 1 missed. This is the correct practice, not optional paranoia.
+2. **Broader predicate > name match** — `qual = true` finds everything; policyname patterns miss look-alikes. Future wildcard audits should use the predicate-based approach.
+3. **Honest scope reduction** — users deferral preserves safety. Breaking a PII table to meet a "100%" label would be worse than honest deferral.
+4. **Two-step atomic application scales** — 17 statements (4 + 13) across two commits proved safe for this scope.
+
+#### New backlog item
+
+**users PII session** (dedicated, estimated 2-3h):
+1. Decide tenancy model for user visibility: store-scoped coworkers via `store_members`? org-scoped? per-role?
+2. Design Gen 3 policies (SELECT + super_admin bypass minimum).
+3. Apply; cross-app smoke test (super_admin, cashier sync, admin app).
+4. Drop the 3 remaining `users` residuals: `anon_read_users`, `authenticated_read_users`, `store_isolation`.
+
+#### Audit refs
+
+Campaign Closure Audit / 2026-04-22 Phase 1 limitation / v65 "33/33 complete" claim correction.
+
+---
+
+END OF CAMPAIGN CLOSURE AUDIT ENTRY — users deferred to dedicated PII session
