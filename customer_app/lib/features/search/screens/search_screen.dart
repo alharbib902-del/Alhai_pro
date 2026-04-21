@@ -149,7 +149,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                               ),
                               title: Text(product.name),
                               subtitle: Text(
-                                '${product.price.toStringAsFixed(2)} ر.س',
+                                '${(product.price / 100.0).toStringAsFixed(2)} ر.س',
                                 style: TextStyle(
                                   color: theme.colorScheme.primary,
                                   fontWeight: FontWeight.bold,

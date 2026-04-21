@@ -429,7 +429,7 @@ class _ProductCard extends StatelessWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          '${product.price.toStringAsFixed(2)} ر.س (شامل الضريبة)',
+                          '${(product.price / 100.0).toStringAsFixed(2)} ر.س (شامل الضريبة)',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.titleSmall?.copyWith(

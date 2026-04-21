@@ -92,7 +92,8 @@ class CartNotifier extends StateNotifier<Cart> {
         CartItem(
           productId: product.id,
           name: product.name,
-          unitPrice: product.price,
+          // C-4 Stage B: product.price is int cents; CartItem.unitPrice is double SAR.
+          unitPrice: product.price / 100.0,
           qty: 1,
           imageUrl: product.imageThumbnail,
         ),

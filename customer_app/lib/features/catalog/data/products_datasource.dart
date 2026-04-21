@@ -85,8 +85,9 @@ class ProductsDatasource {
       name: row['name'] as String,
       sku: row['sku'] as String?,
       barcode: row['barcode'] as String?,
-      price: (row['price'] as num).toDouble(),
-      costPrice: (row['cost_price'] as num?)?.toDouble(),
+      // C-4 Stage B: server sends int cents (post v71); Product.price is int.
+      price: (row['price'] as num).toInt(),
+      costPrice: (row['cost_price'] as num?)?.toInt(),
       stockQty: (row['stock_qty'] as num?)?.toDouble() ?? 0,
       minQty: (row['min_qty'] as num?)?.toDouble() ?? 1,
       unit: row['unit'] as String?,

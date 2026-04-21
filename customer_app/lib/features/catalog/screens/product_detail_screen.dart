@@ -98,7 +98,7 @@ class ProductDetailScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: AlhaiSpacing.xs),
                 Text(
-                  '${product.price.toStringAsFixed(2)} ر.س (شامل الضريبة)',
+                  '${(product.price / 100.0).toStringAsFixed(2)} ر.س (شامل الضريبة)',
                   style: theme.textTheme.headlineMedium?.copyWith(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,
