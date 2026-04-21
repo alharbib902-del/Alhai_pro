@@ -3384,3 +3384,104 @@ RLS Hygiene Closeout / v67 "truly complete" verification / v51 whatsapp_template
 ---
 
 END OF RLS HYGIENE CLOSEOUT — 🎉 CAMPAIGN VERIFIED CLOSED
+
+
+---
+
+### Server RPC Audit — 2026-04-21 — 35 CVE hardenings + column bug fix (v68)
+
+**Classification:** CVE-2018-1058 closure (search_path) + production column-name bug fix.
+**Branch:** fix/server-rpc-audit (off b3dd458, cumulative from RLS hygiene closeout)
+**Migration:** v68 at supabase/migrations/20260421_v68_rpc_cve_sweep_and_release_stock_fix.sql
+**Applied:** Supabase production on 2026-04-21 via SQL Editor (single atomic BEGIN..COMMIT)
+
+#### Summary
+
+Audit intended to check `reserve_online_stock` + `release_reserved_stock` for the customer_app column-drift bug pattern (qty vs quantity). Scope expanded significantly when Phase A discovered that v37 (2026-04-16) — a major RPC hardening migration for 17 SECURITY DEFINER functions — had **never been applied** to production. Extending the scan revealed **35 SECURITY DEFINER functions** on `public.*` without `search_path` set.
+
+Plus: `release_reserved_stock` had the exact column-name bug the audit was looking for (`oi.qty` vs live column `oi.quantity`).
+
+v68 closes both issues atomically: 34 ALTER FUNCTION (config-only hardening, v50 pattern) + 1 CREATE OR REPLACE for the broken function (body fix + AUTH GATE + search_path).
+
+#### The confirmed bug (release_reserved_stock)
+
+```sql
+-- BEFORE (broken on live):
+UPDATE public.products p
+SET online_reserved_qty = GREATEST(0, p.online_reserved_qty - oi.qty),
+    updated_at = NOW()
+FROM public.order_items oi
+WHERE oi.order_id = p_order_id
+  AND p.id = oi.product_id;
+```
+
+`oi.qty` doesn't exist on live — the column is `oi.quantity` (confirmed via information_schema.columns in C-2 session 2026-04-20). This function fails with Postgres `42703 undefined_column` on any call.
+
+**Impact:** any online-order cancellation/release path that calls `release_reserved_stock` silently fails → reserved stock never released → products appear permanently out-of-stock for online availability. Potential production incident that never got reported (no app currently calls this RPC based on grep, but it's the stated contract for customer_app and future flows).
+
+#### Phase A investigation
+
+**Q1 — RPCs touching order_items:**
+```
+release_reserved_stock  p_order_id text  has_search_path=false  body: oi.qty
+```
+Only 1 RPC.
+
+**Q2 — SECURITY DEFINER without search_path:**
+35 rows across 5 categories:
+- Stock (5): apply_stock_deltas × 2, reserve_online_stock × 2, release_online_stock, release_reserved_stock, sync_org_product_to_stores
+- Sync (4): get_changes_since × 2, sync_batch_upsert, sync_from_device
+- Store mgmt (7): get_my_stores, get_store_*, get_org_*, check_stock_alert
+- Triggers (6): update_account_balance, update_loyalty_points, update_stock_on_* × 4
+- Generation (3): generate_daily_summary, generate_order_number, generate_receipt_no
+- Auth/other (10): user_has_store_access, get_user_org_role, check_cashier_by_phone, check_plan_limit, get_or_assign_default_tier, confirm_delivery, get_daily_summary, increment_coupon_usage, etc.
+
+#### Scope decision: Option C (full CVE sweep)
+
+Three options presented:
+- **A (narrow, 1 RPC, ~15 min)** — fix release_reserved_stock only; leave 34 CVE risks open
+- **B (v37 re-apply, 5 RPCs, ~30 min)** — fix v37 subset; leave 30 CVE risks open
+- **C (full CVE sweep, 35 functions, ~1h)** — close ALL CVE risks via ALTER FUNCTION + fix bug
+
+Selected **C**. Rationale:
+- ALTER FUNCTION is mechanical and safe (v50-proven, zero body drift)
+- Single migration closes comprehensive CVE surface
+- Atomic BEGIN..COMMIT for all 35 statements
+- AUTH GATE work (the other half of v37's intent) explicitly deferred to dedicated session
+
+#### Verification
+
+| Step | Expected | Actual |
+|---|---|---|
+| V-PRE | 35 unhardened | ✓ |
+| Apply (atomic) | 34 ALTER + 1 CREATE OR REPLACE | Success. No rows returned |
+| V-POST-A | 47 hardened (35 new + 10 v50 + 2 pre) | ✓ 47 |
+| V-POST-B | release_reserved_stock has oi.quantity + AUTH GATE + search_path | ✓ all 3 confirmed |
+| V-POST-C | 0 unhardened on public.* | ✓ 0 |
+| Flutter tests | cashier 600/600 + alhai_sync 358/358 | (pending — baseline expected preserved since no Dart code touched) |
+
+#### DEFERRED — AUTH GATE re-application for 16 other RPCs
+
+v37's full intent included body-level AUTH GATES (auth.uid() null check + store-membership verification for tenant-scoped RPCs). This migration handles:
+- ✅ search_path for all 35 functions (CVE hardening)
+- ✅ AUTH GATE for release_reserved_stock (already rewriting body)
+- ❌ AUTH GATE for the remaining 16 RPCs from v37
+
+The remaining AUTH GATE work is body-level (CREATE OR REPLACE × 16) and needs verbatim function bodies from v37 as source. Estimated 2-3h dedicated session.
+
+Backlog item: "RPC AUTH GATE Re-Apply Session".
+
+#### Methodology validations
+
+1. **"Why was v37 not applied?" forensics paid off** — Narrow audit scope would have missed that v37 never landed. Broader "any SECURITY DEFINER without search_path" query surfaced the full gap in 30 seconds.
+2. **ALTER FUNCTION > CREATE OR REPLACE for config-only** — 34 × ALTER FUNCTION with zero risk of body drift vs 34 × CREATE OR REPLACE which would require re-pasting bodies (transcription risk).
+3. **CREATE OR REPLACE reserved for body changes** — release_reserved_stock needs column rename + AUTH GATE, so CREATE OR REPLACE is justified here. One exception, not the rule.
+4. **Scope expansion is honest when evidence demands it** — Audit was "1-2h" expected. Revealing 35 CVE risks was outside scope, but fixing them via ALTER pattern stayed within budget.
+
+#### Audit refs
+
+Server RPC Audit / customer_app column-drift pattern (2026-04-20 C-2 Residual) / v37 RPC Auth Hardening (2026-04-16, never-applied forensics) / v50 Helper Function Hardening (ALTER FUNCTION pattern template).
+
+---
+
+END OF SERVER RPC AUDIT ENTRY — 35 CVE closed + 1 column bug fixed, AUTH GATE work deferred
