@@ -4594,3 +4594,107 @@ Pattern: cents stored, doubles for UI math (per Stage B boundary design).
 ---
 
 END OF SESSION 13 STATION 1 ENTRY — next: deploy customer_app + driver_app
+
+---
+
+## Station 2 — customer_app + driver_app deploy bundle
+
+### Summary
+
+New branch `fix/deploy-bundle-customer-driver` from `72d04e1` carries:
+1. Cherry-picked production fixes from the two deploy branches (`2236b94` + `c0185a2`).
+2. C-4 Stage B boundary conversions that customer_app was missing (5 sites).
+3. driver_app Android build infrastructure patches (3 fixes, ported from customer_app's working patterns).
+
+Final branch head: `780e0bf`. Both apps: tests preserved, debug APK builds clean. Release builds blocked only by the expected standard credentials (keystore .jks + google-services.json), which are gitignored and user-provided.
+
+### Strategic choice — cherry-pick over full rebase
+
+User picked Option A (rebase deploy branches onto HEAD). Technical refinement: the two deploy branches contained 16 commits total above main, of which only 2 were actual code fixes — the remaining 14 were migrations (v50–v55) that were already on HEAD with **different commit hashes** (replayed through the linear chain), plus log-fanout docs commits. A full rebase would have regenerated 14 no-op migration conflicts and a log-fanout conflict. Cherry-picking the 2 code commits produces the same code outcome without the noise. Same spirit as A (deploy fixes merged onto HEAD), cleaner mechanics.
+
+### Commits on the bundle branch (oldest→newest after HEAD `72d04e1`)
+
+| # | Hash | Scope | Notes |
+|---|---|---|---|
+| 1 | `de85d6e` | customer_app/lib + test: `qty`→`quantity`, `total_price`→`total` | Cherry-picked from `2236b94` clean (no conflicts). Production-breaking RLS bug from v55 sweep era. |
+| 2 | `10ae9fe` | driver_app auth datasource: fetch `users.store_id` before drivers upsert | Cherry-picked from `c0185a2` clean. Paired with v55 strict RLS. |
+| 3 | `aa8fc43` | customer_app C-4 Stage B boundaries — 5 sites in 5 files | Discovered when `flutter analyze` + `flutter test` on customer_app after cherry-picks threw 3 compile errors + 7 test failures. All at the `Product.price: double → int` boundary (Stage B flipped the type on HEAD but customer_app was pre-Stage-B). Applied same pattern as edit_price_screen fix: `.toInt()` on server ingress, `/ 100.0` at UI display. |
+| 4 | `780e0bf` | driver_app Android build infra — 3 fixes | Pre-existing build blockers; none related to our fix commits. See breakdown below. |
+
+### C-4 Stage B customer_app boundary fixes (commit `aa8fc43`)
+
+| File | Line | Before | After |
+|---|---|---|---|
+| `customer_app/lib/features/catalog/data/products_datasource.dart` | 88 | `(row['price'] as num).toDouble()` | `(row['price'] as num).toInt()` |
+| `customer_app/lib/features/catalog/data/products_datasource.dart` | 89 | `(row['cost_price'] as num?)?.toDouble()` | `(row['cost_price'] as num?)?.toInt()` |
+| `customer_app/lib/features/cart/providers/cart_provider.dart` | 95 | `unitPrice: product.price` | `unitPrice: product.price / 100.0` |
+| `customer_app/lib/features/search/screens/search_screen.dart` | 152 | `product.price.toStringAsFixed(2)` | `(product.price / 100.0).toStringAsFixed(2)` |
+| `customer_app/lib/features/catalog/screens/catalog_screen.dart` | 432 | `product.price.toStringAsFixed(2)` | `(product.price / 100.0).toStringAsFixed(2)` |
+| `customer_app/lib/features/catalog/screens/product_detail_screen.dart` | 101 | `product.price.toStringAsFixed(2)` | `(product.price / 100.0).toStringAsFixed(2)` |
+
+Boundary semantics: server Supabase now sends `products.price` as INTEGER cents (post v71). Ingress reads it as int; `Product.price` (from `alhai_core`) is int cents. Cart and display boundaries convert to double SAR for UI math.
+
+### driver_app Android build infrastructure (commit `780e0bf`)
+
+Three pre-existing bugs discovered during first `flutter build apk --debug`. All three were already correctly handled in customer_app — driver_app's gradle was an older / less-complete version of the same setup. Fix strategy: port customer_app's patterns 1:1.
+
+**1. release-keystore throw fires on debug builds.**
+- Symptom: `assembleDebug` fails with "driver_app: android/key.properties not found." before any actual build work.
+- Root cause: `buildTypes.release { if (!hasReleaseKeystore) throw GradleException(...) }` is evaluated during configuration phase for *every* build type, because Gradle configures all buildTypes regardless of which task was invoked.
+- Fix: port `isBuildingRelease` guard from customer_app — check `gradle.startParameter.taskNames` and only throw when the invoked task names actually imply a release build. Also fall back to the debug signing config when no release keystore is present.
+
+**2. Firebase plugin applied unconditionally.**
+- Symptom: `Execution failed for task ':app:processDebugGoogleServices'. File google-services.json is missing.`
+- Root cause: `id("com.google.gms.google-services")` in the `plugins { }` block applies the plugin unconditionally, so any fresh checkout without `flutterfire configure` run yet hard-fails.
+- Fix: port customer_app's conditional apply pattern — check `file("google-services.json").exists()` and only `apply(plugin = ...)` when present, otherwise log a warning.
+
+**3. flutter_background_service manifest merger conflict.**
+- Symptom: `Attribute service#id.flutter.flutter_background_service.BackgroundService@exported value=(false) ... is also present ... value=(true). Suggestion: add 'tools:replace="android:exported"'`.
+- Root cause: the plugin's AndroidManifest declares the service with `android:exported="true"`. Our main manifest declares the same service with `android:exported="false"` for tighter surface area. Merger rejects the conflict by default.
+- Fix: add `xmlns:tools="http://schemas.android.com/tools"` to `<manifest>` root + `tools:replace="android:exported"` on the `<service>` element. This tells the merger our value wins.
+
+### Verification matrix
+
+| Step | Expected | Actual |
+|---|---|---|
+| cherry-pick `2236b94` | clean | ✓ no conflicts |
+| cherry-pick `c0185a2` | clean | ✓ no conflicts |
+| customer_app `flutter analyze lib/` (post-Stage-B fixes) | 0 errors | ✓ (2 pre-existing unrelated info/warning) |
+| customer_app `flutter test` | 136/136 | ✓ (up from +101 -7) |
+| customer_app `flutter build apk --debug` | Built | ✓ 204 MB APK |
+| driver_app `flutter test` | 152/152 | ✓ (no change; no code diff beyond cherry-pick) |
+| driver_app `flutter build apk --debug` (after 3 infra fixes) | Built | ✓ APK |
+| cashier tests (regression check — not expected to touch) | 600/600 | ✓ (not re-run this station; we only edited customer_app + driver_app) |
+
+### Release-deploy blockers (user-provided credentials, NOT in repo)
+
+To produce signed release APKs / AABs for Play Store:
+
+1. **`customer_app/android/key.properties`** + upload keystore `.jks` (gitignored; example at `android/key.properties.example`).
+2. **`driver_app/android/key.properties`** + upload keystore `.jks` (same pattern).
+3. **`customer_app/android/app/google-services.json`** — Firebase config (for FCM push).
+4. **`driver_app/android/app/google-services.json`** — same.
+5. **Play Store / App Store Connect credentials** for submission.
+6. **iOS build** — macOS-only, not possible from this Windows session.
+
+When all 4 credential files land, build flow is:
+```
+cd customer_app && flutter build appbundle --release
+cd driver_app && flutter build appbundle --release
+# Upload AABs via `fastlane supply` or manually to Play Console.
+```
+
+### Risk
+
+- Four commits on the bundle branch. Two are straight cherry-picks. Two are boundary/infra fixes that port established patterns from an already-deployed sibling (customer_app build.gradle.kts that successfully produced APKs in this session). Low regression risk on shared code (only customer_app Dart + driver_app Android config were touched).
+- No schema change, no shared-package edit, no Supabase migration.
+- Test baselines preserved for all touched apps.
+
+### Audit refs
+
+- NEXT SESSION STARTING POINT §1b (line 4377–4381): customer_app + driver_app deploy — this station addresses the branch integration half; credentials + store upload half awaits user.
+- C-4 plan `docs/sessions/c4-money-migration-plan.md` §5 Stage B (consumer boundary audit) — this station retro-applied Stage B to customer_app which was branched before Stage B landed.
+
+---
+
+END OF SESSION 13 STATION 2 ENTRY — next: C-4 Session 2 pre-work (Appendix B audit + VatCalculator collapse + CurrencyFormatter.format(Money) overload)
