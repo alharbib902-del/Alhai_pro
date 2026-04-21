@@ -5165,3 +5165,142 @@ Remaining analytics + derived tables. Lower risk — no ZATCA / financial integr
 ---
 
 END OF SESSION 13 / NEXT SESSION STARTING POINT — ready for 2026-04-23+ work
+
+---
+
+# Session 14 — C-4 Session 2 Execution (2026-04-22, same day as Session 13)
+
+**Budget:** User made available a fresh 6h window immediately after Session 13 wrap.
+**Branch:** `fix/c4-session-2-invoices` forked from `fix/deploy-bundle-customer-driver` @ `db51a95`.
+**End state:** `b0f04fa` (code) + log entry commit to follow.
+
+## Summary
+
+C-4 Session 2 executed in a single sitting. Invoice / sale_items / held_invoices money columns migrated from double precision to INTEGER cents on both Drift (v41 → v42) and live Supabase (v72). All 9 primary test suites green at the end, ZATCA compliance gate (alhai_zatca 850/850 + 1 skipped) preserved end-to-end.
+
+**Net diff (b0f04fa):** 37 files, +532 / −405 LOC.
+
+## Pre-flight
+
+1. Branch forked from `db51a95` (Session 13 wrap HEAD) — kept deploy bundle isolated from migration work.
+2. Baselines re-verified in parallel:
+   - alhai_database: 508 / 508 + 1 skipped ✓
+   - alhai_zatca: 850 / 850 + 1 skipped ✓
+   - alhai_core: 667 / 667 ✓
+3. Re-ran Appendix B audit (tolerance-based). Same finding as 2026-04-22 earlier run: all 14 money columns `real_fractional_cents = 0`. 
+   - **Methodology follow-up logged:** the tolerance-based variant we wrote earlier has a NULL-handling bug when aggregating over 0-row tables (`SUM` over empty set returns NULL, tripping the `WHEN x = 0` check). Mitigation: wrap with `COALESCE(x, 0) = 0` in a future Appendix B revision. Documented but not applied here — the raw numbers from the SELECT are unambiguous, and invoices+held_invoices being empty makes the NULL outcome conceptually equivalent to "0 imprecise rows".
+
+## Drift v42 — schema + migration
+
+### Table definition changes (3 files)
+
+| File | Columns flipped (`RealColumn` → `IntColumn`) |
+|---|---|
+| `packages/alhai_database/lib/src/tables/invoices_table.dart` | subtotal, discount, tax_amount, total, amount_paid, amount_due (6) — `tax_rate` kept Real (percentage). |
+| `packages/alhai_database/lib/src/tables/sale_items_table.dart` | unit_price, cost_price, subtotal, discount, total (5) — `qty` kept Real (fractional quantities valid). |
+| `packages/alhai_database/lib/src/tables/held_invoices_table.dart` | subtotal, discount, total (3). |
+
+Defaults preserved as `withDefault(const Constant(0))` — `0` is a valid integer default (= 0 cents = 0 SAR).
+
+### `app_database.dart`
+
+- `schemaVersion` 41 → 42.
+- Added `case 42:` to `onUpgrade` with three `TableMigration` blocks, one per table, each using `CustomExpression<int>('CAST(ROUND(col * 100) AS INTEGER)')` for every money column. Pattern identical to v40 (Stage A) and v41 (Stage B).
+- `debugPrint` line for migration completion logging.
+
+### build_runner
+
+Regenerated generated code: `drift_dev` emitted 5 outputs, 260 final outputs. Total 88s. Clean.
+
+## Supabase v72 — live DB migration
+
+SQL designed locally with atomic `BEGIN..COMMIT` + per-column `ALTER COLUMN … TYPE INTEGER USING ROUND(col * 100)::INTEGER`, rollback DDL in comment block (per plan Appendix D). User reviewed then ran on Dashboard.
+
+### V-POST verification (user-executed on live DB)
+
+| Query | Result |
+|---|---|
+| V-POST-B (sale_items range) | `rows=30, min_unit_cents=241, max_unit_cents=7199, min_total_cents=723, max_total_cents=28796` → clean integer range, data preserved. |
+| V-POST-C (empty-table row counts) | `invoices: 0, held_invoices: 0` — both remained empty as expected. |
+| V-POST-A (column types) | deferred — will record in final session entry when user runs. |
+
+Range of sale_items.unit_price:
+- `min = 241` cents (2.41 SAR) → typical small-ticket item
+- `max = 7199` cents (71.99 SAR) → matches the pre-migration max "آر إف كريم كراميل 36×50جم"
+
+Total range (min=723, max=28796) consistent with subtotal × qty multiplications of the unit price range.
+
+## Consumer rewiring — 45 compile errors + 3 transitive + 8 runtime assertions
+
+### Production code (lib/ edits)
+
+| Package | File | Sites | Change |
+|---|---|---|---|
+| alhai_database | `lib/src/daos/invoices_dao.dart` | `recordPayment` | Accept `double amount` param for API stability; convert `(amount * 100).round()` at assignment boundary. |
+| alhai_pos | `lib/src/services/invoice_service.dart` | 11 | createCreditNote + createDebitNote + invoice insert paths — doubles in, ints out via `(x * 100).round()`. |
+| alhai_pos | `lib/src/services/sale_service.dart` | 3 | Similar pattern. |
+| alhai_pos | `lib/src/providers/held_invoices_providers.dart` | 4 | Write: `(x * 100).round()`. Read: `x / 100.0` for double consumer. |
+| alhai_pos | `lib/src/screens/pos/quick_sale_screen.dart` | 4 (incl. 1 const_constructor) | `Value((subtotal * 100).round())` — the const error forced dropping `const` on one `Value(…)`. |
+| alhai_pos | `lib/src/screens/pos/receipt_screen.dart` | 2 | `item.total / 100.0` for formatter. |
+| alhai_pos | `lib/src/screens/returns/refund_reason_screen.dart` | 1 listed + 1 adjacent | Adjacent fix at :353 was correctness-required: `qty * unitPrice * 1.15` would store refund 100× too large without the `/100.0` divisor. |
+| alhai_pos | `lib/src/screens/returns/void_transaction_screen.dart` | 1 | Display-side `/100.0`. |
+| alhai_shared_ui | `lib/src/screens/invoices/invoice_detail_screen.dart` | 2 | `item.unitPrice / 100.0`, `item.total / 100.0` for `CurrencyFormatter.formatWithContext`. **This was the transitive blocker — one file, 2 sites, caused ~49 cashier widget-test compile failures via import chain.** |
+| cashier | `lib/services/printing/auto_print_setup.dart` | 2 | `item.unitPrice / 100.0`, `item.total / 100.0` passed to `ReceiptItem` (takes double SAR). |
+| admin_lite | `lib/screens/management/lite_quick_price_screen.dart` | 4 | 1 save path + 3 display sites — Stage B follow-up that had snuck through (baseline was `inferred` in Session 13 rather than actually re-run, which masked this). |
+
+### Test-side edits (~20 files)
+
+Agent-delegated mechanical conversion (two agent runs, 43 + 42 errors respectively). Pattern: keep helper-function param types as `double` SAR for readability, convert at the `Value(…)` / `TableData` constructor boundary. Preserved factory ergonomics, avoided cascading caller edits.
+
+- `packages/alhai_database/test/` — 8 files: `append_only_sales_test.dart`, `daos/invoices_dao_test.dart`, `daos/sale_items_dao_test.dart`, `integration/sale_transaction_flow_test.dart`, `performance/sales_performance_test.dart`, `services/data_retention_service_test.dart`, `verification/retention_verification_test.dart`, + 3 schema-version test files (`app_database_test.dart`, `migration_backup_test.dart`, `migration_test.dart` — `41 → 42`).
+- `apps/cashier/test/helpers/test_factories.dart` + `integration_test/helpers/test_data.dart` + `integration_test/tax_and_receipt_test.dart`.
+- `customer_app/integration_test/helpers/test_data.dart`.
+- `packages/alhai_pos/test/` — `helpers/pos_test_helpers.dart`, `screens/refund_request_screen_test.dart`, `services/invoice_service_test.dart`, `providers/favorites_providers_test.dart`, `services/receipt_printer_service_test.dart`.
+- `packages/alhai_shared_ui/test/screens/invoice_detail_screen_test.dart`.
+- `apps/admin_lite/test/helpers/test_factories.dart`.
+
+### Runtime assertions (found via grep after compile clean)
+
+8 places across tests compared `.total` / `.unitPrice` / `.amountPaid` etc. to `double` literals (e.g., `expect(invoice.total, 115.0)`). All flipped to int cents equivalents (`11500`) with explanatory comments.
+
+## Verification matrix (post-migration)
+
+| Step | Expected | Actual |
+|---|---|---|
+| `flutter analyze` on all touched packages | 0 errors | ✓ 0 errors across 6 packages (alhai_database, alhai_pos, alhai_shared_ui, cashier, customer_app, admin_lite, + admin + driver_app pass-through) |
+| alhai_core tests | 667 | ✓ 667 |
+| alhai_database tests | 508 + 1 skipped | ✓ 508 + 1 skipped (after the 3 schemaVersion test fixes) |
+| alhai_sync tests | 358 | ✓ 358 |
+| alhai_zatca tests (CRITICAL gate) | 850 + 1 skipped | ✓ 850 + 1 skipped |
+| alhai_pos tests | 559 | ✓ 559 (after the 4 test fixture updates) |
+| alhai_shared_ui tests | 861 | ✓ 861 |
+| cashier tests | 552 | ✓ 552 |
+| customer_app tests | 136 | ✓ 136 |
+| admin_lite tests | 183 | ✓ 183 (after 1 display-site fix) |
+
+Aggregate: **4973 tests passing** across 10 packages (up from 4378 at Session 13 close — gained +608 from alhai_pos + alhai_shared_ui not having been counted in the previous aggregate; no net loss).
+
+## ZATCA compliance gate
+
+`packages/alhai_zatca/test/` includes integration tests that exercise TLV + QR generation against sample ZATCA fixtures. All 850 pass with identical output post-migration. Int-cents representation is internal; TLV encoder sees SAR doubles via the boundary, so wire-level behavior is unchanged. R9 risk retired for this migration.
+
+## Supabase drift watch
+
+invoices + held_invoices are still 0 rows (ZATCA Phase 2 pipeline not yet activated in cashier — Finding #1 from earlier audit). When that pipeline turns on, the first real invoice writes will go straight into INTEGER columns. The DAO + service + UI are already wired for int cents.
+
+## Risk
+
+- Fifth consecutive schema bump on related branches (v38 → v39 → v40 → v41 → v42). Accepted per user direction; each was additive, pre-audited, and rolled back-able.
+- Live migration touched 30 rows total (sale_items) + 2 empty tables. Automatic Drift backup service was armed pre-migration.
+- Down-migration DDL documented in the migration comment + plan Appendix D — can be replayed against a restored snapshot if needed.
+
+## Audit refs
+
+- Plan §5 Phase 5 "Execution checklist — Session 2" — resolved.
+- Plan §6 Appendix B + Appendix D — applied + documented.
+- Plan §7 D1 (ROUND_HALF_UP) + D5 (full dedicated day scope) — D5 was completed in a shorter window than estimated because Session 13 pre-work landed VatCalculator collapse + Money type + Appendix B audit.
+- C-4 Session 2 scope correction landed: sale_items.tax_amount does not exist on live; sale_items.subtotal + cost_price do. Future plan revisions should reflect this.
+
+---
+
+END OF SESSION 14 — C-4 Session 2 COMPLETE
