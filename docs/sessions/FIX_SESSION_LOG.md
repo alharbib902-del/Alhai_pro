@@ -4883,3 +4883,115 @@ Total test-count drop across suites = **57 removed** — all duplicates of cover
 ---
 
 END OF SESSION 13 STATION 3b ENTRY — next: Station 3c (Money class creation + CurrencyFormatter.format(Money) overload)
+
+---
+
+## Station 3c — Money value type + CurrencyFormatter overload
+
+### Summary
+
+C-4 plan D1 (ROUND_HALF_UP) + D2 (currency-aware from day one) foundational primitive. Session 2's invoice / sale_items / held_invoices int-cents migration is unblocked from day one — the primitive it depends on is in place and tested.
+
+### Scope discovery
+
+Plan §5 names "CurrencyFormatter.format(Money) overload (add)" as Session 2 scope. Implicitly assumes `Money` exists. Live check: `class Money` appeared zero places in the codebase. Station 3c scope expanded to cover the missing primitive before its formatter companion.
+
+### Files introduced / touched
+
+| File | Status | LOC |
+|---|---|---|
+| `alhai_core/lib/src/models/money.dart` | **new** | 167 |
+| `alhai_core/lib/src/models/models.dart` | +3 (export line) | +3 |
+| `alhai_core/test/models/money_test.dart` | **new** | 440 (56 tests) |
+| `packages/alhai_shared_ui/lib/src/core/utils/currency_formatter.dart` | +58 (Money overloads + `_symbolFor` helper) | +58 |
+
+Net: **+667 LOC**, 0 LOC deleted, commit `4de24ab`.
+
+### Money type — design decisions
+
+Per plan §7 D1 + D2:
+
+| Decision | Implementation |
+|---|---|
+| **D1 ROUND_HALF_UP** | `_roundHalfUp(num raw)` static helper. For `raw ≥ 0`: `(raw + 0.5).floor()`. For `raw < 0`: `-((-raw + 0.5).floor())`. Matches Java `BigDecimal.HALF_UP` (halves round away from zero). Dart's default `round` is banker's — we override explicitly. Applied in `fromDouble`, `operator *`, `operator /`. |
+| **D2 currency-aware from day one** | `final String currencyCode` field defaulting to `'SAR'`. `+`, `-`, `compareTo` assert matching currency via `_assertSameCurrency` (throws `ArgumentError` on mismatch). Equality compares both cents AND currency — `Money.sar(100) ≠ Money.fromCents(100, currencyCode: 'USD')`. |
+| **Constructors** | `Money.fromCents(int, {currencyCode})`, `Money.sar(int)` (const, SAR-only convenience), `Money.zero({currencyCode})` (const), `Money.fromDouble(double, {currencyCode})` (factory, ROUND_HALF_UP). |
+| **Arithmetic** | `+`, `-`, unary `-`, `*(num)`, `/(num)`. Mixed-currency `+/-` throws. `*` and `/` apply ROUND_HALF_UP. `/` throws on divide-by-zero. |
+| **Comparison** | `Comparable<Money>` + `<`, `<=`, `>`, `>=` all currency-guarded. Enables `list.sort()` of SAR values. |
+| **Predicates** | `isZero`, `isPositive`, `isNegative`, `abs()`. |
+| **JSON** | `toJson() → {cents: N, currency: String}`. `fromJson` validates shape, throws `FormatException` on missing keys or wrong types. Schema extensible: adding USD/AED rows needs no wire-format change. |
+| **Equality** | `==` and `hashCode` over `(cents, currencyCode)` pair. |
+| **String** | `toString() → "Money($cents $currency)"`. |
+
+### FP literal rounding limits — documented
+
+During test iteration, `Money.fromDouble(1.005).cents == 100` (not `101`) surfaced a subtle correctness concern. Root cause: the *double literal* `1.005` is stored in IEEE 754 as `1.00499999…`, so `1.00499… * 100 = 100.4999…` rounds DOWN by any rule, including ROUND_HALF_UP.
+
+This is not a bug in `Money` — it's a fundamental limit of `fromDouble` applied to non-representable half literals. The contrast:
+
+| Input | Double representation | `* 100` | ROUND_HALF_UP | Result |
+|---|---|---|---|---|
+| `0.005` | `0.005000000000000000…` | `0.5000000001…` | `.floor(1.00000…)` | 1 ✓ |
+| `1.005` | `1.00499999…` | `100.4999…` | `.floor(100.9999…)` | 100 (not 101) |
+
+Pinned with a regression test that guarantees the current behavior is intentional:
+
+```dart
+test('fromDouble is subject to FP literal representation', () {
+  expect(Money.fromDouble(1.005).cents, 100);
+  expect(Money.fromDouble(-1.005).cents, -100);
+});
+```
+
+Callers needing deterministic half-up behavior must route through scalar arithmetic on `Money` itself (e.g. `Money.sar(1) / 2` correctly yields `1` cent, because the rounding is applied to the exactly-representable integer `1/2 = 0.5`), not through `fromDouble` on half literals.
+
+This finding directly connects to Station 3a's FP artifact discussion on Appendix B. The core lesson: IEEE 754 halves are often illusions; design tests and boundaries accordingly.
+
+### CurrencyFormatter — Money overloads
+
+Dart doesn't support overloading by parameter type, so the `format(double)` method is kept as-is (85 existing call sites unchanged) and three new Money-taking methods are added:
+
+| New method | Delegates to |
+|---|---|
+| `formatMoney(Money, {locale, decimalDigits})` | `format(money.toDouble(), symbol: _symbolFor(money.currencyCode), …)` |
+| `formatMoneyCompact(Money, {locale})` | `formatCompact(…)` |
+| `formatMoneyWithContext(BuildContext, Money, {decimalDigits})` | `formatWithContext(…)` |
+
+`_symbolFor(String code)` is a private helper: SAR → `StoreSettings.defaultCurrencySymbol` (existing `ر.س`). Any other code falls back to the ISO code itself as symbol — add `case 'USD':` etc. when those currencies launch.
+
+No existing caller is forced to migrate. When Session 2's invoice migration lands, display sites can adopt `formatMoney(invoice.total)` one-at-a-time as they flip to Money-typed fields.
+
+### Verification matrix
+
+| Step | Expected | Actual |
+|---|---|---|
+| `flutter analyze alhai_core/lib/src/models/money.dart + test/models/money_test.dart` | 0 | ✓ `No issues found!` |
+| `flutter analyze alhai_core` (full lib + test) | 0 errors | ✓ `No issues found!` |
+| `flutter analyze alhai_shared_ui/lib` | 0 errors for our change | ✓ 10 pre-existing `deprecated_member_use` infos unrelated to this edit |
+| `alhai_core` full test suite | ≥608 (prior baseline) | **667 / 667** ✓ (+59 = 56 Money tests + 3 scenario tests) |
+
+### Risk
+
+- Pure additive change: new file + new exports + new formatter methods. No existing code path touched.
+- Money is not yet consumed anywhere in production code. Consumers will wire up in Session 2 as the invoice migration lands, row by row.
+- `models.dart` barrel re-export adds `Money` to `package:alhai_core/alhai_core.dart` — widely imported. Verified zero name collision: `class Money` is new.
+- The FP-literal limitation on `fromDouble` is documented in both the class doc and a pin test, so any future contributor who attempts to "fix" the half-literal behavior will see the tests pin the current (correct) behavior.
+
+### Session 2 follow-up (not in this commit)
+
+1. Invoice / held_invoices / sale_items Drift schema bump (plan Session 2) — money fields become `IntColumn` with TableMigration `CAST(ROUND(col * 100) AS INTEGER)` transformer.
+2. Invoice / held_invoices / sale_items Supabase migration (v72+) — `ALTER COLUMN … TYPE INTEGER USING ROUND(… * 100)::INTEGER`.
+3. Adopt `Money` fields in domain classes (Invoice, SaleItem, HeldInvoice) where appropriate — not every `int cents` field needs to be wrapped, but invoice-level aggregates and line totals benefit from the currency-safety.
+4. Migrate display sites gradually from `CurrencyFormatter.format(x / 100.0)` to `formatMoney(invoice.total)` once the fields are Money-typed.
+5. Wire ZATCA XML generation to emit cents-based amounts (the generator currently emits doubles; Session 2 scope will switch to cents without changing the on-wire precision).
+
+### Audit refs
+
+- Plan §7 D1 — ROUND_HALF_UP — implemented in `_roundHalfUp` + all rounding sites.
+- Plan §7 D2 — currency-aware from day one — implemented via `currencyCode` field + guards.
+- Plan §5 "Code" item 2 (Session 2) — `CurrencyFormatter.format(Money)` overload — resolved conceptually via `formatMoney`/`formatMoneyCompact`/`formatMoneyWithContext` (Dart lacks true overloading).
+- Plan §4 R1 (rounding ambiguity) — retired for production by pinning ROUND_HALF_UP everywhere in Money.
+
+---
+
+END OF SESSION 13 STATION 3c ENTRY — Session 2 prerequisites COMPLETE
