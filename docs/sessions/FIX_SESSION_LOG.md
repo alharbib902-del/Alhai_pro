@@ -3485,3 +3485,107 @@ Server RPC Audit / customer_app column-drift pattern (2026-04-20 C-2 Residual) /
 ---
 
 END OF SERVER RPC AUDIT ENTRY — 35 CVE closed + 1 column bug fixed, AUTH GATE work deferred
+
+
+---
+
+### RPC AUTH GATE Re-Apply — 2026-04-21 — v37 body-level intent closed (v69)
+
+**Classification:** Body-level security hardening. AUTH GATES added to 8 RPCs.
+**Branch:** fix/rpc-auth-gates (off 9820da7, cumulative from v68)
+**Migration:** v69 at supabase/migrations/20260421_v69_rpc_auth_gates_reapply.sql
+**Applied:** Supabase production on 2026-04-21 via SQL Editor (single atomic BEGIN..COMMIT)
+
+#### Summary
+
+Completes v37's (2026-04-16) intended body-level AUTH GATE hardening for the 8 RPCs that v68 explicitly deferred.
+
+v68 handled the config-level CVE-2018-1058 via ALTER FUNCTION SET search_path on all 35 unhardened SECURITY DEFINER functions. v69 handles the complementary body-level work: privilege-escalation gates (auth.uid() null check + optional store-membership check).
+
+Together, v68 + v69 close the complete v37 intent on what's actually on production. The other 8 RPCs from v37's original 17-function scope don't exist on live DB (phantom targets).
+
+#### Phase A audit findings
+
+Query on live pg_proc for v37's 17 target functions:
+- **9 exist on live** (the ones we hardened)
+- **8 are phantoms** (never created or removed later): sa_monthly_revenue, sa_top_stores_by_revenue, sa_top_stores_by_transactions, update_order_with_items, batch_update_product_prices, get_driver_dashboard_stats, assign_delivery_to_driver, insert_security_events
+
+Of the 9 that exist:
+- 1 (`release_reserved_stock`) was hardened in v68 (AUTH GATE + column bug fix + search_path)
+- 8 remained for v69 (this migration)
+
+#### Scope — 8 RPCs hardened
+
+**Store-scoped (3): AUTH + `has_store_access(p_store_id)` check**
+- `apply_stock_deltas(p_store_id, p_deltas)` — v16 variant
+- `apply_stock_deltas(p_org_id, p_store_id, p_deltas)` — v14 variant
+- `get_store_stats(p_store_id)` — sensitive business metrics
+
+**Authentication-only (5): AUTH check; scope enforced by RPC logic**
+- `reserve_online_stock(p_product_id, p_qty DOUBLE PRECISION)` — single product
+- `reserve_online_stock(p_store_id, p_items JSONB)` — batch within store
+- `release_online_stock(p_product_id, p_qty DOUBLE PRECISION)`
+- `confirm_delivery(p_order_id, p_confirmation_code)` — order-scoped via status check
+- `sync_org_product_to_stores(p_org_product_id)` — org-scoped via WHERE clause
+
+#### Key design decision: `has_store_access()` vs direct `store_members` query
+
+v37 originally used direct `SELECT 1 FROM public.store_members WHERE ...` for store checks. v69 instead uses the canonical `public.has_store_access(p_store_id)` helper.
+
+Rationale:
+- `has_store_access` is the canonical access helper post-v50 (hardened + multi-store safe + includes owner via `is_store_owner` OR)
+- Matches the pattern used across all v64-v67 RLS policies
+- Single source of truth for "can user X access store Y"
+- Easier to evolve: if access model changes, we update the helper once rather than across every RPC
+
+Tradeoff: v37's direct query excluded super_admin (by design, stock changes are staff work). `has_store_access` ALSO excludes super_admin (doesn't query is_super_admin). So behavior is equivalent for the cashier/store_owner path. Super_admin still can't call `apply_stock_deltas` or `get_store_stats` directly — **intentional**, super_admin should use sa_* datasources (which query tables via `*_super_admin` policies, not via these RPCs).
+
+#### Body preservation
+
+Where v37's proposed body differed from live:
+- `apply_stock_deltas(p_store_id, p_deltas)` — live uses `INTEGER` for `v_qty_change`, v37 uses `DOUBLE PRECISION`. **Live preserved.**
+- `apply_stock_deltas(p_org_id, p_store_id, p_deltas)` — both use NUMERIC. Match.
+- All others: live matched v37's non-AUTH parts.
+
+v69 preserves live semantics and adds AUTH GATES only. No silent behavior changes.
+
+#### Verification
+
+| Step | Check | Expected | Actual |
+|---|---|---|---|
+| V-PRE | 8 RPCs lack auth_null_check | ✓ | ✓ |
+| Apply | 8 × CREATE OR REPLACE atomic | Success. No rows returned | ✓ |
+| V-POST-A | All 9 RPCs (+ v68's) have AUTH GATE + search_path; 3 also have has_store_access | ✓ | ✓ exact match |
+| Flutter tests | cashier 600/600 + alhai_sync 358/358 | baseline preserved | ✓ |
+
+#### Campaign closure status
+
+Combined v68 + v69 outcome:
+- **47 SECURITY DEFINER functions** on `public.*` fully hardened
+  - 10 helpers (v50)
+  - 35 functions with search_path (v68)
+  - 9 RPCs with AUTH GATE (v68: 1, v69: 8)
+  - + 2 pre-existing hardened
+- **100% CVE-2018-1058 closed** on public.*
+- **v37 intent fulfilled** for all live targets (8 phantoms noted as backlog — not actionable)
+
+#### Methodology validations
+
+1. **Phantom function check** — Phase A query revealed that 8 of v37's 17 intended targets don't exist on live. Saved 8 × "write body verbatim" work. Always check existence before designing bodies.
+2. **Modernize to helpers over copy-verbatim** — using `has_store_access()` instead of re-inlining v37's direct store_members query keeps the code consistent with the rest of the codebase and easier to evolve.
+3. **Body preservation + AUTH addition only** — clean pattern for "fix security without changing behavior". Minimizes risk of breaking callers.
+4. **Atomic 8-statement CREATE OR REPLACE** — proven safe at this scope (similar to v65's Step 1 and v68 Part A+B).
+
+#### Residual backlog
+
+1. **8 phantom functions** — if any of them get created later (sa_monthly_revenue for super_admin analytics, assign_delivery_to_driver for store admins, etc.), they need v37-pattern AUTH GATES from day one.
+2. **Triggers** (update_stock_on_*, update_account_balance, update_loyalty_points) — have search_path from v68 but don't have explicit auth.uid() check. They run in the context of INSERT/UPDATE on their parent table, which has RLS enforcement. Safe by implicit auth via triggering statement.
+3. **Sync functions** (sync_batch_upsert, sync_from_device, get_changes_since, etc.) — not in v37 scope, not audited for AUTH requirements. Likely fine (client auth via calling layer) but could be re-audited in a dedicated session.
+
+#### Audit refs
+
+RPC AUTH GATE Re-Apply / v37 RPC Auth Hardening (2026-04-16, partial apply) / v68 Server RPC Audit (config CVE hardening) / v50 Helper Function Hardening (has_store_access canonical helper).
+
+---
+
+END OF RPC AUTH GATE RE-APPLY ENTRY — v37 body-level intent verifiably closed
