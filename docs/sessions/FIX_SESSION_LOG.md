@@ -4788,3 +4788,98 @@ All 14 money columns across 3 tables: `real_fractional_cents = 0` → **Session 
 ---
 
 END OF SESSION 13 STATION 3a ENTRY — next: VatCalculator collapse + CurrencyFormatter.format(Money) overload
+
+---
+
+## Station 3b — VatCalculator 3-way collapse
+
+### Summary
+
+Plan §5 Session 2 scope item. Plan said "collapse two VatCalculator implementations"; live codebase had **three**. Converged everything onto `packages/alhai_zatca/lib/src/qr/vat_calculator.dart` (the pre-existing canonical — ZATCA-compliant 2dp rounding, full VatBreakdown class, 850 unit tests).
+
+Net: **-518 LOC**, 4 files deleted, 4 files edited, 57 duplicate tests removed with zero real coverage loss.
+
+### The three implementations — what was different
+
+| Aspect | `alhai_zatca` (canonical, kept) | `apps/cashier` (deleted) | `distributor_portal` (deleted) |
+|---|---|---|---|
+| LOC | 225 | 78 | 37 |
+| Rate format | `15.0` (percent number) | `0.15` (decimal fraction) | `0.15` |
+| Rounds to 2dp? | **Yes** (ZATCA-compliant `_round2`) | No | No |
+| API style | named params: `netAmount:`, `vatRate:` | positional + `rate:` | positional |
+| `VatBreakdown` fields | `netAmount / vatAmount / grossAmount / vatRate` | `subtotal / discount / taxableAmount / vatRate / vatAmount / total` | `Map<String,double>` with `'subtotal'/'vat'/'total'` keys |
+| Test count | **850** (comprehensive) | ~22 (duplicates basic cases) | ~9 (duplicates basic cases) |
+
+### Consumer audit — production vs dead code
+
+| File | Import before | Status |
+|---|---|---|
+| `packages/alhai_pos/lib/src/screens/pos/*.dart` (4 files) | `alhai_zatca` | already canonical ✓ no change |
+| `apps/cashier/integration_test/tax_and_receipt_test.dart` | `alhai_zatca` | already canonical ✓ no change |
+| `customer_app/lib/features/checkout/**/*.dart` (2) | `alhai_zatca` | already canonical ✓ no change |
+| `customer_app/test/features/**/*_test.dart` (2) | `alhai_zatca` | already canonical ✓ no change |
+| `apps/cashier/lib/**/*.dart` (prod lib) | **— none** | `apps/cashier/lib/core/services/zatca/vat_calculator.dart` was dead code, no lib/ referent |
+| `apps/cashier/test/unit/vat_test.dart` | `cashier local` | deleted wholesale (205 LOC, 100% duplicate) |
+| `apps/cashier/test/unit/payment_test.dart` | `cashier local` | rewired to alhai_zatca, 2 call sites updated |
+| `apps/cashier/test/unit/zatca_tlv_test.dart` | `cashier local` | duplicate `VatCalculator` group deleted (74 LOC), import removed |
+| `apps/cashier/test/services/printing/receipt_builder_test.dart` | `cashier local` | `VAT calculation (15%)` math group deleted, receipt-label assertion preserved under renamed group, import removed |
+| `distributor_portal/lib/screens/orders/distributor_order_detail_screen.dart` | `local utils` | **production consumer** — rewired to alhai_zatca |
+| `distributor_portal/test/core/vat_calculator_test.dart` | `local utils` | deleted wholesale (duplicate of alhai_zatca's test coverage) |
+
+### Surgical changes made
+
+1. **Deleted** `apps/cashier/lib/core/services/zatca/vat_calculator.dart` — dead-code duplicate impl.
+2. **Deleted** `apps/cashier/test/unit/vat_test.dart` — 205 LOC, 100% redundant with `packages/alhai_zatca/test/qr/vat_calculator_test.dart`.
+3. **Deleted** `distributor_portal/lib/core/utils/vat_calculator.dart` — duplicate impl.
+4. **Deleted** `distributor_portal/test/core/vat_calculator_test.dart` — redundant test coverage.
+5. **Edited** `apps/cashier/test/unit/payment_test.dart`:
+   - Import: `cashier/core/services/zatca/vat_calculator.dart` → `alhai_zatca/alhai_zatca.dart show VatCalculator`
+   - `VatCalculator.breakdown(100.0)` → `VatCalculator.breakdownFromNet(netAmount: 100.0)`
+   - `breakdown.total` → `breakdown.grossAmount`
+6. **Edited** `apps/cashier/test/unit/zatca_tlv_test.dart`:
+   - Removed import
+   - Deleted the entire `group('VatCalculator', () { … })` block (lines 252-326), ~75 LOC
+   - Left a one-line pointer comment to `alhai_zatca/test/qr/vat_calculator_test.dart`
+7. **Edited** `apps/cashier/test/services/printing/receipt_builder_test.dart`:
+   - Removed import
+   - Deleted the 6-test VAT math sub-block inside `group('VAT calculation (15%)')`
+   - Renamed the group to `'Receipt VAT label (15%)'` and kept the single `receipt tax line shows 15% label` test (it only asserts receipt output text — no `VatCalculator` dependency)
+8. **Edited** `distributor_portal/lib/screens/orders/distributor_order_detail_screen.dart` `_buildTotalSection`:
+   - Import: `../../core/utils/vat_calculator.dart` → `package:alhai_zatca/alhai_zatca.dart show VatCalculator`
+   - `VatCalculator.breakdown(total)` → `VatCalculator.breakdownFromNet(netAmount: total)` (retains prior semantics: `total` param is treated as net/pre-VAT, as the old local impl did)
+   - Display access `vatBreakdown['subtotal']!` → `vatBreakdown.netAmount`; `'vat'` → `vatAmount`; `'total'` → `grossAmount`
+
+### Behavioural diff (stored values unaffected, display only)
+
+The distributor_portal migration introduces ZATCA-compliant 2-decimal rounding to that screen's total display, where there was none before. For typical prices this changes display output by ≤0.005 SAR per line — well below the 0.01 SAR display precision that users see anyway via `NumberFormat('#,##0.00')`. **No stored value is affected** — `_buildTotalSection` is purely view-layer.
+
+cashier's removed local impl wasn't in production use, so its absent `_round2` doesn't matter to the running app. Tests were the only callers, and they're now deleted or converted.
+
+### Verification matrix
+
+| Step | Expected | Actual |
+|---|---|---|
+| `flutter analyze apps/cashier` (lib/ + test/) | 0 errors | ✓ `No issues found!` |
+| `flutter analyze distributor_portal` (lib/ + test/) | 0 errors | ✓ 4 pre-existing infos, unrelated |
+| apps/cashier tests | preserve minus deletions | **552 / 552** ✓ (was 600; −48 = duplicate VAT tests purged) |
+| distributor_portal tests | preserve minus deletions | **420 / 420** ✓ (was 429; −9) |
+| customer_app tests | preserve | **136 / 136** ✓ |
+| alhai_zatca tests (CRITICAL gate) | preserve | **850 / 850 + 1 skipped** ✓ canonical intact |
+
+Total test-count drop across suites = **57 removed** — all duplicates of coverage that already exists in alhai_zatca's 850. Coverage invariant: every VAT math case now tested in exactly one place with the stricter ZATCA-compliant rounding semantics.
+
+### Risk
+
+- Cashier lib/ untouched — zero risk of production regression. All touched cashier code is test-side.
+- distributor_portal change is view-layer only, no state mutation, lost FP-precision drift replaced with ZATCA rounding — a correctness improvement, not a regression.
+- ZATCA integration test gate (`alhai_zatca` 850/850) preserved end-to-end.
+
+### Audit refs
+
+- Plan §5 Phase 5 "Code" item 1 (Session 2): "Collapse two VatCalculator implementations" — **resolved 3-way** (plan's 2-way scope was stale; live had a third in distributor_portal).
+- NEXT SESSION STARTING POINT §2a Session 2 "Code" item 1 — resolved.
+- `R3` risk from plan §4 (Dart test churn with wrong type assumptions) retired for VAT-related test files; future type changes (int-cents Money) on VAT are now concentrated in alhai_zatca only.
+
+---
+
+END OF SESSION 13 STATION 3b ENTRY — next: Station 3c (Money class creation + CurrencyFormatter.format(Money) overload)
