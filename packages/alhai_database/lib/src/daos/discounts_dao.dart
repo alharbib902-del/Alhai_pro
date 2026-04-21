@@ -13,7 +13,7 @@ class DiscountsDao extends DatabaseAccessor<AppDatabase>
 
   Future<List<DiscountsTableData>> getAllDiscounts(String storeId) {
     return (select(discountsTable)
-          ..where((d) => d.storeId.equals(storeId))
+          ..where((d) => d.storeId.equals(storeId) & d.deletedAt.isNull())
           ..orderBy([(d) => OrderingTerm.desc(d.createdAt)])
           ..limit(200))
         .get();
@@ -21,7 +21,10 @@ class DiscountsDao extends DatabaseAccessor<AppDatabase>
 
   Future<List<DiscountsTableData>> getActiveDiscounts(String storeId) {
     return (select(discountsTable)
-          ..where((d) => d.storeId.equals(storeId) & d.isActive.equals(true))
+          ..where((d) =>
+              d.storeId.equals(storeId) &
+              d.isActive.equals(true) &
+              d.deletedAt.isNull())
           ..limit(200))
         .get();
   }
@@ -36,7 +39,7 @@ class DiscountsDao extends DatabaseAccessor<AppDatabase>
   // Coupons
   Future<List<CouponsTableData>> getAllCoupons(String storeId) {
     return (select(couponsTable)
-          ..where((c) => c.storeId.equals(storeId))
+          ..where((c) => c.storeId.equals(storeId) & c.deletedAt.isNull())
           ..orderBy([(c) => OrderingTerm.desc(c.createdAt)])
           ..limit(200))
         .get();
@@ -47,7 +50,8 @@ class DiscountsDao extends DatabaseAccessor<AppDatabase>
           (c) =>
               c.storeId.equals(storeId) &
               c.code.equals(code) &
-              c.isActive.equals(true),
+              c.isActive.equals(true) &
+              c.deletedAt.isNull(),
         ))
         .getSingleOrNull();
   }
@@ -62,7 +66,7 @@ class DiscountsDao extends DatabaseAccessor<AppDatabase>
   // Promotions
   Future<List<PromotionsTableData>> getAllPromotions(String storeId) {
     return (select(promotionsTable)
-          ..where((p) => p.storeId.equals(storeId))
+          ..where((p) => p.storeId.equals(storeId) & p.deletedAt.isNull())
           ..orderBy([(p) => OrderingTerm.desc(p.createdAt)])
           ..limit(200))
         .get();
@@ -74,6 +78,7 @@ class DiscountsDao extends DatabaseAccessor<AppDatabase>
           (p) =>
               p.storeId.equals(storeId) &
               p.isActive.equals(true) &
+              p.deletedAt.isNull() &
               p.startDate.isSmallerOrEqualValue(now) &
               p.endDate.isBiggerOrEqualValue(now),
         ))

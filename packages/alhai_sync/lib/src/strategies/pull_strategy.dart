@@ -348,29 +348,23 @@ class PullStrategy {
 
     await _db.batch((batch) {
       for (final record in records) {
-        // التعامل مع الحذف الناعم
-        final deletedAt = record['deleted_at'];
-        if (deletedAt != null) {
-          // حذف ناعم: حذف السجل محلياً
-          batch.customStatement('DELETE FROM $tableName WHERE id = ?', [
-            record['id'],
-          ]);
-        } else {
-          // إدراج أو تحديث
-          final columns = record.keys.toList();
-          final placeholders = columns.map((_) => '?').join(', ');
-          final updates = columns
-              .where((c) => c != 'id')
-              .map((c) => '$c = excluded.$c')
-              .join(', ');
+        // UPSERT يتعامل مع كل السجلات بشكل موحَّد — بما في ذلك الـ tombstones
+        // (deleted_at != null) التي يجب حفظها محلياً بدل حذفها hard-delete.
+        // الحذف الفعلي لا يأتي عبر pull (السيرفر يستخدم soft-delete حصرياً
+        // على الـ tombstoned tables).
+        final columns = record.keys.toList();
+        final placeholders = columns.map((_) => '?').join(', ');
+        final updates = columns
+            .where((c) => c != 'id')
+            .map((c) => '$c = excluded.$c')
+            .join(', ');
 
-          batch.customStatement(
-            'INSERT INTO $tableName (${columns.join(', ')}) '
-            'VALUES ($placeholders) '
-            'ON CONFLICT(id) DO UPDATE SET $updates',
-            columns.map((c) => record[c]).toList(),
-          );
-        }
+        batch.customStatement(
+          'INSERT INTO $tableName (${columns.join(', ')}) '
+          'VALUES ($placeholders) '
+          'ON CONFLICT(id) DO UPDATE SET $updates',
+          columns.map((c) => record[c]).toList(),
+        );
       }
     });
   }

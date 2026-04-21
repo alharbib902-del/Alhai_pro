@@ -39,8 +39,10 @@ class RealtimeEvent {
 ///
 /// آلية العمل:
 /// 1. الاشتراك في قنوات Supabase Realtime لكل جدول
-/// 2. عند INSERT/UPDATE: إدراج/تحديث محلياً فوراً
-/// 3. عند DELETE: حذف ناعم محلياً
+/// 2. عند INSERT/UPDATE: إدراج/تحديث محلياً فوراً. الـ tombstones
+///    (deleted_at != null) تصل كـ UPDATE event وتُحفظ محلياً عبر UPSERT.
+/// 3. عند DELETE: حذف فعلي (hard-delete) محلياً — هذا المسار للحذف
+///    الحقيقي من السيرفر فقط، وليس للـ tombstones.
 /// 4. فلترة حسب org_id و store_id
 /// 5. إعادة الاتصال تلقائياً عند انقطاع الاتصال
 ///
@@ -300,7 +302,7 @@ class RealtimeListener {
           if (oldRecord.isNotEmpty) {
             final recordId = oldRecord['id'] as String?;
             if (recordId != null) {
-              await _softDeleteLocally(tableName, recordId);
+              await _hardDeleteLocally(tableName, recordId);
               _emitEvent(
                 RealtimeEvent(
                   tableName: tableName,
@@ -403,10 +405,11 @@ class RealtimeListener {
     );
   }
 
-  /// حذف ناعم محلياً
-  Future<void> _softDeleteLocally(String tableName, String recordId) async {
+  /// حذف فعلي (hard-delete) محلياً — يُستدعى من DELETE events الحقيقية
+  /// من السيرفر فقط. الـ tombstones (deleted_at != null) تصل كـ UPDATE
+  /// events وتُحفظ محلياً عبر _upsertLocally بدون استدعاء هذه الدالة.
+  Future<void> _hardDeleteLocally(String tableName, String recordId) async {
     validateTableName(tableName);
-    // نحذف السجل محلياً (الحذف الناعم يكون على السيرفر)
     await _db.customStatement('DELETE FROM $tableName WHERE id = ?', [
       recordId,
     ]);

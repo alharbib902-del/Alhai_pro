@@ -13,7 +13,7 @@ class ExpensesDao extends DatabaseAccessor<AppDatabase>
 
   Future<List<ExpensesTableData>> getAllExpenses(String storeId) {
     return (select(expensesTable)
-          ..where((e) => e.storeId.equals(storeId))
+          ..where((e) => e.storeId.equals(storeId) & e.deletedAt.isNull())
           ..orderBy([(e) => OrderingTerm.desc(e.createdAt)])
           ..limit(500))
         .get();
@@ -28,6 +28,7 @@ class ExpensesDao extends DatabaseAccessor<AppDatabase>
           ..where(
             (e) =>
                 e.storeId.equals(storeId) &
+                e.deletedAt.isNull() &
                 e.expenseDate.isBiggerOrEqualValue(startDate) &
                 e.expenseDate.isSmallerThanValue(endDate),
           )
@@ -41,7 +42,9 @@ class ExpensesDao extends DatabaseAccessor<AppDatabase>
     final startOfDay = DateTime(today.year, today.month, today.day);
     final endOfDay = startOfDay.add(const Duration(days: 1));
     final result = await customSelect(
-      'SELECT COALESCE(SUM(amount), 0) as total FROM expenses WHERE store_id = ? AND expense_date >= ? AND expense_date < ?',
+      'SELECT COALESCE(SUM(amount), 0) as total FROM expenses '
+      'WHERE store_id = ? AND expense_date >= ? AND expense_date < ? '
+      'AND deleted_at IS NULL',
       variables: [
         Variable.withString(storeId),
         Variable.withDateTime(startOfDay),
@@ -66,7 +69,7 @@ class ExpensesDao extends DatabaseAccessor<AppDatabase>
 
   Stream<List<ExpensesTableData>> watchExpenses(String storeId) {
     return (select(expensesTable)
-          ..where((e) => e.storeId.equals(storeId))
+          ..where((e) => e.storeId.equals(storeId) & e.deletedAt.isNull())
           ..orderBy([(e) => OrderingTerm.desc(e.expenseDate)]))
         .watch();
   }

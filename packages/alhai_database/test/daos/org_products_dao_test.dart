@@ -244,7 +244,12 @@ void main() {
 
         await db.orgProductsDao.softDelete('op-1');
 
-        final product = await db.orgProductsDao.getById('op-1');
+        // Bypass the DAO's deletedAt.isNull() filter — post-v70 getById() hides
+        // soft-deleted rows by design. To verify softDelete's effect on flags,
+        // query the table directly.
+        final product = await (db.select(db.orgProductsTable)
+              ..where((p) => p.id.equals('op-1')))
+            .getSingleOrNull();
         expect(product!.isActive, isFalse);
         expect(product.deletedAt, isNotNull);
       });

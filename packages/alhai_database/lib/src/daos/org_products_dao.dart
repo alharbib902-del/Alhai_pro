@@ -14,29 +14,38 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
   /// Get all active products for an organization
   Future<List<OrgProductsTableData>> getByOrgId(String orgId) {
     return (select(orgProductsTable)
-          ..where((p) => p.orgId.equals(orgId) & p.isActive.equals(true))
+          ..where((p) =>
+              p.orgId.equals(orgId) &
+              p.isActive.equals(true) &
+              p.deletedAt.isNull())
           ..orderBy([(p) => OrderingTerm.asc(p.name)]))
         .get();
   }
 
   /// Get a single org product by ID
   Future<OrgProductsTableData?> getById(String id) {
-    return (select(
-      orgProductsTable,
-    )..where((p) => p.id.equals(id))).getSingleOrNull();
+    return (select(orgProductsTable)
+          ..where((p) => p.id.equals(id) & p.deletedAt.isNull()))
+        .getSingleOrNull();
   }
 
   /// Get org product by SKU
   Future<OrgProductsTableData?> getBySku(String orgId, String sku) {
     return (select(orgProductsTable)
-          ..where((p) => p.orgId.equals(orgId) & p.sku.equals(sku)))
+          ..where((p) =>
+              p.orgId.equals(orgId) &
+              p.sku.equals(sku) &
+              p.deletedAt.isNull()))
         .getSingleOrNull();
   }
 
   /// Get org product by barcode
   Future<OrgProductsTableData?> getByBarcode(String orgId, String barcode) {
     return (select(orgProductsTable)
-          ..where((p) => p.orgId.equals(orgId) & p.barcode.equals(barcode)))
+          ..where((p) =>
+              p.orgId.equals(orgId) &
+              p.barcode.equals(barcode) &
+              p.deletedAt.isNull()))
         .getSingleOrNull();
   }
 
@@ -48,6 +57,7 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
             (p) =>
                 p.orgId.equals(orgId) &
                 p.isActive.equals(true) &
+                p.deletedAt.isNull() &
                 (p.name.like(pattern) |
                     p.nameEn.like(pattern) |
                     p.barcode.like(pattern) |
@@ -68,7 +78,8 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
             (p) =>
                 p.orgId.equals(orgId) &
                 p.categoryId.equals(categoryId) &
-                p.isActive.equals(true),
+                p.isActive.equals(true) &
+                p.deletedAt.isNull(),
           )
           ..orderBy([(p) => OrderingTerm.asc(p.name)]))
         .get();
@@ -81,7 +92,8 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
             (p) =>
                 p.orgId.equals(orgId) &
                 p.isActive.equals(true) &
-                p.onlineAvailable.equals(true),
+                p.onlineAvailable.equals(true) &
+                p.deletedAt.isNull(),
           )
           ..orderBy([(p) => OrderingTerm.asc(p.name)]))
         .get();
@@ -157,7 +169,8 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
       ..addColumns([count])
       ..where(
         orgProductsTable.orgId.equals(orgId) &
-            orgProductsTable.isActive.equals(true),
+            orgProductsTable.isActive.equals(true) &
+            orgProductsTable.deletedAt.isNull(),
       );
     final result = await query.getSingle();
     return result.read(count) ?? 0;
@@ -166,7 +179,10 @@ class OrgProductsDao extends DatabaseAccessor<AppDatabase>
   /// Watch all active products for an organization
   Stream<List<OrgProductsTableData>> watchByOrgId(String orgId) {
     return (select(orgProductsTable)
-          ..where((p) => p.orgId.equals(orgId) & p.isActive.equals(true))
+          ..where((p) =>
+              p.orgId.equals(orgId) &
+              p.isActive.equals(true) &
+              p.deletedAt.isNull())
           ..orderBy([(p) => OrderingTerm.asc(p.name)]))
         .watch();
   }

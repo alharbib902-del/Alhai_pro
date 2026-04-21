@@ -11,30 +11,32 @@ class StoresDao extends DatabaseAccessor<AppDatabase> with _$StoresDaoMixin {
   StoresDao(super.db);
 
   Future<List<StoresTableData>> getAllStores() {
-    return (select(
-      storesTable,
-    )..orderBy([(s) => OrderingTerm.asc(s.name)])).get();
+    return (select(storesTable)
+          ..where((s) => s.deletedAt.isNull())
+          ..orderBy([(s) => OrderingTerm.asc(s.name)]))
+        .get();
   }
 
   Future<List<StoresTableData>> getActiveStores() {
     return (select(storesTable)
-          ..where((s) => s.isActive.equals(true))
+          ..where((s) => s.isActive.equals(true) & s.deletedAt.isNull())
           ..orderBy([(s) => OrderingTerm.asc(s.name)]))
         .get();
   }
 
   Future<StoresTableData?> getStoreById(String id) {
-    return (select(
-      storesTable,
-    )..where((s) => s.id.equals(id))).getSingleOrNull();
+    return (select(storesTable)
+          ..where((s) => s.id.equals(id) & s.deletedAt.isNull()))
+        .getSingleOrNull();
   }
 
   /// جلب عدة متاجر بقائمة معرفات (batch query بدلاً من loop)
   Future<List<StoresTableData>> getStoresByIds(List<String> ids) {
     if (ids.isEmpty) return Future.value([]);
-    return (select(
-      storesTable,
-    )..where((s) => s.id.isIn(ids) & s.isActive.equals(true))).get();
+    return (select(storesTable)
+          ..where((s) =>
+              s.id.isIn(ids) & s.isActive.equals(true) & s.deletedAt.isNull()))
+        .get();
   }
 
   /// إدراج أو تحديث متجر (UPSERT) - يمنع خطأ UNIQUE constraint
@@ -55,8 +57,9 @@ class StoresDao extends DatabaseAccessor<AppDatabase> with _$StoresDaoMixin {
   }
 
   Stream<List<StoresTableData>> watchStores() {
-    return (select(
-      storesTable,
-    )..orderBy([(s) => OrderingTerm.asc(s.name)])).watch();
+    return (select(storesTable)
+          ..where((s) => s.deletedAt.isNull())
+          ..orderBy([(s) => OrderingTerm.asc(s.name)]))
+        .watch();
   }
 }

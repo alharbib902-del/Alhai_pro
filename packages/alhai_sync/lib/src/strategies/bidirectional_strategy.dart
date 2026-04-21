@@ -483,13 +483,9 @@ class BidirectionalStrategy {
     validateTableName(tableName);
     final recordId = serverRecord['id'] as String;
 
-    // التعامل مع الحذف الناعم
-    if (serverRecord['deleted_at'] != null) {
-      await _db.customStatement('DELETE FROM $tableName WHERE id = ?', [
-        recordId,
-      ]);
-      return _ApplyResult.pulled;
-    }
+    // ملاحظة: الـ tombstones (deleted_at != null) تمر عبر نفس مسار الـ UPSERT
+    // ومنطق كشف التعارض. هذا يحفظ الـ audit trail محلياً ويمنع فقدان
+    // البيانات في حالة وجود تعديل محلي معلّق لنفس السجل.
 
     // تحديد عمود الوقت المتاح
     final timeCol = _getOrderColumn(tableName);

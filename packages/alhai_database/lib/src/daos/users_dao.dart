@@ -12,30 +12,36 @@ class UsersDao extends DatabaseAccessor<AppDatabase> with _$UsersDaoMixin {
 
   Future<List<UsersTableData>> getAllUsers(String storeId) {
     return (select(usersTable)
-          ..where((u) => u.storeId.equals(storeId))
+          ..where((u) => u.storeId.equals(storeId) & u.deletedAt.isNull())
           ..orderBy([(u) => OrderingTerm.asc(u.name)]))
         .get();
   }
 
   Future<List<UsersTableData>> getActiveUsers(String storeId) {
     return (select(usersTable)
-          ..where((u) => u.storeId.equals(storeId) & u.isActive.equals(true))
+          ..where((u) =>
+              u.storeId.equals(storeId) &
+              u.isActive.equals(true) &
+              u.deletedAt.isNull())
           ..orderBy([(u) => OrderingTerm.asc(u.name)]))
         .get();
   }
 
   Future<UsersTableData?> getUserById(String id) =>
-      (select(usersTable)..where((u) => u.id.equals(id))).getSingleOrNull();
-  Future<UsersTableData?> getUserByPhone(String phone) => (select(
-    usersTable,
-  )..where((u) => u.phone.equals(phone))).getSingleOrNull();
+      (select(usersTable)
+            ..where((u) => u.id.equals(id) & u.deletedAt.isNull()))
+          .getSingleOrNull();
+  Future<UsersTableData?> getUserByPhone(String phone) => (select(usersTable)
+        ..where((u) => u.phone.equals(phone) & u.deletedAt.isNull()))
+      .getSingleOrNull();
 
   Future<UsersTableData?> verifyPin(String storeId, String pin) {
     return (select(usersTable)..where(
           (u) =>
               u.storeId.equals(storeId) &
               u.pin.equals(pin) &
-              u.isActive.equals(true),
+              u.isActive.equals(true) &
+              u.deletedAt.isNull(),
         ))
         .getSingleOrNull();
   }
@@ -62,7 +68,7 @@ class UsersDao extends DatabaseAccessor<AppDatabase> with _$UsersDaoMixin {
 
   Stream<List<UsersTableData>> watchUsers(String storeId) {
     return (select(usersTable)
-          ..where((u) => u.storeId.equals(storeId))
+          ..where((u) => u.storeId.equals(storeId) & u.deletedAt.isNull())
           ..orderBy([(u) => OrderingTerm.asc(u.name)]))
         .watch();
   }

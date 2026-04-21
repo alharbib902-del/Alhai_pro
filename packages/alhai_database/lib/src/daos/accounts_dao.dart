@@ -14,7 +14,7 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
   /// الحصول على جميع الحسابات
   Future<List<AccountsTableData>> getAllAccounts(String storeId) {
     return (select(accountsTable)
-          ..where((a) => a.storeId.equals(storeId))
+          ..where((a) => a.storeId.equals(storeId) & a.deletedAt.isNull())
           ..orderBy([(a) => OrderingTerm.asc(a.name)])
           ..limit(500))
         .get();
@@ -24,7 +24,10 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
   Future<List<AccountsTableData>> getReceivableAccounts(String storeId) {
     return (select(accountsTable)
           ..where(
-            (a) => a.storeId.equals(storeId) & a.type.equals('receivable'),
+            (a) =>
+                a.storeId.equals(storeId) &
+                a.type.equals('receivable') &
+                a.deletedAt.isNull(),
           )
           ..orderBy([(a) => OrderingTerm.asc(a.name)])
           ..limit(500))
@@ -34,7 +37,10 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
   /// الحصول على حسابات الموردين
   Future<List<AccountsTableData>> getPayableAccounts(String storeId) {
     return (select(accountsTable)
-          ..where((a) => a.storeId.equals(storeId) & a.type.equals('payable'))
+          ..where((a) =>
+              a.storeId.equals(storeId) &
+              a.type.equals('payable') &
+              a.deletedAt.isNull())
           ..orderBy([(a) => OrderingTerm.asc(a.name)])
           ..limit(500))
         .get();
@@ -42,9 +48,9 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
 
   /// الحصول على حساب بالمعرف
   Future<AccountsTableData?> getAccountById(String id) {
-    return (select(
-      accountsTable,
-    )..where((a) => a.id.equals(id))).getSingleOrNull();
+    return (select(accountsTable)
+          ..where((a) => a.id.equals(id) & a.deletedAt.isNull()))
+        .getSingleOrNull();
   }
 
   /// الحصول على حساب العميل
@@ -53,7 +59,10 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
     String storeId,
   ) {
     return (select(accountsTable)..where(
-          (a) => a.customerId.equals(customerId) & a.storeId.equals(storeId),
+          (a) =>
+              a.customerId.equals(customerId) &
+              a.storeId.equals(storeId) &
+              a.deletedAt.isNull(),
         ))
         .getSingleOrNull();
   }
@@ -110,9 +119,10 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
   /// إجمالي الديون
   Future<double> getTotalReceivable(String storeId) async {
     final result = await customSelect(
-      '''SELECT COALESCE(SUM(balance), 0) as total 
-         FROM accounts 
-         WHERE store_id = ? AND type = 'receivable' AND balance > 0''',
+      '''SELECT COALESCE(SUM(balance), 0) as total
+         FROM accounts
+         WHERE store_id = ? AND type = 'receivable' AND balance > 0
+           AND deleted_at IS NULL''',
       variables: [Variable.withString(storeId)],
     ).getSingle();
 
@@ -133,7 +143,8 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
             (a) =>
                 a.storeId.equals(storeId) &
                 a.type.equals('receivable') &
-                a.balance.isBiggerThanValue(0),
+                a.balance.isBiggerThanValue(0) &
+                a.deletedAt.isNull(),
           )
           ..orderBy([(a) => OrderingTerm.desc(a.balance)]))
         .watch();
@@ -154,7 +165,7 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
   }) {
     var query = select(accountsTable)
       ..where((a) {
-        var condition = a.storeId.equals(storeId);
+        var condition = a.storeId.equals(storeId) & a.deletedAt.isNull();
         if (type != null) {
           condition = condition & a.type.equals(type);
         }
@@ -172,7 +183,8 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
 
     var query = selectOnly(accountsTable)
       ..addColumns([countExpression])
-      ..where(accountsTable.storeId.equals(storeId));
+      ..where(accountsTable.storeId.equals(storeId) &
+          accountsTable.deletedAt.isNull());
 
     if (type != null) {
       query.where(accountsTable.type.equals(type));

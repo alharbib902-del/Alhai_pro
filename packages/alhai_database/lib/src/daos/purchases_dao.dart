@@ -13,7 +13,7 @@ class PurchasesDao extends DatabaseAccessor<AppDatabase>
 
   Future<List<PurchasesTableData>> getAllPurchases(String storeId) {
     return (select(purchasesTable)
-          ..where((p) => p.storeId.equals(storeId))
+          ..where((p) => p.storeId.equals(storeId) & p.deletedAt.isNull())
           ..orderBy([(p) => OrderingTerm.desc(p.createdAt)])
           ..limit(500))
         .get();
@@ -24,13 +24,18 @@ class PurchasesDao extends DatabaseAccessor<AppDatabase>
     String status,
   ) {
     return (select(purchasesTable)
-          ..where((p) => p.storeId.equals(storeId) & p.status.equals(status))
+          ..where((p) =>
+              p.storeId.equals(storeId) &
+              p.status.equals(status) &
+              p.deletedAt.isNull())
           ..limit(500))
         .get();
   }
 
   Future<PurchasesTableData?> getPurchaseById(String id) =>
-      (select(purchasesTable)..where((p) => p.id.equals(id))).getSingleOrNull();
+      (select(purchasesTable)
+            ..where((p) => p.id.equals(id) & p.deletedAt.isNull()))
+          .getSingleOrNull();
 
   Future<int> insertPurchase(PurchasesTableCompanion purchase) =>
       into(purchasesTable).insert(purchase);
@@ -95,7 +100,7 @@ class PurchasesDao extends DatabaseAccessor<AppDatabase>
     int limit = 20,
   }) {
     return (select(purchasesTable)
-          ..where((p) => p.storeId.equals(storeId))
+          ..where((p) => p.storeId.equals(storeId) & p.deletedAt.isNull())
           ..orderBy([(p) => OrderingTerm.desc(p.createdAt)])
           ..limit(limit, offset: offset))
         .get();
@@ -109,7 +114,10 @@ class PurchasesDao extends DatabaseAccessor<AppDatabase>
     int limit = 20,
   }) {
     return (select(purchasesTable)
-          ..where((p) => p.storeId.equals(storeId) & p.status.equals(status))
+          ..where((p) =>
+              p.storeId.equals(storeId) &
+              p.status.equals(status) &
+              p.deletedAt.isNull())
           ..orderBy([(p) => OrderingTerm.desc(p.createdAt)])
           ..limit(limit, offset: offset))
         .get();
@@ -120,7 +128,8 @@ class PurchasesDao extends DatabaseAccessor<AppDatabase>
     final countExpr = purchasesTable.id.count();
     var query = selectOnly(purchasesTable)
       ..addColumns([countExpr])
-      ..where(purchasesTable.storeId.equals(storeId));
+      ..where(purchasesTable.storeId.equals(storeId) &
+          purchasesTable.deletedAt.isNull());
     if (status != null) {
       query.where(purchasesTable.status.equals(status));
     }

@@ -3589,3 +3589,113 @@ RPC AUTH GATE Re-Apply / v37 RPC Auth Hardening (2026-04-16, partial apply) / v6
 ---
 
 END OF RPC AUTH GATE RE-APPLY ENTRY — v37 body-level intent verifiably closed
+
+
+---
+
+### C-7 Sync Tombstones Fix — 2026-04-21 — server soft-delete now preserved locally
+
+**Classification:** Production bug fix. Sync layer + DAO filter sweep. No Supabase migration.
+**Branch:** fix/sync-tombstones (off ba46cb5, cumulative from v69)
+**Scope:** 4 alhai_sync sites + 9 alhai_database DAOs
+**Applied:** Code only; no live DB changes this session
+
+#### Summary
+
+Fixes the long-standing sync bug where server-side soft-deletes (UPDATE setting `deleted_at`) were translated into local HARD DELETE operations at 4 sync sites. This:
+- Destroyed the local audit trail of tombstones
+- Caused dead-letter queue entries on tables with pending local changes (sales/shifts per prior evidence)
+- Clashed with any in-flight local UPDATE for the concurrently-deleted row
+
+The fix unifies all sync UPSERT paths to treat `deleted_at` as just another column — tombstones are now preserved locally, matching the server's intent.
+
+Paired with DAO filter additions on 9 previously-unfiltered DAOs (accounts, discounts, expenses, orders, org_products, purchases, stores, suppliers, users) so reads don't start returning ghost deleted rows. This is an ATOMIC fix — sync change + DAO filters must land together or apps regress.
+
+#### Scope changes
+
+**alhai_sync (4 files):**
+1. `pull_strategy.dart:349-375` — `_upsertLocally`: removed the `if (deletedAt != null) DELETE` branch. Fallthrough to UPSERT handles tombstones via the `deleted_at` column being part of the UPSERT payload.
+2. `pull_sync_service.dart:276-300` — `_insertBatch`: same pattern as #1.
+3. `bidirectional_strategy.dart:486-492` — `_applyServerRecord`: removed the early-return tombstone DELETE branch. Code flows to conflict detection + UPSERT, which safely preserves local pending changes via conflict resolution.
+4. `realtime_listener.dart`:
+   - Docstring lines 42-43: "عند DELETE: حذف ناعم محلياً" (misleading — said soft, code hard-deletes) → now accurately describes the UPSERT-for-tombstones vs hard-delete-for-DELETE-events distinction.
+   - `_softDeleteLocally` → renamed to `_hardDeleteLocally` (honesty in naming). This function IS called from true DELETE events (which are for actual server-side hard-deletes, not tombstones). The rename reflects reality.
+
+**alhai_database DAOs (9 files) — added `deletedAt.isNull()` filter:**
+
+| DAO | Methods touched |
+|---|---|
+| accounts_dao | getAllAccounts, getReceivableAccounts, getPayableAccounts, getAccountById, getCustomerAccount, getTotalReceivable (raw SQL), watchReceivableAccounts, getAccountsPaginated, getAccountsCount |
+| discounts_dao | getAllDiscounts, getActiveDiscounts, getAllCoupons, getCouponByCode, getAllPromotions, getActivePromotions |
+| expenses_dao | getAllExpenses, getExpensesByDateRange, getTodayExpensesTotal (raw SQL), watchExpenses |
+| orders_dao | getOrders, getOrdersPaginated, getOrdersCount, getOrdersByStatus, getPendingOrders, getOrderById, getOrderByNumber, getOrdersCountByStatus (raw SQL), getTodayOrdersTotal (raw SQL), getPendingOrdersCount (raw SQL), getOrdersStats (raw SQL), getOrdersWithCustomer (raw SQL) |
+| org_products_dao | getByOrgId, getById, getBySku, getByBarcode, search, getByCategory, getOnlineProducts, getCount, watchByOrgId |
+| purchases_dao | getAllPurchases, getPurchasesByStatus, getPurchaseById, getPurchasesPaginated, getPurchasesByStatusPaginated, getPurchasesCount |
+| stores_dao | getAllStores, getActiveStores, getStoreById, getStoresByIds, watchStores |
+| suppliers_dao | getAllSuppliers, getActiveSuppliers, getSupplierById, searchSuppliers, watchSuppliers |
+| users_dao | getAllUsers, getActiveUsers, getUserById, getUserByPhone, verifyPin, watchUsers |
+
+**Total: ~55 DAO read methods updated.**
+
+Cashier hot path was already safe (5 DAOs filter: categories, customers, products, returns, sales — verified in prior C-7 scoping session on 2026-04-20).
+
+#### Phase A investigation findings
+
+- **4 sync sites confirmed broken** on current HEAD (ba46cb5). Grep for `DELETE FROM \$tableName` in the tombstone branches matched exactly what the prior audit documented.
+- **Narrative-fiction comment** at realtime_listener.dart:42-43 confirmed.
+- **9 unfiltered DAOs** matched prior audit list exactly.
+- **Drift schema surprise:** `PromotionsTable` IS defined in `discounts_table.dart` (line 65-87) with a `deletedAt` column. Prior audit (2026-04-20) had logged "promotions has NO Drift table" — outdated. No Drift schema work needed.
+- **5 Drift-only soft-delete tables** (accounts, customers, discounts, expenses, purchases): these have `deletedAt` in Drift but NOT on Supabase. Sync never sends `deleted_at` for them → the 4-site fix is a no-op for these → but DAO filters still apply for consistency.
+
+#### Explicitly deferred
+
+- **Supabase partial indexes** on `deleted_at IS NULL` for the 10 server-tombstoned tables (performance optimization, not behavior) — deferred.
+- **5 Drift-only soft-delete tables alignment** with Supabase — deferred, out-of-scope.
+- **Cashier hot-path DAOs** (5 already have filters) — verified clean, no action.
+
+#### Verification
+
+| Step | Expected | Actual |
+|---|---|---|
+| Static analysis `alhai_database/lib/` | clean | ✓ (72s) |
+| Static analysis `alhai_sync/lib/` | clean | ✓ (9s) |
+| alhai_database tests | 496 pass + 1 skipped | ✓ (after test fix — see below) |
+| alhai_sync tests | 358 | ✓ |
+| cashier tests | 600 | ✓ |
+| customer_app tests | 136 | ✓ |
+| driver_app tests | 152 | ✓ |
+
+**Test fix required (1 test):**
+`test/daos/org_products_dao_test.dart:242` — "softDelete marks product as inactive"
+
+The test called `softDelete('op-1')` then `getById('op-1')` expecting to see the soft-deleted row with `isActive=false`. Post-fix, `getById` now filters `deletedAt.isNull()` — so soft-deleted rows are correctly hidden from normal reads.
+
+**Fix:** changed the test's verification step to query the table directly via `db.select(db.orgProductsTable)..where(id.equals('op-1'))`, bypassing the DAO filter. This verifies softDelete's effect on flags without relying on the (now correctly-filtering) `getById`. The behavioral change reflects intent: soft-deleted rows SHOULD be invisible via normal read paths.
+
+#### Risk analysis
+
+**What could regress:**
+1. Apps that previously ONLY worked because of hard-delete on sync (so deleted rows were absent locally). With the fix, rows persist with `deletedAt`. Apps NOT filtering would show ghosts. **Mitigation:** 9 DAOs updated in same commit.
+2. Raw SQL queries in app code (not via DAOs) might lack the filter. **Mitigation:** grep shows zero direct `.from()` or raw SQL hits on tombstoned tables outside DAOs.
+3. Conflict detection in bidirectional_strategy: now tombstones go through conflict path. For tombstones with no local pending change, flow is normal UPSERT. For concurrent local update + server tombstone, conflict resolver decides (actually an improvement over unconditional DELETE).
+
+**What improves:**
+1. Local audit trail of tombstones preserved.
+2. No more dead-letter entries on tables with concurrent local writes.
+3. Realtime listener naming now matches behavior (`_hardDeleteLocally`).
+4. DAO filters make ghost rows impossible regardless of sync behavior — defensive, not only reactive.
+
+#### Methodology notes
+
+1. **Unifying special branches into the generic path** — removing the `if (deletedAt != null) DELETE` branches simplifies code AND fixes the bug. Rare win where the simpler implementation is also the correct one.
+2. **Renaming for honesty** — `_softDeleteLocally` did a hard delete; `_hardDeleteLocally` matches reality. Naming debt is real debt; reviewing function names periodically catches drift between intent and implementation.
+3. **Atomic sync-fix + DAO-filter-sweep** — one without the other causes regression. Shipping them together in one commit preserves consistency.
+4. **Live code verification** — prior audit log on 2026-04-20 said promotions wasn't a Drift table. Today verified it IS. Live verification catches stale documentation.
+
+#### Audit refs
+
+C-7 Tombstones Fix / prior scoping session 2026-04-20 FIX_SESSION_LOG entry / `03_sync_offline_first.md` Finding #4 / F4 follow-through after deferred C-6b comment fix.
+
+---
+
+END OF C-7 TOMBSTONES FIX ENTRY — sync layer + 9 DAOs

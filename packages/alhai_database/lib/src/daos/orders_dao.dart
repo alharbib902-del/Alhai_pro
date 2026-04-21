@@ -19,7 +19,7 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
   Future<List<OrdersTableData>> getOrders(String storeId, {String? channel}) {
     return (select(ordersTable)
           ..where((o) {
-            var condition = o.storeId.equals(storeId);
+            var condition = o.storeId.equals(storeId) & o.deletedAt.isNull();
             if (channel != null) {
               condition = condition & o.channel.equals(channel);
             }
@@ -45,7 +45,7 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
   }) {
     var query = select(ordersTable)
       ..where((o) {
-        var condition = o.storeId.equals(storeId);
+        var condition = o.storeId.equals(storeId) & o.deletedAt.isNull();
         if (status != null) {
           condition = condition & o.status.equals(status);
         }
@@ -63,7 +63,8 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
 
     var query = selectOnly(ordersTable)
       ..addColumns([countExpression])
-      ..where(ordersTable.storeId.equals(storeId));
+      ..where(ordersTable.storeId.equals(storeId) &
+          ordersTable.deletedAt.isNull());
 
     if (status != null) {
       query.where(ordersTable.status.equals(status));
@@ -79,7 +80,10 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
     String status,
   ) {
     return (select(ordersTable)
-          ..where((o) => o.storeId.equals(storeId) & o.status.equals(status))
+          ..where((o) =>
+              o.storeId.equals(storeId) &
+              o.status.equals(status) &
+              o.deletedAt.isNull())
           ..orderBy([(o) => OrderingTerm.desc(o.orderDate)])
           ..limit(500))
         .get();
@@ -91,6 +95,7 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
           ..where(
             (o) =>
                 o.storeId.equals(storeId) &
+                o.deletedAt.isNull() &
                 o.status.isIn([
                   'created',
                   'confirmed',
@@ -106,9 +111,9 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
 
   /// جلب طلب بمعرفه
   Future<OrdersTableData?> getOrderById(String id) {
-    return (select(
-      ordersTable,
-    )..where((o) => o.id.equals(id))).getSingleOrNull();
+    return (select(ordersTable)
+          ..where((o) => o.id.equals(id) & o.deletedAt.isNull()))
+        .getSingleOrNull();
   }
 
   /// جلب طلب برقمه (مع فلتر المتجر)
@@ -117,7 +122,8 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
     String? storeId,
   }) {
     return (select(ordersTable)..where((o) {
-          var condition = o.orderNumber.equals(orderNumber);
+          var condition =
+              o.orderNumber.equals(orderNumber) & o.deletedAt.isNull();
           if (storeId != null) {
             condition = condition & o.storeId.equals(storeId);
           }
@@ -237,7 +243,7 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
     final result = await customSelect(
       '''SELECT status, COUNT(*) as count
          FROM orders
-         WHERE store_id = ?
+         WHERE store_id = ? AND deleted_at IS NULL
          GROUP BY status''',
       variables: [Variable.withString(storeId)],
       readsFrom: {ordersTable},
@@ -262,7 +268,8 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
          FROM orders
          WHERE store_id = ?
            AND status = 'delivered'
-           AND order_date >= ?''',
+           AND order_date >= ?
+           AND deleted_at IS NULL''',
       variables: [
         Variable.withString(storeId),
         Variable.withDateTime(startOfDay),
@@ -279,7 +286,8 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
       '''SELECT COUNT(*) as count
          FROM orders
          WHERE store_id = ?
-           AND status IN ('created', 'confirmed', 'preparing', 'ready', 'out_for_delivery')''',
+           AND status IN ('created', 'confirmed', 'preparing', 'ready', 'out_for_delivery')
+           AND deleted_at IS NULL''',
       variables: [Variable.withString(storeId)],
       readsFrom: {ordersTable},
     ).getSingle();
@@ -307,7 +315,8 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
          FROM orders
          WHERE store_id = ?
            AND order_date >= ?
-           AND order_date <= ?''',
+           AND order_date <= ?
+           AND deleted_at IS NULL''',
       variables: [
         Variable.withString(storeId),
         Variable.withDateTime(start),
@@ -371,7 +380,7 @@ class OrdersDao extends DatabaseAccessor<AppDatabase> with _$OrdersDaoMixin {
     int limit = 20,
     int offset = 0,
   }) async {
-    var whereClause = 'o.store_id = ?';
+    var whereClause = 'o.store_id = ? AND o.deleted_at IS NULL';
     final variables = <Variable>[Variable.withString(storeId)];
 
     if (status != null) {

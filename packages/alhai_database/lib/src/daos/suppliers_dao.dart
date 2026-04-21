@@ -38,7 +38,7 @@ class SuppliersDao extends DatabaseAccessor<AppDatabase>
 
   Future<List<SuppliersTableData>> getAllSuppliers(String storeId) {
     return (select(suppliersTable)
-          ..where((s) => s.storeId.equals(storeId))
+          ..where((s) => s.storeId.equals(storeId) & s.deletedAt.isNull())
           ..orderBy([(s) => OrderingTerm.asc(s.name)])
           ..limit(500))
         .get();
@@ -46,14 +46,19 @@ class SuppliersDao extends DatabaseAccessor<AppDatabase>
 
   Future<List<SuppliersTableData>> getActiveSuppliers(String storeId) {
     return (select(suppliersTable)
-          ..where((s) => s.storeId.equals(storeId) & s.isActive.equals(true))
+          ..where((s) =>
+              s.storeId.equals(storeId) &
+              s.isActive.equals(true) &
+              s.deletedAt.isNull())
           ..orderBy([(s) => OrderingTerm.asc(s.name)])
           ..limit(500))
         .get();
   }
 
   Future<SuppliersTableData?> getSupplierById(String id) =>
-      (select(suppliersTable)..where((s) => s.id.equals(id))).getSingleOrNull();
+      (select(suppliersTable)
+            ..where((s) => s.id.equals(id) & s.deletedAt.isNull()))
+          .getSingleOrNull();
 
   Future<List<SuppliersTableData>> searchSuppliers(
     String query,
@@ -63,6 +68,7 @@ class SuppliersDao extends DatabaseAccessor<AppDatabase>
           ..where(
             (s) =>
                 s.storeId.equals(storeId) &
+                s.deletedAt.isNull() &
                 (s.name.contains(query) | s.phone.contains(query)),
           )
           ..limit(20))
@@ -117,7 +123,7 @@ class SuppliersDao extends DatabaseAccessor<AppDatabase>
 
   Stream<List<SuppliersTableData>> watchSuppliers(String storeId) {
     return (select(suppliersTable)
-          ..where((s) => s.storeId.equals(storeId))
+          ..where((s) => s.storeId.equals(storeId) & s.deletedAt.isNull())
           ..orderBy([(s) => OrderingTerm.asc(s.name)]))
         .watch();
   }
