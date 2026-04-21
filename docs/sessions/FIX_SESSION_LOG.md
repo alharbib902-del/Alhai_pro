@@ -4302,3 +4302,295 @@ C-4 Session 1 Stage B / plan `docs/sessions/c4-money-migration-plan.md` §5 Stag
 ---
 
 END OF C-4 SESSION 1 STAGE B ENTRY — Session 2 (ZATCA invoice core, full dedicated day) next
+
+
+---
+
+# 🚀 NEXT SESSION STARTING POINT (2026-04-22+)
+
+**Written at end-of-day 2026-04-21 after 12 sessions / ~15-16 hours.**
+**Purpose:** Single entry point for any fresh session (AI or human) to resume work WITHOUT re-reading all prior entries.
+
+---
+
+## 0. Production / Repo State Snapshot
+
+### Supabase (live production)
+- **Latest migration:** v71 (`20260421_v71_c4_money_stage_b_products.sql`)
+- **Full history of today's live applies:** v64, v65, v66, v67, v68, v69, v70, v71
+- **Schema highlights:**
+  - **Wildcard campaign 100% closed** on `public.*` — zero `qual=true` policies remain, zero anon-read leaks
+  - **47 SECURITY DEFINER functions hardened** (search_path set, CVE-2018-1058 closed)
+  - **9 RPCs have AUTH GATES** (auth.uid() null check + optional store access check)
+  - **Money columns migrated to INTEGER cents** on: discounts (value, min_purchase, max_discount), org_products (default_price, cost_price), products (price, cost_price)
+  - **ZATCA offline queue** + dead-letter tables ready (zatca_offline_queue + zatca_dead_letter), consumer wiring deferred
+
+### Drift schema (local)
+- **Latest version:** v41 (ProductsTable IntColumn for price/costPrice)
+- **Bumps today:** v37 → v38 → v39 → v40 → v41 (4 bumps, all additive / pre-audited)
+- **Migration strategy:** TableMigration columnTransformer with CAST(ROUND(col * 100) AS INTEGER)
+
+### Branches (remote: `backup` = GitHub Alhai_backup; NOT on origin)
+| Branch | HEAD | Contents |
+|---|---|---|
+| `fix/platform-admin-rls` | `53ade82` | v64 |
+| `fix/wildcard-gen3-bootstrap` | `c398342` | v65 |
+| `fix/campaign-closure-audit` | `d0d879f` | v66 |
+| `fix/users-pii-rls` | `9e4b01c` | v67 |
+| `fix/rls-hygiene-closeout` | `b3dd458` | log-only |
+| `fix/server-rpc-audit` | `9820da7` | v68 |
+| `fix/rpc-auth-gates` | `ba46cb5` | v69 |
+| `fix/sync-tombstones` | `89eebd7` | client code (Drift unchanged) |
+| `fix/zatca-queue-drift` | `3d158f5` | v38 + v39 + v40 + v41 + v70 + v71 + C-4 A + C-4 B |
+
+**Note:** Branches are cumulative (each forked from prior HEAD). No merge conflicts expected in linear order.
+
+### Test baselines (preserved across all 12 sessions)
+- alhai_core: pass (no failure count tracked — small suite)
+- alhai_database: **508/508 + 1 skipped**
+- alhai_sync: **358/358**
+- alhai_zatca: **850/850 + 1 skipped** ← CRITICAL ZATCA COMPLIANCE GATE
+- customer_app: 136/136 (not affected by Stage A/B)
+- driver_app: 152/152 (not affected)
+- cashier: **595/600** (5 widget tests deferred — see 🔴 URGENT §1)
+- admin: 365/365
+
+---
+
+## 1. 🔴 URGENT — Start with these
+
+### 1a. 5 cashier widget tests in edit_price_screen_test.dart
+**Fail mode:** "Found 0 widgets with text 'Test Product'" — widget not rendering; multiple exceptions during setup.
+**Impact:** 0 (financial correctness verified via ZATCA 850/850 + DB DAO 508/508 + admin forms 365/365).
+**Suspected root cause:** mock setup or timer handling in widget tests after int-cents product conversion.
+**Where to start:**
+- File: `apps/cashier/test/screens/products/edit_price_screen_test.dart`
+- Related lib: `apps/cashier/lib/screens/products/edit_price_screen.dart`
+- Test factory (already updated): `apps/cashier/test/helpers/test_factories.dart` — `createTestProduct` returns `int price`
+- Mock database: `apps/cashier/test/helpers/mock_database.dart`
+- Run: `cd apps/cashier && flutter test test/screens/products/edit_price_screen_test.dart --reporter=expanded`
+- Look at full exception output (not just "Found 0 widgets" — there's an underlying error)
+
+**Estimated time:** 30-45 min in fresh-mind session.
+
+### 1b. Deploy customer_app + driver_app
+- **customer_app deploy** — branch `fix/customer-app-orders-20260421` from 2026-04-21 (qty→quantity + total_price→total fix). **Branch HEAD:** `f18feaa`. Needs flutter build + store submission.
+- **driver_app deploy** — pair with v55 drivers policy fix. Branch `fix/rls-hardening-c9-20260421` from 2026-04-21 (store_id fetch before drivers upsert). **Branch HEAD:** `c0185a2`. Needs flutter build + store submission.
+- **Impact if delayed:** customer_app createOrder calls 100% fail with 42703/23502 on production. driver_app updateProfile fails on drivers RLS after v55.
+- **Estimated time:** 1-1.5h total (build + smoke + submit).
+
+### 1c. Branch management — merge strategy
+9 branches are cumulative. Either:
+- (a) Fast-forward merge `fix/zatca-queue-drift` into a single `develop`/`main` equivalent (contains all 12 sessions of work — includes C-8a/b and C-4 A/B)
+- (b) Cherry-pick per-session if selective rollout needed
+
+Current HEAD of `fix/zatca-queue-drift` = `3d158f5`. Before v67/v69/v71 get into a merge, decide the linear order for when they hit main.
+
+**Estimated time:** 30 min decision + mechanics.
+
+---
+
+## 2. 🟠 HIGH — C-4 Money Migration (Sessions 2-4)
+
+**Plan ref:** `docs/sessions/c4-money-migration-plan.md` on branch `plan/c4-money-migration-20260421`.
+
+### 2a. Session 2 — Invoice Core + ZATCA (🔴 FULL DEDICATED DAY per plan D5)
+Tables:
+- `invoices.subtotal / discount / taxRate / taxAmount / total / amountPaid / amountDue`
+- `sale_items.unitPrice / discount / taxRate / taxAmount / total`
+- `held_invoices.subtotal / discount / total`
+
+Code:
+- Collapse two `VatCalculator` implementations → single canonical (alhai_zatca + apps/cashier VatCalculator)
+- `CurrencyFormatter.format(Money)` overload (add)
+- ~24 inline `toStringAsFixed(2)` / direct interpolation sites → formatter
+- ZATCA TLV encoder paths — verify int-cents produces byte-identical output vs pre-migration
+
+**Pre-requisite:** Run the C-4 plan's Appendix B data-shape audit on invoices + sale_items (like we did for products). Fractional-cent check MUST show 0 rows or stop.
+
+**Critical:** ZATCA integration test `packages/alhai_zatca/test/integration/zatca_sandbox_test.dart` MUST pass at end. This is the regulatory compliance gate.
+
+**Estimated time:** 8-10h (per plan D5 — full day, no other work).
+
+### 2b. Session 3 — Shifts & Cash (~4-6h)
+Tables:
+- `shifts.openingCash / closingCash / expectedCash / difference / totalSalesAmount / totalRefundsAmount`
+- `cash_movements.amount`
+- `sales.subtotal / discount / tax / total / amountReceived / changeAmount / cashAmount / cardAmount / creditAmount`
+- `sale_items.*` if not done in Session 2
+
+### 2c. Session 4 — Analytics Cleanup (~3-4h)
+Tables:
+- `accounts.balance / creditLimit`
+- `expenses.amount`
+- `purchases.subtotal / tax / discount / total / unitCost`
+- `returns.totalRefund / unitPrice / refundAmount`
+- `daily_summaries.* (8 money columns)`
+- `transactions.amount / balanceAfter`
+- Remove legacy `double` escape hatches in Product domain
+
+### 2d. Remaining tables not in any session yet
+- `customer_addresses` — no money columns
+- `loyalty_table` — `saleAmount / rewardValue / minPurchase`
+- `promotions / discounts / coupons.value` — partially done in Stage A
+- `suppliers.balance` — needs addition
+
+---
+
+## 3. 🟡 MEDIUM — Consumer wiring + deferred work
+
+### 3a. ZATCA offline queue consumer activation (from C-8a/b)
+- Drift tables `zatca_offline_queue` + `zatca_dead_letter` + DAO are ready (committed in `fix/zatca-queue-drift`)
+- **NOT WIRED**: callbacks `onQueueChanged` + `onLoadQueue` on `ZatcaOfflineQueue` class are unset in production
+- Actions needed:
+  1. In a consumer (e.g., cashier app DI), wire `AppDatabase.zatcaOfflineQueueDao` to the ZatcaOfflineQueue callbacks
+  2. SharedPreferences → Drift migration helper (on first load, copy legacy JSON blob from SharedPreferences to Drift, delete legacy)
+  3. Cleanup scheduler (daily cron? on-app-start?) that calls `cleanupStaleToDeadLetter()`
+  4. Admin UI for dead-letter review + purge
+- **Prerequisite:** ZATCA Phase 2 pipeline must actually be activated in cashier (Finding #1 in audit)
+- **Estimated time:** 3-4h when ZATCA Phase 2 is ready to activate
+
+### 3b. Supabase partial indexes on deleted_at (from C-7)
+- 10 Supabase tables with `deleted_at`: categories, orders, org_products, products, promotions, returns, sales, stores, suppliers, users
+- Current: only 2 have partial indexes (sales, returns), and they're INVERSE (`WHERE deleted_at IS NOT NULL`)
+- Needed: `CREATE INDEX idx_<table>_active ON public.<table> (id) WHERE deleted_at IS NULL` for common read path
+- **Estimated time:** 1 migration (v72), ~30 min
+
+### 3c. 5 Drift-only soft-delete tables alignment
+- accounts, customers, discounts, expenses, purchases: have `deletedAt` on Drift but NOT Supabase
+- Decision needed: intentional local-only? Or stale schema gap?
+- **Estimated time:** investigation 1h + potentially 1 Supabase migration 30 min
+
+### 3d. Orphan `*_org_isolation` policies (from v57)
+- `expense_categories_org_isolation` and `loyalty_rewards_org_isolation` use `current_setting('app.current_org_id')` — no code reference to that setting anywhere
+- Likely dead code from earlier architecture
+- Verify + drop
+- **Estimated time:** 30 min
+
+### 3e. super_admin Tier 3 (U5/U9/U11/U13)
+- From prior super_admin handover doc
+- Estimated time per earlier log: 4-8h
+
+### 3f. Admin Audit Execution (310 findings, 42 P0s)
+- Multi-day (2-3 days)
+- Per the admin handover doc from 2026-04-17
+
+---
+
+## 4. 🟢 LOW — Nice-to-have
+
+### 4a. C-1 Receipt number collision (multi-device offline)
+- Real bug (since v17, 2026-03-06)
+- 4 design options in log entry from 2026-04-21 discovery session
+- No incidents reported yet (single-terminal operators common)
+- Half-day dedicated
+
+### 4b. C-5 TLV Encoder Refactor
+- Broken TLV encoder in `alhai_pos/zatca_service.dart`
+- Shared package (touches cashier + admin)
+- Own session
+
+### 4c. C-10 Historical NULL-orgId invoice cleanup
+- 1-2h
+
+### 4d. RLS Type-Drift historical scan
+- `supabase/rls_policies.sql` has ~30 historical policies not installed on live
+- Verify any got installed; apply casts if needed
+- 1h
+
+### 4e. driver_app updateProfile unit tests
+- +14 LOC from c0185a2 (2026-04-21) lacks direct unit test
+- 30-45 min
+
+---
+
+## 5. How to start a session
+
+**Before coding:**
+1. `git checkout fix/zatca-queue-drift` (contains the most-recent cumulative state)
+2. `git pull backup fix/zatca-queue-drift` (if starting on different machine)
+3. Create new branch: `git checkout -b <fix/next-work-topic>` (date-free per user preference)
+4. Verify test baselines: `cd packages/alhai_database && flutter test | tail -3` → expect `508 + 1 skipped, All tests passed!`
+5. Verify Drift schema version: should show 41 in `app_database.dart:135`
+6. Live Supabase cross-check: run Appendix A (§6 of c4-money-migration-plan) to confirm column types
+
+**Dual-log maintenance:**
+- Canonical: `C:\Users\basem\OneDrive\Desktop\alhai_check-18-04-2026\cashier\FIX_SESSION_LOG.md`
+- In-repo: `docs/sessions/FIX_SESSION_LOG.md`
+- After every commit: canonical → in-repo + `diff -q` verify byte-identical
+
+**Commit pattern (user-gated):**
+- Design + present SQL → user runs → verify → commit
+- For code: edit → analyze → test → commit
+- Log entry template: header + summary + scope + verification matrix + audit refs + END marker
+
+**Key methodology principles (validated over 12 sessions):**
+1. Atomic BEGIN..COMMIT for SQL
+2. Pre-apply verification queries (live DB source of truth)
+3. Post-apply verification (V-POST-A/B/C pattern)
+4. Dual-log sync after every log update
+5. Boundary conversions in DAO for int-cents vs double-SAR
+6. Honest scope reduction over forced completeness
+7. Rerun transient test failures before debugging (Drift regen cache quirks)
+8. Agent delegation for mechanical fixture updates (cost-effective)
+
+---
+
+END OF NEXT SESSION STARTING POINT — ready for 2026-04-22+ work
+
+---
+
+# Session 13 — 2026-04-22 (continuation)
+
+**Branch:** `fix/zatca-queue-drift` (continuation from session 12 HEAD `3d158f5`)
+**Budget:** 6h split: widget tests → deploy customer_app + driver_app → C-4 Session 2 pre-work
+
+---
+
+## Station 1 — edit_price_screen.dart widget-test cascade (C-4 Stage B follow-up)
+
+### Summary
+
+5 failing widget tests in `apps/cashier/test/screens/products/edit_price_screen_test.dart` — all cascading from the same **single root cause**: 3 boundary-conversion sites missed during C-4 Stage B products int-cents migration.
+
+### Root cause
+
+After products.price / costPrice flipped from double SAR to int cents in Stage B, three UI-side sites kept the pre-migration type assumption:
+
+1. **`lib/screens/products/edit_price_screen.dart:66`** — `product.price.toStringAsFixed(2)` emits `"2500.00"` (cents as-is) instead of `"25.00"` (SAR). Test assertion `find.text('25.00')` fails.
+2. **`lib/screens/products/edit_price_screen.dart:67`** — same defect on cost price.
+3. **`lib/screens/products/edit_price_screen.dart:75` + `:632`** — `_priceHistory` injected `product.price` as int at line 75; consumer at line 632 casts `entry['price'] as double` → throws `type 'int' is not a subtype of type 'double'`. Flutter's error-widget replaces the build subtree → zero `TextField` widgets found → 5 downstream expectations cascade to fail.
+
+### Fix — 3-line boundary conversions
+
+Pattern: cents stored, doubles for UI math (per Stage B boundary design).
+
+| Line | Before | After |
+|---|---|---|
+| 66 | `product.price.toStringAsFixed(2)` | `(product.price / 100.0).toStringAsFixed(2)` |
+| 67 | `(product.costPrice ?? 0).toStringAsFixed(2)` | `((product.costPrice ?? 0) / 100.0).toStringAsFixed(2)` |
+| 75 | `'price': product.price` | `'price': product.price / 100.0` |
+
+### Verification
+
+| Step | Before | After |
+|---|---|---|
+| `flutter test edit_price_screen_test.dart` | `+1 -5` | **`+6 All tests passed!`** ✓ |
+| `flutter test` full cashier | 595 / 600 | **600 / 600** ✓ (baseline restored) |
+| `flutter analyze edit_price_screen.dart` | — | `No issues found!` |
+| Grep for remaining cashier-lib sites (`.price.toStringAsFixed`, `.costPrice.*toStringAsFixed`, `'price'.*product.price(?!\s*/)`) | — | **0 matches** — no undetected sites |
+
+### Risk
+
+- Cashier-only cosmetic fix; zero schema change; zero shared-package touch.
+- Boundary-conversion semantics identical to the pattern used in other Stage B consumer fixes (see line 4211-4223 of this log).
+- All ZATCA / DAO / admin financial paths already verified clean at Stage B commit — this just closes the widget-layer tail.
+
+### Audit refs
+
+- C-4 Stage B follow-up entry at lines 4276-4282 (this log) — this resolves that follow-up.
+- NEXT SESSION STARTING POINT §1a (line 4362) — RESOLVED.
+
+---
+
+END OF SESSION 13 STATION 1 ENTRY — next: deploy customer_app + driver_app

@@ -63,16 +63,16 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
       if (mounted && product != null) {
         setState(() {
           _product = product;
-          _newPriceController.text = product.price.toStringAsFixed(2);
-          _costPriceController.text = (product.costPrice ?? 0).toStringAsFixed(
-            2,
-          );
+          // C-4 Stage B: product.price/costPrice are int cents; UI needs SAR doubles.
+          _newPriceController.text = (product.price / 100.0).toStringAsFixed(2);
+          _costPriceController.text = ((product.costPrice ?? 0) / 100.0)
+              .toStringAsFixed(2);
           _isLoading = false;
           // Simulate price history from product data
           _priceHistory.addAll([
             {
               'date': product.updatedAt,
-              'price': product.price,
+              'price': product.price / 100.0,
               'changedBy': 'system',
             },
           ]);
