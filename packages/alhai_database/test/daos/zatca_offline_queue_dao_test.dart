@@ -15,7 +15,7 @@ void main() {
 
   group('ZatcaOfflineQueueDao', () {
     group('upsert', () {
-      test('inserts a new invoice with status=pending and retry=0', () async {
+      test('inserts a new invoice in queue with retry=0', () async {
         await db.zatcaOfflineQueueDao.upsert(
           invoiceNumber: 'INV-001',
           uuid: 'uuid-1',
@@ -27,8 +27,7 @@ void main() {
 
         final row = await db.zatcaOfflineQueueDao.getByInvoiceNumber('INV-001');
         expect(row, isNotNull);
-        expect(row!.status, 'pending');
-        expect(row.retryCount, 0);
+        expect(row!.retryCount, 0);
         expect(row.signedXmlBase64, 'xml-base64-data');
         expect(row.isStandard, isFalse);
       });
@@ -70,7 +69,8 @@ void main() {
     });
 
     group('recordRetry', () {
-      test('increments retry count and sets lastRetryAt', () async {
+      test('increments retry count and sets lastRetryAt (below max)',
+          () async {
         await db.zatcaOfflineQueueDao.upsert(
           invoiceNumber: 'INV-001',
           uuid: 'uuid-1',
@@ -86,13 +86,19 @@ void main() {
         );
 
         final row = await db.zatcaOfflineQueueDao.getByInvoiceNumber('INV-001');
+        expect(row, isNotNull, reason: 'row should stay in queue below max');
         expect(row!.retryCount, 1);
         expect(row.lastError, 'timeout');
         expect(row.lastRetryAt, isNotNull);
-        expect(row.status, 'pending');
+
+        // Not in dead_letter yet
+        final dead = await db.zatcaOfflineQueueDao
+            .getDeadLetterByInvoiceNumber('INV-001');
+        expect(dead, isNull);
       });
 
-      test('moves to dead_letter when retry count hits maxRetries', () async {
+      test('atomic row-move to dead_letter when retry count hits maxRetries',
+          () async {
         await db.zatcaOfflineQueueDao.upsert(
           invoiceNumber: 'INV-001',
           uuid: 'uuid-1',
@@ -110,10 +116,21 @@ void main() {
           );
         }
 
-        final row = await db.zatcaOfflineQueueDao.getByInvoiceNumber('INV-001');
-        expect(row!.status, 'dead_letter');
-        expect(row.retryCount, ZatcaOfflineQueueDao.maxRetries);
-        expect(row.deadLetteredAt, isNotNull);
+        // Row should be GONE from active queue
+        final queueRow =
+            await db.zatcaOfflineQueueDao.getByInvoiceNumber('INV-001');
+        expect(queueRow, isNull,
+            reason: 'row must be removed from queue after moveToDeadLetter');
+
+        // Row should be IN dead_letter with full audit trail
+        final deadRow = await db.zatcaOfflineQueueDao
+            .getDeadLetterByInvoiceNumber('INV-001');
+        expect(deadRow, isNotNull);
+        expect(deadRow!.retryCount, ZatcaOfflineQueueDao.maxRetries);
+        expect(deadRow.deadLetterReason, 'max_retries');
+        expect(deadRow.deadLetteredAt, isNotNull);
+        expect(deadRow.signedXmlBase64, 'xml',
+            reason: 'XML preserved for review/manual retry');
       });
 
       test('is a no-op when invoice does not exist', () async {
@@ -126,7 +143,7 @@ void main() {
     });
 
     group('getPending / getDeadLetter', () {
-      test('getPending excludes dead_letter rows', () async {
+      test('getPending returns only active queue rows', () async {
         await db.zatcaOfflineQueueDao.upsert(
           invoiceNumber: 'INV-A',
           uuid: 'uuid-a',
@@ -158,8 +175,9 @@ void main() {
         expect(dead.first.invoiceNumber, 'INV-B');
       });
 
-      test('getPendingCount returns correct count', () async {
+      test('getPendingCount + getDeadLetterCount separate correctly', () async {
         expect(await db.zatcaOfflineQueueDao.getPendingCount(), 0);
+        expect(await db.zatcaOfflineQueueDao.getDeadLetterCount(), 0);
 
         await db.zatcaOfflineQueueDao.upsert(
           invoiceNumber: 'INV-1',
@@ -171,6 +189,7 @@ void main() {
         );
 
         expect(await db.zatcaOfflineQueueDao.getPendingCount(), 1);
+        expect(await db.zatcaOfflineQueueDao.getDeadLetterCount(), 0);
 
         await db.zatcaOfflineQueueDao.upsert(
           invoiceNumber: 'INV-2',
@@ -182,6 +201,14 @@ void main() {
         );
 
         expect(await db.zatcaOfflineQueueDao.getPendingCount(), 2);
+
+        // Move INV-2 to dead_letter
+        for (var i = 0; i < ZatcaOfflineQueueDao.maxRetries; i++) {
+          await db.zatcaOfflineQueueDao.recordRetry(invoiceNumber: 'INV-2');
+        }
+
+        expect(await db.zatcaOfflineQueueDao.getPendingCount(), 1);
+        expect(await db.zatcaOfflineQueueDao.getDeadLetterCount(), 1);
       });
 
       test('getPending filters by storeId when provided', () async {
@@ -206,10 +233,32 @@ void main() {
         expect(s1.length, 1);
         expect(s1.first.invoiceNumber, 'INV-S1');
       });
+
+      test('getDeadLetter filters by storeId when provided', () async {
+        // Create + move both to dead_letter
+        for (final inv in ['INV-A', 'INV-B']) {
+          await db.zatcaOfflineQueueDao.upsert(
+            invoiceNumber: inv,
+            uuid: 'u',
+            storeId: inv == 'INV-A' ? 'store-1' : 'store-2',
+            signedXmlBase64: 'x',
+            invoiceHash: 'h',
+            isStandard: false,
+          );
+          for (var i = 0; i < ZatcaOfflineQueueDao.maxRetries; i++) {
+            await db.zatcaOfflineQueueDao.recordRetry(invoiceNumber: inv);
+          }
+        }
+
+        final s1 =
+            await db.zatcaOfflineQueueDao.getDeadLetter(storeId: 'store-1');
+        expect(s1.length, 1);
+        expect(s1.first.invoiceNumber, 'INV-A');
+      });
     });
 
-    group('remove', () {
-      test('deletes the invoice row', () async {
+    group('remove (active queue)', () {
+      test('deletes the invoice row from queue', () async {
         await db.zatcaOfflineQueueDao.upsert(
           invoiceNumber: 'INV-001',
           uuid: 'u',
@@ -227,8 +276,8 @@ void main() {
       });
     });
 
-    group('purgeDeadLetter', () {
-      test('deletes only dead_letter rows', () async {
+    group('removeDeadLetter + purgeDeadLetter', () {
+      test('purgeDeadLetter deletes only dead_letter rows', () async {
         await db.zatcaOfflineQueueDao.upsert(
           invoiceNumber: 'INV-PENDING',
           uuid: 'u',
@@ -252,12 +301,38 @@ void main() {
         final purged = await db.zatcaOfflineQueueDao.purgeDeadLetter();
         expect(purged, 1);
 
+        // Active queue row untouched
         expect(
           await db.zatcaOfflineQueueDao.getByInvoiceNumber('INV-PENDING'),
           isNotNull,
         );
+        // Dead_letter row gone
         expect(
-          await db.zatcaOfflineQueueDao.getByInvoiceNumber('INV-DEAD'),
+          await db.zatcaOfflineQueueDao
+              .getDeadLetterByInvoiceNumber('INV-DEAD'),
+          isNull,
+        );
+      });
+
+      test('removeDeadLetter removes single dead_letter row', () async {
+        await db.zatcaOfflineQueueDao.upsert(
+          invoiceNumber: 'INV-DEAD',
+          uuid: 'u',
+          storeId: 's',
+          signedXmlBase64: 'x',
+          invoiceHash: 'h',
+          isStandard: false,
+        );
+        for (var i = 0; i < ZatcaOfflineQueueDao.maxRetries; i++) {
+          await db.zatcaOfflineQueueDao.recordRetry(invoiceNumber: 'INV-DEAD');
+        }
+
+        final removed =
+            await db.zatcaOfflineQueueDao.removeDeadLetter('INV-DEAD');
+        expect(removed, 1);
+        expect(
+          await db.zatcaOfflineQueueDao
+              .getDeadLetterByInvoiceNumber('INV-DEAD'),
           isNull,
         );
       });

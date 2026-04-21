@@ -40254,6 +40254,659 @@ class ZatcaOfflineQueueTableCompanion
   }
 }
 
+class $ZatcaDeadLetterTableTable extends ZatcaDeadLetterTable
+    with TableInfo<$ZatcaDeadLetterTableTable, ZatcaDeadLetterTableData> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $ZatcaDeadLetterTableTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _invoiceNumberMeta =
+      const VerificationMeta('invoiceNumber');
+  @override
+  late final GeneratedColumn<String> invoiceNumber = GeneratedColumn<String>(
+      'invoice_number', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _uuidMeta = const VerificationMeta('uuid');
+  @override
+  late final GeneratedColumn<String> uuid = GeneratedColumn<String>(
+      'uuid', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _storeIdMeta =
+      const VerificationMeta('storeId');
+  @override
+  late final GeneratedColumn<String> storeId = GeneratedColumn<String>(
+      'store_id', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _signedXmlBase64Meta =
+      const VerificationMeta('signedXmlBase64');
+  @override
+  late final GeneratedColumn<String> signedXmlBase64 = GeneratedColumn<String>(
+      'signed_xml_base64', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _invoiceHashMeta =
+      const VerificationMeta('invoiceHash');
+  @override
+  late final GeneratedColumn<String> invoiceHash = GeneratedColumn<String>(
+      'invoice_hash', aliasedName, false,
+      type: DriftSqlType.string, requiredDuringInsert: true);
+  static const VerificationMeta _isStandardMeta =
+      const VerificationMeta('isStandard');
+  @override
+  late final GeneratedColumn<bool> isStandard = GeneratedColumn<bool>(
+      'is_standard', aliasedName, false,
+      type: DriftSqlType.bool,
+      requiredDuringInsert: true,
+      defaultConstraints: GeneratedColumn.constraintIsAlways(
+          'CHECK ("is_standard" IN (0, 1))'));
+  static const VerificationMeta _retryCountMeta =
+      const VerificationMeta('retryCount');
+  @override
+  late final GeneratedColumn<int> retryCount = GeneratedColumn<int>(
+      'retry_count', aliasedName, false,
+      type: DriftSqlType.int, requiredDuringInsert: true);
+  static const VerificationMeta _lastErrorMeta =
+      const VerificationMeta('lastError');
+  @override
+  late final GeneratedColumn<String> lastError = GeneratedColumn<String>(
+      'last_error', aliasedName, true,
+      type: DriftSqlType.string, requiredDuringInsert: false);
+  static const VerificationMeta _deadLetterReasonMeta =
+      const VerificationMeta('deadLetterReason');
+  @override
+  late final GeneratedColumn<String> deadLetterReason = GeneratedColumn<String>(
+      'dead_letter_reason', aliasedName, false,
+      type: DriftSqlType.string,
+      requiredDuringInsert: false,
+      defaultValue: const Constant('max_retries'));
+  static const VerificationMeta _queuedAtMeta =
+      const VerificationMeta('queuedAt');
+  @override
+  late final GeneratedColumn<DateTime> queuedAt = GeneratedColumn<DateTime>(
+      'queued_at', aliasedName, false,
+      type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  static const VerificationMeta _lastRetryAtMeta =
+      const VerificationMeta('lastRetryAt');
+  @override
+  late final GeneratedColumn<DateTime> lastRetryAt = GeneratedColumn<DateTime>(
+      'last_retry_at', aliasedName, true,
+      type: DriftSqlType.dateTime, requiredDuringInsert: false);
+  static const VerificationMeta _deadLetteredAtMeta =
+      const VerificationMeta('deadLetteredAt');
+  @override
+  late final GeneratedColumn<DateTime> deadLetteredAt =
+      GeneratedColumn<DateTime>('dead_lettered_at', aliasedName, false,
+          type: DriftSqlType.dateTime, requiredDuringInsert: true);
+  @override
+  List<GeneratedColumn> get $columns => [
+        invoiceNumber,
+        uuid,
+        storeId,
+        signedXmlBase64,
+        invoiceHash,
+        isStandard,
+        retryCount,
+        lastError,
+        deadLetterReason,
+        queuedAt,
+        lastRetryAt,
+        deadLetteredAt
+      ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'zatca_dead_letter';
+  @override
+  VerificationContext validateIntegrity(
+      Insertable<ZatcaDeadLetterTableData> instance,
+      {bool isInserting = false}) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('invoice_number')) {
+      context.handle(
+          _invoiceNumberMeta,
+          invoiceNumber.isAcceptableOrUnknown(
+              data['invoice_number']!, _invoiceNumberMeta));
+    } else if (isInserting) {
+      context.missing(_invoiceNumberMeta);
+    }
+    if (data.containsKey('uuid')) {
+      context.handle(
+          _uuidMeta, uuid.isAcceptableOrUnknown(data['uuid']!, _uuidMeta));
+    } else if (isInserting) {
+      context.missing(_uuidMeta);
+    }
+    if (data.containsKey('store_id')) {
+      context.handle(_storeIdMeta,
+          storeId.isAcceptableOrUnknown(data['store_id']!, _storeIdMeta));
+    } else if (isInserting) {
+      context.missing(_storeIdMeta);
+    }
+    if (data.containsKey('signed_xml_base64')) {
+      context.handle(
+          _signedXmlBase64Meta,
+          signedXmlBase64.isAcceptableOrUnknown(
+              data['signed_xml_base64']!, _signedXmlBase64Meta));
+    } else if (isInserting) {
+      context.missing(_signedXmlBase64Meta);
+    }
+    if (data.containsKey('invoice_hash')) {
+      context.handle(
+          _invoiceHashMeta,
+          invoiceHash.isAcceptableOrUnknown(
+              data['invoice_hash']!, _invoiceHashMeta));
+    } else if (isInserting) {
+      context.missing(_invoiceHashMeta);
+    }
+    if (data.containsKey('is_standard')) {
+      context.handle(
+          _isStandardMeta,
+          isStandard.isAcceptableOrUnknown(
+              data['is_standard']!, _isStandardMeta));
+    } else if (isInserting) {
+      context.missing(_isStandardMeta);
+    }
+    if (data.containsKey('retry_count')) {
+      context.handle(
+          _retryCountMeta,
+          retryCount.isAcceptableOrUnknown(
+              data['retry_count']!, _retryCountMeta));
+    } else if (isInserting) {
+      context.missing(_retryCountMeta);
+    }
+    if (data.containsKey('last_error')) {
+      context.handle(_lastErrorMeta,
+          lastError.isAcceptableOrUnknown(data['last_error']!, _lastErrorMeta));
+    }
+    if (data.containsKey('dead_letter_reason')) {
+      context.handle(
+          _deadLetterReasonMeta,
+          deadLetterReason.isAcceptableOrUnknown(
+              data['dead_letter_reason']!, _deadLetterReasonMeta));
+    }
+    if (data.containsKey('queued_at')) {
+      context.handle(_queuedAtMeta,
+          queuedAt.isAcceptableOrUnknown(data['queued_at']!, _queuedAtMeta));
+    } else if (isInserting) {
+      context.missing(_queuedAtMeta);
+    }
+    if (data.containsKey('last_retry_at')) {
+      context.handle(
+          _lastRetryAtMeta,
+          lastRetryAt.isAcceptableOrUnknown(
+              data['last_retry_at']!, _lastRetryAtMeta));
+    }
+    if (data.containsKey('dead_lettered_at')) {
+      context.handle(
+          _deadLetteredAtMeta,
+          deadLetteredAt.isAcceptableOrUnknown(
+              data['dead_lettered_at']!, _deadLetteredAtMeta));
+    } else if (isInserting) {
+      context.missing(_deadLetteredAtMeta);
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {invoiceNumber};
+  @override
+  ZatcaDeadLetterTableData map(Map<String, dynamic> data,
+      {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return ZatcaDeadLetterTableData(
+      invoiceNumber: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}invoice_number'])!,
+      uuid: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}uuid'])!,
+      storeId: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}store_id'])!,
+      signedXmlBase64: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}signed_xml_base64'])!,
+      invoiceHash: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}invoice_hash'])!,
+      isStandard: attachedDatabase.typeMapping
+          .read(DriftSqlType.bool, data['${effectivePrefix}is_standard'])!,
+      retryCount: attachedDatabase.typeMapping
+          .read(DriftSqlType.int, data['${effectivePrefix}retry_count'])!,
+      lastError: attachedDatabase.typeMapping
+          .read(DriftSqlType.string, data['${effectivePrefix}last_error']),
+      deadLetterReason: attachedDatabase.typeMapping.read(
+          DriftSqlType.string, data['${effectivePrefix}dead_letter_reason'])!,
+      queuedAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}queued_at'])!,
+      lastRetryAt: attachedDatabase.typeMapping
+          .read(DriftSqlType.dateTime, data['${effectivePrefix}last_retry_at']),
+      deadLetteredAt: attachedDatabase.typeMapping.read(
+          DriftSqlType.dateTime, data['${effectivePrefix}dead_lettered_at'])!,
+    );
+  }
+
+  @override
+  $ZatcaDeadLetterTableTable createAlias(String alias) {
+    return $ZatcaDeadLetterTableTable(attachedDatabase, alias);
+  }
+}
+
+class ZatcaDeadLetterTableData extends DataClass
+    implements Insertable<ZatcaDeadLetterTableData> {
+  /// رقم الفاتورة — PK
+  final String invoiceNumber;
+
+  /// UUID الفاتورة (مولّد من UblInvoiceBuilder)
+  final String uuid;
+
+  /// معرف المتجر صاحب الفاتورة
+  final String storeId;
+
+  /// الـ XML الموقّع بـ base64 (محفوظ للمراجعة/إعادة الإرسال اليدوي)
+  final String signedXmlBase64;
+
+  /// hash الفاتورة
+  final String invoiceHash;
+
+  /// هل standard (clearance) أم simplified (reporting)؟
+  final bool isStandard;
+
+  /// عدد المحاولات اللي تمت قبل الانتقال هنا (عادة = maxRetries = 10)
+  final int retryCount;
+
+  /// آخر رسالة خطأ مُسَجَّلة
+  final String? lastError;
+
+  /// سبب الانتقال لـ dead_letter: 'max_retries' أو 'stale' أو 'manual'
+  final String deadLetterReason;
+
+  /// وقت الـ queue الأول (قبل ما ينتقل هنا)
+  final DateTime queuedAt;
+
+  /// وقت آخر محاولة فاشلة
+  final DateTime? lastRetryAt;
+
+  /// وقت الانتقال لـ dead_letter
+  final DateTime deadLetteredAt;
+  const ZatcaDeadLetterTableData(
+      {required this.invoiceNumber,
+      required this.uuid,
+      required this.storeId,
+      required this.signedXmlBase64,
+      required this.invoiceHash,
+      required this.isStandard,
+      required this.retryCount,
+      this.lastError,
+      required this.deadLetterReason,
+      required this.queuedAt,
+      this.lastRetryAt,
+      required this.deadLetteredAt});
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['invoice_number'] = Variable<String>(invoiceNumber);
+    map['uuid'] = Variable<String>(uuid);
+    map['store_id'] = Variable<String>(storeId);
+    map['signed_xml_base64'] = Variable<String>(signedXmlBase64);
+    map['invoice_hash'] = Variable<String>(invoiceHash);
+    map['is_standard'] = Variable<bool>(isStandard);
+    map['retry_count'] = Variable<int>(retryCount);
+    if (!nullToAbsent || lastError != null) {
+      map['last_error'] = Variable<String>(lastError);
+    }
+    map['dead_letter_reason'] = Variable<String>(deadLetterReason);
+    map['queued_at'] = Variable<DateTime>(queuedAt);
+    if (!nullToAbsent || lastRetryAt != null) {
+      map['last_retry_at'] = Variable<DateTime>(lastRetryAt);
+    }
+    map['dead_lettered_at'] = Variable<DateTime>(deadLetteredAt);
+    return map;
+  }
+
+  ZatcaDeadLetterTableCompanion toCompanion(bool nullToAbsent) {
+    return ZatcaDeadLetterTableCompanion(
+      invoiceNumber: Value(invoiceNumber),
+      uuid: Value(uuid),
+      storeId: Value(storeId),
+      signedXmlBase64: Value(signedXmlBase64),
+      invoiceHash: Value(invoiceHash),
+      isStandard: Value(isStandard),
+      retryCount: Value(retryCount),
+      lastError: lastError == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastError),
+      deadLetterReason: Value(deadLetterReason),
+      queuedAt: Value(queuedAt),
+      lastRetryAt: lastRetryAt == null && nullToAbsent
+          ? const Value.absent()
+          : Value(lastRetryAt),
+      deadLetteredAt: Value(deadLetteredAt),
+    );
+  }
+
+  factory ZatcaDeadLetterTableData.fromJson(Map<String, dynamic> json,
+      {ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return ZatcaDeadLetterTableData(
+      invoiceNumber: serializer.fromJson<String>(json['invoiceNumber']),
+      uuid: serializer.fromJson<String>(json['uuid']),
+      storeId: serializer.fromJson<String>(json['storeId']),
+      signedXmlBase64: serializer.fromJson<String>(json['signedXmlBase64']),
+      invoiceHash: serializer.fromJson<String>(json['invoiceHash']),
+      isStandard: serializer.fromJson<bool>(json['isStandard']),
+      retryCount: serializer.fromJson<int>(json['retryCount']),
+      lastError: serializer.fromJson<String?>(json['lastError']),
+      deadLetterReason: serializer.fromJson<String>(json['deadLetterReason']),
+      queuedAt: serializer.fromJson<DateTime>(json['queuedAt']),
+      lastRetryAt: serializer.fromJson<DateTime?>(json['lastRetryAt']),
+      deadLetteredAt: serializer.fromJson<DateTime>(json['deadLetteredAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'invoiceNumber': serializer.toJson<String>(invoiceNumber),
+      'uuid': serializer.toJson<String>(uuid),
+      'storeId': serializer.toJson<String>(storeId),
+      'signedXmlBase64': serializer.toJson<String>(signedXmlBase64),
+      'invoiceHash': serializer.toJson<String>(invoiceHash),
+      'isStandard': serializer.toJson<bool>(isStandard),
+      'retryCount': serializer.toJson<int>(retryCount),
+      'lastError': serializer.toJson<String?>(lastError),
+      'deadLetterReason': serializer.toJson<String>(deadLetterReason),
+      'queuedAt': serializer.toJson<DateTime>(queuedAt),
+      'lastRetryAt': serializer.toJson<DateTime?>(lastRetryAt),
+      'deadLetteredAt': serializer.toJson<DateTime>(deadLetteredAt),
+    };
+  }
+
+  ZatcaDeadLetterTableData copyWith(
+          {String? invoiceNumber,
+          String? uuid,
+          String? storeId,
+          String? signedXmlBase64,
+          String? invoiceHash,
+          bool? isStandard,
+          int? retryCount,
+          Value<String?> lastError = const Value.absent(),
+          String? deadLetterReason,
+          DateTime? queuedAt,
+          Value<DateTime?> lastRetryAt = const Value.absent(),
+          DateTime? deadLetteredAt}) =>
+      ZatcaDeadLetterTableData(
+        invoiceNumber: invoiceNumber ?? this.invoiceNumber,
+        uuid: uuid ?? this.uuid,
+        storeId: storeId ?? this.storeId,
+        signedXmlBase64: signedXmlBase64 ?? this.signedXmlBase64,
+        invoiceHash: invoiceHash ?? this.invoiceHash,
+        isStandard: isStandard ?? this.isStandard,
+        retryCount: retryCount ?? this.retryCount,
+        lastError: lastError.present ? lastError.value : this.lastError,
+        deadLetterReason: deadLetterReason ?? this.deadLetterReason,
+        queuedAt: queuedAt ?? this.queuedAt,
+        lastRetryAt: lastRetryAt.present ? lastRetryAt.value : this.lastRetryAt,
+        deadLetteredAt: deadLetteredAt ?? this.deadLetteredAt,
+      );
+  ZatcaDeadLetterTableData copyWithCompanion(
+      ZatcaDeadLetterTableCompanion data) {
+    return ZatcaDeadLetterTableData(
+      invoiceNumber: data.invoiceNumber.present
+          ? data.invoiceNumber.value
+          : this.invoiceNumber,
+      uuid: data.uuid.present ? data.uuid.value : this.uuid,
+      storeId: data.storeId.present ? data.storeId.value : this.storeId,
+      signedXmlBase64: data.signedXmlBase64.present
+          ? data.signedXmlBase64.value
+          : this.signedXmlBase64,
+      invoiceHash:
+          data.invoiceHash.present ? data.invoiceHash.value : this.invoiceHash,
+      isStandard:
+          data.isStandard.present ? data.isStandard.value : this.isStandard,
+      retryCount:
+          data.retryCount.present ? data.retryCount.value : this.retryCount,
+      lastError: data.lastError.present ? data.lastError.value : this.lastError,
+      deadLetterReason: data.deadLetterReason.present
+          ? data.deadLetterReason.value
+          : this.deadLetterReason,
+      queuedAt: data.queuedAt.present ? data.queuedAt.value : this.queuedAt,
+      lastRetryAt:
+          data.lastRetryAt.present ? data.lastRetryAt.value : this.lastRetryAt,
+      deadLetteredAt: data.deadLetteredAt.present
+          ? data.deadLetteredAt.value
+          : this.deadLetteredAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ZatcaDeadLetterTableData(')
+          ..write('invoiceNumber: $invoiceNumber, ')
+          ..write('uuid: $uuid, ')
+          ..write('storeId: $storeId, ')
+          ..write('signedXmlBase64: $signedXmlBase64, ')
+          ..write('invoiceHash: $invoiceHash, ')
+          ..write('isStandard: $isStandard, ')
+          ..write('retryCount: $retryCount, ')
+          ..write('lastError: $lastError, ')
+          ..write('deadLetterReason: $deadLetterReason, ')
+          ..write('queuedAt: $queuedAt, ')
+          ..write('lastRetryAt: $lastRetryAt, ')
+          ..write('deadLetteredAt: $deadLetteredAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      invoiceNumber,
+      uuid,
+      storeId,
+      signedXmlBase64,
+      invoiceHash,
+      isStandard,
+      retryCount,
+      lastError,
+      deadLetterReason,
+      queuedAt,
+      lastRetryAt,
+      deadLetteredAt);
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is ZatcaDeadLetterTableData &&
+          other.invoiceNumber == this.invoiceNumber &&
+          other.uuid == this.uuid &&
+          other.storeId == this.storeId &&
+          other.signedXmlBase64 == this.signedXmlBase64 &&
+          other.invoiceHash == this.invoiceHash &&
+          other.isStandard == this.isStandard &&
+          other.retryCount == this.retryCount &&
+          other.lastError == this.lastError &&
+          other.deadLetterReason == this.deadLetterReason &&
+          other.queuedAt == this.queuedAt &&
+          other.lastRetryAt == this.lastRetryAt &&
+          other.deadLetteredAt == this.deadLetteredAt);
+}
+
+class ZatcaDeadLetterTableCompanion
+    extends UpdateCompanion<ZatcaDeadLetterTableData> {
+  final Value<String> invoiceNumber;
+  final Value<String> uuid;
+  final Value<String> storeId;
+  final Value<String> signedXmlBase64;
+  final Value<String> invoiceHash;
+  final Value<bool> isStandard;
+  final Value<int> retryCount;
+  final Value<String?> lastError;
+  final Value<String> deadLetterReason;
+  final Value<DateTime> queuedAt;
+  final Value<DateTime?> lastRetryAt;
+  final Value<DateTime> deadLetteredAt;
+  final Value<int> rowid;
+  const ZatcaDeadLetterTableCompanion({
+    this.invoiceNumber = const Value.absent(),
+    this.uuid = const Value.absent(),
+    this.storeId = const Value.absent(),
+    this.signedXmlBase64 = const Value.absent(),
+    this.invoiceHash = const Value.absent(),
+    this.isStandard = const Value.absent(),
+    this.retryCount = const Value.absent(),
+    this.lastError = const Value.absent(),
+    this.deadLetterReason = const Value.absent(),
+    this.queuedAt = const Value.absent(),
+    this.lastRetryAt = const Value.absent(),
+    this.deadLetteredAt = const Value.absent(),
+    this.rowid = const Value.absent(),
+  });
+  ZatcaDeadLetterTableCompanion.insert({
+    required String invoiceNumber,
+    required String uuid,
+    required String storeId,
+    required String signedXmlBase64,
+    required String invoiceHash,
+    required bool isStandard,
+    required int retryCount,
+    this.lastError = const Value.absent(),
+    this.deadLetterReason = const Value.absent(),
+    required DateTime queuedAt,
+    this.lastRetryAt = const Value.absent(),
+    required DateTime deadLetteredAt,
+    this.rowid = const Value.absent(),
+  })  : invoiceNumber = Value(invoiceNumber),
+        uuid = Value(uuid),
+        storeId = Value(storeId),
+        signedXmlBase64 = Value(signedXmlBase64),
+        invoiceHash = Value(invoiceHash),
+        isStandard = Value(isStandard),
+        retryCount = Value(retryCount),
+        queuedAt = Value(queuedAt),
+        deadLetteredAt = Value(deadLetteredAt);
+  static Insertable<ZatcaDeadLetterTableData> custom({
+    Expression<String>? invoiceNumber,
+    Expression<String>? uuid,
+    Expression<String>? storeId,
+    Expression<String>? signedXmlBase64,
+    Expression<String>? invoiceHash,
+    Expression<bool>? isStandard,
+    Expression<int>? retryCount,
+    Expression<String>? lastError,
+    Expression<String>? deadLetterReason,
+    Expression<DateTime>? queuedAt,
+    Expression<DateTime>? lastRetryAt,
+    Expression<DateTime>? deadLetteredAt,
+    Expression<int>? rowid,
+  }) {
+    return RawValuesInsertable({
+      if (invoiceNumber != null) 'invoice_number': invoiceNumber,
+      if (uuid != null) 'uuid': uuid,
+      if (storeId != null) 'store_id': storeId,
+      if (signedXmlBase64 != null) 'signed_xml_base64': signedXmlBase64,
+      if (invoiceHash != null) 'invoice_hash': invoiceHash,
+      if (isStandard != null) 'is_standard': isStandard,
+      if (retryCount != null) 'retry_count': retryCount,
+      if (lastError != null) 'last_error': lastError,
+      if (deadLetterReason != null) 'dead_letter_reason': deadLetterReason,
+      if (queuedAt != null) 'queued_at': queuedAt,
+      if (lastRetryAt != null) 'last_retry_at': lastRetryAt,
+      if (deadLetteredAt != null) 'dead_lettered_at': deadLetteredAt,
+      if (rowid != null) 'rowid': rowid,
+    });
+  }
+
+  ZatcaDeadLetterTableCompanion copyWith(
+      {Value<String>? invoiceNumber,
+      Value<String>? uuid,
+      Value<String>? storeId,
+      Value<String>? signedXmlBase64,
+      Value<String>? invoiceHash,
+      Value<bool>? isStandard,
+      Value<int>? retryCount,
+      Value<String?>? lastError,
+      Value<String>? deadLetterReason,
+      Value<DateTime>? queuedAt,
+      Value<DateTime?>? lastRetryAt,
+      Value<DateTime>? deadLetteredAt,
+      Value<int>? rowid}) {
+    return ZatcaDeadLetterTableCompanion(
+      invoiceNumber: invoiceNumber ?? this.invoiceNumber,
+      uuid: uuid ?? this.uuid,
+      storeId: storeId ?? this.storeId,
+      signedXmlBase64: signedXmlBase64 ?? this.signedXmlBase64,
+      invoiceHash: invoiceHash ?? this.invoiceHash,
+      isStandard: isStandard ?? this.isStandard,
+      retryCount: retryCount ?? this.retryCount,
+      lastError: lastError ?? this.lastError,
+      deadLetterReason: deadLetterReason ?? this.deadLetterReason,
+      queuedAt: queuedAt ?? this.queuedAt,
+      lastRetryAt: lastRetryAt ?? this.lastRetryAt,
+      deadLetteredAt: deadLetteredAt ?? this.deadLetteredAt,
+      rowid: rowid ?? this.rowid,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (invoiceNumber.present) {
+      map['invoice_number'] = Variable<String>(invoiceNumber.value);
+    }
+    if (uuid.present) {
+      map['uuid'] = Variable<String>(uuid.value);
+    }
+    if (storeId.present) {
+      map['store_id'] = Variable<String>(storeId.value);
+    }
+    if (signedXmlBase64.present) {
+      map['signed_xml_base64'] = Variable<String>(signedXmlBase64.value);
+    }
+    if (invoiceHash.present) {
+      map['invoice_hash'] = Variable<String>(invoiceHash.value);
+    }
+    if (isStandard.present) {
+      map['is_standard'] = Variable<bool>(isStandard.value);
+    }
+    if (retryCount.present) {
+      map['retry_count'] = Variable<int>(retryCount.value);
+    }
+    if (lastError.present) {
+      map['last_error'] = Variable<String>(lastError.value);
+    }
+    if (deadLetterReason.present) {
+      map['dead_letter_reason'] = Variable<String>(deadLetterReason.value);
+    }
+    if (queuedAt.present) {
+      map['queued_at'] = Variable<DateTime>(queuedAt.value);
+    }
+    if (lastRetryAt.present) {
+      map['last_retry_at'] = Variable<DateTime>(lastRetryAt.value);
+    }
+    if (deadLetteredAt.present) {
+      map['dead_lettered_at'] = Variable<DateTime>(deadLetteredAt.value);
+    }
+    if (rowid.present) {
+      map['rowid'] = Variable<int>(rowid.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('ZatcaDeadLetterTableCompanion(')
+          ..write('invoiceNumber: $invoiceNumber, ')
+          ..write('uuid: $uuid, ')
+          ..write('storeId: $storeId, ')
+          ..write('signedXmlBase64: $signedXmlBase64, ')
+          ..write('invoiceHash: $invoiceHash, ')
+          ..write('isStandard: $isStandard, ')
+          ..write('retryCount: $retryCount, ')
+          ..write('lastError: $lastError, ')
+          ..write('deadLetterReason: $deadLetterReason, ')
+          ..write('queuedAt: $queuedAt, ')
+          ..write('lastRetryAt: $lastRetryAt, ')
+          ..write('deadLetteredAt: $deadLetteredAt, ')
+          ..write('rowid: $rowid')
+          ..write(')'))
+        .toString();
+  }
+}
+
 abstract class _$AppDatabase extends GeneratedDatabase {
   _$AppDatabase(QueryExecutor e) : super(e);
   $AppDatabaseManager get managers => $AppDatabaseManager(this);
@@ -40341,6 +40994,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $InvoicesTableTable invoicesTable = $InvoicesTableTable(this);
   late final $ZatcaOfflineQueueTableTable zatcaOfflineQueueTable =
       $ZatcaOfflineQueueTableTable(this);
+  late final $ZatcaDeadLetterTableTable zatcaDeadLetterTable =
+      $ZatcaDeadLetterTableTable(this);
   late final Index idxProductsStoreId = Index('idx_products_store_id',
       'CREATE INDEX idx_products_store_id ON products (store_id)');
   late final Index idxProductsBarcode = Index('idx_products_barcode',
@@ -40771,6 +41426,11 @@ abstract class _$AppDatabase extends GeneratedDatabase {
       'CREATE INDEX idx_zatca_queue_store ON zatca_offline_queue (store_id)');
   late final Index idxZatcaQueueRetry = Index('idx_zatca_queue_retry',
       'CREATE INDEX idx_zatca_queue_retry ON zatca_offline_queue (retry_count, queued_at)');
+  late final Index idxZatcaDeadLetterStore = Index(
+      'idx_zatca_dead_letter_store',
+      'CREATE INDEX idx_zatca_dead_letter_store ON zatca_dead_letter (store_id)');
+  late final Index idxZatcaDeadLetterAt = Index('idx_zatca_dead_letter_at',
+      'CREATE INDEX idx_zatca_dead_letter_at ON zatca_dead_letter (dead_lettered_at)');
   late final ProductsDao productsDao = ProductsDao(this as AppDatabase);
   late final SalesDao salesDao = SalesDao(this as AppDatabase);
   late final SaleItemsDao saleItemsDao = SaleItemsDao(this as AppDatabase);
@@ -40872,6 +41532,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         orgProductsTable,
         invoicesTable,
         zatcaOfflineQueueTable,
+        zatcaDeadLetterTable,
         idxProductsStoreId,
         idxProductsBarcode,
         idxProductsSku,
@@ -41064,7 +41725,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
         idxInvoicesSale,
         idxZatcaQueueStatusQueued,
         idxZatcaQueueStore,
-        idxZatcaQueueRetry
+        idxZatcaQueueRetry,
+        idxZatcaDeadLetterStore,
+        idxZatcaDeadLetterAt
       ];
   @override
   StreamQueryUpdateRules get streamUpdateRules => const StreamQueryUpdateRules(
@@ -66431,6 +67094,297 @@ typedef $$ZatcaOfflineQueueTableTableProcessedTableManager
         ),
         ZatcaOfflineQueueTableData,
         PrefetchHooks Function()>;
+typedef $$ZatcaDeadLetterTableTableCreateCompanionBuilder
+    = ZatcaDeadLetterTableCompanion Function({
+  required String invoiceNumber,
+  required String uuid,
+  required String storeId,
+  required String signedXmlBase64,
+  required String invoiceHash,
+  required bool isStandard,
+  required int retryCount,
+  Value<String?> lastError,
+  Value<String> deadLetterReason,
+  required DateTime queuedAt,
+  Value<DateTime?> lastRetryAt,
+  required DateTime deadLetteredAt,
+  Value<int> rowid,
+});
+typedef $$ZatcaDeadLetterTableTableUpdateCompanionBuilder
+    = ZatcaDeadLetterTableCompanion Function({
+  Value<String> invoiceNumber,
+  Value<String> uuid,
+  Value<String> storeId,
+  Value<String> signedXmlBase64,
+  Value<String> invoiceHash,
+  Value<bool> isStandard,
+  Value<int> retryCount,
+  Value<String?> lastError,
+  Value<String> deadLetterReason,
+  Value<DateTime> queuedAt,
+  Value<DateTime?> lastRetryAt,
+  Value<DateTime> deadLetteredAt,
+  Value<int> rowid,
+});
+
+class $$ZatcaDeadLetterTableTableFilterComposer
+    extends Composer<_$AppDatabase, $ZatcaDeadLetterTableTable> {
+  $$ZatcaDeadLetterTableTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<String> get invoiceNumber => $composableBuilder(
+      column: $table.invoiceNumber, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get uuid => $composableBuilder(
+      column: $table.uuid, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get storeId => $composableBuilder(
+      column: $table.storeId, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get signedXmlBase64 => $composableBuilder(
+      column: $table.signedXmlBase64,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get invoiceHash => $composableBuilder(
+      column: $table.invoiceHash, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<bool> get isStandard => $composableBuilder(
+      column: $table.isStandard, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<int> get retryCount => $composableBuilder(
+      column: $table.retryCount, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get lastError => $composableBuilder(
+      column: $table.lastError, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<String> get deadLetterReason => $composableBuilder(
+      column: $table.deadLetterReason,
+      builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get queuedAt => $composableBuilder(
+      column: $table.queuedAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get lastRetryAt => $composableBuilder(
+      column: $table.lastRetryAt, builder: (column) => ColumnFilters(column));
+
+  ColumnFilters<DateTime> get deadLetteredAt => $composableBuilder(
+      column: $table.deadLetteredAt,
+      builder: (column) => ColumnFilters(column));
+}
+
+class $$ZatcaDeadLetterTableTableOrderingComposer
+    extends Composer<_$AppDatabase, $ZatcaDeadLetterTableTable> {
+  $$ZatcaDeadLetterTableTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<String> get invoiceNumber => $composableBuilder(
+      column: $table.invoiceNumber,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get uuid => $composableBuilder(
+      column: $table.uuid, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get storeId => $composableBuilder(
+      column: $table.storeId, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get signedXmlBase64 => $composableBuilder(
+      column: $table.signedXmlBase64,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get invoiceHash => $composableBuilder(
+      column: $table.invoiceHash, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<bool> get isStandard => $composableBuilder(
+      column: $table.isStandard, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<int> get retryCount => $composableBuilder(
+      column: $table.retryCount, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get lastError => $composableBuilder(
+      column: $table.lastError, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<String> get deadLetterReason => $composableBuilder(
+      column: $table.deadLetterReason,
+      builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get queuedAt => $composableBuilder(
+      column: $table.queuedAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get lastRetryAt => $composableBuilder(
+      column: $table.lastRetryAt, builder: (column) => ColumnOrderings(column));
+
+  ColumnOrderings<DateTime> get deadLetteredAt => $composableBuilder(
+      column: $table.deadLetteredAt,
+      builder: (column) => ColumnOrderings(column));
+}
+
+class $$ZatcaDeadLetterTableTableAnnotationComposer
+    extends Composer<_$AppDatabase, $ZatcaDeadLetterTableTable> {
+  $$ZatcaDeadLetterTableTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<String> get invoiceNumber => $composableBuilder(
+      column: $table.invoiceNumber, builder: (column) => column);
+
+  GeneratedColumn<String> get uuid =>
+      $composableBuilder(column: $table.uuid, builder: (column) => column);
+
+  GeneratedColumn<String> get storeId =>
+      $composableBuilder(column: $table.storeId, builder: (column) => column);
+
+  GeneratedColumn<String> get signedXmlBase64 => $composableBuilder(
+      column: $table.signedXmlBase64, builder: (column) => column);
+
+  GeneratedColumn<String> get invoiceHash => $composableBuilder(
+      column: $table.invoiceHash, builder: (column) => column);
+
+  GeneratedColumn<bool> get isStandard => $composableBuilder(
+      column: $table.isStandard, builder: (column) => column);
+
+  GeneratedColumn<int> get retryCount => $composableBuilder(
+      column: $table.retryCount, builder: (column) => column);
+
+  GeneratedColumn<String> get lastError =>
+      $composableBuilder(column: $table.lastError, builder: (column) => column);
+
+  GeneratedColumn<String> get deadLetterReason => $composableBuilder(
+      column: $table.deadLetterReason, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get queuedAt =>
+      $composableBuilder(column: $table.queuedAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get lastRetryAt => $composableBuilder(
+      column: $table.lastRetryAt, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get deadLetteredAt => $composableBuilder(
+      column: $table.deadLetteredAt, builder: (column) => column);
+}
+
+class $$ZatcaDeadLetterTableTableTableManager extends RootTableManager<
+    _$AppDatabase,
+    $ZatcaDeadLetterTableTable,
+    ZatcaDeadLetterTableData,
+    $$ZatcaDeadLetterTableTableFilterComposer,
+    $$ZatcaDeadLetterTableTableOrderingComposer,
+    $$ZatcaDeadLetterTableTableAnnotationComposer,
+    $$ZatcaDeadLetterTableTableCreateCompanionBuilder,
+    $$ZatcaDeadLetterTableTableUpdateCompanionBuilder,
+    (
+      ZatcaDeadLetterTableData,
+      BaseReferences<_$AppDatabase, $ZatcaDeadLetterTableTable,
+          ZatcaDeadLetterTableData>
+    ),
+    ZatcaDeadLetterTableData,
+    PrefetchHooks Function()> {
+  $$ZatcaDeadLetterTableTableTableManager(
+      _$AppDatabase db, $ZatcaDeadLetterTableTable table)
+      : super(TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$ZatcaDeadLetterTableTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$ZatcaDeadLetterTableTableOrderingComposer(
+                  $db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$ZatcaDeadLetterTableTableAnnotationComposer(
+                  $db: db, $table: table),
+          updateCompanionCallback: ({
+            Value<String> invoiceNumber = const Value.absent(),
+            Value<String> uuid = const Value.absent(),
+            Value<String> storeId = const Value.absent(),
+            Value<String> signedXmlBase64 = const Value.absent(),
+            Value<String> invoiceHash = const Value.absent(),
+            Value<bool> isStandard = const Value.absent(),
+            Value<int> retryCount = const Value.absent(),
+            Value<String?> lastError = const Value.absent(),
+            Value<String> deadLetterReason = const Value.absent(),
+            Value<DateTime> queuedAt = const Value.absent(),
+            Value<DateTime?> lastRetryAt = const Value.absent(),
+            Value<DateTime> deadLetteredAt = const Value.absent(),
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ZatcaDeadLetterTableCompanion(
+            invoiceNumber: invoiceNumber,
+            uuid: uuid,
+            storeId: storeId,
+            signedXmlBase64: signedXmlBase64,
+            invoiceHash: invoiceHash,
+            isStandard: isStandard,
+            retryCount: retryCount,
+            lastError: lastError,
+            deadLetterReason: deadLetterReason,
+            queuedAt: queuedAt,
+            lastRetryAt: lastRetryAt,
+            deadLetteredAt: deadLetteredAt,
+            rowid: rowid,
+          ),
+          createCompanionCallback: ({
+            required String invoiceNumber,
+            required String uuid,
+            required String storeId,
+            required String signedXmlBase64,
+            required String invoiceHash,
+            required bool isStandard,
+            required int retryCount,
+            Value<String?> lastError = const Value.absent(),
+            Value<String> deadLetterReason = const Value.absent(),
+            required DateTime queuedAt,
+            Value<DateTime?> lastRetryAt = const Value.absent(),
+            required DateTime deadLetteredAt,
+            Value<int> rowid = const Value.absent(),
+          }) =>
+              ZatcaDeadLetterTableCompanion.insert(
+            invoiceNumber: invoiceNumber,
+            uuid: uuid,
+            storeId: storeId,
+            signedXmlBase64: signedXmlBase64,
+            invoiceHash: invoiceHash,
+            isStandard: isStandard,
+            retryCount: retryCount,
+            lastError: lastError,
+            deadLetterReason: deadLetterReason,
+            queuedAt: queuedAt,
+            lastRetryAt: lastRetryAt,
+            deadLetteredAt: deadLetteredAt,
+            rowid: rowid,
+          ),
+          withReferenceMapper: (p0) => p0
+              .map((e) => (e.readTable(table), BaseReferences(db, table, e)))
+              .toList(),
+          prefetchHooksCallback: null,
+        ));
+}
+
+typedef $$ZatcaDeadLetterTableTableProcessedTableManager
+    = ProcessedTableManager<
+        _$AppDatabase,
+        $ZatcaDeadLetterTableTable,
+        ZatcaDeadLetterTableData,
+        $$ZatcaDeadLetterTableTableFilterComposer,
+        $$ZatcaDeadLetterTableTableOrderingComposer,
+        $$ZatcaDeadLetterTableTableAnnotationComposer,
+        $$ZatcaDeadLetterTableTableCreateCompanionBuilder,
+        $$ZatcaDeadLetterTableTableUpdateCompanionBuilder,
+        (
+          ZatcaDeadLetterTableData,
+          BaseReferences<_$AppDatabase, $ZatcaDeadLetterTableTable,
+              ZatcaDeadLetterTableData>
+        ),
+        ZatcaDeadLetterTableData,
+        PrefetchHooks Function()>;
 
 class $AppDatabaseManager {
   final _$AppDatabase _db;
@@ -66548,4 +67502,6 @@ class $AppDatabaseManager {
   $$ZatcaOfflineQueueTableTableTableManager get zatcaOfflineQueueTable =>
       $$ZatcaOfflineQueueTableTableTableManager(
           _db, _db.zatcaOfflineQueueTable);
+  $$ZatcaDeadLetterTableTableTableManager get zatcaDeadLetterTable =>
+      $$ZatcaDeadLetterTableTableTableManager(_db, _db.zatcaDeadLetterTable);
 }

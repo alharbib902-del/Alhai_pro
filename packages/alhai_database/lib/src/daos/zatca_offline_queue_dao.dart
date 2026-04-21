@@ -1,19 +1,20 @@
 import 'package:drift/drift.dart';
 
 import '../app_database.dart';
+import '../tables/zatca_dead_letter_table.dart';
 import '../tables/zatca_offline_queue_table.dart';
 
 part 'zatca_offline_queue_dao.g.dart';
 
-/// DAO لطابور فواتير ZATCA الـ offline
+/// DAO لطابور فواتير ZATCA الـ offline + dead-letter
 ///
-/// يحل محل JSON-blob على SharedPreferences. كل عملية enqueue/dequeue/retry
-/// = صف واحد محدد بدل full-rewrite.
+/// جدولان منفصلان:
+///   - zatca_offline_queue: الفواتير النشطة (قابلة لإعادة المحاولة)
+///   - zatca_dead_letter:   الفواتير اللي استنفدت المحاولات (للمراجعة)
 ///
-/// Statuses:
-///   - pending: الفاتورة قابلة لإعادة المحاولة
-///   - dead_letter: استنفدت المحاولات ومعلّقة للمراجعة اليدوية
-@DriftAccessor(tables: [ZatcaOfflineQueueTable])
+/// الانتقال بين الجدولين atomic عبر moveToDeadLetter() باستخدام
+/// transaction + INSERT + DELETE.
+@DriftAccessor(tables: [ZatcaOfflineQueueTable, ZatcaDeadLetterTable])
 class ZatcaOfflineQueueDao extends DatabaseAccessor<AppDatabase>
     with _$ZatcaOfflineQueueDaoMixin {
   ZatcaOfflineQueueDao(super.db);
@@ -24,12 +25,11 @@ class ZatcaOfflineQueueDao extends DatabaseAccessor<AppDatabase>
   /// الفترة الزمنية التي بعدها تُعتبر الفاتورة قديمة للـ cleanup
   static const Duration staleThreshold = Duration(days: 30);
 
-  // ═══════════ قراءة ═══════════
+  // ═══════════ قراءة (active queue) ═══════════
 
-  /// جلب كل الفواتير المعلّقة (pending) للمتجر
+  /// جلب كل الفواتير النشطة في الـ queue
   Future<List<ZatcaOfflineQueueTableData>> getPending({String? storeId}) {
     final query = select(zatcaOfflineQueueTable)
-      ..where((q) => q.status.equals('pending'))
       ..orderBy([(q) => OrderingTerm.asc(q.queuedAt)]);
     if (storeId != null) {
       query.where((q) => q.storeId.equals(storeId));
@@ -37,18 +37,7 @@ class ZatcaOfflineQueueDao extends DatabaseAccessor<AppDatabase>
     return query.get();
   }
 
-  /// جلب فواتير dead_letter (للمراجعة اليدوية)
-  Future<List<ZatcaOfflineQueueTableData>> getDeadLetter({String? storeId}) {
-    final query = select(zatcaOfflineQueueTable)
-      ..where((q) => q.status.equals('dead_letter'))
-      ..orderBy([(q) => OrderingTerm.desc(q.deadLetteredAt)]);
-    if (storeId != null) {
-      query.where((q) => q.storeId.equals(storeId));
-    }
-    return query.get();
-  }
-
-  /// جلب فاتورة محددة برقمها
+  /// جلب فاتورة من الـ active queue برقمها
   Future<ZatcaOfflineQueueTableData?> getByInvoiceNumber(
     String invoiceNumber,
   ) =>
@@ -56,12 +45,11 @@ class ZatcaOfflineQueueDao extends DatabaseAccessor<AppDatabase>
             ..where((q) => q.invoiceNumber.equals(invoiceNumber)))
           .getSingleOrNull();
 
-  /// عدد الفواتير المعلّقة
+  /// عدد الفواتير النشطة
   Future<int> getPendingCount({String? storeId}) async {
     final countExpr = zatcaOfflineQueueTable.invoiceNumber.count();
     final query = selectOnly(zatcaOfflineQueueTable)
-      ..addColumns([countExpr])
-      ..where(zatcaOfflineQueueTable.status.equals('pending'));
+      ..addColumns([countExpr]);
     if (storeId != null) {
       query.where(zatcaOfflineQueueTable.storeId.equals(storeId));
     }
@@ -69,11 +57,43 @@ class ZatcaOfflineQueueDao extends DatabaseAccessor<AppDatabase>
     return result.read(countExpr) ?? 0;
   }
 
+  // ═══════════ قراءة (dead-letter) ═══════════
+
+  /// جلب فواتير dead_letter (للمراجعة اليدوية)
+  Future<List<ZatcaDeadLetterTableData>> getDeadLetter({String? storeId}) {
+    final query = select(zatcaDeadLetterTable)
+      ..orderBy([(d) => OrderingTerm.desc(d.deadLetteredAt)]);
+    if (storeId != null) {
+      query.where((d) => d.storeId.equals(storeId));
+    }
+    return query.get();
+  }
+
+  /// جلب فاتورة من dead_letter برقمها
+  Future<ZatcaDeadLetterTableData?> getDeadLetterByInvoiceNumber(
+    String invoiceNumber,
+  ) =>
+      (select(zatcaDeadLetterTable)
+            ..where((d) => d.invoiceNumber.equals(invoiceNumber)))
+          .getSingleOrNull();
+
+  /// عدد فواتير dead_letter
+  Future<int> getDeadLetterCount({String? storeId}) async {
+    final countExpr = zatcaDeadLetterTable.invoiceNumber.count();
+    final query = selectOnly(zatcaDeadLetterTable)
+      ..addColumns([countExpr]);
+    if (storeId != null) {
+      query.where(zatcaDeadLetterTable.storeId.equals(storeId));
+    }
+    final result = await query.getSingle();
+    return result.read(countExpr) ?? 0;
+  }
+
   // ═══════════ كتابة ═══════════
 
-  /// إضافة/تحديث فاتورة في الطابور (UPSERT على invoice_number)
+  /// إضافة/تحديث فاتورة في الـ active queue (UPSERT على invoice_number)
   ///
-  /// - إذا كانت جديدة: INSERT مع status=pending و retry_count=0
+  /// - إذا كانت جديدة: INSERT مع retry_count=0
   /// - إذا كانت موجودة: UPDATE للحفاظ على retry_count الحالي
   ///   وتحديث الـ XML/hash فقط (الحالة المعتادة: إعادة توقيع)
   Future<void> upsert({
@@ -112,15 +132,16 @@ class ZatcaOfflineQueueDao extends DatabaseAccessor<AppDatabase>
     }
   }
 
-  /// حذف فاتورة (بعد إرسال ناجح لـ ZATCA)
+  /// حذف فاتورة من الـ active queue (بعد إرسال ناجح لـ ZATCA)
   Future<int> remove(String invoiceNumber) =>
       (delete(zatcaOfflineQueueTable)
             ..where((q) => q.invoiceNumber.equals(invoiceNumber)))
           .go();
 
-  /// تسجيل محاولة فاشلة — يزيد retryCount ويحدّث lastRetryAt
+  /// تسجيل محاولة فاشلة
   ///
-  /// إذا retryCount يصل لـ maxRetries، الفاتورة تنتقل تلقائياً لـ dead_letter.
+  /// - إذا retryCount < maxRetries: يزيد العداد + يحدّث lastRetryAt في الـ queue
+  /// - إذا يصل لـ maxRetries: ينقل الصف لـ dead_letter atomic (INSERT + DELETE)
   Future<void> recordRetry({
     required String invoiceNumber,
     String? lastError,
@@ -130,62 +151,129 @@ class ZatcaOfflineQueueDao extends DatabaseAccessor<AppDatabase>
 
     final newRetryCount = row.retryCount + 1;
     final now = DateTime.now();
-    final shouldDeadLetter = newRetryCount >= maxRetries;
 
-    await (update(zatcaOfflineQueueTable)
-          ..where((q) => q.invoiceNumber.equals(invoiceNumber)))
-        .write(
-      ZatcaOfflineQueueTableCompanion(
-        retryCount: Value(newRetryCount),
-        lastRetryAt: Value(now),
-        lastError: Value(lastError),
-        status: Value(shouldDeadLetter ? 'dead_letter' : 'pending'),
-        deadLetteredAt: shouldDeadLetter ? Value(now) : const Value.absent(),
-      ),
-    );
+    if (newRetryCount >= maxRetries) {
+      // نقل الصف لـ dead_letter atomic
+      await _moveToDeadLetter(
+        row: row,
+        finalRetryCount: newRetryCount,
+        lastError: lastError,
+        reason: 'max_retries',
+        movedAt: now,
+      );
+    } else {
+      // تحديث العداد في الـ queue فقط
+      await (update(zatcaOfflineQueueTable)
+            ..where((q) => q.invoiceNumber.equals(invoiceNumber)))
+          .write(
+        ZatcaOfflineQueueTableCompanion(
+          retryCount: Value(newRetryCount),
+          lastRetryAt: Value(now),
+          lastError: Value(lastError),
+        ),
+      );
+    }
+  }
+
+  /// نقل atomic من zatca_offline_queue → zatca_dead_letter
+  ///
+  /// داخل transaction — لو INSERT أو DELETE فشل، rollback كامل يضمن
+  /// عدم فقدان السجل (ما ينتقل لا ينختفي من الاثنين).
+  Future<void> _moveToDeadLetter({
+    required ZatcaOfflineQueueTableData row,
+    required int finalRetryCount,
+    required String? lastError,
+    required String reason,
+    required DateTime movedAt,
+  }) async {
+    await transaction(() async {
+      await into(zatcaDeadLetterTable).insert(
+        ZatcaDeadLetterTableCompanion(
+          invoiceNumber: Value(row.invoiceNumber),
+          uuid: Value(row.uuid),
+          storeId: Value(row.storeId),
+          signedXmlBase64: Value(row.signedXmlBase64),
+          invoiceHash: Value(row.invoiceHash),
+          isStandard: Value(row.isStandard),
+          retryCount: Value(finalRetryCount),
+          lastError: Value(lastError ?? row.lastError),
+          deadLetterReason: Value(reason),
+          queuedAt: Value(row.queuedAt),
+          lastRetryAt: Value(movedAt),
+          deadLetteredAt: Value(movedAt),
+        ),
+      );
+      await (delete(zatcaOfflineQueueTable)
+            ..where((q) => q.invoiceNumber.equals(row.invoiceNumber)))
+          .go();
+    });
   }
 
   // ═══════════ Cleanup ═══════════
 
   /// نقل الفواتير القديمة (>30 يوم) والفاشلة (retryCount >= maxRetries)
-  /// إلى حالة dead_letter.
+  /// من الـ active queue إلى dead_letter.
   ///
-  /// Returns عدد الصفوف اللي تحوّلت.
+  /// Returns عدد الصفوف اللي اتنقلت.
   Future<int> cleanupStaleToDeadLetter() async {
     final cutoff = DateTime.now().subtract(staleThreshold);
-    return (update(zatcaOfflineQueueTable)
+    final stale = await (select(zatcaOfflineQueueTable)
           ..where(
             (q) =>
-                q.status.equals('pending') &
                 q.retryCount.isBiggerOrEqualValue(maxRetries) &
                 q.queuedAt.isSmallerThanValue(cutoff),
           ))
-        .write(
-      ZatcaOfflineQueueTableCompanion(
-        status: const Value('dead_letter'),
-        deadLetteredAt: Value(DateTime.now()),
-      ),
-    );
+        .get();
+
+    if (stale.isEmpty) return 0;
+
+    final now = DateTime.now();
+    for (final row in stale) {
+      await _moveToDeadLetter(
+        row: row,
+        finalRetryCount: row.retryCount,
+        lastError: row.lastError,
+        reason: 'stale',
+        movedAt: now,
+      );
+    }
+    return stale.length;
   }
 
-  /// حذف كل الـ dead_letter (للمسح اليدوي بعد المراجعة)
-  Future<int> purgeDeadLetter() => (delete(zatcaOfflineQueueTable)
-        ..where((q) => q.status.equals('dead_letter')))
-      .go();
+  /// حذف يدوي لفاتورة من dead_letter (بعد المراجعة)
+  Future<int> removeDeadLetter(String invoiceNumber) =>
+      (delete(zatcaDeadLetterTable)
+            ..where((d) => d.invoiceNumber.equals(invoiceNumber)))
+          .go();
+
+  /// حذف كل الـ dead_letter (للمسح اليدوي بعد المراجعة الكاملة)
+  Future<int> purgeDeadLetter() => (delete(zatcaDeadLetterTable)).go();
 
   // ═══════════ Streams (للـ UI المباشر) ═══════════
 
   /// Stream لـ pending count (للـ UI indicator)
   Stream<int> watchPendingCount({String? storeId}) {
     final query = selectOnly(zatcaOfflineQueueTable)
-      ..addColumns([zatcaOfflineQueueTable.invoiceNumber.count()])
-      ..where(zatcaOfflineQueueTable.status.equals('pending'));
+      ..addColumns([zatcaOfflineQueueTable.invoiceNumber.count()]);
     if (storeId != null) {
       query.where(zatcaOfflineQueueTable.storeId.equals(storeId));
     }
     return query.watchSingle().map(
           (row) =>
               row.read(zatcaOfflineQueueTable.invoiceNumber.count()) ?? 0,
+        );
+  }
+
+  /// Stream لـ dead_letter count (للـ admin UI)
+  Stream<int> watchDeadLetterCount({String? storeId}) {
+    final query = selectOnly(zatcaDeadLetterTable)
+      ..addColumns([zatcaDeadLetterTable.invoiceNumber.count()]);
+    if (storeId != null) {
+      query.where(zatcaDeadLetterTable.storeId.equals(storeId));
+    }
+    return query.watchSingle().map(
+          (row) =>
+              row.read(zatcaDeadLetterTable.invoiceNumber.count()) ?? 0,
         );
   }
 }

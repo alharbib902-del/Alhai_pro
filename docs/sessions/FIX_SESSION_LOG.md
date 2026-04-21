@@ -3830,3 +3830,161 @@ C-8a ZATCA Queue Drift Infrastructure / prior C-8 FSS encryption work (separate 
 ---
 
 END OF C-8a ZATCA QUEUE DRIFT ENTRY — infrastructure ready, consumer wiring deferred
+
+
+---
+
+### C-8b Dead-Letter Table Separation — 2026-04-21 — schema v38 → v39
+
+**Classification:** Architectural refinement on top of C-8a. Dedicated dead-letter table + atomic row moves.
+**Branch:** fix/zatca-queue-drift (same as C-8a, cumulative)
+**Scope:** New `zatca_dead_letter` table + DAO rewrite with row-move pattern + 12 tests + 3 schema-version assertions bumped
+
+#### Summary
+
+C-8a landed a single-table design with `status` column. C-8b splits dead-letter into its own table. User preference after my initial recommendation against the literal split.
+
+**Post-C-8b design:**
+- `zatca_offline_queue` — active invoices only (retryable)
+- `zatca_dead_letter` — archived invoices that exhausted retries or went stale
+
+Moves happen atomically inside a Drift `transaction()` — INSERT to dead_letter, DELETE from queue. Transaction-safe: on any failure, rollback ensures no row disappears from both tables.
+
+#### Design rationale (user-driven)
+
+Arguments for C-8b separation:
+1. Organizational: queue is operational, dead_letter is audit trail
+2. Retention: queue purges on success, dead_letter kept for review
+3. Access patterns: queue hot, dead_letter cold
+4. No need to WHERE-filter by status on the hot path
+
+My initial recommendation was against this (simpler status column achieves same expressivity), but user chose explicitly. Implementation kept pragmatic:
+- Queue table unchanged (C-8a columns `status` + `dead_lettered_at` retained; harmless now, simpler migration)
+- New dead_letter table with focused columns (adds `dead_letter_reason`)
+
+#### Schema v39 additions
+
+`zatca_dead_letter` (PK = `invoice_number`):
+- Copied columns: invoice_number, uuid, store_id, signed_xml_base64, invoice_hash, is_standard, retry_count, last_error, queued_at, last_retry_at
+- New: `dead_letter_reason` (default `'max_retries'`, also supports `'stale'`, `'manual'`)
+- New: `dead_lettered_at` (NOT NULL at this table, was nullable in queue)
+
+Indexes:
+- `idx_zatca_dead_letter_store` (store_id)
+- `idx_zatca_dead_letter_at` (dead_lettered_at DESC)
+
+#### DAO changes
+
+New methods:
+- `getDeadLetter({storeId})` — reads from new table
+- `getDeadLetterByInvoiceNumber(n)` — single lookup in dead_letter
+- `getDeadLetterCount({storeId})` — count helper
+- `watchDeadLetterCount({storeId})` — reactive stream
+- `removeDeadLetter(n)` — single-row delete from dead_letter
+- `_moveToDeadLetter(...)` — private atomic row-move via `transaction()`
+
+Changed methods:
+- `recordRetry(...)` — when `newRetryCount >= maxRetries`, calls `_moveToDeadLetter(reason: 'max_retries')` instead of updating status
+- `getPending({storeId})` — no `WHERE status='pending'` filter needed; all queue rows are pending by definition now
+- `getPendingCount({storeId})` — same simplification
+- `cleanupStaleToDeadLetter()` — iterates stale+exhausted, calls `_moveToDeadLetter(reason: 'stale')` for each
+
+Same methods (unchanged):
+- `upsert(...)`, `remove(...)`, `getByInvoiceNumber(n)`, `watchPendingCount(...)`, `purgeDeadLetter()`
+
+#### Atomic row-move implementation
+
+```dart
+Future<void> _moveToDeadLetter(...) async {
+  await transaction(() async {
+    await into(zatcaDeadLetterTable).insert(ZatcaDeadLetterTableCompanion(...));
+    await (delete(zatcaOfflineQueueTable)..where((q) => q.invoiceNumber.equals(...))).go();
+  });
+}
+```
+
+Transaction-safe: if INSERT fails (e.g. dead_letter PK collision, which shouldn't happen but defensively), DELETE doesn't run. If DELETE fails (shouldn't — same connection), INSERT rolls back. Row can NEVER disappear from both tables.
+
+Edge case: manual re-try of a dead-lettered invoice. If admin re-upserts the same `invoice_number` via `upsert()`, current design creates a new queue entry while the dead_letter row remains. Operator-responsibility to clear dead_letter via `removeDeadLetter(n)` first. Acceptable (manual workflow).
+
+#### Migration (schema v38 → v39)
+
+- `app_database.dart:schemaVersion` bumped 38 → 39
+- `case 39` added to `_runMigrationStep` — `m.createTable(zatcaDeadLetterTable)`
+- Pre-migration backup created automatically
+- No data migration needed (C-8a tables are empty anyway; no production consumer)
+- Queue table columns (status, dead_lettered_at) kept for now — harmless, avoids column-drop complexity
+
+#### Tests
+
+**12 DAO tests** (updated from 10 in C-8a):
+- `upsert`: insert + re-sign-preserves-retry
+- `recordRetry`: increment below max; atomic row-move at max; no-op if missing
+- `getPending`: only queue rows; filter by storeId
+- `getDeadLetter`: separate table; filter by storeId
+- `getPendingCount` + `getDeadLetterCount`: correctly separated
+- `remove` (from queue): standard delete
+- `removeDeadLetter` + `purgeDeadLetter`: delete only from dead_letter, preserve queue
+
+**Critical test: atomic row-move**
+```dart
+// After maxRetries:
+expect(queueRow, isNull, reason: 'row must be removed from queue');
+expect(deadRow, isNotNull);
+expect(deadRow.deadLetterReason, 'max_retries');
+expect(deadRow.signedXmlBase64, 'xml', reason: 'XML preserved for review');
+```
+
+#### Verification
+
+| Step | Expected | Actual |
+|---|---|---|
+| `flutter analyze alhai_database/lib/` | clean | ✓ (77s) |
+| `build_runner build` | 256 outputs | ✓ (64s) |
+| alhai_database full suite | 508/508 + 1 skipped | ✓ (+2 new) |
+| 3 hardcoded-schema-version tests | updated 38→39 | ✓ |
+| cashier tests | 600/600 | (pending) |
+| alhai_sync tests | 358/358 | (pending) |
+
+#### Files changed (this commit only, on top of C-8a)
+
+| File | Type |
+|---|---|
+| `packages/alhai_database/lib/src/tables/zatca_dead_letter_table.dart` | NEW |
+| `packages/alhai_database/lib/src/tables/tables.dart` | export added |
+| `packages/alhai_database/lib/src/daos/zatca_offline_queue_dao.dart` | REWRITE (row-move) |
+| `packages/alhai_database/lib/src/app_database.dart` | +table, v38→v39, case 39 |
+| Regenerated `.g.dart` files | (many) |
+| `packages/alhai_database/test/daos/zatca_offline_queue_dao_test.dart` | 12 tests (rewritten) |
+| `packages/alhai_database/test/app_database_test.dart` | v38→v39 |
+| `packages/alhai_database/test/migration_test.dart` | v38→v39 |
+| `packages/alhai_database/test/migration_backup_test.dart` | v38→v39 |
+
+#### Risk assessment
+
+- **Second schema bump in quick succession** (v38 and v39 on the same branch). Both are `createTable` — lowest-risk class, additive only.
+- **No data migration** — both tables empty on every device (consumer not wired yet)
+- **Pre-migration backup automatic** per bump
+- **Downgrade guard** throws on v39 → v38 via existing logic
+
+#### Backlog still deferred (unchanged from C-8a)
+
+- SharedPreferences → Drift data migration on first load
+- ZATCA Phase 2 pipeline activation in cashier
+- Cleanup task scheduler
+- UI for dead-letter review (super_admin / store-admin)
+
+#### Methodology notes
+
+1. **User-driven design wins over optimizer's preference** — I recommended against the split (marginal value vs cost). User chose it anyway for organizational/compliance clarity. Shipped cleanly with atomic row-moves.
+2. **Transaction-safe row moves are the critical invariant** — `transaction()` wraps INSERT + DELETE ensuring a row can never vanish from both tables. Tests explicitly assert this invariant.
+3. **Queue columns (status, dead_lettered_at) retained** — simpler migration, no column-drop complexity. Harmless given row-move semantics make status always effectively `pending` for rows present in queue.
+4. **Two consecutive schema bumps in one session** — normally risky; acceptable here because both are additive createTable on empty tables with automatic pre-migration backups.
+
+#### Audit refs
+
+C-8b Dead-Letter Separation / C-8a infrastructure (same branch) / prior audit Finding #10 deferred items.
+
+---
+
+END OF C-8b DEAD-LETTER SEPARATION ENTRY — row-move pattern live, consumer wiring still deferred

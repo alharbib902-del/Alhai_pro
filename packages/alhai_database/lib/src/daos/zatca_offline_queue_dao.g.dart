@@ -6,6 +6,8 @@ part of 'zatca_offline_queue_dao.dart';
 mixin _$ZatcaOfflineQueueDaoMixin on DatabaseAccessor<AppDatabase> {
   $ZatcaOfflineQueueTableTable get zatcaOfflineQueueTable =>
       attachedDatabase.zatcaOfflineQueueTable;
+  $ZatcaDeadLetterTableTable get zatcaDeadLetterTable =>
+      attachedDatabase.zatcaDeadLetterTable;
   ZatcaOfflineQueueDaoManager get managers => ZatcaOfflineQueueDaoManager(this);
 }
 
@@ -15,4 +17,7 @@ class ZatcaOfflineQueueDaoManager {
   $$ZatcaOfflineQueueTableTableTableManager get zatcaOfflineQueueTable =>
       $$ZatcaOfflineQueueTableTableTableManager(
           _db.attachedDatabase, _db.zatcaOfflineQueueTable);
+  $$ZatcaDeadLetterTableTableTableManager get zatcaDeadLetterTable =>
+      $$ZatcaDeadLetterTableTableTableManager(
+          _db.attachedDatabase, _db.zatcaDeadLetterTable);
 }

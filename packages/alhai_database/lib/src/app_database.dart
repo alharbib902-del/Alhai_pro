@@ -75,8 +75,9 @@ part 'app_database.g.dart';
     OrgProductsTable,
     // الفواتير الرسمية
     InvoicesTable,
-    // طابور ZATCA offline
+    // طابور ZATCA offline + dead-letter
     ZatcaOfflineQueueTable,
+    ZatcaDeadLetterTable,
   ],
   daos: [
     // DAOs الأساسية
@@ -136,7 +137,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 38;
+  int get schemaVersion => 39;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -600,12 +601,20 @@ class AppDatabase extends _$AppDatabase {
         );
 
       case 38:
-        // v38: طابور ZATCA offline الـ Drift-backed
-        // يحل محل SharedPreferences JSON-blob. صف واحد لكل فاتورة مع
-        // status = pending | dead_letter.
+        // v38: طابور ZATCA offline الـ Drift-backed (active queue)
+        // يحل محل SharedPreferences JSON-blob.
         await m.createTable(zatcaOfflineQueueTable);
         debugPrint(
           '[Migration v38] Created zatca_offline_queue table',
+        );
+
+      case 39:
+        // v39: جدول dead-letter منفصل لفواتير ZATCA المستنفدة المحاولات
+        // row-move pattern: DAO.moveToDeadLetter() ينقل الصف atomic من
+        // zatca_offline_queue → zatca_dead_letter عند exceed maxRetries.
+        await m.createTable(zatcaDeadLetterTable);
+        debugPrint(
+          '[Migration v39] Created zatca_dead_letter table',
         );
 
       default:
