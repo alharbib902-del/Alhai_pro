@@ -349,8 +349,8 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
             productId: Value(item.productId),
             productName: Value(item.productName),
             qty: Value(item.qty),
-            unitPrice: Value(item.unitPrice),
-            refundAmount: Value(item.qty * item.unitPrice * 1.15),
+            unitPrice: Value(item.unitPrice / 100.0),
+            refundAmount: Value(item.qty * (item.unitPrice / 100.0) * 1.15),
           );
         }).toList();
 

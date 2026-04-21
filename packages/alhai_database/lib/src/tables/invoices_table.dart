@@ -65,17 +65,19 @@ class InvoicesTable extends Table {
   TextColumn get customerAddress => text().nullable()();
 
   // ═══════════ المبالغ ═══════════
-  RealColumn get subtotal => real().withDefault(const Constant(0))();
-  RealColumn get discount => real().withDefault(const Constant(0))();
+  // C-4 Session 2: money columns are int cents (ROUND_HALF_UP).
+  // taxRate stays Real — it's a percentage (0.15 = 15%), not money.
+  IntColumn get subtotal => integer().withDefault(const Constant(0))();
+  IntColumn get discount => integer().withDefault(const Constant(0))();
   RealColumn get taxRate => real().withDefault(const Constant(15))(); // 15% VAT
-  RealColumn get taxAmount => real().withDefault(const Constant(0))();
-  RealColumn get total => real().withDefault(const Constant(0))();
+  IntColumn get taxAmount => integer().withDefault(const Constant(0))();
+  IntColumn get total => integer().withDefault(const Constant(0))();
 
   // ═══════════ الدفع ═══════════
   TextColumn get paymentMethod =>
       text().nullable()(); // cash, card, mixed, credit, transfer
-  RealColumn get amountPaid => real().withDefault(const Constant(0))();
-  RealColumn get amountDue => real().withDefault(const Constant(0))();
+  IntColumn get amountPaid => integer().withDefault(const Constant(0))();
+  IntColumn get amountDue => integer().withDefault(const Constant(0))();
   TextColumn get currency => text().withDefault(const Constant('SAR'))();
 
   // ═══════════ ZATCA ═══════════

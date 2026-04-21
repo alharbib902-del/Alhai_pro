@@ -46,16 +46,19 @@ SaleItemsTableData _createTestSaleItem({
   double unitPrice = 25.0,
   double qty = 2.0,
 }) {
+  // C-4 Session 2: sale_items money cols are int cents; convert at factory boundary.
+  final unitPriceCents = (unitPrice * 100).round();
+  final lineCents = (unitPrice * qty * 100).round();
   return SaleItemsTableData(
     id: id,
     saleId: saleId,
     productId: 'prod-1',
     productName: productName,
-    unitPrice: unitPrice,
+    unitPrice: unitPriceCents,
     qty: qty,
-    subtotal: unitPrice * qty,
+    subtotal: lineCents,
     discount: 0,
-    total: unitPrice * qty,
+    total: lineCents,
   );
 }
 

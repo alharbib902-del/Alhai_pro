@@ -353,7 +353,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                                     child: Text(
                                       CurrencyFormatter.formatNumberWithContext(
                                         context,
-                                        item.total,
+                                        item.total / 100.0,
                                       ),
                                       textAlign: TextAlign.start,
                                       style: const TextStyle(
@@ -614,7 +614,7 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
               (i) => ReceiptLineItem(
                 name: i.productName,
                 quantity: i.qty.toInt(),
-                total: i.total,
+                total: i.total / 100.0,
               ),
             )
             .toList(),

@@ -94,9 +94,9 @@ Future<HeldInvoice> holdCurrentInvoice(WidgetRef ref, {String? name}) async {
           cashierId: '', // سيتم تعيينه من المستخدم الحالي لاحقاً
           customerName: Value(cart.customerName),
           items: itemsJson,
-          subtotal: Value(cart.subtotal),
-          discount: Value(cart.discount),
-          total: Value(cart.total),
+          subtotal: Value((cart.subtotal * 100).round()),
+          discount: Value((cart.discount * 100).round()),
+          total: Value((cart.total * 100).round()),
           notes: Value(name),
           createdAt: now,
         ),
@@ -192,7 +192,7 @@ HeldInvoice _rowToHeldInvoice(HeldInvoicesTableData row) {
   // بناء CartState من بيانات الجدول
   final cart = CartState(
     items: cartItems,
-    discount: row.discount,
+    discount: row.discount / 100.0,
     customerName: row.customerName,
   );
 

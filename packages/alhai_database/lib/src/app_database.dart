@@ -137,7 +137,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 41;
+  int get schemaVersion => 42;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -675,6 +675,80 @@ class AppDatabase extends _$AppDatabase {
         debugPrint(
           '[Migration v41] Converted products money columns '
           'to INTEGER cents (C-4 Stage B)',
+        );
+
+      case 42:
+        // v42: C-4 Session 2 — invoices (6) + sale_items (5) + held_invoices (3)
+        // RealColumn → IntColumn (cents) ROUND_HALF_UP
+        // invoices + held_invoices: 0 rows on server (empty).
+        // sale_items: 30 rows, 0 real fractional cents (FP artifacts only).
+        // Verified via tolerance-based Appendix B audit on 2026-04-22.
+        await m.alterTable(
+          TableMigration(
+            invoicesTable,
+            columnTransformer: {
+              invoicesTable.subtotal: const CustomExpression<int>(
+                'CAST(ROUND(subtotal * 100) AS INTEGER)',
+              ),
+              invoicesTable.discount: const CustomExpression<int>(
+                'CAST(ROUND(discount * 100) AS INTEGER)',
+              ),
+              invoicesTable.taxAmount: const CustomExpression<int>(
+                'CAST(ROUND(tax_amount * 100) AS INTEGER)',
+              ),
+              invoicesTable.total: const CustomExpression<int>(
+                'CAST(ROUND(total * 100) AS INTEGER)',
+              ),
+              invoicesTable.amountPaid: const CustomExpression<int>(
+                'CAST(ROUND(amount_paid * 100) AS INTEGER)',
+              ),
+              invoicesTable.amountDue: const CustomExpression<int>(
+                'CAST(ROUND(amount_due * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        await m.alterTable(
+          TableMigration(
+            saleItemsTable,
+            columnTransformer: {
+              saleItemsTable.unitPrice: const CustomExpression<int>(
+                'CAST(ROUND(unit_price * 100) AS INTEGER)',
+              ),
+              saleItemsTable.costPrice: const CustomExpression<int>(
+                'CAST(ROUND(cost_price * 100) AS INTEGER)',
+              ),
+              saleItemsTable.subtotal: const CustomExpression<int>(
+                'CAST(ROUND(subtotal * 100) AS INTEGER)',
+              ),
+              saleItemsTable.discount: const CustomExpression<int>(
+                'CAST(ROUND(discount * 100) AS INTEGER)',
+              ),
+              saleItemsTable.total: const CustomExpression<int>(
+                'CAST(ROUND(total * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        await m.alterTable(
+          TableMigration(
+            heldInvoicesTable,
+            columnTransformer: {
+              heldInvoicesTable.subtotal: const CustomExpression<int>(
+                'CAST(ROUND(subtotal * 100) AS INTEGER)',
+              ),
+              heldInvoicesTable.discount: const CustomExpression<int>(
+                'CAST(ROUND(discount * 100) AS INTEGER)',
+              ),
+              heldInvoicesTable.total: const CustomExpression<int>(
+                'CAST(ROUND(total * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        debugPrint(
+          '[Migration v42] Converted invoices+sale_items+held_invoices money '
+          'columns to INTEGER cents (C-4 Session 2)',
         );
 
       default:

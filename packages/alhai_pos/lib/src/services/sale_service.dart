@@ -307,11 +307,11 @@ class SaleService {
                 saleId: saleId,
                 productId: item.product.id,
                 productName: item.product.name,
-                unitPrice: unitPrice,
+                unitPrice: (unitPrice * 100).round(),
                 qty: item.quantity.toDouble(),
-                subtotal: unitPrice * item.quantity,
+                subtotal: (unitPrice * item.quantity * 100).round(),
                 discount: const Value(0),
-                total: unitPrice * item.quantity,
+                total: (unitPrice * item.quantity * 100).round(),
               ),
             );
 

@@ -206,7 +206,8 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
                   cells: [
                     DataCell(Text(product.name)),
                     DataCell(
-                      Text('${product.price.toStringAsFixed(2)} ${l10n.sar}'),
+                      // C-4 Stage B: product.price is int cents; display in SAR.
+                      Text('${(product.price / 100.0).toStringAsFixed(2)} ${l10n.sar}'),
                     ),
                     DataCell(Text(product.categoryId ?? '-')),
                     DataCell(
@@ -285,7 +286,8 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
             ),
           ),
           Text(
-            '${product.price.toStringAsFixed(0)} SAR',
+            // C-4 Stage B: product.price is int cents; display in SAR.
+            '${(product.price / 100.0).toStringAsFixed(0)} SAR',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
@@ -314,7 +316,8 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
     AppLocalizations l10n,
   ) {
     final controller = TextEditingController(
-      text: product.price.toStringAsFixed(2),
+      // C-4 Stage B: product.price is int cents; controller shows SAR.
+      text: (product.price / 100.0).toStringAsFixed(2),
     );
     String? errorText;
     showDialog(
@@ -368,8 +371,9 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
                 if (newPrice != null && newPrice > 0) {
                   try {
                     final db = GetIt.I<AppDatabase>();
+                    // C-4 Stage B: product.price is int cents; convert user-typed SAR double.
                     final updated = product.copyWith(
-                      price: newPrice,
+                      price: (newPrice * 100).round(),
                       updatedAt: Value(DateTime.now()),
                     );
                     await db.productsDao.updateProduct(updated);

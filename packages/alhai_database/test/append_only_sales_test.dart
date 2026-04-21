@@ -106,9 +106,10 @@ void main() {
               productId: 'prod-4',
               productName: 'Product 4',
               qty: 2.0,
-              unitPrice: 50.0,
-              subtotal: 100.0,
-              total: 100.0,
+              // C-4 Session 2: SAR × 100 = cents (int)
+              unitPrice: 5000,
+              subtotal: 10000,
+              total: 10000,
             ),
           );
 

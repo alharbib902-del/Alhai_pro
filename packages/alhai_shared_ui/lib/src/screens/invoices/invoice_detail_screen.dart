@@ -709,9 +709,10 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                         ),
                         SizedBox(width: AlhaiSpacing.lg),
                         Text(
+                          // C-4 Session 2: sale_items money cols are int cents; formatter takes double SAR.
                           CurrencyFormatter.formatWithContext(
                             context,
-                            item.unitPrice,
+                            item.unitPrice / 100.0,
                           ),
                           style: TextStyle(fontSize: 13, color: mutedColor),
                         ),
@@ -721,7 +722,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                           child: Text(
                             CurrencyFormatter.formatWithContext(
                               context,
-                              item.total,
+                              item.total / 100.0,
                             ),
                             textAlign: TextAlign.end,
                             style: TextStyle(

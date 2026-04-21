@@ -108,8 +108,9 @@ void main() {
       ];
 
       expect(items.length, equals(2));
-      final totalSum = items.fold<double>(0, (sum, i) => sum + i.total);
-      expect(totalSum, equals(55.0));
+      // C-4 Session 2: sale_items.total is int cents; sum over 2500 + 3000 = 5500 cents.
+      final totalSum = items.fold<int>(0, (sum, i) => sum + i.total);
+      expect(totalSum, equals(5500));
     });
 
     test('sale data with discount', () {

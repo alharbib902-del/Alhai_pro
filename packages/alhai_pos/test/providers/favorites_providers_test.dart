@@ -60,7 +60,9 @@ void main() {
     });
 
     test('price returns product price', () {
-      expect(favoriteData.price, equals(1500));
+      // C-4 Stage B: product.price is int cents; FavoriteProductData.price getter
+      // divides by 100 for SAR display — asserts double 15.0 (= 1500 cents ÷ 100).
+      expect(favoriteData.price, equals(15.0));
     });
 
     test('barcode returns product barcode', () {

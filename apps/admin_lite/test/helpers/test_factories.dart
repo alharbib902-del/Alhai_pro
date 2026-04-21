@@ -69,8 +69,9 @@ ProductsTableData createTestProduct({
     id: id,
     storeId: storeId,
     name: name,
-    price: price,
-    costPrice: costPrice,
+    // C-4 Stage B: product price/costPrice are int cents; convert at factory boundary.
+    price: (price * 100).round(),
+    costPrice: costPrice == null ? null : (costPrice * 100).round(),
     stockQty: stockQty,
     minQty: minQty,
     isActive: isActive,

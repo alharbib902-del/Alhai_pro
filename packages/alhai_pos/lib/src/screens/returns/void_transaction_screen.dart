@@ -155,7 +155,7 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
               sku: item.productSku ?? item.productBarcode ?? '',
               icon: Icons.shopping_bag_outlined,
               qty: item.qty.toInt(),
-              price: item.unitPrice,
+              price: item.unitPrice / 100.0,
             ),
           )
           .toList();

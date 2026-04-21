@@ -13,9 +13,10 @@ class HeldInvoicesTable extends Table {
   TextColumn get customerName => text().nullable()();
   TextColumn get customerPhone => text().nullable()();
   TextColumn get items => text()(); // JSON array of cart items
-  RealColumn get subtotal => real().withDefault(const Constant(0))();
-  RealColumn get discount => real().withDefault(const Constant(0))();
-  RealColumn get total => real().withDefault(const Constant(0))();
+  // C-4 Session 2: money columns are int cents (ROUND_HALF_UP).
+  IntColumn get subtotal => integer().withDefault(const Constant(0))();
+  IntColumn get discount => integer().withDefault(const Constant(0))();
+  IntColumn get total => integer().withDefault(const Constant(0))();
   TextColumn get notes => text().nullable()();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime().nullable()();

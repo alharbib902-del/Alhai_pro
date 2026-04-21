@@ -76,9 +76,11 @@ void main() {
       productId: productId,
       productName: productName,
       qty: qty,
-      unitPrice: unitPrice,
-      subtotal: subtotal,
-      total: total,
+      // C-4 Session 2: fixture inputs are SAR doubles for readability;
+      // convert to int cents at the Drift boundary.
+      unitPrice: (unitPrice * 100).round(),
+      subtotal: (subtotal * 100).round(),
+      total: (total * 100).round(),
     );
   }
 
@@ -203,12 +205,13 @@ void main() {
 
         final itemA = items.firstWhere((i) => i.productId == 'prod-A');
         expect(itemA.qty, 2);
-        expect(itemA.unitPrice, 5.5);
-        expect(itemA.total, 11.0);
+        // C-4 Session 2: sale_items.unitPrice/total are int cents.
+        expect(itemA.unitPrice, 550);
+        expect(itemA.total, 1100);
 
         final itemB = items.firstWhere((i) => i.productId == 'prod-B');
         expect(itemB.qty, 1);
-        expect(itemB.total, 3.0);
+        expect(itemB.total, 300);
       },
     );
 
@@ -477,7 +480,8 @@ void main() {
         expect(itemsWithDetails.first.productName, 'منتج مفصل');
         expect(itemsWithDetails.first.productBarcode, 'DET-001');
         expect(itemsWithDetails.first.qty, 3);
-        expect(itemsWithDetails.first.total, 75.0);
+        // C-4 Session 2: sale_items.total is int cents.
+        expect(itemsWithDetails.first.total, 7500);
 
         // Verify stock was deducted
         final product = await db.productsDao.getProductById('detail-prod-1');

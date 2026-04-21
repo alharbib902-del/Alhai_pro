@@ -29,14 +29,16 @@ class SaleItemsTable extends Table {
   TextColumn get productBarcode => text().nullable()();
 
   // الكميات والأسعار
+  // C-4 Session 2: money columns are int cents (ROUND_HALF_UP).
+  // qty stays Real — fractional quantities (e.g. 1.5 kg) are valid.
   RealColumn get qty => real()();
-  RealColumn get unitPrice => real()();
-  RealColumn get costPrice => real().nullable()();
-  RealColumn get subtotal => real()();
+  IntColumn get unitPrice => integer()();
+  IntColumn get costPrice => integer().nullable()();
+  IntColumn get subtotal => integer()();
 
   // الخصم على مستوى العنصر
-  RealColumn get discount => real().withDefault(const Constant(0))();
-  RealColumn get total => real()();
+  IntColumn get discount => integer().withDefault(const Constant(0))();
+  IntColumn get total => integer()();
 
   // ملاحظات
   TextColumn get notes => text().nullable()();

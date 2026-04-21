@@ -170,12 +170,16 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
   }
 
   /// تسجيل دفعة
+  ///
+  /// `amount` is SAR (double). Converts to int cents at the boundary per
+  /// C-4 Session 2 money-type migration.
   Future<int> recordPayment(String id, double amount) async {
     final invoice = await getById(id);
     if (invoice == null) return 0;
 
-    final newPaid = invoice.amountPaid + amount;
-    final double newDue = (invoice.total - newPaid).clamp(0.0, double.infinity);
+    final amountCents = (amount * 100).round();
+    final int newPaid = invoice.amountPaid + amountCents;
+    final int newDue = newPaid >= invoice.total ? 0 : invoice.total - newPaid;
     final newStatus = newDue <= 0 ? 'paid' : 'partially_paid';
 
     return (update(invoicesTable)..where((i) => i.id.equals(id))).write(

@@ -55,13 +55,13 @@ void main() {
     invoiceNumber: 'INV-2026-00001',
     invoiceType: 'simplified_tax',
     status: 'paid',
-    subtotal: 40.0,
-    discount: 0.0,
+    subtotal: (40.0 * 100).round(),
+    discount: (0.0 * 100).round(),
     taxRate: 15.0,
-    taxAmount: 6.0,
-    total: 46.0,
-    amountPaid: 46.0,
-    amountDue: 0.0,
+    taxAmount: (6.0 * 100).round(),
+    total: (46.0 * 100).round(),
+    amountPaid: (46.0 * 100).round(),
+    amountDue: (0.0 * 100).round(),
     currency: 'SAR',
     createdAt: DateTime(2026, 1, 1, 10, 30),
   );
@@ -266,8 +266,9 @@ void main() {
           taxAmount: 30.0,
         );
 
-        expect(capturedCompanion!.total.value, 230.0);
-        expect(capturedCompanion!.amountPaid.value, 230.0);
+        // C-4 Session 2: invoices.total/amountPaid are int cents (230 SAR = 23000).
+        expect(capturedCompanion!.total.value, 23000);
+        expect(capturedCompanion!.amountPaid.value, 23000);
       });
 
       test('returns null on error', () async {
@@ -363,8 +364,9 @@ void main() {
           taxAmount: 15.0,
         );
 
-        expect(capturedCompanion!.total.value, 115.0);
-        expect(capturedCompanion!.amountDue.value, 115.0);
+        // C-4 Session 2: invoices.total/amountDue are int cents (115 SAR = 11500).
+        expect(capturedCompanion!.total.value, 11500);
+        expect(capturedCompanion!.amountDue.value, 11500);
       });
 
       test('returns null on error', () async {

@@ -38,11 +38,13 @@ void main() {
       invoiceNumber: invoiceNumber,
       invoiceType: Value(invoiceType),
       status: Value(status),
-      subtotal: Value(subtotal),
-      taxAmount: Value(taxAmount),
-      total: Value(total),
-      amountPaid: Value(amountPaid),
-      amountDue: Value(amountDue),
+      // C-4 Session 2: fixture inputs are SAR doubles for readability;
+      // convert to int cents at the Drift boundary.
+      subtotal: Value((subtotal * 100).round()),
+      taxAmount: Value((taxAmount * 100).round()),
+      total: Value((total * 100).round()),
+      amountPaid: Value((amountPaid * 100).round()),
+      amountDue: Value((amountDue * 100).round()),
       saleId: Value(saleId),
       customerId: Value(customerId),
       customerName: Value(customerName),
@@ -60,7 +62,8 @@ void main() {
         final invoice = await db.invoicesDao.getById('inv-1');
         expect(invoice, isNotNull);
         expect(invoice!.invoiceNumber, 'INV-2026-00001');
-        expect(invoice.total, 115.0);
+        // C-4 Session 2: invoices.total is int cents.
+        expect(invoice.total, 11500);
       });
 
       test('returns null for non-existent', () async {
@@ -280,8 +283,9 @@ void main() {
         await db.invoicesDao.recordPayment('inv-1', 60.0);
 
         final invoice = await db.invoicesDao.getById('inv-1');
-        expect(invoice!.amountPaid, 60.0);
-        expect(invoice.amountDue, 40.0);
+        // C-4 Session 2: amountPaid/amountDue are int cents.
+        expect(invoice!.amountPaid, 6000);
+        expect(invoice.amountDue, 4000);
         expect(invoice.status, 'partially_paid');
       });
 
@@ -293,8 +297,8 @@ void main() {
         await db.invoicesDao.recordPayment('inv-1', 100.0);
 
         final invoice = await db.invoicesDao.getById('inv-1');
-        expect(invoice!.amountPaid, 100.0);
-        expect(invoice.amountDue, 0.0);
+        expect(invoice!.amountPaid, 10000);
+        expect(invoice.amountDue, 0);
         expect(invoice.status, 'paid');
         expect(invoice.paidAt, isNotNull);
       });

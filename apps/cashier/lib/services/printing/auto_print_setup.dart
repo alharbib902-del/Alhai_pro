@@ -85,8 +85,9 @@ Future<bool> _autoPrintReceipt(WidgetRef ref, String saleId) async {
             (i) => ReceiptItem(
               name: i.productName,
               quantity: i.qty.toDouble(),
-              unitPrice: i.unitPrice,
-              total: i.total,
+              // C-4 Session 2: sale_items money cols are int cents; receipt API takes double SAR.
+              unitPrice: i.unitPrice / 100.0,
+              total: i.total / 100.0,
             ),
           )
           .toList(),

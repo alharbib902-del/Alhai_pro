@@ -137,11 +137,13 @@ SaleItemsTableData createTestSaleItem({
     productSku: productSku,
     productBarcode: productBarcode,
     qty: qty.toDouble(),
-    unitPrice: unitPrice,
-    costPrice: costPrice,
-    subtotal: subtotal,
-    discount: discount,
-    total: total,
+    // C-4 Session 2: fixture inputs are SAR doubles for readability;
+    // convert to int cents at the Drift boundary.
+    unitPrice: (unitPrice * 100).round(),
+    costPrice: costPrice == null ? null : (costPrice * 100).round(),
+    subtotal: (subtotal * 100).round(),
+    discount: (discount * 100).round(),
+    total: (total * 100).round(),
     notes: notes,
   );
 }

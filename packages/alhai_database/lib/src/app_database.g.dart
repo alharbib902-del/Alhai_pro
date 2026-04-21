@@ -6942,34 +6942,34 @@ class $SaleItemsTableTable extends SaleItemsTable
   static const VerificationMeta _unitPriceMeta =
       const VerificationMeta('unitPrice');
   @override
-  late final GeneratedColumn<double> unitPrice = GeneratedColumn<double>(
+  late final GeneratedColumn<int> unitPrice = GeneratedColumn<int>(
       'unit_price', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _costPriceMeta =
       const VerificationMeta('costPrice');
   @override
-  late final GeneratedColumn<double> costPrice = GeneratedColumn<double>(
+  late final GeneratedColumn<int> costPrice = GeneratedColumn<int>(
       'cost_price', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _subtotalMeta =
       const VerificationMeta('subtotal');
   @override
-  late final GeneratedColumn<double> subtotal = GeneratedColumn<double>(
+  late final GeneratedColumn<int> subtotal = GeneratedColumn<int>(
       'subtotal', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _discountMeta =
       const VerificationMeta('discount');
   @override
-  late final GeneratedColumn<double> discount = GeneratedColumn<double>(
+  late final GeneratedColumn<int> discount = GeneratedColumn<int>(
       'discount', aliasedName, false,
-      type: DriftSqlType.double,
+      type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
   static const VerificationMeta _totalMeta = const VerificationMeta('total');
   @override
-  late final GeneratedColumn<double> total = GeneratedColumn<double>(
+  late final GeneratedColumn<int> total = GeneratedColumn<int>(
       'total', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
   @override
   late final GeneratedColumn<String> notes = GeneratedColumn<String>(
@@ -7098,15 +7098,15 @@ class $SaleItemsTableTable extends SaleItemsTable
       qty: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}qty'])!,
       unitPrice: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}unit_price'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}unit_price'])!,
       costPrice: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}cost_price']),
+          .read(DriftSqlType.int, data['${effectivePrefix}cost_price']),
       subtotal: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}subtotal'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}subtotal'])!,
       discount: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}discount'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}discount'])!,
       total: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}total'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}total'])!,
       notes: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}notes']),
     );
@@ -7127,11 +7127,11 @@ class SaleItemsTableData extends DataClass
   final String? productSku;
   final String? productBarcode;
   final double qty;
-  final double unitPrice;
-  final double? costPrice;
-  final double subtotal;
-  final double discount;
-  final double total;
+  final int unitPrice;
+  final int? costPrice;
+  final int subtotal;
+  final int discount;
+  final int total;
   final String? notes;
   const SaleItemsTableData(
       {required this.id,
@@ -7161,13 +7161,13 @@ class SaleItemsTableData extends DataClass
       map['product_barcode'] = Variable<String>(productBarcode);
     }
     map['qty'] = Variable<double>(qty);
-    map['unit_price'] = Variable<double>(unitPrice);
+    map['unit_price'] = Variable<int>(unitPrice);
     if (!nullToAbsent || costPrice != null) {
-      map['cost_price'] = Variable<double>(costPrice);
+      map['cost_price'] = Variable<int>(costPrice);
     }
-    map['subtotal'] = Variable<double>(subtotal);
-    map['discount'] = Variable<double>(discount);
-    map['total'] = Variable<double>(total);
+    map['subtotal'] = Variable<int>(subtotal);
+    map['discount'] = Variable<int>(discount);
+    map['total'] = Variable<int>(total);
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
@@ -7210,11 +7210,11 @@ class SaleItemsTableData extends DataClass
       productSku: serializer.fromJson<String?>(json['productSku']),
       productBarcode: serializer.fromJson<String?>(json['productBarcode']),
       qty: serializer.fromJson<double>(json['qty']),
-      unitPrice: serializer.fromJson<double>(json['unitPrice']),
-      costPrice: serializer.fromJson<double?>(json['costPrice']),
-      subtotal: serializer.fromJson<double>(json['subtotal']),
-      discount: serializer.fromJson<double>(json['discount']),
-      total: serializer.fromJson<double>(json['total']),
+      unitPrice: serializer.fromJson<int>(json['unitPrice']),
+      costPrice: serializer.fromJson<int?>(json['costPrice']),
+      subtotal: serializer.fromJson<int>(json['subtotal']),
+      discount: serializer.fromJson<int>(json['discount']),
+      total: serializer.fromJson<int>(json['total']),
       notes: serializer.fromJson<String?>(json['notes']),
     );
   }
@@ -7229,11 +7229,11 @@ class SaleItemsTableData extends DataClass
       'productSku': serializer.toJson<String?>(productSku),
       'productBarcode': serializer.toJson<String?>(productBarcode),
       'qty': serializer.toJson<double>(qty),
-      'unitPrice': serializer.toJson<double>(unitPrice),
-      'costPrice': serializer.toJson<double?>(costPrice),
-      'subtotal': serializer.toJson<double>(subtotal),
-      'discount': serializer.toJson<double>(discount),
-      'total': serializer.toJson<double>(total),
+      'unitPrice': serializer.toJson<int>(unitPrice),
+      'costPrice': serializer.toJson<int?>(costPrice),
+      'subtotal': serializer.toJson<int>(subtotal),
+      'discount': serializer.toJson<int>(discount),
+      'total': serializer.toJson<int>(total),
       'notes': serializer.toJson<String?>(notes),
     };
   }
@@ -7246,11 +7246,11 @@ class SaleItemsTableData extends DataClass
           Value<String?> productSku = const Value.absent(),
           Value<String?> productBarcode = const Value.absent(),
           double? qty,
-          double? unitPrice,
-          Value<double?> costPrice = const Value.absent(),
-          double? subtotal,
-          double? discount,
-          double? total,
+          int? unitPrice,
+          Value<int?> costPrice = const Value.absent(),
+          int? subtotal,
+          int? discount,
+          int? total,
           Value<String?> notes = const Value.absent()}) =>
       SaleItemsTableData(
         id: id ?? this.id,
@@ -7352,11 +7352,11 @@ class SaleItemsTableCompanion extends UpdateCompanion<SaleItemsTableData> {
   final Value<String?> productSku;
   final Value<String?> productBarcode;
   final Value<double> qty;
-  final Value<double> unitPrice;
-  final Value<double?> costPrice;
-  final Value<double> subtotal;
-  final Value<double> discount;
-  final Value<double> total;
+  final Value<int> unitPrice;
+  final Value<int?> costPrice;
+  final Value<int> subtotal;
+  final Value<int> discount;
+  final Value<int> total;
   final Value<String?> notes;
   final Value<int> rowid;
   const SaleItemsTableCompanion({
@@ -7383,11 +7383,11 @@ class SaleItemsTableCompanion extends UpdateCompanion<SaleItemsTableData> {
     this.productSku = const Value.absent(),
     this.productBarcode = const Value.absent(),
     required double qty,
-    required double unitPrice,
+    required int unitPrice,
     this.costPrice = const Value.absent(),
-    required double subtotal,
+    required int subtotal,
     this.discount = const Value.absent(),
-    required double total,
+    required int total,
     this.notes = const Value.absent(),
     this.rowid = const Value.absent(),
   })  : id = Value(id),
@@ -7406,11 +7406,11 @@ class SaleItemsTableCompanion extends UpdateCompanion<SaleItemsTableData> {
     Expression<String>? productSku,
     Expression<String>? productBarcode,
     Expression<double>? qty,
-    Expression<double>? unitPrice,
-    Expression<double>? costPrice,
-    Expression<double>? subtotal,
-    Expression<double>? discount,
-    Expression<double>? total,
+    Expression<int>? unitPrice,
+    Expression<int>? costPrice,
+    Expression<int>? subtotal,
+    Expression<int>? discount,
+    Expression<int>? total,
     Expression<String>? notes,
     Expression<int>? rowid,
   }) {
@@ -7440,11 +7440,11 @@ class SaleItemsTableCompanion extends UpdateCompanion<SaleItemsTableData> {
       Value<String?>? productSku,
       Value<String?>? productBarcode,
       Value<double>? qty,
-      Value<double>? unitPrice,
-      Value<double?>? costPrice,
-      Value<double>? subtotal,
-      Value<double>? discount,
-      Value<double>? total,
+      Value<int>? unitPrice,
+      Value<int?>? costPrice,
+      Value<int>? subtotal,
+      Value<int>? discount,
+      Value<int>? total,
       Value<String?>? notes,
       Value<int>? rowid}) {
     return SaleItemsTableCompanion(
@@ -7490,19 +7490,19 @@ class SaleItemsTableCompanion extends UpdateCompanion<SaleItemsTableData> {
       map['qty'] = Variable<double>(qty.value);
     }
     if (unitPrice.present) {
-      map['unit_price'] = Variable<double>(unitPrice.value);
+      map['unit_price'] = Variable<int>(unitPrice.value);
     }
     if (costPrice.present) {
-      map['cost_price'] = Variable<double>(costPrice.value);
+      map['cost_price'] = Variable<int>(costPrice.value);
     }
     if (subtotal.present) {
-      map['subtotal'] = Variable<double>(subtotal.value);
+      map['subtotal'] = Variable<int>(subtotal.value);
     }
     if (discount.present) {
-      map['discount'] = Variable<double>(discount.value);
+      map['discount'] = Variable<int>(discount.value);
     }
     if (total.present) {
-      map['total'] = Variable<double>(total.value);
+      map['total'] = Variable<int>(total.value);
     }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
@@ -24096,24 +24096,24 @@ class $HeldInvoicesTableTable extends HeldInvoicesTable
   static const VerificationMeta _subtotalMeta =
       const VerificationMeta('subtotal');
   @override
-  late final GeneratedColumn<double> subtotal = GeneratedColumn<double>(
+  late final GeneratedColumn<int> subtotal = GeneratedColumn<int>(
       'subtotal', aliasedName, false,
-      type: DriftSqlType.double,
+      type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
   static const VerificationMeta _discountMeta =
       const VerificationMeta('discount');
   @override
-  late final GeneratedColumn<double> discount = GeneratedColumn<double>(
+  late final GeneratedColumn<int> discount = GeneratedColumn<int>(
       'discount', aliasedName, false,
-      type: DriftSqlType.double,
+      type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
   static const VerificationMeta _totalMeta = const VerificationMeta('total');
   @override
-  late final GeneratedColumn<double> total = GeneratedColumn<double>(
+  late final GeneratedColumn<int> total = GeneratedColumn<int>(
       'total', aliasedName, false,
-      type: DriftSqlType.double,
+      type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
   static const VerificationMeta _notesMeta = const VerificationMeta('notes');
@@ -24278,11 +24278,11 @@ class $HeldInvoicesTableTable extends HeldInvoicesTable
       items: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}items'])!,
       subtotal: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}subtotal'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}subtotal'])!,
       discount: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}discount'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}discount'])!,
       total: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}total'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}total'])!,
       notes: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}notes']),
       createdAt: attachedDatabase.typeMapping
@@ -24312,9 +24312,9 @@ class HeldInvoicesTableData extends DataClass
   final String? customerName;
   final String? customerPhone;
   final String items;
-  final double subtotal;
-  final double discount;
-  final double total;
+  final int subtotal;
+  final int discount;
+  final int total;
   final String? notes;
   final DateTime createdAt;
   final DateTime? updatedAt;
@@ -24350,9 +24350,9 @@ class HeldInvoicesTableData extends DataClass
       map['customer_phone'] = Variable<String>(customerPhone);
     }
     map['items'] = Variable<String>(items);
-    map['subtotal'] = Variable<double>(subtotal);
-    map['discount'] = Variable<double>(discount);
-    map['total'] = Variable<double>(total);
+    map['subtotal'] = Variable<int>(subtotal);
+    map['discount'] = Variable<int>(discount);
+    map['total'] = Variable<int>(total);
     if (!nullToAbsent || notes != null) {
       map['notes'] = Variable<String>(notes);
     }
@@ -24410,9 +24410,9 @@ class HeldInvoicesTableData extends DataClass
       customerName: serializer.fromJson<String?>(json['customerName']),
       customerPhone: serializer.fromJson<String?>(json['customerPhone']),
       items: serializer.fromJson<String>(json['items']),
-      subtotal: serializer.fromJson<double>(json['subtotal']),
-      discount: serializer.fromJson<double>(json['discount']),
-      total: serializer.fromJson<double>(json['total']),
+      subtotal: serializer.fromJson<int>(json['subtotal']),
+      discount: serializer.fromJson<int>(json['discount']),
+      total: serializer.fromJson<int>(json['total']),
       notes: serializer.fromJson<String?>(json['notes']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
       updatedAt: serializer.fromJson<DateTime?>(json['updatedAt']),
@@ -24431,9 +24431,9 @@ class HeldInvoicesTableData extends DataClass
       'customerName': serializer.toJson<String?>(customerName),
       'customerPhone': serializer.toJson<String?>(customerPhone),
       'items': serializer.toJson<String>(items),
-      'subtotal': serializer.toJson<double>(subtotal),
-      'discount': serializer.toJson<double>(discount),
-      'total': serializer.toJson<double>(total),
+      'subtotal': serializer.toJson<int>(subtotal),
+      'discount': serializer.toJson<int>(discount),
+      'total': serializer.toJson<int>(total),
       'notes': serializer.toJson<String?>(notes),
       'createdAt': serializer.toJson<DateTime>(createdAt),
       'updatedAt': serializer.toJson<DateTime?>(updatedAt),
@@ -24450,9 +24450,9 @@ class HeldInvoicesTableData extends DataClass
           Value<String?> customerName = const Value.absent(),
           Value<String?> customerPhone = const Value.absent(),
           String? items,
-          double? subtotal,
-          double? discount,
-          double? total,
+          int? subtotal,
+          int? discount,
+          int? total,
           Value<String?> notes = const Value.absent(),
           DateTime? createdAt,
           Value<DateTime?> updatedAt = const Value.absent(),
@@ -24571,9 +24571,9 @@ class HeldInvoicesTableCompanion
   final Value<String?> customerName;
   final Value<String?> customerPhone;
   final Value<String> items;
-  final Value<double> subtotal;
-  final Value<double> discount;
-  final Value<double> total;
+  final Value<int> subtotal;
+  final Value<int> discount;
+  final Value<int> total;
   final Value<String?> notes;
   final Value<DateTime> createdAt;
   final Value<DateTime?> updatedAt;
@@ -24628,9 +24628,9 @@ class HeldInvoicesTableCompanion
     Expression<String>? customerName,
     Expression<String>? customerPhone,
     Expression<String>? items,
-    Expression<double>? subtotal,
-    Expression<double>? discount,
-    Expression<double>? total,
+    Expression<int>? subtotal,
+    Expression<int>? discount,
+    Expression<int>? total,
     Expression<String>? notes,
     Expression<DateTime>? createdAt,
     Expression<DateTime>? updatedAt,
@@ -24666,9 +24666,9 @@ class HeldInvoicesTableCompanion
       Value<String?>? customerName,
       Value<String?>? customerPhone,
       Value<String>? items,
-      Value<double>? subtotal,
-      Value<double>? discount,
-      Value<double>? total,
+      Value<int>? subtotal,
+      Value<int>? discount,
+      Value<int>? total,
       Value<String?>? notes,
       Value<DateTime>? createdAt,
       Value<DateTime?>? updatedAt,
@@ -24718,13 +24718,13 @@ class HeldInvoicesTableCompanion
       map['items'] = Variable<String>(items.value);
     }
     if (subtotal.present) {
-      map['subtotal'] = Variable<double>(subtotal.value);
+      map['subtotal'] = Variable<int>(subtotal.value);
     }
     if (discount.present) {
-      map['discount'] = Variable<double>(discount.value);
+      map['discount'] = Variable<int>(discount.value);
     }
     if (total.present) {
-      map['total'] = Variable<double>(total.value);
+      map['total'] = Variable<int>(total.value);
     }
     if (notes.present) {
       map['notes'] = Variable<String>(notes.value);
@@ -38067,17 +38067,17 @@ class $InvoicesTableTable extends InvoicesTable
   static const VerificationMeta _subtotalMeta =
       const VerificationMeta('subtotal');
   @override
-  late final GeneratedColumn<double> subtotal = GeneratedColumn<double>(
+  late final GeneratedColumn<int> subtotal = GeneratedColumn<int>(
       'subtotal', aliasedName, false,
-      type: DriftSqlType.double,
+      type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
   static const VerificationMeta _discountMeta =
       const VerificationMeta('discount');
   @override
-  late final GeneratedColumn<double> discount = GeneratedColumn<double>(
+  late final GeneratedColumn<int> discount = GeneratedColumn<int>(
       'discount', aliasedName, false,
-      type: DriftSqlType.double,
+      type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
   static const VerificationMeta _taxRateMeta =
@@ -38091,16 +38091,16 @@ class $InvoicesTableTable extends InvoicesTable
   static const VerificationMeta _taxAmountMeta =
       const VerificationMeta('taxAmount');
   @override
-  late final GeneratedColumn<double> taxAmount = GeneratedColumn<double>(
+  late final GeneratedColumn<int> taxAmount = GeneratedColumn<int>(
       'tax_amount', aliasedName, false,
-      type: DriftSqlType.double,
+      type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
   static const VerificationMeta _totalMeta = const VerificationMeta('total');
   @override
-  late final GeneratedColumn<double> total = GeneratedColumn<double>(
+  late final GeneratedColumn<int> total = GeneratedColumn<int>(
       'total', aliasedName, false,
-      type: DriftSqlType.double,
+      type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
   static const VerificationMeta _paymentMethodMeta =
@@ -38112,17 +38112,17 @@ class $InvoicesTableTable extends InvoicesTable
   static const VerificationMeta _amountPaidMeta =
       const VerificationMeta('amountPaid');
   @override
-  late final GeneratedColumn<double> amountPaid = GeneratedColumn<double>(
+  late final GeneratedColumn<int> amountPaid = GeneratedColumn<int>(
       'amount_paid', aliasedName, false,
-      type: DriftSqlType.double,
+      type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
   static const VerificationMeta _amountDueMeta =
       const VerificationMeta('amountDue');
   @override
-  late final GeneratedColumn<double> amountDue = GeneratedColumn<double>(
+  late final GeneratedColumn<int> amountDue = GeneratedColumn<int>(
       'amount_due', aliasedName, false,
-      type: DriftSqlType.double,
+      type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
   static const VerificationMeta _currencyMeta =
@@ -38476,21 +38476,21 @@ class $InvoicesTableTable extends InvoicesTable
       customerAddress: attachedDatabase.typeMapping.read(
           DriftSqlType.string, data['${effectivePrefix}customer_address']),
       subtotal: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}subtotal'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}subtotal'])!,
       discount: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}discount'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}discount'])!,
       taxRate: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}tax_rate'])!,
       taxAmount: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}tax_amount'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}tax_amount'])!,
       total: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}total'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}total'])!,
       paymentMethod: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}payment_method']),
       amountPaid: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}amount_paid'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}amount_paid'])!,
       amountDue: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}amount_due'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}amount_due'])!,
       currency: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}currency'])!,
       zatcaHash: attachedDatabase.typeMapping
@@ -38560,14 +38560,14 @@ class InvoicesTableData extends DataClass
   final String? customerEmail;
   final String? customerVatNumber;
   final String? customerAddress;
-  final double subtotal;
-  final double discount;
+  final int subtotal;
+  final int discount;
   final double taxRate;
-  final double taxAmount;
-  final double total;
+  final int taxAmount;
+  final int total;
   final String? paymentMethod;
-  final double amountPaid;
-  final double amountDue;
+  final int amountPaid;
+  final int amountDue;
   final String currency;
   final String? zatcaHash;
   final String? zatcaQr;
@@ -38658,16 +38658,16 @@ class InvoicesTableData extends DataClass
     if (!nullToAbsent || customerAddress != null) {
       map['customer_address'] = Variable<String>(customerAddress);
     }
-    map['subtotal'] = Variable<double>(subtotal);
-    map['discount'] = Variable<double>(discount);
+    map['subtotal'] = Variable<int>(subtotal);
+    map['discount'] = Variable<int>(discount);
     map['tax_rate'] = Variable<double>(taxRate);
-    map['tax_amount'] = Variable<double>(taxAmount);
-    map['total'] = Variable<double>(total);
+    map['tax_amount'] = Variable<int>(taxAmount);
+    map['total'] = Variable<int>(total);
     if (!nullToAbsent || paymentMethod != null) {
       map['payment_method'] = Variable<String>(paymentMethod);
     }
-    map['amount_paid'] = Variable<double>(amountPaid);
-    map['amount_due'] = Variable<double>(amountDue);
+    map['amount_paid'] = Variable<int>(amountPaid);
+    map['amount_due'] = Variable<int>(amountDue);
     map['currency'] = Variable<String>(currency);
     if (!nullToAbsent || zatcaHash != null) {
       map['zatca_hash'] = Variable<String>(zatcaHash);
@@ -38811,14 +38811,14 @@ class InvoicesTableData extends DataClass
       customerVatNumber:
           serializer.fromJson<String?>(json['customerVatNumber']),
       customerAddress: serializer.fromJson<String?>(json['customerAddress']),
-      subtotal: serializer.fromJson<double>(json['subtotal']),
-      discount: serializer.fromJson<double>(json['discount']),
+      subtotal: serializer.fromJson<int>(json['subtotal']),
+      discount: serializer.fromJson<int>(json['discount']),
       taxRate: serializer.fromJson<double>(json['taxRate']),
-      taxAmount: serializer.fromJson<double>(json['taxAmount']),
-      total: serializer.fromJson<double>(json['total']),
+      taxAmount: serializer.fromJson<int>(json['taxAmount']),
+      total: serializer.fromJson<int>(json['total']),
       paymentMethod: serializer.fromJson<String?>(json['paymentMethod']),
-      amountPaid: serializer.fromJson<double>(json['amountPaid']),
-      amountDue: serializer.fromJson<double>(json['amountDue']),
+      amountPaid: serializer.fromJson<int>(json['amountPaid']),
+      amountDue: serializer.fromJson<int>(json['amountDue']),
       currency: serializer.fromJson<String>(json['currency']),
       zatcaHash: serializer.fromJson<String?>(json['zatcaHash']),
       zatcaQr: serializer.fromJson<String?>(json['zatcaQr']),
@@ -38854,14 +38854,14 @@ class InvoicesTableData extends DataClass
       'customerEmail': serializer.toJson<String?>(customerEmail),
       'customerVatNumber': serializer.toJson<String?>(customerVatNumber),
       'customerAddress': serializer.toJson<String?>(customerAddress),
-      'subtotal': serializer.toJson<double>(subtotal),
-      'discount': serializer.toJson<double>(discount),
+      'subtotal': serializer.toJson<int>(subtotal),
+      'discount': serializer.toJson<int>(discount),
       'taxRate': serializer.toJson<double>(taxRate),
-      'taxAmount': serializer.toJson<double>(taxAmount),
-      'total': serializer.toJson<double>(total),
+      'taxAmount': serializer.toJson<int>(taxAmount),
+      'total': serializer.toJson<int>(total),
       'paymentMethod': serializer.toJson<String?>(paymentMethod),
-      'amountPaid': serializer.toJson<double>(amountPaid),
-      'amountDue': serializer.toJson<double>(amountDue),
+      'amountPaid': serializer.toJson<int>(amountPaid),
+      'amountDue': serializer.toJson<int>(amountDue),
       'currency': serializer.toJson<String>(currency),
       'zatcaHash': serializer.toJson<String?>(zatcaHash),
       'zatcaQr': serializer.toJson<String?>(zatcaQr),
@@ -38895,14 +38895,14 @@ class InvoicesTableData extends DataClass
           Value<String?> customerEmail = const Value.absent(),
           Value<String?> customerVatNumber = const Value.absent(),
           Value<String?> customerAddress = const Value.absent(),
-          double? subtotal,
-          double? discount,
+          int? subtotal,
+          int? discount,
           double? taxRate,
-          double? taxAmount,
-          double? total,
+          int? taxAmount,
+          int? total,
           Value<String?> paymentMethod = const Value.absent(),
-          double? amountPaid,
-          double? amountDue,
+          int? amountPaid,
+          int? amountDue,
           String? currency,
           Value<String?> zatcaHash = const Value.absent(),
           Value<String?> zatcaQr = const Value.absent(),
@@ -39170,14 +39170,14 @@ class InvoicesTableCompanion extends UpdateCompanion<InvoicesTableData> {
   final Value<String?> customerEmail;
   final Value<String?> customerVatNumber;
   final Value<String?> customerAddress;
-  final Value<double> subtotal;
-  final Value<double> discount;
+  final Value<int> subtotal;
+  final Value<int> discount;
   final Value<double> taxRate;
-  final Value<double> taxAmount;
-  final Value<double> total;
+  final Value<int> taxAmount;
+  final Value<int> total;
   final Value<String?> paymentMethod;
-  final Value<double> amountPaid;
-  final Value<double> amountDue;
+  final Value<int> amountPaid;
+  final Value<int> amountDue;
   final Value<String> currency;
   final Value<String?> zatcaHash;
   final Value<String?> zatcaQr;
@@ -39292,14 +39292,14 @@ class InvoicesTableCompanion extends UpdateCompanion<InvoicesTableData> {
     Expression<String>? customerEmail,
     Expression<String>? customerVatNumber,
     Expression<String>? customerAddress,
-    Expression<double>? subtotal,
-    Expression<double>? discount,
+    Expression<int>? subtotal,
+    Expression<int>? discount,
     Expression<double>? taxRate,
-    Expression<double>? taxAmount,
-    Expression<double>? total,
+    Expression<int>? taxAmount,
+    Expression<int>? total,
     Expression<String>? paymentMethod,
-    Expression<double>? amountPaid,
-    Expression<double>? amountDue,
+    Expression<int>? amountPaid,
+    Expression<int>? amountDue,
     Expression<String>? currency,
     Expression<String>? zatcaHash,
     Expression<String>? zatcaQr,
@@ -39374,14 +39374,14 @@ class InvoicesTableCompanion extends UpdateCompanion<InvoicesTableData> {
       Value<String?>? customerEmail,
       Value<String?>? customerVatNumber,
       Value<String?>? customerAddress,
-      Value<double>? subtotal,
-      Value<double>? discount,
+      Value<int>? subtotal,
+      Value<int>? discount,
       Value<double>? taxRate,
-      Value<double>? taxAmount,
-      Value<double>? total,
+      Value<int>? taxAmount,
+      Value<int>? total,
       Value<String?>? paymentMethod,
-      Value<double>? amountPaid,
-      Value<double>? amountDue,
+      Value<int>? amountPaid,
+      Value<int>? amountDue,
       Value<String>? currency,
       Value<String?>? zatcaHash,
       Value<String?>? zatcaQr,
@@ -39488,28 +39488,28 @@ class InvoicesTableCompanion extends UpdateCompanion<InvoicesTableData> {
       map['customer_address'] = Variable<String>(customerAddress.value);
     }
     if (subtotal.present) {
-      map['subtotal'] = Variable<double>(subtotal.value);
+      map['subtotal'] = Variable<int>(subtotal.value);
     }
     if (discount.present) {
-      map['discount'] = Variable<double>(discount.value);
+      map['discount'] = Variable<int>(discount.value);
     }
     if (taxRate.present) {
       map['tax_rate'] = Variable<double>(taxRate.value);
     }
     if (taxAmount.present) {
-      map['tax_amount'] = Variable<double>(taxAmount.value);
+      map['tax_amount'] = Variable<int>(taxAmount.value);
     }
     if (total.present) {
-      map['total'] = Variable<double>(total.value);
+      map['total'] = Variable<int>(total.value);
     }
     if (paymentMethod.present) {
       map['payment_method'] = Variable<String>(paymentMethod.value);
     }
     if (amountPaid.present) {
-      map['amount_paid'] = Variable<double>(amountPaid.value);
+      map['amount_paid'] = Variable<int>(amountPaid.value);
     }
     if (amountDue.present) {
-      map['amount_due'] = Variable<double>(amountDue.value);
+      map['amount_due'] = Variable<int>(amountDue.value);
     }
     if (currency.present) {
       map['currency'] = Variable<String>(currency.value);
@@ -48308,11 +48308,11 @@ typedef $$SaleItemsTableTableCreateCompanionBuilder = SaleItemsTableCompanion
   Value<String?> productSku,
   Value<String?> productBarcode,
   required double qty,
-  required double unitPrice,
-  Value<double?> costPrice,
-  required double subtotal,
-  Value<double> discount,
-  required double total,
+  required int unitPrice,
+  Value<int?> costPrice,
+  required int subtotal,
+  Value<int> discount,
+  required int total,
   Value<String?> notes,
   Value<int> rowid,
 });
@@ -48325,11 +48325,11 @@ typedef $$SaleItemsTableTableUpdateCompanionBuilder = SaleItemsTableCompanion
   Value<String?> productSku,
   Value<String?> productBarcode,
   Value<double> qty,
-  Value<double> unitPrice,
-  Value<double?> costPrice,
-  Value<double> subtotal,
-  Value<double> discount,
-  Value<double> total,
+  Value<int> unitPrice,
+  Value<int?> costPrice,
+  Value<int> subtotal,
+  Value<int> discount,
+  Value<int> total,
   Value<String?> notes,
   Value<int> rowid,
 });
@@ -48395,19 +48395,19 @@ class $$SaleItemsTableTableFilterComposer
   ColumnFilters<double> get qty => $composableBuilder(
       column: $table.qty, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get unitPrice => $composableBuilder(
+  ColumnFilters<int> get unitPrice => $composableBuilder(
       column: $table.unitPrice, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get costPrice => $composableBuilder(
+  ColumnFilters<int> get costPrice => $composableBuilder(
       column: $table.costPrice, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get subtotal => $composableBuilder(
+  ColumnFilters<int> get subtotal => $composableBuilder(
       column: $table.subtotal, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get discount => $composableBuilder(
+  ColumnFilters<int> get discount => $composableBuilder(
       column: $table.discount, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get total => $composableBuilder(
+  ColumnFilters<int> get total => $composableBuilder(
       column: $table.total, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get notes => $composableBuilder(
@@ -48479,19 +48479,19 @@ class $$SaleItemsTableTableOrderingComposer
   ColumnOrderings<double> get qty => $composableBuilder(
       column: $table.qty, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get unitPrice => $composableBuilder(
+  ColumnOrderings<int> get unitPrice => $composableBuilder(
       column: $table.unitPrice, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get costPrice => $composableBuilder(
+  ColumnOrderings<int> get costPrice => $composableBuilder(
       column: $table.costPrice, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get subtotal => $composableBuilder(
+  ColumnOrderings<int> get subtotal => $composableBuilder(
       column: $table.subtotal, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get discount => $composableBuilder(
+  ColumnOrderings<int> get discount => $composableBuilder(
       column: $table.discount, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get total => $composableBuilder(
+  ColumnOrderings<int> get total => $composableBuilder(
       column: $table.total, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get notes => $composableBuilder(
@@ -48562,19 +48562,19 @@ class $$SaleItemsTableTableAnnotationComposer
   GeneratedColumn<double> get qty =>
       $composableBuilder(column: $table.qty, builder: (column) => column);
 
-  GeneratedColumn<double> get unitPrice =>
+  GeneratedColumn<int> get unitPrice =>
       $composableBuilder(column: $table.unitPrice, builder: (column) => column);
 
-  GeneratedColumn<double> get costPrice =>
+  GeneratedColumn<int> get costPrice =>
       $composableBuilder(column: $table.costPrice, builder: (column) => column);
 
-  GeneratedColumn<double> get subtotal =>
+  GeneratedColumn<int> get subtotal =>
       $composableBuilder(column: $table.subtotal, builder: (column) => column);
 
-  GeneratedColumn<double> get discount =>
+  GeneratedColumn<int> get discount =>
       $composableBuilder(column: $table.discount, builder: (column) => column);
 
-  GeneratedColumn<double> get total =>
+  GeneratedColumn<int> get total =>
       $composableBuilder(column: $table.total, builder: (column) => column);
 
   GeneratedColumn<String> get notes =>
@@ -48652,11 +48652,11 @@ class $$SaleItemsTableTableTableManager extends RootTableManager<
             Value<String?> productSku = const Value.absent(),
             Value<String?> productBarcode = const Value.absent(),
             Value<double> qty = const Value.absent(),
-            Value<double> unitPrice = const Value.absent(),
-            Value<double?> costPrice = const Value.absent(),
-            Value<double> subtotal = const Value.absent(),
-            Value<double> discount = const Value.absent(),
-            Value<double> total = const Value.absent(),
+            Value<int> unitPrice = const Value.absent(),
+            Value<int?> costPrice = const Value.absent(),
+            Value<int> subtotal = const Value.absent(),
+            Value<int> discount = const Value.absent(),
+            Value<int> total = const Value.absent(),
             Value<String?> notes = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
@@ -48684,11 +48684,11 @@ class $$SaleItemsTableTableTableManager extends RootTableManager<
             Value<String?> productSku = const Value.absent(),
             Value<String?> productBarcode = const Value.absent(),
             required double qty,
-            required double unitPrice,
-            Value<double?> costPrice = const Value.absent(),
-            required double subtotal,
-            Value<double> discount = const Value.absent(),
-            required double total,
+            required int unitPrice,
+            Value<int?> costPrice = const Value.absent(),
+            required int subtotal,
+            Value<int> discount = const Value.absent(),
+            required int total,
             Value<String?> notes = const Value.absent(),
             Value<int> rowid = const Value.absent(),
           }) =>
@@ -59263,9 +59263,9 @@ typedef $$HeldInvoicesTableTableCreateCompanionBuilder
   Value<String?> customerName,
   Value<String?> customerPhone,
   required String items,
-  Value<double> subtotal,
-  Value<double> discount,
-  Value<double> total,
+  Value<int> subtotal,
+  Value<int> discount,
+  Value<int> total,
   Value<String?> notes,
   required DateTime createdAt,
   Value<DateTime?> updatedAt,
@@ -59282,9 +59282,9 @@ typedef $$HeldInvoicesTableTableUpdateCompanionBuilder
   Value<String?> customerName,
   Value<String?> customerPhone,
   Value<String> items,
-  Value<double> subtotal,
-  Value<double> discount,
-  Value<double> total,
+  Value<int> subtotal,
+  Value<int> discount,
+  Value<int> total,
   Value<String?> notes,
   Value<DateTime> createdAt,
   Value<DateTime?> updatedAt,
@@ -59321,13 +59321,13 @@ class $$HeldInvoicesTableTableFilterComposer
   ColumnFilters<String> get items => $composableBuilder(
       column: $table.items, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get subtotal => $composableBuilder(
+  ColumnFilters<int> get subtotal => $composableBuilder(
       column: $table.subtotal, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get discount => $composableBuilder(
+  ColumnFilters<int> get discount => $composableBuilder(
       column: $table.discount, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get total => $composableBuilder(
+  ColumnFilters<int> get total => $composableBuilder(
       column: $table.total, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get notes => $composableBuilder(
@@ -59378,13 +59378,13 @@ class $$HeldInvoicesTableTableOrderingComposer
   ColumnOrderings<String> get items => $composableBuilder(
       column: $table.items, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get subtotal => $composableBuilder(
+  ColumnOrderings<int> get subtotal => $composableBuilder(
       column: $table.subtotal, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get discount => $composableBuilder(
+  ColumnOrderings<int> get discount => $composableBuilder(
       column: $table.discount, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get total => $composableBuilder(
+  ColumnOrderings<int> get total => $composableBuilder(
       column: $table.total, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get notes => $composableBuilder(
@@ -59433,13 +59433,13 @@ class $$HeldInvoicesTableTableAnnotationComposer
   GeneratedColumn<String> get items =>
       $composableBuilder(column: $table.items, builder: (column) => column);
 
-  GeneratedColumn<double> get subtotal =>
+  GeneratedColumn<int> get subtotal =>
       $composableBuilder(column: $table.subtotal, builder: (column) => column);
 
-  GeneratedColumn<double> get discount =>
+  GeneratedColumn<int> get discount =>
       $composableBuilder(column: $table.discount, builder: (column) => column);
 
-  GeneratedColumn<double> get total =>
+  GeneratedColumn<int> get total =>
       $composableBuilder(column: $table.total, builder: (column) => column);
 
   GeneratedColumn<String> get notes =>
@@ -59496,9 +59496,9 @@ class $$HeldInvoicesTableTableTableManager extends RootTableManager<
             Value<String?> customerName = const Value.absent(),
             Value<String?> customerPhone = const Value.absent(),
             Value<String> items = const Value.absent(),
-            Value<double> subtotal = const Value.absent(),
-            Value<double> discount = const Value.absent(),
-            Value<double> total = const Value.absent(),
+            Value<int> subtotal = const Value.absent(),
+            Value<int> discount = const Value.absent(),
+            Value<int> total = const Value.absent(),
             Value<String?> notes = const Value.absent(),
             Value<DateTime> createdAt = const Value.absent(),
             Value<DateTime?> updatedAt = const Value.absent(),
@@ -59532,9 +59532,9 @@ class $$HeldInvoicesTableTableTableManager extends RootTableManager<
             Value<String?> customerName = const Value.absent(),
             Value<String?> customerPhone = const Value.absent(),
             required String items,
-            Value<double> subtotal = const Value.absent(),
-            Value<double> discount = const Value.absent(),
-            Value<double> total = const Value.absent(),
+            Value<int> subtotal = const Value.absent(),
+            Value<int> discount = const Value.absent(),
+            Value<int> total = const Value.absent(),
             Value<String?> notes = const Value.absent(),
             required DateTime createdAt,
             Value<DateTime?> updatedAt = const Value.absent(),
@@ -66055,14 +66055,14 @@ typedef $$InvoicesTableTableCreateCompanionBuilder = InvoicesTableCompanion
   Value<String?> customerEmail,
   Value<String?> customerVatNumber,
   Value<String?> customerAddress,
-  Value<double> subtotal,
-  Value<double> discount,
+  Value<int> subtotal,
+  Value<int> discount,
   Value<double> taxRate,
-  Value<double> taxAmount,
-  Value<double> total,
+  Value<int> taxAmount,
+  Value<int> total,
   Value<String?> paymentMethod,
-  Value<double> amountPaid,
-  Value<double> amountDue,
+  Value<int> amountPaid,
+  Value<int> amountDue,
   Value<String> currency,
   Value<String?> zatcaHash,
   Value<String?> zatcaQr,
@@ -66096,14 +66096,14 @@ typedef $$InvoicesTableTableUpdateCompanionBuilder = InvoicesTableCompanion
   Value<String?> customerEmail,
   Value<String?> customerVatNumber,
   Value<String?> customerAddress,
-  Value<double> subtotal,
-  Value<double> discount,
+  Value<int> subtotal,
+  Value<int> discount,
   Value<double> taxRate,
-  Value<double> taxAmount,
-  Value<double> total,
+  Value<int> taxAmount,
+  Value<int> total,
   Value<String?> paymentMethod,
-  Value<double> amountPaid,
-  Value<double> amountDue,
+  Value<int> amountPaid,
+  Value<int> amountDue,
   Value<String> currency,
   Value<String?> zatcaHash,
   Value<String?> zatcaQr,
@@ -66195,28 +66195,28 @@ class $$InvoicesTableTableFilterComposer
       column: $table.customerAddress,
       builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get subtotal => $composableBuilder(
+  ColumnFilters<int> get subtotal => $composableBuilder(
       column: $table.subtotal, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get discount => $composableBuilder(
+  ColumnFilters<int> get discount => $composableBuilder(
       column: $table.discount, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<double> get taxRate => $composableBuilder(
       column: $table.taxRate, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get taxAmount => $composableBuilder(
+  ColumnFilters<int> get taxAmount => $composableBuilder(
       column: $table.taxAmount, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get total => $composableBuilder(
+  ColumnFilters<int> get total => $composableBuilder(
       column: $table.total, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get paymentMethod => $composableBuilder(
       column: $table.paymentMethod, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get amountPaid => $composableBuilder(
+  ColumnFilters<int> get amountPaid => $composableBuilder(
       column: $table.amountPaid, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get amountDue => $composableBuilder(
+  ColumnFilters<int> get amountDue => $composableBuilder(
       column: $table.amountDue, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get currency => $composableBuilder(
@@ -66340,29 +66340,29 @@ class $$InvoicesTableTableOrderingComposer
       column: $table.customerAddress,
       builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get subtotal => $composableBuilder(
+  ColumnOrderings<int> get subtotal => $composableBuilder(
       column: $table.subtotal, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get discount => $composableBuilder(
+  ColumnOrderings<int> get discount => $composableBuilder(
       column: $table.discount, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<double> get taxRate => $composableBuilder(
       column: $table.taxRate, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get taxAmount => $composableBuilder(
+  ColumnOrderings<int> get taxAmount => $composableBuilder(
       column: $table.taxAmount, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get total => $composableBuilder(
+  ColumnOrderings<int> get total => $composableBuilder(
       column: $table.total, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get paymentMethod => $composableBuilder(
       column: $table.paymentMethod,
       builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get amountPaid => $composableBuilder(
+  ColumnOrderings<int> get amountPaid => $composableBuilder(
       column: $table.amountPaid, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get amountDue => $composableBuilder(
+  ColumnOrderings<int> get amountDue => $composableBuilder(
       column: $table.amountDue, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get currency => $composableBuilder(
@@ -66479,28 +66479,28 @@ class $$InvoicesTableTableAnnotationComposer
   GeneratedColumn<String> get customerAddress => $composableBuilder(
       column: $table.customerAddress, builder: (column) => column);
 
-  GeneratedColumn<double> get subtotal =>
+  GeneratedColumn<int> get subtotal =>
       $composableBuilder(column: $table.subtotal, builder: (column) => column);
 
-  GeneratedColumn<double> get discount =>
+  GeneratedColumn<int> get discount =>
       $composableBuilder(column: $table.discount, builder: (column) => column);
 
   GeneratedColumn<double> get taxRate =>
       $composableBuilder(column: $table.taxRate, builder: (column) => column);
 
-  GeneratedColumn<double> get taxAmount =>
+  GeneratedColumn<int> get taxAmount =>
       $composableBuilder(column: $table.taxAmount, builder: (column) => column);
 
-  GeneratedColumn<double> get total =>
+  GeneratedColumn<int> get total =>
       $composableBuilder(column: $table.total, builder: (column) => column);
 
   GeneratedColumn<String> get paymentMethod => $composableBuilder(
       column: $table.paymentMethod, builder: (column) => column);
 
-  GeneratedColumn<double> get amountPaid => $composableBuilder(
+  GeneratedColumn<int> get amountPaid => $composableBuilder(
       column: $table.amountPaid, builder: (column) => column);
 
-  GeneratedColumn<double> get amountDue =>
+  GeneratedColumn<int> get amountDue =>
       $composableBuilder(column: $table.amountDue, builder: (column) => column);
 
   GeneratedColumn<String> get currency =>
@@ -66604,14 +66604,14 @@ class $$InvoicesTableTableTableManager extends RootTableManager<
             Value<String?> customerEmail = const Value.absent(),
             Value<String?> customerVatNumber = const Value.absent(),
             Value<String?> customerAddress = const Value.absent(),
-            Value<double> subtotal = const Value.absent(),
-            Value<double> discount = const Value.absent(),
+            Value<int> subtotal = const Value.absent(),
+            Value<int> discount = const Value.absent(),
             Value<double> taxRate = const Value.absent(),
-            Value<double> taxAmount = const Value.absent(),
-            Value<double> total = const Value.absent(),
+            Value<int> taxAmount = const Value.absent(),
+            Value<int> total = const Value.absent(),
             Value<String?> paymentMethod = const Value.absent(),
-            Value<double> amountPaid = const Value.absent(),
-            Value<double> amountDue = const Value.absent(),
+            Value<int> amountPaid = const Value.absent(),
+            Value<int> amountDue = const Value.absent(),
             Value<String> currency = const Value.absent(),
             Value<String?> zatcaHash = const Value.absent(),
             Value<String?> zatcaQr = const Value.absent(),
@@ -66684,14 +66684,14 @@ class $$InvoicesTableTableTableManager extends RootTableManager<
             Value<String?> customerEmail = const Value.absent(),
             Value<String?> customerVatNumber = const Value.absent(),
             Value<String?> customerAddress = const Value.absent(),
-            Value<double> subtotal = const Value.absent(),
-            Value<double> discount = const Value.absent(),
+            Value<int> subtotal = const Value.absent(),
+            Value<int> discount = const Value.absent(),
             Value<double> taxRate = const Value.absent(),
-            Value<double> taxAmount = const Value.absent(),
-            Value<double> total = const Value.absent(),
+            Value<int> taxAmount = const Value.absent(),
+            Value<int> total = const Value.absent(),
             Value<String?> paymentMethod = const Value.absent(),
-            Value<double> amountPaid = const Value.absent(),
-            Value<double> amountDue = const Value.absent(),
+            Value<int> amountPaid = const Value.absent(),
+            Value<int> amountDue = const Value.absent(),
             Value<String> currency = const Value.absent(),
             Value<String?> zatcaHash = const Value.absent(),
             Value<String?> zatcaQr = const Value.absent(),

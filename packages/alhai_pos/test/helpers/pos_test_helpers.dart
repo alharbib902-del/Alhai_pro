@@ -285,11 +285,11 @@ SaleItemsTableData createTestSaleItemsTableData({
     saleId: saleId,
     productId: productId,
     productName: productName,
-    unitPrice: unitPrice,
+    unitPrice: (unitPrice * 100).round(),
     qty: qty,
-    subtotal: subtotal,
-    discount: discount,
-    total: total,
+    subtotal: (subtotal * 100).round(),
+    discount: (discount * 100).round(),
+    total: (total * 100).round(),
   );
 }
 

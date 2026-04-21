@@ -98,7 +98,8 @@ void main() {
       // One unit of Milk at 6.50 SAR
       final milk = testProducts[0];
       final breakdown = VatCalculator.lineBreakdown(
-        unitPrice: milk.price,
+        // C-4 Stage B: Product.price is int cents; convert at boundary to SAR.
+        unitPrice: milk.price / 100.0,
         quantity: 1,
       );
 
@@ -112,7 +113,8 @@ void main() {
       // 3 units of Rice at 32.00 each
       final rice = testProducts[2];
       final breakdown = VatCalculator.lineBreakdown(
-        unitPrice: rice.price,
+        // C-4 Stage B: Product.price is int cents; convert at boundary to SAR.
+        unitPrice: rice.price / 100.0,
         quantity: 3,
       );
 
@@ -400,7 +402,8 @@ void main() {
       expect(milk.name.contains('حليب'), true);
 
       final breakdown = VatCalculator.lineBreakdown(
-        unitPrice: milk.price,
+        // C-4 Stage B: Product.price is int cents; convert at boundary to SAR.
+        unitPrice: milk.price / 100.0,
         quantity: 2,
       );
       expect(breakdown.netAmount, closeTo(13.00, 0.001));

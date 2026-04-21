@@ -162,11 +162,11 @@ void main() {
           saleId: 'sale-1',
           productId: 'prod-1',
           productName: 'Product A',
-          unitPrice: 25.0,
+          unitPrice: (25.0 * 100).round(),
           qty: 2,
-          subtotal: 50.0,
+          subtotal: (50.0 * 100).round(),
           discount: 0,
-          total: 50.0,
+          total: (50.0 * 100).round(),
         ),
       ];
 
