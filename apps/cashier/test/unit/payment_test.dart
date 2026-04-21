@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:cashier/core/services/zatca/vat_calculator.dart';
+import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
 
 /// Pure payment calculation logic tests.
 ///
@@ -182,12 +182,12 @@ void main() {
 
     test('refund with VAT breakdown', () {
       // Original sale: 100 + 15 VAT = 115
-      final breakdown = VatCalculator.breakdown(100.0);
-      expect(breakdown.total, closeTo(115.0, 0.01));
+      final breakdown = VatCalculator.breakdownFromNet(netAmount: 100.0);
+      expect(breakdown.grossAmount, closeTo(115.0, 0.01));
 
       // Refund 50% of items → refund 50 + 7.5 VAT = 57.5
-      final refundBreakdown = VatCalculator.breakdown(50.0);
-      expect(refundBreakdown.total, closeTo(57.5, 0.01));
+      final refundBreakdown = VatCalculator.breakdownFromNet(netAmount: 50.0);
+      expect(refundBreakdown.grossAmount, closeTo(57.5, 0.01));
       expect(refundBreakdown.vatAmount, closeTo(7.5, 0.01));
     });
   });

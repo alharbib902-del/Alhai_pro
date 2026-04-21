@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:alhai_zatca/alhai_zatca.dart' show ZatcaTlvEncoder;
 import 'package:cashier/core/services/zatca/zatca_qr_service.dart';
-import 'package:cashier/core/services/zatca/vat_calculator.dart';
 
 void main() {
   late ZatcaTlvEncoder encoder;
@@ -248,80 +247,6 @@ void main() {
       });
     });
   });
-
-  group('VatCalculator', () {
-    group('calculateVat', () {
-      test('calculates 15% VAT correctly', () {
-        expect(VatCalculator.calculateVat(100), closeTo(15.0, 0.001));
-        expect(VatCalculator.calculateVat(200), closeTo(30.0, 0.001));
-        expect(VatCalculator.calculateVat(0), equals(0.0));
-      });
-
-      test('supports custom VAT rate', () {
-        expect(
-          VatCalculator.calculateVat(100, rate: 0.10),
-          closeTo(10.0, 0.001),
-        );
-        expect(
-          VatCalculator.calculateVat(100, rate: 0.05),
-          closeTo(5.0, 0.001),
-        );
-      });
-    });
-
-    group('addVat', () {
-      test('adds 15% VAT correctly', () {
-        expect(VatCalculator.addVat(100), closeTo(115.0, 0.001));
-        expect(VatCalculator.addVat(200), closeTo(230.0, 0.001));
-        expect(VatCalculator.addVat(0), equals(0.0));
-      });
-    });
-
-    group('removeVat', () {
-      test('extracts amount before VAT from total', () {
-        expect(VatCalculator.removeVat(115), closeTo(100.0, 0.01));
-        expect(VatCalculator.removeVat(230), closeTo(200.0, 0.01));
-        expect(VatCalculator.removeVat(0), equals(0.0));
-      });
-    });
-
-    group('extractVat', () {
-      test('extracts VAT amount from total including VAT', () {
-        expect(VatCalculator.extractVat(115), closeTo(15.0, 0.01));
-        expect(VatCalculator.extractVat(230), closeTo(30.0, 0.01));
-        expect(VatCalculator.extractVat(0), equals(0.0));
-      });
-    });
-
-    group('breakdown', () {
-      test('calculates full invoice breakdown', () {
-        final result = VatCalculator.breakdown(100);
-
-        expect(result.subtotal, equals(100));
-        expect(result.discount, equals(0));
-        expect(result.taxableAmount, equals(100));
-        expect(result.vatRate, equals(0.15));
-        expect(result.vatAmount, closeTo(15.0, 0.001));
-        expect(result.total, closeTo(115.0, 0.001));
-      });
-
-      test('calculates breakdown with discount', () {
-        final result = VatCalculator.breakdown(100, discount: 20);
-
-        expect(result.subtotal, equals(100));
-        expect(result.discount, equals(20));
-        expect(result.taxableAmount, equals(80));
-        expect(result.vatAmount, closeTo(12.0, 0.001));
-        expect(result.total, closeTo(92.0, 0.001));
-      });
-
-      test('calculates breakdown with custom rate', () {
-        final result = VatCalculator.breakdown(100, rate: 0.10);
-
-        expect(result.vatRate, equals(0.10));
-        expect(result.vatAmount, closeTo(10.0, 0.001));
-        expect(result.total, closeTo(110.0, 0.001));
-      });
-    });
-  });
+  // VatCalculator math coverage lives in
+  // packages/alhai_zatca/test/qr/vat_calculator_test.dart.
 }

@@ -16,7 +16,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
 import '../../core/utils/date_helper.dart';
-import '../../core/utils/vat_calculator.dart';
+import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
 import '../../data/models.dart';
 import '../../providers/distributor_providers.dart';
 import '../../ui/shared_widgets.dart' show responsivePadding, kMaxContentWidth;
@@ -1113,7 +1113,8 @@ class _DistributorOrderDetailScreenState
     bool isDark,
     AppLocalizations? l10n,
   ) {
-    final vatBreakdown = VatCalculator.breakdown(total);
+    // `total` is treated as net (pre-VAT), matching prior local impl semantics.
+    final vatBreakdown = VatCalculator.breakdownFromNet(netAmount: total);
     final fmt = NumberFormat('#,##0.00');
     final riyal = l10n?.distributorRiyal ?? 'SAR';
 
@@ -1172,13 +1173,13 @@ class _DistributorOrderDetailScreenState
           if (total > 0) ...[
             _buildTotalRow(
               'المجموع الفرعي',
-              '${fmt.format(vatBreakdown['subtotal']!)} $riyal',
+              '${fmt.format(vatBreakdown.netAmount)} $riyal',
               isDark,
             ),
             const SizedBox(height: AlhaiSpacing.xs),
             _buildTotalRow(
               'ضريبة القيمة المضافة 15%',
-              '${fmt.format(vatBreakdown['vat']!)} $riyal',
+              '${fmt.format(vatBreakdown.vatAmount)} $riyal',
               isDark,
               isVat: true,
             ),
@@ -1186,7 +1187,7 @@ class _DistributorOrderDetailScreenState
           ],
           // Grand total with VAT
           Text(
-            '${fmt.format(vatBreakdown['total']!)} $riyal',
+            '${fmt.format(vatBreakdown.grossAmount)} $riyal',
             style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,

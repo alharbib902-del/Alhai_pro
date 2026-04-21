@@ -6,7 +6,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:cashier/services/printing/receipt_builder.dart';
 import 'package:cashier/services/printing/receipt_data.dart';
 import 'package:cashier/services/printing/print_service.dart' show PaperSize;
-import 'package:cashier/core/services/zatca/vat_calculator.dart';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -237,55 +236,11 @@ void main() {
   });
 
   // -------------------------------------------------------------------------
-  // VAT calculation (15%)
+  // Receipt VAT label (15%)
+  // VAT math coverage lives in packages/alhai_zatca/test/qr/vat_calculator_test.dart.
+  // This group retains only the receipt-formatting assertion.
   // -------------------------------------------------------------------------
-  group('VAT calculation (15%)', () {
-    test('calculateVat computes 15% of amount', () {
-      expect(VatCalculator.calculateVat(100), closeTo(15.0, 0.001));
-      expect(VatCalculator.calculateVat(200), closeTo(30.0, 0.001));
-      expect(VatCalculator.calculateVat(0), closeTo(0.0, 0.001));
-    });
-
-    test('addVat returns amount + 15%', () {
-      expect(VatCalculator.addVat(100), closeTo(115.0, 0.001));
-      expect(VatCalculator.addVat(1000), closeTo(1150.0, 0.001));
-    });
-
-    test('removeVat extracts pre-tax amount from total', () {
-      expect(VatCalculator.removeVat(115), closeTo(100.0, 0.001));
-      expect(VatCalculator.removeVat(1150), closeTo(1000.0, 0.001));
-    });
-
-    test('extractVat returns VAT portion from inclusive amount', () {
-      expect(VatCalculator.extractVat(115), closeTo(15.0, 0.001));
-      expect(VatCalculator.extractVat(230), closeTo(30.0, 0.001));
-    });
-
-    test('breakdown computes full invoice details', () {
-      final bd = VatCalculator.breakdown(200, discount: 20);
-
-      expect(bd.subtotal, 200.0);
-      expect(bd.discount, 20.0);
-      expect(bd.taxableAmount, closeTo(180.0, 0.001));
-      expect(bd.vatRate, 0.15);
-      expect(bd.vatAmount, closeTo(27.0, 0.001));
-      expect(bd.total, closeTo(207.0, 0.001));
-    });
-
-    test('breakdown with zero discount', () {
-      final bd = VatCalculator.breakdown(100);
-
-      expect(bd.taxableAmount, closeTo(100.0, 0.001));
-      expect(bd.vatAmount, closeTo(15.0, 0.001));
-      expect(bd.total, closeTo(115.0, 0.001));
-    });
-
-    test('custom VAT rate', () {
-      // 5% rate
-      expect(VatCalculator.calculateVat(100, rate: 0.05), closeTo(5.0, 0.001));
-      expect(VatCalculator.addVat(100, rate: 0.05), closeTo(105.0, 0.001));
-    });
-
+  group('Receipt VAT label (15%)', () {
     test('receipt tax line shows 15% label', () async {
       final receipt = _sampleReceipt(subtotal: 100.0, discount: 0.0);
       final bytes = await ReceiptBuilder.build(receipt);
