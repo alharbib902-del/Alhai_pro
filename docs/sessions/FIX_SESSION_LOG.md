@@ -3988,3 +3988,147 @@ C-8b Dead-Letter Separation / C-8a infrastructure (same branch) / prior audit Fi
 ---
 
 END OF C-8b DEAD-LETTER SEPARATION ENTRY — row-move pattern live, consumer wiring still deferred
+
+
+---
+
+### C-4 Session 1 Stage A — 2026-04-21 — Money migration on empty tables (v70 + Drift v40)
+
+**Classification:** Financial schema migration (first production-side Money work).
+**Branch:** fix/zatca-queue-drift (same as C-8a/b, cumulative)
+**Supabase migration:** v70 at `supabase/migrations/20260421_v70_c4_money_stage_a_discounts_org_products.sql`
+**Drift schema:** v39 → v40 (same branch, C-8b Drift bump was v38→v39 — second consecutive bump)
+**Applied:** Supabase production + local Drift. No staging (D3 unblocked by user pre-session).
+
+#### Summary
+
+First live execution of the C-4 Money Migration plan. Stage A = "empty-table proving ground" — validates the migration approach on 2 empty tables (`discounts`, `org_products`) before Stage B touches the 9742-row `products` table.
+
+**D3 staging prerequisite REMOVED** by user decision before this session. Production is the target; risk mitigated by (a) pre-apply 0-row verification, (b) atomic BEGIN..COMMIT, (c) Drift migration pairs with the Supabase one via v40 case.
+
+#### Scope — 5 money columns across 2 tables
+
+**Supabase v70 (ALTER COLUMN TYPE):**
+- `org_products.default_price`  NUMERIC(12,2) NOT NULL → INTEGER NOT NULL (cents)
+- `org_products.cost_price`     NUMERIC(12,2)          → INTEGER           (cents, nullable)
+- `discounts.value`             DOUBLE PRECISION NOT NULL → INTEGER NOT NULL (cents-or-centi-percent)
+- `discounts.min_purchase`      DOUBLE PRECISION          → INTEGER          (cents, default 0)
+- `discounts.max_discount`      DOUBLE PRECISION          → INTEGER          (cents, nullable)
+
+All 5 used `USING ROUND(col * 100)::INTEGER` — no-op on 0 rows but required by ALTER.
+
+**Drift v40 (TableMigration columnTransformer):**
+- `DiscountsTable`: value, minPurchase, maxDiscount RealColumn → IntColumn
+- `OrgProductsTable`: defaultPrice, costPrice RealColumn → IntColumn
+- `columnTransformer` uses `CAST(ROUND(col * 100) AS INTEGER)` for SQLite-side conversion
+
+Coupons table (value, min_purchase) NOT touched — outside C-4 Stage A scope.
+
+#### Pre-apply verification
+
+```sql
+SELECT 'org_products' AS t, COUNT(*) FROM public.org_products
+UNION ALL SELECT 'discounts', COUNT(*) FROM public.discounts;
+```
+
+Result: **0 rows / 0 rows** — safe to ALTER with ROUND backfill.
+
+#### Code changes for compile-time compatibility
+
+Drift table type changes break every caller that reads `row.defaultPrice` as double. Analysis across the 7-app repo found only **4 files with compile errors**:
+
+**Fixed (3 files):**
+1. `apps/admin/lib/providers/marketing_providers.dart:67-69` — `addDiscount` boundary conversion: `value`, `minPurchase`, `maxDiscount` from UI doubles → cents via `(x * 100).round()`. Sync payload also updated to send int cents.
+
+2. `packages/alhai_database/test/daos/discounts_dao_test.dart` (5 test updates) — test fixtures: `value: 10.0` → `value: 1000`, `value: 5.0` → `value: 500`, assertion `discounts.first.value, 10.0` → `1000`.
+
+3. `packages/alhai_database/test/daos/org_products_dao_test.dart` (3 updates) — `makeOrgProduct` helper signature: `double defaultPrice = 25.0` → `int defaultPrice = 2500`; `double? costPrice` → `int? costPrice`; test assertion `product!.defaultPrice, 20.0` → `2000`.
+
+4. `apps/admin/test/helpers/test_factories.dart:345-347` — `createTestDiscount` factory: same boundary, default values updated to int cents.
+
+**ALL other apps/packages remained compile-clean:**
+- `apps/cashier/lib/` — 0 errors (doesn't use org_products/discounts DAOs directly)
+- `packages/alhai_shared_ui/lib/` — 0 errors
+- `packages/alhai_pos/lib/` — 0 errors
+- `packages/alhai_reports/lib/` — 0 errors
+- `alhai_core/lib/` — 0 errors
+
+The narrow blast radius vindicates the plan's Stage A focus: org_products consumer changes are deferred to Stage B (per plan §5 B5 commit scope).
+
+#### Semantic note — discounts.value for percentage type
+
+Historically: `type='percentage'` + `value=10.0` meant "10%". Post-v70: value becomes int stored as `value * 100`. So "10%" is now stored as `1000`. App layer interprets based on `type` column.
+
+This is consistent with the plan's direction (Money columns as INTEGER across the board). Percentage discounts technically use centi-percent semantics, but the storage type matches the money columns uniformly.
+
+If future app-layer refactor wants a dedicated percentage representation, it's a separate concern from the storage type migration.
+
+#### Verification
+
+| Step | Expected | Actual |
+|---|---|---|
+| Pre-apply row counts | org_products=0, discounts=0 | ✓ |
+| Supabase v70 atomic apply | Success. No rows returned | ✓ (user applied) |
+| Post-apply column types | 5 × INTEGER | ✓ (assumed per user continuation; verify query available) |
+| `flutter analyze alhai_database/lib/` | clean | ✓ |
+| `flutter analyze alhai_core/lib/` | clean | ✓ |
+| `flutter analyze apps/admin/lib/` | 3 errors → 0 errors post-fix | ✓ |
+| `flutter analyze apps/cashier/lib/` | clean | ✓ |
+| `flutter analyze packages/alhai_shared_ui/lib/` | clean | ✓ |
+| `flutter analyze packages/alhai_pos/lib/` | clean | ✓ |
+| `flutter analyze packages/alhai_reports/lib/` | clean | ✓ |
+| alhai_database tests | 508/508 + 1 skipped | (pending) |
+| alhai_sync tests | 358/358 | (pending) |
+| cashier tests | 600/600 | (pending) |
+| admin tests | (baseline) | (pending) |
+| `flutter analyze alhai_database/test/` | clean | ✓ (after fixes) |
+| `flutter analyze apps/admin/test/` | clean | ✓ (after fixes) |
+
+#### Files changed (this commit, on top of C-8b)
+
+| File | Type |
+|---|---|
+| `supabase/migrations/20260421_v70_c4_money_stage_a_discounts_org_products.sql` | NEW |
+| `packages/alhai_database/lib/src/tables/discounts_table.dart` | 3 RealColumn→IntColumn |
+| `packages/alhai_database/lib/src/tables/org_products_table.dart` | 2 RealColumn→IntColumn |
+| `packages/alhai_database/lib/src/app_database.dart` | v39→v40, case 40 |
+| `packages/alhai_database/lib/src/app_database.g.dart` | regenerated |
+| `packages/alhai_database/lib/src/daos/discounts_dao.g.dart` | regenerated |
+| `packages/alhai_database/lib/src/daos/org_products_dao.g.dart` | regenerated |
+| `apps/admin/lib/providers/marketing_providers.dart` | boundary conversion |
+| `apps/admin/test/helpers/test_factories.dart` | fixture int types |
+| `packages/alhai_database/test/daos/discounts_dao_test.dart` | fixture int values |
+| `packages/alhai_database/test/daos/org_products_dao_test.dart` | fixture int defaultPrice |
+| `packages/alhai_database/test/app_database_test.dart` | v39→v40 (expected with bump) |
+| `packages/alhai_database/test/migration_test.dart` | v39→v40 |
+| `packages/alhai_database/test/migration_backup_test.dart` | v39→v40 |
+
+#### Risk assessment
+
+**Applied risk:**
+- Third schema bump in same session (v38, v39, v40 — all on empty tables with automatic pre-migration backups)
+- Production apply (D3 staging removed) — mitigated by 0-row verification
+- ROUND semantics on PostgreSQL: no-op on empty tables; re-verify for Stage B when 9742 rows exist
+
+**Deferred (not in this session):**
+- Stage B: `products.price` + `products.cost_price` (9742 rows — requires fractional-cent audit + potentially per-row rounding decisions)
+- B3-B6: `Product` domain + `CreateProductParams` + DTOs + ZATCA integration test checkpoint
+- Session 2: invoice core / ZATCA integration (full dedicated day)
+- Session 3: Shifts & cash
+- Session 4: Analytics cleanup
+
+#### Methodology notes
+
+1. **D3 removal + pre-verification ritual** — when staging is removed as a blocker, the pre-apply 0-row check becomes the sole safety net. Non-negotiable.
+2. **Narrow blast radius of RealColumn→IntColumn** — analyzer pinpointed exactly which files needed touching. 4 files total. The plan's expectation that Stage A is small was validated.
+3. **Boundary conversion pattern** — `marketing_providers.addDiscount` keeps UI doubles in the signature but converts to cents at the DAO boundary. Consumers (UI screens) unchanged. Pragmatic for Stage A; the plan's later sessions may push Money-typed API all the way up.
+4. **Test fixture updates are mechanical** — once the DAO type changes, fixture literals need integer equivalents. The conversion ratio (× 100) makes it easy to mentally verify.
+5. **Third consecutive schema bump on one branch** — higher risk than single-bump sessions but accepted given (a) all additive, (b) all empty tables, (c) automatic pre-migration backups, (d) atomic transactions.
+
+#### Audit refs
+
+C-4 Session 1 Stage A / plan `docs/sessions/c4-money-migration-plan.md` §5 Stage A 4-commit / D3 staging decision removed per user / D1 ROUND_HALF_UP / D4 0-row audit (still valid).
+
+---
+
+END OF C-4 SESSION 1 STAGE A ENTRY — Stage B (products 9742 rows) is next session

@@ -28,8 +28,9 @@ class OrgProductsTable extends Table {
   TextColumn get description => text().nullable()();
 
   // الأسعار الافتراضية
-  RealColumn get defaultPrice => real()();
-  RealColumn get costPrice => real().nullable()();
+  // C-4 Stage A: money stored as INTEGER cents (ROUND_HALF_UP from legacy doubles)
+  IntColumn get defaultPrice => integer()();
+  IntColumn get costPrice => integer().nullable()();
 
   // التصنيف
   TextColumn get categoryId => text().nullable().references(

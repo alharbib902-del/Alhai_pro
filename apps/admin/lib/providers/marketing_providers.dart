@@ -57,6 +57,16 @@ Future<void> addDiscount(
   final id = _uuid.v4();
   final now = DateTime.now();
 
+  // C-4 Stage A: money columns (value/minPurchase/maxDiscount) stored as
+  // INTEGER cents on both Drift and Supabase. Boundary convert UI doubles
+  // using ROUND_HALF_UP (Dart's .round() = half-away-from-zero, equivalent
+  // for the positive values we handle here).
+  final valueCents = (value * 100).round();
+  final minPurchaseCents = (minPurchase * 100).round();
+  final maxDiscountCents = maxDiscount == null
+      ? null
+      : (maxDiscount * 100).round();
+
   await db.discountsDao.insertDiscount(
     DiscountsTableCompanion(
       id: Value(id),
@@ -64,9 +74,9 @@ Future<void> addDiscount(
       name: Value(name),
       nameEn: Value(nameEn ?? name),
       type: Value(type),
-      value: Value(value),
-      minPurchase: Value(minPurchase),
-      maxDiscount: Value(maxDiscount),
+      value: Value(valueCents),
+      minPurchase: Value(minPurchaseCents),
+      maxDiscount: Value(maxDiscountCents),
       appliesTo: Value(appliesTo),
       productIds: Value(productIds),
       categoryIds: Value(categoryIds),
@@ -89,9 +99,9 @@ Future<void> addDiscount(
         'name': name,
         'name_en': nameEn ?? name,
         'type': type,
-        'value': value,
-        'min_purchase': minPurchase,
-        'max_discount': maxDiscount,
+        'value': valueCents,
+        'min_purchase': minPurchaseCents,
+        'max_discount': maxDiscountCents,
         'applies_to': appliesTo,
         'product_ids': productIds,
         'category_ids': categoryIds,

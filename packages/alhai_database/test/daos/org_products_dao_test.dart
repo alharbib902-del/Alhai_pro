@@ -21,8 +21,9 @@ void main() {
     String? nameEn,
     String? sku,
     String? barcode,
-    double defaultPrice = 25.0,
-    double? costPrice,
+    // C-4 Stage A: prices stored as INTEGER cents. Default: 25.00 SAR → 2500.
+    int defaultPrice = 2500,
+    int? costPrice,
     String? categoryId,
     bool isActive = true,
     bool onlineAvailable = false,
@@ -52,7 +53,8 @@ void main() {
         final product = await db.orgProductsDao.getById('op-1');
         expect(product, isNotNull);
         expect(product!.name, 'Test Product');
-        expect(product.defaultPrice, 25.0);
+        // C-4 Stage A: default 25.00 SAR stored as 2500 cents.
+        expect(product.defaultPrice, 2500);
       });
 
       test('returns null for non-existent', () async {
@@ -213,15 +215,16 @@ void main() {
       });
 
       test('updates existing product on conflict', () async {
+        // C-4 Stage A: prices in cents. 10.00 → 1000, 20.00 → 2000.
         await db.orgProductsDao.upsertOrgProduct(
-          makeOrgProduct(defaultPrice: 10.0),
+          makeOrgProduct(defaultPrice: 1000),
         );
         await db.orgProductsDao.upsertOrgProduct(
-          makeOrgProduct(defaultPrice: 20.0),
+          makeOrgProduct(defaultPrice: 2000),
         );
 
         final product = await db.orgProductsDao.getById('op-1');
-        expect(product!.defaultPrice, 20.0);
+        expect(product!.defaultPrice, 2000);
       });
     });
 

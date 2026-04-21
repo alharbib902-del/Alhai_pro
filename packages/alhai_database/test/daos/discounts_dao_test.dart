@@ -22,7 +22,8 @@ void main() {
           storeId: 'store-1',
           name: 'خصم رمضان',
           type: 'percentage',
-          value: 10.0,
+          // C-4 Stage A: value stored as cents (× 100). 10.0% → 1000.
+          value: 1000,
           isActive: const Value(true),
           createdAt: DateTime(2025, 3, 1),
         ),
@@ -31,7 +32,7 @@ void main() {
       final discounts = await db.discountsDao.getAllDiscounts('store-1');
       expect(discounts, hasLength(1));
       expect(discounts.first.name, 'خصم رمضان');
-      expect(discounts.first.value, 10.0);
+      expect(discounts.first.value, 1000);
     });
 
     test('getActiveDiscounts returns only active', () async {
@@ -41,7 +42,7 @@ void main() {
           storeId: 'store-1',
           name: 'خصم نشط',
           type: 'percentage',
-          value: 10.0,
+          value: 1000,
           isActive: const Value(true),
           createdAt: DateTime(2025, 3, 1),
         ),
@@ -52,7 +53,7 @@ void main() {
           storeId: 'store-1',
           name: 'خصم منتهي',
           type: 'fixed',
-          value: 5.0,
+          value: 500,
           isActive: const Value(false),
           createdAt: DateTime(2025, 3, 1),
         ),
@@ -70,7 +71,7 @@ void main() {
           storeId: 'store-1',
           name: 'خصم',
           type: 'fixed',
-          value: 5.0,
+          value: 500,
           createdAt: DateTime(2025, 3, 1),
         ),
       );

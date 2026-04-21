@@ -46,7 +46,8 @@ void main() {
     String id = 'op-1',
     String orgId = 'org-1',
     String name = 'Test Product',
-    double defaultPrice = 25.0,
+    // C-4 Stage A: prices in INTEGER cents. Default 25.00 → 2500.
+    int defaultPrice = 2500,
   }) {
     return OrgProductsTableData(
       id: id,
@@ -57,7 +58,7 @@ void main() {
       barcode: '1234567890',
       description: null,
       defaultPrice: defaultPrice,
-      costPrice: 10.0,
+      costPrice: 1000,
       categoryId: null,
       unit: null,
       orgImageThumbnail: null,

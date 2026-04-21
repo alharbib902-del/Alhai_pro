@@ -137,7 +137,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 39;
+  int get schemaVersion => 40;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -615,6 +615,44 @@ class AppDatabase extends _$AppDatabase {
         await m.createTable(zatcaDeadLetterTable);
         debugPrint(
           '[Migration v39] Created zatca_dead_letter table',
+        );
+
+      case 40:
+        // v40: C-4 Stage A — money columns على discounts + org_products
+        // RealColumn → IntColumn (cents) ROUND_HALF_UP
+        // الجداول فارغة (server side verified قبل apply) — لا يوجد فقدان بيانات
+        await m.alterTable(
+          TableMigration(
+            discountsTable,
+            columnTransformer: {
+              discountsTable.value: const CustomExpression<int>(
+                'CAST(ROUND(value * 100) AS INTEGER)',
+              ),
+              discountsTable.minPurchase: const CustomExpression<int>(
+                'CAST(ROUND(min_purchase * 100) AS INTEGER)',
+              ),
+              discountsTable.maxDiscount: const CustomExpression<int>(
+                'CAST(ROUND(max_discount * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        await m.alterTable(
+          TableMigration(
+            orgProductsTable,
+            columnTransformer: {
+              orgProductsTable.defaultPrice: const CustomExpression<int>(
+                'CAST(ROUND(default_price * 100) AS INTEGER)',
+              ),
+              orgProductsTable.costPrice: const CustomExpression<int>(
+                'CAST(ROUND(cost_price * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        debugPrint(
+          '[Migration v40] Converted discounts + org_products money columns '
+          'to INTEGER cents (C-4 Stage A)',
         );
 
       default:

@@ -342,9 +342,10 @@ DiscountsTableData createTestDiscount({
       '\u062e\u0635\u0645 \u062a\u062c\u0631\u064a\u0628\u064a', // خصم تجريبي
   String? nameEn = 'Test Discount',
   String type = 'percentage',
-  double value = 10.0,
-  double minPurchase = 0.0,
-  double? maxDiscount,
+  // C-4 Stage A: stored as INTEGER (× 100). Default 10% → 1000.
+  int value = 1000,
+  int minPurchase = 0,
+  int? maxDiscount,
   String appliesTo = 'all',
   String? productIds,
   String? categoryIds,

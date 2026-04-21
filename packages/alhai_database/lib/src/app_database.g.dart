@@ -21782,23 +21782,23 @@ class $DiscountsTableTable extends DiscountsTable
       type: DriftSqlType.string, requiredDuringInsert: true);
   static const VerificationMeta _valueMeta = const VerificationMeta('value');
   @override
-  late final GeneratedColumn<double> value = GeneratedColumn<double>(
+  late final GeneratedColumn<int> value = GeneratedColumn<int>(
       'value', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _minPurchaseMeta =
       const VerificationMeta('minPurchase');
   @override
-  late final GeneratedColumn<double> minPurchase = GeneratedColumn<double>(
+  late final GeneratedColumn<int> minPurchase = GeneratedColumn<int>(
       'min_purchase', aliasedName, false,
-      type: DriftSqlType.double,
+      type: DriftSqlType.int,
       requiredDuringInsert: false,
       defaultValue: const Constant(0));
   static const VerificationMeta _maxDiscountMeta =
       const VerificationMeta('maxDiscount');
   @override
-  late final GeneratedColumn<double> maxDiscount = GeneratedColumn<double>(
+  late final GeneratedColumn<int> maxDiscount = GeneratedColumn<int>(
       'max_discount', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _appliesToMeta =
       const VerificationMeta('appliesTo');
   @override
@@ -22014,11 +22014,11 @@ class $DiscountsTableTable extends DiscountsTable
       type: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}type'])!,
       value: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}value'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}value'])!,
       minPurchase: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}min_purchase'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}min_purchase'])!,
       maxDiscount: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}max_discount']),
+          .read(DriftSqlType.int, data['${effectivePrefix}max_discount']),
       appliesTo: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}applies_to'])!,
       productIds: attachedDatabase.typeMapping
@@ -22056,9 +22056,9 @@ class DiscountsTableData extends DataClass
   final String name;
   final String? nameEn;
   final String type;
-  final double value;
-  final double minPurchase;
-  final double? maxDiscount;
+  final int value;
+  final int minPurchase;
+  final int? maxDiscount;
   final String appliesTo;
   final String? productIds;
   final String? categoryIds;
@@ -22102,10 +22102,10 @@ class DiscountsTableData extends DataClass
       map['name_en'] = Variable<String>(nameEn);
     }
     map['type'] = Variable<String>(type);
-    map['value'] = Variable<double>(value);
-    map['min_purchase'] = Variable<double>(minPurchase);
+    map['value'] = Variable<int>(value);
+    map['min_purchase'] = Variable<int>(minPurchase);
     if (!nullToAbsent || maxDiscount != null) {
-      map['max_discount'] = Variable<double>(maxDiscount);
+      map['max_discount'] = Variable<int>(maxDiscount);
     }
     map['applies_to'] = Variable<String>(appliesTo);
     if (!nullToAbsent || productIds != null) {
@@ -22186,9 +22186,9 @@ class DiscountsTableData extends DataClass
       name: serializer.fromJson<String>(json['name']),
       nameEn: serializer.fromJson<String?>(json['nameEn']),
       type: serializer.fromJson<String>(json['type']),
-      value: serializer.fromJson<double>(json['value']),
-      minPurchase: serializer.fromJson<double>(json['minPurchase']),
-      maxDiscount: serializer.fromJson<double?>(json['maxDiscount']),
+      value: serializer.fromJson<int>(json['value']),
+      minPurchase: serializer.fromJson<int>(json['minPurchase']),
+      maxDiscount: serializer.fromJson<int?>(json['maxDiscount']),
       appliesTo: serializer.fromJson<String>(json['appliesTo']),
       productIds: serializer.fromJson<String?>(json['productIds']),
       categoryIds: serializer.fromJson<String?>(json['categoryIds']),
@@ -22211,9 +22211,9 @@ class DiscountsTableData extends DataClass
       'name': serializer.toJson<String>(name),
       'nameEn': serializer.toJson<String?>(nameEn),
       'type': serializer.toJson<String>(type),
-      'value': serializer.toJson<double>(value),
-      'minPurchase': serializer.toJson<double>(minPurchase),
-      'maxDiscount': serializer.toJson<double?>(maxDiscount),
+      'value': serializer.toJson<int>(value),
+      'minPurchase': serializer.toJson<int>(minPurchase),
+      'maxDiscount': serializer.toJson<int?>(maxDiscount),
       'appliesTo': serializer.toJson<String>(appliesTo),
       'productIds': serializer.toJson<String?>(productIds),
       'categoryIds': serializer.toJson<String?>(categoryIds),
@@ -22234,9 +22234,9 @@ class DiscountsTableData extends DataClass
           String? name,
           Value<String?> nameEn = const Value.absent(),
           String? type,
-          double? value,
-          double? minPurchase,
-          Value<double?> maxDiscount = const Value.absent(),
+          int? value,
+          int? minPurchase,
+          Value<int?> maxDiscount = const Value.absent(),
           String? appliesTo,
           Value<String?> productIds = const Value.absent(),
           Value<String?> categoryIds = const Value.absent(),
@@ -22375,9 +22375,9 @@ class DiscountsTableCompanion extends UpdateCompanion<DiscountsTableData> {
   final Value<String> name;
   final Value<String?> nameEn;
   final Value<String> type;
-  final Value<double> value;
-  final Value<double> minPurchase;
-  final Value<double?> maxDiscount;
+  final Value<int> value;
+  final Value<int> minPurchase;
+  final Value<int?> maxDiscount;
   final Value<String> appliesTo;
   final Value<String?> productIds;
   final Value<String?> categoryIds;
@@ -22418,7 +22418,7 @@ class DiscountsTableCompanion extends UpdateCompanion<DiscountsTableData> {
     required String name,
     this.nameEn = const Value.absent(),
     required String type,
-    required double value,
+    required int value,
     this.minPurchase = const Value.absent(),
     this.maxDiscount = const Value.absent(),
     this.appliesTo = const Value.absent(),
@@ -22445,9 +22445,9 @@ class DiscountsTableCompanion extends UpdateCompanion<DiscountsTableData> {
     Expression<String>? name,
     Expression<String>? nameEn,
     Expression<String>? type,
-    Expression<double>? value,
-    Expression<double>? minPurchase,
-    Expression<double>? maxDiscount,
+    Expression<int>? value,
+    Expression<int>? minPurchase,
+    Expression<int>? maxDiscount,
     Expression<String>? appliesTo,
     Expression<String>? productIds,
     Expression<String>? categoryIds,
@@ -22491,9 +22491,9 @@ class DiscountsTableCompanion extends UpdateCompanion<DiscountsTableData> {
       Value<String>? name,
       Value<String?>? nameEn,
       Value<String>? type,
-      Value<double>? value,
-      Value<double>? minPurchase,
-      Value<double?>? maxDiscount,
+      Value<int>? value,
+      Value<int>? minPurchase,
+      Value<int?>? maxDiscount,
       Value<String>? appliesTo,
       Value<String?>? productIds,
       Value<String?>? categoryIds,
@@ -22551,13 +22551,13 @@ class DiscountsTableCompanion extends UpdateCompanion<DiscountsTableData> {
       map['type'] = Variable<String>(type.value);
     }
     if (value.present) {
-      map['value'] = Variable<double>(value.value);
+      map['value'] = Variable<int>(value.value);
     }
     if (minPurchase.present) {
-      map['min_purchase'] = Variable<double>(minPurchase.value);
+      map['min_purchase'] = Variable<int>(minPurchase.value);
     }
     if (maxDiscount.present) {
-      map['max_discount'] = Variable<double>(maxDiscount.value);
+      map['max_discount'] = Variable<int>(maxDiscount.value);
     }
     if (appliesTo.present) {
       map['applies_to'] = Variable<String>(appliesTo.value);
@@ -36846,15 +36846,15 @@ class $OrgProductsTableTable extends OrgProductsTable
   static const VerificationMeta _defaultPriceMeta =
       const VerificationMeta('defaultPrice');
   @override
-  late final GeneratedColumn<double> defaultPrice = GeneratedColumn<double>(
+  late final GeneratedColumn<int> defaultPrice = GeneratedColumn<int>(
       'default_price', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _costPriceMeta =
       const VerificationMeta('costPrice');
   @override
-  late final GeneratedColumn<double> costPrice = GeneratedColumn<double>(
+  late final GeneratedColumn<int> costPrice = GeneratedColumn<int>(
       'cost_price', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _categoryIdMeta =
       const VerificationMeta('categoryId');
   @override
@@ -37161,9 +37161,9 @@ class $OrgProductsTableTable extends OrgProductsTable
       description: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}description']),
       defaultPrice: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}default_price'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}default_price'])!,
       costPrice: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}cost_price']),
+          .read(DriftSqlType.int, data['${effectivePrefix}cost_price']),
       categoryId: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}category_id']),
       unit: attachedDatabase.typeMapping
@@ -37214,8 +37214,8 @@ class OrgProductsTableData extends DataClass
   final String? sku;
   final String? barcode;
   final String? description;
-  final double defaultPrice;
-  final double? costPrice;
+  final int defaultPrice;
+  final int? costPrice;
   final String? categoryId;
   final String? unit;
   final String? orgImageThumbnail;
@@ -37276,9 +37276,9 @@ class OrgProductsTableData extends DataClass
     if (!nullToAbsent || description != null) {
       map['description'] = Variable<String>(description);
     }
-    map['default_price'] = Variable<double>(defaultPrice);
+    map['default_price'] = Variable<int>(defaultPrice);
     if (!nullToAbsent || costPrice != null) {
-      map['cost_price'] = Variable<double>(costPrice);
+      map['cost_price'] = Variable<int>(costPrice);
     }
     if (!nullToAbsent || categoryId != null) {
       map['category_id'] = Variable<String>(categoryId);
@@ -37393,8 +37393,8 @@ class OrgProductsTableData extends DataClass
       sku: serializer.fromJson<String?>(json['sku']),
       barcode: serializer.fromJson<String?>(json['barcode']),
       description: serializer.fromJson<String?>(json['description']),
-      defaultPrice: serializer.fromJson<double>(json['defaultPrice']),
-      costPrice: serializer.fromJson<double?>(json['costPrice']),
+      defaultPrice: serializer.fromJson<int>(json['defaultPrice']),
+      costPrice: serializer.fromJson<int?>(json['costPrice']),
       categoryId: serializer.fromJson<String?>(json['categoryId']),
       unit: serializer.fromJson<String?>(json['unit']),
       orgImageThumbnail:
@@ -37425,8 +37425,8 @@ class OrgProductsTableData extends DataClass
       'sku': serializer.toJson<String?>(sku),
       'barcode': serializer.toJson<String?>(barcode),
       'description': serializer.toJson<String?>(description),
-      'defaultPrice': serializer.toJson<double>(defaultPrice),
-      'costPrice': serializer.toJson<double?>(costPrice),
+      'defaultPrice': serializer.toJson<int>(defaultPrice),
+      'costPrice': serializer.toJson<int?>(costPrice),
       'categoryId': serializer.toJson<String?>(categoryId),
       'unit': serializer.toJson<String?>(unit),
       'orgImageThumbnail': serializer.toJson<String?>(orgImageThumbnail),
@@ -37454,8 +37454,8 @@ class OrgProductsTableData extends DataClass
           Value<String?> sku = const Value.absent(),
           Value<String?> barcode = const Value.absent(),
           Value<String?> description = const Value.absent(),
-          double? defaultPrice,
-          Value<double?> costPrice = const Value.absent(),
+          int? defaultPrice,
+          Value<int?> costPrice = const Value.absent(),
           Value<String?> categoryId = const Value.absent(),
           Value<String?> unit = const Value.absent(),
           Value<String?> orgImageThumbnail = const Value.absent(),
@@ -37653,8 +37653,8 @@ class OrgProductsTableCompanion extends UpdateCompanion<OrgProductsTableData> {
   final Value<String?> sku;
   final Value<String?> barcode;
   final Value<String?> description;
-  final Value<double> defaultPrice;
-  final Value<double?> costPrice;
+  final Value<int> defaultPrice;
+  final Value<int?> costPrice;
   final Value<String?> categoryId;
   final Value<String?> unit;
   final Value<String?> orgImageThumbnail;
@@ -37708,7 +37708,7 @@ class OrgProductsTableCompanion extends UpdateCompanion<OrgProductsTableData> {
     this.sku = const Value.absent(),
     this.barcode = const Value.absent(),
     this.description = const Value.absent(),
-    required double defaultPrice,
+    required int defaultPrice,
     this.costPrice = const Value.absent(),
     this.categoryId = const Value.absent(),
     this.unit = const Value.absent(),
@@ -37740,8 +37740,8 @@ class OrgProductsTableCompanion extends UpdateCompanion<OrgProductsTableData> {
     Expression<String>? sku,
     Expression<String>? barcode,
     Expression<String>? description,
-    Expression<double>? defaultPrice,
-    Expression<double>? costPrice,
+    Expression<int>? defaultPrice,
+    Expression<int>? costPrice,
     Expression<String>? categoryId,
     Expression<String>? unit,
     Expression<String>? orgImageThumbnail,
@@ -37798,8 +37798,8 @@ class OrgProductsTableCompanion extends UpdateCompanion<OrgProductsTableData> {
       Value<String?>? sku,
       Value<String?>? barcode,
       Value<String?>? description,
-      Value<double>? defaultPrice,
-      Value<double?>? costPrice,
+      Value<int>? defaultPrice,
+      Value<int?>? costPrice,
       Value<String?>? categoryId,
       Value<String?>? unit,
       Value<String?>? orgImageThumbnail,
@@ -37872,10 +37872,10 @@ class OrgProductsTableCompanion extends UpdateCompanion<OrgProductsTableData> {
       map['description'] = Variable<String>(description.value);
     }
     if (defaultPrice.present) {
-      map['default_price'] = Variable<double>(defaultPrice.value);
+      map['default_price'] = Variable<int>(defaultPrice.value);
     }
     if (costPrice.present) {
-      map['cost_price'] = Variable<double>(costPrice.value);
+      map['cost_price'] = Variable<int>(costPrice.value);
     }
     if (categoryId.present) {
       map['category_id'] = Variable<String>(categoryId.value);
@@ -58232,9 +58232,9 @@ typedef $$DiscountsTableTableCreateCompanionBuilder = DiscountsTableCompanion
   required String name,
   Value<String?> nameEn,
   required String type,
-  required double value,
-  Value<double> minPurchase,
-  Value<double?> maxDiscount,
+  required int value,
+  Value<int> minPurchase,
+  Value<int?> maxDiscount,
   Value<String> appliesTo,
   Value<String?> productIds,
   Value<String?> categoryIds,
@@ -58255,9 +58255,9 @@ typedef $$DiscountsTableTableUpdateCompanionBuilder = DiscountsTableCompanion
   Value<String> name,
   Value<String?> nameEn,
   Value<String> type,
-  Value<double> value,
-  Value<double> minPurchase,
-  Value<double?> maxDiscount,
+  Value<int> value,
+  Value<int> minPurchase,
+  Value<int?> maxDiscount,
   Value<String> appliesTo,
   Value<String?> productIds,
   Value<String?> categoryIds,
@@ -58298,13 +58298,13 @@ class $$DiscountsTableTableFilterComposer
   ColumnFilters<String> get type => $composableBuilder(
       column: $table.type, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get value => $composableBuilder(
+  ColumnFilters<int> get value => $composableBuilder(
       column: $table.value, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get minPurchase => $composableBuilder(
+  ColumnFilters<int> get minPurchase => $composableBuilder(
       column: $table.minPurchase, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get maxDiscount => $composableBuilder(
+  ColumnFilters<int> get maxDiscount => $composableBuilder(
       column: $table.maxDiscount, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get appliesTo => $composableBuilder(
@@ -58365,13 +58365,13 @@ class $$DiscountsTableTableOrderingComposer
   ColumnOrderings<String> get type => $composableBuilder(
       column: $table.type, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get value => $composableBuilder(
+  ColumnOrderings<int> get value => $composableBuilder(
       column: $table.value, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get minPurchase => $composableBuilder(
+  ColumnOrderings<int> get minPurchase => $composableBuilder(
       column: $table.minPurchase, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get maxDiscount => $composableBuilder(
+  ColumnOrderings<int> get maxDiscount => $composableBuilder(
       column: $table.maxDiscount, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get appliesTo => $composableBuilder(
@@ -58432,13 +58432,13 @@ class $$DiscountsTableTableAnnotationComposer
   GeneratedColumn<String> get type =>
       $composableBuilder(column: $table.type, builder: (column) => column);
 
-  GeneratedColumn<double> get value =>
+  GeneratedColumn<int> get value =>
       $composableBuilder(column: $table.value, builder: (column) => column);
 
-  GeneratedColumn<double> get minPurchase => $composableBuilder(
+  GeneratedColumn<int> get minPurchase => $composableBuilder(
       column: $table.minPurchase, builder: (column) => column);
 
-  GeneratedColumn<double> get maxDiscount => $composableBuilder(
+  GeneratedColumn<int> get maxDiscount => $composableBuilder(
       column: $table.maxDiscount, builder: (column) => column);
 
   GeneratedColumn<String> get appliesTo =>
@@ -58505,9 +58505,9 @@ class $$DiscountsTableTableTableManager extends RootTableManager<
             Value<String> name = const Value.absent(),
             Value<String?> nameEn = const Value.absent(),
             Value<String> type = const Value.absent(),
-            Value<double> value = const Value.absent(),
-            Value<double> minPurchase = const Value.absent(),
-            Value<double?> maxDiscount = const Value.absent(),
+            Value<int> value = const Value.absent(),
+            Value<int> minPurchase = const Value.absent(),
+            Value<int?> maxDiscount = const Value.absent(),
             Value<String> appliesTo = const Value.absent(),
             Value<String?> productIds = const Value.absent(),
             Value<String?> categoryIds = const Value.absent(),
@@ -58549,9 +58549,9 @@ class $$DiscountsTableTableTableManager extends RootTableManager<
             required String name,
             Value<String?> nameEn = const Value.absent(),
             required String type,
-            required double value,
-            Value<double> minPurchase = const Value.absent(),
-            Value<double?> maxDiscount = const Value.absent(),
+            required int value,
+            Value<int> minPurchase = const Value.absent(),
+            Value<int?> maxDiscount = const Value.absent(),
             Value<String> appliesTo = const Value.absent(),
             Value<String?> productIds = const Value.absent(),
             Value<String?> categoryIds = const Value.absent(),
@@ -65380,8 +65380,8 @@ typedef $$OrgProductsTableTableCreateCompanionBuilder
   Value<String?> sku,
   Value<String?> barcode,
   Value<String?> description,
-  required double defaultPrice,
-  Value<double?> costPrice,
+  required int defaultPrice,
+  Value<int?> costPrice,
   Value<String?> categoryId,
   Value<String?> unit,
   Value<String?> orgImageThumbnail,
@@ -65409,8 +65409,8 @@ typedef $$OrgProductsTableTableUpdateCompanionBuilder
   Value<String?> sku,
   Value<String?> barcode,
   Value<String?> description,
-  Value<double> defaultPrice,
-  Value<double?> costPrice,
+  Value<int> defaultPrice,
+  Value<int?> costPrice,
   Value<String?> categoryId,
   Value<String?> unit,
   Value<String?> orgImageThumbnail,
@@ -65495,10 +65495,10 @@ class $$OrgProductsTableTableFilterComposer
   ColumnFilters<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get defaultPrice => $composableBuilder(
+  ColumnFilters<int> get defaultPrice => $composableBuilder(
       column: $table.defaultPrice, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get costPrice => $composableBuilder(
+  ColumnFilters<int> get costPrice => $composableBuilder(
       column: $table.costPrice, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<String> get unit => $composableBuilder(
@@ -65617,11 +65617,11 @@ class $$OrgProductsTableTableOrderingComposer
   ColumnOrderings<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get defaultPrice => $composableBuilder(
+  ColumnOrderings<int> get defaultPrice => $composableBuilder(
       column: $table.defaultPrice,
       builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get costPrice => $composableBuilder(
+  ColumnOrderings<int> get costPrice => $composableBuilder(
       column: $table.costPrice, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<String> get unit => $composableBuilder(
@@ -65743,10 +65743,10 @@ class $$OrgProductsTableTableAnnotationComposer
   GeneratedColumn<String> get description => $composableBuilder(
       column: $table.description, builder: (column) => column);
 
-  GeneratedColumn<double> get defaultPrice => $composableBuilder(
+  GeneratedColumn<int> get defaultPrice => $composableBuilder(
       column: $table.defaultPrice, builder: (column) => column);
 
-  GeneratedColumn<double> get costPrice =>
+  GeneratedColumn<int> get costPrice =>
       $composableBuilder(column: $table.costPrice, builder: (column) => column);
 
   GeneratedColumn<String> get unit =>
@@ -65867,8 +65867,8 @@ class $$OrgProductsTableTableTableManager extends RootTableManager<
             Value<String?> sku = const Value.absent(),
             Value<String?> barcode = const Value.absent(),
             Value<String?> description = const Value.absent(),
-            Value<double> defaultPrice = const Value.absent(),
-            Value<double?> costPrice = const Value.absent(),
+            Value<int> defaultPrice = const Value.absent(),
+            Value<int?> costPrice = const Value.absent(),
             Value<String?> categoryId = const Value.absent(),
             Value<String?> unit = const Value.absent(),
             Value<String?> orgImageThumbnail = const Value.absent(),
@@ -65923,8 +65923,8 @@ class $$OrgProductsTableTableTableManager extends RootTableManager<
             Value<String?> sku = const Value.absent(),
             Value<String?> barcode = const Value.absent(),
             Value<String?> description = const Value.absent(),
-            required double defaultPrice,
-            Value<double?> costPrice = const Value.absent(),
+            required int defaultPrice,
+            Value<int?> costPrice = const Value.absent(),
             Value<String?> categoryId = const Value.absent(),
             Value<String?> unit = const Value.absent(),
             Value<String?> orgImageThumbnail = const Value.absent(),

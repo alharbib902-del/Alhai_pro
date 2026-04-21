@@ -13,9 +13,10 @@ class DiscountsTable extends Table {
   TextColumn get name => text()();
   TextColumn get nameEn => text().nullable()();
   TextColumn get type => text()(); // percentage, fixed
-  RealColumn get value => real()();
-  RealColumn get minPurchase => real().withDefault(const Constant(0))();
-  RealColumn get maxDiscount => real().nullable()();
+  // C-4 Stage A: money stored as INTEGER cents (ROUND_HALF_UP from legacy doubles)
+  IntColumn get value => integer()();
+  IntColumn get minPurchase => integer().withDefault(const Constant(0))();
+  IntColumn get maxDiscount => integer().nullable()();
   TextColumn get appliesTo => text().withDefault(const Constant('all'))();
   TextColumn get productIds => text().nullable()(); // JSON array
   TextColumn get categoryIds => text().nullable()(); // JSON array
