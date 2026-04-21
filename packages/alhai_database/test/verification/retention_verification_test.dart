@@ -116,12 +116,13 @@ void main() {
     test('sale_items deleted after parent sale is cleaned', () async {
       final age = DateTime.now().subtract(const Duration(days: 2555));
 
+      // C-4 Stage B: SAR × 100 = cents
       await db.productsDao.insertProduct(
         ProductsTableCompanion.insert(
           id: 'prod-ret-7',
           name: 'Retention Product',
           storeId: 'store-1',
-          price: 50.0,
+          price: 5000,
           createdAt: DateTime.now(),
         ),
       );

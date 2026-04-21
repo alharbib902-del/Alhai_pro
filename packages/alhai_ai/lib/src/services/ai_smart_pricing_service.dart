@@ -270,12 +270,15 @@ class AiSmartPricingService {
         final safeIncrease = (1.0 - elasticity.abs()) * 10;
         if (safeIncrease > 2) {
           // الحد الأدنى 2%
+          // C-4 Stage B: product.price is int cents; AI service operates on
+          // double SAR internally. Convert at the boundary.
+          final priceSar = product.price / 100.0;
           options.add(
             BulkPricingOption(
               productId: product.id,
               name: product.name,
-              currentPrice: product.price,
-              suggestedPrice: product.price * (1 + safeIncrease / 100),
+              currentPrice: priceSar,
+              suggestedPrice: priceSar * (1 + safeIncrease / 100),
               safeIncreasePercent: safeIncrease,
               category: product.categoryId ?? 'عام', // General
             ),
@@ -296,10 +299,15 @@ class AiSmartPricingService {
 
   /// تحليل تسعير المنتج
   PriceSuggestion? _analyzeProductPricing(ProductsTableData product) {
-    final cost = product.costPrice ?? (product.price * 0.6);
-    if (product.price <= 0) return null;
+    // C-4 Stage B: product.price/costPrice are int cents; AI service does
+    // all math in double SAR. Convert at the boundary.
+    final priceSar = product.price / 100.0;
+    final cost = product.costPrice != null
+        ? product.costPrice! / 100.0
+        : priceSar * 0.6;
+    if (priceSar <= 0) return null;
 
-    final margin = (product.price - cost) / product.price * 100;
+    final margin = (priceSar - cost) / priceSar * 100;
     final elasticity = _estimateElasticity(product);
     final monthlyVolume = _estimateMonthlyVolume(product);
 
@@ -317,48 +325,48 @@ class AiSmartPricingService {
       confidence = 0.9;
     } else if (margin > 60) {
       // هامش ربح مرتفع جداً مع مبيعات منخفضة
-      suggestedPrice = product.price * 0.85;
+      suggestedPrice = priceSar * 0.85;
       reasoning =
           'هامش الربح ${margin.toStringAsFixed(1)}% مرتفع. خفض السعر قد يزيد حجم المبيعات بشكل كبير.';
       // High margin, lowering price may significantly increase volume
       confidence = 0.75;
     } else if (elasticity.abs() < 0.7 && margin < 40) {
       // منتج غير مرن مع هامش متوسط - يمكن رفع السعر
-      suggestedPrice = product.price * 1.05;
+      suggestedPrice = priceSar * 1.05;
       reasoning =
           'المنتج غير مرن سعرياً (العملاء يحتاجونه). يمكن رفع السعر 5% دون تأثير على المبيعات.';
       // Inelastic product, can safely increase price 5%
       confidence = 0.85;
     } else if (elasticity.abs() > 1.3 && margin > 35) {
       // منتج مرن مع هامش جيد - يُنصح بخفض بسيط
-      suggestedPrice = product.price * 0.95;
+      suggestedPrice = priceSar * 0.95;
       reasoning =
           'المنتج مرن سعرياً. خفض 5% قد يزيد المبيعات بنسبة ${(5 * elasticity.abs()).toStringAsFixed(0)}%.';
       // Elastic product, 5% decrease may increase sales
       confidence = 0.7;
     } else {
       // السعر مناسب
-      suggestedPrice = product.price;
+      suggestedPrice = priceSar;
       reasoning = 'السعر الحالي مناسب ومتوازن مع السوق.';
       // Current price is appropriate
       confidence = 0.6;
     }
 
     // حساب التأثير
-    final priceChangePercent = (suggestedPrice - product.price) / product.price;
+    final priceChangePercent = (suggestedPrice - priceSar) / priceSar;
     final volumeChangePercent = -priceChangePercent * elasticity * 100;
     final newVolume = monthlyVolume * (1 + volumeChangePercent / 100);
     final monthlyRevenueDelta =
-        (suggestedPrice * newVolume) - (product.price * monthlyVolume);
+        (suggestedPrice * newVolume) - (priceSar * monthlyVolume);
     final yearlyProfitDelta =
         ((suggestedPrice - cost) * newVolume -
-            (product.price - cost) * monthlyVolume) *
+            (priceSar - cost) * monthlyVolume) *
         12;
 
     return PriceSuggestion(
       productId: product.id,
       name: product.name,
-      currentPrice: product.price,
+      currentPrice: priceSar,
       suggestedPrice: double.parse(suggestedPrice.toStringAsFixed(2)),
       costPrice: cost,
       reasoning: reasoning,

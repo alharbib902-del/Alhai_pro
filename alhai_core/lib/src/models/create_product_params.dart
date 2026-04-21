@@ -10,8 +10,8 @@ class CreateProductParams with _$CreateProductParams {
     /// Product name
     required String name,
 
-    /// Product price
-    required double price,
+    /// Product price — INTEGER cents (C-4 Stage B).
+    required int price,
 
     /// Store ID
     required String storeId,

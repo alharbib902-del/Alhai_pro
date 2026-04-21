@@ -38,20 +38,16 @@ class OrgCatalogService {
         ProductsTableCompanion.insert(
           id: productId,
           name: op.name,
-          // C-4 Stage A boundary: org_products stores INTEGER cents;
-          // products (Stage B target) still stores DOUBLE PRECISION SAR.
-          // Convert cents → SAR at the boundary until Stage B migrates
-          // products to cents too.
-          price: op.defaultPrice / 100.0,
+          // C-4 Stage B: org_products and products both store INTEGER cents.
+          // Cents pass through directly — no conversion needed.
+          price: op.defaultPrice,
           createdAt: DateTime.now(),
           orgId: Value(orgId),
           storeId: storeId,
           orgProductId: Value(op.id),
           barcode: Value(op.barcode),
           sku: Value(op.sku),
-          costPrice: Value(
-            op.costPrice == null ? null : op.costPrice! / 100.0,
-          ),
+          costPrice: Value(op.costPrice),
           categoryId: Value(op.categoryId),
           unit: Value(op.unit),
           description: Value(op.description),

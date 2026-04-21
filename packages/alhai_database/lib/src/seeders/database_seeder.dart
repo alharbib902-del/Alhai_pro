@@ -179,7 +179,10 @@ class DatabaseSeeder {
 
         final id = row[0].toString();
         final name = row[2].toString();
-        final price = double.tryParse(row[3].toString()) ?? 0.0;
+        // C-4 Stage B: seed CSV stores price as decimal SAR (e.g. "25.99").
+        // Convert to int cents via ROUND_HALF_UP.
+        final priceDouble = double.tryParse(row[3].toString()) ?? 0.0;
+        final price = (priceDouble * 100).round();
         final categoryId = row[4].toString();
         final barcode = row[5].toString();
         final stockQty = double.tryParse(row[6].toString()) ?? 0.0;

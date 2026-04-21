@@ -10,13 +10,14 @@ void main() {
     await seedTestData(db);
     final now = DateTime(2025, 1, 1);
     // returns reference sales and products via FK
+    // C-4 Stage B: SAR × 100 = cents
     for (var i = 1; i <= 2; i++) {
       await db.productsDao.insertProduct(
         ProductsTableCompanion.insert(
           id: 'prod-$i',
           storeId: 'store-1',
           name: 'P$i',
-          price: 10.0,
+          price: 1000,
           createdAt: now,
         ),
       );

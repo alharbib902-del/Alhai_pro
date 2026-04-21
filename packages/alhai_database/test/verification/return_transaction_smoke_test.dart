@@ -22,12 +22,13 @@ void main() {
   group('createReturnTransaction — ghost bug fix smoke test', () {
     test('completes without ArgumentError', () async {
       // Setup: product with stock
+      // C-4 Stage B: SAR × 100 = cents
       await db.productsDao.insertProduct(
         ProductsTableCompanion.insert(
           id: 'prod-smoke',
           name: 'Smoke Test Widget',
           storeId: 'store-1',
-          price: 50.0,
+          price: 5000,
           createdAt: DateTime.now(),
         ),
       );
@@ -75,7 +76,7 @@ void main() {
           id: 'prod-sale-smoke',
           name: 'Sale Smoke Widget',
           storeId: 'store-1',
-          price: 25.0,
+          price: 2500,
           createdAt: DateTime.now(),
         ),
       );

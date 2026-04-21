@@ -13,7 +13,8 @@ class UpdateProductRequest with _$UpdateProductRequest {
 
   const factory UpdateProductRequest({
     String? name,
-    double? price,
+    // C-4 Stage B: int cents on the wire (matches int-cents Supabase schema).
+    int? price,
     String? description,
     @JsonKey(name: 'image_url') String? imageUrl,
     String? barcode,

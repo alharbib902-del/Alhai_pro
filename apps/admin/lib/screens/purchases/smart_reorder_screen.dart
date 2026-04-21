@@ -470,7 +470,8 @@ class _SmartReorderScreenState extends ConsumerState<SmartReorderScreen> {
           _suggestions = lowStockProducts.map((p) {
             final deficit = p.minQty - p.stockQty;
             final reorderQty = deficit > 0 ? deficit : p.minQty;
-            final costPrice = p.costPrice ?? p.price;
+            // C-4 Stage B: costPrice/price are int cents; reorder UI is double SAR.
+            final costPrice = (p.costPrice ?? p.price) / 100.0;
             return _ReorderItem(
               name: p.name,
               currentStock: p.stockQty,

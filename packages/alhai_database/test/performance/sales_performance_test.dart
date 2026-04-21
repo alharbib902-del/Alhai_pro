@@ -69,7 +69,8 @@ void main() {
             id: 'prod_$i',
             storeId: 'store-1',
             name: 'Product $i',
-            price: 10.0 + i,
+            // C-4 Stage B: SAR × 100 = cents
+            price: 1000 + i * 100,
             createdAt: DateTime(2025, 1, 1),
           ),
         );

@@ -18,7 +18,8 @@ void main() {
     required String id,
     String storeId = 'store-1',
     required String name,
-    double price = 10.0,
+    // C-4 Stage B: SAR × 100 = cents
+    int price = 1000,
     String? barcode,
     double stockQty = 100,
     double minQty = 5,
@@ -123,7 +124,7 @@ void main() {
           makeProduct(
             id: 'prod-A',
             name: 'حليب طازج',
-            price: 5.5,
+            price: 550,
             barcode: 'BC-001',
             stockQty: 50,
           ),
@@ -132,7 +133,7 @@ void main() {
           makeProduct(
             id: 'prod-B',
             name: 'عصير برتقال',
-            price: 3.0,
+            price: 300,
             barcode: 'BC-002',
             stockQty: 30,
           ),
@@ -217,7 +218,7 @@ void main() {
         makeProduct(
           id: 'prod-V1',
           name: 'منتج للإلغاء',
-          price: 20.0,
+          price: 2000,
           stockQty: 100,
         ),
       );
@@ -277,7 +278,7 @@ void main() {
             makeProduct(
               id: 'multi-prod-$i',
               name: 'Multi Product $i',
-              price: 10.0 + i,
+              price: 1000 + i * 100,
               stockQty: 50,
             ),
           );
@@ -349,7 +350,7 @@ void main() {
         makeProduct(
           id: 'cycle-prod',
           name: 'Cycle Product',
-          price: 15.0,
+          price: 1500,
           stockQty: 100,
         ),
       );
@@ -441,7 +442,7 @@ void main() {
           makeProduct(
             id: 'detail-prod-1',
             name: 'منتج مفصل',
-            price: 25.0,
+            price: 2500,
             barcode: 'DET-001',
             stockQty: 80,
           ),

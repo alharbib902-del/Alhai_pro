@@ -36,8 +36,9 @@ class PosCartItem {
     this.customPrice,
   });
 
-  /// السعر الفعلي (مخصص أو الأصلي)
-  double get effectivePrice => customPrice ?? product.price;
+  /// السعر الفعلي (مخصص أو الأصلي بعد تحويل cents→SAR)
+  /// C-4 Stage B: product.price is int cents; cart math stays in double SAR.
+  double get effectivePrice => customPrice ?? (product.price / 100.0);
 
   /// إجمالي سعر العنصر
   double get total => effectivePrice * quantity;

@@ -137,7 +137,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 40;
+  int get schemaVersion => 41;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -653,6 +653,28 @@ class AppDatabase extends _$AppDatabase {
         debugPrint(
           '[Migration v40] Converted discounts + org_products money columns '
           'to INTEGER cents (C-4 Stage A)',
+        );
+
+      case 41:
+        // v41: C-4 Stage B — products.price + cost_price
+        // RealColumn → IntColumn (cents) ROUND_HALF_UP
+        // 9742 rows on server, 0 fractional cents verified pre-apply
+        await m.alterTable(
+          TableMigration(
+            productsTable,
+            columnTransformer: {
+              productsTable.price: const CustomExpression<int>(
+                'CAST(ROUND(price * 100) AS INTEGER)',
+              ),
+              productsTable.costPrice: const CustomExpression<int>(
+                'CAST(ROUND(cost_price * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        debugPrint(
+          '[Migration v41] Converted products money columns '
+          'to INTEGER cents (C-4 Stage B)',
         );
 
       default:

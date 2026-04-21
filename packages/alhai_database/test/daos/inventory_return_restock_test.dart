@@ -18,12 +18,13 @@ void main() {
   group('InventoryDao.recordReturnMovement', () {
     test('records a positive return movement', () async {
       // Create a product first
+      // C-4 Stage B: SAR × 100 = cents
       await db.productsDao.insertProduct(
         ProductsTableCompanion.insert(
           id: 'prod-return-1',
           name: 'Test Widget',
           storeId: 'store-1',
-          price: 50.0,
+          price: 5000,
           createdAt: DateTime.now(),
         ),
       );
@@ -59,7 +60,7 @@ void main() {
           id: 'prod-return-2',
           name: 'Another Widget',
           storeId: 'store-1',
-          price: 25.0,
+          price: 2500,
           createdAt: DateTime.now(),
         ),
       );
@@ -89,7 +90,7 @@ void main() {
           id: 'prod-e2e-1',
           name: 'E2E Widget',
           storeId: 'store-1',
-          price: 10.0,
+          price: 1000,
           createdAt: DateTime.now(),
         ),
       );

@@ -4,6 +4,11 @@ part 'product.freezed.dart';
 part 'product.g.dart';
 
 /// Product domain model (v3.2 - Complete)
+///
+/// C-4 Stage B: `price` and `costPrice` are now stored as INTEGER cents
+/// (ROUND_HALF_UP from legacy doubles). UI formatters should divide by 100
+/// for display; inputs should multiply by 100 via `(userInput * 100).round()`.
+/// stockQty/minQty remain `double` — they are inventory quantities, not money.
 @freezed
 class Product with _$Product {
   const Product._();
@@ -14,8 +19,8 @@ class Product with _$Product {
     required String name,
     String? sku,
     String? barcode,
-    required double price,
-    double? costPrice,
+    required int price,
+    int? costPrice,
     required double stockQty,
     @Default(0) double minQty,
     String? unit,
@@ -38,6 +43,7 @@ class Product with _$Product {
       _$ProductFromJson(json);
 
   /// Calculate profit margin percentage
+  /// Math is invariant to cents vs SAR: ratio preserves.
   double? get profitMargin {
     if (costPrice == null || costPrice == 0) return null;
     return ((price - costPrice!) / costPrice!) * 100;

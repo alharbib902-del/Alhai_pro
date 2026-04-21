@@ -138,7 +138,8 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
           _InvoiceItem(
             productId: product.id,
             productName: product.name,
-            price: product.price,
+            // C-4 Stage B: product.price is int cents; invoice in double SAR.
+            price: product.price / 100.0,
             qty: 1,
           ),
         );

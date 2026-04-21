@@ -12,9 +12,10 @@ class CreateProductRequest with _$CreateProductRequest {
 
   const factory CreateProductRequest({
     required String name,
-    required double price,
+    // C-4 Stage B: int cents on the wire (matches int-cents Supabase schema).
+    required int price,
     @JsonKey(name: 'store_id') required String storeId,
-    @JsonKey(name: 'cost_price') double? costPrice,
+    @JsonKey(name: 'cost_price') int? costPrice,
     @JsonKey(name: 'stock_qty') @Default(0) int stockQty,
     @JsonKey(name: 'min_qty') @Default(1) int minQty,
     String? unit,

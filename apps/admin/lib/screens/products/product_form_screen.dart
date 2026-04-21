@@ -951,13 +951,18 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         final existing = await db.productsDao.getProductById(widget.productId!);
         if (existing == null) throw Exception('Product not found');
 
+        // C-4 Stage B: user-typed SAR → int cents for Drift storage.
+        final priceCents = ((double.tryParse(priceText) ?? 0.0) * 100).round();
+        final costPriceCents = costText.isEmpty
+            ? null
+            : double.tryParse(costText) != null
+                ? (double.parse(costText) * 100).round()
+                : null;
         final updated = existing.copyWith(
           name: name,
           barcode: drift.Value(barcode.isEmpty ? null : barcode),
-          price: double.tryParse(priceText) ?? 0.0,
-          costPrice: drift.Value(
-            costText.isEmpty ? null : double.tryParse(costText),
-          ),
+          price: priceCents,
+          costPrice: drift.Value(costPriceCents),
           stockQty: double.tryParse(stockText) ?? 0.0,
           minQty: double.tryParse(minStockText) ?? 1.0,
           categoryId: drift.Value(_selectedCategoryId),
@@ -1001,15 +1006,20 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
       } else {
         final productId = 'prod_${DateTime.now().millisecondsSinceEpoch}';
 
+        // C-4 Stage B: user-typed SAR → int cents for Drift storage.
+        final insertPriceCents = ((double.tryParse(priceText) ?? 0.0) * 100).round();
+        final insertCostPriceCents = costText.isEmpty
+            ? null
+            : double.tryParse(costText) != null
+                ? (double.parse(costText) * 100).round()
+                : null;
         final companion = ProductsTableCompanion(
           id: drift.Value(productId),
           storeId: drift.Value(storeId),
           name: drift.Value(name),
           barcode: drift.Value(barcode.isEmpty ? null : barcode),
-          price: drift.Value(double.tryParse(priceText) ?? 0.0),
-          costPrice: drift.Value(
-            costText.isEmpty ? null : double.tryParse(costText),
-          ),
+          price: drift.Value(insertPriceCents),
+          costPrice: drift.Value(insertCostPriceCents),
           stockQty: drift.Value(double.tryParse(stockText) ?? 0.0),
           minQty: drift.Value(double.tryParse(minStockText) ?? 1.0),
           categoryId: drift.Value(_selectedCategoryId),

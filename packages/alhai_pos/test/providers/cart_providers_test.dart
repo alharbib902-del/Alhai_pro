@@ -27,23 +27,23 @@ void main() {
 
   group('PosCartItem', () {
     test('effectivePrice returns product price when no custom price', () {
-      final item = createTestCartItem(price: 25.0);
+      final item = createTestCartItem(price: 2500);
       expect(item.effectivePrice, equals(25.0));
     });
 
     test('effectivePrice returns custom price when set', () {
-      final item = createTestCartItem(price: 25.0, customPrice: 20.0);
+      final item = createTestCartItem(price: 2500, customPrice: 20.0);
       expect(item.effectivePrice, equals(20.0));
     });
 
     test('total is effectivePrice * quantity', () {
-      final item = createTestCartItem(price: 10.0, quantity: 3);
+      final item = createTestCartItem(price: 1000, quantity: 3);
       expect(item.total, equals(30.0));
     });
 
     test('total with custom price', () {
       final item = createTestCartItem(
-        price: 10.0,
+        price: 1000,
         quantity: 3,
         customPrice: 8.0,
       );
@@ -51,7 +51,7 @@ void main() {
     });
 
     test('copyWith updates fields', () {
-      final item = createTestCartItem(price: 10.0, quantity: 2);
+      final item = createTestCartItem(price: 1000, quantity: 2);
       final updated = item.copyWith(quantity: 5);
 
       expect(updated.quantity, equals(5));
@@ -59,7 +59,7 @@ void main() {
     });
 
     test('copyWith clearCustomPrice removes custom price', () {
-      final item = createTestCartItem(price: 10.0, customPrice: 8.0);
+      final item = createTestCartItem(price: 1000, customPrice: 8.0);
       final updated = item.copyWith(clearCustomPrice: true);
 
       expect(updated.customPrice, isNull);
@@ -68,7 +68,7 @@ void main() {
 
     test('toJson and fromJson roundtrip', () {
       final item = createTestCartItem(
-        price: 15.0,
+        price: 1500,
         quantity: 2,
         customPrice: 12.0,
       );
@@ -121,8 +121,8 @@ void main() {
     test('subtotal sums all item totals', () {
       final state = createTestCartState(
         items: [
-          createTestCartItem(price: 10.0, quantity: 2), // 20
-          createTestCartItem(productId: 'p2', price: 15.0, quantity: 1), // 15
+          createTestCartItem(price: 1000, quantity: 2), // 20
+          createTestCartItem(productId: 'p2', price: 1500, quantity: 1), // 15
         ],
       );
 
@@ -132,7 +132,7 @@ void main() {
     test('total is subtotal minus discount', () {
       final state = createTestCartState(
         items: [
-          createTestCartItem(price: 50.0, quantity: 2), // 100
+          createTestCartItem(price: 5000, quantity: 2), // 100
         ],
         discount: 10.0,
       );
@@ -188,7 +188,7 @@ void main() {
     });
 
     test('addProduct adds new item', () {
-      final product = createTestProduct(id: 'p-1', price: 10.0);
+      final product = createTestProduct(id: 'p-1', price: 1000);
       notifier.addProduct(product);
 
       expect(notifier.state.items.length, equals(1));
@@ -197,7 +197,7 @@ void main() {
     });
 
     test('addProduct with quantity', () {
-      final product = createTestProduct(id: 'p-1', price: 10.0);
+      final product = createTestProduct(id: 'p-1', price: 1000);
       notifier.addProduct(product, quantity: 3);
 
       expect(notifier.state.items.first.quantity, equals(3));
@@ -205,7 +205,7 @@ void main() {
     });
 
     test('addProduct increments quantity for existing item', () {
-      final product = createTestProduct(id: 'p-1', price: 10.0);
+      final product = createTestProduct(id: 'p-1', price: 1000);
       notifier.addProduct(product);
       notifier.addProduct(product);
 
@@ -214,7 +214,7 @@ void main() {
     });
 
     test('addProduct with custom price', () {
-      final product = createTestProduct(id: 'p-1', price: 10.0);
+      final product = createTestProduct(id: 'p-1', price: 1000);
       notifier.addProduct(product, customPrice: 8.0);
 
       expect(notifier.state.items.first.customPrice, equals(8.0));
@@ -233,7 +233,7 @@ void main() {
     });
 
     test('updateQuantity changes quantity', () {
-      final product = createTestProduct(id: 'p-1', price: 10.0);
+      final product = createTestProduct(id: 'p-1', price: 1000);
       notifier.addProduct(product);
       notifier.updateQuantity('p-1', 5);
 
@@ -281,7 +281,7 @@ void main() {
     });
 
     test('setCustomPrice updates price', () {
-      final product = createTestProduct(id: 'p-1', price: 10.0);
+      final product = createTestProduct(id: 'p-1', price: 1000);
       notifier.addProduct(product);
       notifier.setCustomPrice('p-1', 7.5);
 
@@ -290,7 +290,7 @@ void main() {
     });
 
     test('setCustomPrice to null clears custom price', () {
-      final product = createTestProduct(id: 'p-1', price: 10.0);
+      final product = createTestProduct(id: 'p-1', price: 1000);
       notifier.addProduct(product, customPrice: 8.0);
       notifier.setCustomPrice('p-1', null);
 
@@ -300,7 +300,7 @@ void main() {
 
     test('setDiscount updates discount', () {
       // Add a product so subtotal > 0 (discount is clamped to subtotal)
-      final product = createTestProduct(id: 'p-1', price: 100.0);
+      final product = createTestProduct(id: 'p-1', price: 10000);
       notifier.addProduct(product);
       notifier.setDiscount(15.0);
       expect(notifier.state.discount, equals(15.0));
@@ -332,7 +332,7 @@ void main() {
     });
 
     test('clear resets the cart', () {
-      final product = createTestProduct(id: 'p-1', price: 10.0);
+      final product = createTestProduct(id: 'p-1', price: 1000);
       notifier.addProduct(product, quantity: 3);
       notifier.setDiscount(5.0);
       notifier.setCustomer('c-1', customerName: 'Ahmed');
@@ -356,7 +356,7 @@ void main() {
     });
 
     test('holdInvoice saves and clears cart', () async {
-      final product = createTestProduct(id: 'p-1', price: 10.0);
+      final product = createTestProduct(id: 'p-1', price: 1000);
       notifier.addProduct(product, quantity: 2);
 
       final invoice = await notifier.holdInvoice(name: 'Test Invoice');
@@ -410,11 +410,11 @@ void main() {
     group('business logic calculations', () {
       test('subtotal with multiple items', () {
         notifier.addProduct(
-          createTestProduct(id: 'p-1', price: 10.0),
+          createTestProduct(id: 'p-1', price: 1000),
           quantity: 3,
         );
         notifier.addProduct(
-          createTestProduct(id: 'p-2', price: 20.0),
+          createTestProduct(id: 'p-2', price: 2000),
           quantity: 2,
         );
 
@@ -424,7 +424,7 @@ void main() {
 
       test('total with discount', () {
         notifier.addProduct(
-          createTestProduct(id: 'p-1', price: 100.0),
+          createTestProduct(id: 'p-1', price: 10000),
           quantity: 1,
         );
         notifier.setDiscount(15.0);
@@ -435,7 +435,7 @@ void main() {
 
       test('total with custom prices and discount', () {
         notifier.addProduct(
-          createTestProduct(id: 'p-1', price: 100.0),
+          createTestProduct(id: 'p-1', price: 10000),
           quantity: 2,
           customPrice: 80.0,
         );

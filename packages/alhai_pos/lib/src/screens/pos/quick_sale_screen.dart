@@ -844,7 +844,8 @@ class CartItem {
 
   const CartItem({required this.product, required this.quantity});
 
-  double get total => product.price * quantity;
+  // C-4 Stage B: product.price is int cents; total stays in double SAR.
+  double get total => (product.price * quantity) / 100.0;
 
   CartItem copyWith({ProductsTableData? product, int? quantity}) {
     return CartItem(

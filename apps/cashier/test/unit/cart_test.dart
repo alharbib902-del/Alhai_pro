@@ -3,10 +3,11 @@ import 'package:alhai_core/alhai_core.dart' hide CartItem;
 import 'package:alhai_pos/alhai_pos.dart';
 
 /// Helper to create a Product for cart tests
+// C-4 Stage B: SAR × 100 = cents
 Product _product({
   String id = 'p1',
   String name = 'Test Product',
-  double price = 25.0,
+  int price = 2500,
   double stockQty = 100,
 }) {
   return Product(
@@ -26,26 +27,26 @@ void main() {
   // ==========================================================================
   group('PosCartItem', () {
     test('effectivePrice returns product price when no custom price', () {
-      final item = PosCartItem(product: _product(price: 50.0));
+      final item = PosCartItem(product: _product(price: 5000));
       expect(item.effectivePrice, equals(50.0));
     });
 
     test('effectivePrice returns custom price when set', () {
       final item = PosCartItem(
-        product: _product(price: 50.0),
+        product: _product(price: 5000),
         customPrice: 40.0,
       );
       expect(item.effectivePrice, equals(40.0));
     });
 
     test('total = effectivePrice * quantity', () {
-      final item = PosCartItem(product: _product(price: 30.0), quantity: 3);
+      final item = PosCartItem(product: _product(price: 3000), quantity: 3);
       expect(item.total, equals(90.0));
     });
 
     test('total with custom price', () {
       final item = PosCartItem(
-        product: _product(price: 30.0),
+        product: _product(price: 3000),
         quantity: 4,
         customPrice: 20.0,
       );
@@ -59,7 +60,7 @@ void main() {
 
     test('JSON roundtrip preserves all fields', () {
       final item = PosCartItem(
-        product: _product(id: 'p99', price: 15.5),
+        product: _product(id: 'p99', price: 1550),
         quantity: 3,
         customPrice: 12.0,
       );
@@ -94,11 +95,11 @@ void main() {
         final cart = CartState(
           items: [
             PosCartItem(
-              product: _product(id: 'a', price: 10.0),
+              product: _product(id: 'a', price: 1000),
               quantity: 2,
             ), // 20
             PosCartItem(
-              product: _product(id: 'b', price: 15.0),
+              product: _product(id: 'b', price: 1500),
               quantity: 3,
             ), // 45
           ],
@@ -108,7 +109,7 @@ void main() {
 
       test('total = subtotal - discount', () {
         final cart = CartState(
-          items: [PosCartItem(product: _product(price: 100.0), quantity: 1)],
+          items: [PosCartItem(product: _product(price: 10000), quantity: 1)],
           discount: 20.0,
         );
         expect(cart.subtotal, equals(100.0));
@@ -117,7 +118,7 @@ void main() {
 
       test('total equals subtotal when no discount', () {
         final cart = CartState(
-          items: [PosCartItem(product: _product(price: 50.0), quantity: 2)],
+          items: [PosCartItem(product: _product(price: 5000), quantity: 2)],
         );
         expect(cart.total, equals(cart.subtotal));
         expect(cart.total, equals(100.0));
@@ -150,7 +151,7 @@ void main() {
     group('discount', () {
       test('flat discount reduces total', () {
         final cart = CartState(
-          items: [PosCartItem(product: _product(price: 200.0), quantity: 1)],
+          items: [PosCartItem(product: _product(price: 20000), quantity: 1)],
           discount: 50.0,
         );
         expect(cart.total, equals(150.0));
@@ -159,7 +160,7 @@ void main() {
       test('percentage discount simulation (manually set amount)', () {
         // 10% of 200 = 20
         final cart = CartState(
-          items: [PosCartItem(product: _product(price: 200.0), quantity: 1)],
+          items: [PosCartItem(product: _product(price: 20000), quantity: 1)],
           discount: 20.0,
         );
         expect(cart.total, equals(180.0));
@@ -167,7 +168,7 @@ void main() {
 
       test('zero discount leaves total unchanged', () {
         final cart = CartState(
-          items: [PosCartItem(product: _product(price: 100.0), quantity: 1)],
+          items: [PosCartItem(product: _product(price: 10000), quantity: 1)],
           discount: 0.0,
         );
         expect(cart.total, equals(100.0));
@@ -177,7 +178,7 @@ void main() {
     group('edge cases', () {
       test('product with zero price', () {
         final cart = CartState(
-          items: [PosCartItem(product: _product(price: 0.0), quantity: 5)],
+          items: [PosCartItem(product: _product(price: 0), quantity: 5)],
         );
         expect(cart.subtotal, equals(0.0));
         expect(cart.total, equals(0.0));
@@ -185,7 +186,7 @@ void main() {
 
       test('single item with quantity 1', () {
         final cart = CartState(
-          items: [PosCartItem(product: _product(price: 99.99), quantity: 1)],
+          items: [PosCartItem(product: _product(price: 9999), quantity: 1)],
         );
         expect(cart.subtotal, closeTo(99.99, 0.001));
         expect(cart.itemCount, equals(1));
@@ -193,7 +194,7 @@ void main() {
 
       test('large quantity', () {
         final cart = CartState(
-          items: [PosCartItem(product: _product(price: 5.0), quantity: 1000)],
+          items: [PosCartItem(product: _product(price: 500), quantity: 1000)],
         );
         expect(cart.subtotal, equals(5000.0));
       });
@@ -232,9 +233,9 @@ void main() {
       test('roundtrip preserves state', () {
         final cart = CartState(
           items: [
-            PosCartItem(product: _product(id: 'p1', price: 25.0), quantity: 3),
+            PosCartItem(product: _product(id: 'p1', price: 2500), quantity: 3),
             PosCartItem(
-              product: _product(id: 'p2', price: 10.0),
+              product: _product(id: 'p2', price: 1000),
               quantity: 1,
               customPrice: 8.0,
             ),

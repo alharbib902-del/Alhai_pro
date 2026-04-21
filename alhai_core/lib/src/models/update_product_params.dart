@@ -14,8 +14,8 @@ class UpdateProductParams with _$UpdateProductParams {
     /// New product name (optional)
     String? name,
 
-    /// New product price (optional)
-    double? price,
+    /// New product price — INTEGER cents (C-4 Stage B).
+    int? price,
 
     /// New product description (optional)
     String? description,

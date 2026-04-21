@@ -29,8 +29,9 @@ ProductsTableData createFakeProduct({
   String id = 'test-product-1',
   String storeId = 'store-1',
   String name = 'Test Product',
-  double price = 25.0,
-  double? costPrice = 15.0,
+  // C-4 Stage B: SAR × 100 = cents. 25.00 → 2500, 15.00 → 1500.
+  int price = 2500,
+  int? costPrice = 1500,
   double stockQty = 100,
   double minQty = 10,
   String? categoryId,

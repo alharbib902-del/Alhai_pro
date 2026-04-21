@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:alhai_core/alhai_core.dart';
 
 /// Helper to create a Product for stock tests
+// C-4 Stage B: SAR × 100 = cents
 Product _product({
   String id = 'p1',
   double stockQty = 100,
@@ -12,7 +13,7 @@ Product _product({
     id: id,
     storeId: 'store-1',
     name: 'Test Product',
-    price: 25.0,
+    price: 2500,
     stockQty: stockQty,
     minQty: minQty,
     isActive: true,
@@ -246,17 +247,18 @@ void main() {
   // ==========================================================================
   group('Product.profitMargin', () {
     test('calculates margin correctly', () {
+      // C-4 Stage B: SAR × 100 = cents
       final product = Product(
         id: 'p1',
         storeId: 's1',
         name: 'Test',
-        price: 30.0,
-        costPrice: 20.0,
+        price: 3000,
+        costPrice: 2000,
         stockQty: 10,
         isActive: true,
         createdAt: DateTime(2026, 1, 1),
       );
-      // (30-20)/20 * 100 = 50%
+      // (30-20)/20 * 100 = 50% (ratio invariant to cents/SAR)
       expect(product.profitMargin, closeTo(50.0, 0.01));
     });
 
@@ -265,7 +267,7 @@ void main() {
         id: 'p1',
         storeId: 's1',
         name: 'Test',
-        price: 30.0,
+        price: 3000,
         stockQty: 10,
         isActive: true,
         createdAt: DateTime(2026, 1, 1),
@@ -278,8 +280,8 @@ void main() {
         id: 'p1',
         storeId: 's1',
         name: 'Test',
-        price: 30.0,
-        costPrice: 0.0,
+        price: 3000,
+        costPrice: 0,
         stockQty: 10,
         isActive: true,
         createdAt: DateTime(2026, 1, 1),
@@ -292,13 +294,13 @@ void main() {
         id: 'p1',
         storeId: 's1',
         name: 'Test',
-        price: 15.0,
-        costPrice: 20.0,
+        price: 1500,
+        costPrice: 2000,
         stockQty: 10,
         isActive: true,
         createdAt: DateTime(2026, 1, 1),
       );
-      // (15-20)/20 * 100 = -25%
+      // (15-20)/20 * 100 = -25% (ratio invariant to cents/SAR)
       expect(product.profitMargin, closeTo(-25.0, 0.01));
     });
   });

@@ -573,7 +573,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                 ),
                 SizedBox(height: AlhaiSpacing.xxs),
                 AlhaiPriceText(
-                  amount: product.price,
+                  amount: product.price / 100.0,
                   currency: l10n.sar,
                   size: AlhaiPriceTextSize.large,
                 ),
@@ -595,7 +595,7 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   ),
                   SizedBox(height: AlhaiSpacing.xxs),
                   Text(
-                    CurrencyFormatter.format(product.costPrice ?? 0),
+                    CurrencyFormatter.format((product.costPrice ?? 0) / 100.0),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.getTextPrimary(isDark),
@@ -1172,7 +1172,8 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
   // ============================================================================
 
   Widget _buildQuickStats(bool isDark, AppLocalizations l10n) {
-    final revenue = _product!.price * _totalSalesCount;
+    // C-4 Stage B: price is cents → convert to SAR for display.
+    final revenue = (_product!.price * _totalSalesCount) / 100.0;
 
     return Row(
       children: [

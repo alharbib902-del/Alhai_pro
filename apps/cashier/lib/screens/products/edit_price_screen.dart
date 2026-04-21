@@ -314,7 +314,8 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
               ),
               const SizedBox(height: AlhaiSpacing.xxs),
               Text(
-                CurrencyFormatter.format(product.price),
+                // C-4 Stage B: product.price is int cents; formatter needs SAR.
+                CurrencyFormatter.format(product.price / 100.0),
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
@@ -471,7 +472,8 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
     ColorScheme colorScheme,
     AppLocalizations l10n,
   ) {
-    final oldPrice = _product?.price ?? 0;
+    // C-4 Stage B: _product.price is int cents; display/math in double SAR.
+    final oldPrice = (_product?.price ?? 0) / 100.0;
     final newPrice = double.tryParse(_newPriceController.text) ?? 0;
     final costPrice = double.tryParse(_costPriceController.text) ?? 0;
     final priceDiff = newPrice - oldPrice;
@@ -715,10 +717,15 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
 
     try {
       final currentProduct = _product!;
+      // C-4 Stage B: convert user-typed SAR doubles → int cents for storage.
+      final newPriceCents = (newPrice * 100).round();
+      final costPriceCents = costPrice == null
+          ? null
+          : (costPrice * 100).round();
       await _db.productsDao.updateProduct(
         currentProduct.copyWith(
-          price: newPrice,
-          costPrice: Value(costPrice),
+          price: newPriceCents,
+          costPrice: Value(costPriceCents),
           updatedAt: Value(DateTime.now()),
         ),
       );
@@ -733,7 +740,8 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
         userName: user?.name ?? 'unknown',
         productId: currentProduct.id,
         productName: currentProduct.name,
-        oldPrice: currentProduct.price,
+        // Audit log API uses double SAR → convert from cents.
+        oldPrice: currentProduct.price / 100.0,
         newPrice: newPrice,
       );
 

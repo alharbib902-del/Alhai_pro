@@ -88,6 +88,7 @@ OrdersTableData createTestOrder({
 // PRODUCTS
 // ============================================================================
 
+// C-4 Stage B: SAR × 100 = cents
 ProductsTableData createTestProduct({
   String id = 'prod-1',
   String? orgId,
@@ -96,8 +97,8 @@ ProductsTableData createTestProduct({
       '\u0645\u0646\u062a\u062c \u062a\u062c\u0631\u064a\u0628\u064a', // منتج تجريبي
   String? sku,
   String? barcode,
-  double price = 25.0,
-  double? costPrice = 15.0,
+  int price = 2500,
+  int? costPrice = 1500,
   double stockQty = 100,
   double minQty = 5,
   String? unit,

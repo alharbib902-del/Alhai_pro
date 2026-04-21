@@ -25,14 +25,15 @@ void main() {
   late MockProductsRemoteDataSource mockRemote;
 
   // Test data
+  // C-4 Stage B: SAR × 100 = cents
   const testProductResponse = ProductResponse(
     id: 'prod-1',
     storeId: 'store-1',
     name: 'Test Product',
     sku: 'SKU001',
     barcode: '123456789',
-    price: 99.99,
-    costPrice: 50.0,
+    price: 9999,
+    costPrice: 5000,
     stockQty: 100,
     minQty: 10,
     unit: 'piece',
@@ -139,8 +140,8 @@ void main() {
         // Assert
         expect(result.id, equals('prod-1'));
         expect(result.name, equals('Test Product'));
-        expect(result.price, equals(99.99));
-        expect(result.costPrice, equals(50.0));
+        expect(result.price, equals(9999));
+        expect(result.costPrice, equals(5000));
         verify(() => mockRemote.getProduct('prod-1')).called(1);
       });
 
@@ -201,7 +202,7 @@ void main() {
         const params = CreateProductParams(
           storeId: 'store-1',
           name: 'New Product',
-          price: 49.99,
+          price: 4999,
         );
 
         when(
@@ -255,7 +256,7 @@ void main() {
         const params = UpdateProductParams(
           id: 'prod-1',
           name: 'Updated Product',
-          price: 79.99,
+          price: 7999,
         );
 
         when(

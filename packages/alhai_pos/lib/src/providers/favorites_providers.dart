@@ -40,8 +40,9 @@ class FavoriteProductData {
   /// اسم المنتج
   String get name => product.name;
 
-  /// سعر المنتج
-  double get price => product.price;
+  /// سعر المنتج (بالريال، بعد تحويل cents→SAR)
+  /// C-4 Stage B: product.price is int cents; this API stays in double SAR.
+  double get price => product.price / 100.0;
 
   /// باركود المنتج
   String get barcode => product.barcode ?? '';

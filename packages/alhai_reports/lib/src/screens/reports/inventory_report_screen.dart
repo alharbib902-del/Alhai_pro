@@ -280,8 +280,9 @@ class _InventoryReportScreenState extends ConsumerState<InventoryReportScreen> {
             sku: p.sku ?? p.barcode ?? '',
             stock: p.stockQty,
             minStock: p.minQty,
-            cost: p.costPrice ?? 0,
-            price: p.price,
+            // C-4 Stage B: costPrice/price are int cents; report uses double SAR.
+            cost: (p.costPrice ?? 0) / 100.0,
+            price: p.price / 100.0,
             lastUpdated: p.updatedAt ?? p.createdAt,
           ),
         )

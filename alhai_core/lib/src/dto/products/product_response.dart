@@ -16,8 +16,9 @@ class ProductResponse with _$ProductResponse {
     required String name,
     String? sku,
     String? barcode,
-    required double price,
-    @JsonKey(name: 'cost_price') double? costPrice,
+    // C-4 Stage B: int cents on the wire (matches int-cents Supabase schema).
+    required int price,
+    @JsonKey(name: 'cost_price') int? costPrice,
     @JsonKey(name: 'stock_qty') required double stockQty,
     @JsonKey(name: 'min_qty') @Default(0) double minQty,
     String? unit,

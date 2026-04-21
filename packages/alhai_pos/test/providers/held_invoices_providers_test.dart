@@ -96,7 +96,7 @@ void main() {
           createTestCartItem(
             productId: 'p1',
             productName: 'Product A',
-            price: 10.0,
+            price: 1000,
             quantity: 3,
           ),
         ],

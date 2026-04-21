@@ -17,9 +17,9 @@ void main() {
       await db.close();
     });
 
-    test('schema version is 40', () async {
+    test('schema version is 41', () async {
       final db = createTestDatabase();
-      expect(db.schemaVersion, 40);
+      expect(db.schemaVersion, 41);
       await db.close();
     });
 
@@ -72,12 +72,13 @@ void main() {
       await seedTestData(db);
 
       // Insert a product
+      // C-4 Stage B: SAR × 100 = cents
       await db.productsDao.insertProduct(
         ProductsTableCompanion.insert(
           id: 'test-prod',
           storeId: 'test-store',
           name: 'منتج اختبار',
-          price: 10.0,
+          price: 1000,
           createdAt: DateTime(2025, 1, 1),
         ),
       );
@@ -106,7 +107,7 @@ void main() {
           id: 'prod-db1',
           storeId: 'store-1',
           name: 'منتج قاعدة بيانات 1',
-          price: 5.0,
+          price: 500,
           createdAt: DateTime(2025, 1, 1),
         ),
       );

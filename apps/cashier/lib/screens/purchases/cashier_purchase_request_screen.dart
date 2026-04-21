@@ -853,8 +853,9 @@ class _CashierPurchaseRequestScreenState
           productName: item.product.name,
           productBarcode: Value(item.product.barcode),
           qty: item.quantity.toDouble(),
-          unitCost: item.product.price,
-          total: item.product.price * item.quantity.toDouble(),
+          // C-4 Stage B: product.price is int cents; purchase schema still double SAR.
+          unitCost: item.product.price / 100.0,
+          total: (item.product.price * item.quantity.toDouble()) / 100.0,
         );
       }).toList();
 

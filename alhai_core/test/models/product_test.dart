@@ -4,12 +4,13 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   group('Product Model', () {
     test('should calculate profit margin correctly', () {
+      // C-4 Stage B: SAR × 100 = cents
       final product = Product(
         id: '1',
         storeId: 'store1',
         name: 'Test Product',
-        price: 100.0,
-        costPrice: 60.0,
+        price: 10000,
+        costPrice: 6000,
         stockQty: 10,
         isActive: true,
         createdAt: DateTime.now(),
@@ -23,7 +24,7 @@ void main() {
         id: '1',
         storeId: 'store1',
         name: 'Test Product',
-        price: 100.0,
+        price: 10000,
         stockQty: 10,
         isActive: true,
         createdAt: DateTime.now(),
@@ -37,7 +38,7 @@ void main() {
         id: '1',
         storeId: 'store1',
         name: 'Test Product',
-        price: 100.0,
+        price: 10000,
         stockQty: 1,
         minQty: 5,
         isActive: true,
@@ -53,7 +54,7 @@ void main() {
         id: '1',
         storeId: 'store1',
         name: 'Test Product',
-        price: 100.0,
+        price: 10000,
         stockQty: 0,
         isActive: true,
         createdAt: DateTime.now(),

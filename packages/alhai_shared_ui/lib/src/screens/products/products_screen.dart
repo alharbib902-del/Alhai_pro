@@ -1055,7 +1055,7 @@ class _ProductGridCardState extends State<_ProductGridCard> {
                       Text(
                         CurrencyFormatter.formatWithContext(
                           context,
-                          widget.product.price,
+                          widget.product.price / 100.0,
                         ),
                         style: Theme.of(context).textTheme.titleMedium
                             ?.copyWith(
@@ -1222,7 +1222,7 @@ class _ProductListCardState extends State<_ProductListCard> {
                           Text(
                             CurrencyFormatter.formatWithContext(
                               context,
-                              widget.product.price,
+                              widget.product.price / 100.0,
                             ),
                             style: Theme.of(context).textTheme.titleSmall
                                 ?.copyWith(

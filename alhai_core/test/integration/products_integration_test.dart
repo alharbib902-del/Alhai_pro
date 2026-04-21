@@ -151,10 +151,11 @@ void main() {
     group('Create Product', () {
       test('should create product successfully', () async {
         // Arrange
+        // C-4 Stage B: SAR × 100 = cents
         const params = CreateProductParams(
           storeId: 'store-123',
           name: 'New Product',
-          price: 15.0,
+          price: 1500,
         );
         when(
           () => mockRemote.createProduct(any()),
@@ -175,7 +176,7 @@ void main() {
         const params = UpdateProductParams(
           id: 'prod-123',
           name: 'Updated Product',
-          price: 20.0,
+          price: 2000,
         );
         when(
           () => mockRemote.updateProduct(any(), any()),

@@ -23,12 +23,13 @@ void main() {
         createdAt: DateTime(2026, 1, 1),
       );
 
+      // C-4 Stage B: SAR × 100 = cents
       fakeProduct = ProductsTableData(
         id: 'prod-1',
         storeId: 'store-1',
         name: 'Favorite Coffee',
-        price: 15.0,
-        costPrice: 8.0,
+        price: 1500,
+        costPrice: 800,
         stockQty: 50,
         isActive: true,
         trackInventory: true,
@@ -59,7 +60,7 @@ void main() {
     });
 
     test('price returns product price', () {
-      expect(favoriteData.price, equals(15.0));
+      expect(favoriteData.price, equals(1500));
     });
 
     test('barcode returns product barcode', () {
@@ -71,8 +72,8 @@ void main() {
         id: 'prod-2',
         storeId: 'store-1',
         name: 'No Barcode Product',
-        price: 10.0,
-        costPrice: 5.0,
+        price: 1000,
+        costPrice: 500,
         stockQty: 20,
         isActive: true,
         trackInventory: true,

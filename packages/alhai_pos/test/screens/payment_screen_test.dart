@@ -54,7 +54,7 @@ Widget _buildTestWidget({
           createTestCartItem(
             productId: 'p1',
             productName: 'Coffee',
-            price: 15.0,
+            price: 1500,
             quantity: 2,
           ),
         ],
@@ -155,7 +155,7 @@ void main() {
               createTestCartItem(
                 productId: 'p1',
                 productName: 'Test Item',
-                price: 25.0,
+                price: 2500,
                 quantity: 1,
               ),
             ],

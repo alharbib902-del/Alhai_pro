@@ -22,12 +22,13 @@ void main() {
   group('SQL Injection Prevention in Backup Import', () {
     test('valid backup with known columns imports successfully', () async {
       // Insert a product first so the export has data
+      // C-4 Stage B: SAR × 100 = cents
       await db.productsDao.insertProduct(
         ProductsTableCompanion.insert(
           id: 'prod-1',
           storeId: 'store-1',
           name: 'Test Product',
-          price: 10.0,
+          price: 1000,
           createdAt: DateTime(2025, 1, 1),
         ),
       );
@@ -74,7 +75,7 @@ void main() {
           id: 'prod-safe',
           storeId: 'store-1',
           name: 'Safe Product',
-          price: 10.0,
+          price: 1000,
           createdAt: DateTime(2025, 1, 1),
         ),
       );

@@ -305,7 +305,8 @@ class _BarcodeScannerScreenState extends ConsumerState<BarcodeScannerScreen> {
               id: product.id,
               barcode: product.barcode ?? barcode,
               name: product.name,
-              price: product.price,
+              // C-4 Stage B: product.price is int cents; UI uses double SAR.
+              price: product.price / 100.0,
               stock: product.stockQty,
             ),
           ),

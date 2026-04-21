@@ -193,15 +193,17 @@ class SaleService {
             freshProducts[item.product.id] = product;
 
             // تصحيح السعر: إذا لم يحدد المستخدم سعراً مخصصاً والسعر تغير في قاعدة البيانات
+            // C-4 Stage B: product.price is int cents; cart math in double SAR.
+            final dbPriceSar = product.price / 100.0;
             if (item.customPrice == null &&
-                product.price != item.effectivePrice) {
-              correctedPrices[item.product.id] = product.price;
+                dbPriceSar != item.effectivePrice) {
+              correctedPrices[item.product.id] = dbPriceSar;
               priceCorrections.add(
                 PriceCorrection(
                   productId: item.product.id,
                   productName: item.product.name,
                   cartPrice: item.effectivePrice,
-                  dbPrice: product.price,
+                  dbPrice: dbPriceSar,
                   quantity: item.quantity,
                 ),
               );

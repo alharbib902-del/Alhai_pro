@@ -9,6 +9,7 @@ void main() {
     db = createTestDatabase();
     await seedTestData(db);
     // order_items reference products via FK
+    // C-4 Stage B: SAR × 100 = cents
     final now = DateTime(2025, 1, 1);
     for (var i = 1; i <= 2; i++) {
       await db.productsDao.insertProduct(
@@ -16,7 +17,7 @@ void main() {
           id: 'prod-$i',
           storeId: 'store-1',
           name: 'P$i',
-          price: 10.0,
+          price: 1000,
           createdAt: now,
         ),
       );

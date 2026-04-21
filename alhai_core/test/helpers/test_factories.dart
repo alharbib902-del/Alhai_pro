@@ -84,8 +84,8 @@ class ProductFactory {
     String? name,
     String? sku,
     String? barcode,
-    double? price,
-    double? costPrice,
+    int? price, // C-4 Stage B: SAR × 100 = cents
+    int? costPrice,
     double? stockQty,
     double? minQty,
     String? categoryId,
@@ -99,7 +99,7 @@ class ProductFactory {
       name: name ?? 'منتج $_counter',
       sku: sku,
       barcode: barcode,
-      price: price ?? 10.0 * _counter,
+      price: price ?? 1000 * _counter,
       costPrice: costPrice,
       stockQty: stockQty ?? 100,
       minQty: minQty ?? 5,
@@ -117,8 +117,8 @@ class ProductFactory {
 
   static Product outOfStock({String? id}) => create(id: id, stockQty: 0);
 
-  static Product withProfit({String? id, double? price, double? costPrice}) =>
-      create(id: id, price: price ?? 100.0, costPrice: costPrice ?? 70.0);
+  static Product withProfit({String? id, int? price, int? costPrice}) =>
+      create(id: id, price: price ?? 10000, costPrice: costPrice ?? 7000);
 
   static List<Product> createList(int count, {String? storeId}) {
     return List.generate(count, (i) => create(storeId: storeId));

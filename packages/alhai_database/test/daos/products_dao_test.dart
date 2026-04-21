@@ -14,11 +14,12 @@ void main() {
     await db.close();
   });
 
+  // C-4 Stage B: SAR × 100 = cents
   ProductsTableCompanion makeProduct({
     String id = 'prod-1',
     String storeId = 'store-1',
     String name = 'حليب طازج',
-    double price = 5.5,
+    int price = 550,
     String? barcode,
     String? sku,
     String? categoryId,
@@ -45,7 +46,7 @@ void main() {
     test('insertProduct inserts and getAllProducts retrieves', () async {
       await db.productsDao.insertProduct(makeProduct());
       await db.productsDao.insertProduct(
-        makeProduct(id: 'prod-2', name: 'عصير برتقال', price: 3.0),
+        makeProduct(id: 'prod-2', name: 'عصير برتقال', price: 300),
       );
 
       final products = await db.productsDao.getAllProducts('store-1');
@@ -60,7 +61,7 @@ void main() {
       final product = await db.productsDao.getProductById('prod-1');
       expect(product, isNotNull);
       expect(product!.name, 'حليب طازج');
-      expect(product.price, 5.5);
+      expect(product.price, 550);
       expect(product.storeId, 'store-1');
     });
 
@@ -113,13 +114,13 @@ void main() {
     test('updateProduct modifies data', () async {
       await db.productsDao.insertProduct(makeProduct());
       final product = await db.productsDao.getProductById('prod-1');
-      final updated = product!.copyWith(name: 'حليب كامل الدسم', price: 6.0);
+      final updated = product!.copyWith(name: 'حليب كامل الدسم', price: 600);
 
       await db.productsDao.updateProduct(updated);
 
       final fetched = await db.productsDao.getProductById('prod-1');
       expect(fetched!.name, 'حليب كامل الدسم');
-      expect(fetched.price, 6.0);
+      expect(fetched.price, 600);
     });
 
     test('updateStock changes stock quantity', () async {
@@ -254,11 +255,11 @@ void main() {
       await db.productsDao.upsertProduct(makeProduct());
 
       var product = await db.productsDao.getProductById('prod-1');
-      expect(product!.price, 5.5);
+      expect(product!.price, 550);
 
-      await db.productsDao.upsertProduct(makeProduct(price: 7.0));
+      await db.productsDao.upsertProduct(makeProduct(price: 700));
       product = await db.productsDao.getProductById('prod-1');
-      expect(product!.price, 7.0);
+      expect(product!.price, 700);
     });
 
     test('batchUpdateStock updates multiple products', () async {

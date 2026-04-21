@@ -12,7 +12,8 @@ void main() {
     required String id,
     String storeId = 'store-1',
     required String name,
-    double price = 10.0,
+    // C-4 Stage B: SAR × 100 = cents
+    int price = 1000,
     String? barcode,
     String? sku,
     bool isActive = true,
@@ -44,7 +45,7 @@ void main() {
           makeProduct(
             id: 'prod_$i',
             name: 'Product $i - منتج ${i % 50}',
-            price: 10.0 + (i * 0.1),
+            price: 1000 + (i * 10),
             barcode: '69000${i.toString().padLeft(5, '0')}',
             sku: 'SKU-${i.toString().padLeft(5, '0')}',
             stockQty: 50 + (i % 200),

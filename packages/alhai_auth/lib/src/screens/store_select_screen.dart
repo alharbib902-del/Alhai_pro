@@ -482,14 +482,15 @@ class _StoreSelectScreenState extends ConsumerState<StoreSelectScreen> {
           id: prod['id'] as String? ?? '',
           storeId: prod['store_id'] as String? ?? '',
           name: prod['name'] as String? ?? '',
-          price: (prod['price'] as num?)?.toDouble() ?? 0.0,
+          // C-4 Stage B: Supabase sends int cents now; store directly.
+          price: (prod['price'] as num?)?.toInt() ?? 0,
           createdAt:
               DateTime.tryParse(prod['created_at']?.toString() ?? '') ??
               DateTime.now(),
           orgId: Value(prod['org_id'] as String?),
           sku: Value(prod['sku'] as String?),
           barcode: Value(prod['barcode'] as String?),
-          costPrice: Value((prod['cost_price'] as num?)?.toDouble()),
+          costPrice: Value((prod['cost_price'] as num?)?.toInt()),
           stockQty: Value((prod['stock_qty'] as num?)?.toDouble() ?? 0.0),
           minQty: Value((prod['min_qty'] as num?)?.toDouble() ?? 0.0),
           unit: Value(prod['unit'] as String?),

@@ -144,12 +144,13 @@ void main() {
       final sevenYearsAgo = DateTime.now().subtract(const Duration(days: 2555));
 
       // Insert product for FK
+      // C-4 Stage B: SAR × 100 = cents
       await db.productsDao.insertProduct(
         ProductsTableCompanion.insert(
           id: 'prod-ret-sale',
           name: 'Retention Test',
           storeId: 'store-1',
-          price: 50.0,
+          price: 5000,
           createdAt: DateTime.now(),
         ),
       );

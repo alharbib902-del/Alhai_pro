@@ -1589,15 +1589,15 @@ class $ProductsTableTable extends ProductsTable
       type: DriftSqlType.string, requiredDuringInsert: false);
   static const VerificationMeta _priceMeta = const VerificationMeta('price');
   @override
-  late final GeneratedColumn<double> price = GeneratedColumn<double>(
+  late final GeneratedColumn<int> price = GeneratedColumn<int>(
       'price', aliasedName, false,
-      type: DriftSqlType.double, requiredDuringInsert: true);
+      type: DriftSqlType.int, requiredDuringInsert: true);
   static const VerificationMeta _costPriceMeta =
       const VerificationMeta('costPrice');
   @override
-  late final GeneratedColumn<double> costPrice = GeneratedColumn<double>(
+  late final GeneratedColumn<int> costPrice = GeneratedColumn<int>(
       'cost_price', aliasedName, true,
-      type: DriftSqlType.double, requiredDuringInsert: false);
+      type: DriftSqlType.int, requiredDuringInsert: false);
   static const VerificationMeta _stockQtyMeta =
       const VerificationMeta('stockQty');
   @override
@@ -2038,9 +2038,9 @@ class $ProductsTableTable extends ProductsTable
       barcode: attachedDatabase.typeMapping
           .read(DriftSqlType.string, data['${effectivePrefix}barcode']),
       price: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}price'])!,
+          .read(DriftSqlType.int, data['${effectivePrefix}price'])!,
       costPrice: attachedDatabase.typeMapping
-          .read(DriftSqlType.double, data['${effectivePrefix}cost_price']),
+          .read(DriftSqlType.int, data['${effectivePrefix}cost_price']),
       stockQty: attachedDatabase.typeMapping
           .read(DriftSqlType.double, data['${effectivePrefix}stock_qty'])!,
       minQty: attachedDatabase.typeMapping
@@ -2112,8 +2112,8 @@ class ProductsTableData extends DataClass
   final String name;
   final String? sku;
   final String? barcode;
-  final double price;
-  final double? costPrice;
+  final int price;
+  final int? costPrice;
   final double stockQty;
   final double minQty;
   final String? unit;
@@ -2192,9 +2192,9 @@ class ProductsTableData extends DataClass
     if (!nullToAbsent || barcode != null) {
       map['barcode'] = Variable<String>(barcode);
     }
-    map['price'] = Variable<double>(price);
+    map['price'] = Variable<int>(price);
     if (!nullToAbsent || costPrice != null) {
-      map['cost_price'] = Variable<double>(costPrice);
+      map['cost_price'] = Variable<int>(costPrice);
     }
     map['stock_qty'] = Variable<double>(stockQty);
     map['min_qty'] = Variable<double>(minQty);
@@ -2355,8 +2355,8 @@ class ProductsTableData extends DataClass
       name: serializer.fromJson<String>(json['name']),
       sku: serializer.fromJson<String?>(json['sku']),
       barcode: serializer.fromJson<String?>(json['barcode']),
-      price: serializer.fromJson<double>(json['price']),
-      costPrice: serializer.fromJson<double?>(json['costPrice']),
+      price: serializer.fromJson<int>(json['price']),
+      costPrice: serializer.fromJson<int?>(json['costPrice']),
       stockQty: serializer.fromJson<double>(json['stockQty']),
       minQty: serializer.fromJson<double>(json['minQty']),
       unit: serializer.fromJson<String?>(json['unit']),
@@ -2397,8 +2397,8 @@ class ProductsTableData extends DataClass
       'name': serializer.toJson<String>(name),
       'sku': serializer.toJson<String?>(sku),
       'barcode': serializer.toJson<String?>(barcode),
-      'price': serializer.toJson<double>(price),
-      'costPrice': serializer.toJson<double?>(costPrice),
+      'price': serializer.toJson<int>(price),
+      'costPrice': serializer.toJson<int?>(costPrice),
       'stockQty': serializer.toJson<double>(stockQty),
       'minQty': serializer.toJson<double>(minQty),
       'unit': serializer.toJson<String?>(unit),
@@ -2436,8 +2436,8 @@ class ProductsTableData extends DataClass
           String? name,
           Value<String?> sku = const Value.absent(),
           Value<String?> barcode = const Value.absent(),
-          double? price,
-          Value<double?> costPrice = const Value.absent(),
+          int? price,
+          Value<int?> costPrice = const Value.absent(),
           double? stockQty,
           double? minQty,
           Value<String?> unit = const Value.absent(),
@@ -2708,8 +2708,8 @@ class ProductsTableCompanion extends UpdateCompanion<ProductsTableData> {
   final Value<String> name;
   final Value<String?> sku;
   final Value<String?> barcode;
-  final Value<double> price;
-  final Value<double?> costPrice;
+  final Value<int> price;
+  final Value<int?> costPrice;
   final Value<double> stockQty;
   final Value<double> minQty;
   final Value<String?> unit;
@@ -2783,7 +2783,7 @@ class ProductsTableCompanion extends UpdateCompanion<ProductsTableData> {
     required String name,
     this.sku = const Value.absent(),
     this.barcode = const Value.absent(),
-    required double price,
+    required int price,
     this.costPrice = const Value.absent(),
     this.stockQty = const Value.absent(),
     this.minQty = const Value.absent(),
@@ -2825,8 +2825,8 @@ class ProductsTableCompanion extends UpdateCompanion<ProductsTableData> {
     Expression<String>? name,
     Expression<String>? sku,
     Expression<String>? barcode,
-    Expression<double>? price,
-    Expression<double>? costPrice,
+    Expression<int>? price,
+    Expression<int>? costPrice,
     Expression<double>? stockQty,
     Expression<double>? minQty,
     Expression<String>? unit,
@@ -2903,8 +2903,8 @@ class ProductsTableCompanion extends UpdateCompanion<ProductsTableData> {
       Value<String>? name,
       Value<String?>? sku,
       Value<String?>? barcode,
-      Value<double>? price,
-      Value<double?>? costPrice,
+      Value<int>? price,
+      Value<int?>? costPrice,
       Value<double>? stockQty,
       Value<double>? minQty,
       Value<String?>? unit,
@@ -2995,10 +2995,10 @@ class ProductsTableCompanion extends UpdateCompanion<ProductsTableData> {
       map['barcode'] = Variable<String>(barcode.value);
     }
     if (price.present) {
-      map['price'] = Variable<double>(price.value);
+      map['price'] = Variable<int>(price.value);
     }
     if (costPrice.present) {
-      map['cost_price'] = Variable<double>(costPrice.value);
+      map['cost_price'] = Variable<int>(costPrice.value);
     }
     if (stockQty.present) {
       map['stock_qty'] = Variable<double>(stockQty.value);
@@ -44009,8 +44009,8 @@ typedef $$ProductsTableTableCreateCompanionBuilder = ProductsTableCompanion
   required String name,
   Value<String?> sku,
   Value<String?> barcode,
-  required double price,
-  Value<double?> costPrice,
+  required int price,
+  Value<int?> costPrice,
   Value<double> stockQty,
   Value<double> minQty,
   Value<String?> unit,
@@ -44048,8 +44048,8 @@ typedef $$ProductsTableTableUpdateCompanionBuilder = ProductsTableCompanion
   Value<String> name,
   Value<String?> sku,
   Value<String?> barcode,
-  Value<double> price,
-  Value<double?> costPrice,
+  Value<int> price,
+  Value<int?> costPrice,
   Value<double> stockQty,
   Value<double> minQty,
   Value<String?> unit,
@@ -44244,10 +44244,10 @@ class $$ProductsTableTableFilterComposer
   ColumnFilters<String> get barcode => $composableBuilder(
       column: $table.barcode, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get price => $composableBuilder(
+  ColumnFilters<int> get price => $composableBuilder(
       column: $table.price, builder: (column) => ColumnFilters(column));
 
-  ColumnFilters<double> get costPrice => $composableBuilder(
+  ColumnFilters<int> get costPrice => $composableBuilder(
       column: $table.costPrice, builder: (column) => ColumnFilters(column));
 
   ColumnFilters<double> get stockQty => $composableBuilder(
@@ -44527,10 +44527,10 @@ class $$ProductsTableTableOrderingComposer
   ColumnOrderings<String> get barcode => $composableBuilder(
       column: $table.barcode, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get price => $composableBuilder(
+  ColumnOrderings<int> get price => $composableBuilder(
       column: $table.price, builder: (column) => ColumnOrderings(column));
 
-  ColumnOrderings<double> get costPrice => $composableBuilder(
+  ColumnOrderings<int> get costPrice => $composableBuilder(
       column: $table.costPrice, builder: (column) => ColumnOrderings(column));
 
   ColumnOrderings<double> get stockQty => $composableBuilder(
@@ -44687,10 +44687,10 @@ class $$ProductsTableTableAnnotationComposer
   GeneratedColumn<String> get barcode =>
       $composableBuilder(column: $table.barcode, builder: (column) => column);
 
-  GeneratedColumn<double> get price =>
+  GeneratedColumn<int> get price =>
       $composableBuilder(column: $table.price, builder: (column) => column);
 
-  GeneratedColumn<double> get costPrice =>
+  GeneratedColumn<int> get costPrice =>
       $composableBuilder(column: $table.costPrice, builder: (column) => column);
 
   GeneratedColumn<double> get stockQty =>
@@ -44978,8 +44978,8 @@ class $$ProductsTableTableTableManager extends RootTableManager<
             Value<String> name = const Value.absent(),
             Value<String?> sku = const Value.absent(),
             Value<String?> barcode = const Value.absent(),
-            Value<double> price = const Value.absent(),
-            Value<double?> costPrice = const Value.absent(),
+            Value<int> price = const Value.absent(),
+            Value<int?> costPrice = const Value.absent(),
             Value<double> stockQty = const Value.absent(),
             Value<double> minQty = const Value.absent(),
             Value<String?> unit = const Value.absent(),
@@ -45054,8 +45054,8 @@ class $$ProductsTableTableTableManager extends RootTableManager<
             required String name,
             Value<String?> sku = const Value.absent(),
             Value<String?> barcode = const Value.absent(),
-            required double price,
-            Value<double?> costPrice = const Value.absent(),
+            required int price,
+            Value<int?> costPrice = const Value.absent(),
             Value<double> stockQty = const Value.absent(),
             Value<double> minQty = const Value.absent(),
             Value<String?> unit = const Value.absent(),

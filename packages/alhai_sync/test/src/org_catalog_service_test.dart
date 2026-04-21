@@ -154,7 +154,8 @@ void main() {
           id: 'p-1',
           storeId: 'store-1',
           name: 'Test',
-          price: 10.0,
+          // C-4 Stage B: SAR × 100 = cents
+          price: 1000,
           stockQty: stockQty,
           minQty: 0,
           onlineAvailable: onlineAvailable,
@@ -209,7 +210,7 @@ void main() {
           id: 'p-1',
           storeId: 'store-1',
           name: 'Test',
-          price: 10.0,
+          price: 1000,
           stockQty: 0,
           minQty: 0,
           onlineAvailable: false,

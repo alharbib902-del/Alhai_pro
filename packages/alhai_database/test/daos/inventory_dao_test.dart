@@ -9,12 +9,13 @@ void main() {
     db = createTestDatabase();
     await seedTestData(db);
     // inventory_movements reference products via FK
+    // C-4 Stage B: SAR × 100 = cents
     await db.productsDao.insertProduct(
       ProductsTableCompanion.insert(
         id: 'prod-1',
         storeId: 'store-1',
         name: 'P1',
-        price: 10.0,
+        price: 1000,
         createdAt: DateTime(2025, 1, 1),
       ),
     );

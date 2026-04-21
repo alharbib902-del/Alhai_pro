@@ -48,8 +48,11 @@ class ProductsTable extends Table {
   TextColumn get barcode => text().nullable()();
 
   // الأسعار
-  RealColumn get price => real()();
-  RealColumn get costPrice => real().nullable()();
+  // C-4 Stage B: stored as INTEGER cents (ROUND_HALF_UP from legacy doubles).
+  // Domain consumers receive int cents directly; UI formatters divide by 100
+  // for display. Boundary conversions live in the DAO + formatters.
+  IntColumn get price => integer()();
+  IntColumn get costPrice => integer().nullable()();
 
   // المخزون (REAL لدعم الكميات الكسرية مثل 2.5 كجم)
   RealColumn get stockQty => real().withDefault(const Constant(0))();

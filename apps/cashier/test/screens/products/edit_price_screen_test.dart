@@ -17,12 +17,13 @@ void main() {
   late MockProductsDao productsDao;
 
   // Screen accesses product.updatedAt for price history, so it must be non-null
+  // C-4 Stage B: SAR × 100 = cents
   final testProduct = createTestProduct(
     id: 'prod-1',
     name: 'Test Product',
     barcode: '123456789',
-    price: 25.0,
-    costPrice: 15.0,
+    price: 2500,
+    costPrice: 1500,
     stockQty: 100,
   ).copyWith(updatedAt: Value(DateTime(2026, 1, 15)));
 

@@ -21,13 +21,14 @@ void main() {
   });
 
   /// Helper: insert a product with given stock
+  // C-4 Stage B: SAR × 100 = cents
   Future<void> _insertProduct(String id, double stock) async {
     await db.productsDao.insertProduct(
       ProductsTableCompanion.insert(
         id: id,
         name: 'Product $id',
         storeId: 'store-1',
-        price: 50.0,
+        price: 5000,
         createdAt: DateTime.now(),
       ),
     );

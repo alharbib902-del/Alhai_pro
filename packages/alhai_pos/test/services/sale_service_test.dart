@@ -132,7 +132,7 @@ void main() {
         final product = createTestProductsTableData(
           id: 'prod-1',
           name: 'Test Product',
-          price: 10.0,
+          price: 1000,
           stockQty: 100,
           trackInventory: true,
         );
@@ -140,7 +140,7 @@ void main() {
         final cartItem = createTestCartItem(
           productId: 'prod-1',
           productName: 'Test Product',
-          price: 10.0,
+          price: 1000,
           quantity: 2,
         );
 
@@ -170,7 +170,7 @@ void main() {
         final cartItem = createTestCartItem(
           productId: 'missing-prod',
           productName: 'Missing Product',
-          price: 10.0,
+          price: 1000,
           quantity: 1,
         );
 
@@ -215,7 +215,7 @@ void main() {
 
         final cartItem = createTestCartItem(
           productId: 'prod-1',
-          price: 10.0,
+          price: 1000,
           quantity: 5, // requesting more than available
         );
 
@@ -262,7 +262,7 @@ void main() {
         final cartItem = createTestCartItem(
           productId: 'prod-1',
           productName: 'Service',
-          price: 50.0,
+          price: 5000,
           quantity: 1,
         );
 
@@ -294,7 +294,7 @@ void main() {
 
         final cartItem = createTestCartItem(
           productId: 'prod-1',
-          price: 10.0,
+          price: 1000,
           quantity: 1,
         );
 
@@ -328,7 +328,7 @@ void main() {
         final product = createTestProductsTableData(
           id: 'prod-1',
           name: 'Credit Product',
-          price: 100.0,
+          price: 10000,
           stockQty: 50,
           trackInventory: true,
         );
@@ -336,7 +336,7 @@ void main() {
         final cartItem = createTestCartItem(
           productId: 'prod-1',
           productName: 'Credit Product',
-          price: 100.0,
+          price: 10000,
           quantity: 1,
         );
 
@@ -450,7 +450,7 @@ void main() {
         final product = createTestProductsTableData(
           id: 'prod-1',
           name: 'Collision Product',
-          price: 10.0,
+          price: 1000,
           stockQty: 100,
           trackInventory: true,
         );
@@ -458,7 +458,7 @@ void main() {
         final cartItem = createTestCartItem(
           productId: 'prod-1',
           productName: 'Collision Product',
-          price: 10.0,
+          price: 1000,
           quantity: 1,
         );
 
@@ -560,7 +560,7 @@ void main() {
         final product = createTestProductsTableData(
           id: 'prod-1',
           name: 'Split Product',
-          price: 100.0,
+          price: 10000,
           stockQty: 50,
           trackInventory: true,
         );
@@ -568,7 +568,7 @@ void main() {
         final cartItem = createTestCartItem(
           productId: 'prod-1',
           productName: 'Split Product',
-          price: 100.0,
+          price: 10000,
           quantity: 1,
         );
 
@@ -765,7 +765,7 @@ void main() {
 
         final cartItem = createTestCartItem(
           productId: 'prod-1',
-          price: 10.0,
+          price: 1000,
           quantity: 1,
         );
 

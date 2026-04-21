@@ -9,7 +9,8 @@ void main() {
     required String id,
     String storeId = 'store-1',
     required String name,
-    double price = 10.0,
+    // C-4 Stage B: SAR × 100 = cents
+    int price = 1000,
     double stockQty = 100,
     double minQty = 5,
     bool isActive = true,

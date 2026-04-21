@@ -102,14 +102,15 @@ void main() {
         ),
       ).thenAnswer(
         (_) async => [
+          // C-4 Stage B: SAR × 100 = cents
           ProductsTableData(
             id: 'p1',
             storeId: 'test-store-id',
             name: 'Test Product',
-            price: 50.0,
+            price: 5000,
             stockQty: 100,
             minQty: 10,
-            costPrice: 30.0,
+            costPrice: 3000,
             createdAt: now,
             isActive: true,
             trackInventory: true,

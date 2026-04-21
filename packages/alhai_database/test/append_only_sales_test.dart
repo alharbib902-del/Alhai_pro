@@ -17,13 +17,14 @@ void main() {
   });
 
   /// Helper to create a product for FK constraints.
+  // C-4 Stage B: SAR × 100 = cents
   Future<void> _seedProduct(String id) async {
     await db.productsDao.insertProduct(
       ProductsTableCompanion.insert(
         id: id,
         storeId: 'store-1',
         name: 'Product $id',
-        price: 50.0,
+        price: 5000,
         createdAt: DateTime(2025, 1, 1),
       ),
     );

@@ -128,12 +128,13 @@ void registerPosFallbackValues() {
 // ============================================================================
 
 /// Create a test Product
+// C-4 Stage B: SAR × 100 = cents
 Product createTestProduct({
   String id = 'prod-1',
   String storeId = 'store-1',
   String name = 'Test Product',
-  double price = 10.0,
-  double? costPrice = 5.0,
+  int price = 1000,
+  int? costPrice = 500,
   double stockQty = 100,
   bool isActive = true,
   bool trackInventory = true,
@@ -157,7 +158,7 @@ Product createTestProduct({
 PosCartItem createTestCartItem({
   String productId = 'prod-1',
   String productName = 'Test Product',
-  double price = 10.0,
+  int price = 1000,
   int quantity = 1,
   double? customPrice,
 }) {
@@ -182,13 +183,13 @@ CartState createTestCartState({
           createTestCartItem(
             productId: 'prod-1',
             productName: 'Product A',
-            price: 10.0,
+            price: 1000,
             quantity: 2,
           ),
           createTestCartItem(
             productId: 'prod-2',
             productName: 'Product B',
-            price: 20.0,
+            price: 2000,
             quantity: 1,
           ),
         ],
@@ -203,8 +204,8 @@ ProductsTableData createTestProductsTableData({
   String id = 'prod-1',
   String storeId = 'store-1',
   String name = 'Test Product',
-  double price = 10.0,
-  double costPrice = 5.0,
+  int price = 1000,
+  int costPrice = 500,
   double stockQty = 100,
   bool isActive = true,
   bool trackInventory = true,

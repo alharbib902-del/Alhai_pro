@@ -639,11 +639,13 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
       if (storeId == null) throw Exception('No store selected');
 
       final productId = const Uuid().v4();
-      final price =
+      // C-4 Stage B: user-typed SAR → int cents for storage.
+      final priceDouble =
           double.tryParse(
             InputSanitizer.sanitizeDecimal(_priceController.text),
           ) ??
           0.0;
+      final price = (priceDouble * 100).round();
       final quantity =
           int.tryParse(
             InputSanitizer.sanitizeNumeric(_quantityController.text),
@@ -670,7 +672,7 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
         ),
       );
 
-      // Audit log
+      // Audit log — audit API uses double SAR; pass the pre-conversion value.
       final user = ref.read(currentUserProvider);
       auditService.logProductCreate(
         storeId: storeId,
@@ -678,7 +680,7 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
         userName: user?.name ?? 'unknown',
         productId: productId,
         productName: sanitizedName,
-        price: price,
+        price: priceDouble,
       );
 
       if (!mounted) return;
