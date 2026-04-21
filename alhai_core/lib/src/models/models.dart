@@ -7,6 +7,9 @@ export 'enums/order_status.dart';
 export 'enums/payment_method.dart';
 export 'enums/delivery_status.dart';
 
+// Value types (domain primitives)
+export 'money.dart';
+
 // Models
 export 'user.dart';
 
