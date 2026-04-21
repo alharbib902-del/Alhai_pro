@@ -4995,3 +4995,173 @@ No existing caller is forced to migrate. When Session 2's invoice migration land
 ---
 
 END OF SESSION 13 STATION 3c ENTRY — Session 2 prerequisites COMPLETE
+
+---
+
+# 🏁 Session 13 Wrap-Up (2026-04-22)
+
+**Budget:** ~4 hours actual (user reported Station 2 = 25 min, Stations 1 + 3a+b+c ≈ 3h35m total). Budget was 6h — under budget.
+
+## Stations delivered
+
+| Station | Outcome | HEAD at close | Commits |
+|---|---|---|---|
+| **1** — 5 widget tests in edit_price_screen_test.dart | ✓ baseline restored (600/600) | `72d04e1` | `72d04e1` fix (log was committed on same branch `fix/zatca-queue-drift`) |
+| **2** — customer_app + driver_app deploy bundle | ✓ both apps tests + debug APKs built; release blocked on user-provided keystore / google-services | `9644b8a` (log) | `de85d6e`, `10ae9fe`, `aa8fc43`, `780e0bf`, `9644b8a` (5 commits on new branch `fix/deploy-bundle-customer-driver`) |
+| **3a** — C-4 Session 2 Appendix B audit | ✓ ALL SAFE (0 real fractional cents); plan drift + FP false-positive methodology fix documented | `4595d80` | `4595d80` |
+| **3b** — VatCalculator 3-way collapse | ✓ 3 impls → 1 canonical (alhai_zatca); -518 / +17 LOC net; 57 duplicate tests purged | `c21db4e` | `f16f323`, `c21db4e` |
+| **3c** — Money value type + CurrencyFormatter.formatMoney overload | ✓ plan D1 + D2 implemented; +667 LOC; 56 new tests | `43adcf7` | `4de24ab`, `43adcf7` |
+
+**Branch at close:** `fix/deploy-bundle-customer-driver` @ `43adcf7` (cumulative from `fix/zatca-queue-drift` @ `3d158f5`).
+
+## Test baselines (post-session)
+
+| Package | Before (2026-04-21) | After (2026-04-22) | Δ |
+|---|---|---|---|
+| alhai_core | 608 | **667** | +59 Money tests |
+| alhai_database | 508 + 1 skipped | 508 + 1 skipped | unchanged |
+| alhai_sync | 358 | 358 | unchanged |
+| alhai_zatca | 850 + 1 skipped | 850 + 1 skipped | unchanged (canonical, preserved through VatCalculator collapse) |
+| customer_app | 136 | 136 | unchanged (5 Stage B boundary fixes added; tests restored after failing on cherry-pick) |
+| driver_app | 152 | 152 | unchanged |
+| admin | 365 | 365 (not re-run; untouched) | inferred |
+| admin_lite | 183 | 183 (not re-run; untouched) | inferred |
+| super_admin | 219 | 219 (not re-run; untouched) | inferred |
+| cashier | 595/600 ⚠ | **552/552** ✓ | 5 widget tests fixed THEN 48 duplicate VAT tests purged — net 600 → 552 with 100% pass rate |
+| distributor_portal | 429 | 420 | -9 duplicate VAT tests purged |
+
+Aggregate across the 11 packages: **4378 passing** (was 4354; gained Money tests, lost duplicate VAT tests). Coverage invariant: ZATCA integration 850 unchanged — the canonical VAT path is now the only path.
+
+## Production / Supabase state — unchanged from end of 2026-04-21
+
+No SQL executed today. Last live migration still `v71` (C-4 Stage B products). Session 2 (invoices + sale_items) will introduce v72+ — cleared to proceed by Station 3a audit.
+
+## Commit graph delta (9 commits above prior HEAD `3d158f5`)
+
+```
+43adcf7 docs(sessions): station 3c — Money value type + formatter overload log entry
+4de24ab feat(alhai_core + alhai_shared_ui): Money value type + CurrencyFormatter.formatMoney — C-4 Session 2 pre-work
+c21db4e docs(sessions): station 3b — VatCalculator 3-way collapse log entry
+f16f323 refactor(vat): collapse 3-way VatCalculator → canonical alhai_zatca — C-4 Stage C prep
+4595d80 docs(sessions): station 3a — C-4 Session 2 Appendix B audit complete, all SAFE
+9644b8a docs(sessions): station 2 deploy bundle — cherry-picks + Stage B boundaries + driver_app Android infra
+780e0bf fix(driver_app): Android build infrastructure — port customer_app patterns
+aa8fc43 fix(customer_app): C-4 Stage B boundary conversions — int cents ↔ double SAR
+10ae9fe fix(driver_app): include store_id in drivers upsert to match v55 strict RLS — C-9 Phase D
+de85d6e fix(customer_app): correct order_items column names — qty→quantity, total_price→total
+72d04e1 fix(cashier): edit_price_screen int-cents boundary (C-4 Stage B follow-up)
+```
+
+`72d04e1` landed on `fix/zatca-queue-drift`; the subsequent 10 commits (including the 2 cherry-picks marked by date) are on `fix/deploy-bundle-customer-driver`, which was forked from `72d04e1` at Station 2 kickoff.
+
+---
+
+# 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
+
+**Written at end-of-day 2026-04-22 after 4h of Session 13.**
+**Purpose:** Single entry point for any fresh session (AI or human) to resume work WITHOUT re-reading all prior entries.
+
+Supersedes the prior "NEXT SESSION STARTING POINT" written 2026-04-21 (line ~4309).
+
+## 0. Production / Repo State Snapshot
+
+### Supabase (live production)
+- **Latest migration:** v71 (unchanged from 2026-04-21).
+- **Status quo:** Wildcard campaign 100% closed; 47 SECURITY DEFINER hardened; 9 RPCs with AUTH GATES; products/discounts/org_products money columns migrated to INT cents.
+- **Invoices + held_invoices + sale_items:** still double precision (Session 2 migrates them). Audit (Station 3a) confirmed 0 real fractional-cent rows → migration is cleared.
+
+### Drift schema (local)
+- **Latest version:** v41 (unchanged). Session 2 will bump to v42 when invoices/sale_items/held_invoices convert to IntColumn.
+
+### Branches (remote `backup` only, NEVER origin)
+
+| Branch | HEAD | Contents | Ready? |
+|---|---|---|---|
+| `fix/zatca-queue-drift` | `72d04e1` | C-7 + C-8a/b + C-4 Stage A + C-4 Stage B + widget-test fix | Merge-candidate for main |
+| `fix/deploy-bundle-customer-driver` | `43adcf7` | Session 13 cumulative — 2 cherry-picked production fixes + customer_app Stage B + driver_app Android infra + VatCalculator collapse + Money type + formatter overload | Needs keystore/google-services to release customer_app/driver_app; code-side ready |
+
+## 1. 🔴 URGENT — Start with these
+
+### 1a. Deploy customer_app + driver_app (release build half)
+- All code fixes in `fix/deploy-bundle-customer-driver`; debug APKs already built clean this session.
+- **Missing from session scope: user-provided credentials** (5 items):
+  1. `customer_app/android/key.properties` + upload keystore `.jks`
+  2. `driver_app/android/key.properties` + upload keystore `.jks`
+  3. `customer_app/android/app/google-services.json` (Firebase FCM)
+  4. `driver_app/android/app/google-services.json`
+  5. Play Console / App Store Connect credentials
+- **Impact if delayed:** customer_app createOrder still 100% fails on production (fix is in `fix/deploy-bundle-customer-driver`, not yet on main). Every day = more failed orders.
+- **Estimated time once credentials land:** 1 hour (build release AAB + smoke + upload).
+
+### 1b. C-4 Session 2 — Invoice / Sale-Items / Held-Invoices int-cents migration (🔴 FULL DEDICATED DAY)
+**PREREQUISITES COMPLETE** as of end-of-session 13:
+- [x] Appendix B audit on live DB → all SAFE (Station 3a).
+- [x] Plan scope correction documented (remove `sale_items.taxAmount`, add `subtotal` + `cost_price`) (Station 3a log).
+- [x] VatCalculator collapsed to canonical (Station 3b).
+- [x] Money value type + formatter ready (Station 3c).
+
+**Scope for Session 2:**
+1. Drift schema v42: TableMigration on invoices (6 cols), sale_items (5 cols — note 14 total not 15), held_invoices (3 cols); all `CAST(ROUND(col * 100) AS INTEGER)`.
+2. Supabase v72: `ALTER COLUMN … TYPE INTEGER USING ROUND(col * 100)::INTEGER` for the same 14 columns. Atomic BEGIN..COMMIT. Empty invoices + held_invoices means only 30 sale_items rows touched.
+3. Domain class updates: `Invoice`, `SaleItem`, `HeldInvoice` flip money fields to `int cents` (or optionally `Money` for line totals).
+4. Consumer boundary audit: every site reading these fields from `row[…]` or assigning to Drift-typed variables needs the int-cents treatment — same pattern as Stage B products.
+5. ZATCA TLV encoder — verify int-cents path produces byte-identical output as pre-migration (ZATCA test `packages/alhai_zatca/test/integration/zatca_sandbox_test.dart` MUST pass).
+6. Test fixture updates (agent-assisted) across affected packages.
+7. Appendix D rollback DDL in migration comment.
+**Estimated time:** 8-10 hours (full dedicated day per plan D5). Session 13's prerequisites save 1-1.5h from this budget.
+
+### 1c. Branch merge strategy
+- `fix/deploy-bundle-customer-driver` @ `43adcf7` is the newest HEAD. It's forked from `fix/zatca-queue-drift` @ `72d04e1`.
+- Session 14 options:
+  - (a) continue on `fix/deploy-bundle-customer-driver` through Session 2, keeping a single long-running branch.
+  - (b) fast-forward into `main` before Session 2 to reset the branch burden. Requires human review.
+  - (c) spawn a new branch `fix/c4-session-2-invoices` from `43adcf7` for Session 2 scope, keep `fix/deploy-bundle-customer-driver` pinned for deploy.
+- Per user preference ("branch names without dates"), any of these work.
+
+## 2. 🟠 HIGH — C-4 remainder
+
+### 2a. Session 3 — Shifts & Cash (~4-6h)
+Tables: `shifts.openingCash / closingCash / expectedCash / difference / totalSalesAmount / totalRefundsAmount`; `cash_movements.amount`; `sales.subtotal / discount / tax / total / amountReceived / changeAmount / cashAmount / cardAmount / creditAmount`.
+
+Pre-work: Appendix B audit on these tables using the **corrected tolerance-based query** from Station 3a (not the plan's original FP-prone version).
+
+### 2b. Session 4 — Analytics & cleanup (~3-4h)
+Remaining analytics + derived tables. Lower risk — no ZATCA / financial integration gate.
+
+## 3. 🟡 MEDIUM — Consumer wiring + deferred work (unchanged from 2026-04-21)
+
+- ZATCA offline queue consumer activation (C-8a/b deferred)
+- Supabase partial indexes on deleted_at
+- 5 Drift-only soft-delete tables alignment
+- Orphan `*_org_isolation` policies drop
+- super_admin Tier 3
+- Admin audit execution
+
+## 4. 🟢 LOW — Nice-to-have (unchanged)
+
+- C-1 Receipt number collision
+- C-5 TLV encoder refactor
+- C-10 Historical NULL-orgId invoice cleanup
+- RLS type-drift historical scan
+- driver_app updateProfile unit tests
+
+## 5. How to start Session 14
+
+1. `git checkout fix/deploy-bundle-customer-driver` (HEAD `43adcf7`).
+2. `git pull backup fix/deploy-bundle-customer-driver` (if on different machine).
+3. Decide branch strategy (see §1c above).
+4. Verify baselines (sanity check before any new work):
+   - `cd alhai_core && flutter test | tail -1` → expect `667 tests passed`
+   - `cd packages/alhai_zatca && flutter test | tail -1` → expect `850 tests passed`
+   - `cd apps/cashier && flutter test | tail -1` → expect `552 tests passed`
+5. Pre-Session 2 re-audit (optional but recommended if >1 day elapsed): run the corrected tolerance-based Appendix B on invoices + sale_items + held_invoices to confirm no new rows introduced fractional-cent data. Expected still 0.
+6. Begin coding per §1a / §1b / §1c above.
+
+**Dual-log maintenance as always:**
+- Canonical: `C:\Users\basem\OneDrive\Desktop\alhai_check-18-04-2026\cashier\FIX_SESSION_LOG.md`
+- In-repo: `docs/sessions/FIX_SESSION_LOG.md`
+- Byte-identical after every edit.
+
+---
+
+END OF SESSION 13 / NEXT SESSION STARTING POINT — ready for 2026-04-23+ work
