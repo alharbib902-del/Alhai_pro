@@ -4698,3 +4698,93 @@ cd driver_app && flutter build appbundle --release
 ---
 
 END OF SESSION 13 STATION 2 ENTRY — next: C-4 Session 2 pre-work (Appendix B audit + VatCalculator collapse + CurrencyFormatter.format(Money) overload)
+
+---
+
+## Station 3a — C-4 Session 2 Appendix B audit (invoices + sale_items + held_invoices)
+
+### Summary
+
+Live Supabase audit for Session 2 tables. **All 14 money columns CLEAN — Session 2 cleared to proceed with ROUND_HALF_UP migration without regression suite.** Plus: one schema-drift finding (plan vs live) and one methodology bug in the plan's Appendix B query.
+
+### Schema introspection (Step 1) — what actually lives on Supabase
+
+| Table | Money cols (live) | NULL? | Row count |
+|---|---|---|---|
+| `invoices` | subtotal, discount, tax_amount, total, amount_paid, amount_due | all nullable | **0** (empty) |
+| `held_invoices` | subtotal, discount, total | all NOT NULL | **0** (empty) |
+| `sale_items` | unit_price, subtotal, discount, total (all NOT NULL) + cost_price (nullable) | mixed | **30** |
+
+Also-money-but-NOT-fit-for-migration:
+- `invoices.tax_rate` — percentage (0.15 = 15%), stays double precision
+- `sale_items.qty` — quantity, not money
+
+### Schema-drift findings (plan vs live) — must land in c4-money-migration-plan.md §2.1
+
+The C-4 plan §2.1 "Invoice-critical" section claims the Session 2 sale_items money columns are: `unitPrice, discount, taxRate, taxAmount, total`. Live reality:
+
+| Plan says | Live reality | Diff |
+|---|---|---|
+| `sale_items.unitPrice` | `sale_items.unit_price` | ✓ exists |
+| `sale_items.discount` | `sale_items.discount` | ✓ |
+| `sale_items.taxRate` | *absent* | ❌ plan-only — skip |
+| `sale_items.taxAmount` | *absent* | ❌ plan-only — skip |
+| `sale_items.total` | `sale_items.total` | ✓ |
+| (plan omits) | `sale_items.subtotal` NOT NULL | ⚠ plan missed — add to scope |
+| (plan omits) | `sale_items.cost_price` nullable | ⚠ plan missed — add to scope |
+
+Net: 2 plan columns removed (tax fields don't exist on `sale_items`), 2 live columns added (subtotal + cost_price). Total money columns to migrate in Session 2 = **14** (6 invoices + 3 held_invoices + 5 sale_items).
+
+Same pattern as A-5 (audit from stale migration file). Documented for Session 2 start.
+
+### Methodology finding: Appendix B query has a false-positive problem
+
+Plan's Appendix B audit query:
+```sql
+WHERE col IS NOT NULL AND (col * 100) <> ROUND(col * 100)
+```
+
+This flags any row where `col * 100` is not exactly equal to `ROUND(col * 100)` under IEEE 754 double precision. Problem: typical SAR prices (e.g., 37.8, 71.99, 32.2) are **not exactly representable** in binary floating-point, so `37.8 * 100 = 3779.9999999999999…` instead of `3780`. The `<>` comparison trips, and the row is flagged imprecise — even though `(col * 100).round()` would produce the exact int 3780 with zero data loss.
+
+This produced **11 cumulative false positives** across 3 sale_items columns (7+4+4) when only 30 rows of data exist.
+
+**Corrected check (tolerance-based)**:
+```sql
+WHERE col IS NOT NULL AND ABS((col * 100) - ROUND(col * 100)) > 1e-6
+```
+
+The `1e-6` tolerance is 10 million× larger than typical FP error (~1e-13) and 10,000× smaller than one cent (0.01 SAR). This distinguishes real fractional-cent data from binary-representation artifacts.
+
+**Why the Stage B products audit (9742 rows) returned 0 imprecise**: most typical product prices in the products table happened to be values that ARE exactly representable in binary double (integer SAR amounts, or SAR ending in certain clean fractions). It was not a robustness signal — just a lucky distribution. The products migration was still correct because `ROUND(col * 100)` is always lossless regardless of FP representation, but the *audit* didn't prove the rounding was lossless; it just returned no results by coincidence.
+
+**Action on plan**: add a "Methodology note" to Appendix B with the tolerance-based version and a brief explanation. Not in this commit to keep this entry small; will be added when Session 2 execution PR lands or in a follow-up docs commit.
+
+### Verification matrix
+
+| Step | Result |
+|---|---|
+| Step 1 schema introspection (16 cols returned) | ✓ confirmed live shape; caught 2 plan-drift items |
+| Step 2 fractional-cent audit (corrected for 14 money cols) | ✓ ran; **3 cols tripped on FP artifacts** (7 + 4 + 4 rows) |
+| Diagnostic query showing actual imprecise rows | ✓ confirmed all 8 distinct imprecise rows have `cents_exact = cents_rounded` (lossless under rounding) |
+| Step 3 tolerance-based confirmation audit | ✓ **`real_fractional_cents = 0` on all 5 sale_items cols** |
+
+### Decision per plan D4
+
+> All zeros → safe to migrate via `ROUND(col * 100)::INT`
+
+All 14 money columns across 3 tables: `real_fractional_cents = 0` → **Session 2 cleared**. No regression suite needed for data precision. R9 risk downgraded to LOW (was CONDITIONAL on this audit).
+
+### Open items for Session 2 start
+
+1. Apply the plan scope correction: swap `sale_items.taxRate` + `sale_items.taxAmount` for `sale_items.subtotal` + `sale_items.cost_price`. This is mechanical.
+2. Plan §2.1 mentions `invoices.taxRate` as Session 2 scope — verify when coding: `invoices.tax_rate` on live is a percentage, not a money amount. Current plan treats it like money. Must skip it (stays double precision).
+3. Confirm via live DB at Session 2 start: count still 0 on invoices + held_invoices (so empty-table migration like Stage A). sale_items may grow beyond 30 rows before Session 2 runs; re-audit at that time.
+
+### Audit refs
+
+- Plan §6 Appendix B (executed) + §4 R9 (downgraded) + §7 D4 (zero-count rule applied).
+- NEXT SESSION STARTING POINT §2a (Session 2 scope): scope now corrected per above.
+
+---
+
+END OF SESSION 13 STATION 3a ENTRY — next: VatCalculator collapse + CurrencyFormatter.format(Money) overload
