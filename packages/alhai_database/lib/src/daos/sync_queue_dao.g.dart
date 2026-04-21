@@ -13,7 +13,5 @@ class SyncQueueDaoManager {
   SyncQueueDaoManager(this._db);
   $$SyncQueueTableTableTableManager get syncQueueTable =>
       $$SyncQueueTableTableTableManager(
-        _db.attachedDatabase,
-        _db.syncQueueTable,
-      );
+          _db.attachedDatabase, _db.syncQueueTable);
 }

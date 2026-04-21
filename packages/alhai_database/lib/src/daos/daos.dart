@@ -45,3 +45,6 @@ export 'invoices_dao.dart';
 // DAOs المزامنة
 export 'sync_metadata_dao.dart';
 export 'stock_deltas_dao.dart';
+
+// DAO طابور ZATCA offline
+export 'zatca_offline_queue_dao.dart';

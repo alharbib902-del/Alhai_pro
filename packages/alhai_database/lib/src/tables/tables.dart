@@ -56,3 +56,6 @@ export 'invoices_table.dart';
 // جداول المزامنة
 export 'sync_metadata_table.dart';
 export 'stock_deltas_table.dart';
+
+// طابور ZATCA offline
+export 'zatca_offline_queue_table.dart';

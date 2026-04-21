@@ -75,6 +75,8 @@ part 'app_database.g.dart';
     OrgProductsTable,
     // الفواتير الرسمية
     InvoicesTable,
+    // طابور ZATCA offline
+    ZatcaOfflineQueueTable,
   ],
   daos: [
     // DAOs الأساسية
@@ -116,6 +118,8 @@ part 'app_database.g.dart';
     StockTransfersDao,
     // DAO الفواتير
     InvoicesDao,
+    // DAO طابور ZATCA offline
+    ZatcaOfflineQueueDao,
   ],
 )
 class AppDatabase extends _$AppDatabase {
@@ -132,7 +136,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 37;
+  int get schemaVersion => 38;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -593,6 +597,15 @@ class AppDatabase extends _$AppDatabase {
         debugPrint(
           '[Migration v$targetVersion] Server-only change — '
           'no Drift schema update required.',
+        );
+
+      case 38:
+        // v38: طابور ZATCA offline الـ Drift-backed
+        // يحل محل SharedPreferences JSON-blob. صف واحد لكل فاتورة مع
+        // status = pending | dead_letter.
+        await m.createTable(zatcaOfflineQueueTable);
+        debugPrint(
+          '[Migration v38] Created zatca_offline_queue table',
         );
 
       default:

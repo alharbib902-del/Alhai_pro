@@ -17,7 +17,5 @@ class ShiftsDaoManager {
       $$ShiftsTableTableTableManager(_db.attachedDatabase, _db.shiftsTable);
   $$CashMovementsTableTableTableManager get cashMovementsTable =>
       $$CashMovementsTableTableTableManager(
-        _db.attachedDatabase,
-        _db.cashMovementsTable,
-      );
+          _db.attachedDatabase, _db.cashMovementsTable);
 }

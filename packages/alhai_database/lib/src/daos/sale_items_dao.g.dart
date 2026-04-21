@@ -26,21 +26,15 @@ class SaleItemsDaoManager {
       $$ShiftsTableTableTableManager(_db.attachedDatabase, _db.shiftsTable);
   $$CustomersTableTableTableManager get customersTable =>
       $$CustomersTableTableTableManager(
-        _db.attachedDatabase,
-        _db.customersTable,
-      );
+          _db.attachedDatabase, _db.customersTable);
   $$SalesTableTableTableManager get salesTable =>
       $$SalesTableTableTableManager(_db.attachedDatabase, _db.salesTable);
   $$CategoriesTableTableTableManager get categoriesTable =>
       $$CategoriesTableTableTableManager(
-        _db.attachedDatabase,
-        _db.categoriesTable,
-      );
+          _db.attachedDatabase, _db.categoriesTable);
   $$ProductsTableTableTableManager get productsTable =>
       $$ProductsTableTableTableManager(_db.attachedDatabase, _db.productsTable);
   $$SaleItemsTableTableTableManager get saleItemsTable =>
       $$SaleItemsTableTableTableManager(
-        _db.attachedDatabase,
-        _db.saleItemsTable,
-      );
+          _db.attachedDatabase, _db.saleItemsTable);
 }

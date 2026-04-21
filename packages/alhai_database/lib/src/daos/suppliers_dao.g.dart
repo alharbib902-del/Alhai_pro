@@ -13,7 +13,5 @@ class SuppliersDaoManager {
   SuppliersDaoManager(this._db);
   $$SuppliersTableTableTableManager get suppliersTable =>
       $$SuppliersTableTableTableManager(
-        _db.attachedDatabase,
-        _db.suppliersTable,
-      );
+          _db.attachedDatabase, _db.suppliersTable);
 }

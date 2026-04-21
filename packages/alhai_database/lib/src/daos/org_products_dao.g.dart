@@ -18,19 +18,13 @@ class OrgProductsDaoManager {
   OrgProductsDaoManager(this._db);
   $$OrganizationsTableTableTableManager get organizationsTable =>
       $$OrganizationsTableTableTableManager(
-        _db.attachedDatabase,
-        _db.organizationsTable,
-      );
+          _db.attachedDatabase, _db.organizationsTable);
   $$StoresTableTableTableManager get storesTable =>
       $$StoresTableTableTableManager(_db.attachedDatabase, _db.storesTable);
   $$CategoriesTableTableTableManager get categoriesTable =>
       $$CategoriesTableTableTableManager(
-        _db.attachedDatabase,
-        _db.categoriesTable,
-      );
+          _db.attachedDatabase, _db.categoriesTable);
   $$OrgProductsTableTableTableManager get orgProductsTable =>
       $$OrgProductsTableTableTableManager(
-        _db.attachedDatabase,
-        _db.orgProductsTable,
-      );
+          _db.attachedDatabase, _db.orgProductsTable);
 }

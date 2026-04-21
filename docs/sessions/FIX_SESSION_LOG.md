@@ -3699,3 +3699,134 @@ C-7 Tombstones Fix / prior scoping session 2026-04-20 FIX_SESSION_LOG entry / `0
 ---
 
 END OF C-7 TOMBSTONES FIX ENTRY — sync layer + 9 DAOs
+
+
+---
+
+### C-8a ZATCA Queue Drift Infrastructure — 2026-04-21 — schema v37 → v38
+
+**Classification:** Infrastructure readiness for ZATCA Phase 2. Drift schema bump.
+**Branch:** fix/zatca-queue-drift (off 89eebd7, cumulative from C-7)
+**Scope:** Drift table + DAO + schema migration + 10 new tests
+**Applied:** Client code + schema bump. No Supabase changes.
+
+#### Summary
+
+Builds the Drift table + DAO for ZATCA offline queue persistence — replacing the current SharedPreferences JSON-blob full-rewrite pattern. This is **infrastructure-only**: the `ZatcaOfflineQueue` class still uses SharedPreferences fallback at runtime, but consumers (e.g. future ZATCA Phase 2 wiring in cashier) can now opt into the DAO by setting the existing `onQueueChanged` + `onLoadQueue` callbacks.
+
+No cross-package dependency added — `alhai_zatca` is untouched. The adapter wiring (DAO → callbacks) is a consumer concern to keep the separation clean.
+
+#### Scope decision (C-8a vs C-8b vs C-8c)
+
+Given session time + real-world state (no production consumer wires callbacks today — ZATCA Phase 2 pipeline not active in cashier):
+
+- **C-8a (chosen)** — Drift infrastructure only, zero alhai_zatca changes. Ready for consumer when ZATCA Phase 2 activates.
+- **C-8b** — Two-table design (separate dead-letter table) — rejected as over-engineering; single-table + status column is simpler.
+- **C-8c** — Stop at v67 FSS encryption — rejected; user wanted actual Drift migration to remove the JSON-blob pattern.
+
+#### Design — single table with status column
+
+`zatca_offline_queue` (PK = `invoice_number`):
+- Identifiers: `invoice_number`, `uuid`, `store_id`
+- Content: `signed_xml_base64`, `invoice_hash`, `is_standard`
+- State: `status` (`pending` | `dead_letter`), `retry_count`, `last_error`
+- Timestamps: `queued_at`, `last_retry_at`, `dead_lettered_at`
+
+Dead-letter is just `status = 'dead_letter'` — no separate table needed. Cleanup task promotes rows where `retry_count >= 10 AND queued_at < NOW() - 30 days`.
+
+Indexes:
+- `idx_zatca_queue_status_queued` (status + queued_at) — list by state + order
+- `idx_zatca_queue_store` (store_id) — per-store filter
+- `idx_zatca_queue_retry` (retry_count + queued_at) — cleanup query
+
+#### DAO methods
+
+- `upsert(...)` — insert new or update existing invoice (preserves retry_count on re-sign)
+- `recordRetry(invoice_number, lastError)` — increments retry_count, auto-promotes to dead_letter at max
+- `remove(invoice_number)` — delete after successful submit
+- `getPending({storeId})` — list pending invoices
+- `getDeadLetter({storeId})` — list dead-letter for manual review
+- `getByInvoiceNumber(n)` — single lookup
+- `getPendingCount({storeId})` — for UI indicator
+- `watchPendingCount({storeId})` — reactive count
+- `cleanupStaleToDeadLetter()` — promote stale+exhausted to dead_letter
+- `purgeDeadLetter()` — manual purge after review
+
+`maxRetries = 10`, `staleThreshold = 30 days`.
+
+#### Migration (schema v37 → v38)
+
+- `app_database.dart:schemaVersion` bumped 37 → 38
+- `case 38` added to `_runMigrationStep` — `m.createTable(zatcaOfflineQueueTable)`
+- Empty table on first upgrade; no data migration (no existing SharedPreferences data to copy in current branch lineage)
+- Pre-migration backup created automatically by existing `backupService.createPreMigrationBackup(from)` — zero additional work
+- Downgrade guard already in place (throws UnsupportedError on v38 → v37)
+
+#### Not touched this session (intentional)
+
+- `alhai_zatca/lib/src/services/zatca_offline_queue.dart` — existing field-setter API (`onQueueChanged` + `onLoadQueue`) is sufficient for consumer wiring. No refactor.
+- `alhai_zatca/lib/src/di/zatca_module.dart` — no change. Consumer (cashier Phase 2) wires the adapter.
+- SharedPreferences migration helper — will be part of consumer wiring when ZATCA Phase 2 activates. For now, both persistence paths coexist cleanly.
+
+#### Verification
+
+| Step | Expected | Actual |
+|---|---|---|
+| `flutter analyze alhai_database/lib/` | clean | ✓ (72s) |
+| `build_runner build` | 262 outputs | ✓ (68s) |
+| New DAO tests | 10/10 | ✓ (all pass) |
+| alhai_database full suite | 506/506 + 1 skipped | ✓ (after updating 3 hardcoded v37 assertions to v38) |
+| cashier tests | 600/600 | (pending) |
+| alhai_sync tests | 358/358 | (pending) |
+
+**3 migration test fixes:**
+- `test/app_database_test.dart:20` — `schema version is 37` → `schema version is 38`
+- `test/migration_test.dart:20` — same
+- `test/migration_backup_test.dart:16` — `expect(db.schemaVersion, 37)` → `38`
+
+Schema-version-as-string test names + literal assertions needed updating for the new version.
+
+#### Files changed
+
+| File | Type |
+|---|---|
+| `packages/alhai_database/lib/src/tables/zatca_offline_queue_table.dart` | NEW |
+| `packages/alhai_database/lib/src/tables/tables.dart` | export added |
+| `packages/alhai_database/lib/src/daos/zatca_offline_queue_dao.dart` | NEW |
+| `packages/alhai_database/lib/src/daos/daos.dart` | export added |
+| `packages/alhai_database/lib/src/app_database.dart` | +table, +dao, v37→v38, case 38 |
+| `packages/alhai_database/lib/src/app_database.g.dart` | regenerated |
+| `packages/alhai_database/lib/src/daos/zatca_offline_queue_dao.g.dart` | NEW (generated) |
+| `packages/alhai_database/test/daos/zatca_offline_queue_dao_test.dart` | NEW (10 tests) |
+| `packages/alhai_database/test/app_database_test.dart` | v37→v38 |
+| `packages/alhai_database/test/migration_test.dart` | v37→v38 |
+| `packages/alhai_database/test/migration_backup_test.dart` | v37→v38 |
+
+#### Risk + deferred items
+
+**Production risk:**
+- Schema bump v37 → v38 forces onUpgrade on all existing devices
+- `createTable` is a simple DDL on an empty new table — lowest-risk migration type
+- Pre-migration backup created automatically via backupService
+- Downgrade guard throws — safe behavior
+
+**Deferred (consumer wiring):**
+1. **FSS/SharedPreferences → Drift data migration** — when consumer wires callbacks, first load should check SharedPreferences for legacy JSON-blob and copy rows to Drift + delete the legacy blob.
+2. **ZATCA Phase 2 pipeline activation** in cashier — prerequisite for any callback wiring (the queue isn't actively populated today).
+3. **Cleanup task scheduler** — `cleanupStaleToDeadLetter()` exists; consumer decides when to call it (daily scheduler? on app start?).
+4. **UI for dead-letter review** — `getDeadLetter()` + `purgeDeadLetter()` ready; super_admin / store-admin UI is future work.
+
+#### Methodology validations
+
+1. **Infrastructure-first** — building the foundation without activating it lets consumers adopt at their own pace. Cross-package separation maintained.
+2. **Single-table with status column over two-table split** — simpler model, no cross-table row-moves, same functional expressivity. YAGNI on the dead-letter table.
+3. **Schema version tests updated atomically** — easy to miss, caught by full suite run. Three hardcoded `37` → `38` across test files.
+4. **Pre-migration backup is free** — existing `backupService` infrastructure means every schema bump is automatically recoverable. No extra work for C-8a.
+
+#### Audit refs
+
+C-8a ZATCA Queue Drift Infrastructure / prior C-8 FSS encryption work (separate branch, 2026-04-21 AM) / audit `03_sync_offline_first.md` Finding #10 / deferred consumer wiring + cleanup scheduler.
+
+---
+
+END OF C-8a ZATCA QUEUE DRIFT ENTRY — infrastructure ready, consumer wiring deferred

@@ -14,12 +14,8 @@ class OrgMembersDaoManager {
   OrgMembersDaoManager(this._db);
   $$OrgMembersTableTableTableManager get orgMembersTable =>
       $$OrgMembersTableTableTableManager(
-        _db.attachedDatabase,
-        _db.orgMembersTable,
-      );
+          _db.attachedDatabase, _db.orgMembersTable);
   $$UserStoresTableTableTableManager get userStoresTable =>
       $$UserStoresTableTableTableManager(
-        _db.attachedDatabase,
-        _db.userStoresTable,
-      );
+          _db.attachedDatabase, _db.userStoresTable);
 }
