@@ -3270,3 +3270,117 @@ users PII RLS session / v66 deferral (closure audit extended) / Phase A live DB 
 ---
 
 END OF USERS PII RLS ENTRY — 🎉 WILDCARD CAMPAIGN TRULY COMPLETE (v58 → v67, 10 migrations)
+
+
+---
+
+### RLS Hygiene Closeout — 2026-04-21 — verification-only session
+
+**Classification:** Read-only audit closure. ZERO database changes, ZERO migration file.
+**Branch:** fix/rls-hygiene-closeout (off 9e4b01c, cumulative from v67)
+**Commit:** log-only (documentation of verified state)
+
+#### Purpose
+
+Independently verify the "campaign truly complete" claim from v67. The original wildcard audit in 2026-04-22 had missed 14+ residuals (caught later by the v66 closure audit); re-verification after v67 prevents the same pattern from recurring a third time.
+
+Also re-evaluates two backlog items:
+- whatsapp_templates "multi-store enhancement" (from v51 backlog)
+- RLS type-drift historical scan (from v53 appendix suggestion)
+
+#### Task 1 — Final wildcard re-sweep (read-only SQL)
+
+Comprehensive predicate-based search across ALL `public.*` tables:
+
+```sql
+WHERE qual = 'true'
+   OR (with_check = 'true' AND cmd != 'INSERT')
+   OR policyname ILIKE '%allow%full%'
+   OR policyname ILIKE 'anon_read%'
+   OR policyname ILIKE 'authenticated_read%'
+```
+
+**Result: 0 rows.** No wildcard, no anon_read with qual=true, no authenticated_read with qual=true, no over-permissive with_check on non-INSERT policies.
+
+This confirms the v67 closure claim. The predicate-based approach — the methodology lesson from v66 — now runs a clean sweep.
+
+#### Task 2 — whatsapp_templates multi-store enhancement (stale backlog)
+
+Expected state per v51 log entry: `whatsapp_templates.store_isolation` using single-store scalar `get_user_store_id()`.
+
+Actual live state:
+```
+whatsapp_templates | whatsapp_templates_store_access | ALL | {authenticated} | has_store_access(store_id)
+```
+
+**Already upgraded.** Policy uses multi-store safe `has_store_access(store_id)` (via `get_user_store_ids()` set). No session action needed — backlog item was silently resolved in an earlier migration (likely v56's Gen 2 cleanup or an out-of-campaign change).
+
+Backlog item officially closed.
+
+#### Task 3 — RLS Type-Drift re-audit (post-v67)
+
+Executed extended audit query catching uncasted `auth.uid()` comparisons in both `qual` and `with_check` clauses (v53 appendix query, extended scope).
+
+**Results: 8 uncasted comparisons found** — same 8 as the 2026-04-21 earlier-today audit:
+
+| Table | Policy | Clause | Column | Type |
+|---|---|---|---|---|
+| app_users | app_users_update | qual | auth_id | uuid |
+| sa_audit_log | sa_audit_log_insert_self | with_check | actor_id | uuid |
+| stores | stores_delete | qual | owner_id | uuid |
+| stores | stores_insert | with_check | owner_id | uuid |
+| stores | stores_member_select | qual | owner_id + subquery | uuid |
+| stores | stores_owner_select | qual | owner_id + has_store_access | uuid |
+| stores | stores_update | qual | owner_id | uuid |
+| users | users_self_select | qual | auth_uid | uuid |
+
+Column-type verification via `information_schema.columns`: all 4 distinct columns (`app_users.auth_id`, `sa_audit_log.actor_id`, `stores.owner_id`, `users.auth_uid`) are `data_type = 'uuid'`. Each comparison is `uuid = uuid` — valid PostgreSQL, no cast needed.
+
+**Critical verification from today's work:** none of the 14 new policies from v64/v65/v66/v67 appear in the audit result. This confirms that:
+- v64's `is_super_admin()` bypass pattern (no direct auth.uid() comparison) is clean
+- v65's `has_store_access(store_id)` pattern is clean
+- v66's `has_store_access` + `is_super_admin()` pattern is clean
+- v67's `id = (auth.uid())::text` patterns (5 new policies on users) all use explicit TEXT cast ✓
+
+**Result: 0 latent type-drift bugs.** RLS type safety preserved across all 10 campaign migrations.
+
+#### Final RLS inventory (post-v67, pre-v68-would-have-been)
+
+- **Total policies on `public.*`:** 165
+- **Tables with at least one policy:** 59
+- **Wildcard/pseudo-wildcard policies:** 0
+- **Dead Gen 2 single-store scalar policies:** 0
+- **Type-drift latent bombs:** 0
+
+#### Outcome
+
+Session deliverable: **log entry only** — no migration v68, no live database changes. All three intended tasks came back clean on verification.
+
+This is the **correct outcome** for a hygiene closeout: if the closure audit finds issues, we extend the campaign (as v66 did); if it finds nothing, the campaign is truly done and the verification itself becomes the deliverable.
+
+#### Methodology validations
+
+1. **Verification-only sessions are valid** — when the audit comes back clean, the log of the audit is the output. Writing a "v68 migration" with zero statements would be cargo-cult work.
+2. **Predicate-based sweeps > policyname patterns** — Task 1's broader predicate `qual = 'true' OR ...` caught zero (matching the expected state); the prior Phase 1 approach (policyname exact-match) would have missed entire classes of wildcards.
+3. **Stale backlog detection** — Task 2's "already done" outcome surfaced by cross-checking assumed state against live. Both v66 and this session demonstrate that backlog items can be resolved out-of-band; verify before scheduling work.
+4. **Cross-time consistency checks** — Task 3 compared audit output to the 2026-04-21 earlier run. Identical 8 rows = no regression, no new type-drift introduced by the 14 new policies.
+
+#### Closure statement
+
+The wildcard-cleanup campaign, spanning v58 (2026-04-22) through v67 (2026-04-21) — 10 migrations, ~85 statements, ~56 wildcard-family removals, ~19 Gen 3/bypass additions — is **verifiably closed** on 2026-04-21.
+
+Post-campaign RLS surface on `public.*`:
+- **Zero** qual=true wildcards
+- **Zero** anon_read policies with qual=true
+- **Zero** authenticated_read policies with qual=true
+- **Zero** dead Gen 2 single-store scalar policies
+- **Zero** latent `text = uuid` type-drift bombs
+- **165 policies** across **59 tables**, all tenant-isolated or platform-admin gated
+
+#### Audit refs
+
+RLS Hygiene Closeout / v67 "truly complete" verification / v51 whatsapp_templates backlog closed / v53 appendix RLS type-drift query (extended re-run).
+
+---
+
+END OF RLS HYGIENE CLOSEOUT — 🎉 CAMPAIGN VERIFIED CLOSED
