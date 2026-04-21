@@ -3151,3 +3151,122 @@ Campaign Closure Audit / 2026-04-22 Phase 1 limitation / v65 "33/33 complete" cl
 ---
 
 END OF CAMPAIGN CLOSURE AUDIT ENTRY — users deferred to dedicated PII session
+
+
+---
+
+### users PII RLS Session — 2026-04-21 — 🎉 CAMPAIGN TRULY COMPLETE (v67)
+
+**Classification:** PII-critical RLS design + S-0 anon-leak closure. Two-step atomic.
+**Branch:** fix/users-pii-rls (off d0d879f, cumulative from v66)
+**Migration:** v67 at supabase/migrations/20260421_v67_users_pii_rls_bootstrap.sql
+**Applied:** Supabase production on 2026-04-21 via SQL Editor (Step 1 then Step 2)
+
+#### Summary
+
+Closes the final residual from v66 — the `users` table's 3 pseudo-wildcard policies (`anon_read_users`, `authenticated_read_users`, `store_isolation` dead Gen 2). Required first-principles tenancy design because `users` has 5 distinct role visibility requirements, not the single-pattern approach that covered earlier tables.
+
+After v67: **every `public.*` table is tenant-isolated or platform-admin gated. ZERO wildcards, anon-reads, or dead Gen 2 remain on any table in the schema.**
+
+#### Tenancy model designed
+
+5 user roles with different visibility needs:
+- **super_admin** — cross-org; sees all users
+- **store_owner** — sees own stores' users (via `stores.owner_id` + `has_store_access`)
+- **cashier/manager** — sees coworkers in same store (via `users.store_id` + `has_store_access`)
+- **customer** — NULL store_id; sees self only
+- **delivery** — NULL store_id; sees self only
+
+Policy coverage strategy:
+1. Self-access (SELECT/INSERT/UPDATE) via `id = auth.uid()::text` — covers all roles' self operations
+2. Coworker visibility via `store_id IS NOT NULL AND has_store_access(store_id)` — NULL store_id (customers/drivers) excluded from staff visibility
+3. Platform bypass via `is_super_admin()` FOR ALL
+
+#### Scope delivered
+
+**Step 1 — 5 CREATE Gen 3 policies (additive):**
+- `users_self_select_by_id` (SELECT, `id = auth.uid()::text`)
+- `users_self_insert` (INSERT, WITH CHECK `id = auth.uid()::text`)
+- `users_self_update` (UPDATE, USING + WITH CHECK `id = auth.uid()::text`)
+- `users_same_store_select` (SELECT, `store_id IS NOT NULL AND has_store_access(store_id)`)
+- `users_super_admin` (FOR ALL, `is_super_admin()`)
+
+**Step 2 — 3 DROP (subtractive):**
+- `anon_read_users` (S-0 PII leak — 4 user records exposed to any anon client)
+- `authenticated_read_users` (over-permissive cross-tenant read)
+- `store_isolation` (dead Gen 2 single-store scalar)
+
+#### Phase A investigation
+
+**Drift schema** (`packages/alhai_database/lib/src/tables/users_table.dart`): `id TEXT PK`, `orgId TEXT nullable`, `storeId TEXT nullable`, `authUid TEXT nullable`, `role TEXT default 'cashier'`.
+
+**Row baseline (Q-users, 2026-04-21):** total=4, with_auth_uid=4, with_id=4, role_count=4 (super_admin + store_owner + cashier + customer). Every row has both `id` and `auth_uid` populated.
+
+**Cross-app `.from('users')` callers — 27 hits across 5 apps:**
+- super_admin (11): CRUD + counts cross-org → needs bypass
+- customer_app (5): signup upsert + self-read + self-update + FCM token → self-scope
+- driver_app (5): signup upsert + self-read + profile + FCM token → self-scope
+- alhai_auth (1): self role resolution via `id = userId` → self-scope
+- alhai_sync (whitelist): cashier coworker visibility → needs same_store policy
+- customer_app tests (2): mocks, not production
+
+**Pre-v67 policy layout:** `users_self_select` (old, `auth_uid = auth.uid()`) was functional because all 4 rows have auth_uid populated. But all apps write `id = auth.uid()::text` — hence `users_self_select_by_id` added as canonical pattern. Legacy policy kept as OR'd coverage (harmless).
+
+#### Verification
+
+| Check | Expected | Actual |
+|---|---|---|
+| V-PRE | 4 rows (anon_read + auth_read + store_isolation + users_self_select) | ✓ |
+| Step 1 atomic | 5 CREATE | Success. No rows returned |
+| V1-POST-A | 9 rows (4 old + 5 new) | ✓ |
+| Step 2 atomic | 3 DROP | Success. No rows returned |
+| V2-POST-A | 6 rows (5 new + legacy users_self_select) | ✓ |
+| V2-POST-B | 4 users preserved | ✓ |
+| V2-POST-WILDCARDS | 0 rows on users table | ✓ |
+| Flutter tests | cashier + alhai_sync + customer_app + driver_app baselines | (see test results in commit) |
+
+#### Access matrix (post-v67)
+
+| Role | Self | Coworker | All Users |
+|---|---|---|---|
+| anon | — | — | — |
+| authenticated (no role match) | R via users_self_select | — | — |
+| customer | RIU | — | — |
+| delivery | RIU | — | — |
+| cashier / manager / store_owner | RIU | R (via users_same_store_select) | — |
+| super_admin | RIU | R | RIUD (via users_super_admin FOR ALL) |
+
+R=Read, I=Insert, U=Update, D=Delete
+
+#### 🎉 Final campaign tally (v58 → v67)
+
+| Migration | Scope |
+|---|---|
+| v58 | 2 S-0 anon (sales, sale_items) |
+| v59 (W1) | 12 policies on 6 financial tables |
+| v60 (W2 reduced) | 4 on 3 identity tables |
+| v61 (W4) | 21 on 10 operational + customers anon |
+| v62 (W5 reduced) | 3 on categories |
+| v63 | 1 sync_queue vestigial |
+| v64 | 5 Platform Admin (2 bypass + 3 wildcards) |
+| v65 | 12 Gen 3 Bootstrap (6 Gen 3 + 6 drops) |
+| v66 | 17 Closure Extended (4 bypass/Gen 3 + 13 drops) |
+| **v67** | **8 users PII (5 Gen 3 + 3 drops)** |
+| **TOTAL** | **~85 statements across 10 migrations — 7 of 7 scope-tables complete** |
+
+**Cumulative:** ~56 wildcard-family removals + ~19 Gen 3/bypass additions. Zero qual=true wildcards remain on any `public.*` table.
+
+#### Methodology validations
+
+1. **First-principles tenancy design over pattern-copying** — `users` has 5 distinct roles with different visibility needs; simple `has_store_access` alone wouldn't cover customer/driver NULL-store-id rows. Multi-policy PERMISSIVE OR solved it.
+2. **Keep-old-and-add-new for legacy policies** — `users_self_select` (auth_uid-based) stayed even after `users_self_select_by_id` (id-based) superseded it. Harmless PERMISSIVE OR. Avoids breaking anything that may depend on the old path.
+3. **Access matrix as design artifact** — the per-role R/I/U/D table in the migration comment forces explicit verification of each role's required capabilities. Caught the "customer-has-NULL-store_id" edge case during design.
+4. **4 test suites in parallel** — first time running cashier + alhai_sync + customer_app + driver_app concurrently. users changes touched auth flow in customer_app + driver_app, so broader test coverage warranted.
+
+#### Audit refs
+
+users PII RLS session / v66 deferral (closure audit extended) / Phase A live DB investigation (Q-users + cross-app grep) / Access matrix design artifact.
+
+---
+
+END OF USERS PII RLS ENTRY — 🎉 WILDCARD CAMPAIGN TRULY COMPLETE (v58 → v67, 10 migrations)
