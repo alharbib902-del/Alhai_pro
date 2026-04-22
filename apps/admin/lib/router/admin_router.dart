@@ -83,6 +83,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart'
         ProductDetailScreen,
         InventoryScreen,
         ExpiryTrackingScreen,
+        InventoryAlertsScreen,
         SuppliersScreen,
         SupplierDetailScreen,
         OrdersScreen,
@@ -650,6 +651,12 @@ final List<RouteBase> _routes = [
         name: 'expiry-tracking',
         pageBuilder: (context, state) =>
             _buildFadePage(state: state, child: const ExpiryTrackingScreen()),
+      ),
+      GoRoute(
+        path: AppRoutes.inventoryAlerts,
+        name: 'inventory-alerts',
+        pageBuilder: (context, state) =>
+            _buildFadePage(state: state, child: const InventoryAlertsScreen()),
       ),
 
       // ====================================================================

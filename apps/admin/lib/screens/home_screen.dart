@@ -189,6 +189,8 @@ class AdminHomeScreen extends ConsumerWidget {
                               ),
                               color: AppColors.warning,
                               isDark: isDark,
+                              onTap: () =>
+                                  context.push(AppRoutes.inventoryAlerts),
                             ),
                             _StatTile(
                               icon: Icons.people_outline_rounded,
@@ -445,6 +447,7 @@ class _StatTile extends StatelessWidget {
   final double? changePercent;
   final Color color;
   final bool isDark;
+  final VoidCallback? onTap;
 
   const _StatTile({
     required this.icon,
@@ -453,6 +456,7 @@ class _StatTile extends StatelessWidget {
     this.changePercent,
     required this.color,
     required this.isDark,
+    this.onTap,
   });
 
   @override
@@ -460,19 +464,17 @@ class _StatTile extends StatelessWidget {
     final changeDesc = changePercent != null && changePercent != 0
         ? ', ${changePercent! > 0 ? "increased" : "decreased"} by ${changePercent!.abs().toStringAsFixed(0)}%'
         : '';
-    return Semantics(
-      label: '$label: $value$changeDesc',
-      child: Container(
-        padding: const EdgeInsets.all(AlhaiSpacing.md),
-        decoration: BoxDecoration(
-          color: AppColors.getSurface(isDark),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: AppColors.getBorder(isDark)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
+    final tile = Container(
+      padding: const EdgeInsets.all(AlhaiSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.getBorder(isDark)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
             Row(
               children: [
                 Container(
@@ -524,16 +526,29 @@ class _StatTile extends StatelessWidget {
                 color: AppColors.getTextPrimary(isDark),
               ),
             ),
-            const SizedBox(height: AlhaiSpacing.xxxs),
-            Text(
-              label,
-              style: TextStyle(
-                fontSize: 12,
-                color: AppColors.getTextMuted(isDark),
-              ),
+          const SizedBox(height: AlhaiSpacing.xxxs),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 12,
+              color: AppColors.getTextMuted(isDark),
             ),
-          ],
-        ),
+          ),
+        ],
+      ),
+    );
+    final semanticTile = Semantics(
+      label: '$label: $value$changeDesc',
+      button: onTap != null,
+      child: tile,
+    );
+    if (onTap == null) return semanticTile;
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(16),
+        child: semanticTile,
       ),
     );
   }
