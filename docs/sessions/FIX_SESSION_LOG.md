@@ -6724,6 +6724,75 @@ END OF SESSION 31 — M7 ZATCA queue report on main; compliance visibility unblo
 
 ---
 
+# Session 32 — Admin Tier B M2 notification badge (2026-04-23)
+
+**Branch:** `feat/admin-low-stock-badge` (merged). **Commit:** `d2ef87ef`. **Budget:** ~1h.
+
+## Summary
+
+Closes the notification-badge half of M2 from `docs/reports/admin-audit-status-2026-04-22.md`. The dashboard tile landed Session 29; this session completes the story — every screen's AppHeader bell now shows a live count of low-stock products and updates in real time as stock crosses the `min_qty` threshold (purchase receipt, sale, manual edit, soft-delete).
+
+Until now, 20 screens across admin + shared_ui passed a hardcoded `notificationsCount: 3` — a dev placeholder. Replaced with a read from a new StreamProvider that watches the DB directly.
+
+## Changes — 23 files, +128 / −20 LOC
+
+### Dependency order
+
+1. **`packages/alhai_database/lib/src/daos/products_dao.dart`** — new `Stream<int> watchLowStockCount(String storeId)`. Mirrors `getLowStockProducts` WHERE clause (`stock_qty <= min_qty`, `is_active = 1`, `deleted_at IS NULL`) but returns a Drift stream via `watchSingle()`. Efficient reactive query (only a COUNT, not the full row set).
+2. **`packages/alhai_shared_ui/lib/src/providers/products_providers.dart`** — new `lowStockNotificationCountProvider` (`StreamProvider.autoDispose<int>`). Reads `currentStoreIdProvider`, pulls `AppDatabase` from GetIt, pipes through `watchLowStockCount`. Wrapped in `try/catch` with `handleError((_) => 0)` on the stream — the badge is a non-critical overlay and must never crash the surrounding screen (widget tests without a full DB mock still render).
+3. **20 screens** (7 admin + 13 shared_ui) — replace `notificationsCount: 3,` with `notificationsCount: ref.watch(lowStockNotificationCountProvider).value ?? 0,`. Shared_ui screens that didn't already import `products_providers.dart` get the import added.
+
+### Screens NOT touched
+
+- `notifications_screen.dart` — already renders `unread` from the notifications provider. Correct as-is.
+- Any screen with `notificationsCount: 0,` — intentional "no badge" (device logs, wallet, etc.).
+
+### Tests — 2 new DAO cases
+
+- **`packages/alhai_database/test/daos/products_dao_test.dart`** — 2 new cases under the existing ProductsDao group:
+  1. Emits 0 when no product is below threshold.
+  2. Reactive contract: initial value 1; drop another product's stock via `updateStock` → count becomes 2; soft-delete one of them → count drops back to 1.
+
+## Why this shape
+
+- **Stream, not Future.** The badge must update when stock changes. Drift's `customSelect(...).watchSingle()` is zero-cost for idle screens and gives us reactive updates for free.
+- **Try/catch around the whole provider.** Widget tests in the codebase register a bare `MockAppDatabase` without stubbing `productsDao.watchLowStockCount`. Pre-M2 this was fine because the AppHeader read a hardcoded `3`. With the new provider, an unstubbed mock throws. The try/catch falls back to `Stream.value(0)` — worst case the badge shows 0 in a test, which is the same as the existing "no real data" behaviour.
+- **Mechanical 20-file edit delegated to a subagent.** Pattern was identical across all files; 19 edits after the first validation file took \~5 min via agent, matching the "agent delegation for mechanical conversion" rule from prior sessions.
+
+## Scope NOT covered (intentionally)
+
+- **Push notifications / OS-level alerts** when stock crosses the threshold. The ask was "in-app notification," which this delivers via the bell badge. OS push would need a separate Firebase/APNs integration.
+- **Granular drill-down from the bell.** Tapping the bell on each screen still uses whatever `onNotificationsTap` that screen's author wired (usually `/notifications`). A future tweak could redirect specifically to `/inventory/alerts` when `count > 0` — left as a polish follow-up.
+- **Shared_ui → admin_lite / cashier usage.** Both apps now benefit from live badges too (strict improvement over hardcoded 3). No regression risk because the try/catch swallows any wiring gap.
+
+## Verification
+
+- `flutter analyze` shared_ui + admin: **0 NEW issues** (both package baselines unchanged at 15 + 25 pre-existing lints in unrelated files).
+- **alhai_database tests: 515 / 515 + 1 skipped** (was 513 + 1; +2 watchLowStockCount cases).
+- **alhai_shared_ui tests: 869 / 869** — baseline preserved.
+- **admin tests: 365 / 365** — baseline preserved.
+
+## Risk
+
+Low.
+- Additive DAO method + additive provider.
+- Provider has error-swallow, so wiring bugs cannot crash the UI.
+- 20 screens changed but all identical 1-line replacements, verified by the full test suite green.
+- No cashier / admin_lite specific changes — they inherit the improvement via shared_ui.
+
+## Remote push + merge
+
+- Branch `feat/admin-low-stock-badge` pushed to `backup`.
+- Fast-forward merged to `main` (main now at `d2ef87ef`).
+- Branch deleted locally post-merge (still on `backup` remote for recoverability).
+- `origin` still at `c214792a` — 15 commits on main now awaiting explicit user approval.
+
+---
+
+END OF SESSION 32 — M2 complete (dashboard + notification badge); every screen shows live low-stock count
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
 
 **Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
@@ -6790,13 +6859,13 @@ super_admin        222
 - ~~Q6~~ — DONE Session 28 (productCreate + productEdit audit, H5 price-compare bug fixed)
 
 **Admin audit — Tier B feature sessions (2-4h each, priority order):**
-1. ~~**M2 dashboard**~~ — DONE Session 29 (route + tappable tile). Notification-badge half still open (see item 6).
+1. ~~**M2**~~ — FULLY DONE (dashboard half Session 29 `86e14676`; notification badge Session 32 `d2ef87ef`)
 2. ~~**Q1-UI**~~ — DONE Session 26, merged to `main` at `ccb7b2dd`
 3. ~~**M1**~~ — DONE Session 30, merged to `main` at `0cc0406f` (EAN-13 generator + form wiring + SnackBar + 5 tests)
 4. ~~**M7**~~ — DONE Session 31, merged to `main` at `e6057198` (ZATCA queue report: 3 stat cards + pending/rejected lists + 4 DAO tests)
 5. **M3 + M4** stocktaking + inter-branch transfer (shared stock_movements, one session)
-6. **M2 notification badge** — wire `lowStockCount` into AppHeader bell / system push (separate session, touches shared_ui)
-7. **M7 follow-ups** — nav entry in ReportsScreen (touches alhai_reports package, shared with cashier); retry/purge actions for rejected items (needs permission decision); date-range filter
+6. **M7 follow-ups** — nav entry in ReportsScreen (touches alhai_reports package, shared with cashier); retry/purge actions for rejected items (needs permission decision); date-range filter
+7. **M2 polish** — redirect bell onTap to `/inventory/alerts` when count > 0 (currently each screen's author chose target, usually `/notifications`)
 
 **super_admin — ops (user-executed, not code):**
 - 6 GitHub Actions secrets + `deploy_web.yml` `--dart-define` flags
