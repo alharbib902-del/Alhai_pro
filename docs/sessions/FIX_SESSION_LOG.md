@@ -7589,6 +7589,60 @@ END OF SESSION 42 — C-4 Session 1 meaningfully complete; 2 known round-trip bu
 
 ---
 
+# Session 43 — admin product_form price/cost seed cents-as-SAR bug (2026-04-24)
+
+**Commit:** `21a30b18` on branch `fix/admin-product-form-price-seed`. **Budget:** ~20 min. Closes §4a from the 2026-04-23 NEXT SESSION STARTING POINT backlog — the round-trip bug that the Session 42 §B1 agent surfaced but did not cross on its skip rule.
+
+## Summary
+
+Picked the 15-min priority item from the fresh-session backlog: the admin product form seeded its price + costPrice text fields from raw int-cents columns (C-4 Stage B made them int cents), then the save handler at `:978 / :1090` converted typed text back as SAR via `(double.tryParse(text) * 100).round()`. Round trip "open a product and save without change" = silent 100× corruption per save. A 10-SAR product becomes 1000 SAR after one accidental re-save.
+
+## Fix
+
+`apps/admin/lib/screens/products/product_form_screen.dart:104-108` — seeds now divide cents by 100.0 before `toStringAsFixed(2)`. costPrice preserves `null` as empty string rather than `"0.00"` (so the save path's empty-text → null branch still fires, keeping the unpriced-cost semantic distinct from zero-cost on round trip).
+
+```dart
+// C-4 Stage B: price + costPrice columns are int cents.
+// Seed SAR for display / text input (save path multiplies by 100).
+_priceController.text = (product.price / 100.0).toStringAsFixed(2);
+_costController.text = product.costPrice == null
+    ? ''
+    : (product.costPrice! / 100.0).toStringAsFixed(2);
+```
+
+## Tests
+
+`apps/admin/test/screens/products/product_form_screen_test.dart` — 2 new widget regressions:
+
+1. **edit mode seeds price/costPrice fields in SAR (cents / 100)** — stubs `getProductById` to return `price: 1234, costPrice: 789` (cents), pumps edit-mode screen, asserts the rendered fields show `"12.34"` + `"7.89"` and NOT `"1234.00"` + `"789.00"`. That last pair is the exact pre-fix bug symptom — if anyone reverts the seed later, this test flips red.
+2. **edit mode leaves costPrice field empty when null** — same setup, `costPrice: null`, asserts the field is not seeded with `"0.00"`. Preserves the null-vs-zero distinction across round trip.
+
+Used existing `createTestProduct` factory from `apps/admin/test/helpers/test_factories.dart` (already has int-cents defaults, `price: 2500, costPrice: 1500`).
+
+## Verification
+
+- `flutter analyze lib/screens/products/product_form_screen.dart test/screens/products/product_form_screen_test.dart`: **0 issues**.
+- `flutter test test/screens/products/product_form_screen_test.dart`: **7 / 7** (5 existing + 2 new).
+- `flutter test` (full admin suite): **367 / 367** (was 365; +2 new).
+- Full `flutter analyze` on apps/admin: 25 pre-existing info-level issues untouched (all in unrelated files, none in `product_form_screen.dart`).
+
+## Scope NOT covered
+
+- Branch NOT merged. NOT pushed. User decides when.
+- Retroactive cents-as-SAR grep (§5 nice-to-have from 2026-04-23 handover) still open. Session 43 closes only the §4a item; §4b-§4g from the backlog remain.
+
+## Why this shape
+
+- **Null preservation over handover's `?? 0` suggestion.** The 2026-04-24 handover doc (`memory/handover_2026_04_24.md` §4a) proposed `((product.costPrice ?? 0) / 100.0).toStringAsFixed(2)`. That would seed `"0.00"` for a null costPrice, which the save path then parses to 0 — silently turning a null column into an explicit zero on any round trip. The ternary preserves null-vs-zero semantics across the full cycle, which is strictly better and costs one extra line.
+- **Widget test over DAO test.** The bug is at the seed/save boundary, not in Drift. The regression asserts the rendered string, which is what actually fails if seeds regress.
+- **No push.** Per durable user preference ("Never push origin إلا بإذن صريح"). User reviews + decides merge/push.
+
+---
+
+END OF SESSION 43 — §4a closed on feature branch; awaits user merge/push decision
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-24+)
 
 **Written end-of-day 2026-04-23 after Session 42** — closes a 17-session / 40-commit marathon this day.
@@ -7602,12 +7656,12 @@ Supersedes the "NEXT SESSION STARTING POINT (2026-04-23+)" block that lived here
 
 ## 1. Repo state snapshot
 
-- **Active branch:** `main` @ `102430ba` (session-42 docs commit).
-- **Remotes:** `local`, `backup/main`, `origin/main` — all in sync at `102430ba`. `gitlab/main` has a prior divergence, left untouched (user reconciles manually).
+- **Active branch:** `main` @ `10333713` (session-42 docs refresh commit).
+- **Feature branch ahead of main:** `fix/admin-product-form-price-seed` @ `21a30b18` (Session 43 §4a fix — awaits user merge/push decision).
+- **Remotes:** `local main`, `backup/main`, `origin/main` — all in sync at `10333713`. `gitlab/main` has a prior divergence, left untouched (user reconciles manually).
 - **Live Supabase:** v75.
 - **v76 authored but NOT live-applied** → `supabase/migrations/20260423_v76_invoices_rls_org_null_fallback.sql` (C-10 fix). Awaits user execution on Supabase Dashboard.
 - **Drift schema:** v44 (unchanged today).
-- **Only 1 local branch:** `main`.
 
 ## 2. Test baselines (end-of-day 2026-04-23)
 
@@ -7623,7 +7677,7 @@ Supersedes the "NEXT SESSION STARTING POINT (2026-04-23+)" block that lived here
 | cashier | 552 | — |
 | customer_app | 136 | — (not re-run) |
 | driver_app | 156 | — (not re-run) |
-| admin | 365 | — |
+| admin | 365 (367 on `fix/admin-product-form-price-seed`) | +2 on feature branch (Session 43 regressions) |
 | admin_lite | 183 | — |
 | super_admin | 222 | — |
 | distributor_portal | 420 | re-verified today |
@@ -7649,9 +7703,9 @@ Impact while delayed: customer_app `createOrder` 100 % failing on live productio
 
 ## 4. 🟠 Pick-up order for a fresh session
 
-### 4a. admin `product_form_screen.dart:104-105` round-trip bug — **do first if touching admin**
+### 4a. ~~admin `product_form_screen.dart:104-105` round-trip bug~~ — ✅ DONE in Session 43
 
-Live bug surfaced by the Session 42 §B1 agent. Form seed reads int cents as SAR → save handler converts back as SAR → cents. Round-trip "open + save-without-change" = silent 100× price corruption. Fix is 2 lines + a regression test (≈ 15 min).
+Closed 2026-04-24 on branch `fix/admin-product-form-price-seed` @ `21a30b18`. Seed divides cents by 100.0; costPrice preserves null as empty string. 2 widget regression tests added. admin baseline 365 → 367 on the feature branch. Awaits user merge/push decision.
 
 ### 4b. customer_app `alhai_shared_ui` dep decision — 3 display sites blocked
 
@@ -7673,9 +7727,12 @@ Code has a 3-option design note at `apps/admin/lib/screens/inventory/stock_trans
 
 ### 4g. super_admin Tier 3 U5/U9/U11/U13 — BLOCKED on missing audit doc
 
-## 5. ✅ Closed this day (2026-04-23)
+## 5. ✅ Closed
 
-### Admin audit — Tier A (all done)
+### 2026-04-24 (Session 43)
+- **§4a** admin `product_form_screen.dart:104-105` round-trip bug — commit `21a30b18` on `fix/admin-product-form-price-seed`. admin 365 → 367 on feature branch. Awaits merge/push.
+
+### Admin audit — Tier A (all done, 2026-04-23)
 Q1 / Q1-UI / Q2 / Q3 / Q4 / Q5 / Q6 — sessions 24 (prior day) + 26 / 27 / 28.
 
 ### Admin audit — Tier B (all done for MVP, some polish deferred)
@@ -7695,8 +7752,8 @@ Q1-UI / M1 / M2 (dashboard + badge) / M3 / M4 (UI) / M7 — sessions 26 / 29 / 3
 
 ```bash
 # 1. confirm clean state
-git log --oneline -1       # expect 102430ba or later
-git branch --list          # expect only main
+git log --oneline -1       # expect 10333713 on main, or fix/admin-product-form-price-seed @ 21a30b18
+git branch --list          # expect main + fix/admin-product-form-price-seed (Session 43)
 
 # 2. sanity-check a baseline subset
 cd packages/alhai_zatca && flutter test | tail -1   # 850 + 1 skipped ← ZATCA gate
