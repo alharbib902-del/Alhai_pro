@@ -184,6 +184,14 @@
   "copyright": "جملہ حقوق محفوظ ہیں",
   "deleteConfirmTitle": "حذف کی تصدیق",
   "deleteConfirmMessage": "کیا آپ واقعی حذف کرنا چاہتے ہیں؟",
+  "confirmDeleteItemMessage": "\"{name}\" حذف کریں؟\nاس عمل کو واپس نہیں کیا جا سکتا۔",
+  "@confirmDeleteItemMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "logoutConfirmTitle": "لاگ آؤٹ کی تصدیق",
   "logoutConfirmMessage": "کیا آپ واقعی لاگ آؤٹ کرنا چاہتے ہیں؟",
   "requiredField": "یہ فیلڈ ضروری ہے",

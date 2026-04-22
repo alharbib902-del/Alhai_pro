@@ -6,6 +6,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../../providers/marketing_providers.dart';
+import '../../core/widgets/delete_confirm_dialog.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Coupon Management Screen - شاشة إدارة الكوبونات
@@ -507,9 +508,13 @@ class _CouponsContent extends ConsumerWidget {
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () {
+                    onPressed: () async {
+                      if (!await confirmDelete(context, itemName: c.code)) {
+                        return;
+                      }
+                      if (!context.mounted) return;
                       Navigator.pop(context);
-                      _deleteCoupon(ref, c);
+                      await _deleteCoupon(ref, c);
                     },
                     icon: const Icon(Icons.delete, color: AppColors.error),
                     label: Text(

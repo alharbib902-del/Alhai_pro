@@ -184,6 +184,14 @@
   "copyright": "Hak cipta dilindungi",
   "deleteConfirmTitle": "Konfirmasi Hapus",
   "deleteConfirmMessage": "Apakah Anda yakin ingin menghapus?",
+  "confirmDeleteItemMessage": "Hapus \"{name}\"?\nTindakan ini tidak dapat dibatalkan.",
+  "@confirmDeleteItemMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "logoutConfirmTitle": "Konfirmasi Keluar",
   "logoutConfirmMessage": "Apakah Anda yakin ingin keluar?",
   "requiredField": "Bidang ini wajib diisi",

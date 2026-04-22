@@ -464,6 +464,11 @@ class AppLocalizationsFil extends AppLocalizations {
   String get deleteConfirmMessage => 'Sigurado ka bang gusto mong tanggalin?';
 
   @override
+  String confirmDeleteItemMessage(String name) {
+    return 'Tanggalin ang \"$name\"?\nHindi na maibabalik ang pagkilos na ito.';
+  }
+
+  @override
   String get logoutConfirmTitle => 'Kumpirmahin ang Logout';
 
   @override

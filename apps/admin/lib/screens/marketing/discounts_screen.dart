@@ -6,6 +6,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../../providers/marketing_providers.dart';
+import '../../core/widgets/delete_confirm_dialog.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Discounts Screen - شاشة الخصومات
@@ -332,7 +333,8 @@ class _DiscountsContent extends ConsumerWidget {
                             color: AppColors.error,
                             size: 20,
                           ),
-                          onPressed: () => _deleteDiscount(ref, discount),
+                          onPressed: () =>
+                              _deleteDiscount(context, ref, discount),
                         ),
                       ],
                     ),
@@ -443,9 +445,11 @@ class _DiscountsContent extends ConsumerWidget {
   }
 
   Future<void> _deleteDiscount(
+    BuildContext context,
     WidgetRef ref,
     DiscountsTableData discount,
   ) async {
+    if (!await confirmDelete(context, itemName: discount.name)) return;
     try {
       await deleteDiscount(ref, discount.id);
     } catch (e) {

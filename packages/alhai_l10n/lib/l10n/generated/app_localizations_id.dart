@@ -464,6 +464,11 @@ class AppLocalizationsId extends AppLocalizations {
   String get deleteConfirmMessage => 'Apakah Anda yakin ingin menghapus?';
 
   @override
+  String confirmDeleteItemMessage(String name) {
+    return 'Hapus \"$name\"?\nTindakan ini tidak dapat dibatalkan.';
+  }
+
+  @override
   String get logoutConfirmTitle => 'Konfirmasi Keluar';
 
   @override

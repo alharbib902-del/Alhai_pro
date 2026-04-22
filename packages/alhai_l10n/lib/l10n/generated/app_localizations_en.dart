@@ -464,6 +464,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get deleteConfirmMessage => 'Are you sure you want to delete?';
 
   @override
+  String confirmDeleteItemMessage(String name) {
+    return 'Delete \"$name\"?\nThis action cannot be undone.';
+  }
+
+  @override
   String get logoutConfirmTitle => 'Confirm Logout';
 
   @override

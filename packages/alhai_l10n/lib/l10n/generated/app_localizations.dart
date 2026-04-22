@@ -1002,6 +1002,12 @@ abstract class AppLocalizations {
   /// **'هل أنت متأكد من الحذف؟'**
   String get deleteConfirmMessage;
 
+  /// No description provided for @confirmDeleteItemMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل تريد حذف \"{name}\"؟\nلا يمكن التراجع عن هذا الإجراء.'**
+  String confirmDeleteItemMessage(String name);
+
   /// No description provided for @logoutConfirmTitle.
   ///
   /// In ar, this message translates to:

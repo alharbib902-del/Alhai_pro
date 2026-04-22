@@ -464,6 +464,11 @@ class AppLocalizationsHi extends AppLocalizations {
   String get deleteConfirmMessage => 'क्या आप वाकई हटाना चाहते हैं?';
 
   @override
+  String confirmDeleteItemMessage(String name) {
+    return '\"$name\" हटाएँ?\nइस कार्रवाई को पूर्ववत नहीं किया जा सकता।';
+  }
+
+  @override
   String get logoutConfirmTitle => 'लॉग आउट की पुष्टि';
 
   @override

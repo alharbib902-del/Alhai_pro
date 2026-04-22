@@ -464,6 +464,11 @@ class AppLocalizationsUr extends AppLocalizations {
   String get deleteConfirmMessage => 'کیا آپ واقعی حذف کرنا چاہتے ہیں؟';
 
   @override
+  String confirmDeleteItemMessage(String name) {
+    return '\"$name\" حذف کریں؟\nاس عمل کو واپس نہیں کیا جا سکتا۔';
+  }
+
+  @override
   String get logoutConfirmTitle => 'لاگ آؤٹ کی تصدیق';
 
   @override

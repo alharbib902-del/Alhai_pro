@@ -184,6 +184,14 @@
   "copyright": "सर्वाधिकार सुरक्षित",
   "deleteConfirmTitle": "हटाने की पुष्टि",
   "deleteConfirmMessage": "क्या आप वाकई हटाना चाहते हैं?",
+  "confirmDeleteItemMessage": "\"{name}\" हटाएँ?\nइस कार्रवाई को पूर्ववत नहीं किया जा सकता।",
+  "@confirmDeleteItemMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "logoutConfirmTitle": "लॉग आउट की पुष्टि",
   "logoutConfirmMessage": "क्या आप वाकई लॉग आउट करना चाहते हैं?",
   "requiredField": "यह फ़ील्ड आवश्यक है",

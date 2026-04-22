@@ -184,6 +184,14 @@
   "copyright": "جميع الحقوق محفوظة",
   "deleteConfirmTitle": "تأكيد الحذف",
   "deleteConfirmMessage": "هل أنت متأكد من الحذف؟",
+  "confirmDeleteItemMessage": "هل تريد حذف \"{name}\"؟\nلا يمكن التراجع عن هذا الإجراء.",
+  "@confirmDeleteItemMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "logoutConfirmTitle": "تأكيد الخروج",
   "logoutConfirmMessage": "هل أنت متأكد من تسجيل الخروج؟",
   "requiredField": "هذا الحقل مطلوب",

@@ -184,6 +184,14 @@
   "copyright": "Lahat ng karapatan ay nakalaan",
   "deleteConfirmTitle": "Kumpirmahin ang Pagtanggal",
   "deleteConfirmMessage": "Sigurado ka bang gusto mong tanggalin?",
+  "confirmDeleteItemMessage": "Tanggalin ang \"{name}\"?\nHindi na maibabalik ang pagkilos na ito.",
+  "@confirmDeleteItemMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "logoutConfirmTitle": "Kumpirmahin ang Logout",
   "logoutConfirmMessage": "Sigurado ka bang gusto mong mag-logout?",
   "requiredField": "Kailangan ang field na ito",

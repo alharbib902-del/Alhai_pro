@@ -6,6 +6,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../../providers/marketing_providers.dart';
+import '../../core/widgets/delete_confirm_dialog.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 
 /// Special Offers Screen - شاشة العروض الخاصة
@@ -469,9 +470,13 @@ class _OffersContent extends ConsumerWidget {
               children: [
                 Expanded(
                   child: OutlinedButton.icon(
-                    onPressed: () {
+                    onPressed: () async {
+                      if (!await confirmDelete(context, itemName: p.name)) {
+                        return;
+                      }
+                      if (!context.mounted) return;
                       Navigator.pop(context);
-                      _deletePromotion(ref, p);
+                      await _deletePromotion(ref, p);
                     },
                     icon: const Icon(Icons.delete, color: AppColors.error),
                     label: Text(

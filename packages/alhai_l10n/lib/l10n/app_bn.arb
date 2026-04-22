@@ -184,6 +184,14 @@
   "copyright": "সর্বস্বত্ব সংরক্ষিত",
   "deleteConfirmTitle": "মুছে ফেলা নিশ্চিত করুন",
   "deleteConfirmMessage": "আপনি কি নিশ্চিত মুছে ফেলতে চান?",
+  "confirmDeleteItemMessage": "\"{name}\" মুছবেন?\nএই ক্রিয়া পূর্বাবস্থায় ফেরানো যাবে না।",
+  "@confirmDeleteItemMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "logoutConfirmTitle": "লগ আউট নিশ্চিত করুন",
   "logoutConfirmMessage": "আপনি কি নিশ্চিত লগ আউট করতে চান?",
   "requiredField": "এই ক্ষেত্রটি প্রয়োজনীয়",

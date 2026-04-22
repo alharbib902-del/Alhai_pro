@@ -184,6 +184,14 @@
   "copyright": "All rights reserved",
   "deleteConfirmTitle": "Confirm Delete",
   "deleteConfirmMessage": "Are you sure you want to delete?",
+  "confirmDeleteItemMessage": "Delete \"{name}\"?\nThis action cannot be undone.",
+  "@confirmDeleteItemMessage": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "logoutConfirmTitle": "Confirm Logout",
   "logoutConfirmMessage": "Are you sure you want to logout?",
   "requiredField": "This field is required",

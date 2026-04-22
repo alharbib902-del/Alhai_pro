@@ -464,6 +464,11 @@ class AppLocalizationsBn extends AppLocalizations {
   String get deleteConfirmMessage => 'আপনি কি নিশ্চিত মুছে ফেলতে চান?';
 
   @override
+  String confirmDeleteItemMessage(String name) {
+    return '\"$name\" মুছবেন?\nএই ক্রিয়া পূর্বাবস্থায় ফেরানো যাবে না।';
+  }
+
+  @override
   String get logoutConfirmTitle => 'লগ আউট নিশ্চিত করুন';
 
   @override
