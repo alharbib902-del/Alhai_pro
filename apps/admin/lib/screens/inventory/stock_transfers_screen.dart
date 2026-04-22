@@ -202,6 +202,28 @@ class _TransferCard extends ConsumerWidget {
     return AppColors.warning;
   }
 
+  // M4 follow-up (pending design decision before wiring):
+  //
+  //   When a transfer is Approved → In-Transit, the source store's
+  //   on-hand stock should decrement by each item's qty and a paired
+  //   `inventory_movements` row should land (type = 'transfer_out',
+  //   reference_type = 'stock_transfer'). Symmetric: on Received, the
+  //   destination store's on-hand stock should increment (type =
+  //   'transfer_in').
+  //
+  //   The blocker is cross-store product identity: `products.id` is
+  //   store-scoped in the current schema, so a product in the source
+  //   store doesn't exist as the same row in the destination. Three
+  //   design options to choose from before wiring:
+  //     (a) Match by barcode/SKU; auto-create a destination product
+  //         row on first transfer (operator friction on mismatch).
+  //     (b) Require the destination store to have a matching product
+  //         row pre-created (reject transfer if missing).
+  //     (c) Switch to an org-scoped `org_products` catalog with
+  //         per-store stock rows (bigger schema change).
+  //   Decide with the user before implementing; until then the
+  //   workflow flips status only and stock is reconciled manually.
+  //   Filed in the C-4 / M4 follow-up list.
   Future<void> _approve(BuildContext context, WidgetRef ref) async {
     final db = GetIt.I<AppDatabase>();
     final currentUser = ref.read(currentUserProvider);
