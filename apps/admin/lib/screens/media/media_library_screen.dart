@@ -445,7 +445,14 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                 ),
                 const SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
-                  product.price.toStringAsFixed(2),
+                  // C-4 (Session 41 §B1): fixed cents-as-SAR display bug
+                  // (media_library_screen.dart:448) — `product` is a Drift
+                  // ProductsTableData whose price is int cents after Stage B,
+                  // but the previous code fed it straight into
+                  // toStringAsFixed(2), rendering "1000.00" for a 10-SAR
+                  // product. formatMoney applies the Money.fromCents scaling
+                  // and picks up the SAR currency symbol from store settings.
+                  CurrencyFormatter.formatMoney(Money.fromCents(product.price)),
                   style: const TextStyle(
                     fontSize: 11,
                     color: AppColors.primary,
@@ -518,7 +525,17 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
                             enabled: false,
                             leading: const Icon(Icons.inventory_2_outlined),
                             title: Text(product.name),
-                            subtitle: Text(product.price.toStringAsFixed(2)),
+                            // C-4 (Session 41 §B1): fixed cents-as-SAR
+                            // display bug (media_library_screen.dart:521) —
+                            // Drift ProductsTableData price is int cents;
+                            // toStringAsFixed(2) alone rendered "1000.00" for
+                            // a 10-SAR product. formatMoney handles the
+                            // Money.fromCents boundary + SAR symbol.
+                            subtitle: Text(
+                              CurrencyFormatter.formatMoney(
+                                Money.fromCents(product.price),
+                              ),
+                            ),
                             trailing: Icon(
                               Icons.add_photo_alternate,
                               color: AppColors.primary.withValues(alpha: 0.4),

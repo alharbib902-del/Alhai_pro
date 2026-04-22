@@ -403,7 +403,16 @@ class _EcommerceScreenState extends ConsumerState<EcommerceScreen>
                   runSpacing: 4,
                   children: [
                     Text(
-                      product.price.toStringAsFixed(2),
+                      // C-4 (Session 41 §B1): fixed cents-as-SAR display bug
+                      // (ecommerce_screen.dart:406) — `product` is a Drift
+                      // ProductsTableData whose price is int cents after
+                      // Stage B, but the previous code fed it straight into
+                      // toStringAsFixed(2), rendering "1000.00" for a 10-SAR
+                      // product. formatMoney scales via Money.fromCents and
+                      // picks up the SAR symbol from store settings.
+                      CurrencyFormatter.formatMoney(
+                        Money.fromCents(product.price),
+                      ),
                       style: const TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
