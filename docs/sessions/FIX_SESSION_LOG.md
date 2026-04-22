@@ -6260,6 +6260,79 @@ END OF SESSION 24 — 4 Tier A quick wins landed on main + tests green
 
 ---
 
+# Session 26 — Admin Tier B Q1-UI: soft-delete wiring (2026-04-23)
+
+**Branch:** `fix/admin-products-soft-delete-ui`. **Commit:** `7e310d55`. **Budget:** ~2h.
+
+## Summary
+
+Completes Tier B Q1-UI from `docs/reports/admin-audit-status-2026-04-22.md`. The DAO primitive `softDeleteProduct` landed in Session 24; without a UI hook the capability was unreachable. This session wires an opt-in delete action on each product card with confirmation dialog, audit trail, and list refresh.
+
+## Changes — 18 files, +493 / −33 LOC
+
+### shared_ui — delete flow
+
+- **`packages/alhai_shared_ui/lib/src/screens/products/products_screen.dart`**
+  - `ProductsScreen` gains `showDeleteAction: bool = false` param (default hides the action for cashier/admin_lite — backward compatible).
+  - `_ProductGridCard` and `_ProductListCard` accept `onDelete: VoidCallback?`; a red delete icon appears on hover when the callback is non-null.
+  - New private `_deleteProduct(Product)` in state widget: confirm dialog → `softDeleteProduct` DAO → audit log → state refresh → SnackBar.
+  - Audit uses `AuditAction.productDelete` with oldValue/newValue capturing the `deleted_at` transition. Silent-catch around the audit log mirrors the H5 price-change pattern (audit must not block the delete UX).
+  - Added `alhai_database` + `get_it` imports (same pattern used by `supplier_detail_screen.dart`).
+
+### admin — permission-gated opt-in
+
+- **`apps/admin/lib/router/admin_router.dart`** — `/products` route now wraps `ProductsScreen` in a `Consumer` that reads `hasPermissionProvider(AdminPermissions.productsDelete)` and passes the result as `showDeleteAction`. Only roles holding `products_delete` see the button. Added one import.
+
+### l10n — 3 new strings × 7 locales
+
+- **`packages/alhai_l10n/lib/l10n/*.arb`** (7 files) — adds `deleteProduct`, `deleteProductConfirm` (with `{name}` placeholder), `productDeletedSuccess` for ar/en/bn/fil/hi/id/ur.
+- Ran `flutter gen-l10n` — 8 generated files refreshed.
+
+### Tests — 3 new widget tests
+
+- **`packages/alhai_shared_ui/test/screens/products/products_screen_test.dart`**
+  - `showDeleteAction: false` + hover over product card → no delete icon present.
+  - `showDeleteAction: true` + hover → delete icon visible, tapping opens `AlertDialog` containing the product name.
+  - Cancelling the confirm dialog dismisses it without triggering a list refresh.
+- Added `Product` fixture helper, `MockProductsDao`, `MockAuditLogDao`, and a `loadProductsCalls` counter on `_MockProductsNotifier`.
+- Required `hide SyncStatus` on the `alhai_core` import to avoid ambiguous symbol with `alhai_sync`.
+
+## Verification
+
+- `flutter analyze` packages/alhai_shared_ui + packages/alhai_l10n + apps/admin: no new issues relative to baseline (pre-existing lint infos unchanged).
+- **alhai_shared_ui tests: 864 / 864** (was 861; +3 soft-delete wiring tests).
+- **admin tests: 365 / 365** preserved.
+- **admin_lite + cashier unchanged** — both still call `const ProductsScreen()`; default `showDeleteAction: false` preserves prior behavior.
+
+## Architectural notes
+
+1. **Delete button is hover-only** (desktop) — matches existing `onQuickEdit` pattern. Mobile touch does not reveal the button. A future enhancement could add long-press / swipe-to-reveal, or wire the existing no-op delete tile in `product_detail_screen.dart:1668-1678` bottom sheet.
+2. **Permission split stays clean.** shared_ui does not know about `AdminPermissions.productsDelete`; it just takes a bool. The admin router does the permission lookup. Cashier/admin_lite keep their own rules (or absence of rules) by choosing whether to pass `true`.
+3. **Audit silent-catch is intentional.** `catch (_)` around the `auditLogDao.log` call follows H5's precedent — audit-trail failures are operational issues, not user-facing errors. The delete itself is still rolled up as a success if the soft-delete row-update succeeded.
+
+## Deferred follow-ups
+
+- **Q1-UI mobile reveal** — current delete action is desktop-hover only. Out of scope for this session (would double the widget-testing surface).
+- **`product_detail_screen` delete wiring** — the existing bottom-sheet tile at `packages/alhai_shared_ui/lib/src/screens/products/product_detail_screen.dart:1668-1678` is a no-op (`onTap: () => Navigator.pop(context)`). Natural follow-up to wire it to the same DAO + audit + pop-with-refresh flow. Would cover the mobile path.
+
+## Risk
+
+Low.
+- Backward-compatible parameter addition (`showDeleteAction` defaults to `false`; cashier/admin_lite/distributor call sites untouched).
+- DAO primitive already landed + unit-tested in Session 24.
+- Audit failure is non-fatal (matches H5 pattern).
+- Permission-gated in admin — only `products_delete` holders see the action; runtime gate complements the existing route-level `productsManage` guard on `/products/add` and `/products/edit/*`.
+
+## Remote push
+
+Not pushed yet. Per user preference, feature branches go to `backup` remote only; origin push requires explicit approval. User to decide when to push/merge.
+
+---
+
+END OF SESSION 26 — Q1-UI wired on fix/admin-products-soft-delete-ui; main unchanged
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
 
 **Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
@@ -6287,7 +6360,7 @@ alhai_database     509 + 1 skipped
 alhai_sync         358
 alhai_zatca        850 + 1 skipped  ← ZATCA gate
 alhai_pos          559
-alhai_shared_ui    861
+alhai_shared_ui    864                ← was 861; +3 Q1-UI tests on fix/admin-products-soft-delete-ui
 alhai_reports      123
 alhai_pos/cashier  552
 customer_app       136
@@ -6296,7 +6369,7 @@ admin              365
 admin_lite         183
 super_admin        222
 -----------
-                   5490 tests passing
+                   5493 tests passing (main still 5490; +3 on the Q1-UI branch)
 ```
 
 (distributor_portal 420 inferred, not re-run today)
@@ -6322,7 +6395,7 @@ super_admin        222
 
 **Admin audit — Tier B feature sessions (2-4h each, priority order):**
 1. **M2** low-stock alerts dashboard + notification (DAO ready: `getLowStockProducts()`)
-2. **Q1-UI** — wire `softDeleteProduct` to products list delete button (DAO primitive landed Session 24)
+2. ~~**Q1-UI**~~ — DONE Session 26 on branch `fix/admin-products-soft-delete-ui` (commit `7e310d55`); awaits merge
 3. **M1** auto-generate EAN-13 barcode when blank
 4. **M7** ZATCA queue status report (sent/rejected/pending)
 5. **M3 + M4** stocktaking + inter-branch transfer (shared stock_movements, one session)
