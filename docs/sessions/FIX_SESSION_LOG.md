@@ -7291,6 +7291,75 @@ END OF SESSION 39 — Product Money getters landed as C-4 migration enabler
 
 ---
 
+# Session 40 — parallel experiment: formatMoney migration (agent) + M4 design note (self) (2026-04-23)
+
+**Commits on main:** `08ec1053` (M4 note, self) + `4c62a0ad` (formatMoney migration, cherry-picked from agent branch). **Budget:** ~20 min self + ~12 min agent wall-clock, running in parallel.
+
+## Summary
+
+User asked "هل ممكن نعمل بالتوازي" (can we work in parallel). Answered with a small experiment: spawn one subagent in an isolated git worktree for mechanical work while the main session holds a thin parallel task. Two commits landed on main. Both small, both clean.
+
+## Part 1 — Agent in worktree (formatMoney migration)
+
+Spawned an isolated-worktree subagent with a 4-site migration scope. Task brief insisted on STOP-AND-FLAG behavior if any site needed behavioral thought. Worktree path: `C:\Users\basem\OneDrive\Desktop\Alhai\.claude\worktrees\agent-ab9b6650`, branch `worktree-agent-ab9b6650`.
+
+**Agent output:** 3 of 4 sites migrated, 1 correctly skipped.
+
+Migrated (commit `cafacab5` on the worktree branch):
+- `packages/alhai_shared_ui/lib/src/screens/products/product_detail_screen.dart:599` — `formatMoney(product.costPriceMoney ?? Money.zero())`
+- `packages/alhai_shared_ui/lib/src/screens/products/products_screen.dart:1191` — `formatMoneyWithContext(context, widget.product.priceMoney)`
+- `packages/alhai_shared_ui/lib/src/screens/products/products_screen.dart:1360` — same pattern
+
+Skipped (correctly flagged):
+- `apps/cashier/lib/screens/products/edit_price_screen.dart:318`. The local `_product` is a Drift row class (`ProductsTableData`), not the `alhai_core` `Product` domain model; the `priceMoney` getter only exists on the latter. Promoting `_product` to the domain model is a behavioral change that touches `_loadProduct` + controller seeds + the price-history sampling flow — flagged as a follow-up. Agent got this right and refused to paper over.
+
+Verified inside the worktree: `flutter analyze` + `flutter test` on both `packages/alhai_shared_ui` (869/869) and `apps/cashier` (552/552) — baselines preserved.
+
+**Integration into main:** cherry-picked `cafacab5` onto main rather than merging the whole branch — the agent's branch was based on `5ef9ce47`, but main had already advanced by my own M4 note (`08ec1053`) in the parallel turn. Cherry-pick applied cleanly (no conflicts because the two changes touched non-overlapping files). Result: commit `4c62a0ad` on main.
+
+Worktree cleanup: `git worktree remove --force` + `git branch -D worktree-agent-ab9b6650`. Main is the only live worktree again.
+
+## Part 2 — M4 follow-up design note (self, on main)
+
+`apps/admin/lib/screens/inventory/stock_transfers_screen.dart` — added a block comment above `_approve` documenting the cross-store product-identity design decision that blocks the M4 stock-movement effects (inventory_movements writes + products.stock_qty decrement/increment). Three options recorded:
+
+- **(a) Match by barcode/SKU, auto-create destination product on first transfer.** Friction on SKU mismatch / typo.
+- **(b) Require destination store to pre-create a matching product row; reject transfer otherwise.**
+- **(c) Migrate to an org-scoped `org_products` catalog with per-store stock rows.** Bigger schema change.
+
+No behavioral change. The next developer reaching for `_approve` will hit the block comment before extending the method.
+
+## Why parallel — the experiment evaluated
+
+- **What worked.** Agent-in-worktree is genuinely concurrent. My main-worktree edit + the agent's three edits landed side-by-side on independent files, no conflict, no retries. Agent's verification (analyze + test) ran against its own worktree copy in parallel with my turn.
+- **Coordination overhead was real but small.** Cherry-picking off a diverged base (instead of fast-forward merge) took one extra step. Worktree unlock + force-remove needed because Windows filesystem + lock-on-active-agent. Both manageable once you know the incantations.
+- **Scope discipline matters.** If the agent's 4-site brief had allowed the skipped site, the agent would have either taken 2-3× longer on the behavioral investigation OR papered over it — both bad. The explicit "skip + flag" instruction paid off.
+- **When NOT to parallelize.** If the two tasks share files (conflict risk) or if the agent's work needs tight iterative collaboration (not a clean hand-off), sequential is better.
+
+## Verification
+
+- `flutter analyze` stock_transfers_screen.dart + migrated display files: **0 issues** (re-ran per file).
+- **packages/alhai_shared_ui tests: 869 / 869** (verified in agent worktree).
+- **apps/cashier tests: 552 / 552** (verified in agent worktree).
+- Main worktree cherry-pick is byte-identical for the two migrated files.
+
+## Scope NOT covered (intentionally deferred)
+
+- **`edit_price_screen.dart` promotion to domain `Product`.** Needs `_loadProduct` refactor + controller seeds update + price-history sampling + tests. One-file session on its own. Agent-flagged.
+- **Broader formatMoney sweep** (`toStringAsFixed(2) + ' ر.س'` sites across customer_app / admin_lite / quick_sale_screen). Different pattern, different currency-symbol semantics, out of this parallel experiment's scope.
+- **M4 stock-movement wiring.** Requires picking (a)/(b)/(c) from the design note with the user.
+
+## Remote push + merge
+
+- Both commits pushed to `backup` and `origin` — see next docs commit.
+- `main` at `4c62a0ad` after the cherry-pick.
+
+---
+
+END OF SESSION 40 — parallel experiment succeeded; formatMoney migration 3/4 + M4 design note both landed on main
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
 
 **Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
@@ -7381,7 +7450,7 @@ super_admin        222
 - ~~C-1 Receipt number collision~~ — DONE Session 36, commit `ee44e78c` (per-device 4-hex-char suffix + 7 tests; alhai_pos 570 → 577)
 - ~~C-5 TLV encoder refactor~~ — DONE Session 35, commit `c240297c` (encodeTag / decodeQrData + 11 tests; alhai_pos 559 → 570)
 - ~~C-10 Historical NULL-orgId invoice cleanup~~ — Session 38 SHIPPED v76 RLS fallback migration (`9e45e502`); **awaits live apply on Supabase Dashboard** (user-executed per standing preference)
-- C-4 follow-ups: Money adoption in domain classes (partial — Product Money getters DONE Session 39 `542b719d`; Invoice / SaleItem / HeldInvoice / etc. still pending, ~4-5 sessions per plan), `formatMoney` migration (incremental, unblocked by Product Money getters)
+- C-4 follow-ups: Money adoption in domain classes (partial — Product Money getters DONE Session 39 `542b719d`; Invoice / SaleItem / HeldInvoice / etc. still pending, ~4-5 sessions per plan), `formatMoney` migration (partial — 3 product display sites DONE Session 40 `4c62a0ad`; broader sweep pending including `toStringAsFixed(2)` sites and `edit_price_screen` domain-model promotion)
 - ~~`loyalty_transactions.sale_amount` decision~~ — DONE Session 34, commit `f0afcf02` (keep as-is, documented)
 - ~~distributor_portal test baseline re-run~~ — DONE Session 37, 420/420 confirmed
 
