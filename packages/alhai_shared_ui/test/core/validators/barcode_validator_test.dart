@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:alhai_shared_ui/src/core/validators/barcode_validator.dart';
 
@@ -226,6 +228,55 @@ void main() {
         final validator = BarcodeValidator.formValidator(required: false);
         expect(validator(''), isNull);
         expect(validator(null), isNull);
+      });
+    });
+
+    group('generateEan13 (M1)', () {
+      test('produces a 13-digit string', () {
+        final barcode = BarcodeValidator.generateEan13();
+        expect(barcode.length, 13);
+        expect(RegExp(r'^\d{13}$').hasMatch(barcode), isTrue);
+      });
+
+      test('uses the "200" internal-use prefix', () {
+        for (var i = 0; i < 50; i++) {
+          final barcode = BarcodeValidator.generateEan13();
+          expect(
+            barcode.startsWith('200'),
+            isTrue,
+            reason: 'Generated $barcode should start with 200',
+          );
+        }
+      });
+
+      test('passes the EAN-13 checksum validator', () {
+        for (var i = 0; i < 100; i++) {
+          final barcode = BarcodeValidator.generateEan13();
+          final result = BarcodeValidator.validate(
+            barcode,
+            type: BarcodeType.ean13,
+          );
+          expect(
+            result.isValid,
+            isTrue,
+            reason: 'Generated $barcode failed EAN-13 validation',
+          );
+        }
+      });
+
+      test('is deterministic with a seeded Random', () {
+        final a = BarcodeValidator.generateEan13(random: Random(42));
+        final b = BarcodeValidator.generateEan13(random: Random(42));
+        expect(a, b);
+      });
+
+      test('produces different codes across calls (unseeded)', () {
+        final codes = <String>{};
+        for (var i = 0; i < 100; i++) {
+          codes.add(BarcodeValidator.generateEan13());
+        }
+        // With 9 random digits we expect ~zero collisions in 100 draws.
+        expect(codes.length, greaterThan(95));
       });
     });
   });

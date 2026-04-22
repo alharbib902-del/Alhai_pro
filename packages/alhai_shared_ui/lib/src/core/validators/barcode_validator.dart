@@ -7,6 +7,8 @@
 /// - Code 128 (أبجدي رقمي)
 library;
 
+import 'dart:math';
+
 import 'validation_result.dart';
 
 /// أنواع الباركود المدعومة
@@ -206,6 +208,29 @@ class BarcodeValidator {
 
     final checkDigit = (10 - (sum % 10)) % 10;
     return '$barcode12$checkDigit';
+  }
+
+  /// توليد باركود EAN-13 جديد صالح مع رقم التحقق.
+  ///
+  /// Returns a 13-digit EAN-13 that passes [_verifyEanChecksum].
+  /// Uses the "200" prefix — reserved by the EAN spec for in-store/internal
+  /// use, so a generated code will not collide with any real-world product
+  /// barcode issued by GS1.
+  ///
+  /// Uniqueness within a store is the caller's responsibility. Expected
+  /// use: generate, check `getProductByBarcode`, regenerate on collision.
+  /// With 9 random digits, the birthday-paradox collision probability for
+  /// N existing products is \~ N^2 / 2e9 — negligible in practice for a
+  /// typical POS catalog.
+  ///
+  /// Pass a seeded [Random] in tests to get deterministic output.
+  static String generateEan13({Random? random}) {
+    final rng = random ?? Random();
+    final base = StringBuffer('200');
+    for (var i = 0; i < 9; i++) {
+      base.write(rng.nextInt(10));
+    }
+    return generateEan13Checksum(base.toString());
   }
 
   /// تحديد نوع الباركود
