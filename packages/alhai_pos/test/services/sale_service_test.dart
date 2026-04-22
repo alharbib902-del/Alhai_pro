@@ -4,9 +4,19 @@ import 'package:mocktail/mocktail.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_sync/alhai_sync.dart';
 import 'package:alhai_pos/src/services/sale_service.dart';
+import 'package:alhai_pos/src/services/terminal_suffix_service.dart';
 import 'package:alhai_pos/src/core/errors/app_exceptions.dart';
 
 import '../helpers/pos_test_helpers.dart';
+
+/// Test double for [TerminalSuffixService] that returns a fixed suffix.
+/// Used by the cross-device collision regression test (C-1).
+class _FixedTerminalSuffix extends TerminalSuffixService {
+  final String _fixed;
+  _FixedTerminalSuffix(this._fixed);
+  @override
+  Future<String> getSuffix() async => _fixed;
+}
 
 // Override MockAppDatabase to handle the generic transaction method
 class TestMockAppDatabase extends MockAppDatabase {
@@ -843,12 +853,146 @@ void main() {
           paymentMethod: 'cash',
         );
 
-        // Assert - receipt number should be POS-YYYYMMDD-0006
+        // Assert - receipt number should be POS-YYYYMMDD-<suffix>-0006
         expect(capturedCompanion, isNotNull);
         final receiptNo = capturedCompanion!.receiptNo.value;
         expect(receiptNo, startsWith('POS-'));
         expect(receiptNo, endsWith('-0006')); // 5 + 1 = 6
+        // C-1 contract: suffix segment (4 hex chars) sits between the
+        // date and the count.
+        expect(
+          RegExp(r'^POS-\d{8}-[0-9a-f]{4}-\d{4}$').hasMatch(receiptNo),
+          isTrue,
+          reason: 'Receipt number should match new C-1 format: $receiptNo',
+        );
       });
+
+      test(
+        'regression — two devices in the same store with the same local '
+        'count generate different receipts (C-1, multi-device offline '
+        'collision since v17 2026-03-06)',
+        () async {
+          // Arrange: two SaleService instances, same mock DB (to keep the
+          // test simple — in production they'd be separate Drift DBs, but
+          // for the receipt-number calculation what matters is each has a
+          // distinct TerminalSuffixService value). Both see
+          // todayStoreCount=5 so the legacy encoder would hand them
+          // BOTH `POS-YYYYMMDD-0006`.
+          final deviceA = SaleService(
+            db: mockDb,
+            syncService: mockSyncService,
+            terminalSuffix: _FixedTerminalSuffix('a3f7'),
+          );
+          final deviceB = SaleService(
+            db: mockDb,
+            syncService: mockSyncService,
+            terminalSuffix: _FixedTerminalSuffix('b2c8'),
+          );
+
+          final product = createTestProductsTableData(
+            id: 'prod-1',
+            name: 'Soda',
+            price: 1000, // 10 SAR in cents
+            stockQty: 100,
+          );
+          final cartItem = createTestCartItem(
+            productId: 'prod-1',
+            productName: 'Soda',
+            price: 1000,
+            quantity: 1,
+          );
+
+          when(
+            () => mockSalesDao.getTodayStoreCount(any()),
+          ).thenAnswer((_) async => 5);
+          when(
+            () => mockProductsDao.getProductById('prod-1'),
+          ).thenAnswer((_) async => product);
+          when(() => mockSaleItemsDao.insertItem(any())).thenAnswer((_) async => 1);
+          when(
+            () => mockInventoryDao.recordSaleMovement(
+              id: any(named: 'id'),
+              productId: any(named: 'productId'),
+              storeId: any(named: 'storeId'),
+              qty: any(named: 'qty'),
+              previousQty: any(named: 'previousQty'),
+              saleId: any(named: 'saleId'),
+            ),
+          ).thenAnswer((_) async => 1);
+          when(
+            () => mockProductsDao.updateStock(any(), any()),
+          ).thenAnswer((_) async => 1);
+          when(
+            () => mockSyncService.enqueueCreate(
+              tableName: any(named: 'tableName'),
+              recordId: any(named: 'recordId'),
+              data: any(named: 'data'),
+              priority: any(named: 'priority'),
+            ),
+          ).thenAnswer((_) async => 'sync-1');
+          when(() => mockUsersDao.getUserById(any())).thenAnswer((_) async => null);
+          when(() => mockUsersDao.ensureUser(any())).thenAnswer((_) async => 1);
+          when(
+            () => mockCustomersDao.getCustomerById(any()),
+          ).thenAnswer((_) async => null);
+          when(() => mockStoresDao.getStoreById(any())).thenAnswer((_) async => null);
+          when(
+            () => mockStockDeltasDao.addDelta(
+              id: any(named: 'id'),
+              productId: any(named: 'productId'),
+              storeId: any(named: 'storeId'),
+              orgId: any(named: 'orgId'),
+              quantityChange: any(named: 'quantityChange'),
+              deviceId: any(named: 'deviceId'),
+              operationType: any(named: 'operationType'),
+              referenceId: any(named: 'referenceId'),
+            ),
+          ).thenAnswer((_) async => 1);
+
+          final captured = <SalesTableCompanion>[];
+          when(() => mockSalesDao.insertSale(any())).thenAnswer((inv) {
+            captured.add(
+              inv.positionalArguments[0] as SalesTableCompanion,
+            );
+            return Future.value(1);
+          });
+
+          // Act — both devices create a sale.
+          await deviceA.createSale(
+            storeId: 'store-1',
+            cashierId: 'cashier-1',
+            items: [cartItem],
+            subtotal: 10.0,
+            discount: 0.0,
+            tax: 1.5,
+            total: 11.5,
+            paymentMethod: 'cash',
+          );
+          await deviceB.createSale(
+            storeId: 'store-1',
+            cashierId: 'cashier-2',
+            items: [cartItem],
+            subtotal: 10.0,
+            discount: 0.0,
+            tax: 1.5,
+            total: 11.5,
+            paymentMethod: 'cash',
+          );
+
+          // Assert — suffixes land in the receipt numbers and the two
+          // are NOT equal (the whole point of the fix).
+          expect(captured.length, 2);
+          final receiptA = captured[0].receiptNo.value;
+          final receiptB = captured[1].receiptNo.value;
+          expect(receiptA, contains('-a3f7-'));
+          expect(receiptB, contains('-b2c8-'));
+          expect(receiptA, isNot(receiptB));
+          // Both should end in the same count (pre-fix this was the
+          // collision point).
+          expect(receiptA, endsWith('-0006'));
+          expect(receiptB, endsWith('-0006'));
+        },
+      );
     });
   });
 }

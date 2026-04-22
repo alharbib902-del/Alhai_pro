@@ -10,6 +10,7 @@ import '../providers/cart_providers.dart';
 import 'package:alhai_sync/alhai_sync.dart';
 
 import 'invoice_service.dart';
+import 'terminal_suffix_service.dart';
 
 /// تسجيل فرق سعر بين السلة وقاعدة البيانات
 class PriceCorrection {
@@ -57,6 +58,12 @@ class SaleService {
   /// If null or returns Duration.zero, `DateTime.now()` is used as-is.
   final Duration Function()? _clockOffsetProvider;
 
+  /// C-1: per-device 4-hex-char suffix injected into the receipt number
+  /// to prevent cross-device offline collisions. Falls back to a
+  /// freshly-constructed service when not supplied (production) or when
+  /// a test doesn't care about the suffix value.
+  final TerminalSuffixService _terminalSuffix;
+
   static const _uuid = Uuid();
 
   SaleService({
@@ -64,10 +71,12 @@ class SaleService {
     required SyncService syncService,
     InvoiceService? invoiceService,
     Duration Function()? clockOffsetProvider,
+    TerminalSuffixService? terminalSuffix,
   }) : _db = db,
        _syncService = syncService,
        _invoiceService = invoiceService,
-       _clockOffsetProvider = clockOffsetProvider;
+       _clockOffsetProvider = clockOffsetProvider,
+       _terminalSuffix = terminalSuffix ?? TerminalSuffixService();
 
   /// Get a corrected timestamp that accounts for device clock drift.
   /// ZATCA requires accurate timestamps; this uses the server-measured offset.
@@ -583,18 +592,31 @@ class SaleService {
   }
 
   /// توليد رقم إيصال فريد
-  /// يستخدم عدد جميع مبيعات المتجر اليوم (بدون فلترة الكاشير)
+  ///
+  /// **Format (C-1):** `POS-YYYYMMDD-<deviceSuffix>-NNNN` where
+  /// `deviceSuffix` is a stable 4-hex-char per-device value from
+  /// [TerminalSuffixService]. The suffix breaks multi-device offline
+  /// collisions on the Supabase `idx_sales_store_receipt_unique` index —
+  /// even if two devices each see their own `todayCount == 5`, their
+  /// receipts land as `POS-20260423-A3F7-0006` and `POS-20260423-B2C8-0006`
+  /// and never collide.
+  ///
+  /// Sales created before the C-1 fix have the legacy format
+  /// `POS-YYYYMMDD-NNNN` — they continue to work (consumers treat the
+  /// column as an opaque string).
   Future<String> _generateReceiptNo(String storeId) async {
     final today = DateTime.now();
     final prefix =
         'POS-${today.year}${today.month.toString().padLeft(2, '0')}${today.day.toString().padLeft(2, '0')}';
+
+    final suffix = await _terminalSuffix.getSuffix();
 
     // استخدام getTodayStoreCount بدلاً من getTodayCount
     // لإحصاء جميع مبيعات المتجر بغض النظر عن الكاشير
     final todayCount = await _db.salesDao.getTodayStoreCount(storeId);
     final sequence = (todayCount + 1).toString().padLeft(4, '0');
 
-    return '$prefix-$sequence';
+    return '$prefix-$suffix-$sequence';
   }
 
   /// إجمالي مبيعات اليوم
