@@ -47,12 +47,18 @@ class CurrencyFormatter {
   /// تنسيق رقم فقط (بدون رمز عملة) مع فواصل المجموعات
   ///
   /// مثال: `١٬٢٣٤٫٥٠` (عربي) أو `1,234.50` (إنجليزي)
+  ///
+  /// With `decimalDigits: 0`, uses the plain `#,##0` pattern so there is no
+  /// trailing separator (previous `#,##0.` + 0 zeros left a dangling `.`).
   static String formatNumber(
     double amount, {
     String? locale,
     int decimalDigits = 2,
   }) {
-    final fmt = NumberFormat('#,##0.${'0' * decimalDigits}', locale ?? 'ar_SA');
+    final pattern = decimalDigits <= 0
+        ? '#,##0'
+        : '#,##0.${'0' * decimalDigits}';
+    final fmt = NumberFormat(pattern, locale ?? 'ar_SA');
     return fmt.format(amount);
   }
 
