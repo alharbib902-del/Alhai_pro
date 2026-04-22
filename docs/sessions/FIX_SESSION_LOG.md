@@ -5733,3 +5733,103 @@ Sixth or seventh "phantom P0" surfaced across these 6+ sessions:
 ---
 
 END OF SESSION 18 — investigation only, no code changes
+
+---
+
+# Session 19 — Branch Merge: main FF + push all remotes (2026-04-22)
+
+**Branch:** `main` (direct work on main post-FF).
+**Commit:** `c71d43c7` (cherry-picked C-4 plan doc) + subsequent log entry commit.
+**Budget:** ~10 min.
+
+## Summary
+
+Consolidated 108 commits of Sessions 12-18 work into `main`, plus cherry-picked the C-4 plan doc from `plan/c4-money-migration-20260421`. All 3 remotes (local, backup, origin) synced at the new HEAD.
+
+## Pre-flight
+
+- main: `c2f1ef76` (2026-04-17, 5 days old)
+- HEAD (on `fix/cleanup-indexes-orphans`): `3766b6a3` (Session 18)
+- merge-base: `c2f1ef76` — pure linear, FF possible
+- Divergence: 108 commits ahead (main), 0 commits behind
+- `1436f66c` (C-4 plan doc on `plan/c4-money-migration-20260421`) confirmed NOT an ancestor of `3766b6a3` — needs cherry-pick
+
+## Execution
+
+### 1. FF main to `3766b6a3` (108 commits)
+
+```bash
+git stash push -- .claude/scheduled_tasks.lock   # harmless system lock file
+git checkout main
+git merge --ff-only 3766b6a3                     # Updating c2f1ef76..3766b6a3
+```
+
+Result: `main` = `3766b6a3`.
+
+### 2. Cherry-pick C-4 plan doc
+
+```bash
+git cherry-pick 1436f66c
+```
+
+Result: `main` = `c71d43c7` (new commit hash since cherry-pick creates new commit).
+
+No conflicts. 1 file added: `docs/sessions/c4-money-migration-plan.md` (+593 LOC).
+
+### 3. Push to both remotes
+
+```bash
+git push backup main   # c2f1ef76..c71d43c7
+git push origin main   # c2f1ef76..c71d43c7
+```
+
+Both pushes FF; no --force needed. User explicitly approved origin push (overriding the "backup-only" policy, one-time for this consolidation).
+
+## Verification
+
+All three refs aligned:
+```
+main           c71d43c7
+backup/main    c71d43c7
+origin/main    c71d43c7
+```
+
+## Content consolidated onto main
+
+Sessions 12 through 18 — everything that was scattered across branches is now linearly on main:
+
+- **Security hardening** (Session 12 base): v64-v71 (wildcard closure, CVE-2018-1058, RPC auth gates, users PII RLS).
+- **C-7 tombstones + C-8a/b ZATCA queue** (Session 12).
+- **C-4 Session 1 products** (Session 12): v70 + v71, 8 money cols.
+- **Session 13 foundation**: widget test fix, deploy bundle, VatCalculator collapse, Money type.
+- **C-4 Session 2 invoices** (Session 14): v72, 14 money cols.
+- **C-4 Session 3 shifts+sales** (Session 15): v73, 16 money cols.
+- **C-4 Session 4 analytics** (Session 16): v74, 27 money cols.
+- **Session 17**: v75 partial indexes + orphan cleanup.
+- **Session 18**: platform_settings phantom P0 investigation.
+- **Session 19 (this)**: C-4 plan doc (retro-imported).
+
+**Total money columns migrated: 65 across 14 tables.** Drift schemaVersion 37→44. Supabase v63→v75.
+
+## Remaining branches (NOT consolidated)
+
+20+ orphan branches with unique commits not reachable from main. Notable:
+- `fix/super-admin-audit-p0s-20260419` (17 commits)
+- `fix/driver-app-test-coverage-20260422` (15 commits)
+- `fix/rls-hardening-c9-20260421` (14 commits, driver_app cherry-pick source)
+- 7 `worktree-agent-*` branches (temp agent worktrees)
+- Various `phase5-*`, `session-w*-wildcards-*`, `audit/*` branches (mostly superseded or integrated piecemeal)
+
+**Triage deferred to a future session** — each branch needs per-branch evaluation (is the work already integrated elsewhere? superseded? or genuinely pending?).
+
+## Impact
+
+- **Main is now the source of truth** for all completed work.
+- **5461 tests** (11 packages) all pass at `c71d43c7`.
+- **Live Supabase at v75** matches main's Drift schema v44.
+- **ZATCA compliance gate preserved** throughout (alhai_zatca 850/850 + 1 skip).
+- Future contributors pulling main get a fully coherent codebase.
+
+---
+
+END OF SESSION 19 — main consolidated, all remotes synced
