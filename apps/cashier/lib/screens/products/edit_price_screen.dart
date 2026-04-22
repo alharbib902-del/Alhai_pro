@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
+import 'package:alhai_core/alhai_core.dart' show Money;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
@@ -314,8 +315,13 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
               ),
               const SizedBox(height: AlhaiSpacing.xxs),
               Text(
-                // C-4 Stage B: product.price is int cents; formatter needs SAR.
-                CurrencyFormatter.format(product.price / 100.0),
+                // C-4 (Session 41): formatMoney wraps the int cents as
+                // Money.fromCents — replaces the `product.price / 100.0`
+                // boilerplate with a type-safe boundary. `_product` is
+                // a Drift `ProductsTableData` (not the domain Product),
+                // so we construct Money inline rather than via the
+                // .priceMoney getter from alhai_core's Product model.
+                CurrencyFormatter.formatMoney(Money.fromCents(product.price)),
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.w800,
