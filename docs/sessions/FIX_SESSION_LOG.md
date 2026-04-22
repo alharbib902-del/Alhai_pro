@@ -5304,3 +5304,149 @@ invoices + held_invoices are still 0 rows (ZATCA Phase 2 pipeline not yet activa
 ---
 
 END OF SESSION 14 — C-4 Session 2 COMPLETE
+
+---
+
+# Session 15 — C-4 Session 3 Execution (2026-04-22, same day as Sessions 13+14)
+
+**Budget:** User extended another 6h immediately after Session 14 wrap.
+**Branch:** `fix/c4-session-3-shifts-sales` forked from `fix/c4-session-2-invoices` @ `5681d7d`.
+**End state:** `39b5fedd` (code) + log entry commit to follow.
+
+## Summary
+
+C-4 Session 3 executed in the same day as Sessions 13 + 14. Shifts + cash_movements + sales money columns migrated from double precision to INTEGER cents on both Drift (v42 → v43) and live Supabase (v73). 10 test suites green end-to-end, ZATCA compliance gate (alhai_zatca 850/850 + 1 skipped) preserved.
+
+**Net diff (39b5fedd):** 50 files, +795 / −546 LOC.
+
+## Pre-flight
+
+Branch forked from `5681d7d` (Session 14 HEAD). Schema introspection confirmed 16 money cols exactly as plan — no drift this time. Baselines verified parallel: alhai_database 508, alhai_zatca 850, alhai_core 667.
+
+### Appendix B audit — 🛑 REAL DATA IMPRECISION surfaced
+
+First session where audit triggered actual STOP (not FP false-positive):
+
+| Column | Real fractional cents | FP artifacts | Total rows |
+|---|---|---|---|
+| sales.tax | **10 / 11** | 0 | 11 |
+| sales.total | **8 / 11** | 0 | 11 |
+| sales.subtotal | 0 | 2 | 11 |
+| (others) | 0 | 0 | mostly 0 (empty) |
+
+Diagnostic revealed all imprecise tax values stored as `subtotal * 0.15` without rounding (e.g. `tax = 36.9675` from `subtotal = 246.45`). Drift magnitudes all ≤ ±0.005 SAR per row.
+
+### Option analysis
+
+Pre-migration math across all 10 imprecise rows confirmed: under ROUND_HALF_UP, `total_cents == subtotal_cents + tax_cents` invariant would be preserved in every row (IEEE 754 asymmetric rounding predicted not to break it). Chose **Option 2: let migration's ROUND_HALF_UP do the cleansing** — no pre-UPDATE needed. Decision locked.
+
+### Methodology gap closed
+
+Tolerance-based Appendix B query from Session 14 had a NULL-over-empty bug (logged but not fixed). This Session's variant added `COALESCE(x, 0) = 0` in the verdict CASE, correctly handling empty tables (shifts, cash_movements) that now show `✓ SAFE` instead of false-positive `⚠ STOP`.
+
+## Drift v43 — schema + migration
+
+### Table definition changes (2 files; cash_movements lives in shifts_table.dart)
+
+| File | RealColumn → IntColumn |
+|---|---|
+| `tables/sales_table.dart` | subtotal, discount, tax, total, amountReceived, changeAmount, cashAmount, cardAmount, creditAmount (9) |
+| `tables/shifts_table.dart` (ShiftsTable) | openingCash, closingCash, expectedCash, difference, totalSalesAmount, totalRefundsAmount (6) |
+| `tables/shifts_table.dart` (CashMovementsTable) | amount (1) |
+
+`totalSales` + `totalRefunds` (count columns, already int) and `qty` (fractional quantity) left alone.
+
+### `app_database.dart`
+
+- `schemaVersion` 42 → 43
+- Added `case 43:` with 3 TableMigration blocks (shifts / cash_movements / sales). Same `CAST(ROUND(col * 100) AS INTEGER)` pattern as v40/v41/v42.
+- Append-only trigger on sales verified type-agnostic (uses `IS NOT` — works for int or real).
+
+### build_runner
+
+79s, 264 outputs, clean.
+
+## Supabase v73 — live DB migration
+
+Atomic BEGIN..COMMIT with 16 ALTER COLUMN statements across 3 tables. Rollback DDL in header comment.
+
+### V-POST verification (user-executed)
+
+| Query | Result |
+|---|---|
+| V-POST-A | ✓ 16 columns all `data_type='integer'` |
+| V-POST-B | ✓ 11 sales rows preserved; cents range clean (sub 10329..52291; tax 1549..7844; total 11878..60135) |
+| V-POST-C | ⚠ **1 violation initial** — row `a937db9e` had `total=15007` but `subtotal+tax=15008`. Δ = −1 cent. IEEE 754 asymmetric rounding on PG: `150.075*100` stored as `150.0749999…*100 = 15007.499…` → `ROUND = 15007`, while `19.575*100 = 1957.499…` → but PG rounded it to `1958`. One-row UPDATE corrected the invariant. Now 0 violations. |
+| V-POST-D | ✓ shifts + cash_movements both 0 rows |
+
+**Note:** My pre-apply invariant analysis concluded the rounding would be symmetric on 150.075 + 19.575 (both round the same way). Reality proved otherwise — PG's ROUND on double precision is implementation-defined at the half-boundary and exhibited asymmetric behavior here. Lesson: **always run V-POST-C invariant check post-migration; don't trust pre-apply proofs for IEEE 754 edge cases**.
+
+## Consumer rewiring — 151 compile errors + 8 runtime assertions
+
+Largest session yet. Agent-delegated mechanical conversion across 5 packages (alhai_database 33, alhai_pos 31, alhai_shared_ui 29, cashier 37, admin 21) + follow-ups.
+
+### Production changes (lib/)
+
+- **alhai_database/lib/src/daos/shifts_dao.dart** — 8+ sites flipped double→int cents.
+- **alhai_database/lib/src/daos/sales_dao.dart** — aggregate helpers kept their public double-SAR contract by dividing cents internally. `_toDouble` helper retained; `_centsSumToSar` added. Rationale: preserving the public API avoided cascading edits across 27+ consumer files in reports/dashboard/profile — which would have exploded scope unjustifiably.
+- **alhai_pos/lib/src/screens/cash/cash_drawer_screen.dart** — drawer display /100.0.
+- **alhai_pos/lib/src/screens/pos/receipt_screen.dart** — int cents → double at ReceiptData / ZatcaQrService boundaries.
+- **alhai_pos/lib/src/screens/returns + payment** — 7 call sites.
+- **alhai_shared_ui/lib/src/providers/shifts_providers.dart** — shift write path.
+- **alhai_shared_ui/lib/src/screens/{dashboard,invoices,shifts}/** — display sites.
+- **apps/cashier/lib/screens/payment/{split_receipt,split_refund}_screen.dart** — payment split UIs (includes a `num can't return from double` signature fix).
+- **apps/cashier/lib/screens/reports/custom_report_screen.dart** — reports math.
+- **apps/cashier/lib/screens/sales/{reprint_receipt,sale_detail}_screen.dart** — receipt surfaces.
+- **apps/cashier/lib/screens/shifts/{daily_summary,shift_close}_screen.dart** — shift reports.
+- **apps/cashier/lib/services/printing/auto_print_setup.dart** — extended Session 2 boundary conversions to shift+cash amounts too.
+- **apps/admin/lib/screens/{home_screen,employees/employee_profile,shifts/shift_close}_screen.dart** — admin surfaces (employee_profile needed both `_centsToSar` and `_toCentsInt` helpers since raw-row builder serves both shift reconstruction and sales stats display).
+
+### Test-side changes (~20 files)
+
+- Inline `(x * 100).round()` conversion at TableData boundary, param types kept as double SAR for readability (pattern from Session 2).
+- 3 schemaVersion assertions updated 42 → 43 (`app_database_test.dart`, `migration_test.dart`, `migration_backup_test.dart`).
+- 5 runtime assertions in alhai_database tests updated to int-cents expectations.
+- 3 runtime assertions in alhai_pos tests (receipt_printer_service, sale_service).
+
+## Verification matrix
+
+| Package | Before | After |
+|---|---|---|
+| flutter analyze (5 packages) | various | **0 errors** all |
+| alhai_core | 667 | **667** ✓ |
+| alhai_database | 508 + 1 skip | **508 + 1 skip** ✓ |
+| alhai_sync | 358 | **358** ✓ |
+| alhai_zatca (CRITICAL gate) | 850 + 1 skip | **850 + 1 skip** ✓ |
+| alhai_pos | 559 | **559** ✓ |
+| alhai_shared_ui | 861 | **861** ✓ |
+| cashier | 552 | **552** ✓ |
+| customer_app | 136 | **136** ✓ |
+| admin | 365 | **365** ✓ |
+| admin_lite | 183 | **183** ✓ |
+
+Aggregate: **5338 tests passing**.
+
+## Risk
+
+- Sixth consecutive schema bump (v38→v39→v40→v41→v42→v43). Drift's automatic pre-migration backup service armed.
+- Live migration touched 11 rows (sales) + 0 rows (others). One invariant violation surfaced post-apply, corrected with single-row UPDATE. No downstream ZATCA impact (invoices empty).
+- The sales_dao DAO-level internal conversion preserves public API stability — consumer apps see unchanged semantics. ZATCA TLV encoder still receives SAR doubles via `auto_print_setup.dart` boundary.
+
+## Session-series aggregate (Sessions 13 + 14 + 15 same-day)
+
+- 4 branches: `fix/zatca-queue-drift` → `fix/deploy-bundle-customer-driver` → `fix/c4-session-2-invoices` → `fix/c4-session-3-shifts-sales`
+- 3 live Supabase migrations applied: v71 (Stage B products, prior day) + v72 (invoices+sale_items+held_invoices) + v73 (shifts+cash_movements+sales)
+- Drift schema bumped v37 → v43 (six steps)
+- **Total money columns now INT cents**: 8 (products+discounts+org_products) + 14 (invoices+sale_items+held_invoices) + 16 (shifts+cash_movements+sales) = **38 money columns migrated**.
+- Remaining C-4 backlog: Session 4 (analytics cleanup — accounts, expenses, purchases, returns, daily_summaries, transactions).
+
+## Audit refs
+
+- Plan §5 Phase 5 "Execution checklist — Session 3" — resolved.
+- Plan §6 Appendix B (tolerance-based + COALESCE NULL-fix variant) — applied.
+- Plan §7 D1 (ROUND_HALF_UP) — applied; live confirmed via V-POST-C invariant fix.
+- Plan §4 R7 (historical reporting drift) — 1 row drift ≤0.01 SAR; resolved via explicit single-row UPDATE.
+
+---
+
+END OF SESSION 15 — C-4 Session 3 COMPLETE
