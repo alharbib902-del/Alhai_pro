@@ -5833,3 +5833,108 @@ Sessions 12 through 18 — everything that was scattered across branches is now 
 ---
 
 END OF SESSION 19 — main consolidated, all remotes synced
+
+---
+
+# Session 20 — Orphan Branch Triage (2026-04-22)
+
+**Branch:** `main` (still working on main).
+**Budget:** ~40 min investigation + execution.
+
+## Summary
+
+Cleaned up **63 branches** across 2 phases. Local branch count: **67 → 4** (main + 3 with real unmerged work flagged for future session).
+
+## Phase 1 — Safe deletes (ahead=0, 44 branches)
+
+All Category A + Category C branches where `ahead=0` vs main. Content fully on main. Used `git branch -d` (safe delete).
+
+- **C-4 sessions (3):** `fix/c4-session-2-invoices`, `fix/c4-session-3-shifts-sales`, `fix/c4-session-4-analytics`
+- **Deploy bundle (2):** `fix/deploy-bundle-customer-driver`, `fix/cleanup-indexes-orphans`
+- **Session 12 chain (9):** `fix/zatca-queue-drift`, `fix/sync-tombstones`, `fix/rpc-auth-gates`, `fix/server-rpc-audit`, `fix/users-pii-rls`, `fix/wildcard-gen3-bootstrap`, `fix/platform-admin-rls`, `fix/campaign-closure-audit`, `fix/rls-hygiene-closeout`
+- **Phase 5 era (14):** `fix/phase2-blockers`, `fix/phase4-blockers`, `fix/phase5-customer-app*`, `fix/phase5-distributor-*`, `fix/phase5-driver-app*`, `fix/phase5-tier*`
+- **Misc (9):** `audit/sync-queue-investigation-20260422`, `fix/cashier-batch-bc-20260419`, `fix/session-w3-sales-wildcards-20260422`
+- **Worktree-agent temps (7):** all ancient throwaway worktrees
+
+1 branch refused safe delete (`session-2026-04-17-hardening` — content on main but local ahead of upstream origin by 6 commits that were integrated via the FF chain). Deferred to Phase 2.
+
+## Phase 2 — Force deletes (ahead>0 but content on main, 18 branches)
+
+Category B branches where the `ahead` commits are EITHER (a) docs/log fan-outs that the canonical FIX_SESSION_LOG.md absorbed, OR (b) migration commits whose *content* (SQL files) is on main under different commit hashes via the cumulative chain, OR (c) cherry-picked upstream.
+
+Used `git branch -D` (force) — content-safe since all files verified to exist on main.
+
+- `session-2026-04-17-hardening` (6 commits, hardening r2-r5 all on main)
+- `audit/phase5` (2 commits, phase 5 acceptance docs)
+- `audit/wildcard-comprehensive-scan-20260422` (v58)
+- `feat/c4-session-1-product-catalog-20260422` (discovery draft, superseded by actual Stage B)
+- `fix/c8-zatca-queue-encryption-20260421` (encryption via flutter_secure_storage)
+- `fix/cashier-audit-quickwins-p0-20260418` (v43 platform_settings — already applied live 2026-04-19)
+- `fix/cashier-c1-ulid-20260421` (deferral doc only)
+- `fix/customer-app-orders-20260421` (2236b94 cherry-picked to deploy bundle)
+- `fix/gen2-dead-policy-cleanup-20260422` (v56)
+- `fix/orphan-org-isolation-audit-20260422` (v57 — Session 17's v75 closed further orphans)
+- `fix/rls-hardening-c9-20260421` (v53/v54/v55 + c0185a2 cherry-picked)
+- `fix/rls-type-drift-audit-20260421` (audit doc)
+- `fix/security-hardening-ultrareview` (v43 platform_settings dupe)
+- `fix/session-w1-financial-wildcards-20260422` (v59)
+- `fix/session-w2-identity-wildcards-20260422` (v60)
+- `fix/session-w4-operational-wildcards-20260422` (v61)
+- `fix/session-w5-anomalies-20260422` (v62)
+- `plan/c4-money-migration-20260421` (plan doc already cherry-picked Session 19)
+
+## KEPT — 3 branches with real unmerged work
+
+**Flagged for a future merge session.**
+
+### 🚨 `fix/super-admin-audit-p0s-20260419` (17 commits)
+
+Substantial unmerged super_admin work from 2026-04-19:
+
+- `v48_update_platform_settings_rpc.sql` — **NOT on main**
+- `v49_create_store_rpc.sql` — **NOT on main**
+- `feat(super_admin/settings): wire Save button to update_platform_settings RPC` — U2 Part 2
+- `refactor(super_admin/stores): replace INSERT chain with create_store RPC` — U4 Part 3
+- `fix(super_admin/errors): sanitize user-facing error messages` — U3 (sweep 4/4)
+- 12 more commits addressing U2/U3/U4 from the 2026-04-17 super_admin handover
+
+The 2026-04-17 handover memory claimed "all P0/P1/P2/P3 closed" but **this branch contains the actual closure work that was never merged to main**. Main is still missing the Save button wiring and the create_store RPC.
+
+### 🚨 `fix/driver-app-test-coverage-20260422` (15 commits)
+
+- `test(driver_app): unit coverage for store_id upsert fix — drivers S-1 closure` — real test code not on main
+- Plus C-9 Phase D docs/migrations (v53/v54/v55 already on main via other paths; docs fan-outs)
+
+### ⚠️ `feat/c4-session-0-money-foundation-20260422` (4 commits)
+
+- `feat(alhai_core): add Money value object with ROUND_HALF_UP — C-4 Session 0` (`16b4e3ee`)
+- `test(alhai_core): 27 tests for Money value object — C-4 Session 0` (`ca2adba7`)
+- `feat(alhai_core): export Money from public barrel — C-4 Session 0.5` (`c903aba8`)
+- `docs(sessions): 2026-04-22 morning session summary` (`286b54e2`)
+
+Our Session 13 authored a DIFFERENT Money type implementation (commit `4de24ab`, on main) with 56 tests. The two versions may share ideas but aren't identical. Before deleting this branch, compare implementations to see if anything worth rescuing (e.g., test cases, ROUND_HALF_UP edge cases).
+
+## Branch count — before vs after
+
+| Category | Before | After |
+|---|---|---|
+| Local branches | 67 | **4** |
+| Merged to main (0 ahead) | 45 | 0 (all deleted) |
+| Had unique commits (ahead>0) | 20 | 3 (kept for future work) |
+| Worktree-agent temps | 7 | 0 |
+| Active (main) | 1 | 1 |
+
+## Remote state
+
+- **backup remote:** still has all ~60+ branches intact. Recovery possible for any deleted branch via `git checkout -b <name> backup/<name>`.
+- **origin:** only `main` was pushed in Session 19. Origin branches unchanged; most originally not pushed there.
+
+## Follow-up for a future session
+
+1. **super_admin merge session** — merge `fix/super-admin-audit-p0s-20260419` into main. Includes v48 + v49 RPCs. **This closes real P0s that the 2026-04-17 handover claimed closed but never were on main.** ~1-2h.
+2. **driver_app test coverage merge** — cherry-pick `e47d4e78 test(driver_app): unit coverage for store_id upsert fix`. ~30 min.
+3. **Money type comparison** — compare `16b4e3ee` Money v1 vs main's `4de24ab` Money v2. If main's is strictly better, delete the branch; if v1 has a useful test or edge case missed, rescue it. ~30 min.
+
+---
+
+END OF SESSION 20 — branch graveyard cleared, 3 real-work branches flagged
