@@ -6127,3 +6127,64 @@ Zero. Session was pure branch cleanup + 1 small test cherry-pick. No schema chan
 ---
 
 END OF SESSION 22 — repo fully consolidated onto main (67 → 1 branch)
+
+---
+
+# Session 23 — Admin audit status reconciliation (2026-04-22)
+
+**Branch:** `main`.
+**Commit:** `8c33bcb4` — new doc `docs/reports/admin-audit-status-2026-04-22.md` (+147 LOC).
+**Budget:** ~25 min.
+
+## Summary
+
+"Admin audit" was last documented in memory as "310 findings, 42 P0s" — a scary number that was blocking pick-up. This session hunted down the actual artifact and discovered reality is much smaller and mostly already-closed.
+
+## Discovery
+
+- ❌ `test_alhai/admin/` — not on disk (same as Session 18's super_admin artifact hunt)
+- ✅ `docs/reports/acceptance/phase4/admin_pos/ACCEPTANCE_REPORT_PHASE4_ADMIN_POS.md` — 431 LOC, Arabic, from 2026-04-15
+- ✅ `docs/reports/fixes-apr15/phase4/ADMIN_FIX_REPORT.md` — 102 LOC, 8/10 fixed, 2 deferred
+
+**Memory was stale.** The actual numbers:
+- 135 items evaluated (not 310)
+- 10 P0s (3 CRITICAL + 7 HIGH, not 42)
+- 8 already fixed on 2026-04-15
+- 2 deferred as infrastructure-blocked (H4 image upload, H7 device OTP)
+- ~27 medium/minor remaining, categorized in the new status doc
+
+## New doc: `admin-audit-status-2026-04-22.md`
+
+Structured reconciliation with:
+- Reality check vs stale memory
+- Categorized remaining items:
+  - **Tier A** — 6 quick wins (~30-60 min each)
+  - **Tier B** — 9 medium features (~2-4h each)
+  - **Tier C** — 5 large/infrastructure items (need plan docs)
+- Items resolved *indirectly* by Sessions 12-22 (RLS closures, C-4, super_admin P0 merge, etc.)
+- Policy recommendations on avoiding future "phantom P0" rabbit holes
+
+## "Phantom P0" pattern across sessions
+
+Adds to the methodology note from Session 18 — this is the 8th such case in the series:
+1. A-5 phantom column (Session 11/12)
+2. C-2 phantom rename
+3. C-1 phantom terminology
+4. super_admin 3 original P0s (Session 13 — all silently closed)
+5. platform_settings P0 (Session 18 — applied 2026-04-19)
+6. Admin "310/42" myth (this session)
+
+**Institutional lesson:** memory from separate intake sessions decays in ~days. Always verify against current code/live state before scoping work based on intake docs.
+
+## Remotes synced
+
+- backup: `ea6d93b4..8c33bcb4` ✓
+- origin: `ea6d93b4..8c33bcb4` ✓
+
+## Risk
+
+Zero. Documentation-only commit. No code, no schema, no live impact.
+
+---
+
+END OF SESSION 23 — admin audit scoped, Tier A/B items ready for future session pickup
