@@ -1482,7 +1482,8 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '${item.total.toStringAsFixed(2)} ${l10n.sar}',
+                // C-4 Session 2: sale_items.total is int cents.
+                '${(item.total / 100.0).toStringAsFixed(2)} ${l10n.sar}',
                 style: TextStyle(
                   fontSize: 14,
                   fontWeight: FontWeight.bold,

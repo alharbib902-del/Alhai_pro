@@ -184,7 +184,8 @@ class _RefundRequestScreenState extends ConsumerState<RefundRequestScreen> {
                         subtitle: Text(
                           AppLocalizations.of(context).quantityTimesPrice(
                             item.qty.toInt(),
-                            item.unitPrice.toStringAsFixed(2),
+                            // C-4 Session 2: sale_items.unitPrice is int cents.
+                            (item.unitPrice / 100.0).toStringAsFixed(2),
                           ),
                         ),
                         secondary: CircleAvatar(

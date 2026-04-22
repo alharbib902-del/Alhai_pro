@@ -464,7 +464,9 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
     bool isDark,
     AppLocalizations l10n,
   ) {
-    final total = item.qty * item.unitPrice;
+    // C-4 Session 2: sale_items.unitPrice is int cents; qty stays double.
+    // Line total in SAR = qty * cents / 100.
+    final total = item.qty * item.unitPrice / 100.0;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
@@ -501,7 +503,7 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  '${item.unitPrice.toStringAsFixed(2)} ${l10n.sar}',
+                  '${(item.unitPrice / 100.0).toStringAsFixed(2)} ${l10n.sar}',
                   style: TextStyle(
                     fontSize: 12,
                     color: AppColors.getTextSecondary(isDark),
