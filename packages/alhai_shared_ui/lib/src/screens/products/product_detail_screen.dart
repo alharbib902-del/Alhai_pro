@@ -596,7 +596,9 @@ class _ProductDetailScreenState extends ConsumerState<ProductDetailScreen> {
                   ),
                   SizedBox(height: AlhaiSpacing.xxs),
                   Text(
-                    CurrencyFormatter.format((product.costPrice ?? 0) / 100.0),
+                    CurrencyFormatter.formatMoney(
+                      product.costPriceMoney ?? Money.zero(),
+                    ),
                     style: Theme.of(context).textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: AppColors.getTextPrimary(isDark),
