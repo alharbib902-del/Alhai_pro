@@ -6257,3 +6257,139 @@ Zero. Pure additive changes on the DAO side (new methods alongside existing). Sc
 ---
 
 END OF SESSION 24 — 4 Tier A quick wins landed on main + tests green
+
+---
+
+# 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
+
+**Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
+**Purpose:** Single entry point for any fresh session (AI or human) to resume work WITHOUT re-reading all prior entries.
+
+Supersedes the prior "NEXT SESSION STARTING POINT" written Session 13 (2026-04-22 early).
+
+## 0. Where to start
+
+**Read `memory/handover_2026_04_23.md` first.** That's the authoritative handover for continuity. This section is a pointer summary.
+
+## 1. Repo state snapshot
+
+- **Active branch:** `main` @ `4ebc4f73` (code) / `4ebc4f73` (log synced post-commit)
+- **All 3 remotes in sync:** local, backup, origin
+- **Live Supabase:** v75
+- **Drift schema:** v44
+- **Only 1 local branch:** `main` (down from 67 this morning)
+
+## 2. Test baselines verified on main today
+
+```
+alhai_core         667
+alhai_database     509 + 1 skipped
+alhai_sync         358
+alhai_zatca        850 + 1 skipped  ← ZATCA gate
+alhai_pos          559
+alhai_shared_ui    861
+alhai_reports      123
+alhai_pos/cashier  552
+customer_app       136
+driver_app         156
+admin              365
+admin_lite         183
+super_admin        222
+-----------
+                   5490 tests passing
+```
+
+(distributor_portal 420 inferred, not re-run today)
+
+## 3. 🔴 URGENT — pick first if credentials are ready
+
+**Deploy customer_app + driver_app release builds.**
+- Code ready on main since Session 13 bundle work.
+- **User-provided credentials required** (5 items):
+  1. `customer_app/android/key.properties` + upload keystore `.jks`
+  2. `driver_app/android/key.properties` + upload keystore `.jks`
+  3. `customer_app/android/app/google-services.json`
+  4. `driver_app/android/app/google-services.json`
+  5. Play Console / App Store Connect credentials
+- **Impact while delayed:** customer_app `createOrder` 100% failing on live production. Every day = more failed orders.
+- **Estimated time:** 1-1.5h once credentials land.
+
+## 4. 🟠 Medium priority — one focused session per item
+
+**Admin audit — Tier A remaining quick wins (30-60 min each)** from `docs/reports/admin-audit-status-2026-04-22.md`:
+- Q2 — confirm-before-delete dialog polish (spot-check screens)
+- Q6 — broader audit-log coverage (extend H5 pattern to stock/settings/permissions)
+
+**Admin audit — Tier B feature sessions (2-4h each, priority order):**
+1. **M2** low-stock alerts dashboard + notification (DAO ready: `getLowStockProducts()`)
+2. **Q1-UI** — wire `softDeleteProduct` to products list delete button (DAO primitive landed Session 24)
+3. **M1** auto-generate EAN-13 barcode when blank
+4. **M7** ZATCA queue status report (sent/rejected/pending)
+5. **M3 + M4** stocktaking + inter-branch transfer (shared stock_movements, one session)
+
+**super_admin — ops (user-executed, not code):**
+- 6 GitHub Actions secrets + `deploy_web.yml` `--dart-define` flags
+
+**super_admin Tier 3 U5/U9/U11/U13 — BLOCKED** until the original Arabic audit report is located (`test_alhai/super_admin/` not on disk).
+
+## 5. 🟢 Low priority
+
+- C-1 Receipt number collision (real bug, half-day dedicated)
+- C-5 TLV encoder refactor (own session)
+- C-10 Historical NULL-orgId invoice cleanup (1-2h)
+- C-4 follow-ups: Money adoption in domain classes, `formatMoney` migration (incremental)
+- `loyalty_transactions.sale_amount` local-only migration decision
+- distributor_portal test baseline re-run
+
+## 6. How to start
+
+```bash
+# 1. confirm clean state
+git log --oneline -1    # expect 4ebc4f73
+git branch --list        # expect only main
+
+# 2. sanity check a subset of baselines
+cd packages/alhai_zatca && flutter test | tail -1   # 850 + 1 skipped
+cd alhai_core && flutter test | tail -1              # 667
+
+# 3. create a feature branch (no dates per user preference)
+git checkout -b fix/<descriptive-name>
+
+# 4. do the work. step-by-step SQL approval if live migrations. dual-log on every log edit.
+
+# 5. when done: commit → push backup + origin (if main-level) → wrap
+```
+
+## 7. User preferences (durable)
+
+- Arabic chat
+- Branch names without dates
+- Step-by-step SQL — user approves every live apply
+- Atomic BEGIN..COMMIT + rollback DDL in comments
+- Pre-apply verification queries mandatory (tolerance-based with COALESCE NULL fix)
+- Never push to origin unprompted (exception: this session series after Session 19 user approved main push to origin as one-time consolidation)
+- Dual-log byte-identical after every log edit
+
+## 8. Key methodology lessons
+
+1. **Phantom P0 pattern** — 8 cases so far. Always verify audit-report claims against current code/live before scoping.
+2. **Memory decays in days.** Spot-check against main before acting on intake doc.
+3. **Pre-apply invariant proofs miss IEEE 754 edge cases.** Run V-POST-C invariant check post-migration.
+4. **Appendix B NULL-over-empty fix:** `COALESCE(col, 0) = 0` in CASE.
+5. **Tolerance-based audit:** `ABS((col * 100) - ROUND(col * 100)) > 1e-6` distinguishes FP artifact from real data.
+6. **DAO aggregate API preservation:** divide cents internally, keep public double-SAR contract to avoid cascading consumer edits.
+7. **Agent delegation for mechanical fixture conversion** — cost-effective for 40+ errors.
+8. **Fork resource cap:** ≤4 parallel test suites on Windows.
+
+## 9. Artifacts to know
+
+- Canonical log: `C:\Users\basem\OneDrive\Desktop\alhai_check-18-04-2026\cashier\FIX_SESSION_LOG.md`
+- In-repo log: `docs/sessions/FIX_SESSION_LOG.md` (byte-identical)
+- Handover (detailed): `memory/handover_2026_04_23.md`
+- C-4 plan: `docs/sessions/c4-money-migration-plan.md`
+- Admin audit status: `docs/reports/admin-audit-status-2026-04-22.md`
+- Drift schemaVersion: `packages/alhai_database/lib/src/app_database.dart` (`44`)
+
+---
+
+END OF NEXT SESSION STARTING POINT — ready for 2026-04-23+ work
