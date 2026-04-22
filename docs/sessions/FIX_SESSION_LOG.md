@@ -7129,6 +7129,98 @@ END OF SESSION 37 — distributor_portal 420/420 confirmed; last stale baseline 
 
 ---
 
+# Session 38 — Origin push + C-10 RLS fallback migration (2026-04-23)
+
+**Branches merged:** direct `main` (origin push) + `fix/c10-invoices-rls-org-null-fallback` (`9e45e502`). **Budget:** ~30 min.
+
+## Summary
+
+User said "فك الحجب كامل" — unblock everything. Two deliverables:
+
+1. **Origin unblock.** 24 commits (sessions 26-37, range `c214792a..31294ef1`) pushed to `origin/main`. `backup/main` and `origin/main` now in sync at `31294ef1`.
+2. **C-10 RLS fallback migration** authored (v76). Server-side fix for historical NULL-orgId invoices stuck in dead-letter. User applies on live Supabase at their schedule.
+
+Money adoption was evaluated and **rescoped as out of reach for current context**: the plan (`docs/sessions/c4-money-migration-plan.md` §3 Option B) budgets 25-30 hours across 4-5 dedicated sessions, not a 2-3h polish as the handover implied. Dropped from this session; flagged for a fresh start.
+
+## Part 1 — Origin sync
+
+```
+git push origin main     # c214792a..31294ef1  main -> main
+git push gitlab main     # rejected (non-fast-forward); gitlab has
+                         # local history divergence — left untouched,
+                         # needs manual reconciliation by user.
+```
+
+All 24 commits on `origin` now:
+- Sessions 26-33 (Admin Tier A + Tier B close: Q1-UI, Q2, Q6, M1, M2×2, M3+M4, M7)
+- Sessions 34-37 (C-4 loyalty decision, C-5 TLV refactor, C-1 receipt collision, distributor_portal baseline)
+
+## Part 2 — C-10 v76 migration
+
+### The bug (recap from 2026-04-21 discovery)
+
+Pre-C-3 (commit `e00e158`) cashier invoices had `org_id = NULL` in Drift. On sync, the v15 `invoices_insert_policy` required `org_id IN (user's orgs)`; `NULL` never matches in three-valued SQL, so every such INSERT silently denied and the invoice landed in dead-letter forever.
+
+C-3 fixed new writes (populates `org_id` from `stores.org_id` up-front). C-10 handles the historical pile.
+
+### The fix — `supabase/migrations/20260423_v76_invoices_rls_org_null_fallback.sql`
+
+Extends `invoices_insert_policy` with a second OR branch: when `org_id IS NULL` AND the user is an active `store_members` row for the invoice's `store_id`, allow the INSERT. Tenant safety is preserved — NULL-org row can only land if caller is already a verified store member.
+
+Critical type-detail preserved in the migration comment: `store_members.user_id` is UUID (per `get_my_stores.sql`), NOT TEXT like `org_members.user_id`. The fallback subquery uses `auth.uid()` without `::TEXT` — so the existing UUID index serves the lookup instead of a runtime text cast.
+
+File structure (project convention):
+- Rollback DDL in header comment (restores v15 policy byte-for-byte)
+- Pre-apply verification (Q1 + Q2) — baseline NULL-org count + policy body sanity check
+- Atomic `BEGIN..COMMIT`
+- Post-apply verification (Q3 + Q4) — new policy body contains "org_id IS NULL" + post-sync NULL-org count
+
+### Live-apply flow (user-executed, per standing preference)
+
+1. Run pre-apply Q1 + Q2 on Supabase Dashboard.
+2. Paste the `BEGIN..COMMIT` block.
+3. Run post-apply Q3.
+4. Trigger a sync on any device with stuck dead-letter invoices.
+5. Optionally Q4 to confirm NULL-org rows land server-side.
+
+No Dart code change. Sync retry lifecycle replays dead-letter items automatically after the policy flip.
+
+## Money adoption — rescope note
+
+Out of scope for this session. The C-4 plan doc spells out:
+- Session 0 Foundation — Money type (already done)
+- Session 1 Product catalog — 4-6 hrs
+- Session 2 Invoice core — 8-10 hrs (ZATCA-critical)
+- Session 3 Shifts & cash — 4-6 hrs
+- Session 4 Analytics cleanup — 3-4 hrs
+
+Total 25-30 hours across 4-5 sessions spread over 1-2 weeks. Current session's context (25+ commits, substantial scope) is not the right place to start.
+
+## Verification
+
+- SQL file parses on visual inspection; all referenced tables (`invoices`, `org_members`, `store_members`) exist in prior migrations.
+- Rollback DDL in header matches v15 policy byte-for-byte.
+- No live apply this session — migration file awaits user.
+
+## Risk (for the v76 migration when applied)
+
+Low (per live-apply side):
+- Additive OR branch in RLS; existing org-members path is unchanged.
+- Tenant safety maintained via `store_members` membership check.
+- Rollback is `DROP POLICY` + re-`CREATE POLICY` with the old body, ~3 seconds.
+
+## Remote push + merge
+
+- `main` at `9e45e502` after the v76 migration commit.
+- Pushed to `backup`.
+- **Origin push:** same operation covered this session's two parts — push already succeeded (see Part 1). Current `origin/main` = `31294ef1`, will advance to `9e45e502` on next origin push.
+
+---
+
+END OF SESSION 38 — 24 commits landed on origin; C-10 RLS fallback migration shipped and awaits live apply
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
 
 **Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
@@ -7218,7 +7310,7 @@ super_admin        222
 
 - ~~C-1 Receipt number collision~~ — DONE Session 36, commit `ee44e78c` (per-device 4-hex-char suffix + 7 tests; alhai_pos 570 → 577)
 - ~~C-5 TLV encoder refactor~~ — DONE Session 35, commit `c240297c` (encodeTag / decodeQrData + 11 tests; alhai_pos 559 → 570)
-- C-10 Historical NULL-orgId invoice cleanup (1-2h)
+- ~~C-10 Historical NULL-orgId invoice cleanup~~ — Session 38 SHIPPED v76 RLS fallback migration (`9e45e502`); **awaits live apply on Supabase Dashboard** (user-executed per standing preference)
 - C-4 follow-ups: Money adoption in domain classes, `formatMoney` migration (incremental)
 - ~~`loyalty_transactions.sale_amount` decision~~ — DONE Session 34, commit `f0afcf02` (keep as-is, documented)
 - ~~distributor_portal test baseline re-run~~ — DONE Session 37, 420/420 confirmed
