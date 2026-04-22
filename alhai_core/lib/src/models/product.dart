@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import 'money.dart';
+
 part 'product.freezed.dart';
 part 'product.g.dart';
 
@@ -54,4 +56,19 @@ class Product with _$Product {
 
   /// Check if product is out of stock
   bool get isOutOfStock => stockQty <= 0;
+
+  // ── C-4 Money adoption (incremental, Session 1 slice) ─────────────────────
+
+  /// [price] wrapped as a [Money] value (SAR, int cents).
+  ///
+  /// Use this at display / arithmetic sites instead of
+  /// `CurrencyFormatter.format(product.price / 100.0)` — the `formatMoney`
+  /// helper handles the conversion and picks the correct symbol. Call-site
+  /// migration is incremental; both paths coexist during the transition.
+  Money get priceMoney => Money.fromCents(price);
+
+  /// [costPrice] wrapped as a [Money] value, or null when the product has
+  /// no recorded cost. Same rationale as [priceMoney].
+  Money? get costPriceMoney =>
+      costPrice == null ? null : Money.fromCents(costPrice!);
 }

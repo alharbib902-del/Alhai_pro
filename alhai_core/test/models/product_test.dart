@@ -62,5 +62,77 @@ void main() {
 
       expect(product.isOutOfStock, isTrue);
     });
+
+    group('Money getters (C-4)', () {
+      test('priceMoney wraps the int-cents price as SAR Money', () {
+        final product = Product(
+          id: '1',
+          storeId: 'store1',
+          name: 'Test Product',
+          price: 3780,
+          stockQty: 10,
+          isActive: true,
+          createdAt: DateTime.now(),
+        );
+
+        expect(product.priceMoney, Money.fromCents(3780));
+        expect(product.priceMoney.cents, 3780);
+        expect(product.priceMoney.currencyCode, 'SAR');
+        expect(product.priceMoney.toDouble(), 37.80);
+      });
+
+      test(
+        'costPriceMoney wraps costPrice as SAR Money when set',
+        () {
+          final product = Product(
+            id: '1',
+            storeId: 'store1',
+            name: 'Test Product',
+            price: 10000,
+            costPrice: 6500,
+            stockQty: 10,
+            isActive: true,
+            createdAt: DateTime.now(),
+          );
+
+          expect(product.costPriceMoney, Money.fromCents(6500));
+          expect(product.costPriceMoney!.cents, 6500);
+        },
+      );
+
+      test('costPriceMoney returns null when costPrice is null', () {
+        final product = Product(
+          id: '1',
+          storeId: 'store1',
+          name: 'Test Product',
+          price: 10000,
+          stockQty: 10,
+          isActive: true,
+          createdAt: DateTime.now(),
+        );
+
+        expect(product.costPrice, isNull);
+        expect(product.costPriceMoney, isNull);
+      });
+
+      test('Money getters preserve precision on arithmetic', () {
+        // 37.80 SAR × 3 items. The cents-int path yields exactly 11340
+        // (113.40 SAR). The double path is 37.8 × 3 = 113.400000000001
+        // under IEEE 754 — the whole reason C-4 exists.
+        final product = Product(
+          id: '1',
+          storeId: 'store1',
+          name: 'Test Product',
+          price: 3780,
+          stockQty: 10,
+          isActive: true,
+          createdAt: DateTime.now(),
+        );
+
+        final total = product.priceMoney * 3;
+        expect(total.cents, 11340);
+        expect(total.toDouble(), 113.40);
+      });
+    });
   });
 }
