@@ -6336,6 +6336,81 @@ END OF SESSION 26 — Q1-UI merged to main; origin push pending user approval
 
 ---
 
+# Session 27 — Admin Tier A Q2: confirm-before-delete polish (2026-04-23)
+
+**Branch:** `fix/admin-delete-confirmation-polish`. **Commit:** `34978295`. **Budget:** ~45 min.
+
+## Summary
+
+Closes the Q2 polish gap from `docs/reports/admin-audit-status-2026-04-22.md`. Four admin marketing screens (discounts, coupons, special offers, smart promotions) used to destroy records on a single tap with no confirmation. Adds a shared confirm helper and wires it into all four.
+
+## Changes — 20 files, +165 / −7 LOC
+
+### New shared helper
+
+- **`apps/admin/lib/core/widgets/delete_confirm_dialog.dart`** (new) — `Future<bool> confirmDelete(context, {itemName})` wraps an `AlertDialog` with the standard "Delete `<name>`? This cannot be undone." prompt. Reuses `deleteConfirmTitle`, `confirmDeleteItemMessage`, `cancel`, `delete` l10n keys + `AppColors.error` for the confirm button foreground. Returns `true` on confirm, `false` on cancel/dismiss (never null).
+
+### Screen wire-ups
+
+- **`apps/admin/lib/screens/marketing/discounts_screen.dart`** — `_deleteDiscount` is inside `_DiscountsContent` (a `ConsumerWidget`, not state), so I added a `BuildContext context` parameter explicitly; call site at delete IconButton also updated to pass `context`.
+- **`apps/admin/lib/screens/marketing/coupon_management_screen.dart`** — bottom-sheet delete button: `onPressed` is now `async`, awaits `confirmDelete(context, itemName: c.code)` before popping the sheet and calling `_deleteCoupon`.
+- **`apps/admin/lib/screens/marketing/special_offers_screen.dart`** — same pattern on the promotions bottom-sheet delete button (uses `p.name`).
+- **`apps/admin/lib/screens/marketing/smart_promotions_screen.dart`** — the delete action inside the `_showPromotionDetails` `AlertDialog.actions` list is now async + confirm-gated (uses `promotion.name`).
+
+### Screens NOT touched (already have confirm dialogs)
+
+- `categories_screen.dart` — `_deleteCategory` has its own AlertDialog
+- `roles_permissions_screen.dart` — `_deleteRole` has its own AlertDialog
+- `supplier_form_screen.dart` — `_showDeleteConfirmation` method exists
+- `products_screen.dart` — confirm dialog added Session 26 (Q1-UI)
+
+### Screens NOT touched (PIN gate considered sufficient)
+
+- `users_management_screen.dart` — the `case 'delete'` branch at line 464 requires `_requirePinConfirmation()` before the destructive DAO call. PIN entry serves as both authentication and deliberate-intent gate (typing 4+ digits is not a muscle-memory action). Out of scope for Q2 polish.
+
+### l10n
+
+- **`packages/alhai_l10n/lib/l10n/*.arb`** (7 files) — adds `confirmDeleteItemMessage` with `{name}` placeholder in ar/en/bn/fil/hi/id/ur. Inserted between existing `deleteConfirmMessage` and `logoutConfirmTitle` for cluster grouping.
+- Ran `flutter gen-l10n` — 8 generated files refreshed.
+
+## Verification
+
+- `flutter analyze` admin/lib/screens/marketing: **0 issues** (all pre-existing admin-wide lints unchanged).
+- **admin tests: 365 / 365** — baseline preserved.
+
+## Architectural notes
+
+1. **Why a helper, not repeated dialogs.** Each of the four delete buttons would otherwise need ~15 lines of dialog boilerplate. One helper keeps the UX consistent and shrinks the diff.
+2. **Why not move `confirmDelete` into shared_ui.** The helper is admin-specific right now. `alhai_design_system` might be the right long-term home for a generic "destructive action confirmation" component, but scope-creeping this session to extract would inflate the change. Left as admin-local; can be promoted later if cashier/admin_lite need a similar flow.
+3. **Async gap handling.** Every call site pattern is `if (!await confirmDelete(...)) return; if (!context.mounted) return; Navigator.pop(context); await _deleteFoo(ref, x);` — the mounted check after the awaited dialog is the correct guard for the post-await `Navigator.pop`.
+4. **Users delete stays PIN-only by choice.** A second "Are you sure?" dialog before PIN would add friction without meaningful safety gain — PIN entry is already a deliberate action that can't be triggered by muscle memory.
+
+## Deferred follow-ups
+
+- **Promote `confirmDelete` to shared_ui/design_system** if cashier/admin_lite develop similar delete flows.
+- **Users delete could still gain a name-inclusive intent dialog** if UX review finds the PIN-only flow confusing. Low priority.
+
+## Risk
+
+Zero.
+- Additive UI change (confirm dialog inserted before an existing delete call).
+- No DAO / no database migration.
+- Cancellation path is safe — returns early before any mutation.
+- admin_lite / cashier / distributor untouched.
+
+## Remote push + merge
+
+- Branch `fix/admin-delete-confirmation-polish` pushed to `backup`.
+- Fast-forward merged to `main` (main now at `34978295`).
+- Branch deleted locally post-merge (still on `backup` remote for recoverability).
+- `origin` still at `c214792a` — explicit user approval required before pushing main there.
+
+---
+
+END OF SESSION 27 — Q2 marketing delete confirms in place
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
 
 **Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
@@ -6393,7 +6468,7 @@ super_admin        222
 ## 4. 🟠 Medium priority — one focused session per item
 
 **Admin audit — Tier A remaining quick wins (30-60 min each)** from `docs/reports/admin-audit-status-2026-04-22.md`:
-- Q2 — confirm-before-delete dialog polish (spot-check screens)
+- ~~Q2~~ — DONE Session 27, merged to `main` (confirmDelete helper + 4 marketing screens)
 - Q6 — broader audit-log coverage (extend H5 pattern to stock/settings/permissions)
 
 **Admin audit — Tier B feature sessions (2-4h each, priority order):**
