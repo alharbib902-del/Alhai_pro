@@ -101,8 +101,12 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         setState(() {
           _nameController.text = product.name;
           _barcodeController.text = product.barcode ?? '';
-          _priceController.text = product.price.toStringAsFixed(2);
-          _costController.text = product.costPrice?.toStringAsFixed(2) ?? '';
+          // C-4 Stage B: price + costPrice columns are int cents.
+          // Seed SAR for display / text input (save path multiplies by 100).
+          _priceController.text = (product.price / 100.0).toStringAsFixed(2);
+          _costController.text = product.costPrice == null
+              ? ''
+              : (product.costPrice! / 100.0).toStringAsFixed(2);
           _stockController.text = product.stockQty.toString();
           _minStockController.text = product.minQty.toString();
           _selectedCategoryId = product.categoryId;
