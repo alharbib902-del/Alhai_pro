@@ -246,6 +246,140 @@ void main() {
         expect(invoice1.qrCode, isNot(equals(invoice2.qrCode)));
       });
     });
+
+    group('TLV length-overflow guard (C-5)', () {
+      test(
+        'sellerName byte count > 255 throws TlvLengthOverflowException',
+        () {
+          // 200 Arabic "م" letters × 2 UTF-8 bytes/letter = 400 bytes.
+          final overlong = 'م' * 200;
+          expect(utf8.encode(overlong).length, greaterThan(255));
+          expect(
+            () => ZatcaService.generateQrData(
+              sellerName: overlong,
+              vatNumber: '300000000000003',
+              timestamp: DateTime(2026, 1, 1),
+              totalWithVat: 100.0,
+              vatAmount: 13.04,
+            ),
+            throwsA(isA<TlvLengthOverflowException>()),
+          );
+        },
+      );
+
+      test('exception reports the offending tag and byte length', () {
+        try {
+          ZatcaService.generateQrData(
+            sellerName: 'x' * 500,
+            vatNumber: '300000000000003',
+            timestamp: DateTime(2026, 1, 1),
+            totalWithVat: 100.0,
+            vatAmount: 13.04,
+          );
+          fail('expected TlvLengthOverflowException');
+        } on TlvLengthOverflowException catch (e) {
+          expect(e.tag, 1);
+          expect(e.byteLength, 500);
+          expect(e.toString(), contains('tag 1'));
+          expect(e.toString(), contains('500 bytes'));
+        }
+      });
+
+      test(
+        'boundary: 255-byte value still encodes (ASCII "x" × 255)',
+        () {
+          final edge = 'x' * 255;
+          final qr = ZatcaService.generateQrData(
+            sellerName: edge,
+            vatNumber: '300000000000003',
+            timestamp: DateTime(2026, 1, 1),
+            totalWithVat: 0,
+            vatAmount: 0,
+          );
+          final decoded = ZatcaService.decodeQrData(qr);
+          expect(decoded[1], equals(edge));
+        },
+      );
+    });
+
+    group('encodeTag (C-5)', () {
+      test('produces [tag, length, ...value] layout', () {
+        final bytes = ZatcaService.encodeTag(1, [0x41, 0x42, 0x43]);
+        expect(bytes, equals([1, 3, 0x41, 0x42, 0x43]));
+      });
+
+      test('accepts empty value → [tag, 0]', () {
+        expect(ZatcaService.encodeTag(7, const []), equals([7, 0]));
+      });
+
+      test('rejects tag > 255', () {
+        expect(
+          () => ZatcaService.encodeTag(256, const [1]),
+          throwsArgumentError,
+        );
+      });
+
+      test('rejects tag < 0', () {
+        expect(
+          () => ZatcaService.encodeTag(-1, const [1]),
+          throwsArgumentError,
+        );
+      });
+    });
+
+    group('decodeQrData (C-5)', () {
+      test('round-trips a full 5-tag payload', () {
+        final qr = ZatcaService.generateQrData(
+          sellerName: 'Round Trip Store',
+          vatNumber: '300000000000003',
+          timestamp: DateTime(2026, 4, 23, 10, 0),
+          totalWithVat: 115.0,
+          vatAmount: 15.0,
+        );
+        final decoded = ZatcaService.decodeQrData(qr);
+        expect(decoded[1], 'Round Trip Store');
+        expect(decoded[2], '300000000000003');
+        expect(
+          decoded[3],
+          DateTime(2026, 4, 23, 10, 0).toIso8601String(),
+        );
+        expect(decoded[4], '115.00');
+        expect(decoded[5], '15.00');
+      });
+
+      test('round-trips Arabic UTF-8 cleanly', () {
+        final qr = ZatcaService.generateQrData(
+          sellerName: 'متجر الهاي',
+          vatNumber: '300000000000003',
+          timestamp: DateTime(2026, 1, 1),
+          totalWithVat: 50.0,
+          vatAmount: 6.52,
+        );
+        expect(ZatcaService.decodeQrData(qr)[1], 'متجر الهاي');
+      });
+
+      test('throws FormatException on truncated header', () {
+        // One loose byte — no length field possible.
+        final truncated = base64Encode([1]);
+        expect(
+          () => ZatcaService.decodeQrData(truncated),
+          throwsA(isA<FormatException>()),
+        );
+      });
+
+      test(
+        'throws FormatException on length byte promising more bytes '
+        'than remain',
+        () {
+          // Tag 1, length 10, but only 3 bytes provided.
+          final malformed = base64Encode([1, 10, 0x41, 0x42, 0x43]);
+          expect(
+            () => ZatcaService.decodeQrData(malformed),
+            throwsA(isA<FormatException>()),
+          );
+        },
+      );
+    });
   });
 }
 
