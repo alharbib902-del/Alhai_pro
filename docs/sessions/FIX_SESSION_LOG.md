@@ -6411,6 +6411,88 @@ END OF SESSION 27 — Q2 marketing delete confirms in place
 
 ---
 
+# Session 28 — Admin Tier A Q6: broader audit-log coverage (2026-04-23)
+
+**Branch:** `fix/admin-audit-log-coverage` (merged). **Commit:** `441a0edd`. **Budget:** ~30 min.
+
+## Summary
+
+Closes the final Tier A item from `docs/reports/admin-audit-status-2026-04-22.md`. The 2026-04-15 H5 fix audited only product price changes. With Q1-UI (Session 26) adding `productDelete` audit, and this session adding `productCreate` + `productEdit`, the full product lifecycle is now on the audit trail.
+
+Opportunistically fixes a pre-existing comparison bug: the H5 audit compared `existing.price` (int cents, C-4) with `newPrice` (SAR double) and therefore fired on every edit with a non-zero price, not just on actual price changes.
+
+## Changes — 1 file, +93 / −10 LOC
+
+- **`apps/admin/lib/screens/products/product_form_screen.dart`**
+
+### Create path (~line 1031)
+New `productCreate` audit after `db.productsDao.insertProduct(companion)`:
+
+```dart
+await db.auditLogDao.log(
+  action: AuditAction.productCreate,
+  entityType: 'product',
+  entityId: productId,
+  newValue: { name, barcode, price, cost_price, stock_qty,
+              category_id, is_active, track_inventory },
+  description: 'Created product "<name>"',
+);
+```
+
+Wrapped in silent try/catch per H5 convention (audit must not block a valid save).
+
+### Edit path (~line 974)
+Replaced the single-field price-change block with two separate entries:
+
+1. **`priceChange`** — retained as a distinct entry. Compliance reports (ZATCA-adjacent) want a price-only signal. Comparison now compares `existing.price` (int cents) against `priceCents` (int cents), not against SAR double — the root bug is fixed.
+2. **`productEdit`** — new. Iterates over name / barcode / stock_qty / min_qty / category_id / is_active / track_inventory / cost_price; populates `oldValue` + `newValue` maps with only the fields that actually changed; fires only when at least one non-price field changed. description lists the changed field names.
+
+Both wrapped in a single `try { ... } catch (_) {}` block — one silent guard for the whole audit stanza.
+
+## Why this shape
+
+- **Two entries, not one.** The compliance motivation for H5 was "we need a dedicated price-change trail." Folding price into productEdit would lose that signal. Keeping them parallel (a priceChange row AND a productEdit row when both apply) matches the existing DB shape and downstream report expectations.
+- **Diff-based, not full snapshot.** `productEdit` only stores the fields that changed, not the whole entity. Saves bytes in audit_log and makes diff reports readable.
+- **Cents only, no SAR math.** The old code fed SAR double into the "did price change" comparison. Using `priceCents` (already computed above for the update companion) gives an accurate change signal.
+
+## Scope boundaries (intentionally NOT touched)
+
+- **`productDelete`** — added Session 26 via Q1-UI soft-delete wiring.
+- **Roles / users** — already audit-logged in `roles_permissions_screen.dart` + `users_management_screen.dart`.
+- **Stock mutations via purchase / receiving** — recorded in `stock_movements` table, which is the canonical inventory audit trail. Adding a parallel `audit_log` entry would duplicate coverage. If a cross-entity view is needed later, that's an aggregation concern, not a logging-gap concern.
+- **Categories / suppliers CRUD** — out of scope for this polish; no acceptance-report item flagged them as audit gaps.
+
+## Verification
+
+- `flutter analyze lib/screens/products/product_form_screen.dart`: 0 issues
+- **admin tests: 365 / 365** — baseline preserved.
+
+## Follow-ups (optional, low priority)
+
+- Cross-entity audit viewer that joins `audit_log` + `stock_movements` for a unified "activity on this product" report.
+- Extend productEdit audit to include `imageThumbnail` / `imageMedium` / `imageLarge` once image upload (L1) ships.
+- Similar diff-based audit for supplier edits (if Q6 follow-up requested).
+
+## Risk
+
+Zero.
+- Pure additive change — audits a path that previously had no trail.
+- Audit failures are silent-caught → cannot block saves.
+- Price-comparison fix removes a false-positive; does not alter save behavior.
+
+## Remote push + merge
+
+- Branch `fix/admin-audit-log-coverage` pushed to `backup`.
+- Fast-forward merged to `main` (main now at `441a0edd`).
+- Branch deleted locally post-merge (still on `backup` remote for recoverability).
+- `origin` still at `c214792a` — explicit user approval required before pushing main there.
+
+---
+
+END OF SESSION 28 — Tier A audit gaps closed; full product lifecycle auditable
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
 
 **Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
@@ -6467,9 +6549,14 @@ super_admin        222
 
 ## 4. 🟠 Medium priority — one focused session per item
 
-**Admin audit — Tier A remaining quick wins (30-60 min each)** from `docs/reports/admin-audit-status-2026-04-22.md`:
-- ~~Q2~~ — DONE Session 27, merged to `main` (confirmDelete helper + 4 marketing screens)
-- Q6 — broader audit-log coverage (extend H5 pattern to stock/settings/permissions)
+**Admin audit — Tier A all done** (as of 2026-04-23 session chain):
+- ~~Q1~~ — DONE Session 24 (DAO primitive)
+- ~~Q3~~ — DONE Session 24 (supplier VAT duplicate check)
+- ~~Q4~~ — DONE Session 24 (phone validation)
+- ~~Q5~~ — DONE Session 24 (dialog controller disposals)
+- ~~Q1-UI~~ — DONE Session 26 (soft-delete button on products list)
+- ~~Q2~~ — DONE Session 27 (confirmDelete helper + 4 marketing screens)
+- ~~Q6~~ — DONE Session 28 (productCreate + productEdit audit, H5 price-compare bug fixed)
 
 **Admin audit — Tier B feature sessions (2-4h each, priority order):**
 1. **M2** low-stock alerts dashboard + notification (DAO ready: `getLowStockProducts()`)
