@@ -6884,6 +6884,54 @@ END OF SESSION 33 — M3 + M4 both land on main; Tier B Q1-UI / M1 / M2 / M3 / M
 
 ---
 
+# Session 34 — C-4 loyalty_transactions.sale_amount decision (2026-04-23)
+
+**Branch:** `docs/c4-loyalty-sale-amount-decision` (merged). **Commit:** `f0afcf02`. **Budget:** ~15 min.
+
+## Summary
+
+Closes the last deferred item from the C-4 money-migration plan (documented in `docs/sessions/c4-money-migration-plan.md`). The original plan listed `loyalty_transactions.sale_amount` as "legacy/less-critical, migrate last"; this session investigates and records the final decision to **not** migrate.
+
+## Investigation
+
+`grep` across the whole repo for `saleAmount` and `sale_amount`:
+- Declared in `packages/alhai_database/lib/src/tables/loyalty_table.dart:104` as nullable `RealColumn` (double SAR).
+- Used in `app_database.g.dart` (generated Drift code) only. No handwritten Dart reads or writes the column.
+- Supabase: the bootstrap `supabase/fix_compatibility.sql:484` defines `sale_amount DOUBLE PRECISION`; live-schema state is per-tenant and was noted "NOT present on live" in a prior C-4 session — neither observation changes the conclusion.
+- Sibling columns in the same loyalty group — `rewardValue`, `minPurchase` — are already `IntColumn` (already effectively migrated).
+
+## Decision — do NOT migrate
+
+Rationale:
+- Zero behavioural impact. Migrating a never-written column carries all the cross-tenant risk of any `ALTER TABLE` and none of the benefit.
+- If the column ever starts getting written, a matched pair of migrations (Drift schemaVersion bump + Supabase `ALTER TABLE ... TYPE BIGINT USING (sale_amount * 100)::bigint`) can be done together with the first writer.
+
+## Changes — 2 files, +28 / −2 LOC
+
+- **`packages/alhai_database/lib/src/tables/loyalty_table.dart`** — inline comment on the `saleAmount` declaration documents: (a) the C-4 convention deviation, (b) why the column stayed `REAL`, (c) the contract for any future writer ("write int cents; migrate both Drift and Supabase together").
+- **`docs/sessions/c4-money-migration-plan.md`** — the "Legacy/less-critical" line for `loyalty_table` is struck through with a decision note referencing this session.
+
+## Verification
+
+- `flutter analyze` loyalty_table.dart: **0 issues** (comment-only change).
+- No tests affected — no code path touched.
+
+## Risk
+
+Zero. Comment-only change + docs update. Live DB unchanged.
+
+## Remote push + merge
+
+- Branch `docs/c4-loyalty-sale-amount-decision` pushed to `backup`.
+- Fast-forward merged to `main` (main now at `f0afcf02`).
+- `origin` still at `c214792a` — 18 commits on main now awaiting explicit user approval.
+
+---
+
+END OF SESSION 34 — C-4 loyalty_transactions.sale_amount decision documented; last C-4 deferred item closed
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
 
 **Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
@@ -6975,7 +7023,7 @@ super_admin        222
 - C-5 TLV encoder refactor (own session)
 - C-10 Historical NULL-orgId invoice cleanup (1-2h)
 - C-4 follow-ups: Money adoption in domain classes, `formatMoney` migration (incremental)
-- `loyalty_transactions.sale_amount` local-only migration decision
+- ~~`loyalty_transactions.sale_amount` decision~~ — DONE Session 34, commit `f0afcf02` (keep as-is, documented)
 - distributor_portal test baseline re-run
 
 ## 6. How to start
