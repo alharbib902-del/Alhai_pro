@@ -6630,6 +6630,100 @@ END OF SESSION 30 — M1 auto EAN-13 on main; Tier B items M1 + M2 (dashboard ha
 
 ---
 
+# Session 31 — Admin Tier B M7: ZATCA submission-queue report (2026-04-23)
+
+**Branch:** `feat/admin-zatca-queue-report` (merged). **Commit:** `e6057198`. **Budget:** ~1.5h.
+
+## Summary
+
+Third Tier B item. Compliance visibility gap closed. Before this change the admin could see invoice totals but had no view into ZATCA submission state: "how many invoices has the tax authority accepted? how many are still waiting? how many were rejected?" The screen wires the answer using tables that were already written/maintained by the submission service.
+
+## Changes — 20 files, +1006 / 0 LOC
+
+### Route constant
+
+- **`packages/alhai_shared_ui/lib/src/core/router/routes.dart`** — adds `AppRoutes.zatcaQueueReport = '/reports/zatca-queue'`, slotted alongside the other `/reports/*` routes for consistency with `dailySalesReport`, `cashFlowReport`, etc.
+
+### DAO (the interesting SQL)
+
+- **`packages/alhai_database/lib/src/daos/invoices_dao.dart`** — new `Future<int> getZatcaSentCount({String? storeId})`.
+  - The offline queue removes rows on successful ZATCA submission, so "sent" cannot simply be counted in the queue tables.
+  - Definition: invoices whose `zatca_hash IS NOT NULL` (went through signing) AND invoice_number is NOT in `zatca_offline_queue` (not still pending) AND NOT in `zatca_dead_letter` (not rejected).
+  - Written as one `customSelect` with two `NOT EXISTS` subqueries — Drift's query builder can't express NOT EXISTS cleanly so raw SQL is clearer.
+  - `storeId` optional: pass it for per-store scope; omit for global.
+
+### Screen (the actual report)
+
+- **`apps/admin/lib/screens/reports/zatca_queue_report_screen.dart`** (new, 423 LOC) — `ConsumerWidget` reading three `FutureProvider.autoDispose`s:
+  - `_zatcaQueueSummaryProvider` → `{pending, rejected, sent}` aggregation
+  - `_pendingItemsProvider` → `List<ZatcaOfflineQueueTableData>`
+  - `_rejectedItemsProvider` → `List<ZatcaDeadLetterTableData>`
+
+  UI layout:
+  - Summary row — 3 stat cards: **Sent** (success-green), **Pending** (warning), **Rejected** (error). Same card style as admin home stats.
+  - **Rejected** section with `ExpansionTile` rows — tap to reveal the `lastError` body (as `SelectableText` so the operator can copy a ZATCA error code).
+  - **Pending** section with plain `ListTile` rows — invoice number + queuedAt timestamp + retry count + tooltip with last error (if any).
+  - `RefreshIndicator` wrapping the `ListView`; AppBar has a refresh `IconButton`. Both invalidate all three providers.
+  - Uses sub-second `Future<void>.delayed(...)` after invalidate so the pull-to-refresh spinner actually renders.
+
+### Router + imports
+
+- **`apps/admin/lib/router/admin_router.dart`** — adds the import and the `GoRoute` (name: `zatca-queue-report`).
+
+### l10n — 9 new strings × 7 locales
+
+- **`packages/alhai_l10n/lib/l10n/*.arb`** (7 files) — `zatcaQueueReportTitle`, `zatcaSent`, `zatcaPendingLabel`, `zatcaRejected`, `zatcaPendingSection`, `zatcaRejectedSection`, `zatcaNoPendingInvoices`, `zatcaNoRejectedInvoices`, `zatcaRetriesLabel` (ICU plural).
+- `flutter gen-l10n` refreshed all 8 generated files.
+
+### Tests — 4 new DAO cases
+
+- **`packages/alhai_database/test/daos/invoices_dao_test.dart`** — new `group('getZatcaSentCount (M7)')`:
+  1. Returns 0 when no invoices exist.
+  2. Core semantics — 4 invoices staged (sent / pending / dead / never-queued), expect count == 1. This is the contract test for the NOT EXISTS query.
+  3. `storeId` filter correctly partitions two stores.
+  4. Omitting `storeId` returns the global count.
+
+## Why this shape
+
+- **Three counts + two lists, not three tabs.** Tabs feel natural but fragment the information — an auditor asking "how are we doing?" wants the overview at a glance. Stat cards + expandable sections keep summary and detail on one scroll.
+- **ExpansionTile for rejected only.** Rejected rows carry a `lastError` string that's usually a paragraph. Pending rows only have a retry count and a timestamp — no room for expansion.
+- **SelectableText on the error body.** Compliance follow-ups usually involve pasting the ZATCA error code into a support ticket. Plain `Text` would make them re-type.
+- **No action buttons (retry / delete / purge).** The DAO has `removeDeadLetter` and `purgeDeadLetter` but exposing them needs a permission decision (likely a new `zatcaQueueManage`). Left for a follow-up.
+
+## Scope NOT covered (intentionally)
+
+- **No nav entry wired.** Route is reachable by URL / deep link but not linked from `ReportsScreen` or `ZatcaComplianceScreen` yet. Adding a `ListTile` to `ReportsScreen` would need to go into `alhai_reports` package which is shared with cashier — prefer a separate scoped PR.
+- **No actions on rejected items.** As above — needs permission model.
+- **No date-range filter.** Useful for large catalogs. Out of scope for the initial visibility need.
+- **No widget test.** The report is pure data-to-widget plumbing; the risk lives in the DAO query, which is covered by the 4 new integration tests above. Adding a widget test would need fresh mock wiring for `ZatcaOfflineQueueDao` + `InvoicesDao.getZatcaSentCount` in `admin/test/helpers/mock_database.dart` — a clean but noisy expansion. Deferred; noted here.
+
+## Verification
+
+- `flutter analyze` admin router + report screen: **0 issues**
+- `flutter analyze` alhai_database: **0 issues**
+- **alhai_database tests: 513 / 513 + 1 skipped** (was 509 + 1; +4 `getZatcaSentCount` cases)
+- **admin tests: 365 / 365** — baseline preserved
+
+## Risk
+
+Zero.
+- Pure additive: new screen, new route, new DAO method. No existing queries touched.
+- DAO query read-only (SELECT COUNT).
+- Report is view-only; no mutation buttons.
+
+## Remote push + merge
+
+- Branch `feat/admin-zatca-queue-report` pushed to `backup`.
+- Fast-forward merged to `main` (main now at `e6057198`).
+- Branch deleted locally post-merge (still on `backup` remote for recoverability).
+- `origin` still at `c214792a` — 13 commits on main now awaiting explicit user approval.
+
+---
+
+END OF SESSION 31 — M7 ZATCA queue report on main; compliance visibility unblocked
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
 
 **Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
@@ -6699,9 +6793,10 @@ super_admin        222
 1. ~~**M2 dashboard**~~ — DONE Session 29 (route + tappable tile). Notification-badge half still open (see item 6).
 2. ~~**Q1-UI**~~ — DONE Session 26, merged to `main` at `ccb7b2dd`
 3. ~~**M1**~~ — DONE Session 30, merged to `main` at `0cc0406f` (EAN-13 generator + form wiring + SnackBar + 5 tests)
-4. **M7** ZATCA queue status report (sent/rejected/pending)
+4. ~~**M7**~~ — DONE Session 31, merged to `main` at `e6057198` (ZATCA queue report: 3 stat cards + pending/rejected lists + 4 DAO tests)
 5. **M3 + M4** stocktaking + inter-branch transfer (shared stock_movements, one session)
 6. **M2 notification badge** — wire `lowStockCount` into AppHeader bell / system push (separate session, touches shared_ui)
+7. **M7 follow-ups** — nav entry in ReportsScreen (touches alhai_reports package, shared with cashier); retry/purge actions for rejected items (needs permission decision); date-range filter
 
 **super_admin — ops (user-executed, not code):**
 - 6 GitHub Actions secrets + `deploy_web.yml` `--dart-define` flags
