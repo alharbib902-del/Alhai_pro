@@ -7104,6 +7104,31 @@ END OF SESSION 36 — C-1 closed; 6-week latent production bug fixed
 
 ---
 
+# Session 37 — distributor_portal baseline re-run (2026-04-23)
+
+**Branch:** `main` (direct — zero code change). **Commit:** docs-only. **Budget:** ~5 min.
+
+## Summary
+
+Verifies the distributor_portal test baseline that the 2026-04-23 handover carried forward as inferred (Session 13-era). Not re-run this series until now.
+
+## Result
+
+**`flutter test` in `distributor_portal`: 420 / 420 — matches expected baseline exactly.**
+
+No code change, no commit for the test run itself. This log entry is the only artifact.
+
+## Remote push + merge
+
+- No branch. Log entry committed directly on `main`.
+- `origin` still at `c214792a` — 23 commits on main now awaiting explicit user approval.
+
+---
+
+END OF SESSION 37 — distributor_portal 420/420 confirmed; last stale baseline re-validated
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
 
 **Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
@@ -7196,7 +7221,7 @@ super_admin        222
 - C-10 Historical NULL-orgId invoice cleanup (1-2h)
 - C-4 follow-ups: Money adoption in domain classes, `formatMoney` migration (incremental)
 - ~~`loyalty_transactions.sale_amount` decision~~ — DONE Session 34, commit `f0afcf02` (keep as-is, documented)
-- distributor_portal test baseline re-run
+- ~~distributor_portal test baseline re-run~~ — DONE Session 37, 420/420 confirmed
 
 ## 6. How to start
 
