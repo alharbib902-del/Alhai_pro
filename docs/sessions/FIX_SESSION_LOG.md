@@ -7221,6 +7221,76 @@ END OF SESSION 38 — 24 commits landed on origin; C-10 RLS fallback migration s
 
 ---
 
+# Session 39 — C-4 Product Money getters (incremental) (2026-04-23)
+
+**Branch:** `feat/c4-product-money-getters` (merged). **Commit:** `542b719d`. **Budget:** ~15 min.
+
+## Summary
+
+First slice of the C-4 Money-adoption effort. The plan's full Session 1 (Product catalog) budgets 4-6 hours across ~30 files; instead of starting and abandoning that arc in the remaining context of this long session, this commit ships a tiny additive enabler that unblocks the rest of the adoption work.
+
+## The change — additive getters on Product
+
+`alhai_core/lib/src/models/product.dart` gains two getters on the freezed class:
+
+```dart
+Money get priceMoney => Money.fromCents(price);
+Money? get costPriceMoney =>
+    costPrice == null ? null : Money.fromCents(costPrice!);
+```
+
+Nothing else moves. Existing call sites that read `product.price / 100.0` continue to work identically. No signature changes, no migration, no breaking change.
+
+## Why this is worth a standalone commit
+
+The plan's Session 1 budgets:
+- Drift v38 migration
+- Supabase v56 migration
+- ~30 call-site edits across cashier + admin
+- Full alhai_zatca sandbox run
+
+That's a cohesive unit of work best done with a fresh context. But once these getters exist, **future sessions can migrate call sites ONE FILE AT A TIME**, shipped in tiny independently-reviewable PRs (`CurrencyFormatter.format(p.price / 100.0)` → `CurrencyFormatter.formatMoney(p.priceMoney)`). This enables the kind of long-tail incremental adoption the plan's "Option B phased" approach anticipates.
+
+Zero behavioural risk because no repo code references the new getters today.
+
+## Tests — 4 new
+
+`alhai_core/test/models/product_test.dart` — new `group('Money getters (C-4)')`:
+- `priceMoney` wraps int-cents as SAR `Money` (cents + currencyCode + toDouble assertions).
+- `costPriceMoney` wraps `costPrice` when set.
+- `costPriceMoney` returns null when `costPrice` is null.
+- Precision check — `priceMoney * 3` on 37.80 SAR yields exactly 11340 cents (113.40 SAR); the IEEE 754 double path `37.8 * 3` drifts to 113.40000000000001. The whole reason C-4 exists.
+
+## Verification
+
+- `flutter analyze` alhai_core: **0 issues**
+- **alhai_core tests: 671 / 671** (was 667; +4 new getters group)
+
+## Scope NOT covered (deferred to future C-4 Session 1+ sessions)
+
+- Display-site migration to `formatMoney(product.priceMoney)`. Per plan, file-by-file, incremental.
+- Money getters on other domain classes (Invoice, SaleItem, HeldInvoice, etc.). Each class its own follow-up.
+- Drift/Supabase column changes — already done in prior C-4 Stage A/B (v70/v71).
+
+## Risk
+
+Zero.
+- Pure additive API.
+- No repo code references the new getters yet, so no behavior change on any path.
+- Zero changes to existing fields, constructors, or serialization.
+
+## Remote push + merge
+
+- Branch `feat/c4-product-money-getters` pushed to `backup`.
+- Fast-forward merged to `main` (main now at `542b719d`).
+- Branch deleted locally post-merge (still on `backup` for recoverability).
+
+---
+
+END OF SESSION 39 — Product Money getters landed as C-4 migration enabler
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
 
 **Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
@@ -7311,7 +7381,7 @@ super_admin        222
 - ~~C-1 Receipt number collision~~ — DONE Session 36, commit `ee44e78c` (per-device 4-hex-char suffix + 7 tests; alhai_pos 570 → 577)
 - ~~C-5 TLV encoder refactor~~ — DONE Session 35, commit `c240297c` (encodeTag / decodeQrData + 11 tests; alhai_pos 559 → 570)
 - ~~C-10 Historical NULL-orgId invoice cleanup~~ — Session 38 SHIPPED v76 RLS fallback migration (`9e45e502`); **awaits live apply on Supabase Dashboard** (user-executed per standing preference)
-- C-4 follow-ups: Money adoption in domain classes, `formatMoney` migration (incremental)
+- C-4 follow-ups: Money adoption in domain classes (partial — Product Money getters DONE Session 39 `542b719d`; Invoice / SaleItem / HeldInvoice / etc. still pending, ~4-5 sessions per plan), `formatMoney` migration (incremental, unblocked by Product Money getters)
 - ~~`loyalty_transactions.sale_amount` decision~~ — DONE Session 34, commit `f0afcf02` (keep as-is, documented)
 - ~~distributor_portal test baseline re-run~~ — DONE Session 37, 420/420 confirmed
 
