@@ -7011,6 +7011,99 @@ END OF SESSION 35 — C-5 TLV encoder refactored; 11 new tests; silent data corr
 
 ---
 
+# Session 36 — C-1 Receipt number collision (multi-device offline) (2026-04-23)
+
+**Branch:** `fix/c1-receipt-collision` (merged). **Commit:** `ee44e78c`. **Budget:** ~3h (half-day, came in under).
+
+## Summary
+
+Closes the multi-device offline receipt-number collision bug latent since v17 (2026-03-06). Picks **Option 1** (per-device suffix) from the 4 design options documented in Session 16, 2026-04-21. Chose it over Option 2 (server reservation, full-day) and Option 4 (collision-detect-regenerate, voids printed receipts → accounting nightmare).
+
+## The bug path (verified end-to-end by the prior discovery session)
+
+1. Device A and Device B both offline, same store, each has 5 local sales today.
+2. Both call `_generateReceiptNo` → `getTodayStoreCount` returns 5 from each device's local Drift → both produce `POS-20260423-0006`.
+3. Both sync online. First push succeeds. Second fails on Supabase `idx_sales_store_receipt_unique` with Postgres 23505.
+4. Conflict resolver attempts UPSERT by UUID → UUIDs differ → INSERT retried → same unique violation.
+5. Second sale permanently stuck in dead-letter. **Silent data loss on the POS side.**
+
+## Fix — per-device 4-hex-char suffix
+
+Receipt format changes from `POS-YYYYMMDD-NNNN` to `POS-YYYYMMDD-<suffix>-NNNN`. The suffix breaks collisions by construction: even with identical `todayCount`, two devices land as `POS-20260423-A3F7-0006` and `POS-20260423-B2C8-0006`.
+
+Collision probability is `N*(N-1)/2 / 65 536`. For a 5-terminal store = 0.015%. Effectively zero in practice.
+
+## Changes — 4 files, +340 / −4 LOC
+
+### New `lib/src/services/terminal_suffix_service.dart` (85 LOC)
+
+- `TerminalSuffixService.getSuffix()` — returns 4-hex-char string. First call reads `pos.terminal.suffix.v1` from SharedPreferences; if absent or malformed, generates via `Random.secure()` and persists. Subsequent calls use an in-process cache.
+- Graceful SharedPreferences-unavailable fallback (widget test without binding, headless context): caches an in-memory suffix for the process lifetime. Collision-guard works within session; next cold-start may pick a different value — acceptable trade rather than crashing the save path.
+- Optional `Random` param for deterministic tests.
+
+### Modified `lib/src/services/sale_service.dart` (+24 LOC)
+
+- Constructor accepts optional `TerminalSuffixService? terminalSuffix`; defaults to a fresh instance when null. Production wiring (`sale_providers.dart`) unchanged — default does the right thing.
+- `_generateReceiptNo` awaits the suffix and composes `POS-YYYYMMDD-<suffix>-NNNN`. Call stays INSIDE the existing retry transaction — no change to retry-on-local-unique path.
+- Doc comment documents the format + the C-1 rationale.
+
+### New `test/services/terminal_suffix_service_test.dart` (85 LOC)
+
+6 unit tests: first-call generates+persists, subsequent-return-cached, reads pre-existing from SP, overwrites malformed stored value, seeded Random determinism, different seeds produce different suffixes.
+
+### Modified `test/services/sale_service_test.dart` (+137 LOC)
+
+- The existing "receipt number with correct format" test gains a regex assertion `^POS-\d{8}-[0-9a-f]{4}-\d{4}$`. The old `startsWith('POS-')` and `endsWith('-0006')` still pass by design — the suffix slots between date and count without shifting either.
+- New regression test: two `SaleService` instances with different `TerminalSuffixService` fakes (`'a3f7'` and `'b2c8'`), both seeing `todayStoreCount = 5`, produce different receipt numbers. Locks the fix against regression.
+- Private `_FixedTerminalSuffix` fake for deterministic regression input.
+
+## Consumer audit (pre-verified no breakage)
+
+Every consumer of `sale.receiptNo` treats it as an opaque string — grep'd + spot-read:
+- `refund_request_screen.dart`, `refund_reason_screen.dart`, `void_transaction_screen.dart` — parameter passing, no parsing.
+- `receipt_printer_service.dart`, `receipt_pdf_generator.dart` — string interpolation into labels/filenames.
+- `whatsapp_receipt_service.dart` — template `${sale.receiptNo}` opaque.
+- `invoices_screen.dart`, `invoice_detail_screen.dart` — display only.
+- admin fixtures / cashier fixtures — hardcode mock strings for non-generation tests, unaffected.
+
+Thermal-print width: 22 chars fits 32-char (2-inch) and 48-char (3-inch) rolls.
+
+ZATCA QR: `receipt_no` is NOT in the 5 TLV tags (tags 1-5 are seller/VAT/timestamp/total/VAT-amount). Unaffected.
+
+## Scope NOT covered (intentionally)
+
+- **`pos_terminals.terminalNumber` integration** — the existing schema has a `pos_terminals` table with a small-int `terminalNumber`, which would give friendlier receipt strings (`POS-20260423-T2-0006`). Using it needs a bootstrap RPC or race-safe `MAX(terminalNumber)+1` assignment on first launch — half-day on its own. Filed as a follow-up; the hex suffix fully solves collision-guard today.
+- **Historical dead-letter sales** (6-week pre-fix window) — tracked as C-10.
+- **Returns-by-receipt search** — current workflows all use string match (verified), so pre-fix and post-fix receipts both work. A "strip suffix to search" helper could be added later as UX polish but isn't required.
+- **customer_app / driver_app** — don't generate receipts, unaffected.
+
+## Verification
+
+- `flutter analyze` alhai_pos service + tests: **0 issues**
+- **alhai_pos tests: 577 / 577** (was 570; +7 = 6 TerminalSuffixService + 1 cross-device regression)
+- **cashier tests: 552 / 552** — baseline preserved
+- All 29 pre-existing ZATCA-service tests still pass unchanged
+
+## Risk
+
+Low.
+- Additive: new service + new constructor param with a safe default.
+- Zero change to the DB column content for pre-existing rows.
+- Zero change to retry/transaction semantics.
+- Graceful SharedPreferences fallback prevents save-path crashes in constrained test environments.
+
+## Remote push + merge
+
+- Branch `fix/c1-receipt-collision` pushed to `backup`.
+- Fast-forward merged to `main` (main now at `ee44e78c`).
+- `origin` still at `c214792a` — 22 commits on main now awaiting explicit user approval.
+
+---
+
+END OF SESSION 36 — C-1 closed; 6-week latent production bug fixed
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
 
 **Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
@@ -7098,7 +7191,7 @@ super_admin        222
 
 ## 5. 🟢 Low priority
 
-- C-1 Receipt number collision (real bug, half-day dedicated)
+- ~~C-1 Receipt number collision~~ — DONE Session 36, commit `ee44e78c` (per-device 4-hex-char suffix + 7 tests; alhai_pos 570 → 577)
 - ~~C-5 TLV encoder refactor~~ — DONE Session 35, commit `c240297c` (encodeTag / decodeQrData + 11 tests; alhai_pos 559 → 570)
 - C-10 Historical NULL-orgId invoice cleanup (1-2h)
 - C-4 follow-ups: Money adoption in domain classes, `formatMoney` migration (incremental)
