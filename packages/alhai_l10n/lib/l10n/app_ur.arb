@@ -514,6 +514,16 @@
   "trackInventory": "انوینٹری ٹریک کریں",
   "productSavedSuccess": "مصنوعات کامیابی سے محفوظ ہو گئی",
   "productAddedSuccess": "مصنوعات کامیابی سے شامل ہو گئی",
+  "deleteProduct": "مصنوعہ حذف کریں",
+  "deleteProductConfirm": "مصنوعہ \"{name}\" حذف کریں؟\nاسے آرکائیو میں منتقل کیا جائے گا اور بعد میں بحال کیا جا سکتا ہے۔",
+  "@deleteProductConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "productDeletedSuccess": "مصنوعہ کامیابی سے حذف ہو گیا",
   "scanBarcode": "بارکوڈ اسکین کریں",
   "activeProduct": "فعال مصنوعات",
   "currency": "ر.س",

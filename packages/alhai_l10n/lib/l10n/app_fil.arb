@@ -514,6 +514,16 @@
   "trackInventory": "I-track ang Imbentaryo",
   "productSavedSuccess": "Matagumpay na na-save ang produkto",
   "productAddedSuccess": "Matagumpay na naidagdag ang produkto",
+  "deleteProduct": "Tanggalin ang Produkto",
+  "deleteProductConfirm": "Tanggalin ang produktong \"{name}\"?\nIpupunta ito sa archive at maaaring i-restore mamaya.",
+  "@deleteProductConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "productDeletedSuccess": "Matagumpay na natanggal ang produkto",
   "scanBarcode": "I-scan ang Barcode",
   "activeProduct": "Aktibong Produkto",
   "currency": "SAR",

@@ -1101,6 +1101,17 @@ class AppLocalizationsHi extends AppLocalizations {
   String get productAddedSuccess => 'उत्पाद सफलतापूर्वक जोड़ा गया';
 
   @override
+  String get deleteProduct => 'उत्पाद हटाएँ';
+
+  @override
+  String deleteProductConfirm(String name) {
+    return '\"$name\" उत्पाद हटाएँ?\nइसे संग्रहित कर दिया जाएगा और बाद में पुनर्स्थापित किया जा सकता है।';
+  }
+
+  @override
+  String get productDeletedSuccess => 'उत्पाद सफलतापूर्वक हटा दिया गया';
+
+  @override
   String get scanBarcode => 'बारकोड स्कैन करें';
 
   @override

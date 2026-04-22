@@ -514,6 +514,16 @@
   "trackInventory": "Track Inventory",
   "productSavedSuccess": "Product saved successfully",
   "productAddedSuccess": "Product added successfully",
+  "deleteProduct": "Delete Product",
+  "deleteProductConfirm": "Delete product \"{name}\"?\nIt will be archived and can be restored later.",
+  "@deleteProductConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "productDeletedSuccess": "Product deleted successfully",
   "scanBarcode": "Scan Barcode",
   "activeProduct": "Active Product",
   "currency": "SAR",

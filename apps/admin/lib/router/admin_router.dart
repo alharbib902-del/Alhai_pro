@@ -19,6 +19,7 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 
 import '../core/constants/admin_permissions.dart';
+import '../core/providers/permission_provider.dart';
 
 // Package imports: Auth
 import 'package:alhai_auth/alhai_auth.dart'
@@ -587,8 +588,17 @@ final List<RouteBase> _routes = [
       GoRoute(
         path: AppRoutes.products,
         name: 'products',
-        pageBuilder: (context, state) =>
-            _buildFadePage(state: state, child: const ProductsScreen()),
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
+          child: Consumer(
+            builder: (context, ref, _) {
+              final canDelete = ref.watch(
+                hasPermissionProvider(AdminPermissions.productsDelete),
+              );
+              return ProductsScreen(showDeleteAction: canDelete);
+            },
+          ),
+        ),
       ),
       GoRoute(
         path: AppRoutes.productsAdd,

@@ -514,6 +514,16 @@
   "trackInventory": "Lacak Inventaris",
   "productSavedSuccess": "Produk berhasil disimpan",
   "productAddedSuccess": "Produk berhasil ditambahkan",
+  "deleteProduct": "Hapus Produk",
+  "deleteProductConfirm": "Hapus produk \"{name}\"?\nAkan dipindahkan ke arsip dan dapat dipulihkan nanti.",
+  "@deleteProductConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "productDeletedSuccess": "Produk berhasil dihapus",
   "scanBarcode": "Pindai Barcode",
   "activeProduct": "Produk Aktif",
   "currency": "SAR",

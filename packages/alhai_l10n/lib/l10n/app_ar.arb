@@ -514,6 +514,16 @@
   "trackInventory": "تتبع المخزون",
   "productSavedSuccess": "تم حفظ المنتج بنجاح",
   "productAddedSuccess": "تمت إضافة المنتج بنجاح",
+  "deleteProduct": "حذف المنتج",
+  "deleteProductConfirm": "هل تريد حذف المنتج \"{name}\"؟\nسيتم نقله للأرشيف ويمكن استعادته لاحقاً.",
+  "@deleteProductConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "productDeletedSuccess": "تم حذف المنتج بنجاح",
   "scanBarcode": "مسح الباركود",
   "activeProduct": "منتج نشط",
   "currency": "ر.س",

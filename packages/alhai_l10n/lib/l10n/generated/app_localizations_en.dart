@@ -1100,6 +1100,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get productAddedSuccess => 'Product added successfully';
 
   @override
+  String get deleteProduct => 'Delete Product';
+
+  @override
+  String deleteProductConfirm(String name) {
+    return 'Delete product \"$name\"?\nIt will be archived and can be restored later.';
+  }
+
+  @override
+  String get productDeletedSuccess => 'Product deleted successfully';
+
+  @override
   String get scanBarcode => 'Scan Barcode';
 
   @override

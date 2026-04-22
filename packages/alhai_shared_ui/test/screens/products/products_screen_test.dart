@@ -1,8 +1,11 @@
 /// Widget tests for ProductsScreen
 ///
-/// Tests: loading state, empty state, data display, search
+/// Tests: loading state, empty state, data display, search, soft-delete wiring
 library;
 
+import 'dart:ui';
+
+import 'package:alhai_core/alhai_core.dart' hide SyncStatus;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -24,17 +27,37 @@ class MockSyncQueueDao extends Mock implements SyncQueueDao {}
 
 class MockSyncManager extends Mock implements SyncManager {}
 
+class MockProductsDao extends Mock implements ProductsDao {}
+
+class MockAuditLogDao extends Mock implements AuditLogDao {}
+
 class _MockProductsNotifier extends StateNotifier<ProductsState>
     with Mock
     implements ProductsNotifier {
   _MockProductsNotifier([ProductsState? initial])
     : super(initial ?? const ProductsState());
 
+  int loadProductsCalls = 0;
+
   @override
   Future<void> loadProducts({
     required String storeId,
     bool refresh = false,
-  }) async {}
+  }) async {
+    loadProductsCalls++;
+  }
+}
+
+Product _fixtureProduct({String id = 'p1', String name = 'Test Product'}) {
+  return Product(
+    id: id,
+    storeId: 'test-store-id',
+    name: name,
+    price: 1000, // cents
+    stockQty: 5,
+    isActive: true,
+    createdAt: DateTime(2026, 1, 1),
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -46,13 +69,17 @@ void _setLargeViewport(WidgetTester tester) {
   tester.view.devicePixelRatio = 1.0;
 }
 
-Widget _buildTestWidget({ProductsState? productsState}) {
+Widget _buildTestWidget({
+  ProductsState? productsState,
+  bool showDeleteAction = false,
+  _MockProductsNotifier? notifier,
+}) {
   final mockSyncManager = MockSyncManager();
   return ProviderScope(
     overrides: [
       currentStoreIdProvider.overrideWith((ref) => 'test-store-id'),
       productsStateProvider.overrideWith(
-        (ref) => _MockProductsNotifier(productsState),
+        (ref) => notifier ?? _MockProductsNotifier(productsState),
       ),
       isOnlineProvider.overrideWith((ref) => Stream.value(true)),
       pendingSyncCountProvider.overrideWith((ref) => Stream.value(0)),
@@ -63,7 +90,7 @@ Widget _buildTestWidget({ProductsState? productsState}) {
       locale: const Locale('en'),
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
-      home: const Scaffold(body: ProductsScreen()),
+      home: Scaffold(body: ProductsScreen(showDeleteAction: showDeleteAction)),
     ),
   );
 }
@@ -146,6 +173,120 @@ void main() {
       await tester.pumpAndSettle(const Duration(seconds: 2));
 
       expect(find.byIcon(Icons.search), findsWidgets);
+    });
+  });
+
+  group('ProductsScreen — soft-delete wiring', () {
+    testWidgets('with showDeleteAction=false, no delete icon on hover', (
+      tester,
+    ) async {
+      _setLargeViewport(tester);
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      final product = _fixtureProduct();
+      await tester.pumpWidget(
+        _buildTestWidget(
+          productsState: ProductsState(
+            products: [product],
+            isLoading: false,
+            hasMore: false,
+          ),
+          showDeleteAction: false,
+        ),
+      );
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+
+      final cardFinder = find.text('Test Product').first;
+      final gesture = await tester.createGesture(
+        kind: PointerDeviceKind.mouse,
+      );
+      await gesture.addPointer(location: Offset.zero);
+      addTearDown(gesture.removePointer);
+      await gesture.moveTo(tester.getCenter(cardFinder));
+      await tester.pumpAndSettle();
+
+      expect(find.byIcon(Icons.delete_outline_rounded), findsNothing);
+    });
+
+    testWidgets(
+      'with showDeleteAction=true, delete icon visible on hover and opens dialog',
+      (tester) async {
+        _setLargeViewport(tester);
+        addTearDown(() => tester.view.resetPhysicalSize());
+
+        final product = _fixtureProduct(name: 'Hover Me');
+        await tester.pumpWidget(
+          _buildTestWidget(
+            productsState: ProductsState(
+              products: [product],
+              isLoading: false,
+              hasMore: false,
+            ),
+            showDeleteAction: true,
+          ),
+        );
+        await tester.pumpAndSettle(const Duration(seconds: 2));
+
+        final cardFinder = find.text('Hover Me').first;
+        final gesture = await tester.createGesture(
+          kind: PointerDeviceKind.mouse,
+        );
+        await gesture.addPointer(location: Offset.zero);
+        addTearDown(gesture.removePointer);
+        await gesture.moveTo(tester.getCenter(cardFinder));
+        await tester.pumpAndSettle();
+
+        final deleteIcon = find.byIcon(Icons.delete_outline_rounded);
+        expect(deleteIcon, findsWidgets);
+
+        await tester.tap(deleteIcon.first);
+        await tester.pumpAndSettle();
+
+        // Confirmation dialog should show product name in confirmation body
+        expect(find.textContaining('Hover Me'), findsWidgets);
+        expect(find.byType(AlertDialog), findsOneWidget);
+      },
+    );
+
+    testWidgets('cancelling the confirm dialog does not refresh list', (
+      tester,
+    ) async {
+      _setLargeViewport(tester);
+      addTearDown(() => tester.view.resetPhysicalSize());
+
+      final notifier = _MockProductsNotifier(
+        ProductsState(
+          products: [_fixtureProduct(name: 'Cancel Me')],
+          isLoading: false,
+          hasMore: false,
+        ),
+      );
+
+      await tester.pumpWidget(
+        _buildTestWidget(notifier: notifier, showDeleteAction: true),
+      );
+      await tester.pumpAndSettle(const Duration(seconds: 2));
+
+      final initialLoadCalls = notifier.loadProductsCalls;
+
+      final cardFinder = find.text('Cancel Me').first;
+      final gesture = await tester.createGesture(
+        kind: PointerDeviceKind.mouse,
+      );
+      await gesture.addPointer(location: Offset.zero);
+      addTearDown(gesture.removePointer);
+      await gesture.moveTo(tester.getCenter(cardFinder));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.delete_outline_rounded).first);
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('Cancel'));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(AlertDialog), findsNothing);
+      // No additional refresh load was triggered
+      expect(notifier.loadProductsCalls, initialLoadCalls);
     });
   });
 }

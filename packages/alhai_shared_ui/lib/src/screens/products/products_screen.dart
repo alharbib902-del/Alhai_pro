@@ -6,6 +6,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_database/alhai_database.dart';
+import 'package:get_it/get_it.dart';
 import '../../core/router/routes.dart';
 import '../../core/responsive/responsive_utils.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
@@ -20,7 +22,11 @@ import '../../widgets/layout/app_header.dart';
 
 /// شاشة قائمة المنتجات - تصميم Web محسّن مع App Shell + Dark Mode
 class ProductsScreen extends ConsumerStatefulWidget {
-  const ProductsScreen({super.key});
+  /// Whether to show the soft-delete action on each product card.
+  /// Host app is responsible for gating this on the user's delete permission.
+  final bool showDeleteAction;
+
+  const ProductsScreen({super.key, this.showDeleteAction = false});
 
   @override
   ConsumerState<ProductsScreen> createState() => _ProductsScreenState();
@@ -673,6 +679,9 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
           product: product,
           onTap: () => context.push(AppRoutes.productDetailPath(product.id)),
           onQuickEdit: () => _showQuickEditDialog(product),
+          onDelete: widget.showDeleteAction
+              ? () => _deleteProduct(product)
+              : null,
         );
       },
     );
@@ -700,6 +709,9 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
             product: product,
             onTap: () => context.push(AppRoutes.productDetailPath(product.id)),
             onQuickEdit: () => _showQuickEditDialog(product),
+            onDelete: widget.showDeleteAction
+                ? () => _deleteProduct(product)
+                : null,
           ),
         );
       },
@@ -844,6 +856,88 @@ class _ProductsScreenState extends ConsumerState<ProductsScreen> {
       },
     );
   }
+
+  Future<void> _deleteProduct(Product product) async {
+    final l10n = AppLocalizations.of(context);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.deleteProduct),
+        content: Text(l10n.deleteProductConfirm(product.name)),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: Text(l10n.cancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
+            child: Text(l10n.deleteProduct),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed != true || !mounted) return;
+
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    final db = GetIt.I<AppDatabase>();
+
+    try {
+      final affected = await db.productsDao.softDeleteProduct(product.id);
+      if (affected == 0) {
+        // Already deleted or not found — still refresh to reflect current state
+        await ref
+            .read(productsStateProvider.notifier)
+            .loadProducts(storeId: storeId, refresh: true);
+        return;
+      }
+
+      // Audit trail — failure must not block the delete UX (matches H5 pattern)
+      try {
+        final currentUser = ref.read(currentUserProvider);
+        await db.auditLogDao.log(
+          storeId: storeId,
+          userId: currentUser?.id ?? 'unknown',
+          userName: currentUser?.name ?? 'unknown',
+          action: AuditAction.productDelete,
+          entityType: 'product',
+          entityId: product.id,
+          oldValue: {'name': product.name, 'deleted_at': null},
+          newValue: {
+            'name': product.name,
+            'deleted_at': DateTime.now().toIso8601String(),
+          },
+          description: 'Soft-deleted product "${product.name}"',
+        );
+      } catch (_) {
+        // audit failure is non-fatal
+      }
+
+      await ref
+          .read(productsStateProvider.notifier)
+          .loadProducts(storeId: storeId, refresh: true);
+
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(l10n.productDeletedSuccess),
+          backgroundColor: AppColors.success,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(l10n.errorWithDetails('$e')),
+          backgroundColor: AppColors.error,
+        ),
+      );
+    }
+  }
 }
 
 /// Toggle button for Grid/List view
@@ -887,11 +981,13 @@ class _ProductGridCard extends StatefulWidget {
   final Product product;
   final VoidCallback onTap;
   final VoidCallback onQuickEdit;
+  final VoidCallback? onDelete;
 
   const _ProductGridCard({
     required this.product,
     required this.onTap,
     required this.onQuickEdit,
+    this.onDelete,
   });
 
   @override
@@ -979,35 +1075,71 @@ class _ProductGridCardState extends State<_ProductGridCard> {
                       end: AppSizes.xs,
                       child: _buildStockBadge(),
                     ),
-                    // Quick Edit Button (on hover)
+                    // Quick Edit + Delete Buttons (on hover)
                     if (_isHovered)
                       PositionedDirectional(
                         top: AppSizes.xs,
                         start: AppSizes.xs,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: colorScheme.surface,
-                            borderRadius: BorderRadius.circular(
-                              AppSizes.radiusSm,
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Container(
+                              decoration: BoxDecoration(
+                                color: colorScheme.surface,
+                                borderRadius: BorderRadius.circular(
+                                  AppSizes.radiusSm,
+                                ),
+                                boxShadow: AppShadows.of(
+                                  context,
+                                  size: ShadowSize.sm,
+                                ),
+                              ),
+                              child: IconButton(
+                                icon: Icon(
+                                  Icons.edit_rounded,
+                                  size: 18,
+                                  color: colorScheme.onSurfaceVariant,
+                                ),
+                                onPressed: widget.onQuickEdit,
+                                padding: const EdgeInsets.all(AppSizes.xs),
+                                constraints: const BoxConstraints(
+                                  minWidth: 32,
+                                  minHeight: 32,
+                                ),
+                              ),
                             ),
-                            boxShadow: AppShadows.of(
-                              context,
-                              size: ShadowSize.sm,
-                            ),
-                          ),
-                          child: IconButton(
-                            icon: Icon(
-                              Icons.edit_rounded,
-                              size: 18,
-                              color: colorScheme.onSurfaceVariant,
-                            ),
-                            onPressed: widget.onQuickEdit,
-                            padding: const EdgeInsets.all(AppSizes.xs),
-                            constraints: const BoxConstraints(
-                              minWidth: 32,
-                              minHeight: 32,
-                            ),
-                          ),
+                            if (widget.onDelete != null) ...[
+                              const SizedBox(width: AppSizes.xxs),
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: colorScheme.surface,
+                                  borderRadius: BorderRadius.circular(
+                                    AppSizes.radiusSm,
+                                  ),
+                                  boxShadow: AppShadows.of(
+                                    context,
+                                    size: ShadowSize.sm,
+                                  ),
+                                ),
+                                child: IconButton(
+                                  icon: const Icon(
+                                    Icons.delete_outline_rounded,
+                                    size: 18,
+                                    color: AppColors.error,
+                                  ),
+                                  onPressed: widget.onDelete,
+                                  tooltip: AppLocalizations.of(
+                                    context,
+                                  ).deleteProduct,
+                                  padding: const EdgeInsets.all(AppSizes.xs),
+                                  constraints: const BoxConstraints(
+                                    minWidth: 32,
+                                    minHeight: 32,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
                         ),
                       ),
                   ],
@@ -1106,11 +1238,13 @@ class _ProductListCard extends StatefulWidget {
   final Product product;
   final VoidCallback onTap;
   final VoidCallback onQuickEdit;
+  final VoidCallback? onDelete;
 
   const _ProductListCard({
     required this.product,
     required this.onTap,
     required this.onQuickEdit,
+    this.onDelete,
   });
 
   @override
@@ -1245,7 +1379,7 @@ class _ProductListCardState extends State<_ProductListCard> {
                 ),
                 const SizedBox(width: AppSizes.sm),
                 // Actions
-                if (_isHovered)
+                if (_isHovered) ...[
                   IconButton(
                     icon: Icon(
                       Icons.edit_rounded,
@@ -1253,6 +1387,16 @@ class _ProductListCardState extends State<_ProductListCard> {
                     ),
                     onPressed: widget.onQuickEdit,
                   ),
+                  if (widget.onDelete != null)
+                    IconButton(
+                      icon: const Icon(
+                        Icons.delete_outline_rounded,
+                        color: AppColors.error,
+                      ),
+                      onPressed: widget.onDelete,
+                      tooltip: AppLocalizations.of(context).deleteProduct,
+                    ),
+                ],
                 Icon(
                   Icons.chevron_left_rounded,
                   color: colorScheme.onSurfaceVariant,

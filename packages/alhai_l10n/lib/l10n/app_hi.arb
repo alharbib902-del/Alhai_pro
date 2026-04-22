@@ -514,6 +514,16 @@
   "trackInventory": "इन्वेंटरी ट्रैक करें",
   "productSavedSuccess": "उत्पाद सफलतापूर्वक सहेजा गया",
   "productAddedSuccess": "उत्पाद सफलतापूर्वक जोड़ा गया",
+  "deleteProduct": "उत्पाद हटाएँ",
+  "deleteProductConfirm": "\"{name}\" उत्पाद हटाएँ?\nइसे संग्रहित कर दिया जाएगा और बाद में पुनर्स्थापित किया जा सकता है।",
+  "@deleteProductConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "productDeletedSuccess": "उत्पाद सफलतापूर्वक हटा दिया गया",
   "scanBarcode": "बारकोड स्कैन करें",
   "activeProduct": "सक्रिय उत्पाद",
   "currency": "SAR",

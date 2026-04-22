@@ -1107,6 +1107,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get productAddedSuccess => 'تمت إضافة المنتج بنجاح';
 
   @override
+  String get deleteProduct => 'حذف المنتج';
+
+  @override
+  String deleteProductConfirm(String name) {
+    return 'هل تريد حذف المنتج \"$name\"؟\nسيتم نقله للأرشيف ويمكن استعادته لاحقاً.';
+  }
+
+  @override
+  String get productDeletedSuccess => 'تم حذف المنتج بنجاح';
+
+  @override
   String get scanBarcode => 'مسح الباركود';
 
   @override

@@ -514,6 +514,16 @@
   "trackInventory": "ইনভেন্টরি ট্র্যাক করুন",
   "productSavedSuccess": "পণ্য সফলভাবে সংরক্ষিত হয়েছে",
   "productAddedSuccess": "পণ্য সফলভাবে যোগ করা হয়েছে",
+  "deleteProduct": "পণ্য মুছুন",
+  "deleteProductConfirm": "\"{name}\" পণ্যটি মুছবেন?\nএটি আর্কাইভে পাঠানো হবে এবং পরে পুনরুদ্ধার করা যাবে।",
+  "@deleteProductConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "productDeletedSuccess": "পণ্য সফলভাবে মুছে ফেলা হয়েছে",
   "scanBarcode": "বারকোড স্ক্যান করুন",
   "activeProduct": "সক্রিয় পণ্য",
   "currency": "SAR",

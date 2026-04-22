@@ -2148,6 +2148,24 @@ abstract class AppLocalizations {
   /// **'تمت إضافة المنتج بنجاح'**
   String get productAddedSuccess;
 
+  /// No description provided for @deleteProduct.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف المنتج'**
+  String get deleteProduct;
+
+  /// No description provided for @deleteProductConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'هل تريد حذف المنتج \"{name}\"؟\nسيتم نقله للأرشيف ويمكن استعادته لاحقاً.'**
+  String deleteProductConfirm(String name);
+
+  /// No description provided for @productDeletedSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حذف المنتج بنجاح'**
+  String get productDeletedSuccess;
+
   /// No description provided for @scanBarcode.
   ///
   /// In ar, this message translates to:

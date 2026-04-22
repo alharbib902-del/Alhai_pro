@@ -1106,6 +1106,17 @@ class AppLocalizationsFil extends AppLocalizations {
   String get productAddedSuccess => 'Matagumpay na naidagdag ang produkto';
 
   @override
+  String get deleteProduct => 'Tanggalin ang Produkto';
+
+  @override
+  String deleteProductConfirm(String name) {
+    return 'Tanggalin ang produktong \"$name\"?\nIpupunta ito sa archive at maaaring i-restore mamaya.';
+  }
+
+  @override
+  String get productDeletedSuccess => 'Matagumpay na natanggal ang produkto';
+
+  @override
   String get scanBarcode => 'I-scan ang Barcode';
 
   @override

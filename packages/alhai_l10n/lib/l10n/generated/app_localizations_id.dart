@@ -1096,6 +1096,17 @@ class AppLocalizationsId extends AppLocalizations {
   String get productAddedSuccess => 'Produk berhasil ditambahkan';
 
   @override
+  String get deleteProduct => 'Hapus Produk';
+
+  @override
+  String deleteProductConfirm(String name) {
+    return 'Hapus produk \"$name\"?\nAkan dipindahkan ke arsip dan dapat dipulihkan nanti.';
+  }
+
+  @override
+  String get productDeletedSuccess => 'Produk berhasil dihapus';
+
+  @override
   String get scanBarcode => 'Pindai Barcode';
 
   @override
