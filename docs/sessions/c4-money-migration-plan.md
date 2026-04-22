@@ -173,7 +173,16 @@ Impact: these feed reports and dashboards. Precision errors here cascade into sh
 Most of these SELECT from the tables above and compute aggregates. If source tables become int-cents, these must either (a) also be int-cents internally, OR (b) convert at read time. Option (a) is simpler.
 
 #### Legacy/less-critical (can migrate last)
-- `loyalty_table` — saleAmount, rewardValue, minPurchase
+- ~~`loyalty_table` — saleAmount, rewardValue, minPurchase~~
+  - `rewardValue` and `minPurchase` — already `IntColumn` (migrated).
+  - `saleAmount` — **DECISION 2026-04-23 (Session 34):** not migrated.
+    Rationale: zero Dart callers read or write this column anywhere
+    in the repo (verified by `grep`). Migrating a never-written
+    column risks breaking the Supabase schema on live tenants for
+    zero behavioural benefit. Documented convention at
+    `packages/alhai_database/lib/src/tables/loyalty_table.dart` —
+    "if you ever start writing this column, write it as INTEGER
+    cents and simultaneously migrate both Drift and Supabase."
 - `expenses_table` — amount
 - `purchases_table` / `purchase_items` — subtotal, tax, discount, total, unitCost
 - `distributor_portal` pricing — standalone

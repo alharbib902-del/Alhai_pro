@@ -100,7 +100,24 @@ class LoyaltyTransactionsTable extends Table {
   /// معرف البيع المرتبط (اختياري)
   TextColumn get saleId => text().nullable().references(SalesTable, #id)();
 
-  /// مبلغ البيع (للاكتساب)
+  /// Sale amount that triggered the loyalty transaction. Optional — a
+  /// manual points adjustment won't populate it.
+  ///
+  /// **C-4 convention deviation (deliberate, documented 2026-04-23).**
+  /// This column is `REAL` (double SAR) while every other money column
+  /// in the schema is `INTEGER` cents after the C-4 migration. The
+  /// reason it wasn't migrated: no Dart code anywhere in the repo
+  /// currently reads or writes `saleAmount`. It's a dormant reserved
+  /// field. Migrating a never-written column to int cents would have
+  /// risked breaking the Supabase schema on live tenants for zero
+  /// behavioural benefit.
+  ///
+  /// **If you start writing this column**, write it as INTEGER cents
+  /// (`(sar * 100).round()`) and simultaneously migrate both the Drift
+  /// schema (bump `schemaVersion`, add a cast step) and the Supabase
+  /// column (`ALTER TABLE ... TYPE BIGINT USING (sale_amount * 100)::bigint`).
+  /// Until then, leave the column alone — formatter code that reads
+  /// from here (none today) must divide by 100.
   RealColumn get saleAmount => real().nullable()();
 
   /// الوصف
