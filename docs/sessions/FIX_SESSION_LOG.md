@@ -6323,13 +6323,16 @@ Low.
 - Audit failure is non-fatal (matches H5 pattern).
 - Permission-gated in admin — only `products_delete` holders see the action; runtime gate complements the existing route-level `productsManage` guard on `/products/add` and `/products/edit/*`.
 
-## Remote push
+## Remote push + merge
 
-Not pushed yet. Per user preference, feature branches go to `backup` remote only; origin push requires explicit approval. User to decide when to push/merge.
+- Feature branch pushed to `backup` (not origin) per standing preference.
+- User said "استمر" after review → fast-forward merged to `main` (main now at `ccb7b2dd`).
+- Branch `fix/admin-products-soft-delete-ui` deleted locally post-merge (still on `backup` remote for recoverability).
+- `origin` still at `c214792a` — push there awaits explicit user approval.
 
 ---
 
-END OF SESSION 26 — Q1-UI wired on fix/admin-products-soft-delete-ui; main unchanged
+END OF SESSION 26 — Q1-UI merged to main; origin push pending user approval
 
 ---
 
@@ -6360,7 +6363,7 @@ alhai_database     509 + 1 skipped
 alhai_sync         358
 alhai_zatca        850 + 1 skipped  ← ZATCA gate
 alhai_pos          559
-alhai_shared_ui    864                ← was 861; +3 Q1-UI tests on fix/admin-products-soft-delete-ui
+alhai_shared_ui    864                ← was 861; +3 Q1-UI widget tests (merged to main)
 alhai_reports      123
 alhai_pos/cashier  552
 customer_app       136
@@ -6369,7 +6372,7 @@ admin              365
 admin_lite         183
 super_admin        222
 -----------
-                   5493 tests passing (main still 5490; +3 on the Q1-UI branch)
+                   5493 tests passing (main @ `ccb7b2dd`, +3 from Q1-UI merge)
 ```
 
 (distributor_portal 420 inferred, not re-run today)
@@ -6395,7 +6398,7 @@ super_admin        222
 
 **Admin audit — Tier B feature sessions (2-4h each, priority order):**
 1. **M2** low-stock alerts dashboard + notification (DAO ready: `getLowStockProducts()`)
-2. ~~**Q1-UI**~~ — DONE Session 26 on branch `fix/admin-products-soft-delete-ui` (commit `7e310d55`); awaits merge
+2. ~~**Q1-UI**~~ — DONE Session 26, merged to `main` at `ccb7b2dd` (feat `7e310d55` + docs `ccb7b2dd`)
 3. **M1** auto-generate EAN-13 barcode when blank
 4. **M7** ZATCA queue status report (sent/rejected/pending)
 5. **M3 + M4** stocktaking + inter-branch transfer (shared stock_movements, one session)
