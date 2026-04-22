@@ -97,19 +97,20 @@ class InvoiceService {
           customerPhone: Value(sale.customerPhone),
           customerVatNumber: Value(customerVatNumber),
           customerAddress: Value(customerAddress),
-          subtotal: Value((sale.subtotal * 100).round()),
-          discount: Value((sale.discount * 100).round()),
-          taxAmount: Value((sale.tax * 100).round()),
-          total: Value((sale.total * 100).round()),
+          // C-4 Session 2: sale.* are already int cents (after the C-4 Session 3
+          // sales migration). Pass straight through — the previous `* 100` was a
+          // 100× overflow that corrupted every invoice created from a POS sale
+          // and broke ZATCA compliance on stored totals.
+          subtotal: Value(sale.subtotal),
+          discount: Value(sale.discount),
+          taxAmount: Value(sale.tax),
+          total: Value(sale.total),
           paymentMethod: Value(sale.paymentMethod),
           amountPaid: Value(
-            ((sale.isPaid ? sale.total : (sale.amountReceived ?? 0)) * 100)
-                .round(),
+            sale.isPaid ? sale.total : (sale.amountReceived ?? 0),
           ),
           amountDue: Value(
-            sale.isPaid
-                ? 0
-                : ((sale.total - (sale.amountReceived ?? 0)) * 100).round(),
+            sale.isPaid ? 0 : (sale.total - (sale.amountReceived ?? 0)),
           ),
           createdBy: Value(sale.cashierId),
           cashierName: Value(cashierName),

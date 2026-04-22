@@ -184,6 +184,102 @@ void main() {
         expect(capturedCompanion, isNotNull);
         expect(capturedCompanion!.status.value, 'issued');
       });
+
+      // C-4 Session 2 regression: createFromSale used to read sale.* (already
+      // int cents after the C-4 Session 3 sales migration) and then multiply by
+      // 100 again — 100x corruption on every POS-generated invoice, and a
+      // ZATCA compliance break since stored totals were wrong. Locks the
+      // byte-exact cents round trip here.
+      test(
+        'passes sale cents through byte-exact to invoice companion '
+        '(sale=46.00 SAR, paid, amountReceived=null)',
+        () async {
+          final sale = createTestSalesTableData(
+            subtotal: 40.0,
+            discount: 0.0,
+            tax: 6.0,
+            total: 46.0,
+            isPaid: true,
+          );
+
+          InvoicesTableCompanion? capturedCompanion;
+          when(() => mockInvoicesDao.upsertInvoice(any())).thenAnswer((inv) {
+            capturedCompanion =
+                inv.positionalArguments[0] as InvoicesTableCompanion;
+            return Future.value(1);
+          });
+
+          await invoiceService.createFromSale(sale: sale, items: testItems);
+
+          expect(capturedCompanion, isNotNull);
+          // Sale is stored in cents by the factory (40.0 SAR -> 4000 cents).
+          expect(capturedCompanion!.subtotal.value, 4000);
+          expect(capturedCompanion!.discount.value, 0);
+          expect(capturedCompanion!.taxAmount.value, 600);
+          expect(capturedCompanion!.total.value, 4600);
+          // Paid sale: amountPaid == total; amountDue == 0.
+          expect(capturedCompanion!.amountPaid.value, 4600);
+          expect(capturedCompanion!.amountDue.value, 0);
+        },
+      );
+
+      test(
+        'partial payment round-trips cents (sale=100.00, paid 60.00)',
+        () async {
+          final sale = createTestSalesTableData(
+            subtotal: 87.0,
+            discount: 0.0,
+            tax: 13.0,
+            total: 100.0,
+            isPaid: false,
+            amountReceived: 60.0,
+          );
+
+          InvoicesTableCompanion? capturedCompanion;
+          when(() => mockInvoicesDao.upsertInvoice(any())).thenAnswer((inv) {
+            capturedCompanion =
+                inv.positionalArguments[0] as InvoicesTableCompanion;
+            return Future.value(1);
+          });
+
+          await invoiceService.createFromSale(sale: sale, items: testItems);
+
+          expect(capturedCompanion, isNotNull);
+          expect(capturedCompanion!.subtotal.value, 8700);
+          expect(capturedCompanion!.taxAmount.value, 1300);
+          expect(capturedCompanion!.total.value, 10000);
+          // Unpaid: amountPaid reflects amountReceived; amountDue is the gap.
+          expect(capturedCompanion!.amountPaid.value, 6000);
+          expect(capturedCompanion!.amountDue.value, 4000);
+        },
+      );
+
+      test(
+        'unpaid with null amountReceived stores amountPaid=0 and amountDue=total',
+        () async {
+          final sale = createTestSalesTableData(
+            subtotal: 50.0,
+            total: 50.0,
+            tax: 0.0,
+            isPaid: false,
+            amountReceived: null,
+          );
+
+          InvoicesTableCompanion? capturedCompanion;
+          when(() => mockInvoicesDao.upsertInvoice(any())).thenAnswer((inv) {
+            capturedCompanion =
+                inv.positionalArguments[0] as InvoicesTableCompanion;
+            return Future.value(1);
+          });
+
+          await invoiceService.createFromSale(sale: sale, items: testItems);
+
+          expect(capturedCompanion, isNotNull);
+          expect(capturedCompanion!.total.value, 5000);
+          expect(capturedCompanion!.amountPaid.value, 0);
+          expect(capturedCompanion!.amountDue.value, 5000);
+        },
+      );
     });
 
     // ── createCreditNote ────────────────────────────────
