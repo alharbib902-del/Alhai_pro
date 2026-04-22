@@ -6793,6 +6793,97 @@ END OF SESSION 32 — M2 complete (dashboard + notification badge); every screen
 
 ---
 
+# Session 33 — Admin Tier B M3 + M4: stocktaking + inter-branch transfers (2026-04-23)
+
+**Branch:** `feat/admin-stocktaking-transfer` (merged). **Commit:** `f0c96284`. **Budget:** ~3h.
+
+## Summary
+
+Last two Tier B features. Both use existing infrastructure: `stock_movements`, `stock_transfers`, and `stores` tables were already in place with complete DAOs. The audit item said "table + workflow exist, UI missing" — this session delivers the UI.
+
+## Changes — 20 files, +2383 / 0 LOC
+
+### New routes
+
+- **`packages/alhai_shared_ui/lib/src/core/router/routes.dart`** — adds 3 constants: `stocktaking = '/inventory/stocktaking'`, `stockTransfers = '/inventory/transfers'`, `stockTransferNew = '/inventory/transfers/new'`.
+
+### M3 — stocktaking reconciliation
+
+**`apps/admin/lib/screens/inventory/stocktaking_screen.dart`** (ConsumerStatefulWidget, ~300 LOC)
+
+- Lists active products for the current store via a new `FutureProvider.autoDispose` wrapping `ProductsDao.getAllProducts`.
+- Search by name or barcode, client-side filter.
+- Per-row layout: name + barcode / Expected (from `stockQty`) / Counted (operator TextField) / Delta (live, coloured green for surplus + red for shortage).
+- "Save adjustments" AppBar action commits ONLY rows with `counted != expected`:
+  - Writes `inventory_movements` via `InventoryDao.recordAdjustment(type: 'adjustment', reason: 'stocktaking')`.
+  - Updates `products.stock_qty` via `ProductsDao.updateStock`.
+  - Audit log entry with `AuditAction.stockAdjust` + oldValue/newValue JSON. Silent-catch mirrors the H5 price-change pattern — audit failures never abort a save.
+- Save button is gated by `_adjustedCount > 0` (live count of non-empty typed inputs), and displays a chip showing the pending count.
+- Success SnackBar uses ICU plural (`stocktakingSavedSuccess`).
+
+### M4 — inter-branch stock transfers
+
+**`apps/admin/lib/screens/inventory/stock_transfers_screen.dart`** (ConsumerWidget, ~280 LOC)
+
+- Two-tab list: Outgoing (this store sent) vs Incoming (another store sent to this store). Each tab is a thin `FutureProvider.autoDispose` wrapping `StockTransfersDao.getOutgoing` / `getIncoming`.
+- Card per row: transfer number, from/to store IDs, item count (decoded from the `items` JSON column), status chip colour-coded by `approvalStatus`.
+- Incoming `pending` rows surface Approve / Reject buttons inline. Incoming `approved` or `in_transit` rows surface a Receive button.
+- Actions:
+  - Approve → `updateApprovalStatus('approved')` + `markInTransit()`.
+  - Reject → `cancelTransfer()`.
+  - Receive → `markReceived(id, userId)` (sets `status=completed`, `approvalStatus=received`, `receivedAt/completedAt`).
+- FAB → `context.push(stockTransferNew)`; on return, both providers are invalidated to re-fetch.
+
+**`apps/admin/lib/screens/inventory/stock_transfer_form_screen.dart`** (ConsumerStatefulWidget, ~360 LOC)
+
+- Destination-store dropdown. Auto-excludes the current store via a `FutureProvider.autoDispose` wrapping `StoresDao.getActiveStores`.
+- Add-item sub-dialog (`_AddItemDialog`): product search (by name or barcode) + qty input with numeric-only `TextInputFormatter`. Returns a `_TransferLine` struct.
+- Notes field (free text).
+- Save button enabled when `toStore != null && lines.isNotEmpty && !saving`.
+- On submit: composes a transfer number `TRF-YYYYMMDD-NNNN`, serializes lines to JSON matching the existing `stock_transfers.items` schema (`[{product_id, name, qty}, ...]`), calls `StockTransfersDao.upsertTransfer`, pops with `true` so the list re-fetches.
+
+### l10n — 26 keys × 7 locales
+
+- **`packages/alhai_l10n/lib/l10n/*.arb`** — Arabic written by hand (source file); the 6 other locales (en/bn/fil/hi/id/ur) via a mechanical subagent pass using existing file tone as reference. All three ICU plural blocks (`stocktakingSavedSuccess`, `stocktakingAdjustedCount`, `stockTransferItemCount`) regenerate cleanly.
+
+## Scope NOT covered (intentionally)
+
+- **Actual stock-movement effects on transfer lifecycle.** The screens only flip the `stock_transfers` workflow columns. The paired `inventory_movements` writes + `products.stock_qty` decrements at the sending store and increments at the receiving store still need a dedicated service (or background worker). Flagged for follow-up.
+- **Nav entry from home / reports index.** Routes are reachable via deep-link or `context.push(...)`. A `ListTile` in the ReportsScreen / home dashboard would need to go into shared packages that the cashier app also consumes — scope-cut for a dedicated PR.
+- **Widget tests for the three new screens.** Heavy logic lives in the DAOs (already tested); these screens are thin data→widget wiring. Scope-cut for budget.
+- **Stocktaking session / audit trail.** Current design flushes adjustments one by one without a bounding "session" record. Acceptable for MVP; large catalogs may benefit from a grouped `stocktaking_sessions` table later.
+
+## Verification
+
+- `flutter analyze` admin router + 3 new inventory screens: **0 issues**
+- **admin tests: 365 / 365** — baseline preserved.
+
+## Architectural notes
+
+- **Both screens use `AutoDisposeFutureProvider`.** Stocktaking needs only a one-shot read on entry (mutation flows through save); transfers are entered in bursts (operator reviews a handful). Reactivity via stream would be overkill for either; manual `ref.invalidate` on action completion is sufficient.
+- **Transfer line encoding.** The existing `stock_transfers.items` column is a TEXT holding JSON. Kept the encoding shape (`product_id / name / qty`) to stay compatible with whatever service eventually owns the stock-move side of the workflow.
+- **Subagent for l10n fan-out.** 26 keys × 6 non-source locales = 156 entries. Mechanical translation with the source file's tone as reference is the canonical pattern for this kind of i18n expansion. Same approach as M2's 20-file notificationsCount replacement.
+
+## Risk
+
+Low.
+- Additive: 3 new screens + 3 new routes + 26 l10n keys. No existing code paths touched.
+- DAOs already in production; this wraps them with UI. No migration required.
+- Audit gate + silent-catch around audit logging matches prior sessions' pattern.
+
+## Remote push + merge
+
+- Branch `feat/admin-stocktaking-transfer` pushed to `backup`.
+- Fast-forward merged to `main` (main now at `f0c96284`).
+- Branch deleted locally post-merge (still on `backup` remote for recoverability).
+- `origin` still at `c214792a` — 17 commits on main now awaiting explicit user approval.
+
+---
+
+END OF SESSION 33 — M3 + M4 both land on main; Tier B Q1-UI / M1 / M2 / M3 / M4 / M7 all closed
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
 
 **Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
@@ -6859,13 +6950,19 @@ super_admin        222
 - ~~Q6~~ — DONE Session 28 (productCreate + productEdit audit, H5 price-compare bug fixed)
 
 **Admin audit — Tier B feature sessions (2-4h each, priority order):**
-1. ~~**M2**~~ — FULLY DONE (dashboard half Session 29 `86e14676`; notification badge Session 32 `d2ef87ef`)
-2. ~~**Q1-UI**~~ — DONE Session 26, merged to `main` at `ccb7b2dd`
-3. ~~**M1**~~ — DONE Session 30, merged to `main` at `0cc0406f` (EAN-13 generator + form wiring + SnackBar + 5 tests)
-4. ~~**M7**~~ — DONE Session 31, merged to `main` at `e6057198` (ZATCA queue report: 3 stat cards + pending/rejected lists + 4 DAO tests)
-5. **M3 + M4** stocktaking + inter-branch transfer (shared stock_movements, one session)
-6. **M7 follow-ups** — nav entry in ReportsScreen (touches alhai_reports package, shared with cashier); retry/purge actions for rejected items (needs permission decision); date-range filter
-7. **M2 polish** — redirect bell onTap to `/inventory/alerts` when count > 0 (currently each screen's author chose target, usually `/notifications`)
+1. ~~**M2**~~ — FULLY DONE (dashboard Session 29 `86e14676`; notification badge Session 32 `d2ef87ef`)
+2. ~~**Q1-UI**~~ — DONE Session 26, merged at `ccb7b2dd`
+3. ~~**M1**~~ — DONE Session 30, merged at `0cc0406f`
+4. ~~**M7**~~ — DONE Session 31, merged at `e6057198`
+5. ~~**M3 + M4**~~ — DONE Session 33, merged at `f0c96284` (stocktaking + inter-branch transfers + create form + 26 l10n keys × 7 locales)
+
+**Tier B follow-ups (all optional polish):**
+- M4 stock-movement effects on transfer approval/receive — service to write `inventory_movements` + update `products.stock_qty` on both ends (noted scope-cut).
+- M3 stocktaking-session record — group adjustments into a bounding session row (noted scope-cut).
+- Widget tests for 3 new inventory screens (scope-cut).
+- M7 follow-ups — nav entry in ReportsScreen (alhai_reports package, shared with cashier); retry/purge actions for rejected items (needs permission decision); date-range filter.
+- M2 polish — redirect bell onTap to `/inventory/alerts` when count > 0.
+- Nav entries for `/inventory/stocktaking` + `/inventory/transfers` from home / reports index.
 
 **super_admin — ops (user-executed, not code):**
 - 6 GitHub Actions secrets + `deploy_web.yml` `--dart-define` flags
