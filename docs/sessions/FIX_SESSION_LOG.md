@@ -5938,3 +5938,93 @@ Our Session 13 authored a DIFFERENT Money type implementation (commit `4de24ab`,
 ---
 
 END OF SESSION 20 — branch graveyard cleared, 3 real-work branches flagged
+
+---
+
+# Session 21 — super_admin P0 merge into main (2026-04-22)
+
+**Branch:** `main`.
+**Commit:** `085ac0b5` (merge commit). Main advanced from `1eee922d` to `085ac0b5`.
+**Budget:** ~20 min.
+
+## Summary
+
+Merged `fix/super-admin-audit-p0s-20260419` (17 commits, 2026-04-19 audit closure work) into main. **The 2026-04-17 handover claimed all super_admin P0/P1/P2/P3 were CLOSED, but the closure branch was never actually merged.** This session fixes that omission.
+
+**Zero merge conflicts.** Auto-merge clean despite the branch forking from `b1f204a2` (2026-04-18) and main having moved 52 commits since.
+
+## Content merged
+
+**5 Supabase migrations:**
+- `v43_platform_settings.sql` — already applied on live 2026-04-19 (discovered in Session 18)
+- `v46_sa_audit_log_append_only.sql` — audit log append-only hardening
+- `v47_sa_audit_log_actor_trigger.sql` — force actor_id = auth.uid() on inserts
+- `v48_update_platform_settings_rpc.sql` — **verified present on live 2026-04-22**
+- `v49_create_store_rpc.sql` — **verified present on live 2026-04-22**
+
+**22 super_admin code changes** addressing the U-numbered audit items from 2026-04-17 handover:
+
+| ID | Change |
+|---|---|
+| U0 | qr_flutter dep + new `SAErrorCard` error-display widget |
+| U1 | Respect system theme and locale (fixes forced-en-locale P0) |
+| U2 | Wire Save button to `update_platform_settings` RPC (fixes missing-save-button P0) |
+| U3 | Sanitize user-facing error messages (4-sweep; fixes `Text('Error: $e')` P1) |
+| U4 | Refactor stores INSERT chain → `create_store` RPC |
+| U6 | Use correct `sales.total` column in analytics |
+| U7/U8 | `sa_audit_log` append-only + actor_id hardening |
+| U10 | Fail-closed on platform_settings load |
+| U12 | Strip PII from store.create audit metadata |
+
+**2 new test files** (bumped super_admin baseline 219 → 222):
+- `test/data/sa_stores_datasource_test.dart` (updated + expanded)
+- `test/screens/platform_settings_save_test.dart` (new)
+
+## Pre-merge check — RPC presence on live
+
+Before committing the merge, verified both RPCs exist on live Supabase:
+
+```sql
+SELECT proname FROM pg_proc
+WHERE proname IN ('update_platform_settings', 'create_store')
+  AND pronamespace = 'public'::regnamespace;
+-- Result: 2 rows (both present)
+```
+
+This means v48 + v49 were applied to live on 2026-04-19 during the original super_admin audit work, but the *SQL migration files* and the *Dart code calling them* were never merged to main. The app on any `main`-derived build was silently calling RPCs that the build's source tree didn't document.
+
+## Verification
+
+- Trial `git merge --no-commit` → "Automatic merge went well" (zero conflicts)
+- Merge commit `085ac0b5` → 27 files changed, +1418 / -264 LOC
+- `super_admin` tests: **222 / 222** ✓ (up from 219; 3 new tests came with the merge)
+- Pushed to `backup` remote: `1eee922d..085ac0b5` ✓
+- Pushed to `origin` remote: `1eee922d..085ac0b5` ✓
+- Source branch `fix/super-admin-audit-p0s-20260419` deleted (fully merged) ✓
+
+## Impact — real super_admin P0 closures now on main
+
+**Before merge** — main's super_admin:
+- `main.dart` still had `Locale('en')` force (UX-P0-1)
+- `sa_platform_settings_screen.dart` had no save button (UX-P0-2)
+- 21 raw `Text('Error: $e')` sites leaking stack traces (SEC-P1)
+- No `SAErrorCard` widget
+- `sa_stores_datasource.create_store` did manual INSERT chain
+- `sa_settings_providers` didn't fail-closed on load
+
+**After merge** — all above closed. Prod-ready super_admin now reflects the 2026-04-19 state the handover claimed.
+
+## Remaining local branches
+
+Down to **3** (main + 2):
+- `feat/c4-session-0-money-foundation-20260422` — Money type v1; compare with main's v2 (~30 min future session)
+- `fix/driver-app-test-coverage-20260422` — driver unit tests; cherry-pick or merge (~30 min future session)
+
+## Follow-up — optional
+
+- **U5/U9/U11/U13** — still pending per 2026-04-17 handover. The merged branch covered U0-U4/U6-U8/U10/U12 but not all. Need a separate super_admin Tier 3 session for those 4 items.
+- **Super admin ops** (unchanged): 6 GitHub Actions secrets + Cloudflare `--dart-define` flags on `deploy_web.yml`.
+
+---
+
+END OF SESSION 21 — super_admin audit closures consolidated to main
