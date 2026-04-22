@@ -9,6 +9,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
+import 'package:alhai_core/alhai_core.dart' show Money;
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
@@ -969,8 +970,16 @@ class _ProductTileState extends State<_ProductTile> {
                   const SizedBox(height: AppSpacing.xs),
 
                   // Price
+                  //
+                  // C-4 (Session 41 §B1): fixed cents-as-SAR display bug
+                  // (quick_sale_screen.dart:973) — `widget.product.price` is
+                  // int cents on the Drift row, but the previous code fed it
+                  // straight into toStringAsFixed(2), rendering "1000.00 ر.س"
+                  // for a 10-SAR (1000 cents) product. formatNumber applies
+                  // the Money.fromCents scale and grouping separators while
+                  // keeping the localized ${l10n.sar} suffix intact.
                   Text(
-                    '${widget.product.price.toStringAsFixed(2)} ${l10n.sar}',
+                    '${CurrencyFormatter.formatNumber(Money.fromCents(widget.product.price).toDouble())} ${l10n.sar}',
                     style: AppTypography.priceMedium.copyWith(
                       color: AppColors.primary,
                     ),
