@@ -10,9 +10,11 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:alhai_core/alhai_core.dart' show Money;
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart' show CurrencyFormatter;
 import 'package:get_it/get_it.dart';
 
 import '../../core/services/sentry_service.dart';
@@ -206,8 +208,15 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
                   cells: [
                     DataCell(Text(product.name)),
                     DataCell(
-                      // C-4 Stage B: product.price is int cents; display in SAR.
-                      Text('${(product.price / 100.0).toStringAsFixed(2)} ${l10n.sar}'),
+                      // C-4 (Session 41 §B1): formatNumber handles the cents
+                      // → SAR scale via Money.fromCents + grouping separators,
+                      // keeping the localized ${l10n.sar} suffix intact
+                      // (formatMoney would emit the default store symbol
+                      // `ر.س`, which drifts from the English-locale SAR
+                      // literal). Drift row → int cents after Stage B.
+                      Text(
+                        '${CurrencyFormatter.formatNumber(Money.fromCents(product.price).toDouble())} ${l10n.sar}',
+                      ),
                     ),
                     DataCell(Text(product.categoryId ?? '-')),
                     DataCell(
@@ -286,8 +295,12 @@ class _LiteQuickPriceScreenState extends ConsumerState<LiteQuickPriceScreen> {
             ),
           ),
           Text(
-            // C-4 Stage B: product.price is int cents; display in SAR.
-            '${(product.price / 100.0).toStringAsFixed(0)} SAR',
+            // C-4 (Session 41 §B1): formatNumber handles the cents → SAR
+            // scale via Money.fromCents and (with decimalDigits: 0) produces
+            // the same whole-number grouping the old toStringAsFixed(0) gave,
+            // while keeping the literal "SAR" suffix from the original site.
+            // Drift row → int cents after Stage B.
+            '${CurrencyFormatter.formatNumber(Money.fromCents(product.price).toDouble(), decimalDigits: 0)} SAR',
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 16,
