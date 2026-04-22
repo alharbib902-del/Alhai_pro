@@ -861,6 +861,35 @@ class _SupplierFormScreenState extends ConsumerState<SupplierFormScreen> {
       final db = getIt<AppDatabase>();
       final storeId = ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
 
+      // Admin Tier A Q3: prevent duplicate VAT number per store.
+      // Active (non-deleted) row check only. Allows editing a supplier
+      // without tripping on their own tax number.
+      if (sanitizedVat.isNotEmpty) {
+        final existingByVat = await db.suppliersDao.getSupplierByTaxNumber(
+          sanitizedVat,
+          storeId,
+        );
+        if (existingByVat != null) {
+          final isSameSupplier =
+              widget.isEditing && existingByVat.id == widget.supplierId;
+          if (!isSameSupplier) {
+            if (mounted) {
+              setState(() => _isLoading = false);
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  // "الرقم الضريبي مستخدم بالفعل للمورد: <name>"
+                  content: Text(
+                    '\u0627\u0644\u0631\u0642\u0645 \u0627\u0644\u0636\u0631\u064a\u0628\u064a \u0645\u0633\u062a\u062e\u062f\u0645 \u0628\u0627\u0644\u0641\u0639\u0644 \u0644\u0644\u0645\u0648\u0631\u062f: ${existingByVat.name}',
+                  ),
+                  backgroundColor: AppColors.error,
+                ),
+              );
+            }
+            return;
+          }
+        }
+      }
+
       if (widget.isEditing) {
         final existing = await db.suppliersDao.getSupplierById(
           widget.supplierId!,

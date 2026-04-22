@@ -142,6 +142,29 @@ void main() {
       expect(product, isNull);
     });
 
+    test('softDeleteProduct sets deletedAt and hides from active queries', () async {
+      // Admin Tier A Q1: soft delete preserves the row for audit/reports
+      // while hiding it from active-row queries that filter deletedAt.isNull().
+      await db.productsDao.insertProduct(makeProduct(id: 'prod-soft'));
+
+      final affected = await db.productsDao.softDeleteProduct('prod-soft');
+      expect(affected, 1);
+
+      // getProductById does NOT filter on deletedAt; row still retrievable
+      final row = await db.productsDao.getProductById('prod-soft');
+      expect(row, isNotNull);
+      expect(row!.deletedAt, isNotNull);
+
+      // Active-list query (getAllProducts) DOES filter deletedAt.isNull() —
+      // soft-deleted row hidden from active users.
+      final active = await db.productsDao.getAllProducts('store-1');
+      expect(active.any((p) => p.id == 'prod-soft'), isFalse);
+
+      // Second soft-delete on same row is a no-op (affected=0).
+      final second = await db.productsDao.softDeleteProduct('prod-soft');
+      expect(second, 0);
+    });
+
     test('getProductsByCategory filters correctly', () async {
       // Create category parents for the FK constraint
       final now = DateTime(2025, 1, 1);

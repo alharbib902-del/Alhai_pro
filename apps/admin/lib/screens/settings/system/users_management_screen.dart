@@ -510,6 +510,7 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
     final nameController = TextEditingController();
     final phoneController = TextEditingController();
     String role = 'cashier';
+    // Admin Tier A Q5: dispose dialog controllers after close to prevent leak.
     showDialog(
       context: context,
       builder: (context) {
@@ -572,6 +573,22 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
               FilledButton(
                 onPressed: () async {
                   if (nameController.text.isNotEmpty) {
+                    // Admin Tier A Q4: validate Saudi phone format before save.
+                    if (phoneController.text.trim().isNotEmpty) {
+                      final phoneResult =
+                          PhoneValidator.validate(phoneController.text);
+                      if (!phoneResult.isValid) {
+                        if (context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(phoneResult.getError('ar') ?? ''),
+                              backgroundColor: AppColors.error,
+                            ),
+                          );
+                        }
+                        return;
+                      }
+                    }
                     final storeId = ref.read(currentStoreIdProvider);
                     if (storeId != null) {
                       try {
@@ -617,13 +634,17 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
           ),
         );
       },
-    );
+    ).whenComplete(() {
+      nameController.dispose();
+      phoneController.dispose();
+    });
   }
 
   void _editUser(_User user) {
     final nameController = TextEditingController(text: user.name);
     final phoneController = TextEditingController(text: user.phone);
     String role = user.role;
+    // Admin Tier A Q5: dispose dialog controllers after close to prevent leak.
     showDialog(
       context: context,
       builder: (context) {
@@ -686,6 +707,22 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
               ),
               FilledButton(
                 onPressed: () async {
+                  // Admin Tier A Q4: validate Saudi phone format before save.
+                  if (phoneController.text.trim().isNotEmpty) {
+                    final phoneResult =
+                        PhoneValidator.validate(phoneController.text);
+                    if (!phoneResult.isValid) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(phoneResult.getError('ar') ?? ''),
+                            backgroundColor: AppColors.error,
+                          ),
+                        );
+                      }
+                      return;
+                    }
+                  }
                   final finalRole = user.role == 'owner' ? 'owner' : role;
                   try {
                     final db = getIt<AppDatabase>();
@@ -735,7 +772,10 @@ class _UsersManagementScreenState extends ConsumerState<UsersManagementScreen> {
           ),
         );
       },
-    );
+    ).whenComplete(() {
+      nameController.dispose();
+      phoneController.dispose();
+    });
   }
 
   void _showUserDetails(_User user) {

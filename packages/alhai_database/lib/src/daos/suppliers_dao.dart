@@ -60,6 +60,22 @@ class SuppliersDao extends DatabaseAccessor<AppDatabase>
             ..where((s) => s.id.equals(id) & s.deletedAt.isNull()))
           .getSingleOrNull();
 
+  /// Find a supplier by their tax (VAT) number within a store.
+  /// Used by form save paths to reject duplicates (admin Tier A Q3).
+  /// Active (non-soft-deleted) rows only.
+  Future<SuppliersTableData?> getSupplierByTaxNumber(
+    String taxNumber,
+    String storeId,
+  ) =>
+      (select(suppliersTable)
+            ..where(
+              (s) =>
+                  s.taxNumber.equals(taxNumber) &
+                  s.storeId.equals(storeId) &
+                  s.deletedAt.isNull(),
+            ))
+          .getSingleOrNull();
+
   Future<List<SuppliersTableData>> searchSuppliers(
     String query,
     String storeId,

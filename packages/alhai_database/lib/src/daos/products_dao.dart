@@ -186,6 +186,21 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
     return (delete(productsTable)..where((p) => p.id.equals(id))).go();
   }
 
+  /// Soft-delete a product: set `deleted_at = now()` without removing the row.
+  /// Admin Tier A Q1 — preferred over [deleteProduct] for audit-preserving
+  /// removal. Active-row queries (which filter `deletedAt.isNull()`) will
+  /// hide the row, while reports and history remain intact.
+  ///
+  /// Returns the number of rows affected (0 if product doesn't exist or
+  /// already soft-deleted, 1 on success).
+  Future<int> softDeleteProduct(String id) {
+    return (update(
+      productsTable,
+    )..where((p) => p.id.equals(id) & p.deletedAt.isNull())).write(
+      ProductsTableCompanion(deletedAt: Value(DateTime.now())),
+    );
+  }
+
   /// تعيين تاريخ المزامنة
   Future<int> markAsSynced(String id) {
     return (update(productsTable)..where((p) => p.id.equals(id))).write(
