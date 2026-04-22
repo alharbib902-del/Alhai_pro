@@ -52,8 +52,10 @@ void main() {
       storeId: storeId,
       receiptNo: receiptNo,
       cashierId: cashierId,
-      subtotal: subtotal,
-      total: total,
+      // C-4 Session 3: sales money columns are int cents; helper keeps
+      // double SAR API, convert at the Drift boundary.
+      subtotal: (subtotal * 100).round(),
+      total: (total * 100).round(),
       paymentMethod: paymentMethod,
       status: Value(status),
       createdAt: createdAt ?? DateTime(2025, 6, 15, 10, 30),
@@ -195,7 +197,8 @@ void main() {
         final sale = await db.salesDao.getSaleById('sale-tx-1');
         expect(sale, isNotNull);
         expect(sale!.receiptNo, 'TX-REC-001');
-        expect(sale.total, 19.0);
+        // C-4 Session 3: sales.total is int cents (19 SAR = 1900).
+        expect(sale.total, 1900);
         expect(sale.status, 'completed');
         expect(sale.paymentMethod, 'cash');
 
@@ -338,7 +341,8 @@ void main() {
 
         // Verify total sale amount
         final sale = await db.salesDao.getSaleById('multi-sale-1');
-        expect(sale!.total, totalAmount);
+        // C-4 Session 3: sales.total is int cents; totalAmount loop is SAR double.
+        expect(sale!.total, (totalAmount * 100).round());
 
         // Verify all items saved
         final savedItems = await db.saleItemsDao.getItemsBySaleId(

@@ -217,12 +217,13 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
         ? _formatDuration(shift.openedAt, shift.closedAt, l10n)
         : '--';
     final invoiceCount = shift?.totalSales ?? 0;
-    final totalSales = shift?.totalSalesAmount ?? 0.0;
-    final refunds = shift?.totalRefundsAmount ?? 0.0;
+    // C-4 Session 3: shifts money columns are int cents; display as SAR.
+    final totalSales = (shift?.totalSalesAmount ?? 0) / 100.0;
+    final refunds = (shift?.totalRefundsAmount ?? 0) / 100.0;
     // مبيعات البطاقة والنقدية غير متوفرة مباشرة - نعرض إجمالي المبيعات ناقص المرتجعات كصافي
     // TODO: إضافة حقول مبيعات البطاقة والنقدية في جدول الورديات مستقبلاً
     final cashSales = shift != null
-        ? (shift.closingCash ?? 0) - shift.openingCash
+        ? ((shift.closingCash ?? 0) - shift.openingCash) / 100.0
         : 0.0;
     final cardSales = shift != null
         ? totalSales - cashSales.clamp(0, totalSales)
@@ -323,9 +324,10 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
     ShiftsTableData? shift,
   ) {
     // حساب قيم الصندوق من بيانات الوردية الفعلية
-    final expectedCash = shift?.expectedCash ?? 0.0;
-    final actualCash = shift?.closingCash ?? 0.0;
-    final difference = shift?.difference ?? 0.0;
+    // C-4 Session 3: shifts money columns are int cents; display as SAR.
+    final expectedCash = (shift?.expectedCash ?? 0) / 100.0;
+    final actualCash = (shift?.closingCash ?? 0) / 100.0;
+    final difference = (shift?.difference ?? 0) / 100.0;
 
     // تحديد لون ورمز الفرق بناءً على القيمة
     final isBalanced = difference == 0;

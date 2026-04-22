@@ -159,8 +159,9 @@ void main() {
                 receiptNo: 'REC-TXN',
                 storeId: 'store-1',
                 cashierId: 'user-1',
-                subtotal: 50.0,
-                total: 57.5,
+                // C-4 Session 3: sales money columns are int cents.
+                subtotal: 5000, // 50.00 SAR
+                total: 5750, // 57.50 SAR
                 paymentMethod: 'cash',
                 createdAt: DateTime.now(),
               ),

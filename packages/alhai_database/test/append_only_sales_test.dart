@@ -41,8 +41,9 @@ void main() {
         storeId: 'store-1',
         receiptNo: 'REC-$id',
         cashierId: 'cashier-1',
-        subtotal: 100.0,
-        total: 100.0,
+        // C-4 Session 3: sales money columns are int cents.
+        subtotal: 10000, // 100.00 SAR
+        total: 10000, // 100.00 SAR
         paymentMethod: 'cash',
         status: Value(status),
         createdAt: DateTime(2025, 6, 1),
@@ -57,12 +58,13 @@ void main() {
       final sale = await _insertSale(id: 'sale-draft', status: 'draft');
 
       // Modifying total on a draft sale should succeed
-      final modified = sale.copyWith(total: 200.0);
+      // C-4 Session 3: total is int cents.
+      final modified = sale.copyWith(total: 20000); // 200.00 SAR
       final ok = await db.salesDao.updateSale(modified);
       expect(ok, isTrue);
 
       final refreshed = await db.salesDao.getSaleById('sale-draft');
-      expect(refreshed!.total, 200.0);
+      expect(refreshed!.total, 20000); // 200.00 SAR in cents
     });
 
     test(
@@ -72,7 +74,8 @@ void main() {
         final sale = await _insertSale(id: 'sale-done', status: 'completed');
 
         // Attempt to change the total on a completed sale
-        final modified = sale.copyWith(total: 999.0);
+        // C-4 Session 3: total is int cents.
+        final modified = sale.copyWith(total: 99900); // 999.00 SAR
         expect(
           () => db.salesDao.updateSale(modified),
           throwsA(isA<AppendOnlyViolationException>()),

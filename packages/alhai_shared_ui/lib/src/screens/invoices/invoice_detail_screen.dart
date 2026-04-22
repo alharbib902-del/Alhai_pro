@@ -737,20 +737,27 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                   ),
                 ),
                 const Divider(height: 24),
-                _totalRow(l10n.subtotalLabel, sale.subtotal, colorScheme, l10n),
+                // C-4 Session 3: sale money columns are int cents; _totalRow
+                // and formatWithContext both expect SAR doubles.
+                _totalRow(
+                  l10n.subtotalLabel,
+                  sale.subtotal / 100.0,
+                  colorScheme,
+                  l10n,
+                ),
                 if (sale.discount > 0)
                   _totalRow(
                     l10n.discountVip,
-                    -sale.discount,
+                    -sale.discount / 100.0,
                     colorScheme,
                     l10n,
                     isDiscount: true,
                   ),
-                _totalRow(l10n.vatLabel, sale.tax, colorScheme, l10n),
+                _totalRow(l10n.vatLabel, sale.tax / 100.0, colorScheme, l10n),
                 const Divider(height: 16),
                 _totalRow(
                   l10n.grandTotalLabel,
-                  sale.total,
+                  sale.total / 100.0,
                   colorScheme,
                   l10n,
                   isBold: true,
@@ -787,7 +794,7 @@ class _InvoiceDetailScreenState extends ConsumerState<InvoiceDetailScreen> {
                       Text(
                         CurrencyFormatter.formatWithContext(
                           context,
-                          sale.amountReceived ?? sale.total,
+                          (sale.amountReceived ?? sale.total) / 100.0,
                         ),
                         style: const TextStyle(
                           fontSize: 14,

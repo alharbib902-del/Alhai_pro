@@ -21,8 +21,10 @@ void main() {
       storeId: storeId,
       receiptNo: receiptNo,
       cashierId: cashierId,
-      subtotal: subtotal,
-      total: total,
+      // C-4 Session 3: sales money columns are int cents; helper keeps
+      // double SAR API, convert at the Drift boundary.
+      subtotal: (subtotal * 100).round(),
+      total: (total * 100).round(),
       paymentMethod: paymentMethod,
       status: Value(status),
       createdAt: createdAt,

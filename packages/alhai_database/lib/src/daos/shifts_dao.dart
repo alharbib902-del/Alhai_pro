@@ -77,13 +77,15 @@ class ShiftsDao extends DatabaseAccessor<AppDatabase> with _$ShiftsDaoMixin {
   }) {
     return (update(shiftsTable)..where((s) => s.id.equals(id))).write(
       ShiftsTableCompanion(
-        closingCash: Value(closingCash),
-        expectedCash: Value(expectedCash),
-        difference: Value(difference),
+        // C-4 Session 3: shift money columns are int cents. Caller still passes
+        // double SAR for readability; convert at the Value() boundary.
+        closingCash: Value((closingCash * 100).round()),
+        expectedCash: Value((expectedCash * 100).round()),
+        difference: Value((difference * 100).round()),
         totalSales: Value(totalSales),
-        totalSalesAmount: Value(totalSalesAmount),
+        totalSalesAmount: Value((totalSalesAmount * 100).round()),
         totalRefunds: Value(totalRefunds),
-        totalRefundsAmount: Value(totalRefundsAmount),
+        totalRefundsAmount: Value((totalRefundsAmount * 100).round()),
         status: const Value('closed'),
         notes: Value(notes),
         closedAt: Value(DateTime.now()),

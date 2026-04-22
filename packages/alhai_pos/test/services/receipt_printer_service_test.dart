@@ -68,7 +68,8 @@ void main() {
 
       expect(sale.id, equals('sale-1'));
       expect(sale.receiptNo, equals('POS-001'));
-      expect(sale.total, equals(115.0));
+      // C-4 Session 3: sales.total is int cents (115 SAR = 11500).
+      expect(sale.total, equals(11500));
     });
 
     test('requires SaleItemsTableData list for printing', () {
@@ -122,10 +123,11 @@ void main() {
         total: 103.5,
       );
 
-      expect(sale.subtotal, equals(100.0));
-      expect(sale.discount, equals(10.0));
-      expect(sale.tax, equals(13.5));
-      expect(sale.total, equals(103.5));
+      // C-4 Session 3: sales money cols are int cents.
+      expect(sale.subtotal, equals(10000));
+      expect(sale.discount, equals(1000));
+      expect(sale.tax, equals(1350));
+      expect(sale.total, equals(10350));
     });
 
     test('sale data with different payment methods', () {

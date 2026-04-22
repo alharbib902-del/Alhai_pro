@@ -27,7 +27,9 @@ void main() {
       storeId: storeId,
       cashierId: cashierId,
       cashierName: cashierName,
-      openingCash: Value(openingCash),
+      // C-4 Session 3: shifts money columns are int cents. Helper keeps the
+      // double SAR API for readability; convert at the Value() boundary.
+      openingCash: Value((openingCash * 100).round()),
       status: Value(status),
       openedAt: openedAt ?? DateTime(2025, 6, 15, 8, 0),
     );
@@ -40,7 +42,7 @@ void main() {
       final shift = await db.shiftsDao.getShiftById('shift-1');
       expect(shift, isNotNull);
       expect(shift!.cashierName, 'محمد الكاشير');
-      expect(shift.openingCash, 500.0);
+      expect(shift.openingCash, 50000); // 500.00 SAR in cents (C-4 Session 3)
       expect(shift.status, 'open');
     });
 
@@ -83,11 +85,12 @@ void main() {
 
       final shift = await db.shiftsDao.getShiftById('shift-1');
       expect(shift!.status, 'closed');
-      expect(shift.closingCash, 1200.0);
-      expect(shift.expectedCash, 1250.0);
-      expect(shift.difference, -50.0);
+      // C-4 Session 3: shift money columns are int cents.
+      expect(shift.closingCash, 120000); // 1200.00 SAR
+      expect(shift.expectedCash, 125000); // 1250.00 SAR
+      expect(shift.difference, -5000); // -50.00 SAR
       expect(shift.totalSales, 15);
-      expect(shift.totalSalesAmount, 750.0);
+      expect(shift.totalSalesAmount, 75000); // 750.00 SAR
       expect(shift.totalRefunds, 1);
       expect(shift.closedAt, isNotNull);
     });
@@ -110,7 +113,8 @@ void main() {
           shiftId: 'shift-1',
           storeId: 'store-1',
           type: 'in',
-          amount: 100.0,
+          // C-4 Session 3: cash_movements.amount is int cents.
+          amount: 10000, // 100.00 SAR
           reason: const Value('إيداع نقدي'),
           createdAt: DateTime(2025, 6, 15, 9, 0),
         ),
@@ -119,7 +123,7 @@ void main() {
       final movements = await db.shiftsDao.getShiftMovements('shift-1');
       expect(movements, hasLength(1));
       expect(movements.first.type, 'in');
-      expect(movements.first.amount, 100.0);
+      expect(movements.first.amount, 10000); // 100.00 SAR in cents
     });
 
     test('getShiftsByDateRange filters by date', () async {

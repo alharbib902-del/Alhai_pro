@@ -74,7 +74,8 @@ class InvoiceModel {
       id: sale.receiptNo,
       customer: sale.customerName ?? '', // cashCustomer set in UI with l10n
       date: sale.createdAt,
-      amount: sale.total,
+      // C-4 Session 3: sale.total is int cents; InvoiceModel.amount is SAR.
+      amount: sale.total / 100.0,
       status: status,
       paymentMethod: sale.paymentMethod,
     );

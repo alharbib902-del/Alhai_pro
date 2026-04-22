@@ -77,12 +77,13 @@ class ReceiptPdfGenerator {
     final pageWidth = paperWidth * PdfPageFormat.mm;
 
     // توليد QR Code بيانات ZATCA
+    // C-4 Session 3: sale.total / sale.tax are int cents; ZATCA expects SAR.
     final qrData = ZatcaService.generateQrData(
       sellerName: store.name,
       vatNumber: store.vatNumber,
       timestamp: sale.createdAt,
-      totalWithVat: sale.total,
-      vatAmount: sale.tax,
+      totalWithVat: sale.total / 100.0,
+      vatAmount: sale.tax / 100.0,
     );
 
     final dateFormat = DateFormat('yyyy/MM/dd HH:mm', 'ar');

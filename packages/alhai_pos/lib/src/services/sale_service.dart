@@ -274,16 +274,30 @@ class SaleService {
               customerId: Value(validCustomerId),
               customerName: Value(customerName),
               customerPhone: Value(customerPhone),
-              subtotal: correctedSubtotal,
-              discount: Value(discount),
-              tax: Value(correctedTax),
-              total: correctedTotal,
+              // C-4 Session 3: sales money columns are int cents. Caller
+              // still passes SAR doubles; convert at the Drift boundary.
+              subtotal: (correctedSubtotal * 100).round(),
+              discount: Value((discount * 100).round()),
+              tax: Value((correctedTax * 100).round()),
+              total: (correctedTotal * 100).round(),
               paymentMethod: paymentMethod,
-              amountReceived: Value(amountReceived),
-              changeAmount: Value(changeAmount),
-              cashAmount: Value(cashAmount),
-              cardAmount: Value(cardAmount),
-              creditAmount: Value(creditAmount),
+              amountReceived: Value(
+                amountReceived == null
+                    ? null
+                    : (amountReceived * 100).round(),
+              ),
+              changeAmount: Value(
+                changeAmount == null ? null : (changeAmount * 100).round(),
+              ),
+              cashAmount: Value(
+                cashAmount == null ? null : (cashAmount * 100).round(),
+              ),
+              cardAmount: Value(
+                cardAmount == null ? null : (cardAmount * 100).round(),
+              ),
+              creditAmount: Value(
+                creditAmount == null ? null : (creditAmount * 100).round(),
+              ),
               notes: Value(notes ?? ''),
               channel: const Value('POS'),
               status: const Value('completed'),

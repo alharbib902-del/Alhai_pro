@@ -121,7 +121,14 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
 
     return _groupResults(
       filtered
-          .map((o) => _GroupItem(date: o.createdAt, value: o.total, count: 1))
+          // C-4 Session 3: sale.total is int cents; _GroupItem.value is SAR.
+          .map(
+            (o) => _GroupItem(
+              date: o.createdAt,
+              value: o.total / 100.0,
+              count: 1,
+            ),
+          )
           .toList(),
     );
   }

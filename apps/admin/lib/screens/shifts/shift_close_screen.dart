@@ -173,13 +173,15 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
     AppLocalizations l10n,
   ) {
     // Compute values from shift and movements
-    final openingCash = shift.openingCash;
+    // C-4 Session 3: shifts.opening_cash and cash_movements.amount are int
+    // cents; convert to SAR doubles for display/math here.
+    final openingCash = shift.openingCash / 100.0;
     final cashIn = movements
         .where((m) => m.type == 'cash_in')
-        .fold<double>(0, (sum, m) => sum + m.amount);
+        .fold<double>(0, (sum, m) => sum + m.amount / 100.0);
     final cashOut = movements
         .where((m) => m.type == 'cash_out')
-        .fold<double>(0, (sum, m) => sum + m.amount);
+        .fold<double>(0, (sum, m) => sum + m.amount / 100.0);
     // BUG FIX: use cash-only sales/refunds for expected drawer calculation
     final totalSalesAmount = cashTotals.cashSales;
     final totalRefundsAmount = cashTotals.cashRefunds;
@@ -758,9 +760,11 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
         expectedCash: expectedCash,
         difference: difference,
         totalSales: shift.totalSales,
-        totalSalesAmount: shift.totalSalesAmount,
+        // C-4 Session 3: shifts money columns are int cents; closeShift
+        // action takes SAR doubles.
+        totalSalesAmount: shift.totalSalesAmount / 100.0,
         totalRefunds: shift.totalRefunds,
-        totalRefundsAmount: shift.totalRefundsAmount,
+        totalRefundsAmount: shift.totalRefundsAmount / 100.0,
         notes: null,
       );
 

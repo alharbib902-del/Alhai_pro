@@ -137,7 +137,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 42;
+  int get schemaVersion => 43;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -749,6 +749,88 @@ class AppDatabase extends _$AppDatabase {
         debugPrint(
           '[Migration v42] Converted invoices+sale_items+held_invoices money '
           'columns to INTEGER cents (C-4 Session 2)',
+        );
+
+      case 43:
+        // v43: C-4 Session 3 — shifts (6) + cash_movements (1) + sales (9)
+        // RealColumn → IntColumn (cents) ROUND_HALF_UP
+        // shifts + cash_movements: 0 rows on server (empty).
+        // sales: 11 rows (5 have amount_received).
+        //   - Audit flagged 10 tax + 8 total rows with real fractional-cent
+        //     values (e.g. subtotal * 0.15 stored unrounded). Max drift ≤0.005
+        //     SAR per row; ROUND_HALF_UP keeps invariant total==subtotal+tax.
+        await m.alterTable(
+          TableMigration(
+            shiftsTable,
+            columnTransformer: {
+              shiftsTable.openingCash: const CustomExpression<int>(
+                'CAST(ROUND(opening_cash * 100) AS INTEGER)',
+              ),
+              shiftsTable.closingCash: const CustomExpression<int>(
+                'CAST(ROUND(closing_cash * 100) AS INTEGER)',
+              ),
+              shiftsTable.expectedCash: const CustomExpression<int>(
+                'CAST(ROUND(expected_cash * 100) AS INTEGER)',
+              ),
+              shiftsTable.difference: const CustomExpression<int>(
+                'CAST(ROUND(difference * 100) AS INTEGER)',
+              ),
+              shiftsTable.totalSalesAmount: const CustomExpression<int>(
+                'CAST(ROUND(total_sales_amount * 100) AS INTEGER)',
+              ),
+              shiftsTable.totalRefundsAmount: const CustomExpression<int>(
+                'CAST(ROUND(total_refunds_amount * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        await m.alterTable(
+          TableMigration(
+            cashMovementsTable,
+            columnTransformer: {
+              cashMovementsTable.amount: const CustomExpression<int>(
+                'CAST(ROUND(amount * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        await m.alterTable(
+          TableMigration(
+            salesTable,
+            columnTransformer: {
+              salesTable.subtotal: const CustomExpression<int>(
+                'CAST(ROUND(subtotal * 100) AS INTEGER)',
+              ),
+              salesTable.discount: const CustomExpression<int>(
+                'CAST(ROUND(discount * 100) AS INTEGER)',
+              ),
+              salesTable.tax: const CustomExpression<int>(
+                'CAST(ROUND(tax * 100) AS INTEGER)',
+              ),
+              salesTable.total: const CustomExpression<int>(
+                'CAST(ROUND(total * 100) AS INTEGER)',
+              ),
+              salesTable.amountReceived: const CustomExpression<int>(
+                'CAST(ROUND(amount_received * 100) AS INTEGER)',
+              ),
+              salesTable.changeAmount: const CustomExpression<int>(
+                'CAST(ROUND(change_amount * 100) AS INTEGER)',
+              ),
+              salesTable.cashAmount: const CustomExpression<int>(
+                'CAST(ROUND(cash_amount * 100) AS INTEGER)',
+              ),
+              salesTable.cardAmount: const CustomExpression<int>(
+                'CAST(ROUND(card_amount * 100) AS INTEGER)',
+              ),
+              salesTable.creditAmount: const CustomExpression<int>(
+                'CAST(ROUND(credit_amount * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        debugPrint(
+          '[Migration v43] Converted shifts+cash_movements+sales money '
+          'columns to INTEGER cents (C-4 Session 3)',
         );
 
       default:

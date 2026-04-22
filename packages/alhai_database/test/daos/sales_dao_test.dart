@@ -30,8 +30,10 @@ void main() {
       storeId: storeId,
       receiptNo: receiptNo,
       cashierId: cashierId,
-      subtotal: subtotal,
-      total: total,
+      // C-4 Session 3: sales money columns are int cents. Helper keeps the
+      // double SAR API for readability; convert at the Value() boundary.
+      subtotal: (subtotal * 100).round(),
+      total: (total * 100).round(),
       paymentMethod: paymentMethod,
       status: Value(status),
       createdAt: createdAt ?? DateTime(2025, 6, 15, 10, 30),
@@ -45,7 +47,7 @@ void main() {
       final sale = await db.salesDao.getSaleById('sale-1');
       expect(sale, isNotNull);
       expect(sale!.receiptNo, 'REC-001');
-      expect(sale.total, 100.0);
+      expect(sale.total, 10000); // 100.00 SAR in cents (C-4 Session 3)
       expect(sale.paymentMethod, 'cash');
     });
 

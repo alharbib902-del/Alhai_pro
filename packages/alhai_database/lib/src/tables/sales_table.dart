@@ -58,21 +58,22 @@ class SalesTable extends Table {
   TextColumn get customerPhone => text().nullable()();
 
   // المبالغ
-  RealColumn get subtotal => real()();
-  RealColumn get discount => real().withDefault(const Constant(0))();
-  RealColumn get tax => real().withDefault(const Constant(0))();
-  RealColumn get total => real()();
+  // C-4 Session 3: sales money columns are int cents (ROUND_HALF_UP).
+  IntColumn get subtotal => integer()();
+  IntColumn get discount => integer().withDefault(const Constant(0))();
+  IntColumn get tax => integer().withDefault(const Constant(0))();
+  IntColumn get total => integer()();
 
   // الدفع
   TextColumn get paymentMethod => text()(); // cash, card, mixed, credit
   BoolColumn get isPaid => boolean().withDefault(const Constant(true))();
-  RealColumn get amountReceived => real().nullable()();
-  RealColumn get changeAmount => real().nullable()();
+  IntColumn get amountReceived => integer().nullable()();
+  IntColumn get changeAmount => integer().nullable()();
 
   // تفصيل مبالغ الدفع (للدفع المختلط والتقارير)
-  RealColumn get cashAmount => real().nullable()(); // المبلغ النقدي
-  RealColumn get cardAmount => real().nullable()(); // مبلغ البطاقة
-  RealColumn get creditAmount => real().nullable()(); // المبلغ الآجل
+  IntColumn get cashAmount => integer().nullable()(); // المبلغ النقدي
+  IntColumn get cardAmount => integer().nullable()(); // مبلغ البطاقة
+  IntColumn get creditAmount => integer().nullable()(); // المبلغ الآجل
 
   // معلومات إضافية
   TextColumn get notes => text().nullable()();

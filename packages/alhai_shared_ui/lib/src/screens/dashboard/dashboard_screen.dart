@@ -313,7 +313,8 @@ class DashboardScreen extends ConsumerWidget {
       return Transaction(
         id: sale.receiptNo,
         customerName: sale.customerName ?? l10n.cashCustomer,
-        amount: sale.total,
+        // C-4 Session 3: sale.total is int cents; Transaction.amount is SAR.
+        amount: sale.total / 100.0,
         type: TransactionType.sale,
         timestamp: sale.createdAt,
         paymentMethod: sale.paymentMethod,

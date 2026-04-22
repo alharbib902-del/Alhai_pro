@@ -545,8 +545,10 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
               sellerName: _store?.name ?? 'Al-HAI Store',
               vatNumber: _store?.taxNumber,
               timestamp: order.createdAt,
-              totalWithVat: order.total,
-              vatAmount: order.tax,
+              // C-4 Session 3: sale money columns are int cents; ZATCA
+              // widget expects SAR doubles.
+              totalWithVat: order.total / 100.0,
+              vatAmount: order.tax / 100.0,
               size: 100,
             ),
           ),

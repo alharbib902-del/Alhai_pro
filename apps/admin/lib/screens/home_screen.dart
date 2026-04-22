@@ -278,8 +278,9 @@ class AdminHomeScreen extends ConsumerWidget {
                         final receiptLabel = sale.receiptNo.isNotEmpty
                             ? sale.receiptNo
                             : sale.id.substring(0, 8);
+                        // C-4 Session 3: sale.total is int cents.
                         final totalLabel =
-                            '${AppNumberFormatter.currency(sale.total, locale: locale)} ${l10n.sar}';
+                            '${AppNumberFormatter.currency(sale.total / 100.0, locale: locale)} ${l10n.sar}';
                         return Semantics(
                           label:
                               '${l10n.recentTransactions}: $receiptLabel, $totalLabel',

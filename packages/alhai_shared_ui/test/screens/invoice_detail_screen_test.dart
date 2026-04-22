@@ -27,10 +27,12 @@ SalesTableData _createTestSale({
     storeId: 'store-1',
     receiptNo: receiptNo,
     cashierId: 'cashier-1',
-    subtotal: total * 0.85,
+    // C-4 Session 3: sales money columns are int cents. Helper keeps the
+    // double SAR API for readability; convert at the TableData boundary.
+    subtotal: ((total * 0.85) * 100).round(),
     discount: 0,
-    tax: total * 0.15,
-    total: total,
+    tax: ((total * 0.15) * 100).round(),
+    total: (total * 100).round(),
     paymentMethod: paymentMethod,
     channel: 'POS',
     status: status,

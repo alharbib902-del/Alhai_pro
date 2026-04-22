@@ -79,12 +79,13 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
       final vatNumber = store?.taxNumber ?? '';
 
       // توليد QR Code بيانات ZATCA
+      // C-4 Session 3: sale.total / sale.tax are int cents; ZATCA expects SAR.
       final qrData = ZatcaService.generateQrData(
         sellerName: sellerName,
         vatNumber: vatNumber,
         timestamp: sale.createdAt,
-        totalWithVat: sale.total,
-        vatAmount: sale.tax,
+        totalWithVat: sale.total / 100.0,
+        vatAmount: sale.tax / 100.0,
       );
 
       setState(() {
@@ -370,22 +371,24 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                         ],
 
                         // Totals
+                        // C-4 Session 3: sale money columns are int cents;
+                        // formatter expects SAR doubles.
                         _totalRow(
                           l10n.subtotalLabel,
-                          _fmtCurrency(context, sale.subtotal),
+                          _fmtCurrency(context, sale.subtotal / 100.0),
                           isDark,
                         ),
                         const SizedBox(height: AlhaiSpacing.xxs),
                         _totalRow(
                           l10n.vatLabel,
-                          _fmtCurrency(context, sale.tax),
+                          _fmtCurrency(context, sale.tax / 100.0),
                           isDark,
                         ),
                         if (sale.discount > 0) ...[
                           const SizedBox(height: AlhaiSpacing.xxs),
                           _totalRow(
                             l10n.discountLabel(''),
-                            '-${_fmtCurrency(context, sale.discount)}',
+                            '-${_fmtCurrency(context, sale.discount / 100.0)}',
                             isDark,
                             color: AppColors.success,
                           ),
@@ -411,7 +414,8 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
                                 ),
                               ),
                               Text(
-                                _fmtCurrency(context, sale.total),
+                                // C-4 Session 3: sale.total is int cents.
+                                _fmtCurrency(context, sale.total / 100.0),
                                 style: const TextStyle(
                                   fontSize: 18,
                                   fontWeight: FontWeight.bold,
@@ -618,10 +622,12 @@ class _ReceiptScreenState extends ConsumerState<ReceiptScreen> {
               ),
             )
             .toList(),
-        subtotal: _sale!.subtotal,
-        tax: _sale!.tax,
-        discount: _sale!.discount,
-        total: _sale!.total,
+        // C-4 Session 3: sale money columns are int cents; ReceiptData uses
+        // SAR doubles for display/printing.
+        subtotal: _sale!.subtotal / 100.0,
+        tax: _sale!.tax / 100.0,
+        discount: _sale!.discount / 100.0,
+        total: _sale!.total / 100.0,
         paymentMethod: _getPaymentMethodLabel(_sale!.paymentMethod),
       );
 

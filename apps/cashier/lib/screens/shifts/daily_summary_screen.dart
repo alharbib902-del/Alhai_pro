@@ -577,7 +577,10 @@ class DailySummaryScreen extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                CurrencyFormatter.formatCompact(shift.totalSalesAmount),
+                // C-4 Session 3: totalSalesAmount is int cents.
+                CurrencyFormatter.formatCompact(
+                  shift.totalSalesAmount / 100.0,
+                ),
                 style: TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.w700,

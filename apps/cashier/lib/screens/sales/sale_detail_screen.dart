@@ -525,12 +525,13 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
 
   Widget _buildTotalsCard(bool isDark, AppLocalizations l10n) {
     final order = _order!;
+    // C-4 Session 3: sale money columns are int cents; display uses SAR.
     final subtotal = _items.fold<double>(
       0,
-      (sum, item) => sum + (item.qty * item.unitPrice),
+      (sum, item) => sum + (item.qty * (item.unitPrice / 100.0)),
     );
-    final tax = order.tax;
-    final discount = order.discount;
+    final tax = order.tax / 100.0;
+    final discount = order.discount / 100.0;
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -598,7 +599,8 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
                 ),
               ),
               Text(
-                '${order.total.toStringAsFixed(2)} ${l10n.sar}',
+                // C-4 Session 3: sale.total is int cents; display as SAR.
+                '${(order.total / 100.0).toStringAsFixed(2)} ${l10n.sar}',
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
@@ -657,8 +659,10 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
           sellerName: storeName,
           vatNumber: vatNumber,
           timestamp: order.createdAt,
-          totalWithVat: order.total,
-          vatAmount: order.tax,
+          // C-4 Session 3: sale money columns are int cents; ZATCA widget
+          // expects SAR doubles.
+          totalWithVat: order.total / 100.0,
+          vatAmount: order.tax / 100.0,
           size: 120,
         ),
       ),

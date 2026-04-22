@@ -170,8 +170,9 @@ class ShiftsScreen extends ConsumerWidget {
                 Row(
                   children: [
                     _ShiftBadge(
+                      // C-4 Session 3: totalSalesAmount is int cents.
                       label: CurrencyFormatter.formatCompact(
-                        shift.totalSalesAmount,
+                        shift.totalSalesAmount / 100.0,
                       ),
                       icon: Icons.attach_money,
                     ),
@@ -482,7 +483,10 @@ class ShiftsScreen extends ConsumerWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  CurrencyFormatter.formatCompact(shift.totalSalesAmount),
+                  // C-4 Session 3: totalSalesAmount is int cents.
+                  CurrencyFormatter.formatCompact(
+                    shift.totalSalesAmount / 100.0,
+                  ),
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     color: colorScheme.onSurface,
@@ -616,12 +620,15 @@ class ShiftsScreen extends ConsumerWidget {
             Divider(height: 32, color: colorScheme.outlineVariant),
             _DetailRow(
               label: l10n.openingBalance,
-              value: CurrencyFormatter.formatCompact(shift.openingCash),
+              // C-4 Session 3: shifts money columns are int cents.
+              value: CurrencyFormatter.formatCompact(shift.openingCash / 100.0),
               icon: Icons.account_balance_wallet_rounded,
             ),
             _DetailRow(
               label: l10n.totalSales,
-              value: CurrencyFormatter.formatCompact(shift.totalSalesAmount),
+              value: CurrencyFormatter.formatCompact(
+                shift.totalSalesAmount / 100.0,
+              ),
               icon: Icons.trending_up_rounded,
               valueColor: AppColors.success,
             ),
@@ -633,21 +640,27 @@ class ShiftsScreen extends ConsumerWidget {
             Divider(height: 32, color: colorScheme.outlineVariant),
             _DetailRow(
               label: l10n.expectedCash,
-              value: CurrencyFormatter.formatCompact(shift.expectedCash ?? 0),
+              value: CurrencyFormatter.formatCompact(
+                (shift.expectedCash ?? 0) / 100.0,
+              ),
               icon: Icons.money_rounded,
               valueColor: AppColors.cash,
             ),
             if (shift.closingCash != null)
               _DetailRow(
                 label: l10n.closingCash,
-                value: CurrencyFormatter.formatCompact(shift.closingCash!),
+                value: CurrencyFormatter.formatCompact(
+                  shift.closingCash! / 100.0,
+                ),
                 icon: Icons.account_balance_wallet_rounded,
                 valueColor: AppColors.card,
               ),
             if (shift.difference != null)
               _DetailRow(
                 label: l10n.difference,
-                value: CurrencyFormatter.formatCompact(shift.difference!),
+                value: CurrencyFormatter.formatCompact(
+                  shift.difference! / 100.0,
+                ),
                 icon: Icons.compare_arrows_rounded,
                 valueColor: shift.difference! >= 0
                     ? AppColors.success

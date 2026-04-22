@@ -145,14 +145,15 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
         setState(() {
           _salesStats = _SalesStats(
             count: (result.data['count'] as int?) ?? 0,
-            total: _toDouble(result.data['total']),
-            average: _toDouble(result.data['avg']),
+            // C-4 Session 3: sales.total is int cents; stats expose SAR.
+            total: _centsToSar(result.data['total']),
+            average: _centsToSar(result.data['avg']),
           );
           _hourlySales = hourly
               .map(
                 (r) => _HourlySale(
                   hour: int.tryParse(r.data['hour'] as String? ?? '0') ?? 0,
-                  total: _toDouble(r.data['total']),
+                  total: _centsToSar(r.data['total']),
                 ),
               )
               .toList();
@@ -198,14 +199,15 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
                   ? _parseDateNullable(r.data['closed_at'])
                   : null,
               status: r.data['status'] as String,
-              openingCash: _toDouble(r.data['opening_cash']),
-              closingCash: r.data['closing_cash'] != null
-                  ? _toDouble(r.data['closing_cash'])
-                  : null,
+              // C-4 Session 3: shifts money columns are int cents; read raw.
+              openingCash: _toCentsInt(r.data['opening_cash']) ?? 0,
+              closingCash: _toCentsInt(r.data['closing_cash']),
               totalSales: (r.data['total_sales'] as int?) ?? 0,
-              totalSalesAmount: _toDouble(r.data['total_sales_amount']),
+              totalSalesAmount:
+                  _toCentsInt(r.data['total_sales_amount']) ?? 0,
               totalRefunds: (r.data['total_refunds'] as int?) ?? 0,
-              totalRefundsAmount: _toDouble(r.data['total_refunds_amount']),
+              totalRefundsAmount:
+                  _toCentsInt(r.data['total_refunds_amount']) ?? 0,
               syncedAt: null,
             );
           }).toList();
@@ -226,6 +228,21 @@ class _EmployeeProfileScreenState extends ConsumerState<EmployeeProfileScreen>
     if (v is int) return v.toDouble();
     if (v is double) return v;
     return 0.0;
+  }
+
+  /// C-4 Session 3: convert an int-cents raw value to SAR double.
+  double _centsToSar(dynamic v) {
+    if (v is int) return v / 100.0;
+    if (v is double) return v / 100.0;
+    return 0.0;
+  }
+
+  /// C-4 Session 3: read an int-cents column as-is (int), nullable.
+  int? _toCentsInt(dynamic v) {
+    if (v == null) return null;
+    if (v is int) return v;
+    if (v is double) return v.round();
+    return null;
   }
 
   DateTime _parseDate(dynamic v) {

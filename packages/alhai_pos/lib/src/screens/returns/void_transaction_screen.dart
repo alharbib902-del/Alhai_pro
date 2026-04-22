@@ -167,7 +167,8 @@ class _VoidTransactionScreenState extends ConsumerState<VoidTransactionScreen> {
             ? sale.customerName![0]
             : '؟',
         date: sale.createdAt,
-        total: sale.total,
+        // C-4 Session 3: sale.total is int cents; _InvoiceData.total is SAR.
+        total: sale.total / 100.0,
         paymentMethod: sale.paymentMethod,
         items: items,
       );

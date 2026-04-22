@@ -29,8 +29,9 @@ void main() {
           storeId: 'store-1',
           receiptNo: 'R-$id',
           cashierId: 'cashier-1',
-          subtotal: 100.0,
-          total: 100.0,
+          // C-4 Session 3: sales money columns are int cents.
+          subtotal: 10000, // 100.00 SAR
+          total: 10000, // 100.00 SAR
           paymentMethod: 'cash',
           createdAt: now,
         ),

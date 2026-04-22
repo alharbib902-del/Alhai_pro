@@ -637,7 +637,8 @@ void main() {
         expect(capturedSale, isNotNull);
         // isPaid is false because amountReceived (80) < total (100)
         expect(capturedSale!.isPaid.value, isFalse);
-        expect(capturedSale!.total.value, equals(100.0));
+        // C-4 Session 3: sales.total is int cents (100 SAR = 10000).
+        expect(capturedSale!.total.value, equals(10000));
 
         // Verify debt created for the unpaid portion (total - amountReceived = 20)
         verify(() => mockAccountsDao.insertAccount(any())).called(1);

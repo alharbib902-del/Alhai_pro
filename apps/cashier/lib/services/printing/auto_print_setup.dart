@@ -67,12 +67,14 @@ Future<bool> _autoPrintReceipt(WidgetRef ref, String saleId) async {
     final vatNumber = store.taxNumber ?? '';
 
     // Generate ZATCA QR data (base64-encoded TLV)
+    // C-4 Session 3: sale money columns are int cents; ZATCA + ReceiptData
+    // both expect SAR doubles.
     final zatcaQr = ZatcaQrService.generateQrData(
       sellerName: storeName,
       vatNumber: vatNumber,
       timestamp: sale.createdAt,
-      totalWithVat: sale.total,
-      vatAmount: sale.tax,
+      totalWithVat: sale.total / 100.0,
+      vatAmount: sale.tax / 100.0,
     );
 
     final receipt = ReceiptData(
@@ -91,13 +93,18 @@ Future<bool> _autoPrintReceipt(WidgetRef ref, String saleId) async {
             ),
           )
           .toList(),
-      subtotal: sale.subtotal,
-      discount: sale.discount,
-      tax: sale.tax,
-      total: sale.total,
+      // C-4 Session 3: sale money columns are int cents.
+      subtotal: sale.subtotal / 100.0,
+      discount: sale.discount / 100.0,
+      tax: sale.tax / 100.0,
+      total: sale.total / 100.0,
       paymentMethod: sale.paymentMethod,
-      amountReceived: sale.amountReceived,
-      changeAmount: sale.changeAmount,
+      amountReceived: sale.amountReceived == null
+          ? null
+          : sale.amountReceived! / 100.0,
+      changeAmount: sale.changeAmount == null
+          ? null
+          : sale.changeAmount! / 100.0,
       store: ReceiptStoreInfo(
         name: storeName,
         address: storeAddress,

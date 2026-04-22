@@ -112,7 +112,9 @@ final openShiftActionProvider =
             storeId: Value(storeId),
             cashierId: Value(cashierId),
             cashierName: Value(cashierName),
-            openingCash: Value(openingCash),
+            // C-4 Session 3: shifts.opening_cash is int cents. Caller
+            // supplies SAR double; convert at the Drift boundary.
+            openingCash: Value((openingCash * 100).round()),
             status: const Value('open'),
             openedAt: Value(DateTime.now()),
           ),
@@ -251,7 +253,9 @@ final addCashMovementProvider =
             shiftId: Value(shiftId),
             storeId: Value(storeId),
             type: Value(type),
-            amount: Value(amount),
+            // C-4 Session 3: cash_movements.amount is int cents. Caller
+            // supplies SAR double; convert at the Drift boundary.
+            amount: Value((amount * 100).round()),
             reason: Value(reason),
             createdBy: Value(createdBy),
             createdAt: Value(DateTime.now()),

@@ -83,21 +83,23 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
   List<_PaymentSplit> _buildSplits(SalesTableData order) {
     // If the order has a single payment method, show it as one split
     // In a real app, this would come from a payments table
+    // C-4 Session 3: sale.total is int cents; _PaymentSplit.amount is SAR.
     final method = order.paymentMethod;
+    final totalSar = order.total / 100.0;
     if (method == 'split') {
       // Simulate split payment
-      final half = order.total / 2;
+      final half = totalSar / 2;
       return [
         _PaymentSplit(method: 'cash', amount: half, reference: null),
         _PaymentSplit(
           method: 'card',
-          amount: order.total - half,
+          amount: totalSar - half,
           reference: '**** 4532',
         ),
       ];
     }
     return [
-      _PaymentSplit(method: method, amount: order.total, reference: null),
+      _PaymentSplit(method: method, amount: totalSar, reference: null),
     ];
   }
 
@@ -526,8 +528,10 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
             sellerName: _store?.name ?? 'Al-HAI Store',
             vatNumber: _store?.taxNumber,
             timestamp: order.createdAt,
-            totalWithVat: order.total,
-            vatAmount: order.tax,
+            // C-4 Session 3: sale.total / sale.tax are int cents; ZATCA
+            // widget expects SAR doubles.
+            totalWithVat: order.total / 100.0,
+            vatAmount: order.tax / 100.0,
             size: 140,
           ),
         ],

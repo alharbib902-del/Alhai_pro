@@ -19,14 +19,16 @@ class ShiftsTable extends Table {
   TextColumn get terminalId => text().nullable()();
   TextColumn get cashierId => text()();
   TextColumn get cashierName => text()();
-  RealColumn get openingCash => real().withDefault(const Constant(0))();
-  RealColumn get closingCash => real().nullable()();
-  RealColumn get expectedCash => real().nullable()();
-  RealColumn get difference => real().nullable()();
+  // C-4 Session 3: shifts money columns are int cents (ROUND_HALF_UP).
+  // totalSales and totalRefunds are count columns — already int.
+  IntColumn get openingCash => integer().withDefault(const Constant(0))();
+  IntColumn get closingCash => integer().nullable()();
+  IntColumn get expectedCash => integer().nullable()();
+  IntColumn get difference => integer().nullable()();
   IntColumn get totalSales => integer().withDefault(const Constant(0))();
-  RealColumn get totalSalesAmount => real().withDefault(const Constant(0))();
+  IntColumn get totalSalesAmount => integer().withDefault(const Constant(0))();
   IntColumn get totalRefunds => integer().withDefault(const Constant(0))();
-  RealColumn get totalRefundsAmount => real().withDefault(const Constant(0))();
+  IntColumn get totalRefundsAmount => integer().withDefault(const Constant(0))();
   TextColumn get status => text().withDefault(const Constant('open'))();
   TextColumn get notes => text().nullable()();
   DateTimeColumn get openedAt => dateTime()();
@@ -50,7 +52,8 @@ class CashMovementsTable extends Table {
   TextColumn get shiftId => text()();
   TextColumn get storeId => text()();
   TextColumn get type => text()(); // in, out
-  RealColumn get amount => real()();
+  // C-4 Session 3: amount is int cents (ROUND_HALF_UP).
+  IntColumn get amount => integer()();
   TextColumn get reason => text().nullable()();
   TextColumn get reference => text().nullable()();
 

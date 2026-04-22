@@ -74,9 +74,12 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
   }
 
   List<_RefundMethod> _buildRefundMethods(SalesTableData order) {
+    // C-4 Session 3: sale.total is int cents; _RefundMethod.originalAmount
+    // is SAR double.
     final method = order.paymentMethod;
+    final totalSar = order.total / 100.0;
     if (method == 'split') {
-      final half = order.total / 2;
+      final half = totalSar / 2;
       return [
         _RefundMethod(
           method: 'cash',
@@ -85,9 +88,9 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
         ),
         _RefundMethod(
           method: 'card',
-          originalAmount: order.total - half,
+          originalAmount: totalSar - half,
           controller: TextEditingController(
-            text: (order.total - half).toStringAsFixed(2),
+            text: (totalSar - half).toStringAsFixed(2),
           ),
         ),
       ];
@@ -95,8 +98,8 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
     return [
       _RefundMethod(
         method: method,
-        originalAmount: order.total,
-        controller: TextEditingController(text: order.total.toStringAsFixed(2)),
+        originalAmount: totalSar,
+        controller: TextEditingController(text: totalSar.toStringAsFixed(2)),
       ),
     ];
   }
@@ -108,7 +111,8 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
     );
   }
 
-  double get _maxRefund => _order?.total ?? 0;
+  // C-4 Session 3: sale.total is int cents; return SAR double.
+  double get _maxRefund => (_order?.total ?? 0) / 100.0;
 
   bool get _isValid {
     if (_totalRefund <= 0) return false;

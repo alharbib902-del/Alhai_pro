@@ -254,16 +254,20 @@ SalesTableData createTestSalesTableData({
     cashierId: cashierId,
     customerId: customerId,
     customerName: customerName,
-    subtotal: subtotal,
-    discount: discount,
-    tax: tax,
-    total: total,
+    // C-4 Session 3: sales money columns are int cents. Helper keeps the
+    // double SAR API for readability; convert at the TableData boundary.
+    subtotal: (subtotal * 100).round(),
+    discount: (discount * 100).round(),
+    tax: (tax * 100).round(),
+    total: (total * 100).round(),
     paymentMethod: paymentMethod,
     channel: 'POS',
     status: status,
     isPaid: isPaid,
-    amountReceived: amountReceived,
-    changeAmount: changeAmount,
+    amountReceived: amountReceived == null
+        ? null
+        : (amountReceived * 100).round(),
+    changeAmount: changeAmount == null ? null : (changeAmount * 100).round(),
     createdAt: DateTime(2026, 1, 1, 10, 30),
   );
 }

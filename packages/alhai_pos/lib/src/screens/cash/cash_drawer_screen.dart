@@ -177,13 +177,15 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
     AppLocalizations l10n,
   ) {
     // Compute values from shift and movements
-    final openingBalance = shift.openingCash;
+    // C-4 Session 3: shifts.opening_cash / cash_movements.amount are int cents.
+    // Convert to SAR doubles here for display.
+    final openingBalance = shift.openingCash / 100.0;
     final cashIn = movements
         .where((m) => m.type == 'cash_in')
-        .fold<double>(0, (sum, m) => sum + m.amount);
+        .fold<double>(0, (sum, m) => sum + m.amount / 100.0);
     final cashOut = movements
         .where((m) => m.type == 'cash_out')
-        .fold<double>(0, (sum, m) => sum + m.amount);
+        .fold<double>(0, (sum, m) => sum + m.amount / 100.0);
     final expectedBalance = openingBalance + cashIn - cashOut;
 
     return Column(
@@ -481,7 +483,8 @@ class _CashDrawerScreenState extends ConsumerState<CashDrawerScreen> {
                 title:
                     m.reason ??
                     (m.type == 'cash_in' ? l10n.cashIn : l10n.cashOut),
-                amount: m.amount,
+                // C-4 Session 3: cash_movements.amount is int cents.
+                amount: m.amount / 100.0,
                 time: _formatTime(m.createdAt, l10n),
                 isIncome: m.type == 'cash_in',
                 isDark: isDark,

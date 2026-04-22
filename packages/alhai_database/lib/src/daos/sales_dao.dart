@@ -371,13 +371,14 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
     ).getSingle();
 
     final total = result.data['total'];
+    // C-4 Session 3: sales.total is int cents; expose SAR doubles externally.
     double value;
     if (total == null) {
       value = 0.0;
     } else if (total is int) {
-      value = total.toDouble();
+      value = total / 100.0;
     } else {
-      value = total as double;
+      value = (total as double) / 100.0;
     }
 
     // Update cache
@@ -579,20 +580,20 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
          FROM sales
          WHERE $whereClause''', variables: variables).getSingle();
 
+    // C-4 Session 3: sales.total is int cents; SalesStats exposes SAR doubles.
+    // Divide sums/averages/max/min by 100.0 to preserve the double-SAR API.
+    double centsToSar(Object? v) {
+      if (v is int) return v / 100.0;
+      if (v is double) return v / 100.0;
+      return 0.0;
+    }
+
     return SalesStats(
       count: result.data['count'] as int? ?? 0,
-      total: (result.data['total'] is int)
-          ? (result.data['total'] as int).toDouble()
-          : result.data['total'] as double? ?? 0.0,
-      average: (result.data['average'] is int)
-          ? (result.data['average'] as int).toDouble()
-          : result.data['average'] as double? ?? 0.0,
-      maxSale: (result.data['max_sale'] is int)
-          ? (result.data['max_sale'] as int).toDouble()
-          : result.data['max_sale'] as double? ?? 0.0,
-      minSale: (result.data['min_sale'] is int)
-          ? (result.data['min_sale'] as int).toDouble()
-          : result.data['min_sale'] as double? ?? 0.0,
+      total: centsToSar(result.data['total']),
+      average: centsToSar(result.data['average']),
+      maxSale: centsToSar(result.data['max_sale']),
+      minSale: centsToSar(result.data['min_sale']),
     );
   }
 
@@ -628,9 +629,8 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
           (row) => HourlySales(
             hour: int.tryParse(row.data['hour']?.toString() ?? '') ?? 0,
             count: row.data['count'] as int,
-            total: (row.data['total'] is int)
-                ? (row.data['total'] as int).toDouble()
-                : row.data['total'] as double,
+            // C-4 Session 3: sales.total is int cents; HourlySales.total is SAR.
+            total: _centsSumToSar(row.data['total']),
           ),
         )
         .toList();
@@ -668,9 +668,8 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
           (row) => PaymentMethodStats(
             method: row.data['payment_method'] as String,
             count: row.data['count'] as int,
-            total: (row.data['total'] is int)
-                ? (row.data['total'] as int).toDouble()
-                : row.data['total'] as double,
+            // C-4 Session 3: sales.total is int cents; expose SAR.
+            total: _centsSumToSar(row.data['total']),
           ),
         )
         .toList();
@@ -792,10 +791,8 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
       variables: variables,
     ).getSingle();
 
-    final total = result.data['total'];
-    if (total == null) return 0.0;
-    if (total is int) return total.toDouble();
-    return total as double;
+    // C-4 Session 3: sales.total is int cents; return SAR.
+    return _centsSumToSar(result.data['total']);
   }
 
   /// مجموع الجزء النقدي من المبيعات المختلطة خلال فترة الوردية
@@ -826,17 +823,26 @@ class SalesDao extends DatabaseAccessor<AppDatabase> with _$SalesDaoMixin {
       variables: variables,
     ).getSingle();
 
-    final total = result.data['total'];
-    if (total == null) return 0.0;
-    if (total is int) return total.toDouble();
-    return total as double;
+    // C-4 Session 3: sales.cash_amount is int cents; return SAR.
+    return _centsSumToSar(result.data['total']);
   }
 
+  /// C-4 Session 3: sales.total is int cents; API exposes SAR doubles.
+  /// Use this when reading money columns from raw customSelect rows.
   double _toDouble(dynamic value) {
     if (value == null) return 0.0;
-    if (value is int) return value.toDouble();
-    if (value is double) return value;
-    if (value is String) return double.tryParse(value) ?? 0.0;
+    if (value is int) return value / 100.0;
+    if (value is double) return value / 100.0;
+    if (value is String) return (double.tryParse(value) ?? 0.0) / 100.0;
+    return 0.0;
+  }
+
+  /// C-4 Session 3: same as [_toDouble] but for SUM aggregate results
+  /// where the value is already a total in cents.
+  double _centsSumToSar(dynamic value) {
+    if (value == null) return 0.0;
+    if (value is int) return value / 100.0;
+    if (value is double) return value / 100.0;
     return 0.0;
   }
 }
