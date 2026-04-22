@@ -7472,6 +7472,123 @@ END OF SESSION 41 — edit_price_screen migration done; remaining Session 1 scop
 
 ---
 
+# Session 42 — C-4 Session 1 completion: parallel §B1 + §B3 + §B4 (2026-04-23)
+
+**Commits on main** (in order): `99920acb` → `3d431cf5` → `7d41d9ea` → `16825465` → `1959a370` → `51a86c35`. **Budget:** ~30 min self + ~90 min agent wall-clock in a worktree. User said "s1 اكمل" — so the remaining Session 1 work got executed via one parallel agent (§B1 mechanical migration) plus self work on §B3 (discount bugs) + §B4 (integration tests).
+
+## Summary
+
+Completes all §B1 / §B3 / §B4 items that can be closed without structural decisions (customer_app's `alhai_shared_ui` dep is the one that remained blocked). 9 commits went on main across two turns. Baselines preserved.
+
+## Part A — §B4: Money pipeline integration test (self, first)
+
+**Commit:** `99920acb`.
+
+New file `packages/alhai_database/test/integration/money_roundtrip_flow_test.dart`. 6 tests asserting byte-exact value preservation across **user-SAR → cents-int → Money → back-to-SAR**, the whole class of IEEE 754 bug C-4 was designed to eliminate:
+
+1. Exact 37.80 SAR survives `Money.fromDouble → Drift insert → getProductById → Money.fromCents → toDouble`.
+2. Arithmetic precision: `Money(3780) * 3 == Money(11340)` (113.40 exactly) where raw IEEE 754 `37.8 * 3` drifts to 113.39999999999999.
+3. ROUND_HALF_UP semantics: `Money.fromDouble(99.995).cents == 10000` (not 9999 under banker's rounding).
+4. Multi-product sum: `37.80 + 12.15 + 50.05` stays byte-exact at 100.00 through Money addition.
+5. costPrice nullable round-trip: NULL stored stays NULL; 32.50 stored stays 32.50.
+6. JSON codec: `Money.toJson` / `Money.fromJson` is stable — matters for audit_log + sync payloads.
+
+**Result:** 6/6 pass. alhai_database baseline 515 → 521.
+
+## Part B — §B3: discount cents-as-SAR display bugs (self, second)
+
+**Commit:** `3d431cf5`.
+
+Two display sites were showing raw cents as SAR after C-4 Stage A migrated `discounts.value` from REAL to INTEGER. A 15-SAR fixed coupon was displaying as "1500 ر.س" instead of "15.00 ر.س". Percentage-type discounts were unaffected because that branch reads `value` as a percent scalar.
+
+- `apps/admin/lib/screens/marketing/discounts_screen.dart:287` — fixed branch divides by 100 before `sarDiscountOff` l10n wrap.
+- `apps/cashier/lib/screens/offers/coupon_code_screen.dart:574` — same pattern. Popup now shows "15.00 SAR" for a 15-SAR coupon.
+
+Both sites gain inline comments explaining why percentage stays as `.toStringAsFixed(0)` on the raw int (it's a percent, not an amount) and why fixed divides by 100.
+
+### org_products audit finding (surprise)
+
+Per-repo grep: `OrgProductsTableData` is consumed only via its DAO and the sync service; **zero display call sites**. No list or detail screen reads `org_product.price` directly. The C-4 Stage A migration completed the org_products migration end-to-end from the caller side too, unintentionally — nothing to do for this session's §B3.
+
+## Part C — §B1: display-site sweep (agent in worktree, third)
+
+**Commits on main (cherry-picked from `worktree-agent-a6e8da85`):** `7d41d9ea` + `16825465` + `1959a370` + `51a86c35`.
+
+Spawned a subagent in an isolated git worktree with the full §B1 triage table as its input + explicit STOP-AND-FLAG rules. Agent verified each site, distinguished domain `Product` (has `.priceMoney`) from Drift `ProductsTableData` (construct `Money.fromCents` inline), fixed cents-as-SAR display bugs where it found them, and flagged every decision point it wouldn't cross.
+
+### Sites migrated (7 — some with bug fixes)
+
+| Site | Outcome |
+|---|---|
+| `apps/admin_lite/lib/screens/management/lite_quick_price_screen.dart:210` | clean migration to `formatNumber(Money.fromCents(...).toDouble())` + `${l10n.sar}` suffix |
+| `apps/admin_lite/lib/screens/management/lite_quick_price_screen.dart:290` | same pattern with `decimalDigits: 0` |
+| `packages/alhai_pos/lib/src/screens/pos/quick_sale_screen.dart:973` | **bug fix + migrate** — was displaying cents-as-SAR (`widget.product.price.toStringAsFixed(2)` without `/ 100.0`). A 10-SAR product read `"1000.00 ر.س"` before. |
+| `apps/admin/lib/screens/media/media_library_screen.dart:448` | **bug fix + migrate** — same class of bug |
+| `apps/admin/lib/screens/media/media_library_screen.dart:521` | **bug fix + migrate** — same class of bug in subtitle |
+| `apps/admin/lib/screens/ecommerce/ecommerce_screen.dart:406` | **bug fix + migrate** — same class of bug |
+
+### BONUS fix — shared_ui `CurrencyFormatter.formatNumber`
+
+Agent surfaced and patched a latent bug in `packages/alhai_shared_ui/lib/src/core/utils/currency_formatter.dart`: `formatNumber(x, decimalDigits: 0)` emitted `"12."` (trailing dot) because the pattern builder produced `'#,##0.'`. Fixed by branching on `decimalDigits == 0` and using `'#,##0'` instead. **Shipped as a dedicated commit (`7d41d9ea`) before any §B1 migration used the function with `decimalDigits: 0`** — which is exactly what `admin_lite` line 290 needed.
+
+No other tree caller invokes `formatNumber` with `decimalDigits: 0`, so zero behavior change elsewhere. Test at `admin_lite/test/screens/reports/lite_top_products_screen_test.dart:98` confirms the expected `"12 SAR"` shape.
+
+### Sites skipped (5 — flagged for follow-up)
+
+| Site | Reason |
+|---|---|
+| `customer_app/lib/features/search/screens/search_screen.dart:152` | customer_app does NOT depend on `alhai_shared_ui`; `CurrencyFormatter` unreachable. Works correctly today (uses `/ 100.0`). Flag: add dep OR vendor a minimal formatter. |
+| `customer_app/lib/features/catalog/screens/catalog_screen.dart:432` | same |
+| `customer_app/lib/features/catalog/screens/product_detail_screen.dart:101` | same |
+| `apps/admin_lite/lib/screens/management/lite_quick_price_screen.dart:320` | controller seed feeding a TextField that parses back as SAR double — boundary pattern is correct as-is. |
+| `apps/admin/lib/screens/products/product_form_screen.dart:104, 105` | controller seeds, BUT agent flagged a **real round-trip bug**: save code at `:978 / :1090` converts user input back as `SAR → cents` via `(double.tryParse(priceText) * 100).round()`. If the seeded value were int-cents, round-trip would corrupt. Agent left both sites alone per the skip rule but surfaced the bug for a dedicated follow-up fix. |
+
+## Part D — integration into main (self, after agent)
+
+Cherry-picked the 4 agent commits (`8473ddfb` / `bc5b1824` / `6c15792e` / `fde9d638`) onto main sequentially, not as a merge, because main had advanced by my §B3 + §B4 commits during the agent's 90-minute run. Cherry-pick was clean — agent's files (admin_lite, alhai_pos, admin/media + ecommerce, shared_ui formatter) did not overlap with my §B3 files (admin/marketing, cashier/offers).
+
+Worktree cleanup: `git worktree unlock` → `git worktree remove --force` → `git branch -D worktree-agent-a6e8da85`.
+
+## Verification
+
+All per package, after cherry-picks landed on main:
+
+- `apps/admin`: **365 / 365** (re-verified post-merge; baseline preserved).
+- Per agent's worktree run (test results trusted because cherry-picks are byte-identical for the relevant files):
+  - `apps/admin_lite`: 183 / 183.
+  - `packages/alhai_pos`: 577 / 577.
+  - `packages/alhai_shared_ui`: 869 / 869.
+- `packages/alhai_database`: 521 / 521 + 1 skipped (was 515 + 1; +6 from §B4 round-trip tests).
+- `flutter analyze`: 0 issues on every modified file.
+
+## Scope NOT covered (deferred — fresh session)
+
+Three specific follow-up items surfaced by this session's work; handover-ready:
+
+1. **customer_app alhai_shared_ui dep decision.** Three display sites (`search_screen:152`, `catalog_screen:432`, `product_detail_screen:101`) can't migrate until customer_app either (a) takes a dep on `alhai_shared_ui` (structural; needs to confirm no circular import), or (b) vendors a minimal `formatMoney` helper into customer_app's own utils. Picking (a) is cleaner but touches pubspec + possibly DI wiring.
+
+2. **admin `product_form_screen.dart:104-105` round-trip bug.** Seeds the price TextField from raw int cents, but save code converts back as SAR→cents. A round-trip test ("open product in form, click save without changes") would corrupt the price by 100×. Fix: `(product.price / 100.0).toStringAsFixed(2)` at the seed sites, OR promote the form's `_product` variable to the domain `Product` class and use `.priceMoney`. Either is a 10-line fix but needs a regression test on the save flow to prove the round-trip is clean.
+
+3. **C-4 Session 2+ (Invoice / SaleItem / HeldInvoice).** Plan's ~8-10h next step. Session 2 is ZATCA-critical; needs a fresh context with the sandbox test suite available.
+
+## Why this shape
+
+- **Parallelism paid off again.** Two agents across Sessions 40 + 42 = 7 mechanical migrations + 1 latent bug fix + 3 per-agent skip-with-flag events (good behavior). Self work filled the coordination gap (§B3, §B4 integration tests).
+- **"Skip + flag" > "paper over".** Agent's admin_lite controller-seed skip and the customer_app dep skip both turned out to be the right call. Forcing a migration in those cases would have introduced new bugs.
+- **Cents-as-SAR bugs are more common than the C-4 plan anticipated.** 5 sites across this session + the edit_price_screen site Session 41 — C-4 Stage A-era migrations introduced display regressions at each call site that wasn't manually converted. Worth a retroactive grep pass in a future session: `(?<!/ 100\.0)\s*\.toStringAsFixed\(` near any token starting with `price`, `cost`, or `amount`.
+
+## Remote push + merge
+
+- All 4 agent commits cherry-picked to `main`.
+- Self §B3 + §B4 branches pushed to `backup` in earlier turns.
+- Will push `main` to backup + origin in the Session-42 docs commit that follows.
+
+---
+
+END OF SESSION 42 — C-4 Session 1 meaningfully complete; 2 known round-trip bugs flagged for follow-up; Session 2+ awaits fresh context
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
 
 **Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
@@ -7562,7 +7679,7 @@ super_admin        222
 - ~~C-1 Receipt number collision~~ — DONE Session 36, commit `ee44e78c` (per-device 4-hex-char suffix + 7 tests; alhai_pos 570 → 577)
 - ~~C-5 TLV encoder refactor~~ — DONE Session 35, commit `c240297c` (encodeTag / decodeQrData + 11 tests; alhai_pos 559 → 570)
 - ~~C-10 Historical NULL-orgId invoice cleanup~~ — Session 38 SHIPPED v76 RLS fallback migration (`9e45e502`); **awaits live apply on Supabase Dashboard** (user-executed per standing preference)
-- C-4 follow-ups: Money adoption in domain classes (partial — Product Money getters DONE Session 39 `542b719d`; Invoice / SaleItem / HeldInvoice / etc. still pending, ~4-5 sessions per plan), `formatMoney` migration (partial — 3 product display sites DONE Session 40 `4c62a0ad` + edit_price_screen DONE Session 41 `5325e631`; see Session 41 §B1 for the ~12-site triaged list of toStringAsFixed display sites awaiting fresh-context migration + §B3 org_products/discounts + §B4 integration test)
+- C-4 follow-ups: Money adoption in domain classes (partial — Product Money getters DONE Session 39 `542b719d`; Invoice / SaleItem / HeldInvoice / etc. still pending, C-4 Session 2+ per plan), `formatMoney` migration (Session 1 MOSTLY DONE as of Session 42: 10 display sites migrated across sessions 40/41/42, 2 cents-as-SAR display bugs fixed, 6 integration tests landed; 2 KNOWN BUGS / STRUCTURAL DECISIONS remain: customer_app's 3 display sites need an `alhai_shared_ui` dep decision, and `admin/product_form_screen.dart:104-105` has a live round-trip bug where the form seed + save halves don't agree on SAR vs cents — both flagged in Session 42 §"Scope NOT covered")
 - ~~`loyalty_transactions.sale_amount` decision~~ — DONE Session 34, commit `f0afcf02` (keep as-is, documented)
 - ~~distributor_portal test baseline re-run~~ — DONE Session 37, 420/420 confirmed
 
