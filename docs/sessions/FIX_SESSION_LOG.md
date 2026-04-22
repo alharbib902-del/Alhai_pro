@@ -6493,6 +6493,67 @@ END OF SESSION 28 — Tier A audit gaps closed; full product lifecycle auditable
 
 ---
 
+# Session 29 — Admin Tier B M2: low-stock alerts wiring (2026-04-23)
+
+**Branch:** `feat/admin-low-stock-alerts` (merged). **Commit:** `d185c3ab`. **Budget:** ~20 min.
+
+## Summary
+
+First Tier B item landed. The infrastructure was mostly already there — `InventoryAlertsScreen` exists in `alhai_shared_ui`, `getLowStockProducts()` DAO works, and the home-screen stat tile already renders `data.lowStockCount`. The only gaps were wiring:
+
+1. `/inventory/alerts` route was not registered in admin's router (widget had no path to reach it).
+2. The low-stock `_StatTile` rendered a number but had no `onTap` — tapping did nothing.
+
+Both wired in this session.
+
+## Changes — 2 files, +44 / −22 LOC
+
+- **`apps/admin/lib/router/admin_router.dart`** — new `GoRoute` on `AppRoutes.inventoryAlerts` (`/inventory/alerts`) rendering `InventoryAlertsScreen` via `_buildFadePage`. Added `InventoryAlertsScreen` to the `alhai_shared_ui` `show` clause (was missing).
+- **`apps/admin/lib/screens/home_screen.dart`** — `_StatTile` gains `VoidCallback? onTap`. When non-null the inner `Container` is wrapped in `Material(color: Colors.transparent, child: InkWell(...))` with matching `BorderRadius.circular(16)`. `Semantics.button` is set to `onTap != null` so accessibility correctly advertises the new interaction. Low-stock tile passes `onTap: () => context.push(AppRoutes.inventoryAlerts)`.
+
+## Why this shape
+
+- **Reuse over rebuild.** `InventoryAlertsScreen` already has TabBar with 3 tabs (low-stock, expiry, all) and its own tests. Building a second low-stock-only screen would have been wasted work.
+- **`context.push` not `context.go`.** Alerts is a sub-destination from dashboard; push preserves the back-stack so the user returns to home.
+- **Not every tile gets onTap.** Only the low-stock tile has a clear destination right now. `todaySales` / `orders` / `newCustomers` could gain destinations later but out of scope for M2.
+
+## Scope NOT covered (intentionally)
+
+- **Notification badge on an app-wide bell.** `home_screen.dart` does not render `AppHeader` — navigation shell handles that at a higher level. Wiring a low-stock count through to a bell widget is a separate concern that would touch `dashboard_shell` or shared_ui's `AppHeader`. Deferred.
+- **Push notifications / system alerts.** M2 brief says "dashboard + in-app" — the dashboard half is done, the in-app bell is still open.
+
+## Verification
+
+- `flutter analyze` home_screen.dart + admin_router.dart: **0 issues**
+- **admin tests: 365 / 365** — baseline preserved
+- InventoryAlertsScreen's own shared_ui tests (3) still pass
+
+## Deferred follow-ups
+
+- Wire `lowStockCount` into `AppHeader`'s bell / notifications badge (shared_ui change).
+- Add a push-notification trigger when a product crosses its `minQty` threshold (operational, not UI).
+- Similar onTap hooks for the other three stat tiles (sales, orders, customers).
+
+## Risk
+
+Zero.
+- Additive route + additive InkWell wrapper.
+- Low-stock logic already existed; this session only exposes it.
+- Backward compatible — cashier / admin_lite routers untouched.
+
+## Remote push + merge
+
+- Branch `feat/admin-low-stock-alerts` pushed to `backup`.
+- Fast-forward merged to `main` (main now at `d185c3ab`).
+- Branch deleted locally post-merge (still on `backup` remote for recoverability).
+- `origin` still at `c214792a` — explicit user approval required before pushing main there.
+
+---
+
+END OF SESSION 29 — M2 dashboard wiring done; notification-badge half still open
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
 
 **Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
@@ -6559,11 +6620,12 @@ super_admin        222
 - ~~Q6~~ — DONE Session 28 (productCreate + productEdit audit, H5 price-compare bug fixed)
 
 **Admin audit — Tier B feature sessions (2-4h each, priority order):**
-1. **M2** low-stock alerts dashboard + notification (DAO ready: `getLowStockProducts()`)
-2. ~~**Q1-UI**~~ — DONE Session 26, merged to `main` at `ccb7b2dd` (feat `7e310d55` + docs `ccb7b2dd`)
+1. ~~**M2 dashboard**~~ — DONE Session 29 (route + tappable tile). Notification-badge half still open (see §4 follow-up).
+2. ~~**Q1-UI**~~ — DONE Session 26, merged to `main` at `ccb7b2dd`
 3. **M1** auto-generate EAN-13 barcode when blank
 4. **M7** ZATCA queue status report (sent/rejected/pending)
 5. **M3 + M4** stocktaking + inter-branch transfer (shared stock_movements, one session)
+6. **M2 notification badge** — wire `lowStockCount` into AppHeader bell / system push (separate session, touches shared_ui)
 
 **super_admin — ops (user-executed, not code):**
 - 6 GitHub Actions secrets + `deploy_web.yml` `--dart-define` flags
