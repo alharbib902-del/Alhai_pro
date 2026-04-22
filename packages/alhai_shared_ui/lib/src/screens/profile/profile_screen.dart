@@ -10,6 +10,7 @@ import '../../core/router/routes.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
+import '../../providers/products_providers.dart';
 
 /// شاشة الملف الشخصي - بيانات حقيقية
 class ProfileScreen extends ConsumerStatefulWidget {
@@ -135,7 +136,8 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               ? null
               : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
+          notificationsCount:
+              ref.watch(lowStockNotificationCountProvider).value ?? 0,
           userName: userName,
           userRole: l10n.branchManager,
           actions: [

@@ -7,6 +7,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import '../../core/validators/input_sanitizer.dart';
 import '../../providers/expenses_providers.dart';
+import '../../providers/products_providers.dart';
 import '../../widgets/common/app_empty_state.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../widgets/common/shimmer_loading.dart';
@@ -41,7 +42,8 @@ class ExpensesScreen extends ConsumerWidget {
                 ? null
                 : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
-            notificationsCount: 3,
+            notificationsCount:
+                ref.watch(lowStockNotificationCountProvider).value ?? 0,
             userName: l10n.defaultUserName,
             userRole: l10n.branchManager,
             onUserTap: () {},

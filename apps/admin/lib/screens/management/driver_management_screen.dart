@@ -93,7 +93,8 @@ class _DriverManagementScreenState
               ? null
               : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
+          notificationsCount:
+              ref.watch(lowStockNotificationCountProvider).value ?? 0,
           userName: l10n.defaultUserName,
           userRole: l10n.branchManager,
           actions: [

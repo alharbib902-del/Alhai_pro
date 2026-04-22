@@ -14,6 +14,7 @@ import '../../core/theme/app_sizes.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../widgets/common/app_empty_state.dart';
 import '../../providers/expenses_providers.dart';
+import '../../providers/products_providers.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة فئات المصروفات
@@ -89,7 +90,8 @@ class _ExpenseCategoriesScreenState
                 ? null
                 : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
-            notificationsCount: 3,
+            notificationsCount:
+                ref.watch(lowStockNotificationCountProvider).value ?? 0,
             userName: l10n.defaultUserName,
             userRole: l10n.branchManager,
             onUserTap: () {},

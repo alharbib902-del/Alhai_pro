@@ -6,6 +6,7 @@ import '../../core/router/routes.dart';
 import '../../core/utils/currency_formatter.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import '../../widgets/layout/app_header.dart';
+import '../../providers/products_providers.dart';
 import '../../providers/shifts_providers.dart';
 import 'package:alhai_database/alhai_database.dart';
 
@@ -75,7 +76,8 @@ class _ShiftSummaryScreenState extends ConsumerState<ShiftSummaryScreen> {
               ? null
               : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
+          notificationsCount:
+              ref.watch(lowStockNotificationCountProvider).value ?? 0,
           userName: l10n.defaultUserName,
           userRole: l10n.branchManager,
           onUserTap: () {},

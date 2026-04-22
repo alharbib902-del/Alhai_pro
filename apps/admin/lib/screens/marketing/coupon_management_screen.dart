@@ -30,7 +30,8 @@ class CouponManagementScreen extends ConsumerWidget {
               ? null
               : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
+          notificationsCount:
+              ref.watch(lowStockNotificationCountProvider).value ?? 0,
           userName: l10n.cashCustomer,
           userRole: l10n.branchManager,
         ),

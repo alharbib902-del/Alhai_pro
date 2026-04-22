@@ -8,6 +8,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_database/alhai_database.dart';
 import '../../core/validators/input_sanitizer.dart';
+import '../../providers/products_providers.dart';
 import '../../providers/suppliers_providers.dart';
 import '../../widgets/common/app_empty_state.dart';
 import '../../widgets/common/shimmer_loading.dart';
@@ -75,7 +76,8 @@ class _SuppliersScreenState extends ConsumerState<SuppliersScreen> {
                 ? null
                 : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
-            notificationsCount: 3,
+            notificationsCount:
+                ref.watch(lowStockNotificationCountProvider).value ?? 0,
             userName: '\u0623\u062D\u0645\u062F \u0645\u062D\u0645\u062F',
             userRole: l10n.branchManager,
           ),

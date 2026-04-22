@@ -9,6 +9,7 @@ import '../../core/router/routes.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import '../../providers/products_providers.dart';
 import '../../providers/suppliers_providers.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../widgets/common/shimmer_loading.dart';
@@ -80,7 +81,8 @@ class _SupplierDetailScreenState extends ConsumerState<SupplierDetailScreen> {
               ? null
               : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () {},
-          notificationsCount: 3,
+          notificationsCount:
+              ref.watch(lowStockNotificationCountProvider).value ?? 0,
           userName: 'أحمد',
           userRole: l10n.dashboard,
         ),

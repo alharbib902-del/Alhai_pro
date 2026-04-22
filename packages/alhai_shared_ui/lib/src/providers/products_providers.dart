@@ -57,6 +57,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_core/alhai_core.dart';
+import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 
@@ -255,6 +256,35 @@ final lowStockProductsProvider = Provider<List<Product>>((ref) {
     ),
   );
   return products;
+});
+
+/// M2: live low-stock count for the AppHeader notification badge.
+///
+/// Unlike [lowStockProductsProvider] which only reflects products that have
+/// been loaded into [productsStateProvider] (populated by the products
+/// screen), this provider watches the DB directly so the badge stays
+/// accurate on every screen.
+///
+/// Resolves to 0 when: there is no active store; `AppDatabase` is not
+/// registered in GetIt (widget tests that pump a screen without a full
+/// mock set); or the underlying stream throws for any reason. The badge
+/// should never block rendering.
+final lowStockNotificationCountProvider = StreamProvider.autoDispose<int>((
+  ref,
+) {
+  try {
+    final storeId = ref.watch(currentStoreIdProvider);
+    if (storeId == null) return Stream.value(0);
+    final db = GetIt.I<AppDatabase>();
+    return db.productsDao
+        .watchLowStockCount(storeId)
+        .handleError((_) => 0);
+  } catch (_) {
+    // GetIt lookup or DAO access failed (typical in widget tests that
+    // don't stub productsDao). The badge is a non-critical overlay —
+    // swallow and show 0 rather than crashing the surrounding screen.
+    return Stream.value(0);
+  }
 });
 
 /// مزود المنتجات النفذة

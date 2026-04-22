@@ -9,6 +9,7 @@ import '../../core/router/routes.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:get_it/get_it.dart';
 import '../../widgets/common/app_empty_state.dart';
+import '../../providers/products_providers.dart';
 import '../../providers/sync_providers.dart';
 import 'package:alhai_sync/alhai_sync.dart';
 
@@ -89,7 +90,8 @@ class _SyncStatusScreenState extends ConsumerState<SyncStatusScreen> {
               ? null
               : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
+          notificationsCount:
+              ref.watch(lowStockNotificationCountProvider).value ?? 0,
           userName: l10n.cashCustomer,
           userRole: l10n.branchManager,
           actions: [

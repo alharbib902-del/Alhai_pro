@@ -7,6 +7,7 @@ import '../../core/responsive/responsive_utils.dart';
 import '../../core/utils/currency_formatter.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import '../../providers/dashboard_providers.dart';
+import '../../providers/products_providers.dart';
 import '../../widgets/layout/app_header.dart';
 import '../../widgets/dashboard/stat_card.dart';
 import '../../widgets/dashboard/sales_chart.dart';
@@ -46,7 +47,8 @@ class DashboardScreen extends ConsumerWidget {
               ? null
               : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
+          notificationsCount:
+              ref.watch(lowStockNotificationCountProvider).value ?? 0,
           userName: l10n.defaultUserName,
           userRole: l10n.branchManager,
           onUserTap: () {},

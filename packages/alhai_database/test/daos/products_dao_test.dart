@@ -209,6 +209,38 @@ void main() {
       expect(lowStock.first.id, 'prod-1');
     });
 
+    test('watchLowStockCount: emits 0 when no low-stock products', () async {
+      await db.productsDao.insertProduct(
+        makeProduct(stockQty: 50, minQty: 5),
+      );
+      final count = await db.productsDao.watchLowStockCount('store-1').first;
+      expect(count, 0);
+    });
+
+    test(
+      'watchLowStockCount: reacts to stock moving across the threshold',
+      () async {
+        await db.productsDao.insertProduct(
+          makeProduct(stockQty: 50, minQty: 5),
+        );
+        await db.productsDao.insertProduct(
+          makeProduct(id: 'prod-2', name: 'عصير', stockQty: 3, minQty: 5),
+        );
+
+        // Initial snapshot: only prod-2 is low.
+        final stream = db.productsDao.watchLowStockCount('store-1');
+        expect(await stream.first, 1);
+
+        // Drop prod-1 below its min: the count must include it on next read.
+        await db.productsDao.updateStock('prod-1', 2);
+        expect(await stream.first, 2);
+
+        // Soft-delete prod-2: low-stock count drops back to 1.
+        await db.productsDao.softDeleteProduct('prod-2');
+        expect(await stream.first, 1);
+      },
+    );
+
     test('markAsSynced sets syncedAt', () async {
       await db.productsDao.insertProduct(makeProduct());
 

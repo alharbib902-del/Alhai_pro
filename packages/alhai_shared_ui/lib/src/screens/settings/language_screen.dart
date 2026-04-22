@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
+import '../../providers/products_providers.dart';
 import '../../widgets/layout/app_header.dart';
 
 /// شاشة اختيار اللغة
@@ -38,7 +39,8 @@ class _LanguageScreenState extends ConsumerState<LanguageScreen> {
               ? null
               : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
+          notificationsCount:
+              ref.watch(lowStockNotificationCountProvider).value ?? 0,
           userName: '\u0623\u062d\u0645\u062f \u0645\u062d\u0645\u062f',
           userRole: l10n.branchManager,
         ),

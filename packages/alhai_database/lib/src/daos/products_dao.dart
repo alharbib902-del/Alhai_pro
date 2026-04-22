@@ -156,6 +156,21 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
     ).map((row) => productsTable.map(row.data)).get();
   }
 
+  /// M2: live count of low-stock products for a store.
+  ///
+  /// Mirrors [getLowStockProducts]'s WHERE clause but returns a `Stream<int>`
+  /// so AppHeader's notification badge updates in real time as stock moves
+  /// across the min-qty threshold (purchase receipt, sale, manual edit).
+  Stream<int> watchLowStockCount(String storeId) {
+    return customSelect(
+      '''SELECT COUNT(*) AS c FROM products
+         WHERE store_id = ? AND stock_qty <= min_qty AND is_active = 1
+               AND deleted_at IS NULL''',
+      variables: [Variable.withString(storeId)],
+      readsFrom: {productsTable},
+    ).map((row) => row.data['c'] as int? ?? 0).watchSingle();
+  }
+
   /// إدراج منتج
   Future<int> insertProduct(ProductsTableCompanion product) {
     return into(productsTable).insert(product);
