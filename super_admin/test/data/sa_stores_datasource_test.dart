@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:super_admin/core/services/audit_log_service.dart';
 import 'package:super_admin/data/models/sa_store_model.dart';
 import 'package:super_admin/data/sa_stores_datasource.dart';
 
@@ -318,131 +319,147 @@ void main() {
   // ==========================================================================
 
   group('createStore', () {
-    test('inserts store and subscription on happy path', () async {
-      // Arrange -- the insert().select().single() chain returns the store row
-      mock.setResponse('stores', {
-        'id': 'new-store-1',
-        'name': 'Fresh Store',
-        'business_type': 'restaurant',
-        'phone': '+966500001111',
-        'email': 'fresh@test.com',
-        'is_active': true,
-        'org_id': 'org-1',
-        'owner_id': null,
-        'address': null,
-        'created_at': '2025-06-01T00:00:00Z',
-        'logo': null,
-        'subscriptions': [],
-      });
-      mock.setResponse('subscriptions', []);
+    // Shared response shape mirroring what the v49 `create_store` RPC
+    // returns -- a single public.stores row (nested subscriptions are NOT
+    // returned by the RPC; they live in the subscriptions table and can
+    // be joined on read).
+    Map<String, dynamic> rpcStoreRow({
+      String id = 'new-store-1',
+      String name = 'Fresh Store',
+      String? phone,
+      String? email,
+      String? taxNumber,
+    }) => {
+      'id': id,
+      'name': name,
+      'phone': phone,
+      'email': email,
+      'tax_number': taxNumber,
+      'is_active': true,
+      'org_id': null,
+      'owner_id': null,
+      'currency': 'SAR',
+      'timezone': 'Asia/Riyadh',
+      'created_at': '2025-06-01T00:00:00Z',
+    };
+
+    test('calls create_store RPC with correct p_* params', () async {
+      // Arrange
+      mock.setRpcResponse(
+        'create_store',
+        rpcStoreRow(
+          id: 'new-store-1',
+          name: 'Fresh Store',
+          phone: '+966500001111',
+          email: 'fresh@test.com',
+          taxNumber: '300123456789003',
+        ),
+      );
 
       // Act
       final store = await ds.createStore(
         name: 'Fresh Store',
+        phone: '+966500001111',
+        email: 'fresh@test.com',
+        taxNumber: '300123456789003',
+        plan: 'starter',
         businessType: 'restaurant',
-        ownerName: 'Ali',
-        ownerPhone: '+966500001111',
-        ownerEmail: 'fresh@test.com',
-        planSlug: 'basic',
       );
 
-      // Assert
+      // Assert -- returned row parses
       expect(store.id, equals('new-store-1'));
       expect(store.name, equals('Fresh Store'));
 
-      // Verify store insert was called
-      final storeOps = mock.queryLog['stores']!.first;
-      final insertOp = storeOps.firstWhere((op) => op.method == 'insert');
-      final insertData = insertOp.args[0] as Map<String, dynamic>;
-      expect(insertData['name'], equals('Fresh Store'));
-      expect(insertData['business_type'], equals('restaurant'));
-      expect(insertData['is_active'], isTrue);
+      // Assert -- exactly one RPC invocation with the expected name + params
+      final calls = mock.queryLog['rpc:create_store'];
+      expect(calls, isNotNull);
+      expect(calls, hasLength(1));
+      final op = calls!.single.single;
+      expect(op.method, equals('rpc'));
+      expect(op.args[0], equals('create_store'));
 
-      // Verify subscription insert was called
-      final subOps = mock.queryLog['subscriptions']!.first;
-      final subInsertOp = subOps.firstWhere((op) => op.method == 'insert');
-      final subData = subInsertOp.args[0] as Map<String, dynamic>;
-      expect(subData['plan'], equals('basic'));
-      expect(subData['status'], equals('active'));
-      expect(subData['org_id'], equals('org-1'));
+      final params = op.args[1] as Map<String, dynamic>;
+      expect(params['p_name'], equals('Fresh Store'));
+      expect(params['p_phone'], equals('+966500001111'));
+      expect(params['p_email'], equals('fresh@test.com'));
+      expect(params['p_tax_number'], equals('300123456789003'));
+      expect(params['p_plan'], equals('starter'));
+      expect(params['p_business_type'], equals('restaurant'));
     });
 
-    test('sets status to trial when planSlug is trial', () async {
+    test('normalises empty-string optional params to null', () async {
       // Arrange
-      mock.setResponse('stores', {
-        'id': 'trial-store',
-        'name': 'Trial',
-        'business_type': 'retail',
-        'phone': '+966500000000',
-        'email': 'trial@test.com',
-        'is_active': true,
-        'org_id': 'trial-store',
-        'owner_id': null,
-        'address': null,
-        'created_at': '2025-06-01T00:00:00Z',
-        'logo': null,
-        'subscriptions': [],
-      });
-      mock.setResponse('subscriptions', []);
+      mock.setRpcResponse('create_store', rpcStoreRow());
 
-      // Act
+      // Act -- pass empty strings / whitespace for every optional field
       await ds.createStore(
-        name: 'Trial',
-        businessType: 'retail',
-        ownerName: 'Test',
-        ownerPhone: '+966500000000',
-        ownerEmail: 'trial@test.com',
-        planSlug: 'trial',
+        name: 'Fresh Store',
+        phone: '',
+        email: '   ',
+        taxNumber: '',
+        plan: 'free',
+        businessType: '  ',
       );
 
-      // Assert
-      final subOps = mock.queryLog['subscriptions']!.first;
-      final subInsertOp = subOps.firstWhere((op) => op.method == 'insert');
-      final subData = subInsertOp.args[0] as Map<String, dynamic>;
-      expect(subData['status'], equals('trial'));
+      // Assert -- each optional becomes null, not '' or '   '
+      final params =
+          mock.queryLog['rpc:create_store']!.single.single.args[1]
+              as Map<String, dynamic>;
+      expect(params['p_phone'], isNull);
+      expect(params['p_email'], isNull);
+      expect(params['p_tax_number'], isNull);
+      expect(params['p_business_type'], isNull);
+      expect(params['p_name'], equals('Fresh Store')); // required, kept
+      expect(params['p_plan'], equals('free'));       // required, kept
     });
 
-    test('rolls back store on subscription error', () async {
-      // Arrange -- store insert succeeds, subscription insert fails
-      mock.setResponse('stores', {
-        'id': 'fail-store',
-        'name': 'Fail Store',
-        'business_type': 'retail',
-        'phone': '+966500000000',
-        'email': 'fail@test.com',
-        'is_active': true,
-        'org_id': 'fail-store',
-        'owner_id': null,
-        'address': null,
-        'created_at': '2025-06-01T00:00:00Z',
-        'logo': null,
-        'subscriptions': [],
-      });
-      mock.setError('subscriptions', Exception('Subscription insert failed'));
+    test('propagates RPC errors (server-side rollback is authoritative)',
+        () async {
+      // Arrange -- the RPC raises (could be 42501 guard, 22023 empty, or
+      // 23514 CHECK violation). The datasource just surfaces the error;
+      // the full transaction rollback is handled server-side.
+      mock.setRpcError('create_store', Exception('RPC failed'));
 
       // Act & Assert
       await expectLater(
         () => ds.createStore(
-          name: 'Fail Store',
+          name: 'Will Fail',
+          phone: '+966500000000',
+          email: 'fail@test.com',
+          plan: 'starter',
           businessType: 'retail',
-          ownerName: 'Test',
-          ownerPhone: '+966500000000',
-          ownerEmail: 'fail@test.com',
-          planSlug: 'basic',
         ),
         throwsA(isA<Exception>()),
       );
-
-      // Verify rollback: store delete was called with eq('id', 'fail-store')
-      // The stores table will have multiple query logs: insert + delete
-      final allStoreQueries = mock.queryLog['stores']!;
-      final deleteQuery = allStoreQueries.firstWhere(
-        (ops) => ops.any((op) => op.method == 'delete'),
-      );
-      final eqOp = deleteQuery.firstWhere((op) => op.method == 'eq');
-      expect(eqOp.args[0], equals('id'));
-      expect(eqOp.args[1], equals('fail-store'));
     });
+
+    test(
+      'does not emit a datasource-side sa_audit_log row '
+      '(RPC owns the audit write)',
+      () async {
+        // Arrange -- inject an audit service so any call would show in
+        // queryLog; the assertion below verifies none was made.
+        final dsWithAudit = SAStoresDatasource.test(
+          mock.client,
+          audit: AuditLogService.test(mock.client),
+        );
+        mock.setRpcResponse('create_store', rpcStoreRow());
+
+        // Act
+        await dsWithAudit.createStore(
+          name: 'Audit Check',
+          phone: '+966500002222',
+          email: 'audit@test.com',
+          plan: 'free',
+          businessType: 'retail',
+        );
+
+        // Assert -- no INSERT was logged against the sa_audit_log table.
+        // (The server-side v49 RPC writes its audit row internally; that
+        // write never round-trips through the client mock.)
+        expect(mock.queryLog['sa_audit_log'], isNull);
+      },
+    );
   });
 
   // ==========================================================================

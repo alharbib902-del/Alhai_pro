@@ -115,72 +115,50 @@ class SAStoresDatasource {
     );
   }
 
-  /// Create a new store with owner and subscription.
+  /// Create a new store with its initial subscription and audit row in a
+  /// single atomic server-side transaction.
   ///
-  /// Uses manual rollback to ensure atomicity: if subscription creation
-  /// fails, the store record is deleted to avoid orphaned rows.
+  /// Wraps the v49 `create_store` RPC. The RPC performs stores INSERT +
+  /// subscriptions INSERT + sa_audit_log INSERT in one plpgsql transaction;
+  /// any failure (CHECK violation, guard rejection, constraint) rolls back
+  /// all three. The client therefore does NOT emit its own audit row --
+  /// that would be a duplicate, and it would not be part of the
+  /// transaction.
+  ///
+  /// Validation authoritative on the server:
+  ///   - `p_name` / `p_plan` non-empty -> 22023
+  ///   - `plan` whitelist (free/starter/professional/enterprise)
+  ///     enforced by `subscriptions_plan_check` -> 23514
+  ///   - `status='trialing'`, 30-day trial window, other defaults set
+  ///     inside the RPC; the client does not pass these.
+  ///
+  /// `businessType` is persisted into `subscriptions.features` JSONB
+  /// by the RPC when provided -- no schema column needed client-side.
   Future<SAStore> createStore({
     required String name,
-    required String businessType,
-    required String ownerName,
-    required String ownerPhone,
-    required String ownerEmail,
-    required String planSlug,
-    int branchCount = 1,
+    String? phone,
+    String? email,
+    String? taxNumber,
+    required String plan,
+    String? businessType,
   }) async {
     _requireMfa();
-    // Step 1: Insert store
-    final storeData = await _client
-        .from('stores')
-        .insert({
-          'name': name,
-          'business_type': businessType,
-          'phone': ownerPhone,
-          'email': ownerEmail,
-          'is_active': true,
-        })
-        .select()
-        .single();
-
-    final storeId = storeData['id'] as String;
-
-    try {
-      // Step 2: Create subscription with plan slug
-      final now = DateTime.now();
-      final endDate = now.add(const Duration(days: 30));
-      final orgId = storeData['org_id'] as String? ?? storeId;
-
-      await _client.from('subscriptions').insert({
-        'id': '${storeId}_sub_${now.millisecondsSinceEpoch}',
-        'org_id': orgId,
-        'plan': planSlug,
-        'status': planSlug == 'trial' ? 'trial' : 'active',
-        'current_period_start': now.toIso8601String(),
-        'current_period_end': endDate.toIso8601String(),
-        'amount': 0,
-        'currency': 'SAR',
-        'billing_cycle': 'monthly',
-      });
-    } catch (e) {
-      // Rollback: delete the store if subscription creation fails
-      await _client.from('stores').delete().eq('id', storeId);
-      rethrow;
-    }
-
-    await _audit?.log(
-      action: 'store.create',
-      targetType: 'store',
-      targetId: storeId,
-      after: {
-        'name': name,
-        'business_type': businessType,
-        'owner_email': ownerEmail,
-        'plan_slug': planSlug,
+    final data = await _client.rpc(
+      'create_store',
+      params: {
+        'p_name':          name,
+        'p_phone':         _nullIfEmpty(phone),
+        'p_email':         _nullIfEmpty(email),
+        'p_tax_number':    _nullIfEmpty(taxNumber),
+        'p_plan':          plan,
+        'p_business_type': _nullIfEmpty(businessType),
       },
     );
-
-    return SAStore.fromJson(storeData);
+    return SAStore.fromJson(data as Map<String, dynamic>);
   }
+
+  String? _nullIfEmpty(String? s) =>
+      (s == null || s.trim().isEmpty) ? null : s.trim();
 
   /// Update store status (activate/suspend).
   Future<void> updateStoreStatus(String storeId, bool isActive) async {

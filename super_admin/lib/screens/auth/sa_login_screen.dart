@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../core/router/app_router.dart';
 import '../../core/services/audit_log_service.dart';
 import '../../core/services/mfa_guard_service.dart';
+import '../../core/services/sentry_service.dart';
 import '../../providers/sa_dashboard_providers.dart'
     show saSupabaseClientProvider;
 
@@ -127,11 +128,12 @@ class _SALoginScreenState extends ConsumerState<SALoginScreen> {
 
       // Step 5: No MFA or already at AAL2 — full login success.
       _logLoginAttempt(email: email, userId: authState.user?.id, success: true);
-    } catch (e) {
+    } catch (e, st) {
       _logLoginAttempt(email: email, success: false, reason: e.toString());
+      await reportError(e, stackTrace: st, hint: 'sign in attempt failed');
       if (mounted) {
         setState(() {
-          _error = e.toString();
+          _error = l10n.saSignInFailed;
           _isLoading = false;
         });
       }

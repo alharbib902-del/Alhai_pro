@@ -85,7 +85,7 @@ class _SAUsersListScreenState extends ConsumerState<SAUsersListScreen> {
             Expanded(
               child: usersAsync.when(
                 loading: () => const SATableSkeleton(),
-                error: (e, _) => Center(child: Text('Error: $e')),
+                error: (e, st) => Center(child: Text(l10n.saErrorLoading)),
                 data: (users) {
                   return Card(
                     elevation: 0,

@@ -139,12 +139,12 @@ class SAAnalyticsDatasource {
       final storeId = store['id'] as String;
       final salesResult = await _client
           .from('sales')
-          .select('total_amount')
+          .select('total')
           .eq('store_id', storeId);
 
       double revenue = 0;
       for (final sale in salesResult as List) {
-        revenue += (sale['total_amount'] as num?)?.toDouble() ?? 0;
+        revenue += (sale['total'] as num?)?.toDouble() ?? 0;
       }
 
       result.add(

@@ -21,7 +21,7 @@ class SASystemHealthScreen extends ConsumerWidget {
     return Scaffold(
       body: healthAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, st) => Center(child: Text(l10n.saErrorLoading)),
         data: (health) {
           final status = health.status;
           final dbResponseMs = health.dbResponseMs ?? 0;

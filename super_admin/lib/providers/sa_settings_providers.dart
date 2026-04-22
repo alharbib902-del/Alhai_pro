@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../core/services/sentry_service.dart';
 import '../data/models/sa_analytics_model.dart';
 
 import 'sa_dashboard_providers.dart' show saSupabaseClientProvider;
@@ -8,7 +9,13 @@ import 'sa_dashboard_providers.dart' show saSupabaseClientProvider;
 // PLATFORM SETTINGS
 // ============================================================================
 
-/// Platform settings from store_settings or a platform_settings table.
+/// Platform settings from the `platform_settings` Supabase table.
+///
+/// Errors propagate as [AsyncError] — consumers must handle the `error:`
+/// branch of the returned [AsyncValue]. Fallback to hardcoded defaults is
+/// intentionally avoided: if the read fails (network, RLS, auth expiry,
+/// JSON shape drift), surfacing synthetic values would let operators edit
+/// and then overwrite real platform settings on save.
 final saPlatformSettingsProvider =
     FutureProvider.autoDispose<SAPlatformSettings>((ref) async {
       final client = ref.watch(saSupabaseClientProvider);
@@ -18,8 +25,12 @@ final saPlatformSettingsProvider =
             .select('*')
             .single();
         return SAPlatformSettings.fromJson(data);
-      } catch (_) {
-        // Table may not exist yet, return defaults
-        return const SAPlatformSettings();
+      } catch (e, st) {
+        await reportError(
+          e,
+          stackTrace: st,
+          hint: 'saPlatformSettingsProvider: failed to load platform_settings',
+        );
+        rethrow;
       }
     });

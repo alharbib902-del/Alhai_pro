@@ -5,6 +5,7 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/sa_providers.dart';
 import '../../core/services/audit_log_service.dart';
+import '../../core/services/sentry_service.dart';
 import '../../core/services/undo_service.dart';
 
 /// User detail / role management -- real Supabase data.
@@ -39,7 +40,7 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
     return Scaffold(
       body: userAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, st) => Center(child: Text(l10n.saErrorLoading)),
         data: (user) {
           final name = user.name ?? 'Unknown';
           final email = user.email ?? '-';
@@ -475,12 +476,14 @@ class _SAUserDetailScreenState extends ConsumerState<SAUserDetailScreen> {
           SnackBar(content: Text(AppLocalizations.of(context).saRoleUpdated)),
         );
       }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Error: $e')));
-      }
+    } catch (e, st) {
+      await reportError(e, stackTrace: st, hint: 'user.role_change');
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(AppLocalizations.of(context).saErrorGeneric),
+        ),
+      );
     } finally {
       if (mounted) setState(() => _saving = false);
     }

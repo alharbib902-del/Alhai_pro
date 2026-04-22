@@ -51,7 +51,7 @@ class SAStoreDetailScreen extends ConsumerWidget {
     return Scaffold(
       body: storeAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('Error: $e')),
+        error: (e, st) => Center(child: Text(l10n.saErrorLoading)),
         data: (store) {
           final name = store.name.isEmpty ? 'Unnamed' : store.name;
           // Audit: log that super admin accessed this store's data.
@@ -216,7 +216,7 @@ class SAStoreDetailScreen extends ConsumerWidget {
                 usageAsync.when(
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
-                  error: (e, _) => Text('Error: $e'),
+                  error: (e, st) => Text(l10n.saErrorLoading),
                   data: (usage) {
                     return GridView.count(
                       crossAxisCount: isWide ? 4 : 2,

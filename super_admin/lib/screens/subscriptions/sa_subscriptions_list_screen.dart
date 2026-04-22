@@ -92,7 +92,7 @@ class _SASubscriptionsListScreenState
             Expanded(
               child: subsAsync.when(
                 loading: () => const SATableSkeleton(),
-                error: (e, _) => Center(child: Text('Error: $e')),
+                error: (e, st) => Center(child: Text(l10n.saErrorLoading)),
                 data: (subs) => Card(
                   elevation: 0,
                   shape: RoundedRectangleBorder(
