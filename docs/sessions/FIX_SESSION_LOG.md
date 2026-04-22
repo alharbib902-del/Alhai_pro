@@ -5617,3 +5617,57 @@ Sessions 13 + 14 + 15 + 16 all executed on 2026-04-22 with cumulative budget ~15
 **End-state test aggregate:** 5461 passing across 11 packages. ZATCA 850/850 + 1 skip preserved end-to-end through all 4 migrations.
 
 Next backlog: deploy customer_app + driver_app (pending keystores + google-services.json), admin audit execution (310 findings, 42 P0s per handover), super_admin Tier 3, receipt number collision bug.
+
+---
+
+# Session 17 — Supabase Cleanup (v75): partial indexes + orphan policies (2026-04-22)
+
+**Branch:** `fix/cleanup-indexes-orphans` forked from `6fcb5f29`.
+**Commit:** `1f096100`.
+**Budget:** ~20 min total (pre-check + design + apply + V-POST + commit).
+
+## Summary
+
+Two long-standing low-risk tech-debt items from the plan closeout list. Both applied atomically in v75, both verified on live. Zero data touches, pure schema metadata.
+
+### Part A — Active-row partial indexes (10 tables)
+
+Tables with `deleted_at`: categories, orders, org_products, products, promotions, returns, sales, stores, suppliers, users.
+
+Created `idx_<table>_active ON public.<table> (id) WHERE deleted_at IS NULL` for each. Common read pattern `WHERE deleted_at IS NULL` now has a covering narrow-scan index — significant speedup once soft-deleted rows accumulate.
+
+**Note:** During apply, one of the 10 `CREATE INDEX IF NOT EXISTS` statements (`idx_org_products_active`) silently didn't take on the first COMMIT despite BEGIN..COMMIT succeeding and the other 9 being created. Root cause unclear (may have been transient client-side issue). A simple re-run of the single idempotent statement created it. V-POST-A then showed all 10 present. Noted as a methodology curiosity for future large index-creation batches: **always re-verify with V-POST after atomic DDL, even if COMMIT returns Success**.
+
+### Part B — Drop 2 orphan `*_org_isolation` policies
+
+- `expense_categories_org_isolation`
+- `loyalty_rewards_org_isolation`
+
+Both used `current_setting('app.current_org_id')`. Grep across Dart + SQL confirmed nothing ever SETs that setting. Dead code from an earlier architecture. Both tables retain their full 4-policy CRUD coverage (insert/update/select/delete) after DROP — V-POST-C confirmed.
+
+## Verification (V-POST)
+
+| Query | Result |
+|---|---|
+| V-POST-A: 10 `idx_*_active` partial indexes present | ✓ (after re-run of `idx_org_products_active`) |
+| V-POST-B: 0 orphan policies remain | ✓ |
+| V-POST-C: expense_categories 4 policies; loyalty_rewards 4 policies | ✓ full CRUD coverage preserved |
+
+## Commit
+
+`1f096100 migration(v75): Supabase cleanup — partial indexes + orphan policy DROP` — 1 new migration file (`supabase/migrations/20260422_v75_partial_indexes_and_orphan_cleanup.sql`), 81 LOC including rollback DDL in header comment.
+
+## Impact
+
+- **Query performance**: small-to-medium speedup on active-row reads on 10 tables. Most noticeable on large soft-delete heavy tables (sales, returns, products) once data accumulates.
+- **Tech debt reduced**: 2 orphan policies cleared from `pg_policies` — future reviewers see cleaner policy set.
+- **Zero code changes**. No Dart / Drift touch. No downstream test impact.
+
+## Audit refs
+
+- 2026-04-21 end-of-day log "NEXT SESSION STARTING POINT" §3b (partial indexes) + §3d (orphan policies) — both resolved.
+- Long-standing item from C-7 session (server soft-delete → local hard-delete) — the remaining partial-index work is now closed.
+
+---
+
+END OF SESSION 17 — Supabase cleanup COMPLETE
