@@ -3069,6 +3069,42 @@ class AppLocalizationsEn extends AppLocalizations {
   String get zatcaPhase2Active => 'Phase 2 Active';
 
   @override
+  String get zatcaQueueReportTitle => 'ZATCA Submission Queue';
+
+  @override
+  String get zatcaSent => 'Sent';
+
+  @override
+  String get zatcaPendingLabel => 'Pending';
+
+  @override
+  String get zatcaRejected => 'Rejected';
+
+  @override
+  String get zatcaPendingSection => 'Pending invoices';
+
+  @override
+  String get zatcaRejectedSection => 'Rejected invoices';
+
+  @override
+  String get zatcaNoPendingInvoices => 'No pending invoices';
+
+  @override
+  String get zatcaNoRejectedInvoices => 'No rejected invoices';
+
+  @override
+  String zatcaRetriesLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count retries',
+      one: '1 retry',
+      zero: 'No retries',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get registrationInfo => 'Registration Info';
 
   @override

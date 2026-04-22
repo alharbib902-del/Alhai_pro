@@ -376,5 +376,124 @@ void main() {
         expect(count, 1);
       });
     });
+
+    group('getZatcaSentCount (M7)', () {
+      test('returns 0 when no invoices exist', () async {
+        final count = await db.invoicesDao.getZatcaSentCount(
+          storeId: 'store-1',
+        );
+        expect(count, 0);
+      });
+
+      test(
+        'counts only invoices with zatca_hash that are NOT in the '
+        'queue or dead-letter',
+        () async {
+          // 3 invoices with zatca_hash:
+          //   inv-sent       — signed and no queue row → counted as Sent
+          //   inv-pending    — signed but in pending queue → NOT counted
+          //   inv-dead       — signed but in dead-letter → NOT counted
+          // 1 invoice WITHOUT zatca_hash → NOT counted (never went to ZATCA)
+          await db.invoicesDao.upsertInvoice(
+            makeInvoice(
+              id: 'inv-sent',
+              invoiceNumber: 'INV-S',
+            ).copyWith(zatcaHash: const Value('hash-sent')),
+          );
+          await db.invoicesDao.upsertInvoice(
+            makeInvoice(
+              id: 'inv-pending',
+              invoiceNumber: 'INV-P',
+            ).copyWith(zatcaHash: const Value('hash-pending')),
+          );
+          await db.invoicesDao.upsertInvoice(
+            makeInvoice(
+              id: 'inv-dead',
+              invoiceNumber: 'INV-D',
+            ).copyWith(zatcaHash: const Value('hash-dead')),
+          );
+          await db.invoicesDao.upsertInvoice(
+            makeInvoice(
+              id: 'inv-no-zatca',
+              invoiceNumber: 'INV-N',
+            ),
+          );
+
+          // Put INV-P in the pending queue and INV-D in dead-letter.
+          await db.zatcaOfflineQueueDao.upsert(
+            invoiceNumber: 'INV-P',
+            uuid: 'uuid-p',
+            storeId: 'store-1',
+            signedXmlBase64: 'xml',
+            invoiceHash: 'hash-pending',
+            isStandard: false,
+          );
+          await db
+              .into(db.zatcaDeadLetterTable)
+              .insert(
+                ZatcaDeadLetterTableCompanion.insert(
+                  invoiceNumber: 'INV-D',
+                  uuid: 'uuid-d',
+                  storeId: 'store-1',
+                  signedXmlBase64: 'xml',
+                  invoiceHash: 'hash-dead',
+                  isStandard: false,
+                  retryCount: 10,
+                  queuedAt: DateTime(2026, 1, 1),
+                  deadLetteredAt: DateTime(2026, 1, 2),
+                ),
+              );
+
+          final count = await db.invoicesDao.getZatcaSentCount(
+            storeId: 'store-1',
+          );
+          expect(count, 1);
+        },
+      );
+
+      test('respects storeId filter', () async {
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(
+            id: 'inv-a',
+            invoiceNumber: 'INV-A',
+          ).copyWith(zatcaHash: const Value('hash-a')),
+        );
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(
+            id: 'inv-b',
+            storeId: 'store-2',
+            invoiceNumber: 'INV-B',
+          ).copyWith(zatcaHash: const Value('hash-b')),
+        );
+
+        final count1 = await db.invoicesDao.getZatcaSentCount(
+          storeId: 'store-1',
+        );
+        final count2 = await db.invoicesDao.getZatcaSentCount(
+          storeId: 'store-2',
+        );
+        expect(count1, 1);
+        expect(count2, 1);
+      });
+
+      test('returns global count when storeId is null', () async {
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(
+            id: 'inv-a',
+            invoiceNumber: 'INV-A',
+          ).copyWith(zatcaHash: const Value('hash-a')),
+        );
+        await db.invoicesDao.upsertInvoice(
+          makeInvoice(
+            id: 'inv-b',
+            storeId: 'store-2',
+            invoiceNumber: 'INV-B',
+          ).copyWith(zatcaHash: const Value('hash-b')),
+        );
+
+        final count = await db.invoicesDao.getZatcaSentCount();
+        expect(count, 2);
+      });
+    });
   });
 }

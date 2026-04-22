@@ -281,6 +281,9 @@ class AppRoutes {
   /// Inventory report
   static const String inventoryReport = '/reports/inventory';
 
+  /// ZATCA submission-queue status report (pending / rejected / sent).
+  static const String zatcaQueueReport = '/reports/zatca-queue';
+
   /// Manager approval
   static const String managerApproval = '/manager-approval';
 

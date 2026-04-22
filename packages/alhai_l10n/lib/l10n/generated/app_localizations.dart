@@ -5844,6 +5844,60 @@ abstract class AppLocalizations {
   /// **'المرحلة الثانية نشطة'**
   String get zatcaPhase2Active;
 
+  /// No description provided for @zatcaQueueReportTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طابور إرسال فواتير ZATCA'**
+  String get zatcaQueueReportTitle;
+
+  /// No description provided for @zatcaSent.
+  ///
+  /// In ar, this message translates to:
+  /// **'مُرسَلة'**
+  String get zatcaSent;
+
+  /// No description provided for @zatcaPendingLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيد الانتظار'**
+  String get zatcaPendingLabel;
+
+  /// No description provided for @zatcaRejected.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرفوضة'**
+  String get zatcaRejected;
+
+  /// No description provided for @zatcaPendingSection.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفواتير المعلقة'**
+  String get zatcaPendingSection;
+
+  /// No description provided for @zatcaRejectedSection.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفواتير المرفوضة'**
+  String get zatcaRejectedSection;
+
+  /// No description provided for @zatcaNoPendingInvoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد فواتير قيد الانتظار'**
+  String get zatcaNoPendingInvoices;
+
+  /// No description provided for @zatcaNoRejectedInvoices.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد فواتير مرفوضة'**
+  String get zatcaNoRejectedInvoices;
+
+  /// No description provided for @zatcaRetriesLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =0{بدون محاولات} one{محاولة واحدة} two{محاولتان} few{{count} محاولات} many{{count} محاولة} other{{count} محاولة}}'**
+  String zatcaRetriesLabel(int count);
+
   /// No description provided for @registrationInfo.
   ///
   /// In ar, this message translates to:

@@ -103,6 +103,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart'
 
 // Local screens
 import '../screens/home_screen.dart';
+import '../screens/reports/zatca_queue_report_screen.dart';
 import '../ui/dashboard_shell.dart';
 
 // Marketing screens (admin-only)
@@ -1090,6 +1091,12 @@ final List<RouteBase> _routes = [
         name: 'complaints-report',
         pageBuilder: (context, state) =>
             _buildFadePage(state: state, child: const ComplaintsReportScreen()),
+      ),
+      GoRoute(
+        path: AppRoutes.zatcaQueueReport,
+        name: 'zatca-queue-report',
+        pageBuilder: (context, state) =>
+            _buildFadePage(state: state, child: const ZatcaQueueReportScreen()),
       ),
 
       // ====================================================================

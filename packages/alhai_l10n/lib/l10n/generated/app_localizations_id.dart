@@ -3064,6 +3064,42 @@ class AppLocalizationsId extends AppLocalizations {
   String get zatcaPhase2Active => 'Fase 2 Aktif';
 
   @override
+  String get zatcaQueueReportTitle => 'Antrian Pengiriman ZATCA';
+
+  @override
+  String get zatcaSent => 'Terkirim';
+
+  @override
+  String get zatcaPendingLabel => 'Menunggu';
+
+  @override
+  String get zatcaRejected => 'Ditolak';
+
+  @override
+  String get zatcaPendingSection => 'Faktur menunggu';
+
+  @override
+  String get zatcaRejectedSection => 'Faktur ditolak';
+
+  @override
+  String get zatcaNoPendingInvoices => 'Tidak ada faktur menunggu';
+
+  @override
+  String get zatcaNoRejectedInvoices => 'Tidak ada faktur ditolak';
+
+  @override
+  String zatcaRetriesLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count percobaan',
+      one: '1 percobaan',
+      zero: 'Tidak ada percobaan ulang',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get registrationInfo => 'Info Pendaftaran';
 
   @override

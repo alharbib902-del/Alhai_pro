@@ -252,4 +252,37 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
       );
     return query.map((row) => row.read(count) ?? 0).watchSingle();
   }
+
+  /// Count of invoices that have been successfully sent to ZATCA (M7).
+  ///
+  /// The offline queue removes a row on successful submission, so "sent"
+  /// is defined as: has a `zatca_hash` (was signed) AND is not currently
+  /// sitting in either the pending queue or the dead-letter table.
+  ///
+  /// Store-scoped when [storeId] is provided.
+  Future<int> getZatcaSentCount({String? storeId}) async {
+    final sql = StringBuffer(
+      'SELECT COUNT(*) AS c FROM invoices i '
+      'WHERE i.zatca_hash IS NOT NULL '
+      'AND NOT EXISTS ('
+      '  SELECT 1 FROM zatca_offline_queue q '
+      '  WHERE q.invoice_number = i.invoice_number'
+      ') '
+      'AND NOT EXISTS ('
+      '  SELECT 1 FROM zatca_dead_letter d '
+      '  WHERE d.invoice_number = i.invoice_number'
+      ') ',
+    );
+    final args = <Variable>[];
+    if (storeId != null) {
+      sql.write('AND i.store_id = ?');
+      args.add(Variable.withString(storeId));
+    }
+    final result = await customSelect(
+      sql.toString(),
+      variables: args,
+      readsFrom: {invoicesTable},
+    ).getSingle();
+    return result.data['c'] as int? ?? 0;
+  }
 }

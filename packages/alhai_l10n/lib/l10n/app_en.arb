@@ -1412,6 +1412,22 @@
   "users": "Users",
   "zatcaRegistered": "Registered with ZATCA",
   "zatcaPhase2Active": "Phase 2 Active",
+  "zatcaQueueReportTitle": "ZATCA Submission Queue",
+  "zatcaSent": "Sent",
+  "zatcaPendingLabel": "Pending",
+  "zatcaRejected": "Rejected",
+  "zatcaPendingSection": "Pending invoices",
+  "zatcaRejectedSection": "Rejected invoices",
+  "zatcaNoPendingInvoices": "No pending invoices",
+  "zatcaNoRejectedInvoices": "No rejected invoices",
+  "zatcaRetriesLabel": "{count, plural, =0{No retries} =1{1 retry} other{{count} retries}}",
+  "@zatcaRetriesLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "registrationInfo": "Registration Info",
   "businessName": "Business Name",
   "branchCode": "Branch Code",

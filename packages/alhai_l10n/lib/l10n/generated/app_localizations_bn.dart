@@ -3071,6 +3071,42 @@ class AppLocalizationsBn extends AppLocalizations {
   String get zatcaPhase2Active => 'দ্বিতীয় পর্যায় সক্রিয়';
 
   @override
+  String get zatcaQueueReportTitle => 'ZATCA জমাদান সারি';
+
+  @override
+  String get zatcaSent => 'পাঠানো';
+
+  @override
+  String get zatcaPendingLabel => 'অপেক্ষমাণ';
+
+  @override
+  String get zatcaRejected => 'প্রত্যাখ্যাত';
+
+  @override
+  String get zatcaPendingSection => 'অপেক্ষমাণ চালান';
+
+  @override
+  String get zatcaRejectedSection => 'প্রত্যাখ্যাত চালান';
+
+  @override
+  String get zatcaNoPendingInvoices => 'কোনো অপেক্ষমাণ চালান নেই';
+
+  @override
+  String get zatcaNoRejectedInvoices => 'কোনো প্রত্যাখ্যাত চালান নেই';
+
+  @override
+  String zatcaRetriesLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countটি পুনরায় চেষ্টা',
+      one: '১টি পুনরায় চেষ্টা',
+      zero: 'কোনো পুনরায় চেষ্টা নেই',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get registrationInfo => 'নিবন্ধন তথ্য';
 
   @override

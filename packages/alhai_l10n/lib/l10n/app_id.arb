@@ -1412,6 +1412,22 @@
   "users": "Pengguna",
   "zatcaRegistered": "Terdaftar di ZATCA",
   "zatcaPhase2Active": "Fase 2 Aktif",
+  "zatcaQueueReportTitle": "Antrian Pengiriman ZATCA",
+  "zatcaSent": "Terkirim",
+  "zatcaPendingLabel": "Menunggu",
+  "zatcaRejected": "Ditolak",
+  "zatcaPendingSection": "Faktur menunggu",
+  "zatcaRejectedSection": "Faktur ditolak",
+  "zatcaNoPendingInvoices": "Tidak ada faktur menunggu",
+  "zatcaNoRejectedInvoices": "Tidak ada faktur ditolak",
+  "zatcaRetriesLabel": "{count, plural, =0{Tidak ada percobaan ulang} =1{1 percobaan} other{{count} percobaan}}",
+  "@zatcaRetriesLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "registrationInfo": "Info Pendaftaran",
   "businessName": "Nama Bisnis",
   "branchCode": "Kode Cabang",

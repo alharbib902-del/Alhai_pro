@@ -1405,6 +1405,22 @@
   "users": "المستخدمون",
   "zatcaRegistered": "مسجل في هيئة الزكاة والضريبة",
   "zatcaPhase2Active": "المرحلة الثانية نشطة",
+  "zatcaQueueReportTitle": "طابور إرسال فواتير ZATCA",
+  "zatcaSent": "مُرسَلة",
+  "zatcaPendingLabel": "قيد الانتظار",
+  "zatcaRejected": "مرفوضة",
+  "zatcaPendingSection": "الفواتير المعلقة",
+  "zatcaRejectedSection": "الفواتير المرفوضة",
+  "zatcaNoPendingInvoices": "لا توجد فواتير قيد الانتظار",
+  "zatcaNoRejectedInvoices": "لا توجد فواتير مرفوضة",
+  "zatcaRetriesLabel": "{count, plural, =0{بدون محاولات} one{محاولة واحدة} two{محاولتان} few{{count} محاولات} many{{count} محاولة} other{{count} محاولة}}",
+  "@zatcaRetriesLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "registrationInfo": "معلومات التسجيل",
   "businessName": "اسم المنشأة",
   "branchCode": "رمز الفرع",

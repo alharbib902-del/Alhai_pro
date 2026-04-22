@@ -1412,6 +1412,22 @@
   "users": "ব্যবহারকারী",
   "zatcaRegistered": "ZATCA-তে নিবন্ধিত",
   "zatcaPhase2Active": "দ্বিতীয় পর্যায় সক্রিয়",
+  "zatcaQueueReportTitle": "ZATCA জমাদান সারি",
+  "zatcaSent": "পাঠানো",
+  "zatcaPendingLabel": "অপেক্ষমাণ",
+  "zatcaRejected": "প্রত্যাখ্যাত",
+  "zatcaPendingSection": "অপেক্ষমাণ চালান",
+  "zatcaRejectedSection": "প্রত্যাখ্যাত চালান",
+  "zatcaNoPendingInvoices": "কোনো অপেক্ষমাণ চালান নেই",
+  "zatcaNoRejectedInvoices": "কোনো প্রত্যাখ্যাত চালান নেই",
+  "zatcaRetriesLabel": "{count, plural, =0{কোনো পুনরায় চেষ্টা নেই} =1{১টি পুনরায় চেষ্টা} other{{count}টি পুনরায় চেষ্টা}}",
+  "@zatcaRetriesLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "registrationInfo": "নিবন্ধন তথ্য",
   "businessName": "ব্যবসার নাম",
   "branchCode": "শাখা কোড",

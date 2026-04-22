@@ -3087,6 +3087,45 @@ class AppLocalizationsAr extends AppLocalizations {
   String get zatcaPhase2Active => 'المرحلة الثانية نشطة';
 
   @override
+  String get zatcaQueueReportTitle => 'طابور إرسال فواتير ZATCA';
+
+  @override
+  String get zatcaSent => 'مُرسَلة';
+
+  @override
+  String get zatcaPendingLabel => 'قيد الانتظار';
+
+  @override
+  String get zatcaRejected => 'مرفوضة';
+
+  @override
+  String get zatcaPendingSection => 'الفواتير المعلقة';
+
+  @override
+  String get zatcaRejectedSection => 'الفواتير المرفوضة';
+
+  @override
+  String get zatcaNoPendingInvoices => 'لا توجد فواتير قيد الانتظار';
+
+  @override
+  String get zatcaNoRejectedInvoices => 'لا توجد فواتير مرفوضة';
+
+  @override
+  String zatcaRetriesLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count محاولة',
+      many: '$count محاولة',
+      few: '$count محاولات',
+      two: 'محاولتان',
+      one: 'محاولة واحدة',
+      zero: 'بدون محاولات',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get registrationInfo => 'معلومات التسجيل';
 
   @override

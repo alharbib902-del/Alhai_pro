@@ -3092,6 +3092,42 @@ class AppLocalizationsUr extends AppLocalizations {
   String get zatcaPhase2Active => 'مرحلہ 2 فعال';
 
   @override
+  String get zatcaQueueReportTitle => 'ZATCA ارسال قطار';
+
+  @override
+  String get zatcaSent => 'ارسال کیا گیا';
+
+  @override
+  String get zatcaPendingLabel => 'زیر التوا';
+
+  @override
+  String get zatcaRejected => 'مسترد';
+
+  @override
+  String get zatcaPendingSection => 'زیر التوا انوائس';
+
+  @override
+  String get zatcaRejectedSection => 'مسترد انوائس';
+
+  @override
+  String get zatcaNoPendingInvoices => 'کوئی زیر التوا انوائس نہیں';
+
+  @override
+  String get zatcaNoRejectedInvoices => 'کوئی مسترد انوائس نہیں';
+
+  @override
+  String zatcaRetriesLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count کوششیں',
+      one: '1 کوشش',
+      zero: 'کوئی دوبارہ کوشش نہیں',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get registrationInfo => 'رجسٹریشن کی معلومات';
 
   @override

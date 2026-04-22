@@ -1412,6 +1412,22 @@
   "users": "صارفین",
   "zatcaRegistered": "ZATCA میں رجسٹرڈ",
   "zatcaPhase2Active": "مرحلہ 2 فعال",
+  "zatcaQueueReportTitle": "ZATCA ارسال قطار",
+  "zatcaSent": "ارسال کیا گیا",
+  "zatcaPendingLabel": "زیر التوا",
+  "zatcaRejected": "مسترد",
+  "zatcaPendingSection": "زیر التوا انوائس",
+  "zatcaRejectedSection": "مسترد انوائس",
+  "zatcaNoPendingInvoices": "کوئی زیر التوا انوائس نہیں",
+  "zatcaNoRejectedInvoices": "کوئی مسترد انوائس نہیں",
+  "zatcaRetriesLabel": "{count, plural, =0{کوئی دوبارہ کوشش نہیں} =1{1 کوشش} other{{count} کوششیں}}",
+  "@zatcaRetriesLabel": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "registrationInfo": "رجسٹریشن کی معلومات",
   "businessName": "کاروبار کا نام",
   "branchCode": "برانچ کوڈ",

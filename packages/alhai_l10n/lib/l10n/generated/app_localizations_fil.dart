@@ -3083,6 +3083,42 @@ class AppLocalizationsFil extends AppLocalizations {
   String get zatcaPhase2Active => 'Phase 2 Aktibo';
 
   @override
+  String get zatcaQueueReportTitle => 'Queue ng ZATCA';
+
+  @override
+  String get zatcaSent => 'Naipadala';
+
+  @override
+  String get zatcaPendingLabel => 'Nakabinbin';
+
+  @override
+  String get zatcaRejected => 'Tinanggihan';
+
+  @override
+  String get zatcaPendingSection => 'Mga nakabinbing invoice';
+
+  @override
+  String get zatcaRejectedSection => 'Mga tinanggihang invoice';
+
+  @override
+  String get zatcaNoPendingInvoices => 'Walang nakabinbing invoice';
+
+  @override
+  String get zatcaNoRejectedInvoices => 'Walang tinanggihang invoice';
+
+  @override
+  String zatcaRetriesLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count retries',
+      one: '1 retry',
+      zero: 'Walang retry',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get registrationInfo => 'Impormasyon ng Pagpaparehistro';
 
   @override
