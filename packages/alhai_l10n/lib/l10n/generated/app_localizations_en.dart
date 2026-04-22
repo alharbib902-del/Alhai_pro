@@ -6853,6 +6853,115 @@ class AppLocalizationsEn extends AppLocalizations {
   String get lowStockLabel => 'Low';
 
   @override
+  String get stocktakingTitle => 'Stocktaking';
+
+  @override
+  String get expectedQty => 'Expected';
+
+  @override
+  String get countedQty => 'Counted';
+
+  @override
+  String get stockDelta => 'Delta';
+
+  @override
+  String get saveAllAdjustments => 'Save adjustments';
+
+  @override
+  String stocktakingSavedSuccess(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count adjustments saved',
+      one: '1 adjustment saved',
+      zero: 'No adjustments',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String stocktakingAdjustedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count adjustments',
+      one: '1 adjustment',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get stockTransfersTitle => 'Inter-branch transfers';
+
+  @override
+  String get stockTransferNewTitle => 'New stock transfer';
+
+  @override
+  String get stockTransferTabOutgoing => 'Outgoing';
+
+  @override
+  String get stockTransferTabIncoming => 'Incoming';
+
+  @override
+  String get stockTransferFromStore => 'From branch';
+
+  @override
+  String get stockTransferToStore => 'To branch';
+
+  @override
+  String get stockTransferAddItem => 'Add item';
+
+  @override
+  String get stockTransferNoItems => 'No items added yet';
+
+  @override
+  String get stockTransferCreate => 'Create transfer';
+
+  @override
+  String get stockTransferApprove => 'Approve';
+
+  @override
+  String get stockTransferReceive => 'Receive';
+
+  @override
+  String get stockTransferReject => 'Reject';
+
+  @override
+  String get stockTransferStatusPending => 'Pending';
+
+  @override
+  String get stockTransferStatusApproved => 'Approved';
+
+  @override
+  String get stockTransferStatusInTransit => 'In transit';
+
+  @override
+  String get stockTransferStatusReceived => 'Received';
+
+  @override
+  String get stockTransferStatusCancelled => 'Cancelled';
+
+  @override
+  String get stockTransferNoOutgoing => 'No outgoing transfers';
+
+  @override
+  String get stockTransferNoIncoming => 'No incoming transfers';
+
+  @override
+  String get stockTransferCreatedSuccess => 'Transfer created';
+
+  @override
+  String stockTransferItemCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '1 item',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get debtor => 'Debtor';
 
   @override

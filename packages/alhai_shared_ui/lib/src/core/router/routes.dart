@@ -86,6 +86,15 @@ class AppRoutes {
   /// Inventory alerts (low stock)
   static const String inventoryAlerts = '/inventory/alerts';
 
+  /// Periodic stocktaking reconciliation (M3).
+  static const String stocktaking = '/inventory/stocktaking';
+
+  /// Inter-branch stock transfers list (M4).
+  static const String stockTransfers = '/inventory/transfers';
+
+  /// Create new stock transfer (M4).
+  static const String stockTransferNew = '/inventory/transfers/new';
+
   // ============================================================================
   // CUSTOMERS ROUTES
   // ============================================================================

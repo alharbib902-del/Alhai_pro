@@ -6855,6 +6855,115 @@ class AppLocalizationsBn extends AppLocalizations {
   String get lowStockLabel => 'কম';
 
   @override
+  String get stocktakingTitle => 'স্টক গণনা';
+
+  @override
+  String get expectedQty => 'প্রত্যাশিত';
+
+  @override
+  String get countedQty => 'গণনাকৃত';
+
+  @override
+  String get stockDelta => 'পার্থক্য';
+
+  @override
+  String get saveAllAdjustments => 'সমন্বয় সংরক্ষণ';
+
+  @override
+  String stocktakingSavedSuccess(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countটি সমন্বয় সংরক্ষিত',
+      one: '1টি সমন্বয় সংরক্ষিত',
+      zero: 'কোনো সমন্বয় নেই',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String stocktakingAdjustedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countটি সমন্বয়',
+      one: '1টি সমন্বয়',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get stockTransfersTitle => 'শাখা-মধ্যবর্তী ট্রান্সফার';
+
+  @override
+  String get stockTransferNewTitle => 'নতুন স্টক ট্রান্সফার';
+
+  @override
+  String get stockTransferTabOutgoing => 'বহির্গামী';
+
+  @override
+  String get stockTransferTabIncoming => 'আগত';
+
+  @override
+  String get stockTransferFromStore => 'শাখা থেকে';
+
+  @override
+  String get stockTransferToStore => 'শাখায়';
+
+  @override
+  String get stockTransferAddItem => 'আইটেম যোগ করুন';
+
+  @override
+  String get stockTransferNoItems => 'এখনো কোনো আইটেম যোগ করা হয়নি';
+
+  @override
+  String get stockTransferCreate => 'ট্রান্সফার তৈরি করুন';
+
+  @override
+  String get stockTransferApprove => 'অনুমোদন';
+
+  @override
+  String get stockTransferReceive => 'গ্রহণ';
+
+  @override
+  String get stockTransferReject => 'প্রত্যাখ্যান';
+
+  @override
+  String get stockTransferStatusPending => 'অপেক্ষমান';
+
+  @override
+  String get stockTransferStatusApproved => 'অনুমোদিত';
+
+  @override
+  String get stockTransferStatusInTransit => 'পথে';
+
+  @override
+  String get stockTransferStatusReceived => 'গৃহীত';
+
+  @override
+  String get stockTransferStatusCancelled => 'বাতিল';
+
+  @override
+  String get stockTransferNoOutgoing => 'কোনো বহির্গামী ট্রান্সফার নেই';
+
+  @override
+  String get stockTransferNoIncoming => 'কোনো আগত ট্রান্সফার নেই';
+
+  @override
+  String get stockTransferCreatedSuccess => 'ট্রান্সফার তৈরি হয়েছে';
+
+  @override
+  String stockTransferItemCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$countটি আইটেম',
+      one: '1টি আইটেম',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get debtor => 'ঋণী';
 
   @override

@@ -3349,6 +3349,55 @@
   "newLabel": "نیا",
   "mixed": "مخلوط",
   "lowStockLabel": "کم",
+  "stocktakingTitle": "اسٹاک کی گنتی",
+  "expectedQty": "متوقع",
+  "countedQty": "شمار شدہ",
+  "stockDelta": "فرق",
+  "saveAllAdjustments": "ایڈجسٹمنٹس محفوظ کریں",
+  "stocktakingSavedSuccess": "{count, plural, =0{کوئی ایڈجسٹمنٹ نہیں} =1{1 ایڈجسٹمنٹ محفوظ} other{{count} ایڈجسٹمنٹس محفوظ}}",
+  "@stocktakingSavedSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stocktakingAdjustedCount": "{count, plural, =1{1 ایڈجسٹمنٹ} other{{count} ایڈجسٹمنٹس}}",
+  "@stocktakingAdjustedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stockTransfersTitle": "شاخوں کے درمیان ٹرانسفر",
+  "stockTransferNewTitle": "نیا اسٹاک ٹرانسفر",
+  "stockTransferTabOutgoing": "بھیجے گئے",
+  "stockTransferTabIncoming": "وصول شدہ",
+  "stockTransferFromStore": "شاخ سے",
+  "stockTransferToStore": "شاخ تک",
+  "stockTransferAddItem": "آئٹم شامل کریں",
+  "stockTransferNoItems": "ابھی کوئی آئٹم شامل نہیں کیا گیا",
+  "stockTransferCreate": "ٹرانسفر بنائیں",
+  "stockTransferApprove": "منظور",
+  "stockTransferReceive": "وصول کریں",
+  "stockTransferReject": "مسترد",
+  "stockTransferStatusPending": "زیر التواء",
+  "stockTransferStatusApproved": "منظور شدہ",
+  "stockTransferStatusInTransit": "راستے میں",
+  "stockTransferStatusReceived": "وصول شدہ",
+  "stockTransferStatusCancelled": "منسوخ",
+  "stockTransferNoOutgoing": "کوئی بھیجا گیا ٹرانسفر نہیں",
+  "stockTransferNoIncoming": "کوئی وصول شدہ ٹرانسفر نہیں",
+  "stockTransferCreatedSuccess": "ٹرانسفر بن گیا",
+  "stockTransferItemCount": "{count, plural, =1{1 آئٹم} other{{count} آئٹمز}}",
+  "@stockTransferItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "debtor": "مقروض",
   "creditor": "قرض دہندہ",
   "balanceLabel": "بیلنس",

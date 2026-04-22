@@ -3349,6 +3349,55 @@
   "newLabel": "جديد",
   "mixed": "مختلط",
   "lowStockLabel": "منخفض",
+  "stocktakingTitle": "جرد المخزون",
+  "expectedQty": "المتوقّع",
+  "countedQty": "المحسوب",
+  "stockDelta": "الفرق",
+  "saveAllAdjustments": "حفظ التسويات",
+  "stocktakingSavedSuccess": "{count, plural, =0{لا توجد تعديلات} one{تم حفظ تسوية واحدة} two{تم حفظ تسويتين} few{تم حفظ {count} تسويات} many{تم حفظ {count} تسوية} other{تم حفظ {count} تسوية}}",
+  "@stocktakingSavedSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stocktakingAdjustedCount": "{count, plural, one{تسوية واحدة} two{تسويتان} few{{count} تسويات} many{{count} تسوية} other{{count} تسوية}}",
+  "@stocktakingAdjustedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stockTransfersTitle": "التحويلات بين الفروع",
+  "stockTransferNewTitle": "تحويل مخزون جديد",
+  "stockTransferTabOutgoing": "صادرة",
+  "stockTransferTabIncoming": "واردة",
+  "stockTransferFromStore": "من فرع",
+  "stockTransferToStore": "إلى فرع",
+  "stockTransferAddItem": "إضافة منتج",
+  "stockTransferNoItems": "لم تُضف أي منتجات بعد",
+  "stockTransferCreate": "إنشاء التحويل",
+  "stockTransferApprove": "اعتماد",
+  "stockTransferReceive": "استلام",
+  "stockTransferReject": "رفض",
+  "stockTransferStatusPending": "قيد الموافقة",
+  "stockTransferStatusApproved": "مُعتمد",
+  "stockTransferStatusInTransit": "قيد النقل",
+  "stockTransferStatusReceived": "مُستلَم",
+  "stockTransferStatusCancelled": "ملغي",
+  "stockTransferNoOutgoing": "لا توجد تحويلات صادرة",
+  "stockTransferNoIncoming": "لا توجد تحويلات واردة",
+  "stockTransferCreatedSuccess": "تم إنشاء التحويل",
+  "stockTransferItemCount": "{count, plural, one{منتج واحد} two{منتجان} few{{count} منتجات} many{{count} منتجاً} other{{count} منتج}}",
+  "@stockTransferItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "debtor": "مدين",
   "creditor": "دائن",
   "balanceLabel": "الرصيد",

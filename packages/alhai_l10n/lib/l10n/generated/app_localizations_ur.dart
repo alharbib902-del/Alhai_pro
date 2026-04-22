@@ -6878,6 +6878,115 @@ class AppLocalizationsUr extends AppLocalizations {
   String get lowStockLabel => 'کم';
 
   @override
+  String get stocktakingTitle => 'اسٹاک کی گنتی';
+
+  @override
+  String get expectedQty => 'متوقع';
+
+  @override
+  String get countedQty => 'شمار شدہ';
+
+  @override
+  String get stockDelta => 'فرق';
+
+  @override
+  String get saveAllAdjustments => 'ایڈجسٹمنٹس محفوظ کریں';
+
+  @override
+  String stocktakingSavedSuccess(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ایڈجسٹمنٹس محفوظ',
+      one: '1 ایڈجسٹمنٹ محفوظ',
+      zero: 'کوئی ایڈجسٹمنٹ نہیں',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String stocktakingAdjustedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ایڈجسٹمنٹس',
+      one: '1 ایڈجسٹمنٹ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get stockTransfersTitle => 'شاخوں کے درمیان ٹرانسفر';
+
+  @override
+  String get stockTransferNewTitle => 'نیا اسٹاک ٹرانسفر';
+
+  @override
+  String get stockTransferTabOutgoing => 'بھیجے گئے';
+
+  @override
+  String get stockTransferTabIncoming => 'وصول شدہ';
+
+  @override
+  String get stockTransferFromStore => 'شاخ سے';
+
+  @override
+  String get stockTransferToStore => 'شاخ تک';
+
+  @override
+  String get stockTransferAddItem => 'آئٹم شامل کریں';
+
+  @override
+  String get stockTransferNoItems => 'ابھی کوئی آئٹم شامل نہیں کیا گیا';
+
+  @override
+  String get stockTransferCreate => 'ٹرانسفر بنائیں';
+
+  @override
+  String get stockTransferApprove => 'منظور';
+
+  @override
+  String get stockTransferReceive => 'وصول کریں';
+
+  @override
+  String get stockTransferReject => 'مسترد';
+
+  @override
+  String get stockTransferStatusPending => 'زیر التواء';
+
+  @override
+  String get stockTransferStatusApproved => 'منظور شدہ';
+
+  @override
+  String get stockTransferStatusInTransit => 'راستے میں';
+
+  @override
+  String get stockTransferStatusReceived => 'وصول شدہ';
+
+  @override
+  String get stockTransferStatusCancelled => 'منسوخ';
+
+  @override
+  String get stockTransferNoOutgoing => 'کوئی بھیجا گیا ٹرانسفر نہیں';
+
+  @override
+  String get stockTransferNoIncoming => 'کوئی وصول شدہ ٹرانسفر نہیں';
+
+  @override
+  String get stockTransferCreatedSuccess => 'ٹرانسفر بن گیا';
+
+  @override
+  String stockTransferItemCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count آئٹمز',
+      one: '1 آئٹم',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get debtor => 'مقروض';
 
   @override

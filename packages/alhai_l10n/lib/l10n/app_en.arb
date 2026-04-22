@@ -3349,6 +3349,55 @@
   "newLabel": "New",
   "mixed": "Mixed",
   "lowStockLabel": "Low",
+  "stocktakingTitle": "Stocktaking",
+  "expectedQty": "Expected",
+  "countedQty": "Counted",
+  "stockDelta": "Delta",
+  "saveAllAdjustments": "Save adjustments",
+  "stocktakingSavedSuccess": "{count, plural, =0{No adjustments} =1{1 adjustment saved} other{{count} adjustments saved}}",
+  "@stocktakingSavedSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stocktakingAdjustedCount": "{count, plural, =1{1 adjustment} other{{count} adjustments}}",
+  "@stocktakingAdjustedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stockTransfersTitle": "Inter-branch transfers",
+  "stockTransferNewTitle": "New stock transfer",
+  "stockTransferTabOutgoing": "Outgoing",
+  "stockTransferTabIncoming": "Incoming",
+  "stockTransferFromStore": "From branch",
+  "stockTransferToStore": "To branch",
+  "stockTransferAddItem": "Add item",
+  "stockTransferNoItems": "No items added yet",
+  "stockTransferCreate": "Create transfer",
+  "stockTransferApprove": "Approve",
+  "stockTransferReceive": "Receive",
+  "stockTransferReject": "Reject",
+  "stockTransferStatusPending": "Pending",
+  "stockTransferStatusApproved": "Approved",
+  "stockTransferStatusInTransit": "In transit",
+  "stockTransferStatusReceived": "Received",
+  "stockTransferStatusCancelled": "Cancelled",
+  "stockTransferNoOutgoing": "No outgoing transfers",
+  "stockTransferNoIncoming": "No incoming transfers",
+  "stockTransferCreatedSuccess": "Transfer created",
+  "stockTransferItemCount": "{count, plural, =1{1 item} other{{count} items}}",
+  "@stockTransferItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "debtor": "Debtor",
   "creditor": "Creditor",
   "balanceLabel": "Balance",

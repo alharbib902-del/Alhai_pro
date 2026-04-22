@@ -3349,6 +3349,55 @@
   "newLabel": "नया",
   "mixed": "मिश्रित",
   "lowStockLabel": "कम",
+  "stocktakingTitle": "स्टॉक गिनती",
+  "expectedQty": "अपेक्षित",
+  "countedQty": "गिना गया",
+  "stockDelta": "अंतर",
+  "saveAllAdjustments": "समायोजन सहेजें",
+  "stocktakingSavedSuccess": "{count, plural, =0{कोई समायोजन नहीं} =1{1 समायोजन सहेजा गया} other{{count} समायोजन सहेजे गए}}",
+  "@stocktakingSavedSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stocktakingAdjustedCount": "{count, plural, =1{1 समायोजन} other{{count} समायोजन}}",
+  "@stocktakingAdjustedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stockTransfersTitle": "शाखा-अंतरण",
+  "stockTransferNewTitle": "नया स्टॉक ट्रांसफर",
+  "stockTransferTabOutgoing": "बाहर जाने वाले",
+  "stockTransferTabIncoming": "आने वाले",
+  "stockTransferFromStore": "शाखा से",
+  "stockTransferToStore": "शाखा को",
+  "stockTransferAddItem": "आइटम जोड़ें",
+  "stockTransferNoItems": "अभी कोई आइटम नहीं जोड़ा गया",
+  "stockTransferCreate": "ट्रांसफर बनाएं",
+  "stockTransferApprove": "मंजूर करें",
+  "stockTransferReceive": "प्राप्त करें",
+  "stockTransferReject": "अस्वीकार करें",
+  "stockTransferStatusPending": "लंबित",
+  "stockTransferStatusApproved": "मंजूर",
+  "stockTransferStatusInTransit": "परिवहन में",
+  "stockTransferStatusReceived": "प्राप्त",
+  "stockTransferStatusCancelled": "रद्द",
+  "stockTransferNoOutgoing": "कोई बाहर जाने वाला ट्रांसफर नहीं",
+  "stockTransferNoIncoming": "कोई आने वाला ट्रांसफर नहीं",
+  "stockTransferCreatedSuccess": "ट्रांसफर बनाया गया",
+  "stockTransferItemCount": "{count, plural, =1{1 आइटम} other{{count} आइटम}}",
+  "@stockTransferItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "debtor": "ऋणी",
   "creditor": "लेनदार",
   "balanceLabel": "बैलेंस",

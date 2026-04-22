@@ -3349,6 +3349,55 @@
   "newLabel": "নতুন",
   "mixed": "মিশ্র",
   "lowStockLabel": "কম",
+  "stocktakingTitle": "স্টক গণনা",
+  "expectedQty": "প্রত্যাশিত",
+  "countedQty": "গণনাকৃত",
+  "stockDelta": "পার্থক্য",
+  "saveAllAdjustments": "সমন্বয় সংরক্ষণ",
+  "stocktakingSavedSuccess": "{count, plural, =0{কোনো সমন্বয় নেই} =1{1টি সমন্বয় সংরক্ষিত} other{{count}টি সমন্বয় সংরক্ষিত}}",
+  "@stocktakingSavedSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stocktakingAdjustedCount": "{count, plural, =1{1টি সমন্বয়} other{{count}টি সমন্বয়}}",
+  "@stocktakingAdjustedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stockTransfersTitle": "শাখা-মধ্যবর্তী ট্রান্সফার",
+  "stockTransferNewTitle": "নতুন স্টক ট্রান্সফার",
+  "stockTransferTabOutgoing": "বহির্গামী",
+  "stockTransferTabIncoming": "আগত",
+  "stockTransferFromStore": "শাখা থেকে",
+  "stockTransferToStore": "শাখায়",
+  "stockTransferAddItem": "আইটেম যোগ করুন",
+  "stockTransferNoItems": "এখনো কোনো আইটেম যোগ করা হয়নি",
+  "stockTransferCreate": "ট্রান্সফার তৈরি করুন",
+  "stockTransferApprove": "অনুমোদন",
+  "stockTransferReceive": "গ্রহণ",
+  "stockTransferReject": "প্রত্যাখ্যান",
+  "stockTransferStatusPending": "অপেক্ষমান",
+  "stockTransferStatusApproved": "অনুমোদিত",
+  "stockTransferStatusInTransit": "পথে",
+  "stockTransferStatusReceived": "গৃহীত",
+  "stockTransferStatusCancelled": "বাতিল",
+  "stockTransferNoOutgoing": "কোনো বহির্গামী ট্রান্সফার নেই",
+  "stockTransferNoIncoming": "কোনো আগত ট্রান্সফার নেই",
+  "stockTransferCreatedSuccess": "ট্রান্সফার তৈরি হয়েছে",
+  "stockTransferItemCount": "{count, plural, =1{1টি আইটেম} other{{count}টি আইটেম}}",
+  "@stockTransferItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "debtor": "ঋণী",
   "creditor": "পাওনাদার",
   "balanceLabel": "ব্যালেন্স",

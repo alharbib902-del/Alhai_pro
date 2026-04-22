@@ -6869,6 +6869,115 @@ class AppLocalizationsFil extends AppLocalizations {
   String get lowStockLabel => 'Mababa';
 
   @override
+  String get stocktakingTitle => 'Pagbilang ng Stock';
+
+  @override
+  String get expectedQty => 'Inaasahan';
+
+  @override
+  String get countedQty => 'Nabilang';
+
+  @override
+  String get stockDelta => 'Pagkakaiba';
+
+  @override
+  String get saveAllAdjustments => 'I-save ang mga pag-aayos';
+
+  @override
+  String stocktakingSavedSuccess(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pag-aayos ang na-save',
+      one: '1 pag-aayos ang na-save',
+      zero: 'Walang pag-aayos',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String stocktakingAdjustedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pag-aayos',
+      one: '1 pag-aayos',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get stockTransfersTitle => 'Mga transfer sa pagitan ng sangay';
+
+  @override
+  String get stockTransferNewTitle => 'Bagong transfer ng stock';
+
+  @override
+  String get stockTransferTabOutgoing => 'Papalabas';
+
+  @override
+  String get stockTransferTabIncoming => 'Papasok';
+
+  @override
+  String get stockTransferFromStore => 'Mula sa sangay';
+
+  @override
+  String get stockTransferToStore => 'Papunta sa sangay';
+
+  @override
+  String get stockTransferAddItem => 'Magdagdag ng item';
+
+  @override
+  String get stockTransferNoItems => 'Wala pang idinagdag na item';
+
+  @override
+  String get stockTransferCreate => 'Gumawa ng transfer';
+
+  @override
+  String get stockTransferApprove => 'Aprubahan';
+
+  @override
+  String get stockTransferReceive => 'Tanggapin';
+
+  @override
+  String get stockTransferReject => 'Tanggihan';
+
+  @override
+  String get stockTransferStatusPending => 'Nakabinbin';
+
+  @override
+  String get stockTransferStatusApproved => 'Naaprubahan';
+
+  @override
+  String get stockTransferStatusInTransit => 'Papunta';
+
+  @override
+  String get stockTransferStatusReceived => 'Natanggap';
+
+  @override
+  String get stockTransferStatusCancelled => 'Kinansela';
+
+  @override
+  String get stockTransferNoOutgoing => 'Walang papalabas na transfer';
+
+  @override
+  String get stockTransferNoIncoming => 'Walang papasok na transfer';
+
+  @override
+  String get stockTransferCreatedSuccess => 'Nagawa ang transfer';
+
+  @override
+  String stockTransferItemCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count na item',
+      one: '1 item',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get debtor => 'Debtor';
 
   @override

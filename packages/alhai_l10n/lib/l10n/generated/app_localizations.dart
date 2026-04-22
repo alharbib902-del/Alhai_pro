@@ -12871,6 +12871,174 @@ abstract class AppLocalizations {
   /// **'منخفض'**
   String get lowStockLabel;
 
+  /// No description provided for @stocktakingTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرد المخزون'**
+  String get stocktakingTitle;
+
+  /// No description provided for @expectedQty.
+  ///
+  /// In ar, this message translates to:
+  /// **'المتوقّع'**
+  String get expectedQty;
+
+  /// No description provided for @countedQty.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحسوب'**
+  String get countedQty;
+
+  /// No description provided for @stockDelta.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفرق'**
+  String get stockDelta;
+
+  /// No description provided for @saveAllAdjustments.
+  ///
+  /// In ar, this message translates to:
+  /// **'حفظ التسويات'**
+  String get saveAllAdjustments;
+
+  /// No description provided for @stocktakingSavedSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, =0{لا توجد تعديلات} one{تم حفظ تسوية واحدة} two{تم حفظ تسويتين} few{تم حفظ {count} تسويات} many{تم حفظ {count} تسوية} other{تم حفظ {count} تسوية}}'**
+  String stocktakingSavedSuccess(int count);
+
+  /// No description provided for @stocktakingAdjustedCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, one{تسوية واحدة} two{تسويتان} few{{count} تسويات} many{{count} تسوية} other{{count} تسوية}}'**
+  String stocktakingAdjustedCount(int count);
+
+  /// No description provided for @stockTransfersTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'التحويلات بين الفروع'**
+  String get stockTransfersTitle;
+
+  /// No description provided for @stockTransferNewTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحويل مخزون جديد'**
+  String get stockTransferNewTitle;
+
+  /// No description provided for @stockTransferTabOutgoing.
+  ///
+  /// In ar, this message translates to:
+  /// **'صادرة'**
+  String get stockTransferTabOutgoing;
+
+  /// No description provided for @stockTransferTabIncoming.
+  ///
+  /// In ar, this message translates to:
+  /// **'واردة'**
+  String get stockTransferTabIncoming;
+
+  /// No description provided for @stockTransferFromStore.
+  ///
+  /// In ar, this message translates to:
+  /// **'من فرع'**
+  String get stockTransferFromStore;
+
+  /// No description provided for @stockTransferToStore.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلى فرع'**
+  String get stockTransferToStore;
+
+  /// No description provided for @stockTransferAddItem.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة منتج'**
+  String get stockTransferAddItem;
+
+  /// No description provided for @stockTransferNoItems.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تُضف أي منتجات بعد'**
+  String get stockTransferNoItems;
+
+  /// No description provided for @stockTransferCreate.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء التحويل'**
+  String get stockTransferCreate;
+
+  /// No description provided for @stockTransferApprove.
+  ///
+  /// In ar, this message translates to:
+  /// **'اعتماد'**
+  String get stockTransferApprove;
+
+  /// No description provided for @stockTransferReceive.
+  ///
+  /// In ar, this message translates to:
+  /// **'استلام'**
+  String get stockTransferReceive;
+
+  /// No description provided for @stockTransferReject.
+  ///
+  /// In ar, this message translates to:
+  /// **'رفض'**
+  String get stockTransferReject;
+
+  /// No description provided for @stockTransferStatusPending.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيد الموافقة'**
+  String get stockTransferStatusPending;
+
+  /// No description provided for @stockTransferStatusApproved.
+  ///
+  /// In ar, this message translates to:
+  /// **'مُعتمد'**
+  String get stockTransferStatusApproved;
+
+  /// No description provided for @stockTransferStatusInTransit.
+  ///
+  /// In ar, this message translates to:
+  /// **'قيد النقل'**
+  String get stockTransferStatusInTransit;
+
+  /// No description provided for @stockTransferStatusReceived.
+  ///
+  /// In ar, this message translates to:
+  /// **'مُستلَم'**
+  String get stockTransferStatusReceived;
+
+  /// No description provided for @stockTransferStatusCancelled.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملغي'**
+  String get stockTransferStatusCancelled;
+
+  /// No description provided for @stockTransferNoOutgoing.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد تحويلات صادرة'**
+  String get stockTransferNoOutgoing;
+
+  /// No description provided for @stockTransferNoIncoming.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد تحويلات واردة'**
+  String get stockTransferNoIncoming;
+
+  /// No description provided for @stockTransferCreatedSuccess.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إنشاء التحويل'**
+  String get stockTransferCreatedSuccess;
+
+  /// No description provided for @stockTransferItemCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count, plural, one{منتج واحد} two{منتجان} few{{count} منتجات} many{{count} منتجاً} other{{count} منتج}}'**
+  String stockTransferItemCount(int count);
+
   /// No description provided for @debtor.
   ///
   /// In ar, this message translates to:

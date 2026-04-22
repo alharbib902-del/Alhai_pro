@@ -3349,6 +3349,55 @@
   "newLabel": "Bago",
   "mixed": "Halo-halo",
   "lowStockLabel": "Mababa",
+  "stocktakingTitle": "Pagbilang ng Stock",
+  "expectedQty": "Inaasahan",
+  "countedQty": "Nabilang",
+  "stockDelta": "Pagkakaiba",
+  "saveAllAdjustments": "I-save ang mga pag-aayos",
+  "stocktakingSavedSuccess": "{count, plural, =0{Walang pag-aayos} =1{1 pag-aayos ang na-save} other{{count} pag-aayos ang na-save}}",
+  "@stocktakingSavedSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stocktakingAdjustedCount": "{count, plural, =1{1 pag-aayos} other{{count} pag-aayos}}",
+  "@stocktakingAdjustedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stockTransfersTitle": "Mga transfer sa pagitan ng sangay",
+  "stockTransferNewTitle": "Bagong transfer ng stock",
+  "stockTransferTabOutgoing": "Papalabas",
+  "stockTransferTabIncoming": "Papasok",
+  "stockTransferFromStore": "Mula sa sangay",
+  "stockTransferToStore": "Papunta sa sangay",
+  "stockTransferAddItem": "Magdagdag ng item",
+  "stockTransferNoItems": "Wala pang idinagdag na item",
+  "stockTransferCreate": "Gumawa ng transfer",
+  "stockTransferApprove": "Aprubahan",
+  "stockTransferReceive": "Tanggapin",
+  "stockTransferReject": "Tanggihan",
+  "stockTransferStatusPending": "Nakabinbin",
+  "stockTransferStatusApproved": "Naaprubahan",
+  "stockTransferStatusInTransit": "Papunta",
+  "stockTransferStatusReceived": "Natanggap",
+  "stockTransferStatusCancelled": "Kinansela",
+  "stockTransferNoOutgoing": "Walang papalabas na transfer",
+  "stockTransferNoIncoming": "Walang papasok na transfer",
+  "stockTransferCreatedSuccess": "Nagawa ang transfer",
+  "stockTransferItemCount": "{count, plural, =1{1 item} other{{count} na item}}",
+  "@stockTransferItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "debtor": "Debtor",
   "creditor": "Creditor",
   "balanceLabel": "Balanse",

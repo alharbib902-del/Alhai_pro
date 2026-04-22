@@ -6846,6 +6846,115 @@ class AppLocalizationsId extends AppLocalizations {
   String get lowStockLabel => 'Rendah';
 
   @override
+  String get stocktakingTitle => 'Stok Opname';
+
+  @override
+  String get expectedQty => 'Diharapkan';
+
+  @override
+  String get countedQty => 'Dihitung';
+
+  @override
+  String get stockDelta => 'Selisih';
+
+  @override
+  String get saveAllAdjustments => 'Simpan penyesuaian';
+
+  @override
+  String stocktakingSavedSuccess(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count penyesuaian disimpan',
+      one: '1 penyesuaian disimpan',
+      zero: 'Tidak ada penyesuaian',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String stocktakingAdjustedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count penyesuaian',
+      one: '1 penyesuaian',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get stockTransfersTitle => 'Transfer antar cabang';
+
+  @override
+  String get stockTransferNewTitle => 'Transfer stok baru';
+
+  @override
+  String get stockTransferTabOutgoing => 'Keluar';
+
+  @override
+  String get stockTransferTabIncoming => 'Masuk';
+
+  @override
+  String get stockTransferFromStore => 'Dari cabang';
+
+  @override
+  String get stockTransferToStore => 'Ke cabang';
+
+  @override
+  String get stockTransferAddItem => 'Tambah item';
+
+  @override
+  String get stockTransferNoItems => 'Belum ada item yang ditambahkan';
+
+  @override
+  String get stockTransferCreate => 'Buat transfer';
+
+  @override
+  String get stockTransferApprove => 'Setujui';
+
+  @override
+  String get stockTransferReceive => 'Terima';
+
+  @override
+  String get stockTransferReject => 'Tolak';
+
+  @override
+  String get stockTransferStatusPending => 'Tertunda';
+
+  @override
+  String get stockTransferStatusApproved => 'Disetujui';
+
+  @override
+  String get stockTransferStatusInTransit => 'Dalam perjalanan';
+
+  @override
+  String get stockTransferStatusReceived => 'Diterima';
+
+  @override
+  String get stockTransferStatusCancelled => 'Dibatalkan';
+
+  @override
+  String get stockTransferNoOutgoing => 'Tidak ada transfer keluar';
+
+  @override
+  String get stockTransferNoIncoming => 'Tidak ada transfer masuk';
+
+  @override
+  String get stockTransferCreatedSuccess => 'Transfer dibuat';
+
+  @override
+  String stockTransferItemCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count item',
+      one: '1 item',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get debtor => 'Debtor';
 
   @override

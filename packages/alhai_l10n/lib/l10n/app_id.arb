@@ -3349,6 +3349,55 @@
   "newLabel": "Baru",
   "mixed": "Campuran",
   "lowStockLabel": "Rendah",
+  "stocktakingTitle": "Stok Opname",
+  "expectedQty": "Diharapkan",
+  "countedQty": "Dihitung",
+  "stockDelta": "Selisih",
+  "saveAllAdjustments": "Simpan penyesuaian",
+  "stocktakingSavedSuccess": "{count, plural, =0{Tidak ada penyesuaian} =1{1 penyesuaian disimpan} other{{count} penyesuaian disimpan}}",
+  "@stocktakingSavedSuccess": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stocktakingAdjustedCount": "{count, plural, =1{1 penyesuaian} other{{count} penyesuaian}}",
+  "@stocktakingAdjustedCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "stockTransfersTitle": "Transfer antar cabang",
+  "stockTransferNewTitle": "Transfer stok baru",
+  "stockTransferTabOutgoing": "Keluar",
+  "stockTransferTabIncoming": "Masuk",
+  "stockTransferFromStore": "Dari cabang",
+  "stockTransferToStore": "Ke cabang",
+  "stockTransferAddItem": "Tambah item",
+  "stockTransferNoItems": "Belum ada item yang ditambahkan",
+  "stockTransferCreate": "Buat transfer",
+  "stockTransferApprove": "Setujui",
+  "stockTransferReceive": "Terima",
+  "stockTransferReject": "Tolak",
+  "stockTransferStatusPending": "Tertunda",
+  "stockTransferStatusApproved": "Disetujui",
+  "stockTransferStatusInTransit": "Dalam perjalanan",
+  "stockTransferStatusReceived": "Diterima",
+  "stockTransferStatusCancelled": "Dibatalkan",
+  "stockTransferNoOutgoing": "Tidak ada transfer keluar",
+  "stockTransferNoIncoming": "Tidak ada transfer masuk",
+  "stockTransferCreatedSuccess": "Transfer dibuat",
+  "stockTransferItemCount": "{count, plural, =1{1 item} other{{count} item}}",
+  "@stockTransferItemCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "debtor": "Debtor",
   "creditor": "Creditor",
   "balanceLabel": "Saldo",

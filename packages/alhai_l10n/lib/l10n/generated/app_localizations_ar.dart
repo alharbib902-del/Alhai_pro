@@ -6862,6 +6862,124 @@ class AppLocalizationsAr extends AppLocalizations {
   String get lowStockLabel => 'منخفض';
 
   @override
+  String get stocktakingTitle => 'جرد المخزون';
+
+  @override
+  String get expectedQty => 'المتوقّع';
+
+  @override
+  String get countedQty => 'المحسوب';
+
+  @override
+  String get stockDelta => 'الفرق';
+
+  @override
+  String get saveAllAdjustments => 'حفظ التسويات';
+
+  @override
+  String stocktakingSavedSuccess(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'تم حفظ $count تسوية',
+      many: 'تم حفظ $count تسوية',
+      few: 'تم حفظ $count تسويات',
+      two: 'تم حفظ تسويتين',
+      one: 'تم حفظ تسوية واحدة',
+      zero: 'لا توجد تعديلات',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String stocktakingAdjustedCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count تسوية',
+      many: '$count تسوية',
+      few: '$count تسويات',
+      two: 'تسويتان',
+      one: 'تسوية واحدة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get stockTransfersTitle => 'التحويلات بين الفروع';
+
+  @override
+  String get stockTransferNewTitle => 'تحويل مخزون جديد';
+
+  @override
+  String get stockTransferTabOutgoing => 'صادرة';
+
+  @override
+  String get stockTransferTabIncoming => 'واردة';
+
+  @override
+  String get stockTransferFromStore => 'من فرع';
+
+  @override
+  String get stockTransferToStore => 'إلى فرع';
+
+  @override
+  String get stockTransferAddItem => 'إضافة منتج';
+
+  @override
+  String get stockTransferNoItems => 'لم تُضف أي منتجات بعد';
+
+  @override
+  String get stockTransferCreate => 'إنشاء التحويل';
+
+  @override
+  String get stockTransferApprove => 'اعتماد';
+
+  @override
+  String get stockTransferReceive => 'استلام';
+
+  @override
+  String get stockTransferReject => 'رفض';
+
+  @override
+  String get stockTransferStatusPending => 'قيد الموافقة';
+
+  @override
+  String get stockTransferStatusApproved => 'مُعتمد';
+
+  @override
+  String get stockTransferStatusInTransit => 'قيد النقل';
+
+  @override
+  String get stockTransferStatusReceived => 'مُستلَم';
+
+  @override
+  String get stockTransferStatusCancelled => 'ملغي';
+
+  @override
+  String get stockTransferNoOutgoing => 'لا توجد تحويلات صادرة';
+
+  @override
+  String get stockTransferNoIncoming => 'لا توجد تحويلات واردة';
+
+  @override
+  String get stockTransferCreatedSuccess => 'تم إنشاء التحويل';
+
+  @override
+  String stockTransferItemCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count منتج',
+      many: '$count منتجاً',
+      few: '$count منتجات',
+      two: 'منتجان',
+      one: 'منتج واحد',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get debtor => 'مدين';
 
   @override

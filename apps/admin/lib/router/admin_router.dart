@@ -103,6 +103,9 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart'
 
 // Local screens
 import '../screens/home_screen.dart';
+import '../screens/inventory/stocktaking_screen.dart';
+import '../screens/inventory/stock_transfers_screen.dart';
+import '../screens/inventory/stock_transfer_form_screen.dart';
 import '../screens/reports/zatca_queue_report_screen.dart';
 import '../ui/dashboard_shell.dart';
 
@@ -658,6 +661,26 @@ final List<RouteBase> _routes = [
         name: 'inventory-alerts',
         pageBuilder: (context, state) =>
             _buildFadePage(state: state, child: const InventoryAlertsScreen()),
+      ),
+      GoRoute(
+        path: AppRoutes.stocktaking,
+        name: 'stocktaking',
+        pageBuilder: (context, state) =>
+            _buildFadePage(state: state, child: const StocktakingScreen()),
+      ),
+      GoRoute(
+        path: AppRoutes.stockTransfers,
+        name: 'stock-transfers',
+        pageBuilder: (context, state) =>
+            _buildFadePage(state: state, child: const StockTransfersScreen()),
+      ),
+      GoRoute(
+        path: AppRoutes.stockTransferNew,
+        name: 'stock-transfer-new',
+        pageBuilder: (context, state) => _buildFadePage(
+          state: state,
+          child: const StockTransferFormScreen(),
+        ),
       ),
 
       // ====================================================================
