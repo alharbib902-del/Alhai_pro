@@ -7589,149 +7589,164 @@ END OF SESSION 42 — C-4 Session 1 meaningfully complete; 2 known round-trip bu
 
 ---
 
-# 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
+# 🚀 NEXT SESSION STARTING POINT (2026-04-24+)
 
-**Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
-**Purpose:** Single entry point for any fresh session (AI or human) to resume work WITHOUT re-reading all prior entries.
+**Written end-of-day 2026-04-23 after Session 42** — closes a 17-session / 40-commit marathon this day.
+**Purpose:** Single entry point for any fresh session (AI or human) to resume work WITHOUT re-reading all 17 prior session entries.
 
-Supersedes the prior "NEXT SESSION STARTING POINT" written Session 13 (2026-04-22 early).
+Supersedes the "NEXT SESSION STARTING POINT (2026-04-23+)" block that lived here until now.
 
 ## 0. Where to start
 
-**Read `memory/handover_2026_04_23.md` first.** That's the authoritative handover for continuity. This section is a pointer summary.
+**Read `memory/handover_2026_04_24.md` first.** That's the authoritative auto-memory handover for continuity. This section is a pointer summary of the same state.
 
 ## 1. Repo state snapshot
 
-- **Active branch:** `main` @ `4ebc4f73` (code) / `4ebc4f73` (log synced post-commit)
-- **All 3 remotes in sync:** local, backup, origin
-- **Live Supabase:** v75
-- **Drift schema:** v44
-- **Only 1 local branch:** `main` (down from 67 this morning)
+- **Active branch:** `main` @ `102430ba` (session-42 docs commit).
+- **Remotes:** `local`, `backup/main`, `origin/main` — all in sync at `102430ba`. `gitlab/main` has a prior divergence, left untouched (user reconciles manually).
+- **Live Supabase:** v75.
+- **v76 authored but NOT live-applied** → `supabase/migrations/20260423_v76_invoices_rls_org_null_fallback.sql` (C-10 fix). Awaits user execution on Supabase Dashboard.
+- **Drift schema:** v44 (unchanged today).
+- **Only 1 local branch:** `main`.
 
-## 2. Test baselines verified on main today
+## 2. Test baselines (end-of-day 2026-04-23)
 
-```
-alhai_core         667
-alhai_database     509 + 1 skipped
-alhai_sync         358
-alhai_zatca        850 + 1 skipped  ← ZATCA gate
-alhai_pos          559
-alhai_shared_ui    864                ← was 861; +3 Q1-UI widget tests (merged to main)
-alhai_reports      123
-alhai_pos/cashier  552
-customer_app       136
-driver_app         156
-admin              365
-admin_lite         183
-super_admin        222
------------
-                   5493 tests passing (main @ `ccb7b2dd`, +3 from Q1-UI merge)
-```
+| Package | Count | Δ vs morning |
+|---|---|---|
+| alhai_core | 671 | +4 (Product Money getters) |
+| alhai_database | 521 + 1 skipped | +12 (Q6 audit, M2 watchLowStock, M7 getZatcaSentCount, §B4 round-trip) |
+| alhai_sync | 358 | — |
+| **alhai_zatca** | **850 + 1 skipped** | — ← **ZATCA gate** |
+| alhai_pos | 577 | +18 (C-5 × 11, C-1 × 7) |
+| alhai_shared_ui | 869 | +8 (Q1-UI × 3, M1 × 5) |
+| alhai_reports | 123 | — |
+| cashier | 552 | — |
+| customer_app | 136 | — (not re-run) |
+| driver_app | 156 | — (not re-run) |
+| admin | 365 | — |
+| admin_lite | 183 | — |
+| super_admin | 222 | — |
+| distributor_portal | 420 | re-verified today |
 
-(distributor_portal 420 inferred, not re-run today)
+Aggregate \~5523 tests passing (up from 5490).
 
-## 3. 🔴 URGENT — pick first if credentials are ready
+## 3. 🔴 URGENT — awaits user input
 
-**Deploy customer_app + driver_app release builds.**
-- Code ready on main since Session 13 bundle work.
-- **User-provided credentials required** (5 items):
-  1. `customer_app/android/key.properties` + upload keystore `.jks`
-  2. `driver_app/android/key.properties` + upload keystore `.jks`
-  3. `customer_app/android/app/google-services.json`
-  4. `driver_app/android/app/google-services.json`
-  5. Play Console / App Store Connect credentials
-- **Impact while delayed:** customer_app `createOrder` 100% failing on live production. Every day = more failed orders.
-- **Estimated time:** 1-1.5h once credentials land.
+### 3a. Apply v76 C-10 RLS fallback on live Supabase Dashboard
 
-## 4. 🟠 Medium priority — one focused session per item
+File: `supabase/migrations/20260423_v76_invoices_rls_org_null_fallback.sql`. Pre-apply Q1+Q2, `BEGIN..COMMIT`, post-apply Q3+Q4, rollback DDL — all in the file header comment. No Dart change needed after apply; sync retry lifecycle drains historical stuck rows automatically.
 
-**Admin audit — Tier A all done** (as of 2026-04-23 session chain):
-- ~~Q1~~ — DONE Session 24 (DAO primitive)
-- ~~Q3~~ — DONE Session 24 (supplier VAT duplicate check)
-- ~~Q4~~ — DONE Session 24 (phone validation)
-- ~~Q5~~ — DONE Session 24 (dialog controller disposals)
-- ~~Q1-UI~~ — DONE Session 26 (soft-delete button on products list)
-- ~~Q2~~ — DONE Session 27 (confirmDelete helper + 4 marketing screens)
-- ~~Q6~~ — DONE Session 28 (productCreate + productEdit audit, H5 price-compare bug fixed)
+### 3b. Deploy customer_app + driver_app — credentials-blocked
 
-**Admin audit — Tier B feature sessions (2-4h each, priority order):**
-1. ~~**M2**~~ — FULLY DONE (dashboard Session 29 `86e14676`; notification badge Session 32 `d2ef87ef`)
-2. ~~**Q1-UI**~~ — DONE Session 26, merged at `ccb7b2dd`
-3. ~~**M1**~~ — DONE Session 30, merged at `0cc0406f`
-4. ~~**M7**~~ — DONE Session 31, merged at `e6057198`
-5. ~~**M3 + M4**~~ — DONE Session 33, merged at `f0c96284` (stocktaking + inter-branch transfers + create form + 26 l10n keys × 7 locales)
+Code has been deploy-ready since prior day's Session 13 bundle work. Awaits:
+1. `customer_app/android/key.properties` + upload keystore `.jks`
+2. `driver_app/android/key.properties` + upload keystore `.jks`
+3. `customer_app/android/app/google-services.json`
+4. `driver_app/android/app/google-services.json`
+5. Play Console / App Store Connect credentials
 
-**Tier B follow-ups (all optional polish):**
-- M4 stock-movement effects on transfer approval/receive — service to write `inventory_movements` + update `products.stock_qty` on both ends (noted scope-cut).
-- M3 stocktaking-session record — group adjustments into a bounding session row (noted scope-cut).
-- Widget tests for 3 new inventory screens (scope-cut).
-- M7 follow-ups — nav entry in ReportsScreen (alhai_reports package, shared with cashier); retry/purge actions for rejected items (needs permission decision); date-range filter.
-- M2 polish — redirect bell onTap to `/inventory/alerts` when count > 0.
-- Nav entries for `/inventory/stocktaking` + `/inventory/transfers` from home / reports index.
+Impact while delayed: customer_app `createOrder` 100 % failing on live production. Estimated ship time once credentials land: 1-1.5 h.
 
-**super_admin — ops (user-executed, not code):**
-- 6 GitHub Actions secrets + `deploy_web.yml` `--dart-define` flags
+## 4. 🟠 Pick-up order for a fresh session
 
-**super_admin Tier 3 U5/U9/U11/U13 — BLOCKED** until the original Arabic audit report is located (`test_alhai/super_admin/` not on disk).
+### 4a. admin `product_form_screen.dart:104-105` round-trip bug — **do first if touching admin**
 
-## 5. 🟢 Low priority
+Live bug surfaced by the Session 42 §B1 agent. Form seed reads int cents as SAR → save handler converts back as SAR → cents. Round-trip "open + save-without-change" = silent 100× price corruption. Fix is 2 lines + a regression test (≈ 15 min).
 
-- ~~C-1 Receipt number collision~~ — DONE Session 36, commit `ee44e78c` (per-device 4-hex-char suffix + 7 tests; alhai_pos 570 → 577)
-- ~~C-5 TLV encoder refactor~~ — DONE Session 35, commit `c240297c` (encodeTag / decodeQrData + 11 tests; alhai_pos 559 → 570)
-- ~~C-10 Historical NULL-orgId invoice cleanup~~ — Session 38 SHIPPED v76 RLS fallback migration (`9e45e502`); **awaits live apply on Supabase Dashboard** (user-executed per standing preference)
-- C-4 follow-ups: Money adoption in domain classes (partial — Product Money getters DONE Session 39 `542b719d`; Invoice / SaleItem / HeldInvoice / etc. still pending, C-4 Session 2+ per plan), `formatMoney` migration (Session 1 MOSTLY DONE as of Session 42: 10 display sites migrated across sessions 40/41/42, 2 cents-as-SAR display bugs fixed, 6 integration tests landed; 2 KNOWN BUGS / STRUCTURAL DECISIONS remain: customer_app's 3 display sites need an `alhai_shared_ui` dep decision, and `admin/product_form_screen.dart:104-105` has a live round-trip bug where the form seed + save halves don't agree on SAR vs cents — both flagged in Session 42 §"Scope NOT covered")
-- ~~`loyalty_transactions.sale_amount` decision~~ — DONE Session 34, commit `f0afcf02` (keep as-is, documented)
-- ~~distributor_portal test baseline re-run~~ — DONE Session 37, 420/420 confirmed
+### 4b. customer_app `alhai_shared_ui` dep decision — 3 display sites blocked
+
+`customer_app/lib/features/search/screens/search_screen.dart:152`, `catalog_screen.dart:432`, `product_detail_screen.dart:101`. Structural: either add the dep to pubspec (check no circular import) or vendor a minimal formatter into customer_app. Recommendation: add the dep.
+
+### 4c. C-4 Session 2 — Invoice / SaleItem / HeldInvoice — 8-10 h, ZATCA-critical
+
+Per `docs/sessions/c4-money-migration-plan.md` §3 Option B. Needs a fresh context. Touches the ZATCA encoder — full sandbox test run required.
+
+### 4d. C-4 Sessions 3 + 4 — 4-6 h + 3-4 h
+
+Session 3 — shifts & cash. Session 4 — analytics cleanup. Read-only for Session 4 (no schema change).
+
+### 4e. M4 stock-movement effects — 2-4 h after design decision
+
+Code has a 3-option design note at `apps/admin/lib/screens/inventory/stock_transfers_screen.dart:205`. Decide with user before implementing.
+
+### 4f. M2 bell onTap redirection — 15 min polish
+
+### 4g. super_admin Tier 3 U5/U9/U11/U13 — BLOCKED on missing audit doc
+
+## 5. ✅ Closed this day (2026-04-23)
+
+### Admin audit — Tier A (all done)
+Q1 / Q1-UI / Q2 / Q3 / Q4 / Q5 / Q6 — sessions 24 (prior day) + 26 / 27 / 28.
+
+### Admin audit — Tier B (all done for MVP, some polish deferred)
+Q1-UI / M1 / M2 (dashboard + badge) / M3 / M4 (UI) / M7 — sessions 26 / 29 / 30 / 31 / 32 / 33.
+
+### C-series
+- **C-1** Receipt-number cross-device collision — Session 36 `ee44e78c` (per-device 4-hex-char suffix, 7 new tests, includes cross-device regression).
+- **C-4 loyalty decision** — Session 34 `f0afcf02` (keep as-is, documented).
+- **C-4 Session 1** — meaningfully complete across sessions 39 / 40 / 41 / 42 (Product Money getters + 10 display-site migrations + 6 round-trip integration tests + 4 cents-as-SAR display bugs fixed + 1 latent formatter bug fixed). 2 follow-up items flagged (see §4a + §4b).
+- **C-5** TLV encoder refactor — Session 35 `c240297c` (encodeTag / decodeQrData + 11 tests + length-overflow guard).
+- **C-10** historical NULL-orgId RLS fallback — Session 38 `9e45e502` (v76 migration shipped; awaits live apply in §3a).
+
+### Baselines
+- distributor_portal re-verified at 420 (Session 37).
 
 ## 6. How to start
 
 ```bash
 # 1. confirm clean state
-git log --oneline -1    # expect 4ebc4f73
-git branch --list        # expect only main
+git log --oneline -1       # expect 102430ba or later
+git branch --list          # expect only main
 
-# 2. sanity check a subset of baselines
-cd packages/alhai_zatca && flutter test | tail -1   # 850 + 1 skipped
-cd alhai_core && flutter test | tail -1              # 667
+# 2. sanity-check a baseline subset
+cd packages/alhai_zatca && flutter test | tail -1   # 850 + 1 skipped ← ZATCA gate
+cd alhai_core && flutter test | tail -1              # 671
 
-# 3. create a feature branch (no dates per user preference)
-git checkout -b fix/<descriptive-name>
+# 3. start a feature branch (no dates per user preference)
+git checkout -b <type>/<descriptive-name>
 
-# 4. do the work. step-by-step SQL approval if live migrations. dual-log on every log edit.
-
-# 5. when done: commit → push backup + origin (if main-level) → wrap
+# 4. edit → analyze → test → commit → dual-log → push backup
+#    (push origin authorized for main-level docs commits per Session 38
+#    user explicit "فك الحجب كامل"; still ask for feature-branch origin.)
 ```
 
-## 7. User preferences (durable)
+## 7. User preferences (durable, unchanged)
 
-- Arabic chat
-- Branch names without dates
-- Step-by-step SQL — user approves every live apply
-- Atomic BEGIN..COMMIT + rollback DDL in comments
-- Pre-apply verification queries mandatory (tolerance-based with COALESCE NULL fix)
-- Never push to origin unprompted (exception: this session series after Session 19 user approved main push to origin as one-time consolidation)
-- Dual-log byte-identical after every log edit
+- **Arabic chat** when user writes Arabic.
+- **Branch names without dates** on feature branches.
+- **Step-by-step SQL approval** — user approves every live-apply.
+- **Atomic `BEGIN..COMMIT`** + rollback DDL in a header comment on every SQL migration.
+- **Pre-apply + post-apply verification queries** mandatory (tolerance-based with `COALESCE` NULL-fix).
+- **Never push to origin unprompted** — the 2026-04-23 "فك الحجب كامل" was a one-time authorization for the day's accumulated commits + subsequent session-38-onward commits; default is still to ask.
+- **Dual-log byte-identical** after every log edit (canonical + in-repo, `diff -q` must succeed).
+- **For code: edit → analyze → test → commit.** No separate gate approval on code.
 
-## 8. Key methodology lessons
+## 8. Key methodology lessons — refined this day
 
-1. **Phantom P0 pattern** — 8 cases so far. Always verify audit-report claims against current code/live before scoping.
-2. **Memory decays in days.** Spot-check against main before acting on intake doc.
-3. **Pre-apply invariant proofs miss IEEE 754 edge cases.** Run V-POST-C invariant check post-migration.
-4. **Appendix B NULL-over-empty fix:** `COALESCE(col, 0) = 0` in CASE.
-5. **Tolerance-based audit:** `ABS((col * 100) - ROUND(col * 100)) > 1e-6` distinguishes FP artifact from real data.
-6. **DAO aggregate API preservation:** divide cents internally, keep public double-SAR contract to avoid cascading consumer edits.
-7. **Agent delegation for mechanical fixture conversion** — cost-effective for 40+ errors.
-8. **Fork resource cap:** ≤4 parallel test suites on Windows.
+1. **Phantom P0 pattern** — 8+ cases. Always verify audit claims against current code/live before scoping.
+2. **Memory decays in days.** Spot-check against `main` before acting on an intake doc.
+3. **Parallel agents-in-worktrees work well** for mechanical tasks with "skip + flag" discipline. Two successful agents this day; cherry-pick is the right integration path when main has advanced during the agent's run.
+4. **Cents-as-SAR display bugs are more common than C-4 planned.** 4 found + fixed this session. A retroactive grep pass is listed in §4 above.
+5. **`StoreSettings.defaultCurrencySymbol` vs l10n suffixes** — pick `formatMoney` when you want the symbol; pick `formatNumber` when the l10n template already wraps it.
+6. **Windows worktree cleanup** needs `unlock` → `remove --force` → `branch -D`.
+7. **Pre-apply invariant proofs miss IEEE 754 edge cases.** Run V-POST-C invariant check post-migration.
+8. **DAO aggregate API preservation** — divide cents internally, keep public double-SAR contract to avoid cascading consumer edits.
+9. **Fork resource cap on Windows** — ≤ 4 parallel test suites before fork exhaustion.
 
 ## 9. Artifacts to know
 
 - Canonical log: `C:\Users\basem\OneDrive\Desktop\alhai_check-18-04-2026\cashier\FIX_SESSION_LOG.md`
-- In-repo log: `docs/sessions/FIX_SESSION_LOG.md` (byte-identical)
-- Handover (detailed): `memory/handover_2026_04_23.md`
-- C-4 plan: `docs/sessions/c4-money-migration-plan.md`
-- Admin audit status: `docs/reports/admin-audit-status-2026-04-22.md`
-- Drift schemaVersion: `packages/alhai_database/lib/src/app_database.dart` (`44`)
+- In-repo log: `docs/sessions/FIX_SESSION_LOG.md` (byte-identical).
+- Auto-memory handover (authoritative): `memory/handover_2026_04_24.md`.
+- C-4 plan: `docs/sessions/c4-money-migration-plan.md`.
+- Admin audit status: `docs/reports/admin-audit-status-2026-04-22.md`.
+- v76 awaits-apply migration: `supabase/migrations/20260423_v76_invoices_rls_org_null_fallback.sql`.
+- Money type: `alhai_core/lib/src/models/money.dart`.
+- Product Money getters: `alhai_core/lib/src/models/product.dart` (≈ lines 60-75).
+- TerminalSuffixService (C-1): `packages/alhai_pos/lib/src/services/terminal_suffix_service.dart`.
+- Money round-trip integration test: `packages/alhai_database/test/integration/money_roundtrip_flow_test.dart`.
+- Drift schemaVersion: `packages/alhai_database/lib/src/app_database.dart` (`44`).
 
 ---
 
-END OF NEXT SESSION STARTING POINT — ready for 2026-04-23+ work
+END OF NEXT SESSION STARTING POINT — ready for 2026-04-24+ work
