@@ -5671,3 +5671,65 @@ Both used `current_setting('app.current_org_id')`. Grep across Dart + SQL confir
 ---
 
 END OF SESSION 17 — Supabase cleanup COMPLETE
+
+---
+
+# Session 18 — super_admin platform_settings investigation (2026-04-22)
+
+**Branch:** `fix/cleanup-indexes-orphans` (no new branch — investigation/docs only).
+**Commit:** none (zero code changes; log-only).
+**Budget:** ~25 min.
+
+## Summary
+
+User requested items #5 + #6 from Session 17 backlog (super_admin Tier 3 + admin audit). Investigation surfaced:
+
+- **super_admin Tier 3** — per 2026-04-18 memory, all P0/P1/P2/P3 already CLOSED; only "ops" work remaining (GitHub Actions secrets + apply `v43_platform_settings.sql` to live).
+- **admin audit (310 findings, 42 P0s)** — artifact `test_alhai/admin/` doesn't exist on disk; cannot execute without reference doc.
+
+User chose Option A: author the missing `v43_platform_settings.sql` → v76 in our numbering.
+
+## Discovery: the table ALREADY EXISTS on live, fully operational
+
+Attempted `CREATE TABLE IF NOT EXISTS platform_settings (id text PRIMARY KEY …)` → failed at INSERT with `ERROR 22P02: invalid input syntax for type integer: "singleton"`.
+
+Diagnosis: the table exists on live with `id integer` (not `text`). The `IF NOT EXISTS` silently skipped creation, but the follow-up INSERT assumed the `text 'singleton'` scheme this session proposed.
+
+Introspection revealed:
+
+| Check | Actual state (live, 2026-04-22) |
+|---|---|
+| Columns | 13 total — 10 fields matching Dart `SAPlatformSettings` + `id integer` + `updated_at timestamptz` + `updated_by uuid` |
+| Row count | **1** (singleton already seeded) |
+| RLS | ✓ enabled |
+| Policies | 2 — `platform_settings_select_super_admin` + `platform_settings_update_super_admin` |
+| Triggers | 2 — `platform_settings_audit_trigger` + `platform_settings_touch_updated_at` |
+| Row values (`SELECT *`) | All match Dart defaults: zatca=production, vat_rate=15.00, lang=ar, currency=SAR, trial=14 days, moyasar=true, tabby=true, hyperpay=false, tamara=false. Last updated_at = 2026-04-19 04:50:45 UTC. |
+
+**Conclusion:** `v43_platform_settings.sql` was **applied on 2026-04-19** (3 days before this investigation). The 2026-04-17 memory's "apply v43" ops task was already complete; memory never got updated to reflect it.
+
+The Dart provider (`sa_settings_providers.dart:17`) uses a defensive `catch (_) { return const SAPlatformSettings(); }` which would have silently returned defaults if the table were really missing — and may have been masking the apparent P0 all along. Actual behavior since 2026-04-19: table read succeeds, values come from live row.
+
+## Net result
+
+- **Zero code changes.** No migration file authored. No Dart edits.
+- **One stale-memory corrective entry** logged here.
+- **super_admin last remaining P0 was a phantom** — like the original 3 P0s we confirmed closed in Session 13.
+
+## Methodology note
+
+Sixth or seventh "phantom P0" surfaced across these 6+ sessions:
+- Session 12: audit-bypass phantoms (A-5 phantom column, C-2 phantom rename, C-1 phantom terminology)
+- Session 13: 3 super_admin original P0s all CLOSED via silent prior work
+- Session 18 (today): platform_settings P0 closed via silent prior work
+
+**Pattern:** memory from separate intake sessions becomes stale quickly; verify on live before executing based on intake doc. Every session should spend 5 min doing live-state introspection before proceeding with migration/fix work. This session did exactly that and saved ~30 min of unnecessary code.
+
+## Follow-up for a future session
+
+1. Admin audit (310 findings, 42 P0s) — locate the source artifact (possibly in an external directory, stash, or handover file not on disk) before scoping a work session.
+2. Stale-memory cleanup — the super_admin 2026-04-17 memory should be updated to reflect post-2026-04-18 state (all code P0s closed; only CI secrets + doc polish remain).
+
+---
+
+END OF SESSION 18 — investigation only, no code changes
