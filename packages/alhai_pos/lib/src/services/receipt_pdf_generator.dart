@@ -275,7 +275,8 @@ class ReceiptPdfGenerator {
           pw.SizedBox(
             width: 40,
             child: pw.Text(
-              item.unitPrice.toStringAsFixed(2),
+              // C-4 Session 2: sale_items.unitPrice/total are int cents.
+              (item.unitPrice / 100.0).toStringAsFixed(2),
               style: const pw.TextStyle(fontSize: 9),
               textAlign: pw.TextAlign.center,
             ),
@@ -283,7 +284,7 @@ class ReceiptPdfGenerator {
           pw.SizedBox(
             width: 45,
             child: pw.Text(
-              item.total.toStringAsFixed(2),
+              (item.total / 100.0).toStringAsFixed(2),
               style: const pw.TextStyle(fontSize: 9),
               textAlign: pw.TextAlign.left,
             ),
@@ -298,14 +299,21 @@ class ReceiptPdfGenerator {
   static pw.Widget _buildTotals(SalesTableData sale) {
     return pw.Column(
       children: [
-        _totalRow('المجموع الفرعي', sale.subtotal.toStringAsFixed(2)),
+        // C-4 Session 3: sales money columns are int cents.
+        _totalRow(
+          'المجموع الفرعي',
+          (sale.subtotal / 100.0).toStringAsFixed(2),
+        ),
         if (sale.discount > 0)
           _totalRow(
             'الخصم',
-            '-${sale.discount.toStringAsFixed(2)}',
+            '-${(sale.discount / 100.0).toStringAsFixed(2)}',
             color: PdfColors.green700,
           ),
-        _totalRow('ضريبة القيمة المضافة 15%', sale.tax.toStringAsFixed(2)),
+        _totalRow(
+          'ضريبة القيمة المضافة 15%',
+          (sale.tax / 100.0).toStringAsFixed(2),
+        ),
         pw.SizedBox(height: 4),
         // خط مزدوج
         pw.Container(
@@ -328,7 +336,7 @@ class ReceiptPdfGenerator {
                 textDirection: pw.TextDirection.rtl,
               ),
               pw.Text(
-                '${sale.total.toStringAsFixed(2)} $_currency',
+                '${(sale.total / 100.0).toStringAsFixed(2)} $_currency',
                 style: pw.TextStyle(
                   fontSize: 13,
                   fontWeight: pw.FontWeight.bold,
@@ -349,15 +357,16 @@ class ReceiptPdfGenerator {
     return pw.Column(
       children: [
         _infoRow('طريقة الدفع', methodLabel),
+        // C-4 Session 3: sales.amountReceived / changeAmount are int cents.
         if (sale.amountReceived != null && sale.amountReceived! > 0)
           _infoRow(
             'المبلغ المدفوع',
-            '${sale.amountReceived!.toStringAsFixed(2)} $_currency',
+            '${(sale.amountReceived! / 100.0).toStringAsFixed(2)} $_currency',
           ),
         if (sale.changeAmount != null && sale.changeAmount! > 0)
           _infoRow(
             'الباقي',
-            '${sale.changeAmount!.toStringAsFixed(2)} $_currency',
+            '${(sale.changeAmount! / 100.0).toStringAsFixed(2)} $_currency',
           ),
       ],
     );
