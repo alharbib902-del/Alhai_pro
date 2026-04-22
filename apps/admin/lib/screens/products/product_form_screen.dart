@@ -973,12 +973,16 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
 
         await db.productsDao.updateProduct(updated);
 
-        // Log price change to audit trail if price changed
-        final newPrice = double.tryParse(priceText) ?? 0.0;
-        if (existing.price != newPrice) {
-          try {
-            final currentUser = ref.read(currentUserProvider);
-            db.auditLogDao.log(
+        // Audit trail (Q6 — extends H5 to full product-edit diff).
+        // - priceChange stays as a separate entry (compliance signal).
+        // - productEdit captures all other field changes in one diff entry.
+        try {
+          final currentUser = ref.read(currentUserProvider);
+
+          // Price is int cents on both sides now (C-4); previous code compared
+          // int cents to SAR double and always fired for non-zero prices.
+          if (existing.price != priceCents) {
+            await db.auditLogDao.log(
               storeId: storeId,
               userId: currentUser?.id ?? 'unknown',
               userName: currentUser?.name ?? 'unknown',
@@ -986,13 +990,66 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
               entityType: 'product',
               entityId: existing.id,
               oldValue: {'price': existing.price},
-              newValue: {'price': newPrice},
+              newValue: {'price': priceCents},
               description:
-                  'Price changed for "${existing.name}": ${existing.price} \u2192 $newPrice',
+                  'Price changed for "${existing.name}": ${existing.price} \u2192 $priceCents cents',
             );
-          } catch (_) {
-            // Audit logging should not block the save
           }
+
+          final oldValues = <String, dynamic>{};
+          final newValues = <String, dynamic>{};
+          if (existing.name != name) {
+            oldValues['name'] = existing.name;
+            newValues['name'] = name;
+          }
+          final newBarcode = barcode.isEmpty ? null : barcode;
+          if (existing.barcode != newBarcode) {
+            oldValues['barcode'] = existing.barcode;
+            newValues['barcode'] = newBarcode;
+          }
+          final newStock = double.tryParse(stockText) ?? 0.0;
+          if (existing.stockQty != newStock) {
+            oldValues['stock_qty'] = existing.stockQty;
+            newValues['stock_qty'] = newStock;
+          }
+          final newMin = double.tryParse(minStockText) ?? 1.0;
+          if (existing.minQty != newMin) {
+            oldValues['min_qty'] = existing.minQty;
+            newValues['min_qty'] = newMin;
+          }
+          if (existing.categoryId != _selectedCategoryId) {
+            oldValues['category_id'] = existing.categoryId;
+            newValues['category_id'] = _selectedCategoryId;
+          }
+          if (existing.isActive != _isActive) {
+            oldValues['is_active'] = existing.isActive;
+            newValues['is_active'] = _isActive;
+          }
+          if (existing.trackInventory != _trackInventory) {
+            oldValues['track_inventory'] = existing.trackInventory;
+            newValues['track_inventory'] = _trackInventory;
+          }
+          if (existing.costPrice != costPriceCents) {
+            oldValues['cost_price'] = existing.costPrice;
+            newValues['cost_price'] = costPriceCents;
+          }
+
+          if (newValues.isNotEmpty) {
+            await db.auditLogDao.log(
+              storeId: storeId,
+              userId: currentUser?.id ?? 'unknown',
+              userName: currentUser?.name ?? 'unknown',
+              action: AuditAction.productEdit,
+              entityType: 'product',
+              entityId: existing.id,
+              oldValue: oldValues,
+              newValue: newValues,
+              description:
+                  'Edited product "${existing.name}" — ${newValues.keys.join(", ")}',
+            );
+          }
+        } catch (_) {
+          // Audit logging should not block the save
         }
 
         if (mounted) {
@@ -1029,6 +1086,32 @@ class _ProductFormScreenState extends ConsumerState<ProductFormScreen> {
         );
 
         await db.productsDao.insertProduct(companion);
+
+        // Audit trail for product creation (Q6 — extends H5 pattern).
+        try {
+          final currentUser = ref.read(currentUserProvider);
+          await db.auditLogDao.log(
+            storeId: storeId,
+            userId: currentUser?.id ?? 'unknown',
+            userName: currentUser?.name ?? 'unknown',
+            action: AuditAction.productCreate,
+            entityType: 'product',
+            entityId: productId,
+            newValue: {
+              'name': name,
+              'barcode': barcode.isEmpty ? null : barcode,
+              'price': insertPriceCents,
+              'cost_price': insertCostPriceCents,
+              'stock_qty': double.tryParse(stockText) ?? 0.0,
+              'category_id': _selectedCategoryId,
+              'is_active': _isActive,
+              'track_inventory': _trackInventory,
+            },
+            description: 'Created product "$name"',
+          );
+        } catch (_) {
+          // Audit logging must not block the create UX.
+        }
 
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
