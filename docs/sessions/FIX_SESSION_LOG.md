@@ -6028,3 +6028,102 @@ Down to **3** (main + 2):
 ---
 
 END OF SESSION 21 — super_admin audit closures consolidated to main
+
+---
+
+# Session 22 — driver_app test cherry-pick + Money v1 delete (2026-04-22)
+
+**Branch:** `main`.
+**Commit:** `20ffc4af` (driver_app test cherry-pick) + log commit.
+**Budget:** ~20 min.
+
+## Summary
+
+Closed out the last 2 orphan branches. Local branch count: **3 → 1** (only main remains).
+
+## Part A — driver_app test coverage merge
+
+**Source:** `fix/driver-app-test-coverage-20260422` (15 commits).
+
+**Trial merge:** failed with conflict in `docs/sessions/FIX_SESSION_LOG.md` (both sides diverged on the log). Aborted.
+
+**Strategy:** cherry-picked only the valuable commit (`e47d4e78 test(driver_app): unit coverage for store_id upsert fix — drivers S-1 closure`). The other 14 commits were log fan-outs + C-9 Phase A/B/C/D migrations (already on main via chain) + the c0185a2 client fix (already cherry-picked).
+
+**Cherry-pick clean.** 1 new test file: `driver_app/test/features/auth/data/driver_auth_datasource_test.dart` (+345 LOC, 4 new tests).
+
+Covers the +14 LOC from c0185a2 with inline-fake Supabase chain (from/select/eq/single + from/upsert) — happy path + null/empty store_id throws Arabic exception.
+
+**Verification:**
+- driver_app tests: **156 / 156** ✓ (up from 152, +4 new)
+- Pushed to backup + origin ✓
+- Source branch deleted ✓
+
+## Part B — Money v1 vs v2 comparison
+
+**Branches compared:**
+- `feat/c4-session-0-money-foundation-20260422` (v1, on branch only)
+- `main` (v2, Session 13 `4de24ab`)
+
+**Key differences:**
+
+| Aspect | v1 (branch) | v2 (main) |
+|---|---|---|
+| Path | `alhai_core/lib/src/money/money.dart` | `alhai_core/lib/src/models/money.dart` |
+| Impl LOC | 327 | 167 |
+| Test LOC | 262 | 440 |
+| `@immutable` annotation | yes | no |
+| `fromDouble` rounding | **string-based** (avoids FP artifacts) | direct FP rounding with pin test |
+| `Money.fromDouble(1.005)` | → 101 cents (user intent preserved) | → 100 cents (FP artifact documented) |
+| Consumer sites using | 0 (never merged) | 65+ across C-4 Sessions 1-4 |
+
+**Trade-off:** v1's string-based rounding better preserves user intent at half-decimal boundaries. But v2 is already integrated, widely tested, and the FP-artifact behavior is explicitly pinned as intentional. Adopting v1 would require re-verifying all 65 C-4 consumer sites.
+
+**Decision:** Delete v1. Preserve the string-based rounding idea in the log for potential future rescue as a separate utility if needed.
+
+**Executed:** `git branch -D feat/c4-session-0-money-foundation-20260422` (was `286b54e2`).
+
+## Final branch state
+
+**1 branch remaining** on local: `main`.
+
+From morning:
+- 67 local branches (including 7 worktree-agent temps)
+- 1 main
+
+After Sessions 19 + 20 + 21 + 22:
+- 1 branch (`main`)
+- All valuable work on main
+- 2 real-work branches (super_admin + driver_app) merged in Sessions 21 + 22
+- 1 duplicate-impl branch (Money v1) deleted in this session
+
+**Backup remote** retains all deleted branches as a historical archive (recovery via `git checkout -b <name> backup/<name>` if ever needed).
+
+## Test baselines (final, 2026-04-22)
+
+All 11 packages verified green within the 9-session series:
+
+| Package | Count | Session verified |
+|---|---|---|
+| alhai_core | 667 | 20 |
+| alhai_database | 508 + 1 skip | 17 |
+| alhai_sync | 358 | 16 |
+| alhai_zatca | 850 + 1 skip | 17 |
+| alhai_pos | 559 | 17 |
+| alhai_shared_ui | 861 | 17 |
+| alhai_reports | 123 | 17 |
+| cashier | 552 | 17 |
+| customer_app | 136 | 17 |
+| driver_app | **156** | **22 (↑ from 152)** |
+| admin | 365 | 17 |
+| admin_lite | 183 | 17 |
+| super_admin | **222** | **21 (↑ from 219)** |
+
+**New aggregate: 5489 tests passing** (was 5463 at Session 21 close; driver_app +4 this session).
+
+## Risk
+
+Zero. Session was pure branch cleanup + 1 small test cherry-pick. No schema change, no Supabase migration, no consumer code touched beyond the new test file.
+
+---
+
+END OF SESSION 22 — repo fully consolidated onto main (67 → 1 branch)
