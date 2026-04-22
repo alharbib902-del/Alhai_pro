@@ -5450,3 +5450,170 @@ Aggregate: **5338 tests passing**.
 ---
 
 END OF SESSION 15 — C-4 Session 3 COMPLETE
+
+---
+
+# Session 16 — C-4 Session 4 Execution (2026-04-22, same day as Sessions 13 + 14 + 15)
+
+**Budget:** User extended another 6h immediately after Session 15 wrap.
+**Branch:** `fix/c4-session-4-analytics` forked from `fix/c4-session-3-shifts-sales` @ `63d96e16`.
+**End state:** `e5797957` (code) + log entry commit to follow.
+
+## Summary
+
+Fourth and final C-4 execution session done **in the same calendar day** as Sessions 13 + 14 + 15. Analytics + supporting tables migrated from double precision to INTEGER cents on both Drift (v43 → v44) and live Supabase (v74). **11 test suites all green end-to-end, ZATCA compliance gate preserved.**
+
+**Net diff (e5797957):** 66 files, +1035 / −751 LOC.
+
+## Pre-flight
+
+Branch forked from `63d96e16`. Schema introspection confirmed **27 money columns across 11 tables** — clean match against plan §2.1 after adjusting for live-Supabase reality (loyalty_transactions.sale_amount NOT present on live; skip for this session).
+
+### Appendix B audit — ALL SAFE (Stage A pattern)
+
+All 11 tables EMPTY on server (0 rows each). Tolerance-based + COALESCE verdict logic produced `✓ SAFE` across all 27 columns. No data-loss risk, no invariant concerns.
+
+Tables covered:
+- accounts (2), coupons (2), daily_summaries (8), expenses (1), loyalty_rewards (2), purchase_items (2), purchases (4), return_items (2), returns (1), suppliers (1), transactions (2)
+
+## Drift v44 — schema + migration
+
+### Table definition changes (9 files)
+
+| File | RealColumn → IntColumn |
+|---|---|
+| `tables/accounts_table.dart` | balance, creditLimit (2) |
+| `tables/expenses_table.dart` | amount (1) |
+| `tables/purchases_table.dart` (PurchasesTable) | subtotal, tax, discount, total (4) |
+| `tables/purchases_table.dart` (PurchaseItemsTable) | unitCost, total (2) |
+| `tables/returns_table.dart` (ReturnsTable) | totalRefund (1) |
+| `tables/returns_table.dart` (ReturnItemsTable) | unitPrice, refundAmount (2) |
+| `tables/daily_summaries_table.dart` | totalSalesAmount, totalOrdersAmount, totalRefundsAmount, totalExpenses, cashTotal, cardTotal, creditTotal, netProfit (8) |
+| `tables/transactions_table.dart` | amount, balanceAfter (2) |
+| `tables/suppliers_table.dart` | balance (1) |
+| `tables/loyalty_table.dart` (LoyaltyRewardsTable) | rewardValue, minPurchase (2) |
+| `tables/discounts_table.dart` (CouponsTable) | value, minPurchase (2) |
+
+`purchase_items.qty`, `purchase_items.receivedQty`, `return_items.qty` stay Real (quantities). `daily_summaries.totalSales/totalOrders/totalRefunds` stay int (counts).
+
+### `app_database.dart`
+
+- `schemaVersion` 43 → 44
+- Added `case 44:` with 11 `TableMigration` blocks (one per table), all using `CustomExpression<int>('CAST(ROUND(col * 100) AS INTEGER)')`.
+- Pattern identical to v40/v41/v42/v43.
+
+### build_runner
+
+66s, 272 outputs, clean.
+
+## Supabase v74 — live DB migration
+
+Atomic BEGIN..COMMIT with 27 ALTER COLUMN statements across 11 tables. Rollback DDL included in header comment.
+
+### V-POST verification (user-executed)
+
+| Query | Result |
+|---|---|
+| V-POST-A | ✓ 27 columns all `data_type='integer'` |
+| V-POST-B | ✓ all 11 tables still 0 rows |
+
+No data preservation concerns — tables were empty pre-migration, stayed empty post-migration.
+
+## Consumer rewiring — 134 compile errors + follow-up
+
+Two agent runs (first hit 529 Overloaded mid-run at 14 errors fixed; second completed remaining 119). Plus 1 follow-up error in `alhai_reports/lib/src/screens/reports/customer_report_screen.dart:113` surfaced during admin_lite test load (not in the compile-error counts because alhai_reports was initially missed from the per-package error scan).
+
+### Production changes (lib/)
+
+- **alhai_database**: DAO layer conversions in expenses, loyalty, purchases, returns, suppliers, transactions, accounts. Preserved aggregate-helper public API as double SAR (internal cents-to-SAR division), same pattern as sales_dao.dart in Session 3.
+- **alhai_pos**: returns provider, POS cart panel (coupon), refund screens (reason / receipt), returns screen, sale_service (account balance mixing), customer_quick_info widget.
+- **alhai_shared_ui**: expenses/suppliers providers (Value int), customer_debt + customer_detail + customers screens (display conversions).
+- **alhai_reports**: customer_report_screen totalSpent cents → SAR (follow-up).
+- **cashier**: apply_interest, customer_ledger, new_transaction screens (balance math). cashier_purchase_request_screen price-in-cents calc.
+- **admin**: marketing + purchases providers (with sync payload updates). customer_ledger, gift_cards, ai_invoice_review, purchase_form screens.
+- **admin_lite**: lite_management_providers refund/purchase cents display.
+
+### Sync-payload caveat
+
+Agent updated sync-queue payload dicts for coupons + purchases to send int cents to Supabase (matching local). Since v74 applied BEFORE this commit, remote schema matches — no drift. But per agent report: worth verifying the sync pipeline's next round on a test coupon/purchase insert end-to-end before declaring fully clean.
+
+### Test fixtures
+
+Inline `(x * 100).round()` at TableData/Value boundary. 3 schemaVersion assertions updated 43 → 44 across `app_database_test.dart`, `migration_test.dart`, `migration_backup_test.dart`. ~15 test helper/factory files touched.
+
+## Verification matrix
+
+| Package | Result |
+|---|---|
+| flutter analyze (7 packages) | **0 errors each** |
+| alhai_core | 667 / 667 ✓ |
+| alhai_database | 508 / 508 + 1 skip ✓ |
+| alhai_sync | 358 / 358 ✓ |
+| alhai_zatca (**CRITICAL gate**) | 850 / 850 + 1 skip ✓ |
+| alhai_pos | 559 / 559 ✓ |
+| alhai_shared_ui | 861 / 861 ✓ |
+| alhai_reports | 123 / 123 ✓ |
+| cashier | 552 / 552 ✓ |
+| customer_app | 136 / 136 ✓ |
+| admin | 365 / 365 ✓ |
+| admin_lite | 183 / 183 ✓ |
+
+**Aggregate: 5461 tests passing** (up from 5338 — alhai_reports counted now).
+
+## Operational note — fork resource exhaustion
+
+Running 8 parallel test suites + analyze on Windows caused bash fork to exhaust child slots (`0xC000026B errno 11`). Re-ran failed suites sequentially; all passed on re-run. **Future sessions: cap parallel test runs at ~4 to avoid this.**
+
+## Risk
+
+- Seventh consecutive schema bump (v38→v44). Drift backup service armed.
+- Live migration touched 0 rows (all 11 tables empty). Lowest risk session.
+- All packages 0 errors + 5461 green tests including the ZATCA gate. Downstream apps (customer_app, driver_app) unaffected (they don't consume accounts/transactions/daily_summaries).
+
+## C-4 Money Migration — **ALL FOUR EXECUTION SESSIONS COMPLETE**
+
+| # | Date | Focus | Drift | Supabase | Money cols |
+|---|---|---|---|---|---|
+| 0 | 2026-04-22 (Session 13) | Foundation | — | — | Money type + VatCalc + formatter |
+| 1 | 2026-04-21 (Session 12) | Products | v38→v41 | v70 + v71 | 8 |
+| 2 | 2026-04-22 (Session 14) | Invoice core | v41→v42 | v72 | 14 |
+| 3 | 2026-04-22 (Session 15) | Shifts + sales | v42→v43 | v73 | 16 |
+| 4 | 2026-04-22 (Session 16) | Analytics | v43→v44 | v74 | 27 |
+| **Total** | — | — | — | — | **65 money cols** |
+
+All money columns in active production use are now INT cents end-to-end. Remaining C-4 follow-ups:
+- `loyalty_transactions.sale_amount` (Drift-only, out-of-scope deferred)
+- Remove legacy `double` escape hatches in Product domain (plan §2.1c leftover — can be retired incrementally now)
+- Replace `CurrencyFormatter.format(x / 100.0)` call sites with `formatMoney(money)` where Money is adopted (incremental cleanup)
+
+## Audit refs
+
+- Plan §5 Phase 5 "Execution checklist — Session 4" — resolved.
+- Plan §6 Appendix B (tolerance-based + COALESCE NULL-fix) — applied cleanly.
+- Plan §7 D1 (ROUND_HALF_UP) — applied; trivial (0 rows).
+- Plan §4 R-series risks — all retired for now; no further schema drift scheduled in C-4.
+
+---
+
+END OF SESSION 16 — C-4 COMPLETE
+
+---
+
+# 🎉 C-4 Money Migration — 4-SESSION SUMMARY (same day: 2026-04-22)
+
+Sessions 13 + 14 + 15 + 16 all executed on 2026-04-22 with cumulative budget ~15-18h.
+
+**Branches (cumulative chain):**
+- `fix/zatca-queue-drift` @ `3d158f5` (Session 12 base, 2026-04-21)
+- `fix/deploy-bundle-customer-driver` @ `db51a95` (Session 13 wrap)
+- `fix/c4-session-2-invoices` @ `5681d7d` (Session 14 wrap)
+- `fix/c4-session-3-shifts-sales` @ `63d96e16` (Session 15 wrap)
+- `fix/c4-session-4-analytics` @ `e5797957` (**Session 16 wrap — current**)
+
+**Live Supabase migrations applied:** v70, v71, v72, v73, v74 — 5 migrations.
+**Drift schema bumps:** v37 → v44 — 7 bumps (includes v39 from Session 12 not part of C-4).
+**Total money columns migrated to INT cents:** **65** across 14 tables.
+
+**End-state test aggregate:** 5461 passing across 11 packages. ZATCA 850/850 + 1 skip preserved end-to-end through all 4 migrations.
+
+Next backlog: deploy customer_app + driver_app (pending keystores + google-services.json), admin audit execution (310 findings, 42 P0s per handover), super_admin Tier 3, receipt number collision bug.
