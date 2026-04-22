@@ -165,4 +165,63 @@ void main() {
       expect(restored, original);
     });
   });
+
+  // C-4 Session 2: the sale -> invoice DAO round trip. Complements the
+  // alhai_pos invoice_service_test unit tests that assert the companion
+  // fields at the service boundary. This exercise drives the same values
+  // through the real Drift DAOs to catch any DAO-level drift.
+  group('C-4 Session 2: sale → invoice cents round-trip through real DAOs',
+      () {
+    test('sale.total cents persist byte-exact to invoices.total', () async {
+      final now = DateTime(2026, 4, 23, 10, 30);
+
+      // Act: insert a completed sale with int-cents totals.
+      await db.salesDao.insertSale(
+        SalesTableCompanion.insert(
+          id: 'sale-rt-1',
+          receiptNo: 'POS-RT-0001',
+          storeId: 'store-1',
+          cashierId: 'cashier-1',
+          // 115.50 SAR sale = 11,550 cents
+          subtotal: 10000,
+          total: 11550,
+          tax: const Value(1500),
+          paymentMethod: 'cash',
+          createdAt: now,
+        ),
+      );
+
+      final sale = (await db.salesDao.getAllSales('store-1')).single;
+      expect(sale.total, 11550);
+
+      // Simulate invoice_service.createFromSale post-fix: pass cents
+      // straight through to InvoicesTableCompanion (no * 100).
+      await db.invoicesDao.upsertInvoice(
+        InvoicesTableCompanion.insert(
+          id: 'inv-rt-1',
+          storeId: 'store-1',
+          invoiceNumber: 'INV-2026-00001',
+          subtotal: Value(sale.subtotal),
+          taxAmount: Value(sale.tax),
+          total: Value(sale.total),
+          amountPaid: Value(sale.total),
+          amountDue: const Value(0),
+          saleId: Value(sale.id),
+          createdAt: now,
+        ),
+      );
+
+      // Assert: invoice stores the same cents as the source sale.
+      final invoice = await db.invoicesDao.getById('inv-rt-1');
+      expect(invoice, isNotNull);
+      expect(invoice!.subtotal, sale.subtotal);
+      expect(invoice.taxAmount, sale.tax);
+      expect(invoice.total, sale.total);
+      expect(invoice.amountPaid, sale.total);
+      expect(invoice.amountDue, 0);
+
+      // Display invariant: displayed SAR = cents / 100, byte-exact.
+      expect((invoice.total / 100.0).toStringAsFixed(2), '115.50');
+    });
+  });
 }
