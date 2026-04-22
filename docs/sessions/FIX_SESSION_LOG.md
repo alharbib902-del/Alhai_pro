@@ -6188,3 +6188,72 @@ Zero. Documentation-only commit. No code, no schema, no live impact.
 ---
 
 END OF SESSION 23 — admin audit scoped, Tier A/B items ready for future session pickup
+
+---
+
+# Session 24 — Admin Tier A Quick Wins Q1/Q3/Q4/Q5 (2026-04-22)
+
+**Branch:** `main`. **Commit:** `ef67f51e`. **Budget:** ~45 min.
+
+## Summary
+
+Executed 4 Tier A items from `docs/reports/admin-audit-status-2026-04-22.md`. All from the 2026-04-15 phase-4 acceptance report's leftover FAILED/PARTIAL items, sized to be completable in a single focused session.
+
+## Changes — 5 files, +125 / −2 LOC
+
+### Q3 — Duplicate VAT check on supplier
+
+Mirrors the C3 (2026-04-15) duplicate barcode pattern for products.
+
+- **`packages/alhai_database/lib/src/daos/suppliers_dao.dart`** — new `getSupplierByTaxNumber(taxNumber, storeId)` returns the active (`deletedAt.isNull()`) supplier with that VAT, or null.
+- **`apps/admin/lib/screens/suppliers/supplier_form_screen.dart`** — `_saveSupplier` now looks up duplicate VAT before insert/update. Edit mode allows the supplier to keep their own number; new-supplier insert with a VAT that matches another row shows the Arabic snackbar "الرقم الضريبي مستخدم بالفعل للمورد: <name>" and aborts.
+
+### Q5 — Dialog TextEditingController disposals
+
+Fixes the leak flagged in phase-4 acceptance §10.
+
+- **`apps/admin/lib/screens/settings/system/users_management_screen.dart`** — both `_addUser` and `_editUser` wrap `showDialog(...)` with `.whenComplete(() { nameController.dispose(); phoneController.dispose(); })`. Dispose runs on either confirm or cancel.
+
+### Q4 — Phone validation before save
+
+The `alhai_shared_ui` package already ships a robust `PhoneValidator` (Saudi mobile + landline + international `+966` patterns). Dialogs weren't using it.
+
+- Same file as Q5. Both `_addUser` and `_editUser` `onPressed` handlers now run `PhoneValidator.validate(phoneController.text)` before DB write when phone is non-empty; `isValid == false` shows the Arabic error snackbar from the validator's `getError('ar')` and returns early.
+- Empty phone still allowed — it's an optional field per the users schema.
+
+### Q1 — Soft-delete product (DAO foundation)
+
+Phase-4 acceptance reported "no UI delete button for products, `deleted_at` column unused." Full UI wire-up (delete button in list + confirmation dialog + audit log + refresh) is MEDIUM scope. This session lands only the DAO primitive so a future session can pick up UI immediately.
+
+- **`packages/alhai_database/lib/src/daos/products_dao.dart`** — new `softDeleteProduct(id)` sets `deletedAt = now()` with `WHERE id = ? AND deletedAt IS NULL`. Second call on the same row returns 0 (idempotent).
+- **`packages/alhai_database/test/daos/products_dao_test.dart`** — new test asserts:
+  - First call returns 1 (affected)
+  - `getProductById` still retrieves the row (no deletedAt filter there — intentional, for audit/history queries)
+  - `getAllProducts(storeId)` does NOT return the row (deletedAt.isNull() filter)
+  - Second call returns 0 (already soft-deleted)
+
+`deleteProduct` (hard delete) kept unchanged — no UI currently uses it, and its one caller (`LocalProductsRepository.deleteProduct`) remains as-is since no production code invokes the repository method either.
+
+## Verification
+
+- flutter analyze apps/admin + packages/alhai_database: 0 errors
+- alhai_database tests: **509 / 509 + 1 skipped** (was 508; +1 softDelete test)
+- admin tests: **365 / 365** preserved ✓
+- backup + origin remotes pushed to `ef67f51e`
+
+## Deferred follow-ups (from Tier A remaining)
+
+Still open as quick wins for a future session:
+- **Q2** — confirm-before-delete dialog polish (audit notes categories/suppliers already have it; spot-check remaining screens)
+- **Q6** — broader audit-log coverage (extend the H5 price-change audit to stock/settings/permissions mutations)
+
+And the bigger pieces:
+- **Q1-UI** — wire the new `softDeleteProduct` to a delete button on the products list (shared_ui/products_screen). Includes confirmation dialog + audit log entry + list refresh.
+
+## Risk
+
+Zero. Pure additive changes on the DAO side (new methods alongside existing). Screen changes are guard-before-save and dispose-on-close — both revert silently if dialog is cancelled.
+
+---
+
+END OF SESSION 24 — 4 Tier A quick wins landed on main + tests green
