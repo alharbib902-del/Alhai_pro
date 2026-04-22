@@ -23,7 +23,7 @@ void main() {
     return ExpensesTableCompanion.insert(
       id: id,
       storeId: storeId,
-      amount: amount,
+      amount: (amount * 100).round(),
       categoryId: Value(categoryId),
       description: const Value('مصروف تجريبي'),
       expenseDate: expenseDate ?? DateTime(2025, 6, 15),

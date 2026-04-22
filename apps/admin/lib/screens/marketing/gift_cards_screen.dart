@@ -59,9 +59,11 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
 
       if (giftCoupons.isNotEmpty) {
         _cards = giftCoupons.map((c) {
+          // C-4 Session 4: coupons.value is int cents. Convert to SAR doubles for _GiftCard.
+          final valueSar = c.value / 100.0;
           final balance =
-              c.value -
-              (c.currentUses * c.value / (c.maxUses == 0 ? 1 : c.maxUses));
+              valueSar -
+              (c.currentUses * valueSar / (c.maxUses == 0 ? 1 : c.maxUses));
           final now = DateTime.now();
           String status;
           if (c.expiresAt != null && c.expiresAt!.isBefore(now)) {
@@ -75,8 +77,8 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
           }
           return _GiftCard(
             code: c.code,
-            amount: c.value,
-            balance: balance.clamp(0, c.value),
+            amount: valueSar,
+            balance: balance.clamp(0.0, valueSar),
             status: status,
             createdAt: c.createdAt,
             expiresAt: c.expiresAt ?? now.add(const Duration(days: 365)),
@@ -230,7 +232,8 @@ class _GiftCardsScreenState extends ConsumerState<GiftCardsScreen>
                     storeId: storeId,
                     code: code,
                     type: 'gift_card',
-                    value: amount,
+                    // C-4 Session 4: coupons.value is int cents.
+                    value: (amount * 100).round(),
                     isActive: const Value(true),
                     expiresAt: Value(
                       DateTime.now().add(Duration(days: validityDays)),

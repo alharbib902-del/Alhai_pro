@@ -13,7 +13,8 @@ class ExpensesTable extends Table {
   TextColumn get orgId => text().nullable()();
   TextColumn get storeId => text()();
   TextColumn get categoryId => text().nullable()();
-  RealColumn get amount => real()();
+  // C-4 Session 4: amount is int cents (ROUND_HALF_UP).
+  IntColumn get amount => integer()();
   TextColumn get description => text().nullable()();
   TextColumn get paymentMethod => text().withDefault(const Constant('cash'))();
   TextColumn get receiptImage => text().nullable()();

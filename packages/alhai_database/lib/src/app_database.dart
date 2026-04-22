@@ -137,7 +137,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 43;
+  int get schemaVersion => 44;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -831,6 +831,178 @@ class AppDatabase extends _$AppDatabase {
         debugPrint(
           '[Migration v43] Converted shifts+cash_movements+sales money '
           'columns to INTEGER cents (C-4 Session 3)',
+        );
+
+      case 44:
+        // v44: C-4 Session 4 — analytics tables money columns.
+        // 27 money cols across 11 tables (Real → Int cents ROUND_HALF_UP):
+        //   accounts (2), coupons (2), daily_summaries (8), expenses (1),
+        //   loyalty_rewards (2), purchase_items (2), purchases (4),
+        //   return_items (2), returns (1), suppliers (1), transactions (2)
+        // Pre-apply audit: ALL 11 tables are empty on server (Stage A-style).
+        await m.alterTable(
+          TableMigration(
+            accountsTable,
+            columnTransformer: {
+              accountsTable.balance: const CustomExpression<int>(
+                'CAST(ROUND(balance * 100) AS INTEGER)',
+              ),
+              accountsTable.creditLimit: const CustomExpression<int>(
+                'CAST(ROUND(credit_limit * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        await m.alterTable(
+          TableMigration(
+            expensesTable,
+            columnTransformer: {
+              expensesTable.amount: const CustomExpression<int>(
+                'CAST(ROUND(amount * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        await m.alterTable(
+          TableMigration(
+            purchasesTable,
+            columnTransformer: {
+              purchasesTable.subtotal: const CustomExpression<int>(
+                'CAST(ROUND(subtotal * 100) AS INTEGER)',
+              ),
+              purchasesTable.tax: const CustomExpression<int>(
+                'CAST(ROUND(tax * 100) AS INTEGER)',
+              ),
+              purchasesTable.discount: const CustomExpression<int>(
+                'CAST(ROUND(discount * 100) AS INTEGER)',
+              ),
+              purchasesTable.total: const CustomExpression<int>(
+                'CAST(ROUND(total * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        await m.alterTable(
+          TableMigration(
+            purchaseItemsTable,
+            columnTransformer: {
+              purchaseItemsTable.unitCost: const CustomExpression<int>(
+                'CAST(ROUND(unit_cost * 100) AS INTEGER)',
+              ),
+              purchaseItemsTable.total: const CustomExpression<int>(
+                'CAST(ROUND(total * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        await m.alterTable(
+          TableMigration(
+            returnsTable,
+            columnTransformer: {
+              returnsTable.totalRefund: const CustomExpression<int>(
+                'CAST(ROUND(total_refund * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        await m.alterTable(
+          TableMigration(
+            returnItemsTable,
+            columnTransformer: {
+              returnItemsTable.unitPrice: const CustomExpression<int>(
+                'CAST(ROUND(unit_price * 100) AS INTEGER)',
+              ),
+              returnItemsTable.refundAmount: const CustomExpression<int>(
+                'CAST(ROUND(refund_amount * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        await m.alterTable(
+          TableMigration(
+            dailySummariesTable,
+            columnTransformer: {
+              dailySummariesTable.totalSalesAmount: const CustomExpression<int>(
+                'CAST(ROUND(total_sales_amount * 100) AS INTEGER)',
+              ),
+              dailySummariesTable.totalOrdersAmount:
+                  const CustomExpression<int>(
+                    'CAST(ROUND(total_orders_amount * 100) AS INTEGER)',
+                  ),
+              dailySummariesTable.totalRefundsAmount:
+                  const CustomExpression<int>(
+                    'CAST(ROUND(total_refunds_amount * 100) AS INTEGER)',
+                  ),
+              dailySummariesTable.totalExpenses: const CustomExpression<int>(
+                'CAST(ROUND(total_expenses * 100) AS INTEGER)',
+              ),
+              dailySummariesTable.cashTotal: const CustomExpression<int>(
+                'CAST(ROUND(cash_total * 100) AS INTEGER)',
+              ),
+              dailySummariesTable.cardTotal: const CustomExpression<int>(
+                'CAST(ROUND(card_total * 100) AS INTEGER)',
+              ),
+              dailySummariesTable.creditTotal: const CustomExpression<int>(
+                'CAST(ROUND(credit_total * 100) AS INTEGER)',
+              ),
+              dailySummariesTable.netProfit: const CustomExpression<int>(
+                'CAST(ROUND(net_profit * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        await m.alterTable(
+          TableMigration(
+            transactionsTable,
+            columnTransformer: {
+              transactionsTable.amount: const CustomExpression<int>(
+                'CAST(ROUND(amount * 100) AS INTEGER)',
+              ),
+              transactionsTable.balanceAfter: const CustomExpression<int>(
+                'CAST(ROUND(balance_after * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        await m.alterTable(
+          TableMigration(
+            suppliersTable,
+            columnTransformer: {
+              suppliersTable.balance: const CustomExpression<int>(
+                'CAST(ROUND(balance * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        await m.alterTable(
+          TableMigration(
+            loyaltyRewardsTable,
+            columnTransformer: {
+              loyaltyRewardsTable.rewardValue: const CustomExpression<int>(
+                'CAST(ROUND(reward_value * 100) AS INTEGER)',
+              ),
+              loyaltyRewardsTable.minPurchase: const CustomExpression<int>(
+                'CAST(ROUND(min_purchase * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        await m.alterTable(
+          TableMigration(
+            couponsTable,
+            columnTransformer: {
+              couponsTable.value: const CustomExpression<int>(
+                'CAST(ROUND(value * 100) AS INTEGER)',
+              ),
+              couponsTable.minPurchase: const CustomExpression<int>(
+                'CAST(ROUND(min_purchase * 100) AS INTEGER)',
+              ),
+            },
+          ),
+        );
+        debugPrint(
+          '[Migration v44] Converted analytics tables money columns to '
+          'INTEGER cents (C-4 Session 4)',
         );
 
       default:

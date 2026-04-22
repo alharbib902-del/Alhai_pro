@@ -78,10 +78,11 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
   }
 
   /// تحديث الرصيد
+  /// [newBalance] is SAR (double); stored as int cents internally.
   Future<int> updateBalance(String id, double newBalance) {
     return (update(accountsTable)..where((a) => a.id.equals(id))).write(
       AccountsTableCompanion(
-        balance: Value(newBalance),
+        balance: Value((newBalance * 100).round()),
         lastTransactionAt: Value(DateTime.now()),
         updatedAt: Value(DateTime.now()),
       ),
@@ -89,11 +90,12 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
   }
 
   /// إضافة للرصيد - atomic SQL to prevent race conditions
+  /// [amount] is SAR (double); converted to int cents for storage.
   Future<int> addToBalance(String id, double amount) {
     return customUpdate(
       'UPDATE accounts SET balance = balance + ?, last_transaction_at = ?, updated_at = ? WHERE id = ?',
       variables: [
-        Variable.withReal(amount),
+        Variable.withInt((amount * 100).round()),
         Variable.withDateTime(DateTime.now()),
         Variable.withDateTime(DateTime.now()),
         Variable.withString(id),
@@ -103,11 +105,12 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
   }
 
   /// خصم من الرصيد - atomic SQL to prevent race conditions
+  /// [amount] is SAR (double); converted to int cents for storage.
   Future<int> subtractFromBalance(String id, double amount) {
     return customUpdate(
       'UPDATE accounts SET balance = balance - ?, last_transaction_at = ?, updated_at = ? WHERE id = ?',
       variables: [
-        Variable.withReal(amount),
+        Variable.withInt((amount * 100).round()),
         Variable.withDateTime(DateTime.now()),
         Variable.withDateTime(DateTime.now()),
         Variable.withString(id),
@@ -117,6 +120,7 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
   }
 
   /// إجمالي الديون
+  /// Internal storage is int cents; public API returns SAR (double).
   Future<double> getTotalReceivable(String storeId) async {
     final result = await customSelect(
       '''SELECT COALESCE(SUM(balance), 0) as total
@@ -126,7 +130,10 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
       variables: [Variable.withString(storeId)],
     ).getSingle();
 
-    return result.data['total'] as double? ?? 0.0;
+    final total = result.data['total'];
+    if (total == null) return 0.0;
+    if (total is int) return total / 100.0;
+    return (total as num).toDouble() / 100.0;
   }
 
   /// تعيين تاريخ المزامنة

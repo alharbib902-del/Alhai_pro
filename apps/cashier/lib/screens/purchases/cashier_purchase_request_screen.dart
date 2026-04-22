@@ -819,11 +819,13 @@ class _CashierPurchaseRequestScreenState
       final purchaseNumber = 'PO-${const Uuid().v4().split('-').first}';
       final now = DateTime.now();
 
-      // Calculate subtotal
-      final subtotal = _requestItems.fold<double>(
+      // C-4 Session 4: purchases.subtotal, total and purchase_items.unit_cost, total are int cents.
+      // product.price is already int cents, so price * qty = cents.
+      final subtotalCents = _requestItems.fold<double>(
         0,
         (sum, item) => sum + (item.product.price * item.quantity),
       );
+      final subtotalCentsInt = subtotalCents.round();
 
       // 1. Insert purchase
       await _db.purchasesDao.insertPurchase(
@@ -832,8 +834,8 @@ class _CashierPurchaseRequestScreenState
           storeId: storeId,
           purchaseNumber: purchaseNumber,
           status: const Value('draft'),
-          subtotal: Value(subtotal),
-          total: Value(subtotal),
+          subtotal: Value(subtotalCentsInt),
+          total: Value(subtotalCentsInt),
           notes: Value(
             _notesController.text.isNotEmpty
                 ? _notesController.text.trim()
@@ -853,9 +855,10 @@ class _CashierPurchaseRequestScreenState
           productName: item.product.name,
           productBarcode: Value(item.product.barcode),
           qty: item.quantity.toDouble(),
-          // C-4 Stage B: product.price is int cents; purchase schema still double SAR.
-          unitCost: item.product.price / 100.0,
-          total: (item.product.price * item.quantity.toDouble()) / 100.0,
+          // C-4 Session 4: purchase_items.unit_cost, total are int cents.
+          // product.price is already int cents.
+          unitCost: item.product.price,
+          total: (item.product.price * item.quantity.toDouble()).round(),
         );
       }).toList();
 

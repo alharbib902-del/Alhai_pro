@@ -36,7 +36,8 @@ class ReturnsTable extends Table {
   TextColumn get type =>
       text().withDefault(const Constant('full'))(); // full, partial
   TextColumn get refundMethod => text().withDefault(const Constant('cash'))();
-  RealColumn get totalRefund => real()();
+  // C-4 Session 4: totalRefund is int cents (ROUND_HALF_UP).
+  IntColumn get totalRefund => integer()();
   TextColumn get status => text().withDefault(const Constant('completed'))();
 
   /// NOTE: Naming inconsistency - this column is called [createdBy] but other
@@ -69,9 +70,10 @@ class ReturnItemsTable extends Table {
   TextColumn get productId =>
       text().references(ProductsTable, #id, onDelete: KeyAction.restrict)();
   TextColumn get productName => text()();
+  // C-4 Session 4: return_items money cols are int cents; qty stays Real.
   RealColumn get qty => real()();
-  RealColumn get unitPrice => real()();
-  RealColumn get refundAmount => real()();
+  IntColumn get unitPrice => integer()();
+  IntColumn get refundAmount => integer()();
 
   @override
   Set<Column> get primaryKey => {id};

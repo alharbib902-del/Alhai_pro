@@ -661,8 +661,9 @@ class _AiInvoiceReviewScreenState extends ConsumerState<AiInvoiceReviewScreen> {
               productId: Value(item.matchedProductId ?? ''),
               productName: Value(item.rawName),
               qty: Value(item.quantity.toDouble()),
-              unitCost: Value(item.unitPrice),
-              total: Value(item.total),
+              // C-4 Session 4: purchase_items.unit_cost, total are int cents.
+              unitCost: Value((item.unitPrice * 100).round()),
+              total: Value((item.total * 100).round()),
             ),
           )
           .toList();

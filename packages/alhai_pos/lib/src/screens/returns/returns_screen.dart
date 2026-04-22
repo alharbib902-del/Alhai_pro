@@ -53,7 +53,8 @@ class ReturnModel {
       invoiceNo: data.saleId,
       customer: data.customerName ?? '',
       date: data.createdAt,
-      amount: data.totalRefund,
+      // C-4 Session 4: returns.total_refund is int cents.
+      amount: data.totalRefund / 100.0,
       status: data.status,
       reason: data.reason ?? 'other',
       type: data.type,

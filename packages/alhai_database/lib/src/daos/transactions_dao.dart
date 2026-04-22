@@ -77,6 +77,7 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
   }
 
   /// تسجيل فاتورة (دين على العميل)
+  /// [amount], [balanceAfter] are SAR (double); stored as int cents.
   Future<int> recordInvoice({
     required String id,
     required String storeId,
@@ -92,8 +93,8 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
         storeId: storeId,
         accountId: accountId,
         type: 'invoice',
-        amount: amount,
-        balanceAfter: balanceAfter,
+        amount: (amount * 100).round(),
+        balanceAfter: (balanceAfter * 100).round(),
         referenceId: Value(saleId),
         referenceType: const Value('sale'),
         createdBy: Value(createdBy),
@@ -103,6 +104,7 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
   }
 
   /// تسجيل دفعة من العميل
+  /// [amount], [balanceAfter] are SAR (double); stored as int cents.
   Future<int> recordPayment({
     required String id,
     required String storeId,
@@ -119,8 +121,8 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
         storeId: storeId,
         accountId: accountId,
         type: 'payment',
-        amount: -amount, // سالب لأنه يخفض الرصيد
-        balanceAfter: balanceAfter,
+        amount: -(amount * 100).round(), // سالب لأنه يخفض الرصيد
+        balanceAfter: (balanceAfter * 100).round(),
         paymentMethod: Value(paymentMethod),
         description: Value(description),
         createdBy: Value(createdBy),
@@ -130,6 +132,7 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
   }
 
   /// تسجيل فائدة شهرية
+  /// [amount], [balanceAfter] are SAR (double); stored as int cents.
   Future<int> recordInterest({
     required String id,
     required String storeId,
@@ -145,8 +148,8 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
         storeId: storeId,
         accountId: accountId,
         type: 'interest',
-        amount: amount,
-        balanceAfter: balanceAfter,
+        amount: (amount * 100).round(),
+        balanceAfter: (balanceAfter * 100).round(),
         periodKey: Value(periodKey),
         createdBy: Value(createdBy),
         createdAt: DateTime.now(),
@@ -168,15 +171,19 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
   }
 
   /// إجمالي المدفوعات لحساب
+  /// Internal storage is int cents; public API returns SAR (double).
   Future<double> getTotalPayments(String accountId) async {
     final result = await customSelect(
-      '''SELECT COALESCE(SUM(ABS(amount)), 0) as total 
-         FROM transactions 
+      '''SELECT COALESCE(SUM(ABS(amount)), 0) as total
+         FROM transactions
          WHERE account_id = ? AND type = 'payment' ''',
       variables: [Variable.withString(accountId)],
     ).getSingle();
 
-    return result.data['total'] as double? ?? 0.0;
+    final total = result.data['total'];
+    if (total == null) return 0.0;
+    if (total is int) return total / 100.0;
+    return (total as num).toDouble() / 100.0;
   }
 
   /// مراقبة حركات الحساب

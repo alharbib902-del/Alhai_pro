@@ -37,7 +37,7 @@ void main() {
       type: type,
       name: name,
       customerId: Value(customerId),
-      balance: Value(balance),
+      balance: Value((balance * 100).round()),
       createdAt: DateTime(2025, 1, 1),
     );
   }
@@ -49,7 +49,7 @@ void main() {
       final account = await db.accountsDao.getAccountById('acc-1');
       expect(account, isNotNull);
       expect(account!.name, 'حساب أحمد محمد');
-      expect(account.balance, 500.0);
+      expect(account.balance, 50000); // 500.00 SAR as int cents
       expect(account.type, 'receivable');
     });
 
@@ -106,7 +106,7 @@ void main() {
       await db.accountsDao.updateBalance('acc-1', 750.0);
 
       final account = await db.accountsDao.getAccountById('acc-1');
-      expect(account!.balance, 750.0);
+      expect(account!.balance, 75000); // 750.00 SAR as int cents
       expect(account.lastTransactionAt, isNotNull);
     });
 
@@ -116,7 +116,7 @@ void main() {
       await db.accountsDao.addToBalance('acc-1', 200.0);
 
       final account = await db.accountsDao.getAccountById('acc-1');
-      expect(account!.balance, 700.0);
+      expect(account!.balance, 70000); // 700.00 SAR as int cents
     });
 
     test('subtractFromBalance decreases balance', () async {
@@ -125,7 +125,7 @@ void main() {
       await db.accountsDao.subtractFromBalance('acc-1', 150.0);
 
       final account = await db.accountsDao.getAccountById('acc-1');
-      expect(account!.balance, 350.0);
+      expect(account!.balance, 35000); // 350.00 SAR as int cents
     });
 
     test('markAsSynced sets syncedAt', () async {

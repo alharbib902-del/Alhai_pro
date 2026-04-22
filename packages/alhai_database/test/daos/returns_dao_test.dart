@@ -57,7 +57,7 @@ void main() {
       returnNumber: returnNumber,
       saleId: saleId,
       storeId: storeId,
-      totalRefund: totalRefund,
+      totalRefund: (totalRefund * 100).round(),
       status: Value(status),
       reason: const Value('المنتج تالف'),
       createdAt: createdAt ?? DateTime(2025, 6, 15),
@@ -71,7 +71,7 @@ void main() {
       final ret = await db.returnsDao.getReturnById('ret-1');
       expect(ret, isNotNull);
       expect(ret!.returnNumber, 'RET-001');
-      expect(ret.totalRefund, 50.0);
+      expect(ret.totalRefund, 5000); // 50.00 in cents
       expect(ret.reason, 'المنتج تالف');
     });
 
@@ -149,8 +149,8 @@ void main() {
           productId: 'prod-1',
           productName: 'حليب طازج',
           qty: 2,
-          unitPrice: 5.5,
-          refundAmount: 11.0,
+          unitPrice: 550, // 5.50 in cents
+          refundAmount: 1100, // 11.00 in cents
         ),
         ReturnItemsTableCompanion.insert(
           id: 'ri-2',
@@ -158,8 +158,8 @@ void main() {
           productId: 'prod-2',
           productName: 'عصير',
           qty: 1,
-          unitPrice: 3.0,
-          refundAmount: 3.0,
+          unitPrice: 300, // 3.00 in cents
+          refundAmount: 300, // 3.00 in cents
         ),
       ]);
 

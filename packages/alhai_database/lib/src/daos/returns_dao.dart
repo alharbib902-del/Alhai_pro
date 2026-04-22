@@ -131,9 +131,10 @@ class ReturnsDao extends DatabaseAccessor<AppDatabase> with _$ReturnsDaoMixin {
       variables: variables,
     ).getSingle();
 
+    // total_refund is stored as int cents; public API returns SAR (double).
     final total = result.data['total'];
     if (total == null) return 0.0;
-    if (total is int) return total.toDouble();
-    return total as double;
+    if (total is int) return total / 100.0;
+    return (total as num).toDouble() / 100.0;
   }
 }

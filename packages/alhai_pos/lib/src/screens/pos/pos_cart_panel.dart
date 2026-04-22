@@ -221,8 +221,12 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                                     final currentSubtotal = ref
                                         .read(cartStateProvider)
                                         .subtotal;
-                                    if (coupon.minPurchase > 0 &&
-                                        currentSubtotal < coupon.minPurchase) {
+                                    // C-4 Session 4: coupon.minPurchase & value are int cents.
+                                    final minPurchaseSar =
+                                        coupon.minPurchase / 100.0;
+                                    final couponValueSar = coupon.value / 100.0;
+                                    if (minPurchaseSar > 0 &&
+                                        currentSubtotal < minPurchaseSar) {
                                       ScaffoldMessenger.of(
                                         context,
                                       ).showSnackBar(
@@ -230,7 +234,7 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                                           content: Text(
                                             l10n.minimumPurchaseRequired(
                                               AppNumberFormatter.currency(
-                                                coupon.minPurchase,
+                                                minPurchaseSar,
                                                 locale: Localizations.localeOf(
                                                   context,
                                                 ).toString(),
@@ -243,8 +247,8 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
                                       return;
                                     }
                                     final discount = coupon.type == 'percentage'
-                                        ? currentSubtotal * (coupon.value / 100)
-                                        : coupon.value;
+                                        ? currentSubtotal * (couponValueSar / 100)
+                                        : couponValueSar;
                                     ref
                                         .read(cartStateProvider.notifier)
                                         .setDiscount(discount);

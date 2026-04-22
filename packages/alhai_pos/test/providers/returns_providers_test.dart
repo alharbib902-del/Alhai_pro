@@ -10,13 +10,14 @@ import 'package:alhai_pos/src/providers/returns_providers.dart';
 
 void main() {
   group('ReturnDetailData', () {
+    // C-4 Session 4: returns.total_refund, return_items.unit_price, refund_amount all int cents.
     test('constructor creates instance with returnData and items', () {
       final returnData = ReturnsTableData(
         id: 'ret-1',
         returnNumber: 'RET-001',
         saleId: 'sale-1',
         storeId: 'store-1',
-        totalRefund: 50.0,
+        totalRefund: 5000, // 50.00 in cents
         status: 'completed',
         type: 'sales',
         refundMethod: 'cash',
@@ -30,8 +31,8 @@ void main() {
           productId: 'prod-1',
           productName: 'Product A',
           qty: 2.0,
-          unitPrice: 25.0,
-          refundAmount: 50.0,
+          unitPrice: 2500, // 25.00 in cents
+          refundAmount: 5000, // 50.00 in cents
         ),
       ];
 
@@ -39,7 +40,7 @@ void main() {
 
       expect(detail.returnData.id, equals('ret-1'));
       expect(detail.returnData.returnNumber, equals('RET-001'));
-      expect(detail.returnData.totalRefund, equals(50.0));
+      expect(detail.returnData.totalRefund, equals(5000));
       expect(detail.items.length, equals(1));
       expect(detail.items.first.productName, equals('Product A'));
     });
@@ -50,7 +51,7 @@ void main() {
         returnNumber: 'RET-002',
         saleId: 'sale-2',
         storeId: 'store-1',
-        totalRefund: 0.0,
+        totalRefund: 0, // int cents
         status: 'pending',
         type: 'sales',
         refundMethod: 'card',
@@ -60,7 +61,7 @@ void main() {
       final detail = ReturnDetailData(returnData: returnData, items: []);
 
       expect(detail.items, isEmpty);
-      expect(detail.returnData.totalRefund, equals(0.0));
+      expect(detail.returnData.totalRefund, equals(0));
     });
 
     test('multiple items are stored correctly', () {
@@ -69,7 +70,7 @@ void main() {
         returnNumber: 'RET-003',
         saleId: 'sale-3',
         storeId: 'store-1',
-        totalRefund: 150.0,
+        totalRefund: 15000, // 150.00 in cents
         status: 'completed',
         type: 'sales',
         refundMethod: 'cash',
@@ -83,8 +84,8 @@ void main() {
           productId: 'prod-1',
           productName: 'Product A',
           qty: 2.0,
-          unitPrice: 25.0,
-          refundAmount: 57.5,
+          unitPrice: 2500, // 25.00 in cents
+          refundAmount: 5750, // 57.50 in cents
         ),
         ReturnItemsTableData(
           id: 'rti-2',
@@ -92,8 +93,8 @@ void main() {
           productId: 'prod-2',
           productName: 'Product B',
           qty: 1.0,
-          unitPrice: 100.0,
-          refundAmount: 115.0,
+          unitPrice: 10000, // 100.00 in cents
+          refundAmount: 11500, // 115.00 in cents
         ),
       ];
 
@@ -113,7 +114,7 @@ void main() {
         customerId: 'cust-1',
         customerName: 'Ahmed',
         reason: 'damaged',
-        totalRefund: 75.0,
+        totalRefund: 7500, // 75.00 in cents
         status: 'completed',
         type: 'sales',
         refundMethod: 'cash',
@@ -140,14 +141,14 @@ void main() {
           productId: 'prod-1',
           productName: 'Expensive Item',
           qty: 3.0,
-          unitPrice: 100.0,
-          refundAmount: 345.0, // 3 * 100 * 1.15
+          unitPrice: 10000, // 100.00 in cents
+          refundAmount: 34500, // 345.00 in cents = 3 * 100 * 1.15
         ),
       ];
 
       expect(items.first.qty, equals(3.0));
-      expect(items.first.unitPrice, equals(100.0));
-      expect(items.first.refundAmount, equals(345.0));
+      expect(items.first.unitPrice, equals(10000));
+      expect(items.first.refundAmount, equals(34500));
     });
   });
 }

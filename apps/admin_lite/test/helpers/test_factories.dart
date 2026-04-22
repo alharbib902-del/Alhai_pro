@@ -115,7 +115,8 @@ ReturnsTableData createTestReturn({
     customerId: customerId,
     customerName: customerName,
     reason: reason,
-    totalRefund: totalRefund,
+    // C-4 Session 4: returns.total_refund is int cents.
+    totalRefund: (totalRefund * 100).round(),
     status: status,
     type: type,
     refundMethod: refundMethod,

@@ -129,12 +129,13 @@ void main() {
 
   group('ReturnModel', () {
     test('fromData creates model from table data', () {
+      // C-4 Session 4: returns.total_refund is int cents.
       final tableData = ReturnsTableData(
         id: 'ret-1',
         returnNumber: 'RET-001',
         saleId: 'sale-1',
         storeId: 'store-1',
-        totalRefund: 50.0,
+        totalRefund: 5000, // 50.00 in cents
         status: 'completed',
         type: 'sales',
         refundMethod: 'cash',
@@ -145,18 +146,20 @@ void main() {
 
       expect(model.id, equals('RET-001'));
       expect(model.invoiceNo, equals('sale-1'));
+      // ReturnModel.fromData divides by 100 to produce SAR double.
       expect(model.amount, equals(50.0));
       expect(model.status, equals('completed'));
       expect(model.type, equals('sales'));
     });
 
     test('fromData handles null customer', () {
+      // C-4 Session 4: returns.total_refund is int cents.
       final tableData = ReturnsTableData(
         id: 'ret-1',
         returnNumber: 'RET-002',
         saleId: 'sale-2',
         storeId: 'store-1',
-        totalRefund: 30.0,
+        totalRefund: 3000, // 30.00 in cents
         status: 'pending',
         type: 'sales',
         refundMethod: 'card',

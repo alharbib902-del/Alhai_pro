@@ -334,7 +334,7 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
             notes: Value(
               _notesController.text.isEmpty ? null : _notesController.text,
             ),
-            totalRefund: Value(pendingRefund.amount),
+            totalRefund: Value((pendingRefund.amount * 100).round()),
             status: const Value('completed'),
             createdBy: Value(userId),
             createdAt: Value(now),
@@ -349,8 +349,12 @@ class _RefundReasonScreenState extends ConsumerState<RefundReasonScreen> {
             productId: Value(item.productId),
             productName: Value(item.productName),
             qty: Value(item.qty),
-            unitPrice: Value(item.unitPrice / 100.0),
-            refundAmount: Value(item.qty * (item.unitPrice / 100.0) * 1.15),
+            // C-4 Session 4: return_items.unit_price, refund_amount are int cents.
+            // item.unitPrice is already int cents.
+            unitPrice: Value(item.unitPrice),
+            refundAmount: Value(
+              (item.qty * item.unitPrice * 1.15).round(),
+            ),
           );
         }).toList();
 

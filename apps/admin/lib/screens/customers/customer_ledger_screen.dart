@@ -70,15 +70,18 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
 
   List<Map<String, dynamic>> _txnToMap(TransactionsTableData t) {
     final isDebit = t.amount > 0;
+    // C-4 Session 4: transactions.amount, balance_after are int cents.
+    final amountSar = t.amount.abs() / 100.0;
+    final balanceSar = t.balanceAfter / 100.0;
     return [
       {
         'id': t.id,
         'type': t.type,
         'description': t.description ?? t.type,
         'reference': t.referenceId ?? '-',
-        'debit': isDebit ? t.amount.abs() : 0.0,
-        'credit': isDebit ? 0.0 : t.amount.abs(),
-        'balance': t.balanceAfter,
+        'debit': isDebit ? amountSar : 0.0,
+        'credit': isDebit ? 0.0 : amountSar,
+        'balance': balanceSar,
         'date': t.createdAt,
       },
     ];
@@ -148,7 +151,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
   }
 
   double get _currentBalance {
-    return _account?.balance ?? 0.0;
+    // C-4 Session 4: accounts.balance is int cents; return SAR double.
+    return (_account?.balance ?? 0) / 100.0;
   }
 
   String get _customerInitials {
@@ -1642,7 +1646,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
     AppLocalizations l10n,
   ) async {
     final isDebit = type == 'debit';
-    final currentBal = _account?.balance ?? 0.0;
+    // C-4 Session 4: accounts.balance, transactions.amount, balance_after are int cents.
+    final currentBal = (_account?.balance ?? 0) / 100.0;
     final signedAmount = isDebit ? amount : -amount;
     final newBalance = currentBal + signedAmount;
     final storeId = ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
@@ -1655,8 +1660,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
           storeId: storeId,
           accountId: widget.customerId,
           type: 'adjustment',
-          amount: signedAmount,
-          balanceAfter: newBalance,
+          amount: (signedAmount * 100).round(),
+          balanceAfter: (newBalance * 100).round(),
           description: Value(reason.isEmpty ? l10n.manualAdjustment : reason),
           createdAt: date,
         ),

@@ -1152,7 +1152,8 @@ class _CustomersScreenState extends ConsumerState<CustomersScreen> {
                           Text(
                             l10n.dueAmountLabel(
                               AppNumberFormatter.currency(
-                                account.balance.abs(),
+                                // C-4 Session 4: accounts.balance is int cents.
+                                account.balance.abs() / 100.0,
                                 locale: Localizations.localeOf(
                                   context,
                                 ).toString(),
@@ -1507,7 +1508,8 @@ class _CustomerCardState extends State<_CustomerCard> {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                      '${AppNumberFormatter.currency(widget.customer.balance.abs(), locale: Localizations.localeOf(context).toString())} ${widget.l10n.currency}',
+                      // C-4 Session 4: accounts.balance is int cents.
+                      '${AppNumberFormatter.currency(widget.customer.balance.abs() / 100.0, locale: Localizations.localeOf(context).toString())} ${widget.l10n.currency}',
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 16,

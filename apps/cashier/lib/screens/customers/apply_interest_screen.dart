@@ -85,15 +85,17 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
   }
 
   double get _totalInterest {
+    // C-4 Session 4: accounts.balance is int cents; convert to SAR double.
     return _accounts
         .where((a) => _selectedIds.contains(a.id))
-        .fold<double>(0, (sum, a) => sum + _calculateInterest(a.balance));
+        .fold<double>(0, (sum, a) => sum + _calculateInterest(a.balance / 100.0));
   }
 
   double get _totalDebt {
+    // C-4 Session 4: accounts.balance is int cents; convert to SAR double.
     return _accounts
         .where((a) => _selectedIds.contains(a.id))
-        .fold<double>(0, (sum, a) => sum + a.balance);
+        .fold<double>(0, (sum, a) => sum + a.balance / 100.0);
   }
 
   void _toggleSelect(String id) {
@@ -425,7 +427,8 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
           const SizedBox(height: AlhaiSpacing.sm),
           ..._accounts.map((account) {
             final isSelected = _selectedIds.contains(account.id);
-            final interest = _calculateInterest(account.balance);
+            // C-4 Session 4: accounts.balance is int cents; convert to SAR double.
+            final interest = _calculateInterest(account.balance / 100.0);
             final initials = _getInitials(account.name);
 
             return Padding(
@@ -728,10 +731,12 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
       await _db.transaction(() async {
         for (final accountId in _selectedIds) {
           final account = _accounts.firstWhere((a) => a.id == accountId);
-          final interest = _calculateInterest(account.balance);
+          // C-4 Session 4: accounts.balance is int cents; interest/newBalance in SAR double.
+          final balanceSar = account.balance / 100.0;
+          final interest = _calculateInterest(balanceSar);
           if (interest <= 0) continue;
 
-          final newBalance = account.balance + interest;
+          final newBalance = balanceSar + interest;
           final txnId = 'INT-${now.millisecondsSinceEpoch}-$accountId';
 
           await _db.transactionsDao.recordInterest(

@@ -85,7 +85,8 @@ class _CustomerQuickInfoState extends State<CustomerQuickInfo> {
         widget.storeId,
       );
       if (account != null) {
-        balance = account.balance;
+        // C-4 Session 4: accounts.balance is int cents.
+        balance = account.balance / 100.0;
       }
     } catch (_) {
       // لا يوجد حساب - الرصيد صفر

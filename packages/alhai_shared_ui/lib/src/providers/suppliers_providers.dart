@@ -84,7 +84,8 @@ Future<void> addSupplier(
       taxNumber: Value(taxNumber),
       notes: Value(notes),
       isActive: const Value(true),
-      balance: const Value(0.0),
+      // C-4 Session 4: suppliers.balance is int cents.
+      balance: const Value(0),
       createdAt: Value(DateTime.now()),
     ),
   );

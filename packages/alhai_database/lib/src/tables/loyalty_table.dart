@@ -149,11 +149,12 @@ class LoyaltyRewardsTable extends Table {
   /// نوع المكافأة: discount_percentage, discount_fixed, free_item
   TextColumn get rewardType => text()();
 
+  // C-4 Session 4: loyalty_rewards money cols are int cents (ROUND_HALF_UP).
   /// قيمة المكافأة (نسبة أو مبلغ)
-  RealColumn get rewardValue => real()();
+  IntColumn get rewardValue => integer()();
 
   /// الحد الأدنى للشراء
-  RealColumn get minPurchase => real().withDefault(const Constant(0))();
+  IntColumn get minPurchase => integer().withDefault(const Constant(0))();
 
   /// المستوى المطلوب: all, bronze, silver, gold, platinum
   TextColumn get requiredTier => text().withDefault(const Constant('all'))();

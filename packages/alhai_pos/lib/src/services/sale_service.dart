@@ -392,7 +392,8 @@ class SaleService {
                     customerId: Value(validCustomerId),
                     name: safeName.isEmpty ? 'عميل' : safeName,
                     phone: Value(safePhone.isEmpty ? null : safePhone),
-                    balance: Value(debtAmount),
+                    // C-4 Session 4: accounts.balance is int cents.
+                    balance: Value((debtAmount * 100).round()),
                     createdAt: now,
                   ),
                 );
@@ -406,7 +407,9 @@ class SaleService {
                   createdBy: cashierId,
                 );
               } else {
-                final newBalance = account.balance + debtAmount;
+                // C-4 Session 4: accounts.balance is int cents.
+                // debtAmount & newBalance are SAR doubles (DAO handles ×100 conversion).
+                final newBalance = account.balance / 100.0 + debtAmount;
                 await _db.accountsDao.addToBalance(account.id, debtAmount);
                 await _db.transactionsDao.recordInvoice(
                   id: _uuid.v4(),

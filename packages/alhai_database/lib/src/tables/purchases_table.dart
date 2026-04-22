@@ -30,10 +30,11 @@ class PurchasesTable extends Table {
   TextColumn get supplierName => text().nullable()();
   TextColumn get purchaseNumber => text()();
   TextColumn get status => text().withDefault(const Constant('draft'))();
-  RealColumn get subtotal => real().withDefault(const Constant(0))();
-  RealColumn get tax => real().withDefault(const Constant(0))();
-  RealColumn get discount => real().withDefault(const Constant(0))();
-  RealColumn get total => real().withDefault(const Constant(0))();
+  // C-4 Session 4: purchases money columns are int cents (ROUND_HALF_UP).
+  IntColumn get subtotal => integer().withDefault(const Constant(0))();
+  IntColumn get tax => integer().withDefault(const Constant(0))();
+  IntColumn get discount => integer().withDefault(const Constant(0))();
+  IntColumn get total => integer().withDefault(const Constant(0))();
   TextColumn get paymentStatus =>
       text().withDefault(const Constant('pending'))();
   TextColumn get paymentMethod => text().nullable()();
@@ -63,10 +64,11 @@ class PurchaseItemsTable extends Table {
       text().references(ProductsTable, #id, onDelete: KeyAction.restrict)();
   TextColumn get productName => text()();
   TextColumn get productBarcode => text().nullable()();
+  // C-4 Session 4: purchase_items money cols are int cents; qty stays Real.
   RealColumn get qty => real()();
   RealColumn get receivedQty => real().withDefault(const Constant(0))();
-  RealColumn get unitCost => real()();
-  RealColumn get total => real()();
+  IntColumn get unitCost => integer()();
+  IntColumn get total => integer()();
 
   @override
   Set<Column> get primaryKey => {id};

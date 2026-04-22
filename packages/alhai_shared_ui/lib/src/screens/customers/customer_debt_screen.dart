@@ -403,7 +403,8 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                       Text(
                         l10n.debtAmountWithCurrency(
                           CurrencyFormatter.formatNumber(
-                            debt.balance,
+                            // C-4 Session 4: accounts.balance is int cents.
+                            debt.balance / 100.0,
                             decimalDigits: 0,
                           ),
                         ),
@@ -560,7 +561,8 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                   Text(
                     l10n.debtAmountWithCurrency(
                       CurrencyFormatter.formatNumber(
-                        debt.balance,
+                        // C-4 Session 4: accounts.balance is int cents.
+                        debt.balance / 100.0,
                         decimalDigits: 0,
                       ),
                     ),
@@ -636,7 +638,8 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
               Text(
                 l10n.currentDebt(
                   CurrencyFormatter.formatNumber(
-                    debt.balance,
+                    // C-4 Session 4: accounts.balance is int cents.
+                    debt.balance / 100.0,
                     decimalDigits: 0,
                   ),
                 ),
@@ -684,7 +687,8 @@ class _CustomerDebtScreenState extends ConsumerState<CustomerDebtScreen>
                   final db = GetIt.I<AppDatabase>();
                   final storeId =
                       ref.read(currentStoreIdProvider) ?? kDefaultStoreId;
-                  final newBalance = debt.balance - amount;
+                  // C-4 Session 4: accounts.balance is int cents; amount is SAR double.
+                  final newBalance = debt.balance / 100.0 - amount;
                   final txnId = 'PAY-${DateTime.now().millisecondsSinceEpoch}';
                   await db.transactionsDao.recordPayment(
                     id: txnId,

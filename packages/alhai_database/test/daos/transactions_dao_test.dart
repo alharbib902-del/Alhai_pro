@@ -32,15 +32,15 @@ void main() {
           storeId: 'store-1',
           accountId: 'acc-1',
           type: 'invoice',
-          amount: 500.0,
-          balanceAfter: 500.0,
+          amount: 50000, // 500.00 in cents
+          balanceAfter: 50000, // 500.00 in cents
           createdAt: DateTime(2025, 6, 15),
         ),
       );
 
       final txns = await db.transactionsDao.getAccountTransactions('acc-1');
       expect(txns, hasLength(1));
-      expect(txns.first.amount, 500.0);
+      expect(txns.first.amount, 50000); // 500.00 in cents
       expect(txns.first.type, 'invoice');
     });
 
@@ -51,8 +51,8 @@ void main() {
           storeId: 'store-1',
           accountId: 'acc-1',
           type: 'invoice',
-          amount: 500.0,
-          balanceAfter: 500.0,
+          amount: 50000, // 500.00 in cents
+          balanceAfter: 50000, // 500.00 in cents
           createdAt: DateTime(2025, 6, 15),
         ),
       );
@@ -62,8 +62,8 @@ void main() {
           storeId: 'store-1',
           accountId: 'acc-1',
           type: 'payment',
-          amount: -200.0,
-          balanceAfter: 300.0,
+          amount: -20000, // -200.00 in cents
+          balanceAfter: 30000, // 300.00 in cents
           createdAt: DateTime(2025, 6, 16),
         ),
       );
@@ -73,7 +73,7 @@ void main() {
         'payment',
       );
       expect(payments, hasLength(1));
-      expect(payments.first.amount, -200.0);
+      expect(payments.first.amount, -20000); // -200.00 in cents
     });
 
     test('getTransactionsInRange filters by date', () async {
@@ -83,8 +83,8 @@ void main() {
           storeId: 'store-1',
           accountId: 'acc-1',
           type: 'invoice',
-          amount: 100.0,
-          balanceAfter: 100.0,
+          amount: 10000, // 100.00 in cents
+          balanceAfter: 10000, // 100.00 in cents
           createdAt: DateTime(2025, 1, 15),
         ),
       );
@@ -94,8 +94,8 @@ void main() {
           storeId: 'store-1',
           accountId: 'acc-1',
           type: 'invoice',
-          amount: 200.0,
-          balanceAfter: 300.0,
+          amount: 20000, // 200.00 in cents
+          balanceAfter: 30000, // 300.00 in cents
           createdAt: DateTime(2025, 6, 15),
         ),
       );
@@ -139,7 +139,7 @@ void main() {
       final txns = await db.transactionsDao.getAccountTransactions('acc-1');
       expect(txns, hasLength(1));
       expect(txns.first.type, 'payment');
-      expect(txns.first.amount, -150.0); // negative for payments
+      expect(txns.first.amount, -15000); // -150.00 in cents, negative for payments
     });
 
     test('recordInterest creates interest transaction', () async {

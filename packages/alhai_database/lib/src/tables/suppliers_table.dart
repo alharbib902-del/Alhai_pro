@@ -24,7 +24,8 @@ class SuppliersTable extends Table {
   /// which throw [InvalidSupplierRatingException] for out-of-range values.
   /// Use [SuppliersDao.clampRating] to safely clamp before insert if needed.
   IntColumn get rating => integer().withDefault(const Constant(0))();
-  RealColumn get balance => real().withDefault(const Constant(0))();
+  // C-4 Session 4: balance is int cents (ROUND_HALF_UP).
+  IntColumn get balance => integer().withDefault(const Constant(0))();
   TextColumn get notes => text().nullable()();
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
   DateTimeColumn get createdAt => dateTime()();

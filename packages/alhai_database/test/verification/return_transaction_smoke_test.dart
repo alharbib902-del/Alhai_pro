@@ -58,7 +58,7 @@ void main() {
           returnNumber: 'RET-SMOKE-001',
           saleId: 'sale-smoke',
           storeId: 'store-1',
-          totalRefund: 50.0,
+          totalRefund: 5000, // 50.00 in cents
           reason: const Value('defective'),
           createdAt: DateTime.now(),
         ),

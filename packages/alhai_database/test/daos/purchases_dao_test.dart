@@ -40,7 +40,7 @@ void main() {
       storeId: storeId,
       purchaseNumber: purchaseNumber,
       status: Value(status),
-      total: Value(total),
+      total: Value((total * 100).round()),
       supplierName: const Value('مورد تجريبي'),
       createdAt: DateTime(2025, 6, 15),
     );
@@ -54,7 +54,7 @@ void main() {
       expect(purchase, isNotNull);
       expect(purchase!.purchaseNumber, 'PO-001');
       expect(purchase.status, 'draft');
-      expect(purchase.total, 5000.0);
+      expect(purchase.total, 500000); // 5000.00 in cents
     });
 
     test('getAllPurchases returns all for store', () async {
@@ -128,8 +128,8 @@ void main() {
           productId: 'prod-1',
           productName: 'حليب طازج',
           qty: 100,
-          unitCost: 4.0,
-          total: 400.0,
+          unitCost: 400, // 4.00 in cents
+          total: 40000, // 400.00 in cents
         ),
         PurchaseItemsTableCompanion.insert(
           id: 'pi-2',
@@ -137,8 +137,8 @@ void main() {
           productId: 'prod-2',
           productName: 'عصير',
           qty: 50,
-          unitCost: 2.0,
-          total: 100.0,
+          unitCost: 200, // 2.00 in cents
+          total: 10000, // 100.00 in cents
         ),
       ]);
 
@@ -155,8 +155,8 @@ void main() {
           productId: 'prod-1',
           productName: 'حليب',
           qty: 10,
-          unitCost: 4.0,
-          total: 40.0,
+          unitCost: 400, // 4.00 in cents
+          total: 4000, // 40.00 in cents
         ),
       ]);
 

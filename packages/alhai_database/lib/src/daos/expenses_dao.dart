@@ -37,6 +37,8 @@ class ExpensesDao extends DatabaseAccessor<AppDatabase>
         .get();
   }
 
+  /// Returns today's total expenses in SAR (double).
+  /// Internal storage is int cents; divides by 100 inside DAO.
   Future<double> getTodayExpensesTotal(String storeId) async {
     final today = DateTime.now();
     final startOfDay = DateTime(today.year, today.month, today.day);
@@ -51,7 +53,10 @@ class ExpensesDao extends DatabaseAccessor<AppDatabase>
         Variable.withDateTime(endOfDay),
       ],
     ).getSingle();
-    return result.data['total'] as double? ?? 0.0;
+    final total = result.data['total'];
+    if (total == null) return 0.0;
+    if (total is int) return total / 100.0;
+    return (total as num).toDouble() / 100.0;
   }
 
   Future<int> insertExpense(ExpensesTableCompanion expense) =>

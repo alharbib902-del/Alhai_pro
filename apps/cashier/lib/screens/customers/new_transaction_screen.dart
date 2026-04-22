@@ -820,7 +820,9 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
     try {
       final account = _selectedAccount!;
       final signedAmount = _isDebt ? amount : -amount;
-      final newBalance = account.balance + signedAmount;
+      // C-4 Session 4: accounts.balance, transactions.amount, balance_after are int cents.
+      final currentBalSar = account.balance / 100.0;
+      final newBalance = currentBalSar + signedAmount;
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
       final user = ref.read(currentUserProvider);
@@ -833,8 +835,8 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
             storeId: storeId,
             accountId: account.id,
             type: _isDebt ? 'invoice' : 'payment',
-            amount: signedAmount,
-            balanceAfter: newBalance,
+            amount: (signedAmount * 100).round(),
+            balanceAfter: (newBalance * 100).round(),
             description: Value(
               _noteController.text.isEmpty ? null : _noteController.text,
             ),

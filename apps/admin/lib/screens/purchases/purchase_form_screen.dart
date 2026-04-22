@@ -610,8 +610,9 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
           productId: Value(item.productId),
           productName: Value(item.productName),
           qty: Value(item.qty.toDouble()),
-          unitCost: Value(item.cost),
-          total: Value(item.total),
+          // C-4 Session 4: purchase_items.unit_cost, total are int cents.
+          unitCost: Value((item.cost * 100).round()),
+          total: Value((item.total * 100).round()),
         );
       }).toList();
 

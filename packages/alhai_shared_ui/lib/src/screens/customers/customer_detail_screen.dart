@@ -47,13 +47,16 @@ class _CustomerDetailScreenState extends ConsumerState<CustomerDetailScreen>
   bool get _isActive => _account?.isActive ?? true;
   double get _totalPurchases {
     // Sum of positive (debit) transactions = total invoiced
-    return _transactions
+    // C-4 Session 4: transactions.amount is int cents; divide at SAR boundary.
+    final cents = _transactions
         .where((t) => t.type == 'invoice')
-        .fold(0.0, (sum, t) => sum + t.amount.abs());
+        .fold<int>(0, (sum, t) => sum + t.amount.abs());
+    return cents / 100.0;
   }
 
-  double get _balance => _account?.balance ?? 0.0;
-  double get _creditLimit => _account?.creditLimit ?? 0.0;
+  // C-4 Session 4: accounts.balance, credit_limit are int cents.
+  double get _balance => (_account?.balance ?? 0) / 100.0;
+  double get _creditLimit => (_account?.creditLimit ?? 0) / 100.0;
   int get _loyaltyPoints => 0; // No loyalty points in accounts table
   String get _lastVisit {
     if (_account?.lastTransactionAt != null) {

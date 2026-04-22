@@ -38,8 +38,9 @@ class AccountsTable extends Table {
   TextColumn get phone => text().nullable()();
 
   // الرصيد
-  RealColumn get balance => real().withDefault(const Constant(0))();
-  RealColumn get creditLimit => real().withDefault(const Constant(0))();
+  // C-4 Session 4: money columns are int cents (ROUND_HALF_UP).
+  IntColumn get balance => integer().withDefault(const Constant(0))();
+  IntColumn get creditLimit => integer().withDefault(const Constant(0))();
 
   // حالة الحساب
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();

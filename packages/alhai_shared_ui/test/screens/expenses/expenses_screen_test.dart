@@ -38,7 +38,8 @@ ExpensesTableData _createTestExpense({
     id: id,
     storeId: 'test-store-id',
     categoryId: categoryId,
-    amount: amount,
+    // C-4 Session 4: expenses.amount is int cents.
+    amount: (amount * 100).round(),
     description: description,
     paymentMethod: 'cash',
     expenseDate: DateTime(2026, 1, 15),

@@ -357,7 +357,8 @@ ReturnsTableData createTestReturn({
     reason: reason,
     type: type,
     refundMethod: refundMethod,
-    totalRefund: totalRefund,
+    // C-4 Session 4: returns.total_refund is int cents.
+    totalRefund: (totalRefund * 100).round(),
     status: status,
     createdBy: createdBy,
     notes: notes,

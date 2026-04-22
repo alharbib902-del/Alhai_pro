@@ -99,7 +99,8 @@ Future<void> addExpense(
       id: Value(id),
       storeId: Value(storeId),
       categoryId: Value(categoryId),
-      amount: Value(amount),
+      // C-4 Session 4: expenses.amount is int cents.
+      amount: Value((amount * 100).round()),
       description: Value(description),
       paymentMethod: Value(paymentMethod),
       createdBy: Value(createdBy),

@@ -81,7 +81,7 @@ Future<String> createReturn(
       customerId: Value(customerId),
       customerName: Value(customerName),
       reason: Value(reason),
-      totalRefund: Value(totalRefund),
+      totalRefund: Value((totalRefund * 100).round()),
       refundMethod: Value(refundMethod),
       status: const Value('completed'),
       notes: Value(notes),

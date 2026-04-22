@@ -178,7 +178,7 @@ void main() {
           name: 'خصم 10%',
           pointsRequired: 500,
           rewardType: 'discount_percentage',
-          rewardValue: 10.0,
+          rewardValue: 1000, // 10.00 in cents
           createdAt: DateTime.now(),
         ),
       );
@@ -197,7 +197,7 @@ void main() {
           name: 'مكافأة نشطة',
           pointsRequired: 100,
           rewardType: 'discount_fixed',
-          rewardValue: 5.0,
+          rewardValue: 500, // 5.00 in cents
           isActive: const Value(true),
           createdAt: DateTime.now(),
         ),
@@ -209,7 +209,7 @@ void main() {
           name: 'مكافأة غير نشطة',
           pointsRequired: 50,
           rewardType: 'discount_fixed',
-          rewardValue: 2.0,
+          rewardValue: 200, // 2.00 in cents
           isActive: const Value(false),
           createdAt: DateTime.now(),
         ),
@@ -228,7 +228,7 @@ void main() {
           name: 'مكافأة',
           pointsRequired: 100,
           rewardType: 'free_item',
-          rewardValue: 1.0,
+          rewardValue: 100, // 1.00 in cents
           createdAt: DateTime.now(),
         ),
       );

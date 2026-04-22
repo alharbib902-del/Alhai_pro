@@ -29,8 +29,9 @@ AccountsTableData _createTestAccount({
     customerId: customerId,
     name: name,
     phone: phone,
-    balance: balance,
-    creditLimit: creditLimit,
+    // C-4 Session 4: accounts.balance, credit_limit are int cents.
+    balance: (balance * 100).round(),
+    creditLimit: (creditLimit * 100).round(),
     isActive: isActive,
     lastTransactionAt: lastTransactionAt,
     createdAt: createdAt ?? DateTime(2026, 1, 1),

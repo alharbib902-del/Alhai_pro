@@ -110,7 +110,8 @@ class _CustomerReportScreenState extends ConsumerState<CustomerReportScreen>
           name: a.name,
           phone: a.phone ?? '',
           totalOrders: 0,
-          totalSpent: a.balance,
+          // C-4 Session 4: accounts.balance is int cents; CustomerData.totalSpent is double SAR.
+          totalSpent: a.balance / 100.0,
           avgOrderValue: 0,
           lastOrderDate: a.lastTransactionAt ?? a.createdAt,
           tier: tier,

@@ -29,8 +29,9 @@ class TransactionsTable extends Table {
   TextColumn get type => text()(); // invoice, payment, interest, adjustment
 
   // المبلغ والوصف
-  RealColumn get amount => real()();
-  RealColumn get balanceAfter => real()(); // الرصيد بعد الحركة
+  // C-4 Session 4: transactions money columns are int cents (ROUND_HALF_UP).
+  IntColumn get amount => integer()();
+  IntColumn get balanceAfter => integer()(); // الرصيد بعد الحركة
   TextColumn get description => text().nullable()();
 
   // مرجع خارجي

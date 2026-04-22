@@ -80,7 +80,8 @@ void main() {
       expect(deleted, 1);
     });
 
-    // Coupons
+    // Coupons — C-4 Session 4: value stored as int cents (ROUND_HALF_UP).
+    // For 'percentage' type: 20% = 2000 cents (caller interprets).
     test('insertCoupon and getCouponByCode', () async {
       await db.discountsDao.insertCoupon(
         CouponsTableCompanion.insert(
@@ -88,7 +89,7 @@ void main() {
           storeId: 'store-1',
           code: 'SAVE20',
           type: 'percentage',
-          value: 20.0,
+          value: 2000, // 20% as cents
           isActive: const Value(true),
           createdAt: DateTime(2025, 3, 1),
         ),
@@ -96,7 +97,7 @@ void main() {
 
       final coupon = await db.discountsDao.getCouponByCode('SAVE20', 'store-1');
       expect(coupon, isNotNull);
-      expect(coupon!.value, 20.0);
+      expect(coupon!.value, 2000);
     });
 
     test('getCouponByCode returns null for inactive coupon', () async {
@@ -106,7 +107,7 @@ void main() {
           storeId: 'store-1',
           code: 'EXPIRED',
           type: 'fixed',
-          value: 10.0,
+          value: 1000, // 10.00 SAR as cents
           isActive: const Value(false),
           createdAt: DateTime(2025, 3, 1),
         ),
@@ -126,7 +127,7 @@ void main() {
           storeId: 'store-1',
           code: 'C1',
           type: 'fixed',
-          value: 5.0,
+          value: 500, // 5.00 SAR as cents
           createdAt: DateTime(2025, 3, 1),
         ),
       );
@@ -136,7 +137,7 @@ void main() {
           storeId: 'store-1',
           code: 'C2',
           type: 'percentage',
-          value: 15.0,
+          value: 1500, // 15% as cents
           createdAt: DateTime(2025, 3, 1),
         ),
       );
@@ -152,7 +153,7 @@ void main() {
           storeId: 'store-1',
           code: 'C1',
           type: 'fixed',
-          value: 5.0,
+          value: 500, // 5.00 SAR as cents
           createdAt: DateTime(2025, 3, 1),
         ),
       );

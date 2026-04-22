@@ -27,7 +27,7 @@ void main() {
       name: name,
       phone: Value(phone),
       isActive: Value(isActive),
-      balance: Value(balance),
+      balance: Value((balance * 100).round()),
       createdAt: DateTime(2025, 1, 1),
     );
   }
@@ -84,7 +84,7 @@ void main() {
       await db.suppliersDao.updateBalance('sup-1', 5000.0);
 
       final supplier = await db.suppliersDao.getSupplierById('sup-1');
-      expect(supplier!.balance, 5000.0);
+      expect(supplier!.balance, 500000); // 5000.00 in cents
     });
 
     test('deleteSupplier removes supplier', () async {

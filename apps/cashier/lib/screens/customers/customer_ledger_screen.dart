@@ -81,15 +81,19 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
 
   List<Map<String, dynamic>> _txnToMap(TransactionsTableData t) {
     final isDebit = t.amount > 0;
+    // C-4 Session 4: transactions.amount, balance_after are int cents.
+    // Convert to SAR doubles for display/aggregation.
+    final amountSar = t.amount.abs() / 100.0;
+    final balanceSar = t.balanceAfter / 100.0;
     return [
       {
         'id': t.id,
         'type': t.type,
         'description': t.description ?? t.type,
         'reference': t.referenceId ?? '-',
-        'debit': isDebit ? t.amount.abs() : 0.0,
-        'credit': isDebit ? 0.0 : t.amount.abs(),
-        'balance': t.balanceAfter,
+        'debit': isDebit ? amountSar : 0.0,
+        'credit': isDebit ? 0.0 : amountSar,
+        'balance': balanceSar,
         'date': t.createdAt,
       },
     ];
@@ -139,7 +143,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
     (sum, t) => sum + (t['credit'] as double),
   );
 
-  double get _currentBalance => _account?.balance ?? 0.0;
+  // C-4 Session 4: accounts.balance is int cents; return as SAR double.
+  double get _currentBalance => (_account?.balance ?? 0) / 100.0;
 
   String get _customerName => _account?.name ?? widget.id;
 
@@ -1470,7 +1475,9 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
     setState(() => _isAdjusting = true);
 
     final isDebit = type == 'debit';
-    final currentBal = _account?.balance ?? 0.0;
+    // C-4 Session 4: accounts.balance, transactions.amount, balance_after are int cents.
+    // Keep SAR doubles for display/public API; convert at DB boundary.
+    final currentBal = (_account?.balance ?? 0) / 100.0;
     final signedAmount = isDebit ? amount : -amount;
     final newBalance = currentBal + signedAmount;
     final storeId = ref.read(currentStoreIdProvider);
@@ -1485,8 +1492,8 @@ class _CustomerLedgerScreenState extends ConsumerState<CustomerLedgerScreen> {
             storeId: storeId,
             accountId: widget.id,
             type: 'adjustment',
-            amount: signedAmount,
-            balanceAfter: newBalance,
+            amount: (signedAmount * 100).round(),
+            balanceAfter: (newBalance * 100).round(),
             description: Value(reason.isEmpty ? l10n.manualAdjustment : reason),
             createdAt: date,
           ),

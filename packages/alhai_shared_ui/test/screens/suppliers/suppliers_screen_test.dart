@@ -40,7 +40,8 @@ SuppliersTableData _createTestSupplier({
     name: name,
     phone: phone,
     isActive: true,
-    balance: balance,
+    // C-4 Session 4: suppliers.balance is int cents.
+    balance: (balance * 100).round(),
     rating: 0,
     createdAt: DateTime(2026, 1, 1),
   );

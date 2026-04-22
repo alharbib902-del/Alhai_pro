@@ -107,7 +107,8 @@ final litePendingApprovalsProvider =
               type: 'refund',
               reference: row.data['id'] as String,
               description: row.data['reason'] as String? ?? 'Refund request',
-              amount: _toDouble(row.data['total_refund']),
+              // C-4 Session 4: returns.total_refund is int cents.
+              amount: _toDouble(row.data['total_refund']) / 100.0,
               requestedBy: row.data['user_name'] as String? ?? 'Unknown',
               createdAt:
                   DateTime.tryParse(row.data['created_at'].toString()) ??
@@ -124,7 +125,8 @@ final litePendingApprovalsProvider =
               type: 'purchase',
               reference: p.id,
               description: 'Purchase order',
-              amount: p.total,
+              // C-4 Session 4: purchases.total is int cents.
+              amount: p.total / 100.0,
               requestedBy: '',
               createdAt: p.createdAt,
             ),

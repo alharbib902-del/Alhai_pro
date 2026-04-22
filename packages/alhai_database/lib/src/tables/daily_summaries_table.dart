@@ -12,17 +12,19 @@ class DailySummariesTable extends Table {
   TextColumn get orgId => text().nullable()();
   TextColumn get storeId => text()();
   DateTimeColumn get date => dateTime()();
+  // C-4 Session 4: daily_summaries money columns are int cents (ROUND_HALF_UP).
+  // Count columns (totalSales, totalOrders, totalRefunds) already int.
   IntColumn get totalSales => integer().withDefault(const Constant(0))();
-  RealColumn get totalSalesAmount => real().withDefault(const Constant(0))();
+  IntColumn get totalSalesAmount => integer().withDefault(const Constant(0))();
   IntColumn get totalOrders => integer().withDefault(const Constant(0))();
-  RealColumn get totalOrdersAmount => real().withDefault(const Constant(0))();
+  IntColumn get totalOrdersAmount => integer().withDefault(const Constant(0))();
   IntColumn get totalRefunds => integer().withDefault(const Constant(0))();
-  RealColumn get totalRefundsAmount => real().withDefault(const Constant(0))();
-  RealColumn get totalExpenses => real().withDefault(const Constant(0))();
-  RealColumn get cashTotal => real().withDefault(const Constant(0))();
-  RealColumn get cardTotal => real().withDefault(const Constant(0))();
-  RealColumn get creditTotal => real().withDefault(const Constant(0))();
-  RealColumn get netProfit => real().withDefault(const Constant(0))();
+  IntColumn get totalRefundsAmount => integer().withDefault(const Constant(0))();
+  IntColumn get totalExpenses => integer().withDefault(const Constant(0))();
+  IntColumn get cashTotal => integer().withDefault(const Constant(0))();
+  IntColumn get cardTotal => integer().withDefault(const Constant(0))();
+  IntColumn get creditTotal => integer().withDefault(const Constant(0))();
+  IntColumn get netProfit => integer().withDefault(const Constant(0))();
   DateTimeColumn get createdAt => dateTime()();
   DateTimeColumn get updatedAt => dateTime().nullable()();
   DateTimeColumn get syncedAt => dateTime().nullable()();

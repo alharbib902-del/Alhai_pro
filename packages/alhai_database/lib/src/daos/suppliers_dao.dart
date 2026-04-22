@@ -91,10 +91,11 @@ class SuppliersDao extends DatabaseAccessor<AppDatabase>
     return update(suppliersTable).replace(supplier);
   }
 
+  /// [newBalance] is SAR (double); stored as int cents internally.
   Future<int> updateBalance(String id, double newBalance) {
     return (update(suppliersTable)..where((s) => s.id.equals(id))).write(
       SuppliersTableCompanion(
-        balance: Value(newBalance),
+        balance: Value((newBalance * 100).round()),
         updatedAt: Value(DateTime.now()),
       ),
     );

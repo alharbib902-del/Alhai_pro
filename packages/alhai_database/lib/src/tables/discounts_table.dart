@@ -46,10 +46,11 @@ class CouponsTable extends Table {
   TextColumn get code => text()();
   TextColumn get discountId => text().nullable()();
   TextColumn get type => text()(); // percentage, fixed
-  RealColumn get value => real()();
+  // C-4 Session 4: coupons money cols are int cents (ROUND_HALF_UP).
+  IntColumn get value => integer()();
   IntColumn get maxUses => integer().withDefault(const Constant(0))();
   IntColumn get currentUses => integer().withDefault(const Constant(0))();
-  RealColumn get minPurchase => real().withDefault(const Constant(0))();
+  IntColumn get minPurchase => integer().withDefault(const Constant(0))();
   BoolColumn get isActive => boolean().withDefault(const Constant(true))();
   DateTimeColumn get expiresAt => dateTime().nullable()();
   DateTimeColumn get createdAt => dateTime()();

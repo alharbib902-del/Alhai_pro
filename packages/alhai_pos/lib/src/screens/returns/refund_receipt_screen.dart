@@ -76,7 +76,8 @@ class RefundReceiptScreen extends ConsumerWidget {
     ReturnsTableData returnData,
     List<ReturnItemsTableData> items,
   ) {
-    final totalRefund = returnData.totalRefund;
+    // C-4 Session 4: returns.total_refund is int cents.
+    final totalRefund = returnData.totalRefund / 100.0;
     final l10n = AppLocalizations.of(context);
     final screenWidth = MediaQuery.sizeOf(context).width;
     final isMobile = screenWidth < AlhaiBreakpoints.tablet;
@@ -170,7 +171,8 @@ class RefundReceiptScreen extends ConsumerWidget {
                         (item) => _ProductRow(
                           name: item.productName,
                           qty: item.qty.toInt(),
-                          price: item.unitPrice,
+                          // C-4 Session 4: return_items.unit_price is int cents.
+                          price: item.unitPrice / 100.0,
                         ),
                       ),
 
