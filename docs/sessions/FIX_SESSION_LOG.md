@@ -6932,6 +6932,85 @@ END OF SESSION 34 — C-4 loyalty_transactions.sale_amount decision documented; 
 
 ---
 
+# Session 35 — C-5 TLV encoder refactor (2026-04-23)
+
+**Branch:** `fix/c5-tlv-encoder` (merged). **Commit:** `c240297c`. **Budget:** ~45 min.
+
+## Summary
+
+Fixes a silent data-corruption bug in the Phase-1 ZATCA QR encoder in `packages/alhai_pos/lib/src/services/zatca_service.dart` (shared by cashier + admin + customer_app). Extracts proper `encodeTag` / `decodeQrData` helpers and adds 11 regression tests.
+
+## The bug
+
+`_addTlv` accumulated bytes into a `List<int>`:
+```dart
+data.add(tag);
+data.add(value.length);   // ← int, no byte-range guard
+data.addAll(value);
+```
+
+`Uint8List.fromList(tlvData)` coerces every int to its low 8 bits. So a value of 400 bytes (easy to hit with an Arabic seller name > ~128 characters, since each letter is 2-3 UTF-8 bytes) was written as `length = 400 & 0xff = 144`. Decoders then read only 144 bytes → corrupted TLV payload, and the QR silently failed to parse on the ZATCA side or on a scanner. The encoder NEVER raised an error.
+
+Demonstrated in a new test: 200 × `'م'` = 400 UTF-8 bytes — now throws `TlvLengthOverflowException` with tag + byte length in the message.
+
+## Changes — 2 files, +226 / −22 LOC
+
+### `lib/src/services/zatca_service.dart`
+
+- New `TlvLengthOverflowException` (tag + byteLength + descriptive `toString`). Callers can catch and surface a clear invoice-time error instead of emitting broken QR.
+- New `static Uint8List encodeTag(int tag, List<int> value)`:
+  - Validates `tag` in `[0, 255]` (throws `ArgumentError`).
+  - Validates `value.length <= tlvMaxValueBytes (255)` (throws `TlvLengthOverflowException`).
+  - Builds `[tag, length, ...value]` directly into a `Uint8List` — no `List<int>` truncation path.
+- `generateQrData` now composes 5 `encodeTag` calls through a `BytesBuilder`. Output is byte-identical to the old encoder for any payload that already fit — no behavioural change for happy-path callers (all 29 pre-existing tests pass unchanged).
+- New `static Map<int, String> decodeQrData(String base64)` — validates while parsing, throws `FormatException` on truncated headers or length bytes promising more than remain. Useful for round-trip tests and inspecting QRs from other tools.
+- New public constant `tlvMaxValueBytes = 255`.
+
+### `test/services/zatca_service_expanded_test.dart`
+
+11 new tests in three groups:
+- **TLV length-overflow guard** (3) — 400-byte Arabic name throws; exception carries tag + byteLength; 255-byte boundary still encodes cleanly.
+- **encodeTag** (4) — wire format, empty value → `[tag, 0]`, tag > 255 throws, tag < 0 throws.
+- **decodeQrData** (4) — round-trips full 5-tag payload; round-trips Arabic UTF-8; throws `FormatException` on truncated header; throws on length-byte over-promise.
+
+## Why this shape
+
+- **Raise, don't truncate.** A silently malformed QR is the worst outcome — it defers the failure from "invoice print button" to "ZATCA side rejects the invoice hours later" or "customer scans and gets garbage." A synchronous exception lets the UI surface a clear message at print time.
+- **Public `encodeTag` + `decodeQrData`.** Making these part of the API (not private helpers) lets tests exercise the encoder in isolation AND lets future features (e.g. an admin "inspect QR" tool) decode stored QR payloads without duplicating the parse loop.
+- **Keep `generateQrData` signature stable.** The bug fix is internal; no cashier / admin / customer_app caller change needed. All consumers get the fix by picking up the new package version.
+- **No byte-output change for valid inputs.** The 29 pre-existing tests continue to pass unchanged because for `value.length <= 255`, `Uint8List.fromList([length])` already produces the same byte as `out[1] = length`. The bug was only in the > 255 branch.
+
+## Scope NOT covered (intentionally)
+
+- **Phase-2 TLV extensions** (tags 6-8: signature, public key, CSID). The Phase-1 QR is complete once these five tags are correct; Phase-2 support lives in the Phase-2 signer in `alhai_zatca` package, not in this helper.
+- **QR rendering / image generation**. This service produces the base64 payload; rendering is a separate concern (also unchanged).
+- **Migration of existing stored QR payloads**. Pre-existing invoices with short values are already byte-identical under the new encoder. Invoices with overflowing values were already broken — no migration can recover them; operators would need to re-print.
+
+## Verification
+
+- `flutter analyze` zatca_service.dart + expanded test: **0 issues**
+- **alhai_pos tests: 570 / 570** (was 559; +11 C-5 cases) — no pre-existing tests regressed.
+
+## Risk
+
+Low.
+- Output byte-identical for every previously-valid payload.
+- Only newly-rejecting inputs (overflow) now throw instead of silently corrupting.
+- Decoder is purely additive — no caller depends on it yet.
+- Shared package, but cashier/admin/customer_app all consume via `ZatcaService.generateQrData` with the same signature; their test suites remain green (checked via alhai_pos; downstream packages inherit behaviour).
+
+## Remote push + merge
+
+- Branch `fix/c5-tlv-encoder` pushed to `backup`.
+- Fast-forward merged to `main` (main now at `c240297c`).
+- `origin` still at `c214792a` — 20 commits on main now awaiting explicit user approval.
+
+---
+
+END OF SESSION 35 — C-5 TLV encoder refactored; 11 new tests; silent data corruption bug closed
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-23+)
 
 **Written end-of-day 2026-04-22 after Session 24 — closes the 12-session series this day.**
@@ -7020,7 +7099,7 @@ super_admin        222
 ## 5. 🟢 Low priority
 
 - C-1 Receipt number collision (real bug, half-day dedicated)
-- C-5 TLV encoder refactor (own session)
+- ~~C-5 TLV encoder refactor~~ — DONE Session 35, commit `c240297c` (encodeTag / decodeQrData + 11 tests; alhai_pos 559 → 570)
 - C-10 Historical NULL-orgId invoice cleanup (1-2h)
 - C-4 follow-ups: Money adoption in domain classes, `formatMoney` migration (incremental)
 - ~~`loyalty_transactions.sale_amount` decision~~ — DONE Session 34, commit `f0afcf02` (keep as-is, documented)
