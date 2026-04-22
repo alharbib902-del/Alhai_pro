@@ -569,9 +569,14 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
               'type': discount.type == 'percentage'
                   ? 'Percentage Off'
                   : AppLocalizations.of(context).fixedAmount,
+              // C-4 Stage A migrated `discount.value` to int for both
+              // types. For 'percentage' it's a percent scalar (0-100);
+              // for 'fixed' it's int cents — divide before display so
+              // a 15-SAR coupon reads "15.00 SAR", not "1500 SAR".
               'value': discount.type == 'percentage'
                   ? '${discount.value.toStringAsFixed(0)}%'
-                  : '${discount.value.toStringAsFixed(0)} ${AppLocalizations.of(context).sar}',
+                  : '${(discount.value / 100.0).toStringAsFixed(2)} '
+                        '${AppLocalizations.of(context).sar}',
               'validUntil': discount.endDate != null
                   ? '${discount.endDate!.day}/${discount.endDate!.month}/${discount.endDate!.year}'
                   : AppLocalizations.of(context).noExpiry,

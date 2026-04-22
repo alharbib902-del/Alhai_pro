@@ -280,11 +280,19 @@ class _DiscountsContent extends ConsumerWidget {
                               ),
                               Text(
                                 discount.type == 'percentage'
+                                    // percentage branch: `value` is a
+                                    // percent scalar (0-100), displayed
+                                    // as-is.
                                     ? l10n.discountOff(
                                         '${discount.value.toInt()}',
                                       )
+                                    // fixed branch: C-4 Stage A migrated
+                                    // `value` to int cents; divide here
+                                    // so the display reads "15.00 ر.س"
+                                    // not "1500 ر.س" (cents-as-SAR bug).
                                     : l10n.sarDiscountOff(
-                                        discount.value.toStringAsFixed(0),
+                                        (discount.value / 100.0)
+                                            .toStringAsFixed(2),
                                       ),
                                 style: const TextStyle(
                                   color: AppColors.primary,
