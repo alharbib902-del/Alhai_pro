@@ -71,6 +71,8 @@ class MockSyncMetadataDao extends Mock implements SyncMetadataDao {}
 
 class MockStockDeltasDao extends Mock implements StockDeltasDao {}
 
+class MockStockTransfersDao extends Mock implements StockTransfersDao {}
+
 // ============================================================================
 // FAKE COMPANION CLASSES (for mocktail registerFallbackValue)
 // ============================================================================
@@ -115,6 +117,9 @@ class FakePromotionsTableCompanion extends Fake
 class FakeSuppliersTableCompanion extends Fake
     implements SuppliersTableCompanion {}
 
+class FakeStockTransfersTableCompanion extends Fake
+    implements StockTransfersTableCompanion {}
+
 // ============================================================================
 // FALLBACK VALUE REGISTRATION
 // ============================================================================
@@ -137,6 +142,7 @@ void registerAdminFallbackValues() {
   registerFallbackValue(FakeCouponsTableCompanion());
   registerFallbackValue(FakePromotionsTableCompanion());
   registerFallbackValue(FakeSuppliersTableCompanion());
+  registerFallbackValue(FakeStockTransfersTableCompanion());
   // SyncPriority is needed by defaultProviderOverrides() for any(named: 'priority')
   registerFallbackValue(SyncPriority.normal);
   // Duration is needed for recoverStuckSyncingItems(stuckThreshold: any(...))
@@ -178,6 +184,7 @@ MockAppDatabase setupMockDatabase({
   MockPosTerminalsDao? posTerminalsDao,
   MockSyncMetadataDao? syncMetadataDao,
   MockStockDeltasDao? stockDeltasDao,
+  MockStockTransfersDao? stockTransfersDao,
 }) {
   final db = MockAppDatabase();
 
@@ -236,6 +243,9 @@ MockAppDatabase setupMockDatabase({
   when(
     () => db.stockDeltasDao,
   ).thenReturn(stockDeltasDao ?? MockStockDeltasDao());
+  when(
+    () => db.stockTransfersDao,
+  ).thenReturn(stockTransfersDao ?? MockStockTransfersDao());
 
   return db;
 }
