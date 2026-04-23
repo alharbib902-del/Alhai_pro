@@ -328,7 +328,7 @@ void main() {
       );
 
       test(
-        'enqueue payload emits SAR doubles (cents / 100.0) for Supabase DOUBLE columns',
+        'enqueue payload emits int cents for Supabase INTEGER columns',
         () async {
           final sale = createTestSalesTableData(
             subtotal: 40.0,
@@ -355,15 +355,19 @@ void main() {
           await invoiceService.createFromSale(sale: sale, items: testItems);
 
           expect(capturedPayload, isNotNull);
-          // Supabase invoices.* are DOUBLE PRECISION. Payload must convert
-          // cents → SAR doubles so the push land the right magnitude.
-          expect(capturedPayload!['subtotal'], 40.0);
-          expect(capturedPayload!['discount'], 0.0);
-          expect(capturedPayload!['taxAmount'], 6.0);
-          expect(capturedPayload!['total'], 46.0);
-          expect(capturedPayload!['amountPaid'], 46.0);
-          expect(capturedPayload!['amountDue'], 0.0);
-          expect(capturedPayload!['taxRate'], 15.0);
+          // C-4 §4h (Session 53): Supabase invoices.* are INTEGER cents
+          // (column-type audit 2026-04-25). Prior Session 45 test expected
+          // SAR doubles (40.0) based on a stale handover that claimed the
+          // server was DOUBLE — that expectation is now wrong. Payload
+          // must pass the Drift int cents (sale.subtotal = 4000) directly.
+          expect(capturedPayload!['subtotal'], 4000);
+          expect(capturedPayload!['subtotal'], isA<int>());
+          expect(capturedPayload!['discount'], 0);
+          expect(capturedPayload!['taxAmount'], 600);
+          expect(capturedPayload!['total'], 4600);
+          expect(capturedPayload!['amountPaid'], 4600);
+          expect(capturedPayload!['amountDue'], 0);
+          expect(capturedPayload!['taxRate'], 15.0); // Rate stays double.
           expect(capturedPayload!['currency'], 'SAR');
           expect(capturedPayload!['invoiceType'], 'simplified_tax');
           expect(capturedPayload!['status'], 'paid');

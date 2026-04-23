@@ -488,6 +488,11 @@ class SaleService {
     // up by the next sync cycle (via getUnsyncedSales / repairMissingSaleItemsSync).
     // =========================================================================
     try {
+      // C-4 §4h (Session 53): Supabase sales + sale_items money columns are
+      // INTEGER (cents) — confirmed by column-type audit 2026-04-25. Caller
+      // variables below are still SAR doubles (POS cart math runs in SAR);
+      // convert to cents at the wire boundary so Postgres doesn't reject
+      // the INSERT for invalid-integer-syntax on a fractional value.
       await _syncService.enqueueCreate(
         tableName: 'sales',
         recordId: saleId,
@@ -501,16 +506,21 @@ class SaleService {
           'customerId': validCustomerId,
           'customerName': customerName,
           'customerPhone': customerPhone,
-          'subtotal': correctedSubtotal,
-          'discount': discount,
-          'tax': correctedTax,
-          'total': correctedTotal,
+          'subtotal': (correctedSubtotal * 100).round(),
+          'discount': (discount * 100).round(),
+          'tax': (correctedTax * 100).round(),
+          'total': (correctedTotal * 100).round(),
           'paymentMethod': paymentMethod,
-          'amountReceived': amountReceived,
-          'changeAmount': changeAmount,
-          'cashAmount': cashAmount,
-          'cardAmount': cardAmount,
-          'creditAmount': creditAmount,
+          'amountReceived':
+              amountReceived == null ? null : (amountReceived * 100).round(),
+          'changeAmount':
+              changeAmount == null ? null : (changeAmount * 100).round(),
+          'cashAmount':
+              cashAmount == null ? null : (cashAmount * 100).round(),
+          'cardAmount':
+              cardAmount == null ? null : (cardAmount * 100).round(),
+          'creditAmount':
+              creditAmount == null ? null : (creditAmount * 100).round(),
           'notes': notes,
           'channel': 'POS',
           'status': 'completed',
@@ -525,6 +535,9 @@ class SaleService {
         final itemId = insertedItemIds[i];
         final unitPrice =
             correctedPrices[item.product.id] ?? item.effectivePrice;
+        final unitPriceCents = (unitPrice * 100).round();
+        final lineTotalCents =
+            (unitPrice * item.quantity * 100).round();
         await _syncService.enqueueCreate(
           tableName: 'sale_items',
           recordId: itemId,
@@ -533,11 +546,11 @@ class SaleService {
             'saleId': saleId,
             'productId': item.product.id,
             'productName': item.product.name,
-            'unitPrice': unitPrice,
+            'unitPrice': unitPriceCents,
             'qty': item.quantity.toDouble(),
-            'subtotal': unitPrice * item.quantity,
+            'subtotal': lineTotalCents,
             'discount': 0,
-            'total': unitPrice * item.quantity,
+            'total': lineTotalCents,
           },
           priority: SyncPriority.high,
         );

@@ -158,19 +158,23 @@ class InvoiceService {
                 'customerPhone': sale.customerPhone,
                 'customerVatNumber': customerVatNumber,
                 'customerAddress': customerAddress,
-                // Cents → SAR for DOUBLE PRECISION Supabase columns.
-                'subtotal': sale.subtotal / 100.0,
-                'discount': sale.discount / 100.0,
+                // C-4 §4h (Session 53): Supabase invoice money columns are
+                // INTEGER (cents) — audit confirmed 2026-04-25. Drift values
+                // are already cents, so pass them through untouched. The
+                // earlier `/100.0` conversion from Session 45 was based on
+                // a stale handover claim that the server was still DOUBLE.
+                'subtotal': sale.subtotal,
+                'discount': sale.discount,
                 'taxRate': 15.0,
-                'taxAmount': sale.tax / 100.0,
-                'total': sale.total / 100.0,
+                'taxAmount': sale.tax,
+                'total': sale.total,
                 'paymentMethod': sale.paymentMethod,
                 'amountPaid': sale.isPaid
-                    ? sale.total / 100.0
-                    : (sale.amountReceived ?? 0) / 100.0,
+                    ? sale.total
+                    : (sale.amountReceived ?? 0),
                 'amountDue': sale.isPaid
-                    ? 0.0
-                    : (sale.total - (sale.amountReceived ?? 0)) / 100.0,
+                    ? 0
+                    : (sale.total - (sale.amountReceived ?? 0)),
                 'currency': 'SAR',
                 'createdBy': sale.cashierId,
                 'cashierName': cashierName,
@@ -270,11 +274,14 @@ class InvoiceService {
 
       await _db.invoicesDao.upsertInvoice(companion);
 
-      // C-4 Session 2 follow-up — Bug B fix: enqueue for Supabase push.
-      // Input is double SAR; Supabase columns are DOUBLE PRECISION, so no
-      // conversion needed. Non-blocking by design.
+      // C-4 §4h (Session 53): Supabase invoice money columns are INTEGER
+      // cents — pass cents, not SAR doubles. Caller still passes SAR
+      // doubles, so convert at the wire boundary.
       if (_syncService != null) {
         try {
+          final subtotalCents = (amount * 100).round();
+          final taxCents = (taxAmount * 100).round();
+          final totalCents = subtotalCents + taxCents;
           await _syncService.enqueueCreate(
             tableName: 'invoices',
             recordId: id,
@@ -289,11 +296,11 @@ class InvoiceService {
               'refReason': reason,
               'customerId': customerId,
               'customerName': customerName,
-              'subtotal': amount,
+              'subtotal': subtotalCents,
               'taxRate': 15.0,
-              'taxAmount': taxAmount,
-              'total': amount + taxAmount,
-              'amountPaid': amount + taxAmount,
+              'taxAmount': taxCents,
+              'total': totalCents,
+              'amountPaid': totalCents,
               'currency': 'SAR',
               'createdBy': createdBy,
               'issuedAt': now.toIso8601String(),
@@ -361,9 +368,13 @@ class InvoiceService {
 
       await _db.invoicesDao.upsertInvoice(companion);
 
-      // C-4 Session 2 follow-up — Bug B fix: enqueue for Supabase push.
+      // C-4 §4h (Session 53): Supabase invoice money columns are INTEGER
+      // cents — pass cents, not SAR doubles.
       if (_syncService != null) {
         try {
+          final subtotalCents = (amount * 100).round();
+          final taxCents = (taxAmount * 100).round();
+          final totalCents = subtotalCents + taxCents;
           await _syncService.enqueueCreate(
             tableName: 'invoices',
             recordId: id,
@@ -378,11 +389,11 @@ class InvoiceService {
               'refReason': reason,
               'customerId': customerId,
               'customerName': customerName,
-              'subtotal': amount,
+              'subtotal': subtotalCents,
               'taxRate': 15.0,
-              'taxAmount': taxAmount,
-              'total': amount + taxAmount,
-              'amountDue': amount + taxAmount,
+              'taxAmount': taxCents,
+              'total': totalCents,
+              'amountDue': totalCents,
               'currency': 'SAR',
               'createdBy': createdBy,
               'issuedAt': now.toIso8601String(),

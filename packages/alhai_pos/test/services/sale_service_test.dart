@@ -467,6 +467,131 @@ void main() {
         },
       );
 
+      // C-4 §4h (Session 53) regression — sales + sale_items push payloads
+      // must carry INTEGER cents, not SAR doubles. Supabase schema audit
+      // 2026-04-25 confirmed all money columns on these two tables are
+      // INTEGER. A SAR-double push against an INTEGER column is rejected
+      // by Postgres as "invalid input syntax", so before this fix every
+      // POS sale was silently failing on the wire and sync_queue was
+      // piling up dead-lettered rows.
+      test(
+        'sales payload carries int cents (not SAR doubles) for all money columns',
+        () async {
+          final product = createTestProductsTableData(
+            id: 'prod-P',
+            price: 1000,
+            stockQty: 50,
+            trackInventory: true,
+          );
+          final cartItem = createTestCartItem(
+            productId: 'prod-P',
+            price: 1000,
+            quantity: 2,
+          );
+          setupCreateSaleMocks(product: product);
+
+          Map<String, dynamic>? salesPayload;
+          when(
+            () => mockSyncService.enqueueCreate(
+              tableName: any(named: 'tableName'),
+              recordId: any(named: 'recordId'),
+              data: any(named: 'data'),
+              priority: any(named: 'priority'),
+            ),
+          ).thenAnswer((invocation) async {
+            if (invocation.namedArguments[#tableName] == 'sales') {
+              salesPayload =
+                  invocation.namedArguments[#data] as Map<String, dynamic>;
+            }
+            return 'sync-id';
+          });
+
+          await saleService.createSale(
+            storeId: 'store-1',
+            cashierId: 'cashier-1',
+            items: [cartItem],
+            subtotal: 20.0,
+            discount: 2.5,
+            tax: 3.0,
+            total: 20.5,
+            paymentMethod: 'cash',
+            amountReceived: 25.0,
+            changeAmount: 4.5,
+            cashAmount: 25.0,
+          );
+
+          expect(salesPayload, isNotNull);
+          expect(salesPayload!['subtotal'], 2000);
+          expect(salesPayload!['subtotal'], isA<int>());
+          expect(salesPayload!['discount'], 250);
+          expect(salesPayload!['tax'], 300);
+          expect(salesPayload!['total'], 2050);
+          expect(salesPayload!['amountReceived'], 2500);
+          expect(salesPayload!['changeAmount'], 450);
+          expect(salesPayload!['cashAmount'], 2500);
+          // Nullables stay null when caller didn't pass them.
+          expect(salesPayload!['cardAmount'], isNull);
+          expect(salesPayload!['creditAmount'], isNull);
+        },
+      );
+
+      test(
+        'sale_items payload carries int cents for unit_price/subtotal/total',
+        () async {
+          final product = createTestProductsTableData(
+            id: 'prod-Q',
+            price: 1250,
+            stockQty: 10,
+            trackInventory: true,
+          );
+          final cartItem = createTestCartItem(
+            productId: 'prod-Q',
+            price: 1250,
+            quantity: 3,
+          );
+          setupCreateSaleMocks(product: product);
+
+          final capturedItems = <Map<String, dynamic>>[];
+          when(
+            () => mockSyncService.enqueueCreate(
+              tableName: any(named: 'tableName'),
+              recordId: any(named: 'recordId'),
+              data: any(named: 'data'),
+              priority: any(named: 'priority'),
+            ),
+          ).thenAnswer((invocation) async {
+            if (invocation.namedArguments[#tableName] == 'sale_items') {
+              capturedItems.add(
+                invocation.namedArguments[#data] as Map<String, dynamic>,
+              );
+            }
+            return 'sync-id';
+          });
+
+          // unitPrice 12.50 SAR × 3 qty → line total 37.50 SAR.
+          await saleService.createSale(
+            storeId: 'store-1',
+            cashierId: 'cashier-1',
+            items: [cartItem],
+            subtotal: 37.5,
+            discount: 0.0,
+            tax: 5.625,
+            total: 43.125,
+            paymentMethod: 'cash',
+          );
+
+          expect(capturedItems, hasLength(1));
+          final item = capturedItems.single;
+          expect(item['unitPrice'], 1250); // 12.50 SAR → 1250 cents.
+          expect(item['unitPrice'], isA<int>());
+          expect(item['subtotal'], 3750); // 37.50 SAR → 3750 cents.
+          expect(item['total'], 3750);
+          expect(item['discount'], 0);
+          // qty stays a double — it's a quantity, not money.
+          expect(item['qty'], 3.0);
+        },
+      );
+
       test('should create debt when payment method is credit', () async {
         // Arrange
         final product = createTestProductsTableData(
