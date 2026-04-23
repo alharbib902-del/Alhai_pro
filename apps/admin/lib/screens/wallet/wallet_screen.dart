@@ -363,7 +363,8 @@ class _WalletScreenState extends ConsumerState<WalletScreen>
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '${isPositive ? '+' : ''}${transaction.amount.toStringAsFixed(2)}',
+                // C-4 Session 4: transactions.amount is int cents.
+                '${isPositive ? '+' : ''}${(transaction.amount / 100.0).toStringAsFixed(2)}',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 15,

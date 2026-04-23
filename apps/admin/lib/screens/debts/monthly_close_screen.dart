@@ -441,8 +441,9 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
+                      // C-4 Session 4: accounts.balance is int cents.
                       l10n.debtLabel(
-                        customer.account.balance.toStringAsFixed(2),
+                        (customer.account.balance / 100.0).toStringAsFixed(2),
                       ),
                       style: TextStyle(
                         color: Theme.of(context).colorScheme.onSurfaceVariant,
@@ -602,14 +603,19 @@ class _MonthlyCloseScreenState extends ConsumerState<MonthlyCloseScreen> {
       final selectedCustomers = _customers.where((c) => c.isSelected).toList();
 
       for (final customer in selectedCustomers) {
-        final newBalance = customer.account.balance + customer.expectedInterest;
+        // C-4 Session 4: accounts.balance is int cents; expectedInterest is
+        // SAR double. Convert balance to SAR before summing so the
+        // `balanceAfter` we pass is coherent SAR. recordInterest then
+        // re-multiplies by 100 at its own boundary.
+        final newBalanceSar =
+            (customer.account.balance / 100.0) + customer.expectedInterest;
 
         await _db.transactionsDao.recordInterest(
           id: 'INT-${DateTime.now().millisecondsSinceEpoch}-${customer.account.id}',
           storeId: customer.account.storeId,
           accountId: customer.account.id,
           amount: customer.expectedInterest,
-          balanceAfter: newBalance,
+          balanceAfter: newBalanceSar,
           periodKey: _currentPeriod,
         );
 

@@ -512,7 +512,8 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
                               ),
                             ),
                             Text(
-                              '${l10n.balanceCol}: ${account.balance.toStringAsFixed(0)} ${l10n.sar}',
+                              // C-4 Session 4: accounts.balance is int cents.
+                              '${l10n.balanceCol}: ${(account.balance / 100.0).toStringAsFixed(0)} ${l10n.sar}',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: AppColors.getTextSecondary(isDark),

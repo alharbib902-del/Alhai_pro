@@ -433,7 +433,8 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                         ),
                       ),
                       Text(
-                        '${account.balance.toStringAsFixed(0)} ${l10n.sar}',
+                        // C-4 Session 4: accounts.balance is int cents.
+                        '${(account.balance / 100.0).toStringAsFixed(0)} ${l10n.sar}',
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
