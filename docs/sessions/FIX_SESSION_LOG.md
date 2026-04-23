@@ -8429,6 +8429,61 @@ END OF SESSION 53 — Found + fixed latent P0 in sale_service + invoice_service 
 
 ---
 
+# Session 54 — Supabase qty schema drift (3 tables → DOUBLE PRECISION) (2026-04-25)
+
+**Branch:** `fix/c4-schema-drift-return-items-total` (merged).
+**Commit:** `e2d14611` + this log entry. **Budget:** ~15 min.
+
+Follow-up to the Session 53 column-type sweep. Tightened scope investigation that surfaced a second schema drift — this time on `qty`, not on money columns:
+
+| Table | Drift | Supabase pre-v79 | Supabase post-v79 |
+|---|---|---|---|
+| `sale_items.qty` | Real | double precision | (unchanged) |
+| `inventory_movements.qty` | Real | **integer** | **double precision** |
+| `return_items.qty` | Real | **integer** | **double precision** |
+| `purchase_items.qty` | Real | **integer** | **double precision** |
+
+## Why it mattered
+
+Drift's `RealColumn` lets POS workflows record fractional quantities for weighed goods (2.5 kg produce, 0.75 L liquids, etc.). Three tables had Supabase stuck on INTEGER. Current impact was latent — all 60 existing `inventory_movements` rows happened to be whole quantities (matching the 11 sales / 30 sale_items with whole quantities today). First weighed-item sale would have hit Postgres `invalid input syntax for type integer` and dead-lettered the push.
+
+## Migration v79 — applied live 2026-04-25
+
+File: `supabase/migrations/20260425_v79_qty_double_precision_drift_alignment.sql`.
+
+Single atomic `BEGIN..COMMIT` with three paired `ALTER COLUMN TYPE DOUBLE PRECISION USING qty::DOUBLE PRECISION`. Int → double cast is lossless — the 60 inventory_movements rows preserve their values (-6, -5, -4, -3, -2, -1 per Q2/Q4 comparison).
+
+Pre-apply audit (Q1 types + Q2 row counts + value ranges) and post-apply verification (Q3 types → `double precision` for all three ✓; Q4 row count / MIN / MAX preserved ✓) ran against live Supabase with results matching expectations exactly. Rollback DDL gated on "no fractional rows exist" pre-check.
+
+## No Dart code change needed
+
+Drift already emits double `qty` via `.toDouble()` at every push site (sale_service, inventory DAOs, etc.) — v79 just lets Postgres accept them on the other side.
+
+## Verification
+
+- Live Supabase Q3: `data_type = 'double precision'` for all three columns.
+- Live Supabase Q4: row count / min / max identical to Q2 baseline.
+- No app-side work; no new tests needed.
+- alhai_pos baseline unchanged (587 / 587).
+
+## Remote push
+
+FF-merged to main.
+
+## What remains from the handover
+
+- §3b (customer/driver deploy) — credentials-blocked.
+- §4e (M4 stock-movement design) — needs user to pick from 3 options.
+- §4g (super_admin Tier 3) — blocked on external audit doc.
+- v76 RLS fallback — optional defense-in-depth.
+- P2 Dart-side push-payload audit for non-sales tables (shifts, purchases, returns, cash_movements, transactions, accounts, suppliers balance, held_invoices) — all empty today so no corruption risk; future cleanup session.
+
+---
+
+END OF SESSION 54 — v79 applied live; inventory_movements + return_items + purchase_items qty column now DOUBLE PRECISION; Drift ↔ Supabase schema parity restored for qty; 60 inventory_movements rows preserved losslessly; no Dart change; ZATCA gate unaffected
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-24+)
 
 **Written end-of-day 2026-04-23 after Session 42** — closes a 17-session / 40-commit marathon this day.
