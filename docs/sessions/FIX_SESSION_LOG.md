@@ -8347,6 +8347,88 @@ END OF SESSION 52 — §4h chunk 1 closed via Dart code fix alone; pre-apply aud
 
 ---
 
+# Session 53 — C-4 §4h P0: sale + invoice push payloads (wire format) (2026-04-25)
+
+**Branch:** `fix/c4-sale-invoice-services-cents-push-payload` (merged).
+**Commit:** `de57ead0`. **Budget:** ~45 min.
+
+Found a latent P0 via the §4h audit that Session 52 opened. A single column-type sweep (22 money columns / 10 tables) against live Supabase returned `integer` for **every** money column except `invoices.tax_rate` (which is a 15% rate, correctly a double). The C-4 handover's claim that these columns were still DOUBLE PRECISION was stale across the board.
+
+## What that meant in production
+
+`sale_service.createSale` and `invoice_service.{createFromSale, createCreditNote, createDebitNote}` were building push payloads in SAR doubles. With the server at INTEGER, Postgres rejects `'subtotal': 150.75` at the insert with `invalid input syntax for type integer`. Every POS sale or invoice created on any device since ~2026-04-22 was therefore:
+
+- saving locally (Drift cents path intact), and
+- enqueuing the push correctly, and then
+- **failing silently on the wire**. Pushes landed in sync_queue as `failed` / `dead_letter` rows.
+
+Net effect: offline POS kept working end-to-end on-device, but zero new sales/invoices reached the server. No production data corruption (server stayed pristine); instead, a growing pile of dead-lettered sync rows.
+
+## Live-data check
+
+Before writing the fix, a `COUNT(*)` + `MIN(created_at)` sample on the three affected tables:
+
+| Table | Rows | Oldest |
+|---|---|---|
+| `sales` | 11 | 2026-03-04 |
+| `sale_items` | 30 | 2026-03-04 |
+| `invoices` | 11 | (v77 backfill 2026-04-24) |
+
+All 11 sales rows inspected — totals like 28342 (283.42 SAR), 17475, 11878, 21648, 33534. Correct cents. Nothing corrupted. Fix is code-only, no backfill needed.
+
+## Fix
+
+Single atomic commit `de57ead0` touches two service files and their tests:
+
+### `packages/alhai_pos/lib/src/services/sale_service.dart`
+
+- **sales** payload (9 cols): subtotal / discount / tax / total + five nullable payment-split amounts (amountReceived / changeAmount / cashAmount / cardAmount / creditAmount). All now `(x * 100).round()` with null-safety preserved for the split fields.
+- **sale_items** payload (3 money cols): unitPrice / subtotal / total now int cents. `qty` stays double (quantity, not money). `discount` already int.
+- Repair path (`repairMissingSaleItemsSync`, ~line 760) was already correct — it reads Drift int-cents fields directly into the payload. No change.
+
+### `packages/alhai_pos/lib/src/services/invoice_service.dart`
+
+Three methods carried the Session 45 "convert cents → SAR double" pattern, which is exactly the wrong conversion now:
+
+- `createFromSale`: removed the five `sale.x / 100.0` conversions. Drift gives int cents — pass through.
+- `createCreditNote` + `createDebitNote`: wrap `amount` and `taxAmount` with `(x * 100).round()` at the wire boundary. Compute `totalCents` once, reuse for `amountPaid` / `amountDue`.
+
+## Tests (alhai_pos 585 → 587)
+
+- `invoice_service_test.dart`: existing "payload emits SAR doubles" test **flipped** to "payload emits int cents". Values `40.0 / 6.0 / 46.0 / 0.0` → `4000 / 600 / 4600 / 0`. Added `isA<int>` type-guards. taxRate stays `15.0` double — correctly a rate, not money.
+- `sale_service_test.dart`: two new regressions in the `createSale` group, paired with the existing inventory_movements test from Session 50:
+  1. **sales payload carries int cents for all money columns** — asserts cents across all 9 columns including nullable payment splits.
+  2. **sale_items payload carries int cents for unit_price / subtotal / total** — qty stays double.
+
+## Verification
+
+- `flutter analyze` alhai_pos: 3 pre-existing infos (unchanged). No new issues.
+- `flutter test` alhai_pos: **587 / 587** (was 585 → +2).
+- `flutter test` alhai_zatca: **850 + 1 skipped** (gate preserved).
+
+## Deploy note
+
+Once the new build rolls out:
+- sync_queue on each device replays the backlog of `failed` sales/invoices with the corrected payload — the rows will land on the server automatically.
+- No Supabase migration needed. No data rewrite.
+- Recommend a follow-up observation window (~1-2 days after rollout) to spot-check that Supabase row counts begin catching up with per-device local sales counts.
+
+## Remaining §4h work
+
+None on the Supabase side — the sweep confirmed the server is already int-cents across all tables. Remaining Dart-side payload audits (non-sales tables) are **P2 at worst** because they're either empty-today (shifts, purchases, returns, transactions, accounts, etc. — 0 rows as of 2026-04-25) or push-only from rare ops workflows, so a latent payload-type mismatch wouldn't have corrupted data yet.
+
+Suggested order for a future cleanup sweep when a dedicated session is available: shifts → purchases → returns → cash_movements → transactions + accounts + suppliers balance → held_invoices.
+
+## Remote push
+
+FF-merged to main.
+
+---
+
+END OF SESSION 53 — Found + fixed latent P0 in sale_service + invoice_service push payloads (SAR doubles → int cents across 14 sites / 2 files); live data integrity confirmed safe; alhai_pos 585 → 587; ZATCA 850+1 preserved; non-sales tables remain as P2 cleanup for later
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-24+)
 
 **Written end-of-day 2026-04-23 after Session 42** — closes a 17-session / 40-commit marathon this day.
