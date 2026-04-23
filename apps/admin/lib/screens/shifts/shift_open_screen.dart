@@ -43,7 +43,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
           onMenuTap: isWideScreen
               ? null
               : () => Scaffold.of(context).openDrawer(),
-          onNotificationsTap: () => context.push('/notifications'),
+          onNotificationsTap: () => smartNotificationsPush(context, ref, lowStockRoute: AppRoutes.inventoryAlerts),
           notificationsCount: 3,
           userName: ref.watch(currentUserProvider)?.name ?? l10n.cashCustomer,
           userRole: l10n.branchManager,

@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
@@ -111,7 +110,7 @@ class _MediaLibraryScreenState extends ConsumerState<MediaLibraryScreen> {
         AppHeader(
           title: l10n.mediaLibrary,
           onMenuTap: isWide ? null : () => Scaffold.of(context).openDrawer(),
-          onNotificationsTap: () => context.push('/notifications'),
+          onNotificationsTap: () => smartNotificationsPush(context, ref, lowStockRoute: AppRoutes.inventoryAlerts),
           notificationsCount: 0,
           userName: l10n.defaultUserName,
           userRole: l10n.branchManager,

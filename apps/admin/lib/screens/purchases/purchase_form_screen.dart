@@ -95,7 +95,7 @@ class _PurchaseFormScreenState extends ConsumerState<PurchaseFormScreen> {
                 onMenuTap: isWideScreen
                     ? null
                     : () => Scaffold.of(context).openDrawer(),
-                onNotificationsTap: () => context.push('/notifications'),
+                onNotificationsTap: () => smartNotificationsPush(context, ref, lowStockRoute: AppRoutes.inventoryAlerts),
                 notificationsCount: 3,
                 userName: l10n.cashCustomer,
                 userRole: l10n.branchManager,

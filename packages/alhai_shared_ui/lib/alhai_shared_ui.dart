@@ -27,6 +27,7 @@ export 'src/core/theme/app_sizes.dart';
 export 'src/core/theme/app_typography.dart';
 export 'src/core/theme/app_theme.dart';
 export 'src/core/router/routes.dart';
+export 'src/core/router/notification_bell_destination.dart';
 export 'src/core/validators/validators.dart';
 export 'src/core/validators/input_sanitizer.dart';
 export 'src/core/sanitizers/input_sanitizer.dart';

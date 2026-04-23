@@ -138,7 +138,7 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
             onMenuTap: isWideScreen
                 ? null
                 : () => Scaffold.of(context).openDrawer(),
-            onNotificationsTap: () => context.push('/notifications'),
+            onNotificationsTap: () => smartNotificationsPush(context, ref, lowStockRoute: AppRoutes.inventoryAlerts),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
             userRole: l10n.branchManager,
@@ -155,7 +155,7 @@ class _PosSettingsScreenState extends ConsumerState<PosSettingsScreen> {
           onMenuTap: isWideScreen
               ? null
               : () => Scaffold.of(context).openDrawer(),
-          onNotificationsTap: () => context.push('/notifications'),
+          onNotificationsTap: () => smartNotificationsPush(context, ref, lowStockRoute: AppRoutes.inventoryAlerts),
           notificationsCount: 3,
           userName: l10n.defaultUserName,
           userRole: l10n.branchManager,

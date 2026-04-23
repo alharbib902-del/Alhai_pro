@@ -258,7 +258,7 @@ class _SecuritySettingsScreenState
           onMenuTap: isWideScreen
               ? null
               : () => Scaffold.of(context).openDrawer(),
-          onNotificationsTap: () => context.push('/notifications'),
+          onNotificationsTap: () => smartNotificationsPush(context, ref, lowStockRoute: AppRoutes.inventoryAlerts),
           notificationsCount: 3,
           userName: userName,
           userRole: userRole,

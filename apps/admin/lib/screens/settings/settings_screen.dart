@@ -62,7 +62,7 @@ class SettingsScreen extends ConsumerWidget {
             onMenuTap: isWideScreen
                 ? null
                 : () => Scaffold.of(context).openDrawer(),
-            onNotificationsTap: () => context.push('/notifications'),
+            onNotificationsTap: () => smartNotificationsPush(context, ref, lowStockRoute: AppRoutes.inventoryAlerts),
             notificationsCount: syncCount,
             userName: userName,
             userRole: userRole,

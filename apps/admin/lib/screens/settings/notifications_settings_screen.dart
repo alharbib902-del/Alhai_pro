@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_core/alhai_core.dart';
@@ -119,7 +118,7 @@ class _NotificationsSettingsScreenState
             onMenuTap: isWideScreen
                 ? null
                 : () => Scaffold.of(context).openDrawer(),
-            onNotificationsTap: () => context.push('/notifications'),
+            onNotificationsTap: () => smartNotificationsPush(context, ref, lowStockRoute: AppRoutes.inventoryAlerts),
             notificationsCount: 3,
             userName: l10n.defaultUserName,
             userRole: l10n.branchManager,
@@ -136,7 +135,7 @@ class _NotificationsSettingsScreenState
           onMenuTap: isWideScreen
               ? null
               : () => Scaffold.of(context).openDrawer(),
-          onNotificationsTap: () => context.push('/notifications'),
+          onNotificationsTap: () => smartNotificationsPush(context, ref, lowStockRoute: AppRoutes.inventoryAlerts),
           notificationsCount: 3,
           userName: l10n.defaultUserName,
           userRole: l10n.branchManager,
