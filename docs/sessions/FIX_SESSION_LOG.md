@@ -8484,6 +8484,62 @@ END OF SESSION 54 — v79 applied live; inventory_movements + return_items + pur
 
 ---
 
+# Session 55 — customer + driver deploy readiness; driver hardening parity (2026-04-25)
+
+**Branch:** `prep/customer-driver-deploy-readiness` (merged).
+**Commit:** `c0399640` + this log entry. **Budget:** ~60 min.
+
+Prep work so §3b (customer_app + driver_app Play Store release) is ≤ 30 min per app once credentials arrive.
+
+## What the audit found
+
+- `customer_app`: already fully hardened on Android (allowBackup=false, XML backup/extraction rules, network_security_config, usesCleartextTraffic=false, ProGuard enabled, signing config conditional on key.properties). Nothing to fix.
+- `driver_app`: **claimed hardened by handover 2026-04-18, actually wasn't.** AndroidManifest lacked every hardening flag, no `res/xml/` directory existed, `build.gradle.kts` had `release {}` without `isMinifyEnabled` / `isShrinkResources` / `proguardFiles`, no `proguard-rules.pro` file at all. Gap closed this session — driver now matches customer byte-for-byte on the Android hardening surface.
+
+## What landed
+
+### driver_app Android hardening
+- `AndroidManifest.xml`: added `android:allowBackup="false"`, `fullBackupContent=@xml/backup_rules`, `dataExtractionRules=@xml/data_extraction_rules`, `networkSecurityConfig=@xml/network_security_config`, `usesCleartextTraffic="false"`.
+- `res/xml/backup_rules.xml`, `res/xml/data_extraction_rules.xml`, `res/xml/network_security_config.xml` created — identical content to `customer_app` equivalents.
+- `app/build.gradle.kts`: release build type now sets `isMinifyEnabled = true`, `isShrinkResources = true`, and references `proguard-rules.pro` alongside the default `proguard-android-optimize.txt`.
+- `app/proguard-rules.pro` created — keeps for Flutter, Google services, Supabase, and (driver-specific) `id.flutter.flutter_background_service` (reflection-based foreground-service lookup at runtime).
+
+### Keystore tooling
+- `scripts/generate_keystores.sh` extended to cover `customer_app` + `driver_app`. Previous script only handled the three `apps/*` Flutter apps (cashier / admin / admin_lite). Added an `APP_PATHS` associative array so root-level customer_app + driver_app get correct paths.
+
+### Release build scripts (new)
+- `scripts/build_customer_release.sh` and `scripts/build_driver_release.sh`. Each runs pre-flight (keystore required, google-services optional with warn, flutter in PATH), then `flutter clean` + `pub get` + `flutter build appbundle --release --obfuscate --split-debug-info=build/symbols`, then copies the AAB to `dist/<app>-<version>-<build>.aab` with a version-stamped filename. Both chmod +x.
+
+### Documentation
+- `docs/deploy/customer-driver-release-checklist.md` — single-page checklist: secrets inventory (keystores, Firebase, Play/App Store, optional Sentry + Maps API key), pre-release verification (tests, analyzer, version bump), Android build step, first-time Play Console setup, internal testing track rollout, iOS notes, post-deploy monitoring (crash-free rate + sync_queue drain), rollback procedure, keystore discipline warnings.
+
+## Verification
+
+- `flutter analyze` driver_app: **No issues found!**
+- `flutter test` driver_app: **156 / 156** (unchanged — hardening is Android-layer only, doesn't touch Dart).
+- customer_app not retested — untouched this session.
+
+## What still blocks §3b
+
+No code blocker remains. Ship is gated only on user-side items:
+1. Android upload keystores (`customer_app` + `driver_app`) — generate via `bash scripts/generate_keystores.sh` and distribute securely.
+2. `google-services.json` per app (via `flutterfire configure`).
+3. Play Console accounts set up for both apps.
+4. *(Optional)* Apple Developer + App Store Connect for iOS.
+5. *(Optional)* Sentry DSN per app.
+
+Once (1) + (2) + (3) are in place, `bash scripts/build_customer_release.sh` and `bash scripts/build_driver_release.sh` produce signed AABs ready for Play Console upload. Expected total shipping time: ~30 min per app to internal testing track.
+
+## Remote push
+
+FF-merged to main.
+
+---
+
+END OF SESSION 55 — Deploy readiness prep; driver_app Android hardening brought to customer_app parity for real (handover 2026-04-18 had claimed parity but the files were absent); keystore generator extended to cover both apps; build scripts + release checklist in place; §3b now bottlenecked only on user-side credentials
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-24+)
 
 **Written end-of-day 2026-04-23 after Session 42** — closes a 17-session / 40-commit marathon this day.
