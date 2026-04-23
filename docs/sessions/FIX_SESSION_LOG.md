@@ -8264,6 +8264,89 @@ END OF SESSION 51 — admin baseline 367 → 390 (+23); M3/M4 inventory screens 
 
 ---
 
+# Session 52 — C-4 §4h chunk 1: Supabase int-cents for coupons + expenses + loyalty_rewards (2026-04-25)
+
+**Branch:** `fix/c4-supabase-int-cents-coupons-expenses-loyalty` (NOT merged; awaits user push approval).
+**Commits:** `5484d2ec` (code + v78), `6b65dcad` (dual-log v1), this commit (v78 retracted + log updated). **Budget:** ~45 min.
+
+First chunk of §4h — intended as the Supabase counterpart to the Drift-side cents migration from 2026-04-22. What actually happened: **during pre-apply audit the live Supabase schema turned out to be INTEGER already for all five target columns.** The handover's §4h scope list was stale for these three tables. Migration v78 was therefore retracted (would cause 100× corruption if run against already-integer columns). The paired Dart code change remains necessary and stands.
+
+## Pre-apply audit — what we found
+
+- Q1 (row counts): all three tables empty (0 rows).
+- Q4 (column types): all five columns already `integer` — not `double precision` as the handover assumed:
+
+  | Table | Column | Actual data_type (2026-04-25) |
+  |---|---|---|
+  | `coupons` | `value` | **integer** |
+  | `coupons` | `min_purchase` | **integer** |
+  | `expenses` | `amount` | **integer** |
+  | `loyalty_rewards` | `reward_value` | **integer** |
+  | `loyalty_rewards` | `min_purchase` | **integer** |
+
+- Q2 + Q3 (fractional-cent scan + value-range) skipped — not meaningful with zero rows.
+
+## What the code change actually fixes
+
+With Supabase at INTEGER and the old Dart payload sending SAR doubles (`'amount': amount`), every expense push was silently implicit-cast by Postgres: `150.75 SAR → 151` cents server-side. Zero decimal precision. Tables being empty meant nobody triggered this on production yet, but the bug was latent.
+
+The paired Dart change (`'amount': (amount * 100).round()`) aligns the wire with the already-migrated server. **That's the real fix this session ships.**
+
+## Migration v78 — retracted
+
+File `supabase/migrations/20260425_v78_c4_money_counterpart_coupons_expenses_loyalty_rewards.sql` was authored + committed in `5484d2ec`, then **deleted in this follow-up commit** once the pre-apply audit showed the columns were already INTEGER. Re-running `ALTER COLUMN TYPE INTEGER USING ROUND(col * 100)::INTEGER` against an already-integer column multiplies values by 100 — exactly the 100× corruption the migration was meant to prevent. Retracting is the safe move.
+
+Implication for the §4h follow-up plan: other "remaining chunks" (sales+items, shifts, transactions+accounts, etc.) cannot be assumed to still be DOUBLE on Supabase. Each one needs a pre-apply Q4 column-type check before migration SQL is authored.
+
+## Code change (stands — the real fix)
+
+`packages/alhai_shared_ui/lib/src/providers/expenses_providers.dart:addExpense` — wire payload `'amount'` switched from SAR double to `(amount * 100).round()` int cents. Matches both the Drift companion (cents since C-4 Session 4) and the Supabase column (already integer).
+
+coupons + loyalty_rewards are pull-only on the client (see `PullStrategy.pullTables`), so no push-side code change for them — the pull delivers INTEGER directly into the Drift INTEGER column, matching shapes end-to-end.
+
+## Tests
+
+Three regression tests added in `packages/alhai_shared_ui/test/providers/expenses_providers_test.dart` (shared_ui 869 → 872):
+
+1. **payload carries int cents for amount (not SAR double)** — canonical wire-contract lock. Captures `inv.namedArguments[#data]` and asserts `amount == 15075` (int) for a 150.75 SAR input.
+2. **fractional SAR amounts rounded to nearest cent** — 12.34 SAR → 1234 cents. Avoids `.5` cases where IEEE-754 float imprecision makes rounding direction non-obvious.
+3. **Drift insert companion also receives int cents** — captures the `ExpensesTableCompanion` positional arg and asserts `amount.value == 7550` for 75.50 SAR. Locks the local-storage side alongside the new wire-format so a future refactor can't accidentally diverge the two sides.
+
+Test infra: `MockWidgetRef extends Mock implements WidgetRef`, plus a `_FakeProviderListenable<T>` fallback for `mockRef.read(provider)` matching. `ref.invalidate(...)` is stubbed with explicit provider references rather than `any()` because `ProviderOrFamily` is a sealed class and can't be faked.
+
+## Deploy order
+
+Simplified now that v78 is retracted: ship the Dart code change (`5484d2ec`) whenever convenient. Server is already at the target shape. Old builds running against the already-INTEGER column were silently truncating decimals; the sooner the new build rolls out, the sooner decimals are preserved.
+
+## Verification
+
+- `flutter analyze` alhai_shared_ui: **16 pre-existing info/warning items (unchanged)**. No new issues from the code change or the test additions.
+- `flutter test` alhai_shared_ui: **872 / 872** (was 869 → +3).
+- Supabase column types: confirmed `integer` for all five target columns (Q4 audit run live 2026-04-25).
+- v78 migration: authored + retracted same session. No live apply.
+
+## Remaining §4h chunks
+
+In rough scope order (smallest → largest). Each needs a pre-apply Q4 column-type check before the migration SQL is authored — after today's discovery, the handover's assumption that these are all still DOUBLE cannot be trusted:
+1. ✅ coupons + expenses + loyalty_rewards (this session — Dart code fix only; Supabase was already migrated).
+2. returns + return_items.
+3. transactions + accounts.
+4. shifts + daily_summaries.
+5. purchases + purchase_items.
+6. sales + sale_items (biggest — touches every POS write path).
+
+Recommended next step: a short audit session that runs one Q4-shaped query across all §4h tables at once to establish the actual server state before any more migration SQL is drafted.
+
+## Remote push
+
+**Awaits user approval** — not pushed yet.
+
+---
+
+END OF SESSION 52 — §4h chunk 1 closed via Dart code fix alone; pre-apply audit revealed Supabase was already INTEGER for all 5 target columns; v78 migration retracted (would have been 100× corruption); expense push payload now cents; 3 regression tests (shared_ui 869 → 872); §4h follow-up sessions must Q4-audit each table group before drafting SQL
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-24+)
 
 **Written end-of-day 2026-04-23 after Session 42** — closes a 17-session / 40-commit marathon this day.

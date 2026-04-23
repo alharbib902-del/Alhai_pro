@@ -119,7 +119,11 @@ Future<void> addExpense(
         'id': id,
         'store_id': storeId,
         'category_id': categoryId,
-        'amount': amount,
+        // C-4 §4h (Session 52): expenses.amount is int cents on both
+        // Drift and Supabase after migration v78. The wire payload must
+        // match — do NOT send SAR doubles here or the server will store
+        // fractional cents as a float-to-int coerce value.
+        'amount': (amount * 100).round(),
         'description': description,
         'payment_method': paymentMethod,
         'created_by': createdBy,
