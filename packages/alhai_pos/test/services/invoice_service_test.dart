@@ -16,6 +16,8 @@ class MockInvoicesDao extends Mock implements InvoicesDao {}
 
 class MockImageUploadService extends Mock implements ImageUploadService {}
 
+class MockSyncService extends Mock implements SyncService {}
+
 class FakeInvoicesTableCompanion extends Fake
     implements InvoicesTableCompanion {}
 
@@ -34,6 +36,7 @@ void main() {
   late TestMockAppDatabase mockDb;
   late MockInvoicesDao mockInvoicesDao;
   late MockImageUploadService mockUploadService;
+  late MockSyncService mockSyncService;
 
   // Test data
   final testSale = createTestSalesTableData();
@@ -70,17 +73,32 @@ void main() {
     registerPosFallbackValues();
     registerFallbackValue(FakeInvoicesTableCompanion());
     registerFallbackValue(Uint8List(0));
+    registerFallbackValue(SyncPriority.normal);
   });
 
   setUp(() {
     mockInvoicesDao = MockInvoicesDao();
     mockUploadService = MockImageUploadService();
+    mockSyncService = MockSyncService();
+
+    // Stub the sync enqueue path so tests using an injected SyncService
+    // don't hit the real implementation. Non-blocking behavior preserves
+    // local-save semantics when enqueue fails.
+    when(
+      () => mockSyncService.enqueueCreate(
+        tableName: any(named: 'tableName'),
+        recordId: any(named: 'recordId'),
+        data: any(named: 'data'),
+        priority: any(named: 'priority'),
+      ),
+    ).thenAnswer((_) async => 'mock-sync-id');
 
     mockDb = TestMockAppDatabase();
     when(() => mockDb.invoicesDao).thenReturn(mockInvoicesDao);
 
     invoiceService = InvoiceService(
       db: mockDb,
+      syncService: mockSyncService,
       uploadService: mockUploadService,
     );
   });
@@ -278,6 +296,101 @@ void main() {
           expect(capturedCompanion!.total.value, 5000);
           expect(capturedCompanion!.amountPaid.value, 0);
           expect(capturedCompanion!.amountDue.value, 5000);
+        },
+      );
+
+      // C-4 Session 2 follow-up — Bug B regression: locks in that the
+      // newly-created invoice is enqueued for Supabase sync. The PRE-fix
+      // code wrote to local Drift only and the invoice never landed
+      // server-side (compliance gap). These tests would have caught it.
+      test(
+        'enqueues invoice to sync queue with tableName="invoices" and high priority',
+        () async {
+          final sale = createTestSalesTableData(
+            subtotal: 40.0,
+            discount: 0.0,
+            tax: 6.0,
+            total: 46.0,
+            isPaid: true,
+          );
+
+          await invoiceService.createFromSale(sale: sale, items: testItems);
+
+          verify(
+            () => mockSyncService.enqueueCreate(
+              tableName: 'invoices',
+              recordId: any(named: 'recordId'),
+              data: any(named: 'data'),
+              priority: SyncPriority.high,
+            ),
+          ).called(1);
+        },
+      );
+
+      test(
+        'enqueue payload emits SAR doubles (cents / 100.0) for Supabase DOUBLE columns',
+        () async {
+          final sale = createTestSalesTableData(
+            subtotal: 40.0,
+            discount: 0.0,
+            tax: 6.0,
+            total: 46.0,
+            isPaid: true,
+          );
+
+          Map<String, dynamic>? capturedPayload;
+          when(
+            () => mockSyncService.enqueueCreate(
+              tableName: any(named: 'tableName'),
+              recordId: any(named: 'recordId'),
+              data: any(named: 'data'),
+              priority: any(named: 'priority'),
+            ),
+          ).thenAnswer((inv) async {
+            capturedPayload =
+                inv.namedArguments[#data] as Map<String, dynamic>;
+            return 'mock-sync-id';
+          });
+
+          await invoiceService.createFromSale(sale: sale, items: testItems);
+
+          expect(capturedPayload, isNotNull);
+          // Supabase invoices.* are DOUBLE PRECISION. Payload must convert
+          // cents → SAR doubles so the push land the right magnitude.
+          expect(capturedPayload!['subtotal'], 40.0);
+          expect(capturedPayload!['discount'], 0.0);
+          expect(capturedPayload!['taxAmount'], 6.0);
+          expect(capturedPayload!['total'], 46.0);
+          expect(capturedPayload!['amountPaid'], 46.0);
+          expect(capturedPayload!['amountDue'], 0.0);
+          expect(capturedPayload!['taxRate'], 15.0);
+          expect(capturedPayload!['currency'], 'SAR');
+          expect(capturedPayload!['invoiceType'], 'simplified_tax');
+          expect(capturedPayload!['status'], 'paid');
+          expect(capturedPayload!['saleId'], sale.id);
+        },
+      );
+
+      test(
+        'enqueue failure does not crash the sale (local row is still saved)',
+        () async {
+          when(
+            () => mockSyncService.enqueueCreate(
+              tableName: any(named: 'tableName'),
+              recordId: any(named: 'recordId'),
+              data: any(named: 'data'),
+              priority: any(named: 'priority'),
+            ),
+          ).thenThrow(Exception('sync enqueue down'));
+
+          final result = await invoiceService.createFromSale(
+            sale: testSale,
+            items: testItems,
+          );
+
+          // Invoice still saved locally, returned to caller.
+          expect(result, isNotNull);
+          verify(() => mockInvoicesDao.upsertInvoice(any())).called(1);
         },
       );
     });

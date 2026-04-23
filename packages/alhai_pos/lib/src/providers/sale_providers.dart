@@ -16,8 +16,16 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 /// مزود خدمة الفواتير
 final invoiceServiceProvider = Provider<InvoiceService>((ref) {
   final db = ref.watch(appDatabaseProvider);
+  // C-4 Session 2 follow-up — Bug B fix: inject SyncService so newly-created
+  // invoices are pushed to Supabase. Pre-fix the service only wrote locally,
+  // leaving a compliance gap server-side.
+  final syncService = ref.watch(syncServiceProvider);
   final clockOffset = ref.watch(clockOffsetProvider);
-  return InvoiceService(db: db, clockOffsetProvider: clockOffset);
+  return InvoiceService(
+    db: db,
+    syncService: syncService,
+    clockOffsetProvider: clockOffset,
+  );
 });
 
 /// Optional clock offset provider. Override this in the cashier app

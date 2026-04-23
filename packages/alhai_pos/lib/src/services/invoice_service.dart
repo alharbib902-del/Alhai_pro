@@ -34,8 +34,18 @@ enum InvoiceType {
 /// - إشعارات دائن/مدين
 /// - أرشفة PDF في Supabase Storage
 /// - تقارير وإحصائيات
+///
+/// ### Sync payload format
+///
+/// Drift stores invoice money columns as int cents (post b0f04fa1 on
+/// 2026-04-22). The Supabase `invoices` table is still DOUBLE PRECISION
+/// (v15 schema — the int-cents counterpart migration is deferred to a
+/// dedicated Supabase-side session). So every [_syncService.enqueueCreate]
+/// payload here divides cents by 100 before emitting. Matches the
+/// sale_service / sale_items push contract.
 class InvoiceService {
   final AppDatabase _db;
+  final SyncService? _syncService;
   final ImageUploadService? _uploadService;
 
   /// Optional clock offset callback. When provided, returns the measured
@@ -47,9 +57,11 @@ class InvoiceService {
 
   InvoiceService({
     required AppDatabase db,
+    SyncService? syncService,
     ImageUploadService? uploadService,
     Duration Function()? clockOffsetProvider,
   }) : _db = db,
+       _syncService = syncService,
        _uploadService = uploadService,
        _clockOffsetProvider = clockOffsetProvider;
 
@@ -121,6 +133,61 @@ class InvoiceService {
         );
 
         await _db.invoicesDao.upsertInvoice(companion);
+
+        // C-4 Session 2 follow-up — Bug B fix: push newly-created invoice
+        // to the sync queue so it lands on Supabase. Before this, local
+        // invoices were never enqueued → every POS-generated invoice stayed
+        // local only → ZATCA compliance gap server-side.
+        // Non-blocking: same pattern as sale_service — invoice is saved
+        // locally regardless of sync enqueue outcome.
+        if (_syncService != null) {
+          try {
+            await _syncService.enqueueCreate(
+              tableName: 'invoices',
+              recordId: id,
+              data: {
+                'id': id,
+                'orgId': sale.orgId,
+                'storeId': sale.storeId,
+                'invoiceNumber': invoiceNumber,
+                'invoiceType': type.value,
+                'status': sale.isPaid ? 'paid' : 'issued',
+                'saleId': sale.id,
+                'customerId': sale.customerId,
+                'customerName': sale.customerName,
+                'customerPhone': sale.customerPhone,
+                'customerVatNumber': customerVatNumber,
+                'customerAddress': customerAddress,
+                // Cents → SAR for DOUBLE PRECISION Supabase columns.
+                'subtotal': sale.subtotal / 100.0,
+                'discount': sale.discount / 100.0,
+                'taxRate': 15.0,
+                'taxAmount': sale.tax / 100.0,
+                'total': sale.total / 100.0,
+                'paymentMethod': sale.paymentMethod,
+                'amountPaid': sale.isPaid
+                    ? sale.total / 100.0
+                    : (sale.amountReceived ?? 0) / 100.0,
+                'amountDue': sale.isPaid
+                    ? 0.0
+                    : (sale.total - (sale.amountReceived ?? 0)) / 100.0,
+                'currency': 'SAR',
+                'createdBy': sale.cashierId,
+                'cashierName': cashierName,
+                'issuedAt': now.toIso8601String(),
+                'paidAt': sale.isPaid ? now.toIso8601String() : null,
+                'createdAt': now.toIso8601String(),
+              },
+              priority: SyncPriority.high,
+            );
+          } catch (e) {
+            if (kDebugMode) {
+              debugPrint(
+                '[InvoiceService] sync enqueue failed (non-blocking, invoice saved locally): $e',
+              );
+            }
+          }
+        }
 
         // توليد وأرشفة PDF
         await _generateAndArchivePdf(
@@ -202,6 +269,47 @@ class InvoiceService {
       );
 
       await _db.invoicesDao.upsertInvoice(companion);
+
+      // C-4 Session 2 follow-up — Bug B fix: enqueue for Supabase push.
+      // Input is double SAR; Supabase columns are DOUBLE PRECISION, so no
+      // conversion needed. Non-blocking by design.
+      if (_syncService != null) {
+        try {
+          await _syncService.enqueueCreate(
+            tableName: 'invoices',
+            recordId: id,
+            data: {
+              'id': id,
+              'orgId': orgId,
+              'storeId': storeId,
+              'invoiceNumber': invoiceNumber,
+              'invoiceType': 'credit_note',
+              'status': 'issued',
+              'refInvoiceId': refInvoiceId,
+              'refReason': reason,
+              'customerId': customerId,
+              'customerName': customerName,
+              'subtotal': amount,
+              'taxRate': 15.0,
+              'taxAmount': taxAmount,
+              'total': amount + taxAmount,
+              'amountPaid': amount + taxAmount,
+              'currency': 'SAR',
+              'createdBy': createdBy,
+              'issuedAt': now.toIso8601String(),
+              'createdAt': now.toIso8601String(),
+            },
+            priority: SyncPriority.high,
+          );
+        } catch (e) {
+          if (kDebugMode) {
+            debugPrint(
+              '[InvoiceService] credit-note sync enqueue failed (non-blocking): $e',
+            );
+          }
+        }
+      }
+
       return _db.invoicesDao.getById(id);
     } catch (e) {
       if (kDebugMode) {
@@ -252,6 +360,45 @@ class InvoiceService {
       );
 
       await _db.invoicesDao.upsertInvoice(companion);
+
+      // C-4 Session 2 follow-up — Bug B fix: enqueue for Supabase push.
+      if (_syncService != null) {
+        try {
+          await _syncService.enqueueCreate(
+            tableName: 'invoices',
+            recordId: id,
+            data: {
+              'id': id,
+              'orgId': orgId,
+              'storeId': storeId,
+              'invoiceNumber': invoiceNumber,
+              'invoiceType': 'debit_note',
+              'status': 'issued',
+              'refInvoiceId': refInvoiceId,
+              'refReason': reason,
+              'customerId': customerId,
+              'customerName': customerName,
+              'subtotal': amount,
+              'taxRate': 15.0,
+              'taxAmount': taxAmount,
+              'total': amount + taxAmount,
+              'amountDue': amount + taxAmount,
+              'currency': 'SAR',
+              'createdBy': createdBy,
+              'issuedAt': now.toIso8601String(),
+              'createdAt': now.toIso8601String(),
+            },
+            priority: SyncPriority.high,
+          );
+        } catch (e) {
+          if (kDebugMode) {
+            debugPrint(
+              '[InvoiceService] debit-note sync enqueue failed (non-blocking): $e',
+            );
+          }
+        }
+      }
+
       return _db.invoicesDao.getById(id);
     } catch (e) {
       if (kDebugMode) {
