@@ -7949,6 +7949,75 @@ END OF SESSION 47 — §4f closed; admin bell now redirects to inventory alerts 
 
 ---
 
+# Session 48 — C-4 Session 3/4 caller follow-up (§4d partial) (2026-04-24)
+
+**Branch:** `fix/c4-session3-accounts-transactions-display` (FF-merged).
+**Commit on main:** `149354f1`. **Budget:** ~40 min.
+
+Scope: §4d "C-4 Sessions 3 + 4 (shifts, cash, analytics)" from the 2026-04-24 handover. Just like Sessions 44/45 found for C-4 Session 2, the Drift schema was already migrated for every Session 3/4 table (accounts, transactions, suppliers, cash_movements, shifts, expenses, loyalty_rewards, coupons, purchases, returns). What remained was a **caller-side cents-as-SAR audit + a potentially silent 100× bug** similar in shape to Bug A from Session 44.
+
+## Top-line finding
+
+Audit surfaced 4 confirmed cents-as-SAR display bugs AND 1 P0 mixed-unit computation bug in admin monthly-close. The P0 would have produced `transactions.balance_after` values 100× too high every time an admin ran the monthly-close routine on debt customers. Not yet triggered on live (admin-initiated, not automatic).
+
+## Changes
+
+### Display fixes (4 sites, all the same shape: add `/ 100.0` before `toStringAsFixed`)
+
+- `cashier/customers/new_transaction_screen.dart:436` — `account.balance`
+- `cashier/customers/apply_interest_screen.dart:515` — `account.balance`
+- `admin/wallet/wallet_screen.dart:366` — `transaction.amount`
+- `admin/debts/monthly_close_screen.dart:445` — `customer.account.balance`
+
+### P0 fix (admin/debts/monthly_close_screen.dart:605)
+
+**Before:**
+```dart
+final newBalance = customer.account.balance + customer.expectedInterest;
+// int cents (e.g. 10000) + double SAR (e.g. 5.0) = 10005.0 (neither unit)
+await _db.transactionsDao.recordInterest(
+  ...
+  balanceAfter: newBalance,  // recordInterest multiplies by 100 → 1,000,500 cents
+);
+```
+
+**After:**
+```dart
+final newBalanceSar =
+    (customer.account.balance / 100.0) + customer.expectedInterest;
+await _db.transactionsDao.recordInterest(
+  ...
+  balanceAfter: newBalanceSar,  // coherent SAR → stored as 10500 cents (= 105 SAR)
+);
+```
+
+## Sites skipped — flagged for follow-up
+
+Three candidates with variable `.amount` / `.balance` on non-obvious types. Need dedicated investigation to determine the source — skip-and-flag discipline from Session 42:
+
+- `cashier/payment/split_receipt_screen.dart:478` — `split.amount`
+- `admin/marketing/gift_cards_screen.dart:331, 634, 635` — `card.balance`, `card.amount`
+- `admin_lite/management/lite_pending_approvals_screen.dart:256` — `item.amount`
+
+## Verification
+
+- `flutter analyze` on 4 touched files: 0 issues.
+- `flutter test` admin: **367 / 367**. cashier: **552 / 552**. No regressions.
+
+## Why not a wider sweep
+
+§4d's original estimate was 4-6 h + 3-4 h. The audit today converged quickly to a tight scope — this session is the "Sessions 3 + 4 caller cleanup" cousin, narrow and focused. The remaining §4d work to close it fully is the **§4h Supabase int-cents counterpart migration** (logged by Session 45) — which is a separate 3-5 hr per table-group session, not a single-branch change.
+
+## Remote push
+
+FF-merged to main. Push to backup + origin in the Session-48 docs commit that follows.
+
+---
+
+END OF SESSION 48 — §4d partially closed (caller follow-up done; Supabase counterpart deferred to §4h); monthly-close P0 fixed before it ever fired on live
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-24+)
 
 **Written end-of-day 2026-04-23 after Session 42** — closes a 17-session / 40-commit marathon this day.
@@ -7962,8 +8031,8 @@ Supersedes the "NEXT SESSION STARTING POINT (2026-04-23+)" block that lived here
 
 ## 1. Repo state snapshot
 
-- **Active branch:** `main` @ `af8ab20a` (Session 47 code tip; Session-47 docs commit follows). Main advanced 14 commits beyond the 2026-04-24 morning head (`10333713`): Sessions 43 + 44 + 45 + 46 + 47, covering admin product_form fix, C-4 Session 2 invoice corruption + display sweep, Bug B sync gap + local v45 + Supabase v77 backfill applied live, customer_app CurrencyFormatter vendor, and admin smart notifications bell sweep.
-- **Remotes:** `backup/main` @ `0df62812` (pushed end of Session 46). `origin/main` @ `0df62812` (pushed end of Session 46). Session-47 code + docs will push next. `gitlab/main` prior divergence untouched.
+- **Active branch:** `main` @ `149354f1` (Session 48 code tip; Session-48 docs commit follows). Main advanced 16 commits beyond the 2026-04-24 morning head (`10333713`): Sessions 43 + 44 + 45 + 46 + 47 + 48 — admin product_form fix, C-4 Session 2 invoice corruption + display sweep, Bug B sync gap + local v45 + Supabase v77 backfill applied live, customer_app CurrencyFormatter vendor, admin smart notifications bell sweep, and C-4 Session 3/4 caller follow-up.
+- **Remotes:** `backup/main` @ `0e8f02fd` (pushed end of Session 47). `origin/main` @ `0e8f02fd` (pushed end of Session 47). Session-48 code + docs will push next. `gitlab/main` prior divergence untouched.
 - **Live Supabase:** v75 + v77 **applied 2026-04-24** (11 invoices backfilled, verification PASS). Net row counts: `public.sales`=11 (unchanged), `public.invoices`=11 (from 0).
 - **v76 authored but NOT live-applied** → `supabase/migrations/20260423_v76_invoices_rls_org_null_fallback.sql` (C-10 fix). Session 45 confirmed this RLS fallback is NOT needed to fix Bug B (which wasn't RLS-blocked — nothing ever enqueued the invoices); v76 remains an optional hardening only.
 - **Historical Supabase data**: Session 45 discovered server-side `invoices` table was EMPTY pre-v77. No 100× corruption ever reached Supabase (Bug B sync gap kept it all local). Session 45's Supabase backfill SQL and Session 44's "historical UPDATE" hypothetical plan are both fully resolved.
@@ -8025,9 +8094,9 @@ Vendor option (b) picked after `alhai_shared_ui/pubspec.yaml` inspection reveale
 
 Closed 2026-04-24 via cherry-picks from `fix/c4-invoice-service-100x-corruption` (4 code commits `9b154327` / `d0f477ec` / `3fa9dba8` / `6cc8671d`). Schema was already migrated (discovered mid-session — plan's 8-10 hr estimate reduced to ~3 hrs). Fixed P0: `invoice_service.createFromSale` 100× corruption (every POS-created invoice since sales→cents migration). Also fixed 12 cents-as-SAR display sites (receipt_pdf_generator x8 + sale_detail_screen x2 + void_transaction + refund_request). ZATCA encoder path audited and safe (Phase 1 QR OK; Phase 2 UBL not wired). Historical data patch-up still pending user approval (see §1 state snapshot + Session 44 "Out of scope").
 
-### 4d. C-4 Sessions 3 + 4 — 4-6 h + 3-4 h
+### 4d. ~~C-4 Sessions 3 + 4 (caller sweep)~~ — ✅ DONE in Session 48 (2026-04-24)
 
-Session 3 — shifts & cash. Session 4 — analytics cleanup. Read-only for Session 4 (no schema change).
+Caller-side audit closed by Session 48 (commit `149354f1`): 4 cents-as-SAR display sites fixed + 1 P0 mixed-unit bug in monthly_close fixed before it ever fired on live. 3 ambiguous sites (split, gift_cards, lite_pending_approvals) flagged for follow-up. The Drift-schema half was already done in earlier commits. The remaining **Supabase int-cents counterpart** is tracked separately as §4h.
 
 ### 4e. M4 stock-movement effects — 2-4 h after design decision
 
@@ -8057,6 +8126,7 @@ Until this is done the schema drift is a documented known quirk; no user-visible
 - **§4c follow-up — Bug B sync gap + local v45 + Supabase v77 backfill** — Session 45. FF-merged from `fix/c4-invoice-sync-enqueue-missing` (3 code commits `7087487f` / `beb803cf` / `df57ab4a`). Invoices were never enqueued to sync since the cents migration; `InvoiceService` now injects SyncService + enqueueCreate after every invoice create. Drift v45 migration divides local 100× invoices by 100 (idempotent). Supabase v77 migration backfills invoices for orphan sales — **applied live on 2026-04-24 (11 invoices, verification Q3/Q4/Q5 all PASS)**. alhai_pos 580 → 583, alhai_database 522 → 526.
 - **§4b — customer_app CurrencyFormatter vendor + 3 display-site migration** — Session 46. FF-merged from `fix/customer-app-currency-formatter` (commit `f6f64e52`). Option (b) picked after rejecting option (a) as structurally heavy. customer_app 136 → 142.
 - **§4f — admin smart notifications bell (polish)** — Session 47. FF-merged from `fix/admin-smart-notifications-bell` (commit `af8ab20a`). Helper in `alhai_shared_ui` + 55-site sweep across admin screens. Bell now redirects to `AppRoutes.inventoryAlerts` when the active store has low-stock products. 22 follow-on unused-import cleanups. admin 367, alhai_shared_ui 869 preserved.
+- **§4d — C-4 Session 3/4 caller follow-up** — Session 48. FF-merged from `fix/c4-session3-accounts-transactions-display` (commit `149354f1`). 4 display fixes (account.balance / transaction.amount across cashier + admin) + 1 P0 mixed-unit bug in monthly_close fixed before it ever fired on live. 3 ambiguous sites flagged for a dedicated follow-up. Remaining Supabase counterpart tracked as §4h.
 
 ### Admin audit — Tier A (all done, 2026-04-23)
 Q1 / Q1-UI / Q2 / Q3 / Q4 / Q5 / Q6 — sessions 24 (prior day) + 26 / 27 / 28.
