@@ -8018,6 +8018,71 @@ END OF SESSION 48 — §4d partially closed (caller follow-up done; Supabase cou
 
 ---
 
+# Session 49 — retroactive cents-as-SAR display sweep (§5 nice-to-have) (2026-04-24)
+
+**Branch:** `fix/c4-retroactive-display-sweep` (FF-merged).
+**Commit on main:** `e4d120f6`. **Budget:** ~45 min.
+
+Closes the §5 handover-note "retroactive grep pass" for the full repo. Grep
+`\.(\w*(?:price|cost|amount|total|value|balance))\.toStringAsFixed` across
+`apps/**/lib/**` returned ~60 candidates. Each was spot-checked against the
+variable's static type to separate true bugs (int cents from migrated Drift
+tables) from safe SAR-double locals.
+
+## Bugs fixed (18 sites, 11 files, 3 batches)
+
+### Batch A — cashier/products (ProductsTableData.price)
+- `cashier_categories_screen.dart:570`
+- `price_labels_screen.dart:373, 620`
+- `print_barcode_screen.dart:375, 504`
+
+### Batch C — cashier/sales + payment_history (SalesTableData.total)
+- `reprint_receipt_screen.dart:403, 531`
+- `sales_history_screen.dart:821`
+- `payment_history_screen.dart:513`
+
+### Batch D — admin/purchases + cashier/purchases
+PurchasesTableData.total + PurchaseItemsTableData.total:
+- `purchases_list_screen.dart:464, 569`
+- `purchase_detail_screen.dart:308, 755, 816`
+- `receiving_goods_screen.dart:310`
+- `send_to_distributor_screen.dart:267, 397`
+- `cashier_receiving_screen.dart:295`
+
+## Confirmed NOT bugs (local domain classes with SAR double totals)
+
+Each of these is a custom view-model / domain type that already holds SAR
+doubles — spot-check confirmed no `toStringAsFixed(2)` corruption:
+
+- `_PurchaseItem` (admin/purchases/purchase_form_screen)
+- `AiInvoiceItem` (admin/purchases/ai_invoice_review)
+- `_ReorderItem` (admin/purchases/smart_reorder)
+- `_PaymentSplit` (cashier/payment/split_receipt)
+- `_GiftCard` (admin/marketing/gift_cards — built from `c.value / 100.0`)
+- `PendingApprovalItem` (admin_lite — built from `/ 100.0`)
+- `OnlineOrder` + `OrderItem` (alhai_pos models, all double)
+- `PosCartItem` (alhai_pos/cart_providers, `effectivePrice = product.price / 100.0`)
+- `ReceiptLineItem` (alhai_pos/whatsapp_receipt, public double API)
+
+Everything Sessions 44 + 48 flagged as ambiguous turned out to be a false
+positive — the code was already converting at the view-model boundary.
+
+## Verification
+
+- `flutter analyze` cashier: **0 issues** (clean).
+- `flutter analyze` admin: 25 pre-existing info-level issues (unchanged).
+- `flutter test` admin: **367 / 367**. cashier: **552 / 552**. No regressions.
+
+## Remote push
+
+FF-merged to main. Push to backup + origin in the Session-49 docs commit.
+
+---
+
+END OF SESSION 49 — §5 retroactive sweep closed; 18 more cents-as-SAR display bugs fixed; 9 flagged items across Sessions 44+48 verified as false positives
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-24+)
 
 **Written end-of-day 2026-04-23 after Session 42** — closes a 17-session / 40-commit marathon this day.
@@ -8031,8 +8096,8 @@ Supersedes the "NEXT SESSION STARTING POINT (2026-04-23+)" block that lived here
 
 ## 1. Repo state snapshot
 
-- **Active branch:** `main` @ `149354f1` (Session 48 code tip; Session-48 docs commit follows). Main advanced 16 commits beyond the 2026-04-24 morning head (`10333713`): Sessions 43 + 44 + 45 + 46 + 47 + 48 — admin product_form fix, C-4 Session 2 invoice corruption + display sweep, Bug B sync gap + local v45 + Supabase v77 backfill applied live, customer_app CurrencyFormatter vendor, admin smart notifications bell sweep, and C-4 Session 3/4 caller follow-up.
-- **Remotes:** `backup/main` @ `0e8f02fd` (pushed end of Session 47). `origin/main` @ `0e8f02fd` (pushed end of Session 47). Session-48 code + docs will push next. `gitlab/main` prior divergence untouched.
+- **Active branch:** `main` @ `e4d120f6` (Session 49 code tip; Session-49 docs commit follows). Main advanced 18 commits beyond the 2026-04-24 morning head (`10333713`): Sessions 43 + 44 + 45 + 46 + 47 + 48 + 49.
+- **Remotes:** `backup/main` @ `e0b0c186` (pushed end of Session 48). `origin/main` @ `e0b0c186` (pushed end of Session 48). Session-49 code + docs will push next. `gitlab/main` prior divergence untouched.
 - **Live Supabase:** v75 + v77 **applied 2026-04-24** (11 invoices backfilled, verification PASS). Net row counts: `public.sales`=11 (unchanged), `public.invoices`=11 (from 0).
 - **v76 authored but NOT live-applied** → `supabase/migrations/20260423_v76_invoices_rls_org_null_fallback.sql` (C-10 fix). Session 45 confirmed this RLS fallback is NOT needed to fix Bug B (which wasn't RLS-blocked — nothing ever enqueued the invoices); v76 remains an optional hardening only.
 - **Historical Supabase data**: Session 45 discovered server-side `invoices` table was EMPTY pre-v77. No 100× corruption ever reached Supabase (Bug B sync gap kept it all local). Session 45's Supabase backfill SQL and Session 44's "historical UPDATE" hypothetical plan are both fully resolved.
@@ -8127,6 +8192,7 @@ Until this is done the schema drift is a documented known quirk; no user-visible
 - **§4b — customer_app CurrencyFormatter vendor + 3 display-site migration** — Session 46. FF-merged from `fix/customer-app-currency-formatter` (commit `f6f64e52`). Option (b) picked after rejecting option (a) as structurally heavy. customer_app 136 → 142.
 - **§4f — admin smart notifications bell (polish)** — Session 47. FF-merged from `fix/admin-smart-notifications-bell` (commit `af8ab20a`). Helper in `alhai_shared_ui` + 55-site sweep across admin screens. Bell now redirects to `AppRoutes.inventoryAlerts` when the active store has low-stock products. 22 follow-on unused-import cleanups. admin 367, alhai_shared_ui 869 preserved.
 - **§4d — C-4 Session 3/4 caller follow-up** — Session 48. FF-merged from `fix/c4-session3-accounts-transactions-display` (commit `149354f1`). 4 display fixes (account.balance / transaction.amount across cashier + admin) + 1 P0 mixed-unit bug in monthly_close fixed before it ever fired on live. 3 ambiguous sites flagged for a dedicated follow-up. Remaining Supabase counterpart tracked as §4h.
+- **§5 — retroactive cents-as-SAR display sweep** — Session 49. FF-merged from `fix/c4-retroactive-display-sweep` (commit `e4d120f6`). 18 more display bugs across cashier/products, cashier/sales, cashier/payment, cashier/purchases, admin/purchases — all now divide int cents by 100 before `toStringAsFixed`. 9 Session-44/48 flagged items spot-checked and confirmed NOT bugs (false positives — local view-models with SAR doubles).
 
 ### Admin audit — Tier A (all done, 2026-04-23)
 Q1 / Q1-UI / Q2 / Q3 / Q4 / Q5 / Q6 — sessions 24 (prior day) + 26 / 27 / 28.
