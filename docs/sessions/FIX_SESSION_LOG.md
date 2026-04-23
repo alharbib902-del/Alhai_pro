@@ -7914,6 +7914,41 @@ END OF SESSION 46 — §4b closed; customer_app keeps its lightweight dep footpr
 
 ---
 
+# Session 47 — admin smart notifications bell (§4f polish) (2026-04-24)
+
+**Branch:** `fix/admin-smart-notifications-bell` (FF-merged to main).
+**Commit on main:** `af8ab20a`. **Budget:** ~25 min.
+
+Closes the last of the explicitly-scoped backlog items from the 2026-04-23 handover — §4f "M2 bell onTap redirection — 15 min polish".
+
+## What changed
+
+- **New helper:** `packages/alhai_shared_ui/lib/src/core/router/notification_bell_destination.dart` — `smartNotificationsPush(context, ref, {lowStockRoute, notificationsRoute})`. Reads `lowStockNotificationCountProvider.valueOrNull ?? 0`; if a `lowStockRoute` was provided and count > 0, pushes there; else pushes `notificationsRoute` (default `/notifications`). Non-blocking on cold start + safe in widget tests. Exported from the `alhai_shared_ui` barrel.
+- **55 call-site sweep in admin:** every `onNotificationsTap: () => context.push('/notifications')` across `apps/admin/lib/screens/**` now reads `onNotificationsTap: () => smartNotificationsPush(context, ref, lowStockRoute: AppRoutes.inventoryAlerts)`. 42 touched `.dart` files.
+- **Follow-on cleanup:** 22 files had a `package:go_router/go_router.dart` import that was only for the `context.push` call — now unused and removed.
+
+## Why this shape
+
+- Helper lives in `alhai_shared_ui`, parameterized, so cashier / admin_lite / customer_app can adopt the same pattern with their own `lowStockRoute` later.
+- admin uses a single well-known route constant (`AppRoutes.inventoryAlerts`); the call-site wiring is a single-line argument, not per-screen logic. No per-screen computation of low-stock state (that logic is hidden behind the provider).
+- `WidgetRef` is already in scope on every one of the 55 call sites (all screens use `ConsumerWidget` / `ConsumerStatefulWidget`) — verified by grepping for files lacking that superclass before running the sed replacement.
+
+## Verification
+
+- `flutter analyze` on admin: down from 47 after the initial sed (22 new `unused_import` warnings) to **25 pre-existing info-level issues** after the go_router cleanup sweep — matches pre-Session-43 baseline.
+- `flutter test` admin: **367 / 367**.
+- `flutter test` alhai_shared_ui: **869 / 869** (new helper is a thin wrapper; existing coverage of `lowStockNotificationCountProvider` + `context.push` in widget tests covers it).
+
+## Push
+
+FF-merged to main. Push to backup + origin in the Session-47 docs commit that follows.
+
+---
+
+END OF SESSION 47 — §4f closed; admin bell now redirects to inventory alerts when the store has low stock; helper reusable across apps
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-24+)
 
 **Written end-of-day 2026-04-23 after Session 42** — closes a 17-session / 40-commit marathon this day.
@@ -7927,8 +7962,8 @@ Supersedes the "NEXT SESSION STARTING POINT (2026-04-23+)" block that lived here
 
 ## 1. Repo state snapshot
 
-- **Active branch:** `main` @ `f6f64e52` (Session 46 code tip; Session-46 docs commit follows). Main advanced 12 commits beyond the 2026-04-24 morning head (`10333713`): Sessions 43 + 44 + 45 + 46, covering admin product_form fix, C-4 Session 2 invoice corruption + display sweep, Bug B sync gap + local v45 + Supabase v77 backfill applied live, and customer_app CurrencyFormatter vendor.
-- **Remotes:** `backup/main` @ `5bd5378f` (pushed at end of Session 45). `origin/main` @ `5bd5378f` (pushed at end of Session 45). Session-46 code + docs will push next. `gitlab/main` prior divergence untouched.
+- **Active branch:** `main` @ `af8ab20a` (Session 47 code tip; Session-47 docs commit follows). Main advanced 14 commits beyond the 2026-04-24 morning head (`10333713`): Sessions 43 + 44 + 45 + 46 + 47, covering admin product_form fix, C-4 Session 2 invoice corruption + display sweep, Bug B sync gap + local v45 + Supabase v77 backfill applied live, customer_app CurrencyFormatter vendor, and admin smart notifications bell sweep.
+- **Remotes:** `backup/main` @ `0df62812` (pushed end of Session 46). `origin/main` @ `0df62812` (pushed end of Session 46). Session-47 code + docs will push next. `gitlab/main` prior divergence untouched.
 - **Live Supabase:** v75 + v77 **applied 2026-04-24** (11 invoices backfilled, verification PASS). Net row counts: `public.sales`=11 (unchanged), `public.invoices`=11 (from 0).
 - **v76 authored but NOT live-applied** → `supabase/migrations/20260423_v76_invoices_rls_org_null_fallback.sql` (C-10 fix). Session 45 confirmed this RLS fallback is NOT needed to fix Bug B (which wasn't RLS-blocked — nothing ever enqueued the invoices); v76 remains an optional hardening only.
 - **Historical Supabase data**: Session 45 discovered server-side `invoices` table was EMPTY pre-v77. No 100× corruption ever reached Supabase (Bug B sync gap kept it all local). Session 45's Supabase backfill SQL and Session 44's "historical UPDATE" hypothetical plan are both fully resolved.
@@ -7998,7 +8033,9 @@ Session 3 — shifts & cash. Session 4 — analytics cleanup. Read-only for Sess
 
 Code has a 3-option design note at `apps/admin/lib/screens/inventory/stock_transfers_screen.dart:205`. Decide with user before implementing.
 
-### 4f. M2 bell onTap redirection — 15 min polish
+### 4f. ~~M2 bell onTap redirection~~ — ✅ DONE in Session 47 (2026-04-24)
+
+Helper `smartNotificationsPush` added in `alhai_shared_ui/lib/src/core/router/notification_bell_destination.dart` + 55 admin screens swept. Bell now routes to `AppRoutes.inventoryAlerts` when low-stock count > 0, else `/notifications`. Commit `af8ab20a` on main.
 
 ### 4g. super_admin Tier 3 U5/U9/U11/U13 — BLOCKED on missing audit doc
 
@@ -8019,6 +8056,7 @@ Until this is done the schema drift is a documented known quirk; no user-visible
 - **§4c** C-4 Session 2 — Invoice / SaleItem / HeldInvoice — Session 44. Cherry-picked from `fix/c4-invoice-service-100x-corruption` (4 code commits `9b154327` / `d0f477ec` / `3fa9dba8` / `6cc8671d`). P0 `invoice_service` 100× corruption + 12 display bugs + integration test. alhai_pos 577 → 580, alhai_database 521 → 522.
 - **§4c follow-up — Bug B sync gap + local v45 + Supabase v77 backfill** — Session 45. FF-merged from `fix/c4-invoice-sync-enqueue-missing` (3 code commits `7087487f` / `beb803cf` / `df57ab4a`). Invoices were never enqueued to sync since the cents migration; `InvoiceService` now injects SyncService + enqueueCreate after every invoice create. Drift v45 migration divides local 100× invoices by 100 (idempotent). Supabase v77 migration backfills invoices for orphan sales — **applied live on 2026-04-24 (11 invoices, verification Q3/Q4/Q5 all PASS)**. alhai_pos 580 → 583, alhai_database 522 → 526.
 - **§4b — customer_app CurrencyFormatter vendor + 3 display-site migration** — Session 46. FF-merged from `fix/customer-app-currency-formatter` (commit `f6f64e52`). Option (b) picked after rejecting option (a) as structurally heavy. customer_app 136 → 142.
+- **§4f — admin smart notifications bell (polish)** — Session 47. FF-merged from `fix/admin-smart-notifications-bell` (commit `af8ab20a`). Helper in `alhai_shared_ui` + 55-site sweep across admin screens. Bell now redirects to `AppRoutes.inventoryAlerts` when the active store has low-stock products. 22 follow-on unused-import cleanups. admin 367, alhai_shared_ui 869 preserved.
 
 ### Admin audit — Tier A (all done, 2026-04-23)
 Q1 / Q1-UI / Q2 / Q3 / Q4 / Q5 / Q6 — sessions 24 (prior day) + 26 / 27 / 28.
