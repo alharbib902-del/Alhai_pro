@@ -7639,7 +7639,122 @@ Used existing `createTestProduct` factory from `apps/admin/test/helpers/test_fac
 
 ---
 
-END OF SESSION 43 — §4a closed on feature branch; awaits user merge/push decision
+END OF SESSION 43 — §4a merged to main (FF from fix/admin-product-form-price-seed at ae374799)
+
+---
+
+# Session 44 — C-4 Session 2: invoice_service 100× corruption + cents-as-SAR display sweep (2026-04-24)
+
+**Branch:** cherry-picked onto `main` from `fix/c4-invoice-service-100x-corruption`.
+**Commits on main (cherry-picks):** `9b154327` → `d0f477ec` → `3fa9dba8` → `6cc8671d`. **Budget:** ~3 hrs. Authored in parallel with Session 43 on a separate feature branch; both merged to main together after user approval.
+
+This is the C-4 plan doc §5 "Session 2" (invoice core) — user picked it up next after the 2026-04-24 handover's §4c. Schema reality: sale_items / invoices / held_invoices were already migrated to int cents by some prior session labeled "C-4 Session 2" in the Drift table comments. So the remaining Session 2 scope was NOT a schema migration but a **caller sweep + P0 bug fixes + ZATCA path audit**. Final scope was ~3 hrs not the plan's 8-10 hrs, because the schema work was already landed.
+
+## Top-line finding — P0 data corruption mitigated
+
+`packages/alhai_pos/lib/src/services/invoice_service.dart` `createFromSale` read a `SalesTableData` (already int cents after the sales migration) and did `(sale.* * 100).round()` when writing the `InvoicesTableCompanion` — so every invoice created from a POS sale stored 100× the correct amount. A 46 SAR sale stored as 460,000 cents on the invoice row.
+
+Existing unit tests in `invoice_service_test.dart` verified `verify(called(1))` without asserting amounts, which is why the bug stayed green through prior sessions. The fix removes the `* 100`; same-file `createCreditNote` / `createDebitNote` paths are untouched because their public API takes `double amount` (SAR) parameters — that path is intentional SAR→cents conversion at a public boundary.
+
+Impact while bug shipped: every stored invoice since the sales→cents migration carries wrong totals. `invoices.amountPaid`, `invoices.amountDue` similarly wrong. ZATCA Phase 1 QR (`ZatcaService.generateQrData` from `receipt_pdf_generator.dart:81`) was unaffected — that call path correctly converts `sale.total / 100.0`. ZATCA Phase 2 UBL submission is not currently wired into the POS sale flow (verified: no production caller creates a `ZatcaInvoice` from an `InvoicesTableData`) — so the 100× error did NOT reach ZATCA's servers. **Historical data patch-up on live Supabase deferred to user decision — see §3 / §5 below.**
+
+## Phase shape
+
+Five small phases, each a separate commit. Each phase preserved test baselines before moving on.
+
+### Phase 2a — invoice_service.dart + 3 round-trip assertion tests (`9b154327`)
+
+Fix at `invoice_service.dart:100-113`: pass `sale.subtotal` / `sale.discount` / `sale.tax` / `sale.total` straight through (already cents). Matching semantic fix for `amountPaid` / `amountDue` which also applied the double-conversion.
+
+Tests: 3 new cases in `invoice_service_test.dart` capture the `InvoicesTableCompanion` argument to `upsertInvoice` and assert byte-exact cents on paid, partial-pay, and null-`amountReceived` paths. These are the regression tests that WOULD have caught the bug.
+
+- alhai_pos: 577 → 580.
+- analyzer clean.
+
+### Phase 2b — receipt_pdf_generator 8 cents-as-SAR display sites (`d0f477ec`)
+
+Plan doc mentioned 4 sites; actual count was 8 after reading the full file. Lines 278, 286 (item fields) + 301, 305, 308, 331 (sale totals) + 355, 360 (payment info) all used `.toStringAsFixed(2)` on int cents. Same file lines 80-86 were already correct — classic "fixed half the sites" pattern from an earlier migration pass.
+
+Visible impact before fix: printed PDF receipt showed `"4600.00 SAR"` for a 46 SAR sale. ZATCA-compliance visible document.
+
+### Phase 2c — 4 display sites on SaleItemsTableData (`3fa9dba8`)
+
+Broad grep audit (`(sale|invoice|heldInvoice|saleItem)\.(subtotal|total|...)\.toStringAsFixed`) surfaced 24+ candidates across the repo. Manually classified:
+
+**Fixed (4 confirmed SaleItemsTableData):**
+- `apps/cashier/sale_detail_screen.dart:467` (derived line total was in cents)
+- `apps/cashier/sale_detail_screen.dart:504` (unitPrice direct)
+- `packages/alhai_pos/screens/returns/void_transaction_screen.dart:1485` (item.total)
+- `packages/alhai_pos/screens/returns/refund_request_screen.dart:187` (unitPrice)
+
+**Verified safe (CartItem / _CartItem totals divide internally):**
+- `packages/alhai_pos/screens/pos/quick_sale_screen.dart:1078` — `CartItem.total` is `(product.price * qty) / 100.0`.
+- `packages/alhai_pos/screens/pos/kiosk_screen.dart:650` — `_CartItem.price` is double SAR.
+
+**Flagged for follow-up audit:**
+- `packages/alhai_pos/widgets/orders/order_card.dart:265` — uses `order.items` (POS online order items; needs domain-type check)
+- `packages/alhai_pos/screens/pos/hold_invoices_screen.dart:544` — held invoice items come from JSON (schema on that path needs verification)
+- `packages/alhai_pos/screens/returns/refund_request_screen.dart:137` — `_saleData!.total.toStringAsFixed(2)` in info-row subtitle; same cents-as-SAR shape, missed in the initial fix pass
+- `packages/alhai_pos/services/whatsapp_receipt_service.dart:125` — public API takes double SAR; all callers to be re-verified they pass SAR not cents
+- Reports / purchases / admin / customer_app / admin_lite display sites — each domain's migration status + call path needs its own review
+
+cashier 552/552 preserved. alhai_pos 580/580 preserved after this phase.
+
+### Phase 2d — ZATCA encoder path audit (no code change)
+
+Checked `packages/alhai_zatca/lib/src/services/zatca_invoice_service.dart` + the TLV and UBL builders. Findings:
+
+- `ZatcaService.generateQrData` (Phase 1 QR, TLV-encoded) is the only ZATCA path wired into POS sale completion. Receipt PDF caller at `receipt_pdf_generator.dart:81-87` passes `sale.total / 100.0` — conversion is correct.
+- `ZatcaInvoiceService.processInvoice` (Phase 2 UBL XML, signing, submission) is NOT currently wired into any POS flow. Production callers of `ZatcaInvoice(` and `ZatcaInvoiceLine(` are: test code + `csid_onboarding_service.dart` (compliance checker onboarding test). No `InvoicesTableData → ZatcaInvoice` mapping exists today.
+- Future risk: when someone wires Phase 2 submission, they MUST convert int-cents → double SAR at the mapping boundary.
+
+- alhai_zatca: **850 + 1 skipped preserved** (ZATCA gate intact).
+
+### Phase 2e — Drift-level sale→invoice integration test (`6cc8671d`)
+
+Added one new test case to `packages/alhai_database/test/integration/money_roundtrip_flow_test.dart`. Drives 115.50 SAR (11,550 cents) through `SalesDao.insertSale` → `InvoicesDao.upsertInvoice` → `InvoicesDao.getById`; asserts byte-exact cents preservation + `(cents / 100.0).toStringAsFixed(2) == "115.50"`. Complements the service-boundary tests from Phase 2a at the DAO level.
+
+alhai_database: 521 → 522 + 1 skipped.
+
+## Test baselines end of session 44 on main
+
+| Package | Count | Δ this session |
+|---|---|---|
+| alhai_pos | 580 | +3 (Phase 2a round-trips) |
+| alhai_database | 522 + 1 skipped | +1 (Phase 2e integration) |
+| alhai_zatca | 850 + 1 skipped | unchanged (gate verified) |
+| apps/cashier | 552 | unchanged (no new tests; display-only fix) |
+| admin | 367 | unchanged by this session (was +2 from Session 43 admin fix) |
+
+No regressions anywhere.
+
+## Out of scope — deferred
+
+Each of these is a self-contained follow-up session or small-item ticket:
+
+1. **Historical data patch-up on live Supabase.** Every `invoices` row created via the POS `createFromSale` path since the sales→cents migration carries `total`/`amountPaid`/`amountDue` stored 100× too high (and `subtotal`/`discount`/`taxAmount` too). `credit_note`/`debit_note` rows are correct (different code path). Plan: (a) discovery queries to establish scope and boundary date; (b) targeted `UPDATE invoices SET total = total / 100, amountPaid = amountPaid / 100, amountDue = amountDue / 100, subtotal = subtotal / 100, discount = discount / 100, taxAmount = taxAmount / 100 WHERE invoice_type IN ('simplified_tax', 'standard_tax') AND created_at < '<deploy_cutoff>'`. Must be **user-approved** and **after** new POS build ships (otherwise new corrupted rows keep arriving during the patch window). Supabase Dashboard SQL Editor per usual protocol.
+2. **Cents-as-SAR display sweep outside sale/invoice/held** — reports, purchases, admin product-media + ecommerce (done in Session 42), admin_lite, customer_app orders, distributor_portal. Each has its own domain and migration status.
+3. **ZATCA Phase 2 UBL wiring + int→double SAR mapping layer** — when/if someone starts submitting invoices to ZATCA, that wiring must include the conversion.
+4. **Broader cents-as-SAR retro-grep** per the §5 handover note — full pattern `(?<!/ 100\.0)\s*\.toStringAsFixed\(` on price/cost/amount/value/total-like tokens.
+
+## Remote push + merge
+
+- 4 commits cherry-picked from `fix/c4-invoice-service-100x-corruption` onto main (Session 43's admin branch FF-merged first, so main had advanced by 2 commits during the cherry-pick).
+- Branch `fix/c4-invoice-service-100x-corruption` left in local for reference until the backup push confirms.
+- Will push `main` to `backup` in the Session-44 docs commit that follows (pre-authorized from Session 38 for main-level docs).
+- Will NOT push to `origin` without explicit user approval (default per user preference).
+
+## Why this shape
+
+- **P0 first.** The invoice 100× bug was data corruption visible on every POS sale; fixing it was the urgent first action. The plan's 8-10 hr estimate assumed schema migration was still to come. It wasn't — only the caller sweep + bug fix remained.
+- **Skip-and-flag discipline worked again.** Phase 2c had 24+ display-site candidates; hard-classifying each one inline would have blown up scope. Fixing only high-confidence SaleItemsTableData sites and flagging the rest for a dedicated audit keeps this branch reviewable.
+- **ZATCA gate unchanged.** 850/850 preserved end-to-end — the encoder's test suite caught nothing new because nothing touched the encoder or its direct callers. Phase 2d is pure audit with zero code change.
+- **Historical data patch is user-owned.** Running an UPDATE against live invoices is a data migration decision, not a code fix. Documented in §1 "deferred" for explicit approval.
+- **Parallel branches merged together.** Session 43 (admin) and Session 44 (invoice) were authored on separate feature branches, each with its own log update. To avoid a log conflict at merge, the cherry-pick strategy landed code commits directly and this log entry was re-authored on main after Session 43 merged FF.
+
+---
+
+END OF SESSION 44 — C-4 Session 2 merged to main; P0 invoice corruption + 12 display bugs fixed; ZATCA gate preserved; historical data patch-up deferred to user decision
 
 ---
 
@@ -7656,11 +7771,11 @@ Supersedes the "NEXT SESSION STARTING POINT (2026-04-23+)" block that lived here
 
 ## 1. Repo state snapshot
 
-- **Active branch:** `main` @ `10333713` (session-42 docs refresh commit).
-- **Feature branch ahead of main:** `fix/admin-product-form-price-seed` @ `21a30b18` (Session 43 §4a fix — awaits user merge/push decision).
-- **Remotes:** `local main`, `backup/main`, `origin/main` — all in sync at `10333713`. `gitlab/main` has a prior divergence, left untouched (user reconciles manually).
+- **Active branch:** `main` — advanced 6 commits beyond the 2026-04-24 morning head (`10333713`): Session 43 admin fix FF-merged (`21a30b18`, `ae374799`) + Session 44 invoice fixes cherry-picked (`9b154327`, `d0f477ec`, `3fa9dba8`, `6cc8671d`). Session-44 docs commit follows.
+- **Remotes:** `local main` ahead of `backup/main` + `origin/main` by 6 commits until the Session-44 push. `gitlab/main` prior divergence untouched.
 - **Live Supabase:** v75.
 - **v76 authored but NOT live-applied** → `supabase/migrations/20260423_v76_invoices_rls_org_null_fallback.sql` (C-10 fix). Awaits user execution on Supabase Dashboard.
+- **Historical data patch pending user decision** — Session 44 `invoice_service` 100× corruption means every `invoices` row created via POS since the sales→cents migration has `total` / `amountPaid` / `amountDue` / `subtotal` / `discount` / `taxAmount` stored 100× too high. SQL fix-up is a separate approval step — see Session 44 "Out of scope" §1 for the patch plan and the `invoice_type IN ('simplified_tax', 'standard_tax')` filter.
 - **Drift schema:** v44 (unchanged today).
 
 ## 2. Test baselines (end-of-day 2026-04-23)
@@ -7677,7 +7792,9 @@ Supersedes the "NEXT SESSION STARTING POINT (2026-04-23+)" block that lived here
 | cashier | 552 | — |
 | customer_app | 136 | — (not re-run) |
 | driver_app | 156 | — (not re-run) |
-| admin | 365 (367 on `fix/admin-product-form-price-seed`) | +2 on feature branch (Session 43 regressions) |
+| admin | 367 | +2 (Session 43 product_form seed regressions, merged) |
+| alhai_pos | 580 | +3 (Session 44 invoice_service round-trip assertions) |
+| alhai_database | 522 + 1 skipped | +1 (Session 44 sale→invoice DAO integration) |
 | admin_lite | 183 | — |
 | super_admin | 222 | — |
 | distributor_portal | 420 | re-verified today |
@@ -7703,17 +7820,17 @@ Impact while delayed: customer_app `createOrder` 100 % failing on live productio
 
 ## 4. 🟠 Pick-up order for a fresh session
 
-### 4a. ~~admin `product_form_screen.dart:104-105` round-trip bug~~ — ✅ DONE in Session 43
+### 4a. ~~admin `product_form_screen.dart:104-105` round-trip bug~~ — ✅ DONE in Session 43 — merged to main
 
-Closed 2026-04-24 on branch `fix/admin-product-form-price-seed` @ `21a30b18`. Seed divides cents by 100.0; costPrice preserves null as empty string. 2 widget regression tests added. admin baseline 365 → 367 on the feature branch. Awaits user merge/push decision.
+Closed 2026-04-24 on branch `fix/admin-product-form-price-seed` (commits `21a30b18` + `ae374799`), FF-merged to main. Seed divides cents by 100.0; costPrice preserves null as empty string. 2 widget regression tests added. admin 365 → 367.
 
 ### 4b. customer_app `alhai_shared_ui` dep decision — 3 display sites blocked
 
 `customer_app/lib/features/search/screens/search_screen.dart:152`, `catalog_screen.dart:432`, `product_detail_screen.dart:101`. Structural: either add the dep to pubspec (check no circular import) or vendor a minimal formatter into customer_app. Recommendation: add the dep.
 
-### 4c. C-4 Session 2 — Invoice / SaleItem / HeldInvoice — 8-10 h, ZATCA-critical
+### 4c. ~~C-4 Session 2 — Invoice / SaleItem / HeldInvoice~~ — ✅ DONE in Session 44 — merged to main
 
-Per `docs/sessions/c4-money-migration-plan.md` §3 Option B. Needs a fresh context. Touches the ZATCA encoder — full sandbox test run required.
+Closed 2026-04-24 via cherry-picks from `fix/c4-invoice-service-100x-corruption` (4 code commits `9b154327` / `d0f477ec` / `3fa9dba8` / `6cc8671d`). Schema was already migrated (discovered mid-session — plan's 8-10 hr estimate reduced to ~3 hrs). Fixed P0: `invoice_service.createFromSale` 100× corruption (every POS-created invoice since sales→cents migration). Also fixed 12 cents-as-SAR display sites (receipt_pdf_generator x8 + sale_detail_screen x2 + void_transaction + refund_request). ZATCA encoder path audited and safe (Phase 1 QR OK; Phase 2 UBL not wired). Historical data patch-up still pending user approval (see §1 state snapshot + Session 44 "Out of scope").
 
 ### 4d. C-4 Sessions 3 + 4 — 4-6 h + 3-4 h
 
@@ -7729,8 +7846,9 @@ Code has a 3-option design note at `apps/admin/lib/screens/inventory/stock_trans
 
 ## 5. ✅ Closed
 
-### 2026-04-24 (Session 43)
-- **§4a** admin `product_form_screen.dart:104-105` round-trip bug — commit `21a30b18` on `fix/admin-product-form-price-seed`. admin 365 → 367 on feature branch. Awaits merge/push.
+### 2026-04-24 (Sessions 43 + 44, merged to main)
+- **§4a** admin `product_form_screen.dart:104-105` round-trip bug — Session 43. FF-merged from `fix/admin-product-form-price-seed` (commits `21a30b18` + `ae374799`). admin 365 → 367.
+- **§4c** C-4 Session 2 — Invoice / SaleItem / HeldInvoice — Session 44. Cherry-picked from `fix/c4-invoice-service-100x-corruption` (4 code commits `9b154327` / `d0f477ec` / `3fa9dba8` / `6cc8671d`). P0 `invoice_service` 100× corruption + 12 display bugs + integration test. alhai_pos 577 → 580, alhai_database 521 → 522. Historical data patch-up pending user decision.
 
 ### Admin audit — Tier A (all done, 2026-04-23)
 Q1 / Q1-UI / Q2 / Q3 / Q4 / Q5 / Q6 — sessions 24 (prior day) + 26 / 27 / 28.
@@ -7752,8 +7870,8 @@ Q1-UI / M1 / M2 (dashboard + badge) / M3 / M4 (UI) / M7 — sessions 26 / 29 / 3
 
 ```bash
 # 1. confirm clean state
-git log --oneline -1       # expect 10333713 on main, or fix/admin-product-form-price-seed @ 21a30b18
-git branch --list          # expect main + fix/admin-product-form-price-seed (Session 43)
+git log --oneline -1       # expect 6cc8671d or later (Session 44 merged to main; Session 44 docs commit follows)
+git branch --list          # expect only main (Session 43 + 44 feature branches cleaned up)
 
 # 2. sanity-check a baseline subset
 cd packages/alhai_zatca && flutter test | tail -1   # 850 + 1 skipped ← ZATCA gate
