@@ -7876,6 +7876,44 @@ END OF SESSION 45 — Bug B closed, local Drift cleanup ready, Supabase v77 back
 
 ---
 
+# Session 46 — customer_app CurrencyFormatter vendor + 3 display-site migration (2026-04-24)
+
+**Branch:** `fix/customer-app-currency-formatter` (FF-merged to main).
+**Commit on main:** `f6f64e52`. **Budget:** ~45 min.
+
+Closes the last backlog item from the 2026-04-23 handover — §4b "customer_app alhai_shared_ui dep decision — 3 display sites blocked".
+
+## Decision: option (b) — vendor, not dep
+
+The handover's original recommendation was (a) add `alhai_shared_ui` as a path dep. Investigation rejected that: `alhai_shared_ui/pubspec.yaml` pulls in **alhai_database (Drift) + alhai_sync + alhai_auth + supabase_flutter + drift**. None of those belong in a customer-facing mobile bundle — customer_app is currently backed only by `alhai_core + alhai_design_system + alhai_zatca`. Adopting (a) would have bloated the APK with the entire POS backend schema for no user-visible benefit.
+
+Option (b): vendor a ~20-LOC subset of `CurrencyFormatter.formatMoney` at `customer_app/lib/core/utils/currency_formatter.dart`. API mirrors the shared_ui version so a future structural migration reduces to a one-line re-export swap.
+
+## Scope
+
+- **New file:** `customer_app/lib/core/utils/currency_formatter.dart` — 82 LOC including doc comments. Exposes `formatMoney(Money, {locale, decimalDigits})` + `formatSar(double, {locale, decimalDigits})`.
+- **3 display sites migrated:**
+  - `customer_app/lib/features/search/screens/search_screen.dart:152` — was `'${(product.price / 100.0).toStringAsFixed(2)} ر.س'`.
+  - `customer_app/lib/features/catalog/screens/catalog_screen.dart:432` — was the same pattern with `(شامل الضريبة)` suffix.
+  - `customer_app/lib/features/catalog/screens/product_detail_screen.dart:101` — same as catalog.
+- **Display behavior change:** default locale shifts from ASCII digits to `ar_SA` (Arabic-Indic digits + grouping). Matches the customer shell's Arabic-only locale at `main.dart:117`. The `(شامل الضريبة)` suffix stays outside the formatter on the 2 sites that need it.
+- **Tests:** 6 new unit tests in `customer_app/test/core/utils/currency_formatter_test.dart` cover `ar_SA` default, `en` override, `decimalDigits:0`, zero-cents, non-SAR currency fallthrough, and the `formatSar` raw-double helper.
+
+## Verification
+
+- `flutter analyze` on 5 touched files: 0 issues.
+- `flutter test`: **142 / 142** (was 136 — +6 from the new test).
+
+## Push
+
+FF-merged to main. Branch deleted locally. Push to backup + origin follows in the Session-46 docs commit.
+
+---
+
+END OF SESSION 46 — §4b closed; customer_app keeps its lightweight dep footprint while picking up locale-aware money formatting
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-24+)
 
 **Written end-of-day 2026-04-23 after Session 42** — closes a 17-session / 40-commit marathon this day.
@@ -7889,14 +7927,13 @@ Supersedes the "NEXT SESSION STARTING POINT (2026-04-23+)" block that lived here
 
 ## 1. Repo state snapshot
 
-- **Active branch:** `main` — advanced 10 commits beyond the 2026-04-24 morning head (`10333713`): Session 43 admin + Session 44 C-4 Session 2 + Session 45 Bug B follow-up + v45 local cleanup + v77 Supabase backfill authored. Tip `df57ab4a` (code) + Session-45 docs commit follows.
-- **Remotes:** `local main` ahead of `backup/main` + `origin/main` by 10 code + 1 docs commit until the Session-45 push. `gitlab/main` prior divergence untouched.
-- **Live Supabase:** v75.
+- **Active branch:** `main` @ `f6f64e52` (Session 46 code tip; Session-46 docs commit follows). Main advanced 12 commits beyond the 2026-04-24 morning head (`10333713`): Sessions 43 + 44 + 45 + 46, covering admin product_form fix, C-4 Session 2 invoice corruption + display sweep, Bug B sync gap + local v45 + Supabase v77 backfill applied live, and customer_app CurrencyFormatter vendor.
+- **Remotes:** `backup/main` @ `5bd5378f` (pushed at end of Session 45). `origin/main` @ `5bd5378f` (pushed at end of Session 45). Session-46 code + docs will push next. `gitlab/main` prior divergence untouched.
+- **Live Supabase:** v75 + v77 **applied 2026-04-24** (11 invoices backfilled, verification PASS). Net row counts: `public.sales`=11 (unchanged), `public.invoices`=11 (from 0).
 - **v76 authored but NOT live-applied** → `supabase/migrations/20260423_v76_invoices_rls_org_null_fallback.sql` (C-10 fix). Session 45 confirmed this RLS fallback is NOT needed to fix Bug B (which wasn't RLS-blocked — nothing ever enqueued the invoices); v76 remains an optional hardening only.
-- **v77 authored but NOT live-applied** → `supabase/migrations/20260424_v77_backfill_invoices_from_orphan_sales.sql` (11 orphan sales → 11 backfilled invoices; idempotent; pre/post verification queries + rollback in header). Apply on Supabase Dashboard after the new POS build ships with the Session 45 code fix, so no competing writes.
-- **Historical Supabase data**: Session 45 discovered server-side `invoices` table was EMPTY (0 rows). No 100× corruption ever reached Supabase (Bug B sync gap kept it all local). The `UPDATE invoices ... / 100` patch-up from Session 44's plan is cancelled — no rows to touch.
+- **Historical Supabase data**: Session 45 discovered server-side `invoices` table was EMPTY pre-v77. No 100× corruption ever reached Supabase (Bug B sync gap kept it all local). Session 45's Supabase backfill SQL and Session 44's "historical UPDATE" hypothetical plan are both fully resolved.
 - **Local Drift cleanup**: schema v45 migration applies the 100× fix on any affected cashier device automatically on first launch after app upgrade.
-- **Drift schema:** v45 (up 44 → 45 this session for Bug A local cleanup).
+- **Drift schema:** v45 (up 44 → 45 in Session 45 for Bug A local cleanup).
 
 ## 2. Test baselines (end-of-day 2026-04-23)
 
@@ -7915,6 +7952,7 @@ Supersedes the "NEXT SESSION STARTING POINT (2026-04-23+)" block that lived here
 | admin | 367 | +2 (Session 43 product_form seed regressions, merged) |
 | alhai_pos | 583 | +3 (Session 44 round-trip assertions) + +3 (Session 45 enqueue regressions) |
 | alhai_database | 526 + 1 skipped | +1 (Session 44 sale→invoice DAO integration) + +4 (Session 45 v45 cleanup) |
+| customer_app | 142 | +6 (Session 46 CurrencyFormatter unit tests) |
 | admin_lite | 183 | — |
 | super_admin | 222 | — |
 | distributor_portal | 420 | re-verified today |
@@ -7944,9 +7982,9 @@ Impact while delayed: customer_app `createOrder` 100 % failing on live productio
 
 Closed 2026-04-24 on branch `fix/admin-product-form-price-seed` (commits `21a30b18` + `ae374799`), FF-merged to main. Seed divides cents by 100.0; costPrice preserves null as empty string. 2 widget regression tests added. admin 365 → 367.
 
-### 4b. customer_app `alhai_shared_ui` dep decision — 3 display sites blocked
+### 4b. ~~customer_app `alhai_shared_ui` dep decision~~ — ✅ DONE in Session 46 (2026-04-24)
 
-`customer_app/lib/features/search/screens/search_screen.dart:152`, `catalog_screen.dart:432`, `product_detail_screen.dart:101`. Structural: either add the dep to pubspec (check no circular import) or vendor a minimal formatter into customer_app. Recommendation: add the dep.
+Vendor option (b) picked after `alhai_shared_ui/pubspec.yaml` inspection revealed heavy backend deps (alhai_database / alhai_sync / alhai_auth). customer_app now has its own minimal `core/utils/currency_formatter.dart` + 3 sites migrated + 6 unit tests. Commit `f6f64e52` on main.
 
 ### 4c. ~~C-4 Session 2 — Invoice / SaleItem / HeldInvoice~~ — ✅ DONE in Session 44 — merged to main
 
@@ -7979,7 +8017,8 @@ Until this is done the schema drift is a documented known quirk; no user-visible
 ### 2026-04-24 (Sessions 43 + 44 + 45, merged to main)
 - **§4a** admin `product_form_screen.dart:104-105` round-trip bug — Session 43. FF-merged from `fix/admin-product-form-price-seed` (commits `21a30b18` + `ae374799`). admin 365 → 367.
 - **§4c** C-4 Session 2 — Invoice / SaleItem / HeldInvoice — Session 44. Cherry-picked from `fix/c4-invoice-service-100x-corruption` (4 code commits `9b154327` / `d0f477ec` / `3fa9dba8` / `6cc8671d`). P0 `invoice_service` 100× corruption + 12 display bugs + integration test. alhai_pos 577 → 580, alhai_database 521 → 522.
-- **§4c follow-up — Bug B sync gap + local v45 + Supabase v77 backfill** — Session 45. FF-merged from `fix/c4-invoice-sync-enqueue-missing` (3 code commits `7087487f` / `beb803cf` / `df57ab4a`). Invoices were never enqueued to sync since the cents migration; `InvoiceService` now injects SyncService + enqueueCreate after every invoice create. Drift v45 migration divides local 100× invoices by 100 (idempotent). Supabase v77 migration backfills invoices for orphan sales (authored, NOT live-applied). alhai_pos 580 → 583, alhai_database 522 → 526.
+- **§4c follow-up — Bug B sync gap + local v45 + Supabase v77 backfill** — Session 45. FF-merged from `fix/c4-invoice-sync-enqueue-missing` (3 code commits `7087487f` / `beb803cf` / `df57ab4a`). Invoices were never enqueued to sync since the cents migration; `InvoiceService` now injects SyncService + enqueueCreate after every invoice create. Drift v45 migration divides local 100× invoices by 100 (idempotent). Supabase v77 migration backfills invoices for orphan sales — **applied live on 2026-04-24 (11 invoices, verification Q3/Q4/Q5 all PASS)**. alhai_pos 580 → 583, alhai_database 522 → 526.
+- **§4b — customer_app CurrencyFormatter vendor + 3 display-site migration** — Session 46. FF-merged from `fix/customer-app-currency-formatter` (commit `f6f64e52`). Option (b) picked after rejecting option (a) as structurally heavy. customer_app 136 → 142.
 
 ### Admin audit — Tier A (all done, 2026-04-23)
 Q1 / Q1-UI / Q2 / Q3 / Q4 / Q5 / Q6 — sessions 24 (prior day) + 26 / 27 / 28.
