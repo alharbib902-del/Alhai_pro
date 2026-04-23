@@ -8218,6 +8218,52 @@ END OF SESSION 50 — sync-queue enqueue coverage audit; 4 Bug-B-shape sites fix
 
 ---
 
+# Session 51 — admin M3/M4 inventory widget tests (2026-04-24)
+
+**Branch:** `test/admin-inventory-m3-m4-widget-tests` (NOT merged; awaits user push approval).
+**Commit:** `1b3177f8` (code) + dual-log commit to follow. **Budget:** ~35 min.
+
+Closes the §5 deferred "M3/M4 widget tests" nice-to-have from the 2026-04-23 admin handover. Sessions 30–33 shipped `stocktaking` + `stock_transfers_list` + `stock_transfer_form` without widget tests; this session adds 23 tests covering render, key interactive elements, form validation gating, and the incoming-tab approve/reject flow.
+
+## What changed
+
+- `apps/admin/test/screens/inventory/stocktaking_screen_test.dart` — 8 tests (render, search field, save icon, disabled-when-empty, product row, expected-qty column, search filter interaction, type sanity).
+- `apps/admin/test/screens/inventory/stock_transfers_screen_test.dart` — 7 tests (render, TabBar + 2 tabs, FAB, refresh button, transfer card + status chip with data, approve/reject buttons on pending incoming, type sanity).
+- `apps/admin/test/screens/inventory/stock_transfer_form_screen_test.dart` — 8 tests (render, destination dropdown, current-store excluded from dropdown, add-item button, notes field, save-disabled when fields missing, check icon on submit, type sanity).
+- `apps/admin/test/helpers/mock_database.dart` — additive: `MockStockTransfersDao`, `FakeStockTransfersTableCompanion`, fallback registration, `setupMockDatabase(stockTransfersDao: …)` optional parameter. Backward-compatible — no existing admin test needed changes.
+
+## Notes — two test-infra patterns worth remembering
+
+1. **`find.text(x)` matches both the search field's `EditableText` AND the product row after typing.** Scope with `find.widgetWithText(Card, x)` when the text is expected to appear *inside a card* after the user has typed the same text into a nearby field.
+2. **`find.byType(FilledButton)` does NOT match widgets created via `FilledButton.icon`.** The factory returns a `_FilledButtonWithIcon` subclass and `byType` matches only the exact `runtimeType`. Use `find.byWidgetPredicate((w) => w is FilledButton)` (subtype-aware), optionally combined with `find.ancestor(of: byIcon(…), matching: …)` to locate the specific instance. Inline comments in the test files reference this pattern for future authors.
+
+## Verification
+
+- `flutter analyze` apps/admin: **25 pre-existing info-level issues (unchanged)**. No new issues from the added test files.
+- `flutter test` admin: **390 / 390** (was 367 → +23, target was ~385-400 ✓).
+
+## Coordination with parallel Session 50 (sync-enqueue audit)
+
+A parallel session ran `fix/audit-sync-enqueue-coverage` in the same working tree. Touched paths: none overlap with this session's code files (Session 50 touched `alhai_pos` + `admin_lite` + new audit doc; this session touched `apps/admin/test/**` only). Git dance to commit cleanly without disturbing the parallel session:
+
+1. `git stash push -u -m "…" -- apps/admin/test/helpers/mock_database.dart apps/admin/test/screens/inventory/` — scoped stash so only this session's files move.
+2. `git checkout test/admin-inventory-m3-m4-widget-tests`.
+3. `git stash pop` — parallel-session's unstaged changes still present, untouched.
+4. `git add` by explicit path (never `-A`) and commit.
+5. Return HEAD to `fix/audit-sync-enqueue-coverage` after finishing so the parallel session's invariants stay intact.
+
+`FIX_SESSION_LOG.md` is the one shared file both branches edit. Session 50 and Session 51 are appended by their respective branches; at main-merge time the two blocks interleave in session-number order (Session 50 then Session 51 after Session 49). Session 50 is absent from this branch's log; it will re-appear when `fix/audit-sync-enqueue-coverage` FF-merges to main.
+
+## Remote push
+
+**Awaits user approval** — not pushed yet.
+
+---
+
+END OF SESSION 51 — admin baseline 367 → 390 (+23); M3/M4 inventory screens now have widget coverage; test-helper infra extended additively
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-24+)
 
 **Written end-of-day 2026-04-23 after Session 42** — closes a 17-session / 40-commit marathon this day.
