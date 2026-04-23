@@ -10,7 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:get_it/get_it.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart' show updateOrderStatus;
 
 import '../../providers/lite_screen_providers.dart';
 
@@ -54,11 +54,7 @@ class LiteOrderStatusScreen extends ConsumerWidget {
                       onPressed: () async {
                         final nextStatus = _stepToStatus(currentStep + 1);
                         if (nextStatus != null) {
-                          final db = GetIt.I<AppDatabase>();
-                          await db.ordersDao.updateOrderStatus(
-                            order.id,
-                            nextStatus,
-                          );
+                          await updateOrderStatus(ref, order.id, nextStatus);
                           ref.invalidate(liteOrderDetailProvider(orderId));
                           ref.invalidate(liteActiveOrdersProvider);
                         }

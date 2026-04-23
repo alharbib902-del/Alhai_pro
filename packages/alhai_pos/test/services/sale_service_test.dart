@@ -333,6 +333,140 @@ void main() {
         ).called(1);
       });
 
+      // Session 50 sync-enqueue audit — Bug-B-shape regression:
+      // inventory_movements is a pushTable and recordSaleMovement writes one
+      // row per sale item, but pre-fix the rows never hit sync_queue →
+      // server-side inventory reports showed 0 POS activity. Lock the new
+      // post-tx enqueue in place.
+      test(
+        'enqueues inventory_movements once per sale item (2 items)',
+        () async {
+          // Arrange
+          final productA = createTestProductsTableData(
+            id: 'prod-A',
+            stockQty: 50,
+            trackInventory: true,
+          );
+          final productB = createTestProductsTableData(
+            id: 'prod-B',
+            stockQty: 30,
+            trackInventory: true,
+          );
+
+          final itemA = createTestCartItem(
+            productId: 'prod-A',
+            price: 1000,
+            quantity: 1,
+          );
+          final itemB = createTestCartItem(
+            productId: 'prod-B',
+            price: 2000,
+            quantity: 3,
+          );
+
+          setupCreateSaleMocks(product: productA);
+          // Override to teach the mock how to return both products individually.
+          when(
+            () => mockProductsDao.getProductById('prod-A'),
+          ).thenAnswer((_) async => productA);
+          when(
+            () => mockProductsDao.getProductById('prod-B'),
+          ).thenAnswer((_) async => productB);
+
+          // Act
+          await saleService.createSale(
+            storeId: 'store-1',
+            cashierId: 'cashier-1',
+            items: [itemA, itemB],
+            subtotal: 70.0,
+            discount: 0.0,
+            tax: 10.5,
+            total: 80.5,
+            paymentMethod: 'cash',
+          );
+
+          // Assert — one enqueueCreate('inventory_movements') per sale item.
+          verify(
+            () => mockSyncService.enqueueCreate(
+              tableName: 'inventory_movements',
+              recordId: any(named: 'recordId'),
+              data: any(named: 'data'),
+              priority: SyncPriority.high,
+            ),
+          ).called(2);
+        },
+      );
+
+      test(
+        'inventory_movements enqueue payload carries type, qty, previousQty, '
+        'newQty, and references the sale',
+        () async {
+          // Arrange
+          final product = createTestProductsTableData(
+            id: 'prod-X',
+            stockQty: 20,
+            trackInventory: true,
+          );
+          final cartItem = createTestCartItem(
+            productId: 'prod-X',
+            price: 500,
+            quantity: 4,
+          );
+
+          setupCreateSaleMocks(product: product);
+
+          // Capture every enqueueCreate; filter for the inventory_movements one
+          // so other enqueues (sales, sale_items) don't interfere.
+          final capturedInventoryPayloads = <Map<String, dynamic>>[];
+          when(
+            () => mockSyncService.enqueueCreate(
+              tableName: any(named: 'tableName'),
+              recordId: any(named: 'recordId'),
+              data: any(named: 'data'),
+              priority: any(named: 'priority'),
+            ),
+          ).thenAnswer((invocation) async {
+            final tableName = invocation.namedArguments[#tableName] as String;
+            final data =
+                invocation.namedArguments[#data] as Map<String, dynamic>;
+            if (tableName == 'inventory_movements') {
+              capturedInventoryPayloads.add(data);
+            }
+            return 'sync-id';
+          });
+
+          // Act
+          final result = await saleService.createSale(
+            storeId: 'store-1',
+            cashierId: 'cashier-1',
+            items: [cartItem],
+            subtotal: 20.0,
+            discount: 0.0,
+            tax: 3.0,
+            total: 23.0,
+            paymentMethod: 'cash',
+          );
+
+          // Assert
+          expect(capturedInventoryPayloads, hasLength(1));
+          final payload = capturedInventoryPayloads.single;
+          expect(payload['productId'], 'prod-X');
+          expect(payload['storeId'], 'store-1');
+          expect(payload['type'], 'sale');
+          // Quantity is stored as a NEGATIVE double for sale movements.
+          expect(payload['qty'], -4.0);
+          expect(payload['previousQty'], 20.0);
+          expect(payload['newQty'], 16.0);
+          expect(payload['referenceType'], 'sale');
+          expect(payload['referenceId'], result.saleId);
+          expect(payload['userId'], 'cashier-1');
+          // id is the Drift movement id; must echo recordId so the server row
+          // and the local row share a primary key.
+          expect(payload['id'], isA<String>());
+          expect((payload['id'] as String).isNotEmpty, isTrue);
+        },
+      );
+
       test('should create debt when payment method is credit', () async {
         // Arrange
         final product = createTestProductsTableData(

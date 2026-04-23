@@ -10,7 +10,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_database/alhai_database.dart';
-import 'package:get_it/get_it.dart';
+import 'package:alhai_shared_ui/alhai_shared_ui.dart'
+    show cancelOrder, updateOrderStatus;
 
 import '../../providers/lite_screen_providers.dart';
 
@@ -465,8 +466,7 @@ class LiteOrderDetailScreen extends ConsumerWidget {
         Expanded(
           child: OutlinedButton.icon(
             onPressed: () async {
-              final db = GetIt.I<AppDatabase>();
-              await db.ordersDao.cancelOrder(order.id, l10n.cancelledByAdmin);
+              await cancelOrder(ref, order.id, l10n.cancelledByAdmin);
               if (context.mounted) {
                 ref.invalidate(liteOrderDetailProvider(orderId));
                 ref.invalidate(liteActiveOrdersProvider);
@@ -489,8 +489,7 @@ class LiteOrderDetailScreen extends ConsumerWidget {
           Expanded(
             child: FilledButton.icon(
               onPressed: () async {
-                final db = GetIt.I<AppDatabase>();
-                await db.ordersDao.updateOrderStatus(order.id, nextStatus);
+                await updateOrderStatus(ref, order.id, nextStatus);
                 if (context.mounted) {
                   ref.invalidate(liteOrderDetailProvider(orderId));
                   ref.invalidate(liteActiveOrdersProvider);

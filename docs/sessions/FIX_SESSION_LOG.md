@@ -8083,6 +8083,141 @@ END OF SESSION 49 — §5 retroactive sweep closed; 18 more cents-as-SAR display
 
 ---
 
+# Session 50 — sync-queue enqueue coverage audit (Bug-B follow-up) (2026-04-25)
+
+**Branch:** `fix/audit-sync-enqueue-coverage`.
+**HEAD at start:** `90cd9d23`. **Budget:** ~90 min.
+
+Follow-up to Session 45's Bug B discovery. Audits every Drift write path to a
+`PushStrategy.pushTables` table and determines whether a `sync_queue` enqueue
+fires on the same path. Fixes confirmed Bug-B-shape gaps; flags larger-scope
+gaps for structured follow-up.
+
+## Methodology
+
+Three parallel `Explore` subagents each took a cluster of `pushTables`
+(sales+sale_items+invoices / orders+order_items+order_status_history /
+cash_movements+audit_log+inventory_movements+daily_summaries+whatsapp_messages)
+and produced a write-path → caller → enqueue-status matrix. Every MISSING
+flag was then hand-verified against actual source before classification.
+
+Full audit report at `docs/audits/sync_enqueue_coverage_2026-04-25.md`.
+
+## Headline findings (Bug-B-shape gaps)
+
+**17 confirmed MISSING** across the 11 pushTables. **4 fixed this session, 13
+flagged for follow-up.**
+
+| Table | OK | Fixed | Deferred | Notes |
+|---|---|---|---|---|
+| sales | 4 (2 canonical + 2 non-canonical) | 0 | 0 | all sites enqueue |
+| sale_items | 1 | 0 | 0 | OK |
+| orders | 7 | **3 admin_lite** | 0 | admin_lite direct-DAO gaps closed by switching to shared helper |
+| order_items | — | 0 | 0 | no local writers (pull-only) |
+| cash_movements | 1 | 0 | 0 | OK |
+| audit_log | 0 | 0 | **10+** | deferred — architectural (likely needs `AuditLogService` wrapper) |
+| inventory_movements | 0 | **1 (sale_service)** | 4 | sale deduction enqueued now; void/return/purchase/adjustment deferred |
+| order_status_history | 2 | 0 | 0 | OK |
+| daily_summaries | — | — | — | UNCLEAR — no local writers, likely server-computed |
+| whatsapp_messages | 0 | 0 | 3 | deferred — 2 services need SyncService DI |
+| invoices | 3 | 0 | 0 | OK (Session 45 fix) |
+
+## Fixes applied (4 sites)
+
+### Fix 1–3 — admin_lite orders: direct `ordersDao.*` → shared helpers
+
+`apps/admin_lite/lib/screens/orders/lite_order_detail_screen.dart` at :469
+(cancelOrder) and :493 (updateOrderStatus), and
+`lite_order_status_screen.dart:58` (updateOrderStatus) all called DAO methods
+directly with no enqueue. Replaced with `cancelOrder(ref, ...)` /
+`updateOrderStatus(ref, ...)` — the canonical top-level helpers in
+`packages/alhai_shared_ui/lib/src/providers/orders_providers.dart`, which
+already enqueue both the `orders` row and the `order_status_history` row.
+
+Drops unused `get_it` imports where they became dead.
+
+### Fix 4 — sale_service inventory_movements enqueue
+
+`packages/alhai_pos/lib/src/services/sale_service.dart` `createSale`:
+`_db.inventoryDao.recordSaleMovement(...)` runs inside the transaction but
+the resulting row was never enqueued — despite `inventory_movements` being in
+`pushTables`. Every POS sale left server-side inventory reporting empty.
+
+Fix: captures a per-item record
+`({id, productId, previousQty, qty})` inside the transaction, then after the
+`sales` + `sale_items` enqueue loop, emits one `enqueueCreate` per
+inventory-movement row (`type: 'sale'`, `qty: -quantity`, `referenceType:
+'sale'`, `referenceId: saleId`, `high` priority). Same non-blocking try/catch
+shell as the existing sale enqueue — local save stands if enqueue fails.
+
+## Tests added
+
+`packages/alhai_pos/test/services/sale_service_test.dart`:
+
+1. `enqueues inventory_movements once per sale item (2 items)` — verifies the
+   per-item count + table name + priority.
+2. `inventory_movements enqueue payload carries type, qty, previousQty,
+   newQty, and references the sale` — captures and asserts payload
+   structure, including the negative-qty contract for sales and the
+   `referenceId == saleId` invariant.
+
+## Flagged for follow-up (deferred — not fixed this session)
+
+- **F-1 `audit_log` (10+ sites):** `auditLogDao.log(...)` is called from
+  many screens/providers with no sync enqueue. Recommend an `AuditLogService`
+  wrapper before per-site migration; architectural decision needed.
+- **F-2 `inventory_movements` non-sale sites:** `recordVoidMovement`
+  (inside sales_dao.voidSale — needs DAO to return IDs), `recordReturnMovement`,
+  `recordPurchaseMovement` × 3, `recordAdjustment` × 2.
+- **F-3 `whatsapp_messages` (3 sites, 2 services):** `whatsapp_service.dart`
+  + `whatsapp_receipt_service.dart` need `SyncService` DI + caller wiring
+  updates.
+- **F-4 `daily_summaries`:** no local writers found. Clarify — push-only
+  from server aggregation? or missing writer path?
+- **F-5 `sales.voidSale` non-canonical sites:** `void_transaction_screen.dart`
+  + `invoice_detail_screen.dart` enqueue but bypass `SaleService.voidSale`.
+  Not Bug-B (fires correctly), but hand-rolled JSON string in
+  `void_transaction_screen.dart:256` is a real P1 (quote-injection on
+  `_notesController.text`) — refactor to the service path.
+
+## Verification
+
+- `flutter analyze` alhai_pos: clean (3 pre-existing infos unchanged).
+- `flutter analyze` admin_lite: clean (1 pre-existing warning unchanged).
+- `flutter test` alhai_pos: **585 / 585** (up from 583 baseline: +2
+  inventory_movements regression tests).
+- `flutter test` admin_lite: **183 / 183** (unchanged — helper-layer
+  contract is exercised in shared_ui test coverage, not re-tested at the
+  screen layer).
+- `flutter test` alhai_zatca: **850 + 1 skipped** (ZATCA gate preserved
+  end-to-end).
+
+## Remote push
+
+Branch ready for merge after user review. Push deferred per standing
+"ask before origin" preference.
+
+## Methodology lessons
+
+1. **Bug-B is a family, not a one-off.** Session 45 found it in invoices;
+   Session 50's audit found 17 more with the same shape across 6 pushTables.
+   Worth checking the whole family whenever one member surfaces.
+2. **Parallel Explore agents + hand-verification is the right cadence for
+   per-table audits.** The three clusters finished in parallel (<5 min
+   wall) while the main thread read the canonical enqueue pattern and set
+   up the audit doc skeleton. Hand-verifying every MISSING flag caught
+   2 false-positives from Agent 1 (non-canonical enqueue ≠ no enqueue).
+3. **Scope discipline matters.** 17 gaps is more than any one session can
+   close without creating a 500+ line PR. Splitting by "fix <20 lines"
+   vs "flag as follow-up" kept the change surface reviewable (4 sites,
+   2 files, <50 lines net code + 2 tests).
+
+---
+
+END OF SESSION 50 — sync-queue enqueue coverage audit; 4 Bug-B-shape sites fixed (3 admin_lite orders + sale_service inventory_movements); 13 further gaps flagged for structured follow-up across audit_log, inventory_movements, whatsapp_messages, daily_summaries; ZATCA 850+1 preserved
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-24+)
 
 **Written end-of-day 2026-04-23 after Session 42** — closes a 17-session / 40-commit marathon this day.

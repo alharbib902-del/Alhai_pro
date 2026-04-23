@@ -120,6 +120,15 @@ class SaleService {
     late double correctedTotal;
     late bool isPaid;
     late List<String> insertedItemIds;
+    // Per-item snapshot captured inside the transaction so the post-commit
+    // sync block can enqueue one inventory_movements row per sale item.
+    // Bug-B-shape fix (Session 50 audit): inventory_movements is in
+    // pushTables, but recordSaleMovement was never enqueued → server-side
+    // inventory reports showed 0 POS activity.
+    late List<
+      ({String id, String productId, double previousQty, double qty})
+    >
+    insertedInventoryMovements;
     late Map<String, double> correctedPrices;
 
     // Fetch org_id BEFORE the transaction so the local sales row and the
@@ -318,6 +327,9 @@ class SaleService {
           // 3. إضافة عناصر البيع وخصم المخزون
           // (org_id was fetched before the transaction — see top of createSale)
           insertedItemIds = <String>[];
+          insertedInventoryMovements = <
+            ({String id, String productId, double previousQty, double qty})
+          >[];
           for (final item in items) {
             final freshProduct = freshProducts[item.product.id]!;
             final unitPrice =
@@ -348,6 +360,12 @@ class SaleService {
               previousQty: freshProduct.stockQty.toDouble(),
               saleId: saleId,
             );
+            insertedInventoryMovements.add((
+              id: movementId,
+              productId: item.product.id,
+              previousQty: freshProduct.stockQty.toDouble(),
+              qty: item.quantity.toDouble(),
+            ));
 
             // تحديث كمية المنتج
             await _db.productsDao.updateStock(
@@ -520,6 +538,31 @@ class SaleService {
             'subtotal': unitPrice * item.quantity,
             'discount': 0,
             'total': unitPrice * item.quantity,
+          },
+          priority: SyncPriority.high,
+        );
+      }
+
+      // Bug-B-shape fix (Session 50 audit) — enqueue inventory_movements
+      // alongside sales + sale_items. Matches the Drift row written by
+      // InventoryDao.recordSaleMovement inside the transaction:
+      //   type='sale', qty=-quantity, referenceType='sale', referenceId=saleId
+      for (final m in insertedInventoryMovements) {
+        await _syncService.enqueueCreate(
+          tableName: 'inventory_movements',
+          recordId: m.id,
+          data: {
+            'id': m.id,
+            'productId': m.productId,
+            'storeId': storeId,
+            'type': 'sale',
+            'qty': -m.qty,
+            'previousQty': m.previousQty,
+            'newQty': m.previousQty - m.qty,
+            'referenceType': 'sale',
+            'referenceId': saleId,
+            'userId': cashierId,
+            'createdAt': now.toIso8601String(),
           },
           priority: SyncPriority.high,
         );
