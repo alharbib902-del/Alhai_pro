@@ -137,7 +137,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 44;
+  int get schemaVersion => 45;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -1003,6 +1003,46 @@ class AppDatabase extends _$AppDatabase {
         debugPrint(
           '[Migration v44] Converted analytics tables money columns to '
           'INTEGER cents (C-4 Session 4)',
+        );
+
+      case 45:
+        // C-4 Session 2 follow-up — Bug A local cleanup.
+        //
+        // Context: between 2026-04-22 (commit b0f04fa1 when invoices + sales
+        // migrated to int cents on Drift) and 2026-04-24 (commit 9b154327,
+        // the fix), `invoice_service.createFromSale` read already-cents
+        // `sale.*` fields and multiplied by 100 again before writing to the
+        // invoices table. Every POS-generated invoice on the local Drift DB
+        // from this window carries `total = sale.total * 100` = cents × 100
+        // (off by two orders of magnitude on all six money columns).
+        //
+        // Detection: only touch rows where the 100× pattern is provable
+        // against the linked sale — `invoice.total = sale.total * 100`.
+        // This is idempotent (no-op on clean devices) and safe against
+        // credit/debit notes (those had a different code path, untouched
+        // by the bug; they also don't link a sale_id).
+        //
+        // Effect: divide the six money columns by 100 in-place.
+        await customStatement('''
+          UPDATE invoices
+          SET
+            subtotal = subtotal / 100,
+            discount = discount / 100,
+            tax_amount = tax_amount / 100,
+            total = total / 100,
+            amount_paid = amount_paid / 100,
+            amount_due = amount_due / 100
+          WHERE sale_id IS NOT NULL
+            AND invoice_type IN ('simplified_tax', 'standard_tax')
+            AND EXISTS (
+              SELECT 1 FROM sales s
+              WHERE s.id = invoices.sale_id
+                AND invoices.total = s.total * 100
+            );
+        ''');
+        debugPrint(
+          '[Migration v45] Applied 100× cleanup to local POS invoices '
+          '(C-4 Session 2 Bug A follow-up). No-op on clean devices.',
         );
 
       default:
