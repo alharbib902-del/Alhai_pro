@@ -8,6 +8,7 @@ import 'package:alhai_core/alhai_core.dart';
 
 import '../../../core/providers/app_providers.dart';
 import '../../../core/services/sentry_service.dart';
+import '../../../core/utils/currency_formatter.dart';
 import '../../../core/utils/responsive_helper.dart';
 import '../providers/catalog_providers.dart';
 import '../../cart/providers/cart_provider.dart';
@@ -429,7 +430,7 @@ class _ProductCard extends StatelessWidget {
                     children: [
                       Flexible(
                         child: Text(
-                          '${(product.price / 100.0).toStringAsFixed(2)} ر.س (شامل الضريبة)',
+                          '${CurrencyFormatter.formatMoney(product.priceMoney)} (شامل الضريبة)',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.titleSmall?.copyWith(

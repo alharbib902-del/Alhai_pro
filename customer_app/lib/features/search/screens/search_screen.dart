@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/providers/app_providers.dart';
+import '../../../core/utils/currency_formatter.dart';
 import '../../catalog/providers/catalog_providers.dart';
 import '../../cart/providers/cart_provider.dart';
 
@@ -149,7 +150,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                               ),
                               title: Text(product.name),
                               subtitle: Text(
-                                '${(product.price / 100.0).toStringAsFixed(2)} ر.س',
+                                CurrencyFormatter.formatMoney(product.priceMoney),
                                 style: TextStyle(
                                   color: theme.colorScheme.primary,
                                   fontWeight: FontWeight.bold,

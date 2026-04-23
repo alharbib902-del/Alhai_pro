@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/providers/app_providers.dart';
+import '../../../core/utils/currency_formatter.dart';
 import '../../../core/utils/responsive_helper.dart';
 import '../providers/catalog_providers.dart';
 import '../../cart/providers/cart_provider.dart';
@@ -98,7 +99,7 @@ class ProductDetailScreen extends ConsumerWidget {
                 ),
                 const SizedBox(height: AlhaiSpacing.xs),
                 Text(
-                  '${(product.price / 100.0).toStringAsFixed(2)} ر.س (شامل الضريبة)',
+                  '${CurrencyFormatter.formatMoney(product.priceMoney)} (شامل الضريبة)',
                   style: theme.textTheme.headlineMedium?.copyWith(
                     color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,
