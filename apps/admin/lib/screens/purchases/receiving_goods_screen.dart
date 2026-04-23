@@ -307,7 +307,8 @@ class _ReceivingGoodsScreenState extends ConsumerState<ReceivingGoodsScreen> {
             AppLocalizations.of(context).totalLabel,
             AppLocalizations.of(
               context,
-            ).amountSar(purchase.total.toStringAsFixed(2)),
+              // C-4 Session 4: purchases.total is int cents.
+            ).amountSar((purchase.total / 100.0).toStringAsFixed(2)),
             isDark,
             valueColor: isDark ? AppColors.primaryLight : AppColors.primaryDark,
           ),

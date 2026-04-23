@@ -264,7 +264,8 @@ class _SendToDistributorScreenState
             AppLocalizations.of(context).totalLabel,
             AppLocalizations.of(
               context,
-            ).amountSar(purchase.total.toStringAsFixed(2)),
+              // C-4 Session 4: purchases.total is int cents.
+            ).amountSar((purchase.total / 100.0).toStringAsFixed(2)),
             isDark,
             valueColor: isDark ? AppColors.primaryLight : AppColors.primaryDark,
           ),
@@ -394,7 +395,8 @@ class _SendToDistributorScreenState
                       Text(
                         AppLocalizations.of(
                           context,
-                        ).amountSar(item.total.toStringAsFixed(2)),
+                          // C-4 Session 4: purchase_items.total is int cents.
+                        ).amountSar((item.total / 100.0).toStringAsFixed(2)),
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: isDark

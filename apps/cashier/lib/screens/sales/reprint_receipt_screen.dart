@@ -400,7 +400,8 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
             ),
             // Amount
             Text(
-              '${order.total.toStringAsFixed(0)} ${l10n.sar}',
+              // C-4 Session 3: sales.total is int cents.
+              '${(order.total / 100.0).toStringAsFixed(0)} ${l10n.sar}',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w800,
@@ -528,7 +529,8 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
                   ),
                 ),
                 Text(
-                  '${order.total.toStringAsFixed(2)} ${l10n.sar}',
+                  // C-4 Session 3: sales.total is int cents.
+                  '${(order.total / 100.0).toStringAsFixed(2)} ${l10n.sar}',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,

@@ -567,7 +567,8 @@ class _CashierCategoriesScreenState
             ),
           ),
           Text(
-            '${product.price.toStringAsFixed(2)} ${l10n.sar}',
+            // C-4 Stage B: products.price is int cents.
+            '${(product.price / 100.0).toStringAsFixed(2)} ${l10n.sar}',
             style: const TextStyle(
               fontSize: 15,
               fontWeight: FontWeight.w700,

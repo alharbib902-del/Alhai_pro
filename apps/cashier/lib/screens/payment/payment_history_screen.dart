@@ -510,7 +510,8 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
             ),
           ),
           Text(
-            '${order.total.toStringAsFixed(0)} ${l10n.sar}',
+            // C-4 Session 3: sales.total is int cents.
+            '${(order.total / 100.0).toStringAsFixed(0)} ${l10n.sar}',
             style: const TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w800,

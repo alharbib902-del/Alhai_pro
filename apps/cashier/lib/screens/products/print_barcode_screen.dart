@@ -372,7 +372,8 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                     ),
                   ),
                   Text(
-                    '${product.price.toStringAsFixed(2)} ${l10n.sar}',
+                    // C-4 Stage B: products.price is int cents.
+                    '${(product.price / 100.0).toStringAsFixed(2)} ${l10n.sar}',
                     style: const TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.w600,
@@ -501,7 +502,8 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                   ),
                   const SizedBox(height: AlhaiSpacing.xxxs),
                   Text(
-                    '${product.price.toStringAsFixed(2)} ${l10n.sar}',
+                    // C-4 Stage B: products.price is int cents.
+                    '${(product.price / 100.0).toStringAsFixed(2)} ${l10n.sar}',
                     style: TextStyle(
                       fontSize: 14,
                       fontWeight: FontWeight.bold,

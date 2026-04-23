@@ -292,7 +292,8 @@ class _CashierReceivingScreenState
                 ),
                 _infoItem(
                   Icons.payments_rounded,
-                  '${purchase.total.toStringAsFixed(2)} ${l10n.sar}',
+                  // C-4 Session 4: purchases.total is int cents.
+                  '${(purchase.total / 100.0).toStringAsFixed(2)} ${l10n.sar}',
                   isDark,
                   valueColor: AppColors.primary,
                 ),

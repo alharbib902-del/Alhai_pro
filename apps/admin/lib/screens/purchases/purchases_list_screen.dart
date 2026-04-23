@@ -461,7 +461,8 @@ class _PurchasesContent extends StatelessWidget {
                     Text(
                       AppLocalizations.of(
                         context,
-                      ).amountSar(p.total.toStringAsFixed(2)),
+                      // C-4 Session 4: purchases.total is int cents.
+                      ).amountSar((p.total / 100.0).toStringAsFixed(2)),
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
                         color: isDark
@@ -566,7 +567,8 @@ class _PurchasesContent extends StatelessWidget {
                     Text(
                       AppLocalizations.of(
                         context,
-                      ).amountSar(p.total.toStringAsFixed(2)),
+                      // C-4 Session 4: purchases.total is int cents.
+                      ).amountSar((p.total / 100.0).toStringAsFixed(2)),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,

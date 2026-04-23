@@ -818,7 +818,8 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                '${order.total.toStringAsFixed(2)} ${l10n.sar}',
+                // C-4 Session 3: sales.total is int cents.
+                '${(order.total / 100.0).toStringAsFixed(2)} ${l10n.sar}',
                 style: const TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w800,
