@@ -30,15 +30,29 @@ if ! command -v keytool &> /dev/null; then
     exit 1
 fi
 
-# App configurations
+# App configurations.
+#
+# - APPS map: app name → application ID (for CN metadata).
+# - APP_PATHS map: app name → path prefix relative to repo root.
+#   Apps under apps/* use `apps/<name>`; customer_app + driver_app live
+#   at the repo root (no `apps/` prefix) so they need an explicit entry.
 declare -A APPS
 APPS[cashier]="com.alhai.cashier"
 APPS[admin]="com.alhai.admin"
 APPS[admin_lite]="com.alhai.admin_lite"
+APPS[customer_app]="com.alhai.customer"
+APPS[driver_app]="com.alhai.driver_app"
+
+declare -A APP_PATHS
+APP_PATHS[cashier]="apps/cashier"
+APP_PATHS[admin]="apps/admin"
+APP_PATHS[admin_lite]="apps/admin_lite"
+APP_PATHS[customer_app]="customer_app"
+APP_PATHS[driver_app]="driver_app"
 
 for APP_NAME in "${!APPS[@]}"; do
     APP_ID="${APPS[$APP_NAME]}"
-    APP_DIR="$PROJECT_ROOT/apps/$APP_NAME/android"
+    APP_DIR="$PROJECT_ROOT/${APP_PATHS[$APP_NAME]}/android"
     KEYSTORE_FILE="$APP_DIR/$APP_NAME-release.keystore"
     KEY_PROPERTIES="$APP_DIR/key.properties"
 
