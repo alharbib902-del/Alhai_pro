@@ -7758,6 +7758,124 @@ END OF SESSION 44 — C-4 Session 2 merged to main; P0 invoice corruption + 12 d
 
 ---
 
+# Session 45 — C-4 Session 2 follow-up: Bug B sync gap + v45 local cleanup + v77 Supabase backfill (2026-04-24)
+
+**Branch:** `fix/c4-invoice-sync-enqueue-missing` (FF-merged to main).
+**Commits on main:** `7087487f` → `beb803cf` → `df57ab4a`. **Budget:** ~3.5 hrs including investigation.
+
+Investigation phase (user said "ب1 تحقيق سريع") surfaced TWO new findings beyond Session 44's 100× scope. This session addresses both.
+
+## Top-line findings
+
+### Finding 1 — Bug B (missing sync enqueue)
+
+Supabase discovery queries on 2026-04-24 returned **0 rows on `public.invoices`** against **11 completed sales in `public.sales`**. Initial hypothesis: invoices are in local `sync_queue` as dead_letter due to RLS (C-10). Code audit rejected that hypothesis.
+
+`InvoicesDao.upsertInvoice` is a plain `insertOnConflictUpdate` with no sync enqueue. `invoice_service.dart` calls it after building the companion, and then exits — never enqueues. Grep of `enqueueCreate.*invoice` / `tableName:\s*'invoices'` across the repo confirms **no production caller enqueues** an invoice for sync. Every POS-generated invoice since the 2026-04-22 Drift cents migration has been local-only.
+
+Practical impact: ZATCA regulatory requirement ("every B2C sale issues a simplified tax invoice") is violated on the server for every historical sale. The Supabase `invoices_insert_policy` RLS is not even exercised — the client never fires the INSERT.
+
+### Finding 2 — Supabase schema drift (documented, not fixed)
+
+Drift migrated `sales`, `sale_items`, `invoices`, `held_invoices`, `shifts`, `returns`, and several more to int cents across Sessions 2/3/4 on 2026-04-22. Supabase-side migrations only covered `products`, `org_products`, `discounts` (v70/v71). No v72+ migration converts the remaining money tables to int cents on the server — they remain `DOUBLE PRECISION` from their v15-era schemas.
+
+Implication: sync payloads for these tables must divide by 100 before pushing (cents → SAR) to match server column types. sale_service already does this for the `sales` / `sale_items` push (by passing pre-multiplication SAR doubles directly). The new `invoices` enqueue in this session follows the same contract. A dedicated Supabase int-cents counterpart session (v78+) is the proper long-term fix; logged as a new backlog item below.
+
+### Consequence for Session 44
+
+Confirmation that Session 44's "Historical data patch-up" on live Supabase is **not needed** — there's no data on Supabase to patch. The 100× corruption exists on cashier devices' local Drift only, and Session 45's v45 migration handles it there.
+
+## Phase shape
+
+Three commits, each self-contained and independently tested.
+
+### T2.A — Bug B fix: InvoiceService sync enqueue (`7087487f`)
+
+- `invoice_service.dart` adds a nullable `SyncService _syncService` field + constructor param (kept nullable so existing tests that don't care can omit it).
+- After each `upsertInvoice` success in `createFromSale`, `createCreditNote`, `createDebitNote`, emit an `enqueueCreate(tableName: 'invoices', priority: SyncPriority.high)` with the invoice payload.
+- Payload emits SAR doubles — for `createFromSale` that means dividing the already-cents `sale.*` fields by 100; for credit/debit notes the input API is double SAR so values pass through. Matches the server's DOUBLE PRECISION schema.
+- Non-blocking by design: enqueue failure is `debugPrint`-logged only; the invoice stays saved locally and can be retried by later sync cycles.
+- `sale_providers.invoiceServiceProvider` updated to pass the SyncService.
+- `invoice_service_test.dart`: adds MockSyncService with stubbed enqueue. 3 new regression tests lock in: `tableName: 'invoices'` + `SyncPriority.high`, payload field-by-field money conversion + metadata, and non-blocking failure semantics.
+
+alhai_pos tests: 580 → 583. analyzer clean.
+
+### T2.B — Drift v45 local cleanup migration (`beb803cf`)
+
+New `app_database.dart onUpgrade case 45`:
+
+```sql
+UPDATE invoices
+SET
+  subtotal = subtotal / 100,
+  discount = discount / 100,
+  tax_amount = tax_amount / 100,
+  total = total / 100,
+  amount_paid = amount_paid / 100,
+  amount_due = amount_due / 100
+WHERE sale_id IS NOT NULL
+  AND invoice_type IN ('simplified_tax', 'standard_tax')
+  AND EXISTS (
+    SELECT 1 FROM sales s
+    WHERE s.id = invoices.sale_id
+      AND invoices.total = s.total * 100
+  );
+```
+
+Detection is `invoice.total = linked_sale.total * 100` — provable from source data, so the migration is **idempotent** (clean devices never match, become a no-op) and **safe for credit/debit notes** (no `sale_id` + different invoice_type — explicitly excluded).
+
+Test coverage in new `v45_invoice_100x_cleanup_test.dart` (4 cases): happy-path 100× correction, no-op on clean row, credit_note preservation, and non-matching-pattern row left alone.
+
+schemaVersion 44 → 45. Three prior tests that asserted the old version were updated.
+
+alhai_database tests: 522 + 1 skipped → 526 + 1 skipped. analyzer clean.
+
+### T2.C — Supabase v77 backfill migration (`df57ab4a`)
+
+New file `supabase/migrations/20260424_v77_backfill_invoices_from_orphan_sales.sql`. For every completed sale on Supabase that doesn't have a linked invoice, INSERT one simplified_tax invoice row with:
+
+- Deterministic `INV-{year}-BF-{seq:4}` number (the distinct `-BF-` infix prevents collisions with normal `INV-{year}-{seq:5}`).
+- SAR doubles passed through from `sales.*` (matches the DOUBLE PRECISION server schema).
+- Paid / issued status derived from `sales.is_paid`.
+- Idempotent `WHERE NOT EXISTS (SELECT 1 FROM invoices WHERE sale_id = s.id)` filter so partial runs are safe.
+- Pre-apply queries Q1 + Q2, post-apply Q3 + Q4 + Q5, rollback DDL block — all in the header comment.
+
+**Not applied live** — awaits user approval per durable preference. Expected scope: 11 rows (per today's discovery).
+
+## Test baselines end of session 45 on main
+
+| Package | Count | Δ this session |
+|---|---|---|
+| alhai_pos | 583 | +3 (invoice enqueue regressions) |
+| alhai_database | 526 + 1 skipped | +4 (v45 cleanup migration tests) |
+| alhai_zatca | 850 + 1 skipped | unchanged (gate verified end-of-session) |
+| apps/cashier | 552 | unchanged |
+| admin | 367 | unchanged |
+
+No regressions.
+
+## Out of scope — deferred / logged
+
+1. **v77 live-apply on Supabase Dashboard** — migration file is ready; awaits user's "apply" decision and post-verify query capture.
+2. **Supabase int-cents counterpart migration for the non-migrated money tables** — `sales`, `sale_items`, `invoices`, `held_invoices`, `shifts`, `cash_movements`, `returns`, `return_items`, `accounts`, `transactions`, `suppliers`, `purchases`, `purchase_items`, `coupons`, `expenses`, `daily_summaries`, `loyalty_rewards`. Must mirror the v71 pattern (paired Drift + Supabase + domain + sync payload). **Logged as §4h below.**
+3. **Cents-as-SAR display sweep outside sale/invoice/held** (§4 continues; not reopened here).
+
+## Remote push + merge
+
+- 3 commits FF-merged to main; branch deleted locally (refs preserved on backup).
+- Next commit will be the Session 45 docs update; then push to backup.
+- origin push still awaits explicit user approval (main now 10 commits ahead).
+
+## Methodology lesson
+
+When the user asks to investigate ("ب1 تحقيق سريع") and the investigation surfaces a bigger scope than originally framed, return to the user with the revised picture before touching code. Session 45's ~3.5 hrs would have been wasted if Bug B had been missed and Session 44's Supabase patch-up had gone ahead — the patch UPDATE would have hit 0 rows and left the real compliance gap open.
+
+---
+
+END OF SESSION 45 — Bug B closed, local Drift cleanup ready, Supabase v77 backfill authored (awaits apply); schema drift on remaining money tables logged as §4h for a dedicated Supabase counterpart session
+
+---
+
 # 🚀 NEXT SESSION STARTING POINT (2026-04-24+)
 
 **Written end-of-day 2026-04-23 after Session 42** — closes a 17-session / 40-commit marathon this day.
@@ -7771,12 +7889,14 @@ Supersedes the "NEXT SESSION STARTING POINT (2026-04-23+)" block that lived here
 
 ## 1. Repo state snapshot
 
-- **Active branch:** `main` — advanced 6 commits beyond the 2026-04-24 morning head (`10333713`): Session 43 admin fix FF-merged (`21a30b18`, `ae374799`) + Session 44 invoice fixes cherry-picked (`9b154327`, `d0f477ec`, `3fa9dba8`, `6cc8671d`). Session-44 docs commit follows.
-- **Remotes:** `local main` ahead of `backup/main` + `origin/main` by 6 commits until the Session-44 push. `gitlab/main` prior divergence untouched.
+- **Active branch:** `main` — advanced 10 commits beyond the 2026-04-24 morning head (`10333713`): Session 43 admin + Session 44 C-4 Session 2 + Session 45 Bug B follow-up + v45 local cleanup + v77 Supabase backfill authored. Tip `df57ab4a` (code) + Session-45 docs commit follows.
+- **Remotes:** `local main` ahead of `backup/main` + `origin/main` by 10 code + 1 docs commit until the Session-45 push. `gitlab/main` prior divergence untouched.
 - **Live Supabase:** v75.
-- **v76 authored but NOT live-applied** → `supabase/migrations/20260423_v76_invoices_rls_org_null_fallback.sql` (C-10 fix). Awaits user execution on Supabase Dashboard.
-- **Historical data patch pending user decision** — Session 44 `invoice_service` 100× corruption means every `invoices` row created via POS since the sales→cents migration has `total` / `amountPaid` / `amountDue` / `subtotal` / `discount` / `taxAmount` stored 100× too high. SQL fix-up is a separate approval step — see Session 44 "Out of scope" §1 for the patch plan and the `invoice_type IN ('simplified_tax', 'standard_tax')` filter.
-- **Drift schema:** v44 (unchanged today).
+- **v76 authored but NOT live-applied** → `supabase/migrations/20260423_v76_invoices_rls_org_null_fallback.sql` (C-10 fix). Session 45 confirmed this RLS fallback is NOT needed to fix Bug B (which wasn't RLS-blocked — nothing ever enqueued the invoices); v76 remains an optional hardening only.
+- **v77 authored but NOT live-applied** → `supabase/migrations/20260424_v77_backfill_invoices_from_orphan_sales.sql` (11 orphan sales → 11 backfilled invoices; idempotent; pre/post verification queries + rollback in header). Apply on Supabase Dashboard after the new POS build ships with the Session 45 code fix, so no competing writes.
+- **Historical Supabase data**: Session 45 discovered server-side `invoices` table was EMPTY (0 rows). No 100× corruption ever reached Supabase (Bug B sync gap kept it all local). The `UPDATE invoices ... / 100` patch-up from Session 44's plan is cancelled — no rows to touch.
+- **Local Drift cleanup**: schema v45 migration applies the 100× fix on any affected cashier device automatically on first launch after app upgrade.
+- **Drift schema:** v45 (up 44 → 45 this session for Bug A local cleanup).
 
 ## 2. Test baselines (end-of-day 2026-04-23)
 
@@ -7793,8 +7913,8 @@ Supersedes the "NEXT SESSION STARTING POINT (2026-04-23+)" block that lived here
 | customer_app | 136 | — (not re-run) |
 | driver_app | 156 | — (not re-run) |
 | admin | 367 | +2 (Session 43 product_form seed regressions, merged) |
-| alhai_pos | 580 | +3 (Session 44 invoice_service round-trip assertions) |
-| alhai_database | 522 + 1 skipped | +1 (Session 44 sale→invoice DAO integration) |
+| alhai_pos | 583 | +3 (Session 44 round-trip assertions) + +3 (Session 45 enqueue regressions) |
+| alhai_database | 526 + 1 skipped | +1 (Session 44 sale→invoice DAO integration) + +4 (Session 45 v45 cleanup) |
 | admin_lite | 183 | — |
 | super_admin | 222 | — |
 | distributor_portal | 420 | re-verified today |
@@ -7844,11 +7964,22 @@ Code has a 3-option design note at `apps/admin/lib/screens/inventory/stock_trans
 
 ### 4g. super_admin Tier 3 U5/U9/U11/U13 — BLOCKED on missing audit doc
 
+### 4h. Supabase int-cents counterpart migration for the non-migrated money tables — NEW (Session 45)
+
+On 2026-04-24 Session 45 verified Drift-side C-4 Sessions 2/3/4 migrated `sales` / `sale_items` / `invoices` / `held_invoices` / `shifts` / `cash_movements` / `returns` / `return_items` / `accounts` / `transactions` / `suppliers` / `purchases` / `purchase_items` / `coupons` / `expenses` / `daily_summaries` / `loyalty_rewards` to int cents — but **no matching Supabase migration exists for any of them**. The server keeps `DOUBLE PRECISION` columns from their v15-era schemas.
+
+Workaround today: sync payloads for these tables convert cents → SAR doubles before pushing (sale_service already does this; Session 45 mirrored the pattern for invoices). This is architecturally dirty but functional.
+
+Proper fix: one or more Supabase migrations in the v71-pattern shape (paired ALTER COLUMN TYPE INTEGER USING CAST(ROUND(col * 100) AS INTEGER) with pre-apply row-count + fractional-cent audit), then switch sync payloads to pass cents through unchanged. Scope estimate: 3-5 hrs per table group (sales + items, shifts + summaries, transactions + accounts, purchases + items, returns + items, coupons + expenses + loyalty). Requires a dedicated session per group, not a big-bang.
+
+Until this is done the schema drift is a documented known quirk; no user-visible bug.
+
 ## 5. ✅ Closed
 
-### 2026-04-24 (Sessions 43 + 44, merged to main)
+### 2026-04-24 (Sessions 43 + 44 + 45, merged to main)
 - **§4a** admin `product_form_screen.dart:104-105` round-trip bug — Session 43. FF-merged from `fix/admin-product-form-price-seed` (commits `21a30b18` + `ae374799`). admin 365 → 367.
-- **§4c** C-4 Session 2 — Invoice / SaleItem / HeldInvoice — Session 44. Cherry-picked from `fix/c4-invoice-service-100x-corruption` (4 code commits `9b154327` / `d0f477ec` / `3fa9dba8` / `6cc8671d`). P0 `invoice_service` 100× corruption + 12 display bugs + integration test. alhai_pos 577 → 580, alhai_database 521 → 522. Historical data patch-up pending user decision.
+- **§4c** C-4 Session 2 — Invoice / SaleItem / HeldInvoice — Session 44. Cherry-picked from `fix/c4-invoice-service-100x-corruption` (4 code commits `9b154327` / `d0f477ec` / `3fa9dba8` / `6cc8671d`). P0 `invoice_service` 100× corruption + 12 display bugs + integration test. alhai_pos 577 → 580, alhai_database 521 → 522.
+- **§4c follow-up — Bug B sync gap + local v45 + Supabase v77 backfill** — Session 45. FF-merged from `fix/c4-invoice-sync-enqueue-missing` (3 code commits `7087487f` / `beb803cf` / `df57ab4a`). Invoices were never enqueued to sync since the cents migration; `InvoiceService` now injects SyncService + enqueueCreate after every invoice create. Drift v45 migration divides local 100× invoices by 100 (idempotent). Supabase v77 migration backfills invoices for orphan sales (authored, NOT live-applied). alhai_pos 580 → 583, alhai_database 522 → 526.
 
 ### Admin audit — Tier A (all done, 2026-04-23)
 Q1 / Q1-UI / Q2 / Q3 / Q4 / Q5 / Q6 — sessions 24 (prior day) + 26 / 27 / 28.
