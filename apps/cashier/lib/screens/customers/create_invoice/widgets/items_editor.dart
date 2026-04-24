@@ -276,7 +276,12 @@ class _ProductResults extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    '${product.price.toStringAsFixed(2)} $sarLabel',
+                    // product.price is int cents; fromCentsWithContext divides
+                    // by 100 + localises. Raw toStringAsFixed inflates 100×.
+                    CurrencyFormatter.fromCentsWithContext(
+                      context,
+                      product.price,
+                    ),
                     style: TextStyle(
                       fontSize: 13,
                       fontWeight: FontWeight.w600,

@@ -128,6 +128,26 @@ class RealtimeListener {
     required String storeId,
     String? deviceId,
   }) async {
+    // Post-Phase-4 strict guard: empty orgId would degrade filtering to a
+    // soft check (see `_deviceId != null && recordOrgId != _orgId` below)
+    // and let through rows from other tenants if the filter ever misses.
+    // Fail fast with a caller-visible error instead of silently subscribing
+    // to a misconfigured stream.
+    if (orgId.isEmpty) {
+      throw ArgumentError.value(
+        orgId,
+        'orgId',
+        'RealtimeListener requires a non-empty orgId',
+      );
+    }
+    if (storeId.isEmpty) {
+      throw ArgumentError.value(
+        storeId,
+        'storeId',
+        'RealtimeListener requires a non-empty storeId',
+      );
+    }
+
     if (_isActive) return;
 
     // M149: Validate JWT session before connecting to Realtime
