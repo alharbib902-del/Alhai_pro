@@ -3,7 +3,18 @@
 /// Form: customer selector, amount, type (debt/payment), note.
 /// Save creates a transaction record.
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
+///
+/// State model:
+/// - Business state → [NewTransactionState] via [_newTransactionProvider]
+///   (accounts list + filtered list, selectedAccount, isDebt toggle,
+///   search-visibility, loading/submitting flags, error). Replaces the
+///   cascade of 13 `setState` calls from the original implementation.
+/// - Pure UI transient state → `TextEditingController` values. The amount
+///   field is wrapped in `ValueListenableBuilder` so quick-amount chips +
+///   submit button enable-state react without `setState(() {})`.
 library;
+
+import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,12 +24,136 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_sync/alhai_sync.dart' show SyncPriority;
 import 'package:uuid/uuid.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
+
+// ============================================================================
+// State
+// ============================================================================
+
+@immutable
+class NewTransactionState {
+  final List<AccountsTableData> allAccounts;
+  final List<AccountsTableData> filteredAccounts;
+  final AccountsTableData? selectedAccount;
+  final bool isDebt;
+  final bool showCustomerSearch;
+  final bool isLoading;
+  final bool isSubmitting;
+  final String? error;
+
+  const NewTransactionState({
+    this.allAccounts = const [],
+    this.filteredAccounts = const [],
+    this.selectedAccount,
+    this.isDebt = true,
+    this.showCustomerSearch = false,
+    // Defaults to loading=true so the first frame shows the spinner while
+    // `_loadAccounts()` runs via addPostFrameCallback. Matches the pre-
+    // refactor behaviour where setState(isLoading=true) fired synchronously
+    // in initState (see `shows loading indicator while fetching` test).
+    this.isLoading = true,
+    this.isSubmitting = false,
+    this.error,
+  });
+
+  NewTransactionState copyWith({
+    List<AccountsTableData>? allAccounts,
+    List<AccountsTableData>? filteredAccounts,
+    AccountsTableData? selectedAccount,
+    bool clearSelectedAccount = false,
+    bool? isDebt,
+    bool? showCustomerSearch,
+    bool? isLoading,
+    bool? isSubmitting,
+    String? error,
+    bool clearError = false,
+  }) => NewTransactionState(
+    allAccounts: allAccounts ?? this.allAccounts,
+    filteredAccounts: filteredAccounts ?? this.filteredAccounts,
+    selectedAccount: clearSelectedAccount
+        ? null
+        : (selectedAccount ?? this.selectedAccount),
+    isDebt: isDebt ?? this.isDebt,
+    showCustomerSearch: showCustomerSearch ?? this.showCustomerSearch,
+    isLoading: isLoading ?? this.isLoading,
+    isSubmitting: isSubmitting ?? this.isSubmitting,
+    error: clearError ? null : (error ?? this.error),
+  );
+}
+
+class NewTransactionNotifier extends StateNotifier<NewTransactionState> {
+  NewTransactionNotifier() : super(const NewTransactionState());
+
+  void setLoading() => state = state.copyWith(isLoading: true, clearError: true);
+
+  void setLoaded(List<AccountsTableData> accounts) => state = state.copyWith(
+    allAccounts: accounts,
+    filteredAccounts: accounts,
+    isLoading: false,
+  );
+
+  /// P2 #2: when the screen was opened with a pre-selected customer (via
+  /// `widget.customerId`), keep `filteredAccounts` narrowed to that account
+  /// so the search list doesn't flash all accounts before selection.
+  void setLoadedWithPreselection(
+    List<AccountsTableData> accounts,
+    String preselectedCustomerId,
+  ) {
+    final matches = accounts
+        .where((a) => a.customerId == preselectedCustomerId)
+        .toList();
+    state = state.copyWith(
+      allAccounts: accounts,
+      filteredAccounts: matches.isEmpty ? accounts : matches,
+      isLoading: false,
+    );
+  }
+
+  void setError(String err) =>
+      state = state.copyWith(isLoading: false, error: err);
+
+  void selectAccount(AccountsTableData account) => state = state.copyWith(
+    selectedAccount: account,
+    showCustomerSearch: false,
+  );
+
+  void showSearch() => state = state.copyWith(showCustomerSearch: true);
+
+  void setIsDebt(bool v) => state = state.copyWith(isDebt: v);
+
+  void setSubmitting(bool v) => state = state.copyWith(isSubmitting: v);
+
+  /// Filter accounts list by query (case-insensitive, name + phone).
+  void filterAccounts(String query) {
+    final q = query.toLowerCase().trim();
+    if (q.isEmpty) {
+      state = state.copyWith(filteredAccounts: state.allAccounts);
+      return;
+    }
+    state = state.copyWith(
+      filteredAccounts: state.allAccounts.where((a) {
+        return a.name.toLowerCase().contains(q) ||
+            (a.phone?.toLowerCase().contains(q) ?? false);
+      }).toList(),
+    );
+  }
+}
+
+final _newTransactionProvider =
+    StateNotifierProvider.autoDispose<
+      NewTransactionNotifier,
+      NewTransactionState
+    >((ref) => NewTransactionNotifier());
+
+// ============================================================================
+// Screen
+// ============================================================================
 
 /// شاشة حركة حساب جديدة
 class NewTransactionScreen extends ConsumerStatefulWidget {
@@ -37,25 +172,21 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
   final _noteController = TextEditingController();
   final _customerSearchController = TextEditingController();
 
-  bool _isDebt = true;
-  bool _isLoading = false;
-  bool _isSubmitting = false;
-  String? _error;
-
-  List<AccountsTableData> _allAccounts = [];
-  List<AccountsTableData> _filteredAccounts = [];
-  AccountsTableData? _selectedAccount;
-  bool _showCustomerSearch = false;
+  // Debounce the customer-search filter — previously re-ran on every
+  // keystroke, causing extra Riverpod rebuilds (P1 #3).
+  Timer? _searchDebounce;
+  String _lastSearchQuery = '';
 
   @override
   void initState() {
     super.initState();
-    _loadAccounts();
-    _customerSearchController.addListener(_filterAccounts);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadAccounts());
+    _customerSearchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _amountController.dispose();
     _noteController.dispose();
     _customerSearchController.dispose();
@@ -63,53 +194,41 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
   }
 
   Future<void> _loadAccounts() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+    final notifier = ref.read(_newTransactionProvider.notifier);
+    notifier.setLoading();
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
       final accounts = await _db.accountsDao.getReceivableAccounts(storeId);
-      if (mounted) {
-        setState(() {
-          _allAccounts = accounts;
-          _filteredAccounts = accounts;
-          _isLoading = false;
-        });
+      if (!mounted) return;
 
-        // If customerId is passed, pre-select the account
-        if (widget.customerId != null) {
-          final match = accounts
-              .where((a) => a.customerId == widget.customerId)
-              .toList();
-          if (match.isNotEmpty) {
-            setState(() => _selectedAccount = match.first);
-          }
-        }
+      // P2 #2: if customerId passed, keep filteredAccounts narrowed to that
+      // customer (prevents the whole list from briefly showing) and auto-
+      // select. When no customerId, fall back to the default load.
+      if (widget.customerId != null) {
+        notifier.setLoadedWithPreselection(accounts, widget.customerId!);
+        final match = accounts
+            .where((a) => a.customerId == widget.customerId)
+            .toList();
+        if (match.isNotEmpty) notifier.selectAccount(match.first);
+      } else {
+        notifier.setLoaded(accounts);
       }
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Load customer accounts');
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _error = '$e';
-        });
-      }
+      if (!mounted) return;
+      notifier.setError('$e');
     }
   }
 
-  void _filterAccounts() {
-    final query = _customerSearchController.text.toLowerCase().trim();
-    setState(() {
-      if (query.isEmpty) {
-        _filteredAccounts = _allAccounts;
-      } else {
-        _filteredAccounts = _allAccounts.where((a) {
-          return a.name.toLowerCase().contains(query) ||
-              (a.phone?.toLowerCase().contains(query) ?? false);
-        }).toList();
-      }
+  void _onSearchChanged() {
+    final q = _customerSearchController.text;
+    if (q == _lastSearchQuery) return;
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
+      _lastSearchQuery = q;
+      ref.read(_newTransactionProvider.notifier).filterAccounts(q);
     });
   }
 
@@ -121,11 +240,16 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
+    final s = ref.watch(_newTransactionProvider);
 
     return Column(
       children: [
         AppHeader(
-          title: 'New Transaction',
+          // No single l10n key for "New Transaction"; use direct Arabic so
+          // the screen is not bilingual when locale is ar (the primary
+          // locale for this app). English speakers still see Arabic — this
+          // matches the rest of the customer flow headers.
+          title: 'حركة حساب جديدة',
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
@@ -139,12 +263,12 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
           onUserTap: () {},
         ),
         Expanded(
-          child: _isLoading
+          child: s.isLoading
               ? const AppLoadingState()
-              : _error != null
+              : s.error != null
               ? AppErrorState.general(
                   context,
-                  message: _error!,
+                  message: s.error!,
                   onRetry: _loadAccounts,
                 )
               : SingleChildScrollView(
@@ -159,9 +283,9 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                               flex: 3,
                               child: Column(
                                 children: [
-                                  _buildCustomerCard(colorScheme, l10n),
+                                  _buildCustomerCard(colorScheme, l10n, s),
                                   const SizedBox(height: AlhaiSpacing.lg),
-                                  _buildTypeCard(colorScheme, l10n),
+                                  _buildTypeCard(colorScheme, l10n, s),
                                 ],
                               ),
                             ),
@@ -170,11 +294,11 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                               flex: 2,
                               child: Column(
                                 children: [
-                                  _buildAmountCard(colorScheme, l10n),
+                                  _buildAmountCard(colorScheme, l10n, s),
                                   const SizedBox(height: AlhaiSpacing.lg),
                                   _buildNoteCard(colorScheme, l10n),
                                   const SizedBox(height: AlhaiSpacing.lg),
-                                  _buildSubmitButton(colorScheme, l10n),
+                                  _buildSubmitButton(colorScheme, l10n, s),
                                 ],
                               ),
                             ),
@@ -183,19 +307,19 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                       : Column(
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            _buildCustomerCard(colorScheme, l10n),
+                            _buildCustomerCard(colorScheme, l10n, s),
                             SizedBox(
                               height: isMediumScreen
                                   ? AlhaiSpacing.lg
                                   : AlhaiSpacing.md,
                             ),
-                            _buildTypeCard(colorScheme, l10n),
+                            _buildTypeCard(colorScheme, l10n, s),
                             SizedBox(
                               height: isMediumScreen
                                   ? AlhaiSpacing.lg
                                   : AlhaiSpacing.md,
                             ),
-                            _buildAmountCard(colorScheme, l10n),
+                            _buildAmountCard(colorScheme, l10n, s),
                             SizedBox(
                               height: isMediumScreen
                                   ? AlhaiSpacing.lg
@@ -203,7 +327,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                             ),
                             _buildNoteCard(colorScheme, l10n),
                             const SizedBox(height: AlhaiSpacing.lg),
-                            _buildSubmitButton(colorScheme, l10n),
+                            _buildSubmitButton(colorScheme, l10n, s),
                             const SizedBox(height: AlhaiSpacing.lg),
                           ],
                         ),
@@ -218,7 +342,11 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
     return '${now.day}/${now.month}/${now.year} \u2022 ${l10n.mainBranch}';
   }
 
-  Widget _buildCustomerCard(ColorScheme colorScheme, AppLocalizations l10n) {
+  Widget _buildCustomerCard(
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+    NewTransactionState s,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -255,10 +383,10 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
             ],
           ),
           const SizedBox(height: AlhaiSpacing.md),
-          if (_selectedAccount != null && !_showCustomerSearch)
-            _buildSelectedCustomer(colorScheme, l10n)
+          if (s.selectedAccount != null && !s.showCustomerSearch)
+            _buildSelectedCustomer(colorScheme, l10n, s)
           else
-            _buildCustomerSelector(colorScheme, l10n),
+            _buildCustomerSelector(colorScheme, l10n, s),
         ],
       ),
     );
@@ -267,13 +395,14 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
   Widget _buildSelectedCustomer(
     ColorScheme colorScheme,
     AppLocalizations l10n,
+    NewTransactionState s,
   ) {
-    final account = _selectedAccount!;
+    final account = s.selectedAccount!;
     final isDebt = account.balance > 0;
     final initials = _getInitials(account.name);
 
     return InkWell(
-      onTap: () => setState(() => _showCustomerSearch = true),
+      onTap: () => ref.read(_newTransactionProvider.notifier).showSearch(),
       borderRadius: BorderRadius.circular(12),
       child: Container(
         padding: const EdgeInsets.all(14),
@@ -339,7 +468,12 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '${account.balance.abs().toStringAsFixed(0)} ${l10n.sar}',
+                  // accounts.balance is int cents (C-4 schema).
+                  CurrencyFormatter.fromCentsWithContext(
+                    context,
+                    account.balance.abs(),
+                    decimalDigits: 0,
+                  ),
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -363,6 +497,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
   Widget _buildCustomerSelector(
     ColorScheme colorScheme,
     AppLocalizations l10n,
+    NewTransactionState s,
   ) {
     return Column(
       children: [
@@ -398,16 +533,15 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
           constraints: const BoxConstraints(maxHeight: 200),
           child: ListView.builder(
             shrinkWrap: true,
-            itemCount: _filteredAccounts.length,
+            itemCount: s.filteredAccounts.length,
             itemBuilder: (context, index) {
-              final account = _filteredAccounts[index];
+              final account = s.filteredAccounts[index];
               return InkWell(
                 onTap: () {
-                  setState(() {
-                    _selectedAccount = account;
-                    _showCustomerSearch = false;
-                    _customerSearchController.clear();
-                  });
+                  ref
+                      .read(_newTransactionProvider.notifier)
+                      .selectAccount(account);
+                  _customerSearchController.clear();
                 },
                 borderRadius: BorderRadius.circular(8),
                 child: Padding(
@@ -434,7 +568,12 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                       ),
                       Text(
                         // C-4 Session 4: accounts.balance is int cents.
-                        '${(account.balance / 100.0).toStringAsFixed(0)} ${l10n.sar}',
+                        // Use CurrencyFormatter for grouping separators.
+                        CurrencyFormatter.fromCentsWithContext(
+                          context,
+                          account.balance.abs(),
+                          decimalDigits: 0,
+                        ),
                         style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w600,
@@ -454,7 +593,11 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
     );
   }
 
-  Widget _buildTypeCard(ColorScheme colorScheme, AppLocalizations l10n) {
+  Widget _buildTypeCard(
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+    NewTransactionState s,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -498,8 +641,10 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                   l10n.debitAdjustment,
                   Icons.arrow_upward_rounded,
                   AppColors.error,
-                  _isDebt,
-                  () => setState(() => _isDebt = true),
+                  s.isDebt,
+                  () => ref
+                      .read(_newTransactionProvider.notifier)
+                      .setIsDebt(true),
                   colorScheme,
                 ),
               ),
@@ -509,8 +654,10 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
                   l10n.payment,
                   Icons.arrow_downward_rounded,
                   AppColors.success,
-                  !_isDebt,
-                  () => setState(() => _isDebt = false),
+                  !s.isDebt,
+                  () => ref
+                      .read(_newTransactionProvider.notifier)
+                      .setIsDebt(false),
                   colorScheme,
                 ),
               ),
@@ -567,8 +714,12 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
     );
   }
 
-  Widget _buildAmountCard(ColorScheme colorScheme, AppLocalizations l10n) {
-    final activeColor = _isDebt ? AppColors.error : AppColors.success;
+  Widget _buildAmountCard(
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+    NewTransactionState s,
+  ) {
+    final activeColor = s.isDebt ? AppColors.error : AppColors.success;
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -614,7 +765,6 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
               fontWeight: FontWeight.bold,
               color: colorScheme.onSurface,
             ),
-            onChanged: (_) => setState(() {}),
             decoration: InputDecoration(
               hintText: '0.00',
               hintStyle: TextStyle(
@@ -630,7 +780,7 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
               prefixIcon: Padding(
                 padding: const EdgeInsets.all(AlhaiSpacing.sm),
                 child: Icon(
-                  _isDebt ? Icons.add_rounded : Icons.remove_rounded,
+                  s.isDebt ? Icons.add_rounded : Icons.remove_rounded,
                   size: 28,
                   color: activeColor,
                 ),
@@ -652,48 +802,51 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
             ),
           ),
           const SizedBox(height: AlhaiSpacing.sm),
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [50, 100, 200, 500].map((amount) {
-              final isSelected = _amountController.text == amount.toString();
-              return Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    _amountController.text = amount.toString();
-                    setState(() {});
-                  },
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: AlhaiSpacing.md,
-                      vertical: 10,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? activeColor.withValues(alpha: 0.1)
-                          : colorScheme.surfaceContainerHighest,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: isSelected
-                            ? activeColor.withValues(alpha: 0.5)
-                            : colorScheme.outlineVariant,
+          // Quick-amount chips — highlight tracks controller via listenable.
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: _amountController,
+            builder: (_, __, ___) => Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [50, 100, 200, 500].map((amount) {
+                final isSelected = _amountController.text == amount.toString();
+                return Material(
+                  color: Colors.transparent,
+                  child: InkWell(
+                    onTap: () {
+                      _amountController.text = amount.toString();
+                    },
+                    borderRadius: BorderRadius.circular(10),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AlhaiSpacing.md,
+                        vertical: 10,
                       ),
-                    ),
-                    child: Text(
-                      '$amount ${l10n.sar}',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
+                      decoration: BoxDecoration(
                         color: isSelected
-                            ? activeColor
-                            : colorScheme.onSurfaceVariant,
+                            ? activeColor.withValues(alpha: 0.1)
+                            : colorScheme.surfaceContainerHighest,
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: isSelected
+                              ? activeColor.withValues(alpha: 0.5)
+                              : colorScheme.outlineVariant,
+                        ),
+                      ),
+                      child: Text(
+                        '$amount ${l10n.sar}',
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: isSelected
+                              ? activeColor
+                              : colorScheme.onSurfaceVariant,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              );
-            }).toList(),
+                );
+              }).toList(),
+            ),
           ),
         ],
       ),
@@ -769,84 +922,148 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
     );
   }
 
-  Widget _buildSubmitButton(ColorScheme colorScheme, AppLocalizations l10n) {
-    final activeColor = _isDebt ? AppColors.error : AppColors.success;
-    final hasAmount =
-        _amountController.text.isNotEmpty &&
-        (double.tryParse(_amountController.text) ?? 0) > 0;
-
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton.icon(
-        onPressed: _isSubmitting || !hasAmount || _selectedAccount == null
-            ? null
-            : () => _submitTransaction(l10n),
-        icon: _isSubmitting
-            ? SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: colorScheme.onPrimary,
-                ),
-              )
-            : Icon(
-                _isDebt
-                    ? Icons.arrow_upward_rounded
-                    : Icons.arrow_downward_rounded,
-                size: 20,
+  Widget _buildSubmitButton(
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+    NewTransactionState s,
+  ) {
+    final activeColor = s.isDebt ? AppColors.error : AppColors.success;
+    // Enable-state also tracks amount text: use ValueListenableBuilder.
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable: _amountController,
+      builder: (_, __, ___) {
+        final hasAmount =
+            _amountController.text.isNotEmpty &&
+            (double.tryParse(_amountController.text) ?? 0) > 0;
+        return SizedBox(
+          width: double.infinity,
+          child: FilledButton.icon(
+            onPressed: s.isSubmitting || !hasAmount || s.selectedAccount == null
+                ? null
+                : () => _submitTransaction(l10n),
+            icon: s.isSubmitting
+                ? SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: colorScheme.onPrimary,
+                    ),
+                  )
+                : Icon(
+                    s.isDebt
+                        ? Icons.arrow_upward_rounded
+                        : Icons.arrow_downward_rounded,
+                    size: 20,
+                  ),
+            label: Text(
+              // Arabic direct strings — `recordPayment` exists in l10n but
+              // there is no matching `recordDebt` key; keep both in Arabic
+              // so the pair stays consistent.
+              s.isDebt ? 'تسجيل دين' : l10n.recordPayment,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
               ),
-        label: Text(
-          _isDebt ? 'Record Debt' : 'Record Payment',
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
-        style: FilledButton.styleFrom(
-          backgroundColor: activeColor,
-          foregroundColor: colorScheme.onPrimary,
-          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+            ),
+            style: FilledButton.styleFrom(
+              backgroundColor: activeColor,
+              foregroundColor: colorScheme.onPrimary,
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
   Future<void> _submitTransaction(AppLocalizations l10n) async {
     final amount = double.tryParse(_amountController.text);
-    if (amount == null || amount <= 0 || _selectedAccount == null) return;
+    final s = ref.read(_newTransactionProvider);
+    if (amount == null || amount <= 0 || s.selectedAccount == null) return;
 
-    setState(() => _isSubmitting = true);
+    final notifier = ref.read(_newTransactionProvider.notifier);
+    notifier.setSubmitting(true);
 
     try {
-      final account = _selectedAccount!;
-      final signedAmount = _isDebt ? amount : -amount;
-      // C-4 Session 4: accounts.balance, transactions.amount, balance_after are int cents.
-      final currentBalSar = account.balance / 100.0;
-      final newBalance = currentBalSar + signedAmount;
+      final account = s.selectedAccount!;
+      final signedAmount = s.isDebt ? amount : -amount;
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
       final user = ref.read(currentUserProvider);
+      final syncService = ref.read(syncServiceProvider);
       final txnId = const Uuid().v4();
+      final now = DateTime.now();
+      final note = _noteController.text.isEmpty ? null : _noteController.text;
+      final txnType = s.isDebt ? 'invoice' : 'payment';
 
+      // C-4 Session 4: accounts.balance, transactions.amount,
+      // balance_after are int cents. Re-read the account inside the
+      // transaction to avoid TOCTOU drift if another device adjusted the
+      // balance since the UI loaded.
+      late final double newBalance;
+      late final double currentBalSar;
       await _db.transaction(() async {
+        final fresh = await _db.accountsDao.getAccountById(account.id);
+        currentBalSar = (fresh?.balance ?? account.balance) / 100.0;
+        newBalance = currentBalSar + signedAmount;
         await _db.transactionsDao.insertTransaction(
           TransactionsTableCompanion.insert(
             id: txnId,
             storeId: storeId,
             accountId: account.id,
-            type: _isDebt ? 'invoice' : 'payment',
+            type: txnType,
             amount: (signedAmount * 100).round(),
             balanceAfter: (newBalance * 100).round(),
-            description: Value(
-              _noteController.text.isEmpty ? null : _noteController.text,
-            ),
+            description: Value(note),
             createdBy: Value(user?.name),
-            createdAt: DateTime.now(),
+            createdAt: now,
           ),
         );
         await _db.accountsDao.updateBalance(account.id, newBalance);
       });
+
+      // Sync enqueue — outside the DB transaction so a sync_queue write
+      // failure cannot poison the local commit. Without this, the
+      // transaction stays local-only (cloud diverges, audit gap).
+      try {
+        await syncService.enqueueCreate(
+          tableName: 'transactions',
+          recordId: txnId,
+          data: {
+            'id': txnId,
+            'storeId': storeId,
+            'accountId': account.id,
+            'type': txnType,
+            'amount': (signedAmount * 100).round(),
+            'balanceAfter': (newBalance * 100).round(),
+            'description': note,
+            'createdBy': user?.name,
+            'createdAt': now.toIso8601String(),
+          },
+          priority: SyncPriority.high,
+        );
+        await syncService.enqueueUpdate(
+          tableName: 'accounts',
+          recordId: account.id,
+          changes: {
+            'id': account.id,
+            'balance': (newBalance * 100).round(),
+            'lastTransactionAt': now.toIso8601String(),
+            'updatedAt': now.toIso8601String(),
+          },
+          priority: SyncPriority.high,
+        );
+      } catch (e, stack) {
+        reportError(
+          e,
+          stackTrace: stack,
+          hint: 'New transaction sync enqueue (txn=$txnId)',
+        );
+      }
 
       // Audit log
       auditService.logTransaction(
@@ -855,13 +1072,13 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
         userName: user?.name ?? 'unknown',
         transactionId: txnId,
         accountName: account.name,
-        type: _isDebt ? 'invoice' : 'payment',
+        type: txnType,
         amount: signedAmount,
         balanceAfter: newBalance,
       );
 
       addBreadcrumb(
-        message: _isDebt ? 'Debt recorded' : 'Payment recorded',
+        message: s.isDebt ? 'Debt recorded' : 'Payment recorded',
         category: 'payment',
         data: {'amount': signedAmount, 'accountId': account.id},
       );
@@ -898,7 +1115,9 @@ class _NewTransactionScreenState extends ConsumerState<NewTransactionScreen> {
         ),
       );
     } finally {
-      if (mounted) setState(() => _isSubmitting = false);
+      if (mounted) {
+        ref.read(_newTransactionProvider.notifier).setSubmitting(false);
+      }
     }
   }
 

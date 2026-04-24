@@ -56,6 +56,53 @@ class DiscountsDao extends DatabaseAccessor<AppDatabase>
         .getSingleOrNull();
   }
 
+  /// Most-recently-touched coupons for a store, capped at [limit].
+  /// Backs the "recent coupons" rail on the coupon screen. Ordered by
+  /// `createdAt` descending — enough to feel fresh without needing a
+  /// dedicated audit table for coupon activity.
+  Future<List<CouponsTableData>> getRecentCoupons(
+    String storeId, {
+    int limit = 5,
+  }) {
+    return (select(couponsTable)
+          ..where(
+            (c) =>
+                c.storeId.equals(storeId) &
+                c.isActive.equals(true) &
+                c.deletedAt.isNull(),
+          )
+          ..orderBy([(c) => OrderingTerm.desc(c.createdAt)])
+          ..limit(limit))
+        .get();
+  }
+
+  /// Atomically increment a coupon's `currentUses`, but only if the
+  /// coupon is still redeemable (active, not deleted, not expired, and
+  /// `currentUses < maxUses` — a `maxUses` of 0 means "unlimited").
+  ///
+  /// Returns the number of rows affected: `1` on success, `0` if the
+  /// coupon is exhausted, expired, or no longer active. This is the
+  /// canonical guard against double-spend race conditions; never branch
+  /// on an in-memory `currentUses` snapshot.
+  Future<int> tryRedeemCoupon(String couponId) {
+    final now = DateTime.now();
+    return customUpdate(
+      '''UPDATE coupons
+         SET current_uses = current_uses + 1
+         WHERE id = ?
+           AND is_active = 1
+           AND deleted_at IS NULL
+           AND (max_uses = 0 OR current_uses < max_uses)
+           AND (expires_at IS NULL OR expires_at > ?)''',
+      variables: [
+        Variable.withString(couponId),
+        Variable.withDateTime(now),
+      ],
+      updates: {couponsTable},
+      updateKind: UpdateKind.update,
+    );
+  }
+
   Future<int> insertCoupon(CouponsTableCompanion coupon) =>
       into(couponsTable).insert(coupon);
   Future<bool> updateCoupon(CouponsTableData coupon) =>

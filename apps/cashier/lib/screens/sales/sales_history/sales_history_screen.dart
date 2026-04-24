@@ -96,7 +96,7 @@ class _SalesHistoryScreenState extends ConsumerState<SalesHistoryScreen> {
                 ? null
                 : () => Scaffold.of(context).openDrawer(),
             onNotificationsTap: () => context.push('/notifications'),
-            notificationsCount: 3,
+            notificationsCount: ref.watch(unreadNotificationsCountProvider),
             userName: user?.name ?? l10n.cashCustomer,
             userRole: l10n.branchManager,
             onUserTap: () {},

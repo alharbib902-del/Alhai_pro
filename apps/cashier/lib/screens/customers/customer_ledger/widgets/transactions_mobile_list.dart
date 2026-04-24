@@ -118,7 +118,10 @@ class _LedgerMobileCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.end,
                       children: [
                         Text(
-                          '${isDebitTx ? '+' : '-'}${amount.toStringAsFixed(2)}',
+                          // P1 #14: CurrencyFormatter yields thousands
+                          // separators + proper decimals in Arabic digits.
+                          '${isDebitTx ? '+' : '-'}'
+                          '${CurrencyFormatter.formatNumberWithContext(context, amount)}',
                           style: TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w700,
@@ -138,7 +141,8 @@ class _LedgerMobileCard extends StatelessWidget {
                             borderRadius: BorderRadius.circular(999),
                           ),
                           child: Text(
-                            '${l10n.balanceCol}: ${balance.toStringAsFixed(0)}',
+                            '${l10n.balanceCol}: '
+                            '${CurrencyFormatter.formatNumberWithContext(context, balance, decimalDigits: 0)}',
                             style: TextStyle(
                               fontSize: 10,
                               fontWeight: FontWeight.w600,

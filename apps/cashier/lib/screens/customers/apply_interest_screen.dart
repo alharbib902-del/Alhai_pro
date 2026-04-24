@@ -14,6 +14,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_sync/alhai_sync.dart' show SyncPriority;
+import 'package:uuid/uuid.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
@@ -528,7 +529,11 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
                             ),
                             Text(
                               // C-4 Session 4: accounts.balance is int cents.
-                              '${l10n.balanceCol}: ${(account.balance / 100.0).toStringAsFixed(0)} ${l10n.sar}',
+                              // Use CurrencyFormatter for grouping separators
+                              // (P1 #8). `decimalDigits: 0` to match the
+                              // previous 0-decimal display.
+                              '${l10n.balanceCol}: '
+                              '${CurrencyFormatter.fromCentsWithContext(context, account.balance, decimalDigits: 0)}',
                               style: TextStyle(
                                 fontSize: 12,
                                 color: AppColors.getTextSecondary(isDark),
@@ -755,7 +760,12 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
 
       await _db.transaction(() async {
         for (final accountId in _selectedIds) {
-          final account = _accounts.firstWhere((a) => a.id == accountId);
+          // Re-fetch each account inside the transaction to defeat TOCTOU:
+          // the in-memory `_accounts` snapshot may be stale if a sale, a
+          // payment, or a sync pulled new data since the UI loaded. Using
+          // a stale balance would write the wrong `balance_after` row.
+          final account = await _db.accountsDao.getAccountById(accountId);
+          if (account == null) continue;
           final balanceSar = account.balance / 100.0;
           final interest = _calculateInterest(balanceSar);
           if (interest <= 0) continue;
@@ -770,7 +780,12 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
           }
 
           final newBalance = balanceSar + interest;
-          final txnId = 'INT-${now.millisecondsSinceEpoch}-$accountId';
+          // P2 #4: `now.millisecondsSinceEpoch` reused for every account in
+          // this tight loop would collide if two accounts shared the same
+          // millisecond tick. `Uuid().v4()` is globally unique and already
+          // imported, so use it for the txn id (prefix retained for log
+          // filtering — interest transactions are easy to grep for).
+          final txnId = 'INT-${const Uuid().v4()}';
 
           await _db.transactionsDao.recordInterest(
             id: txnId,

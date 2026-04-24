@@ -188,7 +188,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Split Receipt',
+                    l10n.splitReceiptTitle,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -429,7 +429,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'Payment Breakdown',
+                l10n.paymentBreakdown,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -493,7 +493,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
             ),
           ),
           Text(
-            '${split.amount.toStringAsFixed(2)} ${l10n.sar}',
+            CurrencyFormatter.formatWithContext(context, split.amount),
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.w700,
@@ -532,7 +532,7 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'ZATCA QR',
+                l10n.zatcaQrTitle,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -590,21 +590,29 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
           ),
         ),
         const SizedBox(height: AlhaiSpacing.sm),
-        SizedBox(
-          width: double.infinity,
-          child: OutlinedButton.icon(
-            onPressed: null,
-            icon: const Icon(Icons.share_rounded, size: 20),
-            label: Text(
-              l10n.share,
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-            ),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.primary,
-              side: const BorderSide(color: AppColors.primary),
-              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
+        // P2-#7: Share button not yet wired — hide entirely instead of showing
+        // a perpetually-disabled dead button. Re-enable when share sheet lands.
+        Visibility(
+          visible: false,
+          child: SizedBox(
+            width: double.infinity,
+            child: OutlinedButton.icon(
+              onPressed: null,
+              icon: const Icon(Icons.share_rounded, size: 20),
+              label: Text(
+                l10n.share,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.primary,
+                side: const BorderSide(color: AppColors.primary),
+                padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
               ),
             ),
           ),
@@ -616,11 +624,11 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
   Future<void> _printReceipt(AppLocalizations l10n) async {
     setState(() => _isPrinting = true);
     try {
-      await Future.delayed(const Duration(seconds: 1));
-      addBreadcrumb(message: 'Receipt printed', category: 'sale');
+      // P2-#8: Printing is not yet implemented — don't claim success.
+      addBreadcrumb(message: 'Split receipt print requested', category: 'sale');
 
       if (!mounted) return;
-      AlhaiSnackbar.success(context, l10n.receiptPrinted);
+      AlhaiSnackbar.info(context, '${l10n.comingSoon} — ${l10n.print}');
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Print split receipt');
       if (!mounted) return;

@@ -5,6 +5,9 @@
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
 library;
 
+import 'dart:convert';
+import 'dart:io' show Socket;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -56,45 +59,22 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
       )..where((s) => s.storeId.equals(storeId))).get();
       final List<_PaymentDevice> loaded = [];
 
-      // Parse stored devices from settings
+      // Parse stored devices from settings. The writer emits JSON (see
+      // add_payment_device_screen.dart), but legacy pipe-packed rows
+      // may still exist in long-lived stores — fall back to the old
+      // format so existing data isn't silently dropped.
       for (final s in settings) {
         if (s.key.startsWith('payment_device_') &&
             !s.key.contains('_ip') &&
             !s.key.contains('_port')) {
-          final parts = s.value.split('|');
-          if (parts.length >= 3) {
-            loaded.add(
-              _PaymentDevice(
-                id: s.key.replaceFirst('payment_device_', ''),
-                name: parts[0],
-                type: parts[1],
-                connectionMethod: parts[2],
-                isConnected: parts.length > 3 && parts[3] == 'true',
-              ),
-            );
-          }
+          final device = _parseStoredDevice(s.key, s.value);
+          if (device != null) loaded.add(device);
         }
       }
 
-      // Default devices if none configured
-      if (loaded.isEmpty) {
-        loaded.addAll([
-          const _PaymentDevice(
-            id: 'mada_1',
-            name: 'Mada Terminal',
-            type: 'Mada',
-            connectionMethod: 'Network',
-            isConnected: true,
-          ),
-          const _PaymentDevice(
-            id: 'stc_1',
-            name: 'STC Pay',
-            type: 'STC Pay',
-            connectionMethod: 'QR Code',
-            isConnected: false,
-          ),
-        ]);
-      }
+      // Empty state handled in the build() path — no more fabricated
+      // "Mada Terminal" / "STC Pay" placeholders pretending to be
+      // configured hardware.
 
       if (mounted) {
         setState(() => _devices = loaded);
@@ -107,27 +87,121 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
     }
   }
 
+  _PaymentDevice? _parseStoredDevice(String key, String value) {
+    final id = key.replaceFirst('payment_device_', '');
+    // JSON fast path (current writer format).
+    if (value.startsWith('{')) {
+      try {
+        final map = jsonDecode(value) as Map<String, dynamic>;
+        return _PaymentDevice(
+          id: id,
+          name: map['name']?.toString() ?? '',
+          type: map['type']?.toString() ?? '',
+          connectionMethod: map['method']?.toString() ?? '',
+          isConnected: map['testPassed'] == true,
+        );
+      } catch (_) {
+        // Fall through to legacy parse
+      }
+    }
+
+    // Legacy pipe-delimited format kept for backwards compatibility.
+    final parts = value.split('|');
+    if (parts.length >= 3) {
+      return _PaymentDevice(
+        id: id,
+        name: parts[0],
+        type: parts[1],
+        connectionMethod: parts[2],
+        isConnected: parts.length > 3 && parts[3] == 'true',
+      );
+    }
+    return null;
+  }
+
   Future<void> _testConnection(int index) async {
     final device = _devices[index];
+    final l10n = AppLocalizations.of(context);
 
-    // Simulate connection test
     AlhaiSnackbar.show(
       context,
-      message: AppLocalizations.of(context).testingConnectionName(device.name),
+      message: l10n.testingConnectionName(device.name),
       variant: AlhaiSnackbarVariant.info,
       duration: const Duration(seconds: 1),
     );
 
-    await Future.delayed(const Duration(seconds: 2));
+    // Only Network devices have a reliable cross-platform dial path.
+    // Non-network devices used to auto-flip to "connected" after a 2s
+    // sleep — a false signal that led admins to trust unreachable
+    // hardware.
+    if (device.connectionMethod != 'Network') {
+      if (mounted) {
+        AlhaiSnackbar.warning(
+          context,
+          'اختبار الاتصال عبر ${device.connectionMethod} غير متوفر بعد',
+        );
+      }
+      return;
+    }
 
-    if (mounted) {
-      setState(() {
-        _devices[index] = device.copyWith(isConnected: true);
-      });
-      AlhaiSnackbar.success(
-        context,
-        AppLocalizations.of(context).connectionSuccessful(device.name),
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
+
+      // Two sequential `.where` calls conjoin in Drift — use this form
+      // to avoid needing to import package:drift/drift.dart just for
+      // the `&` operator on Expression<bool>.
+      final ipRow =
+          await ((_db.select(_db.settingsTable)
+                    ..where((s) => s.storeId.equals(storeId)))
+                  ..where(
+                    (s) => s.key.equals('payment_device_${device.id}_ip'),
+                  ))
+              .getSingleOrNull();
+      final portRow =
+          await ((_db.select(_db.settingsTable)
+                    ..where((s) => s.storeId.equals(storeId)))
+                  ..where(
+                    (s) => s.key.equals('payment_device_${device.id}_port'),
+                  ))
+              .getSingleOrNull();
+
+      final ip = ipRow?.value.trim() ?? '';
+      final port = int.tryParse(portRow?.value.trim() ?? '');
+      if (ip.isEmpty || port == null || port < 1 || port > 65535) {
+        throw const FormatException(
+          'IP أو Port غير مُعرَّف لهذا الجهاز — عدّل الجهاز وأضفهما.',
+        );
+      }
+
+      final socket = await Socket.connect(
+        ip,
+        port,
+        timeout: const Duration(seconds: 5),
       );
+      await socket.close();
+      socket.destroy();
+
+      if (mounted) {
+        setState(() {
+          _devices[index] = device.copyWith(isConnected: true);
+        });
+        AlhaiSnackbar.success(
+          context,
+          l10n.connectionSuccessful(device.name),
+        );
+      }
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Test payment device');
+      if (mounted) {
+        setState(() {
+          _devices[index] = device.copyWith(isConnected: false);
+        });
+        AlhaiSnackbar.error(
+          context,
+          l10n.connectionFailedMsg('$e'),
+        );
+      }
     }
   }
 
@@ -143,7 +217,7 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
       children: [
         AppHeader(
           title: l10n.paymentDevicesSettings,
-          subtitle: '${_devices.length} أجهزة مضافة',
+          subtitle: _devicesCountLabel(_devices.length),
           showSearch: false,
           leading: IconButton(
             icon: Icon(
@@ -201,6 +275,17 @@ class _PaymentDevicesScreenState extends ConsumerState<PaymentDevicesScreen> {
         ),
       ],
     );
+  }
+
+  /// Arabic pluralization for device count shown in the header subtitle.
+  /// Covers zero / singular / dual / small-plural (3–10) / large-plural (11+)
+  /// per standard MSA forms — simpler than wiring Intl.plural here.
+  String _devicesCountLabel(int count) {
+    if (count == 0) return 'لا توجد أجهزة';
+    if (count == 1) return 'جهاز واحد';
+    if (count == 2) return 'جهازان';
+    if (count <= 10) return '$count أجهزة';
+    return '$count جهازاً';
   }
 
   Widget _buildEmptyState(bool isDark, AppLocalizations l10n) {

@@ -96,7 +96,8 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
         _filteredOrders = _allOrders.where((order) {
           return order.id.toLowerCase().contains(query) ||
               (order.customerId?.toLowerCase().contains(query) ?? false) ||
-              order.total.toStringAsFixed(2).contains(query);
+              // C-4: order.total is int cents — format as SAR for search match.
+              (order.total / 100.0).toStringAsFixed(2).contains(query);
         }).toList();
       }
     });
@@ -122,7 +123,7 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
               ? null
               : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
+          notificationsCount: ref.watch(unreadNotificationsCountProvider),
           userName: user?.name ?? l10n.cashCustomer,
           userRole: l10n.branchManager,
           onUserTap: () {},
@@ -684,13 +685,12 @@ class _ReprintReceiptScreenState extends ConsumerState<ReprintReceiptScreen> {
     setState(() => _isPrinting = true);
 
     try {
-      // Simulate printing delay
-      await Future.delayed(const Duration(seconds: 1));
-
+      // P2-#2: Printing is not yet implemented — don't lie to the user with a
+      // fake "receipt printed" success. Show a coming-soon info message until
+      // real printer integration lands.
       if (!mounted) return;
       HapticShim.mediumImpact();
-      SoundService.instance.saleSuccess();
-      AlhaiSnackbar.success(context, l10n.receiptPrinted);
+      AlhaiSnackbar.info(context, '${l10n.comingSoon} — ${l10n.reprintReceipt}');
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Reprint receipt');
       if (!mounted) return;

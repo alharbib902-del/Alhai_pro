@@ -12,17 +12,24 @@ class LedgerSummaryBar extends StatelessWidget {
   final double totalDebit;
   final double totalCredit;
 
+  /// الرصيد النهائي الحقيقي من آخر حركة مفلترة (يحترم الرصيد الافتتاحي).
+  /// عند null يُستخدم fallback `totalDebit - totalCredit` للتوافق الخلفي.
+  final double? finalBalance;
+
   const LedgerSummaryBar({
     super.key,
     required this.totalDebit,
     required this.totalCredit,
+    this.finalBalance,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
-    final finalBalance = totalDebit - totalCredit;
+    // P1 #11: استخدم الرصيد الحقيقي من آخر حركة بدلاً من (debit - credit)
+    // الذي يتجاهل الرصيد الافتتاحي. fallback للـ arithmetic عند غياب الحركات.
+    final effectiveBalance = finalBalance ?? (totalDebit - totalCredit);
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -39,7 +46,10 @@ class LedgerSummaryBar extends StatelessWidget {
           Expanded(
             child: _SummaryItem(
               label: l10n.totalDebit,
-              value: totalDebit.toStringAsFixed(2),
+              value: CurrencyFormatter.formatNumberWithContext(
+                context,
+                totalDebit,
+              ),
               color: AppColors.error,
               icon: Icons.arrow_upward_rounded,
             ),
@@ -48,7 +58,10 @@ class LedgerSummaryBar extends StatelessWidget {
           Expanded(
             child: _SummaryItem(
               label: l10n.totalCredit,
-              value: totalCredit.toStringAsFixed(2),
+              value: CurrencyFormatter.formatNumberWithContext(
+                context,
+                totalCredit,
+              ),
               color: AppColors.success,
               icon: Icons.arrow_downward_rounded,
             ),
@@ -57,8 +70,13 @@ class LedgerSummaryBar extends StatelessWidget {
           Expanded(
             child: _SummaryItem(
               label: l10n.finalBalance,
-              value: finalBalance.abs().toStringAsFixed(2),
-              color: finalBalance > 0 ? AppColors.error : AppColors.success,
+              value: CurrencyFormatter.formatNumberWithContext(
+                context,
+                effectiveBalance.abs(),
+              ),
+              color: effectiveBalance > 0
+                  ? AppColors.error
+                  : AppColors.success,
               icon: Icons.account_balance_wallet_outlined,
               isBold: true,
             ),

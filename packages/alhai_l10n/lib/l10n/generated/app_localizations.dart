@@ -8058,6 +8058,18 @@ abstract class AppLocalizations {
   /// **'اختصارات لوحة المفاتيح'**
   String get keyboardShortcuts;
 
+  /// No description provided for @animationsToggle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأثيرات حركية'**
+  String get animationsToggle;
+
+  /// No description provided for @animationsToggleDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحريك الشاشات والتحولات البصرية'**
+  String get animationsToggleDesc;
+
   /// No description provided for @customizeShortcuts.
   ///
   /// In ar, this message translates to:
@@ -16882,7 +16894,7 @@ abstract class AppLocalizations {
   /// No description provided for @totalRefund.
   ///
   /// In ar, this message translates to:
-  /// **'إجمالي الإرجاع'**
+  /// **'إجمالي الاسترداد'**
   String get totalRefund;
 
   /// No description provided for @reasonLabel.
@@ -26198,6 +26210,108 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لم ترجع عملية تسجيل TOTP أي بيانات.'**
   String get saMfaEnrollmentNoData;
+
+  /// No description provided for @exchangeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'استبدال'**
+  String get exchangeTitle;
+
+  /// No description provided for @itemsToReturn.
+  ///
+  /// In ar, this message translates to:
+  /// **'عناصر للإرجاع'**
+  String get itemsToReturn;
+
+  /// No description provided for @newItemsToAdd.
+  ///
+  /// In ar, this message translates to:
+  /// **'عناصر جديدة للإضافة'**
+  String get newItemsToAdd;
+
+  /// No description provided for @exchangeRequiresNewItem.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاستبدال يتطلب إضافة عنصر جديد واحد على الأقل. للاسترداد البحت، استخدم شاشة المرتجعات التي تربط الاسترداد بفاتورة البيع الأصلية.'**
+  String get exchangeRequiresNewItem;
+
+  /// No description provided for @splitReceiptTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيصال الدفع المجزأ'**
+  String get splitReceiptTitle;
+
+  /// No description provided for @paymentBreakdown.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل الدفع'**
+  String get paymentBreakdown;
+
+  /// No description provided for @zatcaQrTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز QR للفوترة الإلكترونية'**
+  String get zatcaQrTitle;
+
+  /// No description provided for @splitRefundTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'استرداد مجزأ'**
+  String get splitRefundTitle;
+
+  /// No description provided for @refundByPaymentMethod.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسترداد حسب طريقة الدفع'**
+  String get refundByPaymentMethod;
+
+  /// No description provided for @exceedsOriginalAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ يتجاوز الأصلي'**
+  String get exceedsOriginalAmount;
+
+  /// No description provided for @refundSummary.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملخص الاسترداد'**
+  String get refundSummary;
+
+  /// No description provided for @originalTotal.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإجمالي الأصلي'**
+  String get originalTotal;
+
+  /// No description provided for @refundLineLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'استرداد {method}'**
+  String refundLineLabel(String method);
+
+  /// No description provided for @refundAmountExceedsOriginal.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ المسترد يتجاوز المبلغ الأصلي'**
+  String get refundAmountExceedsOriginal;
+
+  /// No description provided for @filterCompletedOnly.
+  ///
+  /// In ar, this message translates to:
+  /// **'المكتملة فقط'**
+  String get filterCompletedOnly;
+
+  /// No description provided for @filterCompletedOnlyDesc.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبيعات غير المكتملة مخفية'**
+  String get filterCompletedOnlyDesc;
+
+  /// No description provided for @pullToRefresh.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسحب للتحديث'**
+  String get pullToRefresh;
 }
 
 class _AppLocalizationsDelegate

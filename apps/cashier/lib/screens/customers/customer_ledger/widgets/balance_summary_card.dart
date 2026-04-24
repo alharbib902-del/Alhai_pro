@@ -38,8 +38,23 @@ class BalanceSummaryCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
+    // P1 #10: distinguish three states (debt / credit / zero). Previously
+    // when balance == 0 the card displayed "customer has credit" which is
+    // wrong — the customer is settled.
     final isDebt = _currentBalance > 0;
-    final balanceColor = isDebt ? AppColors.error : AppColors.success;
+    final isCredit = _currentBalance < 0;
+    final balanceColor = isDebt
+        ? AppColors.error
+        : (isCredit ? AppColors.success : colorScheme.outline);
+    final String statusLabel;
+    if (isDebt) {
+      statusLabel = l10n.dueOnCustomer;
+    } else if (isCredit) {
+      statusLabel = l10n.customerHasCredit;
+    } else {
+      // No l10n key for "no balance" — Arabic direct per task policy.
+      statusLabel = 'رصيد مُسوّى';
+    }
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -117,7 +132,7 @@ class BalanceSummaryCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(999),
                 ),
                 child: Text(
-                  isDebt ? l10n.dueOnCustomer : l10n.customerHasCredit,
+                  statusLabel,
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
@@ -127,7 +142,10 @@ class BalanceSummaryCard extends StatelessWidget {
               ),
               const SizedBox(height: 6),
               Text(
-                '${_currentBalance.abs().toStringAsFixed(2)} ${l10n.sar}',
+                CurrencyFormatter.formatWithContext(
+                  context,
+                  _currentBalance.abs(),
+                ),
                 style: TextStyle(
                   fontSize: isMobile ? 18 : 22,
                   fontWeight: FontWeight.w800,

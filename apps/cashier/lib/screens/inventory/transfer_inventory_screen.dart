@@ -3,9 +3,20 @@
 /// From store (current, read-only), to store dropdown, product search/scan,
 /// quantity, note, submit button.
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
+///
+/// State model:
+/// - Business state → [TransferInventoryState] via [_transferInventoryProvider]
+///   (stores list, selectedToStoreId, search results, selectedProduct,
+///   loading/saving flags, error). Replaces 12 historic `setState` sites.
+/// - Pure UI transient state → `TextEditingController` values only. The
+///   submit button's enable-state tracks quantity text through
+///   `ValueListenableBuilder`.
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
@@ -19,6 +30,106 @@ import 'package:alhai_design_system/alhai_design_system.dart'
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
+
+// ============================================================================
+// State
+// ============================================================================
+
+@immutable
+class TransferInventoryState {
+  final List<StoresTableData> stores;
+  final String? toStoreId;
+  final List<ProductsTableData> searchResults;
+  final ProductsTableData? selectedProduct;
+  final bool isLoading;
+  final bool isSaving;
+  final String? error;
+
+  const TransferInventoryState({
+    this.stores = const [],
+    this.toStoreId,
+    this.searchResults = const [],
+    this.selectedProduct,
+    this.isLoading = true,
+    this.isSaving = false,
+    this.error,
+  });
+
+  TransferInventoryState copyWith({
+    List<StoresTableData>? stores,
+    String? toStoreId,
+    bool clearToStoreId = false,
+    List<ProductsTableData>? searchResults,
+    ProductsTableData? selectedProduct,
+    bool clearSelectedProduct = false,
+    bool? isLoading,
+    bool? isSaving,
+    String? error,
+    bool clearError = false,
+  }) => TransferInventoryState(
+    stores: stores ?? this.stores,
+    toStoreId: clearToStoreId ? null : (toStoreId ?? this.toStoreId),
+    searchResults: searchResults ?? this.searchResults,
+    selectedProduct: clearSelectedProduct
+        ? null
+        : (selectedProduct ?? this.selectedProduct),
+    isLoading: isLoading ?? this.isLoading,
+    isSaving: isSaving ?? this.isSaving,
+    error: clearError ? null : (error ?? this.error),
+  );
+}
+
+class TransferInventoryNotifier
+    extends StateNotifier<TransferInventoryState> {
+  TransferInventoryNotifier() : super(const TransferInventoryState());
+
+  void setLoading() =>
+      state = state.copyWith(isLoading: true, clearError: true);
+
+  void setStores(List<StoresTableData> list) =>
+      state = state.copyWith(stores: list, isLoading: false);
+
+  void setError(String err) =>
+      state = state.copyWith(isLoading: false, error: err);
+
+  void setToStoreId(String? id) => state = id == null
+      ? state.copyWith(clearToStoreId: true)
+      : state.copyWith(toStoreId: id);
+
+  void setSearchResults(List<ProductsTableData> list) =>
+      state = state.copyWith(searchResults: list);
+
+  void clearSearchResults() =>
+      state = state.copyWith(searchResults: const []);
+
+  void selectProduct(ProductsTableData p) => state = state.copyWith(
+    selectedProduct: p,
+    searchResults: const [],
+  );
+
+  void clearSelectedProduct() =>
+      state = state.copyWith(clearSelectedProduct: true);
+
+  void setSaving(bool v) => state = state.copyWith(isSaving: v);
+
+  /// Reset after a successful transfer. Keeps loaded stores + isLoading=false.
+  void resetAfterSave() => state = state.copyWith(
+    clearSelectedProduct: true,
+    clearToStoreId: true,
+    searchResults: const [],
+    isSaving: false,
+  );
+}
+
+final _transferInventoryProvider =
+    StateNotifierProvider.autoDispose<
+      TransferInventoryNotifier,
+      TransferInventoryState
+    >((ref) => TransferInventoryNotifier());
+
+// ============================================================================
+// Screen
+// ============================================================================
 
 /// شاشة نقل المخزون
 class TransferInventoryScreen extends ConsumerStatefulWidget {
@@ -36,22 +147,20 @@ class _TransferInventoryScreenState
   final _quantityController = TextEditingController();
   final _noteController = TextEditingController();
 
-  List<StoresTableData> _stores = [];
-  String? _toStoreId;
-  List<ProductsTableData> _searchResults = [];
-  ProductsTableData? _selectedProduct;
-  bool _isLoading = true;
-  bool _isSaving = false;
-  String? _error;
+  // P2: Debounce keystrokes on the product search so we don't spawn a
+  // DB query per character. 300 ms matches the convention used in
+  // add/edit/remove and purchase_request screens.
+  Timer? _searchDebounce;
 
   @override
   void initState() {
     super.initState();
-    _loadStores();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadStores());
   }
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchController.dispose();
     _quantityController.dispose();
     _noteController.dispose();
@@ -59,52 +168,51 @@ class _TransferInventoryScreenState
   }
 
   Future<void> _loadStores() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+    final notifier = ref.read(_transferInventoryProvider.notifier);
+    notifier.setLoading();
     try {
       final stores = await _db.storesDao.getAllStores();
       final currentStoreId = ref.read(currentStoreIdProvider);
-      if (mounted) {
-        setState(() {
-          _stores = stores.where((s) => s.id != currentStoreId).toList();
-          _isLoading = false;
-        });
-      }
+      if (!mounted) return;
+      notifier.setStores(
+        stores.where((s) => s.id != currentStoreId).toList(),
+      );
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Load stores for transfer');
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-          _error = '$e';
-        });
-      }
+      if (!mounted) return;
+      notifier.setError('$e');
     }
   }
 
-  Future<void> _searchProducts(String query) async {
+  /// Debounced entry point wired to the TextField's onChanged. Actual
+  /// DB hit is delegated to [_runProductSearch] after 300 ms of idle.
+  void _searchProducts(String query) {
+    _searchDebounce?.cancel();
     if (query.isEmpty) {
-      setState(() => _searchResults = []);
+      ref.read(_transferInventoryProvider.notifier).clearSearchResults();
       return;
     }
+    _searchDebounce = Timer(
+      const Duration(milliseconds: 300),
+      () => _runProductSearch(query),
+    );
+  }
+
+  Future<void> _runProductSearch(String query) async {
+    final notifier = ref.read(_transferInventoryProvider.notifier);
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
       final products = await _db.productsDao.searchProducts(query, storeId);
-      if (mounted) {
-        setState(() {
-          _searchResults = products;
-        });
-      }
+      if (!mounted) return;
+      notifier.setSearchResults(products);
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Search products in transfer');
-      if (mounted) {
-        AlhaiSnackbar.error(
-          context,
-          AppLocalizations.of(context).errorOccurred,
-        );
-      }
+      if (!mounted) return;
+      AlhaiSnackbar.error(
+        context,
+        AppLocalizations.of(context).errorOccurred,
+      );
     }
   }
 
@@ -116,6 +224,7 @@ class _TransferInventoryScreenState
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
+    final s = ref.watch(_transferInventoryProvider);
 
     return Column(
       children: [
@@ -134,12 +243,12 @@ class _TransferInventoryScreenState
           onUserTap: () {},
         ),
         Expanded(
-          child: _isLoading
+          child: s.isLoading
               ? const AppLoadingState()
-              : _error != null
+              : s.error != null
               ? AppErrorState.general(
                   context,
-                  message: _error!,
+                  message: s.error!,
                   onRetry: _loadStores,
                 )
               : SingleChildScrollView(
@@ -151,6 +260,7 @@ class _TransferInventoryScreenState
                     isMediumScreen,
                     colorScheme,
                     l10n,
+                    s,
                   ),
                 ),
         ),
@@ -168,6 +278,7 @@ class _TransferInventoryScreenState
     bool isMediumScreen,
     ColorScheme colorScheme,
     AppLocalizations l10n,
+    TransferInventoryState s,
   ) {
     if (isWideScreen) {
       return Row(
@@ -177,16 +288,16 @@ class _TransferInventoryScreenState
             flex: 3,
             child: Column(
               children: [
-                _buildStoreSelectionCard(colorScheme, l10n),
+                _buildStoreSelectionCard(colorScheme, l10n, s),
                 const SizedBox(height: AlhaiSpacing.lg),
                 _buildProductSearchCard(colorScheme, l10n),
-                if (_searchResults.isNotEmpty && _selectedProduct == null) ...[
+                if (s.searchResults.isNotEmpty && s.selectedProduct == null) ...[
                   const SizedBox(height: AlhaiSpacing.md),
-                  _buildSearchResults(colorScheme, l10n),
+                  _buildSearchResults(colorScheme, l10n, s),
                 ],
-                if (_selectedProduct != null) ...[
+                if (s.selectedProduct != null) ...[
                   const SizedBox(height: AlhaiSpacing.md),
-                  _buildSelectedCard(colorScheme, l10n),
+                  _buildSelectedCard(colorScheme, l10n, s),
                 ],
               ],
             ),
@@ -200,7 +311,7 @@ class _TransferInventoryScreenState
                 const SizedBox(height: AlhaiSpacing.lg),
                 _buildNoteCard(colorScheme, l10n),
                 const SizedBox(height: AlhaiSpacing.lg),
-                _buildSubmitButton(colorScheme, l10n),
+                _buildSubmitButton(colorScheme, l10n, s),
               ],
             ),
           ),
@@ -211,23 +322,23 @@ class _TransferInventoryScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildStoreSelectionCard(colorScheme, l10n),
+        _buildStoreSelectionCard(colorScheme, l10n, s),
         SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildProductSearchCard(colorScheme, l10n),
-        if (_searchResults.isNotEmpty && _selectedProduct == null) ...[
+        if (s.searchResults.isNotEmpty && s.selectedProduct == null) ...[
           const SizedBox(height: AlhaiSpacing.sm),
-          _buildSearchResults(colorScheme, l10n),
+          _buildSearchResults(colorScheme, l10n, s),
         ],
-        if (_selectedProduct != null) ...[
+        if (s.selectedProduct != null) ...[
           const SizedBox(height: AlhaiSpacing.sm),
-          _buildSelectedCard(colorScheme, l10n),
+          _buildSelectedCard(colorScheme, l10n, s),
         ],
         SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildQuantityCard(colorScheme, l10n),
         SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
         _buildNoteCard(colorScheme, l10n),
         const SizedBox(height: AlhaiSpacing.lg),
-        _buildSubmitButton(colorScheme, l10n),
+        _buildSubmitButton(colorScheme, l10n, s),
       ],
     );
   }
@@ -235,6 +346,7 @@ class _TransferInventoryScreenState
   Widget _buildStoreSelectionCard(
     ColorScheme colorScheme,
     AppLocalizations l10n,
+    TransferInventoryState s,
   ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -340,7 +452,7 @@ class _TransferInventoryScreenState
           ),
           const SizedBox(height: AlhaiSpacing.xs),
           DropdownButtonFormField<String>(
-            initialValue: _toStoreId,
+            initialValue: s.toStoreId,
             style: TextStyle(color: colorScheme.onSurface),
             dropdownColor: colorScheme.surface,
             decoration: InputDecoration(
@@ -372,13 +484,14 @@ class _TransferInventoryScreenState
                 vertical: 14,
               ),
             ),
-            items: _stores.map((store) {
+            items: s.stores.map((store) {
               return DropdownMenuItem<String>(
                 value: store.id,
                 child: Text(store.name),
               );
             }).toList(),
-            onChanged: (v) => setState(() => _toStoreId = v),
+            onChanged: (v) =>
+                ref.read(_transferInventoryProvider.notifier).setToStoreId(v),
           ),
         ],
       ),
@@ -468,7 +581,11 @@ class _TransferInventoryScreenState
     );
   }
 
-  Widget _buildSearchResults(ColorScheme colorScheme, AppLocalizations l10n) {
+  Widget _buildSearchResults(
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+    TransferInventoryState s,
+  ) {
     return Container(
       decoration: BoxDecoration(
         color: colorScheme.surface,
@@ -477,13 +594,14 @@ class _TransferInventoryScreenState
       ),
       clipBehavior: Clip.antiAlias,
       child: Column(
-        children: _searchResults.take(5).map((product) {
+        children: s.searchResults.take(5).map((product) {
           return InkWell(
-            onTap: () => setState(() {
-              _selectedProduct = product;
+            onTap: () {
               _searchController.text = product.name;
-              _searchResults = [];
-            }),
+              ref
+                  .read(_transferInventoryProvider.notifier)
+                  .selectProduct(product);
+            },
             child: Container(
               padding: const EdgeInsets.symmetric(
                 horizontal: AlhaiSpacing.md,
@@ -524,8 +642,12 @@ class _TransferInventoryScreenState
     );
   }
 
-  Widget _buildSelectedCard(ColorScheme colorScheme, AppLocalizations l10n) {
-    final product = _selectedProduct!;
+  Widget _buildSelectedCard(
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+    TransferInventoryState s,
+  ) {
+    final product = s.selectedProduct!;
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -566,10 +688,12 @@ class _TransferInventoryScreenState
             ),
           ),
           IconButton(
-            onPressed: () => setState(() {
-              _selectedProduct = null;
+            onPressed: () {
               _searchController.clear();
-            }),
+              ref
+                  .read(_transferInventoryProvider.notifier)
+                  .clearSelectedProduct();
+            },
             icon: Icon(
               Icons.close_rounded,
               size: 18,
@@ -604,14 +728,18 @@ class _TransferInventoryScreenState
           const SizedBox(height: AlhaiSpacing.md),
           TextField(
             controller: _quantityController,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'^\d+(\.\d{0,2})?$'),
+              ),
+            ],
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
               color: colorScheme.onSurface,
             ),
             textAlign: TextAlign.center,
-            onChanged: (_) => setState(() {}),
             decoration: InputDecoration(
               hintText: '0',
               hintStyle: TextStyle(
@@ -695,106 +823,212 @@ class _TransferInventoryScreenState
     );
   }
 
-  Widget _buildSubmitButton(ColorScheme colorScheme, AppLocalizations l10n) {
-    final isValid =
-        _selectedProduct != null &&
-        _toStoreId != null &&
-        (int.tryParse(_quantityController.text) ?? 0) > 0;
-
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton.icon(
-        onPressed: _isSaving || !isValid ? null : _submitTransfer,
-        icon: _isSaving
-            ? SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: colorScheme.onPrimary,
-                ),
-              )
-            : const Icon(Icons.send_rounded, size: 20),
-        label: Text(
-          l10n.submitTransfer,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
-        style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: colorScheme.onPrimary,
-          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
+  Widget _buildSubmitButton(
+    ColorScheme colorScheme,
+    AppLocalizations l10n,
+    TransferInventoryState s,
+  ) {
+    return ValueListenableBuilder<TextEditingValue>(
+      valueListenable: _quantityController,
+      builder: (_, __, ___) {
+        final isValid =
+            s.selectedProduct != null &&
+            s.toStoreId != null &&
+            (double.tryParse(_quantityController.text) ?? 0) > 0;
+        return SizedBox(
+          width: double.infinity,
+          child: FilledButton.icon(
+            onPressed: s.isSaving || !isValid ? null : _submitTransfer,
+            icon: s.isSaving
+                ? SizedBox(
+                    width: 20,
+                    height: 20,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: colorScheme.onPrimary,
+                    ),
+                  )
+                : const Icon(Icons.send_rounded, size: 20),
+            label: Text(
+              l10n.submitTransfer,
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+            ),
+            style: FilledButton.styleFrom(
+              backgroundColor: AppColors.primary,
+              foregroundColor: colorScheme.onPrimary,
+              padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 
   Future<void> _submitTransfer() async {
     final l10n = AppLocalizations.of(context);
-    final quantity = int.tryParse(_quantityController.text) ?? 0;
-    if (quantity <= 0) return;
+    final notifier = ref.read(_transferInventoryProvider.notifier);
+    final s = ref.read(_transferInventoryProvider);
+    final qtyDouble = double.tryParse(_quantityController.text) ?? 0;
+    if (qtyDouble <= 0 || s.selectedProduct == null || s.toStoreId == null) {
+      return;
+    }
 
-    setState(() => _isSaving = true);
+    notifier.setSaving(true);
 
     try {
       final storeId = ref.read(currentStoreIdProvider);
-      if (storeId == null) return;
-      final movementId = const Uuid().v4();
-      final currentStock = _selectedProduct!.stockQty;
-      final newStock = currentStock - quantity;
+      if (storeId == null) {
+        notifier.setSaving(false);
+        return;
+      }
+      final product = s.selectedProduct!;
+      final toStoreId = s.toStoreId!;
+
+      // Pre-flight: refuse a transfer that would leave the source negative.
+      // (UI cap also enforced — defence-in-depth.)
+      if (product.stockQty < qtyDouble) {
+        notifier.setSaving(false);
+        if (mounted) {
+          AlhaiSnackbar.error(
+            context,
+            'الكمية المطلوبة (${qtyDouble.toStringAsFixed(2)}) أكبر من المخزون الحالي (${product.stockQty.toStringAsFixed(2)})',
+          );
+        }
+        return;
+      }
+
+      late final ProductsTableData destProduct;
+      late final double destPreviousQty;
+      late final double destNewQty;
+      late final double sourceNewStock;
 
       await _db.transaction(() async {
+        // Re-read the source product inside the transaction to avoid
+        // TOCTOU drift if another device adjusted stock since the UI loaded.
+        final freshSource = await _db.productsDao.getProductById(product.id);
+        if (freshSource == null) {
+          throw StateError('المنتج لم يعد موجوداً في المتجر المصدر');
+        }
+        if (freshSource.stockQty < qtyDouble) {
+          throw StateError(
+            'المخزون غير كافٍ: المتاح ${freshSource.stockQty.toStringAsFixed(2)}، المطلوب ${qtyDouble.toStringAsFixed(2)}',
+          );
+        }
+
+        // Match the destination product by SKU then barcode. Each store
+        // owns its own product row (storeId-scoped), so a transfer must
+        // land on a row that already exists in the destination — otherwise
+        // the units would silently vanish.
+        final dest = await _db.productsDao.findInStoreBySkuOrBarcode(
+          storeId: toStoreId,
+          sku: freshSource.sku,
+          barcode: freshSource.barcode,
+        );
+        if (dest == null) {
+          throw StateError(
+            'المنتج "${freshSource.name}" غير موجود في الفرع المستقبِل — أضفه أولاً ثم أعد المحاولة',
+          );
+        }
+        destProduct = dest;
+        destPreviousQty = dest.stockQty;
+        destNewQty = destPreviousQty + qtyDouble;
+        sourceNewStock = freshSource.stockQty - qtyDouble;
+
+        final userNote = _noteController.text.isNotEmpty
+            ? _noteController.text
+            : null;
+
+        // Reason column carries a stable enum-style tag only. The
+        // store-ids used to be baked into the reason string
+        // (`transfer_to_<id>`), which polluted reports and made
+        // reason-based aggregations impossible. Stash the counterpart
+        // store in `notes` as a tagged prefix alongside the operator's
+        // free-form note.
+        String composeNotes(String counterpartTag, String counterpartId) {
+          final tag = '[$counterpartTag:$counterpartId]';
+          return userNote == null ? tag : '$tag $userNote';
+        }
+
+        // 1. Source: transfer_out movement + stock decrement.
+        final outMovementId = const Uuid().v4();
         await _db.inventoryDao.insertMovement(
           InventoryMovementsTableCompanion.insert(
-            id: movementId,
+            id: outMovementId,
             storeId: storeId,
-            productId: _selectedProduct!.id,
+            productId: freshSource.id,
             type: 'transfer_out',
-            qty: (-quantity).toDouble(),
-            previousQty: currentStock.toDouble(),
-            newQty: newStock.toDouble(),
-            reason: Value('transfer_to_$_toStoreId'),
-            notes: Value(
-              _noteController.text.isNotEmpty ? _noteController.text : null,
-            ),
+            qty: -qtyDouble,
+            previousQty: freshSource.stockQty,
+            newQty: sourceNewStock,
+            reason: const Value('transfer_out'),
+            referenceType: const Value('transfer'),
+            referenceId: Value(outMovementId),
+            notes: Value(composeNotes('toStoreId', toStoreId)),
             createdAt: DateTime.now(),
           ),
         );
-        await _db.productsDao.updateStock(_selectedProduct!.id, newStock);
+        await _db.productsDao.updateStock(freshSource.id, sourceNewStock);
+
+        // 2. Destination: transfer_in movement + stock increment.
+        await _db.inventoryDao.insertMovement(
+          InventoryMovementsTableCompanion.insert(
+            id: const Uuid().v4(),
+            storeId: toStoreId,
+            productId: dest.id,
+            type: 'transfer_in',
+            qty: qtyDouble,
+            previousQty: destPreviousQty,
+            newQty: destNewQty,
+            reason: const Value('transfer_in'),
+            referenceType: const Value('transfer'),
+            referenceId: Value(outMovementId),
+            notes: Value(composeNotes('fromStoreId', storeId)),
+            createdAt: DateTime.now(),
+          ),
+        );
+        await _db.productsDao.updateStock(dest.id, destNewQty);
       });
 
-      // Audit log
+      // Audit log (outside the DB transaction). Logs both legs so the
+      // ledger reflects the true stock movement on each store.
       final user = ref.read(currentUserProvider);
       auditService.logStockAdjust(
         storeId: storeId,
         userId: user?.id ?? 'unknown',
         userName: user?.name ?? 'unknown',
-        productId: _selectedProduct!.id,
-        productName: _selectedProduct!.name,
-        oldQty: currentStock.toDouble(),
-        newQty: newStock.toDouble(),
+        productId: product.id,
+        productName: product.name,
+        oldQty: product.stockQty,
+        newQty: sourceNewStock,
         reason: 'نقل إلى فرع آخر',
+      );
+      auditService.logStockAdjust(
+        storeId: toStoreId,
+        userId: user?.id ?? 'unknown',
+        userName: user?.name ?? 'unknown',
+        productId: destProduct.id,
+        productName: destProduct.name,
+        oldQty: destPreviousQty,
+        newQty: destNewQty,
+        reason: 'استلام من فرع آخر',
       );
 
       if (!mounted) return;
 
       AlhaiSnackbar.success(context, l10n.transferCompletedSuccess);
 
-      setState(() {
-        _selectedProduct = null;
-        _toStoreId = null;
-        _searchController.clear();
-        _quantityController.clear();
-        _noteController.clear();
-      });
+      _searchController.clear();
+      _quantityController.clear();
+      _noteController.clear();
+      notifier.resetAfterSave();
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Save inventory transfer');
       if (!mounted) return;
       AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
-    } finally {
-      if (mounted) setState(() => _isSaving = false);
+      notifier.setSaving(false);
     }
   }
 }

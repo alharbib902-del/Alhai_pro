@@ -251,13 +251,13 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
         children: [
           _sectionHeader(
             Icons.text_fields_rounded,
-            'Receipt Text',
+            'نص الإيصال',
             AppColors.secondary,
             isDark,
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           Text(
-            'Header Text',
+            'نص الترويسة',
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -272,7 +272,7 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
               fontSize: 14,
               color: AppColors.getTextPrimary(isDark),
             ),
-            decoration: _inputDecoration('Receipt header hint', isDark),
+            decoration: _inputDecoration('أدخل ترويسة الإيصال', isDark),
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           Text(
@@ -291,7 +291,7 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
               fontSize: 14,
               color: AppColors.getTextPrimary(isDark),
             ),
-            decoration: _inputDecoration('Receipt footer hint', isDark),
+            decoration: _inputDecoration('أدخل تذييل الإيصال', isDark),
           ),
         ],
       ),
@@ -311,38 +311,38 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
         children: [
           _sectionHeader(
             Icons.visibility_rounded,
-            'Display Options',
+            'خيارات العرض',
             AppColors.info,
             isDark,
           ),
           const SizedBox(height: AlhaiSpacing.md),
           _toggleItem(
-            'Show Logo',
-            'Display store logo on receipt',
+            'عرض الشعار',
+            'طباعة شعار المتجر على الإيصال',
             _showLogo,
             (v) => setState(() => _showLogo = v),
             isDark,
           ),
           Divider(color: AppColors.getBorder(isDark), height: 1),
           _toggleItem(
-            'Show Customer Name',
-            'Print customer name on receipt',
+            'عرض اسم العميل',
+            'طباعة اسم العميل على الإيصال',
             _showCustomerName,
             (v) => setState(() => _showCustomerName = v),
             isDark,
           ),
           Divider(color: AppColors.getBorder(isDark), height: 1),
           _toggleItem(
-            'Show Cashier Name',
-            'Print cashier name on receipt',
+            'عرض اسم الكاشير',
+            'طباعة اسم الكاشير على الإيصال',
             _showCashierName,
             (v) => setState(() => _showCashierName = v),
             isDark,
           ),
           Divider(color: AppColors.getBorder(isDark), height: 1),
           _toggleItem(
-            'Show Store Address',
-            'Print store address on receipt',
+            'عرض عنوان المتجر',
+            'طباعة عنوان المتجر على الإيصال',
             _showStoreAddress,
             (v) => setState(() => _showStoreAddress = v),
             isDark,
@@ -365,7 +365,7 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
         children: [
           _sectionHeader(
             Icons.straighten_rounded,
-            'Receipt Width',
+            'عرض الإيصال',
             AppColors.warning,
             isDark,
           ),
@@ -514,12 +514,24 @@ class _ReceiptSettingsScreenState extends ConsumerState<ReceiptSettingsScreen> {
                 if (_showCustomerName)
                   _previewRow(l10n.customer, l10n.cashCustomer, isDark),
                 Divider(color: AppColors.getBorder(isDark), height: 16),
-                _previewRow('Sample Product', '25.00', isDark),
-                _previewRow('Sample Product 2', '15.50', isDark),
+                // Preview amounts go through the same int-cents formatter
+                // as live receipts so the cashier sees the production
+                // formatting (locale-aware decimals + currency symbol),
+                // not a hard-coded string.
+                _previewRow(
+                  'Sample Product',
+                  CurrencyFormatter.fromCentsWithContext(context, 2500),
+                  isDark,
+                ),
+                _previewRow(
+                  'Sample Product 2',
+                  CurrencyFormatter.fromCentsWithContext(context, 1550),
+                  isDark,
+                ),
                 Divider(color: AppColors.getBorder(isDark), height: 16),
                 _previewRow(
                   l10n.total,
-                  '40.50 ${l10n.sar}',
+                  CurrencyFormatter.fromCentsWithContext(context, 4050),
                   isDark,
                   bold: true,
                 ),

@@ -5,6 +5,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
@@ -445,7 +446,12 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
           const SizedBox(height: AlhaiSpacing.md),
           TextField(
             controller: _quantityController,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'^\d+(\.\d{0,2})?$'),
+              ),
+            ],
             style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -681,7 +687,7 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
     final hasData =
         _selectedProduct != null &&
         _quantityController.text.isNotEmpty &&
-        (int.tryParse(_quantityController.text) ?? 0) > 0;
+        (double.tryParse(_quantityController.text) ?? 0) > 0;
 
     return SizedBox(
       width: double.infinity,
@@ -715,7 +721,8 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
 
   Future<void> _removeInventory() async {
     final l10n = AppLocalizations.of(context);
-    final quantity = int.tryParse(_quantityController.text) ?? 0;
+    final double quantity =
+        double.tryParse(_quantityController.text) ?? 0.0;
     if (quantity <= 0 || _selectedProduct == null) return;
 
     setState(() => _isSaving = true);
@@ -724,8 +731,20 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
       final movementId = const Uuid().v4();
-      final currentStock = _selectedProduct!.stockQty;
-      final newStock = currentStock - quantity;
+      final double currentStock = _selectedProduct!.stockQty;
+      final double newStock = currentStock - quantity;
+
+      // Refuse to drive stock negative. Message is plain Arabic — an
+      // l10n key specifically for "negative stock on remove" does not
+      // exist in app_ar.arb yet.
+      if (newStock < 0) {
+        AlhaiSnackbar.error(
+          context,
+          'المخزون غير كافٍ: المتاح ${currentStock.toStringAsFixed(2)}، المطلوب سحبه ${quantity.toStringAsFixed(2)}',
+        );
+        setState(() => _isSaving = false);
+        return;
+      }
 
       await _db.transaction(() async {
         await _db.inventoryDao.insertMovement(
@@ -734,9 +753,9 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
             storeId: storeId,
             productId: _selectedProduct!.id,
             type: 'subtraction',
-            qty: (-quantity).toDouble(),
-            previousQty: currentStock.toDouble(),
-            newQty: newStock.toDouble(),
+            qty: -quantity,
+            previousQty: currentStock,
+            newQty: newStock,
             reason: Value(_reason),
             notes: Value(
               _noteController.text.isNotEmpty ? _noteController.text : null,
@@ -747,7 +766,9 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
         await _db.productsDao.updateStock(_selectedProduct!.id, newStock);
       });
 
-      // Audit log
+      // Audit log — reason stays as an enum-style tag ("sold", "damaged"
+      // etc.); the Arabic prefix was lost to hard-coded i18n and made
+      // downstream reason-based aggregation impossible.
       final user = ref.read(currentUserProvider);
       auditService.logStockAdjust(
         storeId: storeId,
@@ -755,9 +776,9 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
         userName: user?.name ?? 'unknown',
         productId: _selectedProduct!.id,
         productName: _selectedProduct!.name,
-        oldQty: currentStock.toDouble(),
-        newQty: newStock.toDouble(),
-        reason: 'سحب مخزون: $_reason',
+        oldQty: currentStock,
+        newQty: newStock,
+        reason: 'remove:$_reason',
       );
 
       if (!mounted) return;

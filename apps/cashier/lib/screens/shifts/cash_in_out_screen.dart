@@ -423,9 +423,9 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
                   });
                 }
               },
-              icon: const Icon(Icons.calculate_rounded, size: 18),
+              icon: const Icon(Icons.savings_rounded, size: 18),
               label: Text(
-                '${AppLocalizations.of(context).countCurrencyBtn} 🪙',
+                AppLocalizations.of(context).countCurrencyBtn,
               ),
               style: OutlinedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(vertical: 10),
@@ -437,16 +437,21 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.sm),
           // Quick amount chips
+          // المقارنة + النص في الحقل موحّدان بـ toStringAsFixed(2) لتلافي
+          // عدم تطابق الـ chip عند كتابة ".00" تلقائياً بعد parse.
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [50, 100, 200, 500].map((amount) {
-              final isSelected = _amountController.text == amount.toString();
+              final amountText = amount.toDouble().toStringAsFixed(2);
+              final currentValue =
+                  double.tryParse(_amountController.text) ?? -1;
+              final isSelected = currentValue == amount.toDouble();
               return Material(
                 color: Colors.transparent,
                 child: InkWell(
                   onTap: () {
-                    _amountController.text = amount.toString();
+                    _amountController.text = amountText;
                     setState(() {});
                   },
                   borderRadius: BorderRadius.circular(10),
@@ -467,7 +472,10 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
                       ),
                     ),
                     child: Text(
-                      '$amount ${l10n.sar}',
+                      CurrencyFormatter.formatWithContext(
+                        context,
+                        amount.toDouble(),
+                      ),
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: isSelected
@@ -709,6 +717,13 @@ class _CashInOutScreenState extends ConsumerState<CashInOutScreen> {
       _amountController.clear();
       _reasonController.clear();
       if (mounted) setState(() {});
+
+      // P2-#9: pop back to caller with a truthy result so the previous route
+      // (shift screen) can refresh its cash summary after a successful
+      // cash-in/out operation.
+      if (mounted && context.canPop()) {
+        context.pop(true);
+      }
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Save cash in/out');
       if (!mounted) return;

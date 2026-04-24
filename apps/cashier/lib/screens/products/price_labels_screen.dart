@@ -59,6 +59,13 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
+      // P2 #15 (2026-04-24): `getAllProducts` returns the entire catalogue
+      // without pagination. For the typical Saudi SMB store (< 5k SKUs) this
+      // is still responsive, but chains with tens of thousands of products
+      // will see a noticeable lag on initial render. TODO: introduce
+      // `getProductsPage(storeId, offset, limit)` + lazy-load the list when
+      // scrolling. Deferred — the current behaviour is functionally correct
+      // and the label printing flow is a relatively low-frequency action.
       final products = await _db.productsDao.getAllProducts(storeId);
       if (mounted) {
         setState(() {
@@ -105,7 +112,8 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
     return Column(
       children: [
         AppHeader(
-          title: 'Price Labels',
+          // P2 #14 (2026-04-24): hardcoded English replaced with Arabic.
+          title: 'ملصقات الأسعار',
           subtitle:
               '${_selectedIds.length} ${l10n.selected} \u2022 ${l10n.mainBranch}',
           showSearch: false,
@@ -264,7 +272,9 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                 label: Text(
                   _selectedIds.length == _filteredProducts.length &&
                           _filteredProducts.isNotEmpty
-                      ? 'Deselect All'
+                      // P2 #14 (2026-04-24): Arabic replacement for hardcoded
+                      // English "Deselect All".
+                      ? 'إلغاء تحديد الكل'
                       : l10n.selectAll,
                 ),
               ),
@@ -410,8 +420,9 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
+              // P2 #14 (2026-04-24): hardcoded English replaced with Arabic.
               Text(
-                'Label Size',
+                'حجم الملصق',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -503,8 +514,9 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
+              // P2 #14 (2026-04-24): hardcoded English replaced with Arabic.
               Text(
-                'Preview',
+                'معاينة',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -683,17 +695,17 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
 
   Future<void> _printLabels() async {
     final l10n = AppLocalizations.of(context);
+    // P1 #15 (2026-04-24): previously faked a `Future.delayed(1s)` then showed
+    // a success snackbar — classic "it works, ship it" anti-pattern that
+    // misleads users into thinking labels were actually printed. Until a real
+    // PrinterService integration lands, be honest: show a neutral "coming
+    // soon" message so the user's next action (walk to the printer tray) is
+    // informed correctly.
     setState(() => _isPrinting = true);
-
     try {
-      await Future.delayed(const Duration(seconds: 1));
-
+      await Future<void>.delayed(const Duration(milliseconds: 200));
       if (!mounted) return;
-
-      AlhaiSnackbar.success(
-        context,
-        l10n.printJobSentForLabels(_selectedIds.length),
-      );
+      AlhaiSnackbar.info(context, '${l10n.comingSoon} — طباعة الملصقات');
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Print price labels');
       if (!mounted) return;

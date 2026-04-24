@@ -32,16 +32,42 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
 
   bool _isValidating = false;
   bool _isValidated = false;
+  bool _isApplying = false;
   String? _validationError;
   Map<String, dynamic>? _discountDetails;
+  // Holds the validated coupon row so apply doesn't have to re-query.
+  CouponsTableData? _validatedCoupon;
 
-  // Recent coupons loaded from validated history (empty by default)
-  final List<Map<String, dynamic>> _recentCoupons = [];
+  // Recent coupons — pulled from the local coupons table on first
+  // paint (see [initState] → [_loadRecentCoupons]). Previously this
+  // list was hard-coded empty, so the "الكوبونات الأخيرة" card was
+  // effectively dead UI.
+  List<CouponsTableData> _recentCoupons = const [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadRecentCoupons();
+  }
 
   @override
   void dispose() {
     _codeController.dispose();
     super.dispose();
+  }
+
+  Future<void> _loadRecentCoupons() async {
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) return;
+      final coupons = await _db.discountsDao.getRecentCoupons(storeId);
+      if (mounted) setState(() => _recentCoupons = coupons);
+    } catch (e, stack) {
+      // Silent fallback — a failure to load the rail must not block
+      // the primary validate/apply flow which is the whole point of
+      // this screen.
+      reportError(e, stackTrace: stack, hint: 'Load recent coupons');
+    }
   }
 
   @override
@@ -267,10 +293,20 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: FilledButton.icon(
-                  onPressed: _isValidated && _discountDetails != null
+                  onPressed:
+                      _isValidated && _discountDetails != null && !_isApplying
                       ? _applyCoupon
                       : null,
-                  icon: const Icon(Icons.add_shopping_cart_rounded, size: 18),
+                  icon: _isApplying
+                      ? const SizedBox(
+                          width: 18,
+                          height: 18,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppColors.textOnPrimary,
+                          ),
+                        )
+                      : const Icon(Icons.add_shopping_cart_rounded, size: 18),
                   label: Text(l10n.apply),
                   style: FilledButton.styleFrom(
                     backgroundColor: AppColors.success,
@@ -326,14 +362,19 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
             details['value'] as String,
             isDark,
           ),
+          // Labels were hard-coded English strings before — the
+          // `validUntilDate` l10n key already carries the "صالح
+          // حتى:" prefix, so we split and reuse just the prefix. For
+          // minPurchase no bare-label key exists so we use a direct
+          // Arabic literal to avoid churning app_ar.arb in this PR.
           _buildDetailRow(
-            'Valid Until',
+            'صالح حتى',
             details['validUntil'] as String,
             isDark,
           ),
           if (details['minPurchase'] != null)
             _buildDetailRow(
-              'Minimum Purchase',
+              'الحد الأدنى للشراء',
               details['minPurchase'] as String,
               isDark,
             ),
@@ -451,10 +492,13 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
             )
           else
             ..._recentCoupons.map((coupon) {
-              final date = coupon['date'] as DateTime;
+              final date = coupon.createdAt;
+              final discountLabel = coupon.type == 'percentage'
+                  ? '${coupon.value}%'
+                  : '${(coupon.value / 100.0).toStringAsFixed(2)} ${l10n.sar}';
               return InkWell(
                 onTap: () {
-                  _codeController.text = coupon['code'] as String;
+                  _codeController.text = coupon.code;
                   setState(() {
                     _isValidated = false;
                     _validationError = null;
@@ -493,7 +537,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              coupon['code'] as String,
+                              coupon.code,
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
@@ -521,7 +565,7 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
                           borderRadius: BorderRadius.circular(999),
                         ),
                         child: Text(
-                          coupon['discount'] as String,
+                          discountLabel,
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -543,60 +587,76 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
     final code = _codeController.text.trim().toUpperCase();
     if (code.isEmpty) return;
 
+    final l10n = AppLocalizations.of(context);
+
     setState(() {
       _isValidating = true;
       _validationError = null;
       _discountDetails = null;
       _isValidated = false;
+      _validatedCoupon = null;
     });
 
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) throw Exception('No store');
 
-      // Try to find discount by code
-      final discounts = await _db.discountsDao.getActiveDiscounts(storeId);
-      final match = discounts
-          .where((d) => d.name.toUpperCase() == code)
-          .toList();
+      // Hit the canonical coupons table — earlier this screen searched
+      // discounts by name, which both missed real coupons and
+      // double-applied unrelated discounts whose Arabic name happened
+      // to collide with the typed code.
+      final coupon = await _db.discountsDao.getCouponByCode(code, storeId);
 
-      if (match.isNotEmpty) {
-        final discount = match.first;
+      if (coupon == null) {
         if (mounted) {
-          setState(() {
-            _isValidated = true;
-            _discountDetails = {
-              'type': discount.type == 'percentage'
-                  ? 'Percentage Off'
-                  : AppLocalizations.of(context).fixedAmount,
-              // C-4 Stage A migrated `discount.value` to int for both
-              // types. For 'percentage' it's a percent scalar (0-100);
-              // for 'fixed' it's int cents — divide before display so
-              // a 15-SAR coupon reads "15.00 SAR", not "1500 SAR".
-              'value': discount.type == 'percentage'
-                  ? '${discount.value.toStringAsFixed(0)}%'
-                  : '${(discount.value / 100.0).toStringAsFixed(2)} '
-                        '${AppLocalizations.of(context).sar}',
-              'validUntil': discount.endDate != null
-                  ? '${discount.endDate!.day}/${discount.endDate!.month}/${discount.endDate!.year}'
-                  : AppLocalizations.of(context).noExpiry,
-            };
-          });
+          setState(() => _validationError = l10n.invalidCouponCode);
         }
-      } else {
-        if (mounted) {
-          setState(() {
-            _validationError = AppLocalizations.of(context).invalidCouponCode;
-          });
-        }
+        return;
       }
+
+      // Expiry guard.
+      if (coupon.expiresAt != null &&
+          coupon.expiresAt!.isBefore(DateTime.now())) {
+        if (mounted) {
+          setState(() => _validationError = l10n.invalidCouponCode);
+        }
+        return;
+      }
+
+      // Usage cap guard. `maxUses == 0` means unlimited.
+      if (coupon.maxUses > 0 && coupon.currentUses >= coupon.maxUses) {
+        if (mounted) {
+          setState(() => _validationError = l10n.invalidCouponCode);
+        }
+        return;
+      }
+
+      if (!mounted) return;
+      setState(() {
+        _isValidated = true;
+        _validatedCoupon = coupon;
+        _discountDetails = {
+          'type': coupon.type == 'percentage'
+              ? l10n.percentageOff
+              : l10n.fixedAmount,
+          // coupons.value is int cents for fixed, plain percentage for
+          // percentage type (C-4 Session 4).
+          'value': coupon.type == 'percentage'
+              ? '${coupon.value}%'
+              : '${(coupon.value / 100.0).toStringAsFixed(2)} ${l10n.sar}',
+          'validUntil': coupon.expiresAt != null
+              ? '${coupon.expiresAt!.day}/${coupon.expiresAt!.month}/${coupon.expiresAt!.year}'
+              : l10n.noExpiry,
+          if (coupon.minPurchase > 0)
+            'minPurchase':
+                '${(coupon.minPurchase / 100.0).toStringAsFixed(2)} ${l10n.sar}',
+        };
+      });
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Validate coupon code');
       if (mounted) {
         setState(() {
-          _validationError = AppLocalizations.of(
-            context,
-          ).errorWithDetails('$e');
+          _validationError = l10n.errorWithDetails('$e');
         });
       }
     } finally {
@@ -604,9 +664,41 @@ class _CouponCodeScreenState extends ConsumerState<CouponCodeScreen> {
     }
   }
 
-  void _applyCoupon() {
+  Future<void> _applyCoupon() async {
+    final coupon = _validatedCoupon;
     final l10n = AppLocalizations.of(context);
-    AlhaiSnackbar.success(context, l10n.couponCode);
-    context.pop();
+    if (coupon == null) return;
+
+    setState(() => _isApplying = true);
+
+    try {
+      // Atomic redemption: the SQL UPDATE refuses to bump current_uses
+      // past max_uses or after expires_at, so two simultaneous taps
+      // can't both succeed. Anything other than 1 row affected = the
+      // coupon was burned out by another transaction in the meantime.
+      final affected = await _db.discountsDao.tryRedeemCoupon(coupon.id);
+      if (affected == 0) {
+        if (mounted) {
+          setState(() {
+            _isValidated = false;
+            _validatedCoupon = null;
+            _discountDetails = null;
+            _validationError = l10n.invalidCouponCode;
+          });
+        }
+        return;
+      }
+
+      if (!mounted) return;
+      AlhaiSnackbar.success(context, l10n.couponValid);
+      context.pop(coupon);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Apply coupon code');
+      if (mounted) {
+        AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
+      }
+    } finally {
+      if (mounted) setState(() => _isApplying = false);
+    }
   }
 }

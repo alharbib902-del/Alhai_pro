@@ -131,15 +131,20 @@ class _BarChartPainter extends CustomPainter {
       );
       canvas.drawRRect(rect, paint);
 
-      // رسم تسمية (مختصرة لـ 6 أحرف لتفادي الازدحام)
+      // P2 #9 (2026-04-24): previously the label was cut with
+      // `substring(length - 7)` which mangled multi-byte Arabic glyphs and
+      // chopped off the wrong end for RTL labels. Use the text painter's
+      // built-in `ellipsis` + `maxLines: 1` so the engine handles both
+      // direction and grapheme boundaries correctly.
       final label = (row['label'] as String? ?? '');
-      final short = label.length > 7 ? label.substring(label.length - 7) : label;
       final textPainter = TextPainter(
         text: TextSpan(
-          text: short,
+          text: label,
           style: TextStyle(color: labelColor, fontSize: 10),
         ),
         textDirection: TextDirection.ltr,
+        maxLines: 1,
+        ellipsis: '\u2026',
       )..layout(maxWidth: barW + gap);
       textPainter.paint(
         canvas,

@@ -67,18 +67,29 @@ class DailySummaryScreen extends ConsumerWidget {
           child: ref
               .watch(todayShiftsProvider)
               .when(
-                data: (shifts) => SingleChildScrollView(
-                  padding: EdgeInsets.all(
-                    isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
-                  ),
-                  child: _buildContent(
-                    context,
-                    ref,
-                    shifts,
-                    isWideScreen,
-                    isMediumScreen,
-                    isDark,
-                    l10n,
+                // RefreshIndicator يسمح بسحب-لتحديث الإحصائيات يدوياً؛
+                // invalidate للـ provider يُعيد القراءة من DB. نغلّف
+                // SingleChildScrollView بـ AlwaysScrollableScrollPhysics
+                // لضمان عمل السحب حتى عندما يكون المحتوى قصيراً.
+                data: (shifts) => RefreshIndicator(
+                  onRefresh: () async {
+                    ref.invalidate(todayShiftsProvider);
+                    await ref.read(todayShiftsProvider.future);
+                  },
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.all(
+                      isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                    ),
+                    child: _buildContent(
+                      context,
+                      ref,
+                      shifts,
+                      isWideScreen,
+                      isMediumScreen,
+                      isDark,
+                      l10n,
+                    ),
                   ),
                 ),
                 loading: () => const AppLoadingState(),
@@ -107,7 +118,10 @@ class DailySummaryScreen extends ConsumerWidget {
     bool isDark,
     AppLocalizations l10n,
   ) {
-    // Aggregate data from all shifts today
+    // Aggregate data from all shifts today.
+    // shifts.totalSalesAmount/totalRefundsAmount/openingCash are int cents
+    // (C-4 schema). Divide at the aggregation boundary so the SAR
+    // accumulators don't carry 100× and the formatter outputs SAR, not cents.
     double totalSales = 0;
     double totalRefunds = 0;
     int totalSalesCount = 0;
@@ -115,11 +129,11 @@ class DailySummaryScreen extends ConsumerWidget {
     double totalOpeningCash = 0;
 
     for (final shift in shifts) {
-      totalSales += shift.totalSalesAmount;
-      totalRefunds += shift.totalRefundsAmount;
+      totalSales += shift.totalSalesAmount / 100.0;
+      totalRefunds += shift.totalRefundsAmount / 100.0;
       totalSalesCount += shift.totalSales;
       totalRefundsCount += shift.totalRefunds;
-      totalOpeningCash += shift.openingCash;
+      totalOpeningCash += shift.openingCash / 100.0;
     }
 
     final netRevenue = totalSales - totalRefunds;

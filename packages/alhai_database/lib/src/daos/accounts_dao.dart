@@ -53,6 +53,16 @@ class AccountsDao extends DatabaseAccessor<AppDatabase>
         .getSingleOrNull();
   }
 
+  /// مراقبة حساب بالمعرف (Stream — يتحدث تلقائياً على كل كتابة).
+  ///
+  /// استخدم هذا في شاشات الـ ledger / customer detail ليتحدث الرصيد الحالي
+  /// فوراً بعد كل حركة بدون `invalidate` يدوي.
+  Stream<AccountsTableData?> watchAccountById(String id) {
+    return (select(accountsTable)
+          ..where((a) => a.id.equals(id) & a.deletedAt.isNull()))
+        .watchSingleOrNull();
+  }
+
   /// الحصول على حساب العميل
   Future<AccountsTableData?> getCustomerAccount(
     String customerId,

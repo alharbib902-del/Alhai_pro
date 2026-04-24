@@ -7,6 +7,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
@@ -17,6 +18,13 @@ import 'package:alhai_design_system/alhai_design_system.dart'
 /// Privacy policy and data rights screen
 class PrivacyPolicyScreen extends ConsumerWidget {
   const PrivacyPolicyScreen({super.key});
+
+  /// Contact email — centralised so copy-edits touch a single line.
+  static const String _privacyEmail = 'privacy@alhai.app';
+
+  /// Effective date of the current policy text. Edit this when the
+  /// policy is revised so the displayed month updates automatically.
+  static final DateTime _policyUpdatedAt = DateTime(2026, 3);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -60,12 +68,14 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                       icon: Icons.info_outline_rounded,
                       color: AppColors.primary,
                       title: 'مقدمة',
-                      children: const [
-                        _PolicyText(
+                      children: [
+                        const _PolicyText(
                           'نحن في الحي نلتزم بحماية خصوصيتك وبياناتك الشخصية. '
                           'توضح هذه السياسة كيف نجمع ونستخدم ونحمي بياناتك عند استخدام تطبيق نقطة البيع.',
                         ),
-                        _PolicyText('آخر تحديث: مارس 2026'),
+                        _PolicyText(
+                          'آخر تحديث: ${DateFormat.yMMMM('ar').format(_policyUpdatedAt)}',
+                        ),
                       ],
                     ),
                     const SizedBox(height: AlhaiSpacing.md),
@@ -129,16 +139,16 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                           'التخزين المحلي: جميع بيانات المبيعات والعملاء تُخزن محلياً على جهازك.',
                         ),
                         _PolicyBullet(
-                          'التشفير: البيانات الحساسة مشفرة باستخدام تقنيات التشفير الحديثة.',
+                          'حماية الوصول: قاعدة البيانات محمية بصلاحيات نظام التشغيل (sandbox) ولا تظهر للتطبيقات الأخرى.',
                         ),
                         _PolicyBullet(
-                          'النسخ الاحتياطي: يمكنك إنشاء نسخ احتياطية مشفرة من بياناتك.',
+                          'النسخ الاحتياطي: يمكنك تصدير نسخة احتياطية كملف JSON. ⚠️ الملف يحتوي بياناتك بصورة مقروءة — احتفظ به في مكان آمن ولا تشاركه إلا مع جهات تثق بها.',
                         ),
                         _PolicyBullet(
                           'المصادقة: الوصول محمي بكلمة مرور وصلاحيات المستخدمين.',
                         ),
                         _PolicyBullet(
-                          'العمل بدون إنترنت: التطبيق يعمل 100% بدون اتصال، بياناتك لا تُرسل لخوادم خارجية.',
+                          'العمل بدون إنترنت: التطبيق يعمل 100% بدون اتصال؛ المزامنة الاختيارية مع السحابة تتم عبر اتصال HTTPS مُؤمَّن.',
                         ),
                       ],
                     ),
@@ -212,7 +222,9 @@ class PrivacyPolicyScreen extends ConsumerWidget {
                           'إذا كان لديك أي أسئلة حول سياسة الخصوصية أو ترغب في ممارسة حقوقك، '
                           'يمكنك التواصل معنا عبر:',
                         ),
-                        _PolicyBullet('البريد الإلكتروني: privacy@alhai.app'),
+                        _PolicyBullet(
+                          'البريد الإلكتروني: $_privacyEmail',
+                        ),
                         _PolicyBullet('الدعم الفني داخل التطبيق'),
                       ],
                     ),

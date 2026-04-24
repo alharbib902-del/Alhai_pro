@@ -27,12 +27,23 @@ class PrinterSettingsScreen extends ConsumerStatefulWidget {
       _PrinterSettingsScreenState();
 }
 
+/// IPv4 regex used to sanity-check the printer network address before
+/// we ever open a socket against it. Accepts 0-255 in each octet; this
+/// deliberately mirrors the format used by network_print_service_impl
+/// rather than trying to validate DNS hostnames (ESC/POS printers are
+/// always reached by static IP in practice).
+final _kIpv4Regex = RegExp(
+  r'^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$',
+);
+
 class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
   bool _isScanning = false;
   bool _isTesting = false;
   List<DiscoveredPrinter> _discoveredPrinters = [];
   String _selectedConnectionType = 'bluetooth'; // bluetooth, network, sunmi
   String? _networkIp;
+  int _networkPort = 9100; // Standard RAW TCP port for ESC/POS printers.
+  final _portController = TextEditingController(text: '9100');
 
   @override
   void initState() {
@@ -43,6 +54,12 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
         ref.read(autoPrintEnabledProvider.notifier).state = enabled;
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _portController.dispose();
+    super.dispose();
   }
 
   Future<void> _scanPrinters() async {
@@ -123,17 +140,37 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
   }
 
   Future<void> _connectNetworkPrinter() async {
+    final l10n = AppLocalizations.of(context);
     final ip = _networkIp?.trim();
     if (ip == null || ip.isEmpty) {
-      AlhaiSnackbar.warning(
+      AlhaiSnackbar.warning(context, l10n.enterPrinterIpAddress);
+      return;
+    }
+
+    // Validate IPv4 before we hand the string to the print service —
+    // an unvalidated IP would have been persisted via `onChanged` and
+    // produced a long, opaque socket error on the next print attempt.
+    if (!_kIpv4Regex.hasMatch(ip)) {
+      AlhaiSnackbar.error(
         context,
-        AppLocalizations.of(context).enterPrinterIpAddress,
+        'عنوان IP غير صالح — أدخل عنواناً على صيغة 192.168.1.100',
+      );
+      return;
+    }
+    if (_networkPort < 1 || _networkPort > 65535) {
+      AlhaiSnackbar.error(
+        context,
+        'منفذ غير صالح — يجب أن يكون بين 1 و 65535',
       );
       return;
     }
 
     await ref.read(printServiceProvider.notifier).setServiceType('network');
 
+    // DiscoveredPrinter doesn't carry a port (the network print service
+    // uses the platform default, typically 9100). We keep `_networkPort`
+    // around for UI validation only — wiring it through the service is
+    // a bigger refactor out of scope for this change.
     final printer = DiscoveredPrinter(
       id: ip,
       name: 'Network Printer ($ip)',
@@ -473,12 +510,52 @@ class _PrinterSettingsScreenState extends ConsumerState<PrinterSettingsScreen> {
             Row(
               children: [
                 Expanded(
+                  flex: 2,
                   child: TextField(
                     textDirection: TextDirection.ltr,
                     keyboardType: TextInputType.number,
-                    onChanged: (v) => _networkIp = v,
+                    // Inline validation — invalid text is still held in
+                    // the field so the user can correct it, but we only
+                    // persist the value when the IPv4 shape matches so a
+                    // half-typed "192.168" can't be accidentally
+                    // submitted via _connectNetworkPrinter.
+                    onChanged: (v) {
+                      final trimmed = v.trim();
+                      _networkIp = _kIpv4Regex.hasMatch(trimmed)
+                          ? trimmed
+                          : null;
+                    },
                     decoration: InputDecoration(
                       hintText: '192.168.1.100',
+                      hintStyle: TextStyle(
+                        color: AppColors.getTextMuted(isDark),
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: AlhaiSpacing.md,
+                        vertical: AlhaiSpacing.sm,
+                      ),
+                      isDense: true,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: AlhaiSpacing.xs),
+                SizedBox(
+                  width: 90,
+                  child: TextField(
+                    textDirection: TextDirection.ltr,
+                    keyboardType: TextInputType.number,
+                    controller: _portController,
+                    onChanged: (v) {
+                      final parsed = int.tryParse(v.trim());
+                      if (parsed != null && parsed >= 1 && parsed <= 65535) {
+                        _networkPort = parsed;
+                      }
+                    },
+                    decoration: InputDecoration(
+                      hintText: '9100',
                       hintStyle: TextStyle(
                         color: AppColors.getTextMuted(isDark),
                       ),

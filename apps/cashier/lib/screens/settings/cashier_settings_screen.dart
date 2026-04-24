@@ -244,9 +244,8 @@ class _CashierSettingsScreenState extends ConsumerState<CashierSettingsScreen> {
               style: TextStyle(color: AppColors.getTextPrimary(isDark)),
             ),
             subtitle: Text(
-              isAr
-                  ? 'F1-F8, Ctrl+F/D/P, +/-, Delete'
-                  : 'F1-F8, Ctrl+F/D/P, +/-, Delete',
+              // Key label — identical in both locales, no branching needed.
+              'F1-F8, Ctrl+F/D/P, +/-, Delete',
               style: TextStyle(
                 fontSize: 11,
                 color: AppColors.getTextMuted(isDark),

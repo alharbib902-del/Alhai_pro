@@ -119,13 +119,31 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
     if (_isCompleting) return;
     setState(() => _isCompleting = true);
 
-    await setOnboardingSeen();
-
-    if (mounted) {
-      // Update the provider so the router guard knows onboarding is done
+    // Order matters: previously we persisted `onboarding_seen=true`
+    // before the navigation call. If GoRouter threw or the widget was
+    // unmounted mid-frame, the flag stayed `true` while the user never
+    // actually reached the login screen — so the next app launch would
+    // skip straight past the onboarding without the user ever having
+    // seen it. Drive the navigation first, then commit the flag only
+    // if it succeeds; roll back in catch so we retry on the next boot.
+    try {
+      if (!mounted) return;
+      // Optimistically update the in-memory provider so the router
+      // guard lets us through on this hop.
       ref.read(onboardingSeenProvider.notifier).state = true;
-      setState(() => _isCompleting = false);
       context.go(AppRoutes.login);
+
+      // Navigation succeeded → persist the durable flag.
+      await setOnboardingSeen();
+    } catch (e) {
+      // Roll back the in-memory flag so the user stays in onboarding on
+      // the next route resolution.
+      if (mounted) {
+        ref.read(onboardingSeenProvider.notifier).state = false;
+      }
+      rethrow;
+    } finally {
+      if (mounted) setState(() => _isCompleting = false);
     }
   }
 
@@ -188,7 +206,7 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
             TextButton(
               onPressed: () => context.push(AppRoutes.settingsPrivacy),
               child: Text(
-                'سياسة الخصوصية | Privacy Policy',
+                l10n.privacyPolicy,
                 style: AppTypography.bodySmall.copyWith(
                   color: AppColors.getTextSecondary(isDark),
                   decoration: TextDecoration.underline,

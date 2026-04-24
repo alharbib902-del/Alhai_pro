@@ -7150,5 +7150,30 @@
     }
   },
   "saMfaEnrollmentFailed": "فشل تسجيل المصادقة الثنائية. تأكد من تفعيل MFA في مشروع Supabase.",
-  "saMfaEnrollmentNoData": "لم ترجع عملية تسجيل TOTP أي بيانات."
+  "saMfaEnrollmentNoData": "لم ترجع عملية تسجيل TOTP أي بيانات.",
+  "exchangeTitle": "استبدال",
+  "itemsToReturn": "عناصر للإرجاع",
+  "newItemsToAdd": "عناصر جديدة للإضافة",
+  "exchangeRequiresNewItem": "الاستبدال يتطلب إضافة عنصر جديد واحد على الأقل. للاسترداد البحت، استخدم شاشة المرتجعات التي تربط الاسترداد بفاتورة البيع الأصلية.",
+  "splitReceiptTitle": "إيصال الدفع المجزأ",
+  "paymentBreakdown": "تفاصيل الدفع",
+  "zatcaQrTitle": "رمز QR للفوترة الإلكترونية",
+  "splitRefundTitle": "استرداد مجزأ",
+  "refundByPaymentMethod": "الاسترداد حسب طريقة الدفع",
+  "exceedsOriginalAmount": "المبلغ يتجاوز الأصلي",
+  "refundSummary": "ملخص الاسترداد",
+  "originalTotal": "الإجمالي الأصلي",
+  "refundLineLabel": "استرداد {method}",
+  "@refundLineLabel": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "totalRefund": "إجمالي الاسترداد",
+  "refundAmountExceedsOriginal": "المبلغ المسترد يتجاوز المبلغ الأصلي",
+  "filterCompletedOnly": "المكتملة فقط",
+  "filterCompletedOnlyDesc": "المبيعات غير المكتملة مخفية",
+  "pullToRefresh": "اسحب للتحديث"
 }

@@ -51,65 +51,36 @@ class _UsersPermissionsScreenState
       final currentUser = ref.read(currentUserProvider);
       final storeId = currentUser?.storeId ?? '';
 
-      if (storeId.isNotEmpty) {
-        final users = await _db.usersDao.getAllUsers(storeId);
-        if (mounted) {
-          setState(() {
-            _users = users
-                .map(
-                  (u) => _UserInfo(
-                    id: u.id,
-                    name: u.name,
-                    email: u.email ?? '',
-                    phone: u.phone ?? '',
-                    role: u.role,
-                    isActive: u.isActive,
-                    avatarUrl: u.avatar,
-                    lastLogin: u.lastLoginAt,
-                  ),
-                )
-                .toList();
-          });
-        }
+      if (storeId.isEmpty) {
+        // No active store — show the real empty state. Previously we
+        // injected a fake admin/cashier pair here, which lied to
+        // admins about who actually has access to the store.
+        if (mounted) setState(() => _users = []);
+        return;
       }
 
-      // Fallback if no users found
-      if (_users.isEmpty) {
-        _users = [
-          _UserInfo(
-            id: '1',
-            name: currentUser?.name ?? 'Admin',
-            email: currentUser?.email ?? '',
-            phone: currentUser?.phone ?? '',
-            role: 'admin',
-            isActive: true,
-            lastLogin: DateTime.now(),
-          ),
-          _UserInfo(
-            id: '2',
-            name: 'Cashier 1',
-            email: '',
-            phone: '',
-            role: 'cashier',
-            isActive: true,
-            lastLogin: DateTime.now().subtract(const Duration(hours: 2)),
-          ),
-        ];
+      final users = await _db.usersDao.getAllUsers(storeId);
+      if (mounted) {
+        setState(() {
+          _users = users
+              .map(
+                (u) => _UserInfo(
+                  id: u.id,
+                  name: u.name,
+                  email: u.email ?? '',
+                  phone: u.phone ?? '',
+                  role: u.role,
+                  isActive: u.isActive,
+                  avatarUrl: u.avatar,
+                  lastLogin: u.lastLoginAt,
+                ),
+              )
+              .toList();
+        });
       }
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Load users and permissions');
-      _error = '$e';
-      _users = [
-        _UserInfo(
-          id: '1',
-          name: 'Admin',
-          email: '',
-          phone: '',
-          role: 'admin',
-          isActive: true,
-          lastLogin: DateTime.now(),
-        ),
-      ];
+      if (mounted) setState(() => _error = '$e');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -234,7 +205,7 @@ class _UsersPermissionsScreenState
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
-                      'Read-only for cashier',
+                      'للعرض فقط للكاشير',
                       style: TextStyle(
                         fontSize: 12,
                         color: AppColors.getTextSecondary(isDark),
@@ -289,6 +260,57 @@ class _UsersPermissionsScreenState
     return '${dt.day}/${dt.month}/${dt.year} ${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
   }
 
+  /// Honest empty state. Shown when the usersDao returns zero rows —
+  /// we no longer fabricate a fake admin/cashier pair to paper over an
+  /// empty database.
+  Widget _buildEmptyState(
+    BuildContext context,
+    AppLocalizations l10n,
+    bool isDark,
+  ) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(AlhaiSpacing.xl),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              width: 80,
+              height: 80,
+              decoration: BoxDecoration(
+                color: AppColors.info.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Icon(
+                Icons.people_outline_rounded,
+                size: 40,
+                color: AppColors.info,
+              ),
+            ),
+            const SizedBox(height: AlhaiSpacing.mdl),
+            Text(
+              'لا يوجد مستخدمون',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.getTextPrimary(isDark),
+              ),
+            ),
+            const SizedBox(height: AlhaiSpacing.xs),
+            Text(
+              'أضف أول مستخدم من خلال شاشة الإدارة',
+              style: TextStyle(
+                fontSize: 14,
+                color: AppColors.getTextSecondary(isDark),
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -325,6 +347,8 @@ class _UsersPermissionsScreenState
                   message: _error!,
                   onRetry: _loadUsers,
                 )
+              : _users.isEmpty
+              ? _buildEmptyState(context, l10n, isDark)
               : SingleChildScrollView(
                   padding: EdgeInsets.all(
                     isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
@@ -375,7 +399,7 @@ class _UsersPermissionsScreenState
     return Row(
       children: [
         _summaryCard(
-          'Total Users',
+          'إجمالي المستخدمين',
           '${_users.length}',
           Icons.people_rounded,
           AppColors.info,
@@ -391,7 +415,7 @@ class _UsersPermissionsScreenState
         ),
         const SizedBox(width: AlhaiSpacing.sm),
         _summaryCard(
-          'Admins',
+          'المدراء',
           '$admins',
           Icons.admin_panel_settings_rounded,
           AppColors.secondary,
@@ -399,7 +423,7 @@ class _UsersPermissionsScreenState
         ),
         const SizedBox(width: AlhaiSpacing.sm),
         _summaryCard(
-          'Cashiers',
+          'الكاشيرين',
           '$cashiers',
           Icons.point_of_sale_rounded,
           AppColors.primary,
@@ -457,10 +481,10 @@ class _UsersPermissionsScreenState
     final roles = ['all', 'admin', 'manager', 'cashier', 'viewer'];
     final roleLabels = {
       'all': l10n.all,
-      'admin': 'Admin',
-      'manager': 'Manager',
+      'admin': 'مدير',
+      'manager': 'مشرف',
       'cashier': l10n.cashier,
-      'viewer': 'Viewer',
+      'viewer': 'مشاهد',
     };
 
     return SingleChildScrollView(

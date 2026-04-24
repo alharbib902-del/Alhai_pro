@@ -161,6 +161,9 @@ class ReportFiltersCard extends ConsumerWidget {
   ) async {
     final picked = await showDateRangePicker(
       context: context,
+      // P2 #8 (2026-04-24): 2020 is a conservative lower bound covering all
+      // live deployments. Ideally this would come from the store's
+      // `createdAt`, but stores table isn't injected here — keep 2020.
       firstDate: DateTime(2020),
       lastDate: DateTime.now(),
       initialDateRange: current,
@@ -190,10 +193,16 @@ class _QuickDateChips extends StatelessWidget {
       ),
       (
         l10n.thisWeek,
-        DateTimeRange(
-          start: now.subtract(Duration(days: now.weekday - 1)),
-          end: now,
-        ),
+        // P2 #7 (2026-04-24): previously `now - (weekday-1) days` without
+        // truncating time, so the range start carried HH:MM:SS from "now"
+        // and missed early-Monday transactions. Floor to midnight.
+        () {
+          final weekStart = now.subtract(Duration(days: now.weekday - 1));
+          return DateTimeRange(
+            start: DateTime(weekStart.year, weekStart.month, weekStart.day),
+            end: now,
+          );
+        }(),
       ),
       (
         l10n.thisMonthPeriod,

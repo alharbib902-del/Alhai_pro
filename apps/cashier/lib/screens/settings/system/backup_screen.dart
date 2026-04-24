@@ -5,7 +5,6 @@
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
 library;
 
-import 'package:flutter/foundation.dart' show kDebugMode, debugPrint;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -96,12 +95,11 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             _backupSizeMb = double.tryParse(s.value) ?? 0;
         }
       }
-    } catch (e) {
-      // Use default values if settings cannot be loaded. This is an
-      // acceptable fallback, but we log it for debug visibility.
-      if (kDebugMode) {
-        debugPrint('[Backup] Failed to load settings, using defaults: $e');
-      }
+    } catch (e, stack) {
+      // Use default values if settings cannot be loaded. Surface to
+      // Sentry so release builds aren't silent; the UI carries on with
+      // defaults regardless.
+      reportError(e, stackTrace: stack, hint: 'Load backup settings');
     } finally {
       if (mounted) setState(() => _isLoading = false);
     }
@@ -183,6 +181,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               '${bundle.totalRows} rows from ${bundle.tableCount} tables\n'
@@ -193,6 +192,42 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               ),
             ),
             const SizedBox(height: AlhaiSpacing.md),
+            // Sensitive-data disclosure: the backup is plaintext JSON and
+            // includes phone numbers, balances, sale history. Surface the
+            // risk before the cashier hands the contents to the system
+            // clipboard (where any other app can read it).
+            Container(
+              padding: const EdgeInsets.all(AlhaiSpacing.sm),
+              decoration: BoxDecoration(
+                color: AppColors.warning.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: AppColors.warning.withValues(alpha: 0.3),
+                ),
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Icon(
+                    Icons.warning_amber_rounded,
+                    color: AppColors.warning,
+                    size: 18,
+                  ),
+                  const SizedBox(width: AlhaiSpacing.xs),
+                  Expanded(
+                    child: Text(
+                      'النسخة الاحتياطية بصورة JSON غير مشفّرة وتحتوي بيانات حساسة (عملاء، أرصدة، مبيعات). أي تطبيق آخر على الجهاز يمكنه قراءتها من الحافظة — احفظها في مكان آمن فوراً ولا تتركها في الحافظة.',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.getTextPrimary(isDark),
+                        height: 1.4,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: AlhaiSpacing.sm),
             Text(
               AppLocalizations.of(ctx).copyBackupInstructions,
               style: TextStyle(
@@ -208,9 +243,38 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             child: Text(AppLocalizations.of(ctx).closeBtn),
           ),
           FilledButton.icon(
-            onPressed: () {
-              Clipboard.setData(ClipboardData(text: _lastBackupJson ?? ''));
+            onPressed: () async {
+              // Double confirmation before exposing PII to the system
+              // clipboard — clipboard is world-readable on most platforms.
+              final ok = await showDialog<bool>(
+                context: ctx,
+                builder: (innerCtx) => AlertDialog(
+                  title: const Text('تأكيد النسخ'),
+                  content: const Text(
+                    'سيتم نسخ بيانات حساسة (عملاء، أرصدة، مبيعات) للحافظة. أي تطبيق آخر على الجهاز يمكنه قراءتها. هل تريد المتابعة؟',
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(innerCtx, false),
+                      child: Text(AppLocalizations.of(innerCtx).cancel),
+                    ),
+                    FilledButton(
+                      onPressed: () => Navigator.pop(innerCtx, true),
+                      style: FilledButton.styleFrom(
+                        backgroundColor: AppColors.warning,
+                      ),
+                      child: const Text('نعم، انسخ'),
+                    ),
+                  ],
+                ),
+              );
+              if (ok != true) return;
+              await Clipboard.setData(
+                ClipboardData(text: _lastBackupJson ?? ''),
+              );
+              if (!ctx.mounted) return;
               Navigator.pop(ctx);
+              if (!mounted) return;
               AlhaiSnackbar.info(
                 context,
                 AppLocalizations.of(context).backupCopiedToClipboard,
@@ -374,6 +438,59 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
       final info = _backupManager.validateBackup(jsonData);
       if (info == null) {
         throw const FormatException('Invalid backup file format');
+      }
+
+      // Cross-store guard: refuse to silently clobber the active store's
+      // data with rows belonging to a different store. Without this
+      // check, an admin who pasted the wrong JSON could irreversibly
+      // overwrite customers, sales, inventory, etc.
+      final currentStoreId = ref.read(currentStoreIdProvider);
+      if (currentStoreId == null || currentStoreId.isEmpty) {
+        throw const FormatException('No active store — cannot restore');
+      }
+      if (info.storeId != currentStoreId) {
+        final proceed = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
+            title: const Row(
+              children: [
+                Icon(
+                  Icons.warning_amber_rounded,
+                  color: AppColors.error,
+                  size: 24,
+                ),
+                SizedBox(width: AlhaiSpacing.sm),
+                Expanded(child: Text('بيانات من متجر آخر')),
+              ],
+            ),
+            content: Text(
+              'هذه النسخة الاحتياطية مأخوذة من متجر آخر '
+              '(${info.storeId}).\n'
+              'استعادتها هنا ستحل محل بيانات المتجر الحالي '
+              '($currentStoreId) وقد يؤدي ذلك إلى فقدان البيانات. '
+              'هل تريد المتابعة؟',
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(ctx, false),
+                child: Text(AppLocalizations.of(ctx).cancel),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.pop(ctx, true),
+                style: FilledButton.styleFrom(
+                  backgroundColor: AppColors.error,
+                ),
+                child: const Text('نعم، استبدل البيانات'),
+              ),
+            ],
+          ),
+        );
+        if (proceed != true) {
+          return; // aborted in the finally below via the early return path
+        }
       }
 
       final report = await _backupManager.importFromJson(jsonData);
@@ -565,7 +682,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           const SizedBox(height: AlhaiSpacing.mdl),
           if (!hasBackup)
             Text(
-              'No backup yet. Create your first backup now.',
+              'لا توجد نسخة احتياطية بعد. قم بإنشاء أول نسخة الآن.',
               style: TextStyle(
                 fontSize: 14,
                 color: AppColors.getTextSecondary(isDark),
@@ -598,7 +715,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 Expanded(
                   child: _statusItem(
                     Icons.folder_rounded,
-                    'Total Backups',
+                    'إجمالي النسخ',
                     '$_backupCount',
                     isDark,
                   ),
@@ -606,8 +723,8 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 Expanded(
                   child: _statusItem(
                     Icons.storage_rounded,
-                    'Size',
-                    '${_backupSizeMb.toStringAsFixed(1)} MB',
+                    'الحجم',
+                    '${_backupSizeMb.toStringAsFixed(1)} م.ب',
                     isDark,
                   ),
                 ),
@@ -679,11 +796,11 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
 
   String _getBackupStatusText(Duration timeSince) {
     if (timeSince.inHours < 1) {
-      return 'Backup is recent (less than an hour ago)';
+      return 'النسخة الاحتياطية حديثة (منذ أقل من ساعة)';
     } else if (timeSince.inHours < 24) {
-      return 'Last backup was ${timeSince.inHours} hours ago';
+      return 'آخر نسخة منذ ${timeSince.inHours} ساعة';
     } else {
-      return 'Last backup was ${timeSince.inDays} days ago';
+      return 'آخر نسخة منذ ${timeSince.inDays} يوم';
     }
   }
 
@@ -712,7 +829,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             const CircularProgressIndicator(color: AppColors.primary),
             const SizedBox(height: AlhaiSpacing.md),
             Text(
-              'Exporting database...',
+              'جارٍ تصدير قاعدة البيانات...',
               style: TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -735,7 +852,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                 onPressed: _performBackup,
                 icon: const Icon(Icons.backup_rounded, size: 22),
                 label: const Text(
-                  'Backup Now',
+                  'نسخ احتياطي الآن',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
                 ),
                 style: FilledButton.styleFrom(
@@ -905,7 +1022,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.md),
           Text(
-            'Restore your data from a previous backup. This will replace all current data.',
+            'استعد بياناتك من نسخة احتياطية سابقة. سيؤدي ذلك إلى استبدال البيانات الحالية.',
             style: TextStyle(
               fontSize: 13,
               color: AppColors.getTextSecondary(isDark),
@@ -924,7 +1041,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                         ),
                         const SizedBox(height: AlhaiSpacing.sm),
                         Text(
-                          'Restoring...',
+                          'جارٍ الاستعادة...',
                           style: TextStyle(
                             fontSize: 14,
                             color: AppColors.getTextSecondary(isDark),
@@ -937,7 +1054,7 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
                     onPressed: () => _showRestoreDialog(isDark, l10n),
                     icon: const Icon(Icons.restore_rounded, size: 20),
                     label: const Text(
-                      'Restore Now',
+                      'استعادة الآن',
                       style: TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w600,

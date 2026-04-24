@@ -59,42 +59,73 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
 
-      final orders = await _db.salesDao.getAllSales(storeId);
       final now = DateTime.now();
       final todayStart = DateTime(now.year, now.month, now.day);
 
-      final filtered = orders.where((order) {
-        if (_dateFilter == 'today') {
-          return order.createdAt.isAfter(todayStart);
-        } else if (_dateFilter == 'week') {
-          return order.createdAt.isAfter(
-            todayStart.subtract(const Duration(days: 7)),
-          );
-        } else if (_dateFilter == 'month') {
-          return order.createdAt.month == now.month &&
-              order.createdAt.year == now.year;
-        } else if (_dateFilter == 'custom' && _customRange != null) {
-          return order.createdAt.isAfter(_customRange!.start) &&
-              order.createdAt.isBefore(
-                _customRange!.end.add(const Duration(days: 1)),
-              );
-        }
-        return true;
-      }).toList();
+      // P1 #1/#2/#3 (2026-04-24): compute a date range up-front then push the
+      // filter to SQL via `getSalesByDateRange` — eliminates the previous
+      // "load all sales, filter in memory" path (`getAllSales`) that scaled
+      // poorly on stores with long histories. Also fixes two boundary bugs:
+      //  - `isAfter(start)` was strict-greater, dropping transactions exactly
+      //    on `start`. SQL uses `>=` (`isBiggerOrEqualValue`).
+      //  - month filter compared `month == now.month` ignoring todayStart
+      //    and future-dated rows; now uses `[monthStart, now]`.
+      DateTime? rangeStart;
+      DateTime? rangeEnd;
+      if (_dateFilter == 'today') {
+        rangeStart = todayStart;
+        rangeEnd = now;
+      } else if (_dateFilter == 'week') {
+        rangeStart = todayStart.subtract(const Duration(days: 7));
+        rangeEnd = now;
+      } else if (_dateFilter == 'month') {
+        rangeStart = DateTime(now.year, now.month, 1);
+        rangeEnd = now;
+      } else if (_dateFilter == 'custom' && _customRange != null) {
+        rangeStart = _customRange!.start;
+        rangeEnd = _customRange!.end.add(const Duration(days: 1));
+      }
+
+      // Phase 5 §5.4 — trace payment-reports data load.
+      final orders = await tracePerformance(
+        name: 'loadPaymentReports',
+        operation: 'db.query',
+        data: {'date_filter': _dateFilter},
+        body: () async {
+          if (rangeStart != null && rangeEnd != null) {
+            return _db.salesDao.getSalesByDateRange(
+              storeId,
+              rangeStart,
+              rangeEnd,
+            );
+          }
+          return _db.salesDao.getAllSales(storeId);
+        },
+      );
+
+      // Keep the list as-is — SQL already performed the range filter.
+      final filtered = orders;
 
       double cash = 0, card = 0, credit = 0;
       int cashC = 0, cardC = 0, creditC = 0;
 
       for (final order in filtered) {
+        // sales.total is int cents (C-4 schema). Convert at aggregation
+        // boundary so the double accumulators carry SAR, not cents.
+        final amount = order.total / 100.0;
         final method = order.paymentMethod;
         if (method == 'cash') {
-          cash += order.total;
+          cash += amount;
           cashC++;
         } else if (method == 'card' || method == 'mada') {
-          card += order.total;
+          // P2 #2 (2026-04-24): 'mada' (Saudi domestic debit network) is
+          // grouped with 'card' for reporting purposes since both represent
+          // electronic card transactions. If a finer breakdown is needed
+          // in the future, fork `_madaTotal`/`_madaCount` here.
+          card += amount;
           cardC++;
         } else {
-          credit += order.total;
+          credit += amount;
           creditC++;
         }
       }
@@ -136,7 +167,7 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
     return Column(
       children: [
         AppHeader(
-          title: 'Payment Reports',
+          title: l10n.paymentBreakdown,
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
@@ -238,6 +269,10 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
             () async {
               final picked = await showDateRangePicker(
                 context: context,
+                // P2 #8 (2026-04-24): 2020 is a conservative lower bound
+                // covering all live deployments. Ideally this would come
+                // from the store's `createdAt`, but stores table isn't
+                // queried here — keep 2020 as a safe default.
                 firstDate: DateTime(2020),
                 lastDate: DateTime.now(),
                 initialDateRange: _customRange,
@@ -557,7 +592,7 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(
-                    '${total.toStringAsFixed(0)} ${l10n.sar}',
+                    CurrencyFormatter.formatCompactWithContext(context, total),
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w700,
@@ -620,7 +655,10 @@ class _PaymentReportsScreenState extends ConsumerState<PaymentReportsScreen> {
                 ),
                 const SizedBox(height: AlhaiSpacing.xxs),
                 Text(
-                  '${_grandTotal.toStringAsFixed(0)} ${l10n.sar}',
+                  CurrencyFormatter.formatCompactWithContext(
+                    context,
+                    _grandTotal,
+                  ),
                   style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.w800,

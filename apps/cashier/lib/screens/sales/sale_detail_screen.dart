@@ -732,11 +732,11 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
   Future<void> _reprintReceipt(AppLocalizations l10n) async {
     setState(() => _isPrinting = true);
     try {
-      await Future.delayed(const Duration(seconds: 1));
+      // P2-#4: Printing is not yet implemented — show coming-soon instead of
+      // a fake "receipt printed" success message.
       if (!mounted) return;
       HapticShim.mediumImpact();
-      SoundService.instance.saleSuccess();
-      AlhaiSnackbar.success(context, l10n.receiptPrinted);
+      AlhaiSnackbar.info(context, '${l10n.comingSoon} — ${l10n.reprintReceipt}');
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Reprint sale receipt');
       if (!mounted) return;

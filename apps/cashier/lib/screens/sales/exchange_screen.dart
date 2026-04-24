@@ -3,6 +3,14 @@
 /// Two sections: "Items to Return" and "New Items to Add".
 /// Search/scan products for exchange, calculate difference.
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
+///
+/// State model:
+/// - Business state → `_ExchangeState` via `_exchangeProvider`. Tracks the
+///   two search-result lists, the two exchange-item lists, and the
+///   submitting flag. Replaces 11 historic `setState` sites with immutable
+///   `copyWith` updates.
+/// - The `_ExchangeItem` record stays as before (its `copyWithQty` continues
+///   to power both return + new-item lists without change).
 library;
 
 import 'package:flutter/material.dart';
@@ -25,6 +33,134 @@ import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 
+// ============================================================================
+// State
+// ============================================================================
+
+@immutable
+class _ExchangeState {
+  final List<ProductsTableData> returnSearchResults;
+  final List<ProductsTableData> newSearchResults;
+  final List<_ExchangeItem> returnItems;
+  final List<_ExchangeItem> newItems;
+  final bool isSubmitting;
+
+  const _ExchangeState({
+    this.returnSearchResults = const [],
+    this.newSearchResults = const [],
+    this.returnItems = const [],
+    this.newItems = const [],
+    this.isSubmitting = false,
+  });
+
+  _ExchangeState copyWith({
+    List<ProductsTableData>? returnSearchResults,
+    List<ProductsTableData>? newSearchResults,
+    List<_ExchangeItem>? returnItems,
+    List<_ExchangeItem>? newItems,
+    bool? isSubmitting,
+  }) => _ExchangeState(
+    returnSearchResults: returnSearchResults ?? this.returnSearchResults,
+    newSearchResults: newSearchResults ?? this.newSearchResults,
+    returnItems: returnItems ?? this.returnItems,
+    newItems: newItems ?? this.newItems,
+    isSubmitting: isSubmitting ?? this.isSubmitting,
+  );
+
+  double get returnTotal =>
+      returnItems.fold<double>(0, (sum, i) => sum + (i.price * i.qty));
+
+  double get newTotal =>
+      newItems.fold<double>(0, (sum, i) => sum + (i.price * i.qty));
+
+  double get difference => newTotal - returnTotal;
+}
+
+class _ExchangeNotifier extends StateNotifier<_ExchangeState> {
+  _ExchangeNotifier() : super(const _ExchangeState());
+
+  void setReturnSearchResults(List<ProductsTableData> list) =>
+      state = state.copyWith(returnSearchResults: list);
+
+  void setNewSearchResults(List<ProductsTableData> list) =>
+      state = state.copyWith(newSearchResults: list);
+
+  void clearReturnSearchResults() =>
+      state = state.copyWith(returnSearchResults: const []);
+
+  void clearNewSearchResults() =>
+      state = state.copyWith(newSearchResults: const []);
+
+  /// Add a product to the return or new list. Bumps quantity if already present.
+  /// Also clears the corresponding search results (the search row is reused
+  /// as a quick "scanner" input: once a product is added the list collapses).
+  void addItem(ProductsTableData product, {required bool isReturn}) {
+    final list = isReturn
+        ? List<_ExchangeItem>.from(state.returnItems)
+        : List<_ExchangeItem>.from(state.newItems);
+    final existing = list.indexWhere((i) => i.productId == product.id);
+    if (existing >= 0) {
+      list[existing] = list[existing].copyWithQty(list[existing].qty + 1);
+    } else {
+      list.add(
+        _ExchangeItem(
+          productId: product.id,
+          productName: product.name,
+          // C-4 Stage B: product.price is int cents; exchange item schema is double SAR.
+          price: product.price / 100.0,
+          qty: 1,
+          product: product,
+        ),
+      );
+    }
+    state = isReturn
+        ? state.copyWith(returnItems: list, returnSearchResults: const [])
+        : state.copyWith(newItems: list, newSearchResults: const []);
+  }
+
+  void removeItem(int index, {required bool isReturn}) {
+    final list = isReturn
+        ? List<_ExchangeItem>.from(state.returnItems)
+        : List<_ExchangeItem>.from(state.newItems);
+    if (index < 0 || index >= list.length) return;
+    list.removeAt(index);
+    state = isReturn
+        ? state.copyWith(returnItems: list)
+        : state.copyWith(newItems: list);
+  }
+
+  void updateQty(int index, int qty, {required bool isReturn}) {
+    if (qty <= 0) {
+      removeItem(index, isReturn: isReturn);
+      return;
+    }
+    final list = isReturn
+        ? List<_ExchangeItem>.from(state.returnItems)
+        : List<_ExchangeItem>.from(state.newItems);
+    if (index < 0 || index >= list.length) return;
+    list[index] = list[index].copyWithQty(qty);
+    state = isReturn
+        ? state.copyWith(returnItems: list)
+        : state.copyWith(newItems: list);
+  }
+
+  void setSubmitting(bool v) => state = state.copyWith(isSubmitting: v);
+
+  void clearAllItems() => state = state.copyWith(
+    returnItems: const [],
+    newItems: const [],
+  );
+}
+
+final _exchangeProvider =
+    StateNotifierProvider.autoDispose<_ExchangeNotifier, _ExchangeState>(
+      (ref) => _ExchangeNotifier(),
+    );
+
+// ============================================================================
+// Screen
+// ============================================================================
+
 /// شاشة الاستبدال
 class ExchangeScreen extends ConsumerStatefulWidget {
   const ExchangeScreen({super.key});
@@ -38,16 +174,6 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
   final _returnSearchController = TextEditingController();
   final _newSearchController = TextEditingController();
 
-  List<ProductsTableData> _returnSearchResults = [];
-  List<ProductsTableData> _newSearchResults = [];
-
-  // Items to return: {productId: {product, qty, price}}
-  final List<_ExchangeItem> _returnItems = [];
-  // New items to add
-  final List<_ExchangeItem> _newItems = [];
-
-  bool _isSubmitting = false;
-
   @override
   void dispose() {
     _returnSearchController.dispose();
@@ -56,98 +182,58 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
   }
 
   Future<void> _searchProducts(String query, bool isReturn) async {
+    final notifier = ref.read(_exchangeProvider.notifier);
     if (query.trim().isEmpty) {
-      setState(() {
-        if (isReturn) {
-          _returnSearchResults = [];
-        } else {
-          _newSearchResults = [];
-        }
-      });
+      if (isReturn) {
+        notifier.clearReturnSearchResults();
+      } else {
+        notifier.clearNewSearchResults();
+      }
       return;
     }
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
       final results = await _db.productsDao.searchProducts(query, storeId);
-      if (mounted) {
-        setState(() {
-          if (isReturn) {
-            _returnSearchResults = results.take(5).toList();
-          } else {
-            _newSearchResults = results.take(5).toList();
-          }
-        });
+      if (!mounted) return;
+      final top = results.take(5).toList();
+      if (isReturn) {
+        notifier.setReturnSearchResults(top);
+      } else {
+        notifier.setNewSearchResults(top);
       }
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Exchange search');
-      if (mounted) {
-        HapticShim.vibrate();
-        SoundService.instance.errorBuzz();
-        AlhaiSnackbar.error(
-          context,
-          AppLocalizations.of(context).errorOccurred,
-        );
-      }
+      if (!mounted) return;
+      HapticShim.vibrate();
+      SoundService.instance.errorBuzz();
+      AlhaiSnackbar.error(
+        context,
+        AppLocalizations.of(context).errorOccurred,
+      );
     }
   }
 
   void _addItem(ProductsTableData product, bool isReturn) {
-    final list = isReturn ? _returnItems : _newItems;
-    final existing = list.indexWhere((i) => i.productId == product.id);
-    setState(() {
-      if (existing >= 0) {
-        list[existing] = list[existing].copyWithQty(list[existing].qty + 1);
-      } else {
-        list.add(
-          _ExchangeItem(
-            productId: product.id,
-            productName: product.name,
-            // C-4 Stage B: product.price is int cents; exchange item schema is double SAR.
-            price: product.price / 100.0,
-            qty: 1,
-            product: product,
-          ),
-        );
-      }
-      if (isReturn) {
-        _returnSearchController.clear();
-        _returnSearchResults = [];
-      } else {
-        _newSearchController.clear();
-        _newSearchResults = [];
-      }
-    });
+    ref.read(_exchangeProvider.notifier).addItem(product, isReturn: isReturn);
+    if (isReturn) {
+      _returnSearchController.clear();
+    } else {
+      _newSearchController.clear();
+    }
   }
 
   void _removeItem(int index, bool isReturn) {
-    setState(() {
-      if (isReturn) {
-        _returnItems.removeAt(index);
-      } else {
-        _newItems.removeAt(index);
-      }
-    });
+    ref
+        .read(_exchangeProvider.notifier)
+        .removeItem(index, isReturn: isReturn);
   }
 
   void _updateQty(int index, int qty, bool isReturn) {
-    if (qty <= 0) {
-      _removeItem(index, isReturn);
-      return;
-    }
-    setState(() {
-      final list = isReturn ? _returnItems : _newItems;
-      list[index] = list[index].copyWithQty(qty);
-    });
+    ref
+        .read(_exchangeProvider.notifier)
+        .updateQty(index, qty, isReturn: isReturn);
   }
-
-  double get _returnTotal =>
-      _returnItems.fold<double>(0, (sum, i) => sum + (i.price * i.qty));
-
-  double get _newTotal =>
-      _newItems.fold<double>(0, (sum, i) => sum + (i.price * i.qty));
-
-  double get _difference => _newTotal - _returnTotal;
 
   @override
   Widget build(BuildContext context) {
@@ -157,11 +243,12 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
+    final s = ref.watch(_exchangeProvider);
 
     return Column(
       children: [
         AppHeader(
-          title: 'Exchange',
+          title: l10n.exchangeTitle,
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
@@ -169,7 +256,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
               ? null
               : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
+          notificationsCount: ref.watch(unreadNotificationsCountProvider),
           userName: user?.name ?? l10n.cashCustomer,
           userRole: l10n.branchManager,
           onUserTap: () {},
@@ -183,25 +270,25 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                 ? Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: _buildReturnSection(isDark, l10n)),
+                      Expanded(child: _buildReturnSection(isDark, l10n, s)),
                       const SizedBox(width: AlhaiSpacing.lg),
-                      Expanded(child: _buildNewItemsSection(isDark, l10n)),
+                      Expanded(child: _buildNewItemsSection(isDark, l10n, s)),
                     ],
                   )
                 : Column(
                     children: [
-                      _buildReturnSection(isDark, l10n),
+                      _buildReturnSection(isDark, l10n, s),
                       SizedBox(
                         height: isMediumScreen
                             ? AlhaiSpacing.lg
                             : AlhaiSpacing.md,
                       ),
-                      _buildNewItemsSection(isDark, l10n),
+                      _buildNewItemsSection(isDark, l10n, s),
                     ],
                   ),
           ),
         ),
-        _buildBottomBar(isDark, l10n),
+        _buildBottomBar(isDark, l10n, s),
       ],
     );
   }
@@ -211,7 +298,11 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
     return '${now.day}/${now.month}/${now.year} \u2022 ${l10n.mainBranch}';
   }
 
-  Widget _buildReturnSection(bool isDark, AppLocalizations l10n) {
+  Widget _buildReturnSection(
+    bool isDark,
+    AppLocalizations l10n,
+    _ExchangeState s,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -238,7 +329,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'Items to Return',
+                l10n.itemsToReturn,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -249,13 +340,13 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.md),
           _buildSearchBar(_returnSearchController, isDark, l10n, true),
-          if (_returnSearchResults.isNotEmpty)
-            _buildSearchResults(_returnSearchResults, isDark, true),
+          if (s.returnSearchResults.isNotEmpty)
+            _buildSearchResults(s.returnSearchResults, isDark, true),
           const SizedBox(height: AlhaiSpacing.sm),
-          ..._returnItems.asMap().entries.map(
+          ...s.returnItems.asMap().entries.map(
             (e) => _buildExchangeItemCard(e.value, e.key, isDark, l10n, true),
           ),
-          if (_returnItems.isNotEmpty)
+          if (s.returnItems.isNotEmpty)
             Padding(
               padding: const EdgeInsetsDirectional.only(top: AlhaiSpacing.sm),
               child: Row(
@@ -269,7 +360,10 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                     ),
                   ),
                   Text(
-                    '${_returnTotal.toStringAsFixed(2)} ${l10n.sar}',
+                    CurrencyFormatter.formatWithContext(
+                      context,
+                      s.returnTotal,
+                    ),
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
@@ -284,7 +378,11 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
     );
   }
 
-  Widget _buildNewItemsSection(bool isDark, AppLocalizations l10n) {
+  Widget _buildNewItemsSection(
+    bool isDark,
+    AppLocalizations l10n,
+    _ExchangeState s,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -311,7 +409,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'New Items to Add',
+                l10n.newItemsToAdd,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -322,13 +420,13 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.md),
           _buildSearchBar(_newSearchController, isDark, l10n, false),
-          if (_newSearchResults.isNotEmpty)
-            _buildSearchResults(_newSearchResults, isDark, false),
+          if (s.newSearchResults.isNotEmpty)
+            _buildSearchResults(s.newSearchResults, isDark, false),
           const SizedBox(height: AlhaiSpacing.sm),
-          ..._newItems.asMap().entries.map(
+          ...s.newItems.asMap().entries.map(
             (e) => _buildExchangeItemCard(e.value, e.key, isDark, l10n, false),
           ),
-          if (_newItems.isNotEmpty)
+          if (s.newItems.isNotEmpty)
             Padding(
               padding: const EdgeInsetsDirectional.only(top: AlhaiSpacing.sm),
               child: Row(
@@ -342,7 +440,10 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                     ),
                   ),
                   Text(
-                    '${_newTotal.toStringAsFixed(2)} ${l10n.sar}',
+                    CurrencyFormatter.formatWithContext(
+                      context,
+                      s.newTotal,
+                    ),
                     style: const TextStyle(
                       fontWeight: FontWeight.w700,
                       fontSize: 16,
@@ -499,7 +600,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                   overflow: TextOverflow.ellipsis,
                 ),
                 Text(
-                  '${item.price.toStringAsFixed(2)} ${l10n.sar}',
+                  CurrencyFormatter.formatWithContext(context, item.price),
                   style: TextStyle(
                     fontSize: 12,
                     color: AppColors.getTextSecondary(isDark),
@@ -565,12 +666,12 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
     );
   }
 
-  Widget _buildBottomBar(bool isDark, AppLocalizations l10n) {
-    final diff = _difference;
+  Widget _buildBottomBar(bool isDark, AppLocalizations l10n, _ExchangeState s) {
+    final diff = s.difference;
     final diffColor = diff == 0
         ? AppColors.success
         : (diff > 0 ? AppColors.warning : AppColors.success);
-    final hasItems = _returnItems.isNotEmpty || _newItems.isNotEmpty;
+    final hasItems = s.returnItems.isNotEmpty || s.newItems.isNotEmpty;
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),
@@ -597,14 +698,14 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Difference',
+                    l10n.difference,
                     style: TextStyle(
                       fontSize: 12,
                       color: AppColors.getTextSecondary(isDark),
                     ),
                   ),
                   Text(
-                    '${diff >= 0 ? '+' : ''}${diff.toStringAsFixed(2)} ${l10n.sar}',
+                    '${diff >= 0 ? '+' : ''}${CurrencyFormatter.formatWithContext(context, diff)}',
                     style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.w800,
@@ -633,10 +734,10 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
             const SizedBox(width: AlhaiSpacing.md),
             Expanded(
               child: FilledButton.icon(
-                onPressed: _isSubmitting || !hasItems
+                onPressed: s.isSubmitting || !hasItems
                     ? null
                     : () => _submitExchange(l10n),
-                icon: _isSubmitting
+                icon: s.isSubmitting
                     ? const SizedBox(
                         width: 20,
                         height: 20,
@@ -674,9 +775,9 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
   /// تنفيذ عملية الاستبدال الفعلية.
   ///
   /// المنطق:
-  /// 1. إذا وُجد [_newItems] → إنشاء بيع جديد عبر [SaleService.createSale]
+  /// 1. إذا وُجد [newItems] → إنشاء بيع جديد عبر [SaleService.createSale]
   ///    (يولّد receipt + stockDeltas + invoice + sync enqueue تلقائياً).
-  /// 2. إذا وُجد [_returnItems] → استدعاء [createReturn] على saleId
+  /// 2. إذا وُجد [returnItems] → استدعاء [createReturn] على saleId
   ///    الجديد المُنشأ (أو رفض السيناريو إن لم يوجد بيع جديد —
   ///    المرتجع البحت يجب أن يمرّ عبر Returns screen حيث يُختار
   ///    البيع الأصلي، لأن FK returns.sale_id هو ON DELETE RESTRICT
@@ -686,36 +787,39 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
   ///    - سالب → نُضيف الفرق إلى totalRefund في createReturn ليُرجع للعميل.
   ///    - صفر → استبدال متوازن (لا فرق).
   Future<void> _submitExchange(AppLocalizations l10n) async {
-    setState(() => _isSubmitting = true);
+    final notifier = ref.read(_exchangeProvider.notifier);
+    notifier.setSubmitting(true);
     HapticFeedback.mediumImpact();
 
     final user = ref.read(currentUserProvider);
     final storeId = ref.read(currentStoreIdProvider);
 
     if (storeId == null) {
-      setState(() => _isSubmitting = false);
+      notifier.setSubmitting(false);
       AlhaiSnackbar.error(context, l10n.errorOccurred);
       return;
     }
 
+    // Snapshot current lists — avoids reading the provider mid-async if
+    // the user closes the screen; copies are immutable anyway.
+    final snap = ref.read(_exchangeProvider);
+    final returnItemsSnap = snap.returnItems;
+    final newItemsSnap = snap.newItems;
+
     // احسب المبالغ (SAR doubles للـ UI/math).
-    final returnTotal = _returnTotal;
-    final newTotal = _newTotal;
+    final returnTotal = snap.returnTotal;
+    final newTotal = snap.newTotal;
     final balanceDiff = newTotal - returnTotal;
 
     // سيناريو مرفوض: لا newItems → ليس استبدالاً. وجّه المستخدم لشاشة
     // Returns المخصصة (التي تربط المرتجع بسجل بيع سابق).
-    if (_newItems.isEmpty && _returnItems.isNotEmpty) {
-      setState(() => _isSubmitting = false);
+    if (newItemsSnap.isEmpty && returnItemsSnap.isNotEmpty) {
+      notifier.setSubmitting(false);
       await showDialog<void>(
         context: context,
         builder: (ctx) => AlertDialog(
           title: Text(l10n.errorOccurred),
-          content: const Text(
-            'Exchange requires at least one new item. For a pure refund, '
-            'please use the Returns screen (which links the refund to the '
-            'original sale).',
-          ),
+          content: Text(l10n.exchangeRequiresNewItem),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
@@ -729,20 +833,20 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
 
     // سيناريو رفض: لا newItems ولا returnItems — button معطّل أصلاً بهذا الشرط
     // لكن نحمي ضد race/state stale.
-    if (_newItems.isEmpty && _returnItems.isEmpty) {
-      setState(() => _isSubmitting = false);
+    if (newItemsSnap.isEmpty && returnItemsSnap.isEmpty) {
+      notifier.setSubmitting(false);
       return;
     }
 
     String? createdSaleId;
 
     try {
-      // ─── 1. إنشاء البيع الجديد (_newItems غير فارغة بالضرورة هنا) ─────
+      // ─── 1. إنشاء البيع الجديد (newItems غير فارغة بالضرورة هنا) ─────
       final saleService = ref.read(saleServiceProvider);
 
       // تحويل _ExchangeItem → PosCartItem. نبني Product domain model من
       // ProductsTableData المحفوظة وقت الإضافة. price هنا int cents (product).
-      final posItems = _newItems.map((ei) {
+      final posItems = newItemsSnap.map((ei) {
         final p = ei.product;
         final productModel = Product(
           id: p.id,
@@ -793,27 +897,29 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
         cashAmount: newGrandTotal,
         customerId: null,
         customerName: null,
-        notes: _returnItems.isNotEmpty
+        notes: returnItemsSnap.isNotEmpty
             ? 'Exchange sale — linked to return of '
-                  '${_returnItems.length} item(s), offset '
+                  '${returnItemsSnap.length} item(s), offset '
                   '${returnTotal.toStringAsFixed(2)} SAR'
             : null,
       );
       createdSaleId = saleResult.saleId;
 
       // ─── 2. إنشاء المرتجع (إن وُجدت عناصر مرتجعة) ─────────────────────
-      if (_returnItems.isNotEmpty) {
-        // totalRefund يمثّل قيمة البضاعة المُرتجعة فعلياً (returnTotal)؛ لا
-        // نضيف إليه balanceDiff لأن ذلك سيُدخل double-counting محاسبياً:
-        // البيع الجديد يحمل قيمته (newTotal)، والمرتجع يحمل قيمته
-        // (returnTotal)، والفرق الصافي بين الطرفين هو ما يدخل/يخرج من
-        // الصندوق فعلياً (cash refund إن كان balanceDiff<0، cash in إن
-        // كان balanceDiff>0). القيد المزدوج يحافظ على صحة السجل.
-        final returnItemCompanions = _returnItems.map((ei) {
-          // unitPrice في return_items هو int cents. refundAmount يشمل VAT 15%
-          // كما في refund_reason_screen.dart:356.
+      if (returnItemsSnap.isNotEmpty) {
+        // VAT consistency: per-line refundAmount carries VAT 15% (matches
+        // refund_reason_screen.dart:356), so totalRefund must also be the
+        // VAT-inclusive gross. Without this multiplier, the sum of
+        // line refunds wouldn't equal the header refund — auditors and
+        // ZATCA reconciliation would flag the mismatch.
+        const vatRate = 0.15;
+        final returnTotalWithVat = returnTotal * (1 + vatRate);
+
+        final returnItemCompanions = returnItemsSnap.map((ei) {
+          // unitPrice في return_items هو int cents.
           final unitPriceCents = (ei.price * 100).round();
-          final lineRefundCents = (ei.qty * ei.price * 1.15 * 100).round();
+          final lineRefundCents = (ei.qty * ei.price * (1 + vatRate) * 100)
+              .round();
           return ReturnItemsTableCompanion(
             productId: Value(ei.productId),
             productName: Value(ei.productName),
@@ -827,7 +933,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
           ref,
           saleId: createdSaleId,
           reason: 'exchange',
-          totalRefund: returnTotal,
+          totalRefund: returnTotalWithVat,
           refundMethod: 'cash',
           notes:
               'Exchange transaction — offsetting new items '
@@ -843,8 +949,8 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
         storeId: storeId,
         userId: user?.id ?? 'unknown',
         userName: user?.name ?? 'unknown',
-        returnCount: _returnItems.length,
-        newCount: _newItems.length,
+        returnCount: returnItemsSnap.length,
+        newCount: newItemsSnap.length,
       );
 
       addBreadcrumb(
@@ -852,8 +958,8 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
         category: 'sale',
         data: {
           'saleId': createdSaleId,
-          'returnItems': _returnItems.length,
-          'newItems': _newItems.length,
+          'returnItems': returnItemsSnap.length,
+          'newItems': newItemsSnap.length,
           'returnTotal': returnTotal,
           'newTotal': newTotal,
           'balanceDiff': balanceDiff,
@@ -876,10 +982,7 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
         context,
         '${l10n.exchangeSuccessMsg}$diffMsg',
       );
-      setState(() {
-        _returnItems.clear();
-        _newItems.clear();
-      });
+      notifier.clearAllItems();
     } catch (e, stack) {
       // ملاحظة على استراتيجية الأخطاء: لا يمكن لفّ createSale + createReturn
       // في transaction واحد لأن كليهما يُدير transactions داخلية مستقلة +
@@ -916,7 +1019,9 @@ class _ExchangeScreenState extends ConsumerState<ExchangeScreen> {
         ),
       );
     } finally {
-      if (mounted) setState(() => _isSubmitting = false);
+      if (mounted) {
+        ref.read(_exchangeProvider.notifier).setSubmitting(false);
+      }
     }
   }
 }

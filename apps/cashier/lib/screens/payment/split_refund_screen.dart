@@ -17,6 +17,7 @@ import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_pos/alhai_pos.dart' show createReturn;
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
 
@@ -74,30 +75,49 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
   }
 
   List<_RefundMethod> _buildRefundMethods(SalesTableData order) {
-    // C-4 Session 3: sale.total is int cents; _RefundMethod.originalAmount
-    // is SAR double.
-    final method = order.paymentMethod;
+    // C-4 Session 3: sale.{total,cashAmount,cardAmount,creditAmount} are
+    // int cents; UI uses SAR doubles. The previous build read a fictional
+    // 'split' method and 50/50'd the total — actual mixed sales record
+    // each leg in dedicated columns, so the breakdown is exact.
+    final cashSar = (order.cashAmount ?? 0) / 100.0;
+    final cardSar = (order.cardAmount ?? 0) / 100.0;
+    final creditSar = (order.creditAmount ?? 0) / 100.0;
     final totalSar = order.total / 100.0;
-    if (method == 'split') {
-      final half = totalSar / 2;
+
+    final hasMixed = cashSar > 0 || cardSar > 0 || creditSar > 0;
+    if (hasMixed) {
       return [
-        _RefundMethod(
-          method: 'cash',
-          originalAmount: half,
-          controller: TextEditingController(text: half.toStringAsFixed(2)),
-        ),
-        _RefundMethod(
-          method: 'card',
-          originalAmount: totalSar - half,
-          controller: TextEditingController(
-            text: (totalSar - half).toStringAsFixed(2),
+        if (cashSar > 0)
+          _RefundMethod(
+            method: 'cash',
+            originalAmount: cashSar,
+            controller: TextEditingController(
+              text: cashSar.toStringAsFixed(2),
+            ),
           ),
-        ),
+        if (cardSar > 0)
+          _RefundMethod(
+            method: 'card',
+            originalAmount: cardSar,
+            controller: TextEditingController(
+              text: cardSar.toStringAsFixed(2),
+            ),
+          ),
+        if (creditSar > 0)
+          _RefundMethod(
+            method: 'credit',
+            originalAmount: creditSar,
+            controller: TextEditingController(
+              text: creditSar.toStringAsFixed(2),
+            ),
+          ),
       ];
     }
+
+    // Fallback: single-method sale — refund using the recorded method.
     return [
       _RefundMethod(
-        method: method,
+        method: order.paymentMethod,
         originalAmount: totalSar,
         controller: TextEditingController(text: totalSar.toStringAsFixed(2)),
       ),
@@ -207,7 +227,7 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Split Refund',
+                    l10n.splitRefundTitle,
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -308,7 +328,7 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'Refund by Payment Method',
+                l10n.refundByPaymentMethod,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -458,9 +478,9 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
         ),
         if (isOverMax) ...[
           const SizedBox(height: 6),
-          const Text(
-            'Exceeds original amount',
-            style: TextStyle(
+          Text(
+            l10n.exceedsOriginalAmount,
+            style: const TextStyle(
               fontSize: 11,
               color: AppColors.error,
               fontWeight: FontWeight.w500,
@@ -502,7 +522,7 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'Refund Summary',
+                l10n.refundSummary,
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -513,8 +533,8 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           _buildSummaryRow(
-            'Original Total',
-            '${max.toStringAsFixed(2)} ${l10n.sar}',
+            l10n.originalTotal,
+            CurrencyFormatter.formatWithContext(context, max),
             isDark,
           ),
           const SizedBox(height: AlhaiSpacing.xs),
@@ -524,8 +544,8 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.xxs),
               child: _buildSummaryRow(
-                '$label refund',
-                '-${refund.toStringAsFixed(2)} ${l10n.sar}',
+                l10n.refundLineLabel(label),
+                '-${CurrencyFormatter.formatWithContext(context, refund)}',
                 isDark,
                 color: AppColors.error,
               ),
@@ -536,7 +556,7 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'Total Refund',
+                l10n.totalRefund,
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
@@ -544,7 +564,7 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
                 ),
               ),
               Text(
-                '${total.toStringAsFixed(2)} ${l10n.sar}',
+                CurrencyFormatter.formatWithContext(context, total),
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 20,
@@ -564,14 +584,14 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
                   color: AppColors.error.withValues(alpha: 0.3),
                 ),
               ),
-              child: const Row(
+              child: Row(
                 children: [
-                  Icon(Icons.warning_rounded, size: 18, color: AppColors.error),
-                  SizedBox(width: AlhaiSpacing.xs),
+                  const Icon(Icons.warning_rounded, size: 18, color: AppColors.error),
+                  const SizedBox(width: AlhaiSpacing.xs),
                   Expanded(
                     child: Text(
-                      'Total refund exceeds original payment',
-                      style: TextStyle(
+                      l10n.refundAmountExceedsOriginal,
+                      style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.error,
                         fontWeight: FontWeight.w500,
@@ -668,21 +688,91 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
   }
 
   Future<void> _submitRefund(AppLocalizations l10n) async {
+    final order = _order;
+    if (order == null) return;
     setState(() => _isSubmitting = true);
     try {
-      await Future.delayed(const Duration(seconds: 1));
-
-      // Audit log
       final user = ref.read(currentUserProvider);
       final storeId = ref.read(currentStoreIdProvider);
-      if (storeId == null) return;
+      if (storeId == null) {
+        setState(() => _isSubmitting = false);
+        return;
+      }
+
+      // Build return-item rows from the original sale items so stock
+      // restocks correctly and the return record reconciles line-by-line.
+      // Refund is allocated pro-rata across items based on each item's
+      // share of the original sale total — covers partial refunds where
+      // the user typed less than the full amount.
+      final saleItems = await _db.saleItemsDao.getItemsBySaleId(order.id);
+      if (saleItems.isEmpty) {
+        if (mounted) {
+          AlhaiSnackbar.error(context, l10n.errorOccurred);
+          setState(() => _isSubmitting = false);
+        }
+        return;
+      }
+
+      final totalRefundSar = _totalRefund;
+      final originalTotalCents = saleItems.fold<int>(
+        0,
+        (sum, i) => sum + i.total,
+      );
+      final ratio = originalTotalCents > 0
+          ? (totalRefundSar * 100) / originalTotalCents
+          : 1.0;
+
+      final returnItems = saleItems.map((it) {
+        final lineRefundCents = (it.total * ratio).round();
+        return ReturnItemsTableCompanion(
+          productId: Value(it.productId),
+          productName: Value(it.productName),
+          qty: Value(it.qty),
+          unitPrice: Value(it.unitPrice),
+          refundAmount: Value(lineRefundCents),
+        );
+      }).toList();
+
+      // refundMethod = 'mixed' when more than one slice carries amount,
+      // otherwise the single slice's method. The per-method breakdown
+      // is stored in `notes` so accounting can reconcile the cash drawer
+      // and card processor against the recorded split.
+      final activeMethods = _methods
+          .where(
+            (m) => (double.tryParse(m.controller.text) ?? 0) > 0,
+          )
+          .toList();
+      final refundMethod = activeMethods.length > 1
+          ? 'mixed'
+          : (activeMethods.isNotEmpty
+                ? activeMethods.first.method
+                : order.paymentMethod);
+      final breakdown = activeMethods
+          .map(
+            (m) => '${m.method}=${m.controller.text}',
+          )
+          .join(', ');
+
+      await createReturn(
+        ref,
+        saleId: order.id,
+        customerId: order.customerId,
+        reason: 'split_refund',
+        totalRefund: totalRefundSar,
+        refundMethod: refundMethod,
+        notes: 'Split refund across: $breakdown',
+        createdBy: user?.id,
+        items: returnItems,
+      );
+
+      // Audit log (outside DB writes — non-transactional sink).
       auditService.logRefund(
         storeId: storeId,
         userId: user?.id ?? 'unknown',
         userName: user?.name ?? 'unknown',
         saleId: widget.orderId,
-        amount: _totalRefund,
-        reason: 'مرتجع مجزأ',
+        amount: totalRefundSar,
+        reason: 'split_refund:$breakdown',
       );
 
       addBreadcrumb(message: 'Refund processed', category: 'payment');
@@ -692,7 +782,7 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
         context,
         AppLocalizations.of(context).refundProcessedSuccess,
       );
-      context.pop();
+      context.pop(true);
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Submit split refund');
       if (!mounted) return;

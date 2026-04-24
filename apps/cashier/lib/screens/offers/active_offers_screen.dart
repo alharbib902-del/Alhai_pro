@@ -49,9 +49,18 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
       final discounts = await _db.discountsDao.getActiveDiscounts(storeId);
+      // P2: DAO returns every offer flagged active, including ones whose
+      // endDate has already passed (legacy rows that weren't deactivated
+      // on schedule). Filter them out client-side so the cashier never
+      // sees an expired "active" offer. A null endDate means the offer
+      // never expires and is kept.
+      final now = DateTime.now();
+      final fresh = discounts
+          .where((d) => d.endDate == null || d.endDate!.isAfter(now))
+          .toList();
       if (mounted) {
         setState(() {
-          _offers = discounts;
+          _offers = fresh;
           _isLoading = false;
         });
       }
@@ -469,12 +478,16 @@ class _ActiveOffersScreenState extends ConsumerState<ActiveOffersScreen> {
   }
 
   String _getDiscountValue(DiscountsTableData offer, AppLocalizations l10n) {
+    // discounts.value is int cents for fixed-amount offers (C-4 schema).
+    // For percentage offers it is a plain integer percentage (e.g. 15).
     if (offer.type == 'percentage') {
-      return '${offer.value.toStringAsFixed(0)}% Off';
+      return l10n.discountOff(offer.value.toString());
     } else if (offer.type == 'fixed') {
-      return '${offer.value.toStringAsFixed(0)} ${l10n.sar} Off';
+      return l10n.sarDiscountOff(
+        CurrencyFormatter.fromCents(offer.value, decimalDigits: 2),
+      );
     }
-    return offer.value.toStringAsFixed(0);
+    return '${offer.value}';
   }
 
   String _formatDate(DateTime date) => '${date.day}/${date.month}/${date.year}';

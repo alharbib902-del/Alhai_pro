@@ -27,10 +27,15 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_it/get_it.dart';
 import 'package:go_router/go_router.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_core/alhai_core.dart' show Product;
+import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
+import 'package:alhai_pos/alhai_pos.dart'
+    show PosCartItem, ZatcaComplianceException, saleServiceProvider;
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 
@@ -57,6 +62,20 @@ class CreateInvoiceScreen extends ConsumerStatefulWidget {
 class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
   bool _isSubmitting = false;
 
+  @override
+  void initState() {
+    super.initState();
+    // P2 #3: load the store's configured tax rate so the summary shows the
+    // correct VAT (may differ from 15% for non-SA or reduced-rate tenants).
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId != null) {
+        ref.read(invoiceDraftProvider.notifier).loadTaxRate(storeId);
+      }
+    });
+  }
+
   String _getDateSubtitle(AppLocalizations l10n) {
     final now = DateTime.now();
     return '${now.day}/${now.month}/${now.year} \u2022 ${l10n.mainBranch}';
@@ -66,62 +85,152 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
     final draft = ref.read(invoiceDraftProvider);
     if (!draft.canSubmit) return;
 
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) {
+      AlhaiSnackbar.error(context, l10n.errorOccurred);
+      return;
+    }
+    final user = ref.read(currentUserProvider);
+
     setState(() => _isSubmitting = true);
 
     try {
-      // Simulate saving invoice (unchanged from pre-3.4 behaviour).
-      //
-      // TODO(c-4/zatca): استدعاء `invoice_service.upsertInvoice` الفعلي هنا
-      // مع تحويل الأسعار SAR→cents. ارفع `ZatcaComplianceException` عند
-      // فشل توليد QR (Phase 1 fix) ومعالجته في catch block أدناه.
-      await Future.delayed(const Duration(seconds: 1));
+      // Drafts are not persisted yet (no invoices.is_draft column). Until
+      // the schema migration lands, surface the gap honestly instead of
+      // showing a fake "saved" toast.
+      if (isDraft) {
+        if (!mounted) return;
+        AlhaiSnackbar.warning(
+          context,
+          'حفظ المسودة غير متاح بعد — أنهِ الفاتورة لتسجيلها',
+        );
+        return;
+      }
 
-      // Audit log (only for finalized invoices)
-      if (!isDraft) {
-        final user = ref.read(currentUserProvider);
-        final storeId = ref.read(currentStoreIdProvider);
-        if (storeId == null) return;
-        auditService.logSaleCreate(
-          storeId: storeId,
-          userId: user?.id ?? 'unknown',
-          userName: user?.name ?? 'unknown',
-          saleId: 'invoice-${DateTime.now().millisecondsSinceEpoch}',
-          total: draft.total,
-          paymentMethod: 'credit',
+      // Resolve each draft item to a live Product row. The draft only
+      // carries productId + display price; SaleService.createSale needs
+      // the full Product domain object so it can revalidate stock and
+      // record cost-of-goods correctly.
+      final db = GetIt.I<AppDatabase>();
+      final cartItems = <PosCartItem>[];
+      for (final item in draft.items) {
+        final p = await db.productsDao.getProductById(item.productId);
+        if (p == null) {
+          throw StateError('المنتج "${item.productName}" لم يعد موجوداً');
+        }
+        final productModel = Product(
+          id: p.id,
+          storeId: p.storeId,
+          name: p.name,
+          sku: p.sku,
+          barcode: p.barcode,
+          price: p.price,
+          costPrice: p.costPrice,
+          stockQty: p.stockQty,
+          minQty: p.minQty,
+          unit: p.unit,
+          description: p.description,
+          imageThumbnail: p.imageThumbnail,
+          imageMedium: p.imageMedium,
+          imageLarge: p.imageLarge,
+          imageHash: p.imageHash,
+          categoryId: p.categoryId,
+          isActive: p.isActive,
+          trackInventory: p.trackInventory,
+          createdAt: p.createdAt,
+          updatedAt: p.updatedAt,
+        );
+        // Honor the price the cashier put on the draft (could differ
+        // from the catalog price for negotiated quotes).
+        cartItems.add(
+          PosCartItem(
+            product: productModel,
+            quantity: item.qty,
+            customPrice: item.price,
+          ),
         );
       }
 
+      // Credit invoice: customer owes the total, no cash collected upfront.
+      // SaleService internally creates the matching invoice row through
+      // InvoiceService (ZATCA QR + sync enqueue) — anything that fails
+      // there throws ZatcaComplianceException so we can route the user to
+      // the right remediation rather than swallow the error.
+      final saleService = ref.read(saleServiceProvider);
+      final result = await saleService.createSale(
+        storeId: storeId,
+        cashierId: user?.id ?? '',
+        items: cartItems,
+        subtotal: draft.subtotal,
+        discount: draft.discount,
+        tax: draft.tax,
+        total: draft.total,
+        paymentMethod: 'credit',
+        amountReceived: 0,
+        creditAmount: draft.total,
+        customerId: draft.selectedCustomer?.id,
+        customerName: draft.selectedCustomer?.name,
+        customerPhone: draft.selectedCustomer?.phone,
+        notes: draft.dueDate != null
+            ? 'Credit invoice — due ${draft.dueDate!.toIso8601String()}'
+            : null,
+      );
+
+      auditService.logSaleCreate(
+        storeId: storeId,
+        userId: user?.id ?? 'unknown',
+        userName: user?.name ?? 'unknown',
+        saleId: result.saleId,
+        total: draft.total,
+        paymentMethod: 'credit',
+      );
+
       addBreadcrumb(
-        message: isDraft ? 'Invoice saved as draft' : 'Invoice finalized',
+        message: 'Invoice finalized',
         category: 'sale',
         data: {
+          'saleId': result.saleId,
           'items': draft.items.length,
           'customer': draft.selectedCustomer?.name,
         },
       );
 
       if (!mounted) return;
-      // Phase 2 Feedback hooks — success.
       HapticShim.heavyImpact();
       SoundService.instance.saleSuccess();
-      AlhaiSnackbar.success(
-        context,
-        isDraft ? 'Invoice saved as draft' : 'Invoice finalized successfully',
-      );
+      AlhaiSnackbar.success(context, l10n.paymentSuccessful);
 
-      if (!isDraft) {
-        // Reset form via provider (single action instead of setState).
-        ref.read(invoiceDraftProvider.notifier).reset();
-      }
+      ref.read(invoiceDraftProvider.notifier).reset();
+    } on ZatcaComplianceException catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Save invoice (ZATCA)');
+      if (!mounted) return;
+      HapticShim.vibrate();
+      SoundService.instance.errorBuzz();
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          icon: const Icon(
+            Icons.error_outline,
+            color: AppColors.error,
+            size: 48,
+          ),
+          title: Text(l10n.error),
+          content: Text(
+            'فشل توليد رمز ZATCA QR — لم تُحفظ الفاتورة. تحقّق من بيانات المتجر (الاسم، رقم الضريبة) ثم أعد المحاولة.\n\n${e.message}',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(),
+              child: Text(l10n.close),
+            ),
+          ],
+        ),
+      );
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Save invoice');
       if (!mounted) return;
-      // Phase 2 Feedback hooks — failure.
       HapticShim.vibrate();
       SoundService.instance.errorBuzz();
-      // Note: when invoice_service integration lands, catch
-      // `ZatcaComplianceException` explicitly to show a dedicated dialog
-      // ("QR generation failed — invoice NOT saved").
       AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
     } finally {
       if (mounted) setState(() => _isSubmitting = false);
@@ -141,7 +250,7 @@ class _CreateInvoiceScreenState extends ConsumerState<CreateInvoiceScreen> {
     return Column(
       children: [
         AppHeader(
-          title: 'Create Invoice',
+          title: l10n.createInvoice,
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,

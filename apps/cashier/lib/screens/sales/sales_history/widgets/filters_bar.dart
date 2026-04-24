@@ -180,6 +180,9 @@ class _DateFilterChips extends ConsumerWidget {
                 firstDate: DateTime(2020),
                 lastDate: DateTime.now(),
                 initialDateRange: currentRange,
+                // P2-#5: honor the active app locale so month names render
+                // in Arabic when the UI is Arabic.
+                locale: Localizations.localeOf(context),
               );
               if (picked != null) {
                 await notifier.setCustomRange(picked);

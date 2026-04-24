@@ -45,7 +45,15 @@ class _CustomReportScreenState extends ConsumerState<CustomReportScreen> {
   Future<void> _generate() async {
     final storeId = ref.read(currentStoreIdProvider);
     final config = ref.read(reportConfigProvider);
-    if (storeId == null || config.dateRange == null) return;
+    final l10n = AppLocalizations.of(context);
+    // P1 #20 (2026-04-24): previously returned silently if dateRange was null,
+    // leaving the user wondering why the button did nothing. Surface a
+    // warning snackbar so the missing filter is clear.
+    if (storeId == null) return;
+    if (config.dateRange == null) {
+      AlhaiSnackbar.warning(context, l10n.selectDateRange);
+      return;
+    }
 
     setState(() => _status = _ResultState.loading);
 

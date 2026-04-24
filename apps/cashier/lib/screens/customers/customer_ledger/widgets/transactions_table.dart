@@ -182,7 +182,10 @@ class _LedgerTableRow extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Text(
-              debit > 0 ? debit.toStringAsFixed(2) : '-',
+              // P1 #13: use CurrencyFormatter for thousands separator.
+              debit > 0
+                  ? CurrencyFormatter.formatNumberWithContext(context, debit)
+                  : '-',
               textAlign: TextAlign.end,
               style: TextStyle(
                 fontSize: 13,
@@ -194,7 +197,9 @@ class _LedgerTableRow extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Text(
-              credit > 0 ? credit.toStringAsFixed(2) : '-',
+              credit > 0
+                  ? CurrencyFormatter.formatNumberWithContext(context, credit)
+                  : '-',
               textAlign: TextAlign.end,
               style: TextStyle(
                 fontSize: 13,
@@ -206,7 +211,7 @@ class _LedgerTableRow extends StatelessWidget {
           Expanded(
             flex: 2,
             child: Text(
-              balance.toStringAsFixed(2),
+              CurrencyFormatter.formatNumberWithContext(context, balance),
               textAlign: TextAlign.end,
               style: TextStyle(
                 fontSize: 13,

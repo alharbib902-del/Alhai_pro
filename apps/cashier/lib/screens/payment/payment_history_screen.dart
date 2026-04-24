@@ -35,6 +35,9 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
   bool _isLoading = true;
   String? _error;
   String _methodFilter = 'all';
+  // إظهار/إخفاء المبيعات غير المكتملة. الافتراضي completed-only حفاظاً
+  // على السلوك الأصلي؛ عندما يكون false نعرض كل الحالات.
+  bool _completedOnly = true;
 
   @override
   void initState() {
@@ -58,13 +61,13 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
       final orders = await _db.salesDao.getAllSales(storeId);
-      // Only completed orders
-      final completed = orders.where((o) => o.status == 'completed').toList();
-      completed.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+      // نحفظ كل المبيعات هنا؛ الفلترة (completed vs all) تجري في
+      // _applyFilters لكي يتبدّل بدون إعادة تحميل من القاعدة.
+      orders.sort((a, b) => b.createdAt.compareTo(a.createdAt));
 
       if (mounted) {
         setState(() {
-          _allOrders = completed;
+          _allOrders = orders;
           _isLoading = false;
         });
         _applyFilters();
@@ -84,6 +87,9 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
     final query = _searchController.text.toLowerCase().trim();
     setState(() {
       _filteredOrders = _allOrders.where((order) {
+        // Completed-only toggle.
+        if (_completedOnly && order.status != 'completed') return false;
+
         // Method filter
         bool passMethod = true;
         if (_methodFilter != 'all') {
@@ -93,10 +99,12 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
         // Search filter
         bool passSearch = true;
         if (query.isNotEmpty) {
+          // sales.total is int cents — convert before string match so a
+          // search for "46.00" hits the SAR amount the user sees.
           passSearch =
               order.id.toLowerCase().contains(query) ||
               (order.customerId?.toLowerCase().contains(query) ?? false) ||
-              order.total.toStringAsFixed(2).contains(query);
+              (order.total / 100.0).toStringAsFixed(2).contains(query);
         }
 
         return passMethod && passSearch;
@@ -124,7 +132,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
               ? null
               : () => Scaffold.of(context).openDrawer(),
           onNotificationsTap: () => context.push('/notifications'),
-          notificationsCount: 3,
+          notificationsCount: ref.watch(unreadNotificationsCountProvider),
           userName: user?.name ?? l10n.cashCustomer,
           userRole: l10n.branchManager,
           onUserTap: () {},
@@ -148,6 +156,8 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
                         children: [
                           _buildSearchBar(isDark, l10n),
                           const SizedBox(height: AlhaiSpacing.sm),
+                          _buildCompletedToggle(isDark, l10n),
+                          const SizedBox(height: AlhaiSpacing.xs),
                           _buildMethodFilters(isDark, l10n),
                         ],
                       ),
@@ -230,6 +240,32 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
           vertical: 14,
         ),
       ),
+    );
+  }
+
+  Widget _buildCompletedToggle(bool isDark, AppLocalizations l10n) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded(
+          child: Text(
+            _completedOnly
+                ? l10n.filterCompletedOnlyDesc
+                : l10n.filterCompletedOnly,
+            style: TextStyle(
+              fontSize: 12,
+              color: AppColors.getTextSecondary(isDark),
+            ),
+          ),
+        ),
+        Switch.adaptive(
+          value: _completedOnly,
+          onChanged: (v) {
+            setState(() => _completedOnly = v);
+            _applyFilters();
+          },
+        ),
+      ],
     );
   }
 
@@ -334,9 +370,11 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
   }
 
   Widget _buildSummaryStats(bool isDark, AppLocalizations l10n) {
+    // sales.total is int cents — divide at fold boundary so the SAR
+    // accumulator does not display 100×.
     final totalAmount = _filteredOrders.fold<double>(
       0,
-      (sum, o) => sum + o.total,
+      (sum, o) => sum + o.total / 100.0,
     );
     final count = _filteredOrders.length;
 
@@ -384,7 +422,10 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
                 ),
                 const SizedBox(height: AlhaiSpacing.xxs),
                 Text(
-                  '${totalAmount.toStringAsFixed(0)} ${l10n.sar}',
+                  CurrencyFormatter.formatCompactWithContext(
+                    context,
+                    totalAmount,
+                  ),
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,

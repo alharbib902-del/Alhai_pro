@@ -5,6 +5,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
@@ -86,7 +87,8 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
     return Column(
       children: [
         AppHeader(
-          title: 'Print Barcode',
+          // P2 #16 (2026-04-24): hardcoded English replaced with Arabic.
+          title: 'طباعة الباركود',
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
@@ -268,22 +270,26 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              SizedBox(
-                height: 56,
-                child: FilledButton.icon(
-                  onPressed: () {
-                    AlhaiSnackbar.info(
-                      context,
-                      AppLocalizations.of(context).enterBarcodeManually,
-                    );
-                  },
-                  icon: const Icon(Icons.qr_code_scanner_rounded, size: 20),
-                  label: Text(l10n.scan),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.info,
-                    foregroundColor: AppColors.textOnPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              // P1 #17 (2026-04-24): the previous "مسح" button only surfaced
+                  // a snackbar asking the user to type the barcode manually —
+                  // effectively a no-op. Disabled the button and wrapped it in
+                  // a Tooltip so the "coming soon" state is explicit rather
+                  // than deceptive. Re-enable when the camera/scanner
+                  // integration lands.
+              Tooltip(
+                message: '${l10n.comingSoon} — ${l10n.scan}',
+                child: SizedBox(
+                  height: 56,
+                  child: FilledButton.icon(
+                    onPressed: null,
+                    icon: const Icon(Icons.qr_code_scanner_rounded, size: 20),
+                    label: Text(l10n.scan),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.info,
+                      foregroundColor: AppColors.textOnPrimary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 ),
@@ -417,8 +423,9 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
+              // P2 #16 (2026-04-24): hardcoded English replaced with Arabic.
               Text(
-                'Barcode Preview',
+                'معاينة الباركود',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -451,6 +458,22 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
               ),
             )
           else ...[
+            // P1 #18 (2026-04-24): the barcode visualization below is a
+            // decorative stripe pattern (`i % 4 == 0`), NOT a real EAN-13
+            // encoding of the product's barcode. Stamp a caption so users
+            // don't mistake the on-screen graphic for the eventual print
+            // output. When PrinterService lands and the preview is rendered
+            // from a real barcode generator (e.g. zebra_pdf or sunmi_barcode)
+            // this caption can be removed.
+            Text(
+              'معاينة توضيحية فقط',
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w500,
+                color: AppColors.getTextMuted(isDark),
+              ),
+            ),
+            const SizedBox(height: AlhaiSpacing.xs),
             // Barcode visualization - paper preview (stays white/black in both
             // themes to mimic printed output)
             Container(
@@ -531,8 +554,10 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                     color: AppColors.getTextMuted(isDark),
                   ),
                   const SizedBox(width: AlhaiSpacing.xs),
+                  // P2 #16 (2026-04-24): format label — "EAN-13" stays as
+                  // the technical identifier, preceded by Arabic prefix.
                   Text(
-                    'Format: EAN-13',
+                    'الصيغة: EAN-13',
                     style: TextStyle(
                       fontSize: 12,
                       color: AppColors.getTextSecondary(isDark),
@@ -573,8 +598,9 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
+              // P2 #16 (2026-04-24): hardcoded English replaced with Arabic.
               Text(
-                'Label Quantity',
+                'عدد الملصقات',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -587,6 +613,11 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
           TextField(
             controller: _quantityController,
             keyboardType: TextInputType.number,
+            // P1 #16 (2026-04-24): only digits allowed; matches the 1-500
+            // clamp enforced at print time.
+            inputFormatters: [
+              FilteringTextInputFormatter.digitsOnly,
+            ],
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
@@ -706,15 +737,30 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
     final l10n = AppLocalizations.of(context);
     final qty = int.tryParse(_quantityController.text) ?? 1;
 
+    // P1 #16 (2026-04-24): hardening for the stub implementation.
+    //  - Reject 0/negative qty (the FAB was otherwise bypassable via keyboard).
+    //  - Cap at 500 to keep UI responsive when the real printer lands — any
+    //    larger job should go through a background queue, not this screen.
+    if (qty <= 0) {
+      AlhaiSnackbar.warning(context, 'الكمية يجب أن تكون أكبر من صفر');
+      return;
+    }
+    if (qty > 500) {
+      AlhaiSnackbar.warning(context, 'الحد الأقصى 500 ملصق في عملية واحدة');
+      return;
+    }
+
     setState(() => _isPrinting = true);
 
     try {
-      // Simulate print operation
-      await Future.delayed(const Duration(seconds: 1));
+      // P1 #16 (2026-04-24): no real PrinterService integration yet. Surface
+      // an explicit "coming soon" message so the user isn't misled by a
+      // success snackbar that used to fire after a fake `Future.delayed(1s)`.
+      await Future<void>.delayed(const Duration(milliseconds: 200));
 
       if (!mounted) return;
 
-      AlhaiSnackbar.success(context, l10n.printJobSentForLabels(qty));
+      AlhaiSnackbar.info(context, '${l10n.comingSoon} — طباعة الباركود');
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Print barcode labels');
       if (!mounted) return;

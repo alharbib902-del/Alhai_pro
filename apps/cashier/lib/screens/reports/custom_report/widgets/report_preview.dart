@@ -276,9 +276,21 @@ class _ResultsTable extends StatelessWidget {
             final label = row['label'] as String? ?? '';
             final value = row['value'] as double? ?? 0;
             final rawCount = row['count'];
-            final count = rawCount is int
-                ? rawCount
-                : (rawCount is double ? rawCount.toInt() : 0);
+            // P1 #4 (2026-04-24): inventory report rolls up `stock_qty` which
+            // may be fractional (0.75 kg for weighed goods). Preserve two
+            // decimals when the value isn't a whole number; show integer-only
+            // otherwise so sales/customers (always int) keep their clean display.
+            final String countLabel;
+            if (rawCount is int) {
+              countLabel = '$rawCount';
+            } else if (rawCount is double) {
+              final isWhole = rawCount == rawCount.roundToDouble();
+              countLabel = isWhole
+                  ? rawCount.toInt().toString()
+                  : rawCount.toStringAsFixed(2);
+            } else {
+              countLabel = '0';
+            }
             final percentage = totalValue > 0
                 ? (value / totalValue * 100).toStringAsFixed(1)
                 : '0.0';
@@ -321,7 +333,7 @@ class _ResultsTable extends StatelessWidget {
                   Expanded(
                     flex: 2,
                     child: Text(
-                      '$count',
+                      countLabel,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 13,
@@ -332,7 +344,12 @@ class _ResultsTable extends StatelessWidget {
                   Expanded(
                     flex: 3,
                     child: Text(
-                      '${value.toStringAsFixed(0)} ${l10n.sar}',
+                      // P2 #5 (2026-04-24): previously `toStringAsFixed(0)`
+                      // hid halalas (fractional SAR), understating totals on
+                      // weighed inventory (e.g. 12.75 kg × 5.50 SAR = 70.13).
+                      // `CurrencyFormatter.formatWithContext` keeps 2 decimals
+                      // and respects locale (Arabic numerals in ar).
+                      CurrencyFormatter.formatWithContext(context, value),
                       textAlign: TextAlign.end,
                       style: TextStyle(
                         fontSize: 13,

@@ -3,9 +3,20 @@
 /// Minimal form: name, barcode (scan), price, category, quantity.
 /// Saves to productsDao for fast cashier entry.
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
+///
+/// State model:
+/// - Business state → [QuickAddProductState] via [_quickAddProductProvider]
+///   (categories list, loading flag, saving flag, dirty flag, error, selected
+///   categoryId). Immutable `copyWith` updates replace the historic
+///   `setState` cascade.
+/// - Pure UI transient state → local `TextEditingController` values only
+///   (no setState needed to rebuild; controllers already notify listeners
+///   bound through `ValueListenableBuilder` where a visual chip highlight
+///   must follow the typed value).
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
@@ -19,6 +30,96 @@ import 'package:alhai_design_system/alhai_design_system.dart'
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
+
+// ============================================================================
+// State
+// ============================================================================
+
+/// Immutable state for the Quick-Add-Product form.
+@immutable
+class QuickAddProductState {
+  final List<CategoriesTableData> categories;
+  final String? selectedCategoryId;
+  final bool isLoading;
+  final bool isSaving;
+  final bool isDirty;
+  final String? error;
+
+  const QuickAddProductState({
+    this.categories = const [],
+    this.selectedCategoryId,
+    // Defaults to loading=true so the first frame shows the spinner while
+    // `_loadCategories()` runs via addPostFrameCallback. Matches the pre-
+    // refactor behaviour where setState(isLoading=true) fired synchronously
+    // in initState (see `shows loading indicator while loading categories`).
+    this.isLoading = true,
+    this.isSaving = false,
+    this.isDirty = false,
+    this.error,
+  });
+
+  QuickAddProductState copyWith({
+    List<CategoriesTableData>? categories,
+    String? selectedCategoryId,
+    bool clearCategoryId = false,
+    bool? isLoading,
+    bool? isSaving,
+    bool? isDirty,
+    String? error,
+    bool clearError = false,
+  }) => QuickAddProductState(
+    categories: categories ?? this.categories,
+    selectedCategoryId: clearCategoryId
+        ? null
+        : (selectedCategoryId ?? this.selectedCategoryId),
+    isLoading: isLoading ?? this.isLoading,
+    isSaving: isSaving ?? this.isSaving,
+    isDirty: isDirty ?? this.isDirty,
+    error: clearError ? null : (error ?? this.error),
+  );
+}
+
+class QuickAddProductNotifier extends StateNotifier<QuickAddProductState> {
+  QuickAddProductNotifier() : super(const QuickAddProductState());
+
+  void setCategories(List<CategoriesTableData> categories) =>
+      state = state.copyWith(categories: categories);
+
+  void selectCategory(String? id) => state = id == null
+      ? state.copyWith(clearCategoryId: true, isDirty: true)
+      : state.copyWith(selectedCategoryId: id, isDirty: true);
+
+  void markDirty() {
+    if (!state.isDirty) state = state.copyWith(isDirty: true);
+  }
+
+  void setLoading(bool loading) {
+    state = state.copyWith(isLoading: loading, clearError: loading);
+  }
+
+  void setError(String err) =>
+      state = state.copyWith(isLoading: false, error: err);
+
+  void setSaving(bool saving) => state = state.copyWith(isSaving: saving);
+
+  /// Reset after a successful save — keeps categories so the next product
+  /// entry doesn't re-fetch. Clears category selection + dirty flag.
+  void resetAfterSave() => state = state.copyWith(
+    clearCategoryId: true,
+    isDirty: false,
+    isSaving: false,
+  );
+}
+
+final _quickAddProductProvider =
+    StateNotifierProvider.autoDispose<
+      QuickAddProductNotifier,
+      QuickAddProductState
+    >((ref) => QuickAddProductNotifier());
+
+// ============================================================================
+// Screen
+// ============================================================================
 
 /// شاشة إضافة منتج سريع
 class QuickAddProductScreen extends ConsumerStatefulWidget {
@@ -43,17 +144,10 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
   final _priceFocus = FocusNode();
   final _quantityFocus = FocusNode();
 
-  List<CategoriesTableData> _categories = [];
-  String? _selectedCategoryId;
-  bool _isLoading = false;
-  bool _isSaving = false;
-  bool _isDirty = false; // M65: unsaved changes tracking
-  String? _error;
-
   @override
   void initState() {
     super.initState();
-    _loadCategories();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _loadCategories());
   }
 
   @override
@@ -70,34 +164,31 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
   }
 
   Future<void> _loadCategories() async {
-    setState(() {
-      _isLoading = true;
-      _error = null;
-    });
+    final notifier = ref.read(_quickAddProductProvider.notifier);
+    notifier.setLoading(true);
     try {
       final storeId = ref.read(currentStoreIdProvider);
-      if (storeId == null) return;
-      final categories = await _db.categoriesDao.getAllCategories(storeId);
-      if (mounted) {
-        setState(() {
-          _categories = categories;
-          _isLoading = false;
-        });
+      if (storeId == null) {
+        notifier.setLoading(false);
+        return;
       }
+      final categories = await _db.categoriesDao.getAllCategories(storeId);
+      if (!mounted) return;
+      notifier.setCategories(categories);
+      notifier.setLoading(false);
     } catch (e, stack) {
       reportError(
         e,
         stackTrace: stack,
         hint: 'Load categories for quick add product',
       );
-      if (mounted) {
-        setState(() {
-          _error = '$e';
-          _isLoading = false;
-        });
-      }
+      if (!mounted) return;
+      notifier.setError('$e');
     }
   }
+
+  void _markDirtyIfNeeded() =>
+      ref.read(_quickAddProductProvider.notifier).markDirty();
 
   @override
   Widget build(BuildContext context) {
@@ -107,9 +198,10 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
+    final s = ref.watch(_quickAddProductProvider);
 
     return PopScope(
-      canPop: !_isDirty,
+      canPop: !s.isDirty,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         final shouldPop = await showDialog<bool>(
@@ -137,7 +229,10 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
       child: Column(
         children: [
           AppHeader(
-            title: 'Quick Add Product',
+            // P2 #12 (2026-04-24): hardcoded English replaced with Arabic;
+            // no dedicated l10n key exists yet and the Saudi market default
+            // is Arabic.
+            title: 'إضافة منتج سريعة',
             subtitle: _getDateSubtitle(l10n),
             showSearch: false,
             searchHint: l10n.searchPlaceholder,
@@ -151,12 +246,12 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
             onUserTap: () {},
           ),
           Expanded(
-            child: _isLoading
+            child: s.isLoading
                 ? const AppLoadingState()
-                : _error != null
+                : s.error != null
                 ? AppErrorState.general(
                     context,
-                    message: _error!,
+                    message: s.error!,
                     onRetry: _loadCategories,
                   )
                 : SingleChildScrollView(
@@ -171,6 +266,7 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
                           isMediumScreen,
                           isDark,
                           l10n,
+                          s,
                         ),
                       ),
                     ),
@@ -191,6 +287,7 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
     bool isMediumScreen,
     bool isDark,
     AppLocalizations l10n,
+    QuickAddProductState s,
   ) {
     if (isWideScreen) {
       return Form(
@@ -202,7 +299,7 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
               flex: 3,
               child: Column(
                 children: [
-                  _buildBasicInfoCard(isDark, l10n),
+                  _buildBasicInfoCard(isDark, l10n, s),
                   const SizedBox(height: AlhaiSpacing.lg),
                   _buildBarcodeCard(isDark, l10n),
                 ],
@@ -215,7 +312,7 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
                 children: [
                   _buildPricingCard(isDark, l10n),
                   const SizedBox(height: AlhaiSpacing.lg),
-                  _buildSaveButton(isDark, l10n),
+                  _buildSaveButton(isDark, l10n, s),
                 ],
               ),
             ),
@@ -229,19 +326,23 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _buildBasicInfoCard(isDark, l10n),
+          _buildBasicInfoCard(isDark, l10n, s),
           SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           _buildBarcodeCard(isDark, l10n),
           SizedBox(height: isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md),
           _buildPricingCard(isDark, l10n),
           const SizedBox(height: AlhaiSpacing.lg),
-          _buildSaveButton(isDark, l10n),
+          _buildSaveButton(isDark, l10n, s),
         ],
       ),
     );
   }
 
-  Widget _buildBasicInfoCard(bool isDark, AppLocalizations l10n) {
+  Widget _buildBasicInfoCard(
+    bool isDark,
+    AppLocalizations l10n,
+    QuickAddProductState s,
+  ) {
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -267,8 +368,9 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
+              // P2 #12 (2026-04-24): hardcoded English replaced with Arabic.
               Text(
-                'Product Info',
+                'معلومات المنتج',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -284,9 +386,7 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
             focusNode: _nameFocus,
             textInputAction: TextInputAction.next,
             onFieldSubmitted: (_) => _barcodeFocus.requestFocus(),
-            onChanged: (_) {
-              if (!_isDirty) setState(() => _isDirty = true);
-            },
+            onChanged: (_) => _markDirtyIfNeeded(),
             style: TextStyle(color: AppColors.getTextPrimary(isDark)),
             maxLength: 200,
             validator: FormValidators.requiredField(
@@ -300,22 +400,30 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.md),
           // Category dropdown
+          // P2 #12/#13 (2026-04-24): hardcoded hint replaced with Arabic and
+          // validator added so the user is forced to pick a category before
+          // saving — previously a null `selectedCategoryId` silently landed
+          // in `categoryId` and was rolled up under 'uncategorized' in the
+          // inventory report.
           DropdownButtonFormField<String>(
-            initialValue: _selectedCategoryId,
+            initialValue: s.selectedCategoryId,
             style: TextStyle(color: AppColors.getTextPrimary(isDark)),
             dropdownColor: AppColors.getSurface(isDark),
             decoration: _inputDecoration(
-              'Category',
+              'الفئة',
               Icons.category_rounded,
               isDark,
             ),
-            items: _categories.map((cat) {
+            items: s.categories.map((cat) {
               return DropdownMenuItem<String>(
                 value: cat.id,
                 child: Text(cat.name),
               );
             }).toList(),
-            onChanged: (v) => setState(() => _selectedCategoryId = v),
+            onChanged: (v) =>
+                ref.read(_quickAddProductProvider.notifier).selectCategory(v),
+            validator: (v) =>
+                (v == null || v.isEmpty) ? 'يرجى اختيار فئة' : null,
           ),
         ],
       ),
@@ -367,9 +475,7 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
                   focusNode: _barcodeFocus,
                   textInputAction: TextInputAction.next,
                   onFieldSubmitted: (_) => _priceFocus.requestFocus(),
-                  onChanged: (_) {
-                    if (!_isDirty) setState(() => _isDirty = true);
-                  },
+                  onChanged: (_) => _markDirtyIfNeeded(),
                   style: TextStyle(color: AppColors.getTextPrimary(isDark)),
                   validator: FormValidators.barcode(required: false),
                   decoration: _inputDecoration(
@@ -380,17 +486,25 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
-              SizedBox(
-                height: 56,
-                child: FilledButton.icon(
-                  onPressed: _scanBarcode,
-                  icon: const Icon(Icons.camera_alt_rounded, size: 20),
-                  label: Text(l10n.scan),
-                  style: FilledButton.styleFrom(
-                    backgroundColor: AppColors.info,
-                    foregroundColor: AppColors.textOnPrimary,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+              // P2 #11 (2026-04-24): barcode camera scan is still a
+              // placeholder (no plugin wiring). Disable the button and add a
+              // tooltip so cashiers can immediately see the feature is
+              // pending rather than tapping and dismissing a transient
+              // snackbar. Manual entry remains via the barcode text field.
+              Tooltip(
+                message: '${l10n.comingSoon} \u2014 مسح الباركود',
+                child: SizedBox(
+                  height: 56,
+                  child: FilledButton.icon(
+                    onPressed: null,
+                    icon: const Icon(Icons.camera_alt_rounded, size: 20),
+                    label: Text(l10n.scan),
+                    style: FilledButton.styleFrom(
+                      backgroundColor: AppColors.info,
+                      foregroundColor: AppColors.textOnPrimary,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 ),
@@ -428,8 +542,9 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
+              // P2 #12 (2026-04-24): hardcoded English replaced with Arabic.
               Text(
-                'Pricing Info',
+                'معلومات التسعير',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -445,16 +560,27 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
             focusNode: _priceFocus,
             textInputAction: TextInputAction.next,
             onFieldSubmitted: (_) => _quantityFocus.requestFocus(),
-            onChanged: (_) {
-              if (!_isDirty) setState(() => _isDirty = true);
-            },
-            keyboardType: TextInputType.number,
+            onChanged: (_) => _markDirtyIfNeeded(),
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            // P1 #14 (2026-04-24): constrain to decimal + 2 fractional digits
+            // so the user can't paste arbitrary text. Mirrors edit_price_screen.
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'^\d*(?:\.\d{0,2})?'),
+              ),
+            ],
             style: TextStyle(
               fontSize: 22,
               fontWeight: FontWeight.bold,
               color: AppColors.getTextPrimary(isDark),
             ),
-            validator: FormValidators.price(required: true, allowZero: false),
+            // P1 #14: 100M SAR cap — FormValidators.price supports maxValue,
+            // rejecting ridiculous amounts before they hit the DAO.
+            validator: FormValidators.price(
+              required: true,
+              allowZero: false,
+              maxValue: 100000000,
+            ),
             decoration: InputDecoration(
               hintText: '0.00',
               hintStyle: TextStyle(
@@ -495,82 +621,94 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
             ),
           ),
           const SizedBox(height: AlhaiSpacing.md),
-          // Quantity
-          TextFormField(
-            controller: _quantityController,
-            focusNode: _quantityFocus,
-            textInputAction: TextInputAction.done,
-            onChanged: (_) {
-              if (!_isDirty) setState(() => _isDirty = true);
-            },
-            keyboardType: TextInputType.number,
-            style: TextStyle(color: AppColors.getTextPrimary(isDark)),
-            validator: FormValidators.quantity(
-              required: true,
-              allowZero: false,
-            ),
-            decoration: _inputDecoration(
-              l10n.quantity,
-              Icons.numbers_rounded,
-              isDark,
-            ),
-          ),
-          const SizedBox(height: AlhaiSpacing.md),
-          // Quick quantity chips
-          Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [1, 5, 10, 25, 50, 100].map((qty) {
-              final isSelected = _quantityController.text == qty.toString();
-              return Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () {
-                    _quantityController.text = qty.toString();
-                    setState(() {});
-                  },
-                  borderRadius: BorderRadius.circular(10),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 14,
-                      vertical: AlhaiSpacing.xs,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isSelected
-                          ? AppColors.primary.withValues(alpha: 0.1)
-                          : AppColors.getSurfaceVariant(isDark),
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                        color: isSelected
-                            ? AppColors.primary.withValues(alpha: 0.5)
-                            : AppColors.getBorder(isDark),
-                      ),
-                    ),
-                    child: Text(
-                      '$qty',
-                      style: TextStyle(
-                        fontWeight: FontWeight.w600,
-                        color: isSelected
-                            ? AppColors.primary
-                            : AppColors.getTextSecondary(isDark),
-                      ),
-                    ),
+          // Quantity — wrapped in ValueListenableBuilder so the chip highlight
+          // below reacts to text changes without a setState rebuild.
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: _quantityController,
+            builder: (_, __, ___) => Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                TextFormField(
+                  controller: _quantityController,
+                  focusNode: _quantityFocus,
+                  textInputAction: TextInputAction.done,
+                  onChanged: (_) => _markDirtyIfNeeded(),
+                  keyboardType: TextInputType.number,
+                  style: TextStyle(color: AppColors.getTextPrimary(isDark)),
+                  validator: FormValidators.quantity(
+                    required: true,
+                    allowZero: false,
+                  ),
+                  decoration: _inputDecoration(
+                    l10n.quantity,
+                    Icons.numbers_rounded,
+                    isDark,
                   ),
                 ),
-              );
-            }).toList(),
+                const SizedBox(height: AlhaiSpacing.md),
+                // Quick quantity chips
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [1, 5, 10, 25, 50, 100].map((qty) {
+                    final isSelected =
+                        _quantityController.text == qty.toString();
+                    return Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () {
+                          _quantityController.text = qty.toString();
+                          _markDirtyIfNeeded();
+                        },
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: AlhaiSpacing.xs,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected
+                                ? AppColors.primary.withValues(alpha: 0.1)
+                                : AppColors.getSurfaceVariant(isDark),
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: isSelected
+                                  ? AppColors.primary.withValues(alpha: 0.5)
+                                  : AppColors.getBorder(isDark),
+                            ),
+                          ),
+                          child: Text(
+                            '$qty',
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              color: isSelected
+                                  ? AppColors.primary
+                                  : AppColors.getTextSecondary(isDark),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ],
+            ),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSaveButton(bool isDark, AppLocalizations l10n) {
+  Widget _buildSaveButton(
+    bool isDark,
+    AppLocalizations l10n,
+    QuickAddProductState s,
+  ) {
     return SizedBox(
       width: double.infinity,
       child: FilledButton.icon(
-        onPressed: _isSaving ? null : _saveProduct,
-        icon: _isSaving
+        onPressed: s.isSaving ? null : _saveProduct,
+        icon: s.isSaving
             ? const SizedBox(
                 width: 20,
                 height: 20,
@@ -622,16 +760,15 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
     );
   }
 
-  void _scanBarcode() {
-    // Barcode scanning placeholder - will use camera/scanner
-    final l10n = AppLocalizations.of(context);
-    AlhaiSnackbar.info(context, l10n.enterBarcodeManually);
-  }
+  // P2 #11 (2026-04-24): `_scanBarcode` is retired — the "scan" button is
+  // disabled with a "coming soon" tooltip until the camera plugin is wired
+  // up. Removing the method silences an `unused_element` analyzer warning.
 
   Future<void> _saveProduct() async {
     if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _isSaving = true);
+    final notifier = ref.read(_quickAddProductProvider.notifier);
+    notifier.setSaving(true);
     final l10n = AppLocalizations.of(context);
 
     try {
@@ -657,6 +794,26 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
       final sanitizedBarcode = InputSanitizer.sanitize(
         _barcodeController.text.trim(),
       );
+      final selectedCategoryId = ref
+          .read(_quickAddProductProvider)
+          .selectedCategoryId;
+
+      // P1 #13 (2026-04-24): reject duplicate barcodes before INSERT. Without
+      // this check we could wind up with two products sharing a barcode which
+      // breaks scanner-based POS (`quickFindByBarcode` returns a single row).
+      // Only runs when a non-empty barcode was entered.
+      if (sanitizedBarcode.isNotEmpty) {
+        final existing = await _db.productsDao.getProductByBarcode(
+          sanitizedBarcode,
+          storeId,
+        );
+        if (existing != null) {
+          if (!mounted) return;
+          AlhaiSnackbar.warning(context, 'باركود مكرر');
+          notifier.setSaving(false);
+          return;
+        }
+      }
 
       await _db.productsDao.insertProduct(
         ProductsTableCompanion.insert(
@@ -665,7 +822,7 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
           name: sanitizedName,
           price: price,
           barcode: Value(sanitizedBarcode.isNotEmpty ? sanitizedBarcode : null),
-          categoryId: Value(_selectedCategoryId),
+          categoryId: Value(selectedCategoryId),
           stockQty: Value(quantity.toDouble()),
           createdAt: DateTime.now(),
           updatedAt: Value(DateTime.now()),
@@ -692,16 +849,12 @@ class _QuickAddProductScreenState extends ConsumerState<QuickAddProductScreen> {
       _barcodeController.clear();
       _priceController.clear();
       _quantityController.text = '1';
-      setState(() {
-        _selectedCategoryId = null;
-        _isDirty = false;
-      });
+      notifier.resetAfterSave();
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Save quick add product');
       if (!mounted) return;
       AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
-    } finally {
-      if (mounted) setState(() => _isSaving = false);
+      notifier.setSaving(false);
     }
   }
 }

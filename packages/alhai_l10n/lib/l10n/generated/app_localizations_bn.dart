@@ -4301,6 +4301,12 @@ class AppLocalizationsBn extends AppLocalizations {
   String get keyboardShortcuts => 'Keyboard Shortcuts';
 
   @override
+  String get animationsToggle => 'অ্যানিমেশন';
+
+  @override
+  String get animationsToggleDesc => 'মসৃণ স্ক্রিন ট্রানজিশন';
+
+  @override
   String get customizeShortcuts => 'Customize shortcuts';
 
   @override
@@ -14124,4 +14130,59 @@ class AppLocalizationsBn extends AppLocalizations {
 
   @override
   String get saMfaEnrollmentNoData => 'لم ترجع عملية تسجيل TOTP أي بيانات.';
+
+  @override
+  String get exchangeTitle => 'استبدال';
+
+  @override
+  String get itemsToReturn => 'عناصر للإرجاع';
+
+  @override
+  String get newItemsToAdd => 'عناصر جديدة للإضافة';
+
+  @override
+  String get exchangeRequiresNewItem =>
+      'الاستبدال يتطلب إضافة عنصر جديد واحد على الأقل. للاسترداد البحت، استخدم شاشة المرتجعات التي تربط الاسترداد بفاتورة البيع الأصلية.';
+
+  @override
+  String get splitReceiptTitle => 'إيصال الدفع المجزأ';
+
+  @override
+  String get paymentBreakdown => 'تفاصيل الدفع';
+
+  @override
+  String get zatcaQrTitle => 'رمز QR للفوترة الإلكترونية';
+
+  @override
+  String get splitRefundTitle => 'استرداد مجزأ';
+
+  @override
+  String get refundByPaymentMethod => 'الاسترداد حسب طريقة الدفع';
+
+  @override
+  String get exceedsOriginalAmount => 'المبلغ يتجاوز الأصلي';
+
+  @override
+  String get refundSummary => 'ملخص الاسترداد';
+
+  @override
+  String get originalTotal => 'الإجمالي الأصلي';
+
+  @override
+  String refundLineLabel(String method) {
+    return 'استرداد $method';
+  }
+
+  @override
+  String get refundAmountExceedsOriginal =>
+      'المبلغ المسترد يتجاوز المبلغ الأصلي';
+
+  @override
+  String get filterCompletedOnly => 'المكتملة فقط';
+
+  @override
+  String get filterCompletedOnlyDesc => 'المبيعات غير المكتملة مخفية';
+
+  @override
+  String get pullToRefresh => 'اسحب للتحديث';
 }

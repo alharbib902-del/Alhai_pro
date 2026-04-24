@@ -344,39 +344,52 @@ class _PaymentDetails extends StatelessWidget {
       );
     }
 
-    // مختلط — استخدم الأعمدة الجديدة إن وجدت.
-    if (order.cashAmount != null ||
-        order.cardAmount != null ||
-        order.creditAmount != null) {
+    // مختلط — استخدم الأعمدة الجديدة عند وجود قيمة موجبة واحدة على الأقل.
+    // الفحص الصريح لـ cashAmount/cardAmount/creditAmount يمنع fallback
+    // خاطئ (double-debit) عند مبيعات mixed حديثة كل قيمها 0 من خطأ مستخدم.
+    final cashCents = order.cashAmount ?? 0;
+    final cardCents = order.cardAmount ?? 0;
+    final creditCents = order.creditAmount ?? 0;
+    final hasExplicitSplits =
+        cashCents > 0 || cardCents > 0 || creditCents > 0;
+    if (hasExplicitSplits) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
-          if ((order.cashAmount ?? 0) > 0)
+          if (cashCents > 0)
             _SplitAmountLine(
               icon: Icons.payments_outlined,
               color: AppColors.success,
-              amountCents: order.cashAmount!,
+              amountCents: cashCents,
             ),
-          if ((order.cardAmount ?? 0) > 0)
+          if (cardCents > 0)
             _SplitAmountLine(
               icon: Icons.credit_card_rounded,
               color: AppColors.info,
-              amountCents: order.cardAmount!,
+              amountCents: cardCents,
             ),
-          if ((order.creditAmount ?? 0) > 0)
+          if (creditCents > 0)
             _SplitAmountLine(
               icon: Icons.account_balance_wallet_outlined,
               color: AppColors.warning,
-              amountCents: order.creditAmount!,
+              amountCents: creditCents,
             ),
         ],
       );
     }
 
-    // Fallback للمبيعات القديمة مع amountReceived فقط.
+    // Fallback للمبيعات القديمة مع amountReceived فقط (legacy rows).
+    // تشديد: لا نفترض "card" للمتبقي إلا عندما تكون isPaid=true AND
+    // amountReceived < total (بيع مختلط قديم). إذا كانت isPaid=true
+    // و amountReceived == total، لا يوجد متبقٍ — نعرض سطر cash واحد.
+    // إذا كانت isPaid=false، المتبقي credit (ديون).
     if (order.amountReceived != null && order.amountReceived! > 0) {
       final paidCents = order.amountReceived!;
       final remainingCents = totalCents - paidCents;
+      // Guard: إذا كانت isPaid=true لكن amountReceived أقل من total،
+      // افترِض أن الفارق legacy rounding (< ريال واحد) ولا تُظهر سطر
+      // card مزدوج. وإلا فهو mixed قديم فعلي.
+      final isMixedLegacy = remainingCents > 100; // > ريال واحد
       final isCredit = !order.isPaid && remainingCents > 0;
       return Column(
         crossAxisAlignment: CrossAxisAlignment.end,
@@ -386,7 +399,7 @@ class _PaymentDetails extends StatelessWidget {
             color: AppColors.success,
             amountCents: paidCents,
           ),
-          if (remainingCents > 0)
+          if (remainingCents > 0 && (isCredit || isMixedLegacy))
             _SplitAmountLine(
               icon: isCredit
                   ? Icons.account_balance_wallet_outlined

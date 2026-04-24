@@ -837,9 +837,19 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
         ),
         FilledButton(
           onPressed: () {
-            // Only require form validation if there's a discrepancy.
-            if (hasDiscrepancy && !(formKey.currentState?.validate() ?? false)) {
-              return;
+            // P2-#10: Only require form validation if there's a discrepancy.
+            // Guard with try/catch: validate() can throw if the Form state is
+            // disposed mid-dialog (tapped confirm while widget is unmounting).
+            if (hasDiscrepancy) {
+              bool valid = false;
+              try {
+                valid = formKey.currentState?.validate() ?? false;
+              } catch (_) {
+                // Form was disposed before we could validate — treat as
+                // invalid and keep dialog open so user can retry.
+                valid = false;
+              }
+              if (!valid) return;
             }
             Navigator.of(context).pop(true);
           },

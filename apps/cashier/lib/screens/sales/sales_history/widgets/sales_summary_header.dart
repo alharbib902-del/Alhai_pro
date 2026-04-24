@@ -32,13 +32,17 @@ class SalesSummaryHeader extends StatelessWidget {
     int creditCents = 0;
 
     for (final o in orders) {
-      // الأعمدة الجديدة (split payments) إن وجدت.
-      if (o.cashAmount != null ||
-          o.cardAmount != null ||
-          o.creditAmount != null) {
-        cashCents += o.cashAmount ?? 0;
-        cardCents += o.cardAmount ?? 0;
-        creditCents += o.creditAmount ?? 0;
+      // الأعمدة الجديدة (split payments) — نقرأ مباشرة القيم الفعلية
+      // بدون تخمين. إن وجدت قيمة واحدة موجبة على الأقل اعتمد الأعمدة
+      // الجديدة؛ القيم صفر/null تبقى 0 ولا تخترع شيئاً.
+      final oCash = o.cashAmount ?? 0;
+      final oCard = o.cardAmount ?? 0;
+      final oCredit = o.creditAmount ?? 0;
+      final hasExplicitSplits = oCash > 0 || oCard > 0 || oCredit > 0;
+      if (hasExplicitSplits) {
+        cashCents += oCash;
+        cardCents += oCard;
+        creditCents += oCredit;
       } else {
         switch (o.paymentMethod) {
           case 'cash':
@@ -48,13 +52,17 @@ class SalesSummaryHeader extends StatelessWidget {
           case 'credit':
             creditCents += o.total;
           case 'mixed':
+            // Fallback محافظ: لا نخمّن "card" للمتبقي — ذلك يُحدث
+            // debit مزدوج عند البيانات المتسقة ظاهرياً. نضيف المقبوض
+            // إلى cash، وإذا كان البيع غير مدفوع والباقي موجب فهو
+            // credit. وإذا كان isPaid=true لكن received<total فهو
+            // data-mismatch ولا نوزّعه على card اختلاقاً.
             final received = o.amountReceived ?? 0;
             if (received > 0) cashCents += received;
             if (!o.isPaid && received < o.total) {
               creditCents += (o.total - received);
-            } else if (received < o.total) {
-              cardCents += (o.total - received);
             }
+            // isPaid=true && received<total: نتجاهل الفرق (لا نختلق card).
         }
       }
     }

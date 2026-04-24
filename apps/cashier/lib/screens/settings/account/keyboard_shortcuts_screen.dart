@@ -350,14 +350,14 @@ class _KeyboardShortcutsScreenState
       ),
       _ShortcutCategory(
         id: 'navigation',
-        name: 'Navigation',
+        name: 'التنقل',
         icon: Icons.navigation_rounded,
         color: AppColors.secondary,
         shortcuts: [
           _ShortcutEntry(action: l10n.openDrawer, keys: 'F9'),
           _ShortcutEntry(action: l10n.openShift, keys: 'Ctrl + O'),
           _ShortcutEntry(action: l10n.closeShift, keys: 'Ctrl + W'),
-          const _ShortcutEntry(action: 'View Reports', keys: 'Ctrl + R'),
+          const _ShortcutEntry(action: 'عرض التقارير', keys: 'Ctrl + R'),
           _ShortcutEntry(action: l10n.settings, keys: 'Ctrl + ,'),
           _ShortcutEntry(action: l10n.help, keys: 'F1'),
         ],

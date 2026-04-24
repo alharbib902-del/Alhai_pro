@@ -67,13 +67,27 @@ class ExportMenu extends StatelessWidget {
               ),
             ),
             const SizedBox(height: AlhaiSpacing.md),
+            // P1 #6 (2026-04-24): both export options remain placeholders
+            // until a real encoder lands. Surface the "coming soon" state in
+            // the list tile itself (not just in the snackbar that fires after
+            // tapping) so users aren't led on — subtitle replaced with the
+            // localized label, and a trailing Icon reinforces the preview.
+            // P2 #6 (2026-04-24): use dedicated l10n keys (`exportCsv` /
+            // `exportPdf`) instead of the bare hardcoded strings `'CSV'` /
+            // `'PDF'`. The Arabic translations read "تصدير CSV" / "تصدير PDF"
+            // which is more descriptive than a raw acronym.
             ListTile(
               leading: const Icon(
                 Icons.table_view_rounded,
                 color: AppColors.primary,
               ),
-              title: Text(l10n.exportData),
-              subtitle: const Text('CSV'),
+              title: Text(l10n.exportCsv),
+              subtitle: Text(l10n.comingSoon),
+              trailing: Icon(
+                Icons.schedule_rounded,
+                size: 18,
+                color: AppColors.getTextMuted(isDark),
+              ),
               onTap: () {
                 Navigator.of(ctx).pop();
                 AlhaiSnackbar.info(context, l10n.comingSoon);
@@ -84,8 +98,13 @@ class ExportMenu extends StatelessWidget {
                 Icons.picture_as_pdf_rounded,
                 color: AppColors.error,
               ),
-              title: Text(l10n.exportData),
-              subtitle: const Text('PDF'),
+              title: Text(l10n.exportPdf),
+              subtitle: Text(l10n.comingSoon),
+              trailing: Icon(
+                Icons.schedule_rounded,
+                size: 18,
+                color: AppColors.getTextMuted(isDark),
+              ),
               onTap: () {
                 Navigator.of(ctx).pop();
                 AlhaiSnackbar.info(context, l10n.comingSoon);

@@ -10,17 +10,22 @@ class LedgerMobileBottomSummary extends StatelessWidget {
   final double totalDebit;
   final double totalCredit;
 
+  /// الرصيد النهائي الحقيقي من آخر حركة مفلترة (يحترم الرصيد الافتتاحي).
+  final double? finalBalance;
+
   const LedgerMobileBottomSummary({
     super.key,
     required this.totalDebit,
     required this.totalCredit,
+    this.finalBalance,
   });
 
   @override
   Widget build(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
     final l10n = AppLocalizations.of(context);
-    final finalBalance = totalDebit - totalCredit;
+    // P1 #11: نفس منطق LedgerSummaryBar — الرصيد من آخر حركة.
+    final effectiveBalance = finalBalance ?? (totalDebit - totalCredit);
 
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -47,7 +52,11 @@ class LedgerMobileBottomSummary extends StatelessWidget {
             Expanded(
               child: _col(
                 l10n.totalDebit,
-                totalDebit.toStringAsFixed(0),
+                CurrencyFormatter.formatNumberWithContext(
+                  context,
+                  totalDebit,
+                  decimalDigits: 0,
+                ),
                 AppColors.error,
                 colorScheme,
               ),
@@ -55,7 +64,11 @@ class LedgerMobileBottomSummary extends StatelessWidget {
             Expanded(
               child: _col(
                 l10n.totalCredit,
-                totalCredit.toStringAsFixed(0),
+                CurrencyFormatter.formatNumberWithContext(
+                  context,
+                  totalCredit,
+                  decimalDigits: 0,
+                ),
                 AppColors.success,
                 colorScheme,
               ),
@@ -68,7 +81,9 @@ class LedgerMobileBottomSummary extends StatelessWidget {
                 ),
                 decoration: BoxDecoration(
                   color:
-                      (finalBalance > 0 ? AppColors.error : AppColors.success)
+                      (effectiveBalance > 0
+                              ? AppColors.error
+                              : AppColors.success)
                           .withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -85,11 +100,15 @@ class LedgerMobileBottomSummary extends StatelessWidget {
                     ),
                     const SizedBox(height: AlhaiSpacing.xxxs),
                     Text(
-                      finalBalance.abs().toStringAsFixed(0),
+                      CurrencyFormatter.formatNumberWithContext(
+                        context,
+                        effectiveBalance.abs(),
+                        decimalDigits: 0,
+                      ),
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w800,
-                        color: finalBalance > 0
+                        color: effectiveBalance > 0
                             ? AppColors.error
                             : AppColors.success,
                       ),

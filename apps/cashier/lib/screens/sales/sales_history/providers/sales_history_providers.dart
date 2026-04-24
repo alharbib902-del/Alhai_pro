@@ -21,6 +21,8 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart'
     show currentStoreIdProvider, globalSyncActivationProvider;
 
+import '../../../../core/services/sentry_service.dart';
+
 /// حجم الصفحة عند الـ pagination.
 const int kSalesHistoryPageSize = 50;
 
@@ -111,6 +113,15 @@ class SalesHistoryNotifier extends AsyncNotifier<SalesHistoryState> {
 
   @override
   Future<SalesHistoryState> build() async {
+    // إعادة تحميل القائمة تلقائياً عند تغيّر store_id (تبديل الفرع
+    // في UI). بدون هذا الـ listener تبقى القائمة على الفرع السابق حتى
+    // يُعيد المستخدم تطبيق الفلتر يدوياً.
+    ref.listen<String?>(currentStoreIdProvider, (prev, next) {
+      if (prev != next) {
+        // reload يعيد تحميل الصفحة الأولى مع الفلاتر الحالية.
+        reload();
+      }
+    });
     return _loadFirstPage(const SalesHistoryState());
   }
 
@@ -126,12 +137,22 @@ class SalesHistoryNotifier extends AsyncNotifier<SalesHistoryState> {
     if (storeId == null) return base;
 
     final range = computeDateRange(base.dateFilter, base.customRange);
-    final orders = await _db.salesDao.getSalesPaginated(
-      storeId,
-      offset: 0,
-      limit: kSalesHistoryPageSize,
-      startDate: range.start,
-      endDate: range.end,
+    // Phase 5 §5.4 — trace sales history first-page load.
+    final orders = await tracePerformance(
+      name: 'loadSalesPage',
+      operation: 'db.query',
+      data: {
+        'offset': 0,
+        'limit': kSalesHistoryPageSize,
+        'page': 'first',
+      },
+      body: () => _db.salesDao.getSalesPaginated(
+        storeId,
+        offset: 0,
+        limit: kSalesHistoryPageSize,
+        startDate: range.start,
+        endDate: range.end,
+      ),
     );
 
     return base.copyWith(
@@ -161,12 +182,22 @@ class SalesHistoryNotifier extends AsyncNotifier<SalesHistoryState> {
         return;
       }
       final range = computeDateRange(current.dateFilter, current.customRange);
-      final more = await _db.salesDao.getSalesPaginated(
-        storeId,
-        offset: current.orders.length,
-        limit: kSalesHistoryPageSize,
-        startDate: range.start,
-        endDate: range.end,
+      // Phase 5 §5.4 — trace sales history next-page load.
+      final more = await tracePerformance(
+        name: 'loadSalesPage',
+        operation: 'db.query',
+        data: {
+          'offset': current.orders.length,
+          'limit': kSalesHistoryPageSize,
+          'page': 'more',
+        },
+        body: () => _db.salesDao.getSalesPaginated(
+          storeId,
+          offset: current.orders.length,
+          limit: kSalesHistoryPageSize,
+          startDate: range.start,
+          endDate: range.end,
+        ),
       );
       state = AsyncData(
         current.copyWith(

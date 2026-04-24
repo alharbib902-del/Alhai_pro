@@ -51,14 +51,25 @@ class PurchasesDao extends DatabaseAccessor<AppDatabase>
     );
   }
 
+  /// Optimistically flip a purchase from `approved` → `received`. The
+  /// `status = approved` guard prevents double-receive races where two
+  /// cashiers tap "استلام" almost simultaneously — the second
+  /// UPDATE touches zero rows and the caller must bail out instead of
+  /// silently re-adjusting stock a second time.
+  ///
+  /// Returns the number of rows affected: `1` on success, `0` if the
+  /// purchase was already received (or never approved).
   Future<int> receivePurchase(String id) {
-    return (update(purchasesTable)..where((p) => p.id.equals(id))).write(
-      PurchasesTableCompanion(
-        status: const Value('received'),
-        receivedAt: Value(DateTime.now()),
-        updatedAt: Value(DateTime.now()),
-      ),
-    );
+    return (update(purchasesTable)..where(
+          (p) => p.id.equals(id) & p.status.equals('approved'),
+        ))
+        .write(
+          PurchasesTableCompanion(
+            status: const Value('received'),
+            receivedAt: Value(DateTime.now()),
+            updatedAt: Value(DateTime.now()),
+          ),
+        );
   }
 
   Future<int> deletePurchase(String id) =>

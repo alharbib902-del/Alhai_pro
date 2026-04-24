@@ -6,6 +6,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
@@ -73,13 +74,15 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
       _error = null;
     });
     try {
+      // Null + empty guard: Drift `.equals('')` is a valid query but
+      // would match rows where storeId is literally empty — refuse to
+      // run in that state instead of silently mis-scoping the read.
       final storeId = ref.read(currentStoreIdProvider);
-      if (storeId == null) return;
-      if (storeId.isNotEmpty) {
-        final store = await _db.storesDao.getStoreById(storeId);
-        if (store != null && mounted) {
-          _taxNumberController.text = store.taxNumber ?? '';
-        }
+      if (storeId == null || storeId.isEmpty) return;
+
+      final store = await _db.storesDao.getStoreById(storeId);
+      if (store != null && mounted) {
+        _taxNumberController.text = store.taxNumber ?? '';
       }
       // Load from settings table
       final settings = await (_db.select(
@@ -87,7 +90,12 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
       )..where((s) => s.storeId.equals(storeId))).get();
       for (final s in settings) {
         if (s.key == 'tax_rate') {
-          _taxRateController.text = s.value.isNotEmpty ? s.value : '15';
+          // Read path tolerates both legacy (decimal string like '15'
+          // or '15.0') and the new canonical basis-points integer
+          // ('1500' → 15.00%). Integer values with no dot get divided
+          // by 100 to recover the percentage; anything that looks like
+          // a float is trusted as the legacy percent string.
+          _taxRateController.text = _decodeStoredTaxRate(s.value);
         } else if (s.key == 'tax_inclusive') {
           _taxInclusive = s.value == 'true';
         } else if (s.key == 'tax_enabled') {
@@ -102,15 +110,80 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
     }
   }
 
+  /// Parse + validate the tax-rate field. Returns null when the input is
+  /// not a finite number in [0, 100]. ZATCA invoices reject negative or
+  /// >100 rates, and unparseable values would crash the receipt builder
+  /// later in the flow.
+  double? _parseTaxRate(String raw) {
+    final text = raw.trim();
+    if (text.isEmpty) return null;
+    final value = double.tryParse(text);
+    if (value == null || !value.isFinite) return null;
+    if (value < 0 || value > 100) return null;
+    return value;
+  }
+
+  /// Decode a stored tax rate back to a user-facing percent string.
+  ///
+  /// Backwards-compatible with legacy rows written as '15', '15.0', or
+  /// '15.00'. New rows use basis-points ('1500' = 15.00%), stored as an
+  /// integer so the double round-trip can't drift.
+  String _decodeStoredTaxRate(String stored) {
+    final trimmed = stored.trim();
+    if (trimmed.isEmpty) return '15';
+
+    // Integer-only → basis-points. 1500 → '15', 1525 → '15.25'.
+    if (!trimmed.contains('.')) {
+      final bps = int.tryParse(trimmed);
+      if (bps != null) {
+        final percent = bps / 100.0;
+        // Drop trailing zeros: 15.00 → '15', 15.50 → '15.5'.
+        final asStr = percent.toStringAsFixed(2);
+        return asStr
+            .replaceFirst(RegExp(r'\.?0+$'), '')
+            .ifEmpty('0');
+      }
+    }
+
+    // Legacy decimal string — trust it, but keep bounds behaviour so
+    // garbage rows don't crash the TextField.
+    final asDouble = double.tryParse(trimmed);
+    if (asDouble == null || !asDouble.isFinite) return '15';
+    return trimmed;
+  }
+
+  /// Encode a percent (e.g. 15.0) to the canonical basis-points string.
+  /// 15 → '1500', 15.5 → '1550', 15.25 → '1525'.
+  String _encodeTaxRateAsBasisPoints(double percent) {
+    return (percent * 100).round().toString();
+  }
+
   Future<void> _saveSettings() async {
+    final l10n = AppLocalizations.of(context);
+
+    // Validator: a bad tax rate poisons every subsequent ZATCA invoice.
+    // Refuse the save here rather than letting `double.parse` blow up
+    // somewhere downstream.
+    final rate = _parseTaxRate(_taxRateController.text);
+    if (rate == null) {
+      AlhaiSnackbar.error(
+        context,
+        'نسبة ضريبة غير صالحة — أدخل رقماً بين 0 و 100',
+      );
+      return;
+    }
+
     setState(() => _isSaving = true);
     try {
-      await _upsertSetting('tax_rate', _taxRateController.text);
+      // Canonical form: basis-points integer string. 15% → '1500',
+      // 15.25% → '1525'. Avoids double-precision drift that would
+      // otherwise bite downstream tax math (a 15.0 that reads back as
+      // 14.999999… compounds across dozens of invoices per day).
+      await _upsertSetting('tax_rate', _encodeTaxRateAsBasisPoints(rate));
       await _upsertSetting('tax_inclusive', _taxInclusive.toString());
       await _upsertSetting('tax_enabled', _taxEnabled.toString());
 
       if (mounted) {
-        final l10n = AppLocalizations.of(context);
         AlhaiSnackbar.success(context, l10n.settingsSaved);
       }
     } catch (e, stack) {
@@ -264,7 +337,13 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           const SizedBox(height: AlhaiSpacing.mdl),
           TextField(
             controller: _taxRateController,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            // Defence-in-depth alongside _parseTaxRate: keeps a clean
+            // numeric string in the controller so save-time validation
+            // only has to range-check.
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r'^\d{0,3}(\.\d{0,2})?')),
+            ],
             style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -304,7 +383,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.sm),
           Text(
-            'Saudi VAT is 15%',
+            'ضريبة القيمة المضافة السعودية 15٪',
             style: TextStyle(
               fontSize: 12,
               color: AppColors.getTextMuted(isDark),
@@ -380,7 +459,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.xs),
           Text(
-            'Tax number (read-only)',
+            'الرقم الضريبي (للقراءة فقط)',
             style: TextStyle(
               fontSize: 12,
               color: AppColors.getTextMuted(isDark),
@@ -419,7 +498,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'Tax Options',
+                'خيارات الضريبة',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -431,8 +510,8 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           const SizedBox(height: AlhaiSpacing.mdl),
           _ToggleRow(
             icon: Icons.toggle_on_rounded,
-            title: 'Enable Tax',
-            subtitle: 'Apply tax to all sales',
+            title: 'تفعيل الضريبة',
+            subtitle: 'تطبيق الضريبة على جميع المبيعات',
             value: _taxEnabled,
             isDark: isDark,
             onChanged: (v) => setState(() => _taxEnabled = v),
@@ -440,7 +519,7 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           Divider(color: AppColors.getBorder(isDark), height: 1),
           _ToggleRow(
             icon: Icons.price_check_rounded,
-            title: 'Tax Inclusive',
+            title: 'السعر شامل الضريبة',
             subtitle: l10n.pricesIncludeTax,
             value: _taxInclusive,
             isDark: isDark,
@@ -483,6 +562,12 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
       ),
     );
   }
+}
+
+/// Private String helper used by the basis-point decoder so stripping
+/// trailing zeros can never leave an empty string.
+extension _StringIfEmpty on String {
+  String ifEmpty(String fallback) => isEmpty ? fallback : this;
 }
 
 /// Toggle row widget for settings

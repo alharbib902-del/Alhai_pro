@@ -5,6 +5,9 @@
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
 library;
 
+import 'dart:convert';
+import 'dart:io' show Socket;
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -79,19 +82,48 @@ class _AddPaymentDeviceScreenState
     });
 
     try {
-      // Simulate connection test
-      await Future.delayed(const Duration(seconds: 2));
-
-      if (mounted) {
-        setState(() => _testPassed = true);
-        AlhaiSnackbar.success(
-          context,
-          AppLocalizations.of(context).connectionSuccessMsg,
+      if (_connectionMethod == 'Network') {
+        // Real TCP dial to the configured address — previously this was
+        // just `await Future.delayed(…)` with an unconditional success,
+        // which would lull an admin into pairing a cashier with a
+        // terminal that isn't actually reachable.
+        final ip = _ipController.text.trim();
+        final port = int.tryParse(_portController.text.trim());
+        if (ip.isEmpty || port == null || port < 1 || port > 65535) {
+          throw const FormatException(
+            'يرجى إدخال عنوان IP ومنفذ صالح قبل اختبار الاتصال',
+          );
+        }
+        final socket = await Socket.connect(
+          ip,
+          port,
+          timeout: const Duration(seconds: 5),
         );
+        await socket.close();
+        socket.destroy();
+        if (mounted) {
+          setState(() => _testPassed = true);
+          AlhaiSnackbar.success(
+            context,
+            AppLocalizations.of(context).connectionSuccessMsg,
+          );
+        }
+      } else {
+        // USB / Bluetooth / QR don't have a platform-agnostic dial path
+        // from inside this screen — be honest about it instead of
+        // flipping a green check for no reason.
+        if (mounted) {
+          setState(() => _testPassed = false);
+          AlhaiSnackbar.warning(
+            context,
+            'اختبار الاتصال عبر ${_connectionMethod == 'QR Code' ? 'رمز QR' : _connectionMethod} غير متوفر بعد — احفظ الجهاز وتحقق من خلال شاشة الدفع.',
+          );
+        }
       }
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Test payment device connection');
       if (mounted) {
+        setState(() => _testPassed = false);
         AlhaiSnackbar.error(
           context,
           AppLocalizations.of(context).connectionFailedMsg('$e'),
@@ -109,8 +141,15 @@ class _AddPaymentDeviceScreenState
 
     try {
       final deviceId = const Uuid().v4();
-      final value =
-          '${_nameController.text}|$_selectedType|$_connectionMethod|$_testPassed';
+      // Switched from `name|type|method|tested` pipe-packing to JSON so
+      // device names with a literal `|` (e.g. "Front Desk | Terminal 2")
+      // no longer corrupt the read path in payment_devices_screen.
+      final value = jsonEncode({
+        'name': _nameController.text,
+        'type': _selectedType,
+        'method': _connectionMethod,
+        'testPassed': _testPassed,
+      });
 
       await _upsertSetting('payment_device_$deviceId', value);
 
@@ -261,13 +300,13 @@ class _AddPaymentDeviceScreenState
         children: [
           _sectionHeader(
             Icons.edit_rounded,
-            'Device Info',
+            'معلومات الجهاز',
             AppColors.primary,
             isDark,
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           Text(
-            'Device Name',
+            'اسم الجهاز',
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -283,11 +322,11 @@ class _AddPaymentDeviceScreenState
             ),
             validator: (v) =>
                 v == null || v.isEmpty ? l10n.fieldRequired : null,
-            decoration: _inputDecoration('e.g. Main Terminal', isDark),
+            decoration: _inputDecoration('مثال: الطرفية الرئيسية', isDark),
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           Text(
-            'Device Type',
+            'نوع الجهاز',
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -350,7 +389,7 @@ class _AddPaymentDeviceScreenState
         children: [
           _sectionHeader(
             Icons.cable_rounded,
-            'Connection Method',
+            'طريقة الاتصال',
             AppColors.info,
             isDark,
           ),
@@ -392,7 +431,7 @@ class _AddPaymentDeviceScreenState
                       ),
                       const SizedBox(width: AlhaiSpacing.sm),
                       Text(
-                        method,
+                        _connectionMethodLabel(method),
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: isSelected
@@ -438,13 +477,13 @@ class _AddPaymentDeviceScreenState
         children: [
           _sectionHeader(
             Icons.lan_rounded,
-            'Network Settings',
+            'إعدادات الشبكة',
             AppColors.warning,
             isDark,
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           Text(
-            'IP Address',
+            'عنوان IP',
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -454,7 +493,9 @@ class _AddPaymentDeviceScreenState
           const SizedBox(height: AlhaiSpacing.xs),
           TextFormField(
             controller: _ipController,
-            keyboardType: TextInputType.number,
+            // P1: use text keyboard so user can type '.' in IPv4 addresses.
+            // `TextInputType.number` on Android hides the dot key.
+            keyboardType: TextInputType.text,
             style: TextStyle(
               fontSize: 14,
               color: AppColors.getTextPrimary(isDark),
@@ -467,7 +508,7 @@ class _AddPaymentDeviceScreenState
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           Text(
-            'Port',
+            'المنفذ',
             style: TextStyle(
               fontSize: 13,
               fontWeight: FontWeight.w600,
@@ -513,7 +554,7 @@ class _AddPaymentDeviceScreenState
                 ),
                 const SizedBox(width: AlhaiSpacing.sm),
                 Text(
-                  'Connection test passed',
+                  'نجح اختبار الاتصال',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -594,6 +635,23 @@ class _AddPaymentDeviceScreenState
         return Icons.qr_code_rounded;
       default:
         return Icons.cable_rounded;
+    }
+  }
+
+  /// Display-only Arabic label for a connection method.
+  /// Internal values stay English so existing DB rows/settings remain valid.
+  String _connectionMethodLabel(String method) {
+    switch (method) {
+      case 'Network':
+        return 'شبكة';
+      case 'USB':
+        return 'USB';
+      case 'Bluetooth':
+        return 'بلوتوث';
+      case 'QR Code':
+        return 'رمز QR';
+      default:
+        return method;
     }
   }
 

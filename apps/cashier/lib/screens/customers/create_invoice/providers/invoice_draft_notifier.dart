@@ -11,6 +11,7 @@ library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:get_it/get_it.dart';
 import 'package:alhai_database/alhai_database.dart';
 
 /// بند في مسودة الفاتورة (price بوحدة SAR)
@@ -78,8 +79,20 @@ class InvoiceDraftState {
   final PaymentTerm paymentTerm;
   final DateTime? dueDate;
 
-  /// نسبة VAT السعودية الثابتة (15%) — لا تتغيّر حالياً
-  static const double taxRate = 0.15;
+  /// نسبة VAT المُطبَّقة على الفاتورة.
+  ///
+  /// P2 #3: سابقاً كانت ثابتة `0.15` (const). الآن تُقرأ من
+  /// `stores.tax_rate` عبر [InvoiceDraftNotifier.loadTaxRate] عند فتح
+  /// الشاشة. الـ default 0.15 يبقى كاحتياطي حتى ينجح التحميل، وذلك
+  /// للحفاظ على سلوك آمن إذا فشل جلب المتجر.
+  ///
+  /// ملاحظة للمستقبل: عندما تصبح إعدادات الضريبة مركّبة (tax_settings /
+  /// معدّلات متعددة / exemptions)، حوّل الحساب إلى service مختص بدل
+  /// الاعتماد على حقل double مُفرد هنا.
+  final double taxRate;
+
+  /// القيمة الافتراضية — VAT السعودية 15%. تُستخدم كـ fallback فقط.
+  static const double defaultTaxRate = 0.15;
 
   const InvoiceDraftState({
     this.selectedCustomer,
@@ -87,6 +100,7 @@ class InvoiceDraftState {
     this.discount = 0,
     this.paymentTerm = PaymentTerm.immediate,
     this.dueDate,
+    this.taxRate = defaultTaxRate,
   });
 
   /// حالة ابتدائية فارغة
@@ -118,6 +132,7 @@ class InvoiceDraftState {
     PaymentTerm? paymentTerm,
     DateTime? dueDate,
     bool clearDueDate = false,
+    double? taxRate,
   }) => InvoiceDraftState(
     selectedCustomer: clearCustomer
         ? null
@@ -126,6 +141,7 @@ class InvoiceDraftState {
     discount: discount ?? this.discount,
     paymentTerm: paymentTerm ?? this.paymentTerm,
     dueDate: clearDueDate ? null : (dueDate ?? this.dueDate),
+    taxRate: taxRate ?? this.taxRate,
   );
 }
 
@@ -193,7 +209,15 @@ class InvoiceDraftNotifier extends StateNotifier<InvoiceDraftState> {
   // --- Payment terms ----------------------------------------------------------
 
   void setPaymentTerm(PaymentTerm term) {
-    // عند تغيير الشروط نحسب dueDate تلقائياً (مع إمكانية التخصيص لاحقاً)
+    // عند تغيير الشروط نحسب dueDate تلقائياً (مع إمكانية التخصيص لاحقاً).
+    //
+    // P1 #7: لا نُعيد حساب dueDate إذا كان نفس الـ term محدداً مسبقاً وكان
+    // للمستخدم قيمة يدوية — الاستدعاءات المكررة لنفس الـ term كانت تُلغي
+    // تعديل المستخدم. لكن عند تغيير الـ term فعلياً نحسب قيمة جديدة.
+    if (state.paymentTerm == term && state.dueDate != null) {
+      // Same term, user has a (possibly custom) date — leave state alone.
+      return;
+    }
     final now = DateTime.now();
     DateTime? due;
     switch (term) {
@@ -219,10 +243,59 @@ class InvoiceDraftNotifier extends StateNotifier<InvoiceDraftState> {
 
   void setDueDate(DateTime date) => state = state.copyWith(dueDate: date);
 
+  // --- Tax rate ---------------------------------------------------------------
+
+  /// P2 #3: تحميل نسبة الضريبة الفعلية من جدول الإعدادات.
+  ///
+  /// القيمة تُخزَّن في `settings` بـ `key='tax_rate'` بصيغتين محتملتين:
+  ///  - basis points (`1500` ⇒ 15.00%) — الصيغة القانونية
+  ///  - decimal string (`15` أو `15.5`) — إرث (legacy)
+  ///
+  /// نُعيد القيمة كنسبة كسرية (0.15 للـ 15%) لتتوافق مع حساب `tax`
+  /// getter. إذا لم يُعثر على إعداد، يُحتفظ بـ default (`0.15`)
+  /// كاحتياطي آمن. مكتوب fire-and-forget لتتزامن مع initState الشاشة.
+  ///
+  /// TODO(future): عندما يصبح tax_settings جدولاً مستقلاً مع
+  /// multi-rate / exemptions، استبدل هذه القراءة بخدمة مختصة.
+  Future<void> loadTaxRate(String storeId) async {
+    try {
+      final db = GetIt.I<AppDatabase>();
+      // Filter by storeId only, then pick the `tax_rate` row in Dart —
+      // matches the pattern used in settings screens (tax_settings_screen.
+      // _loadSettings) and sidesteps Drift's composite-where boilerplate.
+      final rows = await (db.select(db.settingsTable)
+            ..where((s) => s.storeId.equals(storeId)))
+          .get();
+      final taxRow = rows.where((s) => s.key == 'tax_rate').toList();
+      if (taxRow.isEmpty) return;
+      final raw = taxRow.first.value.trim();
+      if (raw.isEmpty) return;
+      double? percent;
+      if (!raw.contains('.')) {
+        // Integer → basis points (1500 → 15.00).
+        final bps = int.tryParse(raw);
+        if (bps != null) percent = bps / 100.0;
+      } else {
+        // Legacy decimal string → already a percent.
+        percent = double.tryParse(raw);
+      }
+      if (percent == null || !percent.isFinite) return;
+      if (percent < 0 || percent > 100) return; // ZATCA bounds.
+      // Store as a fraction (0.15 for 15%) to match the tax getter below.
+      state = state.copyWith(taxRate: percent / 100.0);
+    } catch (_) {
+      // Keep the default — tax computation stays correct for the SA market
+      // even if the DB lookup momentarily fails.
+    }
+  }
+
   // --- Reset ------------------------------------------------------------------
 
   /// مسح الفاتورة بعد نجاح الإنهاء. يحافظ على PaymentTerm الابتدائي.
-  void reset() => state = InvoiceDraftState.empty();
+  ///
+  /// P2 #3: نحافظ على `taxRate` الحالية — العودة إلى default 0.15 بعد
+  /// reset ستُظهر ضريبة خاطئة إذا كان المتجر يُشغّل نسبة مختلفة.
+  void reset() => state = InvoiceDraftState(taxRate: state.taxRate);
 }
 
 /// Provider مسودة الفاتورة — scoped per screen لتجنّب تسرّب الحالة بين شاشات.

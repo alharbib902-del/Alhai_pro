@@ -7290,5 +7290,30 @@
     }
   },
   "saMfaEnrollmentFailed": "MFA enrollment failed. Ensure MFA is enabled in your Supabase project.",
-  "saMfaEnrollmentNoData": "TOTP enrollment returned no data."
+  "saMfaEnrollmentNoData": "TOTP enrollment returned no data.",
+  "exchangeTitle": "Exchange",
+  "itemsToReturn": "Items to Return",
+  "newItemsToAdd": "New Items to Add",
+  "exchangeRequiresNewItem": "Exchange requires at least one new item. For a pure refund, please use the Returns screen (which links the refund to the original sale).",
+  "splitReceiptTitle": "Split Receipt",
+  "paymentBreakdown": "Payment Breakdown",
+  "zatcaQrTitle": "ZATCA QR",
+  "splitRefundTitle": "Split Refund",
+  "refundByPaymentMethod": "Refund by Payment Method",
+  "exceedsOriginalAmount": "Exceeds original amount",
+  "refundSummary": "Refund Summary",
+  "originalTotal": "Original Total",
+  "refundLineLabel": "{method} refund",
+  "@refundLineLabel": {
+    "placeholders": {
+      "method": {
+        "type": "String"
+      }
+    }
+  },
+  "totalRefund": "Total Refund",
+  "refundAmountExceedsOriginal": "Refund amount exceeds original",
+  "filterCompletedOnly": "Completed only",
+  "filterCompletedOnlyDesc": "Non-completed sales are hidden",
+  "pullToRefresh": "Pull to refresh"
 }

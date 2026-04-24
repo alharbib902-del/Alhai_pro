@@ -5,7 +5,10 @@
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
 library;
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
@@ -38,7 +41,15 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
   bool _isSaving = false;
   String? _error;
 
-  // Map productId -> counted quantity (user input)
+  // Map productId -> counted quantity (user input).
+  //
+  // P2: Controllers are created lazily on first lookup via
+  // [_controllerFor] instead of up-front in [_loadData]. In a large
+  // catalogue (10k+ SKUs) the previous eager construction allocated
+  // one TextEditingController per row even though most products never
+  // receive a manual count, burning memory and delaying the initial
+  // frame. Lazy creation keeps the map sparse — only rows the operator
+  // actually touches allocate a controller.
   final Map<String, TextEditingController> _countControllers = {};
 
   @override
@@ -52,7 +63,17 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
     for (final c in _countControllers.values) {
       c.dispose();
     }
+    _countControllers.clear();
     super.dispose();
+  }
+
+  /// Returns (and caches) the [TextEditingController] for a given
+  /// product row. First access allocates; subsequent accesses reuse.
+  TextEditingController _controllerFor(String productId) {
+    return _countControllers.putIfAbsent(
+      productId,
+      () => TextEditingController(),
+    );
   }
 
   Future<void> _loadData() async {
@@ -72,10 +93,9 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
           _categories = categories;
           _products = products;
           _isLoading = false;
-          // Initialize controllers
-          for (final p in products) {
-            _countControllers[p.id] = TextEditingController();
-          }
+          // Controllers are built lazily by _controllerFor on first
+          // touch — skip the eager loop that used to allocate one per
+          // product row.
         });
       }
     } catch (e, stack) {
@@ -104,7 +124,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
   int get _varianceItems => _filteredProducts.where((p) {
     final ctrl = _countControllers[p.id];
     if (ctrl == null || ctrl.text.isEmpty) return false;
-    final counted = int.tryParse(ctrl.text) ?? 0;
+    final counted = double.tryParse(ctrl.text) ?? 0.0;
     final system = p.stockQty;
     return counted != system;
   }).length;
@@ -348,11 +368,11 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
     AppLocalizations l10n,
     bool isMediumScreen,
   ) {
-    final systemQty = product.stockQty;
-    final ctrl = _countControllers[product.id]!;
-    final countedQty = int.tryParse(ctrl.text);
-    final variance = countedQty != null ? countedQty - systemQty : null;
-    final hasVariance = variance != null && variance != 0;
+    final double systemQty = product.stockQty;
+    final ctrl = _controllerFor(product.id);
+    final double? countedQty = double.tryParse(ctrl.text);
+    final double? variance = countedQty != null ? countedQty - systemQty : null;
+    final bool hasVariance = variance != null && variance != 0;
 
     return Container(
       padding: const EdgeInsets.all(14),
@@ -412,7 +432,10 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                 ),
                 const SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
-                  '$systemQty',
+                  // Stock is a double — format consistently so a product
+                  // sitting at 3.5 doesn't render "3.5" next to a whole
+                  // "10" on the neighbour row.
+                  systemQty.toStringAsFixed(2),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
@@ -428,7 +451,14 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
             width: 80,
             child: TextField(
               controller: ctrl,
-              keyboardType: TextInputType.number,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              inputFormatters: [
+                FilteringTextInputFormatter.allow(
+                  RegExp(r'^\d+(\.\d{0,2})?$'),
+                ),
+              ],
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 16,
@@ -480,7 +510,7 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                 const SizedBox(height: AlhaiSpacing.xxxs),
                 Text(
                   variance != null
-                      ? '${variance >= 0 ? '+' : ''}$variance'
+                      ? '${variance >= 0 ? '+' : ''}${variance.toStringAsFixed(2)}'
                       : '-',
                   style: TextStyle(
                     fontSize: 16,
@@ -581,7 +611,73 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
 
   Future<void> _saveCount() async {
     final l10n = AppLocalizations.of(context);
-    AlhaiSnackbar.success(context, l10n.success);
+    setState(() => _isSaving = true);
+    try {
+      final storeId = ref.read(currentStoreIdProvider);
+      if (storeId == null) {
+        setState(() => _isSaving = false);
+        return;
+      }
+
+      // Build a draft payload from whatever the operator has keyed so
+      // far. Kept as an "in_progress" stock_take row; finalise uses a
+      // different path that actually mutates product stock.
+      final drafts = <Map<String, dynamic>>[];
+      int totalCounted = 0;
+      int totalVariance = 0;
+      for (final product in _filteredProducts) {
+        final ctrl = _countControllers[product.id];
+        if (ctrl == null || ctrl.text.isEmpty) continue;
+        final counted = double.tryParse(ctrl.text);
+        if (counted == null) continue;
+        totalCounted += 1;
+        if (counted != product.stockQty) totalVariance += 1;
+        drafts.add({
+          'productId': product.id,
+          'name': product.name,
+          'systemQty': product.stockQty,
+          'countedQty': counted,
+          'variance': counted - product.stockQty,
+        });
+      }
+
+      if (drafts.isEmpty) {
+        setState(() => _isSaving = false);
+        AlhaiSnackbar.info(context, l10n.success);
+        return;
+      }
+
+      final user = ref.read(currentUserProvider);
+      final now = DateTime.now();
+      final draftId = const Uuid().v4();
+
+      await _db
+          .into(_db.stockTakesTable)
+          .insert(
+            StockTakesTableCompanion.insert(
+              id: draftId,
+              storeId: storeId,
+              name:
+                  'جرد ${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')} ${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}',
+              items: Value(jsonEncode(drafts)),
+              totalItems: Value(_filteredProducts.length),
+              countedItems: Value(totalCounted),
+              varianceItems: Value(totalVariance),
+              createdBy: Value(user?.id),
+              startedAt: now,
+              status: const Value('in_progress'),
+            ),
+          );
+
+      if (!mounted) return;
+      AlhaiSnackbar.success(context, l10n.success);
+    } catch (e, stack) {
+      reportError(e, stackTrace: stack, hint: 'Save stock take draft');
+      if (!mounted) return;
+      AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
+    }
   }
 
   Future<void> _finalizeCount() async {
@@ -598,10 +694,10 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
           final ctrl = _countControllers[product.id];
           if (ctrl == null || ctrl.text.isEmpty) continue;
 
-          final counted = int.tryParse(ctrl.text);
+          final double? counted = double.tryParse(ctrl.text);
           if (counted == null) continue;
 
-          final systemQty = product.stockQty;
+          final double systemQty = product.stockQty;
           if (counted != systemQty) {
             final movementId = const Uuid().v4();
             await _db.inventoryDao.insertMovement(
@@ -610,14 +706,14 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
                 storeId: storeId,
                 productId: product.id,
                 type: 'stock_take',
-                qty: (counted - systemQty).toDouble(),
-                previousQty: systemQty.toDouble(),
-                newQty: counted.toDouble(),
+                qty: counted - systemQty,
+                previousQty: systemQty,
+                newQty: counted,
                 reason: const Value('stock_take'),
                 createdAt: DateTime.now(),
               ),
             );
-            await _db.productsDao.updateStock(product.id, counted.toDouble());
+            await _db.productsDao.updateStock(product.id, counted);
             adjustedProducts.add(product);
           }
         }
@@ -627,15 +723,15 @@ class _StockTakeScreenState extends ConsumerState<StockTakeScreen> {
       final user = ref.read(currentUserProvider);
       for (final product in adjustedProducts) {
         final ctrl = _countControllers[product.id];
-        final counted = int.tryParse(ctrl?.text ?? '') ?? 0;
+        final double counted = double.tryParse(ctrl?.text ?? '') ?? 0.0;
         auditService.logStockAdjust(
           storeId: storeId,
           userId: user?.id ?? 'unknown',
           userName: user?.name ?? 'unknown',
           productId: product.id,
           productName: product.name,
-          oldQty: product.stockQty.toDouble(),
-          newQty: counted.toDouble(),
+          oldQty: product.stockQty,
+          newQty: counted,
           reason: 'جرد',
         );
       }

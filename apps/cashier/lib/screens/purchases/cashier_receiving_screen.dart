@@ -15,6 +15,7 @@ import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
+import 'package:uuid/uuid.dart';
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
@@ -82,6 +83,13 @@ class _CashierReceivingScreenState
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final l10n = AppLocalizations.of(context);
     final user = ref.watch(currentUserProvider);
+
+    // P2: When the active store changes (e.g. multi-store user switches
+    // branches from the shell), refresh the approved-purchases list so
+    // the cashier doesn't keep seeing the previous branch's shipments.
+    ref.listen<String?>(currentStoreIdProvider, (prev, next) {
+      if (prev != next) _loadPurchases();
+    });
 
     return Column(
       children: [
@@ -230,6 +238,13 @@ class _CashierReceivingScreenState
               ),
               const SizedBox(width: 14),
               Expanded(
+                // P2: Header shows purchase-number + supplier name (with
+                // fallback), and the expected-receive date is already
+                // rendered in the info strip below. The `attachments`
+                // indicator requested in the brief has no data source —
+                // purchases_table has no attachments column — so adding
+                // a static icon would mislead the cashier. Wire this up
+                // if/when attachments DAO lands.
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -585,7 +600,11 @@ class _CashierReceivingScreenState
                                           ),
                                         ),
                                         Text(
-                                          '${item.unitCost.toStringAsFixed(2)} ${l10n.sar}',
+                                          // purchase_items.unitCost is int cents.
+                                          CurrencyFormatter.fromCentsWithContext(
+                                            context,
+                                            item.unitCost,
+                                          ),
                                           style: TextStyle(
                                             fontSize: 12,
                                             color: AppColors.getTextSecondary(
@@ -644,29 +663,51 @@ class _CashierReceivingScreenState
 
     setState(() => _receivingId = purchase.id);
 
-    try {
-      await _db.transaction(() async {
-        // 1. Mark purchase as received
-        await _db.purchasesDao.receivePurchase(purchase.id);
+    final user = ref.read(currentUserProvider);
+    final storeId = ref.read(currentStoreIdProvider);
+    if (storeId == null) {
+      setState(() => _receivingId = null);
+      return;
+    }
 
-        // 2. Update stock for each item
+    try {
+      final receivedItems = await _db.transaction(() async {
+        // 1. Mark purchase as received — DAO has an optimistic
+        //    `status = 'approved'` predicate, so zero rows affected
+        //    means another device already received this PO.
+        final affected = await _db.purchasesDao.receivePurchase(purchase.id);
+        if (affected == 0) {
+          throw StateError(
+            'تم استلام هذا الطلب بالفعل — يرجى تحديث القائمة',
+          );
+        }
+
+        // 2. Update stock + record audit movement for each item.
+        //    item.qty is RealColumn (double) — `.toInt()` was truncating
+        //    fractional units (e.g. 12.5 kg → 12). Use the double directly.
+        //    Also record an inventory_movements row so the receive shows
+        //    up in stock-history reports.
         final items = await _db.purchasesDao.getPurchaseItems(purchase.id);
         for (final item in items) {
           final product = await _db.productsDao.getProductById(item.productId);
-          if (product != null) {
-            final newStock = product.stockQty + item.qty.toInt();
-            await _db.productsDao.updateStock(item.productId, newStock);
-          }
+          if (product == null) continue;
+          final previousQty = product.stockQty;
+          final newStock = previousQty + item.qty;
+          await _db.productsDao.updateStock(item.productId, newStock);
+          await _db.inventoryDao.recordPurchaseMovement(
+            id: const Uuid().v4(),
+            productId: item.productId,
+            storeId: storeId,
+            qty: item.qty,
+            previousQty: previousQty,
+            purchaseId: purchase.id,
+            userId: user?.id,
+          );
         }
+        return items;
       });
 
-      // Audit log
-      final user = ref.read(currentUserProvider);
-      final storeId = ref.read(currentStoreIdProvider);
-      if (storeId == null) return;
-      final receivedItems = await _db.purchasesDao.getPurchaseItems(
-        purchase.id,
-      );
+      // Audit log (outside DB transaction — non-transactional sink).
       auditService.logStockReceive(
         storeId: storeId,
         userId: user?.id ?? 'unknown',

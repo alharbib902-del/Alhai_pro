@@ -5,6 +5,8 @@
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -62,8 +64,13 @@ class _CashierPurchaseRequestScreenState
   bool _isSearching = false;
   bool _isSending = false;
 
+  // Debounce so each keystroke doesn't spawn its own query — 300ms is
+  // the shop-wide convention (see add/edit/remove inventory screens).
+  Timer? _searchDebounce;
+
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchController.dispose();
     _notesController.dispose();
     for (final item in _requestItems) {
@@ -72,11 +79,24 @@ class _CashierPurchaseRequestScreenState
     super.dispose();
   }
 
-  Future<void> _searchProducts(String query) async {
+  /// Debounced entry point wired to the TextField's onChanged. The
+  /// actual DB hit is delegated to [_runProductSearch].
+  void _searchProducts(String query) {
+    _searchDebounce?.cancel();
     if (query.length < 2) {
-      setState(() => _searchResults = []);
+      setState(() {
+        _searchResults = [];
+        _isSearching = false;
+      });
       return;
     }
+    _searchDebounce = Timer(
+      const Duration(milliseconds: 300),
+      () => _runProductSearch(query),
+    );
+  }
+
+  Future<void> _runProductSearch(String query) async {
     setState(() => _isSearching = true);
     try {
       final storeId = ref.read(currentStoreIdProvider);
@@ -818,16 +838,24 @@ class _CashierPurchaseRequestScreenState
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
       final purchaseId = _uuid.v4();
-      final purchaseNumber = 'PO-${const Uuid().v4().split('-').first}';
+      // Full 128-bit UUID — the old 8-hex slice courted collisions
+      // once PO counts pass ~64k (birthday paradox on 32-bit ids).
+      final purchaseNumber = 'PO-${_uuid.v4()}';
       final now = DateTime.now();
 
-      // C-4 Session 4: purchases.subtotal, total and purchase_items.unit_cost, total are int cents.
-      // product.price is already int cents, so price * qty = cents.
-      final subtotalCents = _requestItems.fold<double>(
-        0,
-        (sum, item) => sum + (item.product.price * item.quantity),
-      );
-      final subtotalCentsInt = subtotalCents.round();
+      // C-4 Session 4: purchases.subtotal, total and
+      // purchase_items.unit_cost, total are int cents. product.price is
+      // already int cents, so price × qty is cents too. Accumulate in
+      // int to avoid any FP drift when qty values happen to be doubles.
+      int subtotalCentsInt = 0;
+      for (final item in _requestItems) {
+        subtotalCentsInt +=
+            (item.product.price * item.quantity.toDouble()).round();
+      }
+      // Draft purchases deliberately carry no VAT row — VAT is applied
+      // only when goods are received and the invoice is finalised.
+      // ZATCA obligations are discharged on the sale invoice, not on
+      // cashier-initiated restock requests.
 
       // 1. Insert purchase
       await _db.purchasesDao.insertPurchase(

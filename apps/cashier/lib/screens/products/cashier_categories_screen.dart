@@ -66,20 +66,11 @@ class _CashierCategoriesScreenState
       if (storeId == null) return;
 
       final categories = await _db.categoriesDao.getAllCategories(storeId);
-      final counts = <String, int>{};
-
-      for (final cat in categories) {
-        try {
-          final products = await _db.productsDao.getProductsByCategory(
-            cat.id,
-            storeId,
-          );
-          counts[cat.id] = products.length;
-        } catch (e, stack) {
-          reportError(e, stackTrace: stack, hint: 'Count products in category');
-          counts[cat.id] = 0;
-        }
-      }
+      // P1 #19 (2026-04-24): previous code ran `getProductsByCategory` once per
+      // category — N+1 query pattern that was O(N) round-trips to SQLite and
+      // scaled badly on stores with many categories. Replaced with a single
+      // GROUP BY that returns `category_id -> count` in one round-trip.
+      final counts = await _db.productsDao.countByCategory(storeId);
 
       if (mounted) {
         setState(() {
@@ -481,7 +472,15 @@ class _CashierCategoriesScreenState
     bool isDark,
     AppLocalizations l10n,
   ) {
-    final hasLowStock = product.stockQty < 5;
+    // P2 #17 (2026-04-24): low-stock threshold uses the per-product
+    // `minQty` reorder level from `products_table` (defaults to 0 when the
+    // product has no explicit reorder level). Previously hard-coded to 5
+    // which over-reported "low" for bulk items (e.g. 20-unit six-packs)
+    // and under-reported for high-turnover SKUs (e.g. thousand-unit
+    // wholesale boxes). Fall back to 5 only when `minQty` is zero so
+    // existing catalogues without reorder levels keep the old behaviour.
+    final threshold = product.minQty > 0 ? product.minQty : 5.0;
+    final hasLowStock = product.stockQty < threshold;
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.md),

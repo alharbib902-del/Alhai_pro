@@ -6,6 +6,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
@@ -215,9 +216,10 @@ class _EditInventoryScreenState extends ConsumerState<EditInventoryScreen> {
 
   Widget _buildCurrentStockCard(bool isDark, AppLocalizations l10n) {
     final product = _product!;
-    final stock = product.stockQty;
-    final adjustment = int.tryParse(_adjustmentController.text) ?? 0;
-    final newStock = _isAdding ? stock + adjustment : stock - adjustment;
+    final double stock = product.stockQty;
+    final double adjustment =
+        double.tryParse(_adjustmentController.text) ?? 0.0;
+    final double newStock = _isAdding ? stock + adjustment : stock - adjustment;
 
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -277,7 +279,7 @@ class _EditInventoryScreenState extends ConsumerState<EditInventoryScreen> {
               Expanded(
                 child: _buildStockInfo(
                   l10n.currentStock,
-                  '$stock',
+                  stock.toStringAsFixed(2),
                   stock > 5 ? AppColors.success : AppColors.error,
                   isDark,
                 ),
@@ -290,7 +292,7 @@ class _EditInventoryScreenState extends ConsumerState<EditInventoryScreen> {
               Expanded(
                 child: _buildStockInfo(
                   l10n.adjustment,
-                  '${_isAdding ? '+' : '-'}$adjustment',
+                  '${_isAdding ? '+' : '-'}${adjustment.toStringAsFixed(2)}',
                   _isAdding ? AppColors.success : AppColors.error,
                   isDark,
                 ),
@@ -301,11 +303,20 @@ class _EditInventoryScreenState extends ConsumerState<EditInventoryScreen> {
                 color: AppColors.getBorder(isDark),
               ),
               Expanded(
-                child: _buildStockInfo(
-                  l10n.newStock,
-                  '$newStock',
-                  newStock >= 0 ? AppColors.info : AppColors.error,
-                  isDark,
+                // P2: When the subtract would drive stock below zero,
+                // wrap the preview in a Tooltip so hover/long-press
+                // explains why the save button (and tx re-read guard)
+                // will refuse. Visible text still colours error-red.
+                child: Tooltip(
+                  message: newStock < 0
+                      ? 'المخزون غير كافٍ — الكمية المطلوبة أكبر من المتاح'
+                      : '',
+                  child: _buildStockInfo(
+                    l10n.newStock,
+                    newStock.toStringAsFixed(2),
+                    newStock >= 0 ? AppColors.info : AppColors.error,
+                    isDark,
+                  ),
                 ),
               ),
             ],
@@ -476,7 +487,12 @@ class _EditInventoryScreenState extends ConsumerState<EditInventoryScreen> {
           const SizedBox(height: AlhaiSpacing.mdl),
           TextField(
             controller: _adjustmentController,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'^\d+(\.\d{0,2})?$'),
+              ),
+            ],
             style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -690,7 +706,7 @@ class _EditInventoryScreenState extends ConsumerState<EditInventoryScreen> {
   Widget _buildSaveButton(bool isDark, AppLocalizations l10n) {
     final hasAmount =
         _adjustmentController.text.isNotEmpty &&
-        (int.tryParse(_adjustmentController.text) ?? 0) > 0;
+        (double.tryParse(_adjustmentController.text) ?? 0) > 0;
 
     return SizedBox(
       width: double.infinity,
@@ -724,7 +740,8 @@ class _EditInventoryScreenState extends ConsumerState<EditInventoryScreen> {
 
   Future<void> _saveAdjustment() async {
     final l10n = AppLocalizations.of(context);
-    final adjustment = int.tryParse(_adjustmentController.text) ?? 0;
+    final double adjustment =
+        double.tryParse(_adjustmentController.text) ?? 0.0;
     if (adjustment <= 0) return;
 
     setState(() => _isSaving = true);
@@ -732,9 +749,25 @@ class _EditInventoryScreenState extends ConsumerState<EditInventoryScreen> {
     try {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
-      final currentStock = _product?.stockQty ?? 0;
-      final signedAdjustment = _isAdding ? adjustment : -adjustment;
-      final newStock = currentStock + signedAdjustment;
+      final double currentStock = _product?.stockQty ?? 0.0;
+      final double signedAdjustment =
+          _isAdding ? adjustment : -adjustment;
+      final double newStock = currentStock + signedAdjustment;
+
+      // Defence-in-depth: refuse an adjustment that would leave stock
+      // below zero. UI mirrors this check, but race-safe re-read also
+      // enforces it in case another sync bumped stock down while the
+      // form was open.
+      if (newStock < 0) {
+        if (mounted) {
+          AlhaiSnackbar.error(
+            context,
+            'المخزون غير كافٍ: المتاح ${currentStock.toStringAsFixed(2)}، المطلوب سحبه ${adjustment.toStringAsFixed(2)}',
+          );
+        }
+        setState(() => _isSaving = false);
+        return;
+      }
 
       final movementId = const Uuid().v4();
       await _db.transaction(() async {
@@ -744,9 +777,9 @@ class _EditInventoryScreenState extends ConsumerState<EditInventoryScreen> {
             storeId: storeId,
             productId: widget.productId,
             type: _isAdding ? 'addition' : 'subtraction',
-            qty: signedAdjustment.toDouble(),
-            previousQty: currentStock.toDouble(),
-            newQty: newStock.toDouble(),
+            qty: signedAdjustment,
+            previousQty: currentStock,
+            newQty: newStock,
             reason: Value(_reason),
             notes: Value(
               _noteController.text.isNotEmpty ? _noteController.text : null,
@@ -765,8 +798,8 @@ class _EditInventoryScreenState extends ConsumerState<EditInventoryScreen> {
         userName: user?.name ?? 'unknown',
         productId: widget.productId,
         productName: _product?.name ?? widget.productId,
-        oldQty: currentStock.toDouble(),
-        newQty: newStock.toDouble(),
+        oldQty: currentStock,
+        newQty: newStock,
         reason: _reason,
       );
 

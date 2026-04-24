@@ -10,10 +10,13 @@ import 'package:get_it/get_it.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_auth/alhai_auth.dart' show currentUserProvider;
+import 'package:alhai_sync/alhai_sync.dart' show SyncPriority;
 import 'package:uuid/uuid.dart';
 import 'package:alhai_design_system/alhai_design_system.dart' show AlhaiSnackbar;
 
 import '../../../../core/services/sentry_service.dart';
+import '../../../../core/services/audit_service.dart';
 import 'customer_ledger_providers.dart';
 
 /// تنفيذ حفظ تسوية يدوية لحساب عميل.
@@ -38,21 +41,28 @@ Future<void> saveLedgerAdjustment({
   ref.read(ledgerAdjustingProvider.notifier).state = true;
 
   final db = GetIt.I<AppDatabase>();
-  final account =
-      ref.read(accountLedgerDataProvider(accountId)).valueOrNull?.account;
   final isDebit = type == 'debit';
-  final currentBal = (account?.balance ?? 0) / 100.0;
   final signedAmount = isDebit ? amount : -amount;
-  final newBalance = currentBal + signedAmount;
   final storeId = ref.read(currentStoreIdProvider);
   if (storeId == null) {
     ref.read(ledgerAdjustingProvider.notifier).state = false;
     return;
   }
+  final user = ref.read(currentUserProvider);
+  final syncService = ref.read(syncServiceProvider);
+  final description = reason.isEmpty ? l10n.manualAdjustment : reason;
 
   try {
     final txnId = const Uuid().v4();
+    // Re-fetch the account inside the transaction so the saved balance
+    // reflects the most recent value, not whatever the UI cached. Without
+    // this guard a concurrent write (e.g. a sale or another adjustment)
+    // would be silently overwritten.
+    late final double newBalance;
     await db.transaction(() async {
+      final fresh = await db.accountsDao.getAccountById(accountId);
+      final currentBal = (fresh?.balance ?? 0) / 100.0;
+      newBalance = currentBal + signedAmount;
       await db.transactionsDao.insertTransaction(
         TransactionsTableCompanion.insert(
           id: txnId,
@@ -61,13 +71,80 @@ Future<void> saveLedgerAdjustment({
           type: 'adjustment',
           amount: (signedAmount * 100).round(),
           balanceAfter: (newBalance * 100).round(),
-          description: Value(reason.isEmpty ? l10n.manualAdjustment : reason),
+          description: Value(description),
+          createdBy: Value(user?.name),
           createdAt: date,
         ),
       );
       await db.accountsDao.updateBalance(accountId, newBalance);
     });
+
+    // Sync enqueue — outside the DB transaction. Without this, manual
+    // adjustments stay local-only and the cloud ledger drifts (audit gap
+    // + risk vector for unauthorized balance changes that never reach
+    // server-side review).
+    try {
+      await syncService.enqueueCreate(
+        tableName: 'transactions',
+        recordId: txnId,
+        data: {
+          'id': txnId,
+          'storeId': storeId,
+          'accountId': accountId,
+          'type': 'adjustment',
+          'amount': (signedAmount * 100).round(),
+          'balanceAfter': (newBalance * 100).round(),
+          'description': description,
+          'createdBy': user?.name,
+          'createdAt': date.toIso8601String(),
+        },
+        priority: SyncPriority.high,
+      );
+      await syncService.enqueueUpdate(
+        tableName: 'accounts',
+        recordId: accountId,
+        changes: {
+          'id': accountId,
+          'balance': (newBalance * 100).round(),
+          'lastTransactionAt': date.toIso8601String(),
+          'updatedAt': date.toIso8601String(),
+        },
+        priority: SyncPriority.high,
+      );
+    } catch (e, stack) {
+      reportError(
+        e,
+        stackTrace: stack,
+        hint: 'Adjustment sync enqueue (txn=$txnId)',
+      );
+    }
+
     ref.invalidate(accountLedgerDataProvider(accountId));
+
+    // Audit log — manual balance changes must leave a trace for compliance
+    // review. `logTransaction` records the full before/after context.
+    // P1 #9: previously the adjustment bypassed the audit trail entirely.
+    // Fetch account name for the description; fall back to the id.
+    try {
+      final fresh = await db.accountsDao.getAccountById(accountId);
+      auditService.logTransaction(
+        storeId: storeId,
+        userId: user?.id ?? 'unknown',
+        userName: user?.name ?? 'unknown',
+        transactionId: txnId,
+        accountName: fresh?.name ?? accountId,
+        type: 'adjustment',
+        amount: signedAmount,
+        balanceAfter: newBalance,
+      );
+    } catch (e, stack) {
+      // Audit failure is non-fatal for the local save — log and proceed.
+      reportError(
+        e,
+        stackTrace: stack,
+        hint: 'Adjustment audit log (txn=$txnId)',
+      );
+    }
 
     if (context.mounted) {
       AlhaiSnackbar.success(context, l10n.adjustmentSaved);

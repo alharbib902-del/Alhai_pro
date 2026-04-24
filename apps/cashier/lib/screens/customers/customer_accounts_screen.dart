@@ -6,6 +6,8 @@
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -38,17 +40,37 @@ class _CustomerAccountsScreenState
   String? _error;
   String _statusFilter = 'all';
 
+  // Debounce search filter — avoids re-running the filter + setState rebuild
+  // on every keystroke (P1 #1). The 500-row cap means each run is cheap, but
+  // the subtree rebuild churns the ListView — debounce collapses rapid typing
+  // into a single recompute.
+  Timer? _searchDebounce;
+  String _lastAppliedQuery = '';
+
   @override
   void initState() {
     super.initState();
     _loadAccounts();
-    _searchController.addListener(_applyFilters);
+    _searchController.addListener(_onSearchChanged);
   }
 
   @override
   void dispose() {
+    _searchDebounce?.cancel();
     _searchController.dispose();
     super.dispose();
+  }
+
+  void _onSearchChanged() {
+    final q = _searchController.text;
+    // Skip when nothing actually changed (setState from clear() + listener).
+    if (q == _lastAppliedQuery) return;
+    _searchDebounce?.cancel();
+    _searchDebounce = Timer(const Duration(milliseconds: 300), () {
+      if (!mounted) return;
+      _lastAppliedQuery = q;
+      _applyFilters();
+    });
   }
 
   Future<void> _loadAccounts() async {
@@ -341,9 +363,11 @@ class _CustomerAccountsScreenState
   }
 
   Widget _buildSummaryStats(bool isDark, AppLocalizations l10n) {
+    // accounts.balance is int cents (C-4 schema). Divide at fold boundary
+    // so the SAR accumulator does not display 100×.
     final totalDebt = _filteredAccounts
         .where((a) => a.balance > 0)
-        .fold<double>(0, (sum, a) => sum + a.balance);
+        .fold<double>(0, (sum, a) => sum + a.balance / 100.0);
     final overdueCount = _filteredAccounts
         .where(
           (a) =>
@@ -398,7 +422,10 @@ class _CustomerAccountsScreenState
                 ),
                 const SizedBox(height: AlhaiSpacing.xxs),
                 Text(
-                  '${totalDebt.toStringAsFixed(0)} ${l10n.sar}',
+                  CurrencyFormatter.formatCompactWithContext(
+                    context,
+                    totalDebt,
+                  ),
                   style: const TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w800,
@@ -557,7 +584,11 @@ class _CustomerAccountsScreenState
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '${account.balance.abs().toStringAsFixed(0)} ${l10n.sar}',
+                  CurrencyFormatter.fromCentsWithContext(
+                    context,
+                    account.balance.abs(),
+                    decimalDigits: 0,
+                  ),
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w800,
@@ -599,9 +630,12 @@ class _CustomerAccountsScreenState
   }
 
   Widget _buildEmptyState(bool isDark, AppLocalizations l10n) {
+    // P2 #1: hard-coded English removed. No l10n key for "no customer
+    // accounts" exists yet; use direct Arabic (primary locale for this app)
+    // — matches the policy used elsewhere in the customer flow headers.
     return const AppEmptyState(
       icon: Icons.account_balance_wallet_outlined,
-      title: 'No customer accounts found',
+      title: 'لا توجد حسابات عملاء',
     );
   }
 

@@ -154,6 +154,7 @@ class _LedgerBody extends ConsumerWidget {
                   LedgerSummaryBar(
                     totalDebit: totals.debit,
                     totalCredit: totals.credit,
+                    finalBalance: totals.finalBalance,
                   ),
                 const SizedBox(height: AlhaiSpacing.lg),
               ],
@@ -164,6 +165,7 @@ class _LedgerBody extends ConsumerWidget {
           LedgerMobileBottomSummary(
             totalDebit: totals.debit,
             totalCredit: totals.credit,
+            finalBalance: totals.finalBalance,
           ),
       ],
     );

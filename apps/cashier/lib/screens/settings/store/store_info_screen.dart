@@ -233,7 +233,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
               borderRadius: BorderRadius.circular(20),
             ),
             child: const Text(
-              'Read Only',
+              'للقراءة فقط',
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -273,7 +273,7 @@ class _StoreInfoScreenState extends ConsumerState<StoreInfoScreen> {
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Text(
-                'Store Details',
+                'بيانات المتجر',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,

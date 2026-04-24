@@ -320,18 +320,21 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
             ),
           ),
           const SizedBox(height: AlhaiSpacing.md),
-          // Quick amount chips
+          // Quick amount chips — المقارنة + النص موحّدان بـ parse+round
+          // لتلافي عدم تطابق الـ chip عند كتابة ".00" تلقائياً.
           Wrap(
             spacing: 8,
             runSpacing: 8,
             children: [100, 200, 500, 1000].map((amount) {
-              final isSelected =
-                  _openingCashController.text == amount.toString();
+              final amountText = amount.toDouble().toStringAsFixed(2);
+              final currentValue =
+                  double.tryParse(_openingCashController.text) ?? -1;
+              final isSelected = currentValue == amount.toDouble();
               return Material(
                 color: Colors.transparent,
                 child: InkWell(
                   onTap: () {
-                    _openingCashController.text = amount.toString();
+                    _openingCashController.text = amountText;
                     setState(() {});
                   },
                   borderRadius: BorderRadius.circular(10),
@@ -352,7 +355,10 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
                       ),
                     ),
                     child: Text(
-                      '$amount ${l10n.sar}',
+                      CurrencyFormatter.formatWithContext(
+                        context,
+                        amount.toDouble(),
+                      ),
                       style: TextStyle(
                         fontWeight: FontWeight.w600,
                         color: isSelected
@@ -461,16 +467,12 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
     setState(() => _isLoading = true);
 
     try {
-      // Guard: check for existing open shift before attempting to open
-      final existingShift = await ref.read(openShiftProvider.future);
-      if (existingShift != null) {
-        if (!mounted) return;
-        setState(() => _isLoading = false);
-        HapticShim.vibrate();
-        AlhaiSnackbar.warning(context, l10n.oneShiftAtATime);
-        return;
-      }
-
+      // قبل: كنا نفحص existingShift هنا ثم نستدعي openShift — race نافذ:
+      // إذا ضغط المستخدم مرتين بسرعة كلا الاستدعاءين يمران التحقق قبل
+      // أن تُكتب الوردية الأولى إلى DB. الحل: الاعتماد على التحقق
+      // الذرّي داخل openShiftActionProvider (يفحص getAnyOpenShift
+      // ويرمي إذا وُجد). الـ setState يضمن أيضاً أن الزر معطّل حتى
+      // نهاية await (يمنع double-tap UI-side).
       final user = ref.read(currentUserProvider);
       final openShift = ref.read(openShiftActionProvider);
 
@@ -499,11 +501,19 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Open shift');
       if (!mounted) return;
+      // إذا رمى الـ provider بسبب وردية مفتوحة مسبقاً (race من double-tap
+      // أو جهاز ثانٍ)، اعرض رسالة "وردية واحدة" بدلاً من خطأ عام.
+      final msg = e.toString();
+      final isDuplicateShift = msg.contains('وردية مفتوحة بالفعل');
       showDialog(
         context: context,
         builder: (ctx) => AlertDialog(
-          title: Text(l10n.errorOpeningShift),
-          content: Text(l10n.errorOccurred),
+          title: Text(
+            isDuplicateShift ? l10n.oneShiftAtATime : l10n.errorOpeningShift,
+          ),
+          content: Text(
+            isDuplicateShift ? l10n.oneShiftAtATime : l10n.errorOccurred,
+          ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(ctx),

@@ -6,6 +6,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
@@ -38,7 +39,6 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
   ProductsTableData? _selectedProduct;
   bool _isSaving = false;
   String _reason = 'expired';
-  bool _hasPhoto = false;
 
   @override
   void dispose() {
@@ -425,7 +425,12 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
           const SizedBox(height: AlhaiSpacing.md),
           TextField(
             controller: _quantityController,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'^\d+(\.\d{0,2})?$'),
+              ),
+            ],
             style: TextStyle(
               fontSize: 28,
               fontWeight: FontWeight.bold,
@@ -585,6 +590,12 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
   }
 
   Widget _buildPhotoCard(ColorScheme colorScheme, AppLocalizations l10n) {
+    // Photo capture is not wired to any camera plugin or storage target
+    // yet — the old toggle merely flipped a boolean and showed a
+    // check-mark, which misled operators into believing an image had
+    // been attached. Render a plain coming-soon placeholder instead so
+    // the UI stays honest. Wire to image_picker + attachments DAO when
+    // that backend lands.
     return Container(
       padding: const EdgeInsets.all(AlhaiSpacing.mdl),
       decoration: BoxDecoration(
@@ -604,66 +615,34 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
             ),
           ),
           const SizedBox(height: AlhaiSpacing.sm),
-          InkWell(
-            onTap: () {
-              setState(() => _hasPhoto = !_hasPhoto);
-            },
-            borderRadius: BorderRadius.circular(12),
-            child: Container(
-              width: double.infinity,
-              height: 100,
-              decoration: BoxDecoration(
-                color: colorScheme.surfaceContainerHighest,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: _hasPhoto
-                      ? AppColors.success
-                      : colorScheme.outlineVariant,
-                  style: _hasPhoto ? BorderStyle.solid : BorderStyle.none,
-                ),
-              ),
-              child: _hasPhoto
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(
-                            Icons.check_circle_rounded,
-                            color: AppColors.success,
-                            size: 32,
-                          ),
-                          const SizedBox(height: AlhaiSpacing.xs),
-                          Text(
-                            l10n.photoAttached,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w500,
-                              color: AppColors.success,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.camera_alt_outlined,
-                            size: 32,
-                            color: colorScheme.outline,
-                          ),
-                          const SizedBox(height: AlhaiSpacing.xs),
-                          Text(
-                            l10n.tapToTakePhoto,
-                            style: TextStyle(
-                              fontSize: 13,
-                              color: colorScheme.outline,
-                            ),
-                          ),
-                        ],
-                      ),
+          Container(
+            width: double.infinity,
+            height: 100,
+            decoration: BoxDecoration(
+              color: colorScheme.surfaceContainerHighest,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: colorScheme.outlineVariant),
+            ),
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.camera_alt_outlined,
+                    size: 28,
+                    color: colorScheme.outline,
+                  ),
+                  const SizedBox(height: AlhaiSpacing.xs),
+                  Text(
+                    l10n.comingSoon,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: colorScheme.outline,
                     ),
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: AlhaiSpacing.xs),
@@ -731,7 +710,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
   Widget _buildSaveButton(ColorScheme colorScheme, AppLocalizations l10n) {
     final hasData =
         _selectedProduct != null &&
-        (int.tryParse(_quantityController.text) ?? 0) > 0;
+        (double.tryParse(_quantityController.text) ?? 0) > 0;
 
     return SizedBox(
       width: double.infinity,
@@ -765,7 +744,7 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
 
   Future<void> _saveWastage() async {
     final l10n = AppLocalizations.of(context);
-    final quantity = int.tryParse(_quantityController.text) ?? 0;
+    final double quantity = double.tryParse(_quantityController.text) ?? 0.0;
     if (quantity <= 0 || _selectedProduct == null) return;
 
     setState(() => _isSaving = true);
@@ -774,8 +753,17 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
       final movementId = const Uuid().v4();
-      final currentStock = _selectedProduct!.stockQty;
-      final newStock = currentStock - quantity;
+      final double currentStock = _selectedProduct!.stockQty;
+      final double newStock = currentStock - quantity;
+
+      if (newStock < 0) {
+        AlhaiSnackbar.error(
+          context,
+          'المخزون غير كافٍ: المتاح ${currentStock.toStringAsFixed(2)}، المطلوب ${quantity.toStringAsFixed(2)}',
+        );
+        setState(() => _isSaving = false);
+        return;
+      }
 
       await _db.transaction(() async {
         await _db.inventoryDao.insertMovement(
@@ -784,9 +772,9 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
             storeId: storeId,
             productId: _selectedProduct!.id,
             type: 'wastage',
-            qty: (-quantity).toDouble(),
-            previousQty: currentStock.toDouble(),
-            newQty: newStock.toDouble(),
+            qty: -quantity,
+            previousQty: currentStock,
+            newQty: newStock,
             reason: Value(_reason),
             notes: Value(
               _noteController.text.isNotEmpty ? _noteController.text : null,
@@ -797,7 +785,8 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
         await _db.productsDao.updateStock(_selectedProduct!.id, newStock);
       });
 
-      // Audit log
+      // Audit log — reason stays an enum-style tag ("expired", "damaged"),
+      // not the mixed free-form Arabic prefix that broke aggregations.
       final user = ref.read(currentUserProvider);
       auditService.logStockAdjust(
         storeId: storeId,
@@ -805,9 +794,9 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
         userName: user?.name ?? 'unknown',
         productId: _selectedProduct!.id,
         productName: _selectedProduct!.name,
-        oldQty: currentStock.toDouble(),
-        newQty: newStock.toDouble(),
-        reason: 'هدر: $_reason',
+        oldQty: currentStock,
+        newQty: newStock,
+        reason: 'wastage:$_reason',
       );
 
       if (!mounted) return;
@@ -820,7 +809,6 @@ class _WastageScreenState extends ConsumerState<WastageScreen> {
         _quantityController.clear();
         _noteController.clear();
         _reason = 'expired';
-        _hasPhoto = false;
       });
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Save wastage record');

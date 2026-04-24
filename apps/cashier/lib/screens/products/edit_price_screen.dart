@@ -5,11 +5,14 @@
 /// Supports: RTL Arabic, dark/light theme, responsive layout.
 library;
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:get_it/get_it.dart';
-import 'package:alhai_core/alhai_core.dart' show Money;
+import 'package:alhai_core/alhai_core.dart' show Money, UserRole;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
@@ -40,10 +43,25 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
   bool _isSaving = false;
   String? _error;
   final List<Map<String, dynamic>> _priceHistory = [];
+  // P1 #7 (2026-04-24): role-based gate. Only store owners / super admins can
+  // save edits. The field is populated in initState — evaluating it there
+  // avoids a rebuild race where the Save button appears briefly enabled
+  // while the user provider is still settling.
+  bool _canEditPrice = false;
 
   @override
   void initState() {
     super.initState();
+    // P1 #7 (2026-04-24): check edit-price permission as early as possible
+    // so the UI can render with the correct state on first frame.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final role = ref.read(userRoleProvider);
+      setState(() {
+        _canEditPrice =
+            role == UserRole.storeOwner || role == UserRole.superAdmin;
+      });
+    });
     _loadProduct();
   }
 
@@ -61,26 +79,69 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
     });
     try {
       final product = await _db.productsDao.getProductById(widget.productId);
-      if (mounted && product != null) {
-        setState(() {
-          _product = product;
-          // C-4 Stage B: product.price/costPrice are int cents; UI needs SAR doubles.
-          _newPriceController.text = (product.price / 100.0).toStringAsFixed(2);
-          _costPriceController.text = ((product.costPrice ?? 0) / 100.0)
-              .toStringAsFixed(2);
-          _isLoading = false;
-          // Simulate price history from product data
-          _priceHistory.addAll([
-            {
-              'date': product.updatedAt,
-              'price': product.price / 100.0,
-              'changedBy': 'system',
-            },
-          ]);
-        });
-      } else {
-        if (mounted) setState(() => _isLoading = false);
+      if (!mounted) {
+        return;
       }
+      if (product == null) {
+        setState(() => _isLoading = false);
+        return;
+      }
+
+      // P1 #9 (2026-04-24): `_priceHistory` was seeded with a synthetic entry
+      // built from `product.updatedAt` which confusingly looked like a real
+      // history row. Replaced with the actual `audit_log` rows scoped to this
+      // product's priceChange events. Rows older than the current product
+      // row (by created_at) are ignored so the list reads oldest→newest.
+      final storeId = ref.read(currentStoreIdProvider);
+      final history = <Map<String, dynamic>>[];
+      if (storeId != null) {
+        try {
+          final logs = await _db.auditLogDao.getLogsByAction(
+            storeId,
+            AuditAction.priceChange,
+          );
+          for (final log in logs) {
+            if (log.entityId != widget.productId) continue;
+            final raw = log.newValue;
+            if (raw == null || raw.isEmpty) continue;
+            try {
+              final decoded = jsonDecode(raw) as Map<String, dynamic>;
+              final price = decoded['price'];
+              if (price is num) {
+                history.add({
+                  'date': log.createdAt,
+                  'price': price.toDouble(),
+                  'changedBy': log.userName,
+                });
+              }
+            } catch (_) {
+              // malformed audit payload — skip silently (hash-chain rows may
+              // embed metadata under `__meta__`; primitives remain under
+              // `price` so we ignore entries that don't parse cleanly).
+            }
+          }
+        } catch (e, stack) {
+          reportError(
+            e,
+            stackTrace: stack,
+            hint: 'Load price history from audit_log',
+          );
+          // Non-fatal — the card will render empty ("no price history") rather
+          // than block editing if audit lookup fails.
+        }
+      }
+
+      setState(() {
+        _product = product;
+        // C-4 Stage B: product.price/costPrice are int cents; UI needs SAR doubles.
+        _newPriceController.text = (product.price / 100.0).toStringAsFixed(2);
+        _costPriceController.text =
+            ((product.costPrice ?? 0) / 100.0).toStringAsFixed(2);
+        _isLoading = false;
+        _priceHistory
+          ..clear()
+          ..addAll(history);
+      });
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Load product for price edit');
       if (mounted) {
@@ -104,7 +165,7 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
     return Column(
       children: [
         AppHeader(
-          title: 'Edit Price',
+          title: l10n.editPrice(_product?.name ?? ''),
           subtitle: _product?.name ?? '',
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
@@ -306,8 +367,12 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
+              // P1 #11 (2026-04-24): hard-coded English replaced with Arabic
+              // copy. `currentPrice` is not a dedicated key in alhai_l10n yet
+              // — using an inline Arabic label rather than introducing a new
+              // key + full codegen round (11 locales) inside this patch.
               Text(
-                'Current Price',
+                'السعر الحالي',
                 style: TextStyle(
                   fontSize: 11,
                   color: colorScheme.onSurfaceVariant,
@@ -384,7 +449,16 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
           const SizedBox(height: AlhaiSpacing.xs),
           TextField(
             controller: _newPriceController,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            // P1 #12 (2026-04-24): constrain input to a valid decimal shape —
+            // up to 2 fractional digits. Previously any character was accepted
+            // which meant the validator in _savePrice had to defensively parse
+            // and reject garbage silently.
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'^\d*(?:\.\d{0,2})?'),
+              ),
+            ],
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
@@ -435,7 +509,12 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
           const SizedBox(height: AlhaiSpacing.xs),
           TextField(
             controller: _costPriceController,
-            keyboardType: TextInputType.number,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                RegExp(r'^\d*(?:\.\d{0,2})?'),
+              ),
+            ],
             style: TextStyle(color: colorScheme.onSurface),
             onChanged: (_) => setState(() {}),
             decoration: InputDecoration(
@@ -512,8 +591,10 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
                 ),
               ),
               const SizedBox(width: AlhaiSpacing.sm),
+              // P1 #11 (2026-04-24): inline Arabic copy — see `currentPrice`
+              // comment above for rationale (no l10n key yet).
               Text(
-                'Price Comparison',
+                'مقارنة الأسعار',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
@@ -524,7 +605,7 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
           ),
           const SizedBox(height: AlhaiSpacing.mdl),
           _buildComparisonRow(
-            'Current Price',
+            'السعر الحالي',
             CurrencyFormatter.format(oldPrice),
             colorScheme,
           ),
@@ -679,33 +760,43 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
   }
 
   Widget _buildSaveButton(ColorScheme colorScheme, AppLocalizations l10n) {
-    return SizedBox(
-      width: double.infinity,
-      child: FilledButton.icon(
-        onPressed: _isSaving ? null : _savePrice,
-        icon: _isSaving
-            ? SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: colorScheme.onPrimary,
-                ),
-              )
-            : const Icon(Icons.save_rounded, size: 20),
-        label: Text(
-          l10n.saveChanges,
-          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-        ),
-        style: FilledButton.styleFrom(
-          backgroundColor: AppColors.primary,
-          foregroundColor: colorScheme.onPrimary,
-          padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
+    // P1 #7 (2026-04-24): only store owners / super admins can edit price.
+    // When permission is missing we render a disabled button with a tooltip
+    // so the reason is obvious rather than the button just doing nothing.
+    final enabled = _canEditPrice && !_isSaving;
+    final button = FilledButton.icon(
+      onPressed: enabled ? _savePrice : null,
+      icon: _isSaving
+          ? SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: colorScheme.onPrimary,
+              ),
+            )
+          : const Icon(Icons.save_rounded, size: 20),
+      label: Text(
+        l10n.saveChanges,
+        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+      ),
+      style: FilledButton.styleFrom(
+        backgroundColor: AppColors.primary,
+        foregroundColor: colorScheme.onPrimary,
+        padding: const EdgeInsets.symmetric(vertical: AlhaiSpacing.md),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
+    );
+    return SizedBox(
+      width: double.infinity,
+      child: _canEditPrice
+          ? button
+          : Tooltip(
+              message: 'لا تملك صلاحية تعديل السعر',
+              child: button,
+            ),
     );
   }
 
@@ -714,8 +805,29 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
     final costPrice = double.tryParse(_costPriceController.text);
     final l10n = AppLocalizations.of(context);
 
+    // P1 #7 (2026-04-24): defense-in-depth — even if the button somehow fires
+    // for an un-privileged user (e.g. race with role resolver), refuse here.
+    if (!_canEditPrice) {
+      AlhaiSnackbar.warning(context, 'لا تملك صلاحية تعديل السعر');
+      return;
+    }
+
     if (newPrice == null || newPrice <= 0) {
       AlhaiSnackbar.warning(context, l10n.enterValidAmount);
+      return;
+    }
+
+    // P1 #8 (2026-04-24): reject unreasonably large prices. 100M SAR is well
+    // above any realistic retail price and also keeps the int-cents value
+    // (newPrice * 100) within a safe 64-bit range with headroom for
+    // downstream calculations (tax × multiple-line totals, etc.).
+    const maxPriceSar = 100000000.0;
+    if (newPrice > maxPriceSar) {
+      AlhaiSnackbar.warning(context, 'السعر كبير جداً');
+      return;
+    }
+    if (costPrice != null && costPrice > maxPriceSar) {
+      AlhaiSnackbar.warning(context, 'سعر التكلفة كبير جداً');
       return;
     }
 
@@ -723,31 +835,50 @@ class _EditPriceScreenState extends ConsumerState<EditPriceScreen> {
 
     try {
       final currentProduct = _product!;
-      // C-4 Stage B: convert user-typed SAR doubles → int cents for storage.
-      final newPriceCents = (newPrice * 100).round();
-      final costPriceCents = costPrice == null
-          ? null
-          : (costPrice * 100).round();
-      await _db.productsDao.updateProduct(
-        currentProduct.copyWith(
-          price: newPriceCents,
-          costPrice: Value(costPriceCents),
-          updatedAt: Value(DateTime.now()),
-        ),
-      );
-
-      // Audit log
       final user = ref.read(currentUserProvider);
       final storeId = ref.read(currentStoreIdProvider);
-      if (storeId == null) return;
+      if (storeId == null) {
+        if (mounted) setState(() => _isSaving = false);
+        return;
+      }
+      // C-4 Stage B: convert user-typed SAR doubles → int cents for storage.
+      final newPriceCents = (newPrice * 100).round();
+      final costPriceCents =
+          costPrice == null ? null : (costPrice * 100).round();
+      final oldPrice = currentProduct.price / 100.0;
+
+      // P1 #10 (2026-04-24): run product update + audit log inside the same
+      // Drift transaction so a mid-write crash can't leave the tables in a
+      // torn state (price updated but no audit row, or vice versa).
+      await _db.transaction(() async {
+        await _db.productsDao.updateProduct(
+          currentProduct.copyWith(
+            price: newPriceCents,
+            costPrice: Value(costPriceCents),
+            updatedAt: Value(DateTime.now()),
+          ),
+        );
+        await _db.auditLogDao.logPriceChange(
+          storeId: storeId,
+          userId: user?.id ?? 'unknown',
+          userName: user?.name ?? 'unknown',
+          productId: currentProduct.id,
+          productName: currentProduct.name,
+          oldPrice: oldPrice,
+          newPrice: newPrice,
+        );
+      });
+
+      // The legacy auditService.logPriceChange publishes the event to Sentry
+      // / sync queue / remote sink — kept outside the transaction because
+      // it may fire network I/O that must not hold the SQLite write lock.
       auditService.logPriceChange(
         storeId: storeId,
         userId: user?.id ?? 'unknown',
         userName: user?.name ?? 'unknown',
         productId: currentProduct.id,
         productName: currentProduct.name,
-        // Audit log API uses double SAR → convert from cents.
-        oldPrice: currentProduct.price / 100.0,
+        oldPrice: oldPrice,
         newPrice: newPrice,
       );
 

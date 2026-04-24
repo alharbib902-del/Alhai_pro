@@ -65,6 +65,32 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
         .getSingleOrNull();
   }
 
+  /// الحصول على منتج بـ SKU داخل متجر محدد.
+  Future<ProductsTableData?> getProductBySku(String sku, String storeId) {
+    return (select(productsTable)
+          ..where((p) => p.sku.equals(sku) & p.storeId.equals(storeId)))
+        .getSingleOrNull();
+  }
+
+  /// مطابقة منتج في متجر آخر (للنقل بين الفروع).
+  ///
+  /// يبحث بـ SKU أولاً ثم Barcode. إن لم يوجد أيهما يعيد null —
+  /// المتصل مسؤول عن التعامل مع غياب المنتج في الفرع المستقبِل.
+  Future<ProductsTableData?> findInStoreBySkuOrBarcode({
+    required String storeId,
+    String? sku,
+    String? barcode,
+  }) async {
+    if (sku != null && sku.isNotEmpty) {
+      final bySku = await getProductBySku(sku, storeId);
+      if (bySku != null) return bySku;
+    }
+    if (barcode != null && barcode.isNotEmpty) {
+      return getProductByBarcode(barcode, storeId);
+    }
+    return null;
+  }
+
   /// البحث في المنتجات (يستخدم FTS إذا متاح)
   Future<List<ProductsTableData>> searchProducts(
     String query,
@@ -142,6 +168,30 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
           )
           ..orderBy([(p) => OrderingTerm.asc(p.name)]))
         .get();
+  }
+
+  /// Returns a map of `category_id -> product count` for a store in a single
+  /// grouped query. Replaces the N+1 pattern of calling
+  /// [getProductsByCategory] once per category (P1 #19 2026-04-24).
+  ///
+  /// Products with `category_id = NULL` are aggregated under the
+  /// sentinel key `'uncategorized'` so callers can surface them without
+  /// losing the count.
+  Future<Map<String, int>> countByCategory(String storeId) async {
+    final result = await customSelect(
+      '''SELECT COALESCE(category_id, 'uncategorized') AS category_id,
+                COUNT(*) AS cnt
+         FROM products
+         WHERE store_id = ? AND deleted_at IS NULL
+         GROUP BY COALESCE(category_id, 'uncategorized')''',
+      variables: [Variable.withString(storeId)],
+      readsFrom: {productsTable},
+    ).get();
+    return {
+      for (final row in result)
+        (row.data['category_id'] as String? ?? 'uncategorized'):
+            (row.data['cnt'] as int? ?? 0),
+    };
   }
 
   /// الحصول على المنتجات منخفضة المخزون

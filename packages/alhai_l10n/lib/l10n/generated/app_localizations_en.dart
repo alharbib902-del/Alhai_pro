@@ -4299,6 +4299,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get keyboardShortcuts => 'Keyboard Shortcuts';
 
   @override
+  String get animationsToggle => 'Animations';
+
+  @override
+  String get animationsToggleDesc => 'Smooth screen transitions and motion';
+
+  @override
   String get customizeShortcuts => 'Customize shortcuts';
 
   @override
@@ -14133,4 +14139,58 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get saMfaEnrollmentNoData => 'TOTP enrollment returned no data.';
+
+  @override
+  String get exchangeTitle => 'Exchange';
+
+  @override
+  String get itemsToReturn => 'Items to Return';
+
+  @override
+  String get newItemsToAdd => 'New Items to Add';
+
+  @override
+  String get exchangeRequiresNewItem =>
+      'Exchange requires at least one new item. For a pure refund, please use the Returns screen (which links the refund to the original sale).';
+
+  @override
+  String get splitReceiptTitle => 'Split Receipt';
+
+  @override
+  String get paymentBreakdown => 'Payment Breakdown';
+
+  @override
+  String get zatcaQrTitle => 'ZATCA QR';
+
+  @override
+  String get splitRefundTitle => 'Split Refund';
+
+  @override
+  String get refundByPaymentMethod => 'Refund by Payment Method';
+
+  @override
+  String get exceedsOriginalAmount => 'Exceeds original amount';
+
+  @override
+  String get refundSummary => 'Refund Summary';
+
+  @override
+  String get originalTotal => 'Original Total';
+
+  @override
+  String refundLineLabel(String method) {
+    return '$method refund';
+  }
+
+  @override
+  String get refundAmountExceedsOriginal => 'Refund amount exceeds original';
+
+  @override
+  String get filterCompletedOnly => 'Completed only';
+
+  @override
+  String get filterCompletedOnlyDesc => 'Non-completed sales are hidden';
+
+  @override
+  String get pullToRefresh => 'Pull to refresh';
 }
