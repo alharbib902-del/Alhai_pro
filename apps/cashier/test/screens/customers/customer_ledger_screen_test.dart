@@ -188,9 +188,11 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // FAB with tune icon
-      expect(find.byIcon(Icons.tune_rounded), findsOneWidget);
-      expect(find.byType(FloatingActionButton), findsOneWidget);
+      // Hotfix 2026-04-24 (§ P0-28): manual adjustment FAB is restricted to
+      // storeOwner/superAdmin. The default test user (no role stub) is
+      // treated as non-authorized, so the FAB must be hidden.
+      expect(find.byIcon(Icons.tune_rounded), findsNothing);
+      expect(find.byType(FloatingActionButton), findsNothing);
     });
 
     testWidgets('shows refresh button in top bar', (tester) async {

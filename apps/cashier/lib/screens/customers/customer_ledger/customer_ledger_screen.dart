@@ -10,6 +10,8 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_core/alhai_core.dart' show UserRole;
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
@@ -68,6 +70,18 @@ class CustomerLedgerScreen extends ConsumerWidget {
     AppLocalizations l10n,
     bool isAdjusting,
   ) {
+    // Hotfix 2026-04-24: manual ledger adjustment is a fraud-sensitive
+    // operation (any cashier could adjust any customer's balance with only
+    // a post-hoc audit log). Restrict to storeOwner + superAdmin until RLS
+    // lands (Sprint 2). A 'manager' role doesn't exist in UserRole yet;
+    // widen this check if/when it's added.
+    // Cf. D:\alhai_reports\_analysis\01_TRUE_P0.md § P0-28.
+    final user = ref.watch(currentUserProvider);
+    final role = user?.role;
+    final canAdjust =
+        role == UserRole.storeOwner || role == UserRole.superAdmin;
+    if (!canAdjust) return const SizedBox.shrink();
+
     return FloatingActionButton.extended(
       tooltip: l10n.manualAdjustment,
       onPressed: isAdjusting

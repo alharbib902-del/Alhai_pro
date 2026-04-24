@@ -511,10 +511,10 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           _ToggleRow(
             icon: Icons.toggle_on_rounded,
             title: 'تفعيل الضريبة',
-            subtitle: 'تطبيق الضريبة على جميع المبيعات',
+            subtitle: 'قيد التطوير — VAT ثابت 15% على كل الفواتير حالياً',
             value: _taxEnabled,
             isDark: isDark,
-            onChanged: (v) => setState(() => _taxEnabled = v),
+            onChanged: null,
           ),
           Divider(color: AppColors.getBorder(isDark), height: 1),
           _ToggleRow(

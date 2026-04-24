@@ -39,7 +39,7 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
   ProductsTableData? _selectedProduct;
   bool _isSearching = false;
   bool _isSaving = false;
-  String _reason = 'sold';
+  String _reason = 'damaged';
 
   @override
   void dispose() {
@@ -496,13 +496,10 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
   }
 
   Widget _buildReasonCard(ColorScheme colorScheme, AppLocalizations l10n) {
+    // 'sold' removed: inventory cannot leave the store via this screen without
+    // a ZATCA invoice (use POS). 'transferred' removed: use transfer_inventory
+    // screen for inter-branch movement (avoids double-accounting).
     final reasons = [
-      {
-        'value': 'sold',
-        'label': l10n.sold,
-        'icon': Icons.shopping_cart_rounded,
-        'color': AppColors.success,
-      },
       {
         'value': 'damaged',
         'label': l10n.damaged,
@@ -514,12 +511,6 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
         'label': l10n.expired,
         'icon': Icons.schedule_rounded,
         'color': AppColors.warning,
-      },
-      {
-        'value': 'transferred',
-        'label': l10n.transferred,
-        'icon': Icons.swap_horiz_rounded,
-        'color': AppColors.info,
       },
       {
         'value': 'other',
@@ -790,7 +781,7 @@ class _RemoveInventoryScreenState extends ConsumerState<RemoveInventoryScreen> {
         _searchController.clear();
         _quantityController.clear();
         _noteController.clear();
-        _reason = 'sold';
+        _reason = 'damaged';
       });
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Save remove inventory');

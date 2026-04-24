@@ -95,9 +95,13 @@ void main() {
       await tester.pumpWidget(createTestWidget(const RemoveInventoryScreen()));
       await tester.pumpAndSettle();
 
-      // Reason options
-      expect(find.text('\u0645\u0628\u0627\u0639'), findsOneWidget);
-      expect(find.text('\u0645\u0646\u0642\u0648\u0644'), findsOneWidget);
+      // Hotfix 2026-04-24 (§§ P0-23, P0-24): 'sold' and 'transferred' reasons
+      // were removed — the first caused a ZATCA / revenue-recognition leak
+      // (stock left the store with no invoice), the second duplicated the
+      // transfer_inventory flow and risked double-accounting.
+      // Surviving reasons: damaged / expired / other.
+      expect(find.text('\u0645\u0628\u0627\u0639'), findsNothing); // مباع
+      expect(find.text('\u0645\u0646\u0642\u0648\u0644'), findsNothing); // منقول
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

@@ -14,6 +14,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_core/alhai_core.dart' show UserRole;
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
@@ -92,6 +93,19 @@ class _UsersPermissionsScreenState
   }
 
   void _showUserDetail(_UserInfo user, bool isDark, AppLocalizations l10n) {
+    // Hotfix 2026-04-24: PDPL/GDPR — restrict PII (email, phone, last login)
+    // to storeOwner/superAdmin or the user viewing their own profile.
+    // Previously all cashiers could see every coworker's contact info
+    // + login pattern. A 'manager' role doesn't exist in UserRole yet;
+    // widen this check if/when it's added.
+    // Cf. D:\alhai_reports\_analysis\01_TRUE_P0.md § P0-02.
+    final currentUser = ref.read(currentUserProvider);
+    final role = currentUser?.role;
+    final canSeePii =
+        role == UserRole.storeOwner ||
+        role == UserRole.superAdmin ||
+        user.id == currentUser?.id;
+
     showModalBottomSheet(
       context: context,
       backgroundColor: AppColors.getSurface(isDark),
@@ -158,18 +172,20 @@ class _UsersPermissionsScreenState
               ),
             ),
             const SizedBox(height: AlhaiSpacing.mdl),
-            _detailRow(
-              Icons.email_rounded,
-              'Email',
-              user.email.isNotEmpty ? user.email : '-',
-              isDark,
-            ),
-            _detailRow(
-              Icons.phone_rounded,
-              l10n.phone,
-              user.phone.isNotEmpty ? user.phone : '-',
-              isDark,
-            ),
+            if (canSeePii) ...[
+              _detailRow(
+                Icons.email_rounded,
+                'Email',
+                user.email.isNotEmpty ? user.email : '-',
+                isDark,
+              ),
+              _detailRow(
+                Icons.phone_rounded,
+                l10n.phone,
+                user.phone.isNotEmpty ? user.phone : '-',
+                isDark,
+              ),
+            ],
             _detailRow(
               Icons.circle,
               l10n.status,
@@ -177,7 +193,7 @@ class _UsersPermissionsScreenState
               isDark,
               valueColor: user.isActive ? AppColors.success : AppColors.error,
             ),
-            if (user.lastLogin != null)
+            if (canSeePii && user.lastLogin != null)
               _detailRow(
                 Icons.access_time_rounded,
                 l10n.lastLogin,

@@ -95,6 +95,12 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
             _backupSizeMb = double.tryParse(s.value) ?? 0;
         }
       }
+      // Hotfix 2026-04-24: auto-backup scheduler is not implemented.
+      // Force OFF regardless of stored value so the UI does not mislead the
+      // user into thinking backups are happening automatically. Sprint 1
+      // will deliver real scheduling + file save + ZATCA table inclusion.
+      // Cf. D:\alhai_reports\_analysis\01_TRUE_P0.md §§ P0-08, P0-09.
+      _autoBackup = false;
     } catch (e, stack) {
       // Use default values if settings cannot be loaded. Surface to
       // Sentry so release builds aren't silent; the UI carries on with
@@ -907,21 +913,35 @@ class _BackupScreenState extends ConsumerState<BackupScreen> {
               ),
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
-                child: Text(
-                  l10n.autoBackup,
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.getTextPrimary(isDark),
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.autoBackup,
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.getTextPrimary(isDark),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'قيد التطوير — اضغط يومياً على "نسخ احتياطية يدوية" لحماية بياناتك',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.warning,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
                 ),
               ),
+              // Hotfix 2026-04-24: Switch intentionally disabled until
+              // scheduler is implemented (Sprint 1). Keeping it visible
+              // (vs hidden) signals the feature's planned presence.
               Switch(
                 value: _autoBackup,
-                onChanged: (v) {
-                  setState(() => _autoBackup = v);
-                  _saveAutoBackupSettings();
-                },
+                onChanged: null,
                 activeTrackColor: AppColors.primary.withValues(alpha: 0.5),
                 activeThumbColor: AppColors.primary,
               ),
