@@ -228,23 +228,6 @@ void main() {
       expect(c[_iDescription] as String, contains('دفعة'));
     });
 
-    test('logInterestApply captures rate and total', () async {
-      await service.logInterestApply(
-        storeId: 's',
-        userId: 'u',
-        userName: 'n',
-        accountCount: 4,
-        rate: 2.5,
-        totalInterest: 125,
-      );
-
-      final c = captureAllArgs();
-      expect(c[_iAction], equals(AuditAction.interestApply));
-      final payload = c[_iPayload] as Map<String, dynamic>;
-      expect(payload['accountCount'], equals(4));
-      expect(payload['rate'], equals(2.5));
-      expect(payload['totalInterest'], equals(125.0));
-    });
   });
 
   // -------------------------------------------------------------------------

@@ -2521,16 +2521,7 @@ class AppLocalizationsId extends AppLocalizations {
   String get closeDrawerAction => 'Close Drawer';
 
   @override
-  String get monthlyCloseTitle => 'Monthly Close';
-
-  @override
-  String get monthlyCloseDesc => 'Close month and calculate receivables';
-
-  @override
   String get totalReceivables => 'Total Receivables';
-
-  @override
-  String get interestRate => 'Interest Rate';
 
   @override
   String get closeMonth => 'Close Month';
@@ -5703,22 +5694,7 @@ class AppLocalizationsId extends AppLocalizations {
   }
 
   @override
-  String interestRateAndGrace(String rate, String days) {
-    return 'Interest rate: $rate% | Grace period: $days days';
-  }
-
-  @override
   String get selectedCustomers => 'Selected Customers';
-
-  @override
-  String get expectedInterests => 'Expected Interests';
-
-  @override
-  String get noDebtsNeedClosing => 'No debts need closing';
-
-  @override
-  String get allCustomersWithinGrace =>
-      'All customers are within the grace period';
 
   @override
   String debtLabel(String amount) {
@@ -5744,16 +5720,6 @@ class AppLocalizationsId extends AppLocalizations {
   @override
   String interestWillBeAdded(int count) {
     return 'Interest will be added to $count customer(s)';
-  }
-
-  @override
-  String totalInterestsLabel(String amount) {
-    return 'Total interests: $amount SAR';
-  }
-
-  @override
-  String monthCloseSuccess(int count) {
-    return 'Month closed for $count customer(s)';
   }
 
   @override
@@ -13260,9 +13226,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get submitExchange => 'Submit Exchange';
 
   @override
-  String get applyInterest => 'Apply Interest';
-
-  @override
   String get reportSettings => 'Report Settings';
 
   @override
@@ -13275,20 +13238,6 @@ class AppLocalizationsId extends AppLocalizations {
   String get allAccountsSettled => 'All customer accounts are settled';
 
   @override
-  String get confirmInterest => 'Confirm Interest';
-
-  @override
-  String confirmInterestMessage(
-      String rate, int count, String amount, String currency) {
-    return 'Apply $rate% interest to $count accounts?\nTotal interest: $amount $currency';
-  }
-
-  @override
-  String interestAppliedWithSkipped(int applied, int skipped) {
-    return 'Interest applied to $applied account(s), $skipped skipped (already applied this month)';
-  }
-
-  @override
   String get selectCustomers => 'Select Customers';
 
   @override
@@ -13299,9 +13248,6 @@ class AppLocalizationsId extends AppLocalizations {
 
   @override
   String get totalDebt => 'Total Debt';
-
-  @override
-  String get totalInterest => 'Total Interest';
 
   @override
   String get finalizeInvoice => 'Finalize Invoice';

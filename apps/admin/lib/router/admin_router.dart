@@ -128,7 +128,6 @@ import '../screens/purchases/send_to_distributor_screen.dart';
 // Management screens (admin-only)
 import '../screens/management/driver_management_screen.dart';
 import '../screens/management/branch_management_screen.dart';
-import '../screens/debts/monthly_close_screen.dart';
 import '../screens/onboarding/onboarding_screen.dart';
 
 // Settings screens (admin-only)
@@ -419,8 +418,7 @@ String? _guardRedirect(Ref ref, GoRouterState state) {
 
     // ── Financial ──────────────────────────────────────────────
     if ((path == AppRoutes.expenses ||
-            path == AppRoutes.expenseCategories ||
-            path == AppRoutes.monthlyClose) &&
+            path == AppRoutes.expenseCategories) &&
         lacks(AdminPermissions.financialManage)) {
       return AppRoutes.home;
     }
@@ -879,16 +877,6 @@ final List<RouteBase> _routes = [
         name: 'cash-drawer',
         pageBuilder: (context, state) =>
             _buildFadePage(state: state, child: const CashDrawerScreen()),
-      ),
-
-      // ====================================================================
-      // DEBTS ROUTES
-      // ====================================================================
-      GoRoute(
-        path: AppRoutes.monthlyClose,
-        name: 'monthly-close',
-        pageBuilder: (context, state) =>
-            _buildFadePage(state: state, child: const MonthlyCloseScreen()),
       ),
 
       // ====================================================================

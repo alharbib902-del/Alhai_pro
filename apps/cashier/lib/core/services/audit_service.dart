@@ -195,29 +195,6 @@ class AuditService {
         : 'تسجيل دفعة من $accountName بمبلغ ${amount.abs()} ر.س',
   );
 
-  /// Log interest application
-  Future<void> logInterestApply({
-    required String storeId,
-    required String userId,
-    required String userName,
-    required int accountCount,
-    required double rate,
-    required double totalInterest,
-  }) => _append(
-    storeId: storeId,
-    userId: userId,
-    userName: userName,
-    action: AuditAction.interestApply,
-    entityType: 'accounts',
-    newValue: {
-      'accountCount': accountCount,
-      'rate': rate,
-      'totalInterest': totalInterest,
-    },
-    description:
-        'تطبيق فائدة $rate% على $accountCount حساب - إجمالي $totalInterest ر.س',
-  );
-
   // ============================================================================
   // SHIFT OPERATIONS
   // ============================================================================

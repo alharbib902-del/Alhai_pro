@@ -56,7 +56,6 @@ enum AuditAction {
 
   // الإعدادات
   settingsChange,
-  interestApply,
 }
 
 /// DAO لسجل التدقيق

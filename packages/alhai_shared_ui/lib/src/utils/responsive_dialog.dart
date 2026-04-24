@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 ///
 /// Phase 2, task 2.4: expanded with `showAlert` to make it a one-liner
 /// replacement for `showDialog(context: ctx, builder: (_) => AlertDialog(...))`
-/// so the 11+ audit sites (apply_interest:695, split receipt confirms, etc.)
+/// so the 11+ audit sites (split receipt confirms, etc.)
 /// get responsive behaviour for free.
 class ResponsiveDialog {
   /// Get max width for dialogs based on screen size
@@ -53,8 +53,8 @@ class ResponsiveDialog {
   /// ```dart
   /// final confirmed = await ResponsiveDialog.showAlert<bool>(
   ///   context,
-  ///   title: Text(l10n.confirmInterest),
-  ///   content: Text(l10n.confirmInterestMessage(...)),
+  ///   title: Text(l10n.confirmTitle),
+  ///   content: Text(l10n.confirmMessage),
   ///   actions: [
   ///     TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.cancel)),
   ///     FilledButton(onPressed: () => Navigator.pop(ctx, true), child: Text(l10n.confirm)),

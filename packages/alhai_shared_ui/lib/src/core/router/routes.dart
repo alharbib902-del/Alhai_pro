@@ -188,9 +188,6 @@ class AppRoutes {
   /// New transaction for customer
   static const String newTransaction = '/customers/transaction';
 
-  /// Apply interest
-  static const String applyInterest = '/customers/apply-interest';
-
   /// Create invoice
   static const String createInvoice = '/invoices/create';
 
@@ -335,13 +332,6 @@ class AppRoutes {
 
   /// Cash drawer management
   static const String cashDrawer = '/cash-drawer';
-
-  // ============================================================================
-  // DEBTS ROUTES
-  // ============================================================================
-
-  /// Monthly close
-  static const String monthlyClose = '/debts/monthly-close';
 
   // ============================================================================
   // SHIFTS ROUTES

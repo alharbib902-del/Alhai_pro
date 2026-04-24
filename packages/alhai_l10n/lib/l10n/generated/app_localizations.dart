@@ -4758,29 +4758,11 @@ abstract class AppLocalizations {
   /// **'إغلاق الدرج'**
   String get closeDrawerAction;
 
-  /// No description provided for @monthlyCloseTitle.
-  ///
-  /// In ar, this message translates to:
-  /// **'الإغلاق الشهري'**
-  String get monthlyCloseTitle;
-
-  /// No description provided for @monthlyCloseDesc.
-  ///
-  /// In ar, this message translates to:
-  /// **'إغلاق الشهر وحساب المستحقات'**
-  String get monthlyCloseDesc;
-
   /// No description provided for @totalReceivables.
   ///
   /// In ar, this message translates to:
   /// **'إجمالي المستحقات'**
   String get totalReceivables;
-
-  /// No description provided for @interestRate.
-  ///
-  /// In ar, this message translates to:
-  /// **'نسبة الفائدة'**
-  String get interestRate;
 
   /// No description provided for @closeMonth.
   ///
@@ -10764,35 +10746,11 @@ abstract class AppLocalizations {
   /// **'آخر إقفال: {date}'**
   String lastClosing(String date);
 
-  /// No description provided for @interestRateAndGrace.
-  ///
-  /// In ar, this message translates to:
-  /// **'نسبة الفائدة: {rate}% | فترة السماح: {days} يوم'**
-  String interestRateAndGrace(String rate, String days);
-
   /// No description provided for @selectedCustomers.
   ///
   /// In ar, this message translates to:
   /// **'العملاء المحددون'**
   String get selectedCustomers;
-
-  /// No description provided for @expectedInterests.
-  ///
-  /// In ar, this message translates to:
-  /// **'الفوائد المتوقعة'**
-  String get expectedInterests;
-
-  /// No description provided for @noDebtsNeedClosing.
-  ///
-  /// In ar, this message translates to:
-  /// **'لا توجد ديون تحتاج إقفال'**
-  String get noDebtsNeedClosing;
-
-  /// No description provided for @allCustomersWithinGrace.
-  ///
-  /// In ar, this message translates to:
-  /// **'جميع العملاء ضمن فترة السماح'**
-  String get allCustomersWithinGrace;
 
   /// No description provided for @debtLabel.
   ///
@@ -10829,18 +10787,6 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'سيتم إضافة فوائد على {count} عميل'**
   String interestWillBeAdded(int count);
-
-  /// No description provided for @totalInterestsLabel.
-  ///
-  /// In ar, this message translates to:
-  /// **'إجمالي الفوائد: {amount} ر.س'**
-  String totalInterestsLabel(String amount);
-
-  /// No description provided for @monthCloseSuccess.
-  ///
-  /// In ar, this message translates to:
-  /// **'تم إقفال الشهر لـ {count} عميل'**
-  String monthCloseSuccess(int count);
 
   /// No description provided for @readAll.
   ///
@@ -24572,12 +24518,6 @@ abstract class AppLocalizations {
   /// **'تأكيد الاستبدال'**
   String get submitExchange;
 
-  /// No description provided for @applyInterest.
-  ///
-  /// In ar, this message translates to:
-  /// **'تطبيق الفائدة'**
-  String get applyInterest;
-
   /// No description provided for @reportSettings.
   ///
   /// In ar, this message translates to:
@@ -24602,25 +24542,6 @@ abstract class AppLocalizations {
   /// **'جميع حسابات العملاء مسددة'**
   String get allAccountsSettled;
 
-  /// No description provided for @confirmInterest.
-  ///
-  /// In ar, this message translates to:
-  /// **'تأكيد الفائدة'**
-  String get confirmInterest;
-
-  /// No description provided for @confirmInterestMessage.
-  ///
-  /// In ar, this message translates to:
-  /// **'تطبيق {rate}% فائدة على {count} حسابات؟\nإجمالي الفائدة: {amount} {currency}'**
-  String confirmInterestMessage(
-      String rate, int count, String amount, String currency);
-
-  /// No description provided for @interestAppliedWithSkipped.
-  ///
-  /// In ar, this message translates to:
-  /// **'تم تطبيق الفائدة على {applied} حساب، {skipped} تم تخطيها (سبق تطبيقها هذا الشهر)'**
-  String interestAppliedWithSkipped(int applied, int skipped);
-
   /// No description provided for @selectCustomers.
   ///
   /// In ar, this message translates to:
@@ -24644,12 +24565,6 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إجمالي الديون'**
   String get totalDebt;
-
-  /// No description provided for @totalInterest.
-  ///
-  /// In ar, this message translates to:
-  /// **'إجمالي الفائدة'**
-  String get totalInterest;
 
   /// No description provided for @finalizeInvoice.
   ///

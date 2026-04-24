@@ -1231,10 +1231,7 @@
   "difference": "Difference",
   "openDrawerAction": "Open Drawer",
   "closeDrawerAction": "Close Drawer",
-  "monthlyCloseTitle": "Monthly Close",
-  "monthlyCloseDesc": "Close month and calculate receivables",
   "totalReceivables": "Total Receivables",
-  "interestRate": "Interest Rate",
   "closeMonth": "Close Month",
   "shiftsTitle": "Shifts",
   "currentShift": "Current Shift",
@@ -2724,21 +2721,7 @@
       }
     }
   },
-  "interestRateAndGrace": "Interest rate: {rate}% | Grace period: {days} days",
-  "@interestRateAndGrace": {
-    "placeholders": {
-      "rate": {
-        "type": "String"
-      },
-      "days": {
-        "type": "String"
-      }
-    }
-  },
   "selectedCustomers": "Selected Customers",
-  "expectedInterests": "Expected Interests",
-  "noDebtsNeedClosing": "No debts need closing",
-  "allCustomersWithinGrace": "All customers are within the grace period",
   "debtLabel": "Debt: {amount} SAR",
   "@debtLabel": {
     "placeholders": {
@@ -2767,22 +2750,6 @@
   "executeClose": "Execute Close",
   "interestWillBeAdded": "Interest will be added to {count} customer(s)",
   "@interestWillBeAdded": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "totalInterestsLabel": "Total interests: {amount} SAR",
-  "@totalInterestsLabel": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "monthCloseSuccess": "Month closed for {count} customer(s)",
-  "@monthCloseSuccess": {
     "placeholders": {
       "count": {
         "type": "int"
@@ -6925,41 +6892,14 @@
   "noItems": "No items",
   "customerPaysExtra": "Customer pays extra",
   "submitExchange": "Submit Exchange",
-  "applyInterest": "Apply Interest",
   "reportSettings": "Report Settings",
   "reportType": "Report Type",
   "paymentDistribution": "Payment Distribution",
   "allAccountsSettled": "All customer accounts are settled",
-  "confirmInterest": "Confirm Interest",
-  "confirmInterestMessage": "Apply {rate}% interest to {count} accounts?\nTotal interest: {amount} {currency}",
-  "@confirmInterestMessage": {
-    "placeholders": {
-      "rate": {
-        "type": "String"
-      },
-      "count": {
-        "type": "int"
-      },
-      "amount": {
-        "type": "String"
-      },
-      "currency": {
-        "type": "String"
-      }
-    }
-  },
-  "interestAppliedWithSkipped": "Interest applied to {applied} account(s), {skipped} skipped (already applied this month)",
-  "@interestAppliedWithSkipped": {
-    "placeholders": {
-      "applied": { "type": "int" },
-      "skipped": { "type": "int" }
-    }
-  },
   "selectCustomers": "Select Customers",
   "deselectAll": "Deselect All",
   "preview": "Preview",
   "totalDebt": "Total Debt",
-  "totalInterest": "Total Interest",
   "finalizeInvoice": "Finalize Invoice",
   "saveAsDraft": "Save as Draft",
   "saveDraft": "Save Draft",
@@ -7117,10 +7057,15 @@
   "shiftOpenCloseReminders": "Shift open/close reminders",
   "setOrChangeManagerPin": "Set or change manager PIN",
   "dataSynchronizationStatus": "Data synchronization status",
-
   "reportBalanceSheetTitle": "Balance Sheet",
   "reportBalanceSheetAsOf": "As of {date}",
-  "@reportBalanceSheetAsOf": { "placeholders": { "date": { "type": "String" } } },
+  "@reportBalanceSheetAsOf": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "reportAssets": "Assets",
   "reportCurrentAssets": "Current Assets",
   "reportCashInDrawer": "Cash in Drawer",
@@ -7137,7 +7082,6 @@
   "reportNetEquity": "Net Equity",
   "reportAccountingEquation": "Accounting Equation",
   "reportAssetsEqualsLiabilitiesPlusEquity": "Assets = Liabilities + Equity",
-
   "reportCashFlowTitle": "Cash Flow Statement",
   "reportNetCashFlow": "Net Cash Flow",
   "reportOperatingActivities": "Operating Activities",
@@ -7153,7 +7097,6 @@
   "reportThisYear": "This Year",
   "reportQuarterly": "Quarterly",
   "reportAnnual": "Annual",
-
   "reportDebtAgingTitle": "Debt Aging Report",
   "reportDebtBucket0to30": "0-30 Days",
   "reportDebtBucket31to60": "31-60 Days",
@@ -7161,8 +7104,13 @@
   "reportDebtBucket90plus": "90+ Days",
   "reportTotalDebts": "Total Debts",
   "reportNDays": "{count} days",
-  "@reportNDays": { "placeholders": { "count": { "type": "int" } } },
-
+  "@reportNDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "reportComparisonTitle": "Comparison Report",
   "reportIndicator": "Indicator",
   "reportChange": "Change",
@@ -7171,19 +7119,42 @@
   "reportLastYear": "Last Year",
   "reportCurrentPeriod": "Current Period",
   "reportPreviousPeriod": "Previous Period",
-
   "reportZakatTitle": "Zakat Calculation",
   "reportZakatDue": "Zakat is Due",
   "reportZakatBelowNisab": "Below Nisab",
   "reportZakatAmountDue": "Zakat Amount Due",
   "reportZakatRateOf": "At a rate of {rate}% of the Zakat base",
-  "@reportZakatRateOf": { "placeholders": { "rate": { "type": "String" } } },
+  "@reportZakatRateOf": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
   "reportNisabThreshold": "Nisab Threshold: {amount} SAR",
-  "@reportNisabThreshold": { "placeholders": { "amount": { "type": "String" } } },
+  "@reportNisabThreshold": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "reportCurrentZakatBase": "Current Zakat Base: {amount} SAR",
-  "@reportCurrentZakatBase": { "placeholders": { "amount": { "type": "String" } } },
+  "@reportCurrentZakatBase": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "reportNisabInfo": "Nisab: {amount} SAR (approx. value of 85g of gold)",
-  "@reportNisabInfo": { "placeholders": { "amount": { "type": "String" } } },
+  "@reportNisabInfo": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "reportZakatAssets": "Zakat Assets (+)",
   "reportGoodsAndInventory": "Goods & Inventory Value",
   "reportAvailableCash": "Available Cash",
@@ -7193,21 +7164,29 @@
   "reportOtherLiabilities": "Other Liabilities",
   "reportNetZakatBase": "Net Zakat Base",
   "reportZakatDisclaimer": "Note: This is an approximate calculation. Consult a qualified scholar for precise Zakat determination.",
-
   "reportPurchaseTitle": "Purchase Report",
   "reportPurchasesBySupplier": "Purchases by Supplier",
   "reportRecentInvoices": "Recent Invoices",
   "reportNoPurchasesInPeriod": "No purchases in this period",
   "reportNInvoices": "{count} invoices",
-  "@reportNInvoices": { "placeholders": { "count": { "type": "int" } } },
+  "@reportNInvoices": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "reportTotalTax": "Total Tax",
   "reportExportSuccess": "Report exported successfully",
   "reportExportFailed": "Export failed: {error}",
-  "@reportExportFailed": { "placeholders": { "error": { "type": "String" } } },
-  "ok": "OK",
-
+  "@reportExportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "@@_section_super_admin": "Super Admin — platform console strings (2026-04-17)",
-
   "saSaveChanges": "Save Changes",
   "saSaving": "Saving...",
   "saDiscardChanges": "Discard",
@@ -7225,7 +7204,6 @@
   "saGeneral": "General",
   "saLanguageArabic": "Arabic",
   "saLanguageEnglish": "English",
-
   "saAuditLog": "Audit Log",
   "saAuditLogRefresh": "Refresh",
   "saAuditFilterAll": "All",
@@ -7238,20 +7216,22 @@
   "saAuditLoadRetry": "Retry",
   "saAuditNoEntries": "No audit entries found",
   "saAuditEntryBy": "by {email}",
-  "@saAuditEntryBy": { "placeholders": { "email": { "type": "String" } } },
-
+  "@saAuditEntryBy": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "saReportsExportComingSoon": "Export is not yet available — coming soon",
   "saSystemHealthMetricsNote": "CPU / Memory / Disk metrics require a backend health endpoint — not yet wired",
-
   "saMfaScanQr": "Scan this QR in your Authenticator app",
   "saMfaSecretFallback": "Or enter this key manually:",
   "saMfaCopied": "Copied to clipboard",
-
   "saErrorGeneric": "Something went wrong",
   "saErrorNetwork": "Network error — check your connection",
   "saErrorRetry": "Try Again",
   "saErrorTechnical": "Technical details",
-
   "saNext": "Next",
   "saBackToLogin": "Back to Login",
   "saPopularBadge": "POPULAR",
@@ -7262,12 +7242,10 @@
   "saBusinessTypeRestaurant": "Restaurant",
   "saBusinessTypeRetail": "Retail",
   "saBusinessTypeServices": "Services",
-
   "saNoPlanRevenueData": "No plan revenue data",
   "saNoStoreRevenueData": "No store revenue data",
   "saNoActiveUserData": "No active user data",
   "saNoTransactionData": "No transaction data",
-
   "saMfaSetupTitle": "Set Up Two-Factor Authentication",
   "saMfaVerifyTitle": "Two-Factor Verification",
   "saMfaEnrollmentInstruction": "Scan the QR code with your authenticator app (Google Authenticator, Authy, etc.) then enter the 6-digit code to complete setup.",
@@ -7280,13 +7258,17 @@
   "saMfaAccountLocked": "Account locked. Try again in {minutes} minutes.",
   "@saMfaAccountLocked": {
     "placeholders": {
-      "minutes": {"type": "int"}
+      "minutes": {
+        "type": "int"
+      }
     }
   },
   "saMfaInvalidCode": "Invalid code. {remaining} attempts remaining.",
   "@saMfaInvalidCode": {
     "placeholders": {
-      "remaining": {"type": "int"}
+      "remaining": {
+        "type": "int"
+      }
     }
   },
   "saMfaEnrollmentFailed": "MFA enrollment failed. Ensure MFA is enabled in your Supabase project.",
@@ -7311,7 +7293,6 @@
       }
     }
   },
-  "totalRefund": "Total Refund",
   "refundAmountExceedsOriginal": "Refund amount exceeds original",
   "filterCompletedOnly": "Completed only",
   "filterCompletedOnlyDesc": "Non-completed sales are hidden",

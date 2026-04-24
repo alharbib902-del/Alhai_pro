@@ -19,6 +19,11 @@ import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_pos/alhai_pos.dart';
+// Phase 4.5 — shortcut wiring. PaymentScreen's `preselectedMethod` expects the
+// PaymentMethod enum defined in alhai_core (cash/card/wallet/bankTransfer),
+// but alhai_pos re-exports a *different* PaymentMethod from payment_gateway.dart
+// (mada/visa/mastercard/etc.). Alias the core enum to disambiguate.
+import 'package:alhai_core/alhai_core.dart' as core show PaymentMethod;
 import 'package:alhai_reports/alhai_reports.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
@@ -39,7 +44,6 @@ import '../screens/payment/payment_history_screen.dart';
 import '../screens/payment/split_refund_screen.dart';
 import '../screens/customers/customer_accounts_screen.dart';
 import '../screens/customers/new_transaction_screen.dart';
-import '../screens/customers/apply_interest_screen.dart';
 import '../screens/customers/create_invoice_screen.dart';
 import '../screens/settings/cashier_settings_screen.dart';
 import '../screens/settings/store/store_info_screen.dart';
@@ -321,13 +325,35 @@ final List<RouteBase> _routes = [
   GoRoute(
     path: AppRoutes.posPayment,
     name: 'pos-payment',
-    pageBuilder: (context, state) => CustomTransitionPage(
-      key: state.pageKey,
-      child: const PaymentScreen(),
-      transitionsBuilder: _alhaiTransition,
-      transitionDuration: _transitionDuration(),
-      reverseTransitionDuration: _transitionDuration(),
-    ),
+    pageBuilder: (context, state) {
+      // Phase 4.5 — optional ?method=cash|card|split query parameter. Used by
+      // the shell-level F6/F7/F8 keyboard shortcuts to jump into the payment
+      // screen with a method preselected. Unknown / empty values leave the
+      // screen on its default (cash).
+      final methodParam = state.queryParam('method');
+      core.PaymentMethod? preselected;
+      bool autoOpenSplit = false;
+      switch (methodParam) {
+        case 'cash':
+          preselected = core.PaymentMethod.cash;
+        case 'card':
+          preselected = core.PaymentMethod.card;
+        case 'split':
+          autoOpenSplit = true;
+        default:
+          break;
+      }
+      return CustomTransitionPage(
+        key: state.pageKey,
+        child: PaymentScreen(
+          preselectedMethod: preselected,
+          autoOpenSplit: autoOpenSplit,
+        ),
+        transitionsBuilder: _alhaiTransition,
+        transitionDuration: _transitionDuration(),
+        reverseTransitionDuration: _transitionDuration(),
+      );
+    },
   ),
   GoRoute(
     path: AppRoutes.posReceipt,
@@ -1062,17 +1088,6 @@ final List<RouteBase> _routes = [
                 ? null
                 : state.queryParam('customerId'),
           ),
-          transitionsBuilder: _alhaiTransition,
-          transitionDuration: _transitionDuration(),
-          reverseTransitionDuration: _transitionDuration(),
-        ),
-      ),
-      GoRoute(
-        path: AppRoutes.applyInterest,
-        name: 'apply-interest',
-        pageBuilder: (context, state) => CustomTransitionPage(
-          key: state.pageKey,
-          child: const ApplyInterestScreen(),
           transitionsBuilder: _alhaiTransition,
           transitionDuration: _transitionDuration(),
           reverseTransitionDuration: _transitionDuration(),

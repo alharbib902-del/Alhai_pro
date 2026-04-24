@@ -142,44 +142,6 @@ void main() {
       expect(txns.first.amount, -15000); // -150.00 in cents, negative for payments
     });
 
-    test('recordInterest creates interest transaction', () async {
-      await db.transactionsDao.recordInterest(
-        id: 'tx-int-1',
-        storeId: 'store-1',
-        accountId: 'acc-1',
-        amount: 25.0,
-        balanceAfter: 525.0,
-        periodKey: '2025-06',
-      );
-
-      final txns = await db.transactionsDao.getAccountTransactions('acc-1');
-      expect(txns.first.type, 'interest');
-      expect(txns.first.periodKey, '2025-06');
-    });
-
-    test('hasInterestForPeriod detects duplicate interest', () async {
-      await db.transactionsDao.recordInterest(
-        id: 'tx-int-1',
-        storeId: 'store-1',
-        accountId: 'acc-1',
-        amount: 25.0,
-        balanceAfter: 525.0,
-        periodKey: '2025-06',
-      );
-
-      final hasInterest = await db.transactionsDao.hasInterestForPeriod(
-        'acc-1',
-        '2025-06',
-      );
-      expect(hasInterest, true);
-
-      final noInterest = await db.transactionsDao.hasInterestForPeriod(
-        'acc-1',
-        '2025-07',
-      );
-      expect(noInterest, false);
-    });
-
     test('getTotalPayments sums payment amounts', () async {
       await db.transactionsDao.recordPayment(
         id: 'tx-1',

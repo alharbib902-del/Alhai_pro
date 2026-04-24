@@ -1231,10 +1231,7 @@
   "difference": "পার্থক্য",
   "openDrawerAction": "Open Drawer",
   "closeDrawerAction": "Close Drawer",
-  "monthlyCloseTitle": "মাসিক বন্ধ",
-  "monthlyCloseDesc": "Close month and calculate receivables",
   "totalReceivables": "মোট প্রাপ্য",
-  "interestRate": "সুদের হার",
   "closeMonth": "মাস বন্ধ করুন",
   "shiftsTitle": "শিফট",
   "currentShift": "বর্তমান শিফট",
@@ -2724,21 +2721,7 @@
       }
     }
   },
-  "interestRateAndGrace": "Interest rate: {rate}% | Grace period: {days} days",
-  "@interestRateAndGrace": {
-    "placeholders": {
-      "rate": {
-        "type": "String"
-      },
-      "days": {
-        "type": "String"
-      }
-    }
-  },
   "selectedCustomers": "Selected Customers",
-  "expectedInterests": "Expected Interests",
-  "noDebtsNeedClosing": "No debts need closing",
-  "allCustomersWithinGrace": "All customers are within the grace period",
   "debtLabel": "Debt: {amount} SAR",
   "@debtLabel": {
     "placeholders": {
@@ -2767,22 +2750,6 @@
   "executeClose": "Execute Close",
   "interestWillBeAdded": "Interest will be added to {count} customer(s)",
   "@interestWillBeAdded": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "totalInterestsLabel": "Total interests: {amount} SAR",
-  "@totalInterestsLabel": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "monthCloseSuccess": "Month closed for {count} customer(s)",
-  "@monthCloseSuccess": {
     "placeholders": {
       "count": {
         "type": "int"
@@ -6925,41 +6892,14 @@
   "noItems": "No items",
   "customerPaysExtra": "Customer pays extra",
   "submitExchange": "Submit Exchange",
-  "applyInterest": "Apply Interest",
   "reportSettings": "Report Settings",
   "reportType": "Report Type",
   "paymentDistribution": "Payment Distribution",
   "allAccountsSettled": "All customer accounts are settled",
-  "confirmInterest": "Confirm Interest",
-  "confirmInterestMessage": "Apply {rate}% interest to {count} accounts?\nTotal interest: {amount} {currency}",
-  "@confirmInterestMessage": {
-    "placeholders": {
-      "rate": {
-        "type": "String"
-      },
-      "count": {
-        "type": "int"
-      },
-      "amount": {
-        "type": "String"
-      },
-      "currency": {
-        "type": "String"
-      }
-    }
-  },
-  "interestAppliedWithSkipped": "Interest applied to {applied} account(s), {skipped} skipped (already applied this month)",
-  "@interestAppliedWithSkipped": {
-    "placeholders": {
-      "applied": { "type": "int" },
-      "skipped": { "type": "int" }
-    }
-  },
   "selectCustomers": "Select Customers",
   "deselectAll": "Deselect All",
   "preview": "Preview",
   "totalDebt": "Total Debt",
-  "totalInterest": "Total Interest",
   "finalizeInvoice": "Finalize Invoice",
   "saveAsDraft": "Save as Draft",
   "saveDraft": "Save Draft",

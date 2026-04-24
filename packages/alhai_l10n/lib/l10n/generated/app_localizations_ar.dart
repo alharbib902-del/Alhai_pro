@@ -2544,16 +2544,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get closeDrawerAction => 'إغلاق الدرج';
 
   @override
-  String get monthlyCloseTitle => 'الإغلاق الشهري';
-
-  @override
-  String get monthlyCloseDesc => 'إغلاق الشهر وحساب المستحقات';
-
-  @override
   String get totalReceivables => 'إجمالي المستحقات';
-
-  @override
-  String get interestRate => 'نسبة الفائدة';
 
   @override
   String get closeMonth => 'إغلاق الشهر';
@@ -5723,21 +5714,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String interestRateAndGrace(String rate, String days) {
-    return 'نسبة الفائدة: $rate% | فترة السماح: $days يوم';
-  }
-
-  @override
   String get selectedCustomers => 'العملاء المحددون';
-
-  @override
-  String get expectedInterests => 'الفوائد المتوقعة';
-
-  @override
-  String get noDebtsNeedClosing => 'لا توجد ديون تحتاج إقفال';
-
-  @override
-  String get allCustomersWithinGrace => 'جميع العملاء ضمن فترة السماح';
 
   @override
   String debtLabel(String amount) {
@@ -5763,16 +5740,6 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String interestWillBeAdded(int count) {
     return 'سيتم إضافة فوائد على $count عميل';
-  }
-
-  @override
-  String totalInterestsLabel(String amount) {
-    return 'إجمالي الفوائد: $amount ر.س';
-  }
-
-  @override
-  String monthCloseSuccess(int count) {
-    return 'تم إقفال الشهر لـ $count عميل';
   }
 
   @override
@@ -13250,9 +13217,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get submitExchange => 'تأكيد الاستبدال';
 
   @override
-  String get applyInterest => 'تطبيق الفائدة';
-
-  @override
   String get reportSettings => 'إعدادات التقرير';
 
   @override
@@ -13265,20 +13229,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get allAccountsSettled => 'جميع حسابات العملاء مسددة';
 
   @override
-  String get confirmInterest => 'تأكيد الفائدة';
-
-  @override
-  String confirmInterestMessage(
-      String rate, int count, String amount, String currency) {
-    return 'تطبيق $rate% فائدة على $count حسابات؟\nإجمالي الفائدة: $amount $currency';
-  }
-
-  @override
-  String interestAppliedWithSkipped(int applied, int skipped) {
-    return 'تم تطبيق الفائدة على $applied حساب، $skipped تم تخطيها (سبق تطبيقها هذا الشهر)';
-  }
-
-  @override
   String get selectCustomers => 'اختيار العملاء';
 
   @override
@@ -13289,9 +13239,6 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get totalDebt => 'إجمالي الديون';
-
-  @override
-  String get totalInterest => 'إجمالي الفائدة';
 
   @override
   String get finalizeInvoice => 'إنهاء الفاتورة';

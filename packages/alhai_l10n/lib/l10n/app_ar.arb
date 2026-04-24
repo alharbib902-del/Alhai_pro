@@ -1224,10 +1224,7 @@
   "difference": "الفرق",
   "openDrawerAction": "فتح الدرج",
   "closeDrawerAction": "إغلاق الدرج",
-  "monthlyCloseTitle": "الإغلاق الشهري",
-  "monthlyCloseDesc": "إغلاق الشهر وحساب المستحقات",
   "totalReceivables": "إجمالي المستحقات",
-  "interestRate": "نسبة الفائدة",
   "closeMonth": "إغلاق الشهر",
   "shiftsTitle": "الورديات",
   "currentShift": "الوردية الحالية",
@@ -2717,21 +2714,7 @@
       }
     }
   },
-  "interestRateAndGrace": "نسبة الفائدة: {rate}% | فترة السماح: {days} يوم",
-  "@interestRateAndGrace": {
-    "placeholders": {
-      "rate": {
-        "type": "String"
-      },
-      "days": {
-        "type": "String"
-      }
-    }
-  },
   "selectedCustomers": "العملاء المحددون",
-  "expectedInterests": "الفوائد المتوقعة",
-  "noDebtsNeedClosing": "لا توجد ديون تحتاج إقفال",
-  "allCustomersWithinGrace": "جميع العملاء ضمن فترة السماح",
   "debtLabel": "الدين: {amount} ر.س",
   "@debtLabel": {
     "placeholders": {
@@ -2760,22 +2743,6 @@
   "executeClose": "تنفيذ الإقفال",
   "interestWillBeAdded": "سيتم إضافة فوائد على {count} عميل",
   "@interestWillBeAdded": {
-    "placeholders": {
-      "count": {
-        "type": "int"
-      }
-    }
-  },
-  "totalInterestsLabel": "إجمالي الفوائد: {amount} ر.س",
-  "@totalInterestsLabel": {
-    "placeholders": {
-      "amount": {
-        "type": "String"
-      }
-    }
-  },
-  "monthCloseSuccess": "تم إقفال الشهر لـ {count} عميل",
-  "@monthCloseSuccess": {
     "placeholders": {
       "count": {
         "type": "int"
@@ -4410,7 +4377,7 @@
   "refundDate": "تاريخ الإرجاع",
   "refundMethodField": "طريقة الاسترداد",
   "returnedProducts": "المنتجات المرتجعة",
-  "totalRefund": "إجمالي الإرجاع",
+  "totalRefund": "إجمالي الاسترداد",
   "reasonLabel": "السبب",
   "homeAction": "الرئيسية",
   "printError": "خطأ في الطباعة: {error}",
@@ -6785,41 +6752,14 @@
   "noItems": "لا توجد عناصر",
   "customerPaysExtra": "العميل يدفع إضافي",
   "submitExchange": "تأكيد الاستبدال",
-  "applyInterest": "تطبيق الفائدة",
   "reportSettings": "إعدادات التقرير",
   "reportType": "نوع التقرير",
   "paymentDistribution": "توزيع المدفوعات",
   "allAccountsSettled": "جميع حسابات العملاء مسددة",
-  "confirmInterest": "تأكيد الفائدة",
-  "confirmInterestMessage": "تطبيق {rate}% فائدة على {count} حسابات؟\nإجمالي الفائدة: {amount} {currency}",
-  "@confirmInterestMessage": {
-    "placeholders": {
-      "rate": {
-        "type": "String"
-      },
-      "count": {
-        "type": "int"
-      },
-      "amount": {
-        "type": "String"
-      },
-      "currency": {
-        "type": "String"
-      }
-    }
-  },
-  "interestAppliedWithSkipped": "تم تطبيق الفائدة على {applied} حساب، {skipped} تم تخطيها (سبق تطبيقها هذا الشهر)",
-  "@interestAppliedWithSkipped": {
-    "placeholders": {
-      "applied": { "type": "int" },
-      "skipped": { "type": "int" }
-    }
-  },
   "selectCustomers": "اختيار العملاء",
   "deselectAll": "إلغاء تحديد الكل",
   "preview": "معاينة",
   "totalDebt": "إجمالي الديون",
-  "totalInterest": "إجمالي الفائدة",
   "finalizeInvoice": "إنهاء الفاتورة",
   "saveAsDraft": "حفظ كمسودة",
   "saveDraft": "حفظ المسودة",
@@ -6977,10 +6917,15 @@
   "shiftOpenCloseReminders": "تنبيهات فتح/إغلاق الورديات",
   "setOrChangeManagerPin": "تعيين أو تغيير رمز PIN للمدير",
   "dataSynchronizationStatus": "حالة مزامنة البيانات",
-
   "reportBalanceSheetTitle": "الميزانية العمومية",
   "reportBalanceSheetAsOf": "كما في {date}",
-  "@reportBalanceSheetAsOf": { "placeholders": { "date": { "type": "String" } } },
+  "@reportBalanceSheetAsOf": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "reportAssets": "الأصول",
   "reportCurrentAssets": "الأصول المتداولة",
   "reportCashInDrawer": "النقد في الصندوق",
@@ -6997,7 +6942,6 @@
   "reportNetEquity": "صافي حقوق الملكية",
   "reportAccountingEquation": "معادلة المحاسبة",
   "reportAssetsEqualsLiabilitiesPlusEquity": "الأصول = الالتزامات + حقوق الملكية",
-
   "reportCashFlowTitle": "قائمة التدفق النقدي",
   "reportNetCashFlow": "صافي التدفق النقدي",
   "reportOperatingActivities": "الأنشطة التشغيلية",
@@ -7013,7 +6957,6 @@
   "reportThisYear": "هذه السنة",
   "reportQuarterly": "ربع سنوي",
   "reportAnnual": "سنوي",
-
   "reportDebtAgingTitle": "تقرير أعمار الديون",
   "reportDebtBucket0to30": "0-30 يوم",
   "reportDebtBucket31to60": "31-60 يوم",
@@ -7021,8 +6964,13 @@
   "reportDebtBucket90plus": "+90 يوم",
   "reportTotalDebts": "إجمالي الديون",
   "reportNDays": "{count} يوم",
-  "@reportNDays": { "placeholders": { "count": { "type": "int" } } },
-
+  "@reportNDays": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "reportComparisonTitle": "تقرير المقارنة",
   "reportIndicator": "المؤشر",
   "reportChange": "التغيير",
@@ -7031,19 +6979,42 @@
   "reportLastYear": "السنة الماضية",
   "reportCurrentPeriod": "الفترة الحالية",
   "reportPreviousPeriod": "الفترة السابقة",
-
   "reportZakatTitle": "حساب الزكاة",
   "reportZakatDue": "وجبت الزكاة",
   "reportZakatBelowNisab": "لم يبلغ النصاب",
   "reportZakatAmountDue": "مقدار الزكاة الواجبة",
   "reportZakatRateOf": "بنسبة {rate}% من وعاء الزكاة",
-  "@reportZakatRateOf": { "placeholders": { "rate": { "type": "String" } } },
+  "@reportZakatRateOf": {
+    "placeholders": {
+      "rate": {
+        "type": "String"
+      }
+    }
+  },
   "reportNisabThreshold": "النصاب الشرعي: {amount} ر.س",
-  "@reportNisabThreshold": { "placeholders": { "amount": { "type": "String" } } },
+  "@reportNisabThreshold": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "reportCurrentZakatBase": "وعاء الزكاة الحالي: {amount} ر.س",
-  "@reportCurrentZakatBase": { "placeholders": { "amount": { "type": "String" } } },
+  "@reportCurrentZakatBase": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "reportNisabInfo": "النصاب: {amount} ر.س (قيمة 85 جرام من الذهب تقريباً)",
-  "@reportNisabInfo": { "placeholders": { "amount": { "type": "String" } } },
+  "@reportNisabInfo": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
   "reportZakatAssets": "أصول الزكاة (+)",
   "reportGoodsAndInventory": "قيمة البضاعة والمخزون",
   "reportAvailableCash": "النقد المتوفر",
@@ -7053,21 +7024,29 @@
   "reportOtherLiabilities": "التزامات أخرى",
   "reportNetZakatBase": "وعاء الزكاة الصافي",
   "reportZakatDisclaimer": "تنبيه: هذا الحساب تقريبي. يُنصح بمراجعة مختص شرعي لتحديد الزكاة الواجبة بدقة.",
-
   "reportPurchaseTitle": "تقرير المشتريات",
   "reportPurchasesBySupplier": "المشتريات حسب المورد",
   "reportRecentInvoices": "آخر الفواتير",
   "reportNoPurchasesInPeriod": "لا توجد مشتريات في هذه الفترة",
   "reportNInvoices": "{count} فاتورة",
-  "@reportNInvoices": { "placeholders": { "count": { "type": "int" } } },
+  "@reportNInvoices": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "reportTotalTax": "إجمالي الضريبة",
   "reportExportSuccess": "تم تصدير التقرير بنجاح",
   "reportExportFailed": "فشل التصدير: {error}",
-  "@reportExportFailed": { "placeholders": { "error": { "type": "String" } } },
-  "ok": "حسناً",
-
+  "@reportExportFailed": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
   "@@_section_super_admin": "Super Admin — نصوص لوحة التحكم (2026-04-17)",
-
   "saSaveChanges": "حفظ التغييرات",
   "saSaving": "جاري الحفظ...",
   "saDiscardChanges": "تجاهل",
@@ -7085,7 +7064,6 @@
   "saGeneral": "عام",
   "saLanguageArabic": "العربية",
   "saLanguageEnglish": "الإنجليزية",
-
   "saAuditLog": "سجل التدقيق",
   "saAuditLogRefresh": "تحديث",
   "saAuditFilterAll": "الكل",
@@ -7098,20 +7076,22 @@
   "saAuditLoadRetry": "إعادة المحاولة",
   "saAuditNoEntries": "لا توجد سجلات تدقيق",
   "saAuditEntryBy": "بواسطة {email}",
-  "@saAuditEntryBy": { "placeholders": { "email": { "type": "String" } } },
-
+  "@saAuditEntryBy": {
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
   "saReportsExportComingSoon": "التصدير غير متاح حالياً — سيضاف قريباً",
   "saSystemHealthMetricsNote": "مقاييس المعالج/الذاكرة/القرص تتطلب نقطة خادم مخصصة — غير متصلة بعد",
-
   "saMfaScanQr": "امسح رمز QR في تطبيق المصادقة",
   "saMfaSecretFallback": "أو أدخل هذا المفتاح يدوياً:",
   "saMfaCopied": "تم النسخ",
-
   "saErrorGeneric": "حدث خطأ ما",
   "saErrorNetwork": "خطأ في الشبكة — تحقق من اتصالك",
   "saErrorRetry": "إعادة المحاولة",
   "saErrorTechnical": "تفاصيل تقنية",
-
   "saNext": "التالي",
   "saBackToLogin": "العودة لتسجيل الدخول",
   "saPopularBadge": "الأكثر طلباً",
@@ -7122,12 +7102,10 @@
   "saBusinessTypeRestaurant": "مطعم",
   "saBusinessTypeRetail": "تجزئة",
   "saBusinessTypeServices": "خدمات",
-
   "saNoPlanRevenueData": "لا توجد بيانات إيرادات للباقات",
   "saNoStoreRevenueData": "لا توجد بيانات إيرادات للمتاجر",
   "saNoActiveUserData": "لا توجد بيانات للمستخدمين النشطين",
   "saNoTransactionData": "لا توجد بيانات معاملات",
-
   "saMfaSetupTitle": "إعداد المصادقة الثنائية",
   "saMfaVerifyTitle": "التحقق الثنائي",
   "saMfaEnrollmentInstruction": "امسح رمز QR بتطبيق المصادقة (Google Authenticator أو Authy وغيرها) ثم أدخل الرمز المكوّن من 6 أرقام لإكمال الإعداد.",
@@ -7140,13 +7118,17 @@
   "saMfaAccountLocked": "تم قفل الحساب. حاول مجدداً خلال {minutes} دقيقة.",
   "@saMfaAccountLocked": {
     "placeholders": {
-      "minutes": {"type": "int"}
+      "minutes": {
+        "type": "int"
+      }
     }
   },
   "saMfaInvalidCode": "رمز غير صحيح. {remaining} محاولات متبقية.",
   "@saMfaInvalidCode": {
     "placeholders": {
-      "remaining": {"type": "int"}
+      "remaining": {
+        "type": "int"
+      }
     }
   },
   "saMfaEnrollmentFailed": "فشل تسجيل المصادقة الثنائية. تأكد من تفعيل MFA في مشروع Supabase.",
@@ -7171,7 +7153,6 @@
       }
     }
   },
-  "totalRefund": "إجمالي الاسترداد",
   "refundAmountExceedsOriginal": "المبلغ المسترد يتجاوز المبلغ الأصلي",
   "filterCompletedOnly": "المكتملة فقط",
   "filterCompletedOnlyDesc": "المبيعات غير المكتملة مخفية",

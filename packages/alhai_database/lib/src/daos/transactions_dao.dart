@@ -131,45 +131,6 @@ class TransactionsDao extends DatabaseAccessor<AppDatabase>
     );
   }
 
-  /// تسجيل فائدة شهرية
-  /// [amount], [balanceAfter] are SAR (double); stored as int cents.
-  Future<int> recordInterest({
-    required String id,
-    required String storeId,
-    required String accountId,
-    required double amount,
-    required double balanceAfter,
-    required String periodKey, // YYYY-MM
-    String? createdBy,
-  }) {
-    return insertTransaction(
-      TransactionsTableCompanion.insert(
-        id: id,
-        storeId: storeId,
-        accountId: accountId,
-        type: 'interest',
-        amount: (amount * 100).round(),
-        balanceAfter: (balanceAfter * 100).round(),
-        periodKey: Value(periodKey),
-        createdBy: Value(createdBy),
-        createdAt: DateTime.now(),
-      ),
-    );
-  }
-
-  /// التحقق من وجود فائدة لفترة معينة
-  Future<bool> hasInterestForPeriod(String accountId, String periodKey) async {
-    final result =
-        await (select(transactionsTable)..where(
-              (t) =>
-                  t.accountId.equals(accountId) &
-                  t.type.equals('interest') &
-                  t.periodKey.equals(periodKey),
-            ))
-            .get();
-    return result.isNotEmpty;
-  }
-
   /// إجمالي المدفوعات لحساب
   /// Internal storage is int cents; public API returns SAR (double).
   Future<double> getTotalPayments(String accountId) async {
