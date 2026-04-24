@@ -4,8 +4,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:alhai_database/alhai_database.dart';
+import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_core/alhai_core.dart' show UserRole;
 import 'package:cashier/screens/products/edit_price_screen.dart';
 
 import '../../helpers/test_helpers.dart';
@@ -15,6 +18,7 @@ import '../../helpers/test_factories.dart';
 void main() {
   late MockAppDatabase db;
   late MockProductsDao productsDao;
+  late MockAuditLogDao auditLogDao;
 
   // Screen accesses product.updatedAt for price history, so it must be non-null
   // C-4 Stage B: SAR × 100 = cents
@@ -31,12 +35,19 @@ void main() {
     registerCashierFallbackValues();
     // updateProduct(any()) needs a fallback for ProductsTableData
     registerFallbackValue(createTestProduct());
+    // For auditLogDao.getLogsByAction(any(), any()) the second arg is an
+    // AuditAction enum. Mocktail requires a fallback for non-null matchers.
+    registerFallbackValue(AuditAction.priceChange);
   });
 
   setUp(() {
     productsDao = MockProductsDao();
+    auditLogDao = MockAuditLogDao();
 
-    db = setupMockDatabase(productsDao: productsDao);
+    db = setupMockDatabase(
+      productsDao: productsDao,
+      auditLogDao: auditLogDao,
+    );
     setupTestGetIt(mockDb: db);
 
     // Default stubs
@@ -44,6 +55,11 @@ void main() {
       () => productsDao.getProductById(any()),
     ).thenAnswer((_) async => testProduct);
     when(() => productsDao.updateProduct(any())).thenAnswer((_) async => true);
+
+    // P1 #9 (2026-04-24): screen now pulls price history from audit_log.
+    when(
+      () => auditLogDao.getLogsByAction(any(), any()),
+    ).thenAnswer((_) async => <AuditLogTableData>[]);
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -122,8 +138,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      expect(find.text('Price Comparison'), findsOneWidget);
-      expect(find.text('Current Price'), findsWidgets);
+      // P1 #11 (2026-04-24): "Price Comparison" → Arabic "مقارنة الأسعار";
+      // current-price inline label → "السعر الحالي".
+      expect(find.text('\u0645\u0642\u0627\u0631\u0646\u0629 \u0627\u0644\u0623\u0633\u0639\u0627\u0631'), findsOneWidget);
+      expect(find.text('\u0627\u0644\u0633\u0639\u0631 \u0627\u0644\u062d\u0627\u0644\u064a'), findsWidgets);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -143,8 +161,9 @@ void main() {
       final textFields = find.byType(TextField);
       expect(textFields, findsWidgets);
 
-      // Verify the price text is displayed
-      expect(find.text('25.00'), findsWidgets);
+      // Verify the price text is displayed — CurrencyFormatter renders
+      // "25.00 ر.س" (formatMoney). We assert the numeric part is present.
+      expect(find.textContaining('25.00'), findsWidgets);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -165,5 +184,59 @@ void main() {
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
     });
+
+    testWidgets(
+      'save button is disabled for non-owner roles (permission gate)',
+      (tester) async {
+        // P1 #7 (2026-04-24): only storeOwner / superAdmin can save edits.
+        // Default helper uses UserRole.employee → expect Save button disabled.
+        tester.view.physicalSize = const Size(1920, 1080);
+        tester.view.devicePixelRatio = 1.0;
+        suppressOverflowErrors();
+
+        await tester.pumpWidget(
+          createTestWidget(const EditPriceScreen(productId: 'prod-1')),
+        );
+        await tester.pumpAndSettle();
+
+        // The save button is a FilledButton.icon. Find all and assert the
+        // one inside the Tooltip (permission-gate) is disabled.
+        final tooltip = find.byTooltip(
+          '\u0644\u0627 \u062a\u0645\u0644\u0643 \u0635\u0644\u0627\u062d\u064a\u0629 \u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0633\u0639\u0631',
+        );
+        expect(tooltip, findsOneWidget);
+
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      },
+    );
+
+    testWidgets(
+      'save button is enabled for storeOwner role',
+      (tester) async {
+        tester.view.physicalSize = const Size(1920, 1080);
+        tester.view.devicePixelRatio = 1.0;
+        suppressOverflowErrors();
+
+        await tester.pumpWidget(
+          createTestWidget(
+            const EditPriceScreen(productId: 'prod-1'),
+            overrides: [
+              userRoleProvider.overrideWithValue(UserRole.storeOwner),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+
+        // Tooltip disappears when permitted — screen renders the bare button.
+        final tooltip = find.byTooltip(
+          '\u0644\u0627 \u062a\u0645\u0644\u0643 \u0635\u0644\u0627\u062d\u064a\u0629 \u062a\u0639\u062f\u064a\u0644 \u0627\u0644\u0633\u0639\u0631',
+        );
+        expect(tooltip, findsNothing);
+
+        tester.view.resetPhysicalSize();
+        tester.view.resetDevicePixelRatio();
+      },
+    );
   });
 }

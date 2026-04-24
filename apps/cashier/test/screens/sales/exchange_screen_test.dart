@@ -30,8 +30,8 @@ void main() {
       await tester.pumpWidget(createTestWidget(const ExchangeScreen()));
       await tester.pumpAndSettle();
 
-      // Screen should render the Exchange title
-      expect(find.text('Exchange'), findsOneWidget);
+      // Screen should render the Exchange title (l10n.exchangeTitle = "استبدال")
+      expect(find.text('\u0627\u0633\u062a\u0628\u062f\u0627\u0644'), findsOneWidget);
     });
 
     testWidgets('shows return and new items sections', (tester) async {
@@ -43,9 +43,17 @@ void main() {
       await tester.pumpWidget(createTestWidget(const ExchangeScreen()));
       await tester.pumpAndSettle();
 
-      // Both sections should be present
-      expect(find.text('Items to Return'), findsOneWidget);
-      expect(find.text('New Items to Add'), findsOneWidget);
+      // Both sections should be present (l10n: "عناصر للإرجاع" / "عناصر جديدة للإضافة")
+      expect(
+        find.text('\u0639\u0646\u0627\u0635\u0631 \u0644\u0644\u0625\u0631\u062c\u0627\u0639'),
+        findsOneWidget,
+      );
+      expect(
+        find.text(
+          '\u0639\u0646\u0627\u0635\u0631 \u062c\u062f\u064a\u062f\u0629 \u0644\u0644\u0625\u0636\u0627\u0641\u0629',
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('has two search bars for return and new items', (tester) async {
@@ -72,7 +80,8 @@ void main() {
       await tester.pumpWidget(createTestWidget(const ExchangeScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Difference'), findsOneWidget);
+      // l10n.difference = "الفرق"
+      expect(find.text('\u0627\u0644\u0641\u0631\u0642'), findsOneWidget);
       // Arabic l10n: submitExchange
       expect(
         find.text(

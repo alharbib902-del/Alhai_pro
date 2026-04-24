@@ -34,6 +34,11 @@ void main() {
       () => categoriesDao.getAllCategories(any()),
     ).thenAnswer((_) async => []);
     when(() => productsDao.insertProduct(any())).thenAnswer((_) async => 1);
+    // P1 #13 (2026-04-24): save flow checks for duplicate barcode via
+    // getProductByBarcode before INSERT. Default to "not found".
+    when(
+      () => productsDao.getProductByBarcode(any(), any()),
+    ).thenAnswer((_) async => null);
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -87,13 +92,21 @@ void main() {
       await tester.pumpWidget(createTestWidget(const QuickAddProductScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Product Info'), findsOneWidget);
+      // P2 #12 (2026-04-24): card title localized to Arabic.
+      expect(
+        find.text(
+          '\u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0627\u0644\u0645\u0646\u062a\u062c',
+        ),
+        findsOneWidget,
+      );
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('displays barcode card with scan button', (tester) async {
+    testWidgets('displays barcode card with disabled scan button', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
@@ -101,8 +114,20 @@ void main() {
       await tester.pumpWidget(createTestWidget(const QuickAddProductScreen()));
       await tester.pumpAndSettle();
 
+      // l10n.scan label still renders as "مسح"
       expect(find.text('\u0645\u0633\u062d'), findsOneWidget);
-      expect(find.byIcon(Icons.qr_code_scanner_rounded), findsOneWidget);
+      expect(find.byIcon(Icons.camera_alt_rounded), findsOneWidget);
+
+      // P2 #11 (2026-04-24): scan button is now disabled (coming soon).
+      // FilledButton.icon constructs a private subclass (_FilledButtonWithIcon)
+      // that still implements FilledButton — use a predicate finder so the
+      // ancestor lookup captures it.
+      final scanButton = find.ancestor(
+        of: find.byIcon(Icons.camera_alt_rounded),
+        matching: find.byWidgetPredicate((w) => w is FilledButton),
+      );
+      expect(scanButton, findsOneWidget);
+      expect(tester.widget<FilledButton>(scanButton.first).onPressed, isNull);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
@@ -116,7 +141,13 @@ void main() {
       await tester.pumpWidget(createTestWidget(const QuickAddProductScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Pricing Info'), findsOneWidget);
+      // P2 #12 (2026-04-24): pricing card title localized to Arabic.
+      expect(
+        find.text(
+          '\u0645\u0639\u0644\u0648\u0645\u0627\u062a \u0627\u0644\u062a\u0633\u0639\u064a\u0631',
+        ),
+        findsOneWidget,
+      );
       // Quick quantity chips
       expect(find.text('5'), findsOneWidget);
       expect(find.text('10'), findsOneWidget);

@@ -115,5 +115,42 @@ void main() {
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
     });
+
+    // --- New behaviour: empty state replaces fake admin fallback ------------
+
+    testWidgets('shows Arabic empty-state when no users exist', (tester) async {
+      tester.view.physicalSize = const Size(1920, 1080);
+      tester.view.devicePixelRatio = 1.0;
+      suppressOverflowErrors();
+
+      await tester.pumpWidget(createTestWidget(const UsersPermissionsScreen()));
+      await tester.pumpAndSettle();
+
+      // The fake admin fallback was removed. With an empty user list, the
+      // screen must now show "لا يوجد مستخدمون" rather than inventing an
+      // admin row — otherwise role-based access controls could be bypassed
+      // by a phantom user in single-cashier stores.
+      expect(find.text('لا يوجد مستخدمون'), findsOneWidget);
+
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    testWidgets('empty-state shows Arabic helper text', (tester) async {
+      tester.view.physicalSize = const Size(1920, 1080);
+      tester.view.devicePixelRatio = 1.0;
+      suppressOverflowErrors();
+
+      await tester.pumpWidget(createTestWidget(const UsersPermissionsScreen()));
+      await tester.pumpAndSettle();
+
+      expect(
+        find.text('أضف أول مستخدم من خلال شاشة الإدارة'),
+        findsOneWidget,
+      );
+
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
   });
 }

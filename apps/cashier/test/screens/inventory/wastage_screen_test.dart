@@ -103,7 +103,9 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    testWidgets('displays photo card with tap to take photo', (tester) async {
+    testWidgets('displays photo card with coming-soon placeholder', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
       suppressOverflowErrors();
@@ -111,15 +113,17 @@ void main() {
       await tester.pumpWidget(createTestWidget(const WastageScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('\u0635\u0648\u0631\u0629'), findsOneWidget);
+      // Photo capture was rewired to a coming-soon placeholder — the old
+      // "انقر لالتقاط صورة" tap-target was removed because the toggle
+      // wasn't actually wired to any camera plugin (see lib/screens/
+      // inventory/wastage_screen.dart _buildPhotoCard doc-comment).
+      expect(find.text('\u0635\u0648\u0631\u0629'), findsOneWidget); // صورة
       expect(
-        find.text(
-          '\u0627\u0646\u0642\u0631 \u0644\u0627\u0644\u062a\u0642\u0627\u0637 \u0635\u0648\u0631\u0629',
-        ),
+        find.text('\u0642\u0631\u064a\u0628\u0627\u064b'), // قريباً (comingSoon)
         findsOneWidget,
       );
       expect(
-        find.text('\u0627\u062e\u062a\u064a\u0627\u0631\u064a'),
+        find.text('\u0627\u062e\u062a\u064a\u0627\u0631\u064a'), // اختياري
         findsWidgets,
       );
 

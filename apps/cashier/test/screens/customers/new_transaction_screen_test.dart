@@ -164,10 +164,13 @@ void main() {
       await tester.pumpWidget(createTestWidget(const NewTransactionScreen()));
       await tester.pumpAndSettle();
 
-      // Submit button should be disabled (no account selected, no amount)
-      // Use ancestor finder because FilledButton.icon creates a subclass
+      // Submit button should be disabled (no account selected, no amount).
+      // The button label was migrated from the English 'Record Debt' to the
+      // direct Arabic 'تسجيل دين' (there is no matching l10n key — see the
+      // comment inside [_buildSubmitButton]).
+      // Use ancestor finder because FilledButton.icon creates a subclass.
       final filledButtonFinder = find.ancestor(
-        of: find.text('Record Debt'),
+        of: find.text('\u062a\u0633\u062c\u064a\u0644 \u062f\u064a\u0646'),
         matching: find.byWidgetPredicate((w) => w is FilledButton),
       );
       expect(filledButtonFinder, findsOneWidget);

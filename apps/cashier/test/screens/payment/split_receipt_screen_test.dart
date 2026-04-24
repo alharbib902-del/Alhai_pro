@@ -124,7 +124,9 @@ void main() {
       expect(find.byIcon(Icons.qr_code_rounded), findsOneWidget);
     });
 
-    testWidgets('shows print and share action buttons', (tester) async {
+    testWidgets('shows print action button (share hidden until wired)', (
+      tester,
+    ) async {
       tester.view.physicalSize = const Size(1920, 1080);
       tester.view.devicePixelRatio = 1.0;
 
@@ -139,10 +141,12 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Print button
+      // Print button is visible.
       expect(find.byIcon(Icons.print_rounded), findsOneWidget);
-      // Share button
-      expect(find.byIcon(Icons.share_rounded), findsOneWidget);
+      // P2-#7: Share button is currently wrapped in Visibility(visible: false)
+      // because the share sheet isn't wired yet — it should NOT render.
+      // When share ships, change this to findsOneWidget.
+      expect(find.byIcon(Icons.share_rounded), findsNothing);
     });
   });
 }

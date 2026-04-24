@@ -2,18 +2,36 @@ library;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocktail/mocktail.dart';
+import 'package:alhai_database/alhai_database.dart';
 import 'package:cashier/screens/offers/coupon_code_screen.dart';
 
 import '../../helpers/test_helpers.dart';
 import '../../helpers/mock_database.dart';
 
 void main() {
+  late MockDiscountsDao discountsDao;
+
   setUpAll(() => registerCashierFallbackValues());
 
   setUp(() {
-    // CouponCodeScreen uses _db.discountsDao.getActiveDiscounts()
-    // for validation, but renders the form without calling DB on init.
-    final db = setupMockDatabase();
+    // CouponCodeScreen now loads recent coupons on init via the new
+    // DiscountsDao.getRecentCoupons(storeId, limit:) method, replacing
+    // the previously hard-coded empty list. Validation uses
+    // getCouponByCode (coupons table, not discounts by name) and apply
+    // uses the atomic tryRedeemCoupon update.
+    discountsDao = MockDiscountsDao();
+    when(
+      () => discountsDao.getRecentCoupons(any(), limit: any(named: 'limit')),
+    ).thenAnswer((_) async => <CouponsTableData>[]);
+    when(
+      () => discountsDao.getCouponByCode(any(), any()),
+    ).thenAnswer((_) async => null);
+    when(
+      () => discountsDao.tryRedeemCoupon(any()),
+    ).thenAnswer((_) async => 1);
+
+    final db = setupMockDatabase(discountsDao: discountsDao);
     setupTestGetIt(mockDb: db);
   });
 

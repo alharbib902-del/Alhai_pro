@@ -101,7 +101,11 @@ void main() {
       await tester.pumpWidget(createTestWidget(const PriceLabelsScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Label Size'), findsOneWidget);
+      // P2 #14 (2026-04-24): "Label Size" → Arabic "حجم الملصق".
+      expect(
+        find.text('\u062d\u062c\u0645 \u0627\u0644\u0645\u0644\u0635\u0642'),
+        findsOneWidget,
+      );
       expect(find.text('Small'), findsOneWidget);
       expect(find.text('Large'), findsOneWidget);
 

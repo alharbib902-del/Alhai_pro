@@ -103,8 +103,13 @@ void main() {
 
       // Refund summary icon
       expect(find.byIcon(Icons.calculate_rounded), findsOneWidget);
-      // Hardcoded English in production screen
-      expect(find.text('Refund Summary'), findsOneWidget);
+      // Arabic l10n: refundSummary = "ملخص الاسترداد"
+      expect(
+        find.text(
+          '\u0645\u0644\u062e\u0635 \u0627\u0644\u0627\u0633\u062a\u0631\u062f\u0627\u062f',
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('shows bottom bar with process refund button', (tester) async {
@@ -149,8 +154,13 @@ void main() {
 
       // Back button
       expect(find.byIcon(Icons.arrow_back_rounded), findsOneWidget);
-      // Title (hardcoded English in production screen)
-      expect(find.text('Split Refund'), findsOneWidget);
+      // Arabic l10n: splitRefundTitle = "استرداد مجزأ"
+      expect(
+        find.text(
+          '\u0627\u0633\u062a\u0631\u062f\u0627\u062f \u0645\u062c\u0632\u0623',
+        ),
+        findsOneWidget,
+      );
     });
   });
 }

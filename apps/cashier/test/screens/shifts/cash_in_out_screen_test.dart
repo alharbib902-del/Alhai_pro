@@ -149,8 +149,10 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Calculator icon for denomination counter
-      expect(find.byIcon(Icons.calculate_rounded), findsOneWidget);
+      // Savings (piggy-bank) icon for denomination counter — was 🪙 emoji +
+      // Icons.calculate_rounded before the P1 sweep; now a single savings icon
+      // on the "Count denominations" button.
+      expect(find.byIcon(Icons.savings_rounded), findsOneWidget);
     });
   });
 }

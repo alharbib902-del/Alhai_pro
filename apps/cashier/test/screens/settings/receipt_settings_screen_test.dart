@@ -97,5 +97,69 @@ void main() {
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
     });
+
+    // --- New behaviour: Arabic section headers -----------------------------
+
+    testWidgets('shows Arabic "receipt text" section header', (tester) async {
+      tester.view.physicalSize = const Size(1920, 1080);
+      tester.view.devicePixelRatio = 1.0;
+      suppressOverflowErrors();
+
+      await tester.pumpWidget(createTestWidget(const ReceiptSettingsScreen()));
+      await tester.pumpAndSettle();
+
+      // Was "Receipt Text".
+      expect(find.text('نص الإيصال'), findsOneWidget);
+
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    testWidgets('shows Arabic "display options" section header', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1920, 1080);
+      tester.view.devicePixelRatio = 1.0;
+      suppressOverflowErrors();
+
+      await tester.pumpWidget(createTestWidget(const ReceiptSettingsScreen()));
+      await tester.pumpAndSettle();
+
+      // Was "Display Options".
+      expect(find.text('خيارات العرض'), findsOneWidget);
+
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    testWidgets('shows Arabic "show logo" toggle label', (tester) async {
+      tester.view.physicalSize = const Size(1920, 1080);
+      tester.view.devicePixelRatio = 1.0;
+      suppressOverflowErrors();
+
+      await tester.pumpWidget(createTestWidget(const ReceiptSettingsScreen()));
+      await tester.pumpAndSettle();
+
+      // Was "Show Logo".
+      expect(find.text('عرض الشعار'), findsOneWidget);
+
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    testWidgets('shows Arabic "header text" field label', (tester) async {
+      tester.view.physicalSize = const Size(1920, 1080);
+      tester.view.devicePixelRatio = 1.0;
+      suppressOverflowErrors();
+
+      await tester.pumpWidget(createTestWidget(const ReceiptSettingsScreen()));
+      await tester.pumpAndSettle();
+
+      // Was "Header Text".
+      expect(find.text('نص الترويسة'), findsOneWidget);
+
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
   });
 }

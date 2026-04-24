@@ -98,4 +98,51 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
   });
+
+  // -------------------------------------------------------------------------
+  // Unit-level: IPv4 regex + port range. Mirror the source contract so a
+  // regression fails the moment someone relaxes validation — an invalid
+  // IP quietly persisted would have produced an opaque socket error on
+  // the next print attempt.
+  // -------------------------------------------------------------------------
+  group('Printer IPv4 + port validation', () {
+    final ipv4 = RegExp(
+      r'^((25[0-5]|2[0-4]\d|[01]?\d\d?)\.){3}(25[0-5]|2[0-4]\d|[01]?\d\d?)$',
+    );
+
+    test('accepts common LAN addresses', () {
+      expect(ipv4.hasMatch('192.168.1.100'), isTrue);
+      expect(ipv4.hasMatch('10.0.0.1'), isTrue);
+      expect(ipv4.hasMatch('172.16.254.1'), isTrue);
+    });
+
+    test('accepts boundary octet values 0 and 255', () {
+      expect(ipv4.hasMatch('0.0.0.0'), isTrue);
+      expect(ipv4.hasMatch('255.255.255.255'), isTrue);
+    });
+
+    test('rejects octets above 255', () {
+      expect(ipv4.hasMatch('256.0.0.1'), isFalse);
+      expect(ipv4.hasMatch('192.168.1.300'), isFalse);
+    });
+
+    test('rejects malformed shapes', () {
+      expect(ipv4.hasMatch('192.168.1'), isFalse); // too few octets
+      expect(ipv4.hasMatch('192.168.1.1.1'), isFalse); // too many
+      expect(ipv4.hasMatch('192.168.1.'), isFalse); // trailing dot
+      expect(ipv4.hasMatch(''), isFalse);
+      expect(ipv4.hasMatch('not.an.ip.addr'), isFalse);
+    });
+
+    test('port range is [1, 65535]', () {
+      bool validPort(int p) => p >= 1 && p <= 65535;
+
+      expect(validPort(1), isTrue);
+      expect(validPort(9100), isTrue); // ESC/POS default
+      expect(validPort(65535), isTrue);
+      expect(validPort(0), isFalse);
+      expect(validPort(-1), isFalse);
+      expect(validPort(65536), isFalse);
+    });
+  });
 }

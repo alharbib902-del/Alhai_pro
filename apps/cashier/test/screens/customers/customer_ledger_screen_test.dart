@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -66,16 +68,31 @@ void main() {
 
       suppressOverflowErrors();
 
+      // P1 #12: accountLedgerDataProvider is now a StreamProvider that
+      // combines watchAccountById + watchAccountTransactions. It stays in
+      // the "loading" state until BOTH streams have emitted at least once.
+      // Use never-completing streams (Completer futures) so the first
+      // frame observes the spinner. Avoid pumpAndSettle — it would hang
+      // because the streams never emit.
       when(
-        () => accountsDao.getAccountById(any()),
-      ).thenAnswer((_) async => _createTestAccount());
+        () => accountsDao.watchAccountById(any()),
+      ).thenAnswer(
+        (_) => Stream<AccountsTableData?>.fromFuture(
+          Completer<AccountsTableData?>().future,
+        ),
+      );
       when(
-        () => transactionsDao.getAccountTransactions(any()),
-      ).thenAnswer((_) async => <TransactionsTableData>[]);
+        () => transactionsDao.watchAccountTransactions(any()),
+      ).thenAnswer(
+        (_) => Stream<List<TransactionsTableData>>.fromFuture(
+          Completer<List<TransactionsTableData>>().future,
+        ),
+      );
 
       await tester.pumpWidget(
         createTestWidget(const CustomerLedgerScreen(id: 'acc-1')),
       );
+      // No pumpAndSettle: settling would hang because the streams never emit.
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
     });
@@ -87,11 +104,13 @@ void main() {
       suppressOverflowErrors();
 
       when(
-        () => accountsDao.getAccountById(any()),
-      ).thenAnswer((_) async => _createTestAccount(balance: 500.0));
+        () => accountsDao.watchAccountById(any()),
+      ).thenAnswer(
+        (_) => Stream.value(_createTestAccount(balance: 500.0)),
+      );
       when(
-        () => transactionsDao.getAccountTransactions(any()),
-      ).thenAnswer((_) async => <TransactionsTableData>[]);
+        () => transactionsDao.watchAccountTransactions(any()),
+      ).thenAnswer((_) => Stream.value(<TransactionsTableData>[]));
 
       await tester.pumpWidget(
         createTestWidget(const CustomerLedgerScreen(id: 'acc-1')),
@@ -113,11 +132,11 @@ void main() {
       suppressOverflowErrors();
 
       when(
-        () => accountsDao.getAccountById(any()),
-      ).thenAnswer((_) async => _createTestAccount());
+        () => accountsDao.watchAccountById(any()),
+      ).thenAnswer((_) => Stream.value(_createTestAccount()));
       when(
-        () => transactionsDao.getAccountTransactions(any()),
-      ).thenAnswer((_) async => <TransactionsTableData>[]);
+        () => transactionsDao.watchAccountTransactions(any()),
+      ).thenAnswer((_) => Stream.value(<TransactionsTableData>[]));
 
       await tester.pumpWidget(
         createTestWidget(const CustomerLedgerScreen(id: 'acc-1')),
@@ -137,11 +156,11 @@ void main() {
       suppressOverflowErrors();
 
       when(
-        () => accountsDao.getAccountById(any()),
-      ).thenAnswer((_) async => _createTestAccount());
+        () => accountsDao.watchAccountById(any()),
+      ).thenAnswer((_) => Stream.value(_createTestAccount()));
       when(
-        () => transactionsDao.getAccountTransactions(any()),
-      ).thenAnswer((_) async => <TransactionsTableData>[]);
+        () => transactionsDao.watchAccountTransactions(any()),
+      ).thenAnswer((_) => Stream.value(<TransactionsTableData>[]));
 
       await tester.pumpWidget(
         createTestWidget(const CustomerLedgerScreen(id: 'acc-1')),
@@ -158,11 +177,11 @@ void main() {
       suppressOverflowErrors();
 
       when(
-        () => accountsDao.getAccountById(any()),
-      ).thenAnswer((_) async => _createTestAccount());
+        () => accountsDao.watchAccountById(any()),
+      ).thenAnswer((_) => Stream.value(_createTestAccount()));
       when(
-        () => transactionsDao.getAccountTransactions(any()),
-      ).thenAnswer((_) async => <TransactionsTableData>[]);
+        () => transactionsDao.watchAccountTransactions(any()),
+      ).thenAnswer((_) => Stream.value(<TransactionsTableData>[]));
 
       await tester.pumpWidget(
         createTestWidget(const CustomerLedgerScreen(id: 'acc-1')),
@@ -181,11 +200,11 @@ void main() {
       suppressOverflowErrors();
 
       when(
-        () => accountsDao.getAccountById(any()),
-      ).thenAnswer((_) async => _createTestAccount());
+        () => accountsDao.watchAccountById(any()),
+      ).thenAnswer((_) => Stream.value(_createTestAccount()));
       when(
-        () => transactionsDao.getAccountTransactions(any()),
-      ).thenAnswer((_) async => <TransactionsTableData>[]);
+        () => transactionsDao.watchAccountTransactions(any()),
+      ).thenAnswer((_) => Stream.value(<TransactionsTableData>[]));
 
       await tester.pumpWidget(
         createTestWidget(const CustomerLedgerScreen(id: 'acc-1')),

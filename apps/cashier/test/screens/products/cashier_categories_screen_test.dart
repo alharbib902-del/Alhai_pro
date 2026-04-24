@@ -36,6 +36,11 @@ void main() {
     when(
       () => productsDao.getProductsByCategory(any(), any()),
     ).thenAnswer((_) async => []);
+    // P1 #19 (2026-04-24): initial counts now come from a single GROUP BY
+    // query (`countByCategory`) rather than N+1 `getProductsByCategory`.
+    when(
+      () => productsDao.countByCategory(any()),
+    ).thenAnswer((_) async => <String, int>{});
   });
 
   tearDown(() => tearDownTestGetIt());
@@ -92,6 +97,12 @@ void main() {
       when(
         () => categoriesDao.getAllCategories(any()),
       ).thenAnswer((_) async => categories);
+      // Supply counts so the grid card's "N products" badge has data.
+      when(
+        () => productsDao.countByCategory(any()),
+      ).thenAnswer(
+        (_) async => {for (final c in categories) c.id: 2},
+      );
 
       await tester.pumpWidget(
         createTestWidget(const CashierCategoriesScreen()),
@@ -160,6 +171,9 @@ void main() {
         () => categoriesDao.getAllCategories(any()),
       ).thenAnswer((_) async => categories);
       when(
+        () => productsDao.countByCategory(any()),
+      ).thenAnswer((_) async => {'cat-1': 1});
+      when(
         () => productsDao.getProductsByCategory('cat-1', any()),
       ).thenAnswer((_) async => products);
 
@@ -172,12 +186,12 @@ void main() {
       await tester.tap(find.text('Drinks'));
       await tester.pumpAndSettle();
 
-      // Products for the category should be loaded.
-      // Called once during _loadCategories() to count products,
-      // and once more in _loadCategoryProducts() when tapped.
+      // P1 #19 (2026-04-24): initial load no longer calls
+      // `getProductsByCategory` per-category. Only the tap-to-open flow does,
+      // so the expected call count drops from 2 → 1.
       verify(
         () => productsDao.getProductsByCategory('cat-1', 'test-store-1'),
-      ).called(2);
+      ).called(1);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

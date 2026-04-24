@@ -94,5 +94,60 @@ void main() {
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
     });
+
+    // --- New behaviour: Arabic strings + empty backup state ----------------
+
+    testWidgets('shows Arabic "no backup yet" helper when empty', (
+      tester,
+    ) async {
+      tester.view.physicalSize = const Size(1920, 1080);
+      tester.view.devicePixelRatio = 1.0;
+      suppressOverflowErrors();
+
+      await tester.pumpWidget(createTestWidget(const BackupScreen()));
+      await tester.pumpAndSettle();
+
+      // Empty DB → hasBackup=false → expect the Arabic empty prompt.
+      // Was previously English "No backup yet".
+      expect(
+        find.text('لا توجد نسخة احتياطية بعد. قم بإنشاء أول نسخة الآن.'),
+        findsOneWidget,
+      );
+
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    testWidgets('shows Arabic "backup now" action button', (tester) async {
+      tester.view.physicalSize = const Size(1920, 1080);
+      tester.view.devicePixelRatio = 1.0;
+      suppressOverflowErrors();
+
+      await tester.pumpWidget(createTestWidget(const BackupScreen()));
+      await tester.pumpAndSettle();
+
+      // Was "Backup Now" — now Arabic. Appears only in the empty-state
+      // (hasBackup=false) branch, which is exactly our test setup.
+      expect(find.text('نسخ احتياطي الآن'), findsOneWidget);
+
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    testWidgets('shows Arabic "restore now" action button', (tester) async {
+      tester.view.physicalSize = const Size(1920, 1080);
+      tester.view.devicePixelRatio = 1.0;
+      suppressOverflowErrors();
+
+      await tester.pumpWidget(createTestWidget(const BackupScreen()));
+      await tester.pumpAndSettle();
+
+      // The Restore section is always rendered — was "Restore Now" in
+      // English.
+      expect(find.text('استعادة الآن'), findsOneWidget);
+
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
   });
 }

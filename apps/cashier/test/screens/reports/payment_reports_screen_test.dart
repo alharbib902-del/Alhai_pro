@@ -19,10 +19,19 @@ void main() {
   setUp(() {
     salesDao = MockSalesDao();
 
-    // PaymentReportsScreen uses _db.salesDao.getAllSales(storeId).
+    // P1 #1/#2/#3 (2026-04-24): screen now pushes date filter down to SQL via
+    // `getSalesByDateRange`. Default stub for both entry points.
+    when(
+      () => salesDao.getSalesByDateRange(
+        any(),
+        any(),
+        any(),
+        limit: any(named: 'limit'),
+      ),
+    ).thenAnswer((_) async => <SalesTableData>[]);
     when(
       () => salesDao.getAllSales(any(), limit: any(named: 'limit')),
-    ).thenAnswer((_) async => []);
+    ).thenAnswer((_) async => <SalesTableData>[]);
 
     final db = setupMockDatabase(salesDao: salesDao);
     setupTestGetIt(mockDb: db);
@@ -51,8 +60,15 @@ void main() {
       suppressOverflowErrors();
 
       final completer = Completer<List<SalesTableData>>();
+      // Default filter is 'today' → dates are non-null → the screen calls
+      // `getSalesByDateRange`, not `getAllSales`. Hold its future.
       when(
-        () => salesDao.getAllSales(any(), limit: any(named: 'limit')),
+        () => salesDao.getSalesByDateRange(
+          any(),
+          any(),
+          any(),
+          limit: any(named: 'limit'),
+        ),
       ).thenAnswer((_) => completer.future);
 
       await tester.pumpWidget(createTestWidget(const PaymentReportsScreen()));
@@ -60,7 +76,7 @@ void main() {
 
       expect(find.byType(CircularProgressIndicator), findsOneWidget);
 
-      completer.complete([]);
+      completer.complete(<SalesTableData>[]);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

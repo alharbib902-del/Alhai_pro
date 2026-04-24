@@ -53,6 +53,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.byIcon(Icons.search_rounded), findsWidgets);
+      // l10n.scan ("مسح") is the scan button label.
       expect(find.text('\u0645\u0633\u062d'), findsOneWidget);
 
       tester.view.resetPhysicalSize();
@@ -67,7 +68,14 @@ void main() {
       await tester.pumpWidget(createTestWidget(const PrintBarcodeScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Barcode Preview'), findsOneWidget);
+      // P2 #16 (2026-04-24): "Barcode Preview" → Arabic "معاينة الباركود".
+      expect(
+        find.text(
+          '\u0645\u0639\u0627\u064a\u0646\u0629 \u0627\u0644\u0628\u0627\u0631\u0643\u0648\u062f',
+        ),
+        findsOneWidget,
+      );
+      // Empty-state copy: "اختر منتج أولاً" (pre-existing, unchanged).
       expect(
         find.text(
           '\u0627\u062e\u062a\u0631 \u0645\u0646\u062a\u062c \u0623\u0648\u0644\u0627\u064b',
@@ -89,7 +97,13 @@ void main() {
       await tester.pumpWidget(createTestWidget(const PrintBarcodeScreen()));
       await tester.pumpAndSettle();
 
-      expect(find.text('Label Quantity'), findsOneWidget);
+      // P2 #16 (2026-04-24): "Label Quantity" → Arabic "عدد الملصقات".
+      expect(
+        find.text(
+          '\u0639\u062f\u062f \u0627\u0644\u0645\u0644\u0635\u0642\u0627\u062a',
+        ),
+        findsOneWidget,
+      );
       // Quick quantity chips: 1, 5, 10, 20, 50
       expect(find.text('5'), findsOneWidget);
       expect(find.text('10'), findsOneWidget);
@@ -110,14 +124,19 @@ void main() {
       await tester.pumpWidget(createTestWidget(const PrintBarcodeScreen()));
       await tester.pumpAndSettle();
 
-      // Find the print button (last FilledButton)
-      // FilledButton.icon creates a private subclass, use predicate
+      // FilledButton.icon creates a private subclass, use predicate.
+      // P1 #17 (2026-04-24): the scan button is now also disabled with a
+      // tooltip (camera plugin not wired) — so we still expect 2 FilledButtons
+      // on-screen: [scan (disabled), print (disabled)].
       final filledButtons = find.byWidgetPredicate((w) => w is FilledButton);
-      // Scan button + Print button
       expect(filledButtons, findsNWidgets(2));
 
+      // The print button is the last FilledButton (bottom of layout).
       final printButton = tester.widget<FilledButton>(filledButtons.last);
       expect(printButton.onPressed, isNull);
+      // And the scan button — also disabled.
+      final scanButton = tester.widget<FilledButton>(filledButtons.first);
+      expect(scanButton.onPressed, isNull);
 
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();

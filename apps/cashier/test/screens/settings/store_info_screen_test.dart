@@ -108,5 +108,37 @@ void main() {
       tester.view.resetPhysicalSize();
       tester.view.resetDevicePixelRatio();
     });
+
+    // --- New behaviour: English labels replaced with Arabic -----------------
+
+    testWidgets('shows Arabic "read-only" badge', (tester) async {
+      tester.view.physicalSize = const Size(1920, 1080);
+      tester.view.devicePixelRatio = 1.0;
+      suppressOverflowErrors();
+
+      await tester.pumpWidget(createTestWidget(const StoreInfoScreen()));
+      await tester.pumpAndSettle();
+
+      // Was "Read Only", now "للقراءة فقط".
+      expect(find.text('للقراءة فقط'), findsOneWidget);
+
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
+
+    testWidgets('shows Arabic "Store Details" section header', (tester) async {
+      tester.view.physicalSize = const Size(1920, 1080);
+      tester.view.devicePixelRatio = 1.0;
+      suppressOverflowErrors();
+
+      await tester.pumpWidget(createTestWidget(const StoreInfoScreen()));
+      await tester.pumpAndSettle();
+
+      // Was "Store Details", now "بيانات المتجر".
+      expect(find.text('بيانات المتجر'), findsOneWidget);
+
+      tester.view.resetPhysicalSize();
+      tester.view.resetDevicePixelRatio();
+    });
   });
 }

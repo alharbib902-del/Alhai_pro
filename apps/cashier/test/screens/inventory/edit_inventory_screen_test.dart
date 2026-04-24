@@ -121,8 +121,9 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      // Current stock should show 50.0 (stockQty is double, may appear in multiple places)
-      expect(find.text('50.0'), findsWidgets);
+      // Current stock shows "50.00" (stockQty is double, formatted via
+      // toStringAsFixed(2) after the P0 inputFormatter/formatter sweep).
+      expect(find.text('50.00'), findsWidgets);
       // Adjustment card title (Arabic l10n)
       expect(
         find.text(
