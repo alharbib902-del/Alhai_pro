@@ -137,7 +137,7 @@ class AppDatabase extends _$AppDatabase {
   late final DatabaseBackupService backupService = DatabaseBackupService(this);
 
   @override
-  int get schemaVersion => 45;
+  int get schemaVersion => 46;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -1043,6 +1043,44 @@ class AppDatabase extends _$AppDatabase {
         debugPrint(
           '[Migration v45] Applied 100× cleanup to local POS invoices '
           '(C-4 Session 2 Bug A follow-up). No-op on clean devices.',
+        );
+
+      case 46:
+        // Sprint 1 / P0-03: seed default tax settings for every store that
+        // doesn't already have them. Before this, TaxSettingsScreen would
+        // show its fallback UI (15% / enabled / inclusive) on first open
+        // but persist nothing — which meant the new taxSettingsProvider
+        // would also fall back instead of reading user-set values.
+        //
+        // This migration is idempotent: stores that already have these
+        // keys are skipped via INSERT OR IGNORE on the composite primary
+        // key in settings. Fresh installs get seeded too because onCreate
+        // doesn't run this path — but the fallback in taxSettingsProvider
+        // already yields the same values, so no user-visible drift.
+        //
+        // Storage contract (matches TaxSettingsScreen encoder):
+        //   tax_rate      — basis points as text ("1500" = 15.00%)
+        //   tax_enabled   — "true" | "false"
+        //   tax_inclusive — "true" | "false"
+        await customStatement('''
+          INSERT OR IGNORE INTO settings (id, store_id, key, value)
+          SELECT 'setting_' || s.id || '_tax_rate', s.id, 'tax_rate', '1500'
+          FROM stores s;
+        ''');
+        await customStatement('''
+          INSERT OR IGNORE INTO settings (id, store_id, key, value)
+          SELECT 'setting_' || s.id || '_tax_enabled', s.id, 'tax_enabled', 'true'
+          FROM stores s;
+        ''');
+        await customStatement('''
+          INSERT OR IGNORE INTO settings (id, store_id, key, value)
+          SELECT 'setting_' || s.id || '_tax_inclusive', s.id, 'tax_inclusive', 'true'
+          FROM stores s;
+        ''');
+        debugPrint(
+          '[Migration v46] Seeded default tax settings '
+          '(tax_rate=1500bps, tax_enabled=true, tax_inclusive=true) '
+          'for stores without existing rows.',
         );
 
       default:

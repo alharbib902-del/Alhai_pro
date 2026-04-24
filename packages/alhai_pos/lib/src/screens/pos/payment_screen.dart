@@ -25,6 +25,7 @@ import 'package:alhai_auth/alhai_auth.dart';
 import '../../services/sale_service.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
+import '../../providers/tax_settings_provider.dart';
 import '../../widgets/pos/split_payment_dialog.dart'
     as split_dlg
     show SplitPaymentDialog, PaymentSplit;
@@ -41,7 +42,26 @@ import 'payment_loyalty_widget.dart';
 
 /// شاشة الدفع
 class PaymentScreen extends ConsumerStatefulWidget {
-  const PaymentScreen({super.key});
+  /// Phase 4.5 — optional preselected payment method, set by shell-level
+  /// keyboard shortcuts (F6 cash, F7 card, F8 split). When null, the screen
+  /// falls back to its historical default of [PaymentMethod.cash].
+  ///
+  /// Note: the post-frame "force cash when offline" logic still runs, so an
+  /// explicit card/split preselection may still be overridden when the device
+  /// is offline or when card payments are disabled in settings — that matches
+  /// the existing UX for the in-screen method buttons.
+  final PaymentMethod? preselectedMethod;
+
+  /// Phase 4.5 — when `true` we immediately open the split-payment dialog on
+  /// the first frame, so the F8 shortcut jumps straight into split entry
+  /// instead of requiring an extra click on the "Split" button.
+  final bool autoOpenSplit;
+
+  const PaymentScreen({
+    super.key,
+    this.preselectedMethod,
+    this.autoOpenSplit = false,
+  });
 
   @override
   ConsumerState<PaymentScreen> createState() => _PaymentScreenState();
@@ -51,7 +71,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     with SingleTickerProviderStateMixin {
   AppLocalizations get l10n => AppLocalizations.of(context);
 
-  PaymentMethod _selectedMethod = PaymentMethod.cash;
+  late PaymentMethod _selectedMethod =
+      widget.preselectedMethod ?? PaymentMethod.cash;
   final _cashReceivedController = TextEditingController();
   final _cardRrnController = TextEditingController();
   final _phoneController = TextEditingController();
@@ -84,6 +105,54 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     _scaleAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _animationController, curve: AlhaiMotion.spring),
     );
+
+    // Phase 4.5 — when the shell opens this screen via the F8 split shortcut
+    // we want to skip the extra click on the "Split payment" button. We defer
+    // to a post-frame callback so the cart state has been resolved and the
+    // Scaffold is available for the dialog.
+    if (widget.autoOpenSplit) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _openSplitDialog());
+    }
+  }
+
+  /// Phase 4.5 — imperatively trigger the split-payment dialog. Mirrors the
+  /// onPressed body of the in-screen "Split" button but reads cart state once
+  /// and guards against the "offline" case where splits are disabled.
+  Future<void> _openSplitDialog() async {
+    if (!mounted) return;
+    final isOnlineAsync = ref.read(isOnlineProvider);
+    final isOffline = isOnlineAsync.when(
+      data: (isOnline) => !isOnline,
+      loading: () => false,
+      error: (_, __) => false,
+    );
+    if (isOffline) return; // matches in-screen button's null onPressed
+
+    final cartState = ref.read(cartStateProvider);
+    final subtotal = cartState.subtotal;
+    // Sprint 1 / P0-03: synchronous read with fallback — avoids inserting
+    // an async gap before `context: context` below, which would trigger
+    // use_build_context_synchronously. The provider auto-fetches on first
+    // watch (e.g. by pos_cart_panel) so it has resolved by the time the
+    // user can press this button.
+    final taxSettings =
+        ref.read(taxSettingsProvider).valueOrNull ?? TaxSettings.fallback;
+    final tax = VatCalculator.vatFromNet(
+      netAmount: subtotal,
+      vatRate: taxSettings.effectiveRate,
+    );
+    final total = subtotal + tax - cartState.discount;
+    final splits = await split_dlg.SplitPaymentDialog.show(
+      context: context,
+      totalAmount: total,
+      customerName: cartState.customerName,
+    );
+    if (splits != null && splits.isNotEmpty && mounted) {
+      setState(() {
+        _isSplitPayment = true;
+        _splitPayments = splits;
+      });
+    }
   }
 
   @override
@@ -121,7 +190,15 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     final nfcService = ref.read(nfcListenerServiceProvider);
     final cartState = ref.read(cartStateProvider);
     final subtotal = cartState.subtotal;
-    final tax = VatCalculator.vatFromNet(netAmount: subtotal);
+    // Sprint 1 / P0-03: synchronous read with fallback — NFC trigger runs
+    // on every rebuild and shouldn't await. If the provider hasn't resolved
+    // yet we use the 15% fallback, matching the legacy hardcoded default.
+    final taxSettings =
+        ref.read(taxSettingsProvider).valueOrNull ?? TaxSettings.fallback;
+    final tax = VatCalculator.vatFromNet(
+      netAmount: subtotal,
+      vatRate: taxSettings.effectiveRate,
+    );
     final total = subtotal + tax - cartState.discount;
 
     if (total > 0) {
@@ -234,7 +311,14 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
     }
 
     final subtotal = cartState.subtotal;
-    final tax = VatCalculator.vatFromNet(netAmount: subtotal);
+    // Sprint 1 / P0-03: watch tax settings so the displayed total updates
+    // live if the admin changes the rate mid-session.
+    final taxSettings =
+        ref.watch(taxSettingsProvider).valueOrNull ?? TaxSettings.fallback;
+    final tax = VatCalculator.vatFromNet(
+      netAmount: subtotal,
+      vatRate: taxSettings.effectiveRate,
+    );
     final discount = cartState.discount;
     final total = subtotal + tax - discount - loyaltyDiscount;
     final change = _cashReceived - total;
@@ -744,7 +828,16 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
                 : () async {
                     final cartState = ref.read(cartStateProvider);
                     final subtotal = cartState.subtotal;
-                    final tax = VatCalculator.vatFromNet(netAmount: subtotal);
+                    // Sprint 1 / P0-03: sync read with fallback (see the
+                    // _onSplitPaymentTap comment above) — avoids an async
+                    // gap before `context: context` in the dialog call.
+                    final taxSettings =
+                        ref.read(taxSettingsProvider).valueOrNull ??
+                            TaxSettings.fallback;
+                    final tax = VatCalculator.vatFromNet(
+                      netAmount: subtotal,
+                      vatRate: taxSettings.effectiveRate,
+                    );
                     final total = subtotal + tax - cartState.discount;
                     final splits = await split_dlg.SplitPaymentDialog.show(
                       context: context,
@@ -1226,7 +1319,13 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen>
 
       final saleService = GetIt.I<SaleService>();
       final subtotal = cartState.subtotal;
-      final tax = VatCalculator.vatFromNet(netAmount: subtotal);
+      // Sprint 1 / P0-03: sale persists the tax amount — it MUST reflect
+      // the current setting, not the legacy 15% default.
+      final taxSettings = await ref.read(taxSettingsProvider.future);
+      final tax = VatCalculator.vatFromNet(
+        netAmount: subtotal,
+        vatRate: taxSettings.effectiveRate,
+      );
 
       // جلب معرف الوردية المفتوحة (nullable — لا يمنع البيع إذا لم توجد وردية)
       final openShift = await ref.read(openShiftProvider.future);

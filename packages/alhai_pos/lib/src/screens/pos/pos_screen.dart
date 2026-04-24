@@ -11,6 +11,7 @@ import '../../core/utils/keyboard_shortcuts.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/cart_providers.dart';
 import '../../providers/pos_feedback_providers.dart';
+import '../../providers/pos_focus_controller.dart';
 import '../../widgets/pos/pos_widgets.dart';
 import '../../widgets/pos/barcode_listener.dart';
 import '../../widgets/pos/payment_success_dialog.dart';
@@ -22,6 +23,7 @@ import 'pos_cart_panel.dart';
 import 'pos_product_shortcuts.dart';
 import 'package:alhai_core/alhai_core.dart' show UserRole;
 import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
+import '../../providers/tax_settings_provider.dart';
 import 'pos_products_panel.dart';
 import 'phone_entry_dialog.dart';
 import '../../providers/customer_display_providers.dart';
@@ -86,6 +88,12 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     final now = DateTime.now();
     final locale = WidgetsBinding.instance.platformDispatcher.locale.toString();
     _dateSubtitle = DateFormat('d MMMM yyyy', locale).format(now);
+
+    // Phase 4.5 — register search-focus hook so the shell's Ctrl+F / F4
+    // shortcuts can focus the search field from anywhere in the POS tree.
+    PosFocusController.registerSearchFocus(() {
+      if (mounted) _searchFocusNode.requestFocus();
+    });
 
     Future.microtask(() {
       final storeId = ref.read(currentStoreIdProvider);
@@ -200,6 +208,9 @@ class _PosScreenState extends ConsumerState<PosScreen> {
 
   @override
   void dispose() {
+    // Phase 4.5 — clear the shell-facing focus hook so we don't leave a
+    // dangling reference to a disposed [FocusNode].
+    PosFocusController.clearSearchFocus();
     _searchFocusNode.dispose();
     _keyboardFocusNode.dispose();
     super.dispose();
@@ -526,6 +537,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
 
         // جلب معرف الوردية المفتوحة (nullable — لا يمنع البيع إذا لم توجد وردية)
         final openShift = await ref.read(openShiftProvider.future);
+        // Sprint 1 / P0-03: tax rate now lives in settings, not hardcoded.
+        final taxSettings = await ref.read(taxSettingsProvider.future);
 
         final saleResult = await saleService.createSale(
           storeId: storeId,
@@ -533,7 +546,10 @@ class _PosScreenState extends ConsumerState<PosScreen> {
           items: cartState.items,
           subtotal: cartState.subtotal,
           discount: cartState.discount,
-          tax: VatCalculator.vatFromNet(netAmount: cartState.subtotal),
+          tax: VatCalculator.vatFromNet(
+            netAmount: cartState.subtotal,
+            vatRate: taxSettings.effectiveRate,
+          ),
           total: saleTotal,
           paymentMethod: result.method.name,
           customerId: result.customerId,
@@ -741,7 +757,16 @@ class _PosScreenState extends ConsumerState<PosScreen> {
               final cartState = ref.read(cartStateProvider);
               if (cartState.items.isNotEmpty) {
                 final subtotal = cartState.subtotal;
-                final tax = VatCalculator.vatFromNet(netAmount: subtotal);
+                // Sprint 1 / P0-03: sync read with fallback — keeps the
+                // handler synchronous; fallback matches legacy 15% if the
+                // provider hasn't resolved yet (fresh app start).
+                final taxSettings =
+                    ref.read(taxSettingsProvider).valueOrNull ??
+                        TaxSettings.fallback;
+                final tax = VatCalculator.vatFromNet(
+                  netAmount: subtotal,
+                  vatRate: taxSettings.effectiveRate,
+                );
                 final total = subtotal + tax - cartState.discount;
                 _showPaymentDialog(total);
               }

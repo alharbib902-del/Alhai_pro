@@ -10,6 +10,10 @@ export 'src/screens/pos/hold_invoices_screen.dart';
 export 'src/screens/pos/kiosk_screen.dart';
 export 'src/screens/pos/customer_display_screen.dart';
 export 'src/screens/pos/phone_entry_dialog.dart';
+// Phase 4.5 — expose the public `showPosDiscountDialog` helper so shell-level
+// keyboard shortcuts (Ctrl+D) can open the same discount dialog the cart
+// panel uses, without re-implementing PIN/approval logic.
+export 'src/screens/pos/pos_cart_panel.dart' show showPosDiscountDialog;
 
 // ─── Screens: Returns ───────────────────────────────────────────
 export 'src/screens/returns/returns_screen.dart';
@@ -30,6 +34,8 @@ export 'src/providers/held_invoices_providers.dart';
 export 'src/providers/returns_providers.dart';
 export 'src/providers/customer_display_providers.dart';
 export 'src/providers/pos_feedback_providers.dart';
+export 'src/providers/pos_focus_controller.dart';
+export 'src/providers/tax_settings_provider.dart';
 
 // ─── Services ───────────────────────────────────────────────────
 export 'src/services/sale_service.dart';

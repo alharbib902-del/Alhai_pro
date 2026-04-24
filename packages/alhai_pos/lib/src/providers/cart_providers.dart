@@ -692,6 +692,47 @@ class CartNotifier extends StateNotifier<CartState> {
     updateQuantity(productId, item.quantity - 1);
   }
 
+  // --------------------------------------------------------------------------
+  // Phase 4.5 — "active item" helpers for shell-level keyboard shortcuts.
+  //
+  // The cashier shell's +/-, Delete shortcuts need to operate on the item the
+  // user is currently focused on. Since the cart widget does not expose a
+  // selected-row concept (items are rendered via AnimatedList with no
+  // selection state), we treat the *last-added* item as the active one — this
+  // matches the common POS convention where the cashier has just scanned or
+  // added a product and wants to adjust it without mousing back to the list.
+  //
+  // All three helpers are no-ops when the cart is empty (desired behaviour —
+  // pressing + on an empty cart must not crash or surprise the user).
+  // --------------------------------------------------------------------------
+
+  /// The most-recently-added cart item, or `null` when the cart is empty.
+  PosCartItem? get activeItem => state.items.isEmpty ? null : state.items.last;
+
+  /// Increase the quantity of the active (last-added) item by one. No-op when
+  /// the cart is empty or when the item is already at the per-item ceiling.
+  void incrementActive() {
+    final item = activeItem;
+    if (item == null) return;
+    incrementQuantity(item.product.id);
+  }
+
+  /// Decrease the quantity of the active (last-added) item by one. When the
+  /// quantity would drop to zero this removes the item entirely (same
+  /// semantics as [decrementQuantity]). No-op on empty cart.
+  void decrementActive() {
+    final item = activeItem;
+    if (item == null) return;
+    decrementQuantity(item.product.id);
+  }
+
+  /// Remove the active (last-added) item from the cart. No-op on empty cart.
+  void removeActive() {
+    final item = activeItem;
+    if (item == null) return;
+    removeProduct(item.product.id);
+  }
+
   /// تعيين سعر مخصص
   void setCustomPrice(String productId, double? price) {
     // Validate: price must be null (clear) or within [0, 999999]

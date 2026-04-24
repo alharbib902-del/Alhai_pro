@@ -15,6 +15,7 @@ import '../../providers/held_invoices_providers.dart';
 import '../../services/manager_approval_service.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
+import '../../providers/tax_settings_provider.dart';
 
 // M160: Locale-aware currency formatting helper for this file
 String _fmtCurrency(BuildContext context, double amount) =>
@@ -58,7 +59,15 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
     final cartState = ref.watch(cartStateProvider);
     final items = cartState.items;
     final subtotal = cartState.subtotal;
-    final tax = VatCalculator.vatFromNet(netAmount: subtotal);
+    // Sprint 1 / P0-03: tax rate from settings, with 15% fallback if the
+    // provider hasn't resolved yet (keeps the first paint identical to
+    // the legacy hardcoded behaviour).
+    final taxSettings =
+        ref.watch(taxSettingsProvider).valueOrNull ?? TaxSettings.fallback;
+    final tax = VatCalculator.vatFromNet(
+      netAmount: subtotal,
+      vatRate: taxSettings.effectiveRate,
+    );
     final total = subtotal + tax - cartState.discount;
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final colorScheme = Theme.of(context).colorScheme;
@@ -1106,102 +1115,124 @@ class _PosCartPanelState extends ConsumerState<PosCartPanel> {
     BuildContext context,
     WidgetRef ref,
     double subtotal,
-  ) {
-    final discountController = TextEditingController();
-    final l10n = AppLocalizations.of(context);
+  ) => showPosDiscountDialog(context: context, ref: ref, subtotal: subtotal);
+}
 
-    showDialog(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: Row(
-            children: [
-              const Icon(
-                Icons.percent_rounded,
-                color: AppColors.success,
-                size: 22,
-              ),
-              const SizedBox(width: AlhaiSpacing.xs),
-              Expanded(
-                child: Text(
-                  l10n.discount,
-                  overflow: TextOverflow.ellipsis,
-                  maxLines: 1,
-                ),
-              ),
-            ],
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: discountController,
-                keyboardType: TextInputType.number,
-                autofocus: true,
-                decoration: InputDecoration(
-                  labelText: l10n.discount,
-                  hintText: '0 - 100',
-                  suffixText: '%',
-                  prefixIcon: const Icon(Icons.percent),
-                  border: const OutlineInputBorder(),
-                ),
-                onSubmitted: (_) => _applyDiscount(
-                  dialogContext,
-                  context,
-                  ref,
-                  discountController,
-                  subtotal,
-                ),
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext),
-              child: Text(l10n.cancel),
+// =============================================================================
+// PUBLIC DISCOUNT DIALOG HELPER
+// =============================================================================
+
+/// Show the discount dialog from outside [PosCartPanel] (e.g. the cashier
+/// shell's Ctrl+D shortcut).
+///
+/// Reads the current subtotal from [cartStateProvider] when [subtotal] is
+/// `null`, so a caller that only has a [BuildContext] and [WidgetRef] does
+/// not need to replicate the VAT calculation.
+///
+/// No-op when the cart is empty — a discount dialog for an empty cart would
+/// be confusing, and the caller can decide whether to surface a snackbar.
+void showPosDiscountDialog({
+  required BuildContext context,
+  required WidgetRef ref,
+  double? subtotal,
+}) {
+  final cartState = ref.read(cartStateProvider);
+  if (cartState.isEmpty) return;
+
+  final effectiveSubtotal = subtotal ?? cartState.subtotal;
+  final discountController = TextEditingController();
+  final l10n = AppLocalizations.of(context);
+
+  showDialog(
+    context: context,
+    builder: (dialogContext) {
+      return AlertDialog(
+        title: Row(
+          children: [
+            const Icon(
+              Icons.percent_rounded,
+              color: AppColors.success,
+              size: 22,
             ),
-            FilledButton(
-              onPressed: () => _applyDiscount(
+            const SizedBox(width: AlhaiSpacing.xs),
+            Expanded(
+              child: Text(
+                l10n.discount,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 1,
+              ),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextField(
+              controller: discountController,
+              keyboardType: TextInputType.number,
+              autofocus: true,
+              decoration: InputDecoration(
+                labelText: l10n.discount,
+                hintText: '0 - 100',
+                suffixText: '%',
+                prefixIcon: const Icon(Icons.percent),
+                border: const OutlineInputBorder(),
+              ),
+              onSubmitted: (_) => _applyDiscountPublic(
                 dialogContext,
                 context,
                 ref,
                 discountController,
-                subtotal,
+                effectiveSubtotal,
               ),
-              child: Text(l10n.confirm),
             ),
           ],
-        );
-      },
-    ).then((_) => discountController.dispose());
-  }
-
-  /// تطبيق الخصم مع التحقق من PIN إذا تجاوز 20%
-  Future<void> _applyDiscount(
-    BuildContext dialogContext,
-    BuildContext parentContext,
-    WidgetRef ref,
-    TextEditingController controller,
-    double subtotal,
-  ) async {
-    final percent = double.tryParse(controller.text);
-    if (percent == null || percent < 0 || percent > 100) return;
-
-    Navigator.pop(dialogContext);
-
-    // إذا الخصم أكثر من 20%: طلب موافقة المشرف
-    if (percent > 20) {
-      if (!parentContext.mounted) return;
-      final approved = await ManagerApprovalService.requestPinApproval(
-        context: parentContext,
-        action: 'discount_over_20',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(dialogContext),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton(
+            onPressed: () => _applyDiscountPublic(
+              dialogContext,
+              context,
+              ref,
+              discountController,
+              effectiveSubtotal,
+            ),
+            child: Text(l10n.confirm),
+          ),
+        ],
       );
-      if (!approved) return;
-    }
+    },
+  ).then((_) => discountController.dispose());
+}
 
-    final discountAmount = subtotal * (percent / 100);
-    ref.read(cartStateProvider.notifier).setDiscount(discountAmount);
+Future<void> _applyDiscountPublic(
+  BuildContext dialogContext,
+  BuildContext parentContext,
+  WidgetRef ref,
+  TextEditingController controller,
+  double subtotal,
+) async {
+  final percent = double.tryParse(controller.text);
+  if (percent == null || percent < 0 || percent > 100) return;
+
+  Navigator.pop(dialogContext);
+
+  // إذا الخصم أكثر من 20%: طلب موافقة المشرف
+  if (percent > 20) {
+    if (!parentContext.mounted) return;
+    final approved = await ManagerApprovalService.requestPinApproval(
+      context: parentContext,
+      action: 'discount_over_20',
+    );
+    if (!approved) return;
   }
+
+  final discountAmount = subtotal * (percent / 100);
+  ref.read(cartStateProvider.notifier).setDiscount(discountAmount);
 }
 
 // =============================================================================

@@ -16,6 +16,7 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
+import 'package:alhai_pos/alhai_pos.dart' show taxSettingsProvider;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../../core/services/sentry_service.dart';
 
@@ -182,6 +183,11 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
       await _upsertSetting('tax_rate', _encodeTaxRateAsBasisPoints(rate));
       await _upsertSetting('tax_inclusive', _taxInclusive.toString());
       await _upsertSetting('tax_enabled', _taxEnabled.toString());
+
+      // Sprint 1 / P0-03: now that POS reads from taxSettingsProvider, we
+      // must invalidate it so subsequent cart/checkout rebuilds see the
+      // new rate immediately (not the previously-cached value).
+      ref.invalidate(taxSettingsProvider);
 
       if (mounted) {
         AlhaiSnackbar.success(context, l10n.settingsSaved);
@@ -511,10 +517,10 @@ class _TaxSettingsScreenState extends ConsumerState<TaxSettingsScreen> {
           _ToggleRow(
             icon: Icons.toggle_on_rounded,
             title: 'تفعيل الضريبة',
-            subtitle: 'قيد التطوير — VAT ثابت 15% على كل الفواتير حالياً',
+            subtitle: 'تطبيق الضريبة على جميع المبيعات',
             value: _taxEnabled,
             isDark: isDark,
-            onChanged: null,
+            onChanged: (v) => setState(() => _taxEnabled = v),
           ),
           Divider(color: AppColors.getBorder(isDark), height: 1),
           _ToggleRow(

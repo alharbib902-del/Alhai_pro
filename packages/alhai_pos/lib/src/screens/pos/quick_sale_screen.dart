@@ -17,6 +17,7 @@ import 'package:uuid/uuid.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_zatca/alhai_zatca.dart' show VatCalculator;
 import '../../providers/cart_providers.dart';
+import '../../providers/tax_settings_provider.dart';
 import '../../providers/customer_display_providers.dart';
 import 'phone_entry_dialog.dart';
 
@@ -78,7 +79,17 @@ class _QuickSaleScreenState extends ConsumerState<QuickSaleScreen> {
   }
 
   double get _subtotal => _cartItems.fold(0.0, (sum, item) => sum + item.total);
-  double get _vat => VatCalculator.vatFromNet(netAmount: _subtotal);
+  // Sprint 1 / P0-03: getter reads live tax setting from the provider.
+  // Since this screen is a ConsumerState, `ref` is available. `valueOrNull`
+  // returns the cached value; we fall back to 15% during the first fetch.
+  double get _vat {
+    final taxSettings =
+        ref.read(taxSettingsProvider).valueOrNull ?? TaxSettings.fallback;
+    return VatCalculator.vatFromNet(
+      netAmount: _subtotal,
+      vatRate: taxSettings.effectiveRate,
+    );
+  }
   double get _total => _subtotal + _vat;
   int get _itemCount => _cartItems.fold(0, (sum, item) => sum + item.quantity);
 

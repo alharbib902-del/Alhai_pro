@@ -213,7 +213,17 @@ class InvoiceService {
                 // a stale handover claim that the server was still DOUBLE.
                 'subtotal': sale.subtotal,
                 'discount': sale.discount,
-                'taxRate': 15.0,
+                // Sprint 1 / P0-03: the tax rate is no longer hardcoded at
+                // 15%. POS screens now read from TaxSettings and compute
+                // sale.tax accordingly (0 for disabled/zero-rated, 14/15/
+                // other for configured rates). Infer the rate back out of
+                // sale.tax ÷ sale.subtotal so the Supabase row matches
+                // what was actually charged. Both columns are int cents.
+                'taxRate': sale.subtotal > 0
+                    ? double.parse(
+                        (sale.tax / sale.subtotal * 100).toStringAsFixed(2),
+                      )
+                    : 0.0,
                 'taxAmount': sale.tax,
                 'total': sale.total,
                 'paymentMethod': sale.paymentMethod,
