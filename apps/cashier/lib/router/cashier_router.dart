@@ -14,6 +14,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:alhai_design_system/alhai_design_system.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_auth/alhai_auth.dart';
@@ -79,17 +80,70 @@ extension GoRouterStateX on GoRouterState {
   String queryParam(String key) => uri.queryParameters[key] ?? '';
 }
 
-/// Fade transition for smooth screen transitions
-Widget _fadeTransition(
+/// Phase 4.4 — SharedPreferences key that controls page-transition animations.
+///
+/// When the user disables "Animations" from `CashierSettingsScreen`, this key
+/// becomes `false`. The router reads the value at app startup (into
+/// [_animationsEnabled]) and each settings toggle refreshes it via
+/// [refreshAnimationsFlag]. When animations are OFF every [CustomTransitionPage]
+/// uses `Duration.zero`, effectively disabling the transition while leaving
+/// the page swap intact (no visual regression for the rest of the app).
+const String kPrefAnimationsEnabled = 'settings_animations_enabled';
+
+/// Router-local cached flag. Read synchronously during a `pageBuilder`, so we
+/// mirror the SharedPreferences value here instead of reading from disk on
+/// every navigation. Default: animations enabled (true).
+bool _animationsEnabled = true;
+
+/// Load the animations-enabled flag from SharedPreferences. Call once from
+/// `main.dart` after prefs are available so the first build already honours
+/// the user's preference. Also called from the settings screen to refresh.
+Future<void> refreshAnimationsFlag() async {
+  final prefs = await SharedPreferences.getInstance();
+  _animationsEnabled = prefs.getBool(kPrefAnimationsEnabled) ?? true;
+}
+
+/// Phase 4.4 — Combined slide + fade transition (200 ms).
+///
+/// Moves the incoming route in from the end (right on LTR, left on RTL) while
+/// fading it in. Replaces the previous pure-fade transition which felt heavy
+/// at 300 ms. When the user disables animations the caller passes
+/// `Duration.zero` via [_transitionDuration] so the animation collapses to
+/// an instant swap — this helper still builds the tween but `animation` jumps
+/// straight to 1.0 so users see no motion.
+Widget _alhaiTransition(
   BuildContext context,
   Animation<double> animation,
   Animation<double> secondaryAnimation,
   Widget child,
 ) {
+  final isRtl = Directionality.of(context) == TextDirection.rtl;
+  // Subtle 5% offset — enough to signal direction without feeling sluggish
+  // for a cashier tapping rapidly between screens.
+  final beginOffset = Offset(isRtl ? -0.05 : 0.05, 0);
+
   return FadeTransition(
-    opacity: CurvedAnimation(parent: animation, curve: AlhaiMotion.standard),
-    child: child,
+    opacity: animation,
+    child: SlideTransition(
+      position: Tween<Offset>(
+        begin: beginOffset,
+        end: Offset.zero,
+      ).animate(
+        CurvedAnimation(parent: animation, curve: AlhaiMotion.standardDecelerate),
+      ),
+      child: child,
+    ),
   );
+}
+
+/// Returns the transition duration to use for [CustomTransitionPage]. When
+/// animations are disabled globally, returns [Duration.zero] — the page swap
+/// still happens but without motion. 200 ms is the default (short enough for
+/// a desktop cashier, long enough to read as intentional motion).
+Duration _transitionDuration() {
+  return _animationsEnabled
+      ? const Duration(milliseconds: 200)
+      : Duration.zero;
 }
 
 /// Notifier that triggers GoRouter redirect on auth/store changes.
@@ -218,7 +272,9 @@ final List<RouteBase> _routes = [
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
       child: const SplashScreen(),
-      transitionsBuilder: _fadeTransition,
+      transitionsBuilder: _alhaiTransition,
+      transitionDuration: _transitionDuration(),
+      reverseTransitionDuration: _transitionDuration(),
     ),
   ),
   GoRoute(
@@ -227,7 +283,9 @@ final List<RouteBase> _routes = [
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
       child: const LoginScreen(),
-      transitionsBuilder: _fadeTransition,
+      transitionsBuilder: _alhaiTransition,
+      transitionDuration: _transitionDuration(),
+      reverseTransitionDuration: _transitionDuration(),
     ),
   ),
   GoRoute(
@@ -236,7 +294,9 @@ final List<RouteBase> _routes = [
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
       child: const StoreSelectScreen(),
-      transitionsBuilder: _fadeTransition,
+      transitionsBuilder: _alhaiTransition,
+      transitionDuration: _transitionDuration(),
+      reverseTransitionDuration: _transitionDuration(),
     ),
   ),
 
@@ -249,7 +309,9 @@ final List<RouteBase> _routes = [
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
       child: const OnboardingScreen(),
-      transitionsBuilder: _fadeTransition,
+      transitionsBuilder: _alhaiTransition,
+      transitionDuration: _transitionDuration(),
+      reverseTransitionDuration: _transitionDuration(),
     ),
   ),
 
@@ -262,7 +324,9 @@ final List<RouteBase> _routes = [
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
       child: const PaymentScreen(),
-      transitionsBuilder: _fadeTransition,
+      transitionsBuilder: _alhaiTransition,
+      transitionDuration: _transitionDuration(),
+      reverseTransitionDuration: _transitionDuration(),
     ),
   ),
   GoRoute(
@@ -271,7 +335,9 @@ final List<RouteBase> _routes = [
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
       child: const ReceiptScreen(),
-      transitionsBuilder: _fadeTransition,
+      transitionsBuilder: _alhaiTransition,
+      transitionDuration: _transitionDuration(),
+      reverseTransitionDuration: _transitionDuration(),
     ),
   ),
   GoRoute(
@@ -280,7 +346,9 @@ final List<RouteBase> _routes = [
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
       child: const ManagerApprovalScreen(),
-      transitionsBuilder: _fadeTransition,
+      transitionsBuilder: _alhaiTransition,
+      transitionDuration: _transitionDuration(),
+      reverseTransitionDuration: _transitionDuration(),
     ),
   ),
   GoRoute(
@@ -289,7 +357,9 @@ final List<RouteBase> _routes = [
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
       child: const KioskScreen(),
-      transitionsBuilder: _fadeTransition,
+      transitionsBuilder: _alhaiTransition,
+      transitionDuration: _transitionDuration(),
+      reverseTransitionDuration: _transitionDuration(),
     ),
   ),
   GoRoute(
@@ -298,7 +368,9 @@ final List<RouteBase> _routes = [
     pageBuilder: (context, state) => CustomTransitionPage(
       key: state.pageKey,
       child: const CustomerDisplayScreen(),
-      transitionsBuilder: _fadeTransition,
+      transitionsBuilder: _alhaiTransition,
+      transitionDuration: _transitionDuration(),
+      reverseTransitionDuration: _transitionDuration(),
     ),
   ),
 
@@ -317,7 +389,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const PosScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -326,7 +400,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const QuickSaleScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -335,7 +411,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const FavoritesScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -344,7 +422,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const HoldInvoicesScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -353,7 +433,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const BarcodeScannerScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -362,7 +444,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CashDrawerScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -375,7 +459,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CashierReceivingScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -384,7 +470,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CashierPurchaseRequestScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -397,7 +485,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const ReturnsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -410,7 +500,9 @@ final List<RouteBase> _routes = [
                 ? null
                 : state.queryParam('orderId'),
           ),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -419,7 +511,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const RefundReasonScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -430,7 +524,9 @@ final List<RouteBase> _routes = [
           return CustomTransitionPage(
             key: state.pageKey,
             child: RefundReceiptScreen(refundId: id),
-            transitionsBuilder: _fadeTransition,
+            transitionsBuilder: _alhaiTransition,
+            transitionDuration: _transitionDuration(),
+            reverseTransitionDuration: _transitionDuration(),
           );
         },
       ),
@@ -444,7 +540,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CustomersScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -455,7 +553,9 @@ final List<RouteBase> _routes = [
           return CustomTransitionPage(
             key: state.pageKey,
             child: CustomerDetailScreen(customerId: id),
-            transitionsBuilder: _fadeTransition,
+            transitionsBuilder: _alhaiTransition,
+            transitionDuration: _transitionDuration(),
+            reverseTransitionDuration: _transitionDuration(),
           );
         },
       ),
@@ -467,7 +567,9 @@ final List<RouteBase> _routes = [
           return CustomTransitionPage(
             key: state.pageKey,
             child: CustomerLedgerScreen(id: id),
-            transitionsBuilder: _fadeTransition,
+            transitionsBuilder: _alhaiTransition,
+            transitionDuration: _transitionDuration(),
+            reverseTransitionDuration: _transitionDuration(),
           );
         },
       ),
@@ -481,7 +583,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const ShiftsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -490,7 +594,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const ShiftOpenScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -499,7 +605,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const ShiftCloseScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -508,7 +616,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const ShiftSummaryScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -521,7 +631,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const SalesHistoryScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -530,7 +642,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const ReprintReceiptScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -543,7 +657,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const DailySummaryScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -552,7 +668,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CashInOutScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -565,7 +683,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const DashboardScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -578,7 +698,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const ProductsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -589,7 +711,9 @@ final List<RouteBase> _routes = [
           return CustomTransitionPage(
             key: state.pageKey,
             child: ProductDetailScreen(productId: id),
-            transitionsBuilder: _fadeTransition,
+            transitionsBuilder: _alhaiTransition,
+            transitionDuration: _transitionDuration(),
+            reverseTransitionDuration: _transitionDuration(),
           );
         },
       ),
@@ -603,7 +727,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const InventoryScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -612,7 +738,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const InventoryAlertsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -621,7 +749,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const ExpiryTrackingScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -634,7 +764,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const InvoicesScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -645,7 +777,9 @@ final List<RouteBase> _routes = [
           return CustomTransitionPage(
             key: state.pageKey,
             child: InvoiceDetailScreen(invoiceId: id),
-            transitionsBuilder: _fadeTransition,
+            transitionsBuilder: _alhaiTransition,
+            transitionDuration: _transitionDuration(),
+            reverseTransitionDuration: _transitionDuration(),
           );
         },
       ),
@@ -659,7 +793,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const VoidTransactionScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -672,7 +808,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CustomerDebtScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -685,7 +823,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const OrderTrackingScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -694,7 +834,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const OrderHistoryScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -707,7 +849,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CustomerAnalyticsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -720,7 +864,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const ReportsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -729,7 +875,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const DailySalesReportScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -738,7 +886,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const TopProductsReportScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -747,7 +897,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CashFlowScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -756,7 +908,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CustomerReportScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -765,7 +919,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const InventoryReportScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -778,7 +934,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const SyncStatusScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -791,7 +949,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const LanguageScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -800,7 +960,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const ThemeScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -815,7 +977,9 @@ final List<RouteBase> _routes = [
           return CustomTransitionPage(
             key: state.pageKey,
             child: SaleDetailScreen(saleId: id),
-            transitionsBuilder: _fadeTransition,
+            transitionsBuilder: _alhaiTransition,
+            transitionDuration: _transitionDuration(),
+            reverseTransitionDuration: _transitionDuration(),
           );
         },
       ),
@@ -825,7 +989,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const ExchangeScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -840,7 +1006,9 @@ final List<RouteBase> _routes = [
           return CustomTransitionPage(
             key: state.pageKey,
             child: SplitReceiptScreen(orderId: id),
-            transitionsBuilder: _fadeTransition,
+            transitionsBuilder: _alhaiTransition,
+            transitionDuration: _transitionDuration(),
+            reverseTransitionDuration: _transitionDuration(),
           );
         },
       ),
@@ -850,7 +1018,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const PaymentHistoryScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -861,7 +1031,9 @@ final List<RouteBase> _routes = [
           return CustomTransitionPage(
             key: state.pageKey,
             child: SplitRefundScreen(orderId: id),
-            transitionsBuilder: _fadeTransition,
+            transitionsBuilder: _alhaiTransition,
+            transitionDuration: _transitionDuration(),
+            reverseTransitionDuration: _transitionDuration(),
           );
         },
       ),
@@ -875,7 +1047,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CustomerAccountsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -888,7 +1062,9 @@ final List<RouteBase> _routes = [
                 ? null
                 : state.queryParam('customerId'),
           ),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -897,7 +1073,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const ApplyInterestScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -906,7 +1084,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CreateInvoiceScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -919,7 +1099,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CashierSettingsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -928,7 +1110,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const StoreInfoScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -937,7 +1121,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const TaxSettingsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -946,7 +1132,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const ReceiptSettingsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -955,7 +1143,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const PaymentDevicesScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -964,7 +1154,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const AddPaymentDeviceScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -973,7 +1165,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const PrinterSettingsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -982,7 +1176,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const KeyboardShortcutsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -991,7 +1187,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const UsersPermissionsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -1000,7 +1198,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const BackupScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -1009,7 +1209,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const PrivacyPolicyScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -1018,7 +1220,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CashierFeaturesSettingsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -1031,7 +1235,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const QuickAddProductScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -1042,7 +1248,9 @@ final List<RouteBase> _routes = [
           return CustomTransitionPage(
             key: state.pageKey,
             child: EditPriceScreen(productId: id),
-            transitionsBuilder: _fadeTransition,
+            transitionsBuilder: _alhaiTransition,
+            transitionDuration: _transitionDuration(),
+            reverseTransitionDuration: _transitionDuration(),
           );
         },
       ),
@@ -1052,7 +1260,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const PrintBarcodeScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -1061,7 +1271,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CashierCategoriesScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -1070,7 +1282,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const PriceLabelsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -1085,7 +1299,9 @@ final List<RouteBase> _routes = [
           return CustomTransitionPage(
             key: state.pageKey,
             child: EditInventoryScreen(productId: id),
-            transitionsBuilder: _fadeTransition,
+            transitionsBuilder: _alhaiTransition,
+            transitionDuration: _transitionDuration(),
+            reverseTransitionDuration: _transitionDuration(),
           );
         },
       ),
@@ -1095,7 +1311,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const AddInventoryScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -1104,7 +1322,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const RemoveInventoryScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -1113,7 +1333,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const TransferInventoryScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -1122,7 +1344,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const StockTakeScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -1131,7 +1355,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const WastageScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -1144,7 +1370,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const ActiveOffersScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -1153,7 +1381,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CouponCodeScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -1162,7 +1392,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const BundleDealsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -1175,7 +1407,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const PaymentReportsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -1184,7 +1418,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const CustomReportScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
 
@@ -1197,7 +1433,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const NotificationsScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
       GoRoute(
@@ -1206,7 +1444,9 @@ final List<RouteBase> _routes = [
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const ProfileScreen(),
-          transitionsBuilder: _fadeTransition,
+          transitionsBuilder: _alhaiTransition,
+          transitionDuration: _transitionDuration(),
+          reverseTransitionDuration: _transitionDuration(),
         ),
       ),
     ],

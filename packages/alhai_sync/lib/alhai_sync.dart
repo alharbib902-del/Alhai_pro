@@ -19,6 +19,9 @@ export 'src/realtime_listener.dart';
 export 'src/json_converter.dart';
 export 'src/sync_payload_utils.dart';
 
+// Pre-sync validation engine (Phase 2 — prevents data corruption at queue)
+export 'src/validators/pre_sync_validator.dart';
+
 // Strategies
 export 'src/strategies/strategies.dart';
 

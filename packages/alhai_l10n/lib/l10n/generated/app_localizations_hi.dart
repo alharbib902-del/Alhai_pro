@@ -13276,6 +13276,11 @@ class AppLocalizationsHi extends AppLocalizations {
   }
 
   @override
+  String interestAppliedWithSkipped(int applied, int skipped) {
+    return 'Interest applied to $applied account(s), $skipped skipped (already applied this month)';
+  }
+
+  @override
   String get selectCustomers => 'Select Customers';
 
   @override
@@ -13426,6 +13431,31 @@ class AppLocalizationsHi extends AppLocalizations {
 
   @override
   String get increaseQuantity => 'Increase quantity';
+
+  @override
+  String get customerAccounts => 'Customer Accounts';
+
+  @override
+  String get paymentHistory => 'Payment History';
+
+  @override
+  String get keyboardShortcutsHint =>
+      'Use these keyboard shortcuts for faster operations';
+
+  @override
+  String get proceedToPayment => 'Proceed to Payment';
+
+  @override
+  String get searchProducts => 'Search Products';
+
+  @override
+  String get splitPayment => 'Split Payment';
+
+  @override
+  String get applyDiscount => 'Apply Discount';
+
+  @override
+  String get holdInvoice => 'Hold Invoice';
 
   @override
   String get copyToClipboard => 'Copy';

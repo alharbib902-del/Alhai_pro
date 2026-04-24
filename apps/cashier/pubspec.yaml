@@ -1,7 +1,7 @@
 name: cashier
 description: Al-HAI Cashier - Professional POS for cashiers (100% offline)
 publish_to: none
-version: 1.0.0-beta.1+1
+version: 1.3.0+4
 
 environment:
   sdk: ">=3.4.0 <4.0.0"
@@ -73,6 +73,12 @@ dependencies:
   # Skeleton loaders (see _buildSkeletonRow inline helper in list screens)
   shimmer: ^3.0.0
 
+  # Audio feedback (Phase 2 §2.5 — SoundService for barcode beep / sale
+  # success / error buzz). The assets under assets/sounds/ are 0-byte
+  # placeholders; SoundService.init swallows load failures and remains
+  # a no-op until real MP3 files ship.
+  just_audio: ^0.9.36
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -81,14 +87,29 @@ dev_dependencies:
   flutter_lints: ^3.0.1
   build_runner: ^2.4.7
   mocktail: ^1.0.4
+  # Phase 3 §3.5 — custom lint rules enforcing design-system wrappers.
+  # Currently warnings only (transitional). `alhai_lints` ships a single
+  # rule (avoid_direct_material_widgets) flagging raw Material widgets
+  # where an AlhaiDS wrapper exists. Discover violations via:
+  #   cd apps/cashier && dart run custom_lint
+  alhai_lints:
+    path: ../../packages/alhai_lints
+  custom_lint: ^0.7.0
   # Native splash generator; run `dart run flutter_native_splash:create`
   # once the brand splash PNGs are placed under assets/images/.
   flutter_native_splash: ^2.4.0
+  # Phase 5 §5.1 — Golden tests. Rendering is platform-sensitive: goldens
+  # must be generated and compared on the same OS/font stack. CI runs on
+  # Ubuntu, so golden masters live under `test/goldens/` committed from
+  # CI and any local run on Windows/macOS skips the comparison (see
+  # `test/goldens/golden_config.dart`).
+  golden_toolkit: ^0.15.0
 
 flutter:
   uses-material-design: true
   assets:
     - assets/data/
+    - assets/sounds/
 
 # Native splash config (no assets generated yet — uncomment image paths
 # and re-run `dart run flutter_native_splash:create` once brand art ships).

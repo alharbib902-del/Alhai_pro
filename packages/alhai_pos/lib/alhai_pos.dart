@@ -29,6 +29,7 @@ export 'src/providers/favorites_providers.dart';
 export 'src/providers/held_invoices_providers.dart';
 export 'src/providers/returns_providers.dart';
 export 'src/providers/customer_display_providers.dart';
+export 'src/providers/pos_feedback_providers.dart';
 
 // ─── Services ───────────────────────────────────────────────────
 export 'src/services/sale_service.dart';

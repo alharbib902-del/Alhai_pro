@@ -19,6 +19,8 @@ import 'package:alhai_design_system/alhai_design_system.dart'
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
 import '../../core/services/audit_service.dart';
+import '../../core/services/haptic_shim.dart';
+import '../../core/services/sound_service.dart';
 
 const _uuid = Uuid();
 
@@ -877,6 +879,8 @@ class _CashierPurchaseRequestScreenState
 
       if (!mounted) return;
 
+      HapticShim.mediumImpact();
+      SoundService.instance.saleSuccess();
       AlhaiSnackbar.success(context, l10n.requestSentToManager);
 
       // Clear form
@@ -892,6 +896,8 @@ class _CashierPurchaseRequestScreenState
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Submit purchase request');
       if (!mounted) return;
+      HapticShim.vibrate();
+      SoundService.instance.errorBuzz();
       AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
     } finally {
       if (mounted) setState(() => _isSending = false);

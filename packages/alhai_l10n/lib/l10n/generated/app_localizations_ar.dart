@@ -7182,7 +7182,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get busy => 'مزدحم';
 
   @override
-  String get outstanding => 'متميز';
+  String get outstanding => 'مستحق';
 
   @override
   String get donate => 'تبرع';
@@ -13268,6 +13268,11 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String interestAppliedWithSkipped(int applied, int skipped) {
+    return 'تم تطبيق الفائدة على $applied حساب، $skipped تم تخطيها (سبق تطبيقها هذا الشهر)';
+  }
+
+  @override
   String get selectCustomers => 'اختيار العملاء';
 
   @override
@@ -13418,6 +13423,31 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get increaseQuantity => 'زيادة الكمية';
+
+  @override
+  String get customerAccounts => 'حسابات العملاء';
+
+  @override
+  String get paymentHistory => 'سجل المدفوعات';
+
+  @override
+  String get keyboardShortcutsHint =>
+      'استخدم اختصارات لوحة المفاتيح لعمليات أسرع';
+
+  @override
+  String get proceedToPayment => 'الانتقال إلى الدفع';
+
+  @override
+  String get searchProducts => 'بحث المنتجات';
+
+  @override
+  String get splitPayment => 'دفع مُقسَّم';
+
+  @override
+  String get applyDiscount => 'تطبيق خصم';
+
+  @override
+  String get holdInvoice => 'تعليق فاتورة';
 
   @override
   String get copyToClipboard => 'نسخ';

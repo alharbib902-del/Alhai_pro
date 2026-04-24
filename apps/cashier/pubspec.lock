@@ -5,10 +5,10 @@ packages:
     dependency: transitive
     description:
       name: _fe_analyzer_shared
-      sha256: "8d7ff3948166b8ec5da0fbb5962000926b8e02f2ed9b3e51d1738905fbd4c98d"
+      sha256: da0d9209ca76bde579f2da330aeb9df62b6319c834fa7baae052021b0462401f
       url: "https://pub.dev"
     source: hosted
-    version: "93.0.0"
+    version: "85.0.0"
   adaptive_number:
     dependency: transitive
     description:
@@ -52,6 +52,13 @@ packages:
       relative: true
     source: path
     version: "1.0.0"
+  alhai_lints:
+    dependency: "direct dev"
+    description:
+      path: "../../packages/alhai_lints"
+      relative: true
+    source: path
+    version: "0.1.0"
   alhai_pos:
     dependency: "direct main"
     description:
@@ -91,10 +98,18 @@ packages:
     dependency: transitive
     description:
       name: analyzer
-      sha256: de7148ed2fcec579b19f122c1800933dfa028f6d9fd38a152b04b1516cec120b
+      sha256: f4ad0fea5f102201015c9aae9d93bc02f75dd9491529a8c21f88d17a8523d44c
       url: "https://pub.dev"
     source: hosted
-    version: "10.0.1"
+    version: "7.6.0"
+  analyzer_plugin:
+    dependency: transitive
+    description:
+      name: analyzer_plugin
+      sha256: "1d460d14e3c2ae36dc2b32cef847c4479198cf87704f63c3c3c8150ee50c3916"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.12.0"
   ansicolor:
     dependency: transitive
     description:
@@ -167,6 +182,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.13.0"
+  audio_session:
+    dependency: transitive
+    description:
+      name: audio_session
+      sha256: "2b7fff16a552486d078bfc09a8cde19f426dc6d6329262b684182597bec5b1ac"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.25"
   barcode:
     dependency: transitive
     description:
@@ -203,10 +226,10 @@ packages:
     dependency: transitive
     description:
       name: build
-      sha256: "275bf6bb2a00a9852c28d4e0b410da1d833a734d57d39d44f94bfc895a484ec3"
+      sha256: "825fed4d63050252a0b6e74f2d75844c4a85b664814be6993bd3493fb5239779"
       url: "https://pub.dev"
     source: hosted
-    version: "4.0.4"
+    version: "4.0.1"
   build_config:
     dependency: transitive
     description:
@@ -227,10 +250,10 @@ packages:
     dependency: "direct dev"
     description:
       name: build_runner
-      sha256: "39ad4ca8a2876779737c60e4228b4bcd35d4352ef7e14e47514093edc012c734"
+      sha256: "4e54dbeefdc70691ba80b3bce3976af63b5425c8c07dface348dfee664a0edc1"
       url: "https://pub.dev"
     source: hosted
-    version: "2.11.1"
+    version: "2.9.0"
   built_collection:
     dependency: transitive
     description:
@@ -287,6 +310,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.4"
+  ci:
+    dependency: transitive
+    description:
+      name: ci
+      sha256: "145d095ce05cddac4d797a158bc4cf3b6016d1fe63d8c3d2fbd7212590adca13"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.0"
+  cli_util:
+    dependency: transitive
+    description:
+      name: cli_util
+      sha256: ff6785f7e9e3c38ac98b2fb035701789de90154024a75b6cb926445e83197d1c
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.2"
   clock:
     dependency: transitive
     description:
@@ -367,6 +406,38 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "6.0.0"
+  custom_lint:
+    dependency: "direct dev"
+    description:
+      name: custom_lint
+      sha256: "021897cce2b6c783b2521543e362e7fe1a2eaab17bf80514d8de37f99942ed9e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.3"
+  custom_lint_builder:
+    dependency: transitive
+    description:
+      name: custom_lint_builder
+      sha256: e4235b9d8cef59afe621eba086d245205c8a0a6c70cd470be7cb17494d6df32d
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.3"
+  custom_lint_core:
+    dependency: transitive
+    description:
+      name: custom_lint_core
+      sha256: "6dcee8a017181941c51a110da7e267c1d104dc74bec8862eeb8c85b5c8759a9e"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.7.1"
+  custom_lint_visitor:
+    dependency: transitive
+    description:
+      name: custom_lint_visitor
+      sha256: "4a86a0d8415a91fbb8298d6ef03e9034dc8e323a599ddc4120a0e36c433983a2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0+7.7.0"
   dart_jsonwebtoken:
     dependency: transitive
     description:
@@ -379,10 +450,10 @@ packages:
     dependency: transitive
     description:
       name: dart_style
-      sha256: "6f6b30cba0301e7b38f32bdc9a6bdae6f5921a55f0a1eb9450e1e6515645dbb2"
+      sha256: "8a0e5fba27e8ee025d2ffb4ee820b4e6e2cf5e4246a6b1a477eb66866947e0bb"
       url: "https://pub.dev"
     source: hosted
-    version: "3.1.6"
+    version: "3.1.1"
   dbus:
     dependency: transitive
     description:
@@ -645,6 +716,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "13.2.5"
+  golden_toolkit:
+    dependency: "direct dev"
+    description:
+      name: golden_toolkit
+      sha256: "8f74adab33154fe7b731395782797021f97d2edc52f7bfb85ff4f1b5c4a215f0"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.15.0"
   gotrue:
     dependency: transitive
     description:
@@ -677,6 +756,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.1"
+  hotreloader:
+    dependency: transitive
+    description:
+      name: hotreloader
+      sha256: "66871df468fc24eee81f1a0a7cb98acc104716f9b7376d355437b48d633c4ebf"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.4.0"
   html:
     dependency: transitive
     description:
@@ -770,6 +857,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.11.0"
+  just_audio:
+    dependency: "direct main"
+    description:
+      name: just_audio
+      sha256: f978d5b4ccea08f267dae0232ec5405c1b05d3f3cd63f82097ea46c015d5c09e
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.46"
+  just_audio_platform_interface:
+    dependency: transitive
+    description:
+      name: just_audio_platform_interface
+      sha256: "2532c8d6702528824445921c5ff10548b518b13f808c2e34c2fd54793b999a6a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "4.6.0"
+  just_audio_web:
+    dependency: transitive
+    description:
+      name: just_audio_web
+      sha256: "6ba8a2a7e87d57d32f0f7b42856ade3d6a9fbe0f1a11fabae0a4f00bb73f0663"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.4.16"
   jwt_decode:
     dependency: transitive
     description:

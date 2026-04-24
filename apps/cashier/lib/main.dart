@@ -17,14 +17,23 @@ import 'package:flutter/services.dart';
 import 'package:alhai_database/alhai_database.dart'
     show setDatabaseEncryptionKey, DatabaseSeeder, AppDatabase;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:alhai_core/alhai_core.dart' show SupabaseConfig;
+import 'package:alhai_core/alhai_core.dart'
+    show CertificatePinningService, SupabaseConfig;
 import 'package:alhai_auth/alhai_auth.dart'
     show
         ForegroundLockGate,
         SecureStorageService,
         authStateProvider,
         currentStoreIdProvider;
-import 'package:alhai_pos/alhai_pos.dart' show clockOffsetProvider;
+import 'package:alhai_pos/alhai_pos.dart'
+    show
+        cartHapticsEnabled,
+        clockOffsetProvider,
+        posBarcodeScanFeedbackProvider,
+        posBarcodeErrorFeedbackProvider,
+        posSaleSuccessFeedbackProvider,
+        posErrorFeedbackProvider,
+        posCartMutationFeedbackProvider;
 import 'di/injection.dart';
 import 'dart:async';
 import 'router/cashier_router.dart';
@@ -32,8 +41,19 @@ import 'screens/onboarding/onboarding_screen.dart';
 import 'core/constants/timing.dart';
 import 'core/services/sentry_service.dart';
 import 'core/services/clock_validation_service.dart';
+import 'core/services/sound_service.dart';
+import 'core/services/haptic_shim.dart';
+import 'core/services/shortcuts_shim.dart';
+import 'core/services/web_db_key_service.dart';
 import 'services/printing/auto_print_setup.dart';
 import 'services/session_manager.dart';
+
+/// Phase 2 §2.5 — SharedPreferences keys for the Feedback settings
+/// (haptic + sound). Exposed here so both `main.dart` (initial load) and
+/// `cashier_settings_screen.dart` (toggle UI) agree on the key names.
+const String kPrefHapticEnabled = 'settings_haptic_enabled';
+const String kPrefSoundEnabled = 'settings_sound_enabled';
+const String kPrefSoundVolume = 'settings_sound_volume';
 
 void main() {
   initSentry(
@@ -93,12 +113,41 @@ void main() {
               'Supabase not configured. ${SupabaseConfig.configurationError}',
             );
           }
+          // Phase 4 §4.1 — Certificate Pinning لـ Supabase
+          // حماية ضد MITM في الشبكات غير الموثوقة (Wi-Fi عامة، captive
+          // portals، certs صادرة من CA مخترق). الـ pins تُمرَّر وقت البناء عبر
+          // --dart-define=SUPABASE_CERT_FINGERPRINT_1..10 (N-pin rotation)،
+          // والـ service نفسه يقرأها عبر String.fromEnvironment كـ static
+          // const داخل الـ class — لذا لا نمرّر pins من هنا. في debug يُرجع
+          // IOClient عادي دون pinning (لدعم mitmproxy / Charles). في release
+          // بدون pins يرمي StateError — هنا نمسكه كـ graceful degradation
+          // (E2E CI يبني release بلا pins؛ أيضاً أول release قبل rollout
+          // الـ secret). في production-release الطبيعي الـ pins تكون مكوَّنة.
+          // التوثيق في docs/cashier-certificate-pinning.md.
+          dynamic pinnedClient;
+          try {
+            pinnedClient = CertificatePinningService.createPinnedClient();
+          } catch (e, st) {
+            reportError(
+              e,
+              stackTrace: st,
+              hint:
+                  'Certificate pinning init failed — using default HTTP client',
+            );
+            pinnedClient = null;
+          }
           await Supabase.initialize(
             url: SupabaseConfig.url,
             anonKey: SupabaseConfig.anonKey,
             debug: SupabaseConfig.enableDebugLogs,
+            httpClient: pinnedClient,
           );
-          if (kDebugMode) debugPrint('✅ Supabase initialized successfully');
+          if (kDebugMode) {
+            debugPrint(
+              '✅ Supabase initialized — cert pinning: '
+              '${CertificatePinningService.diagnosticStatus}',
+            );
+          }
         } catch (e, stack) {
           if (kDebugMode) debugPrint('❌ Supabase init FAILED: $e');
           reportError(e, stackTrace: stack, hint: 'Supabase init');
@@ -161,6 +210,39 @@ void main() {
       await _seedDatabaseFromCsv();
 
       final prefs = results[3] as SharedPreferences;
+
+      // Phase 2 §2.5 — load Feedback preferences (haptic/sound) and boot
+      // the SoundService. Placeholder MP3 assets mean init is allowed to
+      // fail silently (see SoundService docs). Never let audio/haptic
+      // boot errors crash the app.
+      final hapticEnabled = prefs.getBool(kPrefHapticEnabled) ?? true;
+      final soundEnabled = prefs.getBool(kPrefSoundEnabled) ?? true;
+      final soundVolume = prefs.getDouble(kPrefSoundVolume) ?? 0.8;
+      HapticShim.loadFromPrefs(hapticEnabled);
+      // Phase 4.5 — same pattern for the keyboard-shortcuts toggle. Reading
+      // it here ensures CashierShell picks up the correct value on the first
+      // build, before any shortcut combination could fire.
+      ShortcutsShim.loadFromPrefs(
+        prefs.getBool(kPrefKeyboardShortcutsEnabled),
+      );
+      // Phase 4.4 — mirror the animations toggle into the router-local flag
+      // so the very first navigation already honours the stored preference.
+      // Kept as a fire-and-forget: if prefs read fails we fall back to the
+      // default (animations enabled) and the settings screen will refresh it
+      // next time the user opens it.
+      unawaited(refreshAnimationsFlag());
+      // Mirror the haptic toggle into the POS package's lightweight
+      // cart-mutation flag (StateNotifiers there have no access to
+      // Riverpod providers, so we use a top-level switch instead).
+      cartHapticsEnabled = hapticEnabled;
+      try {
+        await SoundService.instance.init(
+          enabled: soundEnabled,
+          volume: soundVolume,
+        );
+      } catch (e) {
+        if (kDebugMode) debugPrint('[main] SoundService.init ignored: $e');
+      }
       // SESSION-FIX: استعادة store ID المحفوظ قبل runApp لمنع فقدان الجلسة عند F5
       final savedStoreId = results[4] as String?;
 
@@ -200,6 +282,28 @@ void main() {
             clockOffsetProvider.overrideWithValue(
               () => ClockValidationService.instance.clockOffset,
             ),
+            // Phase 2 §2.5/2.6 — wire POS feedback hooks to the cashier
+            // app's SoundService + HapticShim. Empty by default in the
+            // POS package so non-cashier hosts don't pay for audio.
+            posBarcodeScanFeedbackProvider.overrideWithValue(() {
+              HapticShim.lightImpact();
+              SoundService.instance.barcodeBeep();
+            }),
+            posBarcodeErrorFeedbackProvider.overrideWithValue(() {
+              HapticShim.vibrate();
+              SoundService.instance.errorBuzz();
+            }),
+            posSaleSuccessFeedbackProvider.overrideWithValue(() {
+              HapticShim.heavyImpact();
+              SoundService.instance.saleSuccess();
+            }),
+            posErrorFeedbackProvider.overrideWithValue(() {
+              HapticShim.vibrate();
+              SoundService.instance.errorBuzz();
+            }),
+            posCartMutationFeedbackProvider.overrideWithValue(() {
+              HapticShim.lightImpact();
+            }),
           ],
           child: const CashierApp(),
         ),
@@ -210,13 +314,13 @@ void main() {
 
 /// Get or create database encryption key from secure storage.
 ///
-/// **SECURITY WARNING (Web platform):**
-/// On web, FlutterSecureStorage has no native keychain, so the key is stored
-/// in SharedPreferences (localStorage). This is NOT secure against XSS
-/// attacks. Production deployments should consider:
-///   1. Deriving the key from the user's session token (server-side KDF), or
-///   2. Using the WebCrypto API with non-extractable CryptoKey objects, or
-///   3. Storing the key in an HttpOnly cookie managed by a backend proxy.
+/// **Web platform (4.2 hardening):**
+/// يُفوَّض إلى `WebDbKeyService.getOrCreateWebDbKey()` الذي يستخدم WebCrypto
+/// AES-GCM + non-extractable CryptoKey في IndexedDB. الـ dbKey raw لا يُخزَّن
+/// مطلقاً في localStorage — فقط ciphertext. XSS على نفس origin يرى
+/// ciphertext عديم الفائدة (لا يستطيع export wrappingKey من IDB).
+/// إذا فشل WebCrypto (متصفح قديم جداً / non-secure context): يسقط تلقائياً
+/// على localStorage + WARN في Sentry ليبقى التطبيق شغَّالاً.
 ///
 /// For native platforms (Android/iOS), FlutterSecureStorage is used which
 /// leverages the OS keychain / EncryptedSharedPreferences.
@@ -224,18 +328,7 @@ Future<String> _getOrCreateDbKey() async {
   const keyName = 'db_encryption_key';
 
   if (kIsWeb) {
-    // SECURITY: Web fallback — localStorage is readable by any JS on the
-    // same origin. Acceptable only if CSP blocks inline scripts and no
-    // third-party JS is loaded. See web/index.html CSP meta tag.
-    final prefs = await SharedPreferences.getInstance();
-    var key = prefs.getString('secure_storage_$keyName');
-    if (key == null) {
-      final random = Random.secure();
-      final values = List<int>.generate(32, (_) => random.nextInt(256));
-      key = base64Url.encode(values);
-      await prefs.setString('secure_storage_$keyName', key);
-    }
-    return key;
+    return WebDbKeyService.getOrCreateWebDbKey();
   } else {
     // Native: use FlutterSecureStorage (encrypted keychain)
     const storage = FlutterSecureStorage(

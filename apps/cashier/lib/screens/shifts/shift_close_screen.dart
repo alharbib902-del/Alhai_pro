@@ -745,66 +745,117 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
     }
     final actualCash = parsedActualCash;
     final difference = actualCash - expectedCash;
+    final hasDiscrepancy = difference != 0;
 
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(l10n.closeShift),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.expectedAmountCurrency(
-                CurrencyFormatter.formatCompact(expectedCash),
-                l10n.sar,
-              ),
-            ),
-            Text(
-              l10n.actualAmountCurrency(
-                CurrencyFormatter.formatCompact(actualCash),
-                l10n.sar,
-              ),
-            ),
-            const SizedBox(height: AlhaiSpacing.xs),
-            Text(
-              difference == 0
-                  ? l10n.drawerMatchedMessage
-                  : difference > 0
-                  ? l10n.surplusAmount(
-                      CurrencyFormatter.formatCompact(difference),
-                      l10n.sar,
-                    )
-                  : l10n.deficitAmount(
-                      CurrencyFormatter.formatCompact(difference),
-                      l10n.sar,
+    // Phase 2, task 2.7 — Cash Drawer mismatch UX:
+    // When the drawer doesn't balance (difference != 0) we force the cashier
+    // to enter a note explaining the shortage/surplus before allowing close.
+    // Previously the confirm dialog accepted any discrepancy silently — a
+    // cashier could lose cash over days without any audit trail of why.
+    final notesController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+
+    final confirmed = await ResponsiveDialog.showAlert<bool>(
+      context,
+      title: Text(l10n.closeShift),
+      content: StatefulBuilder(
+        builder: (ctx, setDialogState) {
+          return Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  l10n.expectedAmountCurrency(
+                    CurrencyFormatter.formatCompact(expectedCash),
+                    l10n.sar,
+                  ),
+                ),
+                Text(
+                  l10n.actualAmountCurrency(
+                    CurrencyFormatter.formatCompact(actualCash),
+                    l10n.sar,
+                  ),
+                ),
+                const SizedBox(height: AlhaiSpacing.xs),
+                Text(
+                  difference == 0
+                      ? l10n.drawerMatchedMessage
+                      : difference > 0
+                      ? l10n.surplusAmount(
+                          CurrencyFormatter.formatCompact(difference),
+                          l10n.sar,
+                        )
+                      : l10n.deficitAmount(
+                          CurrencyFormatter.formatCompact(difference),
+                          l10n.sar,
+                        ),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color: difference == 0
+                        ? AppColors.success
+                        : (difference > 0
+                              ? AppColors.warning
+                              : AppColors.error),
+                  ),
+                ),
+                const SizedBox(height: AlhaiSpacing.sm),
+                Text(l10n.confirmCloseShift),
+                if (hasDiscrepancy) ...[
+                  const SizedBox(height: AlhaiSpacing.md),
+                  // Notes field required for discrepancies — cashier must
+                  // explain shortage/surplus for audit trail.
+                  TextFormField(
+                    controller: notesController,
+                    maxLines: 3,
+                    minLines: 2,
+                    textInputAction: TextInputAction.done,
+                    decoration: InputDecoration(
+                      labelText: '${l10n.reason} *',
+                      hintText: l10n.optionalNoteHint,
+                      border: const OutlineInputBorder(),
+                      alignLabelWithHint: true,
                     ),
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: difference == 0
-                    ? AppColors.success
-                    : (difference > 0 ? AppColors.warning : AppColors.error),
-              ),
+                    validator: (v) {
+                      if (v == null || v.trim().isEmpty) {
+                        return l10n.requiredField;
+                      }
+                      return null;
+                    },
+                  ),
+                ],
+              ],
             ),
-            const SizedBox(height: AlhaiSpacing.sm),
-            Text(l10n.confirmCloseShift),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx, false),
-            child: Text(l10n.cancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(ctx, true),
-            style: FilledButton.styleFrom(backgroundColor: AppColors.error),
-            child: Text(l10n.confirm),
-          ),
-        ],
+          );
+        },
       ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(l10n.cancel),
+        ),
+        FilledButton(
+          onPressed: () {
+            // Only require form validation if there's a discrepancy.
+            if (hasDiscrepancy && !(formKey.currentState?.validate() ?? false)) {
+              return;
+            }
+            Navigator.of(context).pop(true);
+          },
+          style: FilledButton.styleFrom(backgroundColor: AppColors.error),
+          child: Text(l10n.confirm),
+        ),
+      ],
     );
 
-    if (confirmed != true) return;
+    if (confirmed != true) {
+      notesController.dispose();
+      return;
+    }
+
+    final shiftNotes = hasDiscrepancy ? notesController.text.trim() : null;
+    notesController.dispose();
 
     setState(() => _isLoading = true);
 
@@ -821,7 +872,10 @@ class _ShiftCloseScreenState extends ConsumerState<ShiftCloseScreen> {
         totalSalesAmount: shift.totalSalesAmount / 100.0,
         totalRefunds: shift.totalRefunds,
         totalRefundsAmount: shift.totalRefundsAmount / 100.0,
-        notes: null,
+        // Phase 2, task 2.7: pass mandatory discrepancy note to audit trail.
+        // null when drawer matches; non-empty string required otherwise (the
+        // dialog form validator above blocks confirm on empty notes).
+        notes: shiftNotes,
       );
 
       addBreadcrumb(

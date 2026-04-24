@@ -5,6 +5,20 @@ import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_sync/alhai_sync.dart';
 
 import 'receipt_pdf_generator.dart';
+import 'zatca_service.dart';
+
+/// يُرفع عندما يستحيل توليد رمز ZATCA QR المطلوب لفاتورة ضريبية
+/// مبسطة. الفاتورة بدون QR غير متوافقة مع هيئة الزكاة والضريبة
+/// ولا تصلح للإصدار، فنُوقف إنشاءها عوضاً عن حفظ فاتورة معطوبة.
+class ZatcaComplianceException implements Exception {
+  final String message;
+  final Object? cause;
+  const ZatcaComplianceException(this.message, {this.cause});
+
+  @override
+  String toString() =>
+      'ZatcaComplianceException: $message${cause != null ? ' (cause: $cause)' : ''}';
+}
 
 /// أنواع الفواتير المدعومة
 enum InvoiceType {
@@ -96,6 +110,36 @@ class InvoiceService {
           type: type,
         );
 
+        // ZATCA Phase-1 compliance (C-4 §4h — P0 blocker):
+        // توليد QR قبل حفظ الفاتورة. إن فشل التوليد (اسم بائع طويل جداً،
+        // VAT مفقود، أي TlvLengthOverflow) نرفع استثناءً ونُلغي العملية —
+        // إصدار فاتورة ضريبية مبسطة بدون QR ZATCA مخالفة قانونية في
+        // السعودية ولا نقبل تمريرها بصمت كما كان يفعل المسار السابق.
+        final String zatcaQrBase64;
+        try {
+          zatcaQrBase64 = ZatcaService.generateQrData(
+            sellerName: store.name,
+            vatNumber: store.vatNumber,
+            timestamp: now,
+            totalWithVat: sale.total / 100.0,
+            vatAmount: sale.tax / 100.0,
+          );
+        } catch (e, st) {
+          if (kDebugMode) {
+            debugPrint(
+              '[InvoiceService] ❌ ZATCA QR generation FAILED — aborting '
+              'invoice. saleId=${sale.id}, storeName="${store.name}", '
+              'vatNumber="${store.vatNumber}", error=$e\n$st',
+            );
+          }
+          throw ZatcaComplianceException(
+            'Failed to generate ZATCA QR for sale ${sale.id}. '
+            'Invoice creation aborted — a simplified tax invoice without a '
+            'compliant QR code is not legally valid in Saudi Arabia.',
+            cause: e,
+          );
+        }
+
         final companion = InvoicesTableCompanion.insert(
           id: id,
           orgId: Value(sale.orgId),
@@ -130,6 +174,10 @@ class InvoiceService {
           dueAt: Value(dueAt),
           paidAt: sale.isPaid ? Value(now) : const Value.absent(),
           createdAt: now,
+          // ZATCA Phase-1 QR: محفوظ مع الفاتورة لضمان ثباته عبر إعادة
+          // الطباعة والاستعلامات (بدل إعادة توليده عند كل عرض/طباعة).
+          zatcaQr: Value(zatcaQrBase64),
+          zatcaUuid: Value(id),
         );
 
         await _db.invoicesDao.upsertInvoice(companion);
@@ -181,6 +229,11 @@ class InvoiceService {
                 'issuedAt': now.toIso8601String(),
                 'paidAt': sale.isPaid ? now.toIso8601String() : null,
                 'createdAt': now.toIso8601String(),
+                // ZATCA Phase-1: QR و UUID ضمن نفس payload حتى لا تصل
+                // الفاتورة لـ Supabase بدون رمزها — يضمن الاتساق بين
+                // السجل المحلي والسحابي للمراجعة والتدقيق.
+                'zatcaQr': zatcaQrBase64,
+                'zatcaUuid': id,
               },
               priority: SyncPriority.high,
             );
@@ -205,6 +258,12 @@ class InvoiceService {
         );
 
         return _db.invoicesDao.getById(id);
+      } on ZatcaComplianceException {
+        // ZATCA compliance failure is NOT retryable — same inputs will
+        // produce the same encoding error. Bubble up so the caller (POS
+        // flow) can block the sale instead of proceeding with an invalid
+        // invoice. Do NOT fall through to the unique-constraint retry path.
+        rethrow;
       } catch (e) {
         // Check if this is a unique constraint violation on invoice number (race condition).
         final errorStr = e.toString().toLowerCase();

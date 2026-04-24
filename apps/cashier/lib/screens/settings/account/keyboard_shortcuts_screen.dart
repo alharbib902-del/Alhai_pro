@@ -97,7 +97,7 @@ class _KeyboardShortcutsScreenState
               const SizedBox(width: AlhaiSpacing.sm),
               Expanded(
                 child: Text(
-                  'Use these keyboard shortcuts for faster operations',
+                  l10n.keyboardShortcutsHint,
                   style: TextStyle(
                     fontSize: 13,
                     color: AppColors.getTextPrimary(isDark),
@@ -324,13 +324,13 @@ class _KeyboardShortcutsScreenState
         color: AppColors.primary,
         shortcuts: [
           _ShortcutEntry(action: l10n.newSale, keys: 'F2'),
-          const _ShortcutEntry(action: 'Search Products', keys: 'Ctrl + F'),
+          _ShortcutEntry(action: l10n.searchProducts, keys: 'Ctrl + F'),
           _ShortcutEntry(action: l10n.addToCart, keys: 'Enter'),
-          const _ShortcutEntry(action: 'Increase Quantity', keys: '+'),
-          const _ShortcutEntry(action: 'Decrease Quantity', keys: '-'),
+          _ShortcutEntry(action: l10n.increaseQuantity, keys: '+'),
+          _ShortcutEntry(action: l10n.decreaseQuantity, keys: '-'),
           _ShortcutEntry(action: l10n.deleteItem, keys: 'Delete'),
           _ShortcutEntry(action: l10n.clearCart, keys: 'Ctrl + Del'),
-          const _ShortcutEntry(action: 'Hold Invoice', keys: 'F3'),
+          _ShortcutEntry(action: l10n.holdInvoice, keys: 'F3'),
           _ShortcutEntry(action: l10n.scanBarcode, keys: 'F4'),
         ],
       ),
@@ -340,11 +340,11 @@ class _KeyboardShortcutsScreenState
         icon: Icons.payment_rounded,
         color: AppColors.info,
         shortcuts: [
-          const _ShortcutEntry(action: 'Proceed to Payment', keys: 'F5'),
+          _ShortcutEntry(action: l10n.proceedToPayment, keys: 'F5'),
           _ShortcutEntry(action: l10n.cashPayment, keys: 'F6'),
           _ShortcutEntry(action: l10n.cardPayment, keys: 'F7'),
-          const _ShortcutEntry(action: 'Split Payment', keys: 'F8'),
-          const _ShortcutEntry(action: 'Apply Discount', keys: 'Ctrl + D'),
+          _ShortcutEntry(action: l10n.splitPayment, keys: 'F8'),
+          _ShortcutEntry(action: l10n.applyDiscount, keys: 'Ctrl + D'),
           _ShortcutEntry(action: l10n.printReceipt, keys: 'Ctrl + P'),
         ],
       ),

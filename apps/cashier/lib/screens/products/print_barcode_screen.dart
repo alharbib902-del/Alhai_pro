@@ -451,7 +451,8 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
               ),
             )
           else ...[
-            // Barcode visualization
+            // Barcode visualization - paper preview (stays white/black in both
+            // themes to mimic printed output)
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(AlhaiSpacing.mdl),
@@ -473,6 +474,7 @@ class _PrintBarcodeScreenState extends ConsumerState<PrintBarcodeScreen> {
                           width: width,
                           height: 60,
                           margin: const EdgeInsets.symmetric(horizontal: 1),
+                          // Paper-preview bars: white = gap, black = bar
                           color: (i % 4 == 0) ? Colors.white : Colors.black,
                         );
                       }),

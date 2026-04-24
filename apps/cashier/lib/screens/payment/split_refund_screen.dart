@@ -625,7 +625,7 @@ class _SplitRefundScreenState extends ConsumerState<SplitRefundScreen> {
         ),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.06),
+            color: Colors.black.withValues(alpha: isDark ? 0.3 : 0.06),
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),

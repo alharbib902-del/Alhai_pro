@@ -2120,6 +2120,8 @@
   "hapticFeedback": "Haptic Feedback",
   "hapticFeedbackDesc": "Vibrate on button press",
   "keyboardShortcuts": "Keyboard Shortcuts",
+  "animationsToggle": "Animasi",
+  "animationsToggleDesc": "Transisi layar yang halus",
   "customizeShortcuts": "Customize shortcuts",
   "shortcutSearchProduct": "Search product",
   "shortcutSearchCustomer": "Search customer",
@@ -6946,6 +6948,13 @@
       }
     }
   },
+  "interestAppliedWithSkipped": "Interest applied to {applied} account(s), {skipped} skipped (already applied this month)",
+  "@interestAppliedWithSkipped": {
+    "placeholders": {
+      "applied": { "type": "int" },
+      "skipped": { "type": "int" }
+    }
+  },
   "selectCustomers": "Select Customers",
   "deselectAll": "Deselect All",
   "preview": "Preview",
@@ -7022,6 +7031,14 @@
   "clearField": "Clear",
   "decreaseQuantity": "Decrease quantity",
   "increaseQuantity": "Increase quantity",
+  "customerAccounts": "Customer Accounts",
+  "paymentHistory": "Payment History",
+  "keyboardShortcutsHint": "Use these keyboard shortcuts for faster operations",
+  "proceedToPayment": "Proceed to Payment",
+  "searchProducts": "Search Products",
+  "splitPayment": "Split Payment",
+  "applyDiscount": "Apply Discount",
+  "holdInvoice": "Hold Invoice",
   "copyToClipboard": "Copy",
   "invoiceAlreadyRefunded": "This invoice has already been fully refunded",
   "invoicePartiallyRefunded": "Some items were previously refunded - showing remaining items only",

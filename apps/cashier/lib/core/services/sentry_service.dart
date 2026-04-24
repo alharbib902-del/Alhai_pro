@@ -73,3 +73,97 @@ void addBreadcrumb({
     ),
   );
 }
+
+/// Phase 5 §5.4 — Performance monitoring helper.
+///
+/// Wraps [body] in a Sentry transaction so its duration, status, and any
+/// caught exception are recorded as a performance event. No-op when
+/// Sentry is not configured (returns the result without observability).
+///
+/// Example:
+/// ```dart
+/// final sales = await tracePerformance(
+///   name: 'loadDailySales',
+///   operation: 'db.query',
+///   body: () => salesDao.getSalesForDate(today),
+/// );
+/// ```
+///
+/// Operation taxonomy:
+/// - `db.query`, `db.write`       — local Drift DAO calls
+/// - `http.client`                — outbound Supabase requests
+/// - `ui.render`                  — expensive build/layout work
+/// - `sync.push`, `sync.pull`     — sync queue batches
+///
+/// Sample rates: `tracesSampleRate` in [initSentry] caps volume
+/// (1.0 in debug, 0.3 in production). Transactions beyond the cap are
+/// dropped on the client.
+Future<T> tracePerformance<T>({
+  required String name,
+  required String operation,
+  required Future<T> Function() body,
+  Map<String, dynamic>? data,
+}) async {
+  if (!isSentryConfigured) {
+    // Short-circuit when DSN missing — tests + local dev shouldn't pay
+    // the wrapper cost.
+    return body();
+  }
+
+  final transaction = Sentry.startTransaction(
+    name,
+    operation,
+    bindToScope: false,
+  );
+
+  if (data != null) {
+    data.forEach(transaction.setData);
+  }
+
+  try {
+    final result = await body();
+    transaction.status = const SpanStatus.ok();
+    return result;
+  } catch (e, st) {
+    transaction.throwable = e;
+    transaction.status = const SpanStatus.internalError();
+    // Re-report so the transaction links the exception as a related event.
+    await reportError(e, stackTrace: st, hint: 'tracePerformance:$name');
+    rethrow;
+  } finally {
+    await transaction.finish();
+  }
+}
+
+/// Synchronous variant — use for CPU-bound work that doesn't await.
+T tracePerformanceSync<T>({
+  required String name,
+  required String operation,
+  required T Function() body,
+  Map<String, dynamic>? data,
+}) {
+  if (!isSentryConfigured) return body();
+
+  final transaction = Sentry.startTransaction(
+    name,
+    operation,
+    bindToScope: false,
+  );
+
+  if (data != null) {
+    data.forEach(transaction.setData);
+  }
+
+  try {
+    final result = body();
+    transaction.status = const SpanStatus.ok();
+    return result;
+  } catch (e, st) {
+    transaction.throwable = e;
+    transaction.status = const SpanStatus.internalError();
+    reportError(e, stackTrace: st, hint: 'tracePerformanceSync:$name');
+    rethrow;
+  } finally {
+    transaction.finish();
+  }
+}

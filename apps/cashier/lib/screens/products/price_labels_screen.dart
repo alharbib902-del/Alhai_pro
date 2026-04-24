@@ -558,6 +558,8 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
         ? 80.0
         : 100.0;
 
+    // Paper-preview label: stays white/black in both themes to mimic
+    // the printed physical label.
     return Container(
       margin: const EdgeInsetsDirectional.only(bottom: AlhaiSpacing.xs),
       height: labelHeight,
@@ -583,6 +585,7 @@ class _PriceLabelsScreenState extends ConsumerState<PriceLabelsScreen> {
                       width: 1.5,
                       height: labelHeight - 40,
                       margin: const EdgeInsets.symmetric(horizontal: 0.5),
+                      // Paper-preview bars: white = gap, black = bar
                       color: (i % 3 == 0) ? Colors.white : Colors.black,
                     );
                   }),

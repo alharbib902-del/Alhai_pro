@@ -7,11 +7,24 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_pos/alhai_pos.dart' show cartHapticsEnabled;
 import '../../core/constants/timing.dart';
 import '../../core/utils/cache_cleaner.dart';
+import '../../core/services/haptic_shim.dart';
+import '../../core/services/sound_service.dart';
+import '../../main.dart'
+    show kPrefHapticEnabled, kPrefSoundEnabled, kPrefSoundVolume;
+// Phase 4.4 / 4.5 — animation + keyboard-shortcut toggle keys live with the
+// router (animations) and an app-level shim (shortcuts). Imported here so
+// the settings UI is the single source of truth that mutates them.
+import '../../router/cashier_router.dart'
+    show kPrefAnimationsEnabled, refreshAnimationsFlag;
+import '../../core/services/shortcuts_shim.dart'
+    show ShortcutsShim, kPrefKeyboardShortcutsEnabled;
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
@@ -26,6 +39,82 @@ class CashierSettingsScreen extends ConsumerStatefulWidget {
 }
 
 class _CashierSettingsScreenState extends ConsumerState<CashierSettingsScreen> {
+  // Phase 2 §2.5/2.6 — Feedback section state. Loaded from SharedPreferences
+  // via [_loadFeedbackPrefs]; mirrored back on every toggle.
+  bool _hapticEnabled = true;
+  bool _soundEnabled = true;
+  double _soundVolume = 0.8;
+  bool _feedbackLoaded = false;
+
+  // Phase 4.4 / 4.5 — Appearance / input preferences. Loaded together with
+  // the feedback block so the whole settings screen renders in one pass.
+  bool _animationsEnabled = true;
+  bool _shortcutsEnabled = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadFeedbackPrefs();
+  }
+
+  Future<void> _loadFeedbackPrefs() async {
+    final prefs = await SharedPreferences.getInstance();
+    if (!mounted) return;
+    setState(() {
+      _hapticEnabled = prefs.getBool(kPrefHapticEnabled) ?? true;
+      _soundEnabled = prefs.getBool(kPrefSoundEnabled) ?? true;
+      _soundVolume = prefs.getDouble(kPrefSoundVolume) ?? 0.8;
+      // Phase 4.4 / 4.5 — read with the same defaults we use at app boot
+      // (both ON) so the UI does not flip briefly during first paint.
+      _animationsEnabled = prefs.getBool(kPrefAnimationsEnabled) ?? true;
+      _shortcutsEnabled =
+          prefs.getBool(kPrefKeyboardShortcutsEnabled) ?? true;
+      _feedbackLoaded = true;
+    });
+  }
+
+  /// Phase 4.4 — Persist the animations toggle, then refresh the router's
+  /// in-memory flag so subsequent navigations use the new duration.
+  Future<void> _setAnimationsEnabled(bool v) async {
+    setState(() => _animationsEnabled = v);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(kPrefAnimationsEnabled, v);
+    await refreshAnimationsFlag();
+  }
+
+  /// Phase 4.5 — Persist the keyboard-shortcuts toggle and mirror the flag
+  /// into [ShortcutsShim] so the shell/POS bindings go dormant immediately.
+  Future<void> _setShortcutsEnabled(bool v) async {
+    setState(() => _shortcutsEnabled = v);
+    ShortcutsShim.enabled = v;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(kPrefKeyboardShortcutsEnabled, v);
+  }
+
+  Future<void> _setHapticEnabled(bool v) async {
+    setState(() => _hapticEnabled = v);
+    HapticShim.enabled = v;
+    cartHapticsEnabled = v;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(kPrefHapticEnabled, v);
+    if (v) HapticShim.selectionClick(); // tiny confirmation tick
+  }
+
+  Future<void> _setSoundEnabled(bool v) async {
+    setState(() => _soundEnabled = v);
+    SoundService.instance.enabled = v;
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(kPrefSoundEnabled, v);
+    if (v) SoundService.instance.barcodeBeep();
+  }
+
+  Future<void> _setSoundVolume(double v) async {
+    setState(() => _soundVolume = v);
+    await SoundService.instance.setVolume(v);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setDouble(kPrefSoundVolume, v);
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -54,15 +143,252 @@ class _CashierSettingsScreenState extends ConsumerState<CashierSettingsScreen> {
             padding: EdgeInsets.all(
               isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
             ),
-            child: _buildGridWithCacheClear(
-              isWideScreen,
-              isMediumScreen,
-              isDark,
-              l10n,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _buildGridWithCacheClear(
+                  isWideScreen,
+                  isMediumScreen,
+                  isDark,
+                  l10n,
+                ),
+                const SizedBox(height: AlhaiSpacing.lg),
+                _buildAppearanceSection(isDark, l10n),
+                const SizedBox(height: AlhaiSpacing.lg),
+                _buildFeedbackSection(isDark, l10n),
+              ],
             ),
           ),
         ),
       ],
+    );
+  }
+
+  // ============================================================================
+  // APPEARANCE / INPUT SECTION (Phase 4.4 / 4.5)
+  //   - Animations toggle: gates all GoRouter page transitions
+  //   - Keyboard shortcuts toggle: gates CallbackShortcuts in shell + POS
+  // Grouped together because both are "how does the app feel" preferences,
+  // distinct from the audio/haptic feedback block below.
+  // ============================================================================
+
+  Widget _buildAppearanceSection(bool isDark, AppLocalizations l10n) {
+    if (!_feedbackLoaded) {
+      return const SizedBox(height: 1);
+    }
+    final isAr = l10n.localeName == 'ar';
+    return Container(
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.getBorder(isDark)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.tune_rounded,
+                color: AppColors.primary,
+                size: 22,
+              ),
+              const SizedBox(width: AlhaiSpacing.sm),
+              Text(
+                isAr ? 'المظهر والإدخال' : 'Appearance & Input',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
+            ],
+          ),
+          const Divider(height: AlhaiSpacing.xl),
+          SwitchListTile.adaptive(
+            contentPadding: EdgeInsets.zero,
+            secondary: Icon(
+              Icons.animation_rounded,
+              color: AppColors.getTextSecondary(isDark),
+            ),
+            title: Text(
+              // Phase 4.4 — intentionally uses a locale-branched literal
+              // instead of adding a new AppLocalizations entry. The existing
+              // `animationsToggle` ARB key is added in the same commit so
+              // future refactors can swap this line for `l10n.animationsToggle`.
+              isAr ? 'تأثيرات حركية' : 'Animations',
+              style: TextStyle(color: AppColors.getTextPrimary(isDark)),
+            ),
+            subtitle: Text(
+              isAr
+                  ? 'تحريك الشاشات والتحولات البصرية'
+                  : 'Smooth screen transitions and motion',
+              style: TextStyle(
+                fontSize: 11,
+                color: AppColors.getTextMuted(isDark),
+              ),
+            ),
+            value: _animationsEnabled,
+            onChanged: _setAnimationsEnabled,
+          ),
+          SwitchListTile.adaptive(
+            contentPadding: EdgeInsets.zero,
+            secondary: Icon(
+              Icons.keyboard_rounded,
+              color: AppColors.getTextSecondary(isDark),
+            ),
+            title: Text(
+              // Phase 4.5 — reuses the existing `keyboardShortcuts` l10n key.
+              l10n.keyboardShortcuts,
+              style: TextStyle(color: AppColors.getTextPrimary(isDark)),
+            ),
+            subtitle: Text(
+              isAr
+                  ? 'F1-F8, Ctrl+F/D/P, +/-, Delete'
+                  : 'F1-F8, Ctrl+F/D/P, +/-, Delete',
+              style: TextStyle(
+                fontSize: 11,
+                color: AppColors.getTextMuted(isDark),
+              ),
+            ),
+            value: _shortcutsEnabled,
+            onChanged: _setShortcutsEnabled,
+          ),
+        ],
+      ),
+    );
+  }
+
+  // ============================================================================
+  // FEEDBACK SECTION (Phase 2 §2.5/2.6) — haptic + sound toggles
+  // ============================================================================
+
+  Widget _buildFeedbackSection(bool isDark, AppLocalizations l10n) {
+    if (!_feedbackLoaded) {
+      return const SizedBox(height: 1);
+    }
+    return Container(
+      padding: const EdgeInsets.all(AlhaiSpacing.mdl),
+      decoration: BoxDecoration(
+        color: AppColors.getSurface(isDark),
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.getBorder(isDark)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(
+                Icons.vibration_rounded,
+                color: AppColors.primary,
+                size: 22,
+              ),
+              const SizedBox(width: AlhaiSpacing.sm),
+              Text(
+                l10n.localeName == 'ar' ? 'التغذية الراجعة' : 'Feedback',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.getTextPrimary(isDark),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: AlhaiSpacing.sm),
+          Text(
+            l10n.localeName == 'ar'
+                ? 'الاهتزاز والصوت عند الإجراءات (المسح، البيع، الأخطاء)'
+                : 'Haptic and sound for key actions (scan, sale, errors)',
+            style: TextStyle(
+              fontSize: 12,
+              color: AppColors.getTextMuted(isDark),
+            ),
+          ),
+          const Divider(height: AlhaiSpacing.xl),
+          SwitchListTile.adaptive(
+            contentPadding: EdgeInsets.zero,
+            title: Text(
+              l10n.localeName == 'ar'
+                  ? 'الاهتزاز عند الإجراءات'
+                  : 'Haptic on actions',
+              style: TextStyle(color: AppColors.getTextPrimary(isDark)),
+            ),
+            subtitle: Text(
+              l10n.localeName == 'ar'
+                  ? 'اهتزاز خفيف عند المسح والإضافة، قوي عند إتمام البيع'
+                  : 'Light tick on scan/add, strong buzz on sale success',
+              style: TextStyle(
+                fontSize: 11,
+                color: AppColors.getTextMuted(isDark),
+              ),
+            ),
+            value: _hapticEnabled,
+            onChanged: _setHapticEnabled,
+          ),
+          SwitchListTile.adaptive(
+            contentPadding: EdgeInsets.zero,
+            title: Text(
+              l10n.localeName == 'ar'
+                  ? 'أصوات التأكيد'
+                  : 'Confirmation sounds',
+              style: TextStyle(color: AppColors.getTextPrimary(isDark)),
+            ),
+            subtitle: Text(
+              l10n.localeName == 'ar'
+                  ? 'صفير عند المسح، رنّة عند إتمام البيع، نغمة خطأ'
+                  : 'Beep on scan, chime on success, buzz on error',
+              style: TextStyle(
+                fontSize: 11,
+                color: AppColors.getTextMuted(isDark),
+              ),
+            ),
+            value: _soundEnabled,
+            onChanged: _setSoundEnabled,
+          ),
+          if (_soundEnabled)
+            Padding(
+              padding: const EdgeInsets.only(top: AlhaiSpacing.xs),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.volume_down_rounded,
+                    size: 18,
+                    color: AppColors.getTextMuted(isDark),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      value: _soundVolume,
+                      min: 0.0,
+                      max: 1.0,
+                      divisions: 10,
+                      label: '${(_soundVolume * 100).round()}%',
+                      onChanged: _setSoundVolume,
+                    ),
+                  ),
+                  Icon(
+                    Icons.volume_up_rounded,
+                    size: 18,
+                    color: AppColors.getTextMuted(isDark),
+                  ),
+                  const SizedBox(width: AlhaiSpacing.xs),
+                  SizedBox(
+                    width: 36,
+                    child: Text(
+                      '${(_soundVolume * 100).round()}%',
+                      style: TextStyle(
+                        fontSize: 12,
+                        color: AppColors.getTextMuted(isDark),
+                      ),
+                      textAlign: TextAlign.end,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+        ],
+      ),
     );
   }
 

@@ -5,6 +5,8 @@ import 'package:uuid/uuid.dart';
 
 import 'package:alhai_database/alhai_database.dart';
 
+import 'validators/pre_sync_validator.dart';
+
 /// أنواع عمليات المزامنة
 enum SyncOperation { create, update, delete }
 
@@ -17,19 +19,51 @@ const _highPriorityTables = {
   'sale_items',
   'inventory_movements',
   'cash_movements',
+  'invoices',       // ZATCA Phase-1 compliance — must always queue
+  'return_items',   // audit trail — must always queue
+  'returns',
+  'stock_deltas',   // multi-device inventory — critical
+  'transactions',   // account ledger — critical
 };
+
+/// Phase 2, task 2.8 — Hard queue limit.
+///
+/// The existing [SyncQueueHealth] demoted low-priority items at 10,000 active
+/// items but never rejected them. After extended offline windows (30+ min on
+/// a bad network) the queue was observed growing past 50k on dev devices, at
+/// which point the sync cycle itself starts eating all SQLite time.
+///
+/// Now: when `activeCount` reaches this ceiling, **even demoted-to-low items
+/// are rejected outright** (non-critical tables only — the high-priority set
+/// above always passes so sales/invoices are never dropped). The rejection
+/// returns synthetic id `queue_full_<ts>` so callers see a non-crash path.
+///
+/// Tuning: chose 50k as a soft failure line — enough headroom that a normal
+/// day of offline work (≤10k operations) never trips it, but small enough
+/// that we catch runaway pathological cases before SQLite degrades.
+const int _hardQueueLimit = 50000;
 
 /// خدمة طابور المزامنة
 /// تضيف العمليات للطابور المحلي ليتم مزامنتها لاحقاً
 class SyncService {
   final SyncQueueDao _syncQueueDao;
+  final PreSyncValidator? _validator;
   final _uuid = const Uuid();
 
   /// آخر صحة طابور مؤقتة (لتجنب استعلام كل مرة)
   SyncQueueHealth? _cachedHealth;
   DateTime? _healthCacheTime;
 
-  SyncService(this._syncQueueDao);
+  /// Constructs a SyncService.
+  ///
+  /// [validator] is optional — when provided, every [enqueue] call passes the
+  /// payload through it before insertion. Payloads that fail validation are
+  /// logged + dropped (not queued). When null, legacy behaviour (no validation)
+  /// is preserved so existing callers continue to work.
+  SyncService(
+    this._syncQueueDao, {
+    PreSyncValidator? validator,
+  }) : _validator = validator;
 
   /// إضافة عملية للطابور مع حماية من التكرار ودمج العمليات
   Future<String> enqueue({
@@ -39,19 +73,38 @@ class SyncService {
     required Map<String, dynamic> payload,
     SyncPriority priority = SyncPriority.normal,
   }) async {
-    // === حماية حجم الطابور ===
-    // تأجيل العناصر منخفضة الأولوية إذا الطابور ممتلئ
+    // === حماية حجم الطابور (Phase 2, task 2.8) ===
+    // ثلاث عتبات:
+    //   1. isOverloaded (>10k): تأجيل العناصر منخفضة الأولوية
+    //   2. _hardQueueLimit (>50k): رفض كامل للعناصر غير الحرجة
+    //   3. جداول _highPriorityTables: تمر دائماً (sales/invoices/stock…)
     if (!_highPriorityTables.contains(tableName) &&
         priority != SyncPriority.high) {
       final health = await _getCachedHealth();
+
+      // ── Hard reject at 50k: حتى مع demoted-to-low ──
+      if (health.activeCount >= _hardQueueLimit) {
+        developer.log(
+          'SyncService: HARD LIMIT hit (${health.activeCount} active ≥ '
+          '$_hardQueueLimit) — dropping non-critical item '
+          '$tableName/$recordId. High-priority tables still accepted.',
+          name: 'SyncService',
+          level: 1000, // SEVERE
+        );
+        // Return synthetic id so callers that await the string don't crash.
+        // The caller's normal flow completes locally (DB write succeeded),
+        // only the sync fanout is skipped. When the queue drains below the
+        // limit, future operations on this record will sync normally.
+        return 'queue_full_${DateTime.now().millisecondsSinceEpoch}';
+      }
+
+      // ── Soft demote at 10k: keep queuing but at low priority ──
       if (health.isOverloaded) {
         developer.log(
           'SyncService: queue overloaded (${health.activeCount} items), '
           'deferring low-priority item ($tableName/$recordId)',
           name: 'SyncService',
         );
-        // لا نرفض، لكن نسجل تحذير - العناصر ذات الأولوية العالية تمر دائماً
-        // نقبل العنصر لكن بأولوية منخفضة
         priority = SyncPriority.low;
       }
     }
@@ -63,6 +116,31 @@ class SyncService {
         name: 'SyncService',
       );
       throw ArgumentError('Invalid sync payload for $tableName/$recordId');
+    }
+
+    // === Pre-sync business-rule validation (Phase 2) ===
+    // Only runs when a validator was injected. Legacy callers without one
+    // skip this step entirely. Failures are dropped (not queued) so corrupt
+    // rows never reach Supabase; see dead-letter log below.
+    if (_validator != null) {
+      final result = await _validator.validate(SyncPayload(
+        table: tableName,
+        operation: operation.name,
+        data: payload,
+      ));
+      if (result.hasErrors) {
+        developer.log(
+          'SyncService: pre-sync validation failed for '
+          '$tableName/$recordId — ${result.errors.length} rule(s) violated. '
+          'Payload dropped from queue.',
+          name: 'SyncService',
+          error: jsonEncode(
+            result.errors.map((e) => e.toJson()).toList(),
+          ),
+        );
+        // Return a synthetic id so callers aren't broken; payload is NOT queued.
+        return 'validation_failed';
+      }
     }
 
     // === دمج العمليات المتقاطعة (Cross-operation dedup) ===

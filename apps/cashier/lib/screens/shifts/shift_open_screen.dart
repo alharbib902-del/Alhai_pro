@@ -15,6 +15,8 @@ import 'package:alhai_design_system/alhai_design_system.dart'
 // alhai_design_system is re-exported via alhai_shared_ui
 import 'package:alhai_core/alhai_core.dart' show UserRole;
 import '../../core/services/sentry_service.dart';
+import '../../core/services/haptic_shim.dart';
+import '../../core/services/sound_service.dart';
 
 /// Map [UserRole] to a localized label.
 String _localizedRole(UserRole? role, AppLocalizations l10n) {
@@ -451,6 +453,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
     final openingCash = double.tryParse(_openingCashController.text);
 
     if (openingCash == null || openingCash <= 0) {
+      HapticShim.vibrate();
       AlhaiSnackbar.warning(context, l10n.pleaseEnterOpeningCash);
       return;
     }
@@ -463,6 +466,7 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
       if (existingShift != null) {
         if (!mounted) return;
         setState(() => _isLoading = false);
+        HapticShim.vibrate();
         AlhaiSnackbar.warning(context, l10n.oneShiftAtATime);
         return;
       }
@@ -484,6 +488,8 @@ class _ShiftOpenScreenState extends ConsumerState<ShiftOpenScreen> {
         data: {'openingCash': openingCash},
       );
 
+      HapticShim.heavyImpact();
+      SoundService.instance.saleSuccess();
       AlhaiSnackbar.success(
         context,
         l10n.shiftOpenedWithAmount(openingCash.toStringAsFixed(0), l10n.sar),

@@ -116,7 +116,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
     return Column(
       children: [
         AppHeader(
-          title: 'Payment History',
+          title: l10n.paymentHistory,
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
@@ -323,7 +323,7 @@ class _PaymentHistoryScreenState extends ConsumerState<PaymentHistoryScreen> {
                 fontSize: 13,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected
-                    ? Colors.white
+                    ? AppColors.textOnPrimary
                     : AppColors.getTextSecondary(isDark),
               ),
             ),

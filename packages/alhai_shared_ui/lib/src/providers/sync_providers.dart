@@ -268,7 +268,13 @@ final realtimeListenerProvider = Provider<RealtimeListener?>((ref) {
 /// عند تسجيل الدخول واختيار المتجر: يبدأ الاستماع للتحديثات الفورية.
 /// عند تسجيل الخروج: يوقف الاستماع تلقائياً.
 ///
-/// يُقرأ مرة واحدة من PosScreen عند التحميل لتفعيل الاشتراك.
+/// يُقرأ مرة واحدة من PosScreen (و CashierShell عبر globalSyncActivationProvider)
+/// عند التحميل لتفعيل الاشتراك.
+///
+/// التحسينات:
+/// - deviceId يُمرَّر لتجنّب معالجة stock_deltas التي أنشأها نفس الجهاز
+/// - يفشل مبكراً إذا كان orgId فارغاً (بدل تشغيل فلتر مكسور)
+/// - يلتقط أي فشل في start() ويسجله بدل تعطّل صامت
 final realtimeActivationProvider = FutureProvider<void>((ref) async {
   final authState = ref.watch(authStateProvider);
   final storeId = ref.watch(currentStoreIdProvider);
@@ -294,17 +300,48 @@ final realtimeActivationProvider = FutureProvider<void>((ref) async {
     final db = ref.read(appDatabaseProvider);
     final store = await db.storesDao.getStoreById(storeId);
     orgId = store?.orgId ?? '';
-  } catch (e) {
+  } catch (e, st) {
     if (kDebugMode) {
-      debugPrint('[RealtimeActivation] Failed to get store orgId: $e');
+      debugPrint('[RealtimeActivation] Failed to get store orgId: $e\n$st');
     }
   }
 
-  // بدء الاستماع
-  await listener.start(orgId: orgId, storeId: storeId);
+  // Fail fast: بدون orgId، فلتر org_id في _handleChange لن يعمل صحيحاً
+  // وسنستقبل بيانات من مؤسسات أخرى. أفضل عدم البدء من أن نبدأ بمستمع معطوب.
+  if (orgId.isEmpty) {
+    if (kDebugMode) {
+      debugPrint(
+        '[RealtimeActivation] ⚠️ Abort: orgId empty for store=$storeId. '
+        'Store may not be fully seeded yet; will retry on next activation.',
+      );
+    }
+    return;
+  }
 
-  if (kDebugMode) {
-    debugPrint('[RealtimeActivation] Started for store=$storeId, org=$orgId');
+  // deviceId: نستخدم معرّف المستخدم كـ proxy (يطابق ما تفعله stock_deltas)
+  // لتجنب معالجة الـ deltas التي أنشأها نفس الكاشير في هذا الجهاز.
+  final deviceId = authState.user?.id;
+
+  // بدء الاستماع مع التقاط الفشل
+  try {
+    await listener.start(
+      orgId: orgId,
+      storeId: storeId,
+      deviceId: deviceId,
+    );
+    if (kDebugMode) {
+      debugPrint(
+        '[RealtimeActivation] ✅ Started for store=$storeId, org=$orgId, '
+        'device=${deviceId ?? "null"}',
+      );
+    }
+  } catch (e, st) {
+    if (kDebugMode) {
+      debugPrint('[RealtimeActivation] ❌ start() failed: $e\n$st');
+    }
+    // لا نرفع الاستثناء: التطبيق يستمر بالعمل مع polling فقط كـ fallback.
+    // المحاولة التالية ستحدث عند إعادة تقييم الـ provider (login/store change).
+    return;
   }
 
   // إيقاف عند إلغاء الـ provider (تسجيل خروج / تغيير متجر)

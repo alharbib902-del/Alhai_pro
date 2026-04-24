@@ -16,6 +16,8 @@ import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
 import '../../core/services/sentry_service.dart';
+import '../../core/services/haptic_shim.dart';
+import '../../core/services/sound_service.dart';
 import '../../widgets/zatca_qr_widget.dart';
 
 /// شاشة تفاصيل البيع
@@ -732,10 +734,14 @@ class _SaleDetailScreenState extends ConsumerState<SaleDetailScreen> {
     try {
       await Future.delayed(const Duration(seconds: 1));
       if (!mounted) return;
+      HapticShim.mediumImpact();
+      SoundService.instance.saleSuccess();
       AlhaiSnackbar.success(context, l10n.receiptPrinted);
     } catch (e, stack) {
       reportError(e, stackTrace: stack, hint: 'Reprint sale receipt');
       if (!mounted) return;
+      HapticShim.vibrate();
+      SoundService.instance.errorBuzz();
       AlhaiSnackbar.error(context, l10n.errorWithDetails('$e'));
     } finally {
       if (mounted) setState(() => _isPrinting = false);

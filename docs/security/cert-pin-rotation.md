@@ -1,7 +1,8 @@
 # Certificate Pin Rotation / دليل تدوير بصمات الشهادة
 
 Applies to `alhai_core/lib/src/security/certificate_pinning_service.dart`,
-consumed by `apps/admin`, `apps/admin_lite`, `customer_app`, `driver_app`.
+consumed by `apps/cashier` (Phase 4 §4.1), `apps/admin`, `apps/admin_lite`,
+`customer_app`, `driver_app`.
 
 ## Why we pin / لماذا نثبت البصمات
 

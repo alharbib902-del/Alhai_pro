@@ -169,6 +169,21 @@ class InvoicesDao extends DatabaseAccessor<AppDatabase>
     );
   }
 
+  /// تحديث رمز ZATCA QR للفاتورة.
+  ///
+  /// ZATCA Phase-1 compliance: كل فاتورة ضريبية مبسطة يجب أن تحمل QR
+  /// مرمّز TLV مع اسم البائع، الرقم الضريبي، الطابع الزمني، والمجاميع.
+  /// يُخزَّن بعد إنشاء الفاتورة مباشرةً (في نفس طلب createFromSale) حتى
+  /// يتم دفعه ضمن نفس payload التزامن بدل توليده لاحقاً عند كل طباعة.
+  Future<int> updateZatcaQr(String id, String qrBase64) {
+    return (update(invoicesTable)..where((i) => i.id.equals(id))).write(
+      InvoicesTableCompanion(
+        zatcaQr: Value(qrBase64),
+        updatedAt: Value(DateTime.now()),
+      ),
+    );
+  }
+
   /// تسجيل دفعة
   ///
   /// `amount` is SAR (double). Converts to int cents at the boundary per

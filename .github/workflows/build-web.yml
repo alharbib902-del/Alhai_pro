@@ -61,11 +61,22 @@ jobs:
         # Tracked icons: Icons.smart_toy_rounded, Icons.category, Icons.storefront,
         # Icons.receipt_long, Icons.inventory_2, Icons.people, Icons.analytics,
         # and dynamic category icons from DB.
+        #
+        # Phase 4 §4.1 — Cert-pin fingerprints are injected via --dart-define
+        # so CertificatePinningService can resolve them at runtime. On web the
+        # IO pinning path is inert (BrowserClient is used by the SDK) but we
+        # still pass the pins to keep native/web build commands aligned, so a
+        # single secret change rotates both. Empty secrets fall through to the
+        # debug-mode no-op in the service.
         run: |
           cd ${{ matrix.path }}
           flutter build web --release --no-tree-shake-icons \
             --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
-            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_1=${{ secrets.SUPABASE_CERT_FINGERPRINT_1 }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_2=${{ secrets.SUPABASE_CERT_FINGERPRINT_2 }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_3=${{ secrets.SUPABASE_CERT_FINGERPRINT_3 }} \
+            --dart-define=SENTRY_DSN=${{ secrets.SENTRY_DSN }}
 
       - name: Upload Web Build
         uses: actions/upload-artifact@v4

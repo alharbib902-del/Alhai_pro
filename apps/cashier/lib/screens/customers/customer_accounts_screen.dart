@@ -123,7 +123,7 @@ class _CustomerAccountsScreenState
     return Column(
       children: [
         AppHeader(
-          title: 'Customer Accounts',
+          title: l10n.customerAccounts,
           subtitle: _getDateSubtitle(l10n),
           showSearch: false,
           searchHint: l10n.searchPlaceholder,
@@ -251,7 +251,7 @@ class _CustomerAccountsScreenState
           }, isDark),
           const SizedBox(width: AlhaiSpacing.xs),
           _buildChip(
-            'Outstanding',
+            l10n.outstanding,
             _statusFilter == 'outstanding',
             () {
               setState(() => _statusFilter = 'outstanding');
@@ -273,7 +273,7 @@ class _CustomerAccountsScreenState
           ),
           const SizedBox(width: AlhaiSpacing.xs),
           _buildChip(
-            'Paid',
+            l10n.paidLabel,
             _statusFilter == 'paid',
             () {
               setState(() => _statusFilter = 'paid');
@@ -330,7 +330,7 @@ class _CustomerAccountsScreenState
                 fontSize: 13,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
                 color: isSelected
-                    ? Colors.white
+                    ? AppColors.textOnPrimary
                     : AppColors.getTextSecondary(isDark),
               ),
             ),

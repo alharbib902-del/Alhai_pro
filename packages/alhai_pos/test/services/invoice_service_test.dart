@@ -7,6 +7,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_sync/alhai_sync.dart';
 import 'package:alhai_pos/src/services/invoice_service.dart';
+import 'package:alhai_pos/src/services/receipt_pdf_generator.dart' show StoreInfo;
 
 import '../helpers/pos_test_helpers.dart';
 
@@ -296,6 +297,69 @@ void main() {
           expect(capturedCompanion!.total.value, 5000);
           expect(capturedCompanion!.amountPaid.value, 0);
           expect(capturedCompanion!.amountDue.value, 5000);
+        },
+      );
+
+      // C-4 §4h — ZATCA Phase-1 blocking (P0 fix):
+      // يلزم كل فاتورة ضريبية مبسطة قادمة من POS أن تحمل رمز ZATCA QR.
+      // الاختباران التاليان يُقفلان السلوك: (1) أن QR يُحفظ فعلاً داخل
+      // الفاتورة، و(2) أن فشل توليد QR يرفع استثناءً يوقف الإنشاء بدل
+      // تمرير فاتورة غير متوافقة.
+      test('populates zatcaQr + zatcaUuid on the invoice companion', () async {
+        InvoicesTableCompanion? capturedCompanion;
+        when(() => mockInvoicesDao.upsertInvoice(any())).thenAnswer((inv) {
+          capturedCompanion =
+              inv.positionalArguments[0] as InvoicesTableCompanion;
+          return Future.value(1);
+        });
+
+        await invoiceService.createFromSale(
+          sale: testSale,
+          items: testItems,
+        );
+
+        expect(capturedCompanion, isNotNull);
+        // QR payload is base64-encoded TLV bytes — must be present and non-empty.
+        final qr = capturedCompanion!.zatcaQr.value;
+        expect(qr, isNotNull);
+        expect(qr, isNotEmpty);
+        // UUID mirror of the invoice id — present for ZATCA audit trail.
+        expect(capturedCompanion!.zatcaUuid.value, isNotNull);
+      });
+
+      test(
+        'throws ZatcaComplianceException when seller name exceeds TLV '
+        'length (>255 bytes) and does NOT upsert the invoice',
+        () async {
+          // Arabic chars are 2 bytes UTF-8 — 200 chars = 400 bytes, well
+          // past the 255-byte TLV limit for a single value.
+          final overlongStore = StoreInfo(
+            name: 'متجر' * 100, // 400 Arabic bytes
+            address: 'الرياض',
+            phone: '0500000000',
+            vatNumber: '300000000000003',
+          );
+
+          expect(
+            () => invoiceService.createFromSale(
+              sale: testSale,
+              items: testItems,
+              store: overlongStore,
+            ),
+            throwsA(isA<ZatcaComplianceException>()),
+          );
+
+          // Invoice must NOT be saved when ZATCA compliance fails —
+          // a tax invoice without a valid QR is illegal in KSA.
+          verifyNever(() => mockInvoicesDao.upsertInvoice(any()));
+          verifyNever(
+            () => mockSyncService.enqueueCreate(
+              tableName: any(named: 'tableName'),
+              recordId: any(named: 'recordId'),
+              data: any(named: 'data'),
+              priority: any(named: 'priority'),
+            ),
+          );
         },
       );
 

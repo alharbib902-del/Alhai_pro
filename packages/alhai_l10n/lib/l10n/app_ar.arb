@@ -2113,6 +2113,8 @@
   "hapticFeedback": "اهتزاز اللمس",
   "hapticFeedbackDesc": "اهتزاز عند الضغط على الأزرار",
   "keyboardShortcuts": "اختصارات لوحة المفاتيح",
+  "animationsToggle": "تأثيرات حركية",
+  "animationsToggleDesc": "تحريك الشاشات والتحولات البصرية",
   "customizeShortcuts": "تخصيص الاختصارات",
   "shortcutSearchProduct": "البحث عن منتج",
   "shortcutSearchCustomer": "البحث عن عميل",
@@ -3465,7 +3467,7 @@
   "duration": "المدة",
   "quiet": "هادئ",
   "busy": "مزدحم",
-  "outstanding": "متميز",
+  "outstanding": "مستحق",
   "donate": "تبرع",
   "day": "يوم",
   "days": "أيام",
@@ -6806,6 +6808,13 @@
       }
     }
   },
+  "interestAppliedWithSkipped": "تم تطبيق الفائدة على {applied} حساب، {skipped} تم تخطيها (سبق تطبيقها هذا الشهر)",
+  "@interestAppliedWithSkipped": {
+    "placeholders": {
+      "applied": { "type": "int" },
+      "skipped": { "type": "int" }
+    }
+  },
   "selectCustomers": "اختيار العملاء",
   "deselectAll": "إلغاء تحديد الكل",
   "preview": "معاينة",
@@ -6882,6 +6891,14 @@
   "clearField": "مسح",
   "decreaseQuantity": "تقليل الكمية",
   "increaseQuantity": "زيادة الكمية",
+  "customerAccounts": "حسابات العملاء",
+  "paymentHistory": "سجل المدفوعات",
+  "keyboardShortcutsHint": "استخدم اختصارات لوحة المفاتيح لعمليات أسرع",
+  "proceedToPayment": "الانتقال إلى الدفع",
+  "searchProducts": "بحث المنتجات",
+  "splitPayment": "دفع مُقسَّم",
+  "applyDiscount": "تطبيق خصم",
+  "holdInvoice": "تعليق فاتورة",
   "copyToClipboard": "نسخ",
   "invoiceAlreadyRefunded": "تم إرجاع هذه الفاتورة بالكامل مسبقاً",
   "invoicePartiallyRefunded": "تم إرجاع بعض المنتجات مسبقاً - يتم عرض المتبقي فقط",

@@ -121,13 +121,18 @@ class _DenominationCounterWidgetState extends State<DenominationCounterWidget> {
             children: [
               Text(
                 l10n.totalAmountLabel,
-                style: const TextStyle(color: Colors.white70, fontSize: 13),
+                style: TextStyle(
+                  // Text sits on denominationGradient (blue->teal) which stays
+                  // constant across themes; textOnPrimary keeps semantic link.
+                  color: AppColors.textOnPrimary.withValues(alpha: 0.7),
+                  fontSize: 13,
+                ),
               ),
               const SizedBox(height: AlhaiSpacing.xxs),
               Text(
                 l10n.amountRiyal(_total.toStringAsFixed(2)),
                 style: const TextStyle(
-                  color: Colors.white,
+                  color: AppColors.textOnPrimary,
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
                 ),

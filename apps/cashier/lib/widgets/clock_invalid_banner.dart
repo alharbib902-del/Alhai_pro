@@ -46,6 +46,7 @@ class _ClockInvalidBannerState extends State<ClockInvalidBanner> {
 
     final offset = ClockValidationService.instance.clockOffset;
     final offsetMinutes = offset.inMinutes.abs();
+    final colorScheme = Theme.of(context).colorScheme;
 
     return Container(
       width: double.infinity,
@@ -53,17 +54,17 @@ class _ClockInvalidBannerState extends State<ClockInvalidBanner> {
         horizontal: AlhaiSpacing.md,
         vertical: AlhaiSpacing.xs,
       ),
-      color: Colors.red.shade700,
+      color: colorScheme.error,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(Icons.access_time, color: Colors.white, size: 18),
+          Icon(Icons.access_time, color: colorScheme.onError, size: 18),
           const SizedBox(width: AlhaiSpacing.xs),
           Flexible(
             child: Text(
               AppLocalizations.of(context).deviceClockInaccurate(offsetMinutes),
-              style: const TextStyle(
-                color: Colors.white,
+              style: TextStyle(
+                color: colorScheme.onError,
                 fontWeight: FontWeight.w500,
               ),
               textAlign: TextAlign.center,

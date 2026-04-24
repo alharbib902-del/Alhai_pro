@@ -13444,7 +13444,7 @@ abstract class AppLocalizations {
   /// No description provided for @outstanding.
   ///
   /// In ar, this message translates to:
-  /// **'متميز'**
+  /// **'مستحق'**
   String get outstanding;
 
   /// No description provided for @donate.
@@ -24603,6 +24603,12 @@ abstract class AppLocalizations {
   String confirmInterestMessage(
       String rate, int count, String amount, String currency);
 
+  /// No description provided for @interestAppliedWithSkipped.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تطبيق الفائدة على {applied} حساب، {skipped} تم تخطيها (سبق تطبيقها هذا الشهر)'**
+  String interestAppliedWithSkipped(int applied, int skipped);
+
   /// No description provided for @selectCustomers.
   ///
   /// In ar, this message translates to:
@@ -24890,6 +24896,54 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'زيادة الكمية'**
   String get increaseQuantity;
+
+  /// No description provided for @customerAccounts.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسابات العملاء'**
+  String get customerAccounts;
+
+  /// No description provided for @paymentHistory.
+  ///
+  /// In ar, this message translates to:
+  /// **'سجل المدفوعات'**
+  String get paymentHistory;
+
+  /// No description provided for @keyboardShortcutsHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'استخدم اختصارات لوحة المفاتيح لعمليات أسرع'**
+  String get keyboardShortcutsHint;
+
+  /// No description provided for @proceedToPayment.
+  ///
+  /// In ar, this message translates to:
+  /// **'الانتقال إلى الدفع'**
+  String get proceedToPayment;
+
+  /// No description provided for @searchProducts.
+  ///
+  /// In ar, this message translates to:
+  /// **'بحث المنتجات'**
+  String get searchProducts;
+
+  /// No description provided for @splitPayment.
+  ///
+  /// In ar, this message translates to:
+  /// **'دفع مُقسَّم'**
+  String get splitPayment;
+
+  /// No description provided for @applyDiscount.
+  ///
+  /// In ar, this message translates to:
+  /// **'تطبيق خصم'**
+  String get applyDiscount;
+
+  /// No description provided for @holdInvoice.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعليق فاتورة'**
+  String get holdInvoice;
 
   /// No description provided for @copyToClipboard.
   ///

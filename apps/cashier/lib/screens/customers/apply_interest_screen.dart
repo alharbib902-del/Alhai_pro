@@ -13,6 +13,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import 'package:alhai_database/alhai_database.dart';
 import 'package:alhai_auth/alhai_auth.dart';
+import 'package:alhai_sync/alhai_sync.dart' show SyncPriority;
 import 'package:alhai_design_system/alhai_design_system.dart'
     show AlhaiBreakpoints, AlhaiSnackbar, AlhaiSpacing;
 // alhai_design_system is re-exported via alhai_shared_ui
@@ -146,65 +147,79 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
           onUserTap: () {},
         ),
         Expanded(
-          child: _isLoading
-              ? const AppLoadingState()
-              : _error != null
-              ? AppErrorState.general(
-                  context,
-                  message: _error!,
-                  onRetry: _loadAccounts,
-                )
-              : _accounts.isEmpty
-              ? _buildNoAccountsMessage(isDark, l10n)
-              : SingleChildScrollView(
-                  padding: EdgeInsets.all(
-                    isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
-                  ),
-                  child: isWideScreen
-                      ? Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
-                              flex: 3,
-                              child: _buildCustomersList(isDark, l10n),
-                            ),
-                            const SizedBox(width: AlhaiSpacing.lg),
-                            Expanded(
-                              flex: 2,
-                              child: Column(
-                                children: [
-                                  _buildRateCard(isDark, l10n),
-                                  const SizedBox(height: AlhaiSpacing.lg),
-                                  _buildPreviewCard(isDark, l10n),
-                                  const SizedBox(height: AlhaiSpacing.lg),
-                                  _buildApplyButton(isDark, l10n),
-                                ],
+          // Phase 4.4 — AnimatedSwitcher softens the loading → content swap.
+          // Each branch needs a unique ValueKey so the switcher can tell them
+          // apart and crossfade correctly; without distinct keys Flutter
+          // treats the subtree as "same child" and skips the animation.
+          child: AnimatedSwitcher(
+            duration: const Duration(milliseconds: 200),
+            child: _isLoading
+                ? const AppLoadingState(key: ValueKey('apply-interest-loading'))
+                : _error != null
+                ? KeyedSubtree(
+                    key: const ValueKey('apply-interest-error'),
+                    child: AppErrorState.general(
+                      context,
+                      message: _error!,
+                      onRetry: _loadAccounts,
+                    ),
+                  )
+                : _accounts.isEmpty
+                ? KeyedSubtree(
+                    key: const ValueKey('apply-interest-empty'),
+                    child: _buildNoAccountsMessage(isDark, l10n),
+                  )
+                : SingleChildScrollView(
+                    key: const ValueKey('apply-interest-content'),
+                    padding: EdgeInsets.all(
+                      isMediumScreen ? AlhaiSpacing.lg : AlhaiSpacing.md,
+                    ),
+                    child: isWideScreen
+                        ? Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                flex: 3,
+                                child: _buildCustomersList(isDark, l10n),
                               ),
-                            ),
-                          ],
-                        )
-                      : Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            _buildRateCard(isDark, l10n),
-                            SizedBox(
-                              height: isMediumScreen
-                                  ? AlhaiSpacing.lg
-                                  : AlhaiSpacing.md,
-                            ),
-                            _buildCustomersList(isDark, l10n),
-                            SizedBox(
-                              height: isMediumScreen
-                                  ? AlhaiSpacing.lg
-                                  : AlhaiSpacing.md,
-                            ),
-                            _buildPreviewCard(isDark, l10n),
-                            const SizedBox(height: AlhaiSpacing.lg),
-                            _buildApplyButton(isDark, l10n),
-                            const SizedBox(height: AlhaiSpacing.lg),
-                          ],
-                        ),
-                ),
+                              const SizedBox(width: AlhaiSpacing.lg),
+                              Expanded(
+                                flex: 2,
+                                child: Column(
+                                  children: [
+                                    _buildRateCard(isDark, l10n),
+                                    const SizedBox(height: AlhaiSpacing.lg),
+                                    _buildPreviewCard(isDark, l10n),
+                                    const SizedBox(height: AlhaiSpacing.lg),
+                                    _buildApplyButton(isDark, l10n),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        : Column(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              _buildRateCard(isDark, l10n),
+                              SizedBox(
+                                height: isMediumScreen
+                                    ? AlhaiSpacing.lg
+                                    : AlhaiSpacing.md,
+                              ),
+                              _buildCustomersList(isDark, l10n),
+                              SizedBox(
+                                height: isMediumScreen
+                                    ? AlhaiSpacing.lg
+                                    : AlhaiSpacing.md,
+                              ),
+                              _buildPreviewCard(isDark, l10n),
+                              const SizedBox(height: AlhaiSpacing.lg),
+                              _buildApplyButton(isDark, l10n),
+                              const SizedBox(height: AlhaiSpacing.lg),
+                            ],
+                          ),
+                  ),
+          ),
         ),
       ],
     );
@@ -726,16 +741,33 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
       final storeId = ref.read(currentStoreIdProvider);
       if (storeId == null) return;
       final user = ref.read(currentUserProvider);
+      final syncService = ref.read(syncServiceProvider);
       final now = DateTime.now();
       final periodKey = '${now.year}-${now.month.toString().padLeft(2, '0')}';
+
+      // C-4 §4h — Idempotency + sync enqueue:
+      // كنا نسمح بضغط "تطبيق" مرتين في نفس الشهر → فائدة مزدوجة. الآن
+      // نفحص hasInterestForPeriod لكل حساب ونتجاهل المُطَبَّق مسبقاً.
+      // ونضع كل معاملة + تحديث رصيد في sync_queue لأن الجداول
+      // bidirectional ولن تُدفَع تلقائياً للسيرفر بدون enqueue.
+      final appliedTxns = <_AppliedInterest>[];
+      int skipped = 0;
 
       await _db.transaction(() async {
         for (final accountId in _selectedIds) {
           final account = _accounts.firstWhere((a) => a.id == accountId);
-          // C-4 Session 4: accounts.balance is int cents; interest/newBalance in SAR double.
           final balanceSar = account.balance / 100.0;
           final interest = _calculateInterest(balanceSar);
           if (interest <= 0) continue;
+
+          // Idempotency guard: لا نطبّق فائدة مرتين على نفس الحساب في
+          // نفس الشهر (YYYY-MM). DAO method يفحص جدول transactions.
+          final alreadyApplied = await _db.transactionsDao
+              .hasInterestForPeriod(accountId, periodKey);
+          if (alreadyApplied) {
+            skipped++;
+            continue;
+          }
 
           final newBalance = balanceSar + interest;
           final txnId = 'INT-${now.millisecondsSinceEpoch}-$accountId';
@@ -750,21 +782,76 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
             createdBy: user?.name,
           );
           await _db.accountsDao.updateBalance(accountId, newBalance);
+
+          appliedTxns.add(
+            _AppliedInterest(
+              txnId: txnId,
+              accountId: accountId,
+              amountSar: interest,
+              balanceAfterSar: newBalance,
+            ),
+          );
         }
       });
+
+      // Sync enqueue خارج الـ transaction — الـ writes إلى sync_queue
+      // يجب ألا تمنع الـ DB transaction من الـ commit.
+      for (final entry in appliedTxns) {
+        try {
+          await syncService.enqueueCreate(
+            tableName: 'transactions',
+            recordId: entry.txnId,
+            data: {
+              'id': entry.txnId,
+              'storeId': storeId,
+              'accountId': entry.accountId,
+              'type': 'interest',
+              'amount': (entry.amountSar * 100).round(),
+              'balanceAfter': (entry.balanceAfterSar * 100).round(),
+              'periodKey': periodKey,
+              'createdBy': user?.name,
+              'createdAt': now.toIso8601String(),
+            },
+            priority: SyncPriority.high,
+          );
+          await syncService.enqueueUpdate(
+            tableName: 'accounts',
+            recordId: entry.accountId,
+            changes: {
+              'id': entry.accountId,
+              'balance': (entry.balanceAfterSar * 100).round(),
+              'lastTransactionAt': now.toIso8601String(),
+              'updatedAt': now.toIso8601String(),
+            },
+            priority: SyncPriority.high,
+          );
+        } catch (e, stack) {
+          // sync enqueue فشل = لا يمنع نجاح البيع المحلي؛ ستُلتقَط في
+          // المزامنة الدورية التالية. Sentry يسجل لنعرف إن كانت مشكلة
+          // دائمة.
+          reportError(
+            e,
+            stackTrace: stack,
+            hint: 'Apply interest sync enqueue (txn=${entry.txnId})',
+          );
+        }
+      }
 
       // Audit log
       auditService.logInterestApply(
         storeId: storeId,
         userId: user?.id ?? 'unknown',
         userName: user?.name ?? 'unknown',
-        accountCount: _selectedIds.length,
+        accountCount: appliedTxns.length,
         rate: _rate,
         totalInterest: _totalInterest,
       );
 
       if (!mounted) return;
-      AlhaiSnackbar.success(context, l10n.success);
+      final msg = skipped > 0
+          ? l10n.interestAppliedWithSkipped(appliedTxns.length, skipped)
+          : l10n.success;
+      AlhaiSnackbar.success(context, msg);
 
       _selectedIds.clear();
       await _loadAccounts();
@@ -801,4 +888,20 @@ class _ApplyInterestScreenState extends ConsumerState<ApplyInterestScreen> {
     }
     return name.isNotEmpty ? name[0].toUpperCase() : '?';
   }
+}
+
+/// قيمة مؤقتة داخلية لتمرير نتائج عمليات الفائدة المُطبَّقة إلى مرحلة
+/// Sync enqueue (التي تجري خارج الـ DB transaction).
+class _AppliedInterest {
+  final String txnId;
+  final String accountId;
+  final double amountSar;
+  final double balanceAfterSar;
+
+  const _AppliedInterest({
+    required this.txnId,
+    required this.accountId,
+    required this.amountSar,
+    required this.balanceAfterSar,
+  });
 }

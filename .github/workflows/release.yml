@@ -45,13 +45,20 @@ jobs:
             echo "env=production" >> $GITHUB_OUTPUT
           fi
       - name: Build Web
+        # Phase 4 §4.1 — inject cert-pin fingerprints so production builds have
+        # pin enforcement wired in. On web the IO pinning path is inert, but
+        # the defines are accepted by the toolchain and keep release commands
+        # aligned with native builds (one secret rotation covers all).
         run: |
           cd apps/${{ matrix.app }}
           flutter build web --no-tree-shake-icons \
             --dart-define=ENV=${{ steps.env.outputs.env }} \
             --dart-define=SENTRY_DSN=${{ secrets.SENTRY_DSN }} \
             --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
-            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_1=${{ secrets.SUPABASE_CERT_FINGERPRINT_1 }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_2=${{ secrets.SUPABASE_CERT_FINGERPRINT_2 }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_3=${{ secrets.SUPABASE_CERT_FINGERPRINT_3 }}
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:

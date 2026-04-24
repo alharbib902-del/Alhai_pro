@@ -304,15 +304,51 @@ class ProductsDao extends DatabaseAccessor<AppDatabase>
     return result.read(countExpression) ?? 0;
   }
 
-  /// البحث في المنتجات مع Pagination (باستثناء المحذوفة)
+  /// البحث في المنتجات مع Pagination (باستثناء المحذوفة).
+  ///
+  /// Phase 3 §3.8 — يُجرَّب FTS5 أولاً للأداء الأفضل (خصوصاً على 10k+ منتج)،
+  /// ثم LIKE كـ fallback إذا كان FTS غير متوفر أو فشل أو أعطى لا نتائج.
+  /// هذا نفس النمط الذي يستخدمه [searchProducts] لكن مع دعم offset+limit
+  /// الذي يحتاجه الـ POS للـ infinite scroll.
   Future<List<ProductsTableData>> searchProductsPaginated(
     String query,
     String storeId, {
     int offset = 0,
     int limit = 20,
-  }) {
-    final searchPattern = '%${_escapeLikePattern(query)}%';
+  }) async {
+    // محاولة FTS أولاً (BM25 ranking، يدعم عربي عبر unicode61 tokenizer)
+    try {
+      if (await _ftsService.isFtsTableExists()) {
+        final ftsResults = await _ftsService.search(
+          query,
+          storeId,
+          limit: limit,
+          offset: offset,
+        );
+        if (ftsResults.isNotEmpty) {
+          final ids = ftsResults.map((r) => r.id).toList();
+          final rows = await (select(productsTable)
+                ..where(
+                  (p) =>
+                      p.id.isIn(ids) &
+                      p.storeId.equals(storeId) &
+                      p.isActive.equals(true) &
+                      p.deletedAt.isNull(),
+                ))
+              .get();
+          // الحفاظ على ترتيب BM25 من FTS (ids.indexOf = أعلى صلة أولاً).
+          rows.sort(
+            (a, b) => ids.indexOf(a.id).compareTo(ids.indexOf(b.id)),
+          );
+          return rows;
+        }
+      }
+    } catch (_) {
+      // FTS غير متاح / فشل — نسقط على LIKE.
+    }
 
+    // Fallback: LIKE التقليدي (بطيء على مجموعات كبيرة لكن مضمون).
+    final searchPattern = '%${_escapeLikePattern(query)}%';
     return (select(productsTable)
           ..where(
             (p) =>

@@ -155,4 +155,31 @@ class CurrencyFormatter {
         return code;
     }
   }
+
+  // ── Int-cents convenience (Phase 2, task 2.2) ────────────────────────────
+  //
+  // Drift stores money columns as int cents (C-4 migration). The patterns
+  // `(cents / 100.0).toStringAsFixed(2)` and `cents / 100.0` then pass to
+  // [format] are scattered across 47+ UI sites — one of them (split_receipt
+  // at :346) leaked a 100× display bug in Phase 1. These overloads close
+  // that door: callers pass raw cents, we handle the conversion once.
+
+  /// Format int cents (Drift storage) as `"150.75 ر.س"` or `"1,234.50 ر.س"`.
+  static String fromCents(int cents, {String? locale, int decimalDigits = 2}) {
+    return format(cents / 100.0, locale: locale, decimalDigits: decimalDigits);
+  }
+
+  /// Compact int-cents formatter (no decimals).
+  static String fromCentsCompact(int cents, {String? locale}) {
+    return formatCompact(cents / 100.0, locale: locale);
+  }
+
+  /// Context-aware int-cents formatter — preferred API for widgets.
+  static String fromCentsWithContext(
+    BuildContext context,
+    int cents, {
+    int decimalDigits = 2,
+  }) {
+    return formatWithContext(context, cents / 100.0, decimalDigits: decimalDigits);
+  }
 }

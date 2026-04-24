@@ -14,8 +14,11 @@ name: Release Android (Play Store)
 # Shared secrets:
 #   SUPABASE_URL
 #   SUPABASE_ANON_KEY
-#   SUPABASE_CERT_FINGERPRINT
-#   SUPABASE_CERT_FINGERPRINT_BACKUP
+#   SUPABASE_CERT_FINGERPRINT           (legacy primary — still honoured)
+#   SUPABASE_CERT_FINGERPRINT_BACKUP    (legacy backup — still honoured)
+#   SUPABASE_CERT_FINGERPRINT_1..3      (Phase 4 §4.1 — N-pin rotation;
+#                                        preferred over legacy pins. Up to 10
+#                                        slots supported; we wire 1–3.)
 #   SENTRY_DSN_CASHIER / SENTRY_DSN_ADMIN / SENTRY_DSN_ADMIN_LITE
 
 on:
@@ -141,6 +144,9 @@ jobs:
             --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} \
             --dart-define=SUPABASE_CERT_FINGERPRINT=${{ secrets.SUPABASE_CERT_FINGERPRINT }} \
             --dart-define=SUPABASE_CERT_FINGERPRINT_BACKUP=${{ secrets.SUPABASE_CERT_FINGERPRINT_BACKUP }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_1=${{ secrets.SUPABASE_CERT_FINGERPRINT_1 }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_2=${{ secrets.SUPABASE_CERT_FINGERPRINT_2 }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_3=${{ secrets.SUPABASE_CERT_FINGERPRINT_3 }} \
             --dart-define=SENTRY_DSN=${{ steps.sentry.outputs.dsn }}
 
       # ─── Build signed APK (for side-loading / GitHub Release) ───────
@@ -154,6 +160,9 @@ jobs:
             --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} \
             --dart-define=SUPABASE_CERT_FINGERPRINT=${{ secrets.SUPABASE_CERT_FINGERPRINT }} \
             --dart-define=SUPABASE_CERT_FINGERPRINT_BACKUP=${{ secrets.SUPABASE_CERT_FINGERPRINT_BACKUP }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_1=${{ secrets.SUPABASE_CERT_FINGERPRINT_1 }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_2=${{ secrets.SUPABASE_CERT_FINGERPRINT_2 }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_3=${{ secrets.SUPABASE_CERT_FINGERPRINT_3 }} \
             --dart-define=SENTRY_DSN=${{ steps.sentry.outputs.dsn }}
 
       # ─── Upload to Play Store ───────────────────────────────────────

@@ -36,7 +36,9 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
   String? _error;
   bool _isPrinting = false;
 
-  // Simulated split payment data
+  // Actual split breakdown derived from sales row columns (cashAmount,
+  // cardAmount, creditAmount). Populated in [_loadData] — empty until
+  // data loads.
   List<_PaymentSplit> _splits = [];
 
   @override
@@ -80,27 +82,37 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
     }
   }
 
+  /// يبني التقسيم الفعلي من أعمدة sales (cashAmount/cardAmount/creditAmount).
+  ///
+  /// قبل هذا الإصلاح كانت الشاشة تُولّد تقسيماً وهمياً (half cash + half
+  /// card) مع مرجع بطاقة خيالي `**** 4532`. ذلك مضلِّل للمستخدم: إيصال
+  /// مطبوع يعرض بيانات لم تحدث. الحل: القراءة المباشرة من سجل البيع.
+  ///
+  /// المبالغ في القاعدة بالهللات (int cents)؛ نحوّلها لـ SAR (double) عند
+  /// حد العرض فقط. المبالغ الصفرية/null تُستبعد لأنها لا تمثل دفعة فعلية.
   List<_PaymentSplit> _buildSplits(SalesTableData order) {
-    // If the order has a single payment method, show it as one split
-    // In a real app, this would come from a payments table
-    // C-4 Session 3: sale.total is int cents; _PaymentSplit.amount is SAR.
-    final method = order.paymentMethod;
-    final totalSar = order.total / 100.0;
-    if (method == 'split') {
-      // Simulate split payment
-      final half = totalSar / 2;
-      return [
-        _PaymentSplit(method: 'cash', amount: half, reference: null),
-        _PaymentSplit(
-          method: 'card',
-          amount: totalSar - half,
-          reference: '**** 4532',
-        ),
-      ];
+    final splits = <_PaymentSplit>[];
+
+    void addIfPositive(String method, int? cents) {
+      if (cents == null || cents <= 0) return;
+      splits.add(_PaymentSplit(method: method, amount: cents / 100.0));
     }
-    return [
-      _PaymentSplit(method: method, amount: totalSar, reference: null),
-    ];
+
+    addIfPositive('cash', order.cashAmount);
+    addIfPositive('card', order.cardAmount);
+    addIfPositive('credit', order.creditAmount);
+
+    // Fallback: سجل قديم قبل دعم multi-payment (الأعمدة الثلاثة null).
+    // نعرض طريقة الدفع الأساسية بالمبلغ الكامل حتى لا تكون الشاشة فارغة.
+    if (splits.isEmpty) {
+      splits.add(
+        _PaymentSplit(
+          method: order.paymentMethod,
+          amount: order.total / 100.0,
+        ),
+      );
+    }
+    return splits;
   }
 
   @override
@@ -343,7 +355,13 @@ class _SplitReceiptScreenState extends ConsumerState<SplitReceiptScreen> {
                   ),
                 ),
                 Text(
-                  '${order.total.toStringAsFixed(2)} ${l10n.sar}',
+                  // order.total is stored as int cents (C-4 Session 3 migration).
+                  // Display requires conversion to SAR; previous code called
+                  // toStringAsFixed on the raw cents value and printed 100× the
+                  // actual total (e.g. 46.00 SAR rendered as 4600.00). Same
+                  // class of display bug corrected across the 34 sites in
+                  // Sessions 43-49 — this site slipped through.
+                  '${(order.total / 100.0).toStringAsFixed(2)} ${l10n.sar}',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,

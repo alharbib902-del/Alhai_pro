@@ -155,6 +155,37 @@ jobs:
           name: coverage-report
           path: coverage/merged_lcov.info
 
+      # Phase 4 §4.7 — Codecov integration (optional, runs only when the
+      # CODECOV_TOKEN secret is configured). Provides trending graphs and
+      # pull-request annotations on coverage regressions.
+      #
+      # To enable: add CODECOV_TOKEN as a repo secret (from codecov.io dashboard
+      # after signing up the repo). No-op when the secret is absent.
+      - name: Upload coverage to Codecov
+        if: >-
+          hashFiles('coverage/merged_lcov.info') != ''
+          && env.CODECOV_TOKEN != ''
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: coverage/merged_lcov.info
+          fail_ci_if_error: false
+          verbose: false
+
+      # Phase 4 §4.7 — Coverage floor guard. Fails CI if line coverage drops
+      # below 60% to catch regressions before merge. Raise the floor as the
+      # test suite matures (target 85% for 10/10).
+      - name: Check coverage floor (>= 60%)
+        if: hashFiles('coverage/merged_lcov.info') != ''
+        run: |
+          sudo apt-get install -y lcov -qq
+          PCT=$(lcov --summary coverage/merged_lcov.info 2>&1 \
+                | grep -oP 'lines.*\d+\.\d+%' | grep -oP '\d+\.\d+' | head -1)
+          echo "Line coverage: ${PCT}%"
+          awk -v p="$PCT" 'BEGIN { if (p+0 < 60.0) { print "❌ below 60% floor"; exit 1 } else { print "✅ above 60% floor" } }'
+
   # ============================================================================
   # PLAYWRIGHT E2E TESTS (cashier web app)
   # Runs after test job passes on main, develop, and all PRs.

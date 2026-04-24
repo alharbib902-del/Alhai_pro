@@ -9,9 +9,45 @@ library cart_providers;
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:alhai_core/alhai_core.dart' hide CartItem;
+
+// ============================================================================
+// CART HAPTICS
+// ============================================================================
+
+/// Phase 2 §2.6 — light haptic tick on cart mutations (add/remove).
+/// Controlled by [cartHapticsEnabled]; the cashier app writes this flag
+/// from the Feedback settings screen so the user can mute it without
+/// touching pos_screen or breaking tests.
+bool cartHapticsEnabled = true;
+
+void _cartHapticTick() {
+  if (!cartHapticsEnabled) return;
+  // Skip when the Flutter ServicesBinding is not initialised. Unit tests
+  // for the cart notifier do not call TestWidgetsFlutterBinding.ensure-
+  // Initialized, and without it `HapticFeedback.lightImpact()` throws
+  // because it needs the default binary messenger. We probe the binding
+  // defensively via try/catch on the `instance` accessor itself (which
+  // is what actually raises the assertion), then fall back to a plain
+  // try/catch on the haptic call for any other platform failures.
+  try {
+    // ignore: unnecessary_statements
+    ServicesBinding.instance;
+  } catch (_) {
+    return;
+  }
+  try {
+    // Fire-and-forget — the returned Future is intentionally ignored;
+    // errors on the async tail are swallowed via `catchError` so they
+    // never surface in tests or web builds.
+    HapticFeedback.lightImpact().catchError((_) {});
+  } catch (_) {
+    // Swallow: haptics unavailable (headless tests, web, desktop).
+  }
+}
 
 // ============================================================================
 // CONSTANTS
@@ -571,6 +607,7 @@ class CartNotifier extends StateNotifier<CartState> {
         ],
       );
     }
+    _cartHapticTick(); // Phase 2 §2.6
     _saveCart();
   }
 
@@ -594,6 +631,7 @@ class CartNotifier extends StateNotifier<CartState> {
     state = state.copyWith(
       items: state.items.where((item) => item.product.id != productId).toList(),
     );
+    _cartHapticTick(); // Phase 2 §2.6
     _saveCart();
   }
 

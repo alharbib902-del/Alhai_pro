@@ -589,7 +589,11 @@ class SaleService {
       }
     }
 
-    // إنشاء فاتورة تلقائية بعد إتمام البيع (لا تمنع البيع عند الفشل)
+    // إنشاء فاتورة تلقائية بعد إتمام البيع.
+    // القاعدة: فشل البنية التحتية (شبكة/قاعدة/تصادم رقم فاتورة) = غير
+    // حاجب — البيع يكتمل والفاتورة تُعاد لاحقاً. أما فشل توافق ZATCA
+    // (QR لا يمكن توليده لمتجر بمعطيات غير صالحة) فهو حاجب لأن
+    // الفاتورة بدون QR مخالفة قانونية ولا يصح تمرير المعاملة بصمت.
     if (_invoiceService != null) {
       try {
         final sale = await _db.salesDao.getSaleById(saleId);
@@ -600,6 +604,11 @@ class SaleService {
             debugPrint('[SaleService] Invoice created for sale $saleId');
           }
         }
+      } on ZatcaComplianceException {
+        // لا نبتلع — أعد الرفع ليستقبله مسار POS ويُظهِر للمستخدم حواراً
+        // واضحاً (إعدادات ZATCA للمتجر ناقصة / VAT غير صالح / اسم بائع
+        // طويل جداً) بدل إتمام بيع بفاتورة معطوبة.
+        rethrow;
       } catch (e) {
         if (kDebugMode) {
           debugPrint(

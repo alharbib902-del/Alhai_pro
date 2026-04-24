@@ -87,6 +87,11 @@ jobs:
       # SIGNED RELEASE BUILDS (APK + AAB)
       # AAB is required for Play Store uploads; APK is kept for sideloading.
       # ======================================================================
+      # Phase 4 §4.1 — Cert-pin fingerprints are injected via --dart-define for
+      # the apps that use CertificatePinningService (cashier, admin, admin_lite).
+      # customer_app/driver_app may ignore unused defines safely. Empty secrets
+      # fall through to the service's debug-mode no-op, so builds don't break
+      # before pins are rolled out.
       - name: Build signed release APK
         if: env.KEYSTORE_BASE64 != ''
         env:
@@ -97,7 +102,10 @@ jobs:
             --obfuscate \
             --split-debug-info=build/debug-info \
             --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
-            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_1=${{ secrets.SUPABASE_CERT_FINGERPRINT_1 }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_2=${{ secrets.SUPABASE_CERT_FINGERPRINT_2 }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_3=${{ secrets.SUPABASE_CERT_FINGERPRINT_3 }}
 
       - name: Build release AAB
         if: env.KEYSTORE_BASE64 != ''
@@ -109,7 +117,10 @@ jobs:
             --obfuscate \
             --split-debug-info=build/debug-info \
             --dart-define=SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
-            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+            --dart-define=SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_1=${{ secrets.SUPABASE_CERT_FINGERPRINT_1 }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_2=${{ secrets.SUPABASE_CERT_FINGERPRINT_2 }} \
+            --dart-define=SUPABASE_CERT_FINGERPRINT_3=${{ secrets.SUPABASE_CERT_FINGERPRINT_3 }}
 
       - name: Upload signed APK artifact
         if: env.KEYSTORE_BASE64 != ''

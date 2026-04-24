@@ -23,9 +23,16 @@ include: package:flutter_lints/flutter.yaml
 #     - prefer-extracting-callbacks
 
 analyzer:
+  # Phase 3 §3.5 — Plug in `alhai_lints` via the `custom_lint` runner so
+  # Alhai-specific rules (avoid_direct_material_widgets, ...) run alongside
+  # `flutter_lints`. Rules are WARNING level for migration period — they do
+  # not fail analyze/CI. Discover counts with: `dart run custom_lint`.
+  plugins:
+    - custom_lint
   exclude:
     - '**/*.g.dart'
     - '**/*.freezed.dart'
+    - 'lib/l10n/generated/**'
   errors:
     invalid_annotation_target: ignore
     sort_constructors_first: ignore

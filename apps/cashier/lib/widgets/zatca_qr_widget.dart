@@ -51,6 +51,9 @@ class ZatcaQrWidget extends StatelessWidget {
           Container(
             padding: const EdgeInsets.all(AlhaiSpacing.sm),
             decoration: BoxDecoration(
+              // QR MUST be displayed on a white background in both themes so
+              // the camera can decode it reliably (ZATCA compliance
+              // requires high contrast >= 4:1 between modules and quiet zone).
               color: Colors.white,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(color: AppColors.getBorder(isDark)),
@@ -59,6 +62,7 @@ class ZatcaQrWidget extends StatelessWidget {
               data: qrData,
               version: QrVersions.auto,
               size: size,
+              // White background required for reliable QR scanning.
               backgroundColor: Colors.white,
               eyeStyle: const QrEyeStyle(
                 eyeShape: QrEyeShape.square,

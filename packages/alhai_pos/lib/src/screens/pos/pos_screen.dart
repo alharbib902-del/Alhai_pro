@@ -10,6 +10,7 @@ import 'package:alhai_shared_ui/alhai_shared_ui.dart';
 import '../../core/utils/keyboard_shortcuts.dart';
 import 'package:alhai_l10n/alhai_l10n.dart';
 import '../../providers/cart_providers.dart';
+import '../../providers/pos_feedback_providers.dart';
 import '../../widgets/pos/pos_widgets.dart';
 import '../../widgets/pos/barcode_listener.dart';
 import '../../widgets/pos/payment_success_dialog.dart';
@@ -71,6 +72,12 @@ class _PosScreenState extends ConsumerState<PosScreen> {
 
   /// L35: Whether the keyboard shortcuts overlay is visible.
   bool _showShortcutsOverlay = false;
+
+  /// C-4 §4h — Barcode debounce: آخر وقت مُسح فيه كل باركود. يمنع إضافة
+  /// المنتج مرتين عندما يرتدّ الماسح (bounce) أو يُضغط بسرعة. الإدخالات
+  /// المنتهية صلاحيتها تُنظَّف داخل [_handleBarcodeScan] لمنع تضخم الخريطة.
+  final Map<String, DateTime> _recentScans = <String, DateTime>{};
+  static const Duration _barcodeDebounceWindow = Duration(milliseconds: 500);
 
   @override
   void initState() {
@@ -247,6 +254,10 @@ class _PosScreenState extends ConsumerState<PosScreen> {
       final product = products[number - 1];
       ref.read(cartStateProvider.notifier).addProduct(product);
       HapticFeedback.lightImpact();
+      // Phase 2 §2.5 — cart mutation feedback (no sound, just haptic tick
+      // in cashier — the shim already fired lightImpact above; this hook
+      // lets the host app chain its own preference check).
+      ref.read(posCartMutationFeedbackProvider)();
       final l10n = AppLocalizations.of(context);
       _showSnackBar(context, '${l10n.addedToCart}: ${product.name}');
     }
@@ -553,6 +564,8 @@ class _PosScreenState extends ConsumerState<PosScreen> {
         // Bug 1: عرض خطأ للمستخدم وعدم مسح السلة
         debugPrint('Save sale error: $e');
         if (!mounted) return;
+        // Phase 2 §2.5 — generic error feedback before the error dialog.
+        ref.read(posErrorFeedbackProvider)();
         await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
@@ -594,6 +607,11 @@ class _PosScreenState extends ConsumerState<PosScreen> {
 
       if (!mounted) return;
 
+      // Phase 2 §2.5 — sale success feedback (heavy haptic + chime).
+      // Fire-and-forget; the callback internally swallows errors so it
+      // never blocks the success dialog.
+      ref.read(posSaleSuccessFeedbackProvider)();
+
       // 4. عرض dialog النجاح مع saleId (الطباعة تتم داخل Dialog)
       await PaymentSuccessDialog.show(
         context: context,
@@ -617,6 +635,25 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     // Bug 3: تجاهل مسح الباركود أثناء فتح نافذة الدفع
     if (_isPaymentDialogOpen) return;
 
+    // C-4 §4h — Debounce: تجاهل نفس الباركود إذا مُسح خلال آخر 500ms.
+    // الكاشير السريع أو ارتداد الماسح يُنتج أحياناً نبضتين متتاليتين
+    // (e.g. 180ms apart) — بدون هذا الفحص يُضاعَف المنتج في السلة دون
+    // علم المستخدم. haptic خفيف يؤكِّد أن الماسح قرأ والنظام تعمّد تجاهل
+    // التكرار.
+    final now = DateTime.now();
+    final lastScan = _recentScans[barcode];
+    if (lastScan != null && now.difference(lastScan) < _barcodeDebounceWindow) {
+      HapticFeedback.selectionClick();
+      return;
+    }
+    _recentScans[barcode] = now;
+
+    // تنظيف الإدخالات الأقدم من 10s — يمنع تضخم الخريطة على جلسات طويلة
+    // (متجر مفتوح 16 ساعة مع آلاف العمليات في اليوم).
+    _recentScans.removeWhere(
+      (_, ts) => now.difference(ts) > const Duration(seconds: 10),
+    );
+
     final repository = ref.read(productsRepositoryProvider);
     final product = await repository.getByBarcode(barcode);
     if (!mounted) return;
@@ -625,12 +662,16 @@ class _PosScreenState extends ConsumerState<PosScreen> {
     if (product != null) {
       ref.read(cartStateProvider.notifier).addProduct(product);
       HapticFeedback.lightImpact();
+      // Phase 2 §2.5 — barcode scan SUCCESS feedback (sound + haptic).
+      ref.read(posBarcodeScanFeedbackProvider)();
       _showSnackBar(
         context,
         '${l10n.addedToCart}: ${product.name}',
         isSuccess: true,
       );
     } else {
+      // Phase 2 §2.5 — barcode scan FAILURE feedback (error buzz + vibrate).
+      ref.read(posBarcodeErrorFeedbackProvider)();
       _showSnackBar(
         context,
         '${l10n.productNotFound}: $barcode',
